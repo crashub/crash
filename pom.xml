@@ -34,14 +34,20 @@
 
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy</artifactId>
-      <version>1.6.5</version>
+      <artifactId>groovy-all-minimal</artifactId>
+      <version>1.5.6</version>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.netty</groupId>
       <artifactId>netty</artifactId>
       <version>3.1.5.GA</version>
+    </dependency>
+
+    <dependency>
+      <groupId>args4j</groupId>
+      <artifactId>args4j</artifactId>
+      <version>2.0.10</version>
     </dependency>
 
     <dependency>
