@@ -2,11 +2,11 @@ import org.crsh.shell.ScriptException;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.util.Calendar;
+import org.crsh.console.ConsoleBuilder;
 
 /*
  * Exports a node to a JCR file.
  */
-import org.crsh.console.ConsoleBuilder;
 { String srcPath, String dstPath ->
   assertConnected();
 
@@ -49,5 +49,5 @@ import org.crsh.console.ConsoleBuilder;
   res.setProperty("jcr:lastModified", Calendar.getInstance());
 
   //
-  return builder;
+  return "The node has been exported";
 }

@@ -35,6 +35,7 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import java.beans.IntrospectionException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
@@ -197,8 +198,10 @@ public class NodeMetaClass extends MetaClassImpl {
           return property.getBoolean();
         case JCRUtils.REFERENCE:
           return property.getNode();
+        case JCRUtils.BINARY:
+          return property.getStream();
         default:
-          throw new UnsupportedOperationException("JCR Property type ${type} not handled yet");
+          throw new UnsupportedOperationException("JCR Property type " + type + " not handled yet");
       }
     }
     catch (PathNotFoundException e) {
@@ -272,6 +275,9 @@ public class NodeMetaClass extends MetaClassImpl {
       }
       else if (newValue instanceof Float) {
         node.setProperty(property, (Float)newValue);
+      }
+      else if (newValue instanceof InputStream) {
+        node.setProperty(property, (InputStream)newValue);
       }
       else {
         throw new UnsupportedOperationException("todo with object " + newValue);

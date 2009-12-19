@@ -23,6 +23,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import java.io.InputStream;
 import java.util.Calendar;
 
 /**
@@ -38,6 +39,7 @@ class JCRUtils {
   public static final int LONG = PropertyType.LONG;
   public static final int BOOLEAN = PropertyType.BOOLEAN;
   public static final int REFERENCE = PropertyType.REFERENCE;
+  public static final int BINARY = PropertyType.BINARY;
 
 
   public static Property getProperty(Node node, String propertyName) throws RepositoryException {
@@ -63,6 +65,7 @@ class JCRUtils {
       value instanceof Float ||
       value instanceof Double ||
       value instanceof Calendar ||
+      value instanceof InputStream ||
       value instanceof Value[];
   }
 }
