@@ -22,9 +22,8 @@ package org.crsh.shell;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class JavaCommand extends Command
-{
+public abstract class JavaCommand extends Command {
 
-   public abstract String call(Object... o);
+  public abstract String call(Object... o);
 
 }

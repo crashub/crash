@@ -18,8 +18,6 @@
  */
 package org.crsh.netty;
 
-import static org.jboss.netty.channel.Channels.*;
-
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
@@ -28,37 +26,37 @@ import org.jboss.netty.handler.codec.frame.Delimiters;
 import org.jboss.netty.handler.codec.string.StringDecoder;
 import org.jboss.netty.handler.codec.string.StringEncoder;
 
+import static org.jboss.netty.channel.Channels.pipeline;
+
 /**
  * Creates a newly configured {@link ChannelPipeline} for a new channel.
  *
  * @author The Netty Project (netty-dev@lists.jboss.org)
  * @author Trustin Lee (trustin@gmail.com)
- *
  * @version $Rev$, $Date$
- *
  */
 public class TelnetPipelineFactory implements
-        ChannelPipelineFactory {
+  ChannelPipelineFactory {
 
-    private final ChannelHandler handler;
+  private final ChannelHandler handler;
 
-    public TelnetPipelineFactory(ChannelHandler handler) {
-        this.handler = handler;
-    }
+  public TelnetPipelineFactory(ChannelHandler handler) {
+    this.handler = handler;
+  }
 
-    public ChannelPipeline getPipeline() throws Exception {
-        // Create a default pipeline implementation.
-        ChannelPipeline pipeline = pipeline();
+  public ChannelPipeline getPipeline() throws Exception {
+    // Create a default pipeline implementation.
+    ChannelPipeline pipeline = pipeline();
 
-        // Add the text line codec combination first,
-        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-                8192, Delimiters.lineDelimiter()));
-        pipeline.addLast("decoder", new StringDecoder());
-        pipeline.addLast("encoder", new StringEncoder());
+    // Add the text line codec combination first,
+    pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
+      8192, Delimiters.lineDelimiter()));
+    pipeline.addLast("decoder", new StringDecoder());
+    pipeline.addLast("encoder", new StringEncoder());
 
-        // and then business logic.
-        pipeline.addLast("handler", handler);
+    // and then business logic.
+    pipeline.addLast("handler", handler);
 
-        return pipeline;
-    }
+    return pipeline;
+  }
 }

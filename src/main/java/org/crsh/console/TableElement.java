@@ -27,23 +27,18 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TableElement extends ConsoleElement<List<Row>>
-{
-   public TableElement()
-   {
-      super(new ArrayList<Row>());
-   }
+public class TableElement extends ConsoleElement<List<Row>> {
+  public TableElement() {
+    super(new ArrayList<Row>());
+  }
 
-   @Override
-   public void print(PrintWriter printer) throws IOException
-   {
-      for (Row row : data)
-      {
-         for (String value : row.values)
-         {
-            printer.write(value);
-         }
-         printer.println();
+  @Override
+  public void print(PrintWriter printer) throws IOException {
+    for (Row row : data) {
+      for (String value : row.values) {
+        printer.write(value);
       }
-   }
+      printer.println();
+    }
+  }
 }

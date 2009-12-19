@@ -28,39 +28,33 @@ import java.io.InputStream;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ServletShellContext implements ShellContext
-{
+public class ServletShellContext implements ShellContext {
 
-   /** . */
-   private final ServletContext servletContext;
+  /** . */
+  private final ServletContext servletContext;
 
-   /** . */
-   private final ClassLoader loader;
+  /** . */
+  private final ClassLoader loader;
 
-   public ServletShellContext(ServletContext servletContext, ClassLoader loader)
-   {
-      if (servletContext == null)
-      {
-         throw new NullPointerException();
-      }
-      if (loader == null)
-      {
-         throw new NullPointerException();
-      }
-      
-      //
-      this.servletContext = servletContext;
-      this.loader = loader;
-   }
+  public ServletShellContext(ServletContext servletContext, ClassLoader loader) {
+    if (servletContext == null) {
+      throw new NullPointerException();
+    }
+    if (loader == null) {
+      throw new NullPointerException();
+    }
 
-   public String loadScript(String scriptURI)
-   {
-      InputStream in = servletContext.getResourceAsStream("/WEB-INF/groovy/" + scriptURI);
-      return in != null ? IO.readAsUTF8(in) : null;
-   }
+    //
+    this.servletContext = servletContext;
+    this.loader = loader;
+  }
 
-   public ClassLoader getLoader()
-   {
-      return loader;
-   }
+  public String loadScript(String scriptURI) {
+    InputStream in = servletContext.getResourceAsStream("/WEB-INF/groovy/" + scriptURI);
+    return in != null ? IO.readAsUTF8(in) : null;
+  }
+
+  public ClassLoader getLoader() {
+    return loader;
+  }
 }

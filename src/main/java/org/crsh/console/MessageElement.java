@@ -25,17 +25,14 @@ import java.io.PrintWriter;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class MessageElement extends ConsoleElement<String>
-{
+public class MessageElement extends ConsoleElement<String> {
 
-   public MessageElement(String data)
-   {
-      super(data);
-   }
+  public MessageElement(String data) {
+    super(data);
+  }
 
-   @Override
-   public void print(PrintWriter printer) throws IOException
-   {
-      printer.println(data);
-   }
+  @Override
+  public void print(PrintWriter printer) throws IOException {
+    printer.println(data);
+  }
 }

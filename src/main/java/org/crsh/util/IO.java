@@ -26,31 +26,25 @@ import java.io.InputStream;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class IO
-{
+public class IO {
 
-   public static String readAsUTF8(InputStream in)
-   {
-      if (in == null)
-      {
-         throw new NullPointerException();
+  public static String readAsUTF8(InputStream in) {
+    if (in == null) {
+      throw new NullPointerException();
+    }
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      byte[] buffer = new byte[256];
+      for (int l = in.read(buffer); l != -1; l = in.read(buffer)) {
+        baos.write(buffer, 0, l);
       }
-      try
-      {
-         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-         byte[] buffer = new byte[256];
-         for (int l = in.read(buffer);l != -1;l = in.read(buffer))
-         {
-            baos.write(buffer, 0, l);
-         }
-         return baos.toString("UTF-8");
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();
+      return baos.toString("UTF-8");
+    }
+    catch (IOException e) {
+      e.printStackTrace();
 
-         //
-         return null;
-      }
-   }
+      //
+      return null;
+    }
+  }
 }

@@ -25,26 +25,22 @@ import java.io.PrintWriter;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ConsoleElement<D>
-{
+public abstract class ConsoleElement<D> {
 
-   /** . */
-   protected D data;
+  /** . */
+  protected D data;
 
-   public ConsoleElement(D data)
-   {
-      this.data = data;
-   }
+  public ConsoleElement(D data) {
+    this.data = data;
+  }
 
-   public ConsoleElement()
-   {
-   }
+  public ConsoleElement() {
+  }
 
-   public D getData()
-   {
-      return data;
-   }
+  public D getData() {
+    return data;
+  }
 
-   public abstract void print(PrintWriter printer) throws IOException;
+  public abstract void print(PrintWriter printer) throws IOException;
 
 }

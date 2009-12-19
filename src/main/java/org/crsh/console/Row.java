@@ -25,19 +25,16 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Row 
-{
+public class Row {
 
-   /** . */
-   protected final List<String> values;
+  /** . */
+  protected final List<String> values;
 
-   public Row()
-   {
-      this.values = new ArrayList<String>();
-   }
+  public Row() {
+    this.values = new ArrayList<String>();
+  }
 
-   public List<String> getValues()
-   {
-      return values;
-   }
+  public List<String> getValues() {
+    return values;
+  }
 }

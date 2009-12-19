@@ -23,8 +23,6 @@ import groovy.lang.MetaClassRegistry;
 import org.crsh.jcr.NodeMetaClass;
 import org.crsh.servlet.ServletShellContext;
 import org.crsh.shell.ShellBuilder;
-import org.crsh.netty.TelnetPipelineFactory;
-import org.crsh.netty.TelnetServerHandler;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
@@ -40,61 +38,54 @@ import java.util.concurrent.Executors;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CrshLifeCycle implements ServletContextListener
-{
+public class CrshLifeCycle implements ServletContextListener {
 
-   /** . */
-   private Channel channel;
+  /** . */
+  private Channel channel;
 
-   public void contextInitialized(ServletContextEvent sce)
-   {
-      // Integrate
-      try
-      {
-         MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
-         Class<? extends Node> eXoNode = (Class<Node>)Thread.currentThread().getContextClassLoader().loadClass("org.exoplatform.services.jcr.impl.core.NodeImpl");
-         NodeMetaClass mc2 = new NodeMetaClass(registry, eXoNode);
-         mc2.initialize();
-         registry.setMetaClass(eXoNode, mc2);
-      }
-      catch (ClassNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (IntrospectionException e)
-      {
-         throw new RuntimeException(e);
-      }
+  public void contextInitialized(ServletContextEvent sce) {
+    // Integrate
+    try {
+      MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
+      Class<? extends Node> eXoNode = (Class<Node>)Thread.currentThread().getContextClassLoader().loadClass("org.exoplatform.services.jcr.impl.core.NodeImpl");
+      NodeMetaClass mc2 = new NodeMetaClass(registry, eXoNode);
+      mc2.initialize();
+      registry.setMetaClass(eXoNode, mc2);
+    }
+    catch (ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+    catch (IntrospectionException e) {
+      throw new RuntimeException(e);
+    }
 
 
-      //
-      ServerBootstrap bootstrap = new ServerBootstrap(
-         new NioServerSocketChannelFactory(
-            Executors.newCachedThreadPool(),
-            Executors.newCachedThreadPool()
-         )
-      );
+    //
+    ServerBootstrap bootstrap = new ServerBootstrap(
+      new NioServerSocketChannelFactory(
+        Executors.newCachedThreadPool(),
+        Executors.newCachedThreadPool()
+      )
+    );
 
-      //
-      ServletShellContext context = new ServletShellContext(sce.getServletContext(), Thread.currentThread().getContextClassLoader());
+    //
+    ServletShellContext context = new ServletShellContext(sce.getServletContext(), Thread.currentThread().getContextClassLoader());
 
-      //
-      ShellBuilder builder = new ShellBuilder(context);
+    //
+    ShellBuilder builder = new ShellBuilder(context);
 
-      //
-      TelnetServerHandler handler = new TelnetServerHandler(builder);
-      bootstrap.setPipelineFactory(new TelnetPipelineFactory(handler));
+    //
+    TelnetServerHandler handler = new TelnetServerHandler(builder);
+    bootstrap.setPipelineFactory(new TelnetPipelineFactory(handler));
 
-      // Bind and start to accept incoming connections.
-      channel = bootstrap.bind(new InetSocketAddress(5000));
-   }
+    // Bind and start to accept incoming connections.
+    channel = bootstrap.bind(new InetSocketAddress(5000));
+  }
 
 
-   public void contextDestroyed(ServletContextEvent sce)
-   {
-      if (channel != null)
-      {
-         channel.close();
-      }
-   }
+  public void contextDestroyed(ServletContextEvent sce) {
+    if (channel != null) {
+      channel.close();
+    }
+  }
 }

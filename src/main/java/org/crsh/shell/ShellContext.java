@@ -22,11 +22,10 @@ package org.crsh.shell;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellContext
-{
+public interface ShellContext {
 
-   String loadScript(String resourceId);
+  String loadScript(String resourceId);
 
-   ClassLoader getLoader();
+  ClassLoader getLoader();
 
 }

@@ -29,42 +29,40 @@ import java.util.Calendar;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class JCRUtils
-{
+class JCRUtils {
 
-   public static final int PATH = PropertyType.PATH;
-   public static final int STRING = PropertyType.STRING;
-   public static final int DATE = PropertyType.DATE;
-   public static final int DOUBLE = PropertyType.DOUBLE;
-   public static final int LONG = PropertyType.LONG;
-   public static final int BOOLEAN = PropertyType.BOOLEAN;
-   public static final int REFERENCE = PropertyType.REFERENCE;
+  public static final int PATH = PropertyType.PATH;
+  public static final int STRING = PropertyType.STRING;
+  public static final int DATE = PropertyType.DATE;
+  public static final int DOUBLE = PropertyType.DOUBLE;
+  public static final int LONG = PropertyType.LONG;
+  public static final int BOOLEAN = PropertyType.BOOLEAN;
+  public static final int REFERENCE = PropertyType.REFERENCE;
 
 
-   public static Property getProperty(Node node, String propertyName) throws RepositoryException {
-     return node.getProperty(propertyName);
-   }
+  public static Property getProperty(Node node, String propertyName) throws RepositoryException {
+    return node.getProperty(propertyName);
+  }
 
-   public static void setProperty(Node node, String propertyName, boolean value) throws RepositoryException {
-     node.setProperty(propertyName, value);
-   }
+  public static void setProperty(Node node, String propertyName, boolean value) throws RepositoryException {
+    node.setProperty(propertyName, value);
+  }
 
-   public static void setProperty(Node node, String propertyName, Value value) throws RepositoryException
-   {
-     node.setProperty(propertyName, value);
-   }
+  public static void setProperty(Node node, String propertyName, Value value) throws RepositoryException {
+    node.setProperty(propertyName, value);
+  }
 
-   public static boolean isJCRPropertyType(Object value) {
-     return value instanceof String ||
-       value instanceof Node ||
-       value instanceof Long ||
-       value instanceof Boolean ||
-       value instanceof Integer ||
-       value instanceof Short ||
-       value instanceof Byte ||
-       value instanceof Float ||
-       value instanceof Double ||
-       value instanceof Calendar ||
-       value instanceof Value[];
-   }
+  public static boolean isJCRPropertyType(Object value) {
+    return value instanceof String ||
+      value instanceof Node ||
+      value instanceof Long ||
+      value instanceof Boolean ||
+      value instanceof Integer ||
+      value instanceof Short ||
+      value instanceof Byte ||
+      value instanceof Float ||
+      value instanceof Double ||
+      value instanceof Calendar ||
+      value instanceof Value[];
+  }
 }

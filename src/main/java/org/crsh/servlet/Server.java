@@ -26,44 +26,36 @@ import java.net.Socket;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Server
-{
+public class Server {
 
-   /** . */
-   private ServerSocket server;
-   
-   /** . */
-   private Thread acceptor;
+  /** . */
+  private ServerSocket server;
 
-   public Server() 
-   {
-   }
-   
-   public void start() throws Exception
-   {
-      this.server = new ServerSocket(5000);
-      this.acceptor = new Thread()
-      {
-         @Override
-         public void run()
-         {
-            try
-            {
-               Socket socket = server.accept();
-            }
-            catch (IOException e)
-            {
-               
-            }
-         }
-      };
-      
-      //
-   }
-   
-   public void stop()
-   {
-      
-   }
-   
+  /** . */
+  private Thread acceptor;
+
+  public Server() {
+  }
+
+  public void start() throws Exception {
+    this.server = new ServerSocket(5000);
+    this.acceptor = new Thread() {
+      @Override
+      public void run() {
+        try {
+          Socket socket = server.accept();
+        }
+        catch (IOException e) {
+
+        }
+      }
+    };
+
+    //
+  }
+
+  public void stop() {
+
+  }
+
 }

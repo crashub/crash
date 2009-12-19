@@ -22,23 +22,19 @@ package org.crsh.shell;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class GroovyCommand extends Command
-{
+public class GroovyCommand extends Command {
 
-   /** . */
-   private final String closureText;
+  /** . */
+  private final String closureText;
 
-   public GroovyCommand(String closureText)
-   {
-      if (closureText == null)
-      {
-         throw new NullPointerException();
-      }
-      this.closureText = closureText;
-   }
+  public GroovyCommand(String closureText) {
+    if (closureText == null) {
+      throw new NullPointerException();
+    }
+    this.closureText = closureText;
+  }
 
-   public String getClosureText()
-   {
-      return closureText;
-   }
+  public String getClosureText() {
+    return closureText;
+  }
 }

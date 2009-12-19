@@ -47,156 +47,137 @@ import java.util.logging.Logger;
  * @version $Rev$, $Date$
  */
 @ChannelPipelineCoverage("all")
-public class TelnetServerHandler extends SimpleChannelUpstreamHandler
-{
+public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
 
-   /** . */
-   private final ShellBuilder builder;
+  /** . */
+  private final ShellBuilder builder;
 
-   public TelnetServerHandler(ShellBuilder builder)
-   {
-      this.builder = builder;
-   }
+  public TelnetServerHandler(ShellBuilder builder) {
+    this.builder = builder;
+  }
 
-   private static final Logger logger = Logger.getLogger(
-      TelnetServerHandler.class.getName());
+  private static final Logger logger = Logger.getLogger(
+    TelnetServerHandler.class.getName());
 
-   @Override
-   public void handleUpstream(
-      ChannelHandlerContext ctx, ChannelEvent e) throws Exception
-   {
-      if (e instanceof ChannelStateEvent)
-      {
-         logger.info(e.toString());
+  @Override
+  public void handleUpstream(
+    ChannelHandlerContext ctx, ChannelEvent e) throws Exception {
+    if (e instanceof ChannelStateEvent) {
+      logger.info(e.toString());
+    }
+    super.handleUpstream(ctx, e);
+  }
+
+  @Override
+  public void channelConnected(
+    ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+    // Build the shell
+    Shell shell = builder.build();
+
+    //
+    shell.setAttribute("portalContainerName", "portal");
+
+    //
+    String prompt = shell.getPrompt();
+
+    // Send greeting for a new connection.
+    Channel channel = e.getChannel();
+
+    //
+    channel.write("Welcome to " + InetAddress.getLocalHost().getHostName() + "!\r\n");
+    channel.write("It is " + new Date() + " now.\r\n");
+    channel.write(prompt);
+
+    //
+    ctx.setAttachment(shell);
+
+  }
+
+  @Override
+  public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+    // Get shell
+    Shell shell = (Shell)ctx.getAttachment();
+
+    // Free resources
+    shell.close();
+  }
+
+  @Override
+  public void messageReceived(
+    ChannelHandlerContext ctx, MessageEvent e) {
+    // Cast to a String first.
+    // We know it is a String because we put some codec in TelnetPipelineFactory.
+    String request = (String)e.getMessage();
+
+    // Get shell
+    Shell shell = (Shell)ctx.getAttachment();
+
+    //
+    boolean close = false;
+    String response = null;
+    if (request.length() > 0) {
+      if ("bye".equals(request)) {
+        close = true;
+        response = "Have a good day!\r\n";
       }
-      super.handleUpstream(ctx, e);
-   }
+      else {
+        try {
 
-   @Override
-   public void channelConnected(
-      ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
-   {
-      // Build the shell
-      Shell shell = builder.build();
+          // Evaluate
+          String result = shell.evaluate(request);
 
-      //
-      shell.setAttribute("portalContainerName", "portal");
+          // Format response if any
+          if (result != null) {
+            response = "" + String.valueOf(result) + "\r\n";
+          }
+        }
+        catch (Throwable t) {
+          if (t instanceof InvokerInvocationException) {
+            t = t.getCause();
+          }
+          StringWriter writer = new StringWriter();
+          PrintWriter printer = new PrintWriter(writer);
+          printer.print("ERROR: ");
+          t.printStackTrace(printer);
+          printer.println();
+          printer.close();
+          response = writer.toString();
+        }
+      }
+    }
+    else {
+      response = "Please type something.\r\n";
+    }
 
-      //
+    //
+    if (!close) {
       String prompt = shell.getPrompt();
 
-      // Send greeting for a new connection.
-      Channel channel = e.getChannel();
-
       //
-      channel.write("Welcome to " + InetAddress.getLocalHost().getHostName() + "!\r\n");
-      channel.write("It is " + new Date() + " now.\r\n");
-      channel.write(prompt);
-      
-      //
-      ctx.setAttachment(shell);
+      response += prompt;
+    }
 
-   }
 
-   @Override
-   public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
-   {
-      // Get shell
-      Shell shell = (Shell)ctx.getAttachment();
+    // We do not need to write a ChannelBuffer here.
+    // We know the encoder inserted at TelnetPipelineFactory will do the conversion.
+    if (response != null) {
+      ChannelFuture future = e.getChannel().write(response);
 
-      // Free resources
-      shell.close();
-   }
-
-   @Override
-   public void messageReceived(
-      ChannelHandlerContext ctx, MessageEvent e)
-   {
-      // Cast to a String first.
-      // We know it is a String because we put some codec in TelnetPipelineFactory.
-      String request = (String)e.getMessage();
-
-      // Get shell
-      Shell shell = (Shell)ctx.getAttachment();
-
-      //
-      boolean close = false;
-      String response = null;
-      if (request.length() > 0)
-      {
-         if ("bye".equals(request))
-         {
-            close = true;
-            response = "Have a good day!\r\n";
-         }
-         else
-         {
-            try
-            {
-
-               // Evaluate
-               String result = shell.evaluate(request);
-
-               // Format response if any
-               if (result != null)
-               {
-                  response = "" + String.valueOf(result) + "\r\n";
-               }
-            }
-            catch (Throwable t)
-            {
-               if (t instanceof InvokerInvocationException)
-               {
-                  t = t.getCause();
-               }
-               StringWriter writer = new StringWriter();
-               PrintWriter printer = new PrintWriter(writer);
-               printer.print("ERROR: ");
-               t.printStackTrace(printer);
-               printer.println();
-               printer.close();
-               response = writer.toString();
-            }
-         }
+      // Close the connection after sending 'Have a good day!'
+      // if the client has sent 'bye'.
+      if (close) {
+        future.addListener(ChannelFutureListener.CLOSE);
       }
-      else
-      {
-         response = "Please type something.\r\n";
-      }
+    }
+  }
 
-      //
-      if (!close)
-      {
-         String prompt = shell.getPrompt();
-
-         //
-         response += prompt;
-      }
-
-
-      // We do not need to write a ChannelBuffer here.
-      // We know the encoder inserted at TelnetPipelineFactory will do the conversion.
-      if (response != null)
-      {
-         ChannelFuture future = e.getChannel().write(response);
-
-         // Close the connection after sending 'Have a good day!'
-         // if the client has sent 'bye'.
-         if (close)
-         {
-            future.addListener(ChannelFutureListener.CLOSE);
-         }
-      }
-   }
-
-   @Override
-   public void exceptionCaught(
-      ChannelHandlerContext ctx, ExceptionEvent e)
-   {
-      logger.log(
-         Level.WARNING,
-         "Unexpected exception from downstream.",
-         e.getCause());
-      e.getChannel().close();
-   }
+  @Override
+  public void exceptionCaught(
+    ChannelHandlerContext ctx, ExceptionEvent e) {
+    logger.log(
+      Level.WARNING,
+      "Unexpected exception from downstream.",
+      e.getCause());
+    e.getChannel().close();
+  }
 }
