@@ -26,6 +26,10 @@ assertConnected = { ->
     throw new ScriptException("Not connect to a repository");
 };
 
+/**
+ * Locate a node by its path and returns it. If no path is provided the root node
+ * will be returned.
+ */
 findNodeByPath = { path ->
   assertConnected();
   if (path == null)
@@ -84,5 +88,15 @@ formatPropertyValue = { property ->
     }
     s += "]";
     return s;
+  }
+}
+
+safeClose = { closeable ->
+  if (closeable != null) {
+    try {
+      closeable.close();
+    }
+    catch (Exception ignore) {
+    }
   }
 }

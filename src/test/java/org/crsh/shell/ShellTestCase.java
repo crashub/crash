@@ -26,6 +26,7 @@ import org.crsh.shell.ShellBuilder;
 import org.crsh.shell.ShellContext;
 import org.crsh.util.IO;
 
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import java.io.InputStream;
@@ -160,5 +161,17 @@ public class ShellTestCase extends TestCase
       //
       shell.evaluate2("rm foo");
       assertEquals(false, groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
+   }
+
+   public void testExport() throws Exception
+   {
+      shell.evaluate2("connect ws");
+      groovyShell.evaluate("session.rootNode.addNode('foo', 'nt:base');");
+      shell.evaluate2("export /foo /foo.xml");
+      Node fooXML = (Node)groovyShell.evaluate("node = session.rootNode['foo.xml']");
+      assertNotNull(fooXML);
+      assertEquals("nt:file", fooXML.getPrimaryNodeType().getName());
+      Node fooContent = fooXML.getNode("jcr:content");
+      assertEquals("application/xml", fooContent.getProperty("jcr:mimeType").getString());
    }
 }
