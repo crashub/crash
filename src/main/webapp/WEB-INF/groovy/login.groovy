@@ -31,25 +31,31 @@ assertConnected = { ->
  * will be returned.
  */
 findNodeByPath = { path ->
+  def item = findItemByPath(path);
+  if (item instanceof Node)
+    return (Node)item;
+  throw new ScriptException("""Item at $path is a property and not a node""");
+};
+
+/**
+ * Locate an item by its path and returns it. If no path is provided the root node
+ * will be returned. If the path is relative then the item will be resolved against the
+ * current node.
+ */
+findItemByPath = { path ->
   assertConnected();
   if (path == null)
     path = "/";
-  def node;
   if (path.startsWith("/"))
   {
-    node = session.getRootNode();
-    if (path.equals("/"))
-      path = ".";
-    else
-      path = path.substring(1);
+    return session.getItem(path);
   }
-  else
-  {
-    node = getCurrentNode();
-  }
-  if (!node.hasNode(path))
-    throw new ScriptException("""$path : no such node""");
-  return node.getNode(path);
+  def node = getCurrentNode();
+  if (node.hasNode(path))
+    return node.getNode(path);
+  if (node.hasProperty(path))
+    return node.getProperty(path);
+  throw new ScriptException("""$path : no such item""");
 };
 
 formatValue = { value ->
