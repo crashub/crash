@@ -11,10 +11,10 @@ import org.kohsuke.args4j.Argument;
  */
 class exportnode extends org.crsh.shell.ClassCommand {
 
-  @Argument(required=true,index=0,usage="Source path")
+  @Argument(required=true,index=0,usage="Path of the node to export")
   def String srcPath;
 
-  @Argument(required=true,index=1,usage="Destination path")
+  @Argument(required=true,index=1,usage="Path of the created nt:file node containing the exported content")
   def String dstPath;
 
   public Object execute() throws ScriptException {
