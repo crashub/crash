@@ -39,8 +39,8 @@ public abstract class ScriptCommand extends Script implements ShellCommand {
 
   public Object execute(CommandContext context, String[] args) throws ScriptException {
 
-    // Copy the current binding
-    Binding binding = new Binding(new HashMap<String, Object>(context));
+    // Set up current binding
+    Binding binding = new Binding(context);
 
     // Set the args on the script
     binding.setProperty("args", args);

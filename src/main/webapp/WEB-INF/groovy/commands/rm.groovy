@@ -14,5 +14,5 @@ import org.crsh.shell.ScriptException;
   }
   else
     throw new ScriptException("""rm: $path: No such node or property""");
-  return result;
+  return null;
 }

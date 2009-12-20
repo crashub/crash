@@ -18,9 +18,6 @@
  */
 package org.crsh.shell;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -30,9 +27,6 @@ public class ShellBuilder {
   /** . */
   private final ShellContext context;
 
-  /** . */
-  private final Map<String, Command> commands;
-
   public ShellBuilder(ShellContext context) {
     if (context == null) {
       throw new NullPointerException();
@@ -40,30 +34,9 @@ public class ShellBuilder {
 
     //
     this.context = context;
-    this.commands = new HashMap<String, Command>();
-  }
-
-  public void addCommand(String name, final JavaCommand command) {
-    if (name == null) {
-      throw new NullPointerException();
-    }
-    if (command == null) {
-      throw new NullPointerException();
-    }
-    commands.put(name, command);
-  }
-
-  public void addCommand(String name, final String command) {
-    if (name == null) {
-      throw new NullPointerException();
-    }
-    if (command == null) {
-      throw new NullPointerException();
-    }
-    commands.put(name, new GroovyCommand(command));
   }
 
   public Shell build() {
-    return new Shell(context, commands);
+    return new Shell(context);
   }
 }
