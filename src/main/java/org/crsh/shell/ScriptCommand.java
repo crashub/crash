@@ -20,9 +20,8 @@ package org.crsh.shell;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
+import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
-
-import java.util.HashMap;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -30,11 +29,14 @@ import java.util.HashMap;
  */
 public abstract class ScriptCommand extends Script implements ShellCommand {
 
-  protected ScriptCommand() {
-  }
-
-  protected ScriptCommand(Binding binding) {
-    super(binding);
+  @Override
+  public Object getProperty(String property) {
+    try {
+      return super.getProperty(property);
+    }
+    catch (MissingPropertyException e) {
+      return null;
+    }
   }
 
   public Object execute(CommandContext context, String[] args) throws ScriptException {

@@ -7,14 +7,14 @@ import javax.jcr.SimpleCredentials;
 
   //
   def repo;
-//  if (portalContainerName != null) {
-//    def portalContainer = container.getPortalContainer(portalContainerName);
-//    def repoService = portalContainer.getComponentInstanceOfType(RepositoryService.class);
-//    repo = repoService.getRepository('repository');
-//  } else {
+  if (portalContainerName != null) {
+    def portalContainer = container.getPortalContainer(portalContainerName);
+    def repoService = portalContainer.getComponentInstanceOfType(RepositoryService.class);
+    repo = repoService.getRepository('repository');
+  } else {
     def repoService = container.getComponentInstanceOfType(RepositoryService.class);
     repo = repoService.getDefaultRepository();
-//  }
+  }
 
   //
   if (args.length == 2 && args[0] != null && args[1] != null) {
