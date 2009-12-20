@@ -16,15 +16,50 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.shell;
+
+import groovy.lang.Binding;
+import groovy.lang.Closure;
+import groovy.lang.Script;
+
+import java.util.HashMap;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class JavaCommand extends Command {
+public class ScriptCommand implements ShellCommand {
 
-  public abstract String call(Object... o);
+  /** . */
+  private final Script script;
+
+  public ScriptCommand(Script script) {
+    this.script = script;
+  }
+
+  public Object execute(CommandContext context, String[] args) throws ScriptException {
+
+    // Copy the current binding
+    Binding binding = new Binding(new HashMap<String, Object>(context));
+
+    // Set the args on the script
+    binding.setProperty("args", args);
+
+    //
+    script.setBinding(binding);
+
+    //
+    Object res = script.run();
+
+    // Evaluate the closure
+    if (res instanceof Closure) {
+      Closure closure = (Closure)res;
+      res = closure.call(args);
+    }
+
+    //
+    return res;
+  }
+
 
 }

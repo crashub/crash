@@ -16,15 +16,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.shell;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class JavaCommand extends Command {
+public interface ShellCommand {
 
-  public abstract String call(Object... o);
+  Object execute(CommandContext context, String[] args) throws ScriptException;
 
 }

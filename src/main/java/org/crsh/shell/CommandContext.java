@@ -19,12 +19,11 @@
 
 package org.crsh.shell;
 
+import java.util.HashMap;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class JavaCommand extends Command {
-
-  public abstract String call(Object... o);
-
+public class CommandContext extends HashMap<String, Object> {
 }
