@@ -28,13 +28,13 @@ import java.util.HashMap;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ScriptCommand implements ShellCommand {
+public abstract class ScriptCommand extends Script implements ShellCommand {
 
-  /** . */
-  private final Script script;
+  protected ScriptCommand() {
+  }
 
-  public ScriptCommand(Script script) {
-    this.script = script;
+  protected ScriptCommand(Binding binding) {
+    super(binding);
   }
 
   public Object execute(CommandContext context, String[] args) throws ScriptException {
@@ -46,10 +46,10 @@ public class ScriptCommand implements ShellCommand {
     binding.setProperty("args", args);
 
     //
-    script.setBinding(binding);
+    setBinding(binding);
 
     //
-    Object res = script.run();
+    Object res = run();
 
     // Evaluate the closure
     if (res instanceof Closure) {
