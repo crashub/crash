@@ -60,25 +60,24 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("abc", cmd.execute(new CommandContext(), new String[]{"-str","abc","b"}));
+    assertEquals("abc", cmd.execute(new CommandContext(), new String[]{"-str","abc"}));
   }
 
   public void testArgumentInjectionInCommandClass() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.shell.ClassCommand { " +
-      "@org.kohsuke.args4j.Option(name=\"-str\") def String str = 'default value';" +
+      "@org.kohsuke.args4j.Argument def String str = 'default value';" +
       "public Object execute() {" +
-      "return arguments;" +
+      "return str;" +
       "}" +
       "}");
 
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals(Arrays.asList("b"), cmd.execute(new CommandContext(), new String[]{"-str","abc","b"}));
+    assertEquals("b", cmd.execute(new CommandContext(), new String[]{"b"}));
   }
 
   public void testContextAccessInCommandClass() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.shell.ClassCommand { " +
-      "@org.kohsuke.args4j.Option(name=\"-str\") def String str = 'default value';" +
       "public Object execute() {" +
       "return bar;" +
       "}" +
@@ -90,12 +89,11 @@ public class ShellCommandTestCase extends TestCase {
 
     // Execute directly
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("bar_value", cmd.execute(ctx, new String[]{"-str","abc","b"}));
+    assertEquals("bar_value", cmd.execute(ctx, new String[]{}));
   }
 
   public void testClosureInvocationInClass() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.shell.ClassCommand { " +
-      "@org.kohsuke.args4j.Option(name=\"-str\") def String str = 'default value';" +
       "public Object execute() {" +
       "return bar();" +
       "}" +
@@ -108,7 +106,7 @@ public class ShellCommandTestCase extends TestCase {
 
     // Execute directly
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("from_closure", cmd.execute(ctx, new String[]{"-str","abc","b"}));
+    assertEquals("from_closure", cmd.execute(ctx, new String[]{}));
   }
 
   public void testContextAccessInScript() throws Exception {

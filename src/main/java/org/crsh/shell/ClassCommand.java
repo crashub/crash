@@ -22,22 +22,17 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
-import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.StringWriter;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public abstract class ClassCommand extends GroovyObjectSupport implements ShellCommand {
-
-  /** . */
-  @Argument
-  protected final List<String> arguments = new ArrayList<String>();
 
   /** . */
   private CommandContext context;
@@ -99,11 +94,18 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
     CmdLineParser parser = new CmdLineParser(this);
 
     //
+    if (args.length > 0 && ("-h".equals(args[0]) || "--help".equals(args[0]))) {
+      StringWriter out = new StringWriter();
+      parser.printUsage(out, null);
+      return out;
+    }
+
+    //
     try {
       parser.parseArgument(args);
     }
     catch (CmdLineException e) {
-      throw new ScriptException("Could not parse command line", e);
+      throw new ScriptException(e.getMessage(), e);
     }
 
     //
@@ -121,5 +123,9 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
   }
 
   protected abstract Object execute() throws ScriptException;
+
+  private void generateHelp() {
+
+  }
 
 }

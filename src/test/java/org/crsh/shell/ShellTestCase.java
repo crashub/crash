@@ -93,7 +93,7 @@ public class ShellTestCase extends TestCase {
   }
 
   public void testRootConnect() throws Exception {
-    shell.evaluate2("connect ws root exo");
+    shell.evaluate2("connect -u root -p exo ws");
     assertNotNull(shell.getAttribute("session"));
     assertEquals("/", shell.getAttribute("currentPath"));
   }
