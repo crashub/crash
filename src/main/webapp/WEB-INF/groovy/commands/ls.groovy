@@ -1,31 +1,39 @@
 import org.crsh.console.ConsoleBuilder;
-{ String path ->
-  assertConnected();
+import org.kohsuke.args4j.Argument;
 
-  //
-  def node = path == null ? getCurrentNode() : findNodeByPath(path);
+public class ls extends org.crsh.shell.ClassCommand {
 
-  //
-  def properties = node.getProperties();
-  def children = node.getNodes();
+  @Argument(required=false,index=0,usage="Path of the node content to list")
+  def String path;
 
-  //
-  def builder = new ConsoleBuilder();
+  public Object execute() throws ScriptException {
+    assertConnected();
 
-  //
-  builder.table {
-    node.eachProperty { property ->
-      row([property.name, " ", formatPropertyValue(property)])
-    }
-  };
+    //
+    def node = path == null ? getCurrentNode() : findNodeByPath(path);
 
-  //
-  builder.table {
-    node.each { child ->
-      row([child.name])
-    }
-  };
+    //
+    def properties = node.getProperties();
+    def children = node.getNodes();
 
-  //
-  return builder;
+    //
+    def builder = new ConsoleBuilder();
+
+    //
+    builder.table {
+      node.eachProperty { property ->
+        row([property.name, " ", formatPropertyValue(property)])
+      }
+    };
+
+    //
+    builder.table {
+      node.each { child ->
+        row([child.name])
+      }
+    };
+
+    //
+    return builder;
+  }
 }
