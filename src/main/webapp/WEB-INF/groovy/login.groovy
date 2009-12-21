@@ -41,11 +41,28 @@ findNodeByPath = { path ->
  * Locate an item by its path and returns it. If no path is provided the root node
  * will be returned. If the path is relative then the item will be resolved against the
  * current node.
+ * @throws ScriptException if the item cannot be found
  */
 findItemByPath = { path ->
   assertConnected();
   if (path == null)
     path = "/";
+  def item = getItemByPath(path);
+  if (item != null)
+    return item;
+  throw new ScriptException("""$path : no such item""");
+};
+
+/**
+ * Locate an item by its path and returns it. If no path is provided the root node
+ * will be returned. If the path is relative then the item will be resolved against the
+ * current node.
+ * @throws ScriptException if no path is provided
+ */
+getItemByPath = { path ->
+  assertConnected();
+  if (path == null)
+    throw new ScriptException("No path provided");
   if (path.startsWith("/"))
   {
     return session.getItem(path);
@@ -55,7 +72,7 @@ findItemByPath = { path ->
     return node.getNode(path);
   if (node.hasProperty(path))
     return node.getProperty(path);
-  throw new ScriptException("""$path : no such item""");
+  return null;
 };
 
 formatValue = { value ->

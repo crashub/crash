@@ -24,6 +24,7 @@ import org.crsh.RepositoryBootstrap;
 import org.crsh.util.IO;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import java.io.InputStream;
@@ -165,5 +166,49 @@ public class ShellTestCase extends TestCase {
     Node foo = (Node)groovyShell.evaluate("return session.rootNode.foo");
     assertNotNull(foo);
     assertEquals("foo", foo.getName());
+  }
+
+  public void testSet() throws Exception {
+    shell.evaluate2("connect ws");
+    groovyShell.evaluate("session.rootNode.setProperty('foo_string', 'foo_value');");
+    groovyShell.evaluate("session.rootNode.setProperty('foo_long', 3);");
+    groovyShell.evaluate("session.rootNode.setProperty('foo_boolean', true);");
+
+    // String update
+    shell.evaluate2("set /foo_string foo_value_2");
+    assertEquals("foo_value_2", groovyShell.evaluate("return session.rootNode.getProperty('foo_string').string;"));
+
+    // Long update
+    shell.evaluate2("set /foo_long 4");
+    assertEquals(4L, groovyShell.evaluate("return session.rootNode.getProperty('foo_long').long;"));
+
+    // Long update
+    shell.evaluate2("set /foo_boolean false");
+    assertEquals(Boolean.FALSE, groovyShell.evaluate("return session.rootNode.getProperty('foo_boolean').boolean;"));
+
+    // String create
+    shell.evaluate2("set /bar_string bar_value");
+    assertEquals(PropertyType.STRING, groovyShell.evaluate("return session.rootNode.getProperty('bar_string').type;"));
+    assertEquals("bar_value", groovyShell.evaluate("return session.rootNode.getProperty('bar_string').string;"));
+
+    // Long create
+    shell.evaluate2("set -t LONG /bar_long 3");
+    assertEquals(PropertyType.LONG, groovyShell.evaluate("return session.rootNode.getProperty('bar_long').type;"));
+    assertEquals(3L, groovyShell.evaluate("return session.rootNode.getProperty('bar_long').long;"));
+
+    // Boolean create
+    shell.evaluate2("set -t BOOLEAN /bar_boolean true");
+    assertEquals(PropertyType.BOOLEAN, groovyShell.evaluate("return session.rootNode.getProperty('bar_boolean').type;"));
+    assertEquals(true, groovyShell.evaluate("return session.rootNode.getProperty('bar_boolean').boolean;"));
+
+    // Existing string remove
+    shell.evaluate2("set /foo_string");
+    assertEquals(false, groovyShell.evaluate("return session.rootNode.hasProperty('foo_string');"));
+
+    // Non existing string remove
+    shell.evaluate2("set /foo_string");
+    assertEquals(false, groovyShell.evaluate("return session.rootNode.hasProperty('foo_string');"));
+
+    // Missing unit test for node with existing meta data
   }
 }
