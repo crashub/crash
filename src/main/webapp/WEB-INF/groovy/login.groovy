@@ -71,7 +71,7 @@ formatValue = { value ->
       return value.string;
     case PropertyType.REFERENCE:
       def id = value.string;
-      def referenced = session.findNodeByUUID(id);
+      def referenced = session.getNodeByUUID(id);
       return """${value.string} -> ${referenced.path}""";
     case PropertyType.BINARY:
       return "<binary>";

@@ -115,38 +115,33 @@ public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
     //
     boolean close = false;
     String response = null;
-    if (request.length() > 0) {
-      if ("bye".equals(request)) {
-        close = true;
-        response = "Have a good day!\r\n";
-      }
-      else {
-        try {
-
-          // Evaluate
-          String result = shell.evaluate(request);
-
-          // Format response if any
-          if (result != null) {
-            response = "" + String.valueOf(result) + "\r\n";
-          }
-        }
-        catch (Throwable t) {
-          if (t instanceof InvokerInvocationException) {
-            t = t.getCause();
-          }
-          StringWriter writer = new StringWriter();
-          PrintWriter printer = new PrintWriter(writer);
-          printer.print("ERROR: ");
-          t.printStackTrace(printer);
-          printer.println();
-          printer.close();
-          response = writer.toString();
-        }
-      }
+    if ("bye".equals(request)) {
+      close = true;
+      response = "Have a good day!\r\n";
     }
     else {
-      response = "Please type something.\r\n";
+      try {
+
+        // Evaluate
+        String result = shell.evaluate(request);
+
+        // Format response if any
+        if (result != null) {
+          response = "" + String.valueOf(result) + "\r\n";
+        }
+      }
+      catch (Throwable t) {
+        if (t instanceof InvokerInvocationException) {
+          t = t.getCause();
+        }
+        StringWriter writer = new StringWriter();
+        PrintWriter printer = new PrintWriter(writer);
+        printer.print("ERROR: ");
+        t.printStackTrace(printer);
+        printer.println();
+        printer.close();
+        response = writer.toString();
+      }
     }
 
     //

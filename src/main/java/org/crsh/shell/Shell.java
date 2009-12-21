@@ -78,7 +78,7 @@ public class Shell {
         }
       }
       else {
-        //
+        return null;
       }
     }
 
@@ -138,57 +138,68 @@ public class Shell {
   }
 
   public List<ConsoleElement> evaluate2(String s) {
-    String[] chunks = s.split("\\s+");
+
+    // Trim
+    s = s.trim();
 
     //
-    if (chunks.length > 0) {
+    Object o = null;
+    if (s.length() > 0) {
+
+      // We'll have at least one chunk
+      String[] chunks = s.trim().split("\\s+");
+
+
       // Get command
       ShellCommand cmd = getClosure(chunks[0]);
 
-      // Build args
-      String[] args = new String[chunks.length - 1];
-      System.arraycopy(chunks, 1, args, 0, args.length);
-
       //
-      Object o = null;
-      try {
-        o = cmd.execute(commandContext, args);
-      }
-      catch (Throwable t) {
-        if (t instanceof ScriptException) {
-          o = "Error: " + t.getMessage();
-        }
-        else if (o instanceof RuntimeException) {
-          o = "Unexpected exception: " + t.getMessage();
-          t.printStackTrace(System.err);
-        }
-        else if (t instanceof Exception) {
-          o = "Unexpected exception: " + t.getMessage();
-          t.printStackTrace(System.err);
-        }
-        else if (t instanceof Error) {
-          throw ((Error)t);
-        }
-        else {
-          o = "Unexpected throwable: " + t.getMessage();
-          t.printStackTrace(System.err);
-        }
-      }
+      if (cmd != null) {
+        // Build args
+        String[] args = new String[chunks.length - 1];
+        System.arraycopy(chunks, 1, args, 0, args.length);
 
-      //
-      if (o instanceof ConsoleBuilder) {
-        return ((ConsoleBuilder)o).getElements();
+        //
+        try {
+          o = cmd.execute(commandContext, args);
+        }
+        catch (Throwable t) {
+          if (t instanceof ScriptException) {
+            o = "Error: " + t.getMessage();
+          }
+          else if (o instanceof RuntimeException) {
+            o = "Unexpected exception: " + t.getMessage();
+            t.printStackTrace(System.err);
+          }
+          else if (t instanceof Exception) {
+            o = "Unexpected exception: " + t.getMessage();
+            t.printStackTrace(System.err);
+          }
+          else if (t instanceof Error) {
+            throw ((Error)t);
+          }
+          else {
+            o = "Unexpected throwable: " + t.getMessage();
+            t.printStackTrace(System.err);
+          }
+        }
+      } else {
+        o = "Unknown command " + chunks[0];
       }
-      else if (o != null) {
-        return Collections.<ConsoleElement>singletonList(new MessageElement(o.toString()));
-      }
-      else {
-        return Collections.emptyList();
-      }
+    } else {
+      o = "Please type something";
     }
 
     //
-    return null;
+    if (o instanceof ConsoleBuilder) {
+      return ((ConsoleBuilder)o).getElements();
+    }
+    else if (o != null) {
+      return Collections.<ConsoleElement>singletonList(new MessageElement(o.toString()));
+    }
+    else {
+      return Collections.emptyList();
+    }
   }
 
   public String evaluate(String s) {
