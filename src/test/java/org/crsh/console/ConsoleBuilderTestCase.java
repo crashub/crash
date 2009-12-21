@@ -112,6 +112,30 @@ public class ConsoleBuilderTestCase extends TestCase
       assertEquals(Arrays.asList("c", "d"), row1.getValues());
    }
 
+  public void testTable4()
+  {
+     GroovyShell shell = new GroovyShell();
+     TableElement res = (TableElement)shell.evaluate(
+        "import org.crsh.console.ConsoleBuilder;\n" +
+        "def table = [['a','b'],['c','d']];\n" +
+        "def builder = new ConsoleBuilder();\n" +
+        "return builder.table {\n" +
+        "  table.each { array -> \n" +
+        "    row {" +
+        "      array.each {" +
+        "        value -> cell(value)" +
+        "      }\n" +
+        "    }\n" +
+        "  }\n" +
+        "};\n"
+     );
+     assertEquals(2, res.getData().size());
+     Row row0 = res.getData().get(0);
+     Row row1 = res.getData().get(1);
+     assertEquals(Arrays.asList("a", "b"), row0.getValues());
+     assertEquals(Arrays.asList("c", "d"), row1.getValues());
+  }
+
    public void testElements()
    {
       GroovyShell shell = new GroovyShell();

@@ -63,10 +63,12 @@ public class ConsoleBuilder extends BuilderSupport {
         }
       }
       else if (value != null) {
-        String s = value.toString();
-        row.values.add(s);
+        row.values.add(value.toString());
       }
       return row;
+    }
+    else if ("cell".equals(name)) {
+      return value;
     }
     else {
       throw new UnsupportedOperationException();
@@ -90,8 +92,11 @@ public class ConsoleBuilder extends BuilderSupport {
       Row row = (Row)child;
       table.data.add(row);
     }
-    else {
-
+    else if (parent instanceof Row) {
+      Row row = (Row)parent;
+      row.getValues().add(String.valueOf(child));
+    } else {
+      throw new UnsupportedOperationException();
     }
   }
 

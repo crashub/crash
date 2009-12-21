@@ -145,46 +145,41 @@ public class Shell {
     //
     Object o = null;
     if (s.length() > 0) {
+      try {
+        // We'll have at least one chunk
+        List<String> chunks = LineFormat.format(s);
 
-      // We'll have at least one chunk
-      String[] chunks = s.trim().split("\\s+");
+        // Get command
+        ShellCommand cmd = getClosure(chunks.get(0));
 
-
-      // Get command
-      ShellCommand cmd = getClosure(chunks[0]);
-
-      //
-      if (cmd != null) {
-        // Build args
-        String[] args = new String[chunks.length - 1];
-        System.arraycopy(chunks, 1, args, 0, args.length);
-
-        //
-        try {
+        if (cmd != null) {
+          // Build args
+          String[] args = new String[chunks.size() - 1];
+          chunks.subList(1, chunks.size()).toArray(args);
           o = cmd.execute(commandContext, args);
+        } else {
+          o = "Unknown command " + chunks.get(0);
         }
-        catch (Throwable t) {
-          if (t instanceof ScriptException) {
-            o = "Error: " + t.getMessage();
-          }
-          else if (o instanceof RuntimeException) {
-            o = "Unexpected exception: " + t.getMessage();
-            t.printStackTrace(System.err);
-          }
-          else if (t instanceof Exception) {
-            o = "Unexpected exception: " + t.getMessage();
-            t.printStackTrace(System.err);
-          }
-          else if (t instanceof Error) {
-            throw ((Error)t);
-          }
-          else {
-            o = "Unexpected throwable: " + t.getMessage();
-            t.printStackTrace(System.err);
-          }
+      }
+      catch (Throwable t) {
+        if (t instanceof ScriptException) {
+          o = "Error: " + t.getMessage();
         }
-      } else {
-        o = "Unknown command " + chunks[0];
+        else if (o instanceof RuntimeException) {
+          o = "Unexpected exception: " + t.getMessage();
+          t.printStackTrace(System.err);
+        }
+        else if (t instanceof Exception) {
+          o = "Unexpected exception: " + t.getMessage();
+          t.printStackTrace(System.err);
+        }
+        else if (t instanceof Error) {
+          throw ((Error)t);
+        }
+        else {
+          o = "Unexpected throwable: " + t.getMessage();
+          t.printStackTrace(System.err);
+        }
       }
     } else {
       o = "Please type something";
