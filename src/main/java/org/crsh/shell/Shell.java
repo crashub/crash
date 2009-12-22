@@ -22,6 +22,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.display.DisplayBuilder;
+import org.crsh.display.SimpleDisplayContext;
 import org.crsh.display.structure.Element;
 import org.crsh.display.structure.LabelElement;
 import org.crsh.jcr.NodeMetaClass;
@@ -136,7 +137,7 @@ public class Shell {
     groovyShell.evaluate(script, "/logout.groovy");
   }
 
-  public List<Element> evaluate2(String s) {
+  public List<Element> evaluate(String s) {
 
     // Trim
     s = s.trim();
@@ -193,36 +194,6 @@ public class Shell {
     }
     else {
       return Collections.emptyList();
-    }
-  }
-
-  public String evaluate(String s) {
-    List<Element> elements = evaluate2(s);
-
-
-    if (elements != null) {
-      StringWriter writer = new StringWriter();
-      if (out.length() > 0) {
-        writer.append(out);
-        out.setLength(0);
-      }
-
-      //
-      PrintWriter printer = new PrintWriter(writer);
-      for (Element element : elements) {
-        try {
-          element.print(printer);
-        }
-        catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      }
-
-      //
-      return writer.toString();
-    }
-    else {
-      return null;
     }
   }
 }

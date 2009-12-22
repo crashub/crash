@@ -4,7 +4,9 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import javax.jcr.Node;
 import javax.jcr.Property;
+import org.crsh.shell.Description;
 
+@Description("Updates a property of a node")
 public class set extends org.crsh.shell.ClassCommand {
 
   @Argument(required=false,index=0,usage="The path of the property to alter")

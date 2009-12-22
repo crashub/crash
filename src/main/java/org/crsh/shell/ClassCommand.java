@@ -96,6 +96,15 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
     //
     if (args.length > 0 && ("-h".equals(args[0]) || "--help".equals(args[0]))) {
       StringWriter out = new StringWriter();
+
+      //
+      Description description = getClass().getAnnotation(Description.class);
+      if (description != null) {
+        out.write(description.value());
+        out.write("\n");
+      }
+
+      //
       parser.printUsage(out, null);
       return out;
     }

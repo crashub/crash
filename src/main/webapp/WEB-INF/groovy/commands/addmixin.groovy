@@ -1,6 +1,8 @@
 import org.crsh.shell.ScriptException;
 import org.kohsuke.args4j.Argument;
+import org.crsh.shell.Description;
 
+@Description("Add a mixin to a node")
 public class addmixin extends org.crsh.shell.ClassCommand {
 
   @Argument(required=true,index=0,usage="The path of the node to add mixin to")

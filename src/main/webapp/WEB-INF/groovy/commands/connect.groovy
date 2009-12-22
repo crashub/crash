@@ -4,7 +4,9 @@ import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
+import org.crsh.shell.Description;
 
+@Description("Connect to a workspace")
 class connect extends org.crsh.shell.ClassCommand
 {
 
@@ -14,20 +16,27 @@ class connect extends org.crsh.shell.ClassCommand
   @Option(name="-p",aliases=["--password"],usage="password")
   def String password;
 
+  @Option(name="-c",aliases=["--container"],usage="portal container name (eXo portal specific)")
+  def String containerName;
+
   @Argument(required=true,index=0,usage="workspace name")
   def String workspaceName;  
 
   public Object execute() throws ScriptException {
-  
+    def repo;
     def container = ExoContainerContext.getTopContainer();
-
-    if (portalContainerName != null) {
-      def portalContainer = container.getPortalContainer(portalContainerName);
-      def repoService = portalContainer.getComponentInstanceOfType(RepositoryService.class);
-      repo = repoService.getRepository('repository');
+    if (containerName != null) {
+      def portalContainer = container.getPortalContainer(containerName);
+      def repoService = portalContainer?.getComponentInstanceOfType(RepositoryService.class);
+      repo = repoService?.getRepository('repository');
     } else {
       def repoService = container.getComponentInstanceOfType(RepositoryService.class);
-      repo = repoService.getDefaultRepository();
+      repo = repoService?.defaultRepository;
+    }
+
+    //
+    if (repo == null) {
+      return "Could not locate repository";
     }
 
     //

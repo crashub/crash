@@ -5,10 +5,9 @@ import java.util.Calendar;
 import javax.jcr.ImportUUIDBehavior;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
+import org.crsh.shell.Description;
 
-/*
- * Exports a node to a JCR file.
- */
+@Description("Import a node from an nt file")
 public class importnode extends org.crsh.shell.ClassCommand {
 
   @Argument(required=true,index=0,usage="Path of the nt:file containing the content to import")

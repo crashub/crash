@@ -19,6 +19,9 @@
 package org.crsh.netty;
 
 import org.codehaus.groovy.runtime.InvokerInvocationException;
+import org.crsh.Info;
+import org.crsh.display.SimpleDisplayContext;
+import org.crsh.display.structure.Element;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellBuilder;
 import org.jboss.netty.channel.Channel;
@@ -36,6 +39,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetAddress;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,15 +79,13 @@ public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
     Shell shell = builder.build();
 
     //
-    shell.setAttribute("portalContainerName", "portal");
-
-    //
     String prompt = shell.getPrompt();
 
     // Send greeting for a new connection.
     Channel channel = e.getChannel();
 
     //
+    channel.write("CRaSH " + Info.getVersion() + " (http://crsh.googlecode.com)\r\n");
     channel.write("Welcome to " + InetAddress.getLocalHost().getHostName() + "!\r\n");
     channel.write("It is " + new Date() + " now.\r\n");
     channel.write(prompt);
@@ -121,9 +123,18 @@ public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
     }
     else {
       try {
-
         // Evaluate
-        String result = shell.evaluate(request);
+        List<Element> elements = shell.evaluate(request);
+
+        //
+        String result = null;
+        if (elements != null) {
+          SimpleDisplayContext context = new SimpleDisplayContext("\r\n");
+          for (Element element : elements) {
+            element.print(context);
+          }
+          result = context.getText();
+        }
 
         // Format response if any
         if (result != null) {

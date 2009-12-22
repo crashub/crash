@@ -2,7 +2,9 @@ import org.kohsuke.args4j.Argument;
 import javax.jcr.query.Query;
 import org.crsh.display.DisplayBuilder;
 import org.kohsuke.args4j.Option;
+import org.crsh.shell.Description;
 
+@Description("Executes a query with the SQL dialect")
 public class select extends org.crsh.shell.AnyArgumentClassCommand {
 
   @Option(name="-o",aliases=["--offset"],usage="The result offset")

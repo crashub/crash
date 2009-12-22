@@ -4,10 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.util.Calendar;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
+import org.crsh.shell.Description;
 
-/*
- * Exports a node to a JCR file.
- */
+@Description("Export a node to an nt file")
 class exportnode extends org.crsh.shell.ClassCommand {
 
   @Argument(required=true,index=0,usage="Path of the node to export")

@@ -88,70 +88,70 @@ public class ShellTestCase extends TestCase {
   }
 
   public void testAnonymousConnect() throws Exception {
-    shell.evaluate2("connect ws");
+    shell.evaluate("connect ws");
     assertNotNull(shell.getAttribute("session"));
     assertEquals("/", shell.getAttribute("currentPath"));
   }
 
   public void testRootConnect() throws Exception {
-    shell.evaluate2("connect -u root -p exo ws");
+    shell.evaluate("connect -u root -p exo ws");
     assertNotNull(shell.getAttribute("session"));
     assertEquals("/", shell.getAttribute("currentPath"));
   }
 
   public void testCd() throws Exception {
-    shell.evaluate2("connect ws");
+    shell.evaluate("connect ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
-    shell.evaluate2("cd foo");
+    shell.evaluate("cd foo");
     assertEquals("/foo", shell.getAttribute("currentPath"));
-    shell.evaluate2("cd ..");
+    shell.evaluate("cd ..");
     assertEquals("/", shell.getAttribute("currentPath"));
-    shell.evaluate2("cd /foo");
+    shell.evaluate("cd /foo");
     assertEquals("/foo", shell.getAttribute("currentPath"));
-    shell.evaluate2("cd .");
+    shell.evaluate("cd .");
     assertEquals("/foo", shell.getAttribute("currentPath"));
-    shell.evaluate2("cd");
+    shell.evaluate("cd");
     assertEquals("/", shell.getAttribute("currentPath"));
   }
 
   public void testCommit() throws Exception {
-    shell.evaluate2("connect ws");
+    shell.evaluate("connect ws");
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
     groovyShell.evaluate("session.rootNode.addNode('added_node');");
     assertTrue(((Session)shell.getAttribute("session")).hasPendingChanges());
-    shell.evaluate2("commit");
+    shell.evaluate("commit");
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
     assertEquals(true, groovyShell.evaluate("return session.rootNode.hasNode('added_node')"));
   }
 
   public void testRollback() throws Exception {
-    shell.evaluate2("connect ws");
+    shell.evaluate("connect ws");
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     assertTrue(((Session)shell.getAttribute("session")).hasPendingChanges());
-    shell.evaluate2("rollback");
+    shell.evaluate("rollback");
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
     assertEquals(false, groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
   }
 
   public void testRm() throws Exception {
-    shell.evaluate2("connect ws");
+    shell.evaluate("connect ws");
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
 
     //
     groovyShell.evaluate("session.rootNode.addNode('foo').addNode('bar');");
-    shell.evaluate2("rm foo/bar");
+    shell.evaluate("rm foo/bar");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
 
     //
-    shell.evaluate2("rm foo");
+    shell.evaluate("rm foo");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
   }
 
   public void testExportImport() throws Exception {
-    shell.evaluate2("connect ws");
+    shell.evaluate("connect ws");
     groovyShell.evaluate("session.rootNode.addNode('foo', 'nt:base');");
-    shell.evaluate2("exportnode /foo /foo.xml");
+    shell.evaluate("exportnode /foo /foo.xml");
 
     //
     Node fooXML = (Node)groovyShell.evaluate("node = session.rootNode['foo.xml']");
@@ -162,51 +162,51 @@ public class ShellTestCase extends TestCase {
 
     //
     groovyShell.evaluate("session.rootNode.foo.remove()");
-    shell.evaluate2("importnode /foo.xml /");
+    shell.evaluate("importnode /foo.xml /");
     Node foo = (Node)groovyShell.evaluate("return session.rootNode.foo");
     assertNotNull(foo);
     assertEquals("foo", foo.getName());
   }
 
   public void testSet() throws Exception {
-    shell.evaluate2("connect ws");
+    shell.evaluate("connect ws");
     groovyShell.evaluate("session.rootNode.setProperty('foo_string', 'foo_value');");
     groovyShell.evaluate("session.rootNode.setProperty('foo_long', 3);");
     groovyShell.evaluate("session.rootNode.setProperty('foo_boolean', true);");
 
     // String update
-    shell.evaluate2("set /foo_string foo_value_2");
+    shell.evaluate("set /foo_string foo_value_2");
     assertEquals("foo_value_2", groovyShell.evaluate("return session.rootNode.getProperty('foo_string').string;"));
 
     // Long update
-    shell.evaluate2("set /foo_long 4");
+    shell.evaluate("set /foo_long 4");
     assertEquals(4L, groovyShell.evaluate("return session.rootNode.getProperty('foo_long').long;"));
 
     // Long update
-    shell.evaluate2("set /foo_boolean false");
+    shell.evaluate("set /foo_boolean false");
     assertEquals(Boolean.FALSE, groovyShell.evaluate("return session.rootNode.getProperty('foo_boolean').boolean;"));
 
     // String create
-    shell.evaluate2("set /bar_string bar_value");
+    shell.evaluate("set /bar_string bar_value");
     assertEquals(PropertyType.STRING, groovyShell.evaluate("return session.rootNode.getProperty('bar_string').type;"));
     assertEquals("bar_value", groovyShell.evaluate("return session.rootNode.getProperty('bar_string').string;"));
 
     // Long create
-    shell.evaluate2("set -t LONG /bar_long 3");
+    shell.evaluate("set -t LONG /bar_long 3");
     assertEquals(PropertyType.LONG, groovyShell.evaluate("return session.rootNode.getProperty('bar_long').type;"));
     assertEquals(3L, groovyShell.evaluate("return session.rootNode.getProperty('bar_long').long;"));
 
     // Boolean create
-    shell.evaluate2("set -t BOOLEAN /bar_boolean true");
+    shell.evaluate("set -t BOOLEAN /bar_boolean true");
     assertEquals(PropertyType.BOOLEAN, groovyShell.evaluate("return session.rootNode.getProperty('bar_boolean').type;"));
     assertEquals(true, groovyShell.evaluate("return session.rootNode.getProperty('bar_boolean').boolean;"));
 
     // Existing string remove
-    shell.evaluate2("set /foo_string");
+    shell.evaluate("set /foo_string");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.hasProperty('foo_string');"));
 
     // Non existing string remove
-    shell.evaluate2("set /foo_string");
+    shell.evaluate("set /foo_string");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.hasProperty('foo_string');"));
 
     // Missing unit test for node with existing meta data
