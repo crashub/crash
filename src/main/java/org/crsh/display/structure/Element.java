@@ -21,12 +21,25 @@ package org.crsh.display.structure;
 
 import org.crsh.display.DisplayContext;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.UndeclaredThrowableException;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public abstract class Element {
 
-  public abstract void print(DisplayContext context);
+  public final void print(DisplayContext context) {
+    try {
+      print(context.printer());
+    }
+    catch (IOException e) {
+      throw new UndeclaredThrowableException(e);
+    }
+  }
+
+  public abstract void print(PrintWriter printer) throws IOException;
 
 }

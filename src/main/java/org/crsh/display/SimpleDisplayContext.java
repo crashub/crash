@@ -33,12 +33,6 @@ public class SimpleDisplayContext extends DisplayContext {
   }
 
   @Override
-  protected void println(char[] cbuf, int off, int len) {
-    print(cbuf, off, len);
-    println();
-  }
-
-  @Override
   protected void println() {
     buffer.append("\n");
   }

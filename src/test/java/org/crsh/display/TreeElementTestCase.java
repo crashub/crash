@@ -30,7 +30,7 @@ public class TreeElementTestCase extends TestCase {
 
   public void testSimple() {
 
-    TreeElement elt = new TreeElement();
+    TreeElement elt = new TreeElement(new LabelElement("bar"));
     elt.addNode(new LabelElement("1\n1"));
     elt.addNode(new LabelElement("2\n"));
 
@@ -39,6 +39,8 @@ public class TreeElementTestCase extends TestCase {
     elt.print(ctx);
 
     System.out.println(ctx.getText());
+
+    System.out.println("");
 
 /*
     assertEquals(
@@ -51,7 +53,7 @@ public class TreeElementTestCase extends TestCase {
   public void testNested() {
 
     TreeElement elt = new TreeElement(new LabelElement("foo"));
-    elt.addNode(new TreeElement().addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
+    elt.addNode(new TreeElement(new LabelElement("bar")).addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
     elt.addNode(new TreeElement().addNode(new LabelElement("3")).addNode(new LabelElement("4")));
 
     SimpleDisplayContext ctx = new SimpleDisplayContext();
@@ -59,6 +61,8 @@ public class TreeElementTestCase extends TestCase {
     elt.print(ctx);
 
     System.out.println(ctx.getText());
+
+    System.out.println("");
 
 /*
     assertEquals(

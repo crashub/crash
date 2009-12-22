@@ -41,12 +41,6 @@ public class ListDisplayContext extends DisplayContext {
   }
 
   @Override
-  protected void println(char[] cbuf, int off, int len) {
-    print(cbuf, off, len);
-    lines.add("");
-  }
-
-  @Override
   protected void println() {
     lines.add("");
   }

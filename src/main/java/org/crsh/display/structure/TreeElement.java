@@ -20,6 +20,7 @@ package org.crsh.display.structure;
 
 import org.crsh.display.DisplayContext;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,12 +102,6 @@ public class TreeElement extends Element {
     }
 
     @Override
-    protected void println(char[] cbuf, int off, int len) {
-      print(cbuf, off, len);
-      println();
-    }
-
-    @Override
     protected void println()  {
       pad();
       parent.println();
@@ -115,17 +110,16 @@ public class TreeElement extends Element {
   }
 
   @Override
-  public void print(DisplayContext context) {
-    PrintWriter printer = context.printer();
-    DisplayContextImpl nodeContext = new DisplayContextImpl(printer);
+  public void print(PrintWriter printer) throws IOException {
     if (value != null) {
-      value.print(nodeContext);
-      nodeContext.println();
+      value.print(printer);
+      printer.println();
     }
+    DisplayContextImpl nodeContext = new DisplayContextImpl(printer);
     for (Element node : nodes) {
-      nodeContext.first = true;
       node.print(nodeContext);
-      nodeContext.println();
+      nodeContext.printer().println();
+      nodeContext.first = true;
     }
   }
 }

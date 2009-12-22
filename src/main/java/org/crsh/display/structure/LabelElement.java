@@ -18,7 +18,8 @@
  */
 package org.crsh.display.structure;
 
-import org.crsh.display.DisplayContext;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -42,9 +43,8 @@ public class LabelElement extends Element {
   }
 
   @Override
-  public void print(DisplayContext context){
-    char[] cbuf = value.toCharArray();
-    context.write(cbuf, 0, cbuf.length);
+  public void print(PrintWriter printer) throws IOException {
+    printer.print(value);
   }
 }
 

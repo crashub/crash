@@ -34,12 +34,17 @@ public abstract class DisplayContext {
     int to = off + len;
     for (int i = off;i < to;i++) {
       if (cbuf[i] == '\n') {
-        println(cbuf, previous, i - previous);
+        if (i > previous) {
+          print(cbuf, previous, i - previous);
+        }
+        println();
         previous = i + 1;
         i++;
       }
     }
-    print(cbuf, previous, to - previous);
+    if (to != previous) {
+      print(cbuf, previous, to - previous);
+    }
   }
 
   public PrintWriter printer() {
@@ -50,8 +55,6 @@ public abstract class DisplayContext {
   }
 
   protected abstract void print(char[] cbuf, int off, int len);
-
-  protected abstract void println(char[] cbuf, int off, int len);
 
   protected abstract void println();
 
