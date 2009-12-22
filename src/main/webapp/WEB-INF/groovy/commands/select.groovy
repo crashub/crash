@@ -2,6 +2,7 @@ import org.crsh.console.ConsoleBuilder;
 import org.kohsuke.args4j.Argument;
 import javax.jcr.query.Query;
 import org.crsh.console.ConsoleBuilder;
+import org.crsh.display.DisplayBuilder;
 import org.kohsuke.args4j.Option;
 
 public class select extends org.crsh.shell.AnyArgumentClassCommand {
@@ -32,6 +33,32 @@ public class select extends org.crsh.shell.AnyArgumentClassCommand {
     def columnNames = [];
 
     //
+    def nodes = result.nodes;
+    if (offset != null) {
+      nodes.skip(offset);
+    }
+
+    //
+    def builder = new DisplayBuilder();
+
+    //
+    builder.node {
+      def index = 0;
+      while (nodes.hasNext()) {
+        def n = nodes.next();
+        if (limit != null && index >= limit)
+          break;
+        node(n.path) {
+          n.properties.each() { property ->
+            label(property.name + ": " + formatPropertyValue(property));
+          }
+        }
+        index++;
+      }
+    }
+
+/*
+    //
     def builder = new ConsoleBuilder();
     builder.table {
       ['foo'].each { a ->
@@ -43,11 +70,6 @@ public class select extends org.crsh.shell.AnyArgumentClassCommand {
       }
     };
 
-    //
-    def rows = result.rows;
-    if (offset != null) {
-      rows.skip(offset);
-    }
 
     builder.table {
       def index = 0;
@@ -64,7 +86,7 @@ public class select extends org.crsh.shell.AnyArgumentClassCommand {
         index++;
       }
     }
-
+*/
     //
     return builder;
   }

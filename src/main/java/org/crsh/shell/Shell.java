@@ -19,12 +19,14 @@
 package org.crsh.shell;
 
 import groovy.lang.Binding;
-import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.console.ConsoleBuilder;
 import org.crsh.console.ConsoleElement;
 import org.crsh.console.MessageElement;
+import org.crsh.display.DisplayBuilder;
+import org.crsh.display.structure.Element;
+import org.crsh.display.SimpleDisplayContext;
 import org.crsh.jcr.NodeMetaClass;
 
 import java.io.IOException;
@@ -186,6 +188,13 @@ public class Shell {
     }
 
     //
+    if (o instanceof DisplayBuilder) {
+      SimpleDisplayContext ctx = new SimpleDisplayContext();
+      for (Element elt : ((DisplayBuilder)o).getElements()) {
+        elt.print(ctx);
+      }
+      return Collections.<ConsoleElement>singletonList(new MessageElement(ctx.getText()));
+    }
     if (o instanceof ConsoleBuilder) {
       return ((ConsoleBuilder)o).getElements();
     }
