@@ -29,48 +29,33 @@ import org.crsh.display.structure.TreeElement;
 public class TreeElementTestCase extends TestCase {
 
   public void testSimple() {
-
-    TreeElement elt = new TreeElement(new LabelElement("bar"));
+    TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
     elt.addNode(new LabelElement("2\n"));
-
-    SimpleDisplayContext ctx = new SimpleDisplayContext();
-
+    SimpleDisplayContext ctx = new SimpleDisplayContext("_");
     elt.print(ctx);
-
-    System.out.println(ctx.getText());
-
-    System.out.println("");
-
-/*
     assertEquals(
-      "+-1\n" +
-      "+-2\n"
+      "+-1_" +
+      "| 1_" +
+      "+-2_"
       , ctx.getText());
-*/
   }
 
-  public void testNested() {
-
+  public void testNested() throws Exception {
     TreeElement elt = new TreeElement(new LabelElement("foo"));
     elt.addNode(new TreeElement(new LabelElement("bar")).addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
     elt.addNode(new TreeElement().addNode(new LabelElement("3")).addNode(new LabelElement("4")));
-
-    SimpleDisplayContext ctx = new SimpleDisplayContext();
-
+    SimpleDisplayContext ctx = new SimpleDisplayContext("_");
     elt.print(ctx);
-
-    System.out.println(ctx.getText());
-
-    System.out.println("");
-
-/*
     assertEquals(
-      "+-+-1\n" +
-      "| +-2\n" +
-      "+-+-3\n" +
-      "| +-4\n"
+      "foo_" +
+      "+-bar_" +
+      "| +-1_" +
+      "| | 1_" +
+      "| +-2_" +
+      "| | 2_" +
+      "+-+-3_" +
+      "| +-4_"
       , ctx.getText());
-*/
   }
 }

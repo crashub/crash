@@ -22,6 +22,8 @@ package org.crsh.display.structure;
 import org.crsh.display.DisplayContext;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.UndeclaredThrowableException;
 
@@ -38,6 +40,10 @@ public abstract class Element {
     catch (IOException e) {
       throw new UndeclaredThrowableException(e);
     }
+  }
+
+  public void print(PrintStream stream) throws IOException {
+    print(new PrintWriter(stream));
   }
 
   public abstract void print(PrintWriter printer) throws IOException;

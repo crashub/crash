@@ -27,6 +27,17 @@ public class SimpleDisplayContext extends DisplayContext {
   /** . */
   private StringBuilder buffer = new StringBuilder();
 
+  /** . */
+  private final String lineFeed;
+
+  public SimpleDisplayContext(String lineFeed) {
+    this.lineFeed = lineFeed;
+  }
+
+  public SimpleDisplayContext() {
+    this("\n");
+  }
+
   @Override
   protected void print(char[] cbuf, int off, int len) {
     buffer.append(cbuf, off, len);
@@ -34,7 +45,7 @@ public class SimpleDisplayContext extends DisplayContext {
 
   @Override
   protected void println() {
-    buffer.append("\n");
+    buffer.append(lineFeed);
   }
 
   public String getText() {
