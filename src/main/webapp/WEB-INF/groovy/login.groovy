@@ -97,6 +97,27 @@ formatValue = { value ->
   }
 }
 
+formatNode = { builder, n, nodeDepth, propertiesDepth ->
+  builder.node(n.path) {
+    if (propertiesDepth > 0) {
+      node('properties') {
+        n.properties.each() { property ->
+        label(property.name + ": " + formatPropertyValue(property));
+      }
+    }
+    if (nodeDepth > 0) {
+      node('children') {
+        n.each { child ->
+          formatNode(builder, child, nodeDepth -1, propertiesDepth -1);  
+        }
+      }
+    }
+  }
+}
+
+
+}
+
 formatPropertyValue = { property ->
   try {
     return formatValue(property.value);

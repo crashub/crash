@@ -1,6 +1,5 @@
 import org.crsh.jcr.PropertyType;
 import org.crsh.shell.ScriptException;
-import org.crsh.console.ConsoleBuilder;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import javax.jcr.Node;

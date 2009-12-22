@@ -1,5 +1,4 @@
 import org.crsh.shell.ScriptException;
-import org.crsh.console.ConsoleBuilder;
 import org.kohsuke.args4j.Argument;
 
 public class commit extends org.crsh.shell.ClassCommand {

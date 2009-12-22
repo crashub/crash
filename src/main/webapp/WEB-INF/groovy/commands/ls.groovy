@@ -1,10 +1,14 @@
-import org.crsh.console.ConsoleBuilder;
+import org.crsh.display.DisplayBuilder;
 import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.Option;
 
 public class ls extends org.crsh.shell.ClassCommand {
 
   @Argument(required=false,index=0,usage="Path of the node content to list")
   def String path;
+
+  @Option(name="-d",aliases=["--depth"],usage="Print depth")
+  def Integer depth;
 
   public Object execute() throws ScriptException {
     assertConnected();
@@ -13,25 +17,15 @@ public class ls extends org.crsh.shell.ClassCommand {
     def node = path == null ? getCurrentNode() : findNodeByPath(path);
 
     //
-    def properties = node.getProperties();
-    def children = node.getNodes();
+    def builder = new DisplayBuilder();
 
     //
-    def builder = new ConsoleBuilder();
+    if (depth == null || depth < 1) {
+      depth = 1;
+    }
 
     //
-    builder.table {
-      node.eachProperty { property ->
-        row([property.name, " ", formatPropertyValue(property)])
-      }
-    };
-
-    //
-    builder.table {
-      node.each { child ->
-        row([child.name])
-      }
-    };
+    formatNode(builder, node, depth, depth);
 
     //
     return builder;

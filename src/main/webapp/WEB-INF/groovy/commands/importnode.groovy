@@ -2,7 +2,6 @@ import org.crsh.shell.ScriptException;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.util.Calendar;
-import org.crsh.console.ConsoleBuilder;
 import javax.jcr.ImportUUIDBehavior;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;

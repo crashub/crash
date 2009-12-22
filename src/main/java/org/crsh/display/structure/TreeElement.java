@@ -103,9 +103,10 @@ public class TreeElement extends Element {
 
     @Override
     protected void println()  {
-      pad();
-      parent.println();
-      padded = false;
+      if (padded) {
+        parent.println();
+        padded = false;
+      }
     }
   }
 

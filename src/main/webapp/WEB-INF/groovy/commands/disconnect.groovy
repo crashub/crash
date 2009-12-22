@@ -1,5 +1,3 @@
-import org.crsh.console.ConsoleBuilder;
-
 public class disconnect extends org.crsh.shell.ClassCommand {
 
   public Object execute() throws ScriptException {

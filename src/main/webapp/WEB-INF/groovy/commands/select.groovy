@@ -1,7 +1,5 @@
-import org.crsh.console.ConsoleBuilder;
 import org.kohsuke.args4j.Argument;
 import javax.jcr.query.Query;
-import org.crsh.console.ConsoleBuilder;
 import org.crsh.display.DisplayBuilder;
 import org.kohsuke.args4j.Option;
 
@@ -48,45 +46,11 @@ public class select extends org.crsh.shell.AnyArgumentClassCommand {
         def n = nodes.next();
         if (limit != null && index >= limit)
           break;
-        node(n.path) {
-          n.properties.each() { property ->
-            label(property.name + ": " + formatPropertyValue(property));
-          }
-        }
+        formatNode(builder, n, 0, 1);
         index++;
       }
     }
 
-/*
-    //
-    def builder = new ConsoleBuilder();
-    builder.table {
-      ['foo'].each { a ->
-        row {
-          result.columnNames.each { columnName ->
-            cell(columnName)
-          }
-        }
-      }
-    };
-
-
-    builder.table {
-      def index = 0;
-      while (rows.hasNext()) {
-        def r = rows.next();
-        if (limit != null && index >= limit)
-          break;
-        row {
-          result.columnNames.each { columnName ->
-            def value = r.getValue(columnName);
-            cell(value!=null?formatValue(value):'');
-          }
-        }
-        index++;
-      }
-    }
-*/
     //
     return builder;
   }

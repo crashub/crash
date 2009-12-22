@@ -21,12 +21,9 @@ package org.crsh.shell;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.console.ConsoleBuilder;
-import org.crsh.console.ConsoleElement;
-import org.crsh.console.MessageElement;
 import org.crsh.display.DisplayBuilder;
 import org.crsh.display.structure.Element;
-import org.crsh.display.SimpleDisplayContext;
+import org.crsh.display.structure.LabelElement;
 import org.crsh.jcr.NodeMetaClass;
 
 import java.io.IOException;
@@ -139,7 +136,7 @@ public class Shell {
     groovyShell.evaluate(script, "/logout.groovy");
   }
 
-  public List<ConsoleElement> evaluate2(String s) {
+  public List<Element> evaluate2(String s) {
 
     // Trim
     s = s.trim();
@@ -189,17 +186,10 @@ public class Shell {
 
     //
     if (o instanceof DisplayBuilder) {
-      SimpleDisplayContext ctx = new SimpleDisplayContext();
-      for (Element elt : ((DisplayBuilder)o).getElements()) {
-        elt.print(ctx);
-      }
-      return Collections.<ConsoleElement>singletonList(new MessageElement(ctx.getText()));
-    }
-    if (o instanceof ConsoleBuilder) {
-      return ((ConsoleBuilder)o).getElements();
+      return ((DisplayBuilder)o).getElements();
     }
     else if (o != null) {
-      return Collections.<ConsoleElement>singletonList(new MessageElement(o.toString()));
+      return Collections.<Element>singletonList(new LabelElement(o.toString()));
     }
     else {
       return Collections.emptyList();
@@ -207,7 +197,7 @@ public class Shell {
   }
 
   public String evaluate(String s) {
-    List<ConsoleElement> elements = evaluate2(s);
+    List<Element> elements = evaluate2(s);
 
 
     if (elements != null) {
@@ -219,7 +209,7 @@ public class Shell {
 
       //
       PrintWriter printer = new PrintWriter(writer);
-      for (ConsoleElement element : elements) {
+      for (Element element : elements) {
         try {
           element.print(printer);
         }
