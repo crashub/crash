@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.netty;
+package org.crsh.connector.telnet;
 
 import org.crsh.connector.CRaSHLifeCycle;
 import org.jboss.netty.bootstrap.ServerBootstrap;
@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CrshLifeCycle extends CRaSHLifeCycle {
+public class TelnetLifeCycle extends CRaSHLifeCycle {
 
   /** . */
   private Channel channel;

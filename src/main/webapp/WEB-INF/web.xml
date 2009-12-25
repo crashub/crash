@@ -25,7 +25,7 @@
   <display-name>Archetype Created Web Application</display-name>
 
   <listener>
-    <listener-class>org.crsh.netty.CrshLifeCycle</listener-class>
+    <listener-class>org.crsh.connector.telnet.TelnetLifeCycle</listener-class>
   </listener>
 
   <listener>
