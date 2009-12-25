@@ -16,21 +16,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.connector.sshd;
 
-import javax.jcr.Repository;
-import java.util.Map;
+import org.apache.sshd.server.Environment;
+import org.crsh.connector.sshd.AbstractCommand;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellContext {
+public class FailCommand extends AbstractCommand {
 
-  String loadScript(String scriptId);
+  /** . */
+  private String failure;
 
-  ClassLoader getLoader();
+  public FailCommand(String failure) {
+    this.failure = failure;
+  }
 
-  // Repository getRepository(Map properties);
+  public void start(Environment env) throws IOException {
+    throw new IOException("Failure " + failure);
+  }
 
+  public void destroy() {
+  }
 }

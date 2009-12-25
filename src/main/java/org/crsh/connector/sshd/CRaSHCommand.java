@@ -19,60 +19,28 @@
 package org.crsh.connector.sshd;
 
 import org.apache.sshd.common.PtyMode;
-import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
-import org.apache.sshd.server.ExitCallback;
 import org.crsh.connector.ShellConnector;
 import org.crsh.shell.ShellBuilder;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CRaSHCommand implements Command, Runnable {
+public class CRaSHCommand extends AbstractCommand implements Runnable {
 
   /** . */
   private final ShellBuilder builder;
-
-  /** . */
-  private InputStream in;
-
-  /** . */
-  private OutputStream out;
-
-  /** . */
-  private OutputStream err;
-
-  /** . */
-  private ExitCallback callback;
 
   /** . */
   private Thread thread;
 
   public CRaSHCommand(ShellBuilder builder) {
     this.builder = builder;
-  }
-
-  public void setInputStream(InputStream in) {
-    this.in = in;
-  }
-
-  public void setOutputStream(OutputStream out) {
-    this.out = out;
-  }
-
-  public void setErrorStream(OutputStream err) {
-    this.err = err;
-  }
-
-  public void setExitCallback(ExitCallback callback) {
-    this.callback = callback;
   }
 
   /** . */

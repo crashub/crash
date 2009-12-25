@@ -16,21 +16,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.connector.sshd.scp;
 
-import javax.jcr.Repository;
-import java.util.Map;
+import org.crsh.connector.sshd.AbstractCommand;
 
 /**
+ *
+ * Three internal options in SCP:
+ * <ul>
+ * <li><code>-f</code> (from) indicates source mode</li>
+ * <li><code>-t</code> (to) indicates sink mode</li>
+ * <li><code>-d</code> indicates that the target is expected to be a directory</li>
+ * </ul>
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellContext {
-
-  String loadScript(String scriptId);
-
-  ClassLoader getLoader();
-
-  // Repository getRepository(Map properties);
-
+public abstract class SCPCommand extends AbstractCommand {
 }

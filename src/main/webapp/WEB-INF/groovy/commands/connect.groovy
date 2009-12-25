@@ -1,10 +1,9 @@
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.services.jcr.RepositoryService;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
 import org.crsh.shell.Description;
+import org.crsh.jcr.JCR;
 
 @Description("Connect to a workspace")
 class connect extends org.crsh.shell.ClassCommand
@@ -23,16 +22,10 @@ class connect extends org.crsh.shell.ClassCommand
   def String workspaceName;  
 
   public Object execute() throws ScriptException {
-    def repo;
-    def container = ExoContainerContext.getTopContainer();
-    if (containerName != null) {
-      def portalContainer = container.getPortalContainer(containerName);
-      def repoService = portalContainer?.getComponentInstanceOfType(RepositoryService.class);
-      repo = repoService?.getRepository('repository');
-    } else {
-      def repoService = container.getComponentInstanceOfType(RepositoryService.class);
-      repo = repoService?.defaultRepository;
-    }
+    def properties = containerName != null ? [:] : ["exo.container.name":containerName];
+
+    //
+    def repo = JCR.getRepository(properties);
 
     //
     if (repo == null) {

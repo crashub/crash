@@ -16,21 +16,45 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.connector.sshd;
 
-import javax.jcr.Repository;
-import java.util.Map;
+import org.apache.sshd.server.Command;
+import org.apache.sshd.server.ExitCallback;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellContext {
+public abstract class AbstractCommand implements Command {
 
-  String loadScript(String scriptId);
+  /** . */
+  protected InputStream in;
 
-  ClassLoader getLoader();
+  /** . */
+  protected OutputStream out;
 
-  // Repository getRepository(Map properties);
+  /** . */
+  protected OutputStream err;
 
+  /** . */
+  protected ExitCallback callback;
+
+  public final void setInputStream(InputStream in) {
+    this.in = in;
+  }
+
+  public final void setOutputStream(OutputStream out) {
+    this.out = out;
+  }
+
+  public final void setErrorStream(OutputStream err) {
+    this.err = err;
+  }
+
+  public final void setExitCallback(ExitCallback callback) {
+    this.callback = callback;
+  }
 }

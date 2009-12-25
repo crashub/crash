@@ -16,21 +16,51 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.connector.sshd.scp;
 
-import javax.jcr.Repository;
-import java.util.Map;
+import org.apache.sshd.server.Environment;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellContext {
+public class SinkCommand extends SCPCommand implements Runnable {
 
-  String loadScript(String scriptId);
+  /** . */
+  private final String target;
 
-  ClassLoader getLoader();
+  /** . */
+  private Environment env;
 
-  // Repository getRepository(Map properties);
+  /** . */
+  private Thread thread;
 
+  /** . */
+  private boolean recursive;
+
+  public SinkCommand(String target, boolean recursive) {
+    this.target = target;
+    this.recursive = recursive;
+  }
+
+  public void start(Environment env) throws IOException {
+    this.env = env;
+
+    //
+    //thread = new Thread(this, "CRaSH");
+    // thread.start();
+  }
+
+  public void destroy() {
+    // thread.interrupt();
+  }
+
+  public void run() {
+
+    
+    
+
+  }
 }
