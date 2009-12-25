@@ -24,17 +24,13 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -124,15 +120,4 @@ public class Exporter extends DefaultHandler {
       throw new SAXException(e);
     }
   }
-
-  @Override
-  public void characters(char[] ch, int start, int length) throws SAXException {
-
-  }
-
-  @Override
-  public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-
-  }
-  
 }
