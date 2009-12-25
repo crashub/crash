@@ -28,4 +28,8 @@
     <listener-class>org.crsh.netty.CrshLifeCycle</listener-class>
   </listener>
 
+  <listener>
+    <listener-class>org.crsh.connector.sshd.SSHLifeCycle</listener-class>
+  </listener>
+
 </web-app>

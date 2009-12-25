@@ -49,6 +49,10 @@ public class ServletShellContext implements ShellContext {
     this.loader = loader;
   }
 
+  public ServletContext getServletContext() {
+    return servletContext;
+  }
+
   public String loadScript(String scriptURI) {
     InputStream in = servletContext.getResourceAsStream("/WEB-INF/groovy/" + scriptURI);
     return in != null ? IO.readAsUTF8(in) : null;

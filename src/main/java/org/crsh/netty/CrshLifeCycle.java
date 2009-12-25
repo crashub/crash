@@ -18,19 +18,11 @@
  */
 package org.crsh.netty;
 
-import groovy.lang.GroovySystem;
-import groovy.lang.MetaClassRegistry;
-import org.crsh.jcr.NodeMetaClass;
-import org.crsh.servlet.ServletShellContext;
-import org.crsh.shell.ShellBuilder;
+import org.crsh.connector.CRaSHLifeCycle;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
-import javax.jcr.Node;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import java.beans.IntrospectionException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
@@ -38,28 +30,13 @@ import java.util.concurrent.Executors;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CrshLifeCycle implements ServletContextListener {
+public class CrshLifeCycle extends CRaSHLifeCycle {
 
   /** . */
   private Channel channel;
 
-  public void contextInitialized(ServletContextEvent sce) {
-    // Integrate
-    try {
-      MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
-      Class<? extends Node> eXoNode = (Class<Node>)Thread.currentThread().getContextClassLoader().loadClass("org.exoplatform.services.jcr.impl.core.NodeImpl");
-      NodeMetaClass mc2 = new NodeMetaClass(registry, eXoNode);
-      mc2.initialize();
-      registry.setMetaClass(eXoNode, mc2);
-    }
-    catch (ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-    catch (IntrospectionException e) {
-      throw new RuntimeException(e);
-    }
-
-
+  @Override
+  protected void init() {
     //
     ServerBootstrap bootstrap = new ServerBootstrap(
       new NioServerSocketChannelFactory(
@@ -69,21 +46,15 @@ public class CrshLifeCycle implements ServletContextListener {
     );
 
     //
-    ServletShellContext context = new ServletShellContext(sce.getServletContext(), Thread.currentThread().getContextClassLoader());
-
-    //
-    ShellBuilder builder = new ShellBuilder(context);
-
-    //
-    TelnetServerHandler handler = new TelnetServerHandler(builder);
+    TelnetServerHandler handler = new TelnetServerHandler(getShellBuilder());
     bootstrap.setPipelineFactory(new TelnetPipelineFactory(handler));
 
     // Bind and start to accept incoming connections.
     channel = bootstrap.bind(new InetSocketAddress(5000));
   }
 
-
-  public void contextDestroyed(ServletContextEvent sce) {
+  @Override
+  protected void destroy() {
     if (channel != null) {
       channel.close();
     }

@@ -24,7 +24,7 @@ package org.crsh.shell;
  */
 public interface ShellContext {
 
-  String loadScript(String resourceId);
+  String loadScript(String scriptId);
 
   ClassLoader getLoader();
 

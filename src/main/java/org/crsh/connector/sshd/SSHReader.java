@@ -16,19 +16,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh;
+package org.crsh.connector.sshd;
+
+import org.crsh.util.ReaderStateMachine;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Info {
+public class SSHReader extends ReaderStateMachine {
 
   /** . */
-  private static final String VERSION = "1.0.0-beta2";
+  private final Reader in;
 
-  public static String getVersion() {
-    return VERSION;
+  public SSHReader(Reader in, int verase, Writer echo) {
+    super(verase, echo);
+
+    //
+    this.in = in;
   }
 
+  public String nextLine() throws IOException {
+    while (true) {
+      if (hasNext()) {
+        return next();
+      }
+      int r = in.read();
+      if (r == -1) {
+        return null;
+      }
+      append((char)r);
+    }
+  }
 }

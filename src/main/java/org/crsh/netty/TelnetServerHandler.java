@@ -18,11 +18,7 @@
  */
 package org.crsh.netty;
 
-import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.Info;
-import org.crsh.display.SimpleDisplayContext;
-import org.crsh.display.structure.Element;
-import org.crsh.shell.Shell;
+import org.crsh.connector.ShellConnector;
 import org.crsh.shell.ShellBuilder;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
@@ -35,11 +31,6 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.InetAddress;
-import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,29 +67,23 @@ public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
   public void channelConnected(
     ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
     // Build the shell
-    Shell shell = builder.build();
-
-    //
-    String prompt = shell.getPrompt();
+    ShellConnector connector = new ShellConnector(builder);
 
     // Send greeting for a new connection.
     Channel channel = e.getChannel();
 
-    //
-    channel.write("CRaSH " + Info.getVersion() + " (http://crsh.googlecode.com)\r\n");
-    channel.write("Welcome to " + InetAddress.getLocalHost().getHostName() + "!\r\n");
-    channel.write("It is " + new Date() + " now.\r\n");
-    channel.write(prompt);
+    // Welcome user
+    String welcome = connector.welcome();
+    channel.write(welcome);
 
     //
-    ctx.setAttachment(shell);
-
+    ctx.setAttachment(connector);
   }
 
   @Override
   public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
     // Get shell
-    Shell shell = (Shell)ctx.getAttachment();
+    ShellConnector shell = (ShellConnector)ctx.getAttachment();
 
     // Free resources
     shell.close();
@@ -112,57 +97,10 @@ public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
     String request = (String)e.getMessage();
 
     // Get shell
-    Shell shell = (Shell)ctx.getAttachment();
+    ShellConnector shell = (ShellConnector)ctx.getAttachment();
 
     //
-    boolean close = false;
-    String response = null;
-    if ("bye".equals(request)) {
-      close = true;
-      response = "Have a good day!\r\n";
-    }
-    else {
-      try {
-        // Evaluate
-        List<Element> elements = shell.evaluate(request);
-
-        //
-        String result = null;
-        if (elements != null) {
-          SimpleDisplayContext context = new SimpleDisplayContext("\r\n");
-          for (Element element : elements) {
-            element.print(context);
-          }
-          result = context.getText();
-        }
-
-        // Format response if any
-        if (result != null) {
-          response = "" + String.valueOf(result) + "\r\n";
-        }
-      }
-      catch (Throwable t) {
-        if (t instanceof InvokerInvocationException) {
-          t = t.getCause();
-        }
-        StringWriter writer = new StringWriter();
-        PrintWriter printer = new PrintWriter(writer);
-        printer.print("ERROR: ");
-        t.printStackTrace(printer);
-        printer.println();
-        printer.close();
-        response = writer.toString();
-      }
-    }
-
-    //
-    if (!close) {
-      String prompt = shell.getPrompt();
-
-      //
-      response += prompt;
-    }
-
+    String response = shell.evaluate(request);
 
     // We do not need to write a ChannelBuffer here.
     // We know the encoder inserted at TelnetPipelineFactory will do the conversion.
@@ -171,7 +109,7 @@ public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
 
       // Close the connection after sending 'Have a good day!'
       // if the client has sent 'bye'.
-      if (close) {
+      if (shell.isClosed()) {
         future.addListener(ChannelFutureListener.CLOSE);
       }
     }
