@@ -75,8 +75,7 @@ public class Exporter extends DefaultHandler {
       //
       TransformerHandler hd = tf.newTransformerHandler();
       Transformer serializer = hd.getTransformer();
-      serializer.setOutputProperty(OutputKeys.ENCODING,"ISO-8859-1");
-      serializer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM,"users.dtd");
+      serializer.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
       serializer.setOutputProperty(OutputKeys.INDENT,"yes");
       hd.setResult(streamResult);
 
