@@ -20,6 +20,9 @@ package org.crsh.connector.sshd.scp;
 
 import org.crsh.connector.sshd.AbstractCommand;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
  *
  * Three internal options in SCP:
@@ -33,4 +36,71 @@ import org.crsh.connector.sshd.AbstractCommand;
  * @version $Revision$
  */
 public abstract class SCPCommand extends AbstractCommand {
+
+  /** . */
+  protected static final int OK = 0;
+
+  /** . */
+  protected static final int ERROR = 2;
+
+  public void file(String name, byte[] content) throws IOException {
+    out.write("C0644 ".getBytes());
+    out.write(Integer.toString(content.length).getBytes());
+    out.write(" ".getBytes());
+    out.write(name.getBytes());
+    out.write("\n".getBytes());
+    out.flush();
+    readAck();
+    out.write(content);
+    ack();
+    readAck();
+  }
+
+  public void startDirectory(String name) throws IOException {
+    out.write("D0755 0 ".getBytes());
+    out.write(name.getBytes());
+    out.write("\n".getBytes());
+    out.flush();
+    readAck();
+  }
+
+  public void endDirectory() throws IOException {
+    out.write("E\n".getBytes());
+    out.flush();
+    readAck();
+  }
+
+  protected void ack() throws IOException {
+      out.write(0);
+      out.flush();
+  }
+
+  protected void readAck() throws IOException {
+    int c = in.read();
+    switch (c) {
+      case 0:
+        break;
+      case 1:
+        System.out.println("Received warning: " + readLine());
+        break;
+      case 2:
+        throw new IOException("Received nack: " + readLine());
+    }
+  }
+
+  protected String readLine() throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    while (true) {
+      int c = in.read();
+      if (c == '\n') {
+        return baos.toString();
+      }
+      else if (c == -1) {
+        throw new IOException("End of stream");
+      }
+      else {
+        baos.write(c);
+      }
+    }
+  }
 }

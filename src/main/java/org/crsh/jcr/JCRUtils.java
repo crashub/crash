@@ -30,7 +30,7 @@ import java.util.Calendar;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class JCRUtils {
+public class JCRUtils {
 
   public static final int PATH = PropertyType.PATH;
   public static final int STRING = PropertyType.STRING;
@@ -41,6 +41,8 @@ class JCRUtils {
   public static final int REFERENCE = PropertyType.REFERENCE;
   public static final int BINARY = PropertyType.BINARY;
 
+  private JCRUtils() {
+  }
 
   public static Property getProperty(Node node, String propertyName) throws RepositoryException {
     return node.getProperty(propertyName);
@@ -67,5 +69,28 @@ class JCRUtils {
       value instanceof Calendar ||
       value instanceof InputStream ||
       value instanceof Value[];
+  }
+
+  public static String encodeName(String name) {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0;i < name.length();i++) {
+      char c = name.charAt(i);
+      if (Character.isLetterOrDigit(c)) {
+        builder.append(c);
+      } else {
+        String val = Integer.toString(c);
+        int padding = 4 - val.length();
+        builder.append("_x");
+        while (padding > 0) {
+          builder.append("0");
+        }
+        builder.append(val);
+      }
+    }
+    return builder.toString();
+  }
+
+  public static String decodeName(String name) {
+    throw new UnsupportedOperationException();
   }
 }

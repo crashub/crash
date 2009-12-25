@@ -40,11 +40,11 @@ public class SCPAction {
   private Boolean preserve;
 
   /** . */
-  @Option(name = "-t")
+  @Option(name = "-f")
   private Boolean source;
 
   /** . */
-  @Option(name = "-f")
+  @Option(name = "-t")
   private Boolean sink;
 
   /** . */
@@ -113,7 +113,7 @@ public class SCPAction {
 
   @Override
   public String toString() {
-    return "SCPAction[recursive=" + recursive + ",verbose=" + verbose + ",preserve=" + preserve + ",to=" + source +
-      ",from=" + sink + ",directory=" + directory + ",argument=" + argument + "]";
+    return "SCPAction[recursive=" + recursive + ",verbose=" + verbose + ",preserve=" + preserve + ",source=" + source +
+      ",sink=" + sink + ",directory=" + directory + ",argument=" + argument + "]";
   }
 }

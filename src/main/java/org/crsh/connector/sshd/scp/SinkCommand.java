@@ -19,8 +19,16 @@
 package org.crsh.connector.sshd.scp;
 
 import org.apache.sshd.server.Environment;
+import org.crsh.jcr.JCR;
 
+import javax.jcr.Item;
+import javax.jcr.Node;
+import javax.jcr.Repository;
+import javax.jcr.Session;
+import javax.jcr.Workspace;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -49,18 +57,88 @@ public class SinkCommand extends SCPCommand implements Runnable {
     this.env = env;
 
     //
-    //thread = new Thread(this, "CRaSH");
-    // thread.start();
+    thread = new Thread(this, "CRaSH");
+    thread.start();
   }
 
   public void destroy() {
-    // thread.interrupt();
+    thread.interrupt();
   }
 
   public void run() {
+    try {
+      execute();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
-    
-    
+  private void execute() throws Exception {
+    Map<String, String> properties = new HashMap<String, String>();
 
+    //
+    int exitStatus = OK;
+    String exitMsg = null;
+
+    // Need portal container name ?
+    int pos1 = target.indexOf(':');
+    String path;
+    String workspaceName;
+    if (pos1 != -1) {
+      int pos2 = target.indexOf(':', pos1 + 1);
+      if (pos2 != -1) {
+        // container_name:workspace_name:path
+        properties.put("exo.container.name", target.substring(0, pos1));
+        workspaceName = target.substring(pos1 + 1, pos2);
+        path = target.substring(pos2 + 1);
+      }
+      else {
+        // workspace_name:path
+        workspaceName = target.substring(0, pos1);
+        path = target.substring(pos1 + 1);
+      }
+    }
+    else {
+      workspaceName = null;
+      path = target;
+    }
+
+    //
+    Repository repository = JCR.getRepository(properties);
+
+    //
+    System.out.println("Obtained repository " + repository);
+
+    //
+    Session session;
+    if (workspaceName != null) {
+      session = repository.login(workspaceName);
+    }
+    else {
+      session = repository.login();
+    }
+
+    //
+    System.out.println("Connected to session " + session);
+
+    //
+    try {
+      Item item = session.getItem(path);
+      if (item instanceof Node) {
+        Exporter exporter = new Exporter(this);
+        session.exportDocumentView(path, exporter, false, false);
+      } else {
+        exitMsg = "Cannot export property";
+        exitStatus = ERROR;
+      }
+    }
+    finally {
+      // Say we are done
+      if (callback != null) {
+        callback.onExit(exitStatus, exitMsg);
+      }
+      session.logout();
+    }
   }
 }
