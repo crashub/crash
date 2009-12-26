@@ -25,7 +25,6 @@ import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
-import javax.jcr.Workspace;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,7 +128,7 @@ public class SourceCommand extends SCPCommand implements Runnable {
         Exporter exporter = new Exporter(this);
         session.exportDocumentView(path, exporter, false, false);
       } else {
-        exitMsg = "Cannot export property";
+        exitMsg = "Cannot export properly";
         exitStatus = ERROR;
       }
     }

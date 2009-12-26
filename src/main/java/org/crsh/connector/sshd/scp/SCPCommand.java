@@ -22,6 +22,7 @@ import org.crsh.connector.sshd.AbstractCommand;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  *
@@ -62,6 +63,36 @@ public abstract class SCPCommand extends AbstractCommand {
     out.write("\n".getBytes());
     out.flush();
     readAck();
+  }
+
+  /**
+   * Read from the input stream an exact amount of bytes.
+   *
+   * @param length the expected data length to read
+   * @return an input stream for reading
+   * @throws IOException any io exception
+   */
+  InputStream read(final int length) throws IOException {
+    System.out.println("Returning stream for length " + length);
+    return new InputStream() {
+
+      /** How many we've read so far. */
+      int count = 0;
+
+      @Override
+      public int read() throws IOException {
+        if (count < length) {
+          int value = in.read();
+          if (value == -1) {
+            throw new IOException("Abnormal end of stream reached");
+          }
+          count++;
+          return value;
+        } else {
+          return -1;
+        }
+      }
+    };
   }
 
   public void endDirectory() throws IOException {

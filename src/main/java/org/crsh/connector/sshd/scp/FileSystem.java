@@ -16,9 +16,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.util;
+package org.crsh.connector.sshd.scp;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -26,37 +25,12 @@ import java.io.InputStream;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class IO {
+public interface FileSystem {
 
-  public static byte[] readAsBytes(InputStream in) throws IOException {
-    return read(in).toByteArray();
-  }
+  void startDirectory(String directoryName) throws IOException;
 
-  public static String readAsUTF8(InputStream in) {
-    try {
-      ByteArrayOutputStream baos = read(in);
-      return baos.toString("UTF-8");
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
+  void file(String fileName, int length, InputStream data) throws IOException;
 
-  private static ByteArrayOutputStream read(InputStream in) throws IOException {
-    if (in == null) {
-      throw new NullPointerException();
-    }
-    try {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      byte[] buffer = new byte[256];
-      for (int l = in.read(buffer); l != -1; l = in.read(buffer)) {
-        baos.write(buffer, 0, l);
-      }
-      return baos;
-    }
-    finally {
-      Safe.close(in);
-    }
-  }
+  void endDirectory(String directoryName) throws IOException;
+
 }

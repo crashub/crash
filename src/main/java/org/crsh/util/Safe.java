@@ -18,45 +18,22 @@
  */
 package org.crsh.util;
 
-import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class IO {
+public class Safe {
 
-  public static byte[] readAsBytes(InputStream in) throws IOException {
-    return read(in).toByteArray();
-  }
-
-  public static String readAsUTF8(InputStream in) {
-    try {
-      ByteArrayOutputStream baos = read(in);
-      return baos.toString("UTF-8");
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
-
-  private static ByteArrayOutputStream read(InputStream in) throws IOException {
-    if (in == null) {
-      throw new NullPointerException();
-    }
-    try {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      byte[] buffer = new byte[256];
-      for (int l = in.read(buffer); l != -1; l = in.read(buffer)) {
-        baos.write(buffer, 0, l);
+  public static void close(Closeable closeable) {
+    if (closeable != null) {
+      try {
+        closeable.close();
       }
-      return baos;
-    }
-    finally {
-      Safe.close(in);
+      catch (IOException ignore) {
+      }
     }
   }
 }

@@ -43,6 +43,8 @@ public class SCPCommandFactory implements CommandFactory {
         parser.parseArgument(command.split("(\\s)+"));
         if (Boolean.TRUE.equals(action.isSource())) {
           return new SourceCommand(action.getArgument(), Boolean.TRUE.equals(action.isRecursive()));
+        } else if (Boolean.TRUE.equals(action.isSink())) {
+          return new SinkCommand(action.getArgument(), Boolean.TRUE.equals(action.isRecursive()));
         } else {
           return new FailCommand("No handle that kind of action for now " + action);
         }
