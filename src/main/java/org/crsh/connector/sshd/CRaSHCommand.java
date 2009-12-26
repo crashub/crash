@@ -22,6 +22,8 @@ import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
 import org.crsh.connector.ShellConnector;
 import org.crsh.shell.ShellBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,6 +34,9 @@ import java.io.OutputStreamWriter;
  * @version $Revision$
  */
 public class CRaSHCommand extends AbstractCommand implements Runnable {
+
+  /** . */
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   private final ShellBuilder builder;
@@ -50,13 +55,6 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   private ShellConnector connector;
 
   public void start(Environment env) throws IOException {
-
-/*
-    System.out.println("env.getPtyModes() = " + env.getPtyModes());
-    System.out.println("env.getEnv() = " + env.getEnv());
-
-    // 
-*/
     context = new SSHContext(env.getPtyModes().get(PtyMode.VERASE));
     connector = new ShellConnector(builder);
 
@@ -103,7 +101,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      log.error("Error when executing command", e);
     }
     finally {
       callback.onExit(0);

@@ -21,6 +21,8 @@ package org.crsh.connector.sshd.scp;
 import org.apache.sshd.server.Environment;
 import org.crsh.connector.sshd.AbstractCommand;
 import org.crsh.jcr.JCR;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Repository;
 import javax.jcr.Session;
@@ -43,6 +45,9 @@ import java.util.Map;
  * @version $Revision$
  */
 public abstract class SCPCommand extends AbstractCommand implements Runnable {
+
+  /** . */
+  protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   protected static final int OK = 0;
@@ -148,7 +153,7 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
       execute();
     }
     catch (Exception e) {
-      e.printStackTrace();
+      log.error("Error during command execution", e);
       exitMsg = e.getMessage();
       exitStatus = ERROR;
     }
