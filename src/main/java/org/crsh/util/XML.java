@@ -16,15 +16,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.connector.sshd.scp;
+package org.crsh.util;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class XML {
+public class XML {
 
-  static String fileName(String qName) {
+  public static String fileName(String qName) {
     int pos = qName.indexOf(':');
     if (pos == -1) {
       return qName;
@@ -33,7 +33,7 @@ class XML {
     }
   }
 
-  static String getPrefix(String qName) {
+  public static String getPrefix(String qName) {
     int pos = qName.indexOf(':');
     return pos == -1 ? "" : qName.substring(0, pos);
   }

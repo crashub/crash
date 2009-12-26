@@ -16,9 +16,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.connector.sshd.scp;
+package org.crsh.jcr;
 
 import org.crsh.fs.FileSystem;
+import org.crsh.util.XML;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -41,16 +42,12 @@ import java.util.Map;
 public class Exporter extends DefaultHandler {
 
   /** . */
-//  private final SCPCommand command;
-
-  /** . */
   private final Map<String, String> mappings;
 
   /** . */
   private FileSystem fs;
 
-  public Exporter(SCPCommand command, FileSystem fs) {
-//    this.command = command;
+  public Exporter(FileSystem fs) {
     this.mappings = new HashMap<String, String>();
     this.fs = fs;
   }
@@ -120,7 +117,7 @@ public class Exporter extends DefaultHandler {
   public void endElement(String uri, String localName, String qName) throws SAXException {
     try {
       String fileName = XML.fileName(qName);
-      fs.endDirectory(qName);
+      fs.endDirectory(fileName);
     }
     catch (IOException e) {
       throw new SAXException(e);

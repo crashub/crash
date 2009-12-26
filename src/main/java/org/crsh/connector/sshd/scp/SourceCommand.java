@@ -20,6 +20,7 @@ package org.crsh.connector.sshd.scp;
 
 import org.apache.sshd.server.Environment;
 import org.crsh.fs.FileSystem;
+import org.crsh.jcr.Exporter;
 import org.crsh.jcr.JCR;
 import org.crsh.util.IO;
 
