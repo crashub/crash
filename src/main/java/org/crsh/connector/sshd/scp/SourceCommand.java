@@ -18,20 +18,15 @@
  */
 package org.crsh.connector.sshd.scp;
 
-import org.apache.sshd.server.Environment;
 import org.crsh.fs.FileSystem;
-import org.crsh.jcr.Exporter;
-import org.crsh.jcr.JCR;
+import org.crsh.util.BytesOutputStream;
 import org.crsh.util.IO;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.Session;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -40,86 +35,17 @@ import java.util.Map;
 public class SourceCommand extends SCPCommand implements Runnable {
 
   /** . */
-  private final String target;
-
-  /** . */
-  private Environment env;
-
-  /** . */
-  private Thread thread;
-
-  /** . */
   private boolean recursive;
 
   public SourceCommand(String target, boolean recursive) {
-    this.target = target;
+    super(target);
+
+    //
     this.recursive = recursive;
   }
 
-  public void start(Environment env) throws IOException {
-    this.env = env;
-
-    //
-    thread = new Thread(this, "CRaSH");
-    thread.start();
-  }
-
-  public void destroy() {
-    thread.interrupt();
-  }
-
-  public void run() {
-    try {
-      execute();
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void execute() throws Exception {
-    Map<String, String> properties = new HashMap<String, String>();
-
-    //
-    int exitStatus = OK;
-    String exitMsg = null;
-
-    // Need portal container name ?
-    int pos1 = target.indexOf(':');
-    String path;
-    String workspaceName;
-    if (pos1 != -1) {
-      int pos2 = target.indexOf(':', pos1 + 1);
-      if (pos2 != -1) {
-        // container_name:workspace_name:path
-        properties.put("exo.container.name", target.substring(0, pos1));
-        workspaceName = target.substring(pos1 + 1, pos2);
-        path = target.substring(pos2 + 1);
-      }
-      else {
-        // workspace_name:path
-        workspaceName = target.substring(0, pos1);
-        path = target.substring(pos1 + 1);
-      }
-    }
-    else {
-      workspaceName = null;
-      path = target;
-    }
-
-    //
-    Repository repository = JCR.getRepository(properties);
-
-    //
-    Session session;
-    if (workspaceName != null) {
-      session = repository.login(workspaceName);
-    }
-    else {
-      session = repository.login();
-    }
-
-    // 
+  @Override
+  protected void execute(Session session, String path) throws Exception {
     FileSystem fs = new FileSystem() {
       public void startDirectory(String directoryName) throws IOException {
         out.write("D0755 0 ".getBytes());
@@ -147,23 +73,31 @@ public class SourceCommand extends SCPCommand implements Runnable {
       }
     };
 
-    //
-    try {
-      Item item = session.getItem(path);
-      if (item instanceof Node) {
-        Exporter exporter = new Exporter(this, fs);
-        session.exportDocumentView(path, exporter, false, false);
+    Item item = session.getItem(path);
+    if (item instanceof Node) {
+
+      //
+      BytesOutputStream baos = new BytesOutputStream();
+
+      // Perform export
+      session.exportSystemView(path, baos, false, false);
+
+      //
+      String name = item.getName();
+      if (name.length() == 0) {
+        name = "jcr_root.xml";
       } else {
-        exitMsg = "Cannot export properly";
-        exitStatus = ERROR;
+        name = name.replace(":", "_") + ".xml";
       }
-    }
-    finally {
-      // Say we are done
-      if (callback != null) {
-        callback.onExit(exitStatus, exitMsg);
-      }
-      session.logout();
+
+      //
+      baos.flush();
+      baos.close();
+
+      //
+      fs.file(name, baos.size(), baos.getInputStream());
+    } else {
+      throw new Exception("Cannot export a property");
     }
   }
 }

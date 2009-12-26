@@ -18,11 +18,17 @@
  */
 package org.crsh.connector.sshd.scp;
 
+import org.apache.sshd.server.Environment;
 import org.crsh.connector.sshd.AbstractCommand;
+import org.crsh.jcr.JCR;
 
+import javax.jcr.Repository;
+import javax.jcr.Session;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -36,13 +42,26 @@ import java.io.InputStream;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class SCPCommand extends AbstractCommand {
+public abstract class SCPCommand extends AbstractCommand implements Runnable {
 
   /** . */
   protected static final int OK = 0;
 
   /** . */
   protected static final int ERROR = 2;
+
+  /** . */
+  private Thread thread;
+
+  /** . */
+  private Environment env;
+
+  /** . */
+  private final String target;
+
+  protected SCPCommand(String target) {
+    this.target = target;
+  }
 
   /**
    * Read from the input stream an exact amount of bytes.
@@ -51,7 +70,7 @@ public abstract class SCPCommand extends AbstractCommand {
    * @return an input stream for reading
    * @throws IOException any io exception
    */
-  InputStream read(final int length) throws IOException {
+  final InputStream read(final int length) throws IOException {
     System.out.println("Returning stream for length " + length);
     return new InputStream() {
 
@@ -74,12 +93,12 @@ public abstract class SCPCommand extends AbstractCommand {
     };
   }
 
-  protected void ack() throws IOException {
+  final protected void ack() throws IOException {
       out.write(0);
       out.flush();
   }
 
-  protected void readAck() throws IOException {
+  final protected void readAck() throws IOException {
     int c = in.read();
     switch (c) {
       case 0:
@@ -92,7 +111,7 @@ public abstract class SCPCommand extends AbstractCommand {
     }
   }
 
-  protected String readLine() throws IOException {
+  final protected String readLine() throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     while (true) {
       int c = in.read();
@@ -107,4 +126,87 @@ public abstract class SCPCommand extends AbstractCommand {
       }
     }
   }
+
+  final public void start(Environment env) throws IOException {
+    this.env = env;
+
+    //
+    thread = new Thread(this, "CRaSH");
+    thread.start();
+  }
+
+  final public void destroy() {
+    thread.interrupt();
+  }
+
+  final public void run() {
+    int exitStatus = OK;
+    String exitMsg = null;
+
+    //
+    try {
+      execute();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      exitMsg = e.getMessage();
+      exitStatus = ERROR;
+    }
+    finally {
+      // Say we are done
+      if (callback != null) {
+        callback.onExit(exitStatus, exitMsg);
+      }
+    }
+  }
+
+  private void execute() throws Exception {
+    Map<String, String> properties = new HashMap<String, String>();
+
+    // Need portal container name ?
+    int pos1 = target.indexOf(':');
+    String path;
+    String workspaceName;
+    if (pos1 != -1) {
+      int pos2 = target.indexOf(':', pos1 + 1);
+      if (pos2 != -1) {
+        // container_name:workspace_name:path
+        properties.put("exo.container.name", target.substring(0, pos1));
+        workspaceName = target.substring(pos1 + 1, pos2);
+        path = target.substring(pos2 + 1);
+      }
+      else {
+        // workspace_name:path
+        workspaceName = target.substring(0, pos1);
+        path = target.substring(pos1 + 1);
+      }
+    }
+    else {
+      workspaceName = null;
+      path = target;
+    }
+
+    //
+    Repository repository = JCR.getRepository(properties);
+
+    //
+    Session session;
+    if (workspaceName != null) {
+      session = repository.login(workspaceName);
+    }
+    else {
+      session = repository.login();
+    }
+
+    //
+    try {
+      execute(session, path);
+    }
+    finally {
+      session.logout();
+    }
+  }
+
+  protected abstract void execute(Session session, String path) throws Exception;
+
 }

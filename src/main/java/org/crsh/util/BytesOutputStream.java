@@ -18,32 +18,54 @@
  */
 package org.crsh.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
+ * Extends the {@link java.io.ByteArrayOutputStream} for providing an input stream over the
+ * buffer.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class XML {
+public class BytesOutputStream extends ByteArrayOutputStream {
 
-  public static String fileName(String qName) {
-    int pos = qName.indexOf(':');
-    if (pos == -1) {
-      return qName;
-    } else {
-      return qName.substring(0, pos) + "__" + qName.substring(pos + 1);
-    }
+  /** . */
+  private boolean closed;
+
+  public BytesOutputStream() {
   }
 
-  public static String qName(String fileName) {
-    int pos = fileName.indexOf("__");
-    if (pos == -1) {
-      return fileName;
-    } else {
-      return fileName.substring(0, pos) + ":" + fileName.substring(pos + 2);
-    }
+  public BytesOutputStream(int size) {
+    super(size);
   }
 
-  public static String getPrefix(String qName) {
-    int pos = qName.indexOf(':');
-    return pos == -1 ? "" : qName.substring(0, pos);
+  public InputStream getInputStream() {
+    if (!closed) {
+      throw new IllegalStateException("Not yet closed");
+    }
+    return new InputStream() {
+
+      /** . */
+      int read = 0;
+
+      @Override
+      public int read() throws IOException {
+        if (read < count) {
+          return buf[read++];
+        } else {
+          return -1;
+        }
+      }
+    };
+  }
+
+  @Override
+  public void close() throws IOException {
+    super.close();
+
+    //
+    closed = true;
   }
 }

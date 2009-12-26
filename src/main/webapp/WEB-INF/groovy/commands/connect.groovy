@@ -22,7 +22,7 @@ class connect extends org.crsh.shell.ClassCommand
   def String workspaceName;  
 
   public Object execute() throws ScriptException {
-    def properties = containerName != null ? [:] : ["exo.container.name":containerName];
+    def properties = containerName == null ? [:] : ["exo.container.name":containerName];
 
     //
     def repo = JCR.getRepository(properties);

@@ -18,10 +18,12 @@
  */
 package org.crsh.connector.sshd.scp;
 
-import org.apache.sshd.server.Environment;
 import org.crsh.fs.FileSystem;
-import org.crsh.util.IO;
+import org.crsh.util.Safe;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.ImportUUIDBehavior;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -32,70 +34,35 @@ import java.io.InputStream;
 public class SinkCommand extends SCPCommand implements Runnable {
 
   /** . */
-  private final String target;
-
-  /** . */
-  private Environment env;
-
-  /** . */
-  private Thread thread;
-
-  /** . */
   private boolean recursive;
 
   public SinkCommand(String target, boolean recursive) {
-    this.target = target;
+    super(target);
+
+    //
     this.recursive = recursive;
   }
 
-  public void start(Environment env) throws IOException {
-    this.env = env;
+  @Override
+  protected void execute(final Session session, final String path) throws Exception {
 
-    //
-    thread = new Thread(this, "CRaSH");
-    thread.start();
-  }
-
-  public void destroy() {
-    thread.interrupt();
-  }
-
-  public void run() {
-
+    // FS that will import
     FileSystem fs = new FileSystem() {
       public void startDirectory(String directoryName) throws IOException {
-        System.out.println("Dir " + directoryName);
       }
-
       public void file(String fileName, int length, InputStream data) throws IOException {
-        System.out.println("File " + fileName);
-        byte[] bytes = IO.readAsBytes(data);
+        try {
+          session.getWorkspace().importXML(path, data, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+        }
+        catch (RepositoryException e) {
+          Safe.rethrow(IOException.class, e);
+        }
       }
-
-
       public void endDirectory(String directoryName) throws IOException {
-        System.out.println("Dir " + directoryName);
       }
     };
 
     //
-    int exitStatus = OK;
-    String exitMsg = null;
-
-    try {
-      System.out.println("About to begin import");
-      FileSystemAction.read(this, fs);
-      System.out.println("Import finished");
-    }
-    catch (IOException e) {
-      exitMsg = "Cannot import properly";
-      exitStatus = ERROR;
-    }
-    finally {
-      // Say we are done
-      if (callback != null) {
-        callback.onExit(exitStatus, exitMsg);
-      }
-    }
+    FileSystemAction.read(this, fs);
   }
 }

@@ -34,6 +34,8 @@ public class SCPCommandFactory implements CommandFactory {
     // Just in case
     command = command.trim();
 
+    System.out.println("command = " + command);
+
     //
     if (command.startsWith("scp ")) {
       try {

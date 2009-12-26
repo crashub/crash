@@ -36,4 +36,22 @@ public class Safe {
       }
     }
   }
+
+  public static <T extends Throwable> void rethrow(Class<T> throwableClass, Throwable cause) throws T {
+    T throwable;
+
+    //
+    try {
+      throwable = throwableClass.newInstance();
+    }
+    catch (Exception e) {
+      throw new AssertionError(e);
+    }
+
+    //
+    throwable.initCause(cause);
+
+    //
+    throw throwable;
+  }
 }
