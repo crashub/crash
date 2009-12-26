@@ -19,6 +19,8 @@
 
 package org.crsh.connector.sshd.scp;
 
+import org.crsh.fs.FileSystem;
+
 import java.io.IOException;
 
 /**

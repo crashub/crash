@@ -19,13 +19,16 @@
 package org.crsh.connector.sshd.scp;
 
 import org.apache.sshd.server.Environment;
+import org.crsh.fs.FileSystem;
 import org.crsh.jcr.JCR;
+import org.crsh.util.IO;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,9 +110,6 @@ public class SourceCommand extends SCPCommand implements Runnable {
     Repository repository = JCR.getRepository(properties);
 
     //
-    System.out.println("Obtained repository " + repository);
-
-    //
     Session session;
     if (workspaceName != null) {
       session = repository.login(workspaceName);
@@ -118,14 +118,39 @@ public class SourceCommand extends SCPCommand implements Runnable {
       session = repository.login();
     }
 
-    //
-    System.out.println("Connected to session " + session);
+    // 
+    FileSystem fs = new FileSystem() {
+      public void startDirectory(String directoryName) throws IOException {
+        out.write("D0755 0 ".getBytes());
+        out.write(directoryName.getBytes());
+        out.write("\n".getBytes());
+        out.flush();
+        readAck();
+      }
+      public void file(String fileName, int length, InputStream data) throws IOException {
+        out.write("C0644 ".getBytes());
+        out.write(Integer.toString(length).getBytes());
+        out.write(" ".getBytes());
+        out.write(fileName.getBytes());
+        out.write("\n".getBytes());
+        out.flush();
+        readAck();
+        IO.copy(data, out);
+        ack();
+        readAck();
+      }
+      public void endDirectory(String directoryName) throws IOException {
+        out.write("E\n".getBytes());
+        out.flush();
+        readAck();
+      }
+    };
 
     //
     try {
       Item item = session.getItem(path);
       if (item instanceof Node) {
-        Exporter exporter = new Exporter(this);
+        Exporter exporter = new Exporter(this, fs);
         session.exportDocumentView(path, exporter, false, false);
       } else {
         exitMsg = "Cannot export properly";

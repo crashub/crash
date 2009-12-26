@@ -21,6 +21,7 @@ package org.crsh.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -43,20 +44,27 @@ public class IO {
     }
   }
 
-  private static ByteArrayOutputStream read(InputStream in) throws IOException {
+  public static void copy(InputStream in, OutputStream out) throws IOException {
     if (in == null) {
       throw new NullPointerException();
     }
     try {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
       byte[] buffer = new byte[256];
       for (int l = in.read(buffer); l != -1; l = in.read(buffer)) {
-        baos.write(buffer, 0, l);
+        out.write(buffer, 0, l);
       }
-      return baos;
     }
     finally {
       Safe.close(in);
     }
+  }
+
+  private static ByteArrayOutputStream read(InputStream in) throws IOException {
+    if (in == null) {
+      throw new NullPointerException();
+    }
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    copy(in, baos);
+    return baos;
   }
 }

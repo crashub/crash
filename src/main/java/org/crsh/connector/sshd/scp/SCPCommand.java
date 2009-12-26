@@ -44,27 +44,6 @@ public abstract class SCPCommand extends AbstractCommand {
   /** . */
   protected static final int ERROR = 2;
 
-  public void file(String name, byte[] content) throws IOException {
-    out.write("C0644 ".getBytes());
-    out.write(Integer.toString(content.length).getBytes());
-    out.write(" ".getBytes());
-    out.write(name.getBytes());
-    out.write("\n".getBytes());
-    out.flush();
-    readAck();
-    out.write(content);
-    ack();
-    readAck();
-  }
-
-  public void startDirectory(String name) throws IOException {
-    out.write("D0755 0 ".getBytes());
-    out.write(name.getBytes());
-    out.write("\n".getBytes());
-    out.flush();
-    readAck();
-  }
-
   /**
    * Read from the input stream an exact amount of bytes.
    *
@@ -93,12 +72,6 @@ public abstract class SCPCommand extends AbstractCommand {
         }
       }
     };
-  }
-
-  public void endDirectory() throws IOException {
-    out.write("E\n".getBytes());
-    out.flush();
-    readAck();
   }
 
   protected void ack() throws IOException {

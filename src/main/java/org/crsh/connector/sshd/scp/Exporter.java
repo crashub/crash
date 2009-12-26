@@ -18,6 +18,7 @@
  */
 package org.crsh.connector.sshd.scp;
 
+import org.crsh.fs.FileSystem;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -27,6 +28,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,14 +41,18 @@ import java.util.Map;
 public class Exporter extends DefaultHandler {
 
   /** . */
-  private final SCPCommand command;
+//  private final SCPCommand command;
 
   /** . */
   private final Map<String, String> mappings;
 
-  public Exporter(SCPCommand command) {
-    this.command = command;
+  /** . */
+  private FileSystem fs;
+
+  public Exporter(SCPCommand command, FileSystem fs) {
+//    this.command = command;
     this.mappings = new HashMap<String, String>();
+    this.fs = fs;
   }
 
   @Override
@@ -63,7 +69,7 @@ public class Exporter extends DefaultHandler {
   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
     try {
       String fileName = XML.fileName(qName);
-      command.startDirectory(fileName);
+      fs.startDirectory(fileName);
 
       //
       ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -103,7 +109,7 @@ public class Exporter extends DefaultHandler {
       //
       out.close();
       byte[] content = out.toByteArray();
-      command.file("crash__content.xml", content);
+      fs.file("crash__content.xml", content.length, new ByteArrayInputStream(content));
     }
     catch (Exception e) {
       throw new SAXException(e);
@@ -113,7 +119,8 @@ public class Exporter extends DefaultHandler {
   @Override
   public void endElement(String uri, String localName, String qName) throws SAXException {
     try {
-      command.endDirectory();
+      String fileName = XML.fileName(qName);
+      fs.endDirectory(qName);
     }
     catch (IOException e) {
       throw new SAXException(e);
