@@ -24,6 +24,38 @@
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
 
+  <context-param>
+    <param-name>ssh.username</param-name>
+    <param-value>root</param-value>
+    <description>The user name for authenticating via SSH</description>
+  </context-param>
+
+  <context-param>
+    <param-name>ssh.password</param-name>
+    <param-value>crash</param-value>
+    <description>The password for authenticating via SSH</description>
+  </context-param>
+
+  <context-param>
+    <param-name>ssh.port</param-name>
+    <param-value>2000</param-value>
+    <description>The SSH port</description>
+  </context-param>
+
+  <!--
+  <context-param>
+    <param-name>ssh.keypath</param-name>
+    <param-value>/path/to/the/key/file</param-value>
+    <description>The path to the key file</description>
+  </context-param>
+  -->
+
+  <context-param>
+    <param-name>telnet.port</param-name>
+    <param-value>5000</param-value>
+    <description>The telnet port</description>
+  </context-param>
+
   <listener>
     <listener-class>org.crsh.connector.telnet.TelnetLifeCycle</listener-class>
   </listener>

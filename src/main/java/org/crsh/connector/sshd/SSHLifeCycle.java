@@ -27,7 +27,10 @@ import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.connector.CRaSHLifeCycle;
 import org.crsh.connector.sshd.scp.SCPCommandFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletContext;
 import java.security.PublicKey;
 
 /**
@@ -37,50 +40,60 @@ import java.security.PublicKey;
 public class SSHLifeCycle extends CRaSHLifeCycle {
 
   /** . */
+  private final Logger log = LoggerFactory.getLogger(SSHLifeCycle.class);
+
+  /** . */
   private SshServer server;
 
   @Override
   protected void init() {
-    String keyPath = getShellContext().getServletContext().getRealPath("/WEB-INF/sshd/hostkey.pem");
+    ServletContext sc = getShellContext().getServletContext();
+
+    // Configuration from web.xml
+    final String username = sc.getInitParameter("ssh.username").trim();
+    final String password = sc.getInitParameter("ssh.password").trim();
+    int port = Integer.parseInt(sc.getInitParameter("ssh.port").trim());
+    String keyPath = sc.getInitParameter("ssh.keypath");
+
+    // Use the default one
+    if (keyPath == null) {
+      log.debug("No key path found in web.xml will use the default one");
+      keyPath = sc.getRealPath("/WEB-INF/sshd/hostkey.pem");
+      log.debug("Going to use the key path at " + keyPath);
+    }
 
     //
     try {
-
       SshServer server = SshServer.setUpDefaultServer();
-      server.setPort(2000);
+      server.setPort(port);
       server.setShellFactory(new CRaSHCommandFactory(getShellBuilder()));
       server.setCommandFactory(new SCPCommandFactory());
       server.setKeyPairProvider(new PEMGeneratorHostKeyProvider(keyPath));
+
+      // No idea if I should use something different than that
       server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
         public boolean authenticate(String username, PublicKey key, ServerSession session) {
           return true;
         }
       });
-/*
-      server.setKeyExchangeFactories(Collections.<NamedFactory<KeyExchange>>emptyList());
-      server.setUserAuthFactories(Collections.<NamedFactory<UserAuth>>emptyList());
-      server.setCipherFactories(Collections.<NamedFactory<Cipher>>emptyList());
-      server.setCompressionFactories(Collections.<NamedFactory<Compression>>emptyList());
-      server.setMacFactories(Collections.<NamedFactory<Mac>>emptyList());
-      server.setChannelFactories(Collections.<NamedFactory<Channel>>emptyList());
-*/
+
+      // For now authenticates in a very simply manner from web.xml setting
       server.setPasswordAuthenticator(new PasswordAuthenticator() {
-        public boolean authenticate(String username, String password, ServerSession session) {
-          return true;
+        public boolean authenticate(String _username, String _password, ServerSession session) {
+          return username.equals(_username) && password.equals(_password);
         }
       });
 
       //
-      System.out.println("About to start server");
+      log.info("About to start CRaSSHD");
       server.start();
-      System.out.println("Server started");
+      log.info("CRaSSHD started on port " + port);
 
       //
       this.server = server;
     }
     catch (Throwable e) {
-      System.out.println("Could not start SSHD");
-      e.printStackTrace();
+      log.error("Could not start CRaSSHD", e);
     }
   }
 
@@ -91,7 +104,7 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
         server.stop();
       }
       catch (InterruptedException e) {
-        e.printStackTrace();
+        log.debug("Got an interruption when stopping server", e);
       }
     }
   }

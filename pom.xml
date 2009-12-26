@@ -19,6 +19,13 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.8</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
       <version>1.0</version>
@@ -76,6 +83,15 @@
       <groupId>org.jboss.netty</groupId>
       <artifactId>netty</artifactId>
       <version>3.1.5.GA</version>
+    </dependency>
+
+    <!-- For unit testing purpose -->
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.5.8</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
