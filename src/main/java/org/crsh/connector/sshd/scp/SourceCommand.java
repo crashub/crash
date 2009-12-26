@@ -34,7 +34,7 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SinkCommand extends SCPCommand implements Runnable {
+public class SourceCommand extends SCPCommand implements Runnable {
 
   /** . */
   private final String target;
@@ -48,7 +48,7 @@ public class SinkCommand extends SCPCommand implements Runnable {
   /** . */
   private boolean recursive;
 
-  public SinkCommand(String target, boolean recursive) {
+  public SourceCommand(String target, boolean recursive) {
     this.target = target;
     this.recursive = recursive;
   }
