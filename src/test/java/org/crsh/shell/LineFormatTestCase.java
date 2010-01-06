@@ -31,11 +31,11 @@ public class LineFormatTestCase extends TestCase {
   public void testQuoting() throws Exception {
     assertEquals(Arrays.<String>asList(), LineFormat.format(""));
     assertEquals(Arrays.<String>asList(), LineFormat.format(" "));
-    assertEquals(Arrays.asList(" "), LineFormat.format("' '"));
-    assertEquals(Arrays.asList(" "), LineFormat.format("\" \""));
-    assertEquals(Arrays.asList("\""), LineFormat.format("'\"'"));
-    assertEquals(Arrays.asList("'"), LineFormat.format("\"'\""));
-    assertEquals(Arrays.asList(" "), LineFormat.format(" ' ' "));
+    assertEquals(Arrays.asList("' '"), LineFormat.format("' '"));
+    assertEquals(Arrays.asList("\" \""), LineFormat.format("\" \""));
+    assertEquals(Arrays.asList("'\"'"), LineFormat.format("'\"'"));
+    assertEquals(Arrays.asList("\"'\""), LineFormat.format("\"'\""));
+    assertEquals(Arrays.asList("' '"), LineFormat.format(" ' ' "));
 
     //
     try {

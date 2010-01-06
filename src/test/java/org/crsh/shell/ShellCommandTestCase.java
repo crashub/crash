@@ -109,6 +109,18 @@ public class ShellCommandTestCase extends TestCase {
     assertEquals("from_closure", cmd.execute(ctx, new String[]{}));
   }
 
+  public void testArgumentQuoteInClass() throws Exception {
+    Class clazz = loader.parseClass("class foo extends org.crsh.shell.AnyArgumentClassCommand { " +
+      "public Object execute() {" +
+      "return arguments;" +
+      "}" +
+      "}");
+
+    // Execute directly
+    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    assertEquals(Arrays.asList("'foo'"), cmd.execute(new CommandContext(), new String[]{"'foo'"}));
+  }
+
   public void testContextAccessInScript() throws Exception {
     Class clazz = loader.parseClass("return bar;");
     ScriptCommand script = (ScriptCommand)clazz.newInstance();

@@ -51,9 +51,11 @@ class LineFormat {
         case '\'':
           if (lastQuote == null) {
             lastQuote = c;
+            chunk.append(c);
           } else if (lastQuote != c) {
             chunk.append(c);
           } else {
+            chunk.append(c);
             lastQuote = null;
           }
           break;
