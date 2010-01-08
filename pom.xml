@@ -5,8 +5,28 @@
   <artifactId>crsh</artifactId>
   <packaging>war</packaging>
   <version>1.0.0-beta2-SNAPSHOT</version>
-  <name>CRaSH Maven Webapp</name>
+  <name>CRaSH</name>
+  <description>The Crsh is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
   <url>http://crsh.googlecode.org</url>
+
+  <organization>
+    <name>eXo Platform SAS</name>
+    <url>http://www.exoplatform.com</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>LGPL, version 2.1</name>
+      <url>http://www.opensource.org/licenses/lgpl-license.php</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:svn:http://crsh.googlecode.com/svn/trunk/</connection>
+    <developerConnection>scm:svn:https://crsh.googlecode.com/svn/trunk/</developerConnection>
+    <url>http://code.google.com/p/crsh/source/browse/</url>
+  </scm>
+
   <repositories>
     <repository>
       <id>repository.jboss.org</id>
@@ -16,6 +36,16 @@
       </snapshots>
     </repository>
   </repositories>
+
+  <properties>
+
+    <!-- maven-release-plugin -->
+    <useReleaseProfile>false</useReleaseProfile>
+    <arguments>-Prelease</arguments>
+    <autoVersionSubmodules>true</autoVersionSubmodules>
+
+  </properties>
+
   <dependencies>
 
     <dependency>
@@ -110,6 +140,22 @@
 
   </dependencies>
   <build>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.0-beta-9</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.6.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <finalName>crsh</finalName>
     <testResources>
       <testResource>
