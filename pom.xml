@@ -5,7 +5,7 @@
   <artifactId>crsh</artifactId>
   <packaging>war</packaging>
   <version>1.0.0-beta1-SNAPSHOT</version>
-  <name>crash Maven Webapp</name>
+  <name>CRaSH Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <repositories>
     <repository>
@@ -16,6 +16,9 @@
       </snapshots>
     </repository>
   </repositories>
+  <properties>
+    <sourceReleaseAssemblyDescriptor>source-release</sourceReleaseAssemblyDescriptor>
+  </properties>
   <dependencies>
 
     <dependency>
@@ -134,6 +137,54 @@
           <source>1.5</source>
         </configuration>
       </plugin>
+
     </plugins>
+
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.6</version>
+            <executions>
+              <execution>
+                <id>zef</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>javadoc</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.2-beta-4</version>
+            <configuration>
+              <finalName>crsh-${project.version}</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>src/main/assembly/packaging.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <executions>
+              <execution>
+                <id>make-assembly</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
