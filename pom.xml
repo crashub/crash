@@ -6,7 +6,7 @@
   <packaging>war</packaging>
   <version>1.0.0-beta2-SNAPSHOT</version>
   <name>CRaSH Maven Webapp</name>
-  <url>http://maven.apache.org</url>
+  <url>http://crsh.googlecode.org</url>
   <repositories>
     <repository>
       <id>repository.jboss.org</id>
@@ -16,9 +16,6 @@
       </snapshots>
     </repository>
   </repositories>
-  <properties>
-    <sourceReleaseAssemblyDescriptor>source-release</sourceReleaseAssemblyDescriptor>
-  </properties>
   <dependencies>
 
     <dependency>
