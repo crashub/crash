@@ -3,9 +3,9 @@
   <groupId>org.crsh</groupId>
   <artifactId>crsh</artifactId>
   <packaging>war</packaging>
-  <version>1.0.0-beta3-SNAPSHOT</version>
+  <version>1.0.0-beta4-SNAPSHOT</version>
   <name>CRaSH</name>
-  <description>The Crsh is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
+  <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
   <url>http://crsh.googlecode.org</url>
 
   <organization>
