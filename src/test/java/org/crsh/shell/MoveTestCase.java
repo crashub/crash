@@ -18,58 +18,66 @@
  */
 package org.crsh.shell;
 
-import org.crsh.display.SimpleDisplayContext;
-import org.crsh.display.structure.Element;
+import groovy.lang.GroovyShell;
 
-import java.util.List;
+import java.io.InputStream;
+
+import javax.jcr.Repository;
+
+import org.crsh.RepositoryBootstrap;
+import org.crsh.util.IO;
 
 /**
  * @version $Revision$
  */
-public class CPTestCase extends AbstractCommandTestCase {
+public class MoveTestCase extends AbstractCommandTestCase {
 
   /**
-   * Copy a node in cwd to another
+   * Move a node in cwd to new
    * @throws Exception
    */
-  public void testCopyRelativeToRelative() throws Exception {
+  public void testRelativeToRelative() throws Exception {
     shell.evaluate("connect ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.save();");
-    shell.evaluate("cp foo bar");
+    shell.evaluate("mv foo bar");
     groovyShell.evaluate("session.refresh(true);");
-    assertEquals(true, groovyShell.evaluate("return session.rootNode.hasNode('bar')"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('bar')"));
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
   }
 
+
   /**
-   * Copy a node to an existing name
+   * Move a node to an existing name
    */
-  public void testCopyToExisting() {
+  public void testMoveToExisting() {
     shell.evaluate("connect ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
-    shell.evaluate("cp foo bar");
+    shell.evaluate("mv foo bar");
     groovyShell.evaluate("session.refresh(true);");
-    assertEquals(true, groovyShell.evaluate("return session.rootNode.hasNode('bar[2]')"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('bar[2]')"));
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
   }
 
   /**
-   * Copy 2 relative paths
+   * move 2 relative paths
    * @throws Exception
    */
   public void testSubRelativeToSubRelative() throws Exception {
     shell.evaluate("connect ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
-    groovyShell.evaluate("session.rootNode.getNode('foo').addNode('foo2');");
+    groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");
-    shell.evaluate("cp foo/foo2 foo/foo3");
+    shell.evaluate("mv foo/bar foo/zed");
     groovyShell.evaluate("session.refresh(true);");
-    assertEquals(true, groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('foo3')"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('zed')"));
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
   }
 
   /**
-   * Copy an absolute path to another absolute path
+   * Move an absolute path to another absolute path
    * @throws Exception
    */
   public void testAbsoluteToAbsolute() throws Exception {
@@ -77,13 +85,15 @@ public class CPTestCase extends AbstractCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");
-    shell.evaluate("cp /foo/bar /zed");
+    shell.evaluate("mv /foo/bar /zed");
     groovyShell.evaluate("session.refresh(true);");
-    assertEquals(true, groovyShell.evaluate("return session.rootNode.hasNode('zed')"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('zed')"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
   }
 
   /**
-   *  copy a relative source to an absolute destination
+   * Move a relative source to an absolute destination
    * @throws Exception
    */
   public void testRelativeToSubRelative() throws Exception {
@@ -91,14 +101,14 @@ public class CPTestCase extends AbstractCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
-    shell.evaluate("cp foo bar/zed");
+    shell.evaluate("mv foo bar/zed");
     groovyShell.evaluate("session.refresh(true);");
-    assertEquals(true, groovyShell.evaluate("return session.rootNode.getNode('bar').hasNode('zed')"));
-
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('bar').hasNode('zed')"));
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
   }
 
   /**
-   * copy a relative source to an absolute destination
+   * Move a relative source to an absolute destination
    * @throws Exception
    */
   public void testAbsoluteToRelative() throws Exception {
@@ -106,15 +116,15 @@ public class CPTestCase extends AbstractCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
-    shell.evaluate("cp /foo bar/zed");
+    shell.evaluate("mv /foo bar/zed");
     groovyShell.evaluate("session.refresh(true);");
-    assertEquals(true, groovyShell.evaluate("return session.rootNode.getNode('bar').hasNode('zed')"));
-
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('bar').hasNode('zed')"));
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
   }
 
 
   /**
-   * copy a relative source to an absolute destination
+   * Move a relative source to an absolute destination
    * @throws Exception
    */
   public void testRelativeToAbsolute() throws Exception {
@@ -122,13 +132,14 @@ public class CPTestCase extends AbstractCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
-    shell.evaluate("cp foo /bar/zed");
+    shell.evaluate("mv foo /bar/zed");
     groovyShell.evaluate("session.refresh(true);");
-    assertEquals(true, groovyShell.evaluate("return session.rootNode.getNode('bar').hasNode('zed')"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('bar').hasNode('zed')"));
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
   }
 
   /**
-   * copy a relative source to an absolute destination
+   * Move a relative source to an absolute destination
    * @throws Exception
    */
   public void testSubRelativeToAbsolute() throws Exception {
@@ -136,8 +147,10 @@ public class CPTestCase extends AbstractCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");
-    shell.evaluate("cp foo/bar /zed");
+    shell.evaluate("mv foo/bar /zed");
     groovyShell.evaluate("session.refresh(true);");
-    assertEquals(true, groovyShell.evaluate("return session.rootNode.hasNode('zed')"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('zed')"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
   }
 }
