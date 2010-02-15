@@ -36,59 +36,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellTestCase extends TestCase {
-
-  /** . */
-  private Repository repo;
-
-  /** . */
-  private boolean initialized = false;
-
-  /** . */
-  private Shell shell;
-
-  /** . */
-  private GroovyShell groovyShell;
-
-  /** . */
-  private final ShellContext shellContext = new ShellContext() {
-    public String loadScript(String resourceId) {
-      // Remove leading '/'
-      resourceId = resourceId.substring(1);
-      InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceId);
-      return in != null ? IO.readAsUTF8(in) : null;
-    }
-
-    public ClassLoader getLoader() {
-      return Thread.currentThread().getContextClassLoader();
-    }
-  };
-
-  @Override
-  protected void setUp() throws Exception {
-    if (!initialized) {
-      RepositoryBootstrap bootstrap = new RepositoryBootstrap();
-      bootstrap.bootstrap();
-      repo = bootstrap.getRepository();
-      initialized = true;
-    }
-
-    //
-    ShellBuilder builder = new ShellBuilder(shellContext);
-
-    //
-    shell = builder.build();
-    groovyShell = shell.getGroovyShell();
-
-    //
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    if (shell != null) {
-      shell.close();
-    }
-  }
+public class ShellTestCase extends AbstractCommandTestCase {
 
   public void testAnonymousConnect() throws Exception {
     shell.evaluate("connect ws");
