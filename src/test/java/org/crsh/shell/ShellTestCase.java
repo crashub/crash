@@ -21,6 +21,8 @@ package org.crsh.shell;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.crsh.RepositoryBootstrap;
+import org.crsh.display.structure.Element;
+import org.crsh.display.structure.LabelElement;
 import org.crsh.util.IO;
 
 import javax.jcr.Node;
@@ -28,6 +30,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -166,6 +169,18 @@ public class ShellTestCase extends TestCase {
     Node foo = (Node)groovyShell.evaluate("return session.rootNode.foo");
     assertNotNull(foo);
     assertEquals("foo", foo.getName());
+  }
+    
+  public void testPWD() throws Exception {
+
+    shell.evaluate("connect ws");
+    List<Element> elts = shell.evaluate("pwd");
+    assertEquals(1, elts.size());
+    assertEquals("/", ((LabelElement)elts.get(0)).getValue());
+    groovyShell.evaluate("setCurrentNode(session.rootNode.addNode('foo'));");
+    elts = shell.evaluate("pwd");
+    assertEquals(1, elts.size());
+    assertEquals("/foo", ((LabelElement)elts.get(0)).getValue());
   }
 
   public void testSet() throws Exception {

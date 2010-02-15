@@ -46,5 +46,10 @@ public class LabelElement extends Element {
   public void print(PrintWriter printer) throws IOException {
     printer.print(value);
   }
+
+  @Override
+  public String toString() {
+    return "Label[" + value + "]";
+  }
 }
 
