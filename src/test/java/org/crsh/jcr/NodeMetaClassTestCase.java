@@ -19,18 +19,15 @@
 package org.crsh.jcr;
 
 import groovy.lang.GroovyShell;
-import junit.framework.TestCase;
-import org.crsh.RepositoryBootstrap;
-import org.crsh.jcr.NodeMetaClass;
+import org.crsh.AbstractRepositoryTestCase;
 
-import javax.jcr.Repository;
 import javax.jcr.Session;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class NodeMetaClassTestCase extends TestCase
+public class NodeMetaClassTestCase extends AbstractRepositoryTestCase
 {
 
    /** Make sure we integrate the node meta class system with Groovy. */
@@ -38,12 +35,6 @@ public class NodeMetaClassTestCase extends TestCase
    {
       NodeMetaClass.setup();
    }
-
-   /** . */
-   private Repository repo;
-
-   /** . */
-   private boolean initialized = false;
 
    /** . */
    private Session session;
@@ -54,13 +45,7 @@ public class NodeMetaClassTestCase extends TestCase
    @Override
    protected void setUp() throws Exception
    {
-      if (!initialized)
-      {
-         RepositoryBootstrap bootstrap = new RepositoryBootstrap();
-         bootstrap.bootstrap();
-         repo = bootstrap.getRepository();
-         initialized = true;
-      }
+     super.setUp();
 
       //
       session = repo.login();

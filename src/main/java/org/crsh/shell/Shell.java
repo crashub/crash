@@ -139,11 +139,11 @@ public class Shell {
   }
 
   public ShellResponse evaluate(String s) {
-    Evaluable callable = callable(s);
-    return callable.evaluate();
+    Evaluable evaluable = callable(s);
+    return evaluable.evaluate();
   }
 
-  public Future<ShellResponse> evaluateLater(String s) {
+  public Future<ShellResponse> submitEvaluation(String s) {
     Evaluable callable = callable(s);
     if (executor != null) {
       return executor.submit(callable);

@@ -16,37 +16,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
 
-import java.util.concurrent.ExecutorService;
+package org.crsh.connector;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellBuilder {
+public enum ConnectorStatus {
 
-  /** . */
-  private final ShellContext context;
+  INITIAL, AVAILABLE, EVALUATING, CLOSED
 
-  /** . */
-  private final ExecutorService executor;
-
-  public ShellBuilder(ShellContext context) {
-    this(context, null);
-  }
-
-  public ShellBuilder(ShellContext context, ExecutorService executor) {
-    if (context == null) {
-      throw new NullPointerException();
-    }
-
-    //
-    this.context = context;
-    this.executor = executor;
-  }
-
-  public Shell build() {
-    return new Shell(context, executor);
-  }
 }

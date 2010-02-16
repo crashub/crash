@@ -73,7 +73,7 @@ public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
     Channel channel = e.getChannel();
 
     // Welcome user
-    String welcome = connector.welcome();
+    String welcome = connector.open();
     channel.write(welcome);
 
     //

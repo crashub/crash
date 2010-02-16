@@ -90,5 +90,9 @@ public abstract class ShellResponse {
     public Throwable getThrowable() {
       return throwable;
     }
+
+    public String toString() {
+      return "ShellResponse.Error[type=" + type + ",throwable=" + throwable.getMessage() + "]";
+    }
   }
 }

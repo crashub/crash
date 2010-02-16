@@ -18,15 +18,6 @@
  */
 package org.crsh.shell;
 
-import groovy.lang.GroovyShell;
-
-import java.io.InputStream;
-
-import javax.jcr.Repository;
-
-import org.crsh.RepositoryBootstrap;
-import org.crsh.util.IO;
-
 /**
  * @version $Revision$
  */

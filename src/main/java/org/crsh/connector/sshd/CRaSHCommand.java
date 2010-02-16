@@ -74,7 +74,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
       SSHReader reader = new SSHReader(new InputStreamReader(in), context.verase, writer);
 
       //
-      String welcome = connector.welcome();
+      String welcome = connector.open();
       writer.write(welcome);
       writer.flush();
 

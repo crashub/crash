@@ -21,7 +21,6 @@ package org.crsh.shell;
 import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
-import groovy.lang.Script;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 

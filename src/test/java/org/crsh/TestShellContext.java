@@ -16,37 +16,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
 
-import java.util.concurrent.ExecutorService;
+package org.crsh;
+
+import org.crsh.shell.ShellContext;
+import org.crsh.util.IO;
+
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellBuilder {
+public class TestShellContext implements ShellContext {
 
   /** . */
-  private final ShellContext context;
+  private final Map<String, String> commands = new HashMap<String, String>();
 
-  /** . */
-  private final ExecutorService executor;
-
-  public ShellBuilder(ShellContext context) {
-    this(context, null);
+  public void addCommand(String name, String script) {
+    commands.put("/commands/" + name + ".groovy", script);
   }
 
-  public ShellBuilder(ShellContext context, ExecutorService executor) {
-    if (context == null) {
-      throw new NullPointerException();
+  public String loadScript(String resourceId) {
+    String s = commands.get(resourceId);
+    if (s == null) {
+      // Remove leading '/'
+      resourceId = resourceId.substring(1);
+      InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceId);
+      s = in != null ? IO.readAsUTF8(in) : null;
     }
-
-    //
-    this.context = context;
-    this.executor = executor;
+    return s;
   }
 
-  public Shell build() {
-    return new Shell(context, executor);
+  public ClassLoader getLoader() {
+    return Thread.currentThread().getContextClassLoader();
   }
 }

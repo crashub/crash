@@ -20,26 +20,17 @@
 package org.crsh.shell;
 
 import groovy.lang.GroovyShell;
-import junit.framework.TestCase;
-import org.crsh.RepositoryBootstrap;
-import org.crsh.util.IO;
+import org.crsh.AbstractRepositoryTestCase;
+import org.crsh.TestShellContext;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Repository;
-import java.io.InputStream;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class AbstractCommandTestCase extends TestCase {
-
-  /** . */
-  protected Repository repo;
-
-  /** . */
-  private boolean initialized = false;
+public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase {
 
   /** . */
   protected Shell shell;
@@ -47,31 +38,12 @@ public abstract class AbstractCommandTestCase extends TestCase {
   /** . */
   protected GroovyShell groovyShell;
 
-  /** . */
-  private final ShellContext shellContext = new ShellContext() {
-    public String loadScript(String resourceId) {
-      // Remove leading '/'
-      resourceId = resourceId.substring(1);
-      InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceId);
-      return in != null ? IO.readAsUTF8(in) : null;
-    }
-
-    public ClassLoader getLoader() {
-      return Thread.currentThread().getContextClassLoader();
-    }
-  };
-
   @Override
   protected void setUp() throws Exception {
-    if (!initialized) {
-      RepositoryBootstrap bootstrap = new RepositoryBootstrap();
-      bootstrap.bootstrap();
-      repo = bootstrap.getRepository();
-      initialized = true;
-    }
+    super.setUp();
 
     //
-    ShellBuilder builder = new ShellBuilder(shellContext);
+    ShellBuilder builder = new ShellBuilder(new TestShellContext());
 
     //
     shell = builder.build();

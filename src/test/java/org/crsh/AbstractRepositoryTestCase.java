@@ -16,37 +16,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
 
-import java.util.concurrent.ExecutorService;
+package org.crsh;
+
+import junit.framework.TestCase;
+
+import javax.jcr.Repository;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellBuilder {
+public abstract class AbstractRepositoryTestCase extends TestCase {
 
   /** . */
-  private final ShellContext context;
+  private boolean initialized = false;
 
   /** . */
-  private final ExecutorService executor;
+  protected Repository repo;
 
-  public ShellBuilder(ShellContext context) {
-    this(context, null);
-  }
-
-  public ShellBuilder(ShellContext context, ExecutorService executor) {
-    if (context == null) {
-      throw new NullPointerException();
+  @Override
+  protected void setUp() throws Exception {
+    if (!initialized) {
+      RepositoryBootstrap bootstrap = new RepositoryBootstrap();
+      bootstrap.bootstrap();
+      repo = bootstrap.getRepository();
+      initialized = true;
     }
-
-    //
-    this.context = context;
-    this.executor = executor;
-  }
-
-  public Shell build() {
-    return new Shell(context, executor);
   }
 }
