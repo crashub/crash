@@ -90,6 +90,12 @@ public abstract class AbstractCommandTestCase extends TestCase {
     }
   }
 
+  protected final ShellResponse.Ok assertOk(String s) {
+    ShellResponse resp = shell.evaluate(s);
+    assertTrue(resp instanceof ShellResponse.Ok);
+    return (ShellResponse.Ok)resp;
+  }
+
   private void cleanRoot() throws Exception {
     shell.evaluate("connect ws");
     Node root = (Node)groovyShell.evaluate("session.rootNode");

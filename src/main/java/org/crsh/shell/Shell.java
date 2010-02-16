@@ -137,13 +137,12 @@ public class Shell {
     groovyShell.evaluate(script, "/logout.groovy");
   }
 
-  public List<Element> evaluate(String s) {
+  public ShellResponse evaluate(String s) {
 
     // Trim
     s = s.trim();
 
     //
-    Object o = null;
     if (s.length() > 0) {
       try {
         // We'll have at least one chunk
@@ -152,48 +151,31 @@ public class Shell {
         // Get command
         ShellCommand cmd = getClosure(chunks.get(0));
 
+        //
         if (cmd != null) {
           // Build args
           String[] args = new String[chunks.size() - 1];
           chunks.subList(1, chunks.size()).toArray(args);
-          o = cmd.execute(commandContext, args);
+          Object o = cmd.execute(commandContext, args);
+          if (o instanceof DisplayBuilder) {
+            return new ShellResponse.Display(((DisplayBuilder)o).getElements());
+          }
+          else if (o != null) {
+            return new ShellResponse.Display(o.toString());
+          }
+          else {
+            return new ShellResponse.Ok();
+          }
+
         } else {
-          o = "Unknown command " + chunks.get(0);
+          return new ShellResponse.UnkownCommand(chunks.get(0));
         }
       }
       catch (Throwable t) {
-        if (t instanceof ScriptException) {
-          o = "Error: " + t.getMessage();
-        }
-        else if (o instanceof RuntimeException) {
-          o = "Unexpected exception: " + t.getMessage();
-          t.printStackTrace(System.err);
-        }
-        else if (t instanceof Exception) {
-          o = "Unexpected exception: " + t.getMessage();
-          t.printStackTrace(System.err);
-        }
-        else if (t instanceof Error) {
-          throw ((Error)t);
-        }
-        else {
-          o = "Unexpected throwable: " + t.getMessage();
-          t.printStackTrace(System.err);
-        }
+        return new ShellResponse.Error(t);
       }
     } else {
-      o = "Please type something";
-    }
-
-    //
-    if (o instanceof DisplayBuilder) {
-      return ((DisplayBuilder)o).getElements();
-    }
-    else if (o != null) {
-      return Collections.<Element>singletonList(new LabelElement(o.toString()));
-    }
-    else {
-      return Collections.emptyList();
+      return new ShellResponse.NoCommand();
     }
   }
 }

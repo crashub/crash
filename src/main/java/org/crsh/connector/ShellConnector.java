@@ -22,8 +22,10 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.Info;
 import org.crsh.display.SimpleDisplayContext;
 import org.crsh.display.structure.Element;
+import org.crsh.shell.ScriptException;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellBuilder;
+import org.crsh.shell.ShellResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -64,59 +66,97 @@ public class ShellConnector {
     shell.getPrompt();
   }
 
-  public String evaluate(String request) {
+  public ShellResponse execute(String request) {
     if (closed) {
       throw new IllegalStateException();
     }
     if ("bye".equals(request)) {
       shell.close();
       closed = true;
-      return "Have a good day!\r\n";
+      return new ShellResponse.Ok();
     }
     else {
-      String ret = null;
-      try {
-        // Evaluate
-        List<Element> elements = shell.evaluate(request);
+      // Evaluate
+      return shell.evaluate(request);
+    }
+  }
 
-        //
-        String result = null;
-        if (elements != null) {
+  public String evaluate(String request) {
+    String ret = null;
+    try {
+      // Evaluate
+      ShellResponse response = execute(request);
+
+      //
+      String result = null;
+      if (response instanceof ShellResponse.Error) {
+        ShellResponse.Error error = (ShellResponse.Error)response;
+        Throwable t = error.getThrowable();
+        if (t instanceof Error) {
+          throw ((Error)t);
+        } else if (t instanceof ScriptException) {
+          result = "Error: " + t.getMessage();
+        } else if (t instanceof RuntimeException) {
+          result = "Unexpected exception: " + t.getMessage();
+          t.printStackTrace(System.err);
+        } else if (t instanceof Exception) {
+          result = "Unexpected exception: " + t.getMessage();
+          t.printStackTrace(System.err);
+        } else {
+          result = "Unexpected throwable: " + t.getMessage();
+          t.printStackTrace(System.err);
+        }
+      } else if (response instanceof ShellResponse.Ok) {
+
+        if (response instanceof ShellResponse.Display) {
+          ShellResponse.Display display = (ShellResponse.Display)response;
           SimpleDisplayContext context = new SimpleDisplayContext("\r\n");
-          for (Element element : elements) {
+          for (Element element : display) {
             element.print(context);
           }
           result = context.getText();
+        } else {
+          result = "";
         }
-
-        // Format response if any
-        if (result != null) {
-          ret = "" + String.valueOf(result) + "\r\n";
-        }
-      }
-      catch (Throwable t) {
-        if (t instanceof InvokerInvocationException) {
-          t = t.getCause();
-        }
-        StringWriter writer = new StringWriter();
-        PrintWriter printer = new PrintWriter(writer);
-        printer.print("ERROR: ");
-        t.printStackTrace(printer);
-        printer.println();
-        printer.close();
-        ret = writer.toString();
+      } else if (response instanceof ShellResponse.NoCommand) {
+        result = "Please type something";
+      } else if (response instanceof ShellResponse.UnkownCommand) {
+        ShellResponse.UnkownCommand unknown = (ShellResponse.UnkownCommand)response;
+        result = "Unknown command " + unknown.getName();
       }
 
-      //
-      if (ret == null) {
-        ret = shell.getPrompt();
-      } else {
-        ret += shell.getPrompt();
+      // Format response if any
+      if (result != null) {
+        ret = "" + String.valueOf(result) + "\r\n";
       }
-
-      //
-      return ret;
     }
+    catch (Throwable t) {
+      if (t instanceof InvokerInvocationException) {
+        t = t.getCause();
+      }
+      StringWriter writer = new StringWriter();
+      PrintWriter printer = new PrintWriter(writer);
+      printer.print("ERROR: ");
+      t.printStackTrace(printer);
+      printer.println();
+      printer.close();
+      ret = writer.toString();
+    }
+
+    //
+    if (ret == null) {
+      ret = shell.getPrompt();
+    } else {
+      ret += shell.getPrompt();
+    }
+
+    //
+    if (closed) {
+      ret += "Have a good day!\r\n";
+    }
+
+    //
+    return ret;
   }
 
   public void close() {
