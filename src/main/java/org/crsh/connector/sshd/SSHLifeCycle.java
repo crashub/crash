@@ -27,6 +27,7 @@ import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.connector.CRaSHLifeCycle;
 import org.crsh.connector.sshd.scp.SCPCommandFactory;
+import org.crsh.shell.ShellContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,24 +46,56 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
   /** . */
   private SshServer server;
 
+  /** . */
+  private String userName;
+
+  /** . */
+  private String password;
+
+  /** . */
+  private int port;
+
+  /** . */
+  private String keyPath;
+
+  public SSHLifeCycle(ShellContext context) {
+    super(context);
+  }
+
+  public String getUserName() {
+    return userName;
+  }
+
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public int getPort() {
+    return port;
+  }
+
+  public void setPort(int port) {
+    this.port = port;
+  }
+
+  public String getKeyPath() {
+    return keyPath;
+  }
+
+  public void setKeyPath(String keyPath) {
+    this.keyPath = keyPath;
+  }
+
   @Override
-  protected void init() {
-    ServletContext sc = getShellContext().getServletContext();
-
-    // Configuration from web.xml
-    final String username = sc.getInitParameter("ssh.username").trim();
-    final String password = sc.getInitParameter("ssh.password").trim();
-    int port = Integer.parseInt(sc.getInitParameter("ssh.port").trim());
-    String keyPath = sc.getInitParameter("ssh.keypath");
-
-    // Use the default one
-    if (keyPath == null) {
-      log.debug("No key path found in web.xml will use the default one");
-      keyPath = sc.getRealPath("/WEB-INF/sshd/hostkey.pem");
-      log.debug("Going to use the key path at " + keyPath);
-    }
-
-    //
+  protected void doInit() {
     try {
       SshServer server = SshServer.setUpDefaultServer();
       server.setPort(port);
@@ -80,7 +113,7 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
       // For now authenticates in a very simply manner from web.xml setting
       server.setPasswordAuthenticator(new PasswordAuthenticator() {
         public boolean authenticate(String _username, String _password, ServerSession session) {
-          return username.equals(_username) && password.equals(_password);
+          return userName.equals(_username) && password.equals(_password);
         }
       });
 
@@ -98,7 +131,7 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
   }
 
   @Override
-  protected void destroy() {
+  protected void doDestroy() {
     if (server != null) {
       try {
         server.stop();

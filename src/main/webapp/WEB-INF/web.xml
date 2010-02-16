@@ -57,11 +57,11 @@
   </context-param>
 
   <listener>
-    <listener-class>org.crsh.connector.telnet.TelnetLifeCycle</listener-class>
+    <listener-class>org.crsh.servlet.TelnetServletLifeCycle</listener-class>
   </listener>
 
   <listener>
-    <listener-class>org.crsh.connector.sshd.SSHLifeCycle</listener-class>
+    <listener-class>org.crsh.servlet.SSHServletLifeCycle</listener-class>
   </listener>
 
 </web-app>

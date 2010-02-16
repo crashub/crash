@@ -21,19 +21,21 @@ package org.crsh.connector;
 import groovy.lang.GroovySystem;
 import groovy.lang.MetaClassRegistry;
 import org.crsh.jcr.NodeMetaClass;
-import org.crsh.servlet.ServletShellContext;
 import org.crsh.shell.ShellBuilder;
+import org.crsh.shell.ShellContext;
 
 import javax.jcr.Node;
+/*
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+*/
 import java.beans.IntrospectionException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CRaSHLifeCycle implements ServletContextListener {
+public abstract class CRaSHLifeCycle /*implements ServletContextListener*/ {
 
   /** . */
   private static final Object LOCK = new Object();
@@ -66,32 +68,37 @@ public abstract class CRaSHLifeCycle implements ServletContextListener {
   private ShellBuilder builder;
 
   /** . */
-  private ServletShellContext context;
+  private final ShellContext context;
 
-  public final void contextInitialized(ServletContextEvent sce) {
+  protected CRaSHLifeCycle(ShellContext context) {
+    if (context == null) {
+      throw new NullPointerException();
+    }
+
+    //
+    this.context = context;
+  }
+
+  public final void init() {
     integrate();
-
-    //
-    context = new ServletShellContext(sce.getServletContext(), Thread.currentThread().getContextClassLoader());
     builder = new ShellBuilder(context);
+    doInit();
+  }
 
-    //
-    init();
+  public final void destroy() {
+    doDestroy();
   }
 
   public final ShellBuilder getShellBuilder() {
     return builder;
   }
 
-  public final ServletShellContext getShellContext() {
+  public final ShellContext getShellContext() {
     return context;
   }
 
-  protected abstract void init();
+  protected abstract void doInit();
 
-  protected abstract void destroy();
+  protected abstract void doDestroy();
 
-  public final void contextDestroyed(ServletContextEvent sce) {
-    destroy();
-  }
 }

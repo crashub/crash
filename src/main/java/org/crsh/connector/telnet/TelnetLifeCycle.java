@@ -19,6 +19,7 @@
 package org.crsh.connector.telnet;
 
 import org.crsh.connector.CRaSHLifeCycle;
+import org.crsh.shell.ShellContext;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
@@ -35,8 +36,12 @@ public class TelnetLifeCycle extends CRaSHLifeCycle {
   /** . */
   private Channel channel;
 
+  public TelnetLifeCycle(ShellContext context) {
+    super(context);
+  }
+
   @Override
-  protected void init() {
+  protected void doInit() {
     //
     ServerBootstrap bootstrap = new ServerBootstrap(
       new NioServerSocketChannelFactory(
@@ -54,7 +59,7 @@ public class TelnetLifeCycle extends CRaSHLifeCycle {
   }
 
   @Override
-  protected void destroy() {
+  protected void doDestroy() {
     if (channel != null) {
       channel.close();
     }
