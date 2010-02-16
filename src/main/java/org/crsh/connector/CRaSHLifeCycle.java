@@ -81,8 +81,13 @@ public abstract class CRaSHLifeCycle /*implements ServletContextListener*/ {
 
   public final void init() {
     integrate();
-    builder = new ShellBuilder(context);
-    doInit();
+    ShellBuilder builder = new ShellBuilder(context);
+    try {
+      doInit();
+      this.builder = builder;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public final void destroy() {
@@ -97,7 +102,7 @@ public abstract class CRaSHLifeCycle /*implements ServletContextListener*/ {
     return context;
   }
 
-  protected abstract void doInit();
+  protected abstract void doInit() throws Exception;
 
   protected abstract void doDestroy();
 

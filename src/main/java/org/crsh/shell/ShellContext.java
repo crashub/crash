@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public interface ShellContext {
 
-  String loadScript(String scriptId);
+  String loadResource(String resourceId);
 
   ClassLoader getLoader();
 

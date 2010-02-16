@@ -23,8 +23,6 @@ import org.crsh.shell.ShellContext;
 import org.crsh.util.IO;
 
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -32,22 +30,11 @@ import java.util.Map;
  */
 public class TestShellContext implements ShellContext {
 
-  /** . */
-  private final Map<String, String> commands = new HashMap<String, String>();
-
-  public void addCommand(String name, String script) {
-    commands.put("/commands/" + name + ".groovy", script);
-  }
-
-  public String loadScript(String resourceId) {
-    String s = commands.get(resourceId);
-    if (s == null) {
-      // Remove leading '/'
-      resourceId = resourceId.substring(1);
-      InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceId);
-      s = in != null ? IO.readAsUTF8(in) : null;
-    }
-    return s;
+  public String loadResource(String resourceId) {
+    // Remove leading '/'
+    resourceId = resourceId.substring(1);
+    InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceId);
+    return in != null ? IO.readAsUTF8(in) : null;
   }
 
   public ClassLoader getLoader() {

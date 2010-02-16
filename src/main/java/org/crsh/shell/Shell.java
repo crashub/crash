@@ -62,8 +62,8 @@ public class Shell {
 
     //
     if (closure == null) {
-      String id = "/commands/" + name + ".groovy";
-      String script = context.loadScript(id);
+      String id = "/groovy/commands/" + name + ".groovy";
+      String script = context.loadResource(id);
       if (script != null) {
         Class<?> clazz = groovyShell.getClassLoader().parseClass(script, id);
         if (ShellCommand.class.isAssignableFrom(clazz)) {
@@ -116,8 +116,8 @@ public class Shell {
 
 
     // Evaluate login script
-    String script = context.loadScript("/login.groovy");
-    groovyShell.evaluate(script, "/login.groovy");
+    String script = context.loadResource("/groovy/login.groovy");
+    groovyShell.evaluate(script, "/groovy/login.groovy");
 
     //
     this.commandContext = commandContext;
@@ -134,8 +134,8 @@ public class Shell {
 
   public void close() {
     // Evaluate logout script
-    String script = context.loadScript("/logout.groovy");
-    groovyShell.evaluate(script, "/logout.groovy");
+    String script = context.loadResource("/groovy/logout.groovy");
+    groovyShell.evaluate(script, "/groovy/logout.groovy");
   }
 
   public ShellResponse evaluate(String s) {

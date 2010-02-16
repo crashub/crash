@@ -16,49 +16,56 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.servlet;
 
+package org.crsh.connector.wimpi;
+
+import net.wimpi.telnetd.TelnetD;
+import org.crsh.connector.CRaSHLifeCycle;
 import org.crsh.shell.ShellContext;
-import org.crsh.util.IO;
 
-import javax.servlet.ServletContext;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ServletShellContext implements ShellContext {
+public class TelnetLifeCycle extends CRaSHLifeCycle {
 
   /** . */
-  private final ServletContext servletContext;
+  private TelnetD daemon;
 
   /** . */
-  private final ClassLoader loader;
+  static TelnetLifeCycle instance;
 
-  public ServletShellContext(ServletContext servletContext, ClassLoader loader) {
-    if (servletContext == null) {
-      throw new NullPointerException();
-    }
-    if (loader == null) {
-      throw new NullPointerException();
+  public TelnetLifeCycle(ShellContext context) {
+    super(context);
+  }
+
+  @Override
+  protected synchronized void doInit() throws Exception {
+    if (instance != null) {
+      throw new IllegalStateException("An instance already exists");
     }
 
     //
-    this.servletContext = servletContext;
-    this.loader = loader;
+    String s = getShellContext().loadResource("/telnet/telnet.properties");
+    Properties props = new Properties();
+    props.load(new ByteArrayInputStream(s.getBytes("ISO-8859-1")));
+    TelnetD daemon = TelnetD.createTelnetD(props);
+    daemon.start();
+
+    //
+    this.daemon = daemon;
+    instance = this;
   }
 
-  public ServletContext getServletContext() {
-    return servletContext;
-  }
-
-  public String loadResource(String scriptURI) {
-    InputStream in = servletContext.getResourceAsStream("/WEB-INF/" + scriptURI);
-    return in != null ? IO.readAsUTF8(in) : null;
-  }
-
-  public ClassLoader getLoader() {
-    return loader;
+  @Override
+  protected synchronized void doDestroy() {
+    instance = null;
+    if (daemon != null) {
+      daemon.stop();
+      daemon = null;
+    }
   }
 }

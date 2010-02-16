@@ -16,44 +16,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.connector.sshd;
 
-import org.crsh.util.Input;
-import org.crsh.util.ReaderStateMachine;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+package org.crsh.util;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SSHReader extends ReaderStateMachine {
+public class Input {
 
-  /** . */
-  private final Reader in;
+  public static class Chars extends Input {
 
-  public SSHReader(Reader in, int verase, Writer echo) {
-    super(verase, echo);
+    /** . */
+    private String value;
 
-    //
-    this.in = in;
-  }
-
-  public String nextLine() throws IOException {
-    while (true) {
-      if (hasNext()) {
-        Input next = next();
-        if (next instanceof Input.Chars) {
-          return ((Input.Chars)next).getValue();
-        }
+    public Chars(String value) {
+      if (value == null) {
+        throw new NullPointerException();
       }
-      int r = in.read();
-      if (r == -1) {
-        return null;
+      this.value = value;
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == this) {
+        return true;
       }
-      append((char)r);
+      if (obj instanceof Chars) {
+        Chars that = (Chars)obj;
+        return value.equals(that.value);
+      }
+      return false;
     }
   }
 }

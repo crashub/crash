@@ -41,7 +41,7 @@ public class ReaderStateMachineTestCase extends TestCase {
       ReaderStateMachine sm = new ReaderStateMachine(127);
       sm.append(test);
       assertTrue(sm.hasNext());
-      assertEquals("a", sm.next());
+      assertEquals(new Input.Chars("a"), sm.next());
       assertFalse(sm.hasNext());
       assertEquals(0, sm.getSize());
     }
@@ -51,7 +51,7 @@ public class ReaderStateMachineTestCase extends TestCase {
     ReaderStateMachine sm = new ReaderStateMachine(127);
     sm.append("a\u007Fb\n");
     assertTrue(sm.hasNext());
-    assertEquals("b", sm.next());
+    assertEquals(new Input.Chars("b"), sm.next());
   }
 
 
