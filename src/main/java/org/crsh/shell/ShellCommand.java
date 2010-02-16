@@ -24,6 +24,6 @@ package org.crsh.shell;
  */
 public interface ShellCommand {
 
-  Object execute(CommandContext context, String[] args) throws ScriptException;
+  Object execute(CommandContext context, String... args) throws ScriptException;
 
 }

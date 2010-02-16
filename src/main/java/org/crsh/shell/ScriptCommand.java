@@ -39,7 +39,7 @@ public abstract class ScriptCommand extends Script implements ShellCommand {
     }
   }
 
-  public Object execute(CommandContext context, String[] args) throws ScriptException {
+  public Object execute(CommandContext context, String... args) throws ScriptException {
 
     // Set up current binding
     Binding binding = new Binding(context);

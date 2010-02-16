@@ -82,7 +82,7 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
     }
   }
 
-  public Object execute(CommandContext context, String[] args) throws ScriptException {
+  public Object execute(CommandContext context, String... args) throws ScriptException {
     if (context == null) {
       throw new NullPointerException();
     }
