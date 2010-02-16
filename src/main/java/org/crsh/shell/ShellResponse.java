@@ -73,10 +73,18 @@ public abstract class ShellResponse {
   public static class Error extends ShellResponse {
 
     /** . */
+    private final ErrorType type;
+
+    /** . */
     private final Throwable throwable;
 
-    public Error(Throwable throwable) {
+    public Error(ErrorType type, Throwable throwable) {
+      this.type = type;
       this.throwable = throwable;
+    }
+
+    public ErrorType getType() {
+      return type;
     }
 
     public Throwable getThrowable() {

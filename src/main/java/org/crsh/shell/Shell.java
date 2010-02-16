@@ -21,19 +21,12 @@ package org.crsh.shell;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.display.DisplayBuilder;
-import org.crsh.display.SimpleDisplayContext;
-import org.crsh.display.structure.Element;
-import org.crsh.display.structure.LabelElement;
 import org.crsh.jcr.NodeMetaClass;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -59,9 +52,12 @@ public class Shell {
   private final Map<String, Class<? extends ShellCommand>> commands;
 
   /** . */
-  private final CommandContext commandContext;
+  final CommandContext commandContext;
 
-  private ShellCommand getClosure(String name) {
+  /** . */
+  private final ExecutorService executor;
+
+  ShellCommand getClosure(String name) {
     Class<? extends ShellCommand> closure = commands.get(name);
 
     //
@@ -106,7 +102,11 @@ public class Shell {
     commandContext.put(name, value);
   }
 
-  Shell(final ShellContext context) {
+  public Shell(ShellContext context) {
+    this(context, null);
+  }
+
+  Shell(final ShellContext context, ExecutorService executor) {
     CommandContext commandContext = new CommandContext();
 
     //
@@ -125,6 +125,7 @@ public class Shell {
     this.groovyShell = groovyShell;
     this.commands = new HashMap<String, Class<? extends ShellCommand>>();
     this.context = context;
+    this.executor = executor;
   }
 
   public String getPrompt() {
@@ -138,44 +139,20 @@ public class Shell {
   }
 
   public ShellResponse evaluate(String s) {
+    Evaluable callable = callable(s);
+    return callable.evaluate();
+  }
 
-    // Trim
-    s = s.trim();
-
-    //
-    if (s.length() > 0) {
-      try {
-        // We'll have at least one chunk
-        List<String> chunks = LineFormat.format(s);
-
-        // Get command
-        ShellCommand cmd = getClosure(chunks.get(0));
-
-        //
-        if (cmd != null) {
-          // Build args
-          String[] args = new String[chunks.size() - 1];
-          chunks.subList(1, chunks.size()).toArray(args);
-          Object o = cmd.execute(commandContext, args);
-          if (o instanceof DisplayBuilder) {
-            return new ShellResponse.Display(((DisplayBuilder)o).getElements());
-          }
-          else if (o != null) {
-            return new ShellResponse.Display(o.toString());
-          }
-          else {
-            return new ShellResponse.Ok();
-          }
-
-        } else {
-          return new ShellResponse.UnkownCommand(chunks.get(0));
-        }
-      }
-      catch (Throwable t) {
-        return new ShellResponse.Error(t);
-      }
+  public Future<ShellResponse> evaluateLater(String s) {
+    Evaluable callable = callable(s);
+    if (executor != null) {
+      return executor.submit(callable);
     } else {
-      return new ShellResponse.NoCommand();
+      return new ImmediateFuture<ShellResponse>(callable.evaluate());
     }
+  }
+
+  private Evaluable callable(final String s) {
+    return new Evaluable(this, s);
   }
 }
