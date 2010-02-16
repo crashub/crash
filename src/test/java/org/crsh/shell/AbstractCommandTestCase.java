@@ -90,9 +90,15 @@ public abstract class AbstractCommandTestCase extends TestCase {
     }
   }
 
+  protected final Throwable assertError(String s) {
+    ShellResponse resp = shell.evaluate(s);
+    assertTrue("Was expecting an ok response instead of " + resp, resp instanceof ShellResponse.Error);
+    return ((ShellResponse.Error)resp).getThrowable();
+  }
+
   protected final ShellResponse.Ok assertOk(String s) {
     ShellResponse resp = shell.evaluate(s);
-    assertTrue(resp instanceof ShellResponse.Ok);
+    assertTrue("Was expecting an ok response instead of " + resp, resp instanceof ShellResponse.Ok);
     return (ShellResponse.Ok)resp;
   }
 

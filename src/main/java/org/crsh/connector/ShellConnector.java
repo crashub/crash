@@ -18,7 +18,6 @@
  */
 package org.crsh.connector;
 
-import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.Info;
 import org.crsh.display.SimpleDisplayContext;
 import org.crsh.display.structure.Element;
@@ -30,10 +29,8 @@ import org.crsh.shell.ShellResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.net.InetAddress;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -131,9 +128,6 @@ public class ShellConnector {
       }
     }
     catch (Throwable t) {
-      if (t instanceof InvokerInvocationException) {
-        t = t.getCause();
-      }
       StringWriter writer = new StringWriter();
       PrintWriter printer = new PrintWriter(writer);
       printer.print("ERROR: ");
