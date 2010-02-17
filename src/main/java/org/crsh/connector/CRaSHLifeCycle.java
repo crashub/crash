@@ -30,6 +30,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 */
 import java.beans.IntrospectionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -70,6 +72,9 @@ public abstract class CRaSHLifeCycle /*implements ServletContextListener*/ {
   /** . */
   private final ShellContext context;
 
+  /** . */
+  private ExecutorService executor;
+
   protected CRaSHLifeCycle(ShellContext context) {
     if (context == null) {
       throw new NullPointerException();
@@ -81,10 +86,12 @@ public abstract class CRaSHLifeCycle /*implements ServletContextListener*/ {
 
   public final void init() {
     integrate();
-    ShellBuilder builder = new ShellBuilder(context);
+    ExecutorService executor = Executors.newFixedThreadPool(3);
+    ShellBuilder builder = new ShellBuilder(context, executor);
     try {
       doInit();
       this.builder = builder;
+      this.executor = executor;
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -92,6 +99,13 @@ public abstract class CRaSHLifeCycle /*implements ServletContextListener*/ {
 
   public final void destroy() {
     doDestroy();
+
+    //
+    executor.shutdownNow();
+
+    //
+    this.executor = null;
+    this.builder = null;
   }
 
   public final ShellBuilder getShellBuilder() {

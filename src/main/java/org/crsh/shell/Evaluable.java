@@ -20,6 +20,7 @@
 package org.crsh.shell;
 
 import org.crsh.display.DisplayBuilder;
+import org.crsh.util.CompletionHandler;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -36,24 +37,24 @@ public class Evaluable implements Callable<ShellResponse> {
   /** . */
   private final String s;
 
-  public Evaluable(Shell shell, String s) {
+  /** . */
+  private final CompletionHandler<ShellResponse> handler;
+
+  public Evaluable(Shell shell, String s, CompletionHandler<ShellResponse> handler) {
     this.shell = shell;
     this.s = s;
+    this.handler = handler;
   }
 
-  public ShellResponse evaluate() {
-    try {
-      return call();
-    } catch (Exception e) {
-      return new ShellResponse.Error(ErrorType.INTERNAL, e);
-    }
-  }
+  public ShellResponse call() {
 
-  public ShellResponse call() throws Exception {
+    System.out.println("Invoking command");
+
     // Trim
     String s2 = s.trim();
 
     //
+    ShellResponse response;
     if (s2.length() > 0) {
       try {
         // We'll have at least one chunk
@@ -69,22 +70,33 @@ public class Evaluable implements Callable<ShellResponse> {
           chunks.subList(1, chunks.size()).toArray(args);
           Object o = cmd.execute(shell.commandContext, args);
           if (o instanceof DisplayBuilder) {
-            return new ShellResponse.Display(((DisplayBuilder) o).getElements());
+            response = new ShellResponse.Display(((DisplayBuilder) o).getElements());
           } else if (o != null) {
-            return new ShellResponse.Display(o.toString());
+            response = new ShellResponse.Display(o.toString());
           } else {
-            return new ShellResponse.Ok();
+            response = new ShellResponse.Ok();
           }
 
         } else {
-          return new ShellResponse.UnkownCommand(chunks.get(0));
+          response = new ShellResponse.UnkownCommand(chunks.get(0));
         }
       }
       catch (Throwable t) {
-        return new ShellResponse.Error(ErrorType.EVALUATION, t);
+        response = new ShellResponse.Error(ErrorType.EVALUATION, t);
       }
     } else {
-      return new ShellResponse.NoCommand();
+      response = new ShellResponse.NoCommand();
     }
+
+    //
+    System.out.println("Making handler response callback");
+
+    //
+    if (handler != null) {
+      handler.completed(response);
+    }
+
+    //
+    return response;
   }
 }

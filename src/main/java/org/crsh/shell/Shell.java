@@ -22,6 +22,8 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.jcr.NodeMetaClass;
+import org.crsh.util.CompletionHandler;
+import org.crsh.util.ImmediateFuture;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -139,20 +141,18 @@ public class Shell {
   }
 
   public ShellResponse evaluate(String s) {
-    Evaluable evaluable = callable(s);
-    return evaluable.evaluate();
+    Evaluable evaluable = new Evaluable(this, s, null);
+    return evaluable.call();
   }
 
-  public Future<ShellResponse> submitEvaluation(String s) {
-    Evaluable callable = callable(s);
+  public Future<ShellResponse> submitEvaluation(String s, CompletionHandler<ShellResponse> handler) {
+    Evaluable callable = new Evaluable(this, s, handler);
     if (executor != null) {
+      System.out.println("Submitting to executor");
       return executor.submit(callable);
     } else {
-      return new ImmediateFuture<ShellResponse>(callable.evaluate());
+      ShellResponse response = callable.call();
+      return new ImmediateFuture<ShellResponse>(response);
     }
-  }
-
-  private Evaluable callable(final String s) {
-    return new Evaluable(this, s);
   }
 }

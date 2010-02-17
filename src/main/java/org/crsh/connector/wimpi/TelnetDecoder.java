@@ -21,7 +21,9 @@ package org.crsh.connector.wimpi;
 
 import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
+import net.wimpi.telnetd.net.Connection;
 import org.crsh.connector.ShellConnector;
+import org.crsh.util.CompletionHandler;
 import org.crsh.util.Input;
 import org.crsh.util.InputDecoder;
 
@@ -34,14 +36,47 @@ import java.io.IOException;
 public class TelnetDecoder extends InputDecoder {
 
   /** . */
+  private final Connection conn;
+
+  /** . */
   private final ShellConnector connector;
 
   /** . */
   private final BasicTerminalIO termIO;
 
-  public TelnetDecoder(ShellConnector connector, BasicTerminalIO termIO) {
-    this.connector = connector;
-    this.termIO = termIO;
+  public TelnetDecoder(Connection connection) {
+    this.conn = connection;
+    this.connector = new ShellConnector(TelnetLifeCycle.instance.getShellBuilder());
+    this.termIO = connection.getTerminalIO();
+  }
+
+  public void run() throws IOException {
+    String welcome = connector.open();
+    writeFully(welcome);
+
+    //
+    while (!isClosed()) {
+      int code = termIO.read();
+      append(code);
+    }
+  }
+
+  public boolean isClosed() {
+    return connector.isClosed();
+  }
+
+  public void close() {
+    try {
+      termIO.flush();
+      conn.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    try {
+      connector.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public void append(int i) throws IOException {
@@ -52,7 +87,12 @@ public class TelnetDecoder extends InputDecoder {
       appendData('\n');
     } else if (i >= 0 && i < 128) {
       if (i == 3) {
-        
+        System.out.println("Wanting to cancel evaluation!!!!!!!!!!!");
+        if (connector.cancelEvalutation()) {
+          System.out.println("Evaluation cancelled");
+        }
+        String s = "\r\n" + connector.getPrompt();
+        writeFully(s);
       } else {
         appendData((char)i);
       }
@@ -65,11 +105,24 @@ public class TelnetDecoder extends InputDecoder {
       Input input = next();
       if (input instanceof Input.Chars) {
         String line = ((Input.Chars)input).getValue();
-        String resp = connector.evaluate(line);
-        termIO.write(resp);
-        termIO.flush();
+        System.out.println("Submitting command " + line);
+        connector.submitEvaluation(line, new CompletionHandler<String>() {
+          public void completed(String s) {
+            System.out.println("Command completed with result " + s);
+            try {
+              writeFully(s);
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+          }
+        });
       }
     }
+  }
+
+  private void writeFully(String prompt) throws IOException {
+    termIO.write(prompt);
+    termIO.flush();
   }
 
   @Override
@@ -82,8 +135,7 @@ public class TelnetDecoder extends InputDecoder {
 
   @Override
   protected void echo(String s) throws IOException {
-    termIO.write(s);
-    termIO.flush();
+    writeFully(s);
   }
 
   @Override

@@ -17,54 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.connector.wimpi;
-
-import net.wimpi.telnetd.net.Connection;
-import net.wimpi.telnetd.net.ConnectionEvent;
-import net.wimpi.telnetd.shell.Shell;
-
-import java.io.IOException;
+package org.crsh.util;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetHandler implements Shell {
+public interface CompletionHandler<V> {
 
-  /** . */
-  private TelnetDecoder decoder;
+  void completed(V v);
 
-  public void run(Connection conn) {
-
-    //
-    decoder = new TelnetDecoder(conn);
-
-    //
-    conn.addConnectionListener(this);
-
-    //
-    try {
-      decoder.run();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void connectionIdle(ConnectionEvent connectionEvent) {
-  }
-
-  public void connectionTimedOut(ConnectionEvent connectionEvent) {
-    decoder.close();
-  }
-
-  public void connectionLogoutRequest(ConnectionEvent connectionEvent) {
-    decoder.close();
-  }
-
-  public void connectionSentBreak(ConnectionEvent connectionEvent) {
-  }
-
-  public static Shell createShell() {
-    return new TelnetHandler();
-  }
 }
