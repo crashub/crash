@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.connector.wimpi;
+package org.crsh.connector.telnet;
 
 import net.wimpi.telnetd.TelnetD;
 import org.crsh.connector.CRaSHLifeCycle;

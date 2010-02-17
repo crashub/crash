@@ -19,7 +19,7 @@
 
 package org.crsh.servlet;
 
-import org.crsh.connector.wimpi.TelnetLifeCycle;
+import org.crsh.connector.telnet.TelnetLifeCycle;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

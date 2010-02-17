@@ -19,7 +19,7 @@
 
 package org.crsh;
 
-import org.crsh.connector.wimpi.TelnetLifeCycle;
+import org.crsh.connector.telnet.TelnetLifeCycle;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
