@@ -113,12 +113,6 @@
     <!-- Telnet connector dependencies -->
 
     <dependency>
-      <groupId>org.jboss.netty</groupId>
-      <artifactId>netty</artifactId>
-      <version>3.1.5.GA</version>
-    </dependency>
-
-    <dependency>
       <groupId>net.wimpi</groupId>
       <artifactId>telnetd-x</artifactId>
       <version>2.1.1</version>
