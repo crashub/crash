@@ -26,6 +26,17 @@
     <url>http://code.google.com/p/crsh/source/browse/</url>
   </scm>
 
+  <distributionManagement>
+    <repository>
+      <id>repository.exoplatform.org</id>
+      <url>${crsh.releases.repo.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>repository.exoplatform.org</id>
+      <url>${crsh.snapshots.repo.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <repositories>
     <repository>
       <id>repository.jboss.org</id>
@@ -41,6 +52,9 @@
   </repositories>
 
   <properties>
+    <!-- Repositories URLs -->
+    <crsh.releases.repo.url>http://repository.exoplatform.org/content/repositories/crsh-releases/</crsh.releases.repo.url>
+    <crsh.snapshots.repo.url>http://repository.exoplatform.org/content/repositories/crsh-snapshots/</crsh.snapshots.repo.url>
 
     <!-- maven-release-plugin -->
     <useReleaseProfile>false</useReleaseProfile>
