@@ -114,7 +114,7 @@ public abstract class InputDecoder implements Iterator<Input> {
   private void push(char c) {
     if (size >= buffer.length) {
       char[] tmp = new char[buffer.length * 2 + 1];
-      System.arraycopy(tmp, 0, buffer, 0, tmp.length);
+      System.arraycopy(buffer, 0, tmp, 0, buffer.length);
       this.buffer = tmp;
     }
     buffer[size++] = c;
