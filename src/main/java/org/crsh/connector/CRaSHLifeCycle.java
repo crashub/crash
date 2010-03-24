@@ -25,10 +25,6 @@ import org.crsh.shell.ShellBuilder;
 import org.crsh.shell.ShellContext;
 
 import javax.jcr.Node;
-/*
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-*/
 import java.beans.IntrospectionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,7 +33,7 @@ import java.util.concurrent.Executors;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CRaSHLifeCycle /*implements ServletContextListener*/ {
+public abstract class CRaSHLifeCycle {
 
   /** . */
   private static final Object LOCK = new Object();
@@ -88,10 +84,14 @@ public abstract class CRaSHLifeCycle /*implements ServletContextListener*/ {
     integrate();
     ExecutorService executor = Executors.newFixedThreadPool(3);
     ShellBuilder builder = new ShellBuilder(context, executor);
+
+    //
+    this.builder = builder;
+    this.executor = executor;
+
+    //
     try {
       doInit();
-      this.builder = builder;
-      this.executor = executor;
     } catch (Exception e) {
       e.printStackTrace();
     }

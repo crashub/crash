@@ -32,6 +32,9 @@ public class CRaSHCommandFactory implements Factory<Command> {
   private final ShellBuilder builder;
 
   public CRaSHCommandFactory(ShellBuilder builder) {
+    if (builder == null) {
+      throw new NullPointerException("No null builder accepted");
+    }
     this.builder = builder;
   }
 

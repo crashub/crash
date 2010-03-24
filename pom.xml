@@ -237,7 +237,7 @@
             <executions>
               <execution>
                 <id>copy-warfile</id>
-                <phase>package</phase>
+                <phase>install</phase>
                 <configuration>
                   <tasks>
                     <copy
