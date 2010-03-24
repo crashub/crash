@@ -49,7 +49,7 @@ public class TelnetLifeCycle extends CRaSHLifeCycle {
     }
 
     //
-    String s = getShellContext().loadResource("/telnet/telnet.properties");
+    String s = getShellContext().loadResource("/telnet/telnet.properties").getContent();
     Properties props = new Properties();
     props.load(new ByteArrayInputStream(s.getBytes("ISO-8859-1")));
     TelnetD daemon = TelnetD.createTelnetD(props);

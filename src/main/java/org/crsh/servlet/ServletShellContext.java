@@ -18,11 +18,18 @@
  */
 package org.crsh.servlet;
 
+import org.crsh.shell.Resource;
 import org.crsh.shell.ShellContext;
 import org.crsh.util.IO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -35,6 +42,9 @@ public class ServletShellContext implements ShellContext {
 
   /** . */
   private final ClassLoader loader;
+
+  /** . */
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
   public ServletShellContext(ServletContext servletContext, ClassLoader loader) {
     if (servletContext == null) {
@@ -53,9 +63,18 @@ public class ServletShellContext implements ShellContext {
     return servletContext;
   }
 
-  public String loadResource(String scriptURI) {
-    InputStream in = servletContext.getResourceAsStream("/WEB-INF/" + scriptURI);
-    return in != null ? IO.readAsUTF8(in) : null;
+  public Resource loadResource(String resourceId) {
+    try {
+      URL url = servletContext.getResource("/WEB-INF/" + resourceId);
+      URLConnection conn = url.openConnection();
+      long timestamp = conn.getLastModified();
+      InputStream in = url.openStream();
+      String content = IO.readAsUTF8(in);
+      return new Resource(content, timestamp);
+    } catch (IOException e) {
+      log.warn("Could not find resource " + resourceId, e);
+      return null;
+    }
   }
 
   public ClassLoader getLoader() {

@@ -16,18 +16,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.crsh.shell;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellContext {
+public class Resource {
 
-  Resource loadResource(String resourceId);
+  /** . */
+  private final String content;
 
-  ClassLoader getLoader();
+  /** . */
+  private long timestamp;
 
-  // Repository getRepository(Map properties);
+  public Resource(String content, long timestamp) {
+    this.content = content;
+    this.timestamp = timestamp;
+  }
 
+  public String getContent() {
+    return content;
+  }
+
+  public long getTimestamp() {
+    return timestamp;
+  }
 }

@@ -19,10 +19,16 @@
 
 package org.crsh;
 
+import org.crsh.shell.Resource;
 import org.crsh.shell.ShellContext;
 import org.crsh.util.IO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -30,11 +36,24 @@ import java.io.InputStream;
  */
 public class TestShellContext implements ShellContext {
 
-  public String loadResource(String resourceId) {
+  /** . */
+  private final Logger log = LoggerFactory.getLogger(getClass());
+
+  public Resource loadResource(String resourceId) {
     // Remove leading '/'
     resourceId = resourceId.substring(1);
-    InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceId);
-    return in != null ? IO.readAsUTF8(in) : null;
+
+    try {
+      URL url = Thread.currentThread().getContextClassLoader().getResource(resourceId);
+      URLConnection conn = url.openConnection();
+      long timestamp = conn.getLastModified();
+      InputStream in = url.openStream();
+      String content = IO.readAsUTF8(in);
+      return new Resource(content, timestamp);
+    } catch (IOException e) {
+      log.warn("Could not find resource " + resourceId, e);
+      return null;
+    }
   }
 
   public ClassLoader getLoader() {

@@ -16,18 +16,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+
+package org.crsh.util;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellContext {
+public class TimestampedObject<T> {
 
-  Resource loadResource(String resourceId);
+  /** . */
+  private final long timestamp;
 
-  ClassLoader getLoader();
+  /** . */
+  private final T object;
 
-  // Repository getRepository(Map properties);
+  public TimestampedObject(long timestamp, T object) {
+    this.timestamp = timestamp;
+    this.object = object;
+  }
 
+  public long getTimestamp() {
+    return timestamp;
+  }
+
+  public T getObject() {
+    return object;
+  }
 }

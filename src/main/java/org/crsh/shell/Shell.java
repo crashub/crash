@@ -24,9 +24,10 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.jcr.NodeMetaClass;
 import org.crsh.util.CompletionHandler;
 import org.crsh.util.ImmediateFuture;
+import org.crsh.util.TimestampedObject;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -51,7 +52,7 @@ public class Shell {
   private final ShellContext context;
 
   /** . */
-  private final Map<String, Class<? extends ShellCommand>> commands;
+  private final Map<String, TimestampedObject<Class<ShellCommand>>> commands;
 
   /** . */
   final CommandContext commandContext;
@@ -60,29 +61,36 @@ public class Shell {
   private final ExecutorService executor;
 
   ShellCommand getClosure(String name) {
-    Class<? extends ShellCommand> closure = commands.get(name);
+    TimestampedObject<Class<ShellCommand>> closure = commands.get(name);
 
     //
-    if (closure == null) {
-      String id = "/groovy/commands/" + name + ".groovy";
-      String script = context.loadResource(id);
-      if (script != null) {
-        Class<?> clazz = groovyShell.getClassLoader().parseClass(script, id);
+    String id = "/groovy/commands/" + name + ".groovy";
+    Resource script = context.loadResource(id);
+
+    //
+    if (script != null) {
+      if (closure != null) {
+        if (script.getTimestamp() != closure.getTimestamp()) {
+          closure = null;
+        }
+      }
+
+      //
+      if (closure == null) {
+        Class<?> clazz = groovyShell.getClassLoader().parseClass(script.getContent(), id);
         if (ShellCommand.class.isAssignableFrom(clazz)) {
-          closure = clazz.asSubclass(ShellCommand.class);
+          Class<ShellCommand> commandClazz = (Class<ShellCommand>) clazz;
+          closure = biltooo(script.getTimestamp(), commandClazz);
           commands.put(name, closure);
         } else {
           System.out.println("Parsed script does not implements " + ShellCommand.class.getName());
         }
       }
-      else {
-        return null;
-      }
     }
 
     //
     try {
-      return closure.newInstance();
+      return closure.getObject().newInstance();
     }
     catch (InstantiationException e) {
       throw new Error(e);
@@ -90,6 +98,10 @@ public class Shell {
     catch (IllegalAccessException e) {
       throw new Error(e);
     }
+  }
+
+  private <T extends ShellCommand> TimestampedObject<Class<T>> biltooo(long timestamp, Class<T> aaa) {
+    return new TimestampedObject<Class<T>>(timestamp, aaa);
   }
 
   public GroovyShell getGroovyShell() {
@@ -113,19 +125,20 @@ public class Shell {
 
     //
     CompilerConfiguration config = new CompilerConfiguration();
+    config.setRecompileGroovySource(true);
     config.setScriptBaseClass(ScriptCommand.class.getName());
     GroovyShell groovyShell = new GroovyShell(context.getLoader(), new Binding(commandContext), config);
 
 
     // Evaluate login script
-    String script = context.loadResource("/groovy/login.groovy");
+    String script = context.loadResource("/groovy/login.groovy").getContent();
     groovyShell.evaluate(script, "/groovy/login.groovy");
 
     //
     this.commandContext = commandContext;
     this.out = new StringBuffer();
     this.groovyShell = groovyShell;
-    this.commands = new HashMap<String, Class<? extends ShellCommand>>();
+    this.commands = new ConcurrentHashMap<String, TimestampedObject<Class<ShellCommand>>>();
     this.context = context;
     this.executor = executor;
   }
@@ -136,7 +149,7 @@ public class Shell {
 
   public void close() {
     // Evaluate logout script
-    String script = context.loadResource("/groovy/logout.groovy");
+    String script = context.loadResource("/groovy/logout.groovy").getContent();
     groovyShell.evaluate(script, "/groovy/logout.groovy");
   }
 
