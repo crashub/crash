@@ -3,7 +3,7 @@
   <groupId>org.crsh</groupId>
   <artifactId>crsh</artifactId>
   <packaging>war</packaging>
-  <version>1.0.0-beta4</version>
+  <version>1.0.0-beta5-SNAPSHOT</version>
   <name>CRaSH</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
   <url>http://crsh.googlecode.org</url>
@@ -21,9 +21,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://crsh.googlecode.com/svn/tags/1.0.0-beta4</connection>
-    <developerConnection>scm:svn:https://crsh.googlecode.com/svn/tags/1.0.0-beta4</developerConnection>
-    <url>http://code.google.com/p/crsh/source/browse/tags/1.0.0-beta4</url>
+    <connection>scm:svn:http://crsh.googlecode.com/svn/trunk/</connection>
+    <developerConnection>scm:svn:https://crsh.googlecode.com/svn/trunk/</developerConnection>
+    <url>http://code.google.com/p/crsh/source/browse/</url>
   </scm>
 
   <distributionManagement>
