@@ -1,0 +1,241 @@
+= Deployment =
+
+Copy the crsh.war in server running eXo Portal 2.5 or GateIn.
+
+= Connection =
+
+You need to connect using telnet or SSH to use the shell.
+
+Telnet connection is done on port 5000:
+
+{{screen}}
+juliens-macbook-pro:webapps julien$ telnet localhost 5000
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+Welcome to juliens-macbook-pro.local!
+It is Mon Nov 23 15:53:44 CET 2009 now.
+%
+{{/screen}}
+
+SSH connection is done on port 2000 with the password //crash//:
+
+{{screen}}
+juliens-macbook-pro:~ julien$ ssh -p 2000 -l root localhost
+root@localhost's password:
+CRaSH 1.0.0-beta2 (http://crsh.googlecode.com)
+Welcome to juliens-macbook-pro.local!
+It is Fri Jan 08 21:12:53 CET 2010 now.
+%
+{{/screen}}
+
+= Commands =
+
+== Getting basic help ==
+
+The {{code}}help{{/code}} command will display the list of known commands by the shell.
+
+{{screen}}
+[/]% help
+Try one of these commands with the -h or --help switch [addmixin, cd, checkin, checkout, commit, connect, disconnect, exportnode, help, importnode, ls, pwd, rm, rollback, select, set]
+{{/screen}}
+
+== Connecting to a repository ==
+
+You must first connect to a repository before any other JCR based operation. When you are connected the shell will maintain
+a JCR session and allows you to interact with the session in a shell oriented fashion. The {{code}}connect{{/code}} command
+is used to perform the connection. The repository name must be specified and optionally you can specify a user name
+and password to have more privileges.
+
+{{screen}}
+% connect -c portal portal-system
+Connected to workspace portal-system
+{{/screen}}
+
+or
+
+{{screen}}
+% connect -c portal -u root -p gtn portal-system
+Connected to workspace portal-system
+{{/screen}}
+
+== Listing the content of a node ==
+
+The {{code}}ls{{/code}} command shows the content of a node. By default it lists the content of the current node. It can
+accept a path argument that can be absolute or relative.
+
+{{screen}}
+[/]% ls
+/
++-properties
+| +-jcr:primaryType: nt:unstructured
+| +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
+| +-exo:owner: '__system'
+| +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administrators set_property,*:/platform/administrators remove]
++-children
+| +-/workspace
+| +-/contents
+| +-/Users
+| +-/gadgets
+| +-/folder
+{{/screen}}
+
+== Changing the current node ==
+
+The {{code}}cd{{/code}} command allows to change the current path. The command used with no argument, change to the root
+directory but you can provide a path argument that can be absolute or relative.
+
+{{screen}}
+[/]% cd /gadgets
+/gadgets
+{{/screen}}
+
+== Printing the current node ==
+
+The {{code}}pwd{{/code}} command shows the current node path.
+
+{{screen}}
+[/gadgets]% pwd
+/gadgets
+{{/screen}}
+
+== Copying a node ==
+
+The {{code}}cp{{/code}} command copies a node to a target location in the JCR tree.
+
+{{screen}}
+[/registry]% cp Registry Registry2
+{{/screen}}
+
+== Moving a node ==
+
+The {{code}}mv{{/code}} command can move a node to a target location in the JCR tree. It can be used also to rename a node.
+
+{{screen}}
+[/registry]% mv Registry Registry2
+{{/screen}}
+
+== Removing a node or property ==
+
+The {{code}}rm{{/code}} command removes a node or property specified by its path either absolute or relative. This operation
+is executed against the JCR session, meaning that it will not be effective until it is commited to the JCR server.
+
+{{screen}}
+[/registry]% rm Administration
+{{/screen}}
+
+== Updating a property ==
+
+The *set* command updates the property of a node:
+
+{{screen}}
+[/gadgets]% set
+{{/screen}}
+
+Create the property foo with the value bar on the root node:
+
+{{screen}}
+[/]% set foo bar
+Property created
+{{/screen}}
+
+Update the existing foo property:
+
+{{screen}}
+[/]% set foo juu
+Property updated
+{{/screen}}
+
+When a property is created and does not have a property descriptor that constraint its type, you can specify it
+with the -t option
+
+{{screen}}
+[/]% set -t LONG long_property 3
+Property created
+{{/screen}}
+
+== Commiting or rolling back changes ==
+
+The {{code}}commit{{/code}} operation saves the current session. Conversely the {{code}}rollback{{/code}} operation rollback
+session changes. For both operations It is possible to specify a path to commit a part of the tree.
+
+== Performing a SQL query ==
+
+Queries in SQL format are possible via the {{code}}select{{/code}} command. You can write a query with the same syntax defined
+by the specification and add options to control the number of results returned. By default the number of nodes is limited
+to 5 results:
+
+{{screen}}
+[/]% select * from nt:base
+The query matched 1114 nodes
++-/
+| +-properties
+| | +-jcr:primaryType: nt:unstructured
+| | +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
+| | +-exo:owner: '__system'
+| | +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administratorsset_property,*:/platform/administrators remove]
++-/workspace
+| +-properties
+| | +-jcr:primaryType: mop:workspace
+| | +-jcr:uuid: 'a69f226ec0a80002007ca83e5845cdac'
+...
+{{/screen}}
+
+Display 20 nodes from the offset 10:
+
+{{screen}}
+[/]% select * from nt:base -o 10 -l 20
+The query matched 1114 nodes
+...
+{{/screen}}
+
+It is possible also to remove the limit of displayed nodes with the -a option (you should use this option with care) :
+
+{{screen}}
+[/]% select * from nt:base -a
+The query matched 1114 nodes
+...
+{{/screen}}
+
+== Performing an XPath query ==
+
+todo
+
+== Exporting a node ==
+
+It is possible to export a node as an nt file of the same workspace with the {{code}}exportnode{{/code}} command. Then it is
+usually possible to access the nt file from webdav.
+
+{{screen}}
+[/]% exportnode gadgets /gadgets.xml
+The node has been exported
+{{/screen}}
+
+== Importing a node ==
+
+It is possible to import a node from an nt file located in the workspace with the {{code}}importnode{{/code}} command.
+
+{{screen}}
+[/]% importnode /gadgets.xml /
+Node imported
+{{/screen}}
+
+== Adding a mixin to a node ==
+
+The {{code}}addmixin{{/code}} command adds a mixin to an existing node.
+
+{{screen}}
+[/gadgets]% addmixin . mix:versionable
+{{/screen}}
+
+== Checkin / checkout of versionable nodes ==
+
+Use the commands {{code}}checkin{{/code}} and {{code}}checkout{{/code}}.
+
+== Disconnecting ==
+
+The {{code}}disconnect{{/code}} command disconnect from the repository.
+
+== Quitting ==
+
+The {{code}}bye{{/code}} command disconnect from the remote shell.

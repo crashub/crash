@@ -1,0 +1,72 @@
+= Groovy command system =
+
+The shell command system is based on the [[Groovy>>http://groovy.codehaus.org/]] language and can easily be extended.
+
+== Groovy file ==
+
+Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell.
+The files are located in the {{code}}/WEB-INF/groovy/commands{{/code}} directory and new files can be added here.
+
+In addition of that there are two special files called {{code}}login.groovy{{/code}} and {{code}}logout.groovy{{/code}} in the
+{{code}}/WEB-INF/groovy{{/code}} directory that are executed upon login and logout of a user. Those files can be studied to
+understand better how the shell works.
+
+== Groovy execution ==
+
+When the user types a command in the sell, the command line is parsed by the [[args4j>>https://args4j.dev.java.net/]] framework
+and injected in the command class. A simple example, the command {{code}}connect -c portal -u root -p gtn portal-system{{/code}}
+creates the connect command instance and args4j injects the options and arguments on the class:
+
+{{code}}
+@Description("Connect to a workspace")
+class connect extends org.crsh.shell.ClassCommand
+{
+
+  @Option(name="-u",aliases=["--username"],usage="user name")
+  def String userName;
+
+  @Option(name="-p",aliases=["--password"],usage="password")
+  def String password;
+
+  @Option(name="-c",aliases=["--container"],usage="portal container name (eXo portal specific)")
+  def String containerName;
+
+  @Argument(required=true,index=0,usage="workspace name")
+  def String workspaceName;
+
+  public Object execute() throws ScriptException {
+    ...
+  }
+}
+{{/code}}
+
+== Shell context ==
+
+A command is a Groovy object and it can access or use the contextual variables. A few variables are maintained by the shell
+and should be considered with caution. The shell also provides a few functions that can be used, those functions defined in
+{{code}}login.groovy{{/code}}
+
+=== Existing context variables ===
+
+* The {{code}}session{{/code}} variable is managed by the {{code}}connect{{/code}} and {{/code}}disconnect{{/code}} commands.
+Commands should be able to use it for accessing JCR session but not update this variable.
+* The {{code}}currentPath{{/code}} variable contains the current path of the shell and it should not be used directly.
+Instead one should use the function {{code}}getCurrentNode(){{/code}} and {{code}}setCurrentNode(Node node){{/code}} to
+update the underlying path.
+
+=== Existing functions ===
+
+* The {{code}}assertConnected(){{/code}} checks that the user is connected. It should be used at the beginning of a command
+that interacs with the session
+* The {{code}}getCurrentNode(){{/code}} returns the current node
+* The {{code}}setCurrentNode(Node node){{/code}} updates the current node
+* The {{code}}findNodeByPath(){{/code}} functions returns a node based on the provided path. If the provided path is null
+then the "/" root path is considered. The path can be either relative or absolute. If the path is relative the current
+node will be used to find the node.
+* The {{code}}formatValue(Value value){{/code}} formats a JCR value into a suitable text value.
+* The {{code}}formatPropertyValue(Property property){{/code}} formats a JCR property value into a suitable text value.
+If the property is multiple then it will return a comma separated list surrounded by square brackets.
+
+== You want to contribute a command? ==
+
+Drop me an email (see my @ on www.julienviet.com).

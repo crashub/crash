@@ -1,1 +1,15 @@
-The master doc
+CRaSH is a shell for [[Java Content Repository>>http://en.wikipedia.org/wiki/Content_repository_API_for_Java]] that comes
+bundled as a war file to deploy in eXo Portal 2.5 or [[GateIn>>http://www.jboss.org/gatein]]. It provides a file system view
+of a repository.
+
+= Interacting with the shell =
+
+{{include document="shell.wiki" /}}
+
+= SCP usage =
+
+{{include document="scp.wiki" /}}
+
+= Extending the shell =
+
+{{include document="extension.wiki" /}}
