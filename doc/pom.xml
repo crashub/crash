@@ -80,6 +80,17 @@
                    <artifactId>docbook</artifactId>
                    <version>1.74.0</version>
                  </dependency>
+                   <dependency>
+                       <groupId>org.gatein.doc</groupId>
+                       <artifactId>gatein-docbook-xslt</artifactId>
+                       <version>1.0.0-CR2</version>
+                   </dependency>
+                   <dependency>
+                       <groupId>org.gatein.doc</groupId>
+                       <artifactId>gatein-jdocbook-style</artifactId>
+                       <version>1.0.0-CR2</version>
+                       <type>jdocbook-style</type>
+                   </dependency>
                </dependencies>
                <configuration>
                    <sourceDocumentName>master.xml</sourceDocumentName>
