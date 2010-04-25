@@ -17,7 +17,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>wikbook</groupId>
+      <groupId>org.wikbook</groupId>
       <artifactId>wikbook.apt</artifactId>
       <version>1.0-GA-SNAPSHOT</version>
     </dependency>
@@ -39,7 +39,7 @@
        <plugins>
 
           <plugin>
-            <groupId>wikbook</groupId>
+            <groupId>org.wikbook</groupId>
             <artifactId>wikbook.maven</artifactId>
             <version>1.0-GA-SNAPSHOT</version>
             <executions>
