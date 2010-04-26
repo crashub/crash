@@ -19,7 +19,7 @@
     <dependency>
       <groupId>org.wikbook</groupId>
       <artifactId>wikbook.apt</artifactId>
-      <version>1.0-GA-SNAPSHOT</version>
+      <version>0.9.0</version>
     </dependency>
   </dependencies>
 
@@ -29,7 +29,7 @@
           <plugin>
             <groupId>org.wikbook</groupId>
             <artifactId>wikbook.maven</artifactId>
-            <version>1.0-GA-SNAPSHOT</version>
+            <version>0.9.0</version>
             <executions>
               <execution>
                 <phase>prepare-package</phase>
