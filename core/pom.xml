@@ -108,7 +108,7 @@
   </dependencies>
   <build>
 
-    <finalName>crsh</finalName>
+    <!--<finalName>crsh</finalName>-->
 
     <testResources>
       <testResource>
@@ -196,38 +196,29 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.6</version>
+            <version>2.5</version>
             <executions>
               <execution>
                 <id>make-javadoc</id>
                 <phase>package</phase>
                 <goals>
-                  <goal>javadoc</goal>
+                  <goal>jar</goal>
                 </goals>
               </execution>
             </executions>
           </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.2-beta-4</version>
-            <configuration>
-              <finalName>crsh-${project.version}</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>src/main/assembly/packaging.xml</descriptor>
-              </descriptors>
-            </configuration>
-            <executions>
-              <execution>
-                <id>make-assembly</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <executions>
+        <execution>
+          <id>attach-sources</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
         </plugins>
       </build>
     </profile>

@@ -23,18 +23,6 @@
     </dependency>
   </dependencies>
 
-  <developers>
-    <developer>
-      <id>changeme</id>
-      <name>Change Me</name>
-      <email>changeme@acme.com</email>
-      <organization>acme</organization>
-      <roles>
-        <role>editor</role>
-      </roles>
-    </developer>
-  </developers>
-
   <build>
        <plugins>
 
@@ -57,7 +45,6 @@
               <destinationFileName>master.xml</destinationFileName>
             </configuration>
           </plugin>
-
            <plugin>
                <groupId>org.jboss.maven.plugins</groupId>
                <artifactId>maven-jdocbook-plugin</artifactId>
@@ -70,7 +57,7 @@
                  <goals>
                    <goal>resources</goal>
                    <goal>generate</goal>
-                   <goal>bundle</goal>
+                   <!--<goal>bundle</goal>-->
                  </goals>
                </execution>
              </executions>
@@ -80,17 +67,6 @@
                    <artifactId>docbook</artifactId>
                    <version>1.74.0</version>
                  </dependency>
-                   <dependency>
-                       <groupId>org.gatein.doc</groupId>
-                       <artifactId>gatein-docbook-xslt</artifactId>
-                       <version>1.0.0-CR2</version>
-                   </dependency>
-                   <dependency>
-                       <groupId>org.gatein.doc</groupId>
-                       <artifactId>gatein-jdocbook-style</artifactId>
-                       <version>1.0.0-CR2</version>
-                       <type>jdocbook-style</type>
-                   </dependency>
                </dependencies>
                <configuration>
                    <sourceDocumentName>master.xml</sourceDocumentName>
@@ -122,6 +98,34 @@
                    </options>
                </configuration>
            </plugin>
+
+           <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-assembly-plugin</artifactId>
+             <!--  We use 2.2-beta-4 otherwise we get the bug:
+             org.apache.maven.artifact.InvalidArtifactRTException: For artifact {org.crsh:crsh.doc:1.0.0-beta5-SNAPSHOT:jar}: An attached artifact must have a different ID than its corresponding main artifact.
+	         at org.apache.maven.project.artifact.AttachedArtifact.<init>(AttachedArtifact.java:51)
+	         at org.apache.maven.project.DefaultMavenProjectHelper.attachArtifact(DefaultMavenProjectHelper.java:53)
+	         at org.apache.maven.plugin.assembly.AbstractAssemblyMojo.createAssembly(AbstractAssemblyMojo.java:290)
+	         -->
+             <version>2.2-beta-4</version>
+             <configuration>
+               <appendAssemblyId>false</appendAssemblyId>
+               <descriptors>
+                 <descriptor>src/main/assembly/packaging.xml</descriptor>
+               </descriptors>
+             </configuration>
+             <executions>
+               <execution>
+                 <id>make-assembly</id>
+                 <phase>package</phase>
+                 <goals>
+                   <goal>single</goal>
+                 </goals>
+               </execution>
+             </executions>
+           </plugin>
+
        </plugins>
    </build>
 
