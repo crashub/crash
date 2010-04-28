@@ -15,21 +15,13 @@
   <name>CRaSH doc</name>
   <description>The CRaSH documentation</description>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.wikbook</groupId>
-      <artifactId>wikbook.apt</artifactId>
-      <version>0.9.0</version>
-    </dependency>
-  </dependencies>
-
   <build>
        <plugins>
 
           <plugin>
             <groupId>org.wikbook</groupId>
             <artifactId>wikbook.maven</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1</version>
             <executions>
               <execution>
                 <phase>prepare-package</phase>
