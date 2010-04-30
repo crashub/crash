@@ -1,0 +1,11 @@
+- integrate SSH login/password with JCR security
+javax.jcr.AccessDeniedException: Access denied []:1[]production:1 for __anonim
+	at org.exoplatform.services.jcr.impl.core.SessionDataManager.readItem(SessionDataManager.java:419)
+	at org.exoplatform.services.jcr.impl.core.SessionDataManager.readItem(SessionDataManager.java:382)
+	at org.exoplatform.services.jcr.impl.core.SessionDataManager.getItem(SessionDataManager.java:359)
+	at org.exoplatform.services.jcr.impl.core.SessionImpl.getItem(SessionImpl.java:537)
+	at org.exoplatform.services.jcr.impl.core.SessionImpl.getItem(SessionImpl.java:99)
+	at org.crsh.connector.sshd.scp.SourceCommand.execute(SourceCommand.java:76)
+	at org.crsh.connector.sshd.scp.SCPCommand.execute(SCPCommand.java:208)
+	at org.crsh.connector.sshd.scp.SCPCommand.run(SCPCommand.java:153)
+	at java.lang.Thread.run(Thread.java:637)
