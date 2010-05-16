@@ -95,6 +95,7 @@
   <modules>
     <module>core</module>
     <module>doc</module>
+    <module>distrib</module>
   </modules>
   
   <build>
@@ -113,16 +114,5 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <profiles>
-    <profile>
-      <id>release</id>
-      <modules>
-        <module>core</module>
-        <module>doc</module>
-        <module>distrib</module>
-      </modules>
-    </profile>
-  </profiles>
 
 </project>
