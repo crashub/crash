@@ -2,9 +2,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>crsh.parent</artifactId>
-    <groupId>org.crsh</groupId>
-    <version>1.0.0-beta5-SNAPSHOT</version>
+    <artifactId>wikbook.docbkx</artifactId>
+    <groupId>org.wikbook</groupId>
+    <version>0.9.12</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
@@ -16,109 +16,60 @@
   <description>The CRaSH documentation</description>
 
   <build>
-       <plugins>
+    <plugins>
 
-          <plugin>
-            <groupId>org.wikbook</groupId>
-            <artifactId>wikbook.maven</artifactId>
-            <version>0.9.1</version>
-            <executions>
-              <execution>
-                <phase>prepare-package</phase>
-                <goals>
-                  <goal>transform</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <sourceDirectory>${pom.basedir}/en/en-US</sourceDirectory>
-              <sourceFileName>master.wiki</sourceFileName>
-              <destinationDirectory>${project.build.directory}/en/en-US</destinationDirectory>
-              <destinationFileName>master.xml</destinationFileName>
-            </configuration>
-          </plugin>
-           <plugin>
-               <groupId>org.jboss.maven.plugins</groupId>
-               <artifactId>maven-jdocbook-plugin</artifactId>
-               <version>2.2.3</version>
-               <extensions>true</extensions>
-             <executions>
-               <execution>
-                 <id>docbook</id>
-                 <phase>package</phase>
-                 <goals>
-                   <goal>resources</goal>
-                   <goal>generate</goal>
-                   <!--<goal>bundle</goal>-->
-                 </goals>
-               </execution>
-             </executions>
-               <dependencies>
-                 <dependency>
-                   <groupId>net.sf.docbook</groupId>
-                   <artifactId>docbook</artifactId>
-                   <version>1.74.0</version>
-                 </dependency>
-               </dependencies>
-               <configuration>
-                   <sourceDocumentName>master.xml</sourceDocumentName>
-                   <sourceDirectory>${project.build.directory}/en</sourceDirectory>
-                   <imageResource>
-                       <directory>${pom.basedir}/en</directory>
-                       <includes>
-                         <include>images/**/*</include>
-                       </includes>
-                   </imageResource>
-                   <formats>
-                       <format>
-                           <formatName>pdf</formatName>
-                           <stylesheetResource>classpath://fo/docbook.xsl</stylesheetResource>
-                           <finalName>book.pdf</finalName>
-                       </format>
-                       <format>
-                           <formatName>html</formatName>
-                           <stylesheetResource>classpath:/html/docbook.xsl</stylesheetResource>
-                           <finalName>index.html</finalName>
-                       </format>
-                   </formats>
-                   <options>
-                       <xincludeSupported>true</xincludeSupported>
-                       <xmlTransformerType>saxon</xmlTransformerType>
-                       <!-- needed for uri-resolvers; can be ommitted if using 'current' uri scheme -->
-                       <!--     could also locate the docbook dependency and inspect its version... -->
-                       <docbookVersion>1.74.0</docbookVersion>
-                   </options>
-               </configuration>
-           </plugin>
+      <!-- Generate the docbook document -->
+      <plugin>
+        <groupId>org.wikbook</groupId>
+        <artifactId>wikbook.maven</artifactId>
+      </plugin>
 
-           <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-assembly-plugin</artifactId>
-             <!--  We use 2.2-beta-4 otherwise we get the bug:
-             org.apache.maven.artifact.InvalidArtifactRTException: For artifact {org.crsh:crsh.doc:1.0.0-beta5-SNAPSHOT:jar}: An attached artifact must have a different ID than its corresponding main artifact.
-	         at org.apache.maven.project.artifact.AttachedArtifact.<init>(AttachedArtifact.java:51)
-	         at org.apache.maven.project.DefaultMavenProjectHelper.attachArtifact(DefaultMavenProjectHelper.java:53)
-	         at org.apache.maven.plugin.assembly.AbstractAssemblyMojo.createAssembly(AbstractAssemblyMojo.java:290)
-	         -->
-             <version>2.2-beta-4</version>
-             <configuration>
-               <appendAssemblyId>false</appendAssemblyId>
-               <descriptors>
-                 <descriptor>src/main/assembly/packaging.xml</descriptor>
-               </descriptors>
-             </configuration>
-             <executions>
-               <execution>
-                 <id>make-assembly</id>
-                 <phase>package</phase>
-                 <goals>
-                   <goal>single</goal>
-                 </goals>
-               </execution>
-             </executions>
-           </plugin>
+      <!-- Unpack resources -->
+     <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-dependency-plugin</artifactId>
+     </plugin>
 
-       </plugins>
+      <!-- Copy the image for the PDF generation -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+      </plugin>
+
+     <!-- -->
+     <plugin>
+       <groupId>com.agilejava.docbkx</groupId>
+       <artifactId>docbkx-maven-plugin</artifactId>
+     </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <!--  We use 2.2-beta-4 otherwise we get the bug:
+        org.apache.maven.artifact.InvalidArtifactRTException: For artifact {org.crsh:crsh.doc:1.0.0-beta5-SNAPSHOT:jar}: An attached artifact must have a different ID than its corresponding main artifact.
+        at org.apache.maven.project.artifact.AttachedArtifact.<init>(AttachedArtifact.java:51)
+        at org.apache.maven.project.DefaultMavenProjectHelper.attachArtifact(DefaultMavenProjectHelper.java:53)
+        at org.apache.maven.plugin.assembly.AbstractAssemblyMojo.createAssembly(AbstractAssemblyMojo.java:290)
+        -->
+        <version>2.2-beta-4</version>
+        <configuration>
+          <appendAssemblyId>false</appendAssemblyId>
+          <descriptors>
+            <descriptor>src/main/assembly/packaging.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
    </build>
 
 </project>

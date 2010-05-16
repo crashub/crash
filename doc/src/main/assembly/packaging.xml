@@ -29,10 +29,10 @@
   <fileSets>
     <fileSet>
       <outputDirectory>.</outputDirectory>
-      <directory>target/docbook/publish</directory>
-      <includes>
-        <include>en-US/**/*</include>
-      </includes>
+      <directory>target/docbkx</directory>
+      <excludes>
+        <exclude>**/*.fo</exclude>
+      </excludes>
     </fileSet>
   </fileSets>
 
