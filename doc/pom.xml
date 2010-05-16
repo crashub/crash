@@ -8,7 +8,7 @@
   <groupId>org.crsh</groupId>
   <artifactId>crsh.doc</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-beta6-SNAPSHOT</version>
+  <version>1.0.0-beta6</version>
 
   <name>CRaSH doc</name>
   <description>The CRaSH documentation</description>
@@ -69,4 +69,10 @@
 
     </plugins>
    </build>
+
+  <scm>
+    <connection>scm:svn:http://wikbook.googlecode.com/svn/tags/1.0.0-beta6</connection>
+    <developerConnection>scm:svn:https://wikbook.googlecode.com/svn/tags/1.0.0-beta6</developerConnection>
+    <url>http://code.google.com/p/wikbook/source/browse/tags/1.0.0-beta6</url>
+  </scm>
 </project>
