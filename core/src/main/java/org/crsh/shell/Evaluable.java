@@ -21,6 +21,8 @@ package org.crsh.shell;
 
 import org.crsh.display.DisplayBuilder;
 import org.crsh.util.CompletionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -30,6 +32,9 @@ import java.util.concurrent.Callable;
  * @version $Revision$
  */
 public class Evaluable implements Callable<ShellResponse> {
+
+  /** . */
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   private final Shell shell;
@@ -48,10 +53,11 @@ public class Evaluable implements Callable<ShellResponse> {
 
   public ShellResponse call() {
 
-    System.out.println("Invoking command");
-
     // Trim
     String s2 = s.trim();
+
+    //
+    log.debug("Invoking command " + s2);
 
     //
     ShellResponse response;
@@ -89,7 +95,7 @@ public class Evaluable implements Callable<ShellResponse> {
     }
 
     //
-    System.out.println("Making handler response callback");
+    log.debug("Making handler response callback");
 
     //
     if (handler != null) {

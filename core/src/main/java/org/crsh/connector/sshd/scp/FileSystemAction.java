@@ -20,6 +20,8 @@
 package org.crsh.connector.sshd.scp;
 
 import org.crsh.fs.FileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -29,13 +31,16 @@ import java.io.IOException;
  */
 abstract class FileSystemAction {
 
+  /** . */
+  private static final Logger log = LoggerFactory.getLogger(FileSystemAction.class);
+
   public static void read(SCPCommand cmd, FileSystem fs) throws IOException {
     cmd.ack();
-    System.out.println("Want to read line");
+    log.debug("Want to read line");
     String line = cmd.readLine();
-    System.out.println("Read line " + line);
+    log.debug("Read line " + line);
     FileSystemAction action = decode(line);
-    System.out.println("action = " + action);
+    log.debug("Action: " + action);
     read(cmd, action, fs);
   }
 
@@ -51,7 +56,7 @@ abstract class FileSystemAction {
       while (true) {
         String nextLine = cmd.readLine();
         FileSystemAction nextAction = decode(nextLine);
-        System.out.println("nextAction = " + nextAction);
+        log.debug("Next action: " + nextAction);
         if (nextAction instanceof FileSystemAction.EndDirectory) {
           fs.endDirectory(directoryName);
           break;
@@ -72,7 +77,7 @@ abstract class FileSystemAction {
       fs.file(file.name, file.length, cmd.read(file.length));
 
       //
-      System.out.println("About to send ack for file");
+      log.debug("About to send ack for file");
       cmd.ack();
       cmd.readAck();
     }

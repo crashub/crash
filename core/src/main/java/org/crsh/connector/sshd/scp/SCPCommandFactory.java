@@ -23,6 +23,8 @@ import org.apache.sshd.server.CommandFactory;
 import org.crsh.connector.sshd.FailCommand;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -30,11 +32,15 @@ import org.kohsuke.args4j.CmdLineParser;
  */
 public class SCPCommandFactory implements CommandFactory {
 
+  /** . */
+  private static final Logger log = LoggerFactory.getLogger(SCPCommandFactory.class);
+
   public Command createCommand(String command) {
     // Just in case
     command = command.trim();
 
-    System.out.println("command = " + command);
+    //
+    log.debug("About to execute shell command " + command);
 
     //
     if (command.startsWith("scp ")) {

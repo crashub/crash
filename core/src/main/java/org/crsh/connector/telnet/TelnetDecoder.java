@@ -26,6 +26,8 @@ import org.crsh.connector.ShellConnector;
 import org.crsh.util.CompletionHandler;
 import org.crsh.util.Input;
 import org.crsh.util.InputDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -34,6 +36,9 @@ import java.io.IOException;
  * @version $Revision$
  */
 public class TelnetDecoder extends InputDecoder {
+
+  /** . */
+  private final Logger log = LoggerFactory.getLogger(TelnetDecoder.class);
 
   /** . */
   private final Connection conn;
@@ -87,9 +92,9 @@ public class TelnetDecoder extends InputDecoder {
       appendData('\n');
     } else if (i >= 0 && i < 128) {
       if (i == 3) {
-        System.out.println("Wanting to cancel evaluation!!!!!!!!!!!");
+        log.debug("Want to cancel evaluation");
         if (connector.cancelEvalutation()) {
-          System.out.println("Evaluation cancelled");
+          log.debug("Evaluation cancelled");
         }
         String s = "\r\n" + connector.getPrompt();
         writeFully(s);
@@ -105,10 +110,10 @@ public class TelnetDecoder extends InputDecoder {
       Input input = next();
       if (input instanceof Input.Chars) {
         String line = ((Input.Chars)input).getValue();
-        System.out.println("Submitting command " + line);
+        log.debug("Submitting command " + line);
         connector.submitEvaluation(line, new CompletionHandler<String>() {
           public void completed(String s) {
-            System.out.println("Command completed with result " + s);
+            log.debug("Command completed with result " + s);
             try {
               writeFully(s);
             } catch (IOException e) {

@@ -20,6 +20,8 @@ package org.crsh.jcr;
 
 import org.crsh.fs.FileSystem;
 import org.crsh.util.Safe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -40,6 +42,9 @@ import java.util.List;
 public class Importer implements FileSystem {
 
   /** . */
+  private static final Logger log = LoggerFactory.getLogger(Importer.class);
+
+  /** . */
   private final ContentHandler handler;
 
   /** . */
@@ -54,7 +59,7 @@ public class Importer implements FileSystem {
     @Override
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
       if (stack.isEmpty()) {
-        System.out.println("Adding prefix " + prefix + " = " + uri);
+        log.debug("Adding prefix mapping " + prefix + " for " + uri);
         handler.startPrefixMapping(prefix, uri);
         prefixes.add(prefix);
       }
@@ -62,7 +67,7 @@ public class Importer implements FileSystem {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-      System.out.println("Creating element " + qName);
+      log.debug("Creating element " + qName);
       handler.startElement(uri, localName, qName, attributes);
       stack.addLast(new EndElement(uri, localName, qName));
     }
@@ -96,7 +101,7 @@ public class Importer implements FileSystem {
       handler.endElement(end.uri, end.localName, end.qName);
       if (stack.isEmpty()) {
         for (String prefix : prefixes) {
-          System.out.println("Removing prefix " + prefix);
+          log.debug("Removing prefix mapping " + prefix);
           handler.endPrefixMapping(prefix);
         }
         prefixes.clear();

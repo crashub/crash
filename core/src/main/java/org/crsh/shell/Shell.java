@@ -25,6 +25,8 @@ import org.crsh.jcr.NodeMetaClass;
 import org.crsh.util.CompletionHandler;
 import org.crsh.util.ImmediateFuture;
 import org.crsh.util.TimestampedObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +43,9 @@ public class Shell {
     // Force integration of node meta class
     NodeMetaClass.setup();
   }
+
+  /** . */
+  private static final Logger log = LoggerFactory.getLogger(Shell.class);
 
   /** . */
   private final GroovyShell groovyShell;
@@ -83,7 +88,7 @@ public class Shell {
           closure = biltooo(script.getTimestamp(), commandClazz);
           commands.put(name, closure);
         } else {
-          System.out.println("Parsed script does not implements " + ShellCommand.class.getName());
+          log.error("Parsed script does not implements " + ShellCommand.class.getName());
         }
       }
     }
@@ -161,7 +166,7 @@ public class Shell {
   public Future<ShellResponse> submitEvaluation(String s, CompletionHandler<ShellResponse> handler) {
     Evaluable callable = new Evaluable(this, s, handler);
     if (executor != null) {
-      System.out.println("Submitting to executor");
+      log.debug("Submitting to executor");
       return executor.submit(callable);
     } else {
       ShellResponse response = callable.call();

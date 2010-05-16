@@ -76,7 +76,7 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
    * @throws IOException any io exception
    */
   final InputStream read(final int length) throws IOException {
-    System.out.println("Returning stream for length " + length);
+    log.debug("Returning stream for length " + length);
     return new InputStream() {
 
       /** How many we've read so far. */
@@ -109,7 +109,7 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
       case 0:
         break;
       case 1:
-        System.out.println("Received warning: " + readLine());
+        log.debug("Received warning: " + readLine());
         break;
       case 2:
         throw new IOException("Received nack: " + readLine());

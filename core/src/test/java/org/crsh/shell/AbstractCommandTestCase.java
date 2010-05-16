@@ -22,6 +22,8 @@ package org.crsh.shell;
 import groovy.lang.GroovyShell;
 import org.crsh.AbstractRepositoryTestCase;
 import org.crsh.TestShellContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -31,6 +33,9 @@ import javax.jcr.NodeIterator;
  * @version $Revision$
  */
 public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase {
+
+  /** . */
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   protected Shell shell;
@@ -83,7 +88,7 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
     {
       Node n = it.nextNode();
       if(!n.getName().equals("jcr:system")) {
-        System.out.println("removed " + n.getPath());
+        log.debug("Removed node " + n.getPath());
         n.remove();
       }
     }

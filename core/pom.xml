@@ -176,7 +176,9 @@
                 <phase>install</phase>
                 <configuration>
                   <tasks>
-                    <copy todir="${HOME}/java/gatein/portal/trunk/packaging/pkg/target/tomcat/webapps/" file="${project.build.directory}/crsh.war">
+                    <copy
+                        tofile="${HOME}/java/gatein/portal/trunk/packaging/pkg/target/tomcat/webapps/crsh.war"
+                        file="${project.build.directory}/${project.build.finalName}.war">
                     </copy>
                   </tasks>
                 </configuration>
