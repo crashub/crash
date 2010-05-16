@@ -3,7 +3,7 @@
   <groupId>org.crsh</groupId>
   <artifactId>crsh.parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-beta6</version>
+  <version>1.0.0-beta7-SNAPSHOT</version>
 
   <name>CRaSH parent</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
@@ -22,9 +22,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://crsh.googlecode.com/svn/tags/1.0.0-beta6</connection>
-    <developerConnection>scm:svn:https://crsh.googlecode.com/svn/tags/1.0.0-beta6</developerConnection>
-    <url>http://code.google.com/p/crsh/source/browse/tags/1.0.0-beta6</url>
+    <connection>scm:svn:http://crsh.googlecode.com/svn/trunk/</connection>
+    <developerConnection>scm:svn:https://crsh.googlecode.com/svn/trunk/</developerConnection>
+    <url>http://code.google.com/p/crsh/source/browse/</url>
   </scm>
 
   <distributionManagement>
@@ -69,25 +69,25 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.core</artifactId>
-        <version>1.0.0-beta6</version>
+        <version>1.0.0-beta7-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.core</artifactId>
-        <version>1.0.0-beta6</version>
+        <version>1.0.0-beta7-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.core</artifactId>
-        <version>1.0.0-beta6</version>
+        <version>1.0.0-beta7-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.0.0-beta6</version>
+        <version>1.0.0-beta7-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
