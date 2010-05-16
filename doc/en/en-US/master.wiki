@@ -10,6 +10,10 @@ of a repository.
 
 {{include document="scp.wiki" /}}
 
+= Configuring the shell =
+
+{{include document="configuration.wiki" /}}
+
 = Extending the shell =
 
 {{include document="extension.wiki" /}}

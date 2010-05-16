@@ -5,10 +5,10 @@ The shell command system is based on the [[Groovy>>http://groovy.codehaus.org/]]
 == Groovy file ==
 
 Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell.
-The files are located in the {{code}}/WEB-INF/groovy/commands{{/code}} directory and new files can be added here.
+The files are located in the ///WEB-INF/groovy/commands// directory and new files can be added here.
 
-In addition of that there are two special files called {{code}}login.groovy{{/code}} and {{code}}logout.groovy{{/code}} in the
-{{code}}/WEB-INF/groovy{{/code}} directory that are executed upon login and logout of a user. Those files can be studied to
+In addition of that there are two special files called //login.groovy// and //logout.groovy// in the
+///WEB-INF/groovy// directory that are executed upon login and logout of a user. Those files can be studied to
 understand better how the shell works.
 
 == Groovy execution ==
@@ -44,7 +44,7 @@ class connect extends org.crsh.shell.ClassCommand
 
 A command is a Groovy object and it can access or use the contextual variables. A few variables are maintained by the shell
 and should be considered with caution. The shell also provides a few functions that can be used, those functions defined in
-{{code}}login.groovy{{/code}}
+//login.groovy//
 
 === Existing context variables ===
 

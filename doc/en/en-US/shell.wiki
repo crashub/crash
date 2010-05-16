@@ -18,7 +18,7 @@ It is Mon Nov 23 15:53:44 CET 2009 now.
 %
 {{/screen}}
 
-SSH connection is done on port 2000 with the password //crash//:
+SSH connection is done on port 2000 with the password **//crash//**:
 
 {{screen}}
 juliens-macbook-pro:~ julien$ ssh -p 2000 -l root localhost
@@ -147,7 +147,7 @@ Property updated
 {{/screen}}
 
 When a property is created and does not have a property descriptor that constraint its type, you can specify it
-with the -t option
+with the //-t// option
 
 {{screen}}
 [/]% set -t LONG long_property 3

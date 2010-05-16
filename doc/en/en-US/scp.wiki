@@ -2,16 +2,16 @@ Secure copy can be used to import or export content.
 
 = Export a JCR node =
 
-The following command will export the node {{code}}/gadgets{{/code}} in the repository {{code}}portal-system{{/code}}
-of the portal container {{code}}portal{{/code}}:
+The following command will export the node ///gadgets// in the repository //portal-system//
+of the portal container //portal//:
 
 {{screen}}
 scp -P 2000 root@localhost:portal:portal-system:/gadgets .
 {{/screen}}
 
-The node will be exported as {{code}}gadgets.xml{{/code}}.
+The node will be exported as //gadgets.xml//.
 
-Note that the portal container name is used for GateIn. If you do ommit it, then the root container will be used.
+Note that the portal container name is used for GateIn. If you do omit it, then the root container will be used.
 
 = Import a JCR node =
 
