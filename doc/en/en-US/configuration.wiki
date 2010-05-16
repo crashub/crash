@@ -1,0 +1,75 @@
+CRaSH can be configured by tweaking the //web.xml// file of the CRaSH web archive.
+
+= Secure the SSH access =
+
+The username and password of the SSH server can be changed by updating the {{code}}ssh.username{{/code}} and
+{{code}}ssh.password{{/code}} parameters:
+
+{{code language=xml}}
+<context-param>
+  <param-name>ssh.username</param-name>
+  <param-value>root</param-value>
+  <description>The user name for authenticating via SSH</description>
+</context-param>
+<context-param>
+  <param-name>ssh.password</param-name>
+  <param-value>crash</param-value>
+  <description>The password for authenticating via SSH</description>
+</context-param>
+{{/code}}
+
+Note that to fully secure the server, you should remove the unauthenticated telnet access as describe below.
+
+= Change the SSH server key =
+
+The key can be changed by replacing the file //WEB-INF/sshd/hostkey.pem//. Alternatively you can configure the server
+to use an external file by using the {{code}}ssh.keypath{{/code}} parameter. Uncomment the XML section and change the path to the
+key file.
+
+{{code language=xml}}
+<!--
+<context-param>
+  <param-name>ssh.keypath</param-name>
+  <param-value>/path/to/the/key/file</param-value>
+  <description>The path to the key file</description>
+</context-param>
+-->
+{{/code}}
+
+= Change the ports of the telnet or SSH server =
+
+The ports of the server are parameterized by the {{code}}ssh.port{{/code}} and {{code}}telnet.port{{/code}} parameters.
+
+{{code language=xml}}
+<context-param>
+  <param-name>ssh.port</param-name>
+  <param-value>2000</param-value>
+  <description>The SSH port</description>
+</context-param>
+{{/code}}
+
+{{code language=xml}}
+<context-param>
+  <param-name>telnet.port</param-name>
+  <param-value>5000</param-value>
+  <description>The telnet port</description>
+</context-param>
+{{/code}}
+
+= Remove the telnet or SSH access =
+
+To remove the telnet access, remove or comment the following XML:
+
+{{code language=xml}}
+<listener>
+  <listener-class>org.crsh.connector.telnet.TelnetLifeCycle</listener-class>
+</listener>
+{{/code}}
+
+To remove the SSH access, remove or comment the following XML:
+
+{{code language=xml}}
+<listener>
+  <listener-class>org.crsh.connector.sshd.SSHLifeCycle</listener-class>
+</listener>
+{{/code}}
