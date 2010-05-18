@@ -13,31 +13,30 @@
   <name>CRaSH distrib</name>
   <description>The CRaSH distribution</description>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.core</artifactId>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.core</artifactId>
-      <classifier>javadoc</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.core</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.doc</artifactId>
-    </dependency>
-  </dependencies>
-
   <profiles>
       <profile>
         <id>release</id>
+        <dependencies>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.core</artifactId>
+            <type>war</type>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.core</artifactId>
+            <classifier>sources</classifier>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.doc</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.core</artifactId>
+            <classifier>javadoc</classifier>
+          </dependency>
+        </dependencies>
         <build>
           <plugins>
             <plugin>

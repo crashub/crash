@@ -29,7 +29,7 @@
   <fileSets>
     <fileSet>
       <outputDirectory>.</outputDirectory>
-      <directory>target/docbkx</directory>
+      <directory>target/wikbook/output</directory>
       <excludes>
         <exclude>**/*.fo</exclude>
       </excludes>

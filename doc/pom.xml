@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>wikbook.docbkx</artifactId>
-    <groupId>org.wikbook</groupId>
-    <version>0.9.12</version>
+    <artifactId>crsh.parent</artifactId>
+    <groupId>org.crsh</groupId>
+    <version>1.0.0-beta7-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
@@ -13,31 +13,124 @@
   <name>CRaSH doc</name>
   <description>The CRaSH documentation</description>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.wikbook</groupId>
+      <artifactId>wikbook.docbkxstyle</artifactId>
+      <version>0.9.15</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
 
-      <!-- Generate the docbook document -->
+      <!-- The wikbook maven plugin generates the docbook document from the wiki source -->
       <plugin>
         <groupId>org.wikbook</groupId>
         <artifactId>wikbook.maven</artifactId>
+        <version>0.9.15</version>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>transform</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <sourceDirectory>${pom.basedir}/src/main/wikbook/en/en-US</sourceDirectory>
+          <sourceFileName>book.wiki</sourceFileName>
+          <destinationDirectory>${project.build.directory}/wikbook/src</destinationDirectory>
+          <destinationFileName>index.xml</destinationFileName>
+          <emitDoctype>false</emitDoctype>
+        </configuration>
       </plugin>
 
-      <!-- Unpack resources -->
+      <!-- Unpacks the docbook style resources for the docbkx plugin -->
      <plugin>
        <groupId>org.apache.maven.plugins</groupId>
        <artifactId>maven-dependency-plugin</artifactId>
+       <executions>
+         <execution>
+           <id>a</id>
+           <phase>prepare-package</phase>
+           <goals>
+             <goal>unpack-dependencies</goal>
+           </goals>
+           <configuration>
+             <includeGroupIds>org.wikbook</includeGroupIds>
+             <includeArtifactIds>wikbook.docbkxstyle</includeArtifactIds>
+             <excludes>META-INF/**</excludes>
+             <outputDirectory>${project.build.directory}/wikbook/src/resources</outputDirectory>
+           </configuration>
+         </execution>
+       </executions>
      </plugin>
 
-      <!-- Copy the image for the PDF generation -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-      </plugin>
-
-     <!-- -->
+     <!-- Dockbx plugin that generates content -->
      <plugin>
        <groupId>com.agilejava.docbkx</groupId>
        <artifactId>docbkx-maven-plugin</artifactId>
+       <version>2.0.7</version>
+       <executions>
+         <execution>
+           <goals>
+             <goal>generate-html</goal>
+             <goal>generate-pdf</goal>
+           </goals>
+           <phase>package</phase>
+           <configuration>
+             <sourceDirectory>${project.build.directory}/wikbook/src</sourceDirectory>
+             <targetDirectory>${project.build.directory}/wikbook/output</targetDirectory>
+
+             <!-- HTML -->
+             <htmlCustomization>${project.build.directory}/wikbook/src/resources/xsl/html.xsl</htmlCustomization>
+             <htmlStylesheet>css/html.css</htmlStylesheet>
+
+             <!-- PDF -->
+             <foCustomization>${project.build.directory}/wikbook/src/resources/xsl/fopdf.xsl</foCustomization>
+             <imgSrcPath>${pom.basedir}/src/main/wikbook/</imgSrcPath>
+
+             <!-- Highlight source code -->
+             <highlightSource>1</highlightSource>
+
+             <!--
+               |  See http://www.sagehill.net/docbookxsl/AnnotateListing.html
+               |  Callouts on imported text
+               -->
+             <useExtensions>1</useExtensions>
+             <calloutsExtension>1</calloutsExtension>
+
+             <!-- Copy the image for HTML-->
+             <postProcess>
+
+               <copy todir="${project.build.directory}/wikbook/output/images">
+                 <fileset dir="${pom.basedir}/src/main/wikbook/images">
+                   <include name="**" />
+                 </fileset>
+               </copy>
+               <copy todir="${project.build.directory}/wikbook/output">
+                 <fileset dir="${project.build.directory}/wikbook/src/resources">
+                   <include name="**/*.css" />
+                   <include name="**/*.png" />
+                   <include name="**/*.gif" />
+                   <include name="**/*.jpg" />
+                 </fileset>
+               </copy>
+
+             </postProcess>
+
+           </configuration>
+         </execution>
+       </executions>
+       <dependencies>
+         <dependency>
+           <groupId>org.docbook</groupId>
+           <artifactId>docbook-xml</artifactId>
+           <version>4.4</version>
+           <scope>runtime</scope>
+         </dependency>
+       </dependencies>
      </plugin>
 
       <plugin>
