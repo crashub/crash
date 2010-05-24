@@ -102,10 +102,10 @@ public class Connector {
     submitEvaluation(request, null);
   }
 
-  public void submitEvaluation(String request, final ConnectorResponseContext handler) {
+  public void submitEvaluation(final String request, final ConnectorResponseContext handler) {
 
-    // The response context bridge
-    ShellResponseContext responseContext = new ShellResponseContext() {
+    // The response context
+    final ShellResponseContext responseContext = new ShellResponseContext() {
       public String readLine(String msg) {
         return handler.readLine(msg);
       }
@@ -131,7 +131,11 @@ public class Connector {
           }
         };
       } else {
-        callable = shell.doSubmitEvaluation(request, responseContext);
+        callable = new Callable<ShellResponse>() {
+          public ShellResponse call() throws Exception {
+            return shell.evaluate(request, responseContext);
+          }
+        };
       }
 
       //

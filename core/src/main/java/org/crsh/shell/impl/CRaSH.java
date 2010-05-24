@@ -21,8 +21,10 @@ package org.crsh.shell.impl;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptCommand;
 import org.crsh.command.ShellCommand;
+import org.crsh.display.DisplayBuilder;
 import org.crsh.jcr.NodeMetaClass;
 import org.crsh.shell.*;
 import org.crsh.util.TimestampedObject;
@@ -30,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -146,9 +149,8 @@ public class CRaSH implements Shell {
     groovyShell.evaluate(script, "/groovy/logout.groovy");
   }
 
-  public ShellResponse evaluate(String s) {
-    Evaluable evaluable = new Evaluable(this, s, null);
-    return evaluable.call();
+  public ShellResponse evaluate(String request) {
+    return evaluate(request, null);
   }
 
   // Shell implementation **********************************************************************************************
@@ -161,7 +163,52 @@ public class CRaSH implements Shell {
     return (String)groovyShell.evaluate("prompt();");
   }
 
-  public Callable<ShellResponse> doSubmitEvaluation(String request, ShellResponseContext responseContext) {
-    return new Evaluable(this, request, responseContext);
+  public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
+    // Trim
+    String s2 = request.trim();
+
+    //
+    log.debug("Invoking command " + s2);
+
+    //
+    ShellResponse response;
+    if (s2.length() > 0) {
+      try {
+        // We'll have at least one chunk
+        List<String> chunks = LineFormat.format(s2);
+
+        // Get command
+        ShellCommand cmd = getClosure(chunks.get(0));
+
+        //
+        CommandContext ctx = new CommandContextImpl(responseContext, attributes);
+
+        //
+        if (cmd != null) {
+          // Build args
+          String[] args = new String[chunks.size() - 1];
+          chunks.subList(1, chunks.size()).toArray(args);
+          Object o = cmd.execute(ctx, args);
+          if (o instanceof DisplayBuilder) {
+            response = new ShellResponse.Display(((DisplayBuilder) o).getElements());
+          } else if (o != null) {
+            response = new ShellResponse.Display(o.toString());
+          } else {
+            response = new ShellResponse.Ok();
+          }
+
+        } else {
+          response = new ShellResponse.UnkownCommand(chunks.get(0));
+        }
+      }
+      catch (Throwable t) {
+        response = new ShellResponse.Error(ErrorType.EVALUATION, t);
+      }
+    } else {
+      response = new ShellResponse.NoCommand();
+    }
+
+    //
+    return response;
   }
 }

@@ -29,7 +29,7 @@ public interface Shell {
 
   String getPrompt();
 
-  Callable<ShellResponse> doSubmitEvaluation(String request, ShellResponseContext responseContext);
+  ShellResponse evaluate(String request, ShellResponseContext responseContext);
 
   void doClose();
 

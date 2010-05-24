@@ -102,6 +102,10 @@ class CommandContextImpl implements CommandContext {
   }
 
   public String readLine(String msg) {
-    return responseContext.readLine(msg);
+    if (responseContext != null) {
+      return responseContext.readLine(msg);
+    } else {
+      throw new IllegalStateException("The command does not have access to console line reading");
+    }
   }
 }
