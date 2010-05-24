@@ -19,7 +19,7 @@ creates the connect command instance and args4j injects the options and argument
 
 {{code}}
 @Description("Connect to a workspace")
-class connect extends org.crsh.shell.ClassCommand
+class connect extends org.crsh.command.ClassCommand
 {
 
   @Option(name="-u",aliases=["--username"],usage="user name")

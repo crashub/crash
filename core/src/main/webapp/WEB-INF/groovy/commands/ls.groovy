@@ -1,10 +1,10 @@
 import org.crsh.display.DisplayBuilder;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
-import org.crsh.shell.Description;
+import org.crsh.command.Description;
 
 @Description("List the content of a node")
-public class ls extends org.crsh.shell.ClassCommand {
+public class ls extends org.crsh.command.ClassCommand {
 
   @Argument(required=false,index=0,usage="Path of the node content to list")
   def String path;

@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.command;
 
 import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
@@ -24,7 +24,6 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
 
 import java.io.StringWriter;
 

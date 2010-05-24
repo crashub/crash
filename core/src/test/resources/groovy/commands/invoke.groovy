@@ -1,11 +1,11 @@
-import org.crsh.shell.Description;
+import org.crsh.command.Description;
 import org.kohsuke.args4j.Argument;
-import org.crsh.shell.Description;
-import org.crsh.shell.ScriptException;
+import org.crsh.command.Description;
+import org.crsh.command.ScriptException;
 import java.lang.reflect.Method;
 
 @Description("Invoke a static method")
-public class invoke extends org.crsh.shell.ClassCommand {
+public class invoke extends org.crsh.command.ClassCommand {
 
   @Argument(required=false,index=0,usage="The fqn of the class to resolve")
   def String className;

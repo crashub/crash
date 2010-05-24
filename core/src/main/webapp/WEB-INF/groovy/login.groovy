@@ -1,4 +1,4 @@
-import org.crsh.shell.ScriptException;
+import org.crsh.command.ScriptException;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.ValueFormatException;

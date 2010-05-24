@@ -2,10 +2,10 @@ import org.kohsuke.args4j.Argument;
 import javax.jcr.query.Query;
 import org.crsh.display.DisplayBuilder;
 import org.kohsuke.args4j.Option;
-import org.crsh.shell.Description;
+import org.crsh.command.Description;
 
 @Description("Executes a query with the XPATH dialect, by default results are limited to 5 ")
-public class select extends org.crsh.shell.ClassCommand {
+public class select extends org.crsh.command.ClassCommand {
 
   @Option(name="-o",aliases=["--offset"],usage="The result offset")
   def Integer offset = 0;

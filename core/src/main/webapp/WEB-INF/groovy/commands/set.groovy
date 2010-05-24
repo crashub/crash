@@ -1,13 +1,13 @@
 import org.crsh.jcr.PropertyType;
-import org.crsh.shell.ScriptException;
+import org.crsh.command.ScriptException;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import javax.jcr.Node;
 import javax.jcr.Property;
-import org.crsh.shell.Description;
+import org.crsh.command.Description;
 
 @Description("Updates a property of a node")
-public class set extends org.crsh.shell.ClassCommand {
+public class set extends org.crsh.command.ClassCommand {
 
   @Argument(required=false,index=0,usage="The path of the property to alter")
   def String propertyPath;

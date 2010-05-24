@@ -2,12 +2,12 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
-import org.crsh.shell.ScriptException;
 import org.kohsuke.args4j.Argument;
-import org.crsh.shell.Description;
+import org.crsh.command.ScriptException;
+import org.crsh.command.Description;
 
 @Description("copy a node to another")
-public class cp extends org.crsh.shell.ClassCommand {
+public class cp extends org.crsh.command.ClassCommand {
 
   @Argument(required=true,index=0,usage="The path of the source node to copy")
   def String source;

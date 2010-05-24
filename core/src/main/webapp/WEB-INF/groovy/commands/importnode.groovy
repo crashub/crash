@@ -1,14 +1,14 @@
-import org.crsh.shell.ScriptException;
+import org.crsh.command.ScriptException;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.util.Calendar;
 import javax.jcr.ImportUUIDBehavior;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
-import org.crsh.shell.Description;
+import org.crsh.command.Description;
 
 @Description("Import a node from an nt file")
-public class importnode extends org.crsh.shell.ClassCommand {
+public class importnode extends org.crsh.command.ClassCommand {
 
   @Argument(required=true,index=0,usage="Path of the nt:file containing the content to import")
   def String srcPath;

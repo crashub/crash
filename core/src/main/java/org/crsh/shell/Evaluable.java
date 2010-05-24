@@ -19,6 +19,7 @@
 
 package org.crsh.shell;
 
+import org.crsh.command.ShellCommand;
 import org.crsh.display.DisplayBuilder;
 import org.crsh.util.CompletionHandler;
 import org.slf4j.Logger;

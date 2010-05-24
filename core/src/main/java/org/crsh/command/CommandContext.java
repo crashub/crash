@@ -16,14 +16,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+
+package org.crsh.command;
+
+import java.util.HashMap;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellCommand {
-
-  Object execute(CommandContext context, String... args) throws ScriptException;
-
+public class CommandContext extends HashMap<String, Object> {
 }

@@ -4,10 +4,10 @@ import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
-import org.crsh.shell.Description;
+import org.crsh.command.Description;
 
 @Description("Provides basic help")
-class help extends org.crsh.shell.ClassCommand
+class help extends org.crsh.command.ClassCommand
 {
 
   /** . */

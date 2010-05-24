@@ -18,6 +18,8 @@
  */
 package org.crsh.shell;
 
+import org.crsh.command.ScriptException;
+
 import java.util.LinkedList;
 import java.util.List;
 

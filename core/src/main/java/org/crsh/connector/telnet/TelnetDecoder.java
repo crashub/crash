@@ -64,7 +64,7 @@ public class TelnetDecoder extends InputDecoder {
     writeFully(welcome);
 
     // Go to ready state
-    this.status = TelnetStatus.READING_INPUT;
+    this.status = TelnetStatus.READY;
 
     //
     while (status != TelnetStatus.SHUTDOWN) {

@@ -23,6 +23,9 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.crsh.command.ClassCommand;
+import org.crsh.command.CommandContext;
+import org.crsh.command.ScriptCommand;
 
 import java.util.Arrays;
 
@@ -50,7 +53,7 @@ public class ShellCommandTestCase extends TestCase {
   }
 
   public void testOptionInjectionInCommandClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.shell.ClassCommand { " +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
       "@org.kohsuke.args4j.Option(name=\"-str\") def String str = 'default value';" +
       "public Object execute() {" +
       "return str;" +
@@ -63,7 +66,7 @@ public class ShellCommandTestCase extends TestCase {
   }
 
   public void testArgumentInjectionInCommandClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.shell.ClassCommand { " +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
       "@org.kohsuke.args4j.Argument def String str = 'default value';" +
       "public Object execute() {" +
       "return str;" +
@@ -76,7 +79,7 @@ public class ShellCommandTestCase extends TestCase {
   }
 
   public void testContextAccessInCommandClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.shell.ClassCommand { " +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
       "public Object execute() {" +
       "return bar;" +
       "}" +
@@ -92,7 +95,7 @@ public class ShellCommandTestCase extends TestCase {
   }
 
   public void testClosureInvocationInClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.shell.ClassCommand { " +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
       "public Object execute() {" +
       "return bar();" +
       "}" +
@@ -109,7 +112,7 @@ public class ShellCommandTestCase extends TestCase {
   }
 
   public void testArgumentQuoteInClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.shell.AnyArgumentClassCommand { " +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.AnyArgumentClassCommand { " +
       "public Object execute() {" +
       "return arguments;" +
       "}" +

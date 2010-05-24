@@ -16,23 +16,52 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.command;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import groovy.lang.Binding;
+import groovy.lang.Closure;
+import groovy.lang.MissingPropertyException;
+import groovy.lang.Script;
 
 /**
- * The command description.
- *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Description {
+public abstract class ScriptCommand extends Script implements ShellCommand {
 
-  String value();
+  @Override
+  public Object getProperty(String property) {
+    try {
+      return super.getProperty(property);
+    }
+    catch (MissingPropertyException e) {
+      return null;
+    }
+  }
+
+  public Object execute(CommandContext context, String... args) throws ScriptException {
+
+    // Set up current binding
+    Binding binding = new Binding(context);
+
+    // Set the args on the script
+    binding.setProperty("args", args);
+
+    //
+    setBinding(binding);
+
+    //
+    Object res = run();
+
+    // Evaluate the closure
+    if (res instanceof Closure) {
+      Closure closure = (Closure)res;
+      res = closure.call(args);
+    }
+
+    //
+    return res;
+  }
+
 
 }

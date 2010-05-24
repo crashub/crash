@@ -2,11 +2,11 @@ import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
-import org.crsh.shell.Description;
+import org.crsh.command.Description;
 import org.crsh.jcr.JCR;
 
 @Description("Connect to a workspace")
-class connect extends org.crsh.shell.ClassCommand
+class connect extends org.crsh.command.ClassCommand
 {
 
   @Option(name="-u",aliases=["--username"],usage="user name")

@@ -16,52 +16,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
-
-import groovy.lang.Binding;
-import groovy.lang.Closure;
-import groovy.lang.MissingPropertyException;
-import groovy.lang.Script;
+package org.crsh.command;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ScriptCommand extends Script implements ShellCommand {
+public class ScriptException extends Exception {
 
-  @Override
-  public Object getProperty(String property) {
-    try {
-      return super.getProperty(property);
-    }
-    catch (MissingPropertyException e) {
-      return null;
-    }
+  public ScriptException(String message) {
+    super(message);
   }
 
-  public Object execute(CommandContext context, String... args) throws ScriptException {
-
-    // Set up current binding
-    Binding binding = new Binding(context);
-
-    // Set the args on the script
-    binding.setProperty("args", args);
-
-    //
-    setBinding(binding);
-
-    //
-    Object res = run();
-
-    // Evaluate the closure
-    if (res instanceof Closure) {
-      Closure closure = (Closure)res;
-      res = closure.call(args);
-    }
-
-    //
-    return res;
+  public ScriptException(String message, Throwable cause) {
+    super(message, cause);
   }
-
-
 }

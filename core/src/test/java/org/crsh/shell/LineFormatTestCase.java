@@ -19,6 +19,7 @@
 package org.crsh.shell;
 
 import junit.framework.TestCase;
+import org.crsh.command.ScriptException;
 
 import java.util.Arrays;
 

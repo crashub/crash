@@ -1,7 +1,7 @@
-import org.crsh.shell.Description;
+import org.crsh.command.Description;
 
 @Description("Disconnect from the current repository")
-public class disconnect extends org.crsh.shell.ClassCommand {
+public class disconnect extends org.crsh.command.ClassCommand {
 
   public Object execute() throws ScriptException {
     assertConnected();
