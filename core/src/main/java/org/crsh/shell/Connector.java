@@ -96,10 +96,10 @@ public class Connector {
   public void submitEvaluation(String request, final ConnectorResponseContext handler) {
 
     //
-    CompletionHandler<ShellResponse> responseHandler = new CompletionHandler<ShellResponse>() {
-      public void completed(ShellResponse shellResponse) {
+    ShellResponseContext responseContext = new ShellResponseContext() {
+      public void completed(ShellResponse response) {
         if (status == ConnectorStatus.EVALUATING) {
-          String ret = update(shellResponse);
+          String ret = update(response);
           if (handler != null) {
             handler.completed(ret);
           }
@@ -123,7 +123,7 @@ public class Connector {
         futureResponse = new ImmediateFuture<ShellResponse>(new ShellResponse.Ok());
       } else {
         // Evaluate
-        futureResponse = shell.doSubmitEvaluation(request, responseHandler);
+        futureResponse = shell.doSubmitEvaluation(request, responseContext);
       }
     }
   }

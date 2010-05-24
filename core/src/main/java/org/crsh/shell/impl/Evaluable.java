@@ -23,6 +23,7 @@ import org.crsh.command.ShellCommand;
 import org.crsh.display.DisplayBuilder;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
+import org.crsh.shell.ShellResponseContext;
 import org.crsh.util.CompletionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +47,9 @@ class Evaluable implements Callable<ShellResponse> {
   private final String s;
 
   /** . */
-  private final CompletionHandler<ShellResponse> handler;
+  private final ShellResponseContext handler;
 
-  public Evaluable(CRaSH shell, String s, CompletionHandler<ShellResponse> handler) {
+  public Evaluable(CRaSH shell, String s, ShellResponseContext handler) {
     this.shell = shell;
     this.s = s;
     this.handler = handler;

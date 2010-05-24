@@ -19,20 +19,14 @@
 
 package org.crsh.shell;
 
-import org.crsh.util.CompletionHandler;
-
-import java.util.concurrent.Future;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface Shell {
+public interface ShellResponseContext {
 
-  String getPrompt();
+  void completed(ShellResponse response);
 
-  Future<ShellResponse> doSubmitEvaluation(String request, ShellResponseContext responseContext);
-
-  void doClose();
+  // String prompt(String s);
 
 }

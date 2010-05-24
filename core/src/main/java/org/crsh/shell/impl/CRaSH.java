@@ -24,12 +24,8 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptCommand;
 import org.crsh.command.ShellCommand;
-import org.crsh.shell.Shell;
 import org.crsh.jcr.NodeMetaClass;
-import org.crsh.shell.Resource;
-import org.crsh.shell.ShellContext;
-import org.crsh.shell.ShellResponse;
-import org.crsh.util.CompletionHandler;
+import org.crsh.shell.*;
 import org.crsh.util.ImmediateFuture;
 import org.crsh.util.TimestampedObject;
 import org.slf4j.Logger;
@@ -166,17 +162,6 @@ public class CRaSH implements Shell {
     return evaluable.call();
   }
 
-  public Future<ShellResponse> submitEvaluation(String s, CompletionHandler<ShellResponse> handler) {
-    Evaluable callable = new Evaluable(this, s, handler);
-    if (executor != null) {
-      log.debug("Submitting to executor");
-      return executor.submit(callable);
-    } else {
-      ShellResponse response = callable.call();
-      return new ImmediateFuture<ShellResponse>(response);
-    }
-  }
-
   // Shell implementation **********************************************************************************************
 
   public void doClose() {
@@ -187,7 +172,14 @@ public class CRaSH implements Shell {
     return (String)groovyShell.evaluate("prompt();");
   }
 
-  public Future<ShellResponse> doSubmitEvaluation(String request, CompletionHandler<ShellResponse> responseHandler) {
-    return submitEvaluation(request, responseHandler);
+  public Future<ShellResponse> doSubmitEvaluation(String request, ShellResponseContext responseContext) {
+    Evaluable callable = new Evaluable(this, request, responseContext);
+    if (executor != null) {
+      log.debug("Submitting to executor");
+      return executor.submit(callable);
+    } else {
+      ShellResponse response = callable.call();
+      return new ImmediateFuture<ShellResponse>(response);
+    }
   }
 }
