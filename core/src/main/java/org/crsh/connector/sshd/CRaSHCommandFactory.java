@@ -20,7 +20,9 @@ package org.crsh.connector.sshd;
 
 import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
-import org.crsh.shell.ShellBuilder;
+import org.crsh.shell.ShellFactory;
+
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -29,16 +31,20 @@ import org.crsh.shell.ShellBuilder;
 public class CRaSHCommandFactory implements Factory<Command> {
 
   /** . */
-  private final ShellBuilder builder;
+  final ShellFactory builder;
 
-  public CRaSHCommandFactory(ShellBuilder builder) {
+  /** . */
+  final ExecutorService executor;
+
+  public CRaSHCommandFactory(ShellFactory builder, ExecutorService executor) {
     if (builder == null) {
       throw new NullPointerException("No null builder accepted");
     }
     this.builder = builder;
+    this.executor = executor;
   }
 
   public Command create() {
-    return new CRaSHCommand(builder);
+    return new CRaSHCommand(this);
   }
 }

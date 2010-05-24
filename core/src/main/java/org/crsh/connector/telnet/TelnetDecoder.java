@@ -54,7 +54,9 @@ public class TelnetDecoder extends InputDecoder {
 
   public TelnetDecoder(Connection connection) {
     this.conn = connection;
-    this.connector = new Connector(TelnetLifeCycle.instance.getShellBuilder().build());
+    this.connector = new Connector(
+        TelnetLifeCycle.instance.getExecutor(),
+        TelnetLifeCycle.instance.getShellFactory().build());
     this.termIO = connection.getTerminalIO();
     this.status = TelnetStatus.SHUTDOWN;
   }

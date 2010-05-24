@@ -20,35 +20,25 @@ package org.crsh.shell;
 
 import org.crsh.shell.impl.CRaSH;
 
-import java.util.concurrent.ExecutorService;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellBuilder {
+public class ShellFactory {
 
   /** . */
   private final ShellContext context;
 
-  /** . */
-  private final ExecutorService executor;
-
-  public ShellBuilder(ShellContext context) {
-    this(context, null);
-  }
-
-  public ShellBuilder(ShellContext context, ExecutorService executor) {
+  public ShellFactory(ShellContext context) {
     if (context == null) {
       throw new NullPointerException();
     }
 
     //
     this.context = context;
-    this.executor = executor;
   }
 
   public CRaSH build() {
-    return new CRaSH(context, executor);
+    return new CRaSH(context);
   }
 }

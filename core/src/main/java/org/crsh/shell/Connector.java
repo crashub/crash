@@ -22,7 +22,6 @@ import org.crsh.Info;
 import org.crsh.command.ScriptException;
 import org.crsh.display.SimpleDisplayContext;
 import org.crsh.display.structure.Element;
-import org.crsh.util.CompletionHandler;
 import org.crsh.util.ImmediateFuture;
 
 import java.io.PrintWriter;
@@ -30,6 +29,8 @@ import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 /**
@@ -53,7 +54,15 @@ public class Connector {
   /** . */
   private final Shell shell;
 
+  /** . */
+  private final ExecutorService executor;
+
   public Connector(Shell shell) {
+    this(null, shell);
+  }
+
+  public Connector(ExecutorService executor, Shell shell) {
+    this.executor = executor;
     this.shell = shell;
     this.status = ConnectorStatus.INITIAL;
     this.lock = new Object();
@@ -95,16 +104,8 @@ public class Connector {
 
   public void submitEvaluation(String request, final ConnectorResponseContext handler) {
 
-    //
+    // The response context bridge
     ShellResponseContext responseContext = new ShellResponseContext() {
-      public void completed(ShellResponse response) {
-        if (status == ConnectorStatus.EVALUATING) {
-          String ret = update(response);
-          if (handler != null) {
-            handler.completed(ret);
-          }
-        }
-      }
       public String readLine(String msg) {
         return handler.readLine(msg);
       }
@@ -120,13 +121,35 @@ public class Connector {
       status = ConnectorStatus.EVALUATING;
 
       //
+      Callable<ShellResponse> callable;
       if ("bye".equals(request)) {
         shell.doClose();
         status = ConnectorStatus.CLOSED;
-        futureResponse = new ImmediateFuture<ShellResponse>(new ShellResponse.Ok());
+        callable = new Callable<ShellResponse>() {
+          public ShellResponse call() throws Exception {
+            return new ShellResponse.Ok();
+          }
+        };
       } else {
-        // Evaluate
-        futureResponse = shell.doSubmitEvaluation(request, responseContext);
+        callable = shell.doSubmitEvaluation(request, responseContext);
+      }
+
+      //
+      Bilto bilto = new Bilto(this, handler, callable);
+
+      // Execute it with or without an executor
+      if (executor != null) {
+        // log.debug("Submitting to executor");
+        futureResponse = executor.submit(bilto);
+      } else {
+        try {
+          ShellResponse response = bilto.call();
+          futureResponse =  new ImmediateFuture<ShellResponse>(response);
+        } catch (Exception e) {
+          AssertionError afe = new AssertionError("Should not happen cause we are calling Evaluable");
+          afe.initCause(e);
+          throw afe;
+        }
       }
     }
   }
@@ -144,20 +167,39 @@ public class Connector {
     }
   }
 
-  private String update(ShellResponse response) {
+  /**
+   * <p>Updates the state of the connector when it is in <code>ConnectorStatus#EVALUATING</code> status. When the connector
+   * is succesfully updated, the status becomes <code>ConnectorStatus#AVAILABLE</code> and the text corresponding to
+   * the shell response is returned.</p>
+   *
+   * <p>If the update fails, no state update is performed and null is returned. This happens when the corresponding
+   * command execution was cancelled or the connector is closed.</p>
+   *
+   * @param response the response
+   * @return the response text
+   */
+  String update(ShellResponse response) {
     synchronized (lock) {
-      if (status != ConnectorStatus.EVALUATING) {
-        throw new IllegalStateException();
-      }
-
-      //
-      try {
-        String ret = decode(response);
-        futureResponse = null;
-        lastLine = ret;
-        return ret;
-      } finally {
-        status = ConnectorStatus.AVAILABLE;
+      switch (status) {
+        // We were waiting for that response
+        case EVALUATING:
+          try {
+            String ret = decode(response);
+            futureResponse = null;
+            lastLine = ret;
+            return ret;
+          } finally {
+            status = ConnectorStatus.AVAILABLE;
+          }
+        case AVAILABLE:
+          // A cancelled command likely
+          return null;
+        case CLOSED:
+          // Long running command that comes after the connector was closed
+          return null;
+        default:
+        case INITIAL:
+          throw new AssertionError("That should not be possible");
       }
     }
   }

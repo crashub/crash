@@ -19,8 +19,6 @@
 package org.crsh.connector.sshd;
 
 import org.apache.sshd.SshServer;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.CommandFactory;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
@@ -31,7 +29,6 @@ import org.crsh.shell.ShellContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
 import java.security.PublicKey;
 
 /**
@@ -99,7 +96,7 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
     try {
       SshServer server = SshServer.setUpDefaultServer();
       server.setPort(port);
-      server.setShellFactory(new CRaSHCommandFactory(getShellBuilder()));
+      server.setShellFactory(new CRaSHCommandFactory(getShellFactory(), getExecutor()));
       server.setCommandFactory(new SCPCommandFactory());
       server.setKeyPairProvider(new PEMGeneratorHostKeyProvider(keyPath));
 

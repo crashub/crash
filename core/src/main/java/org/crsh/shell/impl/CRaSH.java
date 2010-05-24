@@ -25,16 +25,14 @@ import org.crsh.command.ScriptCommand;
 import org.crsh.command.ShellCommand;
 import org.crsh.jcr.NodeMetaClass;
 import org.crsh.shell.*;
-import org.crsh.util.ImmediateFuture;
 import org.crsh.util.TimestampedObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -61,9 +59,6 @@ public class CRaSH implements Shell {
 
   /** . */
   private final Map<String, TimestampedObject<Class<ShellCommand>>> commands;
-
-  /** . */
-  private final ExecutorService executor;
 
   /** . */
   final Map<String, Object> attributes;
@@ -124,11 +119,7 @@ public class CRaSH implements Shell {
     attributes.put(name, value);
   }
 
-  public CRaSH(ShellContext context) {
-    this(context, null);
-  }
-
-  public CRaSH(final ShellContext context, ExecutorService executor) {
+  public CRaSH(final ShellContext context) {
     HashMap<String, Object> attributes = new HashMap<String, Object>();
 
     //
@@ -136,7 +127,6 @@ public class CRaSH implements Shell {
     config.setRecompileGroovySource(true);
     config.setScriptBaseClass(ScriptCommand.class.getName());
     GroovyShell groovyShell = new GroovyShell(context.getLoader(), new Binding(attributes), config);
-
 
     // Evaluate login script
     String script = context.loadResource("/groovy/login.groovy").getContent();
@@ -148,7 +138,6 @@ public class CRaSH implements Shell {
     this.groovyShell = groovyShell;
     this.commands = new ConcurrentHashMap<String, TimestampedObject<Class<ShellCommand>>>();
     this.context = context;
-    this.executor = executor;
   }
 
   public void close() {
@@ -172,14 +161,7 @@ public class CRaSH implements Shell {
     return (String)groovyShell.evaluate("prompt();");
   }
 
-  public Future<ShellResponse> doSubmitEvaluation(String request, ShellResponseContext responseContext) {
-    Evaluable callable = new Evaluable(this, request, responseContext);
-    if (executor != null) {
-      log.debug("Submitting to executor");
-      return executor.submit(callable);
-    } else {
-      ShellResponse response = callable.call();
-      return new ImmediateFuture<ShellResponse>(response);
-    }
+  public Callable<ShellResponse> doSubmitEvaluation(String request, ShellResponseContext responseContext) {
+    return new Evaluable(this, request, responseContext);
   }
 }

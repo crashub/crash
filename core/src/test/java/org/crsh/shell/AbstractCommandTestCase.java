@@ -49,7 +49,7 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
     super.setUp();
 
     //
-    ShellBuilder builder = new ShellBuilder(new TestShellContext());
+    ShellFactory builder = new ShellFactory(new TestShellContext());
 
     //
     shell = builder.build();

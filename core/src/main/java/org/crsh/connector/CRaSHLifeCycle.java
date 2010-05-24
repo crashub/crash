@@ -21,7 +21,7 @@ package org.crsh.connector;
 import groovy.lang.GroovySystem;
 import groovy.lang.MetaClassRegistry;
 import org.crsh.jcr.NodeMetaClass;
-import org.crsh.shell.ShellBuilder;
+import org.crsh.shell.ShellFactory;
 import org.crsh.shell.ShellContext;
 
 import javax.jcr.Node;
@@ -63,7 +63,7 @@ public abstract class CRaSHLifeCycle {
   }
 
   /** . */
-  private ShellBuilder builder;
+  private ShellFactory builder;
 
   /** . */
   private final ShellContext context;
@@ -83,7 +83,7 @@ public abstract class CRaSHLifeCycle {
   public final void init() {
     integrate();
     ExecutorService executor = Executors.newFixedThreadPool(3);
-    ShellBuilder builder = new ShellBuilder(context, executor);
+    ShellFactory builder = new ShellFactory(context);
 
     //
     this.builder = builder;
@@ -108,7 +108,11 @@ public abstract class CRaSHLifeCycle {
     this.builder = null;
   }
 
-  public final ShellBuilder getShellBuilder() {
+  public final ExecutorService getExecutor() {
+    return executor;
+  }
+
+  public final ShellFactory getShellFactory() {
     return builder;
   }
 

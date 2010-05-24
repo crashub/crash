@@ -25,8 +25,6 @@ package org.crsh.shell;
  */
 public interface ShellResponseContext {
 
-  void completed(ShellResponse response);
-
   String readLine(String msg);
 
 }

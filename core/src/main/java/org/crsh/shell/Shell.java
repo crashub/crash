@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -29,7 +29,7 @@ public interface Shell {
 
   String getPrompt();
 
-  Future<ShellResponse> doSubmitEvaluation(String request, ShellResponseContext responseContext);
+  Callable<ShellResponse> doSubmitEvaluation(String request, ShellResponseContext responseContext);
 
   void doClose();
 

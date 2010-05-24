@@ -102,14 +102,6 @@ class Evaluable implements Callable<ShellResponse> {
     }
 
     //
-    log.debug("Making handler response callback");
-
-    //
-    if (responseContext != null) {
-      responseContext.completed(response);
-    }
-
-    //
     return response;
   }
 }
