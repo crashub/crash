@@ -21,6 +21,9 @@ package org.crsh.shell;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.crsh.connector.AbstractShell;
+import org.crsh.display.SimpleDisplayContext;
+import org.crsh.display.structure.Element;
 import org.crsh.jcr.NodeMetaClass;
 import org.crsh.util.CompletionHandler;
 import org.crsh.util.ImmediateFuture;
@@ -28,6 +31,8 @@ import org.crsh.util.TimestampedObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -37,7 +42,7 @@ import java.util.concurrent.Future;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Shell {
+public class CRaSH implements AbstractShell<ShellResponse> {
 
   static {
     // Force integration of node meta class
@@ -45,7 +50,7 @@ public class Shell {
   }
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(Shell.class);
+  private static final Logger log = LoggerFactory.getLogger(CRaSH.class);
 
   /** . */
   private final GroovyShell groovyShell;
@@ -121,11 +126,11 @@ public class Shell {
     commandContext.put(name, value);
   }
 
-  public Shell(ShellContext context) {
+  public CRaSH(ShellContext context) {
     this(context, null);
   }
 
-  Shell(final ShellContext context, ExecutorService executor) {
+  CRaSH(final ShellContext context, ExecutorService executor) {
     CommandContext commandContext = new CommandContext();
 
     //
@@ -148,10 +153,6 @@ public class Shell {
     this.executor = executor;
   }
 
-  public String getPrompt() {
-    return (String)groovyShell.evaluate("prompt();");
-  }
-
   public void close() {
     // Evaluate logout script
     String script = context.loadResource("/groovy/logout.groovy").getContent();
@@ -172,5 +173,96 @@ public class Shell {
       ShellResponse response = callable.call();
       return new ImmediateFuture<ShellResponse>(response);
     }
+  }
+
+  // Shell implementation **********************************************************************************************
+
+  public ShellResponse okResponse() {
+    return new ShellResponse.Ok();
+  }
+
+  public void doClose() {
+    close();
+  }
+
+  public String getPrompt() {
+    return (String)groovyShell.evaluate("prompt();");
+  }
+
+  public Future<ShellResponse> doSubmitEvaluation(String request, CompletionHandler<ShellResponse> responseHandler) {
+    return submitEvaluation(request, responseHandler);
+  }
+
+  public String decode(ShellResponse response) {
+    String ret = null;
+    try {
+      String result = null;
+      if (response instanceof ShellResponse.Error) {
+        ShellResponse.Error error = (ShellResponse.Error) response;
+        Throwable t = error.getThrowable();
+        if (t instanceof Error) {
+          throw ((Error) t);
+        } else if (t instanceof ScriptException) {
+          result = "Error: " + t.getMessage();
+        } else if (t instanceof RuntimeException) {
+          result = "Unexpected exception: " + t.getMessage();
+          t.printStackTrace(System.err);
+        } else if (t instanceof Exception) {
+          result = "Unexpected exception: " + t.getMessage();
+          t.printStackTrace(System.err);
+        } else {
+          result = "Unexpected throwable: " + t.getMessage();
+          t.printStackTrace(System.err);
+        }
+      } else if (response instanceof ShellResponse.Ok) {
+
+        if (response instanceof ShellResponse.Display) {
+          ShellResponse.Display display = (ShellResponse.Display) response;
+          SimpleDisplayContext context = new SimpleDisplayContext("\r\n");
+          for (Element element : display) {
+            element.print(context);
+          }
+          result = context.getText();
+        } else {
+          result = "";
+        }
+      } else if (response instanceof ShellResponse.NoCommand) {
+        result = "Please type something";
+      } else if (response instanceof ShellResponse.UnkownCommand) {
+        ShellResponse.UnkownCommand unknown = (ShellResponse.UnkownCommand) response;
+        result = "Unknown command " + unknown.getName();
+      }
+
+      // Format response if any
+      if (result != null) {
+        ret = "" + String.valueOf(result) + "\r\n";
+      }
+    } catch (Throwable t) {
+      StringWriter writer = new StringWriter();
+      PrintWriter printer = new PrintWriter(writer);
+      printer.print("ERROR: ");
+      t.printStackTrace(printer);
+      printer.println();
+      printer.close();
+      ret = writer.toString();
+    }
+
+    //
+    // NEED TO ENABLE THIS AGAIN
+/*
+    if (isClosed()) {
+      ret += "Have a good day!\r\n";
+    }
+*/
+
+    //
+    if (ret == null) {
+      ret = getPrompt();
+    } else {
+      ret += getPrompt();
+    }
+
+    //
+    return ret;
   }
 }

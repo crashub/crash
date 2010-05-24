@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,37 +16,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
 
-import java.util.concurrent.ExecutorService;
+package org.crsh.connector.telnet;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellBuilder {
+public enum TelnetStatus {
 
-  /** . */
-  private final ShellContext context;
+  /**
+   * The system is shut down.
+   */
+  SHUTDOWN,
 
-  /** . */
-  private final ExecutorService executor;
+  /**
+   * The system is ready to process a command.
+   */
+  READY,
 
-  public ShellBuilder(ShellContext context) {
-    this(context, null);
-  }
+  /**
+   * The system is reading input.
+   */
+  READING_INPUT
 
-  public ShellBuilder(ShellContext context, ExecutorService executor) {
-    if (context == null) {
-      throw new NullPointerException();
-    }
-
-    //
-    this.context = context;
-    this.executor = executor;
-  }
-
-  public CRaSH build() {
-    return new CRaSH(context, executor);
-  }
 }

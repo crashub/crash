@@ -37,7 +37,7 @@ public class Evaluable implements Callable<ShellResponse> {
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
-  private final Shell shell;
+  private final CRaSH shell;
 
   /** . */
   private final String s;
@@ -45,7 +45,7 @@ public class Evaluable implements Callable<ShellResponse> {
   /** . */
   private final CompletionHandler<ShellResponse> handler;
 
-  public Evaluable(Shell shell, String s, CompletionHandler<ShellResponse> handler) {
+  public Evaluable(CRaSH shell, String s, CompletionHandler<ShellResponse> handler) {
     this.shell = shell;
     this.s = s;
     this.handler = handler;

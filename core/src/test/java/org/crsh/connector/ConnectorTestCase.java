@@ -52,7 +52,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
   }
 
   public void _testCancelEvaluation() {
-    ShellConnector connector = new ShellConnector(builder);
+    ShellConnector connector = new ShellConnector(builder.build());
     connector.open();
     status = 0;
     connector.submitEvaluation("invoke " + ConnectorTestCase.class.getName() + " bilta");
@@ -92,7 +92,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
   }
 
   public void _testAsyncEvaluation() {
-    ShellConnector connector = new ShellConnector(builder);
+    ShellConnector connector = new ShellConnector(builder.build());
     connector.open();
     status = 0;
     connector.submitEvaluation("invoke " + ConnectorTestCase.class.getName() + " bilto");

@@ -19,14 +19,9 @@
 package org.crsh.connector;
 
 import org.crsh.Info;
-import org.crsh.display.SimpleDisplayContext;
-import org.crsh.display.structure.Element;
-import org.crsh.shell.*;
 import org.crsh.util.CompletionHandler;
 import org.crsh.util.ImmediateFuture;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
@@ -36,16 +31,13 @@ import java.util.concurrent.Future;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellConnector {
-
-  /** . */
-  private Shell shell;
+public class ShellConnector<R> {
 
   /** . */
   private ConnectorStatus status;
 
   /** . */
-  private Future<ShellResponse> futureResponse;
+  private Future<R> futureResponse;
 
   /** . */
   private String lastLine;
@@ -53,8 +45,11 @@ public class ShellConnector {
   /** . */
   private final Object lock;
 
-  public ShellConnector(ShellBuilder builder) {
-    this.shell = builder.build();
+  /** . */
+  private final AbstractShell<R> shell;
+
+  public ShellConnector(AbstractShell shell) {
+    this.shell = shell;
     this.status = ConnectorStatus.INITIAL;
     this.lock = new Object();
   }
@@ -96,8 +91,8 @@ public class ShellConnector {
   public void submitEvaluation(String request, final CompletionHandler<String> handler) {
 
     //
-    CompletionHandler<ShellResponse> responseHandler = new CompletionHandler<ShellResponse>() {
-      public void completed(ShellResponse shellResponse) {
+    CompletionHandler<R> responseHandler = new CompletionHandler<R>() {
+      public void completed(R shellResponse) {
         if (status == ConnectorStatus.EVALUATING) {
           String ret = update(shellResponse);
           if (handler != null) {
@@ -118,12 +113,12 @@ public class ShellConnector {
 
       //
       if ("bye".equals(request)) {
-        shell.close();
+        shell.doClose();
         status = ConnectorStatus.CLOSED;
-        futureResponse = new ImmediateFuture<ShellResponse>(new ShellResponse.Ok());
+        futureResponse = new ImmediateFuture<R>(shell.okResponse());
       } else {
         // Evaluate
-        futureResponse = shell.submitEvaluation(request, responseHandler);
+        futureResponse = shell.doSubmitEvaluation(request, responseHandler);
       }
     }
   }
@@ -141,7 +136,7 @@ public class ShellConnector {
     }
   }
 
-  private String update(ShellResponse response) {
+  private String update(R response) {
     synchronized (lock) {
       if (status != ConnectorStatus.EVALUATING) {
         throw new IllegalStateException();
@@ -149,7 +144,7 @@ public class ShellConnector {
 
       //
       try {
-        String ret = decode(response);
+        String ret = shell.decode(response);
         futureResponse = null;
         lastLine = ret;
         return ret;
@@ -186,7 +181,7 @@ public class ShellConnector {
       switch (status) {
         case INITIAL:
         case AVAILABLE:
-          shell.close();
+          shell.doClose();
           break;
         case EVALUATING:
           throw new UnsupportedOperationException("todo :-)");
@@ -195,75 +190,5 @@ public class ShellConnector {
       }
       status = ConnectorStatus.CLOSED;
     }
-  }
-
-  private String decode(ShellResponse response) {
-    String ret = null;
-    try {
-      String result = null;
-      if (response instanceof ShellResponse.Error) {
-        ShellResponse.Error error = (ShellResponse.Error) response;
-        Throwable t = error.getThrowable();
-        if (t instanceof Error) {
-          throw ((Error) t);
-        } else if (t instanceof ScriptException) {
-          result = "Error: " + t.getMessage();
-        } else if (t instanceof RuntimeException) {
-          result = "Unexpected exception: " + t.getMessage();
-          t.printStackTrace(System.err);
-        } else if (t instanceof Exception) {
-          result = "Unexpected exception: " + t.getMessage();
-          t.printStackTrace(System.err);
-        } else {
-          result = "Unexpected throwable: " + t.getMessage();
-          t.printStackTrace(System.err);
-        }
-      } else if (response instanceof ShellResponse.Ok) {
-
-        if (response instanceof ShellResponse.Display) {
-          ShellResponse.Display display = (ShellResponse.Display) response;
-          SimpleDisplayContext context = new SimpleDisplayContext("\r\n");
-          for (Element element : display) {
-            element.print(context);
-          }
-          result = context.getText();
-        } else {
-          result = "";
-        }
-      } else if (response instanceof ShellResponse.NoCommand) {
-        result = "Please type something";
-      } else if (response instanceof ShellResponse.UnkownCommand) {
-        ShellResponse.UnkownCommand unknown = (ShellResponse.UnkownCommand) response;
-        result = "Unknown command " + unknown.getName();
-      }
-
-      // Format response if any
-      if (result != null) {
-        ret = "" + String.valueOf(result) + "\r\n";
-      }
-    } catch (Throwable t) {
-      StringWriter writer = new StringWriter();
-      PrintWriter printer = new PrintWriter(writer);
-      printer.print("ERROR: ");
-      t.printStackTrace(printer);
-      printer.println();
-      printer.close();
-      ret = writer.toString();
-    }
-
-    //
-    if (isClosed()) {
-      ret += "Have a good day!\r\n";
-    }
-
-    //
-    if (ret == null) {
-      ret = shell.getPrompt();
-    } else {
-      ret += shell.getPrompt();
-    }
-
-    //
-    return ret;
   }
 }

@@ -49,25 +49,28 @@ public class TelnetDecoder extends InputDecoder {
   /** . */
   private final BasicTerminalIO termIO;
 
+  /** . */
+  private TelnetStatus status;
+
   public TelnetDecoder(Connection connection) {
     this.conn = connection;
-    this.connector = new ShellConnector(TelnetLifeCycle.instance.getShellBuilder());
+    this.connector = new ShellConnector(TelnetLifeCycle.instance.getShellBuilder().build());
     this.termIO = connection.getTerminalIO();
+    this.status = TelnetStatus.SHUTDOWN;
   }
 
   public void run() throws IOException {
     String welcome = connector.open();
     writeFully(welcome);
 
+    // Go to ready state
+    this.status = TelnetStatus.READING_INPUT;
+
     //
-    while (!isClosed()) {
+    while (status != TelnetStatus.SHUTDOWN) {
       int code = termIO.read();
       append(code);
     }
-  }
-
-  public boolean isClosed() {
-    return connector.isClosed();
   }
 
   public void close() {
@@ -102,7 +105,7 @@ public class TelnetDecoder extends InputDecoder {
         appendData((char)i);
       }
     } else {
-      // log
+      log.debug("Unhandled char " + i);
     }
 
     //
@@ -110,18 +113,34 @@ public class TelnetDecoder extends InputDecoder {
       Input input = next();
       if (input instanceof Input.Chars) {
         String line = ((Input.Chars)input).getValue();
-        log.debug("Submitting command " + line);
-        connector.submitEvaluation(line, new CompletionHandler<String>() {
-          public void completed(String s) {
-            log.debug("Command completed with result " + s);
-            try {
-              writeFully(s);
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-          }
-        });
+
+        switch (status)
+        {
+          case READY:
+            log.debug("Submitting command " + line);
+            connector.submitEvaluation(line, new CompletionHandler<String>() {
+              public void completed(String s) {
+                log.debug("Command completed with result " + s);
+                try {
+                  writeFully(s);
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+              }
+            });
+            break;
+          case READING_INPUT:
+            log.info("Submitting back input");
+            break;
+          case SHUTDOWN:
+            throw new AssertionError("Does not make sense");
+        }
       }
+    }
+
+    // Update status
+    if (connector.isClosed()) {
+      status = TelnetStatus.SHUTDOWN;
     }
   }
 

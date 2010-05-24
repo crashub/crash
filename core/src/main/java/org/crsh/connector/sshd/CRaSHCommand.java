@@ -56,7 +56,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
 
   public void start(Environment env) throws IOException {
     context = new SSHContext(env.getPtyModes().get(PtyMode.VERASE));
-    connector = new ShellConnector(builder);
+    connector = new ShellConnector(builder.build());
 
     //
     thread = new Thread(this, "CRaSH");

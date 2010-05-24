@@ -38,7 +38,7 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
-  protected Shell shell;
+  protected CRaSH shell;
 
   /** . */
   protected GroovyShell groovyShell;
