@@ -105,6 +105,9 @@ public class Connector {
           }
         }
       }
+      public String readLine(String s) {
+        return handler.readLine(s);
+      }
     };
 
     //

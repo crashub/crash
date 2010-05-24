@@ -125,12 +125,25 @@ public class TelnetDecoder extends InputDecoder {
                   writeFully(s);
                 } catch (IOException e) {
                   e.printStackTrace();
+                } finally {
+                  status = TelnetStatus.READY;
+                }
+              }
+              public String readLine(String s) {
+                try {
+                  status = TelnetStatus.READING_INPUT;
+                  return "FOOOOOOOOO";
+                } finally {
+                  status = TelnetStatus.PROCESSING;
                 }
               }
             });
             break;
           case READING_INPUT:
             log.info("Submitting back input");
+            break;
+          case PROCESSING:
+            log.info("System is already processing a command");
             break;
           case SHUTDOWN:
             throw new AssertionError("Does not make sense");

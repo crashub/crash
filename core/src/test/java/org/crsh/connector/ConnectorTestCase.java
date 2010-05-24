@@ -43,6 +43,9 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
   /** . */
   protected ExecutorService executor;
 
+  /** . */
+  private static volatile int status;
+
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -53,7 +56,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
     builder = new ShellBuilder(context, executor);
   }
 
-  public void _testCancelEvaluation() {
+  public void testCancelEvaluation() {
     Connector connector = new Connector(builder.build());
     connector.open();
     status = 0;
@@ -89,11 +92,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
     }
   }
 
-  public void testFoo() {
-    
-  }
-
-  public void _testAsyncEvaluation() {
+  public void testAsyncEvaluation() {
     Connector connector = new Connector(builder.build());
     connector.open();
     status = 0;
@@ -104,8 +103,6 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
     assertEquals(1, status);
     connector.popResponse();
   }
-
-  private static int status;
 
   public static void bilto() {
     if (status == 0) {

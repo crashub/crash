@@ -27,6 +27,6 @@ public interface ShellResponseContext {
 
   void completed(ShellResponse response);
 
-  // String prompt(String s);
+  String readLine(String s);
 
 }

@@ -36,6 +36,11 @@ public enum TelnetStatus {
   READY,
 
   /**
+   * The system is processing a command.
+   */
+  PROCESSING,
+
+  /**
    * The system is reading input.
    */
   READING_INPUT

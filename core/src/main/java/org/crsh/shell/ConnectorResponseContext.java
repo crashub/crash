@@ -27,6 +27,7 @@ public interface ConnectorResponseContext {
 
   void completed(String s);
 
+  String readLine(String s);
 
 
 }
