@@ -21,7 +21,6 @@ package org.crsh.shell.impl;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptCommand;
 import org.crsh.command.ShellCommand;
 import org.crsh.jcr.NodeMetaClass;
@@ -31,6 +30,7 @@ import org.crsh.util.TimestampedObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -63,10 +63,10 @@ public class CRaSH implements Shell {
   private final Map<String, TimestampedObject<Class<ShellCommand>>> commands;
 
   /** . */
-  final CommandContext commandContext;
+  private final ExecutorService executor;
 
   /** . */
-  private final ExecutorService executor;
+  final Map<String, Object> attributes;
 
   ShellCommand getClosure(String name) {
     TimestampedObject<Class<ShellCommand>> closure = commands.get(name);
@@ -117,11 +117,11 @@ public class CRaSH implements Shell {
   }
 
   public Object getAttribute(String name) {
-    return commandContext.get(name);
+    return attributes.get(name);
   }
 
   public void setAttribute(String name, Object value) {
-    commandContext.put(name, value);
+    attributes.put(name, value);
   }
 
   public CRaSH(ShellContext context) {
@@ -129,13 +129,13 @@ public class CRaSH implements Shell {
   }
 
   public CRaSH(final ShellContext context, ExecutorService executor) {
-    CommandContext commandContext = new CommandContext();
+    HashMap<String, Object> attributes = new HashMap<String, Object>();
 
     //
     CompilerConfiguration config = new CompilerConfiguration();
     config.setRecompileGroovySource(true);
     config.setScriptBaseClass(ScriptCommand.class.getName());
-    GroovyShell groovyShell = new GroovyShell(context.getLoader(), new Binding(commandContext), config);
+    GroovyShell groovyShell = new GroovyShell(context.getLoader(), new Binding(attributes), config);
 
 
     // Evaluate login script
@@ -143,7 +143,7 @@ public class CRaSH implements Shell {
     groovyShell.evaluate(script, "/groovy/login.groovy");
 
     //
-    this.commandContext = commandContext;
+    this.attributes = attributes;
     this.out = new StringBuffer();
     this.groovyShell = groovyShell;
     this.commands = new ConcurrentHashMap<String, TimestampedObject<Class<ShellCommand>>>();

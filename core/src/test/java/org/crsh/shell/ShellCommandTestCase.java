@@ -62,7 +62,7 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("abc", cmd.execute(new CommandContext(), "-str","abc"));
+    assertEquals("abc", cmd.execute(new TestCommandContext(), "-str","abc"));
   }
 
   public void testArgumentInjectionInCommandClass() throws Exception {
@@ -75,7 +75,7 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("b", cmd.execute(new CommandContext(), "b"));
+    assertEquals("b", cmd.execute(new TestCommandContext(), "b"));
   }
 
   public void testContextAccessInCommandClass() throws Exception {
@@ -86,7 +86,7 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    CommandContext ctx = new CommandContext();
+    CommandContext ctx = new TestCommandContext();
     ctx.put("bar", "bar_value");
 
     // Execute directly
@@ -102,7 +102,7 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    CommandContext ctx = new CommandContext();
+    CommandContext ctx = new TestCommandContext();
     Closure closure = (Closure)shell.evaluate("{ -> return 'from_closure'; }");
     ctx.put("bar", closure);
 
@@ -120,13 +120,13 @@ public class ShellCommandTestCase extends TestCase {
 
     // Execute directly
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals(Arrays.asList("'foo'"), cmd.execute(new CommandContext(), "'foo'"));
+    assertEquals(Arrays.asList("'foo'"), cmd.execute(new TestCommandContext(), "'foo'"));
   }
 
   public void testContextAccessInScript() throws Exception {
     Class clazz = loader.parseClass("return bar;");
     ScriptCommand script = (ScriptCommand)clazz.newInstance();
-    CommandContext ctx = new CommandContext();
+    CommandContext ctx = new TestCommandContext();
     ctx.put("bar", "bar_value");
     assertEquals("bar_value", script.execute(ctx));
   }
@@ -134,14 +134,14 @@ public class ShellCommandTestCase extends TestCase {
   public void testArgumentAccessInScript() throws Exception {
     Class clazz = loader.parseClass("return args[0];");
     ScriptCommand script = (ScriptCommand)clazz.newInstance();
-    CommandContext ctx = new CommandContext();
+    CommandContext ctx = new TestCommandContext();
     assertEquals("arg_value", script.execute(ctx, "arg_value"));
   }
 
   public void testArgumentAccessInClosure() throws Exception {
     Class clazz = loader.parseClass("{ arg -> return arg };");
     ScriptCommand script = (ScriptCommand)clazz.newInstance();
-    CommandContext ctx = new CommandContext();
+    CommandContext ctx = new TestCommandContext();
     assertEquals("arg_value", script.execute(ctx, "arg_value"));
   }
 }

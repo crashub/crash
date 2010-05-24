@@ -105,8 +105,8 @@ public class Connector {
           }
         }
       }
-      public String readLine(String s) {
-        return handler.readLine(s);
+      public String readLine(String msg) {
+        return handler.readLine(msg);
       }
     };
 

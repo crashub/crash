@@ -19,12 +19,12 @@
 
 package org.crsh.shell.impl;
 
+import org.crsh.command.CommandContext;
 import org.crsh.command.ShellCommand;
 import org.crsh.display.DisplayBuilder;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
-import org.crsh.util.CompletionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,12 +47,12 @@ class Evaluable implements Callable<ShellResponse> {
   private final String s;
 
   /** . */
-  private final ShellResponseContext handler;
+  private final ShellResponseContext responseContext;
 
-  public Evaluable(CRaSH shell, String s, ShellResponseContext handler) {
+  public Evaluable(CRaSH shell, String s, ShellResponseContext responseContext) {
     this.shell = shell;
     this.s = s;
-    this.handler = handler;
+    this.responseContext = responseContext;
   }
 
   public ShellResponse call() {
@@ -74,11 +74,14 @@ class Evaluable implements Callable<ShellResponse> {
         ShellCommand cmd = shell.getClosure(chunks.get(0));
 
         //
+        CommandContext ctx = new CommandContextImpl(responseContext, shell.attributes);
+
+        //
         if (cmd != null) {
           // Build args
           String[] args = new String[chunks.size() - 1];
           chunks.subList(1, chunks.size()).toArray(args);
-          Object o = cmd.execute(shell.commandContext, args);
+          Object o = cmd.execute(ctx, args);
           if (o instanceof DisplayBuilder) {
             response = new ShellResponse.Display(((DisplayBuilder) o).getElements());
           } else if (o != null) {
@@ -102,8 +105,8 @@ class Evaluable implements Callable<ShellResponse> {
     log.debug("Making handler response callback");
 
     //
-    if (handler != null) {
-      handler.completed(response);
+    if (responseContext != null) {
+      responseContext.completed(response);
     }
 
     //

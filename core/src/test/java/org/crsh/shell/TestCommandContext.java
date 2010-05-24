@@ -19,14 +19,16 @@
 
 package org.crsh.shell;
 
+import org.crsh.command.CommandContext;
+
+import java.util.HashMap;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellResponseContext {
-
-  void completed(ShellResponse response);
-
-  String readLine(String msg);
-
+public class TestCommandContext extends HashMap<String, Object> implements CommandContext {
+  public String readLine(String msg) {
+    throw new UnsupportedOperationException();
+  }
 }

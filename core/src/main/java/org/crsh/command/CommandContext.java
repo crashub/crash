@@ -20,10 +20,14 @@
 package org.crsh.command;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CommandContext extends HashMap<String, Object> {
+public interface CommandContext extends Map<String, Object> {
+
+  String readLine(String msg);
+
 }

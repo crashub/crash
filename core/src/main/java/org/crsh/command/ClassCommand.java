@@ -132,8 +132,4 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
 
   protected abstract Object execute() throws ScriptException;
 
-  private void generateHelp() {
-
-  }
-
 }
