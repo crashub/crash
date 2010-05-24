@@ -20,13 +20,14 @@
 package org.crsh.connector;
 
 import org.crsh.AbstractRepositoryTestCase;
+import org.crsh.TestShell;
 import org.crsh.TestShellContext;
-import org.crsh.shell.ConnectorStatus;
-import org.crsh.shell.ShellFactory;
-import org.crsh.shell.Connector;
+import org.crsh.shell.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -57,39 +58,66 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
   }
 
   public void testCancelEvaluation() {
-    Connector connector = new Connector(executor, builder.build());
+
+    //
+    final ShellResponse ok = new ShellResponse.Ok();
+    final AtomicBoolean fail = new AtomicBoolean(false);
+    final AtomicInteger status = new AtomicInteger(0);
+
+    //
+    Shell shell = new TestShell() {
+      @Override
+      public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
+
+        //
+        fail.set(!"foo".equals(request));
+
+        //
+        if (status.get() == 0) {
+          status.set(1);
+          int r = status.get();
+          while (r == 1) {
+            r = status.get();
+          }
+          if (r == 2) {
+            status.set(3);
+          } else {
+            status.set(-1);
+          }
+        } else {
+          status.set(-1);
+        }
+
+        //
+        return ok;
+      }
+    };
+
+    //
+    Connector connector = new Connector(executor, shell);
     connector.open();
-    status = 0;
-    connector.submitEvaluation("invoke " + ConnectorTestCase.class.getName() + " bilta");
+
+    //
+    connector.submitEvaluation("foo");
     assertEquals(ConnectorStatus.EVALUATING, connector.getStatus());
-    while (status == 0) {
-      // Wait
-    }
-    assertEquals(1, status);
+
+    //
+    int r;
+    for (r = status.get();r == 0;r = status.get()) { }
+    assertEquals(1, r);
     assertEquals(ConnectorStatus.EVALUATING, connector.getStatus());
+
+    //
     connector.cancelEvalutation();
     assertEquals(ConnectorStatus.AVAILABLE, connector.getStatus());
-    status = 2;
-    while (status == 2) {
-      // Wait
-    }
-    assertEquals(3, status);
-  }
 
-  public static void bilta() {
-    if (status == 0) {
-      status = 1;
-      while (status == 1) {
-        // Wait
-      }
-      if (status == 2) {
-        status = 3;
-      } else {
-        status = -1;
-      }
-    } else {
-      status = -1;
-    }
+    //
+    status.set(2);
+    for (r = status.get();r == 2;r = status.get()) { }
+    assertEquals(3, r);
+
+    //
+    assertFalse(fail.get());
   }
 
   public void testAsyncEvaluation() {
