@@ -18,6 +18,8 @@
  */
 package org.crsh.shell;
 
+import org.crsh.shell.impl.CRaSH;
+
 import java.util.concurrent.ExecutorService;
 
 /**

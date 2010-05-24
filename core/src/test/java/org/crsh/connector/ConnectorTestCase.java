@@ -21,7 +21,9 @@ package org.crsh.connector;
 
 import org.crsh.AbstractRepositoryTestCase;
 import org.crsh.TestShellContext;
+import org.crsh.shell.ConnectorStatus;
 import org.crsh.shell.ShellBuilder;
+import org.crsh.shell.ShellConnector;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

@@ -28,6 +28,4 @@ public interface ShellContext {
 
   ClassLoader getLoader();
 
-  // Repository getRepository(Map properties);
-
 }

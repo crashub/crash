@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.connector;
+package org.crsh.shell;
 
 import org.crsh.Info;
 import org.crsh.util.CompletionHandler;
@@ -31,13 +31,13 @@ import java.util.concurrent.Future;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellConnector<R> {
+public class ShellConnector {
 
   /** . */
   private ConnectorStatus status;
 
   /** . */
-  private Future<R> futureResponse;
+  private Future<ShellResponse> futureResponse;
 
   /** . */
   private String lastLine;
@@ -46,9 +46,9 @@ public class ShellConnector<R> {
   private final Object lock;
 
   /** . */
-  private final AbstractShell<R> shell;
+  private final Shell shell;
 
-  public ShellConnector(AbstractShell shell) {
+  public ShellConnector(Shell shell) {
     this.shell = shell;
     this.status = ConnectorStatus.INITIAL;
     this.lock = new Object();
@@ -91,8 +91,8 @@ public class ShellConnector<R> {
   public void submitEvaluation(String request, final CompletionHandler<String> handler) {
 
     //
-    CompletionHandler<R> responseHandler = new CompletionHandler<R>() {
-      public void completed(R shellResponse) {
+    CompletionHandler<ShellResponse> responseHandler = new CompletionHandler<ShellResponse>() {
+      public void completed(ShellResponse shellResponse) {
         if (status == ConnectorStatus.EVALUATING) {
           String ret = update(shellResponse);
           if (handler != null) {
@@ -115,7 +115,7 @@ public class ShellConnector<R> {
       if ("bye".equals(request)) {
         shell.doClose();
         status = ConnectorStatus.CLOSED;
-        futureResponse = new ImmediateFuture<R>(shell.okResponse());
+        futureResponse = new ImmediateFuture<ShellResponse>(new ShellResponse.Ok());
       } else {
         // Evaluate
         futureResponse = shell.doSubmitEvaluation(request, responseHandler);
@@ -136,7 +136,7 @@ public class ShellConnector<R> {
     }
   }
 
-  private String update(R response) {
+  private String update(ShellResponse response) {
     synchronized (lock) {
       if (status != ConnectorStatus.EVALUATING) {
         throw new IllegalStateException();

@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.shell.impl;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -25,10 +25,13 @@ import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptCommand;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
-import org.crsh.connector.AbstractShell;
+import org.crsh.shell.Shell;
 import org.crsh.display.SimpleDisplayContext;
 import org.crsh.display.structure.Element;
 import org.crsh.jcr.NodeMetaClass;
+import org.crsh.shell.Resource;
+import org.crsh.shell.ShellContext;
+import org.crsh.shell.ShellResponse;
 import org.crsh.util.CompletionHandler;
 import org.crsh.util.ImmediateFuture;
 import org.crsh.util.TimestampedObject;
@@ -46,7 +49,7 @@ import java.util.concurrent.Future;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CRaSH implements AbstractShell<ShellResponse> {
+public class CRaSH implements Shell {
 
   static {
     // Force integration of node meta class
@@ -134,7 +137,7 @@ public class CRaSH implements AbstractShell<ShellResponse> {
     this(context, null);
   }
 
-  CRaSH(final ShellContext context, ExecutorService executor) {
+  public CRaSH(final ShellContext context, ExecutorService executor) {
     CommandContext commandContext = new CommandContext();
 
     //
@@ -180,10 +183,6 @@ public class CRaSH implements AbstractShell<ShellResponse> {
   }
 
   // Shell implementation **********************************************************************************************
-
-  public ShellResponse okResponse() {
-    return new ShellResponse.Ok();
-  }
 
   public void doClose() {
     close();

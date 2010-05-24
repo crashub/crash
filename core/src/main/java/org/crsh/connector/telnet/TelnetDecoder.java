@@ -22,7 +22,7 @@ package org.crsh.connector.telnet;
 import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
-import org.crsh.connector.ShellConnector;
+import org.crsh.shell.ShellConnector;
 import org.crsh.util.CompletionHandler;
 import org.crsh.util.Input;
 import org.crsh.util.InputDecoder;

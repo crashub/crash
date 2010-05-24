@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.connector;
+package org.crsh.shell;
 
 import org.crsh.util.CompletionHandler;
 
@@ -27,16 +27,14 @@ import java.util.concurrent.Future;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface AbstractShell<R> {
+public interface Shell {
 
   String getPrompt();
 
-  Future<R> doSubmitEvaluation(String request, CompletionHandler<R> responseHandler);
+  Future<ShellResponse> doSubmitEvaluation(String request, CompletionHandler<ShellResponse> responseHandler);
 
-  String decode(R response);
+  String decode(ShellResponse response);
 
   void doClose();
-
-  R okResponse();
 
 }

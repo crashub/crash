@@ -22,6 +22,7 @@ package org.crsh.shell;
 import groovy.lang.GroovyShell;
 import org.crsh.AbstractRepositoryTestCase;
 import org.crsh.TestShellContext;
+import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

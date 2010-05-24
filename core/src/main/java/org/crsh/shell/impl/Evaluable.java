@@ -17,10 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.shell.impl;
 
 import org.crsh.command.ShellCommand;
 import org.crsh.display.DisplayBuilder;
+import org.crsh.shell.ErrorType;
+import org.crsh.shell.ShellResponse;
 import org.crsh.util.CompletionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,7 @@ import java.util.concurrent.Callable;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Evaluable implements Callable<ShellResponse> {
+class Evaluable implements Callable<ShellResponse> {
 
   /** . */
   private final Logger log = LoggerFactory.getLogger(getClass());
