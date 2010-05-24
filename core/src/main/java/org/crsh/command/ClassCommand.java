@@ -37,7 +37,7 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
   private CommandContext context;
 
   @Override
-  public Object invokeMethod(String name, Object args) {
+  public final Object invokeMethod(String name, Object args) {
     try {
       return super.invokeMethod(name, args);
     }
@@ -62,7 +62,7 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
   }
 
   @Override
-  public Object getProperty(String property) {
+  public final Object getProperty(String property) {
     try {
       return super.getProperty(property);
     }
@@ -72,7 +72,7 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
   }
 
   @Override
-  public void setProperty(String property, Object newValue) {
+  public final void setProperty(String property, Object newValue) {
     try {
       super.setProperty(property, newValue);
     }
@@ -81,7 +81,14 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
     }
   }
 
-  public Object execute(CommandContext context, String... args) throws ScriptException {
+  protected final String readLine(String msg) {
+    if (context == null) {
+      throw new IllegalStateException("No current context");
+    }
+    return context.readLine(msg);
+  }
+
+  public final Object execute(CommandContext context, String... args) throws ScriptException {
     if (context == null) {
       throw new NullPointerException();
     }

@@ -19,8 +19,6 @@
 
 package org.crsh.shell;
 
-import org.crsh.util.CompletionHandler;
-
 import java.util.concurrent.Future;
 
 /**
