@@ -19,9 +19,14 @@
 package org.crsh.shell;
 
 import org.crsh.Info;
+import org.crsh.command.ScriptException;
+import org.crsh.display.SimpleDisplayContext;
+import org.crsh.display.structure.Element;
 import org.crsh.util.CompletionHandler;
 import org.crsh.util.ImmediateFuture;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
@@ -31,7 +36,7 @@ import java.util.concurrent.Future;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellConnector {
+public class Connector {
 
   /** . */
   private ConnectorStatus status;
@@ -48,7 +53,7 @@ public class ShellConnector {
   /** . */
   private final Shell shell;
 
-  public ShellConnector(Shell shell) {
+  public Connector(Shell shell) {
     this.shell = shell;
     this.status = ConnectorStatus.INITIAL;
     this.lock = new Object();
@@ -88,7 +93,7 @@ public class ShellConnector {
     submitEvaluation(request, null);
   }
 
-  public void submitEvaluation(String request, final CompletionHandler<String> handler) {
+  public void submitEvaluation(String request, final ConnectorResponseContext handler) {
 
     //
     CompletionHandler<ShellResponse> responseHandler = new CompletionHandler<ShellResponse>() {
@@ -144,7 +149,7 @@ public class ShellConnector {
 
       //
       try {
-        String ret = shell.decode(response);
+        String ret = decode(response);
         futureResponse = null;
         lastLine = ret;
         return ret;
@@ -190,5 +195,78 @@ public class ShellConnector {
       }
       status = ConnectorStatus.CLOSED;
     }
+  }
+
+  private String decode(ShellResponse response) {
+    String ret = null;
+    try {
+      String result = null;
+      if (response instanceof ShellResponse.Error) {
+        ShellResponse.Error error = (ShellResponse.Error) response;
+        Throwable t = error.getThrowable();
+        if (t instanceof Error) {
+          throw ((Error) t);
+        } else if (t instanceof ScriptException) {
+          result = "Error: " + t.getMessage();
+        } else if (t instanceof RuntimeException) {
+          result = "Unexpected exception: " + t.getMessage();
+          t.printStackTrace(System.err);
+        } else if (t instanceof Exception) {
+          result = "Unexpected exception: " + t.getMessage();
+          t.printStackTrace(System.err);
+        } else {
+          result = "Unexpected throwable: " + t.getMessage();
+          t.printStackTrace(System.err);
+        }
+      } else if (response instanceof ShellResponse.Ok) {
+
+        if (response instanceof ShellResponse.Display) {
+          ShellResponse.Display display = (ShellResponse.Display) response;
+          SimpleDisplayContext context = new SimpleDisplayContext("\r\n");
+          for (Element element : display) {
+            element.print(context);
+          }
+          result = context.getText();
+        } else {
+          result = "";
+        }
+      } else if (response instanceof ShellResponse.NoCommand) {
+        result = "Please type something";
+      } else if (response instanceof ShellResponse.UnkownCommand) {
+        ShellResponse.UnkownCommand unknown = (ShellResponse.UnkownCommand) response;
+        result = "Unknown command " + unknown.getName();
+      }
+
+      // Format response if any
+      if (result != null) {
+        ret = "" + String.valueOf(result) + "\r\n";
+      }
+    } catch (Throwable t) {
+      StringWriter writer = new StringWriter();
+      PrintWriter printer = new PrintWriter(writer);
+      printer.print("ERROR: ");
+      t.printStackTrace(printer);
+      printer.println();
+      printer.close();
+      ret = writer.toString();
+    }
+
+    //
+    // NEED TO ENABLE THIS AGAIN
+/*
+    if (isClosed()) {
+      ret += "Have a good day!\r\n";
+    }
+*/
+
+    //
+    if (ret == null) {
+      ret = getPrompt();
+    } else {
+      ret += getPrompt();
+    }
+
+    //
+    return ret;
   }
 }

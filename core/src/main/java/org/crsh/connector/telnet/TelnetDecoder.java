@@ -22,8 +22,8 @@ package org.crsh.connector.telnet;
 import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
-import org.crsh.shell.ShellConnector;
-import org.crsh.util.CompletionHandler;
+import org.crsh.shell.Connector;
+import org.crsh.shell.ConnectorResponseContext;
 import org.crsh.util.Input;
 import org.crsh.util.InputDecoder;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class TelnetDecoder extends InputDecoder {
   private final Connection conn;
 
   /** . */
-  private final ShellConnector connector;
+  private final Connector connector;
 
   /** . */
   private final BasicTerminalIO termIO;
@@ -54,7 +54,7 @@ public class TelnetDecoder extends InputDecoder {
 
   public TelnetDecoder(Connection connection) {
     this.conn = connection;
-    this.connector = new ShellConnector(TelnetLifeCycle.instance.getShellBuilder().build());
+    this.connector = new Connector(TelnetLifeCycle.instance.getShellBuilder().build());
     this.termIO = connection.getTerminalIO();
     this.status = TelnetStatus.SHUTDOWN;
   }
@@ -118,7 +118,7 @@ public class TelnetDecoder extends InputDecoder {
         {
           case READY:
             log.debug("Submitting command " + line);
-            connector.submitEvaluation(line, new CompletionHandler<String>() {
+            connector.submitEvaluation(line, new ConnectorResponseContext() {
               public void completed(String s) {
                 log.debug("Command completed with result " + s);
                 try {

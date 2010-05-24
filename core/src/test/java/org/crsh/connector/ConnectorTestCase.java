@@ -23,7 +23,7 @@ import org.crsh.AbstractRepositoryTestCase;
 import org.crsh.TestShellContext;
 import org.crsh.shell.ConnectorStatus;
 import org.crsh.shell.ShellBuilder;
-import org.crsh.shell.ShellConnector;
+import org.crsh.shell.Connector;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,7 +54,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
   }
 
   public void _testCancelEvaluation() {
-    ShellConnector connector = new ShellConnector(builder.build());
+    Connector connector = new Connector(builder.build());
     connector.open();
     status = 0;
     connector.submitEvaluation("invoke " + ConnectorTestCase.class.getName() + " bilta");
@@ -94,7 +94,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
   }
 
   public void _testAsyncEvaluation() {
-    ShellConnector connector = new ShellConnector(builder.build());
+    Connector connector = new Connector(builder.build());
     connector.open();
     status = 0;
     connector.submitEvaluation("invoke " + ConnectorTestCase.class.getName() + " bilto");
