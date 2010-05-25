@@ -24,6 +24,8 @@ import org.crsh.TestShell;
 import org.crsh.TestShellContext;
 import org.crsh.shell.*;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -55,6 +57,44 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
     executor = Executors.newSingleThreadExecutor();
     context = new TestShellContext();
     builder = new ShellFactory(context);
+  }
+
+  public void testReadLine() {
+    final LinkedList<String> output = new LinkedList<String>();
+    final LinkedList<String> input = new LinkedList<String>();
+    input.add("juu");
+
+    //
+    Shell shell = new TestShell() {
+      @Override
+      public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
+
+        String a = responseContext.readLine("bar");
+
+        return new ShellResponse.Display(a);
+      }
+    };
+
+    //
+    Connector connector = new Connector(executor, shell);
+    connector.open();
+
+    //
+    connector.submitEvaluation("foo", new ConnectorResponseContext() {
+      public void completed(String s) {
+
+      }
+      public String readLine(String s) {
+        output.addLast(s);
+        return input.isEmpty() ? null : input.removeLast();
+      }
+    });
+
+    //
+    String actual = connector.popResponse();
+    assertEquals("juu\r\n%", actual);
+    assertEquals(Collections.singletonList("bar"), output);
+    assertEquals(0, input.size());
   }
 
   public void testCancelEvaluation() {
