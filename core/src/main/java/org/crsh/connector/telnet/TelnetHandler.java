@@ -22,6 +22,9 @@ package org.crsh.connector.telnet;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
+import org.crsh.connector.Term;
+import org.crsh.connector.TermShellAdapter;
+import org.crsh.shell.Connector;
 
 import java.io.IOException;
 
@@ -32,12 +35,19 @@ import java.io.IOException;
 public class TelnetHandler implements Shell {
 
   /** . */
-  private TelnetDecoder decoder;
+  private TermShellAdapter decoder;
 
   public void run(Connection conn) {
 
+    Connector connector = new Connector(
+        TelnetLifeCycle.instance.getExecutor(),
+        TelnetLifeCycle.instance.getShellFactory().build());
+
     //
-    decoder = new TelnetDecoder(conn);
+    Term term = new TelnetTerm(conn);
+
+    //
+    decoder = new TermShellAdapter(term, connector);
 
     //
     conn.addConnectionListener(this);

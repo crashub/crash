@@ -17,32 +17,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.connector.telnet;
+package org.crsh.connector;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public enum TelnetStatus {
+public interface Term {
 
-  /**
-   * The system is shut down.
-   */
-  SHUTDOWN,
+  TermAction readAction() throws IOException;
 
-  /**
-   * The system is ready to process a command.
-   */
-  READY,
+  void writeFully(String prompt) throws IOException;
 
-  /**
-   * The system is processing a command.
-   */
-  PROCESSING,
-
-  /**
-   * The system is reading input.
-   */
-  READING_INPUT
+  void close();
 
 }

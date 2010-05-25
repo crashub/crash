@@ -19,6 +19,7 @@
 package org.crsh.util;
 
 import junit.framework.TestCase;
+import org.crsh.connector.sshd.ReaderStateMachine;
 
 import java.io.IOException;
 

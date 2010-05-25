@@ -20,6 +20,7 @@
 package org.crsh.connector.telnet;
 
 import junit.framework.TestCase;
+import org.crsh.TestShellContext;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -27,9 +28,25 @@ import junit.framework.TestCase;
  */
 public class TelnetTestCase extends TestCase {
 
+  /** . */
+  private TelnetLifeCycle lf;
+
+  @Override
+  protected void setUp() throws Exception {
+
+    TelnetLifeCycle lf = new TelnetLifeCycle(new TestShellContext());
+    lf.doInit();
+
+    this.lf = lf;
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    lf.doDestroy();
+    lf = null;
+  }
 
   public void testFoo(){
-
 
 
 
