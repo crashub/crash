@@ -50,6 +50,10 @@ public class TermShellAdapter {
     this.term = term;
   }
 
+  public TermStatus getStatus() {
+    return status;
+  }
+
   public void close() {
     term.close();
     try {
