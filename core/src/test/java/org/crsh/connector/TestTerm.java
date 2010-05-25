@@ -57,7 +57,7 @@ public class TestTerm implements Term {
     actions.add(action);
   }
 
-  public TermAction readAction() throws IOException {
+  public TermAction read() throws IOException {
     if (closed) {
       throw new IllegalStateException();
     }
@@ -68,7 +68,7 @@ public class TestTerm implements Term {
     }
   }
 
-  public void writeFully(String data) throws IOException {
+  public void write(String data) throws IOException {
     if (closed) {
       throw new IllegalStateException();
     }

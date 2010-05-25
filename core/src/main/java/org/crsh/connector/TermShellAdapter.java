@@ -65,7 +65,7 @@ public class TermShellAdapter {
 
   public void run() throws IOException {
     String welcome = connector.open();
-    term.writeFully(welcome);
+    term.write(welcome);
 
     // Go to ready state
     this.status = TermStatus.READY;
@@ -74,7 +74,7 @@ public class TermShellAdapter {
     while (status != TermStatus.SHUTDOWN) {
 
       //
-      TermAction tmp = term.readAction();
+      TermAction tmp = term.read();
 
       if (tmp instanceof TermAction.ReadLine) {
 
@@ -90,7 +90,7 @@ public class TermShellAdapter {
               public void completed(String s) {
                 log.debug("Command completed with result " + s);
                 try {
-                  term.writeFully(s);
+                  term.write(s);
                 } catch (IOException e) {
                   e.printStackTrace();
                 } finally {
@@ -121,7 +121,7 @@ public class TermShellAdapter {
           log.debug("Evaluation cancelled");
         }
         String s = "\r\n" + connector.getPrompt();
-        term.writeFully(s);
+        term.write(s);
 
         // Maybe should clear buffer ?
       }

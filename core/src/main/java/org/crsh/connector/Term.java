@@ -27,9 +27,9 @@ import java.io.IOException;
  */
 public interface Term {
 
-  TermAction readAction() throws IOException;
+  TermAction read() throws IOException;
 
-  void writeFully(String prompt) throws IOException;
+  void write(String prompt) throws IOException;
 
   void close();
 

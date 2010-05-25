@@ -60,7 +60,7 @@ public class TelnetTerm extends InputDecoder implements Term {
     }
   }
 
-  public TermAction readAction() throws IOException {
+  public TermAction read() throws IOException {
 
     while (true) {
       int code = termIO.read();
@@ -92,7 +92,7 @@ public class TelnetTerm extends InputDecoder implements Term {
     }
   }
 
-  public void writeFully(String prompt) throws IOException {
+  public void write(String prompt) throws IOException {
     termIO.write(prompt);
     termIO.flush();
   }
@@ -107,7 +107,7 @@ public class TelnetTerm extends InputDecoder implements Term {
 
   @Override
   protected void echo(String s) throws IOException {
-    writeFully(s);
+    write(s);
   }
 
   @Override
