@@ -19,6 +19,8 @@
 
 package org.crsh.shell;
 
+import org.crsh.command.ScriptException;
+import org.crsh.display.SimpleDisplayContext;
 import org.crsh.display.structure.Element;
 import org.crsh.display.structure.LabelElement;
 
@@ -32,6 +34,8 @@ import java.util.List;
  */
 public abstract class ShellResponse {
 
+  public abstract String getText();
+
   public static class UnkownCommand extends ShellResponse {
 
     /** . */
@@ -44,18 +48,36 @@ public abstract class ShellResponse {
     public String getName() {
       return name;
     }
+
+    @Override
+    public String getText() {
+      return "Unknown command " + name;
+    }
   }
 
   public static class NoCommand extends ShellResponse {
+    @Override
+    public String getText() {
+      return "Please type something";
+    }
   }
 
   public static class Close extends ShellResponse {
+
+    @Override
+    public String getText() {
+      return "Have a good day!\r\n";
+    }
   }
 
   /**
    * Command execution is terminated.
    */
   public static class Ok extends ShellResponse {
+    @Override
+    public String getText() {
+      return "";
+    }
   }
 
   public static class Display extends Ok implements Iterable<Element> {
@@ -69,6 +91,15 @@ public abstract class ShellResponse {
 
     public Display(String label) {
       this(Collections.<Element>singletonList(new LabelElement(label)));
+    }
+
+    @Override
+    public String getText() {
+      SimpleDisplayContext context = new SimpleDisplayContext("\r\n");
+      for (Element element : elements) {
+        element.print(context);
+      }
+      return context.getText();
     }
 
     public Iterator<Element> iterator() {
@@ -95,6 +126,26 @@ public abstract class ShellResponse {
 
     public Throwable getThrowable() {
       return throwable;
+    }
+
+    @Override
+    public String getText() {
+      String result;
+      if (throwable instanceof java.lang.Error) {
+        throw ((java.lang.Error)throwable);
+      } else if (throwable instanceof ScriptException) {
+        result = "Error: " + throwable.getMessage();
+      } else if (throwable instanceof RuntimeException) {
+        result = "Unexpected exception: " + throwable.getMessage();
+        throwable.printStackTrace(System.err);
+      } else if (throwable instanceof Exception) {
+        result = "Unexpected exception: " + throwable.getMessage();
+        throwable.printStackTrace(System.err);
+      } else {
+        result = "Unexpected throwable: " + throwable.getMessage();
+        throwable.printStackTrace(System.err);
+      }
+      return result;
     }
 
     public String toString() {

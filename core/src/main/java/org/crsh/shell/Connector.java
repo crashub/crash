@@ -19,15 +19,10 @@
 package org.crsh.shell;
 
 import org.crsh.Info;
-import org.crsh.command.ScriptException;
-import org.crsh.display.SimpleDisplayContext;
-import org.crsh.display.structure.Element;
 import org.crsh.util.ImmediateFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
@@ -100,11 +95,11 @@ public class Connector {
     return status;
   }
 
-  public void submitEvaluation(String request) {
-    submitEvaluation(request, null);
+  public Future<ShellResponse> submitEvaluation(String request) {
+    return submitEvaluation(request, null);
   }
 
-  public void submitEvaluation(final String request, final ConnectorResponseContext handler) {
+  public Future<ShellResponse> submitEvaluation(final String request, final ConnectorResponseContext handler) {
 
     // The response context
     final ShellResponseContext responseContext = new ShellResponseContext() {
@@ -156,6 +151,9 @@ public class Connector {
         }
       }
     }
+
+    //
+    return futureResponse;
   }
 
   public boolean cancelEvalutation() {
@@ -190,7 +188,7 @@ public class Connector {
         // We were waiting for that response
         case EVALUATING:
           try {
-            ret = decode(response);
+            ret = response.getText() + getPrompt();
             futureResponse = null;
             break;
           } finally {
@@ -241,7 +239,7 @@ public class Connector {
 
     //
     if (response != null) {
-      return decode(response);
+      return response.getText() + getPrompt();
     } else {
       return null;
     }
@@ -265,72 +263,5 @@ public class Connector {
       }
       status = ConnectorStatus.CLOSED;
     }
-  }
-
-  private String decode(ShellResponse response) {
-    String ret = null;
-    try {
-      String result = null;
-      if (response instanceof ShellResponse.Close) {
-        ret = "Have a good day!\r\n";
-      } if (response instanceof ShellResponse.Error) {
-        ShellResponse.Error error = (ShellResponse.Error) response;
-        Throwable t = error.getThrowable();
-        if (t instanceof Error) {
-          throw ((Error) t);
-        } else if (t instanceof ScriptException) {
-          result = "Error: " + t.getMessage();
-        } else if (t instanceof RuntimeException) {
-          result = "Unexpected exception: " + t.getMessage();
-          t.printStackTrace(System.err);
-        } else if (t instanceof Exception) {
-          result = "Unexpected exception: " + t.getMessage();
-          t.printStackTrace(System.err);
-        } else {
-          result = "Unexpected throwable: " + t.getMessage();
-          t.printStackTrace(System.err);
-        }
-      } else if (response instanceof ShellResponse.Ok) {
-
-        if (response instanceof ShellResponse.Display) {
-          ShellResponse.Display display = (ShellResponse.Display) response;
-          SimpleDisplayContext context = new SimpleDisplayContext("\r\n");
-          for (Element element : display) {
-            element.print(context);
-          }
-          result = context.getText();
-        } else {
-          result = "";
-        }
-      } else if (response instanceof ShellResponse.NoCommand) {
-        result = "Please type something";
-      } else if (response instanceof ShellResponse.UnkownCommand) {
-        ShellResponse.UnkownCommand unknown = (ShellResponse.UnkownCommand) response;
-        result = "Unknown command " + unknown.getName();
-      }
-
-      // Format response if any
-      if (result != null) {
-        ret = "" + String.valueOf(result) + "\r\n";
-      }
-    } catch (Throwable t) {
-      StringWriter writer = new StringWriter();
-      PrintWriter printer = new PrintWriter(writer);
-      printer.print("ERROR: ");
-      t.printStackTrace(printer);
-      printer.println();
-      printer.close();
-      ret = writer.toString();
-    }
-
-    //
-    if (ret == null) {
-      ret = getPrompt();
-    } else {
-      ret += getPrompt();
-    }
-
-    //
-    return ret;
   }
 }

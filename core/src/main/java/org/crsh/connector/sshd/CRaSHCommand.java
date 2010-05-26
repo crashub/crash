@@ -21,12 +21,15 @@ package org.crsh.connector.sshd;
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
 import org.crsh.shell.Connector;
+import org.crsh.shell.ShellResponse;
+import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.concurrent.Future;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -53,9 +56,13 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   /** . */
   private Connector connector;
 
+  /** . */
+  private CRaSH shell;
+
   public void start(Environment env) throws IOException {
     context = new SSHContext(env.getPtyModes().get(PtyMode.VERASE));
-    connector = new Connector(factory.executor, factory.builder.build());
+    shell = factory.builder.build();
+    connector = new Connector(factory.executor, shell);
 
     //
     thread = new Thread(this, "CRaSH");
@@ -87,14 +94,20 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
         }
 
         //
-        String response = connector.evaluate(request);
+        Future<ShellResponse> futureResponse = connector.submitEvaluation(request);
 
         //
-        writer.write(response);
+        ShellResponse response = futureResponse.get();
+
+        //
+        writer.write(response.getText());
+        writer.write(connector.getPrompt());
         writer.flush();
 
         //
-        if (connector.isClosed()) {
+        if (response instanceof ShellResponse.Close) {
+          connector.close();
+          shell.close();
           break;
         }
       }
