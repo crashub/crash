@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -53,6 +54,35 @@ public class TelnetTerm extends InputDecoder implements Term {
   /** . */
   private boolean closed;
 
+  /** . */
+  private final Object lock = new Object();
+
+  /** . */
+  private final LinkedList<Awaiter> awaiters = new LinkedList<Awaiter>();
+
+  private static class Awaiter {
+
+    TermAction action;
+
+    private Awaiter() {
+    }
+
+    public synchronized void give(TermAction action) {
+      this.action = action;
+      notify();
+    }
+
+    public synchronized TermAction take() {
+      try {
+        wait();
+        return action;
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+        return null;
+      }
+    }
+  }
+
   public TelnetTerm(Connection conn) {
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
@@ -68,17 +98,56 @@ public class TelnetTerm extends InputDecoder implements Term {
   }
 
   public void run() {
+
+    //
+    TermAction action = null;
+
+    //
     while (!closed) {
       try {
-        TermAction action = read();
-        boolean processed = processor.process(TelnetTerm.this, action);
-        if (!processed) {
-          throw new Exception("Not implemented yet :-)");
+        if (action == null) {
+          action = _read();
+        }
+
+        //
+        Awaiter awaiter = null;
+        synchronized (lock) {
+          if (awaiters.size() > 0) {
+            awaiter = awaiters.removeFirst();
+          }
+        }
+
+        // Consume
+        TermAction action2 = action;
+        action = null;
+
+        //
+        if (awaiter != null) {
+          awaiter.give(action2);
+        } else {
+          boolean processed = processor.process(TelnetTerm.this, action2);
+          if (!processed) {
+            // Push back
+            action = action2;
+          }
         }
       } catch (Exception e) {
         log.error("Action delivery failed", e);
       }
     }
+  }
+
+  public TermAction read() throws IOException {
+    Awaiter awaiter;
+
+    //
+    synchronized (lock) {
+      awaiter = new Awaiter();
+      awaiters.add(awaiter);
+    }
+
+    //
+    return awaiter.take();
   }
 
   public void close() {
@@ -91,7 +160,7 @@ public class TelnetTerm extends InputDecoder implements Term {
     }
   }
 
-  public TermAction read() throws IOException {
+  public TermAction _read() throws IOException {
 
     while (true) {
       int code = termIO.read();
