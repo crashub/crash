@@ -188,7 +188,7 @@ public class Connector {
         // We were waiting for that response
         case EVALUATING:
           try {
-            ret = response.getText() + getPrompt();
+            ret = response.getText() + "\r\n" + getPrompt();
             futureResponse = null;
             break;
           } finally {
@@ -239,7 +239,7 @@ public class Connector {
 
     //
     if (response != null) {
-      return response.getText() + getPrompt();
+      return response.getText() + "\r\n" + getPrompt();
     } else {
       return null;
     }
