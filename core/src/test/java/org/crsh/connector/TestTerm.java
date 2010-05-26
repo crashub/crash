@@ -57,6 +57,8 @@ public class TestTerm implements Term {
         try {
           final TermAction action = actions.takeFirst();
           TermResponseContext ctx = new TermResponseContext() {
+            public void setEcho(boolean echo) {
+            }
             public TermAction read() throws IOException {
               return TestTerm.this.read();
             }

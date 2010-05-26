@@ -103,8 +103,8 @@ public class Connector {
 
     // The response context
     final ShellResponseContext responseContext = new ShellResponseContext() {
-      public String readLine(String msg) {
-        return handler.readLine(msg);
+      public String readLine(String msg, boolean echo) {
+        return handler.readLine(msg, echo);
       }
     };
 

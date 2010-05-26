@@ -27,6 +27,8 @@ import java.io.IOException;
  */
 public interface TermResponseContext {
 
+  void setEcho(boolean echo);
+
   TermAction read() throws IOException;
 
   void write(String prompt) throws IOException;

@@ -42,18 +42,44 @@ public abstract class InputDecoder implements Iterator<Input> {
   /** -1 means the starts of a new line. */
   private int previous;
 
+  /** Whether or not we do echoing. */
+  private boolean echoing;
+
   public InputDecoder() {
     this.buffer = new char[128];
     this.size = 0;
     this.lines = new LinkedList<Input>();
     this.previous = -1;
+    this.echoing = true;
   }
 
-  protected abstract void echo(char c) throws IOException;
+  public boolean isEchoing() {
+    return echoing;
+  }
 
-  protected abstract void echo(String s) throws IOException;
+  public void setEchoing(boolean echoing) {
+    this.echoing = echoing;
+  }
 
-  protected abstract void echoDel() throws IOException;
+  private void echo(char c) throws IOException {
+    echo(new String(new char[]{c}));
+  }
+
+  private void echo(String s) throws IOException {
+    if (echoing) {
+      doEcho(s);
+    }
+  }
+
+  private void echoDel() throws IOException {
+    if (echoing) {
+      doEchoDel();
+    }
+  }
+
+  protected abstract void doEcho(String s) throws IOException;
+
+  protected abstract void doEchoDel() throws IOException;
 
   public void appendData(char c) throws IOException {
     if ((c == '\n' && previous == '\r') || (c == '\r' && previous == '\n')) {

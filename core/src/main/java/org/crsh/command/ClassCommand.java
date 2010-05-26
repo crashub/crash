@@ -82,10 +82,14 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
   }
 
   protected final String readLine(String msg) {
+    return readLine(msg, true);
+  }
+
+  protected final String readLine(String msg, boolean echo) {
     if (context == null) {
       throw new IllegalStateException("No current context");
     }
-    return context.readLine(msg);
+    return context.readLine(msg, echo);
   }
 
   public final Object execute(CommandContext context, String... args) throws ScriptException {

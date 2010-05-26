@@ -101,9 +101,9 @@ class CommandContextImpl implements CommandContext {
     return state.hashCode();
   }
 
-  public String readLine(String msg) {
+  public String readLine(String msg, boolean echo) {
     if (responseContext != null) {
-      return responseContext.readLine(msg);
+      return responseContext.readLine(msg, echo);
     } else {
       throw new IllegalStateException("The command does not have access to console line reading");
     }

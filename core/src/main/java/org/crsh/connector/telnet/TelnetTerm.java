@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -79,6 +80,12 @@ public class TelnetTerm extends InputDecoder implements Term {
   /** . */
   private final LinkedList<Awaiter> awaiters = new LinkedList<Awaiter>();
 
+  /** . */
+  private final ArrayList<String> history;
+
+  /** . */
+  private int historyCursor;
+
   private static class Awaiter {
 
     TermAction action;
@@ -107,6 +114,8 @@ public class TelnetTerm extends InputDecoder implements Term {
     this.termIO = conn.getTerminalIO();
     this.processor = null;
     this.status = new AtomicInteger(STATUS_INITIAL);
+    this.history = new ArrayList<String>();
+    this.historyCursor = 0;
   }
 
   public TelnetTerm(Connection conn, TermProcessor processor) {
@@ -114,6 +123,8 @@ public class TelnetTerm extends InputDecoder implements Term {
     this.termIO = conn.getTerminalIO();
     this.processor = processor;
     this.status = new AtomicInteger(STATUS_INITIAL);
+    this.history = new ArrayList<String>();
+    this.historyCursor = 0;
   }
 
   public void run() {
@@ -162,6 +173,9 @@ public class TelnetTerm extends InputDecoder implements Term {
 
         //
         TermResponseContext ctx = new TermResponseContext() {
+          public void setEcho(boolean echo) {
+            TelnetTerm.this.setEchoing(echo);
+          }
           public TermAction read() throws IOException {
             return TelnetTerm.this.read();
           }
@@ -237,6 +251,10 @@ public class TelnetTerm extends InputDecoder implements Term {
       } else if (code == 10) {
         appendData('\r');
         appendData('\n');
+      } else if (code == TerminalIO.UP) {
+
+      } else if (code == TerminalIO.DOWN) {
+
       } else if (code >= 0 && code < 128) {
         if (code == 3) {
           log.debug("Want to cancel evaluation");
@@ -245,7 +263,7 @@ public class TelnetTerm extends InputDecoder implements Term {
           appendData((char)code);
         }
       } else {
-        log.debug("Unhandled char " + code);
+        log.info("Unhandled char " + code);
       }
 
       if (hasNext()) {
@@ -265,7 +283,7 @@ public class TelnetTerm extends InputDecoder implements Term {
   }
 
   @Override
-  protected void echoDel() throws IOException {
+  protected void doEchoDel() throws IOException {
     termIO.moveLeft(1);
     termIO.write(' ');
     termIO.moveLeft(1);
@@ -273,13 +291,7 @@ public class TelnetTerm extends InputDecoder implements Term {
   }
 
   @Override
-  protected void echo(String s) throws IOException {
+  protected void doEcho(String s) throws IOException {
     write(s);
-  }
-
-  @Override
-  protected void echo(char c) throws IOException {
-    termIO.write(c);
-    termIO.flush();
   }
 }

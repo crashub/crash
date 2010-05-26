@@ -93,23 +93,26 @@ public class TermShellAdapter implements TermProcessor {
                 status = TermStatus.READY;
               }
             }
-            public String readLine(String s) {
+            public String readLine(String s, boolean echo) {
               try {
                 status = TermStatus.READING_INPUT;
+                responseContext.setEcho(echo);
                 responseContext.write(s);
                 TermAction action = responseContext.read();
+                String line = null;
                 if (action instanceof TermAction.ReadLine) {
-                  String line = ((TermAction.ReadLine) action).getLine();
-                  log.debug("Read from console " + line);
-                  return line;
+                  line = ((TermAction.ReadLine) action).getLine();
+                  log.debug("Read from console");
                 } else {
                   log.debug("Ignoring action " + action + " returning null");
-                  return null;
                 }
+                responseContext.write("\r\n");
+                return line;
               } catch (Exception e) {
                 log.error("Reading from console failed", e);
                 return null;
               } finally {
+                responseContext.setEcho(true);
                 status = TermStatus.PROCESSING;
               }
             }

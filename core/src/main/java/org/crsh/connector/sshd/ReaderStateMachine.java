@@ -23,7 +23,6 @@ import org.crsh.util.OutputCode;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Iterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -49,14 +48,7 @@ public class ReaderStateMachine extends InputDecoder {
     this.echo = echo;
   }
 
-  protected void echo(char c) throws IOException {
-    if (echo != null) {
-      echo.write(new char[]{c});
-      echo.flush();
-    }
-  }
-
-  protected void echo(String s) throws IOException {
+  protected void doEcho(String s) throws IOException {
     if (echo != null) {
       echo.write(s);
       echo.flush();
@@ -64,8 +56,8 @@ public class ReaderStateMachine extends InputDecoder {
   }
 
   @Override
-  protected void echoDel() throws IOException {
-    echo(DEL_SEQ);
+  protected void doEchoDel() throws IOException {
+    doEcho(DEL_SEQ);
   }
 
   public void append(String s) throws IOException {

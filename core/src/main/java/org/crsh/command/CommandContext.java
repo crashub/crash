@@ -28,6 +28,6 @@ import java.util.Map;
  */
 public interface CommandContext extends Map<String, Object> {
 
-  String readLine(String msg);
+  String readLine(String msg, boolean echo);
 
 }

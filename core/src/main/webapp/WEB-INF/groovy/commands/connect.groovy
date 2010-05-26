@@ -25,7 +25,7 @@ class connect extends org.crsh.command.ClassCommand
 
     //
     if (userName != null && password == null) {
-      password = readLine("password:");
+      password = readLine("password:", false);
     }
 
     //
