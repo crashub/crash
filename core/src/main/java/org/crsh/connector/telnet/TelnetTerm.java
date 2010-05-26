@@ -53,21 +53,6 @@ public class TelnetTerm extends InputDecoder implements Term {
   /** . */
   private boolean closed;
 
-  /** . */
-  private final Thread thread = new Thread() {
-    @Override
-    public void run() {
-      while (!closed) {
-        try {
-          TermAction action = read();
-          processor.process(TelnetTerm.this, action);
-        } catch (IOException e) {
-          log.error("Action delivery failed", e);
-        }
-      }
-    }
-  };
-
   public TelnetTerm(Connection conn) {
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
@@ -80,9 +65,20 @@ public class TelnetTerm extends InputDecoder implements Term {
     this.termIO = conn.getTerminalIO();
     this.processor = processor;
     this.closed = false;
+  }
 
-    //
-    thread.start();
+  public void run() {
+    while (!closed) {
+      try {
+        TermAction action = read();
+        boolean processed = processor.process(TelnetTerm.this, action);
+        if (!processed) {
+          throw new Exception("Not implemented yet :-)");
+        }
+      } catch (Exception e) {
+        log.error("Action delivery failed", e);
+      }
+    }
   }
 
   public void close() {

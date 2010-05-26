@@ -22,7 +22,6 @@ package org.crsh.connector.telnet;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
-import org.crsh.connector.Term;
 import org.crsh.connector.TermShellAdapter2;
 import org.crsh.shell.Connector;
 
@@ -36,7 +35,7 @@ public class TelnetHandler implements Shell {
   private TermShellAdapter2 decoder;
 
   /** . */
-  private Term term;
+  private TelnetTerm term;
 
   public void run(Connection conn) {
 
@@ -52,6 +51,9 @@ public class TelnetHandler implements Shell {
 
     //
     conn.addConnectionListener(this);
+
+    //
+    term.run();
 
     //
 /*

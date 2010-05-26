@@ -104,6 +104,11 @@ public class TermShellAdapter2 implements TermProcessor {
             public String readLine(String s) {
               try {
                 status = TermStatus.READING_INPUT;
+
+                //
+                term.write(s);
+
+                //
                 TermAction action = term.read();
                 if (action instanceof TermAction.ReadLine) {
                   String line = ((TermAction.ReadLine) action).getLine();

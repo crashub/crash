@@ -22,6 +22,13 @@ class connect extends org.crsh.command.ClassCommand
   def String workspaceName;  
 
   public Object execute() throws ScriptException {
+
+    //
+    if (userName != null && password == null) {
+      password = readLine("password:");
+    }
+
+    //
     def properties = containerName == null ? [:] : ["exo.container.name":containerName];
 
     //
