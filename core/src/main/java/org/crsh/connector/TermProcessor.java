@@ -17,18 +17,16 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.connector;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ConnectorResponseContext {
+public interface TermProcessor {
 
-  void completed(String s);
-
-  String readLine(String s);
-
-  void close();
+  boolean process(Term term, TermAction action);
 
 }

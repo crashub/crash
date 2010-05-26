@@ -23,10 +23,8 @@ import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
 import org.crsh.connector.Term;
-import org.crsh.connector.TermShellAdapter;
+import org.crsh.connector.TermShellAdapter2;
 import org.crsh.shell.Connector;
-
-import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -35,7 +33,10 @@ import java.io.IOException;
 public class TelnetHandler implements Shell {
 
   /** . */
-  private TermShellAdapter decoder;
+  private TermShellAdapter2 decoder;
+
+  /** . */
+  private Term term;
 
   public void run(Connection conn) {
 
@@ -44,31 +45,33 @@ public class TelnetHandler implements Shell {
         TelnetLifeCycle.instance.getShellFactory().build());
 
     //
-    Term term = new TelnetTerm(conn);
+    decoder = new TermShellAdapter2(connector);
 
     //
-    decoder = new TermShellAdapter(term, connector);
+    term = new TelnetTerm(conn, decoder);
 
     //
     conn.addConnectionListener(this);
 
     //
+/*
     try {
       decoder.run();
     } catch (IOException e) {
       e.printStackTrace();
     }
+*/
   }
 
   public void connectionIdle(ConnectionEvent connectionEvent) {
   }
 
   public void connectionTimedOut(ConnectionEvent connectionEvent) {
-    decoder.close();
+    term.close();
   }
 
   public void connectionLogoutRequest(ConnectionEvent connectionEvent) {
-    decoder.close();
+    term.close();
   }
 
   public void connectionSentBreak(ConnectionEvent connectionEvent) {

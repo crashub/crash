@@ -19,9 +19,12 @@
 
 package org.crsh.connector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -36,12 +39,40 @@ public class TestTerm implements Term {
   private boolean closed;
 
   /** . */
-  private BlockingQueue<TermAction> actions;
+  private BlockingDeque<TermAction> actions;
 
-  public TestTerm() {
+  /** . */
+  private final TermProcessor processor;
+
+  /** . */
+  private final Logger log = LoggerFactory.getLogger(TestTerm.class);
+
+  /** . */
+  private final Thread thread = new Thread() {
+    @Override
+    public void run() {
+      while (!closed) {
+        try {
+          TermAction action = actions.takeFirst();
+          boolean consumed = processor.process(TestTerm.this, action);
+          if (!consumed) {
+            actions.addFirst(action);
+          }
+        } catch (Exception e) {
+          log.error("Action delivery failed", e);
+        }
+      }
+    }
+  };
+
+  public TestTerm(TermProcessor processor) {
     this.writer = new StringBuilder();
     this.closed = false;
-    this.actions = new ArrayBlockingQueue<TermAction>(10);
+    this.actions = new LinkedBlockingDeque<TermAction>();
+    this.processor = processor;
+
+    //
+    thread.start();
   }
 
   public String getOutput() {
@@ -54,7 +85,7 @@ public class TestTerm implements Term {
     if (action == null) {
       throw new NullPointerException();
     }
-    actions.add(action);
+    actions.addLast(action);
   }
 
   public TermAction read() throws IOException {
@@ -62,7 +93,7 @@ public class TestTerm implements Term {
       throw new IllegalStateException();
     }
     try {
-      return actions.take();
+      return actions.takeFirst();
     } catch (InterruptedException e) {
       throw new AssertionError(e);
     }

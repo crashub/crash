@@ -24,6 +24,7 @@ import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
 import org.crsh.connector.Term;
 import org.crsh.connector.TermAction;
+import org.crsh.connector.TermProcessor;
 import org.crsh.util.Input;
 import org.crsh.util.InputDecoder;
 import org.slf4j.Logger;
@@ -46,12 +47,46 @@ public class TelnetTerm extends InputDecoder implements Term {
   /** . */
   private final BasicTerminalIO termIO;
 
+  /** . */
+  private final TermProcessor processor;
+
+  /** . */
+  private boolean closed;
+
+  /** . */
+  private final Thread thread = new Thread() {
+    @Override
+    public void run() {
+      while (!closed) {
+        try {
+          TermAction action = read();
+          processor.process(TelnetTerm.this, action);
+        } catch (IOException e) {
+          log.error("Action delivery failed", e);
+        }
+      }
+    }
+  };
+
   public TelnetTerm(Connection conn) {
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
+    this.processor = null;
+    this.closed = false;
+  }
+
+  public TelnetTerm(Connection conn, TermProcessor processor) {
+    this.conn = conn;
+    this.termIO = conn.getTerminalIO();
+    this.processor = processor;
+    this.closed = false;
+
+    //
+    thread.start();
   }
 
   public void close() {
+    closed = true;
     try {
       termIO.flush();
       conn.close();

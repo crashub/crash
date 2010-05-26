@@ -34,18 +34,15 @@ import java.util.concurrent.Executors;
 public class TermShellAdapterTestCase extends TestCase {
 
   public void testReadLine() throws Exception {
-//    testReadLine(true);
+    testReadLine(true);
   }
 
-/*
   public void testReadLineNoExecutor() throws Exception {
     testReadLine(false);
   }
-*/
 
   private void testReadLine(boolean withExecutor) throws Exception {
 
-    TestTerm term = new TestTerm();
     TestShell shell = new TestShell();
     Connector connector;
     if (withExecutor) {
@@ -53,30 +50,22 @@ public class TermShellAdapterTestCase extends TestCase {
     } else {
       connector = new Connector(shell);
     }
-    final TermShellAdapter adapter = new TermShellAdapter(term, connector);
+    final TermShellAdapter2 adapter = new TermShellAdapter2(connector);
 
     //
-    assertEquals(TermStatus.SHUTDOWN, adapter.getStatus());
+    TestTerm term = new TestTerm(adapter);
 
     //
-    new Thread() {
-      @Override
-      public void run() {
-        try {
-          adapter.run();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }.start();
+    assertEquals(TermStatus.READY, adapter.getStatus());
 
-    // Wait until ready
-    while (adapter.getStatus() != TermStatus.READY) {
-      Thread.sleep(10);
-    }
+    //
+    System.out.println("1");
 
     //
     term.add(new TermAction.ReadLine("foo"));
+
+    //
+    System.out.println("2");
 
     //
     shell.append(new TestShellAction() {
@@ -90,6 +79,9 @@ public class TermShellAdapterTestCase extends TestCase {
     while (adapter.getStatus() != TermStatus.READING_INPUT) {
       Thread.sleep(10);
     }
+
+    //
+    System.out.println("3");
 
     // Send a line
     term.add(new TermAction.ReadLine("juu"));

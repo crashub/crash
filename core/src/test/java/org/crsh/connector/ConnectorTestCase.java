@@ -82,11 +82,12 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
     //
     connector.submitEvaluation("foo", new ConnectorResponseContext() {
       public void completed(String s) {
-
       }
       public String readLine(String s) {
         output.addLast(s);
         return input.isEmpty() ? null : input.removeLast();
+      }
+      public void close() {
       }
     });
 

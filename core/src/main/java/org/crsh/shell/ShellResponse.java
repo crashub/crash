@@ -49,6 +49,9 @@ public abstract class ShellResponse {
   public static class NoCommand extends ShellResponse {
   }
 
+  public static class Close extends ShellResponse {
+  }
+
   /**
    * Command execution is terminated.
    */

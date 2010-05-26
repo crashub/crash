@@ -48,11 +48,7 @@ public class Bilto implements Callable<ShellResponse> {
       ShellResponse response = delegate.call();
 
       // Update connector and get string response
-      String ret = connector.update(response);
-      if (responseContext != null) {
-        // log.debug("Making handler response callback");
-        responseContext.completed(ret);
-      }
+      connector.update(responseContext, response);
 
       // Return response also
       return response;

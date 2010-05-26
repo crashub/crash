@@ -114,7 +114,7 @@ public class Connector {
     //
     synchronized (lock) {
       if (status != ConnectorStatus.AVAILABLE) {
-        throw new IllegalStateException();
+        throw new IllegalStateException("State was " + status);
       }
 
       //
@@ -123,11 +123,9 @@ public class Connector {
       //
       Callable<ShellResponse> callable;
       if ("bye".equals(request)) {
-        shell.doClose();
-        status = ConnectorStatus.CLOSED;
         callable = new Callable<ShellResponse>() {
           public ShellResponse call() throws Exception {
-            return new ShellResponse.Ok();
+            return new ShellResponse.Close();
           }
         };
       } else {
@@ -182,28 +180,45 @@ public class Connector {
    * @param response the response
    * @return the response text
    */
-  String update(ShellResponse response) {
+  void update(ConnectorResponseContext responseContext, ShellResponse response) {
     synchronized (lock) {
-      switch (status) {
-        // We were waiting for that response
-        case EVALUATING:
-          try {
-            String ret = decode(response);
-            futureResponse = null;
-            lastLine = ret;
-            return ret;
-          } finally {
-            status = ConnectorStatus.AVAILABLE;
-          }
-        case AVAILABLE:
-          // A cancelled command likely
-          return null;
-        case CLOSED:
-          // Long running command that comes after the connector was closed
-          return null;
-        default:
-        case INITIAL:
-          throw new AssertionError("That should not be possible");
+      if (response instanceof ShellResponse.Close) {
+        shell.doClose();
+        status = ConnectorStatus.CLOSED;
+        if (responseContext != null) {
+          responseContext.close();
+        }
+      } else {
+        String ret = null;
+
+        //
+        switch (status) {
+          // We were waiting for that response
+          case EVALUATING:
+            try {
+              ret = decode(response);
+              futureResponse = null;
+              lastLine = ret;
+              break;
+            } finally {
+              status = ConnectorStatus.AVAILABLE;
+            }
+          case AVAILABLE:
+            // A cancelled command likely
+            break;
+          case CLOSED:
+            // Long running command that comes after the connector was closed
+            break;
+          default:
+          case INITIAL:
+            throw new AssertionError("That should not be possible");
+        }
+
+        //
+        if (responseContext != null) {
+          // log.debug("Making handler response callback");
+          responseContext.completed(ret);
+        }
       }
     }
   }
