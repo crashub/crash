@@ -28,6 +28,10 @@ class connect extends org.crsh.command.ClassCommand
       password = readLine("password:");
     }
 
+    out.println("password: " + password);
+    out.println("password: " + password);
+    out.println("password: " + password);
+
     //
     def properties = containerName == null ? [:] : ["exo.container.name":containerName];
 

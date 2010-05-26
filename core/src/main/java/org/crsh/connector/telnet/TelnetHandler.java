@@ -22,8 +22,9 @@ package org.crsh.connector.telnet;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
-import org.crsh.connector.TermShellAdapter2;
+import org.crsh.connector.TermShellAdapter;
 import org.crsh.shell.Connector;
+import org.crsh.shell.impl.CRaSH;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -32,48 +33,52 @@ import org.crsh.shell.Connector;
 public class TelnetHandler implements Shell {
 
   /** . */
-  private TermShellAdapter2 decoder;
+  private TermShellAdapter decoder;
 
   /** . */
   private TelnetTerm term;
 
+  /** . */
+  private Connector connector;
+
+  /** . */
+  private CRaSH shell;
+
   public void run(Connection conn) {
 
-    Connector connector = new Connector(
-        TelnetLifeCycle.instance.getExecutor(),
-        TelnetLifeCycle.instance.getShellFactory().build());
-
     //
-    decoder = new TermShellAdapter2(connector);
-
-    //
+    shell = TelnetLifeCycle.instance.getShellFactory().build();
+    connector = new Connector(TelnetLifeCycle.instance.getExecutor(), shell);
+    decoder = new TermShellAdapter(connector);
     term = new TelnetTerm(conn, decoder);
 
     //
-    conn.addConnectionListener(this);
-
-    //
-    term.run();
-
-    //
-/*
     try {
-      decoder.run();
-    } catch (IOException e) {
-      e.printStackTrace();
+      conn.addConnectionListener(this);
+
+      //
+      term.run();
+    } finally {
+      close();
     }
-*/
+  }
+
+  private void close() {
+    term.close();
+    decoder.close();
+    connector.close();
+    shell.close();
   }
 
   public void connectionIdle(ConnectionEvent connectionEvent) {
   }
 
   public void connectionTimedOut(ConnectionEvent connectionEvent) {
-    term.close();
+    close();
   }
 
   public void connectionLogoutRequest(ConnectionEvent connectionEvent) {
-    term.close();
+    close();
   }
 
   public void connectionSentBreak(ConnectionEvent connectionEvent) {

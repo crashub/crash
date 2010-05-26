@@ -23,6 +23,8 @@ import org.crsh.command.ScriptException;
 import org.crsh.display.SimpleDisplayContext;
 import org.crsh.display.structure.Element;
 import org.crsh.util.ImmediateFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -40,13 +42,13 @@ import java.util.concurrent.Future;
 public class Connector {
 
   /** . */
+  private final Logger log = LoggerFactory.getLogger(Connector.class);
+
+  /** . */
   private ConnectorStatus status;
 
   /** . */
   private Future<ShellResponse> futureResponse;
-
-  /** . */
-  private String lastLine;
 
   /** . */
   private final Object lock;
@@ -174,70 +176,75 @@ public class Connector {
    * is succesfully updated, the status becomes <code>ConnectorStatus#AVAILABLE</code> and the text corresponding to
    * the shell response is returned.</p>
    *
-   * <p>If the update fails, no state update is performed and null is returned. This happens when the corresponding
-   * command execution was cancelled or the connector is closed.</p>
-   *
+   * @param responseContext the response context
    * @param response the response
-   * @return the response text
    */
   void update(ConnectorResponseContext responseContext, ShellResponse response) {
     synchronized (lock) {
+
+      //
+      String ret = null;
+
+      //
+      switch (status) {
+        // We were waiting for that response
+        case EVALUATING:
+          try {
+            ret = decode(response);
+            futureResponse = null;
+            break;
+          } finally {
+            status = ConnectorStatus.AVAILABLE;
+          }
+        case AVAILABLE:
+          // A cancelled command likely
+          break;
+        case CLOSED:
+          // Long running command that comes after the connector was closed
+          break;
+        default:
+        case INITIAL:
+          throw new AssertionError("That should not be possible");
+      }
+
+      //
+      if (responseContext != null) {
+        log.debug("Making handler response callback with " + ret);
+        responseContext.completed(ret);
+      }
+
+      //
       if (response instanceof ShellResponse.Close) {
-        shell.doClose();
-        status = ConnectorStatus.CLOSED;
         if (responseContext != null) {
+          log.debug("Signaling close to response context");
           responseContext.close();
-        }
-      } else {
-        String ret = null;
-
-        //
-        switch (status) {
-          // We were waiting for that response
-          case EVALUATING:
-            try {
-              ret = decode(response);
-              futureResponse = null;
-              lastLine = ret;
-              break;
-            } finally {
-              status = ConnectorStatus.AVAILABLE;
-            }
-          case AVAILABLE:
-            // A cancelled command likely
-            break;
-          case CLOSED:
-            // Long running command that comes after the connector was closed
-            break;
-          default:
-          case INITIAL:
-            throw new AssertionError("That should not be possible");
-        }
-
-        //
-        if (responseContext != null) {
-          // log.debug("Making handler response callback");
-          responseContext.completed(ret);
         }
       }
     }
   }
 
   public String popResponse() {
+
+    //
+    ShellResponse response = null;
+
+    //
     if (futureResponse != null) {
       try {
         // That will trigger the completion handler and the state update
         // of this object so there is no need to do anything else than that
-        futureResponse.get();
+        response = futureResponse.get();
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
 
     //
-    String s = lastLine;
-    lastLine = null;
-    return s;
+    if (response != null) {
+      return decode(response);
+    } else {
+      return null;
+    }
   }
 
   public String evaluate(String request) {
@@ -250,7 +257,6 @@ public class Connector {
       switch (status) {
         case INITIAL:
         case AVAILABLE:
-          shell.doClose();
           break;
         case EVALUATING:
           throw new UnsupportedOperationException("todo :-)");
@@ -265,7 +271,9 @@ public class Connector {
     String ret = null;
     try {
       String result = null;
-      if (response instanceof ShellResponse.Error) {
+      if (response instanceof ShellResponse.Close) {
+        ret = "Have a good day!\r\n";
+      } if (response instanceof ShellResponse.Error) {
         ShellResponse.Error error = (ShellResponse.Error) response;
         Throwable t = error.getThrowable();
         if (t instanceof Error) {
@@ -314,14 +322,6 @@ public class Connector {
       printer.close();
       ret = writer.toString();
     }
-
-    //
-    // NEED TO ENABLE THIS AGAIN
-/*
-    if (isClosed()) {
-      ret += "Have a good day!\r\n";
-    }
-*/
 
     //
     if (ret == null) {

@@ -154,10 +154,6 @@ public class CRaSH implements Shell {
 
   // Shell implementation **********************************************************************************************
 
-  public void doClose() {
-    close();
-  }
-
   public String getPrompt() {
     return (String)groovyShell.evaluate("prompt();");
   }

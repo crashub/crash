@@ -31,6 +31,4 @@ public interface Term {
 
   void write(String prompt) throws IOException;
 
-  void close();
-
 }

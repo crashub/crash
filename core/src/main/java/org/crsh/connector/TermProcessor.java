@@ -19,14 +19,12 @@
 
 package org.crsh.connector;
 
-import java.io.IOException;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface TermProcessor {
 
-  boolean process(Term term, TermAction action);
+  boolean process(TermAction action, TermResponseContext responseContext);
 
 }

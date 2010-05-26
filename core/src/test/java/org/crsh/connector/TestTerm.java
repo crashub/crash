@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -51,10 +52,22 @@ public class TestTerm implements Term {
   private final Thread thread = new Thread() {
     @Override
     public void run() {
+      final AtomicBoolean wantClose = new AtomicBoolean(false);
       while (!closed) {
         try {
-          TermAction action = actions.takeFirst();
-          boolean consumed = processor.process(TestTerm.this, action);
+          final TermAction action = actions.takeFirst();
+          TermResponseContext ctx = new TermResponseContext() {
+            public TermAction read() throws IOException {
+              return TestTerm.this.read();
+            }
+            public void write(String prompt) throws IOException {
+              TestTerm.this.write(prompt);
+            }
+            public void close() {
+              wantClose.set(true);
+            }
+          };
+          boolean consumed = processor.process(action, ctx);
           if (!consumed) {
             actions.addFirst(action);
           }
@@ -62,6 +75,12 @@ public class TestTerm implements Term {
           log.error("Action delivery failed", e);
         }
       }
+
+      //
+      if (wantClose.get()) {
+        close();
+      }
+
     }
   };
 

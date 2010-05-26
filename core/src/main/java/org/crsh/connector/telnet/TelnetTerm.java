@@ -25,19 +25,38 @@ import net.wimpi.telnetd.net.Connection;
 import org.crsh.connector.Term;
 import org.crsh.connector.TermAction;
 import org.crsh.connector.TermProcessor;
+import org.crsh.connector.TermResponseContext;
 import org.crsh.util.Input;
 import org.crsh.util.InputDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public class TelnetTerm extends InputDecoder implements Term {
+
+  /** . */
+  private static final int STATUS_INITIAL = 0;
+
+  /** . */
+  private static final int STATUS_OPEN = 1;
+
+  /** . */
+  private static final int STATUS_CLOSED = 2;
+
+  /** . */
+  private static final int STATUS_WANT_CLOSE = 3;
+
+  /** . */
+  private static final int STATUS_CLOSING = 4;
 
   /** . */
   private final Logger log = LoggerFactory.getLogger(TelnetTerm.class);
@@ -52,7 +71,7 @@ public class TelnetTerm extends InputDecoder implements Term {
   private final TermProcessor processor;
 
   /** . */
-  private boolean closed;
+  private final AtomicInteger status;
 
   /** . */
   private final Object lock = new Object();
@@ -87,14 +106,14 @@ public class TelnetTerm extends InputDecoder implements Term {
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
     this.processor = null;
-    this.closed = false;
+    this.status = new AtomicInteger(STATUS_INITIAL);
   }
 
   public TelnetTerm(Connection conn, TermProcessor processor) {
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
     this.processor = processor;
-    this.closed = false;
+    this.status = new AtomicInteger(STATUS_INITIAL);
   }
 
   public void run() {
@@ -103,36 +122,74 @@ public class TelnetTerm extends InputDecoder implements Term {
     TermAction action = null;
 
     //
-    while (!closed) {
-      try {
-        if (action == null) {
+    if (!status.compareAndSet(STATUS_INITIAL, STATUS_OPEN)) {
+      throw new IllegalStateException();
+    }
+
+    //
+    while (status.get() == STATUS_OPEN) {
+      if (action == null) {
+        try {
           action = _read();
-        }
-
-        //
-        Awaiter awaiter = null;
-        synchronized (lock) {
-          if (awaiters.size() > 0) {
-            awaiter = awaiters.removeFirst();
+          log.debug("read term data " + action);
+        } catch (IOException e) {
+          if (status.get() == STATUS_OPEN) {
+            log.error("Could not read term data", e);
+          } else {
+            log.debug("Exception but term is considered as closed", e);
+            // We continue it will lead to getting out of the loop
+            continue;
           }
         }
+      }
 
-        // Consume
-        TermAction action2 = action;
-        action = null;
+      //
+      Awaiter awaiter = null;
+      synchronized (lock) {
+        if (awaiters.size() > 0) {
+          awaiter = awaiters.removeFirst();
+        }
+      }
+
+      // Consume
+      final TermAction action2 = action;
+      action = null;
+
+      //
+      if (awaiter != null) {
+        awaiter.give(action2);
+      } else {
 
         //
-        if (awaiter != null) {
-          awaiter.give(action2);
-        } else {
-          boolean processed = processor.process(TelnetTerm.this, action2);
-          if (!processed) {
-            // Push back
-            action = action2;
+        TermResponseContext ctx = new TermResponseContext() {
+          public TermAction read() throws IOException {
+            return TelnetTerm.this.read();
           }
+          public void write(String prompt) throws IOException {
+            TelnetTerm.this.write(prompt);
+          }
+          public void close() {
+
+            // Change status
+            if (status.compareAndSet(STATUS_OPEN, STATUS_WANT_CLOSE)) {
+              // If we succeded we close the term
+              // It will cause an exception to be thrown for the thread that are waiting in the
+              // blocking read operation
+              try {
+                termIO.close();
+              } catch (IOException ignore) {
+              }
+            }
+          }
+        };
+
+        //
+        boolean processed = processor.process(action2, ctx);
+        if (!processed) {
+          // Push back
+          log.debug("Pushing back action " + action2);
+          action = action2;
         }
-      } catch (Exception e) {
-        log.error("Action delivery failed", e);
       }
     }
   }
@@ -147,16 +204,26 @@ public class TelnetTerm extends InputDecoder implements Term {
     }
 
     //
-    return awaiter.take();
+    TermAction taken = awaiter.take();
+    return taken;
   }
 
   public void close() {
-    closed = true;
-    try {
-      termIO.flush();
-      conn.close();
-    } catch (IOException e) {
-      e.printStackTrace();
+
+    //
+    status.compareAndSet(STATUS_OPEN, STATUS_WANT_CLOSE);
+
+    //
+    if (status.compareAndSet(STATUS_WANT_CLOSE, STATUS_CLOSING)) {
+      try {
+        log.debug("Closing connection");
+        termIO.flush();
+        conn.close();
+      } catch (IOException e) {
+        log.debug("Exception thrown during term close()", e);
+      } finally {
+        status.set(STATUS_CLOSED);
+      }
     }
   }
 

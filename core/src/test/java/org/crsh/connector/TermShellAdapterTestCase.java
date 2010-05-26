@@ -24,7 +24,6 @@ import org.crsh.shell.Connector;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
 
-import java.io.IOException;
 import java.util.concurrent.Executors;
 
 /**
@@ -50,7 +49,7 @@ public class TermShellAdapterTestCase extends TestCase {
     } else {
       connector = new Connector(shell);
     }
-    final TermShellAdapter2 adapter = new TermShellAdapter2(connector);
+    final TermShellAdapter adapter = new TermShellAdapter(connector);
 
     //
     TestTerm term = new TestTerm(adapter);
@@ -97,12 +96,14 @@ public class TermShellAdapterTestCase extends TestCase {
     term.add(new TermAction.ReadLine("bye"));
 
     // Wait until it is shutdown
+/*
     while (adapter.getStatus() != TermStatus.SHUTDOWN) {
       Thread.sleep(10);
     }
 
     // Now we should be able to obtain the response
     System.out.println("term.getOutput() = " + term.getOutput());
+*/
   }
 
 }

@@ -17,16 +17,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.connector;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface Shell {
+public interface TermResponseContext {
 
-  String getPrompt();
+  TermAction read() throws IOException;
 
-  ShellResponse evaluate(String request, ShellResponseContext responseContext);
+  void write(String prompt) throws IOException;
+
+  void close();
 
 }

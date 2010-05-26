@@ -37,8 +37,17 @@ public class TermAction {
     public String getLine() {
       return line;
     }
+
+    @Override
+    public String toString() {
+      return "ReadLine[line=" + line + "]";
+    }
   }
 
   public static class CancelEvaluation extends TermAction {
+    @Override
+    public String toString() {
+      return "CancelEvaluation[]";
+    }
   }
 }

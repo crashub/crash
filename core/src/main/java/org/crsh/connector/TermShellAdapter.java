@@ -30,10 +30,10 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TermShellAdapter2 implements TermProcessor {
+public class TermShellAdapter implements TermProcessor {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(TermShellAdapter2.class);
+  private final Logger log = LoggerFactory.getLogger(TermShellAdapter.class);
 
   /** . */
   private final Connector connector;
@@ -41,7 +41,7 @@ public class TermShellAdapter2 implements TermProcessor {
   /** . */
   private volatile TermStatus status;
 
-  public TermShellAdapter2(Connector connector) {
+  public TermShellAdapter(Connector connector) {
     this.connector = connector;
     this.status = TermStatus.READY;
   }
@@ -50,35 +50,28 @@ public class TermShellAdapter2 implements TermProcessor {
     return status;
   }
 
-/*
-  public void close() {
-    term.close();
-    try {
-      connector.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-*/
-
   private volatile boolean first = true;
 
-  public boolean process(final Term term, TermAction action) {
+  public void close() {
+    // No nop for now
+  }
+
+  public boolean process(TermAction action, TermResponseContext responseContext) {
     try {
-      return _process(term, action);
+      return _process(action, responseContext);
     } catch (IOException e) {
       e.printStackTrace();
       return true;
     }
   }
 
-  private boolean _process(final Term term, TermAction action) throws IOException {
+  private boolean _process(TermAction action, final TermResponseContext responseContext) throws IOException {
 
     //
     if (first) {
       first = false;
       String welcome = connector.open();
-      term.write(welcome);
+      responseContext.write(welcome);
     }
 
     //
@@ -94,7 +87,7 @@ public class TermShellAdapter2 implements TermProcessor {
             public void completed(String s) {
               log.debug("Command completed with result " + s);
               try {
-                term.write(s);
+                responseContext.write(s);
               } catch (IOException e) {
                 log.error("Write to term failure", e);
               } finally {
@@ -106,10 +99,10 @@ public class TermShellAdapter2 implements TermProcessor {
                 status = TermStatus.READING_INPUT;
 
                 //
-                term.write(s);
+                responseContext.write(s);
 
                 //
-                TermAction action = term.read();
+                TermAction action = responseContext.read();
                 if (action instanceof TermAction.ReadLine) {
                   String line = ((TermAction.ReadLine) action).getLine();
                   log.debug("Read from console " + line);
@@ -127,7 +120,7 @@ public class TermShellAdapter2 implements TermProcessor {
             }
             public void close() {
               status = TermStatus.SHUTDOWN;
-              term.close();
+              responseContext.close();
             }
           });
         } else {
@@ -146,7 +139,7 @@ public class TermShellAdapter2 implements TermProcessor {
             log.debug("Attempt to cancel evaluation failed");
           }
           String s = "\r\n" + connector.getPrompt();
-          term.write(s);
+          responseContext.write(s);
           // Maybe should clear char buffer ?
         } else {
           log.debug("Ignoring action " + action);
