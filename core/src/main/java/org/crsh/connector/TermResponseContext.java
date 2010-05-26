@@ -31,8 +31,8 @@ public interface TermResponseContext {
 
   TermAction read() throws IOException;
 
-  void write(String prompt) throws IOException;
+  void write(String msg) throws IOException;
 
-  void close();
+  void done(boolean close);
 
 }

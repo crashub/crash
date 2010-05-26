@@ -72,7 +72,7 @@ public class TermShellAdapterTestCase extends TestCase {
     //
     shell.append(new TestShellAction() {
       public ShellResponse evaluate(String request, ShellResponseContext responseContext) throws Exception {
-        String resp = responseContext.readLine("bar");
+        String resp = responseContext.readLine("bar", true);
         return new ShellResponse.Display(resp);
       }
     });

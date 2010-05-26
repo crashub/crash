@@ -81,6 +81,10 @@ public abstract class InputDecoder implements Iterator<Input> {
 
   protected abstract void doEchoDel() throws IOException;
 
+  public int size() {
+    return lines.size();
+  }
+
   public void appendData(char c) throws IOException {
     if ((c == '\n' && previous == '\r') || (c == '\r' && previous == '\n')) {
       previous = -1;

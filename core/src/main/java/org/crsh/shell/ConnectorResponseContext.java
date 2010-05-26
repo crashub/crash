@@ -29,6 +29,6 @@ public interface ConnectorResponseContext {
 
   String readLine(String s, boolean echo);
 
-  void close();
+  void done(boolean close);
 
 }

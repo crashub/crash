@@ -28,7 +28,7 @@ import java.util.HashMap;
  * @version $Revision$
  */
 public class TestCommandContext extends HashMap<String, Object> implements CommandContext {
-  public String readLine(String msg) {
+  public String readLine(String msg, boolean echo) {
     throw new UnsupportedOperationException();
   }
 }

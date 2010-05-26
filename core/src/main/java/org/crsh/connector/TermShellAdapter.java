@@ -46,6 +46,10 @@ public class TermShellAdapter implements TermProcessor {
     this.status = TermStatus.READY;
   }
 
+  public String getPrompt() {
+    return connector.getPrompt();
+  }
+
   public TermStatus getStatus() {
     return status;
   }
@@ -116,14 +120,17 @@ public class TermShellAdapter implements TermProcessor {
                 status = TermStatus.PROCESSING;
               }
             }
-            public void close() {
-              status = TermStatus.SHUTDOWN;
-              responseContext.close();
+            public void done(boolean close) {
+              if (close) {
+                // julien : should we really do that here ?
+                status = TermStatus.SHUTDOWN;
+              }
+              responseContext.done(close);
             }
           });
         } else if (action instanceof TermAction.CancelEvaluation) {
-          String s = "\r\n" + connector.getPrompt();
-          responseContext.write(s);
+//          String s = "\r\n" + connector.getPrompt();
+//          responseContext.write(s);
         }
         processed = true;
         break;
@@ -137,8 +144,8 @@ public class TermShellAdapter implements TermProcessor {
           } else {
             log.debug("Attempt to cancel evaluation failed");
           }
-          String s = "\r\n" + connector.getPrompt();
-          responseContext.write(s);
+//          String s = "\r\n" + connector.getPrompt();
+//          responseContext.write(s);
           // Maybe should clear char buffer ?
         } else {
           log.debug("Ignoring action " + action);

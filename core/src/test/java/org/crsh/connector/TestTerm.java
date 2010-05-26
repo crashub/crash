@@ -62,11 +62,13 @@ public class TestTerm implements Term {
             public TermAction read() throws IOException {
               return TestTerm.this.read();
             }
-            public void write(String prompt) throws IOException {
-              TestTerm.this.write(prompt);
+            public void write(String msg) throws IOException {
+              TestTerm.this.write(msg);
             }
-            public void close() {
-              wantClose.set(true);
+            public void done(boolean close) {
+              if (close) {
+                wantClose.set(true);
+              }
             }
           };
           boolean consumed = processor.process(action, ctx);

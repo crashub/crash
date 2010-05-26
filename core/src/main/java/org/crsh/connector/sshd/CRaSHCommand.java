@@ -101,7 +101,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
 
         //
         writer.write(response.getText());
-        writer.write(connector.getPrompt());
+//        writer.write(connector.getPrompt());
         writer.flush();
 
         //

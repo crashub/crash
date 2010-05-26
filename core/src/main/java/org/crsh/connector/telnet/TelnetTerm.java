@@ -32,10 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -179,19 +177,20 @@ public class TelnetTerm extends InputDecoder implements Term {
           public TermAction read() throws IOException {
             return TelnetTerm.this.read();
           }
-          public void write(String prompt) throws IOException {
-            TelnetTerm.this.write(prompt);
+          public void write(String msg) throws IOException {
+            TelnetTerm.this.write(msg);
           }
-          public void close() {
-
-            // Change status
-            if (status.compareAndSet(STATUS_OPEN, STATUS_WANT_CLOSE)) {
-              // If we succeded we close the term
-              // It will cause an exception to be thrown for the thread that are waiting in the
-              // blocking read operation
-              try {
-                termIO.close();
-              } catch (IOException ignore) {
+          public void done(boolean close) {
+            if (close) {
+              // Change status
+              if (status.compareAndSet(STATUS_OPEN, STATUS_WANT_CLOSE)) {
+                // If we succeded we close the term
+                // It will cause an exception to be thrown for the thread that are waiting in the
+                // blocking read operation
+                try {
+                  termIO.close();
+                } catch (IOException ignore) {
+                }
               }
             }
           }
@@ -203,6 +202,8 @@ public class TelnetTerm extends InputDecoder implements Term {
           // Push back
           log.debug("Pushing back action " + action2);
           action = action2;
+        } else if (action2 instanceof TermAction.ReadLine) {
+          history.add(((TermAction.ReadLine)action2).getLine());
         }
       }
     }
@@ -245,7 +246,6 @@ public class TelnetTerm extends InputDecoder implements Term {
 
     while (true) {
       int code = termIO.read();
-
       if (code == TerminalIO.DELETE) {
         appendDel();
       } else if (code == 10) {
@@ -277,8 +277,8 @@ public class TelnetTerm extends InputDecoder implements Term {
     }
   }
 
-  public void write(String prompt) throws IOException {
-    termIO.write(prompt);
+  public void write(String msg) throws IOException {
+    termIO.write(msg);
     termIO.flush();
   }
 

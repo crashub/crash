@@ -69,7 +69,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
       @Override
       public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
 
-        String a = responseContext.readLine("bar");
+        String a = responseContext.readLine("bar", true);
 
         return new ShellResponse.Display(a);
       }
@@ -83,17 +83,17 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
     connector.submitEvaluation("foo", new ConnectorResponseContext() {
       public void completed(String s) {
       }
-      public String readLine(String s) {
+      public String readLine(String s, boolean echo) {
         output.addLast(s);
         return input.isEmpty() ? null : input.removeLast();
       }
-      public void close() {
+      public void done(boolean close) {
       }
     });
 
     //
     String actual = connector.popResponse();
-    assertEquals("juu\r\n%", actual);
+    assertEquals("juu", actual);
     assertEquals(Collections.singletonList("bar"), output);
     assertEquals(0, input.size());
   }

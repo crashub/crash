@@ -188,7 +188,7 @@ public class Connector {
         // We were waiting for that response
         case EVALUATING:
           try {
-            ret = response.getText() + "\r\n" + getPrompt();
+            ret = response.getText() /*+ "\r\n" + getPrompt()*/;
             futureResponse = null;
             break;
           } finally {
@@ -212,11 +212,9 @@ public class Connector {
       }
 
       //
-      if (response instanceof ShellResponse.Close) {
-        if (responseContext != null) {
-          log.debug("Signaling close to response context");
-          responseContext.close();
-        }
+      if (responseContext != null) {
+        log.debug("Signaling done to response context");
+        responseContext.done(response instanceof ShellResponse.Close);
       }
     }
   }
@@ -239,7 +237,7 @@ public class Connector {
 
     //
     if (response != null) {
-      return response.getText() + "\r\n" + getPrompt();
+      return response.getText() /*+ "\r\n" + getPrompt()*/;
     } else {
       return null;
     }
