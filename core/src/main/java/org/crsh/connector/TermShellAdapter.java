@@ -80,6 +80,7 @@ public class TermShellAdapter implements TermProcessor {
       case READY:
         if (action instanceof TermAction.ReadLine) {
           String line = ((TermAction.ReadLine)action).getLine();
+          status = TermStatus.PROCESSING;
           log.debug("Submitting command " + line);
           connector.submitEvaluation(line, new ConnectorResponseContext() {
             public void completed(String s) {
@@ -95,11 +96,7 @@ public class TermShellAdapter implements TermProcessor {
             public String readLine(String s) {
               try {
                 status = TermStatus.READING_INPUT;
-
-                //
                 responseContext.write(s);
-
-                //
                 TermAction action = responseContext.read();
                 if (action instanceof TermAction.ReadLine) {
                   String line = ((TermAction.ReadLine) action).getLine();
@@ -121,8 +118,9 @@ public class TermShellAdapter implements TermProcessor {
               responseContext.close();
             }
           });
-        } else {
-          log.debug("Ignoring action " + action);
+        } else if (action instanceof TermAction.CancelEvaluation) {
+          String s = "\r\n" + connector.getPrompt();
+          responseContext.write(s);
         }
         processed = true;
         break;
