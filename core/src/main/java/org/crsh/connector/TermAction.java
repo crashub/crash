@@ -25,6 +25,13 @@ package org.crsh.connector;
  */
 public class TermAction {
 
+  public static class Init extends TermAction {
+    @Override
+    public String toString() {
+      return "Init[]";
+    }
+  }
+
   public static class ReadLine extends TermAction {
 
     /** . */

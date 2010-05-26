@@ -119,12 +119,12 @@ public class TelnetTerm extends InputDecoder implements Term {
   public void run() {
 
     //
-    TermAction action = null;
-
-    //
     if (!status.compareAndSet(STATUS_INITIAL, STATUS_OPEN)) {
       throw new IllegalStateException();
     }
+
+    //
+    TermAction action = new TermAction.Init();
 
     //
     while (status.get() == STATUS_OPEN) {

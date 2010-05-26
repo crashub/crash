@@ -50,8 +50,6 @@ public class TermShellAdapter implements TermProcessor {
     return status;
   }
 
-  private volatile boolean first = true;
-
   public void close() {
     // No nop for now
   }
@@ -67,11 +65,11 @@ public class TermShellAdapter implements TermProcessor {
 
   private boolean _process(TermAction action, final TermResponseContext responseContext) throws IOException {
 
-    //
-    if (first) {
-      first = false;
+    // Take care of that here
+    if (action instanceof TermAction.Init) {
       String welcome = connector.open();
       responseContext.write(welcome);
+      return true;
     }
 
     //

@@ -52,6 +52,9 @@ public class TermShellAdapterTestCase extends TestCase {
     final TermShellAdapter adapter = new TermShellAdapter(connector);
 
     //
+    connector.open();
+
+    //
     TestTerm term = new TestTerm(adapter);
 
     //
