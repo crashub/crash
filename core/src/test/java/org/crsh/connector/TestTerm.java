@@ -65,6 +65,8 @@ public class TestTerm implements Term {
             public void write(String msg) throws IOException {
               TestTerm.this.write(msg);
             }
+            public void setPrompt(String prompt) {
+            }
             public void done(boolean close) {
               if (close) {
                 wantClose.set(true);

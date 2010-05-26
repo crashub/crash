@@ -29,6 +29,8 @@ public interface ConnectorResponseContext {
 
   String readLine(String s, boolean echo);
 
+  void setPrompt(String prompt);
+
   void done(boolean close);
 
 }

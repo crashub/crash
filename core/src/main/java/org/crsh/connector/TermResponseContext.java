@@ -33,6 +33,8 @@ public interface TermResponseContext {
 
   void write(String msg) throws IOException;
 
+  void setPrompt(String prompt);
+
   void done(boolean close);
 
 }

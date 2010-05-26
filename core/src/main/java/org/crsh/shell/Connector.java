@@ -209,10 +209,11 @@ public class Connector {
       if (responseContext != null) {
         log.debug("Making handler response callback with " + ret);
         responseContext.completed(ret);
-      }
 
-      //
-      if (responseContext != null) {
+        // Set prompt                                          
+        responseContext.setPrompt(shell.getPrompt());
+
+        //
         log.debug("Signaling done to response context");
         responseContext.done(response instanceof ShellResponse.Close);
       }
@@ -237,7 +238,7 @@ public class Connector {
 
     //
     if (response != null) {
-      return response.getText() /*+ "\r\n" + getPrompt()*/;
+      return response.getText();
     } else {
       return null;
     }

@@ -89,6 +89,8 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
       }
       public void done(boolean close) {
       }
+      public void setPrompt(String prompt) {
+      }
     });
 
     //

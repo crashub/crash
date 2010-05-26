@@ -171,6 +171,10 @@ public class TelnetTerm extends InputDecoder implements Term {
 
         //
         TermResponseContext ctx = new TermResponseContext() {
+
+          /** . */
+          private String prompt;
+
           public void setEcho(boolean echo) {
             TelnetTerm.this.setEchoing(echo);
           }
@@ -180,7 +184,20 @@ public class TelnetTerm extends InputDecoder implements Term {
           public void write(String msg) throws IOException {
             TelnetTerm.this.write(msg);
           }
+
+          public void setPrompt(String prompt) {
+            this.prompt = prompt;
+          }
+
           public void done(boolean close) {
+            try {
+              String p = prompt == null ? "%" : prompt;
+              TelnetTerm.this.write("\r\n" + p);
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+
+            //
             if (close) {
               // Change status
               if (status.compareAndSet(STATUS_OPEN, STATUS_WANT_CLOSE)) {
