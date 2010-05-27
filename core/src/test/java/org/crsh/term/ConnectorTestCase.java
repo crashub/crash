@@ -23,6 +23,9 @@ import org.crsh.AbstractRepositoryTestCase;
 import org.crsh.TestShell;
 import org.crsh.TestShellContext;
 import org.crsh.shell.*;
+import org.crsh.shell.connector.Connector;
+import org.crsh.shell.connector.ConnectorResponseContext;
+import org.crsh.shell.connector.ConnectorStatus;
 
 import java.util.Collections;
 import java.util.LinkedList;

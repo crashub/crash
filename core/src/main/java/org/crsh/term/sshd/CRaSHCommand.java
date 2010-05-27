@@ -20,7 +20,7 @@ package org.crsh.term.sshd;
 
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
-import org.crsh.shell.Connector;
+import org.crsh.shell.connector.Connector;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;

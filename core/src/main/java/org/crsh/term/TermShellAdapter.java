@@ -19,8 +19,8 @@
 
 package org.crsh.term;
 
-import org.crsh.shell.Connector;
-import org.crsh.shell.ConnectorResponseContext;
+import org.crsh.shell.connector.Connector;
+import org.crsh.shell.connector.ConnectorResponseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

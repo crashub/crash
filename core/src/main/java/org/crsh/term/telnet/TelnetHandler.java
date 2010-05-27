@@ -22,8 +22,8 @@ package org.crsh.term.telnet;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
+import org.crsh.shell.connector.Connector;
 import org.crsh.term.TermShellAdapter;
-import org.crsh.shell.Connector;
 import org.crsh.shell.impl.CRaSH;
 
 /**

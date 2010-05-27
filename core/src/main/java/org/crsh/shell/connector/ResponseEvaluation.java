@@ -17,7 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.shell.connector;
+
+import org.crsh.shell.ErrorType;
+import org.crsh.shell.ShellResponse;
 
 import java.util.concurrent.Callable;
 
@@ -25,7 +28,7 @@ import java.util.concurrent.Callable;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Bilto implements Callable<ShellResponse> {
+class ResponseEvaluation implements Callable<ShellResponse> {
 
   /** . */
   private final ConnectorResponseContext responseContext;
@@ -36,7 +39,7 @@ public class Bilto implements Callable<ShellResponse> {
   /** . */
   private final Connector connector;
 
-  public Bilto(Connector connector, ConnectorResponseContext responseContext, Callable<ShellResponse> delegate) {
+  public ResponseEvaluation(Connector connector, ConnectorResponseContext responseContext, Callable<ShellResponse> delegate) {
     this.connector = connector;
     this.responseContext = responseContext;
     this.delegate = delegate;

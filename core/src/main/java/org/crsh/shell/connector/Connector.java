@@ -16,9 +16,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.shell.connector;
 
 import org.crsh.Info;
+import org.crsh.shell.Shell;
+import org.crsh.shell.ShellResponse;
+import org.crsh.shell.ShellResponseContext;
 import org.crsh.util.ImmediateFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +46,7 @@ public class Connector {
   private ConnectorStatus status;
 
   /** . */
-  private Future<ShellResponse> futureResponse;
+  private Future<ShellResponse> futureEvaluation;
 
   /** . */
   private final Object lock;
@@ -134,18 +137,18 @@ public class Connector {
       }
 
       //
-      Bilto bilto = new Bilto(this, handler, callable);
+      ResponseEvaluation evaluation = new ResponseEvaluation(this, handler, callable);
 
       // Execute it with or without an executor
       if (executor != null) {
         // log.debug("Submitting to executor");
-        futureResponse = executor.submit(bilto);
+        futureEvaluation = executor.submit(evaluation);
       } else {
         try {
-          ShellResponse response = bilto.call();
-          futureResponse =  new ImmediateFuture<ShellResponse>(response);
+          ShellResponse response = evaluation.call();
+          futureEvaluation =  new ImmediateFuture<ShellResponse>(response);
         } catch (Exception e) {
-          AssertionError afe = new AssertionError("Should not happen cause we are calling Evaluable");
+          AssertionError afe = new AssertionError("Should not happen");
           afe.initCause(e);
           throw afe;
         }
@@ -153,15 +156,15 @@ public class Connector {
     }
 
     //
-    return futureResponse;
+    return futureEvaluation;
   }
 
   public boolean cancelEvalutation() {
     synchronized (lock) {
       if (status == ConnectorStatus.EVALUATING) {
         status = ConnectorStatus.AVAILABLE;
-        futureResponse.cancel(true);
-        futureResponse = null;
+        futureEvaluation.cancel(true);
+        futureEvaluation = null;
         return true;
       } else {
         return false;
@@ -170,9 +173,8 @@ public class Connector {
   }
 
   /**
-   * <p>Updates the state of the connector when it is in <code>ConnectorStatus#EVALUATING</code> status. When the connector
-   * is succesfully updated, the status becomes <code>ConnectorStatus#AVAILABLE</code> and the text corresponding to
-   * the shell response is returned.</p>
+   * <p>Updates the state of the connector when it is in <code>ConnectorStatus#EVALUATING</code> status.
+   * When the connector is succesfully updated, the status becomes <code>ConnectorStatus#AVAILABLE</code>.</p>
    *
    * @param responseContext the response context
    * @param response the response
@@ -189,7 +191,7 @@ public class Connector {
         case EVALUATING:
           try {
             ret = response.getText() /*+ "\r\n" + getPrompt()*/;
-            futureResponse = null;
+            futureEvaluation = null;
             break;
           } finally {
             status = ConnectorStatus.AVAILABLE;
@@ -226,11 +228,11 @@ public class Connector {
     ShellResponse response = null;
 
     //
-    if (futureResponse != null) {
+    if (futureEvaluation != null) {
       try {
         // That will trigger the completion handler and the state update
         // of this object so there is no need to do anything else than that
-        response = futureResponse.get();
+        response = futureEvaluation.get();
       } catch (Exception e) {
         e.printStackTrace();
       }

@@ -20,7 +20,7 @@
 package org.crsh.term;
 
 import junit.framework.TestCase;
-import org.crsh.shell.Connector;
+import org.crsh.shell.connector.Connector;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
 
