@@ -77,12 +77,35 @@ public abstract class InputDecoder implements Iterator<Input> {
     }
   }
 
+  private void echoCRLF() throws IOException {
+    if (echoing) {
+      doEchoCRLF();
+    }
+  }
+
+  protected abstract void doEchoCRLF() throws IOException;
+
   protected abstract void doEcho(String s) throws IOException;
 
   protected abstract void doEchoDel() throws IOException;
 
+  public String set(String s) throws IOException {
+    StringBuilder builder = new StringBuilder();
+    for (int i = appendDel();i != -1;i = appendDel()) {
+      builder.append(i);
+    }
+    appendData(s);
+    return builder.reverse().toString();
+  }
+
   public int size() {
     return lines.size();
+  }
+
+  public void appendData(String s) throws IOException {
+    for (int i = 0;i < s.length();i++) {
+      appendData(s.charAt(i));
+    }
   }
 
   public void appendData(char c) throws IOException {
@@ -93,7 +116,7 @@ public abstract class InputDecoder implements Iterator<Input> {
       lines.add(new Input.Chars(line));
       previous = c;
       size = 0;
-      echo("\r\n");
+      echoCRLF();
     } else {
       push(c);
       previous = c;
@@ -101,27 +124,30 @@ public abstract class InputDecoder implements Iterator<Input> {
     }
   }
 
-  public void appendDel() throws IOException {
-    pop();
+  public int appendDel() throws IOException {
+    int popped = pop();
 
     //
-    if (size > 0) {
+    if (popped != -1) {
       previous = buffer[size];
+      echoDel();
     } else {
       previous = -1;
     }
 
     //
-    echoDel();
+    return popped;
   }
 
   public int getSize() {
     return size;
   }
 
-  private void pop() {
+  private int pop() {
     if (size > 0) {
-      size--;
+      return buffer[size--];
+    } else {
+      return -1;
     }
   }
 

@@ -56,6 +56,11 @@ public class ReaderStateMachine extends InputDecoder {
   }
 
   @Override
+  protected void doEchoCRLF() throws IOException {
+    doEcho("\r\n");
+  }
+
+  @Override
   protected void doEchoDel() throws IOException {
     doEcho(DEL_SEQ);
   }
