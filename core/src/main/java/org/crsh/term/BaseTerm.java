@@ -17,22 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.telnet;
+package org.crsh.term;
 
-import net.wimpi.telnetd.io.BasicTerminalIO;
-import net.wimpi.telnetd.io.TerminalIO;
-import net.wimpi.telnetd.net.Connection;
-import org.crsh.term.Term;
-import org.crsh.term.TermAction;
-import org.crsh.term.TermProcessor;
-import org.crsh.term.TermResponseContext;
 import org.crsh.util.Input;
 import org.crsh.util.InputDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetTerm extends InputDecoder implements Term {
+public class BaseTerm extends InputDecoder implements Term {
 
   /** . */
   private static final int STATUS_INITIAL = 0;
@@ -58,13 +50,7 @@ public class TelnetTerm extends InputDecoder implements Term {
   private static final int STATUS_CLOSING = 4;
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(TelnetTerm.class);
-
-  /** . */
-  private final Connection conn;
-
-  /** . */
-  private final BasicTerminalIO termIO;
+  private final Logger log = LoggerFactory.getLogger(BaseTerm.class);
 
   /** . */
   private final TermProcessor processor;
@@ -90,6 +76,9 @@ public class TelnetTerm extends InputDecoder implements Term {
   /** . */
   private String prompt;
 
+  /** . */
+  private final TermIO io;
+
   private static class Awaiter {
 
     TermAction action;
@@ -113,18 +102,17 @@ public class TelnetTerm extends InputDecoder implements Term {
     }
   }
 
-  public TelnetTerm(Connection conn) {
-    this(conn, null);
+  public BaseTerm(TermIO io) {
+    this(io, null);
   }
 
-  public TelnetTerm(Connection conn, TermProcessor processor) {
-    this.conn = conn;
-    this.termIO = conn.getTerminalIO();
+  public BaseTerm(TermIO io, TermProcessor processor) {
     this.processor = processor;
     this.status = new AtomicInteger(STATUS_INITIAL);
     this.history = new LinkedList<String>();
     this.historyBuffer = null;
     this.historyCursor = -1;
+    this.io = io;
   }
 
   public void run() {
@@ -175,23 +163,23 @@ public class TelnetTerm extends InputDecoder implements Term {
         TermResponseContext ctx = new TermResponseContext() {
 
           public void setEcho(boolean echo) {
-            TelnetTerm.this.setEchoing(echo);
+            BaseTerm.this.setEchoing(echo);
           }
           public TermAction read() throws IOException {
-            return TelnetTerm.this.read();
+            return BaseTerm.this.read();
           }
           public void write(String msg) throws IOException {
-            TelnetTerm.this.write(msg);
+            BaseTerm.this.write(msg);
           }
 
           public void setPrompt(String prompt) {
-            TelnetTerm.this.prompt = prompt;
+            BaseTerm.this.prompt = prompt;
           }
 
           public void done(boolean close) {
             try {
               String p = prompt == null ? "%" : prompt;
-              TelnetTerm.this.write("\r\n" + p);
+              BaseTerm.this.write("\r\n" + p);
             } catch (IOException e) {
               e.printStackTrace();
             }
@@ -203,10 +191,7 @@ public class TelnetTerm extends InputDecoder implements Term {
                 // If we succeded we close the term
                 // It will cause an exception to be thrown for the thread that are waiting in the
                 // blocking read operation
-                try {
-                  termIO.close();
-                } catch (IOException ignore) {
-                }
+                io.close();
               }
             }
           }
@@ -253,8 +238,8 @@ public class TelnetTerm extends InputDecoder implements Term {
     if (status.compareAndSet(STATUS_WANT_CLOSE, STATUS_CLOSING)) {
       try {
         log.debug("Closing connection");
-        termIO.flush();
-        conn.close();
+        io.flush();
+        io.close();
       } catch (IOException e) {
         log.debug("Exception thrown during term close()", e);
       } finally {
@@ -266,35 +251,43 @@ public class TelnetTerm extends InputDecoder implements Term {
   public TermAction _read() throws IOException {
 
     while (true) {
-      int code = termIO.read();
-      if (code == TerminalIO.DELETE) {
-        appendDel();
-      } else if (code == 10) {
-        appendData("\r\n");
-      } else if (code == TerminalIO.UP || code == TerminalIO.DOWN) {
-        int nextHistoryCursor = historyCursor +  (code == TerminalIO.UP ? + 1 : -1);
-        if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
-          String s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
-          String t = set(s);
-          if (historyCursor == -1) {
-            historyBuffer = t;
+      int code = io.read();
+      CodeType type = io.getType(code);
+      switch (type) {
+        case DELETE:
+          appendDel();
+          break;
+        case UP:
+        case DOWN:
+          int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
+          if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
+            String s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
+            String t = set(s);
+            if (historyCursor == -1) {
+              historyBuffer = t;
+            }
+            if (nextHistoryCursor == -1) {
+              historyBuffer = null;
+            }
+            historyCursor = nextHistoryCursor;
           }
-          if (nextHistoryCursor == -1) {
-            historyBuffer = null;
+        case CHAR:
+          if (code >= 0 && code < 128) {
+            if (code == 3) {
+              log.debug("Want to cancel evaluation");
+              return new TermAction.CancelEvaluation();
+            }  else if (code == 10) {
+              appendData("\r\n");
+            } else {
+              appendData((char)code);
+            }
+          } else {
+            log.debug("Unhandled char " + code);
           }
-          historyCursor = nextHistoryCursor;
-        }
-      } else if (code >= 0 && code < 128) {
-        if (code == 3) {
-          log.debug("Want to cancel evaluation");
-          return new TermAction.CancelEvaluation();
-        } else {
-          appendData((char)code);
-        }
-      } else {
-        log.debug("Unhandled char " + code);
+          break;
       }
 
+      //
       if (hasNext()) {
         Input input = next();
         if (input instanceof Input.Chars) {
@@ -307,35 +300,25 @@ public class TelnetTerm extends InputDecoder implements Term {
   }
 
   public void write(String msg) throws IOException {
-    termIO.write(msg);
-    termIO.flush();
+    io.write(msg);
+    io.flush();
   }
 
+  @Override
   protected void doEchoCRLF() throws IOException {
-//    StringBuilder sb = (StringBuilder)history.get(0);
-//    sb.setLength(0);
-//
-//    //
-    write("\r\n");
+    io.writeCRLF();
+    io.flush();
   }
 
   @Override
   protected void doEchoDel() throws IOException {
-//    StringBuilder sb = (StringBuilder) history.get(0);
-//    sb.setLength(sb.length() - 1);
-//
-//    //
-    termIO.moveLeft(1);
-    termIO.write(' ');
-    termIO.moveLeft(1);
-    termIO.flush();
+    io.writeDel();
+    io.flush();
   }
 
   @Override
   protected void doEcho(String s) throws IOException {
-//    ((StringBuilder)history.get(0)).append(s);
-//
-//    //
-    write(s);
+    io.write(s);
+    io.flush();
   }
 }

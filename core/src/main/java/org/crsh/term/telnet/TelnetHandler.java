@@ -23,6 +23,7 @@ import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
 import org.crsh.shell.connector.Connector;
+import org.crsh.term.BaseTerm;
 import org.crsh.term.TermShellAdapter;
 import org.crsh.shell.impl.CRaSH;
 
@@ -36,7 +37,7 @@ public class TelnetHandler implements Shell {
   private TermShellAdapter decoder;
 
   /** . */
-  private TelnetTerm term;
+  private BaseTerm term;
 
   /** . */
   private Connector connector;
@@ -50,7 +51,7 @@ public class TelnetHandler implements Shell {
     shell = TelnetLifeCycle.instance.getShellFactory().build();
     connector = new Connector(TelnetLifeCycle.instance.getExecutor(), shell);
     decoder = new TermShellAdapter(connector);
-    term = new TelnetTerm(conn, decoder);
+    term = new BaseTerm(new TelnetIO(conn), decoder);
 
     //
     try {
