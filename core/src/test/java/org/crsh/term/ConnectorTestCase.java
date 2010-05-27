@@ -31,8 +31,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -62,7 +64,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
     builder = new ShellFactory(context);
   }
 
-  public void testReadLine() {
+  public void testReadLine() throws Exception {
     final LinkedList<String> output = new LinkedList<String>();
     final LinkedList<String> input = new LinkedList<String>();
     input.add("juu");
@@ -83,7 +85,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
     connector.open();
 
     //
-    connector.submitEvaluation("foo", new ConnectorResponseContext() {
+    ShellResponse actual = connector.submitEvaluation("foo", new ConnectorResponseContext() {
       public void completed(String s) {
       }
       public String readLine(String s, boolean echo) {
@@ -94,11 +96,11 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
       }
       public void setPrompt(String prompt) {
       }
-    });
+    }).get();
 
     //
-    String actual = connector.popResponse();
-    assertEquals("juu", actual);
+    assertTrue(actual instanceof ShellResponse.Display);
+    assertEquals("juu", actual.getText());
     assertEquals(Collections.singletonList("bar"), output);
     assertEquals(0, input.size());
   }

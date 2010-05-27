@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -139,14 +140,28 @@ public class Connector {
       ResponseEvaluation evaluation = new ResponseEvaluation(this, handler, callable);
 
       // Execute it with or without an executor
-      Future<ShellResponse> futureResponse;
+      Future<ShellResponse> clientResponse;
       if (executor != null) {
         // log.debug("Submitting to executor");
-        futureResponse = executor.submit(evaluation);
+        Future<ShellResponse> futureResponse = executor.submit(evaluation);
+
+        // Update state
+        futureEvaluation =  new FutureEvaluation(futureResponse, handler);
+        status = ConnectorStatus.EVALUATING;
+
+        //
+        clientResponse = futureResponse;
       } else {
         try {
-          ShellResponse response = evaluation.call();
-          futureResponse = new ImmediateFuture<ShellResponse>(response);
+          FutureTask<ShellResponse> futureResponse = new FutureTask<ShellResponse>(evaluation);
+
+          // Update state
+          futureEvaluation =  new FutureEvaluation(futureResponse, handler);
+          status = ConnectorStatus.EVALUATING;
+
+          // Trigger call
+          futureResponse.run();
+          clientResponse = futureResponse;
         } catch (Exception e) {
           AssertionError afe = new AssertionError("Should not happen");
           afe.initCause(e);
@@ -155,11 +170,7 @@ public class Connector {
       }
 
       //
-      futureEvaluation =  new FutureEvaluation(futureResponse, handler);
-      status = ConnectorStatus.EVALUATING;
-
-      //
-      return futureResponse;
+      return clientResponse;
     }
   }
 
@@ -179,7 +190,9 @@ public class Connector {
     if (evaluation != null) {
       //
       evaluation.futureResponse.cancel(true);
-      evaluation.responseHandler.done(false);
+      if (evaluation.responseHandler != null) {
+        evaluation.responseHandler.done(false);
+      }
       return  true;
     } else {
       return false;

@@ -56,6 +56,7 @@ public class TestTerm implements Term {
       while (!closed) {
         try {
           final TermAction action = actions.takeFirst();
+          final AtomicBoolean done = new AtomicBoolean(false);
           TermResponseContext ctx = new TermResponseContext() {
             public void setEcho(boolean echo) {
             }
@@ -68,6 +69,7 @@ public class TestTerm implements Term {
             public void setPrompt(String prompt) {
             }
             public void done(boolean close) {
+              done.set(true);
               if (close) {
                 wantClose.set(true);
               }
@@ -76,6 +78,10 @@ public class TestTerm implements Term {
           boolean consumed = processor.process(action, ctx);
           if (!consumed) {
             actions.addFirst(action);
+          } else {
+            while (!done.get()) {
+              // Wait until it is processed
+            }
           }
         } catch (Exception e) {
           log.error("Action delivery failed", e);
