@@ -20,21 +20,18 @@ package org.crsh.util;
 
 import junit.framework.TestCase;
 
+import java.io.IOException;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ReaderStateMachineTestCase extends TestCase {
+public class InputDecoderTestCase extends TestCase {
 
 
-  public void testFoo() {
-
-  }
-
-/*
   public void testNoCR() throws IOException {
-    ReaderStateMachine sm = new ReaderStateMachine(127);
-    sm.append("a");
+    TestInputDecoder sm = new TestInputDecoder();
+    sm.appendData("a");
     assertFalse(sm.hasNext());
     assertEquals(1, sm.getSize());
   }
@@ -42,8 +39,8 @@ public class ReaderStateMachineTestCase extends TestCase {
   public void testReadLine() throws IOException {
     String[] tests = {"a\n","a\r","a\n\r","a\r\n"};
     for (String test : tests) {
-      ReaderStateMachine sm = new ReaderStateMachine(127);
-      sm.append(test);
+      TestInputDecoder sm = new TestInputDecoder();
+      sm.appendData(test);
       assertTrue(sm.hasNext());
       assertEquals(new Input.Chars("a"), sm.next());
       assertFalse(sm.hasNext());
@@ -52,23 +49,13 @@ public class ReaderStateMachineTestCase extends TestCase {
   }
 
   public void testErase() throws IOException {
-    ReaderStateMachine sm = new ReaderStateMachine(127);
-    sm.append("a\u007Fb\n");
+    TestInputDecoder sm = new TestInputDecoder();
+    sm.appendData("a");
+    sm.appendDel();
+    sm.appendData("b\n");
     assertTrue(sm.hasNext());
     assertEquals(new Input.Chars("b"), sm.next());
   }
-*/
-
-
-/*
-  public void testFoo() {
-    ReaderStateMachine sm = new ReaderStateMachine(127);
-    sm.append("a\u007Fb");
-//    assertEquals("b", sm.flush());
-  }
-*/
-
-
 
 /*
   public void testBar1() {
