@@ -78,10 +78,11 @@ public class TelnetTerm extends InputDecoder implements Term {
   /** . */
   private final LinkedList<Awaiter> awaiters = new LinkedList<Awaiter>();
 
-  /**
-   * .
-   */
-  private final ArrayList<CharSequence> history;
+  /** . */
+  private final LinkedList<String> history;
+
+  /** . */
+  private String historyBuffer;
 
   /** . */
   private int historyCursor;
@@ -117,16 +118,13 @@ public class TelnetTerm extends InputDecoder implements Term {
   }
 
   public TelnetTerm(Connection conn, TermProcessor processor) {
-    ArrayList<CharSequence> history = new ArrayList<CharSequence>();
-    history.add(new StringBuilder());
-
-    //
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
     this.processor = processor;
     this.status = new AtomicInteger(STATUS_INITIAL);
-    this.history = history;
-    this.historyCursor = 0;
+    this.history = new LinkedList<String>();
+    this.historyBuffer = null;
+    this.historyCursor = -1;
   }
 
   public void run() {
@@ -221,7 +219,12 @@ public class TelnetTerm extends InputDecoder implements Term {
           log.debug("Pushing back action " + action2);
           action = action2;
         } else if (action2 instanceof TermAction.ReadLine) {
-          history.add(((TermAction.ReadLine)action2).getLine());
+          String line = ((TermAction.ReadLine)action2).getLine();
+          historyCursor = -1;
+          historyBuffer = null;
+          if (line.length() > 0) {
+            history.addFirst(((TermAction.ReadLine)action2).getLine());
+          }
         }
       }
     }
@@ -268,25 +271,19 @@ public class TelnetTerm extends InputDecoder implements Term {
         appendDel();
       } else if (code == 10) {
         appendData("\r\n");
-      } else if (code == TerminalIO.UP) {
-
-/*
-        if (historyCursor + 1< history.size()) {
-
-
-
+      } else if (code == TerminalIO.UP || code == TerminalIO.DOWN) {
+        int nextHistoryCursor = historyCursor +  (code == TerminalIO.UP ? + 1 : -1);
+        if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
+          String s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
+          String t = set(s);
+          if (historyCursor == -1) {
+            historyBuffer = t;
+          }
+          if (nextHistoryCursor == -1) {
+            historyBuffer = null;
+          }
+          historyCursor = nextHistoryCursor;
         }
-
-        if (historyCursor == 0) {
-          String s = "";
-        } else {
-
-        }
-
-        set("BILTO");
-*/
-      } else if (code == TerminalIO.DOWN) {
-
       } else if (code >= 0 && code < 128) {
         if (code == 3) {
           log.debug("Want to cancel evaluation");
@@ -295,7 +292,7 @@ public class TelnetTerm extends InputDecoder implements Term {
           appendData((char)code);
         }
       } else {
-        log.info("Unhandled char " + code);
+        log.debug("Unhandled char " + code);
       }
 
       if (hasNext()) {
@@ -315,15 +312,19 @@ public class TelnetTerm extends InputDecoder implements Term {
   }
 
   protected void doEchoCRLF() throws IOException {
+//    StringBuilder sb = (StringBuilder)history.get(0);
+//    sb.setLength(0);
+//
+//    //
     write("\r\n");
   }
 
   @Override
   protected void doEchoDel() throws IOException {
-    StringBuilder sb = (StringBuilder) history.get(0);
-    sb.setLength(sb.length() - 1);
-
-    //
+//    StringBuilder sb = (StringBuilder) history.get(0);
+//    sb.setLength(sb.length() - 1);
+//
+//    //
     termIO.moveLeft(1);
     termIO.write(' ');
     termIO.moveLeft(1);
@@ -332,9 +333,9 @@ public class TelnetTerm extends InputDecoder implements Term {
 
   @Override
   protected void doEcho(String s) throws IOException {
-    ((StringBuilder)history.get(0)).append(s);
-
-    //
+//    ((StringBuilder)history.get(0)).append(s);
+//
+//    //
     write(s);
   }
 }

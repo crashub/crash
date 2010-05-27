@@ -92,7 +92,7 @@ public abstract class InputDecoder implements Iterator<Input> {
   public String set(String s) throws IOException {
     StringBuilder builder = new StringBuilder();
     for (int i = appendDel();i != -1;i = appendDel()) {
-      builder.append(i);
+      builder.append((char)i);
     }
     appendData(s);
     return builder.reverse().toString();
@@ -145,7 +145,7 @@ public abstract class InputDecoder implements Iterator<Input> {
 
   private int pop() {
     if (size > 0) {
-      return buffer[size--];
+      return buffer[--size];
     } else {
       return -1;
     }
