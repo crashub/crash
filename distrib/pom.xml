@@ -2,13 +2,13 @@
   <parent>
     <artifactId>crsh.parent</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.0.0-beta8</version>
+    <version>1.0.0-beta9-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.distrib</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-beta8</version>
+  <version>1.0.0-beta9-SNAPSHOT</version>
 
   <name>CRaSH distrib</name>
   <description>The CRaSH distribution</description>
