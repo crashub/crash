@@ -5,9 +5,9 @@ javax.jcr.AccessDeniedException: Access denied []:1[]production:1 for __anonim
 	at org.exoplatform.services.jcr.impl.core.SessionDataManager.getItem(SessionDataManager.java:359)
 	at org.exoplatform.services.jcr.impl.core.SessionImpl.getItem(SessionImpl.java:537)
 	at org.exoplatform.services.jcr.impl.core.SessionImpl.getItem(SessionImpl.java:99)
-	at org.crsh.connector.sshd.scp.SourceCommand.execute(SourceCommand.java:76)
-	at org.crsh.connector.sshd.scp.SCPCommand.execute(SCPCommand.java:208)
-	at org.crsh.connector.sshd.scp.SCPCommand.run(SCPCommand.java:153)
+	at org.crsh.term.sshd.scp.SourceCommand.execute(SourceCommand.java:76)
+	at org.crsh.term.sshd.scp.SCPCommand.execute(SCPCommand.java:208)
+	at org.crsh.term.sshd.scp.SCPCommand.run(SCPCommand.java:153)
 	at java.lang.Thread.run(Thread.java:637)
 
 - fix prb with wrong login

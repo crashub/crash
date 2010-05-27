@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -17,34 +17,50 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.servlet;
+package org.crsh.term;
 
-import org.crsh.term.telnet.TelnetLifeCycle;
+import org.crsh.shell.Shell;
+import org.crsh.shell.ShellResponse;
+import org.crsh.shell.ShellResponseContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetServletLifeCycle implements ServletContextListener {
+public class TestShell implements Shell {
+
 
   /** . */
-  private TelnetLifeCycle lifeCycle;
+  private final BlockingQueue<TestShellAction> queue;
 
-  public void contextInitialized(ServletContextEvent sce) {
-    ServletContext sc = sce.getServletContext();
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(new ServletShellContext(sc, Thread.currentThread().getContextClassLoader()));
-    lifeCycle.init();
-    this.lifeCycle = lifeCycle;
+  public TestShell() {
+    queue = new ArrayBlockingQueue<TestShellAction>(10);
   }
 
-  public void contextDestroyed(ServletContextEvent sce) {
-    if (lifeCycle != null) {
-      lifeCycle.destroy();
-      lifeCycle = null;
+  public int getSize() {
+    return queue.size();
+  }
+
+  public void append(TestShellAction action) {
+    queue.add(action);
+  }
+
+  public String getPrompt() {
+    return "%";
+  }
+
+  public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
+    try {
+      TestShellAction action = queue.take();
+      return action.evaluate(request, responseContext);
+    } catch (Exception e) {
+      throw new AssertionError(e);
     }
+  }
+
+  public void doClose() {
   }
 }

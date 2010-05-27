@@ -16,25 +16,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.term.sshd;
 
-package org.crsh;
+import org.apache.sshd.server.Environment;
 
-import org.crsh.term.telnet.TelnetLifeCycle;
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Main {
+public class FailCommand extends AbstractCommand {
 
-  public static void main(String[] args) throws Exception {
+  /** . */
+  private String failure;
 
-    RepositoryBootstrap repo = new RepositoryBootstrap();
-    repo.bootstrap();
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(new TestShellContext());
-    lifeCycle.init();
-    new Object().wait();
-
+  public FailCommand(String failure) {
+    this.failure = failure;
   }
 
+  public void start(Environment env) throws IOException {
+    throw new IOException("Failure " + failure);
+  }
+
+  public void destroy() {
+  }
 }

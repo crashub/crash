@@ -16,25 +16,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.crsh;
-
-import org.crsh.term.telnet.TelnetLifeCycle;
+package org.crsh.term.sshd;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Main {
+public class SSHContext {
 
-  public static void main(String[] args) throws Exception {
+  /** . */
+  public final int verase;
 
-    RepositoryBootstrap repo = new RepositoryBootstrap();
-    repo.bootstrap();
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(new TestShellContext());
-    lifeCycle.init();
-    new Object().wait();
-
+  public SSHContext(int verase) {
+    this.verase = verase;
   }
-
 }

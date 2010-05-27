@@ -16,25 +16,45 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.term.sshd;
 
-package org.crsh;
+import org.apache.sshd.server.Command;
+import org.apache.sshd.server.ExitCallback;
 
-import org.crsh.term.telnet.TelnetLifeCycle;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Main {
+public abstract class AbstractCommand implements Command {
 
-  public static void main(String[] args) throws Exception {
+  /** . */
+  protected InputStream in;
 
-    RepositoryBootstrap repo = new RepositoryBootstrap();
-    repo.bootstrap();
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(new TestShellContext());
-    lifeCycle.init();
-    new Object().wait();
+  /** . */
+  protected OutputStream out;
 
+  /** . */
+  protected OutputStream err;
+
+  /** . */
+  protected ExitCallback callback;
+
+  public final void setInputStream(InputStream in) {
+    this.in = in;
   }
 
+  public final void setOutputStream(OutputStream out) {
+    this.out = out;
+  }
+
+  public final void setErrorStream(OutputStream err) {
+    this.err = err;
+  }
+
+  public final void setExitCallback(ExitCallback callback) {
+    this.callback = callback;
+  }
 }

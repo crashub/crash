@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -17,24 +17,44 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
-
-import org.crsh.term.telnet.TelnetLifeCycle;
+package org.crsh.term;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Main {
+public class TermAction {
 
-  public static void main(String[] args) throws Exception {
-
-    RepositoryBootstrap repo = new RepositoryBootstrap();
-    repo.bootstrap();
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(new TestShellContext());
-    lifeCycle.init();
-    new Object().wait();
-
+  public static class Init extends TermAction {
+    @Override
+    public String toString() {
+      return "Init[]";
+    }
   }
 
+  public static class ReadLine extends TermAction {
+
+    /** . */
+    private final String line;
+
+    public ReadLine(String line) {
+      this.line = line;
+    }
+
+    public String getLine() {
+      return line;
+    }
+
+    @Override
+    public String toString() {
+      return "ReadLine[line=" + line + "]";
+    }
+  }
+
+  public static class CancelEvaluation extends TermAction {
+    @Override
+    public String toString() {
+      return "CancelEvaluation[]";
+    }
+  }
 }

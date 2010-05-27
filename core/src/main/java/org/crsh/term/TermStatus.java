@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -17,24 +17,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
-
-import org.crsh.term.telnet.TelnetLifeCycle;
+package org.crsh.term;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Main {
+public enum TermStatus {
 
-  public static void main(String[] args) throws Exception {
+  /**
+   * The system is shut down.
+   */
+  SHUTDOWN,
 
-    RepositoryBootstrap repo = new RepositoryBootstrap();
-    repo.bootstrap();
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(new TestShellContext());
-    lifeCycle.init();
-    new Object().wait();
+  /**
+   * The system is ready to process a command.
+   */
+  READY,
 
-  }
+  /**
+   * The system is processing a command.
+   */
+  PROCESSING,
+
+  /**
+   * The system is reading input.
+   */
+  READING_INPUT
 
 }
