@@ -23,12 +23,15 @@ import org.apache.sshd.server.Environment;
 import org.crsh.shell.connector.Connector;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.impl.CRaSH;
+import org.crsh.term.BaseTerm;
+import org.crsh.term.TermShellAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.util.concurrent.Future;
 
 /**
@@ -75,6 +78,19 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   }
 
   public void run() {
+
+    try {
+      OutputStreamWriter writer = new OutputStreamWriter(out);
+      Reader reader = new InputStreamReader(in);
+      SSHIO io = new SSHIO(reader, writer, context.verase);
+      BaseTerm term = new BaseTerm(io, new TermShellAdapter(connector));
+      term.run();
+    } finally {
+      callback.onExit(0);
+    }
+  }
+
+  public void run2() {
     try {
       OutputStreamWriter writer = new OutputStreamWriter(out);
       SSHReader reader = new SSHReader(new InputStreamReader(in), context.verase, writer);
