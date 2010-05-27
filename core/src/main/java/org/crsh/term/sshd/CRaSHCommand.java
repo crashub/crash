@@ -72,6 +72,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
 
   public void destroy() {
     connector.close();
+    shell.close();
     thread.interrupt();
   }
 
