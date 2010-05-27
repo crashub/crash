@@ -21,7 +21,6 @@ package org.crsh.term.sshd;
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
 import org.crsh.shell.connector.Connector;
-import org.crsh.shell.ShellResponse;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.TermShellAdapter;
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.util.concurrent.Future;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -86,52 +84,6 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
       BaseTerm term = new BaseTerm(io, new TermShellAdapter(connector));
       term.run();
     } finally {
-      callback.onExit(0);
-    }
-  }
-
-  public void run2() {
-    try {
-      OutputStreamWriter writer = new OutputStreamWriter(out);
-      SSHReader reader = new SSHReader(new InputStreamReader(in), context.verase, writer);
-
-      //
-      String welcome = connector.open();
-      writer.write(welcome);
-      writer.flush();
-
-      //
-      while (true) {
-        String request = reader.nextLine();
-
-        //
-        if (request == null) {
-          break;
-        }
-
-        //
-        Future<ShellResponse> futureResponse = connector.submitEvaluation(request);
-
-        //
-        ShellResponse response = futureResponse.get();
-
-        //
-        writer.write(response.getText());
-//        writer.write(connector.getPrompt());
-        writer.flush();
-
-        //
-        if (response instanceof ShellResponse.Close) {
-          connector.close();
-          shell.close();
-          break;
-        }
-      }
-    }
-    catch (Exception e) {
-      log.error("Error when executing command", e);
-    }
-    finally {
       callback.onExit(0);
     }
   }

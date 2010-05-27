@@ -46,7 +46,7 @@ public class Connector {
   private ConnectorStatus status;
 
   /** . */
-  private Future<ShellResponse> futureEvaluation;
+  private FutureEvaluation futureEvaluation;
 
   /** . */
   private final Object lock;
@@ -95,7 +95,9 @@ public class Connector {
   }
 
   public ConnectorStatus getStatus() {
-    return status;
+    synchronized (lock) {
+      return status;
+    }
   }
 
   public Future<ShellResponse> submitEvaluation(String request) {
@@ -118,9 +120,6 @@ public class Connector {
       }
 
       //
-      status = ConnectorStatus.EVALUATING;
-
-      //
       Callable<ShellResponse> callable;
       if ("bye".equals(request)) {
         callable = new Callable<ShellResponse>() {
@@ -140,35 +139,50 @@ public class Connector {
       ResponseEvaluation evaluation = new ResponseEvaluation(this, handler, callable);
 
       // Execute it with or without an executor
+      Future<ShellResponse> futureResponse;
       if (executor != null) {
         // log.debug("Submitting to executor");
-        futureEvaluation = executor.submit(evaluation);
+        futureResponse = executor.submit(evaluation);
       } else {
         try {
           ShellResponse response = evaluation.call();
-          futureEvaluation =  new ImmediateFuture<ShellResponse>(response);
+          futureResponse = new ImmediateFuture<ShellResponse>(response);
         } catch (Exception e) {
           AssertionError afe = new AssertionError("Should not happen");
           afe.initCause(e);
           throw afe;
         }
       }
-    }
 
-    //
-    return futureEvaluation;
+      //
+      futureEvaluation =  new FutureEvaluation(futureResponse, handler);
+      status = ConnectorStatus.EVALUATING;
+
+      //
+      return futureResponse;
+    }
   }
 
   public boolean cancelEvalutation() {
+
+    //
+    FutureEvaluation evaluation = null;
     synchronized (lock) {
       if (status == ConnectorStatus.EVALUATING) {
+        evaluation = this.futureEvaluation;
         status = ConnectorStatus.AVAILABLE;
-        futureEvaluation.cancel(true);
         futureEvaluation = null;
-        return true;
-      } else {
-        return false;
       }
+    }
+
+    //
+    if (evaluation != null) {
+      //
+      evaluation.futureResponse.cancel(true);
+      evaluation.responseHandler.done(false);
+      return  true;
+    } else {
+      return false;
     }
   }
 
@@ -209,8 +223,10 @@ public class Connector {
 
       //
       if (responseContext != null) {
-        log.debug("Making handler response callback with " + ret);
-        responseContext.completed(ret);
+        if (ret != null) {
+          log.debug("Making handler response callback with " + ret);
+          responseContext.completed(ret);
+        }
 
         // Set prompt                                          
         responseContext.setPrompt(shell.getPrompt());
@@ -232,7 +248,7 @@ public class Connector {
       try {
         // That will trigger the completion handler and the state update
         // of this object so there is no need to do anything else than that
-        response = futureEvaluation.get();
+        response = futureEvaluation.futureResponse.get();
       } catch (Exception e) {
         e.printStackTrace();
       }

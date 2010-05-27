@@ -93,8 +93,6 @@ public class TermShellAdapter implements TermProcessor {
                 responseContext.write(s);
               } catch (IOException e) {
                 log.error("Write to term failure", e);
-              } finally {
-                status = TermStatus.READY;
               }
             }
             public String readLine(String s, boolean echo) {
@@ -124,6 +122,8 @@ public class TermShellAdapter implements TermProcessor {
               if (close) {
                 // julien : should we really do that here ?
                 status = TermStatus.SHUTDOWN;
+              } else {
+                status = TermStatus.READY;
               }
               responseContext.done(close);
             }
