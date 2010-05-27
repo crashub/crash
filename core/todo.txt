@@ -1,22 +1,2 @@
-- integrate SSH login/password with JCR security
-javax.jcr.AccessDeniedException: Access denied []:1[]production:1 for __anonim
-	at org.exoplatform.services.jcr.impl.core.SessionDataManager.readItem(SessionDataManager.java:419)
-	at org.exoplatform.services.jcr.impl.core.SessionDataManager.readItem(SessionDataManager.java:382)
-	at org.exoplatform.services.jcr.impl.core.SessionDataManager.getItem(SessionDataManager.java:359)
-	at org.exoplatform.services.jcr.impl.core.SessionImpl.getItem(SessionImpl.java:537)
-	at org.exoplatform.services.jcr.impl.core.SessionImpl.getItem(SessionImpl.java:99)
-	at org.crsh.term.sshd.scp.SourceCommand.execute(SourceCommand.java:76)
-	at org.crsh.term.sshd.scp.SCPCommand.execute(SCPCommand.java:208)
-	at org.crsh.term.sshd.scp.SCPCommand.run(SCPCommand.java:153)
-	at java.lang.Thread.run(Thread.java:637)
-
-- fix prb with wrong login
-javax.jcr.AccessDeniedException: Access denied []:1 for __anonim
-	at org.exoplatform.services.jcr.impl.core.SessionDataManager.readItem(SessionDataManager.java:419)
-	at org.exoplatform.services.jcr.impl.core.SessionDataManager.readItem(SessionDataManager.java:382)
-	at org.exoplatform.services.jcr.impl.core.SessionDataManager.getItemByIdentifier(SessionDataManager.java:453)
-	at org.exoplatform.services.jcr.impl.core.SessionImpl.getRootNode(SessionImpl.java:678)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
+- write AbstractTerm unit tests
+- write IO tests
