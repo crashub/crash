@@ -1,0 +1,21 @@
+<bookinfo>
+  <title>CRaSH</title>
+  <subtitle>CRaSH guide</subtitle>
+  <edition>1.0</edition>
+  <pubsnumber>1</pubsnumber>
+  <productname>CRaSH</productname>
+  <productnumber>1.0</productnumber>
+  <copyright>
+    <year>2010</year>
+    <holder>eXo Platform SAS</holder>
+  </copyright>
+  <authorgroup>
+    <author>
+      <firstname>Julien</firstname>
+      <surname>Viet</surname>
+      <affiliation>
+        <shortaffil>eXo Platform</shortaffil>
+      </affiliation>
+    </author>
+  </authorgroup>
+</bookinfo>
