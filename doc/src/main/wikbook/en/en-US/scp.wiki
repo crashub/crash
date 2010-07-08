@@ -1,4 +1,5 @@
-Secure copy can be used to import or export content.
+Secure copy can be used to import or export content. The username/password prompted by the SSH server will be used
+for authentication against the repository when the import or the export is performed.
 
 = Export a JCR node =
 
