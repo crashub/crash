@@ -23,7 +23,7 @@ SSH connection is done on port 2000 with the password **//crash//**:
 {{screen}}
 juliens-macbook-pro:~ julien$ ssh -p 2000 -l root localhost
 root@localhost's password:
-CRaSH 1.0.0-beta2 (http://crsh.googlecode.com)
+CRaSH $[crash.version] (http://crsh.googlecode.com)
 Welcome to juliens-macbook-pro.local!
 It is Fri Jan 08 21:12:53 CET 2010 now.
 %

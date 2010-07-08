@@ -35,6 +35,7 @@
 
   <properties>
     <wikbook.version>0.9.25</wikbook.version>
+    <crash.version>${project.version}</crash.version>
   </properties>
 
   <dependencies>
