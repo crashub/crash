@@ -20,6 +20,8 @@ package org.crsh.term.sshd;
 
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.SessionAware;
+import org.apache.sshd.server.session.ServerSession;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,7 +30,7 @@ import java.io.OutputStream;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class AbstractCommand implements Command {
+public abstract class AbstractCommand implements Command, SessionAware {
 
   /** . */
   protected InputStream in;
@@ -41,6 +43,9 @@ public abstract class AbstractCommand implements Command {
 
   /** . */
   protected ExitCallback callback;
+
+  /** . */
+  protected ServerSession session;
 
   public final void setInputStream(InputStream in) {
     this.in = in;
@@ -56,5 +61,9 @@ public abstract class AbstractCommand implements Command {
 
   public final void setExitCallback(ExitCallback callback) {
     this.callback = callback;
+  }
+
+  public void setSession(ServerSession session) {
+    this.session = session;
   }
 }

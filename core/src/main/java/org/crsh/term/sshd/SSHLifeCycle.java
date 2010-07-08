@@ -19,6 +19,7 @@
 package org.crsh.term.sshd;
 
 import org.apache.sshd.SshServer;
+import org.apache.sshd.common.Session;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
@@ -36,6 +37,12 @@ import java.security.PublicKey;
  * @version $Revision$
  */
 public class SSHLifeCycle extends CRaSHLifeCycle {
+
+  /** . */
+  public static final Session.AttributeKey<String> USERNAME = new Session.AttributeKey<java.lang.String>();
+
+  /** . */
+  public static final Session.AttributeKey<String> PASSWORD = new Session.AttributeKey<java.lang.String>();
 
   /** . */
   private final Logger log = LoggerFactory.getLogger(SSHLifeCycle.class);
@@ -101,16 +108,20 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
       server.setKeyPairProvider(new PEMGeneratorHostKeyProvider(keyPath));
 
       // No idea if I should use something different than that
+/*
       server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
         public boolean authenticate(String username, PublicKey key, ServerSession session) {
           return true;
         }
       });
+*/
 
-      // For now authenticates in a very simply manner from web.xml setting
+      //
       server.setPasswordAuthenticator(new PasswordAuthenticator() {
         public boolean authenticate(String _username, String _password, ServerSession session) {
-          return userName.equals(_username) && password.equals(_password);
+          session.setAttribute(USERNAME, _username);
+          session.setAttribute(PASSWORD, _password);
+          return true;
         }
       });
 

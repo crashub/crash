@@ -21,11 +21,14 @@ package org.crsh.term.sshd.scp;
 import org.apache.sshd.server.Environment;
 import org.crsh.term.sshd.AbstractCommand;
 import org.crsh.jcr.JCR;
+import org.crsh.term.sshd.SSHLifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -194,13 +197,18 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
     //
     Repository repository = JCR.getRepository(properties);
 
+    // Obtain credentials from SSH
+    String userName = session.getAttribute(SSHLifeCycle.USERNAME);
+    String password = session.getAttribute(SSHLifeCycle.PASSWORD);
+    Credentials credentials = new SimpleCredentials(userName, password.toCharArray());
+
     //
     Session session;
     if (workspaceName != null) {
-      session = repository.login(workspaceName);
+      session = repository.login(credentials, workspaceName);
     }
     else {
-      session = repository.login();
+      session = repository.login(credentials);
     }
 
     //
