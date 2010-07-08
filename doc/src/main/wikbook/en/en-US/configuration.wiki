@@ -1,23 +1,5 @@
 CRaSH can be configured by tweaking the //web.xml// file of the CRaSH web archive.
 
-= Secure the SSH access =
-
-The username and password of the SSH server can be changed by updating the {{code}}ssh.username{{/code}} and
-{{code}}ssh.password{{/code}} parameters:
-
-{{code language=xml}}
-<context-param>
-  <param-name>ssh.username</param-name>
-  <param-value>root</param-value>
-  <description>The user name for authenticating via SSH</description>
-</context-param>
-<context-param>
-  <param-name>ssh.password</param-name>
-  <param-value>crash</param-value>
-  <description>The password for authenticating via SSH</description>
-</context-param>
-{{/code}}
-
 Note that to fully secure the server, you should remove the unauthenticated telnet access as describe below.
 
 = Change the SSH server key =

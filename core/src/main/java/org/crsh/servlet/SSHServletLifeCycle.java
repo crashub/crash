@@ -44,8 +44,6 @@ public class SSHServletLifeCycle implements ServletContextListener {
     ServletContext sc = sce.getServletContext();
 
     // Configuration from web.xml
-    final String username = sc.getInitParameter("ssh.username").trim();
-    final String password = sc.getInitParameter("ssh.password").trim();
     int port = Integer.parseInt(sc.getInitParameter("ssh.port").trim());
     String keyPath = sc.getInitParameter("ssh.keypath");
 
@@ -61,8 +59,6 @@ public class SSHServletLifeCycle implements ServletContextListener {
     //
     lifeCycle.setKeyPath(keyPath);
     lifeCycle.setPort(port);
-    lifeCycle.setUserName(username);
-    lifeCycle.setPassword(password);
 
     //
     lifeCycle.init();

@@ -51,12 +51,6 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
   private SshServer server;
 
   /** . */
-  private String userName;
-
-  /** . */
-  private String password;
-
-  /** . */
   private int port;
 
   /** . */
@@ -64,22 +58,6 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
 
   public SSHLifeCycle(ShellContext context) {
     super(context);
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
   }
 
   public int getPort() {
@@ -106,15 +84,6 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
       server.setShellFactory(new CRaSHCommandFactory(getShellFactory(), getExecutor()));
       server.setCommandFactory(new SCPCommandFactory());
       server.setKeyPairProvider(new PEMGeneratorHostKeyProvider(keyPath));
-
-      // No idea if I should use something different than that
-/*
-      server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
-        public boolean authenticate(String username, PublicKey key, ServerSession session) {
-          return true;
-        }
-      });
-*/
 
       //
       server.setPasswordAuthenticator(new PasswordAuthenticator() {
