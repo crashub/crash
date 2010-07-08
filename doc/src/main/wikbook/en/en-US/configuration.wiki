@@ -5,10 +5,10 @@ Note that to fully secure the server, you should remove the unauthenticated teln
 = Change the SSH server key =
 
 The key can be changed by replacing the file //WEB-INF/sshd/hostkey.pem//. Alternatively you can configure the server
-to use an external file by using the {{code}}ssh.keypath{{/code}} parameter. Uncomment the XML section and change the path to the
+to use an external file by using the //ssh.keypath// parameter. Uncomment the XML section and change the path to the
 key file.
 
-{{code language=xml}}
+{{xml}}
 <!--
 <context-param>
   <param-name>ssh.keypath</param-name>
@@ -16,42 +16,42 @@ key file.
   <description>The path to the key file</description>
 </context-param>
 -->
-{{/code}}
+{{/xml}}
 
 = Change the ports of the telnet or SSH server =
 
-The ports of the server are parameterized by the {{code}}ssh.port{{/code}} and {{code}}telnet.port{{/code}} parameters.
+The ports of the server are parameterized by the //ssh.port// and //telnet.port// parameters.
 
-{{code language=xml}}
+{{xml}}
 <context-param>
   <param-name>ssh.port</param-name>
   <param-value>2000</param-value>
   <description>The SSH port</description>
 </context-param>
-{{/code}}
+{{/xml}}
 
-{{code language=xml}}
+{{xml}}
 <context-param>
   <param-name>telnet.port</param-name>
   <param-value>5000</param-value>
   <description>The telnet port</description>
 </context-param>
-{{/code}}
+{{/xml}}
 
 = Remove the telnet or SSH access =
 
 To remove the telnet access, remove or comment the following XML:
 
-{{code language=xml}}
+{{xml}}
 <listener>
   <listener-class>org.crsh.term.telnet.TelnetLifeCycle</listener-class>
 </listener>
-{{/code}}
+{{/xml}}
 
 To remove the SSH access, remove or comment the following XML:
 
-{{code language=xml}}
+{{xml}}
 <listener>
   <listener-class>org.crsh.term.sshd.SSHLifeCycle</listener-class>
 </listener>
-{{/code}}
+{{/xml}}

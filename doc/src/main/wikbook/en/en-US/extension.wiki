@@ -14,10 +14,10 @@ understand better how the shell works.
 == Groovy execution ==
 
 When the user types a command in the sell, the command line is parsed by the [[args4j>>https://args4j.dev.java.net/]] framework
-and injected in the command class. A simple example, the command {{code}}connect -c portal -u root -p gtn portal-system{{/code}}
+and injected in the command class. A simple example, the command ##connect -c portal -u root -p gtn portal-system##
 creates the connect command instance and args4j injects the options and arguments on the class:
 
-{{code}}
+{{java}}
 @Description("Connect to a workspace")
 class connect extends org.crsh.command.ClassCommand
 {
@@ -38,7 +38,7 @@ class connect extends org.crsh.command.ClassCommand
     ...
   }
 }
-{{/code}}
+{{/java}}
 
 == Shell context ==
 
@@ -48,23 +48,23 @@ and should be considered with caution. The shell also provides a few functions t
 
 === Existing context variables ===
 
-* The {{code}}session{{/code}} variable is managed by the {{code}}connect{{/code}} and {{/code}}disconnect{{/code}} commands.
+* The ##session## variable is managed by the ##connect## and ##disconnect## commands.
 Commands should be able to use it for accessing JCR session but not update this variable.
-* The {{code}}currentPath{{/code}} variable contains the current path of the shell and it should not be used directly.
-Instead one should use the function {{code}}getCurrentNode(){{/code}} and {{code}}setCurrentNode(Node node){{/code}} to
+* The ##currentPath## variable contains the current path of the shell and it should not be used directly.
+Instead one should use the function ##getCurrentNode()## and ##setCurrentNode(Node node)## to
 update the underlying path.
 
 === Existing functions ===
 
-* The {{code}}assertConnected(){{/code}} checks that the user is connected. It should be used at the beginning of a command
-that interacs with the session
-* The {{code}}getCurrentNode(){{/code}} returns the current node
-* The {{code}}setCurrentNode(Node node){{/code}} updates the current node
-* The {{code}}findNodeByPath(){{/code}} functions returns a node based on the provided path. If the provided path is null
+* The ##assertConnected()## checks that the user is connected. It should be used at the beginning of a command
+that interacts with the session
+* The ##getCurrentNode()## returns the current node
+* The ##setCurrentNode(Node node)## updates the current node
+* The ##findNodeByPath()## functions returns a node based on the provided path. If the provided path is null
 then the "/" root path is considered. The path can be either relative or absolute. If the path is relative the current
 node will be used to find the node.
-* The {{code}}formatValue(Value value){{/code}} formats a JCR value into a suitable text value.
-* The {{code}}formatPropertyValue(Property property){{/code}} formats a JCR property value into a suitable text value.
+* The ##formatValue(Value value)## formats a JCR value into a suitable text value.
+* The ##formatPropertyValue(Property property)## formats a JCR property value into a suitable text value.
 If the property is multiple then it will return a comma separated list surrounded by square brackets.
 
 == You want to contribute a command? ==

@@ -33,7 +33,7 @@ It is Fri Jan 08 21:12:53 CET 2010 now.
 
 == Getting basic help ==
 
-The {{code}}help{{/code}} command will display the list of known commands by the shell.
+The ##help## command will display the list of known commands by the shell.
 
 {{screen}}
 [/]% help
@@ -43,7 +43,7 @@ Try one of these commands with the -h or --help switch [addmixin, cd, checkin, c
 == Connecting to a repository ==
 
 You must first connect to a repository before any other JCR based operation. When you are connected the shell will maintain
-a JCR session and allows you to interact with the session in a shell oriented fashion. The {{code}}connect{{/code}} command
+a JCR session and allows you to interact with the session in a shell oriented fashion. The ##connect## command
 is used to perform the connection. The repository name must be specified and optionally you can specify a user name
 and password to have more privileges.
 
@@ -61,7 +61,7 @@ Connected to workspace portal-system
 
 == Listing the content of a node ==
 
-The {{code}}ls{{/code}} command shows the content of a node. By default it lists the content of the current node. It can
+The ##ls## command shows the content of a node. By default it lists the content of the current node. It can
 accept a path argument that can be absolute or relative.
 
 {{screen}}
@@ -82,7 +82,7 @@ accept a path argument that can be absolute or relative.
 
 == Changing the current node ==
 
-The {{code}}cd{{/code}} command allows to change the current path. The command used with no argument, change to the root
+The ##cd## command allows to change the current path. The command used with no argument, change to the root
 directory but you can provide a path argument that can be absolute or relative.
 
 {{screen}}
@@ -92,7 +92,7 @@ directory but you can provide a path argument that can be absolute or relative.
 
 == Printing the current node ==
 
-The {{code}}pwd{{/code}} command shows the current node path.
+The ##pwd## command shows the current node path.
 
 {{screen}}
 [/gadgets]% pwd
@@ -101,7 +101,7 @@ The {{code}}pwd{{/code}} command shows the current node path.
 
 == Copying a node ==
 
-The {{code}}cp{{/code}} command copies a node to a target location in the JCR tree.
+The ##cp## command copies a node to a target location in the JCR tree.
 
 {{screen}}
 [/registry]% cp Registry Registry2
@@ -109,7 +109,7 @@ The {{code}}cp{{/code}} command copies a node to a target location in the JCR tr
 
 == Moving a node ==
 
-The {{code}}mv{{/code}} command can move a node to a target location in the JCR tree. It can be used also to rename a node.
+The ##mv## command can move a node to a target location in the JCR tree. It can be used also to rename a node.
 
 {{screen}}
 [/registry]% mv Registry Registry2
@@ -117,7 +117,7 @@ The {{code}}mv{{/code}} command can move a node to a target location in the JCR 
 
 == Removing a node or property ==
 
-The {{code}}rm{{/code}} command removes a node or property specified by its path either absolute or relative. This operation
+The ##rm## command removes a node or property specified by its path either absolute or relative. This operation
 is executed against the JCR session, meaning that it will not be effective until it is commited to the JCR server.
 
 {{screen}}
@@ -156,12 +156,12 @@ Property created
 
 == Commiting or rolling back changes ==
 
-The {{code}}commit{{/code}} operation saves the current session. Conversely the {{code}}rollback{{/code}} operation rollback
+The ##commit## operation saves the current session. Conversely the ##rollback## operation rollback
 session changes. For both operations It is possible to specify a path to commit a part of the tree.
 
 == Performing a SQL query ==
 
-Queries in SQL format are possible via the {{code}}select{{/code}} command. You can write a query with the same syntax defined
+Queries in SQL format are possible via the ##select## command. You can write a query with the same syntax defined
 by the specification and add options to control the number of results returned. By default the number of nodes is limited
 to 5 results:
 
@@ -203,7 +203,7 @@ todo
 
 == Exporting a node ==
 
-It is possible to export a node as an nt file of the same workspace with the {{code}}exportnode{{/code}} command. Then it is
+It is possible to export a node as an nt file of the same workspace with the ##exportnode## command. Then it is
 usually possible to access the nt file from webdav.
 
 {{screen}}
@@ -213,7 +213,7 @@ The node has been exported
 
 == Importing a node ==
 
-It is possible to import a node from an nt file located in the workspace with the {{code}}importnode{{/code}} command.
+It is possible to import a node from an nt file located in the workspace with the ##importnode## command.
 
 {{screen}}
 [/]% importnode /gadgets.xml /
@@ -222,7 +222,7 @@ Node imported
 
 == Adding a mixin to a node ==
 
-The {{code}}addmixin{{/code}} command adds a mixin to an existing node.
+The ##addmixin## command adds a mixin to an existing node.
 
 {{screen}}
 [/gadgets]% addmixin . mix:versionable
@@ -230,12 +230,12 @@ The {{code}}addmixin{{/code}} command adds a mixin to an existing node.
 
 == Checkin / checkout of versionable nodes ==
 
-Use the commands {{code}}checkin{{/code}} and {{code}}checkout{{/code}}.
+Use the commands ##checkin## and ##checkout##.
 
 == Disconnecting ==
 
-The {{code}}disconnect{{/code}} command disconnect from the repository.
+The ##disconnect## command disconnect from the repository.
 
 == Quitting ==
 
-The {{code}}bye{{/code}} command disconnect from the remote shell.
+The ##bye## command disconnect from the remote shell.
