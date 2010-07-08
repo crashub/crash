@@ -28,7 +28,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testRelativeToRelative() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.save();");
     assertOk("mv foo bar");
@@ -42,7 +42,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
    * Move a node to an existing name
    */
   public void testMoveToExisting() {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -57,7 +57,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testSubRelativeToSubRelative() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -72,7 +72,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testAbsoluteToAbsolute() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -88,7 +88,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testRelativeToSubRelative() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -103,7 +103,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testAbsoluteToRelative() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -119,7 +119,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testRelativeToAbsolute() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -134,7 +134,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testSubRelativeToAbsolute() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");

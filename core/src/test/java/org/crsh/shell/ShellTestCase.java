@@ -33,7 +33,7 @@ import java.util.Iterator;
 public class ShellTestCase extends AbstractCommandTestCase {
 
   public void testAnonymousConnect() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     assertNotNull(shell.getAttribute("session"));
     assertEquals("/", shell.getAttribute("currentPath"));
   }
@@ -45,7 +45,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testCd() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     assertOk("cd foo");
     assertEquals("/foo", shell.getAttribute("currentPath"));
@@ -60,7 +60,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testCommit() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
     groovyShell.evaluate("session.rootNode.addNode('added_node');");
     assertTrue(((Session)shell.getAttribute("session")).hasPendingChanges());
@@ -70,7 +70,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testRollback() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     assertTrue(((Session)shell.getAttribute("session")).hasPendingChanges());
@@ -80,7 +80,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testRm() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
 
     //
@@ -94,7 +94,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testExportImport() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo', 'nt:base');");
     assertOk("exportnode /foo /foo.xml");
 
@@ -115,7 +115,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
     
   public void testPWD() throws Exception {
 
-    assertOk("connect ws");
+    assertOk("login ws");
     ShellResponse resp = assertOk("pwd");
     Iterator<Element> elts = ((ShellResponse.Display)resp).iterator();
     assertTrue(elts.hasNext());
@@ -128,7 +128,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testSet() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.setProperty('foo_string', 'foo_value');");
     groovyShell.evaluate("session.rootNode.setProperty('foo_long', 3);");
     groovyShell.evaluate("session.rootNode.setProperty('foo_boolean', true);");

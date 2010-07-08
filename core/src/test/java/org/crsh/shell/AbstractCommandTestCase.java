@@ -81,7 +81,7 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
   }
 
   private void cleanRoot() throws Exception {
-    shell.evaluate("connect ws");
+    shell.evaluate("login ws");
     Node root = (Node)groovyShell.evaluate("session.rootNode");
     root.refresh(false);
     NodeIterator it = root.getNodes();

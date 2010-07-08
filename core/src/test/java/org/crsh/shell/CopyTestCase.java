@@ -28,7 +28,7 @@ public class CopyTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testCopyRelativeToRelative() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.save();");
     assertOk("cp foo bar");
@@ -40,7 +40,7 @@ public class CopyTestCase extends AbstractCommandTestCase {
    * Copy a node to an existing name
    */
   public void testCopyToExisting() {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -54,7 +54,7 @@ public class CopyTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testSubRelativeToSubRelative() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('foo2');");
     groovyShell.evaluate("session.save();");
@@ -68,7 +68,7 @@ public class CopyTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testAbsoluteToAbsolute() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -82,7 +82,7 @@ public class CopyTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testRelativeToSubRelative() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -97,7 +97,7 @@ public class CopyTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testAbsoluteToRelative() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -112,7 +112,7 @@ public class CopyTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testRelativeToAbsolute() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.save();");
@@ -126,7 +126,7 @@ public class CopyTestCase extends AbstractCommandTestCase {
    * @throws Exception
    */
   public void testSubRelativeToAbsolute() throws Exception {
-    assertOk("connect ws");
+    assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");
