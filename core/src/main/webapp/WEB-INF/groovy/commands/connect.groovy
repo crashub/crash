@@ -9,7 +9,7 @@ import org.crsh.jcr.JCR;
 class connect extends org.crsh.command.ClassCommand
 {
 
-  @Option(name="-u",aliases=["--username"],usage="user name")
+  @Option(required=true,name="-u",aliases=["--username"],usage="user name")
   def String userName;
 
   @Option(name="-p",aliases=["--password"],usage="password")

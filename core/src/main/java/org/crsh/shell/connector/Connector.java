@@ -85,14 +85,18 @@ public class Connector {
     }
     String ret = "CRaSH " + Info.getVersion() + " (http://crsh.googlecode.com)\r\n" +
         "Welcome to " + hostName + "!\r\n" +
-        "It is " + new Date() + " now.\r\n" +
-        shell.getPrompt();
+        "It is " + new Date() + " now.\r\n" + getPrompt();
     status = ConnectorStatus.AVAILABLE;
     return ret;
   }
 
   public String getPrompt() {
-    return shell.getPrompt();
+    try {
+      return shell.getPrompt();
+    } catch (Exception e) {
+      log.error("Could not obtain prompt", e);
+      return "% ";
+    }
   }
 
   public ConnectorStatus getStatus() {
@@ -241,8 +245,11 @@ public class Connector {
           responseContext.completed(ret);
         }
 
-        // Set prompt                                          
-        responseContext.setPrompt(shell.getPrompt());
+        // Obtain prompt
+        String prompt = getPrompt();
+
+        //
+        responseContext.setPrompt(prompt);
 
         //
         log.debug("Signaling done to response context");
