@@ -25,6 +25,8 @@ package org.crsh.shell;
  */
 public interface Shell {
 
+  String getWelcome();
+
   String getPrompt();
 
   ShellResponse evaluate(String request, ShellResponseContext responseContext);

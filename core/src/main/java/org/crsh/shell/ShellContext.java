@@ -24,6 +24,8 @@ package org.crsh.shell;
  */
 public interface ShellContext {
 
+  String getVersion();
+
   Resource loadResource(String resourceId);
 
   ClassLoader getLoader();

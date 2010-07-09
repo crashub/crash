@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -46,6 +47,9 @@ public class ServletShellContext implements ShellContext {
   /** . */
   private final Logger log = LoggerFactory.getLogger(getClass());
 
+  /** . */
+  private final String version;
+
   public ServletShellContext(ServletContext servletContext, ClassLoader loader) {
     if (servletContext == null) {
       throw new NullPointerException();
@@ -55,12 +59,36 @@ public class ServletShellContext implements ShellContext {
     }
 
     //
+    String version = null;
+    try {
+      Properties props = new Properties();
+      InputStream in = servletContext.getResourceAsStream("/META-INF/maven/org.crsh/crsh.core/pom.properties");
+      if (in != null) {
+        props.load(in);
+        version = props.getProperty("version");
+      }
+    } catch (Exception e) {
+      log.error("Could not load maven properties", e);
+    }
+
+    //
+    if (version == null) {
+      log.warn("No version found will use unknown value instead");
+      version = "unkown";
+    }
+
+    //
     this.servletContext = servletContext;
     this.loader = loader;
+    this.version = version;
   }
 
   public ServletContext getServletContext() {
     return servletContext;
+  }
+
+  public String getVersion() {
+    return version;
   }
 
   public Resource loadResource(String resourceId) {

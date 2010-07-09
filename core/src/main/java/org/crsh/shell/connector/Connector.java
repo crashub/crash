@@ -18,17 +18,12 @@
  */
 package org.crsh.shell.connector;
 
-import org.crsh.Info;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
-import org.crsh.util.ImmediateFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -77,15 +72,7 @@ public class Connector {
     if (status != ConnectorStatus.INITIAL) {
       throw new IllegalStateException();
     }
-    String hostName;
-    try {
-      hostName = InetAddress.getLocalHost().getHostName();
-    } catch (UnknownHostException e) {
-      hostName = "localhost";
-    }
-    String ret = "CRaSH " + Info.getVersion() + " (http://crsh.googlecode.com)\r\n" +
-        "Welcome to " + hostName + "!\r\n" +
-        "It is " + new Date() + " now.\r\n" + getPrompt();
+    String ret = shell.getWelcome();
     status = ConnectorStatus.AVAILABLE;
     return ret;
   }

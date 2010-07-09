@@ -48,8 +48,12 @@ public class TestShell implements Shell {
     queue.add(action);
   }
 
+  public String getWelcome() {
+    return "Welcome\r\n% ";
+  }
+
   public String getPrompt() {
-    return "%";
+    return "% ";
   }
 
   public ShellResponse evaluate(String request, ShellResponseContext responseContext) {

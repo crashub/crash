@@ -39,6 +39,10 @@ public class TestShellContext implements ShellContext {
   /** . */
   private final Logger log = LoggerFactory.getLogger(getClass());
 
+  public String getVersion() {
+    return "1.0.0";
+  }
+
   public Resource loadResource(String resourceId) {
     // Remove leading '/'
     resourceId = resourceId.substring(1);

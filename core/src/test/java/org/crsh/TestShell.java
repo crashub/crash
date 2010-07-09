@@ -29,8 +29,12 @@ import org.crsh.shell.ShellResponseContext;
  */
 public class TestShell implements Shell {
 
+  public String getWelcome() {
+    return "Welcome\r\n" + getPrompt();
+  }
+
   public String getPrompt() {
-    return "%";
+    return "% ";
   }
 
   public ShellResponse evaluate(String request, ShellResponseContext responseContext) {

@@ -3,6 +3,21 @@ import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.ValueFormatException;
 
+welcome = { ->
+    def hostName;
+    try {
+      hostName = java.net.InetAddress.getLocalHost().getHostName();
+    } catch (java.net.UnknownHostException ignore) {
+      hostName = "localhost";
+    }
+    String ret =
+    "CRaSH " + version + " (http://crsh.googlecode.com)\r\n" +
+    "Welcome to " + hostName + "!\r\n" +
+    "It is " + new Date() + " now.\r\n" +
+    "% ";
+    return ret;
+}
+
 prompt = { ->
   if (session == null)
     return "% ";

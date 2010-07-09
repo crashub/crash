@@ -124,6 +124,9 @@ public class CRaSH implements Shell {
   public CRaSH(final ShellContext context) {
     HashMap<String, Object> attributes = new HashMap<String, Object>();
 
+    // Set version number
+    attributes.put("version", context.getVersion());
+
     //
     CompilerConfiguration config = new CompilerConfiguration();
     config.setRecompileGroovySource(true);
@@ -153,6 +156,10 @@ public class CRaSH implements Shell {
   }
 
   // Shell implementation **********************************************************************************************
+
+  public String getWelcome() {
+    return (String)groovyShell.evaluate("welcome();");
+  }
 
   public String getPrompt() {
     return (String)groovyShell.evaluate("prompt();");
