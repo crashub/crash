@@ -94,6 +94,11 @@ public class CRaSH implements Shell {
     }
 
     //
+    if (closure == null) {
+      return null;
+    }
+
+    //
     try {
       return closure.getObject().newInstance();
     }
@@ -183,10 +188,9 @@ public class CRaSH implements Shell {
         ShellCommand cmd = getClosure(chunks.get(0));
 
         //
-        CommandContext ctx = new CommandContextImpl(responseContext, attributes);
-
-        //
         if (cmd != null) {
+          CommandContext ctx = new CommandContextImpl(responseContext, attributes);
+
           // Build args
           String[] args = new String[chunks.size() - 1];
           chunks.subList(1, chunks.size()).toArray(args);
@@ -198,7 +202,6 @@ public class CRaSH implements Shell {
           } else {
             response = new ShellResponse.Ok();
           }
-
         } else {
           response = new ShellResponse.UnkownCommand(chunks.get(0));
         }

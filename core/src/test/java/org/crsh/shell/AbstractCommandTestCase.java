@@ -68,6 +68,12 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
     }
   }
 
+  protected final void assertUnknownCommand(String s) {
+    ShellResponse resp = shell.evaluate(s);
+    assertTrue("Was expecting an ok response instead of " + resp, resp instanceof ShellResponse.UnkownCommand);
+    assertEquals(s, ((ShellResponse.UnkownCommand)resp).getName());
+  }
+
   protected final Throwable assertError(String s) {
     ShellResponse resp = shell.evaluate(s);
     assertTrue("Was expecting an ok response instead of " + resp, resp instanceof ShellResponse.Error);

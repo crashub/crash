@@ -92,17 +92,20 @@ public class ServletShellContext implements ShellContext {
   }
 
   public Resource loadResource(String resourceId) {
+    Resource res = null;
     try {
       URL url = servletContext.getResource("/WEB-INF/" + resourceId);
-      URLConnection conn = url.openConnection();
-      long timestamp = conn.getLastModified();
-      InputStream in = url.openStream();
-      String content = IO.readAsUTF8(in);
-      return new Resource(content, timestamp);
+      if (url != null) {
+        URLConnection conn = url.openConnection();
+        long timestamp = conn.getLastModified();
+        InputStream in = url.openStream();
+        String content = IO.readAsUTF8(in);
+        res = new Resource(content, timestamp);
+      }
     } catch (IOException e) {
       log.warn("Could not find resource " + resourceId, e);
-      return null;
     }
+    return res;
   }
 
   public ClassLoader getLoader() {

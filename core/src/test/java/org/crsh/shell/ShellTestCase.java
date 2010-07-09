@@ -38,6 +38,11 @@ public class ShellTestCase extends AbstractCommandTestCase {
     assertEquals("/", shell.getAttribute("currentPath"));
   }
 
+  public void testUnkownCommand() throws Exception {
+    assertOk("login ws");
+    assertUnknownCommand("bilto");
+  }
+
   public void testRootConnect() throws Exception {
     assertOk("connect -u root -p exo ws");
     assertNotNull(shell.getAttribute("session"));

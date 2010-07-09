@@ -47,17 +47,22 @@ public class TestShellContext implements ShellContext {
     // Remove leading '/'
     resourceId = resourceId.substring(1);
 
+    //
+    Resource res = null;
+
     try {
       URL url = Thread.currentThread().getContextClassLoader().getResource(resourceId);
-      URLConnection conn = url.openConnection();
-      long timestamp = conn.getLastModified();
-      InputStream in = url.openStream();
-      String content = IO.readAsUTF8(in);
-      return new Resource(content, timestamp);
+      if (url != null) {
+        URLConnection conn = url.openConnection();
+        long timestamp = conn.getLastModified();
+        InputStream in = url.openStream();
+        String content = IO.readAsUTF8(in);
+        res = new Resource(content, timestamp);
+      }
     } catch (IOException e) {
       log.warn("Could not find resource " + resourceId, e);
-      return null;
     }
+    return res;
   }
 
   public ClassLoader getLoader() {
