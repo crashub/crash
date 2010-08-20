@@ -80,7 +80,13 @@
       <outputDirectory>/doc</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.doc</include>
+        <include>org.crsh:crsh.doc:zip:html</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/doc</outputDirectory>
+      <includes>
+        <include>org.crsh:crsh.doc:pdf</include>
       </includes>
     </dependencySet>
   </dependencySets>

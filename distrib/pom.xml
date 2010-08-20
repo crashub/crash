@@ -30,6 +30,13 @@
           <dependency>
             <groupId>org.crsh</groupId>
             <artifactId>crsh.doc</artifactId>
+            <type>pdf</type>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.doc</artifactId>
+            <classifier>html</classifier>
+            <type>zip</type>
           </dependency>
           <dependency>
             <groupId>org.crsh</groupId>

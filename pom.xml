@@ -88,6 +88,14 @@
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
         <version>1.0.0-beta10-SNAPSHOT</version>
+        <type>pdf</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.doc</artifactId>
+        <version>1.0.0-beta10-SNAPSHOT</version>
+        <classifier>html</classifier>
+        <type>zip</type>
       </dependency>
     </dependencies>
   </dependencyManagement>

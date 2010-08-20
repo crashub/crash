@@ -1,4 +1,7 @@
-CRaSH can be configured by tweaking the //web.xml// file of the CRaSH web archive.
+CRaSH can be configured by tweaking various files of the CRaSH web archive
+
+* //WEB-INF/web.xml//
+* //WEB-INF/groovy/login.groovy//
 
 Note that to fully secure the server, you should remove the unauthenticated telnet access as describe below.
 
@@ -20,7 +23,7 @@ key file.
 
 = Change the ports of the telnet or SSH server =
 
-The ports of the server are parameterized by the //ssh.port// and //telnet.port// parameters.
+The ports of the server are parameterized by the //ssh.port// and //telnet.port// parameters in the //web.xml// file
 
 {{xml}}
 <context-param>
@@ -40,7 +43,7 @@ The ports of the server are parameterized by the //ssh.port// and //telnet.port/
 
 = Remove the telnet or SSH access =
 
-To remove the telnet access, remove or comment the following XML:
+To remove the telnet access, remove or comment the following XML from the //web.xml// file
 
 {{xml}}
 <listener>
@@ -48,10 +51,19 @@ To remove the telnet access, remove or comment the following XML:
 </listener>
 {{/xml}}
 
-To remove the SSH access, remove or comment the following XML:
+To remove the SSH access, remove or comment the following XML from the //web.xml// file
 
 {{xml}}
 <listener>
   <listener-class>org.crsh.term.sshd.SSHLifeCycle</listener-class>
 </listener>
 {{/xml}}
+
+= Configure the shell default message =
+
+The //login.groovy// file contains two closures that are evaluated each time a message is required
+
+* The ##prompt## closure returns the prompt message
+* The ##welcome## closure returns the welcome message
+
+Those closure can be customized to return different messages.
