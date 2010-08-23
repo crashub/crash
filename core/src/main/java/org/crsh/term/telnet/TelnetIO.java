@@ -24,7 +24,6 @@ import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
 import org.crsh.term.CodeType;
 import org.crsh.term.TermIO;
-
 import java.io.IOException;
 
 /**
@@ -51,11 +50,16 @@ public class TelnetIO implements TermIO {
   public CodeType getType(int code) {
     switch (code) {
       case TerminalIO.DELETE:
+      case TerminalIO.BACKSPACE:
         return CodeType.DELETE;
       case TerminalIO.UP:
         return CodeType.UP;
       case TerminalIO.DOWN:
         return CodeType.DOWN;
+      case TerminalIO.RIGHT:
+        return CodeType.RIGHT;
+      case TerminalIO.LEFT:
+        return CodeType.LEFT;
       default:
         return CodeType.CHAR;
     }
@@ -82,5 +86,15 @@ public class TelnetIO implements TermIO {
 
   public void writeCRLF() throws IOException {
     termIO.write("\r\n");
+  }
+
+  public boolean moveRight() throws IOException {
+    termIO.moveRight(1);
+    return true;
+  }
+
+  public boolean moveLeft() throws IOException {
+    termIO.moveLeft(1);
+    return true;
   }
 }

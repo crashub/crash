@@ -26,95 +26,40 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class InputDecoderTestCase extends TestCase {
+public class InputDecoderTestCase extends AbstractInputDecoderTestCase {
 
-
-  public void testNoCR() throws IOException {
-    TestInputDecoder sm = new TestInputDecoder();
-    sm.appendData("a");
-    assertFalse(sm.hasNext());
-    assertEquals(1, sm.getSize());
+  @Override
+  protected boolean getSupportsCursorMove() {
+    return true;
   }
 
-  public void testReadLine() throws IOException {
-    String[] tests = {"a\n","a\r","a\n\r","a\r\n"};
-    for (String test : tests) {
-      TestInputDecoder sm = new TestInputDecoder();
-      sm.appendData(test);
-      assertTrue(sm.hasNext());
-      assertEquals(new Input.Chars("a"), sm.next());
-      assertFalse(sm.hasNext());
-      assertEquals(0, sm.getSize());
-    }
+  @Override
+  protected String getExpectedMoveLeftInsert() {
+    return "ba";
   }
 
-  public void testErase() throws IOException {
-    TestInputDecoder sm = new TestInputDecoder();
-    sm.appendData("a");
-    sm.appendDel();
-    sm.appendData("b\n");
-    assertTrue(sm.hasNext());
-    assertEquals(new Input.Chars("b"), sm.next());
+  @Override
+  protected String getExpectedMoveLeftDel() {
+    return "b";
   }
 
-/*
-  public void testBar1() {
-    ReaderStateMachine sm = new ReaderStateMachine(127);
-    sm.append("ab");
-    char[] chars = new char[2];
-    assertEquals(1, sm.flush(chars, 0, 1));
-    assertEquals('a', chars[0]);
-    assertEquals(0, chars[1]);
-    assertEquals(1, sm.getSize());
-    assertEquals(1, sm.flush(chars, 0, 1));
-    assertEquals('b', chars[0]);
-    assertEquals(0, chars[1]);
-    assertEquals(0, sm.getSize());
+  @Override
+  protected String getExpectedMoveRightInsert() {
+    return "abdc";
   }
 
-  public void testBar2() {
-    ReaderStateMachine sm = new ReaderStateMachine(127);
-    sm.append("ab");
-    char[] chars = new char[2];
-    assertEquals(1, sm.flush(chars, 0, 1));
-    assertEquals('a', chars[0]);
-    assertEquals(0, chars[1]);
-    assertEquals(1, sm.getSize());
-    assertEquals(1, sm.flush(chars, 0, 2));
-    assertEquals('b', chars[0]);
-    assertEquals(0, chars[1]);
-    assertEquals(0, sm.getSize());
+  @Override
+  protected String getExpectedMoveRightDel() {
+    return "ac";
   }
 
-  public void testBar3() {
-    ReaderStateMachine sm = new ReaderStateMachine(127);
-    sm.append("ab");
-    char[] chars = new char[2];
-    assertEquals(2, sm.flush(chars, 0, 2));
-    assertEquals('a', chars[0]);
-    assertEquals('b', chars[1]);
-    assertEquals(0, sm.getSize());
-    assertEquals(0, sm.flush(chars, 0, 2));
-    assertEquals('a', chars[0]);
-    assertEquals('b', chars[1]);
-    assertEquals(0, sm.getSize());
+  @Override
+  protected String getExpectedMoveRightAtEndOfLine() {
+    return "ab";
   }
 
-  public void testBar4() {
-    ReaderStateMachine sm = new ReaderStateMachine(127);
-    sm.append("ab");
-    char[] chars = new char[3];
-    assertEquals(2, sm.flush(chars, 0, 3));
-    assertEquals('a', chars[0]);
-    assertEquals('b', chars[1]);
-    assertEquals(0, chars[2]);
-    assertEquals(0, sm.getSize());
-    assertEquals(0, sm.flush(chars, 0, 1));
-    assertEquals('a', chars[0]);
-    assertEquals('b', chars[1]);
-    assertEquals(0, chars[2]);
-    assertEquals(0, sm.getSize());
+  @Override
+  protected String getExpectedMoveLeftAtBeginningOfLine() {
+    return "ba";
   }
-*/
-
 }

@@ -147,4 +147,12 @@ public class SSHIO implements TermIO {
   public void writeCRLF() throws IOException {
     writer.write("\r\n");
   }
+
+  public boolean moveRight() throws IOException {
+    return false;
+  }
+
+  public boolean moveLeft() throws IOException {
+    return false;
+  }
 }

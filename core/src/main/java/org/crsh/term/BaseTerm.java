@@ -271,6 +271,13 @@ public class BaseTerm extends InputDecoder implements Term {
             }
             historyCursor = nextHistoryCursor;
           }
+          break;
+        case RIGHT:
+          moveRight();
+          break;
+        case LEFT:
+          moveLeft();
+          break;
         case CHAR:
           if (code >= 0 && code < 128) {
             if (code == 3) {
@@ -320,5 +327,13 @@ public class BaseTerm extends InputDecoder implements Term {
   protected void doEcho(String s) throws IOException {
     io.write(s);
     io.flush();
+  }
+  @Override
+  protected boolean doMoveRight() throws IOException {
+    return io.moveRight();
+  }
+  @Override
+  protected boolean doMoveLeft() throws IOException {
+    return io.moveLeft();
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2003-2009 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,15 +16,46 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.crsh.term;
+package org.crsh.util;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public enum CodeType {
+public class InputDecoderNoMoveTestCase extends AbstractInputDecoderTestCase {
 
-  DELETE, UP, DOWN, CHAR, RIGHT, LEFT
+  @Override
+  protected boolean getSupportsCursorMove() {
+    return false;
+  }
 
+  @Override
+  protected String getExpectedMoveLeftInsert() {
+    return "ab";
+  }
+
+  @Override
+  protected String getExpectedMoveLeftDel() {
+    return "a";
+  }
+
+  @Override
+  protected String getExpectedMoveRightInsert() {
+    return "abcd";
+  }
+
+  @Override
+  protected String getExpectedMoveRightDel() {
+    return "ab";
+  }
+
+  @Override
+  protected String getExpectedMoveRightAtEndOfLine() {
+    return "ab";
+  }
+
+  @Override
+  protected String getExpectedMoveLeftAtBeginningOfLine() {
+    return "ab";
+  }
 }

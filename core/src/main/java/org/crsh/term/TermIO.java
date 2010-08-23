@@ -41,4 +41,7 @@ public interface TermIO {
 
   void writeCRLF() throws IOException;
 
+  boolean moveRight() throws IOException;
+
+  boolean moveLeft() throws IOException;
 }

@@ -30,22 +30,58 @@ public class TestInputDecoder extends InputDecoder {
   /** . */
   private final StringBuilder builder = new StringBuilder();
 
+  /** . */
+  private final StringBuilder line = new StringBuilder();
+
+  /** . */
+  private int position = 0;
+
+  /** . */
+  private final boolean supportsCursorMove;
+
+  public TestInputDecoder(boolean supportsCursorMove) {
+    this.supportsCursorMove = supportsCursorMove;
+  }
+
+  public TestInputDecoder() {
+    this(true);
+  }
+
   @Override
   protected void doEchoCRLF() throws IOException {
-    builder.append("\r\n");
+    builder.append(line.toString());
+    line.setLength(0);
+    position = 0;
   }
 
   @Override
   protected void doEcho(String s) throws IOException {
-    builder.append(s);
+    line.insert(position, s);
+    position++;
   }
 
   @Override
   protected void doEchoDel() throws IOException {
-    builder.setLength(builder.length() - 1);
+    line.deleteCharAt(--position);
   }
 
-  public String getString() {
-    return builder.toString();
+  @Override
+  protected boolean doMoveRight() {
+    if (supportsCursorMove) {
+      position++;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Override
+  protected boolean doMoveLeft() {
+    if (supportsCursorMove) {
+      position--;
+      return true;
+    } else {
+      return false;
+    }
   }
 }
