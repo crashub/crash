@@ -52,6 +52,9 @@ public class ShellTestCase extends AbstractCommandTestCase {
   public void testCd() throws Exception {
     assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
+    groovyShell.evaluate("session.rootNode.addNode('foo bar');");
+
+    //
     assertOk("cd foo");
     assertEquals("/foo", shell.getAttribute("currentPath"));
     assertOk("cd ..");
@@ -60,6 +63,18 @@ public class ShellTestCase extends AbstractCommandTestCase {
     assertEquals("/foo", shell.getAttribute("currentPath"));
     assertOk("cd .");
     assertEquals("/foo", shell.getAttribute("currentPath"));
+    assertOk("cd");
+    assertEquals("/", shell.getAttribute("currentPath"));
+
+    //
+    assertOk("cd 'foo bar'");
+    assertEquals("/foo bar", shell.getAttribute("currentPath"));
+    assertOk("cd ..");
+    assertEquals("/", shell.getAttribute("currentPath"));
+    assertOk("cd '/foo bar'");
+    assertEquals("/foo bar", shell.getAttribute("currentPath"));
+    assertOk("cd .");
+    assertEquals("/foo bar", shell.getAttribute("currentPath"));
     assertOk("cd");
     assertEquals("/", shell.getAttribute("currentPath"));
   }

@@ -20,6 +20,7 @@
 package org.crsh.shell;
 
 import groovy.lang.GroovyShell;
+import junit.framework.AssertionFailedError;
 import org.crsh.AbstractRepositoryTestCase;
 import org.crsh.TestShellContext;
 import org.crsh.shell.impl.CRaSH;
@@ -82,8 +83,21 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
 
   protected final ShellResponse.Ok assertOk(String s) {
     ShellResponse resp = shell.evaluate(s);
-    assertTrue("Was expecting an ok response instead of " + resp, resp instanceof ShellResponse.Ok);
-    return (ShellResponse.Ok)resp;
+    if (resp instanceof ShellResponse.Ok)
+    {
+      return (ShellResponse.Ok)resp;
+    }
+    else if (resp instanceof ShellResponse.Error)
+    {
+      ShellResponse.Error err = (ShellResponse.Error)resp;
+      AssertionFailedError afe = new AssertionFailedError();
+      afe.initCause(err.getThrowable());
+      throw afe;
+    }
+    else
+    {
+      throw new AssertionFailedError("Was expecting an ok response instead of " + resp);
+    }
   }
 
   private void cleanRoot() throws Exception {
