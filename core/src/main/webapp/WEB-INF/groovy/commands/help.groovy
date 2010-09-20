@@ -23,11 +23,13 @@ class help extends org.crsh.command.ClassCommand
   "help",
   "importnode",
   "ls",
+  "mv",
   "pwd",
   "rm",
   "rollback",
   "select",
-  "set"];
+  "set",
+  "xpath"];
 
   public Object execute() throws ScriptException {
 
