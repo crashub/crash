@@ -2,7 +2,9 @@
 
 Copy the crsh.war in server running eXo Portal 2.5 or GateIn.
 
-= Connection =
+= Shell usage =
+
+== Connection ==
 
 You need to connect using telnet or SSH to use the shell.
 
@@ -28,6 +30,13 @@ Welcome to juliens-macbook-pro.local!
 It is Fri Jan 08 21:12:53 CET 2010 now.
 %
 {{/screen}}
+
+== Features ==
+
+* Line edition: the current line can be edited via left and right arrow keys
+* History: the key up and key down enable history browsing
+* Quoting: simple quotes or double quotes allow to insert blanks in command options and arguments, for instance
+//"old boy"// or //'old boy'//. One quote style can quote another, like //"ol' boy"//.
 
 = Commands =
 
