@@ -29,6 +29,7 @@ class help extends org.crsh.command.ClassCommand
   "rollback",
   "select",
   "set",
+  "setperm",
   "xpath"];
 
   public Object execute() throws ScriptException {

@@ -241,6 +241,43 @@ The ##addmixin## command adds a mixin to an existing node.
 
 Use the commands ##checkin## and ##checkout##.
 
+== Configuring the node security ==
+
+{{warning}}This is command is only available for eXo JCR{{/warning}}
+
+The ##setperm## commands configures the security of a node based on [[eXo JCR access control>>http://wiki.exoplatform.com/xwiki/bin/view/JCR/Access%20Control]].
+When a node is protected by access control, it owns a mixin called ##exo:privilegeable## that contains a ##exo:permissions##
+property, for instance:
+
+{{screen}}
+[/production]% ls
+/production
++-properties
+| +-jcr:primaryType: nt:unstructured
+| +-jcr:mixinTypes: [exo:privilegeable]
+| +-exo:permissions: [*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administrators set_property,*:/platform/administrators remove]
++-children
+| +-/production/app:gadgets
+| +-/production/app:applications
+| +-/production/mop:workspace
+{{/screen}}
+
+You can alter the node permission list with the ##setperm## command:
+
+{{screen}}
+[/production]% setperm *:/platform/mygroup read add_node
+Node /production updated to [read,add_node]
+{{/screen}}
+
+You can also remove a permission by prefixing it with a exclamation mark (!).
+
+{{screen}}
+[/production]% setperm *:/platform/mygroup !add_node
+Node /production updated to [read]
+{{/screen}}
+
+The ##setperm## command will add automatically the ##exo:privilegeable## mixin on the node when it is missing.
+
 == Disconnecting ==
 
 The ##disconnect## command disconnect from the repository.

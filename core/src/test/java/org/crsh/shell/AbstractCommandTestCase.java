@@ -27,8 +27,9 @@ import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
+import javax.jcr.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -67,6 +68,14 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
       shell = null;
       groovyShell = null;
     }
+  }
+
+  protected final List<String> getStringValues(Property p) throws RepositoryException {
+    List<String> strings = new ArrayList<String>();
+    for (Value value : p.getValues()) {
+      strings.add(value.getString());
+    }
+    return strings;
   }
 
   protected final void assertUnknownCommand(String s) {
