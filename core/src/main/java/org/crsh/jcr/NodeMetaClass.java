@@ -35,10 +35,6 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import java.beans.IntrospectionException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Calendar;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -136,19 +132,6 @@ public class NodeMetaClass extends MetaClassImpl {
           }
         }
       }
-      else if (args.length == 2) {
-        Object arg0 = args[0];
-        Object arg1 = args[1];
-
-        //
-        if (arg0 instanceof String && "setProperty".equals(name)) {
-          String propertyName = (String)arg0;
-          if (arg1 instanceof Boolean) {
-            JCRUtils.setProperty(node, propertyName, (Boolean)arg1);
-            return null;
-          }
-        }
-      }
     }
 
     // We let groovy handle the call
@@ -183,26 +166,8 @@ public class NodeMetaClass extends MetaClassImpl {
     // First we try to access a property
     try {
       Property property = node.getProperty(propertyName);
-      int type = property.getType();
-      switch (type) {
-        case JCRUtils.PATH:
-        case JCRUtils.STRING:
-          return property.getString();
-        case JCRUtils.DATE:
-          return property.getDate();
-        case JCRUtils.DOUBLE:
-          return property.getDouble();
-        case JCRUtils.LONG:
-          return property.getLong();
-        case JCRUtils.BOOLEAN:
-          return property.getBoolean();
-        case JCRUtils.REFERENCE:
-          return property.getNode();
-        case JCRUtils.BINARY:
-          return property.getStream();
-        default:
-          throw new UnsupportedOperationException("JCR Property type " + type + " not handled yet");
-      }
+      PropertyType type = PropertyType.fromValue(property.getType());
+      return type.getValue(property);
     }
     catch (PathNotFoundException e) {
     }
@@ -228,63 +193,38 @@ public class NodeMetaClass extends MetaClassImpl {
     }
   }
 
-  private void _setProperty(Object object, String property, Object newValue) throws RepositoryException {
+  private void _setProperty(Object object, String propertyName, Object propertyValue) throws RepositoryException {
     Node node = (Node)object;
+    if (propertyValue == null) {
+      node.setProperty(propertyName, (Value)null);
+    } else {
 
-    // Perform some unwrapping if necessary first
-    if (newValue instanceof BigDecimal) {
-      // Unwrap big decimal
-      BigDecimal bdValue = (BigDecimal)newValue;
-      newValue = bdValue.doubleValue();
-    }
-    else if (newValue instanceof BigInteger) {
-      // Unwrap big integer
-      BigInteger biValue = (BigInteger)newValue;
-      newValue = biValue.longValue();
-    }
-    else if (newValue instanceof Character) {
-      // Transform character to String
-      newValue = Character.toString((Character)newValue);
-    }
+      // Get property type
+      PropertyType type;
+      try {
+        Property property = node.getProperty(propertyName);
+        type = PropertyType.fromValue(property.getType());
+      } catch (PathNotFoundException e) {
+        type = PropertyType.fromCanonicalType(propertyValue.getClass());
+      }
 
-    //
-    if (newValue == null || JCRUtils.isJCRPropertyType(newValue)) {
-      if (newValue == null) {
-        node.setProperty(property, (Value)null);
+      // Update the property and get the updated property
+      Property property;
+      if (type != null) {
+        property = type.set(node, propertyName, propertyValue);
+      } else {
+        property = null;
       }
-      else if (newValue instanceof Double) {
-        node.setProperty(property, (Double)newValue);
+
+      //
+      if (property == null && propertyValue instanceof String) {
+        if (propertyValue instanceof String) {
+          // This is likely a conversion from String that should be handled natively by JCR itself
+          node.setProperty(propertyName, (String)propertyValue);
+        } else {
+          throw new MissingPropertyException("Property " + propertyName + " does not have a correct type " + propertyValue.getClass().getName());
+        }
       }
-      else if (newValue instanceof String) {
-        node.setProperty(property, (String)newValue);
-      }
-      else if (newValue instanceof Long) {
-        node.setProperty(property, (Long)newValue);
-      }
-      else if (newValue instanceof Integer) {
-        node.setProperty(property, (Integer)newValue);
-      }
-      else if (newValue instanceof Byte) {
-        node.setProperty(property, (Byte)newValue);
-      }
-      else if (newValue instanceof Boolean) {
-        node.setProperty(property, (Boolean)newValue);
-      }
-      else if (newValue instanceof Calendar) {
-        node.setProperty(property, (Calendar)newValue);
-      }
-      else if (newValue instanceof Float) {
-        node.setProperty(property, (Float)newValue);
-      }
-      else if (newValue instanceof InputStream) {
-        node.setProperty(property, (InputStream)newValue);
-      }
-      else {
-        throw new UnsupportedOperationException("todo with object " + newValue);
-      }
-    }
-    else {
-      throw new MissingPropertyException("Property $name does not have a correct type");
     }
   }
 }
