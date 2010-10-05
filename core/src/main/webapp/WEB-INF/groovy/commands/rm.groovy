@@ -2,19 +2,24 @@ import org.crsh.command.ScriptException;
 import org.kohsuke.args4j.Argument;
 import org.crsh.command.Description;
 
-@Description("Removes a node or a property")
+@Description("Removes one or several node or a property")
 public class rm extends org.crsh.command.ClassCommand {
 
-  @Argument(required=true,index=0,usage="The path of the node to remove")
-  def String path;
+  @Argument(index=0,usage="The paths of the node to remove")
+  def List<String> paths;
 
   public Object execute() throws ScriptException {
     assertConnected();
 
     // Get node
-    def item = findItemByPath(path);
+    def ret = 'Node';
+    paths.each {
+      def node = getNodeByPath(it);
+      ret <<= " $node.path";
+      node.remove();
+    };
 
     //
-    item.remove();
+    return "$ret removed";
   }
 }

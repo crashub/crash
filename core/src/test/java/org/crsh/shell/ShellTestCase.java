@@ -18,6 +18,7 @@
  */
 package org.crsh.shell;
 
+import org.crsh.command.ScriptException;
 import org.crsh.display.structure.Element;
 import org.crsh.display.structure.LabelElement;
 
@@ -103,14 +104,24 @@ public class ShellTestCase extends AbstractCommandTestCase {
     assertOk("login ws");
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
 
-    //
+    // Try relative
     groovyShell.evaluate("session.rootNode.addNode('foo').addNode('bar');");
     assertOk("rm foo/bar");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
 
-    //
-    assertOk("rm foo");
+    // Try absolute
+    groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
+    assertOk("rm /foo/bar");
+    assertEquals(false, groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
+
+    // Try several
+    groovyShell.evaluate("session.rootNode.addNode('bar');");
+    assertOk("rm foo bar");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
+    assertEquals(false, groovyShell.evaluate("return session.rootNode.hasNode('bar')"));
+
+    // Delete a non existing node
+    assertError("rm foo", ScriptException.class);
   }
 
   public void testExportImport() throws Exception {

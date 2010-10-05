@@ -84,6 +84,13 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
     assertEquals(s, ((ShellResponse.UnkownCommand)resp).getName());
   }
 
+  protected final void assertError(String s, Class<? extends Throwable> expectedErrorType) {
+    Throwable error = assertError(s);
+    if (!expectedErrorType.isInstance(error)) {
+      fail("Expected error " + error + " to be of type " + expectedErrorType.getName());
+    }
+  }
+
   protected final Throwable assertError(String s) {
     ShellResponse resp = shell.evaluate(s);
     assertTrue("Was expecting an ok response instead of " + resp, resp instanceof ShellResponse.Error);

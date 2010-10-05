@@ -69,6 +69,22 @@ findItemByPath = { path ->
 };
 
 /**
+ * Locate a node by its path. It calls the getItemByPath function and makes sure the returned
+ * item is a node.
+ *
+ * @throws ScriptException if no path is provided
+ * @throws ScriptException if the path is not valid
+ */
+getNodeByPath = { path ->
+  def item = getItemByPath(path);
+  if (item instanceof Node) {
+    return item;
+  } else {
+    throw new ScriptException("The path $item is an item instead of a node");
+  }
+}
+
+/**
  * Locate an item by its path and returns it. If no path is provided the root node
  * will be returned. If the path is relative then the item will be resolved against the
  * current node.
