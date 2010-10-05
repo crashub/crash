@@ -12,6 +12,7 @@ class help extends org.crsh.command.ClassCommand
 
   /** . */
   private static final List<String> commands = [
+  "addnode",
   "addmixin",
   "cd",
   "checkin",

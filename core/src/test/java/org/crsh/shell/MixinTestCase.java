@@ -25,7 +25,7 @@ package org.crsh.shell;
  */
 public class MixinTestCase extends AbstractCommandTestCase {
 
-  public void testRelativeToRelative() throws Exception {
+  public void testAddVersionable() throws Exception {
     assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     assertOk("addmixin foo mix:versionable");
