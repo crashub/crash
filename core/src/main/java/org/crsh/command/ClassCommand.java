@@ -36,6 +36,14 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
   /** . */
   private CommandContext context;
 
+  /** . */
+  private boolean unquoteArguments;
+
+  protected ClassCommand() {
+    this.context = null;
+    this.unquoteArguments = true;
+  }
+
   @Override
   public final Object invokeMethod(String name, Object args) {
     try {
@@ -81,6 +89,19 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
     }
   }
 
+  /**
+   * Returns true if the command wants its arguments to be unquoted.
+   *
+   * @return true if arguments must be unquoted
+   */
+  protected boolean getUnquoteArguments() {
+    return unquoteArguments;
+  }
+
+  public void setUnquoteArguments(boolean unquoteArguments) {
+    this.unquoteArguments = unquoteArguments;
+  }
+
   protected final String readLine(String msg) {
     return readLine(msg, true);
   }
@@ -117,6 +138,25 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
       //
       parser.printUsage(out, null);
       return out;
+    }
+
+    // Remove surrounding quotes if there are
+    if (unquoteArguments) {
+      String[] foo = new String[args.length];
+      for (int i = 0;i < args.length;i++) {
+        String arg = args[i];
+        if (arg.charAt(0) == '\'') {
+          if (arg.charAt(arg.length() - 1) == '\'') {
+            arg = arg.substring(1, arg.length() - 1);
+          }
+        } else if (arg.charAt(0) == '"') {
+          if (arg.charAt(arg.length() - 1) == '"') {
+            arg = arg.substring(1, arg.length() - 1);
+          }
+        }
+        foo[i] = arg;
+      }
+      args = foo;
     }
 
     //

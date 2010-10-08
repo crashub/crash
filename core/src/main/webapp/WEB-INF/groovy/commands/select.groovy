@@ -16,6 +16,10 @@ public class select extends org.crsh.command.AnyArgumentClassCommand {
   @Option(name="-a",aliases=["--all"],usage="Ignore the limit argument")
   def Boolean all = false;
 
+  {
+     unquoteArguments = false;
+  }
+
   public Object execute() throws ScriptException {
     assertConnected();
 

@@ -120,6 +120,19 @@ public class ShellCommandTestCase extends TestCase {
 
     // Execute directly
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    assertEquals(Arrays.asList("foo"), cmd.execute(new TestCommandContext(), "'foo'"));
+  }
+
+  public void testArgumentQuoteInClass2() throws Exception {
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.AnyArgumentClassCommand {\n" +
+      "{ unquoteArguments = false; }\n" +
+      "public Object execute() {\n" +
+      "return arguments;\n" +
+      "}\n" +
+      "}\n");
+
+    // Execute directly
+    ClassCommand cmd = (ClassCommand)clazz.newInstance();
     assertEquals(Arrays.asList("'foo'"), cmd.execute(new TestCommandContext(), "'foo'"));
   }
 

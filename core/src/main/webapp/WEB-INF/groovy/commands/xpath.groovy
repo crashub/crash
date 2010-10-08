@@ -19,6 +19,10 @@ public class select extends org.crsh.command.ClassCommand {
   @Argument(required=true,index=0,usage="The xpath query to execute")
   def String xpath;
 
+  {
+     unquoteArguments = false;
+  }
+
   public Object execute() throws ScriptException {
     assertConnected();
 
