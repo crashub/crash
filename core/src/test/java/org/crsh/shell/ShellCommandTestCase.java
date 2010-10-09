@@ -25,7 +25,8 @@ import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.ClassCommand;
 import org.crsh.command.CommandContext;
-import org.crsh.command.ScriptCommand;
+import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.GroovyScriptCommand;
 
 import java.util.Arrays;
 
@@ -45,7 +46,7 @@ public class ShellCommandTestCase extends TestCase {
   @Override
   protected void setUp() throws Exception {
     CompilerConfiguration config = new CompilerConfiguration();
-    config.setScriptBaseClass(ScriptCommand.class.getName());
+    config.setScriptBaseClass(GroovyScriptCommand.class.getName());
 
     //
     loader = new GroovyClassLoader(Thread.currentThread().getContextClassLoader(), config);
@@ -142,7 +143,7 @@ public class ShellCommandTestCase extends TestCase {
 
   public void testContextAccessInScript() throws Exception {
     Class clazz = loader.parseClass("return bar;");
-    ScriptCommand script = (ScriptCommand)clazz.newInstance();
+    ShellCommand script = (ShellCommand)clazz.newInstance();
     CommandContext ctx = new TestCommandContext();
     ctx.put("bar", "bar_value");
     assertEquals("bar_value", script.execute(ctx));
@@ -150,14 +151,14 @@ public class ShellCommandTestCase extends TestCase {
 
   public void testArgumentAccessInScript() throws Exception {
     Class clazz = loader.parseClass("return args[0];");
-    ScriptCommand script = (ScriptCommand)clazz.newInstance();
+    ShellCommand script = (ShellCommand)clazz.newInstance();
     CommandContext ctx = new TestCommandContext();
     assertEquals("arg_value", script.execute(ctx, "arg_value"));
   }
 
   public void testArgumentAccessInClosure() throws Exception {
     Class clazz = loader.parseClass("{ arg -> return arg };");
-    ScriptCommand script = (ScriptCommand)clazz.newInstance();
+    ShellCommand script = (ShellCommand)clazz.newInstance();
     CommandContext ctx = new TestCommandContext();
     assertEquals("arg_value", script.execute(ctx, "arg_value"));
   }

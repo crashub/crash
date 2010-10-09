@@ -16,18 +16,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
+package org.crsh.shell.impl;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
+import org.crsh.command.CommandContext;
+import org.crsh.command.ScriptException;
+import org.crsh.command.ShellCommand;
 
 /**
+ * This class provides the base class for Groovy scripts. It should not be used directly as it is rather used
+ * for configuring a Groovy {@link org.codehaus.groovy.control.CompilerConfiguration#setScriptBaseClass(String)} class.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ScriptCommand extends Script implements ShellCommand {
+public abstract class GroovyScriptCommand extends Script implements ShellCommand {
 
   @Override
   public Object getProperty(String property) {

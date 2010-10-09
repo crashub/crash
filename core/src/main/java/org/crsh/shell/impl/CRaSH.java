@@ -22,7 +22,6 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.CommandContext;
-import org.crsh.command.ScriptCommand;
 import org.crsh.command.ShellCommand;
 import org.crsh.display.DisplayBuilder;
 import org.crsh.jcr.NodeMetaClass;
@@ -135,7 +134,7 @@ public class CRaSH implements Shell {
     //
     CompilerConfiguration config = new CompilerConfiguration();
     config.setRecompileGroovySource(true);
-    config.setScriptBaseClass(ScriptCommand.class.getName());
+    config.setScriptBaseClass(GroovyScriptCommand.class.getName());
     GroovyShell groovyShell = new GroovyShell(context.getLoader(), new Binding(attributes), config);
 
     // Evaluate login script
