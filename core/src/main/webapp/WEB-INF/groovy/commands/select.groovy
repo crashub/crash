@@ -5,7 +5,7 @@ import org.kohsuke.args4j.Option;
 import org.crsh.command.Description;
 
 @Description("Executes a query with the SQL dialect, by default results are limited to 5 ")
-public class select extends org.crsh.command.AnyArgumentClassCommand {
+public class select extends org.crsh.command.ClassCommand {
 
   @Option(name="-o",aliases=["--offset"],usage="The result offset")
   def Integer offset = 0;
@@ -15,6 +15,9 @@ public class select extends org.crsh.command.AnyArgumentClassCommand {
 
   @Option(name="-a",aliases=["--all"],usage="Ignore the limit argument")
   def Boolean all = false;
+
+  @Argument(usage = "the query")
+  def List<String> arguments;
 
   {
      unquoteArguments = false;

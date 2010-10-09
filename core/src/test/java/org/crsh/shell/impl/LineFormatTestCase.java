@@ -20,7 +20,6 @@ package org.crsh.shell.impl;
 
 import junit.framework.TestCase;
 import org.crsh.command.ScriptException;
-import org.crsh.shell.impl.LineFormat;
 
 import java.util.Arrays;
 

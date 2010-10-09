@@ -22,7 +22,7 @@ package org.crsh.command;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ScriptException extends Exception {
+public class ScriptException extends RuntimeException {
 
   public ScriptException(String message) {
     super(message);

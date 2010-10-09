@@ -112,11 +112,13 @@ public class ShellCommandTestCase extends TestCase {
   }
 
   public void testArgumentQuoteInClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.AnyArgumentClassCommand { " +
-      "public Object execute() {" +
-      "return arguments;" +
-      "}" +
-      "}");
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand {\n" +
+      "@org.kohsuke.args4j.Argument\n" +
+      "def List<String> arguments;\n" +
+      "public Object execute() {\n" +
+      "return arguments;\n" +
+      "}\n" +
+      "}\n");
 
     // Execute directly
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
@@ -124,7 +126,9 @@ public class ShellCommandTestCase extends TestCase {
   }
 
   public void testArgumentQuoteInClass2() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.AnyArgumentClassCommand {\n" +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand {\n" +
+      "@org.kohsuke.args4j.Argument\n" +
+      "def List<String> arguments;\n" +
       "{ unquoteArguments = false; }\n" +
       "public Object execute() {\n" +
       "return arguments;\n" +
