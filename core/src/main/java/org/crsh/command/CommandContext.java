@@ -19,7 +19,6 @@
 
 package org.crsh.command;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,5 +28,7 @@ import java.util.Map;
 public interface CommandContext extends Map<String, Object> {
 
   String readLine(String msg, boolean echo);
+
+  ShellWriter getWriter();
 
 }

@@ -21,9 +21,7 @@ package org.crsh.shell.impl;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.command.CommandContext;
 import org.crsh.command.ShellCommand;
-import org.crsh.display.DisplayBuilder;
 import org.crsh.jcr.NodeMetaClass;
 import org.crsh.shell.*;
 import org.crsh.util.TimestampedObject;
@@ -51,9 +49,6 @@ public class CRaSH implements Shell {
 
   /** . */
   private final GroovyShell groovyShell;
-
-  /** . */
-  private final StringBuffer out;
 
   /** . */
   private final ShellContext context;
@@ -143,7 +138,6 @@ public class CRaSH implements Shell {
 
     //
     this.attributes = attributes;
-    this.out = new StringBuffer();
     this.groovyShell = groovyShell;
     this.commands = new ConcurrentHashMap<String, TimestampedObject<Class<ShellCommand>>>();
     this.context = context;
@@ -188,16 +182,14 @@ public class CRaSH implements Shell {
 
         //
         if (cmd != null) {
-          CommandContext ctx = new CommandContextImpl(responseContext, attributes);
+          CommandContextImpl ctx = new CommandContextImpl(responseContext, attributes);
 
           // Build args
           String[] args = new String[chunks.size() - 1];
           chunks.subList(1, chunks.size()).toArray(args);
-          Object o = cmd.execute(ctx, args);
-          if (o instanceof DisplayBuilder) {
-            response = new ShellResponse.Display(((DisplayBuilder) o).getElements());
-          } else if (o != null) {
-            response = new ShellResponse.Display(o.toString());
+          cmd.execute(ctx, args);
+          if (ctx.getBuffer() != null) {
+            response = new ShellResponse.Display(ctx.getBuffer().toString());
           } else {
             response = new ShellResponse.Ok();
           }

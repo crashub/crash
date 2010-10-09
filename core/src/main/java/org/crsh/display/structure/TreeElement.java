@@ -111,7 +111,7 @@ public class TreeElement extends Element {
   }
 
   @Override
-  public void print(PrintWriter printer) throws IOException {
+  public void print(PrintWriter printer) {
     if (value != null) {
       value.print(printer);
       printer.println();

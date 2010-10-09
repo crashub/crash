@@ -17,43 +17,55 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.command;
 
-import org.crsh.command.CommandContext;
-import org.crsh.command.ShellCommand;
-import org.crsh.command.ShellWriter;
+import org.crsh.display.DisplayBuilder;
+import org.crsh.display.DisplayContext;
+import org.crsh.display.structure.Element;
 
-import java.io.StringWriter;
-import java.util.HashMap;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestCommandContext extends HashMap<String, Object> implements CommandContext {
+public class ShellWriter extends PrintWriter {
+
+  private final DisplayContext dc = new DisplayContext() {
+    @Override
+    protected void print(char[] cbuf, int off, int len) {
+
+    }
+
+    @Override
+    protected void println() {
+      ShellWriter.super.print(lineFeed);
+    }
+  };
 
   /** . */
-  private StringWriter buffer;
+  private final String lineFeed;
 
-  /** . */
-  private ShellWriter writer;
+  public ShellWriter(Writer out, String lineFeed) {
+    super(out);
 
-  public String readLine(String msg, boolean echo) {
-    throw new UnsupportedOperationException();
+    //
+    this.lineFeed = lineFeed;
   }
 
-  public ShellWriter getWriter() {
-    if (writer == null) {
-      writer = new ShellWriter(buffer = new StringWriter(), "\r\n");
-    }
-    return writer;
-  }
+  @Override
+  public void print(Object obj) {
 
-  public String execute(ShellCommand command, String... args) {
-    if (buffer != null) {
-      buffer.getBuffer().setLength(0);
+    //
+    if (obj instanceof DisplayBuilder) {
+      for (Element element : ((DisplayBuilder)obj).getElements()) {
+        print(element);
+      }
+    } else if (obj instanceof Element) {
+      ((Element)obj).print(this);
+    } else {
+      super.print(obj);
     }
-    command.execute(this, args);
-    return buffer != null ? buffer.toString() : null;
   }
 }

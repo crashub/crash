@@ -43,7 +43,7 @@ public class LabelElement extends Element {
   }
 
   @Override
-  public void print(PrintWriter printer) throws IOException {
+  public void print(PrintWriter printer) {
     printer.print(value);
   }
 

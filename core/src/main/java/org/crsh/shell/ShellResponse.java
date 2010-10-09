@@ -20,13 +20,6 @@
 package org.crsh.shell;
 
 import org.crsh.command.ScriptException;
-import org.crsh.display.SimpleDisplayContext;
-import org.crsh.display.structure.Element;
-import org.crsh.display.structure.LabelElement;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -80,30 +73,18 @@ public abstract class ShellResponse {
     }
   }
 
-  public static class Display extends Ok implements Iterable<Element> {
+  public static class Display extends Ok {
 
     /** . */
-    private final List<Element> elements;
+    private final String text;
 
-    public Display(List<Element> elements) {
-      this.elements = elements;
-    }
-
-    public Display(String label) {
-      this(Collections.<Element>singletonList(new LabelElement(label)));
+    public Display(String text) {
+      this.text = text;
     }
 
     @Override
     public String getText() {
-      SimpleDisplayContext context = new SimpleDisplayContext("\r\n");
-      for (Element element : elements) {
-        element.print(context);
-      }
-      return context.getText();
-    }
-
-    public Iterator<Element> iterator() {
-      return elements.iterator();
+      return text;
     }
   }
 

@@ -45,7 +45,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public Object execute(CommandContext context, String... args) throws ScriptException {
+  public void execute(CommandContext context, String... args) throws ScriptException {
 
     // Set up current binding
     Binding binding = new Binding(context);
@@ -66,8 +66,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
 
     //
-    return res;
+    if (res != null) {
+      context.getWriter().print(res);
+    }
   }
-
-
 }

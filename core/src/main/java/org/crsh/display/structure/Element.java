@@ -34,18 +34,13 @@ import java.lang.reflect.UndeclaredThrowableException;
 public abstract class Element {
 
   public final void print(DisplayContext context) {
-    try {
-      print(context.printer());
-    }
-    catch (IOException e) {
-      throw new UndeclaredThrowableException(e);
-    }
+    print(context.printer());
   }
 
   public void print(PrintStream stream) throws IOException {
     print(new PrintWriter(stream));
   }
 
-  public abstract void print(PrintWriter printer) throws IOException;
+  public abstract void print(PrintWriter printer);
 
 }

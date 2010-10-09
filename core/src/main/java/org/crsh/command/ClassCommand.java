@@ -25,8 +25,6 @@ import groovy.lang.MissingPropertyException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import java.io.StringWriter;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -113,7 +111,7 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
     return context.readLine(msg, echo);
   }
 
-  public final Object execute(CommandContext context, String... args) throws ScriptException {
+  public final void execute(CommandContext context, String... args) throws ScriptException {
     if (context == null) {
       throw new NullPointerException();
     }
@@ -126,7 +124,7 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
 
     //
     if (args.length > 0 && ("-h".equals(args[0]) || "--help".equals(args[0]))) {
-      StringWriter out = new StringWriter();
+      ShellWriter out = context.getWriter();
 
       //
       Description description = getClass().getAnnotation(Description.class);
@@ -137,48 +135,50 @@ public abstract class ClassCommand extends GroovyObjectSupport implements ShellC
 
       //
       parser.printUsage(out, null);
-      return out;
-    }
-
-    // Remove surrounding quotes if there are
-    if (unquoteArguments) {
-      String[] foo = new String[args.length];
-      for (int i = 0;i < args.length;i++) {
-        String arg = args[i];
-        if (arg.charAt(0) == '\'') {
-          if (arg.charAt(arg.length() - 1) == '\'') {
-            arg = arg.substring(1, arg.length() - 1);
+    } else {
+      // Remove surrounding quotes if there are
+      if (unquoteArguments) {
+        String[] foo = new String[args.length];
+        for (int i = 0;i < args.length;i++) {
+          String arg = args[i];
+          if (arg.charAt(0) == '\'') {
+            if (arg.charAt(arg.length() - 1) == '\'') {
+              arg = arg.substring(1, arg.length() - 1);
+            }
+          } else if (arg.charAt(0) == '"') {
+            if (arg.charAt(arg.length() - 1) == '"') {
+              arg = arg.substring(1, arg.length() - 1);
+            }
           }
-        } else if (arg.charAt(0) == '"') {
-          if (arg.charAt(arg.length() - 1) == '"') {
-            arg = arg.substring(1, arg.length() - 1);
-          }
+          foo[i] = arg;
         }
-        foo[i] = arg;
+        args = foo;
       }
-      args = foo;
-    }
 
-    //
-    try {
-      parser.parseArgument(args);
-    }
-    catch (CmdLineException e) {
-      throw new ScriptException(e.getMessage(), e);
-    }
+      //
+      try {
+        parser.parseArgument(args);
+      }
+      catch (CmdLineException e) {
+        throw new ScriptException(e.getMessage(), e);
+      }
 
-    //
-    Object res;
-    try {
-      this.context = context;
-      res = execute();
-    }
-    finally {
-      this.context = null;
-    }
+      //
+      try {
+        this.context = context;
 
-    //
-    return res;
+        //
+        Object o = execute();
+
+        //
+        if (o != null) {
+          context.getWriter().print(o);
+        }
+      }
+      finally {
+        this.context = null;
+      }
+    }
   }
 
   protected abstract Object execute() throws ScriptException;
