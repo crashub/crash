@@ -30,7 +30,7 @@ import java.io.Writer;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellWriter extends PrintWriter {
+public class ShellPrinter extends PrintWriter {
 
   private final DisplayContext dc = new DisplayContext() {
     @Override
@@ -40,14 +40,14 @@ public class ShellWriter extends PrintWriter {
 
     @Override
     protected void println() {
-      ShellWriter.super.print(lineFeed);
+      ShellPrinter.super.print(lineFeed);
     }
   };
 
   /** . */
   private final String lineFeed;
 
-  public ShellWriter(Writer out, String lineFeed) {
+  public ShellPrinter(Writer out, String lineFeed) {
     super(out);
 
     //

@@ -20,7 +20,7 @@
 package org.crsh.shell.impl;
 
 import org.crsh.command.CommandContext;
-import org.crsh.command.ShellWriter;
+import org.crsh.command.ShellPrinter;
 import org.crsh.shell.ShellResponseContext;
 
 import java.io.StringWriter;
@@ -41,7 +41,7 @@ class CommandContextImpl implements CommandContext {
   private final Map<String, Object> state;
 
   /** . */
-  private ShellWriter writer;
+  private ShellPrinter writer;
 
   /** . */
   private StringWriter buffer;
@@ -57,10 +57,10 @@ class CommandContextImpl implements CommandContext {
     return buffer;
   }
 
-  public ShellWriter getWriter() {
+  public ShellPrinter getWriter() {
     if (writer == null) {
       buffer = new StringWriter();
-      writer = new ShellWriter(buffer, "\r\n");
+      writer = new ShellPrinter(buffer, "\r\n");
     }
     return writer;
   }

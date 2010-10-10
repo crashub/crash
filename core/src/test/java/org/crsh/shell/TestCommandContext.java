@@ -21,7 +21,7 @@ package org.crsh.shell;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.ShellCommand;
-import org.crsh.command.ShellWriter;
+import org.crsh.command.ShellPrinter;
 
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -36,15 +36,15 @@ public class TestCommandContext extends HashMap<String, Object> implements Comma
   private StringWriter buffer;
 
   /** . */
-  private ShellWriter writer;
+  private ShellPrinter writer;
 
   public String readLine(String msg, boolean echo) {
     throw new UnsupportedOperationException();
   }
 
-  public ShellWriter getWriter() {
+  public ShellPrinter getWriter() {
     if (writer == null) {
-      writer = new ShellWriter(buffer = new StringWriter(), "\r\n");
+      writer = new ShellPrinter(buffer = new StringWriter(), "\r\n");
     }
     return writer;
   }
