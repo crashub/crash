@@ -20,7 +20,9 @@
 package org.crsh.util;
 
 import junit.framework.TestCase;
+import org.crsh.shell.io.ShellWriterContext;
 
+import java.io.IOException;
 import java.io.StringWriter;
 
 /**
@@ -29,24 +31,21 @@ import java.io.StringWriter;
  */
 public class LineFeedWriterTestCase extends TestCase {
 
-  final StringWriter buffer;
-  final LineFeedWriter writer = new LineFeedWriter(buffer = new StringWriter(), "_");
+  /** . */
+  private String padding;
 
   private void assertWriter(String expected, String... texts) throws Exception {
-    writer.write('\n');
-    writer.flush();
-    buffer.getBuffer().setLength(0);
+    StringWriter buffer = new StringWriter();
+    LineFeedWriter writer = new LineFeedWriter(buffer, "_");
+    ShellWriterContext ctx = new ShellWriterContext() {
+      public void pad(Appendable appendable) throws IOException {
+        if (padding != null) {
+          appendable.append(padding);
+        }
+      }
+    };
     for (String text : texts) {
-      writer.write(text.toCharArray(), 0, text.length());
-    }
-    assertEquals(expected, buffer.toString());
-
-    //
-    writer.write('\n');
-    writer.flush();
-    buffer.getBuffer().setLength(0);
-    for (String text : texts) {
-      writer.write(text, 0, text.length());
+      writer.append(ctx, text);
     }
     assertEquals(expected, buffer.toString());
   }
@@ -87,17 +86,17 @@ public class LineFeedWriterTestCase extends TestCase {
   }
 
   public void testPadding1() throws Exception {
-    writer.setPadding("-");
+    padding = "-";
     assertWriter("-a", "a");
   }
 
   public void testPadding2() throws Exception {
-    writer.setPadding("-");
+    padding = "-";
     assertWriter("-a_", "a\n");
   }
 
   public void testPadding3() throws Exception {
-    writer.setPadding("-");
+    padding = "-";
     assertWriter("-a_-b", "a\nb");
   }
 }

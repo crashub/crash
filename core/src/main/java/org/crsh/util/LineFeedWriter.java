@@ -19,47 +19,52 @@
 
 package org.crsh.util;
 
-import org.crsh.shell.ShellAppendable;
+import org.crsh.shell.io.ShellWriter;
+import org.crsh.shell.io.ShellWriterContext;
 
-import java.io.FilterWriter;
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class LineFeedWriter extends FilterWriter implements ShellAppendable {
+public class LineFeedWriter implements ShellWriter {
 
   /** . */
-  private char[] tmp;
+  private static final int NOT_PADDED = 0;
+
+  /** . */
+  private static final int PADDING = 1;
+
+  /** . */
+  private static final int PADDED = 2;
+
+  /** . */
+  private final Appendable out;
+
+  /** . */
+  private CharSequence tmp;
+
+  /** . */
+  private char c;
 
   /** . */
   private final String lineFeed;
 
   /** . */
-  private String padding;
+  private int status;
 
-  /** . */
-  private boolean padded;
-
-  public LineFeedWriter(Writer out) {
+  public LineFeedWriter(Appendable out) {
     this(out, "\r\n");
   }
 
-  public LineFeedWriter(Writer out, String lineFeed) {
-    super(out);
-
-    //
+  public LineFeedWriter(Appendable out, String lineFeed) {
+    this.out = out;
     this.lineFeed = lineFeed;
-    this.padding = null;
-    this.padded = false;
+    this.status = NOT_PADDED;
   }
 
-  public String getPadding() {
-    return padding;
-  }
-
+/*
   public void setPadding(String padding) {
     if (padding != null) {
       for (int i = 0;i < padding.length();i++) {
@@ -69,34 +74,56 @@ public class LineFeedWriter extends FilterWriter implements ShellAppendable {
         }
       }
     }
+  }
+*/
 
-    //
-    this.padding = padding;
+  public Appendable append(char c) throws IOException {
+    return append(null, c);
   }
 
-  @Override
-  public void write(int c) throws IOException {
+  public ShellWriter append(ShellWriterContext ctx, final char c) throws IOException {
     if (tmp == null) {
-      tmp = new char[1];
+      tmp = new CharSequence() {
+        public int length() {
+          return 1;
+        }
+        public char charAt(int index) {
+          return LineFeedWriter.this.c;
+        }
+        public CharSequence subSequence(int start, int end) {
+          throw new UnsupportedOperationException();
+        }
+      };
     }
-    tmp[0] = (char)c;
-    write(tmp, 0, 1);
+    this.c = c;
+    return append(ctx, tmp);
   }
 
-  @Override
-  public void write(char[] cbuf, int off, int len) throws IOException {
-    int previous = off;
-    int to = off + len;
-    for (int i = off;i < to;i++) {
-      char c = cbuf[i];
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    return append(null, csq, start, end);
+  }
+
+  public Appendable append(CharSequence csq) throws IOException {
+    return append(null, csq);
+  }
+
+  public ShellWriter append(ShellWriterContext ctx, CharSequence csq) throws IOException {
+    return append(ctx, csq, 0, csq.length());
+  }
+
+  public ShellWriter append(ShellWriterContext ctx, CharSequence csq, int start, int end) throws IOException {
+    int previous = start;
+    int to = start + end;
+    for (int i = start;i < to;i++) {
+      char c = csq.charAt(i);
       if (c == '\r') {
         if (i > previous) {
-          realWrite(cbuf, previous, i - previous);
+          realAppend(ctx, csq, previous, i);
         }
         previous = i + 1;
       } else if (c == '\n') {
         if (i > previous) {
-          realWrite(cbuf, previous, i - previous);
+          realAppend(ctx, csq, previous, i);
         }
         writeLF();
         previous = i + 1;
@@ -104,62 +131,35 @@ public class LineFeedWriter extends FilterWriter implements ShellAppendable {
       }
     }
     if (to != previous) {
-      realWrite(cbuf, previous, to - previous);
+      realAppend(ctx, csq, previous, to);
     }
+    return this;
   }
 
-
-  @Override
-  public void write(String str, int off, int len) throws IOException {
-    int previous = off;
-    int to = off + len;
-    for (int i = off;i < to;i++) {
-      char c = str.charAt(i);
-      if (c == '\r') {
-        if (i > previous) {
-          realWrite(str, previous, i - previous);
+  private void realAppend(ShellWriterContext ctx, CharSequence csq, int off, int end) throws IOException {
+    if (end > 0) {
+      if (status == NOT_PADDED) {
+        if (ctx != null) {
+          status = PADDING;
+          ctx.pad(this);
         }
-        previous = i + 1;
-      } else if (c == '\n') {
-        if (i > previous) {
-          realWrite(str, previous, i - previous);
-        }
-        writeLF();
-        previous = i + 1;
-        i++;
+        status = PADDED;
       }
-    }
-    if (to != previous) {
-      realWrite(str, previous, to  - previous);
-    }
-  }
-
-  private void realWrite(String str, int off, int len) throws IOException {
-    if (len > 0) {
-      if (!padded) {
-        if (padding != null) {
-          out.write(padding);
-        }
-        padded = true;
-      }
-      out.write(str, off, len);
-    }
-  }
-
-  private void realWrite(char[] cbuf, int off, int len) throws IOException {
-    if (len > 0) {
-      if (!padded) {
-        if (padding != null) {
-          out.write(padding);
-        }
-        padded = true;
-      }
-      out.write(cbuf, off, len);
+      out.append(csq, off, end);
     }
   }
 
   private void writeLF() throws IOException {
-    out.write(lineFeed);
-    padded = false;
+    switch (status) {
+      case PADDING:
+        throw new IllegalStateException();
+      case PADDED:
+        status = NOT_PADDED;
+      case NOT_PADDED:
+        out.append(lineFeed);
+        break;
+      default:
+        throw new AssertionError();
+    }
   }
 }

@@ -17,16 +17,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.shell.io;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellAppendable extends Appendable {
+public interface ShellWriter extends Appendable {
 
-  String getPadding();
 
-  void setPadding(String padding);
+  ShellWriter append(ShellWriterContext ctx, CharSequence csq) throws IOException;
+
+  ShellWriter append(ShellWriterContext ctx, CharSequence csq, int start, int end) throws IOException;
+
+  ShellWriter append(ShellWriterContext ctx, char c) throws IOException;
 
 }
