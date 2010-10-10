@@ -40,6 +40,9 @@ public class LineFeedWriter extends FilterWriter implements ShellAppendable {
   /** . */
   private String padding;
 
+  /** . */
+  private boolean padded;
+
   public LineFeedWriter(Writer out) {
     this(out, "\r\n");
   }
@@ -50,6 +53,7 @@ public class LineFeedWriter extends FilterWriter implements ShellAppendable {
     //
     this.lineFeed = lineFeed;
     this.padding = null;
+    this.padded = false;
   }
 
   public String getPadding() {
@@ -87,12 +91,12 @@ public class LineFeedWriter extends FilterWriter implements ShellAppendable {
       char c = cbuf[i];
       if (c == '\r') {
         if (i > previous) {
-          out.write(cbuf, previous, i - previous);
+          realWrite(cbuf, previous, i - previous);
         }
         previous = i + 1;
       } else if (c == '\n') {
         if (i > previous) {
-          out.write(cbuf, previous, i - previous);
+          realWrite(cbuf, previous, i - previous);
         }
         writeLF();
         previous = i + 1;
@@ -100,9 +104,10 @@ public class LineFeedWriter extends FilterWriter implements ShellAppendable {
       }
     }
     if (to != previous) {
-      out.write(cbuf, previous, to - previous);
+      realWrite(cbuf, previous, to - previous);
     }
   }
+
 
   @Override
   public void write(String str, int off, int len) throws IOException {
@@ -112,12 +117,12 @@ public class LineFeedWriter extends FilterWriter implements ShellAppendable {
       char c = str.charAt(i);
       if (c == '\r') {
         if (i > previous) {
-          out.write(str, previous, i - previous);
+          realWrite(str, previous, i - previous);
         }
         previous = i + 1;
       } else if (c == '\n') {
         if (i > previous) {
-          out.write(str, previous, i - previous);
+          realWrite(str, previous, i - previous);
         }
         writeLF();
         previous = i + 1;
@@ -125,16 +130,35 @@ public class LineFeedWriter extends FilterWriter implements ShellAppendable {
       }
     }
     if (to != previous) {
-      out.write(str, previous, to - previous);
+      realWrite(str, previous, to  - previous);
+    }
+  }
+
+  private void realWrite(String str, int off, int len) throws IOException {
+    if (len > 0) {
+      if (!padded) {
+        if (padding != null) {
+          out.write(padding);
+        }
+        padded = true;
+      }
+      out.write(str, off, len);
+    }
+  }
+
+  private void realWrite(char[] cbuf, int off, int len) throws IOException {
+    if (len > 0) {
+      if (!padded) {
+        if (padding != null) {
+          out.write(padding);
+        }
+        padded = true;
+      }
+      out.write(cbuf, off, len);
     }
   }
 
   private void writeLF() throws IOException {
     out.write(lineFeed);
-
-    //
-    if (padding != null) {
-      out.write(padding);
-    }
   }
 }
