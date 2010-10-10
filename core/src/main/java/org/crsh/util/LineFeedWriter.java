@@ -160,5 +160,6 @@ public class LineFeedWriter extends FilterWriter implements ShellAppendable {
 
   private void writeLF() throws IOException {
     out.write(lineFeed);
+    padded = false;
   }
 }

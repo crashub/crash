@@ -33,6 +33,7 @@ public class LineFeedWriterTestCase extends TestCase {
   final LineFeedWriter writer = new LineFeedWriter(buffer = new StringWriter(), "_");
 
   private void assertWriter(String expected, String... texts) throws Exception {
+    writer.write('\n');
     writer.flush();
     buffer.getBuffer().setLength(0);
     for (String text : texts) {
@@ -41,6 +42,7 @@ public class LineFeedWriterTestCase extends TestCase {
     assertEquals(expected, buffer.toString());
 
     //
+    writer.write('\n');
     writer.flush();
     buffer.getBuffer().setLength(0);
     for (String text : texts) {
@@ -82,5 +84,20 @@ public class LineFeedWriterTestCase extends TestCase {
 
   public void testFoo8() throws Exception {
     assertWriter("", "\r");
+  }
+
+  public void testPadding1() throws Exception {
+    writer.setPadding("-");
+    assertWriter("-a", "a");
+  }
+
+  public void testPadding2() throws Exception {
+    writer.setPadding("-");
+    assertWriter("-a_", "a\n");
+  }
+
+  public void testPadding3() throws Exception {
+    writer.setPadding("-");
+    assertWriter("-a_-b", "a\nb");
   }
 }
