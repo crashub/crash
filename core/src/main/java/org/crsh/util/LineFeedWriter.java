@@ -19,6 +19,8 @@
 
 package org.crsh.util;
 
+import org.crsh.shell.ShellAppendable;
+
 import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -27,13 +29,16 @@ import java.io.Writer;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class LineFeedWriter extends FilterWriter {
+public class LineFeedWriter extends FilterWriter implements ShellAppendable {
 
   /** . */
   private char[] tmp;
 
   /** . */
   private final String lineFeed;
+
+  /** . */
+  private String padding;
 
   public LineFeedWriter(Writer out) {
     this(out, "\r\n");
@@ -44,6 +49,25 @@ public class LineFeedWriter extends FilterWriter {
 
     //
     this.lineFeed = lineFeed;
+    this.padding = null;
+  }
+
+  public String getPadding() {
+    return padding;
+  }
+
+  public void setPadding(String padding) {
+    if (padding != null) {
+      for (int i = 0;i < padding.length();i++) {
+        char c = padding.charAt(i);
+        if (c == '\r' || c == '\n') {
+          throw new IllegalArgumentException("Padding must not contain the char with code " + (int)c);
+        }
+      }
+    }
+
+    //
+    this.padding = padding;
   }
 
   @Override
@@ -107,5 +131,10 @@ public class LineFeedWriter extends FilterWriter {
 
   private void writeLF() throws IOException {
     out.write(lineFeed);
+
+    //
+    if (padding != null) {
+      out.write(padding);
+    }
   }
 }
