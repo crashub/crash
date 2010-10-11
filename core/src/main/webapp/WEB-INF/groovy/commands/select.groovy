@@ -3,9 +3,11 @@ import javax.jcr.query.Query;
 import org.crsh.shell.ui.UIBuilder;
 import org.kohsuke.args4j.Option;
 import org.crsh.command.Description;
+import javax.jcr.Node;
+import org.crsh.command.CommandContext;
 
 @Description("Executes a query with the SQL dialect, by default results are limited to 5 ")
-public class select extends org.crsh.command.ClassCommand {
+public class select extends org.crsh.command.BaseCommand<Node> {
 
   @Option(name="-o",aliases=["--offset"],usage="The result offset")
   def Integer offset = 0;
@@ -23,17 +25,17 @@ public class select extends org.crsh.command.ClassCommand {
      unquoteArguments = false;
   }
 
-  public Object execute() throws ScriptException {
+  public void execute(CommandContext<Node> context) throws ScriptException {
     assertConnected();
 
     //
     if (offset < 0) {
-      return "No negative offset accepted";
+      throw new ScriptException("No negative offset accepted");
     }
 
     //
     if (limit < 0) {
-      return "No negative limit accepted";
+      throw new ScriptException("No negative limit accepted");
     }
 
     //
@@ -72,14 +74,23 @@ public class select extends org.crsh.command.ClassCommand {
       def index = 0;
       while (nodes.hasNext()) {
         def n = nodes.next();
+
+        //
         if (limit != null && index >= limit)
           break;
+
+        //
         formatNode(builder, n, 0, 1);
+
+        //
+        context.produce(n);
+
+        //
         index++;
       }
     }
 
     //
-    return builder;
+    context.getWriter().print(builder);
   }
 }

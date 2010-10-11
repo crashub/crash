@@ -25,10 +25,12 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface CommandContext extends Map<String, Object> {
+public interface CommandContext<P> extends Map<String, Object> {
 
   String readLine(String msg, boolean echo);
 
   ShellPrinter getWriter();
+
+  void produce(P product);
 
 }

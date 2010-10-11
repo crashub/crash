@@ -25,15 +25,13 @@ import org.crsh.shell.ShellResponseContext;
 import org.crsh.util.LineFeedWriter;
 
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class CommandContextImpl implements CommandContext {
+class CommandContextImpl<P> implements CommandContext<P> {
 
   /** . */
   private final ShellResponseContext responseContext;
@@ -47,15 +45,26 @@ class CommandContextImpl implements CommandContext {
   /** . */
   private StringWriter buffer;
 
+  /** . */
+  private List<P> products;
+
   public CommandContextImpl(ShellResponseContext responseContext, Map<String, Object> state) {
     this.state = state;
     this.responseContext = responseContext;
     this.writer = null;
     this.buffer = null;
+    this.products = Collections.emptyList();
   }
 
   public StringWriter getBuffer() {
     return buffer;
+  }
+
+  public void produce(P product) {
+    if (products.isEmpty()) {
+      products = new LinkedList<P>();
+    }
+    products.add(product);
   }
 
   public ShellPrinter getWriter() {

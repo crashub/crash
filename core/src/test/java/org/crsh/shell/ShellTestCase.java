@@ -199,4 +199,15 @@ public class ShellTestCase extends AbstractCommandTestCase {
 
     // Missing unit test for node with existing meta data
   }
+
+  public void testPipe() throws Exception {
+
+    assertOk("login ws");
+    assertOk("addnode foo | addnode bar");
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('bar');"));
+
+
+
+  }
 }

@@ -33,7 +33,11 @@ import org.crsh.command.ShellCommand;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class GroovyScriptCommand extends Script implements ShellCommand {
+public abstract class GroovyScriptCommand extends Script implements ShellCommand<Void> {
+
+  public Class<Void> getProductType() {
+    return Void.class;
+  }
 
   @Override
   public Object getProperty(String property) {

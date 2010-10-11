@@ -30,5 +30,13 @@ public class SelectTestCase extends AbstractCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
     groovyShell.evaluate("session.save();");
     assertOk("select * from nt:base where bar = 'juu'");
+
+    // Now test production
+/*
+    groovyShell.evaluate(
+        "def context = new org.crsh.shell.TestCommandContext();\n" +
+        "new ");
+*/
+
   }
 }

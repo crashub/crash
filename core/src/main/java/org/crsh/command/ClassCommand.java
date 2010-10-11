@@ -18,166 +18,24 @@
  */
 package org.crsh.command;
 
-import groovy.lang.Closure;
-import groovy.lang.GroovyObjectSupport;
-import groovy.lang.MissingMethodException;
-import groovy.lang.MissingPropertyException;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ClassCommand extends GroovyObjectSupport implements ShellCommand {
-
-  /** . */
-  private CommandContext context;
-
-  /** . */
-  private boolean unquoteArguments;
+public abstract class ClassCommand extends BaseCommand<Void> {
 
   protected ClassCommand() {
-    this.context = null;
-    this.unquoteArguments = true;
   }
 
   @Override
-  public final Object invokeMethod(String name, Object args) {
-    try {
-      return super.invokeMethod(name, args);
-    }
-    catch (MissingMethodException e) {
-      Object o = context.get(name);
-      if (o instanceof Closure) {
-        Closure closure = (Closure)o;
-        if (args instanceof Object[]) {
-          Object[] array = (Object[])args;
-          if (array.length == 0) {
-            return closure.call();
-          } else {
-            return closure.call(array);
-          }
-        } else {
-          return closure.call(args);
-        }
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  @Override
-  public final Object getProperty(String property) {
-    try {
-      return super.getProperty(property);
-    }
-    catch (MissingPropertyException e) {
-      return context.get(property);
-    }
-  }
-
-  @Override
-  public final void setProperty(String property, Object newValue) {
-    try {
-      super.setProperty(property, newValue);
-    }
-    catch (MissingPropertyException e) {
-      context.put(property, newValue);
-    }
-  }
-
-  /**
-   * Returns true if the command wants its arguments to be unquoted.
-   *
-   * @return true if arguments must be unquoted
-   */
-  protected boolean getUnquoteArguments() {
-    return unquoteArguments;
-  }
-
-  public void setUnquoteArguments(boolean unquoteArguments) {
-    this.unquoteArguments = unquoteArguments;
-  }
-
-  protected final String readLine(String msg) {
-    return readLine(msg, true);
-  }
-
-  protected final String readLine(String msg, boolean echo) {
-    if (context == null) {
-      throw new IllegalStateException("No current context");
-    }
-    return context.readLine(msg, echo);
-  }
-
-  public final void execute(CommandContext context, String... args) throws ScriptException {
-    if (context == null) {
-      throw new NullPointerException();
-    }
-    if (args == null) {
-      throw new NullPointerException();
-    }
+  protected void execute(CommandContext<Void> context) throws ScriptException {
 
     //
-    CmdLineParser parser = new CmdLineParser(this);
+    Object o = execute();
 
     //
-    if (args.length > 0 && ("-h".equals(args[0]) || "--help".equals(args[0]))) {
-      ShellPrinter out = context.getWriter();
-
-      //
-      Description description = getClass().getAnnotation(Description.class);
-      if (description != null) {
-        out.write(description.value());
-        out.write("\n");
-      }
-
-      //
-      parser.printUsage(out, null);
-    } else {
-      // Remove surrounding quotes if there are
-      if (unquoteArguments) {
-        String[] foo = new String[args.length];
-        for (int i = 0;i < args.length;i++) {
-          String arg = args[i];
-          if (arg.charAt(0) == '\'') {
-            if (arg.charAt(arg.length() - 1) == '\'') {
-              arg = arg.substring(1, arg.length() - 1);
-            }
-          } else if (arg.charAt(0) == '"') {
-            if (arg.charAt(arg.length() - 1) == '"') {
-              arg = arg.substring(1, arg.length() - 1);
-            }
-          }
-          foo[i] = arg;
-        }
-        args = foo;
-      }
-
-      //
-      try {
-        parser.parseArgument(args);
-      }
-      catch (CmdLineException e) {
-        throw new ScriptException(e.getMessage(), e);
-      }
-
-      //
-      try {
-        this.context = context;
-
-        //
-        Object o = execute();
-
-        //
-        if (o != null) {
-          context.getWriter().print(o);
-        }
-      }
-      finally {
-        this.context = null;
-      }
+    if (o != null) {
+      context.getWriter().print(o);
     }
   }
 

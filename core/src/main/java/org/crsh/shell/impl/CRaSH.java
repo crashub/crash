@@ -28,9 +28,7 @@ import org.crsh.util.TimestampedObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -59,7 +57,7 @@ public class CRaSH implements Shell {
   /** . */
   final Map<String, Object> attributes;
 
-  ShellCommand getClosure(String name) {
+  ShellCommand getCommand(String name) {
     TimestampedObject<Class<ShellCommand>> closure = commands.get(name);
 
     //
@@ -164,44 +162,78 @@ public class CRaSH implements Shell {
   }
 
   public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
-    // Trim
-    String s2 = request.trim();
+    log.debug("Invoking request " + request);
 
     //
-    log.debug("Invoking command " + s2);
+    LinkedList<String> commands = new LinkedList<String>();
+    int from = 0;
+    while (from < request.length()) {
+      int to = request.indexOf('|', from);
+
+      //
+      if (to == -1) {
+        to = request.length();
+      }
+
+      //
+      String command = request.substring(from, to).trim();
+      if (command.length() == 0) {
+        if (commands.size() > 0) {
+          return new ShellResponse.SyntaxError();
+        }
+      }
+      else {
+        commands.add(command);
+      }
+
+      //
+      from = to + 1;
+    }
 
     //
-    ShellResponse response;
-    if (s2.length() > 0) {
+    ShellResponse response = new ShellResponse.NoCommand();
+
+    //
+    if (commands.size() > 0) {
       try {
-        // We'll have at least one chunk
-        List<String> chunks = LineFormat.format(s2);
+        for (String command : commands) {
 
-        // Get command
-        ShellCommand cmd = getClosure(chunks.get(0));
+          // We'll have at least one chunk
+          List<String> chunks = LineFormat.format(command);
 
-        //
-        if (cmd != null) {
-          CommandContextImpl ctx = new CommandContextImpl(responseContext, attributes);
+          // Get command
+          ShellCommand cmd = getCommand(chunks.get(0));
 
-          // Build args
-          String[] args = new String[chunks.size() - 1];
-          chunks.subList(1, chunks.size()).toArray(args);
-          cmd.execute(ctx, args);
-          if (ctx.getBuffer() != null) {
-            response = new ShellResponse.Display(ctx.getBuffer().toString());
+          //
+          if (cmd != null) {
+            CommandContextImpl ctx = new CommandContextImpl(responseContext, attributes);
+
+            // Build args
+            String[] args = new String[chunks.size() - 1];
+            chunks.subList(1, chunks.size()).toArray(args);
+
+            //
+            cmd.execute(ctx, args);
+
+            //
+            if (ctx.getBuffer() != null) {
+              response = new ShellResponse.Display(ctx.getBuffer().toString());
+            } else {
+              response = new ShellResponse.Ok();
+            }
           } else {
-            response = new ShellResponse.Ok();
+            response = new ShellResponse.UnkownCommand(chunks.get(0));
           }
-        } else {
-          response = new ShellResponse.UnkownCommand(chunks.get(0));
+
+          // We continue only if OK
+          if (!(response instanceof ShellResponse.Ok)) {
+            break;
+          }
         }
       }
       catch (Throwable t) {
         response = new ShellResponse.Error(ErrorType.EVALUATION, t);
       }
-    } else {
-      response = new ShellResponse.NoCommand();
     }
 
     //

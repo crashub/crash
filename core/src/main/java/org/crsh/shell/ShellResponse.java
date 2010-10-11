@@ -29,6 +29,17 @@ public abstract class ShellResponse {
 
   public abstract String getText();
 
+  public static class SyntaxError extends ShellResponse {
+
+    public SyntaxError() {
+    }
+
+    @Override
+    public String getText() {
+      return "Syntax error";
+    }
+  }
+
   public static class UnkownCommand extends ShellResponse {
 
     /** . */

@@ -26,18 +26,23 @@ import org.crsh.util.LineFeedWriter;
 
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestCommandContext extends HashMap<String, Object> implements CommandContext {
+public class TestCommandContext<P> extends HashMap<String, Object> implements CommandContext<P> {
 
   /** . */
   private StringWriter buffer;
 
   /** . */
   private ShellPrinter writer;
+
+  /** . */
+  private LinkedList<P> products;
 
   public String readLine(String msg, boolean echo) {
     throw new UnsupportedOperationException();
@@ -50,7 +55,18 @@ public class TestCommandContext extends HashMap<String, Object> implements Comma
     return writer;
   }
 
-  public String execute(ShellCommand command, String... args) {
+  public void produce(P product) {
+    if (products == null) {
+      products = new LinkedList<P>();
+    }
+    products.add(product);
+  }
+
+  public List<P> getProducts() {
+    return products;
+  }
+
+  public String execute(ShellCommand<P> command, String... args) {
     if (buffer != null) {
       buffer.getBuffer().setLength(0);
     }
