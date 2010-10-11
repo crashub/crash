@@ -25,18 +25,10 @@ package org.crsh.shell;
  */
 public class SelectTestCase extends AbstractCommandTestCase {
 
-  public void testQuery1() throws Exception {
+  public void testQuery() throws Exception {
     assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
     groovyShell.evaluate("session.save();");
-    assertOk("select * from nt:base where bar = 'juu'");
-
-    // Now test production
-/*
-    groovyShell.evaluate(
-        "def context = new org.crsh.shell.TestCommandContext();\n" +
-        "new ");
-*/
-
+    assertOk("/foo", "select * from nt:base where bar = 'juu' | collect");
   }
 }

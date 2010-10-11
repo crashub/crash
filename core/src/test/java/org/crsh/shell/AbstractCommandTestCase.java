@@ -97,6 +97,13 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
     return ((ShellResponse.Error)resp).getThrowable();
   }
 
+  protected final void assertOk(String expected, String s) {
+    ShellResponse.Ok ok = assertOk(s);
+    assertTrue(ok instanceof ShellResponse.Display);
+    ShellResponse.Display display = (ShellResponse.Display)ok;
+    assertEquals(expected, display.getText());
+  }
+
   protected final ShellResponse.Ok assertOk(String s) {
     ShellResponse resp = shell.evaluate(s);
     if (resp instanceof ShellResponse.Ok)
