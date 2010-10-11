@@ -97,30 +97,6 @@ public class ShellTestCase extends AbstractCommandTestCase {
     assertEquals(false, groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
   }
 
-  public void testRm() throws Exception {
-    assertOk("login ws");
-    assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
-
-    // Try relative
-    groovyShell.evaluate("session.rootNode.addNode('foo').addNode('bar');");
-    assertOk("rm foo/bar");
-    assertEquals(false, groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
-
-    // Try absolute
-    groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
-    assertOk("rm /foo/bar");
-    assertEquals(false, groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
-
-    // Try several
-    groovyShell.evaluate("session.rootNode.addNode('bar');");
-    assertOk("rm foo bar");
-    assertEquals(false, groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
-    assertEquals(false, groovyShell.evaluate("return session.rootNode.hasNode('bar')"));
-
-    // Delete a non existing node
-    assertError("rm foo", ScriptException.class);
-  }
-
   public void testExportImport() throws Exception {
     assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo', 'nt:base');");
