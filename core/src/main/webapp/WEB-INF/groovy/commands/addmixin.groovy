@@ -16,7 +16,7 @@ public class addmixin extends org.crsh.command.BaseCommand<Node, Void> {
     assertConnected();
 
     //
-    def ret = 'Node';
+    def ret = 'Added mixin $mixinName to nodes';
 
     //
     context.consume().each {
@@ -24,7 +24,7 @@ public class addmixin extends org.crsh.command.BaseCommand<Node, Void> {
       it.addMixin(mixinName);
     };
 
-    // Get node
+    //
     paths.each {
       def node = getNodeByPath(it);
       ret <<= " $node.path";
@@ -32,6 +32,6 @@ public class addmixin extends org.crsh.command.BaseCommand<Node, Void> {
     };
 
     //
-    context.getWriter().print("$ret removed");
+    context.getWriter().print(ret);
   }
 }

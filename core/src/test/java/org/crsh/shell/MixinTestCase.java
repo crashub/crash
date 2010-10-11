@@ -19,6 +19,8 @@
 
 package org.crsh.shell;
 
+import javax.jcr.Node;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -29,6 +31,13 @@ public class MixinTestCase extends AbstractCommandTestCase {
     assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     assertOk("addmixin mix:versionable foo");
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
+  }
+
+  public void testConsume() throws Exception {
+    assertOk("login ws");
+    groovyShell.evaluate("return session.rootNode.addNode('foo');");
+    assertOk("produce /foo | addmixin mix:versionable");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
   }
 }
