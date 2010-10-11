@@ -17,7 +17,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.io;
+package org.crsh.shell.ui;
+
+import org.crsh.shell.io.ShellWriter;
 
 import java.io.IOException;
 
@@ -25,12 +27,12 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellWriterContext {
+public abstract class Element {
 
-  void pad(Appendable appendable) throws IOException;
+  public void print(ShellWriter writer) throws IOException {
+    print(null, writer);
+  }
 
-  void text(CharSequence csq, int off, int end);
-
-  void lineFeed();
+  public abstract void print(TreeWriterContext ctx, ShellWriter writer) throws IOException;
 
 }

@@ -17,7 +17,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.io;
+package org.crsh.shell.ui;
+
+import org.crsh.shell.io.ShellWriter;
 
 import java.io.IOException;
 
@@ -25,12 +27,30 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellWriterContext {
+public class LabelElement extends Element {
 
-  void pad(Appendable appendable) throws IOException;
+  /** . */
+  private final String value;
 
-  void text(CharSequence csq, int off, int end);
+  public LabelElement(String value) {
+    this.value = value;
+  }
 
-  void lineFeed();
+  public LabelElement(Object value) {
+    this.value = String.valueOf(value);
+  }
 
+  public String getValue() {
+    return value;
+  }
+
+  @Override
+  public void print(TreeWriterContext ctx, ShellWriter writer) throws IOException {
+    writer.append(ctx, value);
+  }
+
+  @Override
+  public String toString() {
+    return "Label[" + value + "]";
+  }
 }

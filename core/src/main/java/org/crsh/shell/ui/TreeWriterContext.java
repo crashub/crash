@@ -17,20 +17,37 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.io;
+package org.crsh.shell.ui;
+
+import org.crsh.shell.io.ShellWriterContext;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellWriterContext {
+public class TreeWriterContext implements ShellWriterContext {
 
-  void pad(Appendable appendable) throws IOException;
+  /** . */
+  final ArrayList<Boolean> stack = new ArrayList<Boolean>();
 
-  void text(CharSequence csq, int off, int end);
+  /** . */
+  boolean needLF = false;
 
-  void lineFeed();
+  public void pad(Appendable appendable) throws IOException {
+    for (int i = 0;i < stack.size();i++) {
+      appendable.append(stack.get(i) ? "+-" : "| ");
+      stack.set(i, false);
+    }
+  }
 
+  public void text(CharSequence csq, int off, int end) {
+    needLF = true;
+  }
+
+  public void lineFeed() {
+    needLF = false;
+  }
 }

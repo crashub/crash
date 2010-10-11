@@ -43,6 +43,12 @@ public class LineFeedWriterTestCase extends TestCase {
           appendable.append(padding);
         }
       }
+      public void text(CharSequence csq, int off, int end) {
+        // Not tested for now
+      }
+      public void lineFeed() {
+        // Not tested for now
+      }
     };
     for (String text : texts) {
       writer.append(ctx, text);

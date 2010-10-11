@@ -125,7 +125,7 @@ public class LineFeedWriter implements ShellWriter {
         if (i > previous) {
           realAppend(ctx, csq, previous, i);
         }
-        writeLF();
+        writeLF(ctx);
         previous = i + 1;
         i++;
       }
@@ -137,19 +137,45 @@ public class LineFeedWriter implements ShellWriter {
   }
 
   private void realAppend(ShellWriterContext ctx, CharSequence csq, int off, int end) throws IOException {
-    if (end > 0) {
-      if (status == NOT_PADDED) {
-        if (ctx != null) {
-          status = PADDING;
-          ctx.pad(this);
-        }
-        status = PADDED;
+    if (end > off) {
+
+      //
+      switch (status) {
+        case NOT_PADDED:
+          if (ctx != null) {
+            status = PADDING;
+            ctx.pad(this);
+          }
+          status = PADDED;
+          break;
+        case PADDING:
+        case PADDED:
+          // Do nothing
+          break;
+        default:
+          throw new AssertionError();
       }
+
+      //
       out.append(csq, off, end);
+
+      //
+      switch (status) {
+        case PADDING:
+          // Do nothing
+          break;
+        case PADDED:
+          if (ctx != null) {
+            ctx.text(csq, off, end);
+          }
+          break;
+        default:
+          throw new AssertionError();
+      }
     }
   }
 
-  private void writeLF() throws IOException {
+  private void writeLF(ShellWriterContext ctx) throws IOException {
     switch (status) {
       case PADDING:
         throw new IllegalStateException();
@@ -157,6 +183,7 @@ public class LineFeedWriter implements ShellWriter {
         status = NOT_PADDED;
       case NOT_PADDED:
         out.append(lineFeed);
+        ctx.lineFeed();
         break;
       default:
         throw new AssertionError();
