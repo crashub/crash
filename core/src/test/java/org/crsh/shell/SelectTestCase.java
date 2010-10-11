@@ -29,6 +29,6 @@ public class SelectTestCase extends AbstractCommandTestCase {
     assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
     groovyShell.evaluate("session.save();");
-    assertOk("/foo", "select * from nt:base where bar = 'juu' | collect");
+    assertOk("/foo", "select * from nt:base where bar = 'juu' | consume");
   }
 }
