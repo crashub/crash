@@ -33,7 +33,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestCommandContext<P> extends HashMap<String, Object> implements CommandContext<P> {
+public class TestCommandContext<C, P> extends HashMap<String, Object> implements CommandContext<C, P> {
 
   /** . */
   private StringWriter buffer;
@@ -55,6 +55,10 @@ public class TestCommandContext<P> extends HashMap<String, Object> implements Co
     return writer;
   }
 
+  public Iterable<C> consume() {
+    throw new UnsupportedOperationException();
+  }
+
   public void produce(P product) {
     if (products == null) {
       products = new LinkedList<P>();
@@ -66,7 +70,7 @@ public class TestCommandContext<P> extends HashMap<String, Object> implements Co
     return products;
   }
 
-  public String execute(ShellCommand<P> command, String... args) {
+  public String execute(ShellCommand<C, P> command, String... args) {
     if (buffer != null) {
       buffer.getBuffer().setLength(0);
     }

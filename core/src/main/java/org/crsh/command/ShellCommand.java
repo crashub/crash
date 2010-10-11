@@ -22,10 +22,12 @@ package org.crsh.command;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellCommand<P> {
+public interface ShellCommand<C, P> {
 
-  void execute(CommandContext<P> context, String... args) throws ScriptException;
+  void execute(CommandContext<C, P> context, String... args) throws ScriptException;
 
-  Class<P> getProductType();
+  Class<P> getProducedType();
+
+  Class<C> getConsumedType();
 
 }

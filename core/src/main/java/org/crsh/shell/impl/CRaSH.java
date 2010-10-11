@@ -193,6 +193,9 @@ public class CRaSH implements Shell {
     //
     ShellResponse response = new ShellResponse.NoCommand();
 
+    // Initial stream
+    Iterable items = Collections.emptyList();
+
     //
     if (commands.size() > 0) {
       try {
@@ -206,7 +209,7 @@ public class CRaSH implements Shell {
 
           //
           if (cmd != null) {
-            CommandContextImpl ctx = new CommandContextImpl(responseContext, attributes);
+            CommandContextImpl ctx = new CommandContextImpl(responseContext, items, attributes);
 
             // Build args
             String[] args = new String[chunks.size() - 1];
@@ -214,6 +217,9 @@ public class CRaSH implements Shell {
 
             //
             cmd.execute(ctx, args);
+
+            //
+            items = ctx.getProducedItems();
 
             //
             if (ctx.getBuffer() != null) {

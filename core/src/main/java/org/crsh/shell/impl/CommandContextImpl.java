@@ -31,7 +31,7 @@ import java.util.*;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class CommandContextImpl<P> implements CommandContext<P> {
+class CommandContextImpl<C, P> implements CommandContext<C, P> {
 
   /** . */
   private final ShellResponseContext responseContext;
@@ -48,16 +48,31 @@ class CommandContextImpl<P> implements CommandContext<P> {
   /** . */
   private List<P> products;
 
-  public CommandContextImpl(ShellResponseContext responseContext, Map<String, Object> state) {
+  /** . */
+  private Iterable<C> consumedItems;
+
+  public CommandContextImpl(
+      ShellResponseContext responseContext,
+      Iterable<C> consumedItems,
+      Map<String, Object> state) {
     this.state = state;
     this.responseContext = responseContext;
     this.writer = null;
     this.buffer = null;
+    this.consumedItems = consumedItems;
     this.products = Collections.emptyList();
+  }
+
+  public List<P> getProducedItems() {
+    return products;
   }
 
   public StringWriter getBuffer() {
     return buffer;
+  }
+
+  public Iterable<C> consume() {
+    return consumedItems;
   }
 
   public void produce(P product) {

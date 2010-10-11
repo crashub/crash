@@ -201,13 +201,17 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testPipe() throws Exception {
-
     assertOk("login ws");
     assertOk("addnode foo | addnode bar");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('bar');"));
+  }
 
-
-
+  public void testPipe2() throws Exception {
+    assertOk("login ws");
+    groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
+    groovyShell.evaluate("session.save();");
+    assertOk("select * from nt:base where bar = 'juu' | rm");
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
   }
 }

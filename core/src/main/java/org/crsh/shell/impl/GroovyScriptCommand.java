@@ -33,9 +33,13 @@ import org.crsh.command.ShellCommand;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class GroovyScriptCommand extends Script implements ShellCommand<Void> {
+public abstract class GroovyScriptCommand extends Script implements ShellCommand<Void, Void> {
 
-  public Class<Void> getProductType() {
+  public Class<Void> getProducedType() {
+    return Void.class;
+  }
+
+  public Class<Void> getConsumedType() {
     return Void.class;
   }
 
@@ -49,7 +53,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public void execute(CommandContext context, String... args) throws ScriptException {
+  public void execute(CommandContext<Void, Void> context, String... args) throws ScriptException {
 
     // Set up current binding
     Binding binding = new Binding(context);

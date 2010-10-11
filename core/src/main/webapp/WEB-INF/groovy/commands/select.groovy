@@ -7,7 +7,7 @@ import javax.jcr.Node;
 import org.crsh.command.CommandContext;
 
 @Description("Executes a query with the SQL dialect, by default results are limited to 5 ")
-public class select extends org.crsh.command.BaseCommand<Node> {
+public class select extends org.crsh.command.BaseCommand<Void, Node> {
 
   @Option(name="-o",aliases=["--offset"],usage="The result offset")
   def Integer offset = 0;
@@ -25,7 +25,7 @@ public class select extends org.crsh.command.BaseCommand<Node> {
      unquoteArguments = false;
   }
 
-  public void execute(CommandContext<Node> context) throws ScriptException {
+  public void execute(CommandContext<Void, Node> context) throws ScriptException {
     assertConnected();
 
     //

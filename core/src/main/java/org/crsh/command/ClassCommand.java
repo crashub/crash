@@ -22,13 +22,13 @@ package org.crsh.command;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ClassCommand extends BaseCommand<Void> {
+public abstract class ClassCommand extends BaseCommand<Void, Void> {
 
   protected ClassCommand() {
   }
 
   @Override
-  protected void execute(CommandContext<Void> context) throws ScriptException {
+  protected void execute(CommandContext<Void, Void> context) throws ScriptException {
 
     //
     Object o = execute();

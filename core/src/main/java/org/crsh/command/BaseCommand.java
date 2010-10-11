@@ -31,25 +31,33 @@ import org.kohsuke.args4j.CmdLineParser;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class BaseCommand<P> extends GroovyObjectSupport implements ShellCommand<P> {
+public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements ShellCommand<C, P> {
 
   /** . */
-  private CommandContext<P> context;
+  private CommandContext<C, P> context;
 
   /** . */
   private boolean unquoteArguments;
 
   /** . */
-  private Class<P> productType;
+  private Class<C> consumedType;
+
+  /** . */
+  private Class<P> producedType;
 
   protected BaseCommand() {
     this.context = null;
     this.unquoteArguments = true;
-    this.productType = (Class<P>)TypeResolver.resolve(getClass(), ShellCommand.class, 1);
+    this.consumedType = (Class<C>)TypeResolver.resolve(getClass(), ShellCommand.class, 0);
+    this.producedType = (Class<P>)TypeResolver.resolve(getClass(), ShellCommand.class, 1);
   }
 
-  public Class<P> getProductType() {
-    return productType;
+  public Class<P> getProducedType() {
+    return producedType;
+  }
+
+  public Class<C> getConsumedType() {
+    return consumedType;
   }
 
   @Override
@@ -121,7 +129,7 @@ public abstract class BaseCommand<P> extends GroovyObjectSupport implements Shel
     return context.readLine(msg, echo);
   }
 
-  public final void execute(CommandContext<P> context, String... args) throws ScriptException {
+  public final void execute(CommandContext<C, P> context, String... args) throws ScriptException {
     if (context == null) {
       throw new NullPointerException();
     }
@@ -186,6 +194,6 @@ public abstract class BaseCommand<P> extends GroovyObjectSupport implements Shel
     }
   }
 
-  protected abstract void execute(CommandContext<P> context) throws ScriptException;
+  protected abstract void execute(CommandContext<C, P> context) throws ScriptException;
 
 }
