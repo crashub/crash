@@ -43,12 +43,6 @@ public class LineFeedWriter implements ShellWriter {
   private final Appendable out;
 
   /** . */
-  private CharSequence tmp;
-
-  /** . */
-  private char c;
-
-  /** . */
   private final String lineFeed;
 
   /** . */
@@ -64,39 +58,12 @@ public class LineFeedWriter implements ShellWriter {
     this.status = NOT_PADDED;
   }
 
-/*
-  public void setPadding(String padding) {
-    if (padding != null) {
-      for (int i = 0;i < padding.length();i++) {
-        char c = padding.charAt(i);
-        if (c == '\r' || c == '\n') {
-          throw new IllegalArgumentException("Padding must not contain the char with code " + (int)c);
-        }
-      }
-    }
-  }
-*/
-
   public Appendable append(char c) throws IOException {
     return append(null, c);
   }
 
   public ShellWriter append(ShellWriterContext ctx, final char c) throws IOException {
-    if (tmp == null) {
-      tmp = new CharSequence() {
-        public int length() {
-          return 1;
-        }
-        public char charAt(int index) {
-          return LineFeedWriter.this.c;
-        }
-        public CharSequence subSequence(int start, int end) {
-          throw new UnsupportedOperationException();
-        }
-      };
-    }
-    this.c = c;
-    return append(ctx, tmp);
+    return append(ctx, Character.toString(c));
   }
 
   public Appendable append(CharSequence csq, int start, int end) throws IOException {
@@ -183,7 +150,9 @@ public class LineFeedWriter implements ShellWriter {
         status = NOT_PADDED;
       case NOT_PADDED:
         out.append(lineFeed);
-        ctx.lineFeed();
+        if (ctx != null) {
+          ctx.lineFeed();
+        }
         break;
       default:
         throw new AssertionError();

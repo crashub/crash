@@ -17,39 +17,38 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
+package org.crsh.util;
 
-import org.crsh.display.DisplayBuilder;
-import org.crsh.display.DisplayContext;
-import org.crsh.display.structure.Element;
-import org.crsh.shell.io.ShellWriter;
-import org.crsh.util.AppendableWriter;
-
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.io.Writer;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellPrinter extends PrintWriter {
+public class AppendableWriter extends Writer {
 
-  public ShellPrinter(ShellWriter out) {
-    super(new AppendableWriter(out));
+  /** . */
+  private final Appendable out;
+
+  public AppendableWriter(Appendable out) {
+    this.out = out;
   }
 
   @Override
-  public void print(Object obj) {
-
-    //
-    if (obj instanceof DisplayBuilder) {
-      for (Element element : ((DisplayBuilder)obj).getElements()) {
-        print(element);
-      }
-    } else if (obj instanceof Element) {
-      ((Element)obj).print(this);
-    } else {
-      super.print(obj);
+  public void write(char[] cbuf, int off, int len) throws IOException {
+    int end = off + len;
+    while (off < end) {
+      out.append(cbuf[off++]);
     }
+  }
+
+  @Override
+  public void flush() throws IOException {
+    
+  }
+
+  @Override
+  public void close() throws IOException {
   }
 }

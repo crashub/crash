@@ -22,6 +22,7 @@ package org.crsh.shell.impl;
 import org.crsh.command.CommandContext;
 import org.crsh.command.ShellPrinter;
 import org.crsh.shell.ShellResponseContext;
+import org.crsh.util.LineFeedWriter;
 
 import java.io.StringWriter;
 import java.util.Collection;
@@ -60,7 +61,7 @@ class CommandContextImpl implements CommandContext {
   public ShellPrinter getWriter() {
     if (writer == null) {
       buffer = new StringWriter();
-      writer = new ShellPrinter(buffer, "\r\n");
+      writer = new ShellPrinter(new LineFeedWriter(buffer, "\r\n"));
     }
     return writer;
   }
