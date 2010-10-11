@@ -19,14 +19,13 @@
 
 package org.crsh.command;
 
-import org.crsh.display.DisplayBuilder;
-import org.crsh.display.DisplayContext;
-import org.crsh.display.structure.Element;
 import org.crsh.shell.io.ShellWriter;
+import org.crsh.shell.ui.Element;
+import org.crsh.shell.ui.UIBuilder;
 import org.crsh.util.AppendableWriter;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -34,20 +33,28 @@ import java.io.Writer;
  */
 public class ShellPrinter extends PrintWriter {
 
+  /** . */
+  private final ShellWriter out;
+
   public ShellPrinter(ShellWriter out) {
     super(new AppendableWriter(out));
+
+    //
+    this.out = out;
   }
 
   @Override
   public void print(Object obj) {
-
-    //
-    if (obj instanceof DisplayBuilder) {
-      for (Element element : ((DisplayBuilder)obj).getElements()) {
+    if (obj instanceof UIBuilder) {
+      for (Element element : ((UIBuilder)obj).getElements()) {
         print(element);
       }
     } else if (obj instanceof Element) {
-      ((Element)obj).print(this);
+      try {
+        ((Element)obj).print(out);
+      } catch (IOException e) {
+        setError();
+      }
     } else {
       super.print(obj);
     }

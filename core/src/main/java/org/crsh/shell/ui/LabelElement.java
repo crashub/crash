@@ -45,7 +45,7 @@ public class LabelElement extends Element {
   }
 
   @Override
-  public void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
     writer.append(ctx, value);
   }
 

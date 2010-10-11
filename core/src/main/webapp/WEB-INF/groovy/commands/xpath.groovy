@@ -1,6 +1,6 @@
 import org.kohsuke.args4j.Argument;
 import javax.jcr.query.Query;
-import org.crsh.display.DisplayBuilder;
+import org.crsh.shell.ui.UIBuilder;
 import org.kohsuke.args4j.Option;
 import org.crsh.command.Description;
 
@@ -61,7 +61,7 @@ public class select extends org.crsh.command.ClassCommand {
     }
 
     //
-    def builder = new DisplayBuilder();
+    def builder = new UIBuilder();
 
     //
     builder.node("The query matched " + total + " nodes") {
