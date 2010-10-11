@@ -33,6 +33,6 @@ public abstract class Element {
     print(null, writer);
   }
 
-  public abstract void print(TreeWriterContext ctx, ShellWriter writer) throws IOException;
+  public abstract void print(UIWriterContext ctx, ShellWriter writer) throws IOException;
 
 }

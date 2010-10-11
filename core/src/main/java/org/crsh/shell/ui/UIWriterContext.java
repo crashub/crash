@@ -28,13 +28,18 @@ import java.util.ArrayList;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TreeWriterContext implements ShellWriterContext {
+class UIWriterContext implements ShellWriterContext {
 
   /** . */
-  final ArrayList<Boolean> stack = new ArrayList<Boolean>();
+  final ArrayList<Boolean> stack;
 
   /** . */
-  boolean needLF = false;
+  boolean needLF;
+
+  UIWriterContext() {
+    this.stack = new ArrayList<Boolean>();
+    this.needLF = false;
+  }
 
   public void pad(Appendable appendable) throws IOException {
     for (int i = 0;i < stack.size();i++) {
