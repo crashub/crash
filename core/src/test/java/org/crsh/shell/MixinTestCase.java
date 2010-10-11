@@ -28,7 +28,7 @@ public class MixinTestCase extends AbstractCommandTestCase {
   public void testAddVersionable() throws Exception {
     assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
-    assertOk("addmixin foo mix:versionable");
+    assertOk("addmixin mix:versionable foo");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
   }
 }

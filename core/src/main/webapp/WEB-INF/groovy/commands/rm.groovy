@@ -13,7 +13,7 @@ public class rm extends org.crsh.command.BaseCommand<Node, Void> {
     assertConnected();
 
     //
-    def ret = 'Node';
+    def ret = 'Added mixin to nodes ';
 
     //
     context.consume().each {
@@ -29,6 +29,6 @@ public class rm extends org.crsh.command.BaseCommand<Node, Void> {
     };
 
     //
-    context.getWriter().print("$ret removed");
+    context.getWriter().print(ret);
   }
 }

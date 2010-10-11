@@ -1,23 +1,37 @@
 import org.kohsuke.args4j.Argument;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
+import org.crsh.command.CommandContext;
 
-@Description("Add a mixin to a node")
-public class addmixin extends org.crsh.command.ClassCommand {
+@Description("Add a mixin to one or several nodes")
+public class addmixin extends org.crsh.command.BaseCommand<Node, Void> {
 
-  @Argument(required=true,index=0,usage="The path of the node to add mixin to")
-  def String path;
-
-  @Argument(required=true,index=1,usage="The name of the mixin to add")
+  @Argument(required=true,index=0,usage="The name of the mixin to add")
   def String mixinName;
 
-  public Object execute() throws ScriptException {
+  @Argument(index=1,usage="The paths of the node to add mixin to")
+  def List<String> paths;
+
+  public void execute(CommandContext<Node, Void> context) throws ScriptException {
     assertConnected();
 
-    // Get node
-    def node = findNodeByPath(path);
+    //
+    def ret = 'Node';
 
     //
-    node.addMixin(mixinName);
+    context.consume().each {
+      ret <<= " $it.path";
+      it.addMixin(mixinName);
+    };
+
+    // Get node
+    paths.each {
+      def node = getNodeByPath(it);
+      ret <<= " $node.path";
+      node.addMixin(mixinName);
+    };
+
+    //
+    context.getWriter().print("$ret removed");
   }
 }

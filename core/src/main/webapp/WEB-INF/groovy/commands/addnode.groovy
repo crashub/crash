@@ -2,9 +2,10 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
+import org.crsh.command.CommandContext;
 
 @Description("Creates one or several nodes")
-public class addnode extends org.crsh.command.ClassCommand {
+public class addnode extends org.crsh.command.BaseCommand<Void, Node> {
 
   @Argument(required=true,index=0,usage="The paths of the new node to be created, the paths can either be absolute or relative.")
   def List<String> paths;
@@ -12,7 +13,7 @@ public class addnode extends org.crsh.command.ClassCommand {
   @Option(name="-t",aliases=["--type"],usage="The name of the primary node type to create")
   def String primaryNodeTypeName;
 
-  public Object execute() throws ScriptException {
+  public void execute(CommandContext<Void, Node> context) throws ScriptException {
     assertConnected();
 
     //
@@ -36,15 +37,14 @@ public class addnode extends org.crsh.command.ClassCommand {
       }
 
       //
+      context.produce(node);
+
+      //
       ret <<= " $node.path";
     }
 
-    System.out.println("$ret created");
-    System.out.println("$ret created");
-    System.out.println("$ret created");
-
     //
-    return "$ret created";
+    context.getWriter().print("$ret created");
   }
 }
 
