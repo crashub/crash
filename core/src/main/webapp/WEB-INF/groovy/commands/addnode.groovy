@@ -17,7 +17,7 @@ public class addnode extends org.crsh.command.BaseCommand<Void, Node> {
     assertConnected();
 
     //
-    def ret = 'Node';
+    context.writer <<= 'Node';
     paths.each {
 
       def parent;
@@ -40,11 +40,11 @@ public class addnode extends org.crsh.command.BaseCommand<Void, Node> {
       context.produce(node);
 
       //
-      ret <<= " $node.path";
+      context.writer <<= " $node.path";
     }
 
     //
-    context.getWriter().print("$ret created");
+    context.writer <<= " created";
   }
 }
 

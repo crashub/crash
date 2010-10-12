@@ -56,13 +56,13 @@ public class setperm extends org.crsh.command.BaseCommand<Node, Node> {
   public void execute(CommandContext<Node, Node> context) throws ScriptException {
 
     //
-    def ret = "Updates permissions of nodes";
+    context.writer <<= "Updates permissions of nodes";
 
     // Node stream
     context.consume().each { node ->
       updateperm(node);
       context.produce(node);
-      ret <<= " $node.path";
+      context.writer <<= " $node.path";
     }
 
     // Node arguments
@@ -70,10 +70,7 @@ public class setperm extends org.crsh.command.BaseCommand<Node, Node> {
       def node = getNodeByPath(path);
       updateperm(node);
       context.produce(node);
-      ret <<= " $node.path";
+      context.writer <<= " $node.path";
     }
-
-    //
-    context.getWriter().print(ret);
   }
 }

@@ -8,6 +8,6 @@ public class pwd extends org.crsh.command.BaseCommand<Void, Node> {
     context.produce(getCurrentNode());
 
     //
-    context.getWriter().print(currentPath);
+    context.writer <<= currentPath;
   }
 }

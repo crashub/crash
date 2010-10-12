@@ -91,6 +91,6 @@ public class select extends org.crsh.command.BaseCommand<Void, Node> {
     }
 
     //
-    context.getWriter().print(builder);
+    context.writer <<= builder;
   }
 }
