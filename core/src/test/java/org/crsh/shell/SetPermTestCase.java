@@ -56,4 +56,22 @@ public class SetPermTestCase extends AbstractCommandTestCase {
     assertTrue(getStringValues(foo.getProperty("exo:permissions")).contains("julien read"));
     assertTrue(getStringValues(foo.getProperty("exo:permissions")).contains("julien add_node"));
   }
+
+  public void testConsume() throws Exception {
+    assertOk("login ws");
+    Node foo = (Node) groovyShell.evaluate("return session.rootNode.addNode('foo');");
+
+    //
+    assertOk("produce /foo | setperm -i julien -a read");
+    assertTrue(getStringValues(foo.getProperty("exo:permissions")).contains("julien read"));
+  }
+
+  public void testProduce() throws Exception {
+    assertOk("login ws");
+    groovyShell.evaluate("return session.rootNode.addNode('foo');");
+    groovyShell.evaluate("return session.rootNode.addNode('bar');");
+
+    //
+    assertOk("/foo /bar", "produce /foo | setperm -i julien -a read /bar | consume");
+  }
 }
