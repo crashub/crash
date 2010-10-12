@@ -28,12 +28,13 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestCommandContext<C, P> extends HashMap<String, Object> implements CommandContext<C, P> {
+public class TestCommandContext<C, P> implements CommandContext<C, P> {
 
   /** . */
   private StringWriter buffer;
@@ -43,6 +44,16 @@ public class TestCommandContext<C, P> extends HashMap<String, Object> implements
 
   /** . */
   private LinkedList<P> products;
+
+  /** . */
+  private Map<String, Object> properties;
+
+  public Map<String, Object> getAttributes() {
+    if (properties == null) {
+      properties = new HashMap<String, Object>();
+    }
+    return properties;
+  }
 
   public String readLine(String msg, boolean echo) {
     throw new UnsupportedOperationException();

@@ -24,7 +24,6 @@ import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.ClassCommand;
-import org.crsh.command.CommandContext;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.impl.GroovyScriptCommand;
 
@@ -88,7 +87,7 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     TestCommandContext ctx = new TestCommandContext();
-    ctx.put("bar", "bar_value");
+    ctx.getAttributes().put("bar", "bar_value");
 
     // Execute directly
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
@@ -105,7 +104,7 @@ public class ShellCommandTestCase extends TestCase {
     //
     TestCommandContext ctx = new TestCommandContext();
     Closure closure = (Closure)shell.evaluate("{ -> return 'from_closure'; }");
-    ctx.put("bar", closure);
+    ctx.getAttributes().put("bar", closure);
 
     // Execute directly
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
@@ -145,7 +144,7 @@ public class ShellCommandTestCase extends TestCase {
     Class clazz = loader.parseClass("System.out.println('bar:' + bar) ; return bar;");
     ShellCommand script = (ShellCommand)clazz.newInstance();
     TestCommandContext ctx = new TestCommandContext();
-    ctx.put("bar", "bar_value");
+    ctx.getAttributes().put("bar", "bar_value");
     assertEquals("bar_value", ctx.execute(script));
   }
 

@@ -25,7 +25,9 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface CommandContext<C, P> extends Map<String, Object> {
+public interface CommandContext<C, P> {
+
+  Map<String, Object> getAttributes();
 
   String readLine(String msg, boolean echo);
 

@@ -66,7 +66,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
       return super.invokeMethod(name, args);
     }
     catch (MissingMethodException e) {
-      Object o = context.get(name);
+      Object o = context.getAttributes().get(name);
       if (o instanceof Closure) {
         Closure closure = (Closure)o;
         if (args instanceof Object[]) {
@@ -91,7 +91,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
       return super.getProperty(property);
     }
     catch (MissingPropertyException e) {
-      return context.get(property);
+      return context.getAttributes().get(property);
     }
   }
 
@@ -101,7 +101,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
       super.setProperty(property, newValue);
     }
     catch (MissingPropertyException e) {
-      context.put(property, newValue);
+      context.getAttributes().put(property, newValue);
     }
   }
 

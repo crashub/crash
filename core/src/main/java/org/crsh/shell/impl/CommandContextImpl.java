@@ -37,7 +37,7 @@ class CommandContextImpl<C, P> implements CommandContext<C, P> {
   private final ShellResponseContext responseContext;
 
   /** . */
-  private final Map<String, Object> state;
+  private final Map<String, Object> attributes;
 
   /** . */
   private ShellPrinter writer;
@@ -54,8 +54,8 @@ class CommandContextImpl<C, P> implements CommandContext<C, P> {
   public CommandContextImpl(
       ShellResponseContext responseContext,
       Iterable<C> consumedItems,
-      Map<String, Object> state) {
-    this.state = state;
+      Map<String, Object> attributes) {
+    this.attributes = attributes;
     this.responseContext = responseContext;
     this.writer = null;
     this.buffer = null;
@@ -69,6 +69,10 @@ class CommandContextImpl<C, P> implements CommandContext<C, P> {
 
   public StringWriter getBuffer() {
     return buffer;
+  }
+
+  public Map<String, Object> getAttributes() {
+    return attributes;
   }
 
   public Iterable<C> consume() {
@@ -89,65 +93,6 @@ class CommandContextImpl<C, P> implements CommandContext<C, P> {
     }
     return writer;
   }
-
-  public int size() {
-    return state.size();
-  }
-
-  public boolean isEmpty() {
-    return state.isEmpty();
-  }
-
-  public boolean containsKey(Object o) {
-    return state.containsKey(o);
-  }
-
-  public boolean containsValue(Object o) {
-    return state.containsValue(o);
-  }
-
-  public Object get(Object o) {
-    return state.get(o);
-  }
-
-  public Object put(String s, Object o) {
-    return state.put(s, o);
-  }
-
-  public Object remove(Object o) {
-    return state.remove(o);
-  }
-
-  public void putAll(Map<? extends String, ? extends Object> map) {
-    state.putAll(map);
-  }
-
-  public void clear() {
-    state.clear();
-  }
-
-  public Set<String> keySet() {
-    return state.keySet();
-  }
-
-  public Collection<Object> values() {
-    return state.values();
-  }
-
-  public Set<Entry<String, Object>> entrySet() {
-    return state.entrySet();
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    return state.equals(o);
-  }
-
-  @Override
-  public int hashCode() {
-    return state.hashCode();
-  }
-
   public String readLine(String msg, boolean echo) {
     if (responseContext != null) {
       return responseContext.readLine(msg, echo);

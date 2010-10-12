@@ -56,7 +56,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   public void execute(CommandContext<Void, Void> context, String... args) throws ScriptException {
 
     // Set up current binding
-    Binding binding = new Binding(context);
+    Binding binding = new Binding(context.getAttributes());
 
     // Set the args on the script
     binding.setProperty("args", args);
