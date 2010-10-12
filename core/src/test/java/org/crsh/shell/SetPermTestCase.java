@@ -30,7 +30,7 @@ public class SetPermTestCase extends AbstractCommandTestCase {
   public void testAddPrivilegeableMixin() throws Exception {
     assertOk("login ws");
     Node foo = (Node) groovyShell.evaluate("return session.rootNode.addNode('foo');");
-    assertOk("setperm -n /foo julien");
+    assertOk("setperm -i julien /foo");
     assertTrue(foo.isNodeType("exo:privilegeable"));
   }
 
@@ -39,11 +39,11 @@ public class SetPermTestCase extends AbstractCommandTestCase {
     Node foo = (Node) groovyShell.evaluate("return session.rootNode.addNode('foo');");
 
     // Test add
-    assertOk("setperm -n /foo julien read");
+    assertOk("setperm -i julien -a read /foo");
     assertTrue(getStringValues(foo.getProperty("exo:permissions")).contains("julien read"));
 
     // Test remove
-    assertOk("setperm -n /foo julien !read");
+    assertOk("setperm -i julien -r read /foo");
     assertFalse(getStringValues(foo.getProperty("exo:permissions")).contains("julien read"));
   }
 
@@ -52,18 +52,8 @@ public class SetPermTestCase extends AbstractCommandTestCase {
     Node foo = (Node) groovyShell.evaluate("return session.rootNode.addNode('foo');");
 
     // Test add
-    assertOk("setperm -n /foo julien read add_node");
+    assertOk("setperm -i julien -a read -a add_node /foo");
     assertTrue(getStringValues(foo.getProperty("exo:permissions")).contains("julien read"));
     assertTrue(getStringValues(foo.getProperty("exo:permissions")).contains("julien add_node"));
-  }
-
-  public void testCurrentNode() throws Exception {
-    assertOk("login ws");
-    Node foo = (Node) groovyShell.evaluate("return session.rootNode.addNode('foo');");
-    assertOk("cd foo");
-
-    // Test add
-    assertOk("setperm julien read");
-    assertTrue(getStringValues(foo.getProperty("exo:permissions")).contains("julien read"));
   }
 }
