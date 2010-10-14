@@ -15,8 +15,9 @@ import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
+import javax.jcr.ItemNotFoundException;
 
-@Description("Export a workspace on the file system")
+@Description("Export a workspace on the file system (experimental)")
 class exportworkspace extends org.crsh.command.ClassCommand {
 
   @Option(required=false,name="-u",aliases=["--username"],usage="user name")
@@ -135,28 +136,43 @@ class exportworkspace extends org.crsh.command.ClassCommand {
         def value = property.value;
         // True means single valued property
         out.writeBoolean(true);
-        exportValue(value, exportedNodes, out);
+        exportValue(property, value, exportedNodes, out);
       } catch (ValueFormatException e) {
         // False means multi valued property
         out.writeBoolean(false);
         out.writeInt(property.values.length);
         property.values.each { value ->
-          exportValue(value, exportedNodes, out);
+          exportValue(property, value, exportedNodes, out);
         };
       }
     }
   }
 
-  private void exportValue(Value value, Set exportedNodes, DataOutputStream out) {
+  private void exportValue(Property property, Value value, Set exportedNodes, DataOutputStream out) {
     if (value == null) {
       throw new NullPointerException("No null value accepted");
     }
-    out.writeInt(value.type);
-    if (value.type == PropertyType.REFERENCE) {
-      out.writeUTF(value.node.path);
-      exportNode(value.node, exportedNodes, out);
-    } else {
-      out.writeUTF(value.string);
+    switch (value.type) {
+      case PropertyType.REFERENCE:
+        try {
+          def referenced = property.getNode();
+          System.out.println(referenced);
+          out.writeInt(value.type);
+          out.writeUTF(referenced.path);
+          exportNode(referenced, exportedNodes, out);
+        } catch (ItemNotFoundException e) {
+        }
+        break;
+      case PropertyType.BINARY:
+        out.writeInt(value.type);
+        out.writeLong(property.length);
+        def stream = value.stream;
+        stream.withStream { out << stream };
+        break;
+      default:
+        out.writeInt(value.type);
+        out.writeUTF(value.string);
+        break;
     }
   }
 }

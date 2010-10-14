@@ -77,10 +77,12 @@ findItemByPath = { path ->
  */
 getNodeByPath = { path ->
   def item = getItemByPath(path);
-  if (item instanceof Node) {
+  if (item == null) {
+    return null;
+  } else if (item instanceof Node) {
     return item;
   } else {
-    throw new ScriptException("The path $item is an item instead of a node");
+    throw new ScriptException("The path $path is an item instead of a node");
   }
 }
 
@@ -95,9 +97,7 @@ getItemByPath = { path ->
   if (path == null)
     throw new ScriptException("No path provided");
   if (path.startsWith("/"))
-  {
     return session.getItem(path);
-  }
   def node = getCurrentNode();
   if (node.hasNode(path))
     return node.getNode(path);

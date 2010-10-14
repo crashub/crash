@@ -2,12 +2,15 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.jcr.JCR;
+import org.crsh.util.SubInputStream;
 import javax.jcr.Node;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Property;
@@ -15,7 +18,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
-@Description("Import a workspace from the file system")
+@Description("Import a workspace from the file system (experimental)")
 class workspaceimport extends org.crsh.command.ClassCommand {
 
   @Option(required=false,name="-u",aliases=["--username"],usage="user name")
@@ -173,16 +176,24 @@ class workspaceimport extends org.crsh.command.ClassCommand {
 
   private Value importPropertyValue(Node node, Map importedNodes, DataInputStream input) {
     def type = input.readInt();
-    if (type == PropertyType.REFERENCE) {
-      def path = input.readUTF();
-      def referencedNode = importedNodes[path];
-      if (referencedNode == null) {
-        referencedNode = importNode(node, importedNodes, input);
-      }
+    switch (type) {
+      case PropertyType.REFERENCE:
+        def path = input.readUTF();
+        def referencedNode = importedNodes[path];
+        if (referencedNode == null) {
+          referencedNode = importNode(node, importedNodes, input);
+        }
       return node.session.valueFactory.createValue(referencedNode);
-    } else {
-      def stringValue = input.readUTF();
-      return node.session.valueFactory.createValue(stringValue, type);
+      case PropertyType.BINARY:
+        long length = input.readLong();
+        def stream = new SubInputStream(input, length);
+        def out =  new ByteArrayOutputStream(length);
+        out.withStream { out << stream };
+        return node.session.valueFactory.createValue(new ByteArrayInputStream(out.toByteArray()));
+        break;
+      default:
+        def stringValue = input.readUTF();
+        return node.session.valueFactory.createValue(stringValue, type);
     }
   }
 }

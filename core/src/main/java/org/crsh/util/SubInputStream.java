@@ -17,52 +17,51 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
-
-import org.crsh.shell.io.ShellWriter;
-import org.crsh.shell.ui.Element;
-import org.crsh.shell.ui.UIBuilder;
-import org.crsh.util.AppendableWriter;
+package org.crsh.util;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
 
 /**
+ * A stream that reads a portion of a delegate input stream.
+ * The impl is very basic and could be improved but it is enough at the moment.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellPrinter extends PrintWriter {
+public class SubInputStream extends InputStream {
 
   /** . */
-  private final ShellWriter out;
+  private final InputStream in;
 
-  public ShellPrinter(ShellWriter out) {
-    super(new AppendableWriter(out));
+  /** . */
+  private final long length;
+
+  /** . */
+  private long count;
+
+  public SubInputStream(InputStream in, long length) {
+    if (in == null) {
+      throw new NullPointerException("Stream cannot be null");
+    }
+    if (length < 0) {
+      throw new IllegalArgumentException("Length cannot be negative");
+    }
 
     //
-    this.out = out;
+    this.in = in ;
+    this.length = length;
+    this.count = 0;
   }
 
   @Override
-  public void println(Object x) {
-    print(x);
-    println();
-  }
-
-  @Override
-  public void print(Object obj) {
-    if (obj instanceof UIBuilder) {
-      for (Element element : ((UIBuilder)obj).getElements()) {
-        print(element);
-      }
-    } else if (obj instanceof Element) {
-      try {
-        ((Element)obj).print(out);
-      } catch (IOException e) {
-        setError();
-      }
+  public int read() throws IOException {
+    if (count < length) {
+      int value = in.read();
+      count++;
+      return value;
     } else {
-      super.print(obj);
+      return -1;
     }
   }
 }
