@@ -67,6 +67,7 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <?just here for testing purpose should remove it later?>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.core</artifactId>
         <version>1.0.0-beta14-SNAPSHOT</version>
