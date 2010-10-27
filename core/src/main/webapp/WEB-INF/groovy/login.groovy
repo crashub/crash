@@ -4,18 +4,17 @@ import javax.jcr.PropertyType;
 import javax.jcr.ValueFormatException;
 
 welcome = { ->
-    def hostName;
-    try {
-      hostName = java.net.InetAddress.getLocalHost().getHostName();
-    } catch (java.net.UnknownHostException ignore) {
-      hostName = "localhost";
-    }
-    String ret =
-    "CRaSH " + version + " (http://crsh.googlecode.com)\r\n" +
-    "Welcome to " + hostName + "!\r\n" +
-    "It is " + new Date() + " now.\r\n" +
-    "% ";
-    return ret;
+  def hostName;
+  try {
+    hostName = java.net.InetAddress.getLocalHost().getHostName();
+  } catch (java.net.UnknownHostException ignore) {
+    hostName = "localhost";
+  }
+  return """\
+  CRaSH $version (http://crsh.googlecode.com)
+  Welcome to $hostName + !
+  It is ${new Date()}  now
+  % """;
 }
 
 prompt = { ->
@@ -42,8 +41,10 @@ assertConnected = { ->
 };
 
 /**
- * Locate a node by its path and returns it. If no path is provided the root node
- * will be returned.
+ * Locates a node by its path and returns it.
+ * If no path is provided the root node will be returned.
+ * If the path is relative then the item will be resolved against the current node.
+ * @throws ScriptException when the provided path does not point to a valid node
  */
 findNodeByPath = { path ->
   def item = findItemByPath(path);
@@ -53,10 +54,10 @@ findNodeByPath = { path ->
 };
 
 /**
- * Locate an item by its path and returns it. If no path is provided the root node
- * will be returned. If the path is relative then the item will be resolved against the
- * current node.
- * @throws ScriptException if the item cannot be found
+ * Locates an item by its path and returns it.
+ * If no path is provided the root node will be returned.
+ * If the path is relative then the item will be resolved lrea the current node.
+ * @throws ScriptException when the provided path does not point to a valid item
  */
 findItemByPath = { path ->
   assertConnected();
@@ -69,11 +70,11 @@ findItemByPath = { path ->
 };
 
 /**
- * Locate a node by its path. It calls the getItemByPath function and makes sure the returned
+ * Locates a node by its path. It calls the getItemByPath function and makes sure the returned
  * item is a node.
  *
  * @throws ScriptException if no path is provided
- * @throws ScriptException if the path is not valid
+ * @throws ScriptException when the provided path does not point to a valid node
  */
 getNodeByPath = { path ->
   def item = getItemByPath(path);
@@ -87,9 +88,9 @@ getNodeByPath = { path ->
 }
 
 /**
- * Locate an item by its path and returns it. If no path is provided the root node
- * will be returned. If the path is relative then the item will be resolved against the
- * current node.
+ * Locates an item by its path and returns it.
+ * When no item is found, the null value is returned.
+ * If the path is relative then the item will be resolved against the current node.
  * @throws ScriptException if no path is provided
  */
 getItemByPath = { path ->
@@ -134,19 +135,17 @@ formatNode = { builder, n, nodeDepth, propertiesDepth ->
       node('properties') {
         n.properties.each() { property ->
         label(property.name + ": " + formatPropertyValue(property));
+        }
       }
-    }
-    if (nodeDepth > 0) {
-      node('children') {
-        n.each { child ->
-          formatNode(builder, child, nodeDepth -1, propertiesDepth -1);  
+      if (nodeDepth > 0) {
+        node('children') {
+          n.each { child ->
+            formatNode(builder, child, nodeDepth -1, propertiesDepth -1);
+          }
         }
       }
     }
   }
-}
-
-
 }
 
 formatPropertyValue = { property ->

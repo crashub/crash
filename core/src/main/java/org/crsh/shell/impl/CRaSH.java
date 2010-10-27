@@ -154,7 +154,7 @@ public class CRaSH implements Shell {
   // Shell implementation **********************************************************************************************
 
   public String getWelcome() {
-    return (String)groovyShell.evaluate("welcome();");
+    return groovyShell.evaluate("welcome();").toString();
   }
 
   public String getPrompt() {
