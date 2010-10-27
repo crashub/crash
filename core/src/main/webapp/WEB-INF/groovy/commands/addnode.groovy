@@ -4,7 +4,7 @@ import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
 
-@Description("Creates one or several nodes")
+@Description("Creates one or several nodes. It produces all the nodes that were created by the command.")
 public class addnode extends org.crsh.command.BaseCommand<Void, Node> {
 
   @Argument(required=true,index=0,usage="The paths of the new node to be created, the paths can either be absolute or relative.")

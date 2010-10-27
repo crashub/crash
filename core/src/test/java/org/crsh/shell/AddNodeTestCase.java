@@ -56,4 +56,9 @@ public class AddNodeTestCase extends AbstractCommandTestCase {
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
     assertEquals("nt:file", groovyShell.evaluate("return session.rootNode.getNode('foo').primaryNodeType.name;"));
   }
+
+  public void testProduce() throws Exception {
+    assertOk("login ws");
+    assertOk("/foo", "addnode foo | consume");
+  }
 }
