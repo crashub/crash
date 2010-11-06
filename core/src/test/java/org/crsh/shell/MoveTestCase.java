@@ -25,7 +25,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
 
   /**
    * Move a node in cwd to new
-   * @throws Exception
+   * @throws Exception any exception
    */
   public void testRelativeToRelative() throws Exception {
     assertOk("login ws");
@@ -54,7 +54,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
 
   /**
    * move 2 relative paths
-   * @throws Exception
+   * @throws Exception any exception
    */
   public void testSubRelativeToSubRelative() throws Exception {
     assertOk("login ws");
@@ -69,7 +69,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
 
   /**
    * Move an absolute path to another absolute path
-   * @throws Exception
+   * @throws Exception any exception
    */
   public void testAbsoluteToAbsolute() throws Exception {
     assertOk("login ws");
@@ -85,7 +85,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
 
   /**
    * Move a relative source to an absolute destination
-   * @throws Exception
+   * @throws Exception any exception
    */
   public void testRelativeToSubRelative() throws Exception {
     assertOk("login ws");
@@ -100,7 +100,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
 
   /**
    * Move a relative source to an absolute destination
-   * @throws Exception
+   * @throws Exception any exception
    */
   public void testAbsoluteToRelative() throws Exception {
     assertOk("login ws");
@@ -116,7 +116,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
 
   /**
    * Move a relative source to an absolute destination
-   * @throws Exception
+   * @throws Exception any exception
    */
   public void testRelativeToAbsolute() throws Exception {
     assertOk("login ws");
@@ -131,7 +131,7 @@ public class MoveTestCase extends AbstractCommandTestCase {
 
   /**
    * Move a relative source to an absolute destination
-   * @throws Exception
+   * @throws Exception any exception
    */
   public void testSubRelativeToAbsolute() throws Exception {
     assertOk("login ws");
