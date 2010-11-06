@@ -1,2 +1,3 @@
 - write AbstractTerm unit tests
 - write IO tests
+- write pipe consistency
