@@ -27,7 +27,7 @@ import javax.jcr.Session;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class RMTestCase extends AbstractCommandTestCase {
+public class RemoveTestCase extends AbstractCommandTestCase {
 
   public void testRm() throws Exception {
     assertOk("login ws");
