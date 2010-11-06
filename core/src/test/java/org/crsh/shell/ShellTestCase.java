@@ -30,21 +30,9 @@ import javax.jcr.Session;
  */
 public class ShellTestCase extends AbstractCommandTestCase {
 
-  public void testAnonymousConnect() throws Exception {
-    assertOk("login ws");
-    assertNotNull(shell.getAttribute("session"));
-    assertEquals("/", shell.getAttribute("currentPath"));
-  }
-
   public void testUnkownCommand() throws Exception {
     assertOk("login ws");
     assertUnknownCommand("bilto");
-  }
-
-  public void testRootConnect() throws Exception {
-    assertOk("connect -u root -p exo ws");
-    assertNotNull(shell.getAttribute("session"));
-    assertEquals("/", shell.getAttribute("currentPath"));
   }
 
   public void testCommit() throws Exception {
