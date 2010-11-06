@@ -69,9 +69,8 @@ public class SetPermTestCase extends AbstractCommandTestCase {
   public void testProduce() throws Exception {
     assertOk("login ws");
     groovyShell.evaluate("return session.rootNode.addNode('foo');");
-    groovyShell.evaluate("return session.rootNode.addNode('bar');");
 
     //
-    assertOk("/foo /bar", "produce /foo | setperm -i julien -a read /bar | consume");
+    assertOk("/foo", "produce /foo | setperm -i julien -a read | consume");
   }
 }

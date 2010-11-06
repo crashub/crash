@@ -13,27 +13,33 @@ public class rm extends org.crsh.command.BaseCommand<Node, Void> {
     assertConnected();
 
     //
-    def nodes = [];
-    paths.each { path ->
-      def node = getNodeByPath(path);
-      if (node == null)
-        throw new ScriptException("Node path does not exist");
-      nodes.add(node);
-    };
-
-    //
     context.writer <<= 'Removed nodes ';
 
     //
-    context.consume().each { node ->
-      context.writer <<= " $node.path";
-      node.remove();
-    };
+    if (context.piped) {
+      if (paths != null && paths.empty) {
+        throw new ScriptException("No path arguments are permitted in a pipe");
+      }
 
-    // Get node
-    nodes.each { node ->
-      context.writer <<= " $node.path";
-      node.remove();
-    };
+      // Node stream
+      context.consume().each { node ->
+        context.writer <<= " $node.path";
+        node.remove();
+      };
+    } else {
+      // First collect nodes
+      def nodes = [];
+      paths.each { path ->
+        def node = getNodeByPath(path);
+        if (node == null)
+          throw new ScriptException("Node path does not exist");
+        nodes.add(node);
+      };
+      // Then remove if we have been able to find them all
+      nodes.each { node ->
+        context.writer <<= " $node.path";
+        node.remove();
+      };
+    }
   }
 }

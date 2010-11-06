@@ -75,7 +75,14 @@ class CommandContextImpl<C, P> implements CommandContext<C, P> {
     return attributes;
   }
 
+  public boolean isPiped() {
+    return consumedItems != null;
+  }
+
   public Iterable<C> consume() {
+    if (consumedItems == null) {
+      throw new IllegalStateException("Cannot consume as no pipe operation is involved");
+    }
     return consumedItems;
   }
 

@@ -193,8 +193,8 @@ public class CRaSH implements Shell {
     //
     ShellResponse response = new ShellResponse.NoCommand();
 
-    // Initial stream
-    Iterable items = Collections.emptyList();
+    // No initial stream (means not in a pipe)
+    Iterable items = null;
 
     //
     if (commands.size() > 0) {

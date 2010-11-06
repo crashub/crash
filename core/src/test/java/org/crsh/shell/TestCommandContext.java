@@ -67,7 +67,11 @@ public class TestCommandContext<C, P> implements CommandContext<C, P> {
   }
 
   public Iterable<C> consume() {
-    throw new UnsupportedOperationException();
+    throw new IllegalStateException();
+  }
+
+  public boolean isPiped() {
+    return false;
   }
 
   public void produce(P product) {

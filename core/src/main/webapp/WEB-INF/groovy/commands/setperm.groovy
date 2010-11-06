@@ -58,19 +58,26 @@ public class setperm extends org.crsh.command.BaseCommand<Node, Node> {
     //
     context.writer <<= "Updates permissions of nodes";
 
-    // Node stream
-    context.consume().each { node ->
-      updateperm(node);
-      context.produce(node);
-      context.writer <<= " $node.path";
-    }
+    //
+    if (context.piped) {
+      if (paths != null && paths.empty) {
+        throw new ScriptException("No path arguments are permitted in a pipe");
+      }
 
-    // Node arguments
-    paths.each { path ->
-      def node = getNodeByPath(path);
-      updateperm(node);
-      context.produce(node);
-      context.writer <<= " $node.path";
+      // Node stream
+      context.consume().each { node ->
+        updateperm(node);
+        context.produce(node);
+        context.writer <<= " $node.path";
+      }
+    } else {
+      // Node arguments
+      paths.each { path ->
+        def node = getNodeByPath(path);
+        updateperm(node);
+        context.produce(node);
+        context.writer <<= " $node.path";
+      }
     }
   }
 }

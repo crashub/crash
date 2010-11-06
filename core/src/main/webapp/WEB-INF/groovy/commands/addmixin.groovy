@@ -20,18 +20,22 @@ public class addmixin extends org.crsh.command.BaseCommand<Node, Node> {
     context.writer <<= "Mixin $mixinName added to nodes";
 
     //
-    context.consume().each { node ->
-      context.writer <<= " $node.path";
-      node.addMixin(mixinName);
-      context.produce(node);
-    };
-
-    //
-    paths.each { path ->
-      def node = getNodeByPath(path);
-      context.writer <<= " $node.path";
-      node.addMixin(mixinName);
-      context.produce(node);
-    };
+    if (context.piped) {
+      if (paths != null && !paths.empty) {
+        throw new ScriptException("No path arguments are permitted in a pipe");
+      }
+      context.consume().each { node ->
+        context.writer <<= " $node.path";
+        node.addMixin(mixinName);
+        context.produce(node);
+      };
+    } else {
+      paths.each { path ->
+        def node = getNodeByPath(path);
+        context.writer <<= " $node.path";
+        node.addMixin(mixinName);
+        context.produce(node);
+      };
+    }
   }
 }
