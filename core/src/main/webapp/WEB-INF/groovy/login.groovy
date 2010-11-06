@@ -43,13 +43,13 @@ assertConnected = { ->
 /**
  * Locates a node by its path and returns it.
  * If no path is provided the root node will be returned.
- * If the path is relative then the item will be resolved against the current node.
+ * If the path is relative then the node will be resolved against the current node.
  * @throws ScriptException when the provided path does not point to a valid node
  */
 findNodeByPath = { path ->
   def item = findItemByPath(path);
   if (item instanceof Node)
-    return (Node)item;
+    return item;
   throw new ScriptException("""Item at $path is a property and not a node""");
 };
 

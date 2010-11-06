@@ -6,11 +6,11 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import org.crsh.command.Description;
 
-@Description("Updates a property of a node")
+@Description("Updates a property of the current node")
 public class set extends org.crsh.command.ClassCommand {
 
-  @Argument(required=false,index=0,usage="The path of the property to alter")
-  def String propertyPath;
+  @Argument(required=false,index=0,usage="The name of the property to alter")
+  def String propertyName;
 
   @Argument(required=false,index=1,usage="The new value of the property")
   def String propertyValue;
@@ -19,35 +19,35 @@ public class set extends org.crsh.command.ClassCommand {
   def PropertyType propertyType = PropertyType.STRING;
 
   public Object execute() throws ScriptException {
-    assertConnected();
+    // Get the current node
+    def node = getCurrentNode();
 
-    //
-    def pos = propertyPath.lastIndexOf("/");
-    def propertyName = propertyPath.substring(pos + 1);
-    def parentPath = pos == - 1 ? "." : propertyPath.substring(0, pos + 1);
-
-    // Get the parent node
-    def parent = findNodeByPath(parentPath);
-
-    // Update the property
-    if (parent.hasProperty(propertyName)) {
-      parent[propertyName] = propertyValue;
+    // Set the property
+    if (node.hasProperty(propertyName)) {
+      // If the current node has already a property, we just update it
+      node[propertyName] = propertyValue;
       return "Property updated";
     } else {
+      // Otherwise we try to create it
       if (propertyValue != null) {
-        // Try to find some meta for the value type first
+        // Use the specified property type (or STRING if none was set explicitely)
         def requiredType = propertyType.value;
-        for (def pd : parent.primaryNodeType.propertyDefinitions) {
+
+        // But if we can find meta info about it we use it
+        for (def pd : node.primaryNodeType.propertyDefinitions) {
           if (pd.name == propertyName) {
             type = pd.requiredType;
             break;
           }
         }
 
-        parent.setProperty(propertyName, propertyValue, requiredType);
+        // Perform the set
+        node.setProperty(propertyName, propertyValue, requiredType);
         return "Property created";
       } else {
-        return "No property updated";
+        // Remove any existing property with that name
+        node[propertyName] = null;
+        return "Property removed";
       }
     }
   }
