@@ -5,9 +5,10 @@ import org.kohsuke.args4j.Option;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import org.crsh.command.Description;
+import org.crsh.command.CommandContext;
 
 @Description("Updates a property of the current node")
-public class set extends org.crsh.command.ClassCommand {
+public class set extends org.crsh.command.BaseCommand<Node, Node> {
 
   @Argument(required=false,index=0,usage="The name of the property to alter")
   def String propertyName;
@@ -18,16 +19,25 @@ public class set extends org.crsh.command.ClassCommand {
   @Option(name="-t",aliases=["--type"],usage="The property type to use when the property does not exist")
   def PropertyType propertyType = PropertyType.STRING;
 
-  public Object execute() throws ScriptException {
-    // Get the current node
-    def node = getCurrentNode();
+  public void execute(CommandContext<Node, Void> context) throws ScriptException {
+    if (context.piped) {
+      context.consume().each { node ->
+        update(node);
+      }
+    } else {
+      // Get the current node
+      def node = getCurrentNode();
+      update(node);
+    }
+  }
 
+  private void update(Node node) {
     // Set the property
     if (node.hasProperty(propertyName)) {
       // If the current node has already a property, we just update it
       node[propertyName] = propertyValue;
-      return "Property updated";
     } else {
+
       // Otherwise we try to create it
       if (propertyValue != null) {
         // Use the specified property type (or STRING if none was set explicitely)
@@ -43,11 +53,9 @@ public class set extends org.crsh.command.ClassCommand {
 
         // Perform the set
         node.setProperty(propertyName, propertyValue, requiredType);
-        return "Property created";
       } else {
         // Remove any existing property with that name
         node[propertyName] = null;
-        return "Property removed";
       }
     }
   }

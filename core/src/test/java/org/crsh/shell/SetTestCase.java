@@ -68,4 +68,10 @@ public class SetTestCase extends AbstractCommandTestCase {
     assertOk("set foo_string");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.hasProperty('foo_string');"));
   }
+
+  public void testPipe() throws Exception {
+    assertOk("login ws");
+    assertOk("produce / | set foo_string foo_value");
+    assertEquals("foo_value", groovyShell.evaluate("return session.rootNode.getProperty('foo_string').string;"));
+  }
 }
