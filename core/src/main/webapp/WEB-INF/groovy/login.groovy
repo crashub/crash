@@ -70,9 +70,11 @@ findItemByPath = { path ->
 };
 
 /**
- * Locates a node by its path. It calls the getItemByPath function and makes sure the returned
+ * Locates a node by its path and returns it.
+ * When no node is found, the null value is returned.
+ * If the path is relative then the node will be resolved against the current node.
+ * It calls the getItemByPath function and makes sure the returned
  * item is a node.
- *
  * @throws ScriptException if no path is provided
  * @throws ScriptException when the provided path does not point to a valid node
  */
@@ -105,6 +107,27 @@ getItemByPath = { path ->
   if (node.hasProperty(path))
     return node.getProperty(path);
   return null;
+};
+
+/**
+ * Compute the absolute path from the provided path argument.
+ * If the path is absolute then it is returned.
+ * If the path is relative then the absolute path is computed based on the current active node.
+ * @param path the path
+ * @return the corresponding absolute path
+ * @throws ScriptException if the path argument is null
+ */
+absolutePath = { path ->
+  if (path == null)
+    throw new ScriptException("No null path accepted");
+  def parent;
+  if (path.charAt(0) == '/') {
+    parent = session.rootNode;
+    path = path.substring(1);
+  } else {
+    parent = getCurrentNode();
+  }
+  return parent.path + path;
 };
 
 formatValue = { value ->

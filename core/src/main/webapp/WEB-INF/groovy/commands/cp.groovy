@@ -22,9 +22,11 @@ public class cp extends org.crsh.command.ClassCommand {
 
     //
     def sourceNode = findItemByPath(source);
-    def targetNode = findItemByPath(target;
 
     //
-    sourceNode.session.workspace.copy(sourceNode.path, destNode.path);
+    def targetPath = absolutePath(target);
+
+    //
+    sourceNode.session.workspace.copy(sourceNode.path, targetPath);
   }
 }
