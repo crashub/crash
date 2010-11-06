@@ -17,9 +17,8 @@ public class rm extends org.crsh.command.BaseCommand<Node, Void> {
 
     //
     if (context.piped) {
-      if (paths != null && paths.empty) {
+      if (paths != null && paths.empty)
         throw new ScriptException("No path arguments are permitted in a pipe");
-      }
 
       // Node stream
       context.consume().each { node ->

@@ -21,25 +21,17 @@ public class mv extends org.crsh.command.BaseCommand<Node, Void> {
 
     //
     if (context.piped) {
-
+      if (target != null)
+        throw new ScriptException("Only one argument is permitted when involved in a pipe");
+      def targetParent = findNodeByPath(source);
+      context.consume().each { node ->
+        def targetPath = targetParent.path + "/" + node.name;
+        session.workspace.move(node.path, targetPath);
+      };
     } else {
-
+      def sourceNode = findNodeByPath(source);
+      def targetPath = absolutePath(target);
+      sourceNode.session.workspace.move(sourceNode.path, targetPath);
     }
-
-    //
-    def sourceNode = findNodeByPath(source);
-
-    //
-    def targetPath = absolutePath(target);
-
-    // Perform move
-    sourceNode.session.workspace.move(sourceNode.path, targetPath);
-
-    //
-//    context.consume().each { node ->
-//      context.writer <<= " $node.path";
-//      node.remove();
-//    };
-
   }
 }

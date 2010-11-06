@@ -144,4 +144,15 @@ public class MoveTestCase extends AbstractCommandTestCase {
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
     assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
   }
+
+  public void testConsume() throws Exception {
+    assertOk("login ws");
+    groovyShell.evaluate("session.rootNode.addNode('foo');");
+    groovyShell.evaluate("session.rootNode.addNode('bar');");
+    groovyShell.evaluate("session.rootNode.addNode('juu');");
+    groovyShell.evaluate("session.save();");
+    assertOk("produce foo bar | mv juu");
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('juu/foo')"));
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('juu/bar')"));
+  }
 }
