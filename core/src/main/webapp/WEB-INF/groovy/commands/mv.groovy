@@ -8,7 +8,7 @@ import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
 
 @Description("Move a node to another location")
-public class mv extends org.crsh.command.BaseCommand<Node, Void> {
+public class mv extends org.crsh.command.BaseCommand<Node, Node> {
 
   @Argument(required=false,index=0,usage="The path of the source node to move")
   def String source;
@@ -27,11 +27,14 @@ public class mv extends org.crsh.command.BaseCommand<Node, Void> {
       context.consume().each { node ->
         def targetPath = targetParent.path + "/" + node.name;
         session.workspace.move(node.path, targetPath);
+        context.produce(node);
       };
     } else {
       def sourceNode = findNodeByPath(source);
       def targetPath = absolutePath(target);
       sourceNode.session.workspace.move(sourceNode.path, targetPath);
+      def targetNode = findNodeByPath(targetPath);
+      context.produce(targetNode);
     }
   }
 }
