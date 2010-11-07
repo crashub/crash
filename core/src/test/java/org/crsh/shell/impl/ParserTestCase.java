@@ -31,7 +31,7 @@ import java.util.Arrays;
  */
 public class ParserTestCase extends TestCase {
 
-  public void testBlah() {
+  public void testEmpty() {
     assertNull(new Parser("").parse());
   }
 
