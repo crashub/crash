@@ -17,51 +17,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl;
-
-import java.util.List;
+package org.crsh.command;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-abstract class Token {
+public class SyntaxException extends ScriptException {
+  public SyntaxException(String message) {
+    super(message);
+  }
 
-  public abstract String toString();
-
-  public static Token EOF = new Token(){
-    @Override
-    public String toString() {
-      return "EOF";
-    }
-  };
-
-  public static Token PLUS = new Token(){
-    @Override
-    public String toString() {
-      return "PLUS";
-    }
-  };
-
-  public static Token PIPE = new Token(){
-    @Override
-    public String toString() {
-      return "PIPE";
-    }
-  };
-
-  public static class Command extends Token {
-
-    /** . */
-    final List<String> chunks;
-
-    public Command(List<String> chunks) {
-      this.chunks = chunks;
-    }
-
-    @Override
-    public String toString() {
-      return "Command[" + chunks + "]";
-    }
+  public SyntaxException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

@@ -27,7 +27,7 @@ import java.util.LinkedList;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Tokenizer {
+class Tokenizer {
 
   /** . */
   private static final int NORMAL = 0;
