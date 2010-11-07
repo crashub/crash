@@ -20,7 +20,6 @@
 package org.crsh.shell.impl;
 
 import junit.framework.TestCase;
-import org.crsh.command.ScriptException;
 import org.crsh.command.SyntaxException;
 
 import java.util.Arrays;
