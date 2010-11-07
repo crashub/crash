@@ -20,6 +20,7 @@ package org.crsh.shell.impl;
 
 import org.crsh.command.ScriptException;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,7 +30,44 @@ import java.util.List;
  */
 class LineFormat {
 
-  public static List<String> format(String s) throws ScriptException {
+  public static List<List<String>> parse(String s) throws ScriptException {
+    List<List<String>> atoms = new ArrayList<List<String>>();
+    int from = 0;
+    while (true) {
+      int to = s.indexOf('|', from);
+      if (to == - 1) {
+        break;
+      }
+      atoms.add(parse2(s.substring(from, to)));
+      from = to + 1;
+    }
+    atoms.add(parse2(s.substring(from)));
+    return atoms;
+  }
+
+  private static List<String> parse2(String s) throws ScriptException {
+    List<String> atoms = new ArrayList<String>();
+    int from = 0;
+    while (true) {
+      int to = s.indexOf('+', from);
+      if (to == - 1) {
+        break;
+      }
+      atoms.add(s.substring(from, to));
+      from = to + 1;
+    }
+    atoms.add(s.substring(from));
+    return atoms;
+  }
+
+  /**
+   * Format a line
+   * @param s
+   * @return
+   * @throws NullPointerException if the argument is null
+   * @throws ScriptException
+   */
+  public static List<String> format(String s) throws NullPointerException, ScriptException {
     if (s == null) {
       throw new NullPointerException();
     }

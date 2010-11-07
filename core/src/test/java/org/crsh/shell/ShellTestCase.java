@@ -104,4 +104,11 @@ public class ShellTestCase extends AbstractCommandTestCase {
     assertOk("select * from nt:base where bar = 'juu' | rm");
     assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
   }
+
+  public void testDistribution() throws Exception {
+    assertOk("login ws");
+    assertOk("/", "select * from nt:base where jcr:path like '/' | set foo foo_value + set bar bar_value + consume");
+    assertEquals("foo_value", groovyShell.evaluate("return session.rootNode.getProperty('foo').string;"));
+    assertEquals("bar_value", groovyShell.evaluate("return session.rootNode.getProperty('bar').string;"));
+  }
 }
