@@ -19,7 +19,6 @@
 
 package org.crsh.shell.impl;
 
-import org.crsh.command.ScriptException;
 import org.crsh.command.SyntaxException;
 
 /**
@@ -42,6 +41,8 @@ class Parser {
 
   /*
 
+  grammar
+
   expr -> term | term "|" expr
   term -> cmd | cmd "+" term
 
@@ -55,7 +56,7 @@ class Parser {
     }
   }
 
-  public AST.Expr parseExpr() {
+  private AST.Expr parseExpr() {
     AST.Term term = parseTerm();
     if (token == Token.EOF) {
       return new AST.Expr(term);
@@ -68,7 +69,7 @@ class Parser {
     }
   }
 
-  public AST.Term parseTerm() {
+  private AST.Term parseTerm() {
     if (token instanceof Token.Command) {
       Token.Command command = (Token.Command)token;
       token = tokenizer.nextToken();

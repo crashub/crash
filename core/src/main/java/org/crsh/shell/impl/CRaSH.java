@@ -165,184 +165,25 @@ public class CRaSH implements Shell {
     log.debug("Invoking request " + request);
 
 
-    List<List<CommandExecution>> exePipe = new ArrayList<List<CommandExecution>>();
+    // Create AST
+    Parser parser = new Parser(request);
+    AST ast = parser.parse();
 
     //
+    if (ast instanceof AST.Expr) {
+      AST.Expr expr = (AST.Expr)ast;
 
-    List<List<String>> a = LineFormat.parse(request);
-    for (List<String> b : a) {
-      List<CommandExecution> exeDisjunction = new ArrayList<CommandExecution>();
-
-      //
-      for (String s : b) {
-        // We'll have at least one chunk
-        List<String> chunks = LineFormat.format(s);
-
-        // Get command
-        ShellCommand cmd;
-        try {
-          cmd = getCommand(chunks.get(0));
-        } catch (Exception e) {
-          return new ShellResponse.Error(ErrorType.EVALUATION, e);
-        }
-
-        //
-        if (cmd == null) {
-          return new ShellResponse.UnkownCommand(chunks.get(0));
-        }
-
-        // Build args
-        String[] args = new String[chunks.size() - 1];
-        chunks.subList(1, chunks.size()).toArray(args);
-
-        //
-        exeDisjunction.add(new CommandExecution(cmd, args));
-      }
-
-      //
-      exePipe.add(exeDisjunction);
-    }
-
-    // No initial stream (means not in a pipe)
-    ArrayList consumed = null;
-
-    //
-    ShellResponse response = new ShellResponse.NoCommand();
-
-    //
-    for (List<CommandExecution> exeDisjunction : exePipe) {
-
-      // What will be produced
-      ArrayList produced = new ArrayList();
-
-      for (CommandExecution exe : exeDisjunction) {
-
-        // Command context
-        CommandContextImpl ctx;
-        if (exe.command.getConsumedType() == Void.class) {
-          ctx = new CommandContextImpl(responseContext, null, attributes);
-        } else {
-          // For now we assume we have compatible consumed/produced types
-          ctx = new CommandContextImpl(responseContext, consumed, attributes);
-        }
-
-        // Execute command
-        try {
-          exe.command.execute(ctx, exe.args);
-        } catch (Throwable t) {
-          return new ShellResponse.Error(ErrorType.EVALUATION, t);
-        }
-
-        //
-        if (ctx.getBuffer() != null) {
-          response = new ShellResponse.Display(ctx.getBuffer().toString());
-        } else {
-          response = new ShellResponse.Ok();
-        }
-
-        //
-        if (exe.command.getProducedType() == Void.class) {
-          // Do nothing
-        } else {
-          produced.addAll(ctx.getProducedItems());
-        }
-      }
-
-      // What was produced will be consumed in next round
-      consumed = produced;
-    }
-
-    //
-    return response;
-
-
-
-
-
-
-
-
-    //
-/*
-    LinkedList<String> commands = new LinkedList<String>();
-    int from = 0;
-    while (from < request.length()) {
-      int to = request.indexOf('|', from);
-
-      //
-      if (to == -1) {
-        to = request.length();
-      }
-
-      //
-      String command = request.substring(from, to).trim();
-      if (command.length() == 0) {
-        if (commands.size() > 0) {
-          return new ShellResponse.SyntaxError();
-        }
-      }
-      else {
-        commands.add(command);
-      }
-
-      //
-      from = to + 1;
-    }
-
-    //
-    ShellResponse response = new ShellResponse.NoCommand();
-
-    // No initial stream (means not in a pipe)
-    Iterable items = null;
-
-    //
-    if (commands.size() > 0) {
+      // Create commands first
       try {
-        for (String command : commands) {
-
-          // We'll have at least one chunk
-          List<String> chunks = LineFormat.format(command);
-
-          // Get command
-          ShellCommand cmd = getCommand(chunks.get(0));
-
-          //
-          if (cmd != null) {
-            CommandContextImpl ctx = new CommandContextImpl(responseContext, items, attributes);
-
-            // Build args
-            String[] args = new String[chunks.size() - 1];
-            chunks.subList(1, chunks.size()).toArray(args);
-
-            //
-            cmd.execute(ctx, args);
-
-            //
-            items = ctx.getProducedItems();
-
-            //
-            if (ctx.getBuffer() != null) {
-              response = new ShellResponse.Display(ctx.getBuffer().toString());
-            } else {
-              response = new ShellResponse.Ok();
-            }
-          } else {
-            response = new ShellResponse.UnkownCommand(chunks.get(0));
-          }
-
-          // We continue only if OK
-          if (!(response instanceof ShellResponse.Ok)) {
-            break;
-          }
-        }
+        expr.createCommands(this);
+      } catch (Exception e) {
+        return new ShellResponse.Error(ErrorType.EVALUATION, e);
       }
-      catch (Throwable t) {
-        response = new ShellResponse.Error(ErrorType.EVALUATION, t);
-      }
+
+      // Execute commands
+      return expr.execute(responseContext, attributes, null);
+    } else {
+      return new ShellResponse.NoCommand();
     }
-
-    //
-    return response;
-*/
   }
 }

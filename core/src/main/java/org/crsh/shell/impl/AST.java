@@ -19,13 +19,22 @@
 
 package org.crsh.shell.impl;
 
+import org.crsh.command.ShellCommand;
+import org.crsh.shell.ErrorType;
+import org.crsh.shell.ShellResponse;
+import org.crsh.shell.ShellResponseContext;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class AST {
+abstract class AST {
+
+  abstract void createCommands(CRaSH crash);
 
   static class Expr extends AST {
 
@@ -44,25 +53,108 @@ class AST {
       this.term = term;
       this.next = next;
     }
+
+    @Override
+    void createCommands(CRaSH crash) {
+      term.createCommands(crash);
+      if (next != null) {
+        next.createCommands(crash);
+      }
+    }
+
+    ShellResponse execute(ShellResponseContext responseContext, Map<String,Object> attributes, ArrayList consumed) {
+
+      //
+      if (term.command == null) {
+        return new ShellResponse.UnkownCommand(term.commandDefinition.get(0));
+      }
+
+      // What will be produced by this expression
+      ArrayList produced = new ArrayList();
+
+      // (need to find better than that)
+      ShellResponse response = new ShellResponse.NoCommand();
+
+      //
+      for (Term current = term;current != null;current = current.next) {
+
+        // Build command context
+        CommandContextImpl ctx;
+        if (current.command.getConsumedType() == Void.class) {
+          ctx = new CommandContextImpl(responseContext, null, attributes);
+        } else {
+          // For now we assume we have compatible consumed/produced types
+          ctx = new CommandContextImpl(responseContext, consumed, attributes);
+        }
+
+        // Execute command
+        try {
+          current.command.execute(ctx, current.args);
+        } catch (Throwable t) {
+          return new ShellResponse.Error(ErrorType.EVALUATION, t);
+        }
+
+        //
+        if (ctx.getBuffer() != null) {
+          response = new ShellResponse.Display(ctx.getBuffer().toString());
+        } else {
+          response = new ShellResponse.Ok();
+        }
+
+        // Append produced if possible
+        if (current.command.getProducedType() == Void.class) {
+          // Do nothing
+        } else {
+          produced.addAll(ctx.getProducedItems());
+        }
+      }
+
+      //
+      if (next != null) {
+        return next.execute(responseContext, attributes, produced);
+      } else {
+        return response;
+      }
+    }
   }
 
   static class Term extends AST {
 
     /** . */
-    final List<String> command;
+    final List<String> commandDefinition;
 
     /** . */
     final Term next;
 
-    Term(List<String> command, Term next) {
-      this.command = command;
+    /** . */
+    private ShellCommand command;
+
+    /** . */
+    private String[] args;
+
+    Term(List<String> commandDefinition, Term next) {
+      this.commandDefinition = commandDefinition;
       this.next = next;
     }
 
-    Term(List<String> command) {
-      this.command = command;
+    Term(List<String> commandDefinition) {
+      this.commandDefinition = commandDefinition;
       this.next = null;
     }
-  }
 
+    @Override
+    void createCommands(CRaSH crash) {
+      ShellCommand command = crash.getCommand(commandDefinition.get(0));
+      String[] args = new String[commandDefinition.size() - 1];
+      commandDefinition.subList(1, commandDefinition.size()).toArray(args);
+
+      //
+      this.args = args;
+      this.command = command;
+
+      if (next != null) {
+        next.createCommands(crash);
+      }
+    }
+  }
 }

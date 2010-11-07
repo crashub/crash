@@ -37,7 +37,7 @@ public class ParserTestCase extends TestCase {
   public void testCommand() {
     Parser p = new Parser("a");
     AST.Expr e = (AST.Expr)p.parse();
-    assertEquals(Arrays.asList("a"), e.term.command);
+    assertEquals(Arrays.asList("a"), e.term.commandDefinition);
     assertNull(e.term.next);
     assertNull(e.next);
   }
@@ -45,8 +45,8 @@ public class ParserTestCase extends TestCase {
   public void testPlus() {
     Parser p = new Parser("a+b");
     AST.Expr e = (AST.Expr)p.parse();
-    assertEquals(Arrays.asList("a"), e.term.command);
-    assertEquals(Arrays.asList("b"), e.term.next.command);
+    assertEquals(Arrays.asList("a"), e.term.commandDefinition);
+    assertEquals(Arrays.asList("b"), e.term.next.commandDefinition);
     assertNull(e.term.next.next);
     assertNull(e.next);
   }
@@ -54,19 +54,19 @@ public class ParserTestCase extends TestCase {
   public void testPipe() {
     Parser p = new Parser("a|b");
     AST.Expr e = (AST.Expr)p.parse();
-    assertEquals(Arrays.asList("a"), e.term.command);
+    assertEquals(Arrays.asList("a"), e.term.commandDefinition);
     assertNull(e.term.next);
-    assertEquals(Arrays.asList("b"), e.next.term.command);
+    assertEquals(Arrays.asList("b"), e.next.term.commandDefinition);
     assertNull(e.next.next);
   }
 
   public void testComplex() {
     Parser p = new Parser("a+b|c");
     AST.Expr e = (AST.Expr)p.parse();
-    assertEquals(Arrays.asList("a"), e.term.command);
-    assertEquals(Arrays.asList("b"), e.term.next.command);
+    assertEquals(Arrays.asList("a"), e.term.commandDefinition);
+    assertEquals(Arrays.asList("b"), e.term.next.commandDefinition);
     assertNull(e.term.next.next);
-    assertEquals(Arrays.asList("c"), e.next.term.command);
+    assertEquals(Arrays.asList("c"), e.next.term.commandDefinition);
     assertNull(e.next.next);
   }
 
