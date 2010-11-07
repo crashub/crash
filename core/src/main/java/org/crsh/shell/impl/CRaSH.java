@@ -165,8 +165,10 @@ public class CRaSH implements Shell {
     log.debug("Invoking request " + request);
 
 
-    //
     List<List<CommandExecution>> exePipe = new ArrayList<List<CommandExecution>>();
+
+    //
+
     List<List<String>> a = LineFormat.parse(request);
     for (List<String> b : a) {
       List<CommandExecution> exeDisjunction = new ArrayList<CommandExecution>();
@@ -252,6 +254,13 @@ public class CRaSH implements Shell {
 
     //
     return response;
+
+
+
+
+
+
+
 
     //
 /*
