@@ -119,4 +119,8 @@ public class ShellTestCase extends AbstractCommandTestCase {
   public void testAggregateContent() throws Exception {
     assertOk("foobar", "echo foo + echo bar");
   }
+  public void testKeepLastPipeContent() throws Exception {
+    assertOk("bar", "echo foo | echo bar");
+  }
+
 }
