@@ -176,7 +176,9 @@
                 <phase>package</phase>
                 <configuration>
                   <tasks>
-                    <copy tofile="${HOME}/java/gatein/portal/trunk/packaging/tomcat/pkg/target/tomcat/webapps/crsh.war" file="${project.build.directory}/${project.build.finalName}.war">
+                    <copy
+                        tofile="${HOME}/java/gatein/portal/trunk/packaging/tomcat/pkg/target/tomcat/webapps/crsh.war"
+                        file="${project.build.directory}/${project.build.finalName}.war">
                     </copy>
                   </tasks>
                 </configuration>
@@ -207,18 +209,18 @@
               </execution>
             </executions>
           </plugin>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-source-plugin</artifactId>
-      <executions>
-        <execution>
-          <id>attach-sources</id>
-          <goals>
-            <goal>jar</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
     </profile>
