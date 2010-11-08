@@ -7,7 +7,7 @@ import javax.jcr.Node;
 import org.crsh.command.CommandContext;
 
 @Description("""Executes a query with the SQL dialect, by default results are limited to 5.\
-All results matched by the query are produced. When the command has a follower in the pipe no textual output.""")
+All results matched by the query are produced by this command.""")
 public class select extends org.crsh.command.BaseCommand<Void, Node> {
 
   @Option(name="-o",aliases=["--offset"],usage="The result offset")
