@@ -7,8 +7,9 @@ import javax.jcr.Property;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
 
-@Description("Updates a property of the current node")
-public class set extends org.crsh.command.BaseCommand<Node, Node> {
+@Description("""Updates a property of the current node. When the command is piped it sets the property\
+ of the consumed nodes.""")
+public class set extends org.crsh.command.BaseCommand<Node, Void> {
 
   @Argument(required=false,index=0,usage="The name of the property to alter")
   def String propertyName;

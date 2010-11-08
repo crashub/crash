@@ -3,9 +3,8 @@ import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
 
-@Description("""Add a mixin to one or several nodes. It consumes a node stream or path arguments.\
-It produces all the nodes that were consumed.""")
-public class addmixin extends org.crsh.command.BaseCommand<Node, Node> {
+@Description("""Add a mixin to one or several nodes. It consumes a node stream or path arguments.""")
+public class addmixin extends org.crsh.command.BaseCommand<Node,Void> {
 
   @Argument(required=true,metaVar="mixin name",index=0,usage="The name of the mixin to add")
   def String mixinName;
@@ -27,14 +26,12 @@ public class addmixin extends org.crsh.command.BaseCommand<Node, Node> {
       context.consume().each { node ->
         context.writer <<= " $node.path";
         node.addMixin(mixinName);
-        context.produce(node);
       };
     } else {
       paths.each { path ->
         def node = getNodeByPath(path);
         context.writer <<= " $node.path";
         node.addMixin(mixinName);
-        context.produce(node);
       };
     }
   }

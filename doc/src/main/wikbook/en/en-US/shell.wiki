@@ -49,7 +49,88 @@ The ##help## command will display the list of known commands by the shell.
 Try one of these commands with the -h or --help switch [addmixin, cd, checkin, checkout, commit, connect, disconnect, exportnode, help, importnode, ls, pwd, rm, rollback, select, set]
 {{/screen}}
 
-== Connecting to a repository ==
+== Command line usage ==
+
+The basic CRaSH usage is like any shell, you just type a command with its options and arguments. However it is possible
+ to compose commands and create powerful combinations.
+
+=== Basic command usage ===
+
+Typing the command followed by options and arguments will do the job
+
+{{screen}}
+% ls -d /
+...
+{{/screen}}
+
+=== Command help display ===
+
+Any command help can be displayed by using the -h argument:
+
+{{screen}}
+% ls -h
+List the content of a node
+ VAL            : Path of the node content to list
+ -d (--depth) N : Print depth
+{{/screen}}
+
+=== Advanced command usage ===
+
+A CRaSH command is able to consume and produce a stream of object, allowing complex interactions between commands
+where they can exchange stream of compatible objets. Most of the time, JCR nodes are the objects exchanged by the
+commands but any command is free to produce or consume any type.
+
+By default a command that does not support this feature does not consumer or produce anything. Such commands usually
+inherits from the ##org.crsh.command.ClassCommand## class that does not care about it. If you look at this class
+you will see it extends the the ##org.crsh.command.BaseCommand##.
+
+More advanced commands inherits from ##org.crsh.command.BaseCommand## class that specifies two generic types ##<C>##
+and ##<P>##:
+
+* ##<C>## is the type of the object that the command consumes
+* ##<P>## is the type of the object that the command produces
+
+The command composition provides two operators:
+
+* The pipe operator **|** allows to stream a command output stream to a command input stream
+* The distribution operator **+** allows to distribute an input stream to several commands and to combine the output stream
+of several commands into a single stream.
+
+=== Connecting a ##<Void,Node>## command to a ##<Node,Void>## command through a pipe ===
+
+{{example title="Remove all nt:unstructed nodes"}}
+{{screen}}
+% select * from nt:unstructed | rm
+{{/screen}}
+{{/example}}
+
+=== Connecting a ##<Void,Node>## command to two ##<Node,Void>## commands through a pipe ===
+
+{{example title="Update the security of all nt:unstructed nodes"}}
+{{screen}}
+% select * from nt:unstructured | setperm -i any -a read + setperm -i any -a write
+{{/screen}}
+{{/example}}
+
+=== Connecting two ##<Void,Node>## command to a ##<Node,Void>## commands through a pipe ==
+
+{{example title="Add the mixin mix:referenceable to any node of type nt:file or nt:folder"}}
+{{screen}}
+% select * from nt:file + select * from nt:folder | addmixin mix:referenceable
+{{/screen}}
+{{/example}}
+
+=== Mixed cases ===
+
+When a command does not consume a stream but is involved in a distribution it will not receive any stream but will
+be nevertheless invoked.
+
+Likewise when a command does not produce a stream but is involved in a distribution, it will not produce anything but
+will be nevertheless invoked.
+
+== Commands ==
+
+=== Connecting to a repository ===
 
 You must first connect to a repository before any other JCR based operation. When you are connected the shell will maintain
 a JCR session and allows you to interact with the session in a shell oriented fashion. The ##connect## command
@@ -68,7 +149,7 @@ or
 Connected to workspace portal-system
 {{/screen}}
 
-== Listing the content of a node ==
+=== Listing the content of a node ===
 
 The ##ls## command shows the content of a node. By default it lists the content of the current node. It can
 accept a path argument that can be absolute or relative.
@@ -89,7 +170,7 @@ accept a path argument that can be absolute or relative.
 | +-/folder
 {{/screen}}
 
-== Changing the current node ==
+=== Changing the current node ===
 
 The ##cd## command allows to change the current path. The command used with no argument, change to the root
 directory but you can provide a path argument that can be absolute or relative.
@@ -99,7 +180,7 @@ directory but you can provide a path argument that can be absolute or relative.
 /gadgets
 {{/screen}}
 
-== Printing the current node ==
+=== Printing the current node ===
 
 The ##pwd## command shows the current node path.
 
@@ -108,7 +189,7 @@ The ##pwd## command shows the current node path.
 /gadgets
 {{/screen}}
 
-== Creating a node ==
+=== Creating a node ===
 
 The ##addnode## command creates one of several nodes. The command takes at least one node as argument, but it can
  take more. Each path can be either absolute or relative. Relative path creates nodes relative to the current node.
@@ -124,7 +205,11 @@ Node /foo created
 Node /bar /juu created
 {{/screen}}
 
-== Copying a node ==
+{{note}}
+The ##addnode## command is a ##<Void,Node>## command that produces all the nodes that were created.
+{{/note}}
+
+=== Copying a node ===
 
 The ##cp## command copies a node to a target location in the JCR tree.
 
@@ -132,7 +217,7 @@ The ##cp## command copies a node to a target location in the JCR tree.
 [/registry]% cp Registry Registry2
 {{/screen}}
 
-== Moving a node ==
+=== Moving a node ===
 
 The ##mv## command can move a node to a target location in the JCR tree. It can be used also to rename a node.
 
@@ -140,7 +225,11 @@ The ##mv## command can move a node to a target location in the JCR tree. It can 
 [/registry]% mv Registry Registry2
 {{/screen}}
 
-== Removing a node or property ==
+{{note}}
+##mv## command is a ##<Node,Node>## command consuming a stream of node to move them and producing nodes that were moved.
+{{/note}}
+
+=== Removing a node or property ===
 
 The ##rm## command removes a node or property specified by its path either absolute or relative. This operation
 is executed against the JCR session, meaning that it will not be effective until it is commited to the JCR server.
@@ -157,15 +246,15 @@ It is possible to specify several nodes.
 Node /foo /bar removed
 {{/screen}}
 
-== Updating a property ==
+{{note}}
+##rm## is a ##<Node,Void>## command removing all the consumed nodes.
+{{/note}}
 
-The *set* command updates the property of a node:
+=== Updating a property ===
 
-{{screen}}
-[/gadgets]% set
-{{/screen}}
+The ##set## command updates the property of a node.
 
-Create the property foo with the value bar on the root node:
+Create or destroy property foo with the value bar on the root node:
 
 {{screen}}
 [/]% set foo bar
@@ -176,7 +265,6 @@ Update the existing foo property:
 
 {{screen}}
 [/]% set foo juu
-Property updated
 {{/screen}}
 
 When a property is created and does not have a property descriptor that constraint its type, you can specify it
@@ -184,15 +272,24 @@ with the //-t// option
 
 {{screen}}
 [/]% set -t LONG long_property 3
-Property created
 {{/screen}}
 
-== Commiting or rolling back changes ==
+Remove a property
+
+{{screen}}
+[/]% set foo
+{{/screen}}
+
+{{note}}
+##set## is a ##<Node,Void>## command updating the property of the consumed node stream.
+{{/note}}
+
+=== Commiting or rolling back changes ===
 
 The ##commit## operation saves the current session. Conversely the ##rollback## operation rollback
 session changes. For both operations It is possible to specify a path to commit a part of the tree.
 
-== Performing a SQL query ==
+=== Performing a SQL query ===
 
 Queries in SQL format are possible via the ##select## command. You can write a query with the same syntax defined
 by the specification and add options to control the number of results returned. By default the number of nodes is limited
@@ -230,11 +327,15 @@ The query matched 1114 nodes
 ...
 {{/screen}}
 
-== Performing an XPath query ==
+{{note}}
+##select## is a ##<Void,Node>## command producing all the matched nodes.
+{{/note}}
+
+=== Performing an XPath query ===
 
 todo
 
-== Exporting a node ==
+=== Exporting a node ===
 
 It is possible to export a node as an nt file of the same workspace with the ##exportnode## command. Then it is
 usually possible to access the nt file from webdav.
@@ -244,7 +345,7 @@ usually possible to access the nt file from webdav.
 The node has been exported
 {{/screen}}
 
-== Importing a node ==
+=== Importing a node ===
 
 It is possible to import a node from an nt file located in the workspace with the ##importnode## command.
 
@@ -253,7 +354,7 @@ It is possible to import a node from an nt file located in the workspace with th
 Node imported
 {{/screen}}
 
-== Adding a mixin to a node ==
+=== Adding a mixin to a node ===
 
 The ##addmixin## command adds a mixin to an existing node.
 
@@ -261,11 +362,15 @@ The ##addmixin## command adds a mixin to an existing node.
 [/gadgets]% addmixin . mix:versionable
 {{/screen}}
 
-== Checkin / checkout of versionable nodes ==
+{{note}}
+##addmixin## is a ##<Node,Void>## command adding the specified mixin to the consumed nodes.
+{{/note}}
+
+=== Checkin / checkout of versionable nodes ===
 
 Use the commands ##checkin## and ##checkout##.
 
-== Configuring the node security ==
+=== Configuring the node security ===
 
 {{warning}}This is command is only available for eXo JCR{{/warning}}
 
@@ -289,23 +394,30 @@ property, for instance:
 You can alter the node permission list with the ##setperm## command:
 
 {{screen}}
-[/production]% setperm *:/platform/mygroup read add_node
+[/production]% setperm -i *:/platform/mygroup -a read -a add_node /
 Node /production updated to [read,add_node]
 {{/screen}}
 
-You can also remove a permission by prefixing it with a exclamation mark (!).
+You can also remove a permission by using the -r option.
 
 {{screen}}
-[/production]% setperm *:/platform/mygroup !add_node
+[/production]% setperm -i *:/platform/mygroup -r add_node /
 Node /production updated to [read]
 {{/screen}}
 
+{{warning}}
 The ##setperm## command will add automatically the ##exo:privilegeable## mixin on the node when it is missing.
+{{/warning}}
 
-== Disconnecting ==
+{{note}}
+##setperm## is a ##<Node,Void>## command altering the security of the consumed node stream.
+{{/note}}
+
+
+=== Disconnecting ===
 
 The ##disconnect## command disconnect from the repository.
 
-== Quitting ==
+=== Quitting ===
 
 The ##bye## command disconnect from the remote shell.

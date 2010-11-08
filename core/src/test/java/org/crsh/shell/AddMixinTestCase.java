@@ -32,8 +32,6 @@ public class AddMixinTestCase extends AbstractCommandTestCase {
     assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     Iterator<?> produced = assertOk("addmixin mix:versionable foo").getProduced().iterator();
-    assertTrue(produced.hasNext());
-    assertEquals("/foo", ((Node) produced.next()).getPath());
     assertFalse(produced.hasNext());
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
   }
@@ -42,8 +40,6 @@ public class AddMixinTestCase extends AbstractCommandTestCase {
     assertOk("login ws");
     groovyShell.evaluate("return session.rootNode.addNode('foo');");
     Iterator<?> produced = assertOk("produce /foo | addmixin mix:versionable").getProduced().iterator();
-    assertTrue(produced.hasNext());
-    assertEquals("/foo", ((Node) produced.next()).getPath());
     assertFalse(produced.hasNext());
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
   }

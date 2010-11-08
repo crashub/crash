@@ -3,7 +3,8 @@ import org.kohsuke.args4j.Argument;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
 
-@Description("Remove one or several node or a property")
+@Description("Remove one or several node or a property. This command can also consume a stream of node\
+to remove.")
 public class rm extends org.crsh.command.BaseCommand<Node, Void> {
 
   @Argument(index=0,usage="The paths of the node to remove")
