@@ -18,6 +18,9 @@
  */
 package org.crsh.shell;
 
+import javax.jcr.Node;
+import java.util.Iterator;
+
 /**
  * @version $Revision$
  */
@@ -76,8 +79,11 @@ public class MoveTestCase extends AbstractCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");
-    assertOk("/zed", "mv /foo/bar /zed | consume");
+    Iterator<?> produced = assertOk("mv /foo/bar /zed").getProduced().iterator();
     groovyShell.evaluate("session.refresh(true);");
+    assertTrue(produced.hasNext());
+    assertEquals("/zed", ((Node)produced.next()).getPath());
+    assertFalse(produced.hasNext());
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('zed')"));
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
     assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
@@ -112,7 +118,6 @@ public class MoveTestCase extends AbstractCommandTestCase {
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('bar').hasNode('zed')"));
     assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo')"));
   }
-
 
   /**
    * Move a relative source to an absolute destination
@@ -151,7 +156,13 @@ public class MoveTestCase extends AbstractCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.rootNode.addNode('juu');");
     groovyShell.evaluate("session.save();");
-    assertOk("/foo /bar", "produce foo bar | mv juu | consume");
+    Iterator<?> produced = assertOk("produce foo bar | mv juu").getProduced().iterator();
+    groovyShell.evaluate("session.refresh(true);");
+    assertTrue(produced.hasNext());
+    assertEquals("/juu/foo", ((Node)produced.next()).getPath());
+    assertTrue(produced.hasNext());
+    assertEquals("/juu/bar", ((Node)produced.next()).getPath());
+    assertFalse(produced.hasNext());
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('juu/foo')"));
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('juu/bar')"));
   }

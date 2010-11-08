@@ -67,36 +67,24 @@ abstract class AST {
 //      (need to find better than that)
 //      ShellResponse response = new ShellResponse.NoCommand();
 
-      // The output
-      StringBuilder out = new StringBuilder();
-
       //
       try {
-        Iterable<?> produced = execute(responseContext, attributes, null, out);
-
-        //
-        ShellResponse response;
-        if (out.length() > 0) {
-          response = new ShellResponse.Display(produced, out.toString());
-        } else {
-          response = new ShellResponse.Ok(produced);
-        }
-
-        //
-        return response;
+        return execute(responseContext, attributes, null);
       } catch (Throwable t) {
         return new ShellResponse.Error(ErrorType.EVALUATION, t);
       }
     }
 
-    private Iterable<?> execute(
+    private ShellResponse execute(
         ShellResponseContext responseContext,
         Map<String,Object> attributes,
-        ArrayList consumed,
-        StringBuilder out) {
+        ArrayList consumed) {
 
       // What will be produced by this expression
       ArrayList produced = new ArrayList();
+
+      //
+      StringBuilder out = new StringBuilder();
 
       //
       for (Term current = term;current != null;current = current.next) {
@@ -128,11 +116,16 @@ abstract class AST {
 
       //
       if (next != null) {
-        next.execute(responseContext, attributes, produced, out);
+        return next.execute(responseContext, attributes, produced);
+      } else {
+        ShellResponse response;
+        if (out.length() > 0) {
+          response = new ShellResponse.Display(produced, out.toString());
+        } else {
+          response = new ShellResponse.Ok(produced);
+        }
+        return response;
       }
-
-      //
-      return produced;
     }
   }
 

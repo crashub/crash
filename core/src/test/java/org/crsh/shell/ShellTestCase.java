@@ -108,7 +108,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
 
   public void testDistribution() throws Exception {
     assertOk("login ws");
-    Iterator<?> produced = assertOk("select * from nt:base where jcr:path like '/' | set foo foo_value + set bar bar_value + consume").getProduced().iterator();
+    Iterator<?> produced = assertOk("produce / | set foo foo_value + set bar bar_value + consume").getProduced().iterator();
     assertTrue(produced.hasNext());
     assertEquals("/", ((Node)produced.next()).getPath());
     assertFalse(produced.hasNext());
