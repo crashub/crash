@@ -20,6 +20,7 @@
 package org.crsh.shell;
 
 import javax.jcr.Node;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -71,6 +72,9 @@ public class SetPermTestCase extends AbstractCommandTestCase {
     groovyShell.evaluate("return session.rootNode.addNode('foo');");
 
     //
-    assertOk("/foo", "produce /foo | setperm -i julien -a read | consume");
+    Iterator<?> produced = assertOk("produce /foo | setperm -i julien -a read").getProduced().iterator();
+    assertTrue(produced.hasNext());
+    assertEquals("/foo", ((Node)produced.next()).getPath());
+    assertFalse(produced.hasNext());
   }
 }

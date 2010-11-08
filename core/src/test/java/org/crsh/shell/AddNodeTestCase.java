@@ -19,6 +19,9 @@
 
 package org.crsh.shell;
 
+import javax.jcr.Node;
+import java.util.Iterator;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -59,6 +62,9 @@ public class AddNodeTestCase extends AbstractCommandTestCase {
 
   public void testProduce() throws Exception {
     assertOk("login ws");
-    assertOk("/foo", "addnode foo | consume");
+    Iterator<?> produced = assertOk("addnode foo").getProduced().iterator();
+    assertTrue(produced.hasNext());
+    assertEquals("/foo", ((Node)produced.next()).getPath());
+    assertFalse(produced.hasNext());
   }
 }

@@ -23,6 +23,7 @@ import org.crsh.command.ScriptException;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.Session;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -107,8 +108,15 @@ public class ShellTestCase extends AbstractCommandTestCase {
 
   public void testDistribution() throws Exception {
     assertOk("login ws");
-    assertOk("/", "select * from nt:base where jcr:path like '/' | set foo foo_value + set bar bar_value + consume");
+    Iterator<?> produced = assertOk("select * from nt:base where jcr:path like '/' | set foo foo_value + set bar bar_value + consume").getProduced().iterator();
+    assertTrue(produced.hasNext());
+    assertEquals("/", ((Node)produced.next()).getPath());
+    assertFalse(produced.hasNext());
     assertEquals("foo_value", groovyShell.evaluate("return session.rootNode.getProperty('foo').string;"));
     assertEquals("bar_value", groovyShell.evaluate("return session.rootNode.getProperty('bar').string;"));
+  }
+
+  public void testAggregateContent() throws Exception {
+    assertOk("foobar", "echo foo + echo bar");
   }
 }

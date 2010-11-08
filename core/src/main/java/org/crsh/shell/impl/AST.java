@@ -34,8 +34,6 @@ import java.util.Map;
  */
 abstract class AST {
 
-  abstract void createCommands(CRaSH crash);
-
   static class Expr extends AST {
 
     /** . */
@@ -54,26 +52,51 @@ abstract class AST {
       this.next = next;
     }
 
-    @Override
-    void createCommands(CRaSH crash) {
-      term.createCommands(crash);
-      if (next != null) {
-        next.createCommands(crash);
+    ShellResponse.UnkownCommand createCommands(CRaSH crash) {
+      ShellResponse.UnkownCommand resp = term.createCommands(crash);
+      if (resp == null) {
+        if (next != null) {
+          return next.createCommands(crash);
+        }
+      }
+      return resp;
+    }
+
+    ShellResponse execute(ShellResponseContext responseContext, Map<String,Object> attributes) {
+
+//      (need to find better than that)
+//      ShellResponse response = new ShellResponse.NoCommand();
+
+      // The output
+      StringBuilder out = new StringBuilder();
+
+      //
+      try {
+        Iterable<?> produced = execute(responseContext, attributes, null, out);
+
+        //
+        ShellResponse response;
+        if (out.length() > 0) {
+          response = new ShellResponse.Display(produced, out.toString());
+        } else {
+          response = new ShellResponse.Ok(produced);
+        }
+
+        //
+        return response;
+      } catch (Throwable t) {
+        return new ShellResponse.Error(ErrorType.EVALUATION, t);
       }
     }
 
-    ShellResponse execute(ShellResponseContext responseContext, Map<String,Object> attributes, ArrayList consumed) {
-
-      //
-      if (term.command == null) {
-        return new ShellResponse.UnkownCommand(term.commandDefinition.get(0));
-      }
+    private Iterable<?> execute(
+        ShellResponseContext responseContext,
+        Map<String,Object> attributes,
+        ArrayList consumed,
+        StringBuilder out) {
 
       // What will be produced by this expression
       ArrayList produced = new ArrayList();
-
-      // (need to find better than that)
-      ShellResponse response = new ShellResponse.NoCommand();
 
       //
       for (Term current = term;current != null;current = current.next) {
@@ -88,17 +111,11 @@ abstract class AST {
         }
 
         // Execute command
-        try {
-          current.command.execute(ctx, current.args);
-        } catch (Throwable t) {
-          return new ShellResponse.Error(ErrorType.EVALUATION, t);
-        }
+        current.command.execute(ctx, current.args);
 
-        //
+        // Append anything that was in the buffer
         if (ctx.getBuffer() != null) {
-          response = new ShellResponse.Display(ctx.getBuffer().toString());
-        } else {
-          response = new ShellResponse.Ok();
+          out.append(ctx.getBuffer().toString());
         }
 
         // Append produced if possible
@@ -111,10 +128,11 @@ abstract class AST {
 
       //
       if (next != null) {
-        return next.execute(responseContext, attributes, produced);
-      } else {
-        return response;
+        next.execute(responseContext, attributes, produced, out);
       }
+
+      //
+      return produced;
     }
   }
 
@@ -142,9 +160,15 @@ abstract class AST {
       this.next = null;
     }
 
-    @Override
-    void createCommands(CRaSH crash) {
+    private ShellResponse.UnkownCommand createCommands(CRaSH crash) {
       ShellCommand command = crash.getCommand(commandDefinition.get(0));
+
+      //
+      if (command == null) {
+        return new ShellResponse.UnkownCommand(commandDefinition.get(0));
+      }
+
+      //
       String[] args = new String[commandDefinition.size() - 1];
       commandDefinition.subList(1, commandDefinition.size()).toArray(args);
 
@@ -152,8 +176,11 @@ abstract class AST {
       this.args = args;
       this.command = command;
 
+      //
       if (next != null) {
-        next.createCommands(crash);
+        return next.createCommands(crash);
+      } else {
+        return null;
       }
     }
   }

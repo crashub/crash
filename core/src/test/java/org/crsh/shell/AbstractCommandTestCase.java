@@ -99,26 +99,23 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
 
   protected final void assertOk(String expected, String s) {
     ShellResponse.Ok ok = assertOk(s);
-    assertTrue(ok instanceof ShellResponse.Display);
+    assertTrue("Was not expecting response to be " + ok, ok instanceof ShellResponse.Display);
     ShellResponse.Display display = (ShellResponse.Display)ok;
     assertEquals(expected, display.getText());
   }
 
   protected final ShellResponse.Ok assertOk(String s) {
     ShellResponse resp = shell.evaluate(s);
-    if (resp instanceof ShellResponse.Ok)
-    {
+    if (resp instanceof ShellResponse.Ok) {
       return (ShellResponse.Ok)resp;
     }
-    else if (resp instanceof ShellResponse.Error)
-    {
+    else if (resp instanceof ShellResponse.Error) {
       ShellResponse.Error err = (ShellResponse.Error)resp;
       AssertionFailedError afe = new AssertionFailedError();
       afe.initCause(err.getThrowable());
       throw afe;
     }
-    else
-    {
+    else {
       throw new AssertionFailedError("Was expecting an ok response instead of " + resp);
     }
   }
@@ -128,8 +125,7 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
     Node root = (Node)groovyShell.evaluate("session.rootNode");
     root.refresh(false);
     NodeIterator it = root.getNodes();
-    while (it.hasNext())
-    {
+    while (it.hasNext()) {
       Node n = it.nextNode();
       if(!n.getName().equals("jcr:system")) {
         log.debug("Removed node " + n.getPath());

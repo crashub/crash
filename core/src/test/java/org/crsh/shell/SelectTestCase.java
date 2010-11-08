@@ -19,6 +19,9 @@
 
 package org.crsh.shell;
 
+import javax.jcr.Node;
+import java.util.Iterator;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -29,6 +32,9 @@ public class SelectTestCase extends AbstractCommandTestCase {
     assertOk("login ws");
     groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
     groovyShell.evaluate("session.save();");
-    assertOk("/foo", "select * from nt:base where bar = 'juu' | consume");
+    Iterator<?> produced = assertOk("select * from nt:base where bar = 'juu'").getProduced().iterator();
+    assertTrue(produced.hasNext());
+    assertEquals("/foo", ((Node) produced.next()).getPath());
+    assertFalse(produced.hasNext());
   }
 }

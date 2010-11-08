@@ -21,6 +21,8 @@ package org.crsh.shell;
 
 import org.crsh.command.ScriptException;
 
+import java.util.Collections;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -78,6 +80,22 @@ public abstract class ShellResponse {
    * Command execution is terminated.
    */
   public static class Ok extends ShellResponse {
+
+    /** . */
+    private final Iterable<?> produced;
+
+    public Ok() {
+      this(Collections.<Object>emptyList());
+    }
+
+    public Ok(Iterable<?> produced) {
+      this.produced = produced;
+    }
+
+    public Iterable<?> getProduced() {
+      return produced;
+    }
+
     @Override
     public String getText() {
       return "";
@@ -90,6 +108,13 @@ public abstract class ShellResponse {
     private final String text;
 
     public Display(String text) {
+      this.text = text;
+    }
+
+    public Display(Iterable<?> produced, String text) {
+      super(produced);
+
+      //
       this.text = text;
     }
 
