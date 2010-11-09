@@ -7,45 +7,110 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.core</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <version>1.0.0-beta15-SNAPSHOT</version>
 
   <name>CRaSH core</name>
   <description>The CRaSH core module</description>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>args4j</groupId>
+        <artifactId>args4j</artifactId>
+        <version>2.0.10</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>1.6.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sshd</groupId>
+        <artifactId>sshd-core</artifactId>
+        <version>0.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sshd</groupId>
+        <artifactId>sshd-pam</artifactId>
+        <version>0.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.mina</groupId>
+        <artifactId>mina-core</artifactId>
+        <version>2.0.0-RC1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15</artifactId>
+        <version>1.40</version>
+      </dependency>
+      <dependency>
+        <groupId>net.wimpi</groupId>
+        <artifactId>telnetd-x</artifactId>
+        <version>2.1.1-CRASH-r14</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.kernel</groupId>
+        <artifactId>exo.kernel.container</artifactId>
+        <version>2.1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.jcr</groupId>
+        <artifactId>exo.jcr.component.core</artifactId>
+        <version>1.11.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
+    <!-- Should be provided by assembly plugin will fail if so -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.5.8</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <version>1.0</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>1.6.5</version>
     </dependency>
 
     <dependency>
       <groupId>args4j</groupId>
       <artifactId>args4j</artifactId>
-      <version>2.0.10</version>
     </dependency>
 
     <!-- SSHD connector dependencies -->
@@ -53,7 +118,6 @@
     <dependency>
       <groupId>org.apache.sshd</groupId>
       <artifactId>sshd-core</artifactId>
-      <version>0.4.0</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
@@ -65,13 +129,16 @@
     <dependency>
       <groupId>org.apache.sshd</groupId>
       <artifactId>sshd-pam</artifactId>
-      <version>0.4.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15</artifactId>
-      <version>1.40</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.mina</groupId>
+      <artifactId>mina-core</artifactId>
     </dependency>
 
     <!-- Telnet connector dependencies -->
@@ -79,7 +146,6 @@
     <dependency>
       <groupId>net.wimpi</groupId>
       <artifactId>telnetd-x</artifactId>
-      <version>2.1.1-CRASH-r14</version>
     </dependency>
 
     <!-- For unit testing purpose -->
@@ -87,28 +153,25 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.5.8</version>
-      <scope>provided</scope>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
       <artifactId>exo.kernel.container</artifactId>
-      <version>2.1.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.exoplatform.jcr</groupId>
       <artifactId>exo.jcr.component.core</artifactId>
-      <version>1.11.1</version>
       <scope>test</scope>
     </dependency>
 
   </dependencies>
   <build>
 
-    <!--<finalName>crsh</finalName>-->
+    <finalName>crsh-${project.version}</finalName>
 
     <testResources>
       <testResource>
@@ -125,6 +188,7 @@
       </testResource>
     </testResources>
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -132,6 +196,28 @@
           <target>1.5</target>
           <source>1.5</source>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <!--<finalName>crsh-${project.version}</finalName>-->
+          <appendAssemblyId>false</appendAssemblyId>
+          <descriptors>
+            <descriptor>src/main/assembly/packaging.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
