@@ -20,6 +20,7 @@
 package org.crsh;
 
 import org.crsh.shell.Resource;
+import org.crsh.shell.ResourceKind;
 import org.crsh.shell.ShellContext;
 import org.crsh.util.IO;
 import org.slf4j.Logger;
@@ -43,25 +44,58 @@ public class TestShellContext implements ShellContext {
     return "1.0.0";
   }
 
-  public Resource loadResource(String resourceId) {
-    // Remove leading '/'
-    resourceId = resourceId.substring(1);
+  public Resource loadResource(String resourceId, ResourceKind resourceKind) {
+
+    if (resourceId == null) {
+      throw new NullPointerException("No null resource id");
+    }
+    if (resourceKind == null) {
+      throw new NullPointerException("No null resource kind");
+    }
+
+    //
+    switch (resourceKind) {
+      case LIFECYCLE:
+        if ("login".equals(resourceId)) {
+          resourceId = "groovy/login.groovy";
+        } else if ("logout".equals(resourceId)) {
+          resourceId = "groovy/logout.groovy";
+        } else {
+          resourceId = null;
+        }
+        break;
+      case SCRIPT:
+        resourceId = "groovy/commands/" + resourceId + ".groovy";
+        break;
+      case CONFIG:
+        if ("telnet.properties".equals(resourceId)) {
+          resourceId = "telnet/telnet.properties";
+        } else {
+          resourceId = null;
+        }
+        break;
+      default:
+        throw new AssertionError();
+    }
 
     //
     Resource res = null;
-
-    try {
-      URL url = Thread.currentThread().getContextClassLoader().getResource(resourceId);
-      if (url != null) {
-        URLConnection conn = url.openConnection();
-        long timestamp = conn.getLastModified();
-        InputStream in = url.openStream();
-        String content = IO.readAsUTF8(in);
-        res = new Resource(content, timestamp);
+    if (resourceId != null) {
+      try {
+        URL url = Thread.currentThread().getContextClassLoader().getResource(resourceId);
+        if (url != null) {
+          URLConnection conn = url.openConnection();
+          long timestamp = conn.getLastModified();
+          InputStream in = url.openStream();
+          String content = IO.readAsUTF8(in);
+          res = new Resource(content, timestamp);
+        }
+      } catch (IOException e) {
+        log.warn("Could not find resource " + resourceId, e);
       }
-    } catch (IOException e) {
-      log.warn("Could not find resource " + resourceId, e);
     }
+
+    //
     return res;
   }
 

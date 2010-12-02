@@ -20,6 +20,7 @@
 package org.crsh.term.telnet;
 
 import net.wimpi.telnetd.TelnetD;
+import org.crsh.shell.ResourceKind;
 import org.crsh.term.CRaSHLifeCycle;
 import org.crsh.shell.ShellContext;
 
@@ -49,7 +50,7 @@ public class TelnetLifeCycle extends CRaSHLifeCycle {
     }
 
     //
-    String s = getShellContext().loadResource("/telnet/telnet.properties").getContent();
+    String s = getShellContext().loadResource("telnet.properties", ResourceKind.CONFIG).getContent();
     Properties props = new Properties();
     props.load(new ByteArrayInputStream(s.getBytes("ISO-8859-1")));
     TelnetD daemon = TelnetD.createTelnetD(props);

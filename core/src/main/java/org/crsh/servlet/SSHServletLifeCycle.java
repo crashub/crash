@@ -39,6 +39,9 @@ public class SSHServletLifeCycle implements ServletContextListener {
   /** . */
   private SSHLifeCycle lifeCycle;
   
+  /** . */
+  private ServletShellContext shellContext;
+
   public void contextInitialized(ServletContextEvent sce) {
 
     ServletContext sc = sce.getServletContext();
@@ -54,23 +57,28 @@ public class SSHServletLifeCycle implements ServletContextListener {
       log.debug("Going to use the key path at " + keyPath);
     }
 
-    SSHLifeCycle lifeCycle = new SSHLifeCycle(new ServletShellContext(sc, Thread.currentThread().getContextClassLoader()));
+    ServletShellContext shellContext = new ServletShellContext(sc, Thread.currentThread().getContextClassLoader());
+    SSHLifeCycle lifeCycle = new SSHLifeCycle(shellContext);
 
     //
     lifeCycle.setKeyPath(keyPath);
     lifeCycle.setPort(port);
 
     //
-    lifeCycle.init();
+    this.lifeCycle = lifeCycle;
+    this.shellContext = shellContext;
 
     //
-    this.lifeCycle = lifeCycle;
+    lifeCycle.init();
+    shellContext.start();
   }
 
   public void contextDestroyed(ServletContextEvent sce) {
     if (lifeCycle != null) {
       lifeCycle.destroy();
-      lifeCycle = null;
+    }
+    if (shellContext != null) {
+      shellContext.stop();
     }
   }
 }

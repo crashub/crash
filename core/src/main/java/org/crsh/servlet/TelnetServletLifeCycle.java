@@ -19,6 +19,7 @@
 
 package org.crsh.servlet;
 
+import org.crsh.shell.ShellContext;
 import org.crsh.term.telnet.TelnetLifeCycle;
 
 import javax.servlet.ServletContext;
@@ -34,17 +35,27 @@ public class TelnetServletLifeCycle implements ServletContextListener {
   /** . */
   private TelnetLifeCycle lifeCycle;
 
+  /** . */
+  private ServletShellContext shellContext;
+
   public void contextInitialized(ServletContextEvent sce) {
     ServletContext sc = sce.getServletContext();
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(new ServletShellContext(sc, Thread.currentThread().getContextClassLoader()));
-    lifeCycle.init();
+    ServletShellContext shellContext = new ServletShellContext(sc, Thread.currentThread().getContextClassLoader());
+    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(shellContext);
     this.lifeCycle = lifeCycle;
+    this.shellContext = shellContext;
+
+    //
+    lifeCycle.init();
+    shellContext.start();
   }
 
   public void contextDestroyed(ServletContextEvent sce) {
     if (lifeCycle != null) {
       lifeCycle.destroy();
-      lifeCycle = null;
+    }
+    if (shellContext != null) {
+      shellContext.stop();
     }
   }
 }

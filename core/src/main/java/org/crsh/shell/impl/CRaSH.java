@@ -61,8 +61,7 @@ public class CRaSH implements Shell {
     TimestampedObject<Class<ShellCommand>> closure = commands.get(name);
 
     //
-    String id = "/groovy/commands/" + name + ".groovy";
-    Resource script = context.loadResource(id);
+    Resource script = context.loadResource(name, ResourceKind.SCRIPT);
 
     //
     if (script != null) {
@@ -74,7 +73,7 @@ public class CRaSH implements Shell {
 
       //
       if (closure == null) {
-        Class<?> clazz = groovyShell.getClassLoader().parseClass(script.getContent(), id);
+        Class<?> clazz = groovyShell.getClassLoader().parseClass(script.getContent(), name);
         if (ShellCommand.class.isAssignableFrom(clazz)) {
           Class<ShellCommand> commandClazz = (Class<ShellCommand>) clazz;
           closure = biltooo(script.getTimestamp(), commandClazz);
@@ -131,8 +130,8 @@ public class CRaSH implements Shell {
     GroovyShell groovyShell = new GroovyShell(context.getLoader(), new Binding(attributes), config);
 
     // Evaluate login script
-    String script = context.loadResource("/groovy/login.groovy").getContent();
-    groovyShell.evaluate(script, "/groovy/login.groovy");
+    String script = context.loadResource("login", ResourceKind.LIFECYCLE).getContent();
+    groovyShell.evaluate(script, "login");
 
     //
     this.attributes = attributes;
@@ -143,8 +142,8 @@ public class CRaSH implements Shell {
 
   public void close() {
     // Evaluate logout script
-    String script = context.loadResource("/groovy/logout.groovy").getContent();
-    groovyShell.evaluate(script, "/groovy/logout.groovy");
+    String script = context.loadResource("logout", ResourceKind.LIFECYCLE).getContent();
+    groovyShell.evaluate(script, "logout");
   }
 
   public ShellResponse evaluate(String request) {
