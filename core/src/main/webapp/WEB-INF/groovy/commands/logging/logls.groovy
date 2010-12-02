@@ -9,8 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import java.util.Collections;
 import java.util.regex.Pattern;
-import java.lang.management.ManagementFactory;
-import javax.management.*;
+import javax.management.ObjectName;
 
 @Description("List the available loggers")
 public class logls extends org.crsh.command.BaseCommand<Void, Logger> {
@@ -35,7 +34,7 @@ public class logls extends org.crsh.command.BaseCommand<Void, Logger> {
       names.addAll(mbean.loggerNames);
 
       // This is a trick to get the logger names per web application in Tomcat environment
-      def server = ManagementFactory.platformMBeanServer;
+      def server = org.apache.tomcat.util.modeler.Registry.registry.MBeanServer;
       ObjectName on = new ObjectName("*:j2eeType=WebModule,*");
       def res = server.queryNames(on, null).each {
         def loader = server.getAttribute(it, "loader");
