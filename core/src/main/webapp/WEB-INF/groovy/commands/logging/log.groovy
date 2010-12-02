@@ -6,7 +6,7 @@ import org.crsh.command.CommandContext;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-@Description("Log a message")
+@Description("Log a message to a logger")
 public class log extends org.crsh.command.BaseCommand<Logger, Void> {
 
   /** The logger methods.*/
