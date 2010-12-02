@@ -52,8 +52,8 @@ abstract class AST {
       this.next = next;
     }
 
-    ShellResponse.UnkownCommand createCommands(CRaSH crash) {
-      ShellResponse.UnkownCommand resp = term.createCommands(crash);
+    ShellResponse.UnknownCommand createCommands(CRaSH crash) {
+      ShellResponse.UnknownCommand resp = term.createCommands(crash);
       if (resp == null) {
         if (next != null) {
           return next.createCommands(crash);
@@ -153,12 +153,12 @@ abstract class AST {
       this.next = null;
     }
 
-    private ShellResponse.UnkownCommand createCommands(CRaSH crash) {
+    private ShellResponse.UnknownCommand createCommands(CRaSH crash) {
       ShellCommand command = crash.getCommand(commandDefinition.get(0));
 
       //
       if (command == null) {
-        return new ShellResponse.UnkownCommand(commandDefinition.get(0));
+        return new ShellResponse.UnknownCommand(commandDefinition.get(0));
       }
 
       //

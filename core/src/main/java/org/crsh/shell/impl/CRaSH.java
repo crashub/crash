@@ -174,7 +174,7 @@ public class CRaSH implements Shell {
 
       // Create commands first
       try {
-        ShellResponse.UnkownCommand resp = expr.createCommands(this);
+        ShellResponse.UnknownCommand resp = expr.createCommands(this);
         if (resp != null) {
           return resp;
         }

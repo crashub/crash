@@ -31,7 +31,7 @@ import java.util.Iterator;
  */
 public class ShellTestCase extends AbstractCommandTestCase {
 
-  public void testUnkownCommand() throws Exception {
+  public void testUnknownCommand() throws Exception {
     assertOk("login ws");
     assertUnknownCommand("bilto");
   }

@@ -42,12 +42,12 @@ public abstract class ShellResponse {
     }
   }
 
-  public static class UnkownCommand extends ShellResponse {
+  public static class UnknownCommand extends ShellResponse {
 
     /** . */
     private final String name;
 
-    public UnkownCommand(String name) {
+    public UnknownCommand(String name) {
       this.name = name;
     }
 
