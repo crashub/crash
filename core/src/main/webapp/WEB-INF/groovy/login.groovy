@@ -11,10 +11,16 @@ welcome = { ->
     hostName = "localhost";
   }
   return """\
-  CRaSH $version (http://crsh.googlecode.com)
-  Welcome to $hostName + !
-  It is ${new Date()}  now
-  % """;
+   ______
+ .~      ~. |`````````,       .'.                   ..'''' |         |
+|           |'''|'''''      .''```.              .''       |_________|
+|           |    `.       .'       `.         ..'          |         |
+ `.______.' |      `.   .'           `. ....''             |         | $version
+
+Follow and support the project on http://crsh.googlecode.com
+Welcome to $hostName + !
+It is ${new Date()} now
+% """;
 }
 
 prompt = { ->

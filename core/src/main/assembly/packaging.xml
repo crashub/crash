@@ -37,6 +37,7 @@
         <include>org.bouncycastle:bcprov-jdk15</include>
         <include>org.apache.mina:mina-core</include>
         <include>net.wimpi:telnetd-x</include>
+        <include>org.crsh:crsh.core</include>
       </includes>
     </dependencySet>
   </dependencySets>
@@ -49,6 +50,7 @@
         <include>**/*</include>
       </includes>
     </fileSet>
+<!--
     <fileSet>
       <directory>target/classes</directory>
       <outputDirectory>/WEB-INF/classes</outputDirectory>
@@ -56,6 +58,7 @@
         <include>**/*</include>
       </includes>
     </fileSet>
+-->
   </fileSets>
 
 

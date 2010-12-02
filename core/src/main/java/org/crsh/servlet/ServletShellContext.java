@@ -69,7 +69,7 @@ public class ServletShellContext implements ShellContext {
     String version = null;
     try {
       Properties props = new Properties();
-      InputStream in = servletContext.getResourceAsStream("/META-INF/maven/org.crsh/crsh.core/pom.properties");
+      InputStream in = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.crsh/crsh.core/pom.properties");
       if (in != null) {
         props.load(in);
         version = props.getProperty("version");
@@ -81,7 +81,7 @@ public class ServletShellContext implements ShellContext {
     //
     if (version == null) {
       log.warn("No version found will use unknown value instead");
-      version = "unkown";
+      version = "unknown";
     }
 
     //
