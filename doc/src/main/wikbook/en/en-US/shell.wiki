@@ -11,13 +11,19 @@ You need to connect using telnet or SSH to use the shell.
 Telnet connection is done on port 5000:
 
 {{screen}}
-juliens-macbook-pro:webapps julien$ telnet localhost 5000
-Trying 127.0.0.1...
+(! 520)-> telnet localhost 5000
+Trying ::1...
 Connected to localhost.
 Escape character is '^]'.
-Welcome to juliens-macbook-pro.local!
-It is Mon Nov 23 15:53:44 CET 2009 now.
-%
+   ______
+ .~      ~. |`````````,       .'.                   ..'''' |         |
+|           |'''|'''''      .''```.              .''       |_________|
+|           |    `.       .'       `.         ..'          |         |
+ `.______.' |      `.   .'           `. ....''             |         | $[crash.version]
+
+Follow and support the project on http://crsh.googlecode.com
+Welcome to julien.local + !
+It is Fri Dec 03 16:20:40 CET 2010 now
 {{/screen}}
 
 SSH connection is done on port 2000 with the password **//crash//**:
