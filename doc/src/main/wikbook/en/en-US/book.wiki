@@ -6,10 +6,6 @@ of a repository.
 
 {{include document="shell.wiki" /}}
 
-= SCP usage =
-
-{{include document="scp.wiki" /}}
-
 = Configuring the shell =
 
 {{include document="configuration.wiki" /}}
