@@ -49,6 +49,9 @@ public class logset extends org.crsh.command.BaseCommand<Logger, Void> {
           throw new ScriptException("Unrecognized level $levelName");
       }
       julLogger.level = level;
+    } else if (simpleName.equals("JBossLoggerAdapter")) {
+      // org.jboss.logging.Logger;
+      System.out.println("Setting the logger level is not implemented for JBoss");
     } else {
       System.out.println("Implement log set for implementation " + simpleName);
     }

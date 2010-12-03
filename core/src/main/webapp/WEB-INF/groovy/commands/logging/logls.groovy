@@ -25,7 +25,8 @@ public class logls extends org.crsh.command.BaseCommand<Void, Logger> {
     //
     def names = [] as Set;
     def factory = LoggerFactory.ILoggerFactory;
-    if (factory.class.simpleName.equals("JDK14LoggerFactory")) {
+    def factoryName = factory.class.simpleName;
+    if (factoryName.equals("JDK14LoggerFactory")) {
       // JDK
       LogManager mgr = LogManager.logManager;
       LoggingMXBean mbean = mgr.loggingMXBean;
@@ -46,6 +47,12 @@ public class logls extends org.crsh.command.BaseCommand<Void, Logger> {
           Thread.currentThread().contextClassLoader = oldCL;
         }
       }
+    } else if (factoryName.equals("JBossLoggerFactory")) {
+      // JBoss AS
+      def f = factory.class.getDeclaredField("loggerMap");
+      f.accessible = true;
+      def loggers = f.get(factory);
+      names.addAll(loggers.keySet());
     } else {
       System.out.println("Implement log lister for implementation " + factory.getClass().getName());
     }
