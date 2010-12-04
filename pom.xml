@@ -70,6 +70,12 @@
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
         <version>1.0.0-beta17-SNAPSHOT</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.core</artifactId>
+        <version>1.0.0-beta17-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
