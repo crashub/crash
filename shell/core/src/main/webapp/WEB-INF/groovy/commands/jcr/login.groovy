@@ -3,35 +3,6 @@ import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.ValueFormatException;
 
-welcome = { ->
-  def hostName;
-  try {
-    hostName = java.net.InetAddress.getLocalHost().getHostName();
-  } catch (java.net.UnknownHostException ignore) {
-    hostName = "localhost";
-  }
-  return """\
-   ______
- .~      ~. |`````````,       .'.                   ..'''' |         |
-|           |'''|'''''      .''```.              .''       |_________|
-|           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         | $version
-
-Follow and support the project on http://crsh.googlecode.com
-Welcome to $hostName + !
-It is ${new Date()} now
-% """;
-}
-
-prompt = { ->
-  if (session == null)
-    return "% ";
-  else {
-    def node = getCurrentNode();
-    return "[" + node.path + "]% ";
-  }
-}
-
 getCurrentNode = { ->
   assertConnected();
   return findNodeByPath(currentPath);
