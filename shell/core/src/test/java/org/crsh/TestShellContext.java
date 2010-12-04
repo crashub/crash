@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -39,6 +42,13 @@ public class TestShellContext implements ShellContext {
 
   /** . */
   private final Logger log = LoggerFactory.getLogger(getClass());
+
+  /** . */
+  private List<String> scriptPaths;
+
+  public TestShellContext(String... scriptPaths) {
+    this.scriptPaths = new ArrayList<String>(Arrays.asList(scriptPaths));
+  }
 
   public String getVersion() {
     return "1.0.0";
@@ -54,22 +64,26 @@ public class TestShellContext implements ShellContext {
     }
 
     //
+    Resource res = null;
     switch (resourceKind) {
       case LIFECYCLE:
         if ("login".equals(resourceId)) {
-          resourceId = "groovy/login.groovy";
+          res = getResource("groovy/login.groovy");
         } else if ("logout".equals(resourceId)) {
-          resourceId = "groovy/logout.groovy";
-        } else {
-          resourceId = null;
+          res = getResource("groovy/logout.groovy");
         }
         break;
       case SCRIPT:
-        resourceId = "groovy/commands/" + resourceId + ".groovy";
+        for (String scriptPath : scriptPaths) {
+          res = getResource(scriptPath + resourceId + ".groovy");
+          if (res != null) {
+            break;
+          }
+        }
         break;
       case CONFIG:
         if ("telnet.properties".equals(resourceId)) {
-          resourceId = "telnet/telnet.properties";
+          res = getResource("telnet/telnet.properties");
         } else {
           resourceId = null;
         }
@@ -79,24 +93,23 @@ public class TestShellContext implements ShellContext {
     }
 
     //
-    Resource res = null;
-    if (resourceId != null) {
-      try {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(resourceId);
-        if (url != null) {
-          URLConnection conn = url.openConnection();
-          long timestamp = conn.getLastModified();
-          InputStream in = url.openStream();
-          String content = IO.readAsUTF8(in);
-          res = new Resource(content, timestamp);
-        }
-      } catch (IOException e) {
-        log.warn("Could not find resource " + resourceId, e);
-      }
-    }
-
-    //
     return res;
+  }
+
+  private Resource getResource(String path) {
+    try {
+      URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+      if (url != null) {
+        URLConnection conn = url.openConnection();
+        long timestamp = conn.getLastModified();
+        InputStream in = url.openStream();
+        String content = IO.readAsUTF8(in);
+        return new Resource(content, timestamp);
+      }
+    } catch (IOException e) {
+      log.warn("Could not find resource " + path, e);
+    }
+    return null;
   }
 
   public ClassLoader getLoader() {

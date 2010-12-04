@@ -29,14 +29,14 @@ import java.util.Iterator;
 public class SetPermTestCase extends AbstractCommandTestCase {
 
   public void testAddPrivilegeableMixin() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     Node foo = (Node) groovyShell.evaluate("return session.rootNode.addNode('foo');");
     assertOk("setperm -i julien /foo");
     assertTrue(foo.isNodeType("exo:privilegeable"));
   }
 
   public void testSimplePermission() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     Node foo = (Node) groovyShell.evaluate("return session.rootNode.addNode('foo');");
 
     // Test add
@@ -49,7 +49,7 @@ public class SetPermTestCase extends AbstractCommandTestCase {
   }
 
   public void testMultiplePermission() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     Node foo = (Node) groovyShell.evaluate("return session.rootNode.addNode('foo');");
 
     // Test add
@@ -59,7 +59,7 @@ public class SetPermTestCase extends AbstractCommandTestCase {
   }
 
   public void testConsume() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     Node foo = (Node) groovyShell.evaluate("return session.rootNode.addNode('foo');");
 
     //
@@ -68,7 +68,7 @@ public class SetPermTestCase extends AbstractCommandTestCase {
   }
 
   public void testProduce() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     groovyShell.evaluate("return session.rootNode.addNode('foo');");
 
     //

@@ -30,7 +30,7 @@ import javax.jcr.Session;
 public class RemoveTestCase extends AbstractCommandTestCase {
 
   public void testRm() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
 
     // Try relative
@@ -54,7 +54,7 @@ public class RemoveTestCase extends AbstractCommandTestCase {
   }
 
   public void testConsume() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     assertOk("produce /foo /bar | rm");

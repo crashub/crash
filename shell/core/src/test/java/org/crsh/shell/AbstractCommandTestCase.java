@@ -51,7 +51,10 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
     super.setUp();
 
     //
-    ShellFactory builder = new ShellFactory(new TestShellContext());
+    ShellFactory builder = new ShellFactory(new TestShellContext(
+      "groovy/commands/jcr/",
+      "groovy/commands/test/"
+    ));
 
     //
     shell = builder.build();
@@ -105,6 +108,10 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
     return display;
   }
 
+  protected final void assertLogin() {
+    assertOk("connect -u exo -p exo ws");
+  }
+
   protected final ShellResponse.Ok assertOk(String s) {
     ShellResponse resp = shell.evaluate(s);
     if (resp instanceof ShellResponse.Ok) {
@@ -122,7 +129,7 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
   }
 
   private void cleanRoot() throws Exception {
-    shell.evaluate("login ws");
+    assertLogin();
     Node root = (Node)groovyShell.evaluate("session.rootNode");
     root.refresh(false);
     NodeIterator it = root.getNodes();

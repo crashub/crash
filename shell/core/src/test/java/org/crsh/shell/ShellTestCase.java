@@ -32,12 +32,12 @@ import java.util.Iterator;
 public class ShellTestCase extends AbstractCommandTestCase {
 
   public void testUnknownCommand() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     assertUnknownCommand("bilto");
   }
 
   public void testCommit() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
     groovyShell.evaluate("session.rootNode.addNode('added_node');");
     assertTrue(((Session)shell.getAttribute("session")).hasPendingChanges());
@@ -47,7 +47,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testRollback() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     assertFalse(((Session)shell.getAttribute("session")).hasPendingChanges());
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     assertTrue(((Session)shell.getAttribute("session")).hasPendingChanges());
@@ -57,7 +57,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testExportImport() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     groovyShell.evaluate("session.rootNode.addNode('foo', 'nt:base');");
     assertOk("exportnode /foo /foo.xml");
 
@@ -78,7 +78,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
     
   public void testPWD() throws Exception {
 /*
-    assertOk("login ws");
+    assertLogin();
     ShellResponse resp = assertOk("pwd");
     Iterator<Element> elts = ((ShellResponse.Display)resp).iterator();
     assertTrue(elts.hasNext());
@@ -92,14 +92,14 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testPipe() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     assertOk("addnode foo | addnode bar");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('bar');"));
   }
 
   public void testPipe2() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
     groovyShell.evaluate("session.save();");
     assertOk("select * from nt:base where bar = 'juu' | rm");
@@ -107,7 +107,7 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testDistribution() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     Iterator<?> produced = assertOk("produce / | set foo foo_value + set bar bar_value + consume").getProduced().iterator();
     assertTrue(produced.hasNext());
     assertEquals("/", ((Node)produced.next()).getPath());

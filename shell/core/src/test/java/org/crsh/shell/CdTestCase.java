@@ -25,8 +25,10 @@ package org.crsh.shell;
  */
 public class CdTestCase extends AbstractCommandTestCase {
 
+
+
   public void testCd() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.addNode('foo bar');");
 

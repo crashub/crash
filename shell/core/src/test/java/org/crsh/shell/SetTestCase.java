@@ -28,7 +28,7 @@ import javax.jcr.PropertyType;
 public class SetTestCase extends AbstractCommandTestCase {
 
   public void testSet() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     groovyShell.evaluate("session.rootNode.setProperty('foo_string', 'foo_value');");
     groovyShell.evaluate("session.rootNode.setProperty('foo_long', 3);");
     groovyShell.evaluate("session.rootNode.setProperty('foo_boolean', true);");
@@ -70,7 +70,7 @@ public class SetTestCase extends AbstractCommandTestCase {
   }
 
   public void testPipe() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     assertOk("produce / | set foo_string foo_value");
     assertEquals("foo_value", groovyShell.evaluate("return session.rootNode.getProperty('foo_string').string;"));
   }

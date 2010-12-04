@@ -29,7 +29,7 @@ import java.util.Iterator;
 public class AddMixinTestCase extends AbstractCommandTestCase {
 
   public void testAddVersionable() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     Iterator<?> produced = assertOk("addmixin mix:versionable foo").getProduced().iterator();
     assertFalse(produced.hasNext());
@@ -37,7 +37,7 @@ public class AddMixinTestCase extends AbstractCommandTestCase {
   }
 
   public void testConsume() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     groovyShell.evaluate("return session.rootNode.addNode('foo');");
     Iterator<?> produced = assertOk("produce /foo | addmixin mix:versionable").getProduced().iterator();
     assertFalse(produced.hasNext());

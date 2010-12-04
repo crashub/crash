@@ -29,7 +29,7 @@ import java.util.Iterator;
 public class SelectTestCase extends AbstractCommandTestCase {
 
   public void testQuery() throws Exception {
-    assertOk("login ws");
+    assertLogin();
     groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
     groovyShell.evaluate("session.save();");
     Iterator<?> produced = assertOk("select * from nt:base where bar = 'juu'").getProduced().iterator();

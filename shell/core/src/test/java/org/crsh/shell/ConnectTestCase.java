@@ -25,12 +25,6 @@ package org.crsh.shell;
  */
 public class ConnectTestCase extends AbstractCommandTestCase {
 
-  public void testAnonymousConnect() throws Exception {
-    assertOk("login ws");
-    assertNotNull(shell.getAttribute("session"));
-    assertEquals("/", shell.getAttribute("currentPath"));
-  }
-
   public void testRootConnect() throws Exception {
     assertOk("connect -u root -p exo ws");
     assertNotNull(shell.getAttribute("session"));

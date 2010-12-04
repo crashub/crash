@@ -20,6 +20,8 @@
 package org.crsh;
 
 import junit.framework.TestCase;
+import org.crsh.jcr.JCRPlugin;
+import org.crsh.plugin.PluginManager;
 
 import javax.jcr.Repository;
 
@@ -38,6 +40,12 @@ public abstract class AbstractRepositoryTestCase extends TestCase {
   @Override
   protected void setUp() throws Exception {
     if (!initialized) {
+
+      // Initialize groovy integration by JCR plugin
+      JCRPlugin plugin = new JCRPlugin();
+      plugin.init();
+
+      //
       RepositoryBootstrap bootstrap = new RepositoryBootstrap();
       bootstrap.bootstrap();
       repo = bootstrap.getRepository();
