@@ -18,6 +18,8 @@
  */
 package org.crsh.shell;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -27,6 +29,8 @@ public interface ShellContext {
   String getVersion();
 
   Resource loadResource(String resourceId, ResourceKind resourceKind);
+
+  List<String> listResourceId(ResourceKind kind);
 
   ClassLoader getLoader();
 

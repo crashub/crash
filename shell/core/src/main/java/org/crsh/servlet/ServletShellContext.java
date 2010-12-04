@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -67,7 +69,7 @@ public class ServletShellContext implements ShellContext {
     String version = null;
     try {
       Properties props = new Properties();
-      InputStream in = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.crsh/crsh.core/pom.properties");
+      InputStream in = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.crsh/crsh.shell.core/pom.properties");
       if (in != null) {
         props.load(in);
         version = props.getProperty("version");
@@ -142,6 +144,30 @@ public class ServletShellContext implements ShellContext {
       log.warn("Could not obtain resource " + resourceId, e);
     }
     return res;
+  }
+
+  private final Pattern p = Pattern.compile(".*/(.+)\\.groovy");
+
+  public List<String> listResourceId(ResourceKind kind) {
+    switch (kind) {
+      case SCRIPT:
+        SortedSet<String> all = new TreeSet<String>();
+        for (String path : dirs) {
+          @SuppressWarnings("unchecked")
+          Set<String> files = servletContext.getResourcePaths(path);
+          for (String file : files) {
+            Matcher matcher = p.matcher(file);
+            if (matcher.matches()) {
+              all.add(matcher.group(1));
+            }
+          }
+        }
+        all.remove("login");
+        all.remove("logout");
+        return new ArrayList<String>(all);
+      default:
+        return Collections.emptyList();
+    }
   }
 
   public ClassLoader getLoader() {

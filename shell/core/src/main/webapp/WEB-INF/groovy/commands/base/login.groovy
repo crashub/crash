@@ -10,7 +10,7 @@ welcome = { ->
  .~      ~. |`````````,       .'.                   ..'''' |         |
 |           |'''|'''''      .''```.              .''       |_________|
 |           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         | $version
+ `.______.' |      `.   .'           `. ....''             |         | ${shellContext.version}
 
 Follow and support the project on http://crsh.googlecode.com
 Welcome to $hostName + !

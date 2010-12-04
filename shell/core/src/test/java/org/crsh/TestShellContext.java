@@ -99,6 +99,10 @@ public class TestShellContext implements ShellContext {
     return res;
   }
 
+  public List<String> listResourceId(ResourceKind kind) {
+    throw new UnsupportedOperationException();
+  }
+
   private Resource getResource(String path) {
     URL url = Thread.currentThread().getContextClassLoader().getResource(path);
     if (url != null) {

@@ -34,7 +34,14 @@ class help extends org.crsh.command.ClassCommand
   "xpath"];
 
   public Object execute() throws ScriptException {
-
-    return """Try one of these commands with the -h or --help switch $commands""";
+    def ret = "Try one of these commands with the -h or --help switch (";
+    shellContext.listResourceId(org.crsh.shell.ResourceKind.SCRIPT).eachWithIndex() {
+      cmd, index ->
+      if (index > 0)
+        ret += ",";
+      ret += cmd;
+    }
+    ret += ")";
+    return ret;
   }
 }

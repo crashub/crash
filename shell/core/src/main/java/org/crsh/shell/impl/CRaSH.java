@@ -114,8 +114,8 @@ public class CRaSH implements Shell {
   public CRaSH(final ShellContext context) {
     HashMap<String, Object> attributes = new HashMap<String, Object>();
 
-    // Set version number
-    attributes.put("version", context.getVersion());
+    // Set context available to scripts
+    attributes.put("shellContext", context);
 
     //
     CompilerConfiguration config = new CompilerConfiguration();

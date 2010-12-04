@@ -3,3 +3,5 @@
 - write pipe consistency
 
 - SLF4J profiler
+
+- rename login.groovy and logout.groovy to something better
