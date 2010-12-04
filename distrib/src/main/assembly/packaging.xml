@@ -59,21 +59,21 @@
       <outputDirectory>/</outputDirectory>
       <outputFileNameMapping>crsh.war</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.core:war</include>
+        <include>org.crsh:crsh.shell.core:war</include>
       </includes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>/javadoc</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.core:jar:javadoc</include>
+        <include>org.crsh:crsh.shell.core:jar:javadoc</include>
       </includes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>/src</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.core:jar:sources</include>
+        <include>org.crsh:crsh.shell.core:jar:sources</include>
       </includes>
     </dependencySet>
     <dependencySet>

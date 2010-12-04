@@ -46,17 +46,6 @@
       <artifactId>wikbook.docbkxstyle</artifactId>
       <version>${wikbook.version}</version>
     </dependency>
-<!--
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.core</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
--->
   </dependencies>
 
   <build>

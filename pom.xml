@@ -68,19 +68,19 @@
     <dependencies>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.core</artifactId>
+        <artifactId>crsh.shell.core</artifactId>
         <version>1.0.0-beta17-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.core</artifactId>
+        <artifactId>crsh.shell.core</artifactId>
         <version>1.0.0-beta17-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.core</artifactId>
+        <artifactId>crsh.shell.core</artifactId>
         <version>1.0.0-beta17-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
@@ -101,7 +101,7 @@
   </dependencyManagement>
 
   <modules>
-    <module>core</module>
+    <module>shell</module>
     <module>doc</module>
     <module>distrib</module>
   </modules>

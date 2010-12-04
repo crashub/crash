@@ -19,12 +19,12 @@
         <dependencies>
           <dependency>
             <groupId>org.crsh</groupId>
-            <artifactId>crsh.core</artifactId>
+            <artifactId>crsh.shell.core</artifactId>
             <type>war</type>
           </dependency>
           <dependency>
             <groupId>org.crsh</groupId>
-            <artifactId>crsh.core</artifactId>
+            <artifactId>crsh.shell.core</artifactId>
             <classifier>sources</classifier>
           </dependency>
           <dependency>
@@ -40,7 +40,7 @@
           </dependency>
           <dependency>
             <groupId>org.crsh</groupId>
-            <artifactId>crsh.core</artifactId>
+            <artifactId>crsh.shell.core</artifactId>
             <classifier>javadoc</classifier>
           </dependency>
         </dependencies>
