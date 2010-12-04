@@ -20,7 +20,7 @@ package org.crsh.jcr;
 
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
-import org.crsh.shell.jcr.GroovyRepositoryBootstrap;
+import org.crsh.jcr.shell.GroovyRepositoryBootstrap;
 
 import javax.jcr.Session;
 

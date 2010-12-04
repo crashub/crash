@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.jcr;
+package org.crsh.jcr.shell;
 
 import javax.jcr.PropertyType;
 

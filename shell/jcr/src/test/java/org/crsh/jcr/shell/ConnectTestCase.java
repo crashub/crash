@@ -17,24 +17,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.jcr;
-
-import javax.jcr.Node;
-import java.util.Iterator;
+package org.crsh.jcr.shell;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SelectTestCase extends AbstractJCRCommandTestCase {
+public class ConnectTestCase extends AbstractJCRCommandTestCase {
 
-  public void testQuery() throws Exception {
-    assertLogin();
-    groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
-    groovyShell.evaluate("session.save();");
-    Iterator<?> produced = assertOk("select * from nt:base where bar = 'juu'").getProduced().iterator();
-    assertTrue(produced.hasNext());
-    assertEquals("/foo", ((Node) produced.next()).getPath());
-    assertFalse(produced.hasNext());
+  public void testRootConnect() throws Exception {
+    assertOk("connect -u root -p exo ws");
+    assertNotNull(shell.getAttribute("session"));
+    assertEquals("/", shell.getAttribute("currentPath"));
   }
 }

@@ -17,38 +17,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.jcr;
+package org.crsh.jcr.shell;
 
-import org.crsh.jcr.JCRPlugin;
-
-import javax.jcr.Repository;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class GroovyRepositoryBootstrap {
+public class AddMixinTestCase extends AbstractJCRCommandTestCase {
 
-  /** . */
-  private static Repository repository;
+  public void testAddVersionable() throws Exception {
+    assertLogin();
+    groovyShell.evaluate("session.rootNode.addNode('foo');");
+    Iterator<?> produced = assertOk("addmixin mix:versionable foo").getProduced().iterator();
+    assertFalse(produced.hasNext());
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
+  }
 
-  /** . */
-  private static boolean initialized;
-
-
-
-  public static synchronized Repository getRepository() throws Exception {
-    if (!initialized) {
-      RepositoryBootstrap repoBoostrap = new RepositoryBootstrap();
-      repoBoostrap.bootstrap();
-      repository = repoBoostrap.getRepository();
-
-      // Initialize groovy integration by JCR plugin
-      new JCRPlugin().init();
-
-      //
-      initialized = true;
-    }
-    return repository;
+  public void testConsume() throws Exception {
+    assertLogin();
+    groovyShell.evaluate("return session.rootNode.addNode('foo');");
+    Iterator<?> produced = assertOk("produce /foo | addmixin mix:versionable").getProduced().iterator();
+    assertFalse(produced.hasNext());
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
   }
 }

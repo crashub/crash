@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -17,25 +17,38 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
+package org.crsh.jcr.shell;
 
-import org.crsh.shell.jcr.RepositoryBootstrap;
-import org.crsh.term.telnet.TelnetLifeCycle;
+import org.crsh.jcr.JCRPlugin;
+
+import javax.jcr.Repository;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Main {
+public class GroovyRepositoryBootstrap {
 
-  public static void main(String[] args) throws Exception {
+  /** . */
+  private static Repository repository;
 
-    RepositoryBootstrap repo = new RepositoryBootstrap();
-    repo.bootstrap();
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(new TestShellContext());
-    lifeCycle.init();
-    new Object().wait();
+  /** . */
+  private static boolean initialized;
 
+
+
+  public static synchronized Repository getRepository() throws Exception {
+    if (!initialized) {
+      RepositoryBootstrap repoBoostrap = new RepositoryBootstrap();
+      repoBoostrap.bootstrap();
+      repository = repoBoostrap.getRepository();
+
+      // Initialize groovy integration by JCR plugin
+      new JCRPlugin().init();
+
+      //
+      initialized = true;
+    }
+    return repository;
   }
-
 }

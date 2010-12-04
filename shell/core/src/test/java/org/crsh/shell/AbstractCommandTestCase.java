@@ -27,10 +27,6 @@ import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.*;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -38,7 +34,7 @@ import java.util.List;
 public abstract class AbstractCommandTestCase extends TestCase {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   protected CRaSH shell;
@@ -67,9 +63,6 @@ public abstract class AbstractCommandTestCase extends TestCase {
     //
     shell = builder.build();
     groovyShell = shell.getGroovyShell();
-
-    //
-    cleanRoot();
   }
 
   @Override
@@ -79,14 +72,6 @@ public abstract class AbstractCommandTestCase extends TestCase {
       shell = null;
       groovyShell = null;
     }
-  }
-
-  protected final List<String> getStringValues(Property p) throws RepositoryException {
-    List<String> strings = new ArrayList<String>();
-    for (Value value : p.getValues()) {
-      strings.add(value.getString());
-    }
-    return strings;
   }
 
   protected final void assertUnknownCommand(String s) {
@@ -116,10 +101,6 @@ public abstract class AbstractCommandTestCase extends TestCase {
     return display;
   }
 
-  protected final void assertLogin() {
-    assertOk("connect -u exo -p exo ws");
-  }
-
   protected final ShellResponse.Ok assertOk(String s) {
     ShellResponse resp = shell.evaluate(s);
     if (resp instanceof ShellResponse.Ok) {
@@ -134,21 +115,5 @@ public abstract class AbstractCommandTestCase extends TestCase {
     else {
       throw new AssertionFailedError("Was expecting an ok response instead of " + resp);
     }
-  }
-
-  private void cleanRoot() throws Exception {
-    assertLogin();
-    Node root = (Node)groovyShell.evaluate("session.rootNode");
-    root.refresh(false);
-    NodeIterator it = root.getNodes();
-    while (it.hasNext()) {
-      Node n = it.nextNode();
-      if(!n.getName().equals("jcr:system")) {
-        log.debug("Removed node " + n.getPath());
-        n.remove();
-      }
-    }
-    root.getSession().save();
-    shell.evaluate("disconnect");
   }
 }

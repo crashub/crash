@@ -26,7 +26,6 @@ package org.crsh.shell;
 public class BaseCommandTestCase extends AbstractCommandTestCase {
 
   public void testUnknownCommand() throws Exception {
-    assertLogin();
     assertUnknownCommand("bilto");
   }
 }

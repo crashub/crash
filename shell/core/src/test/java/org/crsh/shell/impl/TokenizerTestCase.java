@@ -20,7 +20,6 @@
 package org.crsh.shell.impl;
 
 import junit.framework.TestCase;
-import org.apache.lucene.analysis.*;
 import org.crsh.command.ScriptException;
 
 import java.util.Arrays;

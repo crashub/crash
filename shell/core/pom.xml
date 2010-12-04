@@ -16,21 +16,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.5.8</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>1.5.8</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <version>1.0</version>
-      </dependency>
-      <dependency>
         <groupId>args4j</groupId>
         <artifactId>args4j</artifactId>
         <version>2.0.10</version>
@@ -70,16 +55,6 @@
         <artifactId>telnetd-x</artifactId>
         <version>2.1.1-CRASH-r14</version>
       </dependency>
-      <dependency>
-        <groupId>org.exoplatform.kernel</groupId>
-        <artifactId>exo.kernel.container</artifactId>
-        <version>2.1.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.exoplatform.jcr</groupId>
-        <artifactId>exo.jcr.component.core</artifactId>
-        <version>1.11.1</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -89,12 +64,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -156,18 +125,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.exoplatform.kernel</groupId>
-      <artifactId>exo.kernel.container</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.exoplatform.jcr</groupId>
-      <artifactId>exo.jcr.component.core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
   <build>
 
@@ -188,15 +145,6 @@
       </testResource>
     </testResources>
     <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <target>1.5</target>
-          <source>1.5</source>
-        </configuration>
-      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

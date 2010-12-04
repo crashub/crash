@@ -17,9 +17,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.jcr;
+package org.crsh.jcr.shell;
 
 import org.crsh.shell.AbstractCommandTestCase;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -42,5 +50,36 @@ public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase
 
     //
     super.setUp();
+
+    //
+    cleanRoot();
+  }
+
+  private void cleanRoot() throws Exception {
+    assertLogin();
+    Node root = (Node)groovyShell.evaluate("session.rootNode");
+    root.refresh(false);
+    NodeIterator it = root.getNodes();
+    while (it.hasNext()) {
+      Node n = it.nextNode();
+      if(!n.getName().equals("jcr:system")) {
+        log.debug("Removed node " + n.getPath());
+        n.remove();
+      }
+    }
+    root.getSession().save();
+    shell.evaluate("disconnect");
+  }
+
+  protected final void assertLogin() {
+    assertOk("connect -u exo -p exo ws");
+  }
+
+  protected final List<String> getStringValues(Property p) throws RepositoryException {
+    List<String> strings = new ArrayList<String>();
+    for (Value value : p.getValues()) {
+      strings.add(value.getString());
+    }
+    return strings;
   }
 }
