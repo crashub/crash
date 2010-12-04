@@ -19,16 +19,13 @@
 
 package org.crsh.shell.jcr;
 
-import org.crsh.shell.AbstractCommandTestCase;
-
-import javax.jcr.Node;
 import java.util.Iterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class AddMixinTestCase extends AbstractCommandTestCase {
+public class AddMixinTestCase extends AbstractJCRCommandTestCase {
 
   public void testAddVersionable() throws Exception {
     assertLogin();

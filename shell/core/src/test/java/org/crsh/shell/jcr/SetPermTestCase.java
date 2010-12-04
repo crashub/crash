@@ -19,8 +19,6 @@
 
 package org.crsh.shell.jcr;
 
-import org.crsh.shell.AbstractCommandTestCase;
-
 import javax.jcr.Node;
 import java.util.Iterator;
 
@@ -28,7 +26,7 @@ import java.util.Iterator;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SetPermTestCase extends AbstractCommandTestCase {
+public class SetPermTestCase extends AbstractJCRCommandTestCase {
 
   public void testAddPrivilegeableMixin() throws Exception {
     assertLogin();

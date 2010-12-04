@@ -19,13 +19,11 @@
 
 package org.crsh.shell.jcr;
 
-import org.crsh.shell.AbstractCommandTestCase;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CdTestCase extends AbstractCommandTestCase {
+public class CdTestCase extends AbstractJCRCommandTestCase {
 
 
 

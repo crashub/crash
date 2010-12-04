@@ -20,7 +20,6 @@
 package org.crsh.shell.jcr;
 
 import org.crsh.command.ScriptException;
-import org.crsh.shell.AbstractCommandTestCase;
 
 import javax.jcr.Session;
 
@@ -28,7 +27,7 @@ import javax.jcr.Session;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class RemoveTestCase extends AbstractCommandTestCase {
+public class RemoveTestCase extends AbstractJCRCommandTestCase {
 
   public void testRm() throws Exception {
     assertLogin();

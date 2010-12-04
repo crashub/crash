@@ -19,13 +19,11 @@
 
 package org.crsh.shell.jcr;
 
-import org.crsh.shell.AbstractCommandTestCase;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ConnectTestCase extends AbstractCommandTestCase {
+public class ConnectTestCase extends AbstractJCRCommandTestCase {
 
   public void testRootConnect() throws Exception {
     assertOk("connect -u root -p exo ws");

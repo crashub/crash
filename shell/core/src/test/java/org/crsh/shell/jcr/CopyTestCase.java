@@ -18,12 +18,10 @@
  */
 package org.crsh.shell.jcr;
 
-import org.crsh.shell.AbstractCommandTestCase;
-
 /**
  * @version $Revision$
  */
-public class CopyTestCase extends AbstractCommandTestCase {
+public class CopyTestCase extends AbstractJCRCommandTestCase {
 
   /**
    * Copy a node in cwd to another

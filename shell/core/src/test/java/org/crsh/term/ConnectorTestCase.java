@@ -19,7 +19,7 @@
 
 package org.crsh.term;
 
-import org.crsh.AbstractRepositoryTestCase;
+import junit.framework.TestCase;
 import org.crsh.TestShell;
 import org.crsh.TestShellContext;
 import org.crsh.shell.*;
@@ -31,16 +31,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ConnectorTestCase extends AbstractRepositoryTestCase {
+public class ConnectorTestCase extends TestCase {
 
   /** . */
   protected ShellFactory builder;

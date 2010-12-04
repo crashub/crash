@@ -19,7 +19,8 @@
 package org.crsh.jcr;
 
 import groovy.lang.GroovyShell;
-import org.crsh.AbstractRepositoryTestCase;
+import junit.framework.TestCase;
+import org.crsh.shell.jcr.GroovyRepositoryBootstrap;
 
 import javax.jcr.Session;
 
@@ -27,21 +28,12 @@ import javax.jcr.Session;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class NodeMetaClassTestCase extends AbstractRepositoryTestCase {
+public class NodeMetaClassTestCase extends TestCase {
 
-  /** Make sure we integrate the node meta class system with Groovy. */
-  static {
-    NodeMetaClass.setup();
-  }
-
-  /**
-   * .
-   */
+  /** . */
   private Session session;
 
-  /**
-   * .
-   */
+  /** . */
   private GroovyShell shell;
 
   @Override
@@ -49,7 +41,7 @@ public class NodeMetaClassTestCase extends AbstractRepositoryTestCase {
     super.setUp();
 
     //
-    session = repo.login();
+    session = GroovyRepositoryBootstrap.getRepository().login();
 
     //
     shell = new GroovyShell();
@@ -61,7 +53,6 @@ public class NodeMetaClassTestCase extends AbstractRepositoryTestCase {
     session.logout();
 
     //
-    repo = null;
     session = null;
     shell = null;
   }

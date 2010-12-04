@@ -19,15 +19,13 @@
 
 package org.crsh.shell.jcr;
 
-import org.crsh.shell.AbstractCommandTestCase;
-
 import javax.jcr.PropertyType;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SetTestCase extends AbstractCommandTestCase {
+public class SetTestCase extends AbstractJCRCommandTestCase {
 
   public void testSet() throws Exception {
     assertLogin();

@@ -19,6 +19,7 @@
 
 package org.crsh;
 
+import org.crsh.shell.jcr.RepositoryBootstrap;
 import org.crsh.term.telnet.TelnetLifeCycle;
 
 /**

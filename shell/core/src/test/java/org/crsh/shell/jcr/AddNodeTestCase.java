@@ -19,8 +19,6 @@
 
 package org.crsh.shell.jcr;
 
-import org.crsh.shell.AbstractCommandTestCase;
-
 import javax.jcr.Node;
 import java.util.Iterator;
 
@@ -28,7 +26,7 @@ import java.util.Iterator;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class AddNodeTestCase extends AbstractCommandTestCase {
+public class AddNodeTestCase extends AbstractJCRCommandTestCase {
 
   public void testAddRelativeNode() throws Exception {
     assertLogin();

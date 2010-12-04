@@ -18,11 +18,9 @@
  */
 package org.crsh.shell.jcr;
 
-import org.crsh.command.ScriptException;
 import org.crsh.shell.AbstractCommandTestCase;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.Session;
 import java.util.Iterator;
 
@@ -30,7 +28,7 @@ import java.util.Iterator;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellTestCase extends AbstractCommandTestCase {
+public class ShellTestCase extends AbstractJCRCommandTestCase {
 
   public void testCommit() throws Exception {
     assertLogin();

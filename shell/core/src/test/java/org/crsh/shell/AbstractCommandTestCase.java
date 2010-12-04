@@ -21,7 +21,7 @@ package org.crsh.shell;
 
 import groovy.lang.GroovyShell;
 import junit.framework.AssertionFailedError;
-import org.crsh.AbstractRepositoryTestCase;
+import junit.framework.TestCase;
 import org.crsh.TestShellContext;
 import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase {
+public abstract class AbstractCommandTestCase extends TestCase {
 
   /** . */
   private final Logger log = LoggerFactory.getLogger(getClass());
@@ -45,6 +45,13 @@ public abstract class AbstractCommandTestCase extends AbstractRepositoryTestCase
 
   /** . */
   protected GroovyShell groovyShell;
+
+  protected AbstractCommandTestCase() {
+  }
+
+  protected AbstractCommandTestCase(String name) {
+    super(name);
+  }
 
   @Override
   protected void setUp() throws Exception {

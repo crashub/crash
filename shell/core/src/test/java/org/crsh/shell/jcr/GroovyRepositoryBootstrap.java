@@ -19,22 +19,36 @@
 
 package org.crsh.shell.jcr;
 
-import javax.jcr.Node;
-import java.util.Iterator;
+import org.crsh.jcr.JCRPlugin;
+
+import javax.jcr.Repository;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SelectTestCase extends AbstractJCRCommandTestCase {
+public class GroovyRepositoryBootstrap {
 
-  public void testQuery() throws Exception {
-    assertLogin();
-    groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
-    groovyShell.evaluate("session.save();");
-    Iterator<?> produced = assertOk("select * from nt:base where bar = 'juu'").getProduced().iterator();
-    assertTrue(produced.hasNext());
-    assertEquals("/foo", ((Node) produced.next()).getPath());
-    assertFalse(produced.hasNext());
+  /** . */
+  private static Repository repository;
+
+  /** . */
+  private static boolean initialized;
+
+
+
+  public static synchronized Repository getRepository() throws Exception {
+    if (!initialized) {
+      RepositoryBootstrap repoBoostrap = new RepositoryBootstrap();
+      repoBoostrap.bootstrap();
+      repository = repoBoostrap.getRepository();
+
+      // Initialize groovy integration by JCR plugin
+      new JCRPlugin().init();
+
+      //
+      initialized = true;
+    }
+    return repository;
   }
 }
