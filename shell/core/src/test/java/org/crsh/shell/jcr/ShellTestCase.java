@@ -16,9 +16,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.shell.jcr;
 
 import org.crsh.command.ScriptException;
+import org.crsh.shell.AbstractCommandTestCase;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -30,11 +31,6 @@ import java.util.Iterator;
  * @version $Revision$
  */
 public class ShellTestCase extends AbstractCommandTestCase {
-
-  public void testUnknownCommand() throws Exception {
-    assertLogin();
-    assertUnknownCommand("bilto");
-  }
 
   public void testCommit() throws Exception {
     assertLogin();

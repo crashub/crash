@@ -61,6 +61,7 @@ public class ConnectorTestCase extends AbstractRepositoryTestCase {
     //
     executor = Executors.newSingleThreadExecutor();
     context = new TestShellContext(
+      "groovy/commands/base/",
       "groovy/commands/jcr/",
       "groovy/commands/test/");
     builder = new ShellFactory(context);

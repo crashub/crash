@@ -17,30 +17,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.shell.jcr;
 
-import javax.jcr.Node;
-import java.util.Iterator;
+import org.crsh.shell.AbstractCommandTestCase;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class AddMixinTestCase extends AbstractCommandTestCase {
+public class ConnectTestCase extends AbstractCommandTestCase {
 
-  public void testAddVersionable() throws Exception {
-    assertLogin();
-    groovyShell.evaluate("session.rootNode.addNode('foo');");
-    Iterator<?> produced = assertOk("addmixin mix:versionable foo").getProduced().iterator();
-    assertFalse(produced.hasNext());
-    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
-  }
-
-  public void testConsume() throws Exception {
-    assertLogin();
-    groovyShell.evaluate("return session.rootNode.addNode('foo');");
-    Iterator<?> produced = assertOk("produce /foo | addmixin mix:versionable").getProduced().iterator();
-    assertFalse(produced.hasNext());
-    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
+  public void testRootConnect() throws Exception {
+    assertOk("connect -u root -p exo ws");
+    assertNotNull(shell.getAttribute("session"));
+    assertEquals("/", shell.getAttribute("currentPath"));
   }
 }

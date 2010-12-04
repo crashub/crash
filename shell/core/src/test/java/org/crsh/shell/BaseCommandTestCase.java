@@ -23,11 +23,10 @@ package org.crsh.shell;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ConnectTestCase extends AbstractCommandTestCase {
+public class BaseCommandTestCase extends AbstractCommandTestCase {
 
-  public void testRootConnect() throws Exception {
-    assertOk("connect -u root -p exo ws");
-    assertNotNull(shell.getAttribute("session"));
-    assertEquals("/", shell.getAttribute("currentPath"));
+  public void testUnknownCommand() throws Exception {
+    assertLogin();
+    assertUnknownCommand("bilto");
   }
 }
