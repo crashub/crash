@@ -18,14 +18,9 @@
  */
 package org.crsh.term;
 
-import groovy.lang.GroovySystem;
-import groovy.lang.MetaClassRegistry;
-import org.crsh.jcr.NodeMetaClass;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.ShellContext;
 
-import javax.jcr.Node;
-import java.beans.IntrospectionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,33 +29,6 @@ import java.util.concurrent.Executors;
  * @version $Revision$
  */
 public abstract class CRaSHLifeCycle {
-
-  /** . */
-  private static final Object LOCK = new Object();
-
-  /** . */
-  private static boolean integrated = false;
-
-  private static void integrate() {
-    synchronized (LOCK) {
-      if (!integrated) {
-        try {
-          MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
-          Class<? extends Node> eXoNode = (Class<Node>)Thread.currentThread().getContextClassLoader().loadClass("org.exoplatform.services.jcr.impl.core.NodeImpl");
-          NodeMetaClass mc2 = new NodeMetaClass(registry, eXoNode);
-          mc2.initialize();
-          registry.setMetaClass(eXoNode, mc2);
-        }
-        catch (ClassNotFoundException e) {
-          throw new RuntimeException(e);
-        }
-        catch (IntrospectionException e) {
-          throw new RuntimeException(e);
-        }
-      }
-      integrated = true;
-    }
-  }
 
   /** . */
   private ShellFactory builder;
@@ -81,7 +49,6 @@ public abstract class CRaSHLifeCycle {
   }
 
   public final void init() {
-    integrate();
     ExecutorService executor = Executors.newFixedThreadPool(3);
     ShellFactory builder = new ShellFactory(context);
 

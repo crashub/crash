@@ -52,4 +52,8 @@
     <listener-class>org.crsh.servlet.SSHServletLifeCycle</listener-class>
   </listener>
 
+  <listener>
+    <listener-class>org.crsh.plugin.PluginLifeCycle</listener-class>
+  </listener>
+
 </web-app>

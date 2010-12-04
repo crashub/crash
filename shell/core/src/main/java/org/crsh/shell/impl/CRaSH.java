@@ -22,7 +22,6 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.ShellCommand;
-import org.crsh.jcr.NodeMetaClass;
 import org.crsh.shell.*;
 import org.crsh.util.TimestampedObject;
 import org.slf4j.Logger;
@@ -36,11 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version $Revision$
  */
 public class CRaSH implements Shell {
-
-  static {
-    // Force integration of node meta class
-    NodeMetaClass.setup();
-  }
 
   /** . */
   private static final Logger log = LoggerFactory.getLogger(CRaSH.class);
