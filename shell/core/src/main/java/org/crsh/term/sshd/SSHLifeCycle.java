@@ -24,13 +24,16 @@ import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
+import org.crsh.plugin.PluginManager;
 import org.crsh.term.CRaSHLifeCycle;
+import org.crsh.term.sshd.scp.CommandPlugin;
 import org.crsh.term.sshd.scp.SCPCommandFactory;
 import org.crsh.shell.ShellContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.PublicKey;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -79,10 +82,14 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
   @Override
   protected void doInit() {
     try {
+      ClassLoader pluginCL = getShellContext().getLoader();
+      PluginManager<CommandPlugin> commandPlugins = new PluginManager<CommandPlugin>(pluginCL, CommandPlugin.class);
+
+      //
       SshServer server = SshServer.setUpDefaultServer();
       server.setPort(port);
       server.setShellFactory(new CRaSHCommandFactory(getShellFactory(), getExecutor()));
-      server.setCommandFactory(new SCPCommandFactory());
+      server.setCommandFactory(new SCPCommandFactory(commandPlugins));
       server.setKeyPairProvider(new PEMGeneratorHostKeyProvider(keyPath));
 
       //

@@ -17,33 +17,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.plugin;
+package org.crsh.term.sshd.scp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import org.apache.sshd.server.Command;
+import org.crsh.plugin.CRaSHPlugin;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class PluginLifeCycle implements ServletContextListener {
+public abstract class CommandPlugin extends CRaSHPlugin
+{
 
-  /** . */
-  private final Logger log = LoggerFactory.getLogger(PluginLifeCycle.class);
+   public abstract Command createCommand(String command);
 
-  /** . */
-  private PluginManager<CRaSHPlugin> manager;
-
-  public void contextInitialized(ServletContextEvent sce) {
-    manager = new PluginManager<CRaSHPlugin>(Thread.currentThread().getContextClassLoader(), CRaSHPlugin.class);
-
-    // Load plugins
-    manager.getPlugins();
-  }
-
-  public void contextDestroyed(ServletContextEvent sce) {
-  }
 }

@@ -20,9 +20,8 @@ package org.crsh.term.sshd.scp;
 
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.CommandFactory;
+import org.crsh.plugin.PluginManager;
 import org.crsh.term.sshd.FailCommand;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +34,13 @@ public class SCPCommandFactory implements CommandFactory {
   /** . */
   private static final Logger log = LoggerFactory.getLogger(SCPCommandFactory.class);
 
+  /** . */
+  private final PluginManager<CommandPlugin> plugins;
+
+  public SCPCommandFactory(PluginManager<CommandPlugin> plugins) {
+    this.plugins = plugins;
+  }
+
   public Command createCommand(String command) {
     // Just in case
     command = command.trim();
@@ -42,27 +48,13 @@ public class SCPCommandFactory implements CommandFactory {
     //
     log.debug("About to execute shell command " + command);
 
-    //
-    if (command.startsWith("scp ")) {
-      try {
-        command = command.substring(4);
-        SCPAction action = new SCPAction();
-        CmdLineParser parser = new CmdLineParser(action);
-        parser.parseArgument(command.split("(\\s)+"));
-        if (Boolean.TRUE.equals(action.isSource())) {
-          return new SourceCommand(action.getArgument(), Boolean.TRUE.equals(action.isRecursive()));
-        } else if (Boolean.TRUE.equals(action.isSink())) {
-          return new SinkCommand(action.getArgument(), Boolean.TRUE.equals(action.isRecursive()));
-        } else {
-          return new FailCommand("No handle that kind of action for now " + action);
-        }
+    for (CommandPlugin plugin : plugins.getPlugins()) {
+      Command cmd = plugin.createCommand(command);
+      if (cmd != null) {
+        return cmd;
       }
-      catch (CmdLineException e) {
-        e.printStackTrace();
-        return null;
-      }
-    } else {
-      return new FailCommand("No other command than scp can be executed " + command);
     }
+
+    return new FailCommand("Unrecognized command " + command);
   }
 }
