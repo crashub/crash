@@ -49,6 +49,13 @@
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.core</artifactId>
+      <type>war</type>
+      <version>1.0.0-beta17-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -88,6 +95,30 @@
         </includes>
       </testResource>
     </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <appendAssemblyId>false</appendAssemblyId>
+          <descriptors>
+            <descriptor>src/main/assembly/packaging.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
   </build>
 
 </project>
