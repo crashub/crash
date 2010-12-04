@@ -18,8 +18,6 @@
  */
 package org.crsh.jcr;
 
-import org.crsh.fs.FileSystem;
-import org.crsh.jcr.SCPCommand;
 import org.crsh.util.BytesOutputStream;
 import org.crsh.util.IO;
 

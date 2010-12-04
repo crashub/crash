@@ -18,7 +18,6 @@
  */
 package org.crsh.jcr;
 
-import org.crsh.fs.FileSystem;
 import org.crsh.util.XML;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

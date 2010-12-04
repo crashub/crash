@@ -18,7 +18,6 @@
  */
 package org.crsh.jcr;
 
-import org.crsh.fs.FileSystem;
 import org.crsh.util.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
