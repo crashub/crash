@@ -21,7 +21,6 @@ package org.crsh.servlet;
 import org.crsh.shell.Resource;
 import org.crsh.shell.ResourceKind;
 import org.crsh.shell.ShellContext;
-import org.crsh.util.IO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,6 @@ import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -40,13 +38,13 @@ import java.util.concurrent.*;
 public class ServletShellContext implements ShellContext {
 
   /** . */
+  private static final Logger log = LoggerFactory.getLogger(ServletShellContext.class);
+
+  /** . */
   private final ServletContext servletContext;
 
   /** . */
   private final ClassLoader loader;
-
-  /** . */
-  private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   private final String version;
@@ -104,38 +102,41 @@ public class ServletShellContext implements ShellContext {
     try {
 
       //
-      URL url = null;
       switch (resourceKind) {
         case LIFECYCLE:
-          if ("login".equals(resourceId)) {
-            url = servletContext.getResource("/WEB-INF/groovy/login.groovy");
-          } else if ("logout".equals(resourceId)) {
-            url = servletContext.getResource("/WEB-INF/groovy/logout.groovy");
+          if ("login".equals(resourceId) || "logout".equals(resourceId)) {
+            StringBuilder sb = new StringBuilder();
+            long timestamp = Long.MIN_VALUE;
+            for (String path : dirs) {
+              URL url = servletContext.getResource(path + resourceId + ".groovy");
+              if (url != null) {
+                Resource sub = Resource.create(url);
+                if (sub != null) {
+                  sb.append(sub.getContent());
+                  timestamp = Math.max(timestamp, sub.getTimestamp());
+                }
+              }
+            }
+            return new Resource(sb.toString(), timestamp);
           }
           break;
         case SCRIPT:
           // Find the resource first, we find for the first found
           for (String path : dirs) {
-            url = servletContext.getResource(path + resourceId + ".groovy");
+            URL url = servletContext.getResource(path + resourceId + ".groovy");
             if (url != null) {
-              break;
+              return Resource.create(url);
             }
           }
           break;
         case CONFIG:
           if ("telnet.properties".equals(resourceId)) {
-            url = servletContext.getResource("/WEB-INF/telnet/telnet.properties");
+            URL url = servletContext.getResource("/WEB-INF/telnet/telnet.properties");
+            if (url != null) {
+              return Resource.create(url);
+            }
           }
           break;
-      }
-
-      //
-      if (url != null) {
-        URLConnection conn = url.openConnection();
-        long timestamp = conn.getLastModified();
-        InputStream in = url.openStream();
-        String content = IO.readAsUTF8(in);
-        res = new Resource(content, timestamp);
       }
     } catch (IOException e) {
       log.warn("Could not obtain resource " + resourceId, e);

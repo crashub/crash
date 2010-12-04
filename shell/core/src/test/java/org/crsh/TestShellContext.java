@@ -22,14 +22,10 @@ package org.crsh;
 import org.crsh.shell.Resource;
 import org.crsh.shell.ResourceKind;
 import org.crsh.shell.ShellContext;
-import org.crsh.util.IO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,10 +63,17 @@ public class TestShellContext implements ShellContext {
     Resource res = null;
     switch (resourceKind) {
       case LIFECYCLE:
-        if ("login".equals(resourceId)) {
-          res = getResource("groovy/login.groovy");
-        } else if ("logout".equals(resourceId)) {
-          res = getResource("groovy/logout.groovy");
+        if ("login".equals(resourceId) || "logout".equals(resourceId)) {
+          StringBuilder sb = new StringBuilder();
+          long timestamp = Long.MIN_VALUE;
+          for (String path : scriptPaths) {
+            Resource url = getResource(path + resourceId + ".groovy");
+            if (url != null) {
+              sb.append(url.getContent());
+              timestamp = Math.max(timestamp, url.getTimestamp());
+            }
+          }
+          res = new Resource(sb.toString(), timestamp);
         }
         break;
       case SCRIPT:
@@ -97,19 +100,12 @@ public class TestShellContext implements ShellContext {
   }
 
   private Resource getResource(String path) {
-    try {
-      URL url = Thread.currentThread().getContextClassLoader().getResource(path);
-      if (url != null) {
-        URLConnection conn = url.openConnection();
-        long timestamp = conn.getLastModified();
-        InputStream in = url.openStream();
-        String content = IO.readAsUTF8(in);
-        return new Resource(content, timestamp);
-      }
-    } catch (IOException e) {
-      log.warn("Could not find resource " + path, e);
+    URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+    if (url != null) {
+      return Resource.create(url);
+    } else {
+      return null;
     }
-    return null;
   }
 
   public ClassLoader getLoader() {
