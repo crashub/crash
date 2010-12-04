@@ -23,8 +23,6 @@ import org.apache.sshd.server.Command;
 import org.crsh.term.sshd.FailCommand;
 import org.crsh.term.sshd.scp.CommandPlugin;
 import org.crsh.term.sshd.scp.SCPAction;
-import org.crsh.term.sshd.scp.SinkCommand;
-import org.crsh.term.sshd.scp.SourceCommand;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 

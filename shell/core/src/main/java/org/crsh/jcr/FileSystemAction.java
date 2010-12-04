@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.sshd.scp;
+package org.crsh.jcr;
 
 import org.crsh.fs.FileSystem;
 import org.slf4j.Logger;
