@@ -17,11 +17,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.sshd;
+package org.crsh.term.spi.sshd;
 
 import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;
-import org.crsh.term.TermIO;
+import org.crsh.term.spi.TermIO;
 import org.crsh.util.OutputCode;
 import org.crsh.util.Safe;
 import org.slf4j.Logger;
@@ -114,7 +114,7 @@ public class SSHIO implements TermIO {
     }
   }
 
-  public CodeType getType(int code) {
+  public CodeType decode(int code) {
     switch (code) {
       case TerminalIO.DELETE:
         return CodeType.DELETE;

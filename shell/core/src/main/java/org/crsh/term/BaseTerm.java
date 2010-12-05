@@ -19,6 +19,7 @@
 
 package org.crsh.term;
 
+import org.crsh.term.spi.TermIO;
 import org.crsh.util.Input;
 import org.crsh.util.InputDecoder;
 import org.slf4j.Logger;
@@ -252,7 +253,7 @@ public class BaseTerm extends InputDecoder implements Term {
 
     while (true) {
       int code = io.read();
-      CodeType type = io.getType(code);
+      CodeType type = io.decode(code);
       switch (type) {
         case DELETE:
           appendDel();

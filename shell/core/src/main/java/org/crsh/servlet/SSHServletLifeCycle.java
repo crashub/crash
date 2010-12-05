@@ -19,7 +19,7 @@
 
 package org.crsh.servlet;
 
-import org.crsh.term.sshd.SSHLifeCycle;
+import org.crsh.term.spi.sshd.SSHLifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

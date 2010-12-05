@@ -47,7 +47,7 @@ To remove the telnet access, remove or comment the following XML from the //web.
 
 {{xml}}
 <listener>
-  <listener-class>org.crsh.term.telnet.TelnetLifeCycle</listener-class>
+  <listener-class>org.crsh.term.spi.telnet.TelnetLifeCycle</listener-class>
 </listener>
 {{/xml}}
 
@@ -55,7 +55,7 @@ To remove the SSH access, remove or comment the following XML from the //web.xml
 
 {{xml}}
 <listener>
-  <listener-class>org.crsh.term.sshd.SSHLifeCycle</listener-class>
+  <listener-class>org.crsh.term.spi.sshd.SSHLifeCycle</listener-class>
 </listener>
 {{/xml}}
 

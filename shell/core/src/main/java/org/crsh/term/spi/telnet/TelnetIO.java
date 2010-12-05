@@ -17,13 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.telnet;
+package org.crsh.term.spi.telnet;
 
 import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
 import org.crsh.term.CodeType;
-import org.crsh.term.TermIO;
+import org.crsh.term.spi.TermIO;
+
 import java.io.IOException;
 
 /**
@@ -47,7 +48,7 @@ public class TelnetIO implements TermIO {
     return termIO.read();
   }
 
-  public CodeType getType(int code) {
+  public CodeType decode(int code) {
     switch (code) {
       case TerminalIO.DELETE:
       case TerminalIO.BACKSPACE:

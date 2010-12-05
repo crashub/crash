@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2003-2009 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,39 +16,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.crsh.term.spi.telnet;
-
-import junit.framework.TestCase;
-import org.crsh.TestShellContext;
+package org.crsh.term.spi.sshd;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetTestCase extends TestCase {
+public class SSHContext {
 
   /** . */
-  private TelnetLifeCycle lf;
+  public final int verase;
 
-  @Override
-  protected void setUp() throws Exception {
-
-    TelnetLifeCycle lf = new TelnetLifeCycle(new TestShellContext(
-      "groovy/commands/base/",
-      "groovy/commands/jcr/",
-      "groovy/commands/test/"));
-    lf.doInit();
-
-    this.lf = lf;
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    lf.doDestroy();
-    lf = null;
-  }
-
-  public void testFoo(){
+  public SSHContext(int verase) {
+    this.verase = verase;
   }
 }

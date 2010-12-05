@@ -16,35 +16,45 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.term.sshd;
+package org.crsh.term.spi.sshd.scp;
 
-import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
-import org.crsh.shell.ShellFactory;
-
-import java.util.concurrent.ExecutorService;
+import org.apache.sshd.server.CommandFactory;
+import org.crsh.plugin.PluginManager;
+import org.crsh.term.spi.sshd.FailCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CRaSHCommandFactory implements Factory<Command> {
+public class SCPCommandFactory implements CommandFactory {
 
   /** . */
-  final ShellFactory builder;
+  private static final Logger log = LoggerFactory.getLogger(SCPCommandFactory.class);
 
   /** . */
-  final ExecutorService executor;
+  private final PluginManager<CommandPlugin> plugins;
 
-  public CRaSHCommandFactory(ShellFactory builder, ExecutorService executor) {
-    if (builder == null) {
-      throw new NullPointerException("No null builder accepted");
-    }
-    this.builder = builder;
-    this.executor = executor;
+  public SCPCommandFactory(PluginManager<CommandPlugin> plugins) {
+    this.plugins = plugins;
   }
 
-  public Command create() {
-    return new CRaSHCommand(this);
+  public Command createCommand(String command) {
+    // Just in case
+    command = command.trim();
+
+    //
+    log.debug("About to execute shell command " + command);
+
+    for (CommandPlugin plugin : plugins.getPlugins()) {
+      Command cmd = plugin.createCommand(command);
+      if (cmd != null) {
+        return cmd;
+      }
+    }
+
+    return new FailCommand("Unrecognized command " + command);
   }
 }

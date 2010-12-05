@@ -17,31 +17,83 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term;
+package org.crsh.term.spi;
+
+import org.crsh.term.CodeType;
 
 import java.io.IOException;
 
 /**
+ * The input/output of a term.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface TermIO {
 
+  /**
+   * Reads an input value.
+   *
+   * @return the value read
+   * @throws IOException any io exception
+   */
   int read() throws IOException;
 
-  CodeType getType(int code);
+  /**
+   * Decode the intput value.
+   *
+   * @param code the code
+   * @return the input value type
+   */
+  CodeType decode(int code);
 
+  /**
+   * Close the input/output.
+   */
   void close();
 
+  /**
+   * Flush output.
+   *
+   * @throws IOException any io exception
+   */
   void flush() throws IOException;
 
+  /**
+   * Write a string.
+   *
+   * @param s the string to write
+   * @throws IOException any io exception
+   */
   void write(String s) throws IOException;
 
+  /**
+   * Delete the char.
+   *
+   * @throws IOException any io exception
+   */
   void writeDel() throws IOException;
 
+  /**
+   * Write a CRLF.
+   *
+   * @throws IOException any io exception
+   */
   void writeCRLF() throws IOException;
 
+  /**
+   * Move the cursor right.
+   *
+   * @return true if the cursor moved.
+   * @throws IOException any io exception
+   */
   boolean moveRight() throws IOException;
 
+  /**
+   * Move the cursor left.
+   *
+   * @return true if the cursor moved
+   * @throws IOException any io exception
+   */
   boolean moveLeft() throws IOException;
 }

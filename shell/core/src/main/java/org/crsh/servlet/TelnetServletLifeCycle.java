@@ -20,7 +20,7 @@
 package org.crsh.servlet;
 
 import org.crsh.shell.ShellContext;
-import org.crsh.term.telnet.TelnetLifeCycle;
+import org.crsh.term.spi.telnet.TelnetLifeCycle;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
