@@ -5,3 +5,4 @@
 - SLF4J profiler
 
 - rename login.groovy and logout.groovy to something better
+- help --verbose

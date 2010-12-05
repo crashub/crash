@@ -19,6 +19,8 @@
 
 package org.crsh.command;
 
+import org.crsh.shell.io.ShellPrinter;
+
 import java.util.Map;
 
 /**

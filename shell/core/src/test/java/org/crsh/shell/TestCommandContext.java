@@ -21,7 +21,7 @@ package org.crsh.shell;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.ShellCommand;
-import org.crsh.command.ShellPrinter;
+import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.LineFeedWriter;
 
 import java.io.StringWriter;
