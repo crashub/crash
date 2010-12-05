@@ -19,7 +19,6 @@
 
 package org.crsh.shell.io;
 
-import org.crsh.shell.io.ShellWriter;
 import org.crsh.shell.ui.Element;
 import org.crsh.shell.ui.UIBuilder;
 import org.crsh.util.AppendableWriter;
@@ -28,6 +27,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
+ * The shell printer extends the {@link PrintWriter} and prints some objects in a special
+ * manner.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
