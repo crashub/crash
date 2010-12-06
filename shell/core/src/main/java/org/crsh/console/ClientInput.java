@@ -29,8 +29,6 @@ public abstract class ClientInput {
 
   public abstract String set(String s) throws IOException;
 
-//  public abstract void
-
   public abstract void write(char c) throws IOException;
 
   public abstract void write(CharSequence s) throws IOException;

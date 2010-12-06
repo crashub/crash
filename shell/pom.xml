@@ -102,7 +102,7 @@
             <executions>
               <execution>
                 <id>copy-warfile</id>
-                <phase>package</phase>
+                <phase>install</phase>
                 <configuration>
                   <tasks>
                     <copy tofile="${HOME}/java/gatein/portal/trunk/packaging/tomcat/pkg/target/tomcat/webapps/crsh.war" file="${project.build.directory}/${project.build.finalName}.war">
