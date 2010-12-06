@@ -25,19 +25,10 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ClientReader {
-
-  public abstract String set(String s) throws IOException;
-
-//  public abstract void
-
-  public abstract void write(char c) throws IOException;
+public abstract class ConsoleWriter {
 
   public abstract void write(CharSequence s) throws IOException;
 
-  public abstract void del() throws IOException;
+  public abstract void write(char c) throws IOException;
 
-  public abstract void moveRight() throws IOException;
-
-  public abstract void moveLeft() throws IOException;
 }

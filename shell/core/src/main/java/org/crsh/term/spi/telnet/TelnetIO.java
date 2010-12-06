@@ -80,6 +80,10 @@ public class TelnetIO implements TermIO {
     termIO.write(s);
   }
 
+  public void write(char c) throws IOException {
+    termIO.write(c);
+  }
+
   public void writeDel() throws IOException {
     termIO.moveLeft(1);
     termIO.write(' ');

@@ -68,6 +68,14 @@ public interface TermIO {
   void write(String s) throws IOException;
 
   /**
+   * Write a char.
+   *
+   * @param c the char to write
+   * @throws IOException any io exception
+   */
+  void write(char c) throws IOException;
+
+  /**
    * Delete the char.
    *
    * @throws IOException any io exception

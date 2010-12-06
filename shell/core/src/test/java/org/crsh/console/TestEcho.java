@@ -25,7 +25,7 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestEcho extends ClientWriter {
+public class TestEcho extends ClientOutput {
 
   /** . */
   private final StringBuilder builder = new StringBuilder();
@@ -51,8 +51,12 @@ public class TestEcho extends ClientWriter {
 
   @Override
   protected void doData(String s) throws IOException {
-    line.insert(position, s);
-    position++;
+    line.insert(position++, s);
+  }
+
+  @Override
+  protected void doData(char c) throws IOException {
+    line.insert(position++, c);
   }
 
   @Override

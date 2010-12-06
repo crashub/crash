@@ -48,31 +48,9 @@ public final class Console {
   private boolean echoing;
 
   /** . */
-  private final ClientWriter echo;
+  private final ClientOutput output;
 
-  /** . */
-  private final ConsoleReader reader = new ConsoleReader() {
-    @Override
-    public int getSize() {
-      return size;
-    }
-
-    @Override
-    public boolean hasNext() {
-      return lines.size() > 0;
-    }
-
-    @Override
-    public Input next() {
-      if (lines.size() > 0) {
-        return lines.removeFirst();
-      } else {
-        throw new NoSuchElementException();
-      }
-    }
-  };
-
-  private final ClientReader writer = new ClientReader() {
+  private final ClientInput input = new ClientInput() {
 
     @Override
     public String set(String s) throws IOException {
@@ -110,14 +88,66 @@ public final class Console {
     }
   };
 
-  public Console(ClientWriter echo) {
+  /** . */
+  private final ConsoleReader reader = new ConsoleReader() {
+    @Override
+    public int getSize() {
+      return size;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return lines.size() > 0;
+    }
+
+    @Override
+    public Input next() {
+      if (lines.size() > 0) {
+        return lines.removeFirst();
+      } else {
+        throw new NoSuchElementException();
+      }
+    }
+  };
+
+  /** . */
+  private final ConsoleWriter writer = new ConsoleWriter() {
+
+    //
+    private int previous;
+
+    @Override
+    public void write(CharSequence s) throws IOException {
+      for (int i = 0;i < s.length();i++) {
+        char c = s.charAt(i);
+        write(c);
+      }
+    }
+
+    public void write(char c) throws IOException {
+      if ((c == '\n' && previous == '\r') || (c == '\r' && previous == '\n')) {
+        previous = -1;
+      } else if (c == '\n' || c == '\r') {
+        String line = new String(buffer, 0, size);
+        lines.add(new Input.Chars(line));
+        previous = c;
+        size = 0;
+        curAt = size;
+        output.doCRLF();
+      } else {
+        output.doData(c);
+      }
+    }
+  };
+
+  public Console(ClientOutput output) {
     this.buffer = new char[128];
     this.size = 0;
     this.curAt = 0;
     this.lines = new LinkedList<Input>();
     this.previous = -1;
     this.echoing = true;
-    this.echo = echo;
+    this.output = output;
   }
 
   /**
@@ -146,7 +176,11 @@ public final class Console {
   }
 
 
-  public ClientReader getWriter() {
+  public ClientInput getInput() {
+    return input;
+  }
+
+  public ConsoleWriter getWriter() {
     return writer;
   }
 
@@ -201,7 +235,7 @@ public final class Console {
       moveLeft();
       // Redisplay from cursor to end
       String disp = new String(buffer, curAt, size - curAt + 1);
-      echo.doData(disp);
+      output.doData(disp);
       // position cursor one to left from where started
       int saveCurAt = curAt;
       curAt = size + 1;   // Size before delete
@@ -217,7 +251,7 @@ public final class Console {
 
   private void moveRight() throws IOException {
     if (curAt < size) {
-      if (echo.doMoveRight())
+      if (output.doMoveRight())
       {
         curAt++;
       }
@@ -226,7 +260,7 @@ public final class Console {
 
   private void moveLeft() throws IOException {
     if (curAt > 0) {
-      if (echo.doMoveLeft())
+      if (output.doMoveLeft())
       {
         curAt--;
       }
@@ -239,19 +273,19 @@ public final class Console {
 
   private void echo(String s) throws IOException {
     if (echoing) {
-      echo.doData(s);
+      output.doData(s);
     }
   }
 
   private void echoDel() throws IOException {
     if (echoing) {
-      echo.doDel();
+      output.doDel();
     }
   }
 
   private void echoCRLF() throws IOException {
     if (echoing) {
-      echo.doCRLF();
+      output.doCRLF();
     }
   }
 
@@ -287,7 +321,7 @@ public final class Console {
       // Adjust size and display from inserted character to end
       ++size;
       String disp = new String(buffer, curAt, size - curAt);
-      echo.doData(disp);
+      output.doData(disp);
       // Move cursor to original character
       int saveCurAt = ++curAt;
       curAt = size;

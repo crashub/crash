@@ -142,6 +142,10 @@ public class SSHIO implements TermIO {
     writer.write(s);
   }
 
+  public void write(char c) throws IOException {
+    writer.write(c);
+  }
+
   public void writeDel() throws IOException {
     writer.write(DEL_SEQ);
   }

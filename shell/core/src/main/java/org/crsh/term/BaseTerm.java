@@ -19,8 +19,8 @@
 
 package org.crsh.term;
 
+import org.crsh.console.ClientOutput;
 import org.crsh.console.Console;
-import org.crsh.console.ClientWriter;
 import org.crsh.console.Input;
 import org.crsh.term.processor.TermProcessor;
 import org.crsh.term.processor.TermResponseContext;
@@ -120,7 +120,7 @@ public class BaseTerm implements Term, Runnable {
     this.historyBuffer = null;
     this.historyCursor = -1;
     this.io = io;
-    this.console = new Console(new ClientWriter() {
+    this.console = new Console(new ClientOutput() {
       @Override
       protected void doCRLF() throws IOException {
         io.writeCRLF();
@@ -130,6 +130,12 @@ public class BaseTerm implements Term, Runnable {
       @Override
       protected void doData(String s) throws IOException {
         io.write(s);
+        io.flush();
+      }
+
+      @Override
+      protected void doData(char c) throws IOException {
+        io.write(c);
         io.flush();
       }
 
@@ -215,7 +221,8 @@ public class BaseTerm implements Term, Runnable {
           public void done(boolean close) {
             try {
               String p = prompt == null ? "%" : prompt;
-              BaseTerm.this.write("\r\n" + p);
+              console.getWriter().write("\r\n");
+              console.getWriter().write(p);
             } catch (IOException e) {
               e.printStackTrace();
             }
@@ -291,14 +298,14 @@ public class BaseTerm implements Term, Runnable {
       CodeType type = io.decode(code);
       switch (type) {
         case DELETE:
-          console.getWriter().del();
+          console.getInput().del();
           break;
         case UP:
         case DOWN:
           int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
           if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
             String s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
-            String t = console.getWriter().set(s);
+            String t = console.getInput().set(s);
             if (historyCursor == -1) {
               historyBuffer = t;
             }
@@ -309,10 +316,10 @@ public class BaseTerm implements Term, Runnable {
           }
           break;
         case RIGHT:
-          console.getWriter().moveRight();
+          console.getInput().moveRight();
           break;
         case LEFT:
-          console.getWriter().moveLeft();
+          console.getInput().moveLeft();
           break;
         case BREAK:
           log.debug("Want to cancel evaluation");
@@ -321,9 +328,9 @@ public class BaseTerm implements Term, Runnable {
         case CHAR:
           if (code >= 0 && code < 128) {
             if (code == 10) {
-              console.getWriter().write("\r\n");
+              console.getInput().write("\r\n");
             } else {
-              console.getWriter().write((char)code);
+              console.getInput().write((char)code);
             }
           } else {
             log.debug("Unhandled char " + code);
