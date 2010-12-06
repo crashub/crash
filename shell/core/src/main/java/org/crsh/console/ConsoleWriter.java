@@ -44,8 +44,6 @@ public abstract class ConsoleWriter {
 
   public abstract int appendDel() throws IOException;
 
-  public abstract int getSize();
-
   public abstract void moveRight() throws IOException;
 
   public abstract void moveLeft() throws IOException;

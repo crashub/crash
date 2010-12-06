@@ -27,6 +27,8 @@ import java.util.NoSuchElementException;
  */
 public abstract class ConsoleReader {
 
+  public abstract int getSize();
+
   public abstract boolean hasNext();
 
   public abstract Input next() throws NoSuchElementException;

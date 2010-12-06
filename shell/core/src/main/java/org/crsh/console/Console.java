@@ -53,6 +53,11 @@ public final class Console {
   /** . */
   private final ConsoleReader reader = new ConsoleReader() {
     @Override
+    public int getSize() {
+      return size;
+    }
+
+    @Override
     public boolean hasNext() {
       return lines.size() > 0;
     }
@@ -163,11 +168,6 @@ public final class Console {
     }
 
     @Override
-    public int getSize() {
-      return size;
-    }
-
-    @Override
     public void moveRight() throws IOException {
       if (curAt < size) {
         if (echo.doMoveRight())
@@ -270,5 +270,10 @@ public final class Console {
    */
   public ConsoleReader getReader() {
     return reader;
+  }
+
+
+  public ConsoleWriter getWriter() {
+    return writer;
   }
 }
