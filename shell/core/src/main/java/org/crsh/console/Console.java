@@ -42,7 +42,8 @@ public final class Console {
   private LinkedList<Input> lines;
 
   /** -1 means the starts of a new line. */
-  private int previous;
+//  private int previous;
+  private boolean previousCR;
 
   /** Whether or not we do echoing. */
   private boolean echoing;
@@ -141,7 +142,8 @@ public final class Console {
     this.size = 0;
     this.curAt = 0;
     this.lines = new LinkedList<Input>();
-    this.previous = -1;
+//    this.previous = -1;
+    this.previousCR = false;
     this.echoing = true;
     this.output = output;
   }
@@ -187,12 +189,12 @@ public final class Console {
   }
 
   private void appendData(char c) throws IOException {
-    if ((c == '\n' && previous == '\r') || (c == '\r' && previous == '\n')) {
-      previous = -1;
-    } else if (c == '\n' || c == '\r') {
+    if (previousCR && c == '\n') {
+      previousCR = false;
+    } else if (c == '\r' || c == '\n') {
+      previousCR = c == '\r';
       String line = new String(buffer, 0, size);
       lines.add(new Input.Chars(line));
-      previous = c;
       size = 0;
       curAt = size;
       echoCRLF();
@@ -207,10 +209,10 @@ public final class Console {
 
       //
       if (popped != -1) {
-        previous = buffer[size];
+//        previous = buffer[size];
         echoDel();
       } else {
-        previous = -1;
+//        previous = -1;
       }
 
       //
@@ -218,7 +220,7 @@ public final class Console {
     } else {
       // Cursor in body
       if (curAt == 0) {
-        previous = -1;
+//        previous = -1;
         return -1;
       }
       // remove previous char from buffer
@@ -305,7 +307,7 @@ public final class Console {
     if (curAt == size) {
       buffer[size++] = c;
       curAt = size;
-      previous = c;
+//      previous = c;
       echo(c);
     } else {
       // In body
@@ -324,7 +326,7 @@ public final class Console {
       while (curAt > saveCurAt) {
         moveLeft();
       }
-      previous = buffer[curAt-1];
+//      previous = buffer[curAt-1];
     }
   }
 }

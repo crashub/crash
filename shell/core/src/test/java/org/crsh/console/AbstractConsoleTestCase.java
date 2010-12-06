@@ -43,12 +43,22 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   }
 
   public void testReadLine() throws IOException {
-    String[] tests = {"a\n","a\r","a\n\r","a\r\n"};
-    for (String test : tests) {
+    for (String test : new String[]{"a\n","a\r","a\r\n"}) {
       Console console = newConsole();
       console.getInput().write(test);
       assertTrue(console.getReader().hasNext());
       assertEquals(new org.crsh.console.Input.Chars("a"), console.getReader().next());
+      assertFalse(console.getReader().hasNext());
+      assertEquals(0, console.getReader().getSize());
+    }
+
+    //
+    for (String test : new String[]{"a\n\n","a\n\r","a\r\r"}) {
+      Console console = newConsole();
+      console.getInput().write(test);
+      assertTrue(console.getReader().hasNext());
+      assertEquals(new org.crsh.console.Input.Chars("a"), console.getReader().next());
+      assertEquals(new org.crsh.console.Input.Chars(""), console.getReader().next());
       assertFalse(console.getReader().hasNext());
       assertEquals(0, console.getReader().getSize());
     }
