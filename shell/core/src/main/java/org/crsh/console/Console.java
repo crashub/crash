@@ -128,11 +128,7 @@ public final class Console {
       if ((c == '\n' && previous == '\r') || (c == '\r' && previous == '\n')) {
         previous = -1;
       } else if (c == '\n' || c == '\r') {
-        String line = new String(buffer, 0, size);
-        lines.add(new Input.Chars(line));
         previous = c;
-        size = 0;
-        curAt = size;
         output.doCRLF();
       } else {
         output.doData(c);

@@ -220,7 +220,7 @@ public class BaseTerm implements Term, Runnable {
 
           public void done(boolean close) {
             try {
-              String p = prompt == null ? "%" : prompt;
+              String p = prompt == null ? "% " : prompt;
               console.getWriter().write("\r\n");
               console.getWriter().write(p);
             } catch (IOException e) {
