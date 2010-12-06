@@ -152,4 +152,14 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   }
 
   protected abstract String getExpectedMoveLeftAtBeginningOfLine();
+
+  public void testClearBuffer() throws Exception {
+    Console console = newConsole();
+    console.getInput().write("a");
+    console.clearBuffer();
+    assertFalse(console.getReader().hasNext());
+    console.getInput().write("b\n");
+    assertEquals(new org.crsh.console.Input.Chars("b"), console.getReader().next());
+    assertFalse(console.getReader().hasNext());
+  }
 }

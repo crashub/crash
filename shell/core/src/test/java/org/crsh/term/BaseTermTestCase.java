@@ -56,14 +56,15 @@ public class BaseTermTestCase extends TestCase {
             return false;
           }
         }
+      } else if (action instanceof TermAction.CancelEvaluation) {
+        responseContext.done(false);
+        return true;
       } else {
         responseContext.done(true);
         return true;
       }
     }
   };
-
-
 
   public void testLine() throws Exception {
     Controller controller = create(ECHO_PROCESSOR);
@@ -100,6 +101,28 @@ public class BaseTermTestCase extends TestCase {
     controller.assertStop();
   }
 
+  public void testBreak() throws Exception {
+    Controller controller = create(ECHO_PROCESSOR);
+    controller.assertStart();
+
+    //
+    controller.connector.append("abc");
+    controller.connector.appendBreak();
+    controller.connector.assertChars("abc");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.connector.append("def\r\n");
+    controller.connector.assertChars("def");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("def");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.assertStop();
+  }
 
   private Controller create(TermProcessor processor) throws IOException {
     return new Controller(new TestTermConnector(), processor);
@@ -147,7 +170,7 @@ public class BaseTermTestCase extends TestCase {
       }
 
       //
-      assertEquals(running, true);
+      assertTrue(running);
 
       //
       connector.assertCRLF();
@@ -168,7 +191,7 @@ public class BaseTermTestCase extends TestCase {
     }
 
     public void assertStop() {
-      assertEquals(running, true);
+      assertTrue(running);
 
       //
       connector.append("bye\r\n");
@@ -186,7 +209,7 @@ public class BaseTermTestCase extends TestCase {
       }
 
       //
-      assertEquals(running, false);
+      assertFalse(running);
     }
   }
 }

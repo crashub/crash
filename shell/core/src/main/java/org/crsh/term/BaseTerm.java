@@ -323,7 +323,7 @@ public class BaseTerm implements Term, Runnable {
           break;
         case BREAK:
           log.debug("Want to cancel evaluation");
-//              clearBuffer();
+          console.clearBuffer();
           return new TermAction.CancelEvaluation();
         case CHAR:
           if (code >= 0 && code < 128) {

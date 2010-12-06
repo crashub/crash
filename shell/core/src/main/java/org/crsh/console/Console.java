@@ -152,8 +152,9 @@ public final class Console {
    * Clears the buffer without doing any echoing.
    */
   public void clearBuffer() {
-    curAt = 0;
-    size = 0;
+    this.previousCR = false;
+    this.curAt = 0;
+    this.size = 0;
   }
 
   public boolean isEchoing() {
