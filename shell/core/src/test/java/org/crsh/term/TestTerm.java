@@ -19,6 +19,8 @@
 
 package org.crsh.term;
 
+import org.crsh.term.processor.TermProcessor;
+import org.crsh.term.processor.TermResponseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

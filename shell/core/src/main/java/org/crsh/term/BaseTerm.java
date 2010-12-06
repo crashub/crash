@@ -19,6 +19,8 @@
 
 package org.crsh.term;
 
+import org.crsh.term.processor.TermProcessor;
+import org.crsh.term.processor.TermResponseContext;
 import org.crsh.term.spi.TermIO;
 import org.crsh.util.Input;
 import org.crsh.util.InputDecoder;

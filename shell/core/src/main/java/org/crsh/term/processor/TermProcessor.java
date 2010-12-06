@@ -17,24 +17,16 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term;
+package org.crsh.term.processor;
 
-import java.io.IOException;
+import org.crsh.term.TermAction;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface TermResponseContext {
+public interface TermProcessor {
 
-  void setEcho(boolean echo);
-
-  TermAction read() throws IOException;
-
-  void write(String msg) throws IOException;
-
-  void setPrompt(String prompt);
-
-  void done(boolean close);
+  boolean process(TermAction action, TermResponseContext responseContext);
 
 }
