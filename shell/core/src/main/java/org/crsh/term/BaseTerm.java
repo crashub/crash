@@ -20,7 +20,7 @@
 package org.crsh.term;
 
 import org.crsh.console.Console;
-import org.crsh.console.ConsoleEcho;
+import org.crsh.console.ClientWriter;
 import org.crsh.console.Input;
 import org.crsh.term.processor.TermProcessor;
 import org.crsh.term.processor.TermResponseContext;
@@ -120,7 +120,7 @@ public class BaseTerm implements Term, Runnable {
     this.historyBuffer = null;
     this.historyCursor = -1;
     this.io = io;
-    this.console = new Console(new ConsoleEcho() {
+    this.console = new Console(new ClientWriter() {
       @Override
       protected void doCRLF() throws IOException {
         io.writeCRLF();
@@ -199,7 +199,7 @@ public class BaseTerm implements Term, Runnable {
         TermResponseContext ctx = new TermResponseContext() {
 
           public void setEcho(boolean echo) {
-            console.getWriter().setEchoing(echo);
+            console.setEchoing(echo);
           }
           public TermAction read() throws IOException {
             return BaseTerm.this.read();
@@ -291,7 +291,7 @@ public class BaseTerm implements Term, Runnable {
       CodeType type = io.decode(code);
       switch (type) {
         case DELETE:
-          console.getWriter().appendDel();
+          console.getWriter().del();
           break;
         case UP:
         case DOWN:
@@ -321,9 +321,9 @@ public class BaseTerm implements Term, Runnable {
         case CHAR:
           if (code >= 0 && code < 128) {
             if (code == 10) {
-              console.getWriter().appendData("\r\n");
+              console.getWriter().write("\r\n");
             } else {
-              console.getWriter().appendData((char)code);
+              console.getWriter().write((char)code);
             }
           } else {
             log.debug("Unhandled char " + code);

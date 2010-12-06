@@ -22,6 +22,7 @@ package org.crsh.console;
 import java.util.NoSuchElementException;
 
 /**
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */

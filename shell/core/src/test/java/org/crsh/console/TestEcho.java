@@ -25,7 +25,7 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestEcho extends ConsoleEcho {
+public class TestEcho extends ClientWriter {
 
   /** . */
   private final StringBuilder builder = new StringBuilder();

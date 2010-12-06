@@ -22,29 +22,21 @@ package org.crsh.console;
 import java.io.IOException;
 
 /**
+ * Perform client write.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ConsoleWriter {
+public abstract class ClientWriter {
 
-  /**
-   * Clears the buffer without doing any echoing.
-   */
-  public abstract void clearBuffer();
+  protected abstract void doCRLF() throws IOException;
 
-  public abstract boolean isEchoing();
+  protected abstract void doData(String s) throws IOException;
 
-  public abstract void setEchoing(boolean echoing);
+  protected abstract void doDel() throws IOException;
 
-  public abstract String set(String s) throws IOException;
+  protected abstract boolean doMoveLeft() throws IOException;
 
-  public abstract void appendData(String s) throws IOException;
+  protected abstract boolean doMoveRight() throws IOException;
 
-  public abstract void appendData(char c) throws IOException;
-
-  public abstract int appendDel() throws IOException;
-
-  public abstract void moveRight() throws IOException;
-
-  public abstract void moveLeft() throws IOException;
 }
