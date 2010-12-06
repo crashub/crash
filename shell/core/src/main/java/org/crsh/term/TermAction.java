@@ -35,13 +35,13 @@ public class TermAction {
   public static class ReadLine extends TermAction {
 
     /** . */
-    private final String line;
+    private final CharSequence line;
 
-    public ReadLine(String line) {
+    public ReadLine(CharSequence line) {
       this.line = line;
     }
 
-    public String getLine() {
+    public CharSequence getLine() {
       return line;
     }
 

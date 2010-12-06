@@ -50,7 +50,7 @@ public class TestEcho extends ClientOutput {
   }
 
   @Override
-  protected void write(String s) throws IOException {
+  protected void write(CharSequence s) throws IOException {
     line.insert(position++, s);
   }
 

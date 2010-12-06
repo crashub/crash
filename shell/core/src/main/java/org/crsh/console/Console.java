@@ -39,7 +39,7 @@ public final class Console {
   private int curAt;
 
   /** . */
-  private LinkedList<Input> lines;
+  private LinkedList<CharSequence> lines;
 
   /** -1 means the starts of a new line. */
 //  private int previous;
@@ -54,7 +54,7 @@ public final class Console {
   private final ClientInput input = new ClientInput() {
 
     @Override
-    public String replace(CharSequence s) throws IOException {
+    public CharSequence replace(CharSequence s) throws IOException {
       StringBuilder builder = new StringBuilder();
       for (int i = appendDel();i != -1;i = appendDel()) {
         builder.append((char)i);
@@ -102,7 +102,7 @@ public final class Console {
     }
 
     @Override
-    public Input next() {
+    public CharSequence next() {
       if (lines.size() > 0) {
         return lines.removeFirst();
       } else {
@@ -141,7 +141,7 @@ public final class Console {
     this.buffer = new char[128];
     this.size = 0;
     this.curAt = 0;
-    this.lines = new LinkedList<Input>();
+    this.lines = new LinkedList<CharSequence>();
 //    this.previous = -1;
     this.previousCR = false;
     this.echoing = true;
@@ -195,7 +195,7 @@ public final class Console {
     } else if (c == '\r' || c == '\n') {
       previousCR = c == '\r';
       String line = new String(buffer, 0, size);
-      lines.add(new Input.Chars(line));
+      lines.add(line);
       size = 0;
       curAt = size;
       echoCRLF();

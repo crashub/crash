@@ -32,6 +32,6 @@ public abstract class ConsoleReader {
 
   public abstract boolean hasNext();
 
-  public abstract Input next() throws NoSuchElementException;
+  public abstract CharSequence next() throws NoSuchElementException;
 
 }

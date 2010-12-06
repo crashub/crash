@@ -30,6 +30,10 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   protected abstract boolean getSupportsCursorMove();
 
+  private static void assertEquals(CharSequence expected, CharSequence actual) {
+    assertEquals(expected.toString(), actual.toString());
+  }
+
   private Console newConsole() {
     return new Console(new TestEcho(getSupportsCursorMove()));
 
@@ -47,7 +51,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
       Console console = newConsole();
       console.getInput().write(test);
       assertTrue(console.getReader().hasNext());
-      assertEquals(new org.crsh.console.Input.Chars("a"), console.getReader().next());
+      assertEquals("a", console.getReader().next());
       assertFalse(console.getReader().hasNext());
       assertEquals(0, console.getReader().getSize());
     }
@@ -57,8 +61,8 @@ public abstract class AbstractConsoleTestCase extends TestCase {
       Console console = newConsole();
       console.getInput().write(test);
       assertTrue(console.getReader().hasNext());
-      assertEquals(new org.crsh.console.Input.Chars("a"), console.getReader().next());
-      assertEquals(new org.crsh.console.Input.Chars(""), console.getReader().next());
+      assertEquals("a", console.getReader().next());
+      assertEquals("", console.getReader().next());
       assertFalse(console.getReader().hasNext());
       assertEquals(0, console.getReader().getSize());
     }
@@ -70,7 +74,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     console.getInput().del();
     console.getInput().write("b\n");
     assertTrue(console.getReader().hasNext());
-    assertEquals(new Input.Chars("b"), console.getReader().next());
+    assertEquals("b", console.getReader().next());
     assertFalse(console.getReader().hasNext());
   }
 
@@ -80,7 +84,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     console.getInput().moveLeft();
     console.getInput().write("b\n");
     assertTrue(console.getReader().hasNext());
-    assertEquals(new Input.Chars(getExpectedMoveLeftInsert()), console.getReader().next());
+    assertEquals(getExpectedMoveLeftInsert(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
   }
 
@@ -93,7 +97,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     console.getInput().del();
     console.getInput().write("\n");
     assertTrue(console.getReader().hasNext());
-    assertEquals(new Input.Chars(getExpectedMoveLeftDel()), console.getReader().next());
+    assertEquals(getExpectedMoveLeftDel(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
   }
 
@@ -107,7 +111,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     console.getInput().moveRight();
     console.getInput().write("d\n");
     assertTrue(console.getReader().hasNext());
-    assertEquals(new Input.Chars(getExpectedMoveRightInsert()), console.getReader().next());
+    assertEquals(getExpectedMoveRightInsert(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
   }
 
@@ -122,7 +126,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     console.getInput().del();
     console.getInput().write("\n");
     assertTrue(console.getReader().hasNext());
-    assertEquals(new Input.Chars(getExpectedMoveRightDel()), console.getReader().next());
+    assertEquals(getExpectedMoveRightDel(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
   }
 
@@ -134,7 +138,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     console.getInput().moveRight();
     console.getInput().write("b\n");
     assertTrue(console.getReader().hasNext());
-    assertEquals(new Input.Chars(getExpectedMoveRightAtEndOfLine()), console.getReader().next());
+    assertEquals(getExpectedMoveRightAtEndOfLine(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
   }
 
@@ -147,7 +151,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     console.getInput().moveLeft();
     console.getInput().write("b\n");
     assertTrue(console.getReader().hasNext());
-    assertEquals(new Input.Chars(getExpectedMoveLeftAtBeginningOfLine()), console.getReader().next());
+    assertEquals(getExpectedMoveLeftAtBeginningOfLine(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
   }
 
@@ -159,7 +163,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     console.clearBuffer();
     assertFalse(console.getReader().hasNext());
     console.getInput().write("b\n");
-    assertEquals(new org.crsh.console.Input.Chars("b"), console.getReader().next());
+    assertEquals("b", console.getReader().next());
     assertFalse(console.getReader().hasNext());
   }
 }

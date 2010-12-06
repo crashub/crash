@@ -31,7 +31,7 @@ public abstract class ClientOutput {
 
   protected abstract void writeCRLF() throws IOException;
 
-  protected abstract void write(String s) throws IOException;
+  protected abstract void write(CharSequence s) throws IOException;
 
   protected abstract void write(char c) throws IOException;
 

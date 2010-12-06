@@ -85,7 +85,7 @@ public class TermShellAdapter implements TermProcessor {
     switch (status) {
       case READY:
         if (action instanceof TermAction.ReadLine) {
-          String line = ((TermAction.ReadLine)action).getLine();
+          String line = ((TermAction.ReadLine)action).getLine().toString();
           status = TermStatus.PROCESSING;
           log.debug("Submitting command " + line);
           connector.submitEvaluation(line, new ConnectorResponseContext() {
@@ -103,7 +103,7 @@ public class TermShellAdapter implements TermProcessor {
                 responseContext.setEcho(echo);
                 responseContext.write(s);
                 TermAction action = responseContext.read();
-                String line = null;
+                CharSequence line = null;
                 if (action instanceof TermAction.ReadLine) {
                   line = ((TermAction.ReadLine) action).getLine();
                   log.debug("Read from console");
@@ -111,7 +111,7 @@ public class TermShellAdapter implements TermProcessor {
                   log.debug("Ignoring action " + action + " returning null");
                 }
                 responseContext.write("\r\n");
-                return line;
+                return line.toString();
               } catch (Exception e) {
                 log.error("Reading from console failed", e);
                 return null;

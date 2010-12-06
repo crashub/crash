@@ -27,7 +27,7 @@ import java.io.IOException;
  */
 public abstract class ClientInput {
 
-  public abstract String replace(CharSequence s) throws IOException;
+  public abstract CharSequence replace(CharSequence s) throws IOException;
 
   public abstract void write(char c) throws IOException;
 

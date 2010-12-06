@@ -21,7 +21,6 @@ package org.crsh.term;
 
 import org.crsh.console.ClientOutput;
 import org.crsh.console.Console;
-import org.crsh.console.Input;
 import org.crsh.term.processor.TermProcessor;
 import org.crsh.term.processor.TermResponseContext;
 import org.crsh.term.spi.TermIO;
@@ -69,10 +68,10 @@ public class BaseTerm implements Term, Runnable {
   private final LinkedList<Awaiter> awaiters = new LinkedList<Awaiter>();
 
   /** . */
-  private final LinkedList<String> history;
+  private final LinkedList<CharSequence> history;
 
   /** . */
-  private String historyBuffer;
+  private CharSequence historyBuffer;
 
   /** . */
   private int historyCursor;
@@ -116,7 +115,7 @@ public class BaseTerm implements Term, Runnable {
   public BaseTerm(final TermIO io, TermProcessor processor) {
     this.processor = processor;
     this.status = new AtomicInteger(STATUS_INITIAL);
-    this.history = new LinkedList<String>();
+    this.history = new LinkedList<CharSequence>();
     this.historyBuffer = null;
     this.historyCursor = -1;
     this.io = io;
@@ -128,8 +127,8 @@ public class BaseTerm implements Term, Runnable {
       }
 
       @Override
-      protected void write(String s) throws IOException {
-        io.write(s);
+      protected void write(CharSequence s) throws IOException {
+        io.write(s.toString());
         io.flush();
       }
 
@@ -247,7 +246,7 @@ public class BaseTerm implements Term, Runnable {
           log.debug("Pushing back action " + action2);
           action = action2;
         } else if (action2 instanceof TermAction.ReadLine) {
-          String line = ((TermAction.ReadLine)action2).getLine();
+          CharSequence line = ((TermAction.ReadLine)action2).getLine();
           historyCursor = -1;
           historyBuffer = null;
           if (line.length() > 0) {
@@ -304,8 +303,8 @@ public class BaseTerm implements Term, Runnable {
         case DOWN:
           int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
           if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
-            String s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
-            String t = console.getInput().replace(s);
+            CharSequence s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
+            CharSequence t = console.getInput().replace(s);
             if (historyCursor == -1) {
               historyBuffer = t;
             }
@@ -336,12 +335,8 @@ public class BaseTerm implements Term, Runnable {
 
       //
       if (console.getReader().hasNext()) {
-        Input input = console.getReader().next();
-        if (input instanceof Input.Chars) {
-          return new TermAction.ReadLine(((Input.Chars)input).getValue());
-        } else {
-          throw new UnsupportedOperationException();
-        }
+        CharSequence input = console.getReader().next();
+        return new TermAction.ReadLine(input);
       }
     }
   }

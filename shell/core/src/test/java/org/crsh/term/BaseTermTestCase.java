@@ -42,7 +42,7 @@ public class BaseTermTestCase extends TestCase {
         responseContext.done(false);
         return true;
       } else if (action instanceof TermAction.ReadLine) {
-        String line = ((TermAction.ReadLine)action).getLine();
+        String line = ((TermAction.ReadLine)action).getLine().toString();
         if ("bye".equals(line)) {
           responseContext.done(true);
           return true;
