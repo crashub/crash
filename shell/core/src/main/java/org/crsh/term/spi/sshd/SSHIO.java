@@ -116,6 +116,8 @@ public class SSHIO implements TermIO {
 
   public CodeType decode(int code) {
     switch (code) {
+      case 3:
+        return CodeType.BREAK;
       case TerminalIO.DELETE:
         return CodeType.DELETE;
       case TerminalIO.UP:

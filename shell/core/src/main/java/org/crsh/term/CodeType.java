@@ -25,6 +25,18 @@ package org.crsh.term;
  */
 public enum CodeType {
 
-  DELETE, UP, DOWN, CHAR, RIGHT, LEFT
+  DELETE,
+
+  UP,
+
+  DOWN,
+
+  CHAR,
+
+  RIGHT,
+
+  LEFT,
+
+  BREAK,
 
 }

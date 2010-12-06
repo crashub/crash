@@ -281,12 +281,13 @@ public class BaseTerm extends InputDecoder implements Term {
         case LEFT:
           moveLeft();
           break;
+        case BREAK:
+          log.debug("Want to cancel evaluation");
+//              clearBuffer();
+          return new TermAction.CancelEvaluation();
         case CHAR:
           if (code >= 0 && code < 128) {
-            if (code == 3) {
-              log.debug("Want to cancel evaluation");
-              return new TermAction.CancelEvaluation();
-            }  else if (code == 10) {
+            if (code == 10) {
               appendData("\r\n");
             } else {
               appendData((char)code);

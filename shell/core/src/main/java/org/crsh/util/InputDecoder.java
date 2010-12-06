@@ -59,11 +59,19 @@ public abstract class InputDecoder implements Iterator<Input> {
     this.echoing = true;
   }
 
-  public boolean isEchoing() {
+  /**
+   * Clears the buffer without doing any echoing.
+   */
+  public final void clearBuffer() {
+    curAt = 0;
+    size = 0;
+  }
+
+  public final boolean isEchoing() {
     return echoing;
   }
 
-  public void setEchoing(boolean echoing) {
+  public final void setEchoing(boolean echoing) {
     this.echoing = echoing;
   }
 
