@@ -25,8 +25,8 @@ import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;
 
 import java.io.IOException;
-import java.io.PipedReader;
-import java.io.PipedWriter;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * A term io for simulating a term connector.
@@ -37,26 +37,25 @@ import java.io.PipedWriter;
 public class TestTermConnector implements TermIO {
 
   /** . */
-  private final PipedReader innerReader;
+  private final BlockingQueue<Integer> inner;
 
   /** . */
-  private final PipedWriter innerWriter;
-
-  /** . */
-  private final PipedReader outterReader;
-
-  /** . */
-  private final PipedWriter outterWriter;
+  private final BlockingQueue<String> outter;
 
   public TestTermConnector() throws IOException {
-    this.outterWriter = new PipedWriter();
-    this.outterReader = new PipedReader(outterWriter);
-    this.innerWriter = new PipedWriter();
-    this.innerReader = new PipedReader(innerWriter);
+    this.inner = new LinkedBlockingQueue<Integer>();
+    this.outter = new LinkedBlockingQueue<String>();
   }
 
   public int read() throws IOException {
-    return innerReader.read();
+    try {
+      return inner.take();
+    }
+    catch (InterruptedException e) {
+      AssertionFailedError afe = new AssertionFailedError();
+      afe.initCause(e);
+      throw afe;
+    }
   }
 
   public TestTermConnector appendDel() {
@@ -96,15 +95,9 @@ public class TestTermConnector implements TermIO {
   }
 
   private TestTermConnector append(int c) {
-    try {
-      innerWriter.write(c);
+      // Should assert this is true somehow
+      inner.add(c);
       return this;
-    }
-    catch (IOException e) {
-      AssertionFailedError afe = new AssertionFailedError();
-      afe.initCause(e);
-      throw afe;
-    }
   }
 
   public CodeType decode(int code) {
@@ -163,14 +156,17 @@ public class TestTermConnector implements TermIO {
       Assert.fail();
     }
     try {
-      Assert.assertEquals('[', outterReader.read());
+      StringBuilder sb = new StringBuilder();
+      sb.append("[");
       for (int i = 0;i < expected.length();i++) {
         char c = expected.charAt(i);
-        Assert.assertEquals(c, outterReader.read());
+        sb.append(c);
       }
-      Assert.assertEquals(']', outterReader.read());
+      sb.append("]");
+      String s = outter.take();
+      Assert.assertEquals(sb.toString(), s);
     }
-    catch (IOException e) {
+    catch (InterruptedException e) {
       AssertionFailedError afe = new AssertionFailedError();
       afe.initCause(e);
       throw afe;
@@ -191,30 +187,28 @@ public class TestTermConnector implements TermIO {
 
   public void write(char c) throws IOException {
     System.out.print("[" + c + "]");
-    outterWriter.write('[');
-    outterWriter.write(c);
-    outterWriter.write(']');
+    outter.add("[" + c + "]");
   }
 
   public void writeDel() throws IOException {
     System.out.print("[del]");
-    outterWriter.write("[del]");
+    outter.add("[del]");
   }
 
   public void writeCRLF() throws IOException {
     System.out.print("[crlf]");
-    outterWriter.write("[crlf]");
+    outter.add("[crlf]");
   }
 
   public boolean moveRight() throws IOException {
     System.out.print("[right]");
-    outterWriter.write("[right]");
+    outter.add("[right]");
     return true;
   }
 
   public boolean moveLeft() throws IOException {
     System.out.print("[left]");
-    outterWriter.write("[left]");
+    outter.add("[left]");
     return true;
   }
 }
