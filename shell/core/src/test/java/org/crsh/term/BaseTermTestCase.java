@@ -20,12 +20,15 @@
 package org.crsh.term;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.term.processor.TermProcessor;
 import org.crsh.term.processor.TermResponseContext;
 import org.crsh.term.spi.TestTermConnector;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -33,95 +36,157 @@ import java.io.IOException;
  */
 public class BaseTermTestCase extends TestCase {
 
-  public void testFoo() throws Exception {
-
-    TestTermConnector connector = new TestTermConnector();
-
-    BaseTerm baseTerm = new BaseTerm(connector, new TermProcessor() {
-      public boolean process(TermAction action, TermResponseContext responseContext) {
-        if (action instanceof TermAction.Init) {
-          responseContext.done(false);
+  private static final TermProcessor ECHO_PROCESSOR = new TermProcessor() {
+    public boolean process(TermAction action, TermResponseContext responseContext) {
+      if (action instanceof TermAction.Init) {
+        responseContext.done(false);
+        return true;
+      } else if (action instanceof TermAction.ReadLine) {
+        String line = ((TermAction.ReadLine)action).getLine();
+        if ("bye".equals(line)) {
+          responseContext.done(true);
           return true;
-        } else if (action instanceof TermAction.ReadLine) {
+        } else {
           try {
-            responseContext.write(((TermAction.ReadLine)action).getLine());
+            responseContext.write(line);
             responseContext.done(false);
             return true;
           }
           catch (IOException e) {
             return false;
           }
-        } else {
-          responseContext.done(true);
-          return true;
         }
+      } else {
+        responseContext.done(true);
+        return true;
       }
-    });
+    }
+  };
 
-    TermController controller = run(baseTerm);
 
-    controller.assertRunning();
+
+  public void testLine() throws Exception {
+    Controller controller = create(ECHO_PROCESSOR);
+    controller.assertStart();
 
     //
-    connector.assertCRLF();
-    connector.assertChars("% ");
+    controller.connector.append("abc\r\n");
+    controller.connector.assertChars("abc");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("abc");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
 
     //
-    connector.append("abc\r\n");
-    connector.assertChars("abc");
-    connector.assertCRLF();
-    connector.assertChars("abc");
-    connector.assertCRLF();
-    connector.assertChars("% ");
-
-/*
-    //
-    connector.append("abc");
-    connector.appendDel();
-    connector.append("\r\n");
-    connector.assertChars("abc");
-    connector.assertDel();
-    connector.assertCRLF();
-    connector.assertChars("ab");
-    connector.assertCRLF();
-    connector.assertChars("% ");
-*/
-
-
+    controller.assertStop();
   }
 
-  private TermController run(BaseTerm term) {
-    TermController controller = new TermController(term);
-    controller.start();
-    return controller;
+  public void testDel() throws Exception {
+    Controller controller = create(ECHO_PROCESSOR);
+    controller.assertStart();
+
+    //
+    controller.connector.append("abc");
+    controller.connector.appendDel();
+    controller.connector.append("\r\n");
+    controller.connector.assertChars("abc");
+    controller.connector.assertDel();
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("ab");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.assertStop();
   }
 
-  private class TermController extends Thread {
 
-    /** . */
-    private final BaseTerm term;
+  private Controller create(TermProcessor processor) throws IOException {
+    return new Controller(new TestTermConnector(), processor);
+  }
+
+  private class Controller extends BaseTerm {
 
     /** . */
     private volatile boolean running;
 
-    private TermController(BaseTerm term) {
-      this.term = term;
+    /** . */
+    private final CountDownLatch startSync;
+
+    /** . */
+    private final CountDownLatch stopSync;
+
+    /** . */
+    private final Thread thread;
+
+    /** . */
+    private final TestTermConnector connector;
+
+    private Controller(TestTermConnector connector, TermProcessor processor) {
+      super(connector, processor);
+
+      //
       this.running = true;
+      this.startSync = new CountDownLatch(1);
+      this.stopSync = new CountDownLatch(1);
+      this.thread = new Thread(this);
+      this.connector = connector;
+    }
+
+    public void assertStart() {
+      thread.start();
+
+      //
+      try {
+        assertTrue(startSync.await(1, TimeUnit.SECONDS));
+      }
+      catch (InterruptedException e) {
+        AssertionFailedError afe = new AssertionFailedError();
+        afe.initCause(e);
+        throw afe;
+      }
+
+      //
+      assertEquals(running, true);
+
+      //
+      connector.assertCRLF();
+      connector.assertChars("% ");
     }
 
     @Override
     public void run() {
+      running = true;
+      startSync.countDown();
       try {
-        term.run();
+        super.run();
       }
       finally {
         running = false;
+        stopSync.countDown();
       }
     }
 
-    public void assertRunning() {
-      Assert.assertTrue(running);
+    public void assertStop() {
+      assertEquals(running, true);
+
+      //
+      connector.append("bye\r\n");
+      connector.assertChars("bye");
+      connector.assertCRLF();
+
+      //
+      try {
+        assertTrue(stopSync.await(4, TimeUnit.SECONDS));
+      }
+      catch (InterruptedException e) {
+        AssertionFailedError afe = new AssertionFailedError();
+        afe.initCause(e);
+        throw afe;
+      }
+
+      //
+      assertEquals(running, false);
     }
   }
-
 }

@@ -327,11 +327,7 @@ public class BaseTerm implements Term, Runnable {
           return new TermAction.CancelEvaluation();
         case CHAR:
           if (code >= 0 && code < 128) {
-            if (code == 10) {
-              console.getInput().write("\r\n");
-            } else {
-              console.getInput().write((char)code);
-            }
+            console.getInput().write((char)code);
           } else {
             log.debug("Unhandled char " + code);
           }
