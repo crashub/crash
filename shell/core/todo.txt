@@ -6,3 +6,5 @@
 
 - rename login.groovy and logout.groovy to something better
 - help --verbose
+
+- repackage WEB-INF with "crash" directory
