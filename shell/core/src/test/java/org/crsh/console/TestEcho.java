@@ -50,22 +50,22 @@ public class TestEcho extends ClientOutput {
   }
 
   @Override
-  protected void doData(String s) throws IOException {
+  protected void write(String s) throws IOException {
     line.insert(position++, s);
   }
 
   @Override
-  protected void doData(char c) throws IOException {
+  protected void write(char c) throws IOException {
     line.insert(position++, c);
   }
 
   @Override
-  protected void doDel() throws IOException {
+  protected void writeDel() throws IOException {
     line.deleteCharAt(--position);
   }
 
   @Override
-  protected boolean doMoveRight() {
+  protected boolean writeMoveRight() {
     if (supportsCursorMove) {
       position++;
       return true;
@@ -75,14 +75,14 @@ public class TestEcho extends ClientOutput {
   }
 
   @Override
-  protected void doCRLF() throws IOException {
+  protected void writeCRLF() throws IOException {
     builder.append(line.toString());
     line.setLength(0);
     position = 0;
   }
 
   @Override
-  protected boolean doMoveLeft() {
+  protected boolean writeMoveLeft() {
     if (supportsCursorMove) {
       position--;
       return true;

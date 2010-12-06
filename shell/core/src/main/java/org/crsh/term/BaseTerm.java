@@ -122,36 +122,36 @@ public class BaseTerm implements Term, Runnable {
     this.io = io;
     this.console = new Console(new ClientOutput() {
       @Override
-      protected void doCRLF() throws IOException {
+      protected void writeCRLF() throws IOException {
         io.writeCRLF();
         io.flush();
       }
 
       @Override
-      protected void doData(String s) throws IOException {
+      protected void write(String s) throws IOException {
         io.write(s);
         io.flush();
       }
 
       @Override
-      protected void doData(char c) throws IOException {
+      protected void write(char c) throws IOException {
         io.write(c);
         io.flush();
       }
 
       @Override
-      protected void doDel() throws IOException {
+      protected void writeDel() throws IOException {
         io.writeDel();
         io.flush();
       }
 
       @Override
-      protected boolean doMoveLeft() throws IOException {
+      protected boolean writeMoveLeft() throws IOException {
         return io.moveLeft();
       }
 
       @Override
-      protected boolean doMoveRight() throws IOException {
+      protected boolean writeMoveRight() throws IOException {
         return io.moveRight();
       }
     });
@@ -305,7 +305,7 @@ public class BaseTerm implements Term, Runnable {
           int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
           if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
             String s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
-            String t = console.getInput().set(s);
+            String t = console.getInput().replace(s);
             if (historyCursor == -1) {
               historyBuffer = t;
             }

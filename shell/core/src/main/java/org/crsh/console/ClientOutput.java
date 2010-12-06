@@ -29,16 +29,16 @@ import java.io.IOException;
  */
 public abstract class ClientOutput {
 
-  protected abstract void doCRLF() throws IOException;
+  protected abstract void writeCRLF() throws IOException;
 
-  protected abstract void doData(String s) throws IOException;
+  protected abstract void write(String s) throws IOException;
 
-  protected abstract void doData(char c) throws IOException;
+  protected abstract void write(char c) throws IOException;
 
-  protected abstract void doDel() throws IOException;
+  protected abstract void writeDel() throws IOException;
 
-  protected abstract boolean doMoveLeft() throws IOException;
+  protected abstract boolean writeMoveLeft() throws IOException;
 
-  protected abstract boolean doMoveRight() throws IOException;
+  protected abstract boolean writeMoveRight() throws IOException;
 
 }

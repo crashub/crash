@@ -54,7 +54,7 @@ public final class Console {
   private final ClientInput input = new ClientInput() {
 
     @Override
-    public String set(String s) throws IOException {
+    public String replace(CharSequence s) throws IOException {
       StringBuilder builder = new StringBuilder();
       for (int i = appendDel();i != -1;i = appendDel()) {
         builder.append((char)i);
@@ -130,9 +130,9 @@ public final class Console {
         previous = -1;
       } else if (c == '\n' || c == '\r') {
         previous = c;
-        output.doCRLF();
+        output.writeCRLF();
       } else {
-        output.doData(c);
+        output.write(c);
       }
     }
   };
@@ -183,7 +183,7 @@ public final class Console {
     return writer;
   }
 
-  private void appendData(String s) throws IOException {
+  private void appendData(CharSequence s) throws IOException {
     for (int i = 0;i < s.length();i++) {
       appendData(s.charAt(i));
     }
@@ -234,7 +234,7 @@ public final class Console {
       moveLeft();
       // Redisplay from cursor to end
       String disp = new String(buffer, curAt, size - curAt + 1);
-      output.doData(disp);
+      output.write(disp);
       // position cursor one to left from where started
       int saveCurAt = curAt;
       curAt = size + 1;   // Size before delete
@@ -250,7 +250,7 @@ public final class Console {
 
   private void moveRight() throws IOException {
     if (curAt < size) {
-      if (output.doMoveRight())
+      if (output.writeMoveRight())
       {
         curAt++;
       }
@@ -259,7 +259,7 @@ public final class Console {
 
   private void moveLeft() throws IOException {
     if (curAt > 0) {
-      if (output.doMoveLeft())
+      if (output.writeMoveLeft())
       {
         curAt--;
       }
@@ -272,19 +272,19 @@ public final class Console {
 
   private void echo(String s) throws IOException {
     if (echoing) {
-      output.doData(s);
+      output.write(s);
     }
   }
 
   private void echoDel() throws IOException {
     if (echoing) {
-      output.doDel();
+      output.writeDel();
     }
   }
 
   private void echoCRLF() throws IOException {
     if (echoing) {
-      output.doCRLF();
+      output.writeCRLF();
     }
   }
 
@@ -320,7 +320,7 @@ public final class Console {
       // Adjust size and display from inserted character to end
       ++size;
       String disp = new String(buffer, curAt, size - curAt);
-      output.doData(disp);
+      output.write(disp);
       // Move cursor to original character
       int saveCurAt = ++curAt;
       curAt = size;
