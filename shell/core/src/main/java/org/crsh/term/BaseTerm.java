@@ -19,11 +19,12 @@
 
 package org.crsh.term;
 
+import org.crsh.console.Console;
+import org.crsh.console.ConsoleEcho;
+import org.crsh.console.Input;
 import org.crsh.term.processor.TermProcessor;
 import org.crsh.term.processor.TermResponseContext;
 import org.crsh.term.spi.TermIO;
-import org.crsh.util.Input;
-import org.crsh.util.InputDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class BaseTerm extends InputDecoder implements Term {
+public class BaseTerm implements Term, Runnable {
 
   /** . */
   private static final int STATUS_INITIAL = 0;
@@ -82,6 +83,9 @@ public class BaseTerm extends InputDecoder implements Term {
   /** . */
   private final TermIO io;
 
+  /** . */
+  private final Console console;
+
   private static class Awaiter {
 
     TermAction action;
@@ -109,13 +113,42 @@ public class BaseTerm extends InputDecoder implements Term {
     this(io, null);
   }
 
-  public BaseTerm(TermIO io, TermProcessor processor) {
+  public BaseTerm(final TermIO io, TermProcessor processor) {
     this.processor = processor;
     this.status = new AtomicInteger(STATUS_INITIAL);
     this.history = new LinkedList<String>();
     this.historyBuffer = null;
     this.historyCursor = -1;
     this.io = io;
+    this.console = new Console(new ConsoleEcho() {
+      @Override
+      protected void doCRLF() throws IOException {
+        io.writeCRLF();
+        io.flush();
+      }
+
+      @Override
+      protected void doData(String s) throws IOException {
+        io.write(s);
+        io.flush();
+      }
+
+      @Override
+      protected void doDel() throws IOException {
+        io.writeDel();
+        io.flush();
+      }
+
+      @Override
+      protected boolean doMoveLeft() throws IOException {
+        return io.moveLeft();
+      }
+
+      @Override
+      protected boolean doMoveRight() throws IOException {
+        return io.moveRight();
+      }
+    });
   }
 
   public void run() {
@@ -166,7 +199,7 @@ public class BaseTerm extends InputDecoder implements Term {
         TermResponseContext ctx = new TermResponseContext() {
 
           public void setEcho(boolean echo) {
-            BaseTerm.this.setEchoing(echo);
+            console.getWriter().setEchoing(echo);
           }
           public TermAction read() throws IOException {
             return BaseTerm.this.read();
@@ -258,14 +291,14 @@ public class BaseTerm extends InputDecoder implements Term {
       CodeType type = io.decode(code);
       switch (type) {
         case DELETE:
-          appendDel();
+          console.getWriter().appendDel();
           break;
         case UP:
         case DOWN:
           int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
           if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
             String s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
-            String t = set(s);
+            String t = console.getWriter().set(s);
             if (historyCursor == -1) {
               historyBuffer = t;
             }
@@ -276,10 +309,10 @@ public class BaseTerm extends InputDecoder implements Term {
           }
           break;
         case RIGHT:
-          moveRight();
+          console.getWriter().moveRight();
           break;
         case LEFT:
-          moveLeft();
+          console.getWriter().moveLeft();
           break;
         case BREAK:
           log.debug("Want to cancel evaluation");
@@ -288,9 +321,9 @@ public class BaseTerm extends InputDecoder implements Term {
         case CHAR:
           if (code >= 0 && code < 128) {
             if (code == 10) {
-              appendData("\r\n");
+              console.getWriter().appendData("\r\n");
             } else {
-              appendData((char)code);
+              console.getWriter().appendData((char)code);
             }
           } else {
             log.debug("Unhandled char " + code);
@@ -299,8 +332,8 @@ public class BaseTerm extends InputDecoder implements Term {
       }
 
       //
-      if (hasNext()) {
-        Input input = next();
+      if (console.getReader().hasNext()) {
+        Input input = console.getReader().next();
         if (input instanceof Input.Chars) {
           return new TermAction.ReadLine(((Input.Chars)input).getValue());
         } else {
@@ -313,31 +346,5 @@ public class BaseTerm extends InputDecoder implements Term {
   public void write(String msg) throws IOException {
     io.write(msg);
     io.flush();
-  }
-
-  @Override
-  protected void doEchoCRLF() throws IOException {
-    io.writeCRLF();
-    io.flush();
-  }
-
-  @Override
-  protected void doEchoDel() throws IOException {
-    io.writeDel();
-    io.flush();
-  }
-
-  @Override
-  protected void doEcho(String s) throws IOException {
-    io.write(s);
-    io.flush();
-  }
-  @Override
-  protected boolean doMoveRight() throws IOException {
-    return io.moveRight();
-  }
-  @Override
-  protected boolean doMoveLeft() throws IOException {
-    return io.moveLeft();
   }
 }
