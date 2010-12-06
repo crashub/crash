@@ -124,6 +124,89 @@ public class BaseTermTestCase extends TestCase {
     controller.assertStop();
   }
 
+  public void testInsert() throws Exception {
+    Controller controller = create(ECHO_PROCESSOR);
+    controller.assertStart();
+
+    //
+    controller.connector.append("ab");
+    controller.connector.appendMoveLeft();
+    controller.connector.append("c\r\n");
+    controller.connector.assertChars("ab");
+    controller.connector.assertMoveLeft();
+    controller.connector.assertChars("cb");
+    controller.connector.assertMoveLeft();
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("acb");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.assertStop();
+  }
+
+  public void testIdempotentMoveRight() throws Exception {
+    Controller controller = create(ECHO_PROCESSOR);
+    controller.assertStart();
+
+    //
+    controller.connector.append("a");
+    controller.connector.appendMoveRight();
+    controller.connector.append("\r\n");
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.assertStop();
+  }
+
+  public void testIdempotentMoveLeft() throws Exception {
+    Controller controller = create(ECHO_PROCESSOR);
+    controller.assertStart();
+
+    //
+    controller.connector.appendMoveLeft();
+    controller.connector.append("a");
+    controller.connector.append("\r\n");
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.assertStop();
+  }
+
+  public void testMoveUp() throws Exception {
+    Controller controller = create(ECHO_PROCESSOR);
+    controller.assertStart();
+
+    //
+    controller.connector.append("a");
+    controller.connector.append("\r\n");
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.connector.appendMoveUp();
+    controller.connector.assertChars("a");
+    controller.connector.append("\r\n");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.assertStop();
+  }
+
   private Controller create(TermProcessor processor) throws IOException {
     return new Controller(new TestTermConnector(), processor);
   }

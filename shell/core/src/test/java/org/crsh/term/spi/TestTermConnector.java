@@ -117,6 +117,10 @@ public class TestTermConnector implements TermIO {
         return CodeType.UP;
       case TerminalIO.DOWN:
         return CodeType.DOWN;
+      case TerminalIO.LEFT:
+        return CodeType.LEFT;
+      case TerminalIO.RIGHT:
+        return CodeType.RIGHT;
       default:
         return CodeType.CHAR;
     }
