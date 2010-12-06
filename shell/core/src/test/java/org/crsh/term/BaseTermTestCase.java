@@ -207,6 +207,57 @@ public class BaseTermTestCase extends TestCase {
     controller.assertStop();
   }
 
+  public void testIdempotentMoveUp() throws Exception {
+    Controller controller = create(ECHO_PROCESSOR);
+    controller.assertStart();
+
+    //
+    controller.connector.append("a");
+    controller.connector.append("\r\n");
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.connector.appendMoveUp();
+    controller.connector.appendMoveUp();
+    controller.connector.assertChars("a");
+    controller.connector.append("\r\n");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.assertStop();
+  }
+
+  public void testIdempotentMoveDown() throws Exception {
+    Controller controller = create(ECHO_PROCESSOR);
+    controller.assertStart();
+
+    //
+    controller.connector.append("a");
+    controller.connector.append("\r\n");
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("a");
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.connector.appendMoveDown();
+    controller.connector.append("\r\n");
+    controller.connector.assertCRLF();
+    controller.connector.assertCRLF();
+    controller.connector.assertChars("% ");
+
+    //
+    controller.assertStop();
+  }
+
   private Controller create(TermProcessor processor) throws IOException {
     return new Controller(new TestTermConnector(), processor);
   }
