@@ -56,10 +56,17 @@
   <!-- the war file -->
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/</outputDirectory>
-      <outputFileNameMapping>crsh.war</outputFileNameMapping>
+      <outputDirectory>/deploy/core</outputDirectory>
+      <outputFileNameMapping>crash.war</outputFileNameMapping>
       <includes>
         <include>org.crsh:crsh.shell.core:war</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/deploy/gatein</outputDirectory>
+      <outputFileNameMapping>crash.war</outputFileNameMapping>
+      <includes>
+        <include>org.crsh:crsh.shell.jcr:war</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -74,6 +81,7 @@
       <unpack>true</unpack>
       <includes>
         <include>org.crsh:crsh.shell.core:jar:sources</include>
+        <include>org.crsh:crsh.shell.jcr:jar:sources</include>
       </includes>
     </dependencySet>
     <dependencySet>
