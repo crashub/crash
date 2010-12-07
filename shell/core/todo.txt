@@ -8,3 +8,5 @@
 - help --verbose
 
 - repackage WEB-INF with "crash" directory
+
+- study how the ConsoleWriter should affect the buffer because it fucking does probably
