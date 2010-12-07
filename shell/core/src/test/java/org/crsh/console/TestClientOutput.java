@@ -57,6 +57,11 @@ public class TestClientOutput extends ClientOutput {
   }
 
   @Override
+  protected void flush() throws IOException {
+    // Noop until we test it
+  }
+
+  @Override
   protected void write(CharSequence s) throws IOException {
     for (int i = 0;i < s.length();i++) {
       char c = s.charAt(i);
