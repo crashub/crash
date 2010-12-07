@@ -66,6 +66,8 @@
 
   <dependencyManagement>
     <dependencies>
+
+      <!-- Module core -->
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
@@ -96,6 +98,39 @@
         <version>1.0.0-beta17-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
+
+      <!-- Module JCR -->
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.jcr</artifactId>
+        <version>1.0.0-beta17-SNAPSHOT</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.jcr</artifactId>
+        <version>1.0.0-beta17-SNAPSHOT</version>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.jcr</artifactId>
+        <version>1.0.0-beta17-SNAPSHOT</version>
+        <classifier>javadoc</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.jcr</artifactId>
+        <version>1.0.0-beta17-SNAPSHOT</version>
+        <type>test-jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.jcr</artifactId>
+        <version>1.0.0-beta17-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
+
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
@@ -109,6 +144,74 @@
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>
+
+      <!-- Thirdparty dependencies -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.kernel</groupId>
+        <artifactId>exo.kernel.container</artifactId>
+        <version>2.1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.jcr</groupId>
+        <artifactId>exo.jcr.component.core</artifactId>
+        <version>1.11.1</version>
+      </dependency>
+      <dependency>
+        <groupId>args4j</groupId>
+        <artifactId>args4j</artifactId>
+        <version>2.0.10</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>1.6.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sshd</groupId>
+        <artifactId>sshd-core</artifactId>
+        <version>0.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sshd</groupId>
+        <artifactId>sshd-pam</artifactId>
+        <version>0.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.mina</groupId>
+        <artifactId>mina-core</artifactId>
+        <version>2.0.0-RC1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15</artifactId>
+        <version>1.40</version>
+      </dependency>
+      <dependency>
+        <groupId>net.wimpi</groupId>
+        <artifactId>telnetd-x</artifactId>
+        <version>2.1.1-CRASH-r14</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

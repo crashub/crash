@@ -29,6 +29,16 @@
           </dependency>
           <dependency>
             <groupId>org.crsh</groupId>
+            <artifactId>crsh.shell.jcr</artifactId>
+            <type>war</type>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.shell.jcr</artifactId>
+            <classifier>sources</classifier>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
             <artifactId>crsh.doc</artifactId>
             <type>pdf</type>
           </dependency>

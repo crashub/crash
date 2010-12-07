@@ -13,51 +13,6 @@
   <name>CRaSH core</name>
   <description>The CRaSH core module</description>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>args4j</groupId>
-        <artifactId>args4j</artifactId>
-        <version>2.0.10</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>1.6.5</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.sshd</groupId>
-        <artifactId>sshd-core</artifactId>
-        <version>0.4.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.sshd</groupId>
-        <artifactId>sshd-pam</artifactId>
-        <version>0.4.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.mina</groupId>
-        <artifactId>mina-core</artifactId>
-        <version>2.0.0-RC1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.bouncycastle</groupId>
-        <artifactId>bcprov-jdk15</artifactId>
-        <version>1.40</version>
-      </dependency>
-      <dependency>
-        <groupId>net.wimpi</groupId>
-        <artifactId>telnetd-x</artifactId>
-        <version>2.1.1-CRASH-r14</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
 
     <!-- Should be provided by assembly plugin will fail if so -->
