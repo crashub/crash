@@ -19,6 +19,7 @@
 
 package org.crsh.console;
 
+import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
 import java.io.IOException;
@@ -43,6 +44,16 @@ public class TestClientOutput extends ClientOutput {
 
   public TestClientOutput(boolean supportsCursorMove) {
     this.supportsCursorMove = supportsCursorMove;
+  }
+
+  public void assertChars(String s) {
+    Assert.assertTrue(line.length() >= s.length());
+    Assert.assertEquals(s, line.substring(0, s.length()));
+    line.delete(0, s.length());
+  }
+
+  public void assertEmpty() {
+    Assert.assertEquals(0, line.length());
   }
 
   @Override

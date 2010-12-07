@@ -115,7 +115,7 @@ public final class Console {
   private final ConsoleWriter writer = new ConsoleWriter() {
 
     //
-    private int previous;
+    private boolean previousCR;
 
     @Override
     public void write(CharSequence s) throws IOException {
@@ -126,10 +126,10 @@ public final class Console {
     }
 
     public void write(char c) throws IOException {
-      if ((c == '\n' && previous == '\r') || (c == '\r' && previous == '\n')) {
-        previous = -1;
-      } else if (c == '\n' || c == '\r') {
-        previous = c;
+      if (previousCR && c == '\n') {
+        previousCR = false;
+      } else if (c == '\r' || c == '\n') {
+        previousCR = c == '\r';
         clientOutput.writeCRLF();
       } else {
         clientOutput.write(c);
@@ -142,7 +142,6 @@ public final class Console {
     this.size = 0;
     this.curAt = 0;
     this.lines = new LinkedList<CharSequence>();
-//    this.previous = -1;
     this.previousCR = false;
     this.echoing = true;
     this.clientOutput = clientOutput;

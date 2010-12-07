@@ -39,18 +39,22 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   }
 
-/*
   public void testWriterCRLF() throws IOException {
-
-    TestClientOutput test = new TestClientOutput(getSupportsCursorMove());
-    Console console = new Console(test);
-    console.getWriter().write("\n");
-    test.
-
-
-
+    for (String test : new String[]{"a\n","a\r","a\r\n"}) {
+      TestClientOutput output = new TestClientOutput(getSupportsCursorMove());
+      Console console = new Console(output);
+      console.getWriter().write(test);
+      output.assertChars("a\r\n");
+      output.assertEmpty();
+    }
+    for (String test : new String[]{"a\n\n","a\n\r","a\r\r"}) {
+      TestClientOutput output = new TestClientOutput(getSupportsCursorMove());
+      Console console = new Console(output);
+      console.getWriter().write(test);
+      output.assertChars("a\r\n\r\n");
+      output.assertEmpty();
+    }
   }
-*/
 
   public void testNoCR() throws IOException {
     Console console = newConsole();
