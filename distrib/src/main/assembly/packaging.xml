@@ -25,7 +25,6 @@
     <format>tar.gz</format>
   </formats>
 
-  <!-- buildable -->
   <fileSets>
     <fileSet>
       <outputDirectory>.</outputDirectory>
@@ -35,7 +34,7 @@
       </includes>
     </fileSet>
     <fileSet>
-      <outputDirectory>javadoc</outputDirectory>
+      <outputDirectory>doc/javadoc</outputDirectory>
       <directory>target/site/apidocs</directory>
       <includes>
         <include>**/*</include>
@@ -43,7 +42,6 @@
     </fileSet>
   </fileSets>
 
-  <!-- the war file -->
   <dependencySets>
     <dependencySet>
       <outputDirectory>/deploy/core</outputDirectory>
@@ -60,13 +58,6 @@
       </includes>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/javadoc</outputDirectory>
-      <unpack>true</unpack>
-      <includes>
-        <include>org.crsh:crsh.distrib:jar:javadoc</include>
-      </includes>
-    </dependencySet>
-    <dependencySet>
       <outputDirectory>/src</outputDirectory>
       <unpack>true</unpack>
       <includes>
@@ -75,7 +66,7 @@
       </includes>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/doc</outputDirectory>
+      <outputDirectory>/doc/html</outputDirectory>
       <unpack>true</unpack>
       <includes>
         <include>org.crsh:crsh.doc:zip:html</include>
@@ -83,6 +74,7 @@
     </dependencySet>
     <dependencySet>
       <outputDirectory>/doc</outputDirectory>
+      <outputFileNameMapping>crash.pdf</outputFileNameMapping>
       <includes>
         <include>org.crsh:crsh.doc:pdf</include>
       </includes>
