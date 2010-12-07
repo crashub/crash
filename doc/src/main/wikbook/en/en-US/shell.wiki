@@ -1,6 +1,12 @@
 = Deployment =
 
-Copy the crsh.war in server running eXo Portal 2.5 or GateIn.
+CRaSH is a war file that deploys in a servlet container and there are two packaging available
+
+* A core war file found under //deploy/core/crash.war// provides the base CRaSH functionnalities.
+* A GateIn war file found under //deploy/gatein/crash.war// provides the additional JCR features but deploys only in
+ a GateIn server.
+
+You have to copy the crash.war in the appropriate server, regardless of the packaging you use.
 
 = Shell usage =
 
