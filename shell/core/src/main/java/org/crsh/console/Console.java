@@ -119,6 +119,10 @@ public final class Console {
 
     @Override
     public void write(CharSequence s) throws IOException {
+
+      // Julien : should make that more efficient :-)
+      // because that likely triggers a flush for every char
+
       for (int i = 0;i < s.length();i++) {
         char c = s.charAt(i);
         write(c);

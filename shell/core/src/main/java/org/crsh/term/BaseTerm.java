@@ -342,7 +342,6 @@ public class BaseTerm implements Term, Runnable {
   }
 
   public void write(String msg) throws IOException {
-    io.write(msg);
-    io.flush();
+    console.getWriter().write(msg);
   }
 }
