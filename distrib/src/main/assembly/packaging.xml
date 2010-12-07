@@ -27,26 +27,16 @@
 
   <!-- buildable -->
   <fileSets>
-<!--
     <fileSet>
-      <outputDirectory>maven</outputDirectory>
-      <directory>.</directory>
-      <includes>
-        <include>pom.xml</include>
-        <include>src/**/*</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <outputDirectory>javadocs</outputDirectory>
-      <directory>target/site/apidocs</directory>
+      <outputDirectory>.</outputDirectory>
+      <directory>src/main/packaging</directory>
       <includes>
         <include>**/*</include>
       </includes>
     </fileSet>
--->
     <fileSet>
-      <outputDirectory>.</outputDirectory>
-      <directory>src/main/packaging</directory>
+      <outputDirectory>javadoc</outputDirectory>
+      <directory>target/site/apidocs</directory>
       <includes>
         <include>**/*</include>
       </includes>
@@ -73,7 +63,7 @@
       <outputDirectory>/javadoc</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.shell.core:jar:javadoc</include>
+        <include>org.crsh:crsh.distrib:jar:javadoc</include>
       </includes>
     </dependencySet>
     <dependencySet>

@@ -56,6 +56,31 @@
         </dependencies>
         <build>
           <plugins>
+
+            <!-- Generate aggregated javadoc -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <version>2.7</version>
+              <executions>
+                <execution>
+                  <id>javadoc</id>
+                  <goals>
+                    <goal>javadoc</goal>
+                  </goals>
+                  <configuration>
+                    <includeDependencySources>true</includeDependencySources>
+                    <dependencySourceIncludes>
+                      <dependencySourceInclude>org.crsh:*</dependencySourceInclude>
+                    </dependencySourceIncludes>
+                  </configuration>
+                  <phase>generate-resources</phase>
+                </execution>
+              </executions>
+
+            </plugin>
+
+            <!-- Final assembly -->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-assembly-plugin</artifactId>
