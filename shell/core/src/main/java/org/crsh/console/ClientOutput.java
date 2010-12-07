@@ -29,6 +29,8 @@ import java.io.IOException;
  */
 public abstract class ClientOutput {
 
+  protected abstract void flush() throws IOException;
+
   protected abstract void writeCRLF() throws IOException;
 
   protected abstract void write(CharSequence s) throws IOException;

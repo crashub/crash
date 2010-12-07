@@ -120,28 +120,30 @@ public class BaseTerm implements Term, Runnable {
     this.historyCursor = -1;
     this.io = io;
     this.console = new Console(new ClientOutput() {
+
+      @Override
+      protected void flush() throws IOException {
+        io.flush();
+      }
+
       @Override
       protected void writeCRLF() throws IOException {
         io.writeCRLF();
-        io.flush();
       }
 
       @Override
       protected void write(CharSequence s) throws IOException {
         io.write(s.toString());
-        io.flush();
       }
 
       @Override
       protected void write(char c) throws IOException {
         io.write(c);
-        io.flush();
       }
 
       @Override
       protected void writeDel() throws IOException {
         io.writeDel();
-        io.flush();
       }
 
       @Override

@@ -119,17 +119,19 @@ public final class Console {
 
     @Override
     public void write(CharSequence s) throws IOException {
-
-      // Julien : should make that more efficient :-)
-      // because that likely triggers a flush for every char
-
       for (int i = 0;i < s.length();i++) {
         char c = s.charAt(i);
-        write(c);
+        writeNoFlush(c);
       }
+      clientOutput.flush();
     }
 
     public void write(char c) throws IOException {
+      writeNoFlush(c);
+      clientOutput.flush();
+    }
+
+    private void writeNoFlush(char c) throws IOException {
       if (previousCR && c == '\n') {
         previousCR = false;
       } else if (c == '\r' || c == '\n') {
@@ -254,6 +256,7 @@ public final class Console {
     if (curAt < size) {
       if (clientOutput.writeMoveRight())
       {
+        clientOutput.flush();
         curAt++;
       }
     }
@@ -263,30 +266,37 @@ public final class Console {
     if (curAt > 0) {
       if (clientOutput.writeMoveLeft())
       {
+        clientOutput.flush();
         curAt--;
       }
     }
   }
 
   private void echo(char c) throws IOException {
-    echo(new String(new char[]{c}));
+    if (echoing) {
+      clientOutput.write(c);
+      clientOutput.flush();
+    }
   }
 
   private void echo(String s) throws IOException {
     if (echoing) {
       clientOutput.write(s);
+      clientOutput.flush();
     }
   }
 
   private void echoDel() throws IOException {
     if (echoing) {
       clientOutput.writeDel();
+      clientOutput.flush();
     }
   }
 
   private void echoCRLF() throws IOException {
     if (echoing) {
       clientOutput.writeCRLF();
+      clientOutput.flush();
     }
   }
 
