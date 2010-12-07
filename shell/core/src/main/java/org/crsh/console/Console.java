@@ -41,17 +41,17 @@ public final class Console {
   /** . */
   private LinkedList<CharSequence> lines;
 
-  /** -1 means the starts of a new line. */
-//  private int previous;
+  /** Do we have a issued a CR previously? */
   private boolean previousCR;
 
   /** Whether or not we do echoing. */
   private boolean echoing;
 
   /** . */
-  private final ClientOutput output;
+  private final ClientOutput clientOutput;
 
-  private final ClientInput input = new ClientInput() {
+  /** . */
+  private final ClientInput clientInput = new ClientInput() {
 
     @Override
     public CharSequence replace(CharSequence s) throws IOException {
@@ -130,14 +130,14 @@ public final class Console {
         previous = -1;
       } else if (c == '\n' || c == '\r') {
         previous = c;
-        output.writeCRLF();
+        clientOutput.writeCRLF();
       } else {
-        output.write(c);
+        clientOutput.write(c);
       }
     }
   };
 
-  public Console(ClientOutput output) {
+  public Console(ClientOutput clientOutput) {
     this.buffer = new char[128];
     this.size = 0;
     this.curAt = 0;
@@ -145,7 +145,7 @@ public final class Console {
 //    this.previous = -1;
     this.previousCR = false;
     this.echoing = true;
-    this.output = output;
+    this.clientOutput = clientOutput;
   }
 
   /**
@@ -174,9 +174,8 @@ public final class Console {
     return reader;
   }
 
-
-  public ClientInput getInput() {
-    return input;
+  public ClientInput getClientInput() {
+    return clientInput;
   }
 
   public ConsoleWriter getWriter() {
@@ -234,7 +233,7 @@ public final class Console {
       moveLeft();
       // Redisplay from cursor to end
       String disp = new String(buffer, curAt, size - curAt + 1);
-      output.write(disp);
+      clientOutput.write(disp);
       // position cursor one to left from where started
       int saveCurAt = curAt;
       curAt = size + 1;   // Size before delete
@@ -250,7 +249,7 @@ public final class Console {
 
   private void moveRight() throws IOException {
     if (curAt < size) {
-      if (output.writeMoveRight())
+      if (clientOutput.writeMoveRight())
       {
         curAt++;
       }
@@ -259,7 +258,7 @@ public final class Console {
 
   private void moveLeft() throws IOException {
     if (curAt > 0) {
-      if (output.writeMoveLeft())
+      if (clientOutput.writeMoveLeft())
       {
         curAt--;
       }
@@ -272,19 +271,19 @@ public final class Console {
 
   private void echo(String s) throws IOException {
     if (echoing) {
-      output.write(s);
+      clientOutput.write(s);
     }
   }
 
   private void echoDel() throws IOException {
     if (echoing) {
-      output.writeDel();
+      clientOutput.writeDel();
     }
   }
 
   private void echoCRLF() throws IOException {
     if (echoing) {
-      output.writeCRLF();
+      clientOutput.writeCRLF();
     }
   }
 
@@ -320,7 +319,7 @@ public final class Console {
       // Adjust size and display from inserted character to end
       ++size;
       String disp = new String(buffer, curAt, size - curAt);
-      output.write(disp);
+      clientOutput.write(disp);
       // Move cursor to original character
       int saveCurAt = ++curAt;
       curAt = size;

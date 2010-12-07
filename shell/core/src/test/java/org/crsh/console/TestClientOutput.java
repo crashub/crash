@@ -19,19 +19,21 @@
 
 package org.crsh.console;
 
+import junit.framework.AssertionFailedError;
+
 import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestEcho extends ClientOutput {
-
-  /** . */
-  private final StringBuilder builder = new StringBuilder();
+public class TestClientOutput extends ClientOutput {
 
   /** . */
   private final StringBuilder line = new StringBuilder();
+
+  /** The last position. */
+  private int lastPosition = 0;
 
   /** . */
   private int position = 0;
@@ -39,29 +41,37 @@ public class TestEcho extends ClientOutput {
   /** . */
   private final boolean supportsCursorMove;
 
-  public TestEcho(boolean supportsCursorMove) {
+  public TestClientOutput(boolean supportsCursorMove) {
     this.supportsCursorMove = supportsCursorMove;
-  }
-
-  protected void doEchoCRLF() throws IOException {
-    builder.append(line.toString());
-    line.setLength(0);
-    position = 0;
   }
 
   @Override
   protected void write(CharSequence s) throws IOException {
-    line.insert(position++, s);
+    for (int i = 0;i < s.length();i++) {
+      char c = s.charAt(i);
+      if (c == '\r' || c == '\n') {
+        throw new AssertionFailedError();
+      }
+    }
+    line.insert(position, s);
+    position += s.length();
   }
 
   @Override
   protected void write(char c) throws IOException {
+    if (c == '\r' || c == '\n') {
+      throw new AssertionFailedError();
+    }
     line.insert(position++, c);
   }
 
   @Override
   protected void writeDel() throws IOException {
-    line.deleteCharAt(--position);
+    if (position > lastPosition) {
+      line.deleteCharAt(--position);
+    } else {
+      throw new AssertionFailedError();
+    }
   }
 
   @Override
@@ -76,15 +86,19 @@ public class TestEcho extends ClientOutput {
 
   @Override
   protected void writeCRLF() throws IOException {
-    builder.append(line.toString());
-    line.setLength(0);
-    position = 0;
+    line.append("\r\n");
+    position += 2;
+    lastPosition = position;
   }
 
   @Override
   protected boolean writeMoveLeft() {
     if (supportsCursorMove) {
-      position--;
+      if (position > lastPosition) {
+        position--;
+      } else {
+        throw new AssertionFailedError();
+      }
       return true;
     } else {
       return false;

@@ -297,14 +297,14 @@ public class BaseTerm implements Term, Runnable {
       CodeType type = io.decode(code);
       switch (type) {
         case DELETE:
-          console.getInput().del();
+          console.getClientInput().del();
           break;
         case UP:
         case DOWN:
           int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
           if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
             CharSequence s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
-            CharSequence t = console.getInput().replace(s);
+            CharSequence t = console.getClientInput().replace(s);
             if (historyCursor == -1) {
               historyBuffer = t;
             }
@@ -315,10 +315,10 @@ public class BaseTerm implements Term, Runnable {
           }
           break;
         case RIGHT:
-          console.getInput().moveRight();
+          console.getClientInput().moveRight();
           break;
         case LEFT:
-          console.getInput().moveLeft();
+          console.getClientInput().moveLeft();
           break;
         case BREAK:
           log.debug("Want to cancel evaluation");
@@ -326,7 +326,7 @@ public class BaseTerm implements Term, Runnable {
           return new TermAction.CancelEvaluation();
         case CHAR:
           if (code >= 0 && code < 128) {
-            console.getInput().write((char)code);
+            console.getClientInput().write((char)code);
           } else {
             log.debug("Unhandled char " + code);
           }
