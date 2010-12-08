@@ -142,10 +142,11 @@ be nevertheless invoked.
 Likewise when a command does not produce a stream but is involved in a distribution, it will not produce anything but
 will be nevertheless invoked.
 
+= Logging =
+
+{{include document="logging.wiki" /}}
+
 = JCR =
 
 {{include document="jcr.wiki" /}}
 
-= Logging =
-
-{{include document="logging.wiki" /}}
