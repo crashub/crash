@@ -18,4 +18,12 @@
       </affiliation>
     </author>
   </authorgroup>
+  <mediaobject>
+    <imageobject role="fo">
+      <imagedata align="center" fileref="images/crash.png" format="PNG" width="150mm"/>
+    </imageobject>
+    <imageobject role="html">
+      <imagedata align="center" fileref="images/crash.png" format="PNG" scale="150"/>
+    </imageobject>
+  </mediaobject>
 </bookinfo>
