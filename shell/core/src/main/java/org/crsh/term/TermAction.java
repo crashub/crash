@@ -25,11 +25,18 @@ package org.crsh.term;
  */
 public class TermAction {
 
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + "[]";
+  }
+
   public static class Init extends TermAction {
-    @Override
-    public String toString() {
-      return "Init[]";
-    }
+  }
+
+  public static class CancelEvaluation extends TermAction {
+  }
+
+  public static class Complete extends TermAction {
   }
 
   public static class ReadLine extends TermAction {
@@ -44,17 +51,10 @@ public class TermAction {
     public CharSequence getLine() {
       return line;
     }
-
     @Override
     public String toString() {
       return "ReadLine[line=" + line + "]";
     }
-  }
 
-  public static class CancelEvaluation extends TermAction {
-    @Override
-    public String toString() {
-      return "CancelEvaluation[]";
-    }
   }
 }

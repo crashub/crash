@@ -163,23 +163,25 @@ public class CRaSH implements Shell {
     AST ast = parser.parse();
 
     //
+    ShellResponse resp;
     if (ast instanceof AST.Expr) {
       AST.Expr expr = (AST.Expr)ast;
 
       // Create commands first
       try {
-        ShellResponse.UnknownCommand resp = expr.createCommands(this);
-        if (resp != null) {
-          return resp;
-        }
+        resp = expr.createCommands(this);
       } catch (Exception e) {
         return new ShellResponse.Error(ErrorType.EVALUATION, e);
       }
 
-      // Execute commands
-      return expr.execute(responseContext, attributes);
+      if (resp == null) {
+        resp = expr.execute(responseContext, attributes);
+      }
     } else {
-      return new ShellResponse.NoCommand();
+      resp = new ShellResponse.NoCommand();
     }
+
+    //
+    return resp;
   }
 }
