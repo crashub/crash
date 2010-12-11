@@ -27,6 +27,8 @@ import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -74,8 +76,22 @@ public abstract class AbstractCommandTestCase extends TestCase {
     }
   }
 
+  protected final ShellResponse evaluate(String s) {
+    final AtomicReference<ShellResponse> resp = new AtomicReference<ShellResponse>();
+    ShellResponseContext ctx = new ShellResponseContext() {
+      public String readLine(String msg, boolean echo) {
+        throw new UnsupportedOperationException("The command does not have access to console line reading");
+      }
+      public void done(ShellResponse response) {
+        resp.set(response);
+      }
+    };
+    shell.evaluate(s, ctx);
+    return resp.get();
+  }
+
   protected final void assertUnknownCommand(String s) {
-    ShellResponse resp = shell.evaluate(s);
+    ShellResponse resp = evaluate(s);
     assertTrue("Was expecting an ok response instead of " + resp, resp instanceof ShellResponse.UnknownCommand);
     assertEquals(s, ((ShellResponse.UnknownCommand)resp).getName());
   }
@@ -88,7 +104,7 @@ public abstract class AbstractCommandTestCase extends TestCase {
   }
 
   protected final Throwable assertError(String s) {
-    ShellResponse resp = shell.evaluate(s);
+    ShellResponse resp = evaluate(s);
     assertTrue("Was expecting an ok response instead of " + resp, resp instanceof ShellResponse.Error);
     return ((ShellResponse.Error)resp).getThrowable();
   }
@@ -102,7 +118,7 @@ public abstract class AbstractCommandTestCase extends TestCase {
   }
 
   protected final ShellResponse.Ok assertOk(String s) {
-    ShellResponse resp = shell.evaluate(s);
+    ShellResponse resp = evaluate(s);
     if (resp instanceof ShellResponse.Ok) {
       return (ShellResponse.Ok)resp;
     }

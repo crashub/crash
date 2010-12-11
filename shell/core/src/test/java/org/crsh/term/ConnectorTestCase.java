@@ -73,11 +73,9 @@ public class ConnectorTestCase extends TestCase {
     //
     Shell shell = new TestShell() {
       @Override
-      public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
-
+      public void evaluate(String request, ShellResponseContext responseContext) {
         String a = responseContext.readLine("bar", true);
-
-        return new ShellResponse.Display(a);
+        responseContext.done(new ShellResponse.Display(a));
       }
     };
 
@@ -116,7 +114,7 @@ public class ConnectorTestCase extends TestCase {
     //
     Shell shell = new TestShell() {
       @Override
-      public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
+      public void evaluate(String request, ShellResponseContext responseContext) {
 
         //
         fail.set(!"foo".equals(request));
@@ -138,7 +136,7 @@ public class ConnectorTestCase extends TestCase {
         }
 
         //
-        return ok;
+        responseContext.done(ok);
       }
     };
 

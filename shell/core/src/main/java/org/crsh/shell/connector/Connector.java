@@ -28,6 +28,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -98,13 +99,6 @@ public class Connector {
 
   public Future<ShellResponse> submitEvaluation(final String request, final ConnectorResponseContext handler) {
 
-    // The response context
-    final ShellResponseContext responseContext = new ShellResponseContext() {
-      public String readLine(String msg, boolean echo) {
-        return handler.readLine(msg, echo);
-      }
-    };
-
     //
     synchronized (lock) {
       if (status != ConnectorStatus.AVAILABLE) {
@@ -122,7 +116,17 @@ public class Connector {
       } else {
         callable = new Callable<ShellResponse>() {
           public ShellResponse call() throws Exception {
-            return shell.evaluate(request, responseContext);
+            final AtomicReference<ShellResponse> resp = new AtomicReference<ShellResponse>();
+            ShellResponseContext responseContext = new ShellResponseContext() {
+              public String readLine(String msg, boolean echo) {
+                return handler.readLine(msg, echo);
+              }
+              public void done(ShellResponse response) {
+                resp.set(response);
+              }
+            };
+            shell.evaluate(request, responseContext);
+            return resp.get();
           }
         };
       }

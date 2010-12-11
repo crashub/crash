@@ -56,10 +56,11 @@ public class TestShell implements Shell {
     return "% ";
   }
 
-  public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
+  public void evaluate(String request, ShellResponseContext responseContext) {
     try {
       TestShellAction action = queue.take();
-      return action.evaluate(request, responseContext);
+      ShellResponse resp = action.evaluate(request, responseContext);
+      responseContext.done(resp);
     } catch (Exception e) {
       throw new AssertionError(e);
     }

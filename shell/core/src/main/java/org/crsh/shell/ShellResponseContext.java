@@ -27,6 +27,6 @@ public interface ShellResponseContext {
 
   String readLine(String msg, boolean echo);
 
-//  void done(ShellResponse response);
+  void done(ShellResponse response);
 
 }

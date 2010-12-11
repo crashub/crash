@@ -68,7 +68,7 @@ public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase
       }
     }
     root.getSession().save();
-    shell.evaluate("disconnect");
+    evaluate("disconnect");
   }
 
   protected final void assertLogin() {

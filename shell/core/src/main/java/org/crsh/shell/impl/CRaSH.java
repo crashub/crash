@@ -140,10 +140,6 @@ public class CRaSH implements Shell {
     groovyShell.evaluate(script, "logout");
   }
 
-  public ShellResponse evaluate(String request) {
-    return evaluate(request, null);
-  }
-
   // Shell implementation **********************************************************************************************
 
   public String getWelcome() {
@@ -154,9 +150,13 @@ public class CRaSH implements Shell {
     return (String)groovyShell.evaluate("prompt();");
   }
 
-  public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
-    log.debug("Invoking request " + request);
+  public void evaluate(String request, ShellResponseContext responseContext) {
+    if (responseContext == null) {
+      throw new NullPointerException();
+    }
 
+    //
+    log.debug("Invoking request " + request);
 
     // Create AST
     Parser parser = new Parser(request);
@@ -171,7 +171,7 @@ public class CRaSH implements Shell {
       try {
         resp = expr.createCommands(this);
       } catch (Exception e) {
-        return new ShellResponse.Error(ErrorType.EVALUATION, e);
+        resp = new ShellResponse.Error(ErrorType.EVALUATION, e);
       }
 
       if (resp == null) {
@@ -182,6 +182,6 @@ public class CRaSH implements Shell {
     }
 
     //
-    return resp;
+    responseContext.done(resp);
   }
 }

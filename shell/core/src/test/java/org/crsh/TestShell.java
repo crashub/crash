@@ -20,7 +20,6 @@
 package org.crsh;
 
 import org.crsh.shell.Shell;
-import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
 
 /**
@@ -37,7 +36,7 @@ public class TestShell implements Shell {
     return "% ";
   }
 
-  public ShellResponse evaluate(String request, ShellResponseContext responseContext) {
+  public void evaluate(String request, ShellResponseContext responseContext) {
     throw new UnsupportedOperationException();
   }
 

@@ -29,6 +29,6 @@ public interface Shell {
 
   String getPrompt();
 
-  ShellResponse evaluate(String request, ShellResponseContext responseContext);
+  void evaluate(String request, ShellResponseContext responseContext);
 
 }

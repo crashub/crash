@@ -51,7 +51,7 @@ class CommandContextImpl<C, P> implements CommandContext<C, P> {
   /** . */
   private Iterable<C> consumedItems;
 
-  public CommandContextImpl(
+  CommandContextImpl(
       ShellResponseContext responseContext,
       Iterable<C> consumedItems,
       Map<String, Object> attributes) {
@@ -101,10 +101,6 @@ class CommandContextImpl<C, P> implements CommandContext<C, P> {
     return writer;
   }
   public String readLine(String msg, boolean echo) {
-    if (responseContext != null) {
-      return responseContext.readLine(msg, echo);
-    } else {
-      throw new IllegalStateException("The command does not have access to console line reading");
-    }
+    return responseContext.readLine(msg, echo);
   }
 }
