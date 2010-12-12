@@ -19,7 +19,6 @@
 
 package org.crsh.term;
 
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.term.processor.TermProcessor;
