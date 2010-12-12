@@ -52,6 +52,8 @@ public class TelnetIO implements TermIO {
     switch (code) {
       case 3:
         return CodeType.BREAK;
+      case TerminalIO.TABULATOR:
+        return CodeType.TAB;
       case TerminalIO.DELETE:
       case TerminalIO.BACKSPACE:
         return CodeType.DELETE;

@@ -19,6 +19,8 @@
 
 package org.crsh.shell;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -32,5 +34,13 @@ public interface Shell {
   String getPrompt();
 
   void evaluate(String request, ShellResponseContext responseContext);
+
+  /**
+   * Completion.
+   *
+   * @param prefix the prefix to complete
+   * @return the sorted list of available suffixes
+   */
+  List<String> complete(String prefix);
 
 }

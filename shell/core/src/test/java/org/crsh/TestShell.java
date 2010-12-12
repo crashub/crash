@@ -22,6 +22,8 @@ package org.crsh;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellResponseContext;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -37,6 +39,10 @@ public class TestShell implements Shell {
   }
 
   public void evaluate(String request, ShellResponseContext responseContext) {
+    throw new UnsupportedOperationException();
+  }
+
+  public List<String> complete(String prefix) {
     throw new UnsupportedOperationException();
   }
 

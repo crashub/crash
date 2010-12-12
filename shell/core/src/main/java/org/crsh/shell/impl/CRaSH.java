@@ -189,4 +189,23 @@ public class CRaSH implements Shell {
     //
     responseContext.done(resp);
   }
+
+  /**
+   * For now basic implementation
+   */
+  public List<String> complete(String prefix) {
+    prefix = prefix.trim();
+    int pos = prefix.indexOf(' ');
+    if (pos == -1) {
+      List<String> completions = new ArrayList<String>();
+      for (String resourceId : context.listResourceId(ResourceKind.SCRIPT)) {
+        if (resourceId.startsWith(prefix)) {
+          completions.add(resourceId);
+        }
+      }
+      return completions;
+    } else {
+      return Collections.emptyList();
+    }
+  }
 }

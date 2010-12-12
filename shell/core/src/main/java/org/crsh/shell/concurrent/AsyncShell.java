@@ -23,6 +23,7 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -148,6 +149,10 @@ public class AsyncShell implements Shell {
 
   public String getPrompt() {
     return shell.getPrompt();
+  }
+
+  public List<String> complete(String prefix) {
+    return shell.complete(prefix);
   }
 
   public void evaluate(String request, ShellResponseContext responseContext) {

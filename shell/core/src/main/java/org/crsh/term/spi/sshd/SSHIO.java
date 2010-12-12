@@ -79,9 +79,6 @@ public class SSHIO implements TermIO {
           if (r == 27) {
             status = STATUS_READ_ESC_1;
           } else {
-            if (r == verase) {
-              return TerminalIO.DELETE;
-            }
             return r;
           }
           break;
@@ -115,17 +112,21 @@ public class SSHIO implements TermIO {
   }
 
   public CodeType decode(int code) {
-    switch (code) {
-      case 3:
-        return CodeType.BREAK;
-      case TerminalIO.DELETE:
-        return CodeType.DELETE;
-      case TerminalIO.UP:
-        return CodeType.UP;
-      case TerminalIO.DOWN:
-        return CodeType.DOWN;
-      default:
-        return CodeType.CHAR;
+    if (code == verase) {
+      return CodeType.DELETE;
+    } else {
+      switch (code) {
+        case 3:
+          return CodeType.BREAK;
+        case 9:
+          return CodeType.TAB;
+        case TerminalIO.UP:
+          return CodeType.UP;
+        case TerminalIO.DOWN:
+          return CodeType.DOWN;
+        default:
+          return CodeType.CHAR;
+      }
     }
   }
 

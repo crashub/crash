@@ -333,6 +333,9 @@ public class BaseTerm implements Term, Runnable {
             log.debug("Unhandled char " + code);
           }
           break;
+        case TAB:
+          log.info("Swallowing tab");
+          break;
       }
 
       //

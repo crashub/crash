@@ -23,6 +23,7 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
 
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -50,6 +51,10 @@ public class TestShell implements Shell {
 
   public String getWelcome() {
     return "Welcome\r\n% ";
+  }
+
+  public List<String> complete(String prefix) {
+    throw new UnsupportedOperationException();
   }
 
   public String getPrompt() {

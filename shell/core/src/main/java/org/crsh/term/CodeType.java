@@ -37,6 +37,8 @@ public enum CodeType {
 
   LEFT,
 
+  TAB,
+
   BREAK,
 
 }
