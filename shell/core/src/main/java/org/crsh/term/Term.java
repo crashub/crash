@@ -27,8 +27,14 @@ import java.io.IOException;
  */
 public interface Term {
 
+  void setEcho(boolean echo);
+
   TermEvent read() throws IOException;
 
   void write(String prompt) throws IOException;
+
+  void close();
+
+  void addToHistory(CharSequence line);
 
 }

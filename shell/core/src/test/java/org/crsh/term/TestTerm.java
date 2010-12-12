@@ -139,6 +139,12 @@ public class TestTerm implements Term {
     writer.append(data);
   }
 
+  public void setEcho(boolean echo) {
+  }
+
+  public void addToHistory(CharSequence line) {
+  }
+
   public void close() {
     closed = true;
   }

@@ -261,7 +261,7 @@ public class BaseTermTestCase extends TestCase {
     return new Controller(new TestTermConnector(), processor);
   }
 
-  private class Controller extends BaseTerm {
+  private class Controller implements Runnable {
 
     /** . */
     private volatile boolean running;
@@ -278,15 +278,16 @@ public class BaseTermTestCase extends TestCase {
     /** . */
     private final TestTermConnector connector;
 
-    private Controller(TestTermConnector connector, TermProcessor processor) {
-      super(connector, processor);
+    /** . */
+    private final Processor processor;
 
-      //
+    private Controller(TestTermConnector connector, TermProcessor processor) {
       this.running = true;
       this.startSync = new CountDownLatch(1);
       this.stopSync = new CountDownLatch(1);
       this.thread = new Thread(this);
       this.connector = connector;
+      this.processor = new Processor(new BaseTerm(connector), processor);
     }
 
     public void assertStart() {
@@ -310,12 +311,11 @@ public class BaseTermTestCase extends TestCase {
       connector.assertChars("% ");
     }
 
-    @Override
     public void run() {
       running = true;
       startSync.countDown();
       try {
-        super.run();
+        processor.run();
       }
       finally {
         running = false;

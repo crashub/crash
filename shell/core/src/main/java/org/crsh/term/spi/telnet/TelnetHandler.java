@@ -25,6 +25,7 @@ import net.wimpi.telnetd.shell.Shell;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.term.BaseTerm;
 import org.crsh.shell.impl.CRaSH;
+import org.crsh.term.Processor;
 import org.crsh.term.TermShellAdapter;
 
 /**
@@ -45,27 +46,30 @@ public class TelnetHandler implements Shell {
   /** . */
   private CRaSH shell;
 
+  /** . */
+  private Processor processor;
+
   public void run(Connection conn) {
 
     //
     shell = TelnetLifeCycle.instance.getShellFactory().build();
     connector = new AsyncShell(TelnetLifeCycle.instance.getExecutor(), shell);
     decoder = new TermShellAdapter(connector);
-    term = new BaseTerm(new TelnetIO(conn), decoder);
+    term = new BaseTerm(new TelnetIO(conn));
+    processor = new Processor(term, decoder);
 
     //
     try {
       conn.addConnectionListener(this);
 
       //
-      term.run();
+      processor.run();
     } finally {
       close();
     }
   }
 
   private void close() {
-    term.close();
     decoder.close();
     connector.close();
     shell.close();

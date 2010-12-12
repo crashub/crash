@@ -22,6 +22,7 @@ import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.impl.CRaSH;
+import org.crsh.term.Processor;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.TermShellAdapter;
 import org.slf4j.Logger;
@@ -82,8 +83,9 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
       OutputStreamWriter writer = new OutputStreamWriter(out);
       Reader reader = new InputStreamReader(in);
       SSHIO io = new SSHIO(reader, writer, context.verase);
-      BaseTerm term = new BaseTerm(io, new TermShellAdapter(connector));
-      term.run();
+      BaseTerm term = new BaseTerm(io);
+      Processor processor = new Processor(term, new TermShellAdapter(connector));
+      processor.run();
     } finally {
       callback.onExit(0);
     }
