@@ -70,7 +70,7 @@ public class TermShellAdapterTestCase extends TestCase {
         }
       }, shell);
     }
-    final TermShellAdapter2 adapter = new TermShellAdapter2(connector);
+    final TermShellAdapter adapter = new TermShellAdapter(connector);
 
     //
     connector.open();

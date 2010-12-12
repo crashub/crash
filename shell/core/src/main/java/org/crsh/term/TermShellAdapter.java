@@ -33,10 +33,10 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TermShellAdapter2 implements TermProcessor {
+public class TermShellAdapter implements TermProcessor {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(TermShellAdapter2.class);
+  private final Logger log = LoggerFactory.getLogger(TermShellAdapter.class);
 
   /** . */
   private final AsyncShell shell;
@@ -44,7 +44,7 @@ public class TermShellAdapter2 implements TermProcessor {
   /** . */
   private volatile TermStatus status;
 
-  public TermShellAdapter2(AsyncShell connector) {
+  public TermShellAdapter(AsyncShell connector) {
     this.shell = connector;
     this.status = TermStatus.READY;
   }
