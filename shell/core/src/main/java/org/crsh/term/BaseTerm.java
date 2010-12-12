@@ -172,7 +172,7 @@ public class BaseTerm implements Term, Runnable {
     while (status.get() == STATUS_OPEN) {
       if (action == null) {
         try {
-          action = _read();
+          action = read();
           log.debug("read term data " + action);
         } catch (IOException e) {
           if (status.get() == STATUS_OPEN) {
@@ -209,7 +209,16 @@ public class BaseTerm implements Term, Runnable {
             console.setEchoing(echo);
           }
           public TermEvent read() throws IOException {
-            return BaseTerm.this.read();
+
+            // Go in the queue and wait for an event
+            Awaiter awaiter;
+            synchronized (lock) {
+              awaiter = new Awaiter();
+              awaiters.add(awaiter);
+            }
+
+            // Returns the event
+            return awaiter.take();
           }
           public void write(String msg) throws IOException {
             BaseTerm.this.write(msg);
@@ -260,40 +269,8 @@ public class BaseTerm implements Term, Runnable {
   }
 
   public TermEvent read() throws IOException {
-    Awaiter awaiter;
 
     //
-    synchronized (lock) {
-      awaiter = new Awaiter();
-      awaiters.add(awaiter);
-    }
-
-    //
-    TermEvent taken = awaiter.take();
-    return taken;
-  }
-
-  public void close() {
-
-    //
-    status.compareAndSet(STATUS_OPEN, STATUS_WANT_CLOSE);
-
-    //
-    if (status.compareAndSet(STATUS_WANT_CLOSE, STATUS_CLOSING)) {
-      try {
-        log.debug("Closing connection");
-        io.flush();
-        io.close();
-      } catch (IOException e) {
-        log.debug("Exception thrown during term close()", e);
-      } finally {
-        status.set(STATUS_CLOSED);
-      }
-    }
-  }
-
-  public TermEvent _read() throws IOException {
-
     while (true) {
       int code = io.read();
       CodeType type = io.decode(code);
@@ -342,6 +319,25 @@ public class BaseTerm implements Term, Runnable {
       if (console.getReader().hasNext()) {
         CharSequence input = console.getReader().next();
         return new TermEvent.ReadLine(input);
+      }
+    }
+  }
+
+  public void close() {
+
+    //
+    status.compareAndSet(STATUS_OPEN, STATUS_WANT_CLOSE);
+
+    //
+    if (status.compareAndSet(STATUS_WANT_CLOSE, STATUS_CLOSING)) {
+      try {
+        log.debug("Closing connection");
+        io.flush();
+        io.close();
+      } catch (IOException e) {
+        log.debug("Exception thrown during term close()", e);
+      } finally {
+        status.set(STATUS_CLOSED);
       }
     }
   }
