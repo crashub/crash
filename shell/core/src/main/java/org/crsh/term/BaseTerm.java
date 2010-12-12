@@ -77,9 +77,6 @@ public class BaseTerm implements Term, Runnable {
   private int historyCursor;
 
   /** . */
-  private String prompt;
-
-  /** . */
   private final TermIO io;
 
   /** . */
@@ -205,6 +202,9 @@ public class BaseTerm implements Term, Runnable {
         //
         TermResponseContext ctx = new TermResponseContext() {
 
+          /** . */
+          private String prompt;
+
           public void setEcho(boolean echo) {
             console.setEchoing(echo);
           }
@@ -225,7 +225,7 @@ public class BaseTerm implements Term, Runnable {
           }
 
           public void setPrompt(String prompt) {
-            BaseTerm.this.prompt = prompt;
+            this.prompt = prompt;
           }
 
           public void done(boolean close) {
