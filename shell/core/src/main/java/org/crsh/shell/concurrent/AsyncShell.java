@@ -64,7 +64,7 @@ public class AsyncShell implements Shell {
   public String open() {
     synchronized (lock) {
       if (status != Status.INITIAL) {
-        throw new IllegalStateException();
+        throw new IllegalStateException("Cannot open shell in state " + status);
       }
       String ret = shell.getWelcome();
       status = Status.AVAILABLE;

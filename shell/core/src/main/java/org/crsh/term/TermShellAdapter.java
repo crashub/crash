@@ -76,6 +76,7 @@ public class TermShellAdapter implements TermProcessor {
     if (action instanceof TermEvent.Init) {
       String welcome = shell.open();
       responseContext.write(welcome);
+      responseContext.done(false);
       return true;
     }
 
