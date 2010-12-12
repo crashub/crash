@@ -20,11 +20,14 @@
 package org.crsh.term;
 
 import junit.framework.TestCase;
-import org.crsh.shell.connector.Connector;
+import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
 
+import java.util.List;
+import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -43,13 +46,31 @@ public class TermShellAdapterTestCase extends TestCase {
   private void testReadLine(boolean withExecutor) throws Exception {
 
     TestShell shell = new TestShell();
-    Connector connector;
+    AsyncShell connector;
     if (withExecutor) {
-      connector = new Connector(Executors.newSingleThreadExecutor(), shell);
+      connector = new AsyncShell(Executors.newSingleThreadExecutor(), shell);
     } else {
-      connector = new Connector(shell);
+      connector = new AsyncShell(new AbstractExecutorService() {
+        public void shutdown() {
+        }
+        public List<Runnable> shutdownNow() {
+          return null;
+        }
+        public boolean isShutdown() {
+          return false;
+        }
+        public boolean isTerminated() {
+          return false;
+        }
+        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+          return false;
+        }
+        public void execute(Runnable command) {
+          command.run();
+        }
+      }, shell);
     }
-    final TermShellAdapter adapter = new TermShellAdapter(connector);
+    final TermShellAdapter2 adapter = new TermShellAdapter2(connector);
 
     //
     connector.open();

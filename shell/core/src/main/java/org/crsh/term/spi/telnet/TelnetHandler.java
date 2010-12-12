@@ -22,10 +22,10 @@ package org.crsh.term.spi.telnet;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
-import org.crsh.shell.connector.Connector;
+import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.term.BaseTerm;
-import org.crsh.term.TermShellAdapter;
 import org.crsh.shell.impl.CRaSH;
+import org.crsh.term.TermShellAdapter2;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -34,13 +34,13 @@ import org.crsh.shell.impl.CRaSH;
 public class TelnetHandler implements Shell {
 
   /** . */
-  private TermShellAdapter decoder;
+  private TermShellAdapter2 decoder;
 
   /** . */
   private BaseTerm term;
 
   /** . */
-  private Connector connector;
+  private AsyncShell connector;
 
   /** . */
   private CRaSH shell;
@@ -49,8 +49,8 @@ public class TelnetHandler implements Shell {
 
     //
     shell = TelnetLifeCycle.instance.getShellFactory().build();
-    connector = new Connector(TelnetLifeCycle.instance.getExecutor(), shell);
-    decoder = new TermShellAdapter(connector);
+    connector = new AsyncShell(TelnetLifeCycle.instance.getExecutor(), shell);
+    decoder = new TermShellAdapter2(connector);
     term = new BaseTerm(new TelnetIO(conn), decoder);
 
     //

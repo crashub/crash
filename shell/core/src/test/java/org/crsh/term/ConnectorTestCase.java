@@ -23,9 +23,9 @@ import junit.framework.TestCase;
 import org.crsh.TestShell;
 import org.crsh.TestShellContext;
 import org.crsh.shell.*;
-import org.crsh.shell.connector.Connector;
-import org.crsh.shell.connector.ConnectorResponseContext;
-import org.crsh.shell.connector.ConnectorStatus;
+import org.crsh.shell.concurrent.AsyncShell;
+import org.crsh.shell.concurrent.Status;
+import org.crsh.shell.concurrent.SyncShellResponseContext;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -80,31 +80,32 @@ public class ConnectorTestCase extends TestCase {
     };
 
     //
-    Connector connector = new Connector(executor, shell);
+    AsyncShell connector = new AsyncShell(executor, shell);
     connector.open();
 
     //
-    ShellResponse actual = connector.submitEvaluation("foo", new ConnectorResponseContext() {
-      public void completed(String s) {
-      }
-      public String readLine(String s, boolean echo) {
-        output.addLast(s);
+    ShellResponseContext respCtx1 = new ShellResponseContext() {
+      public String readLine(String msg, boolean echo) {
+        output.addLast(msg);
         return input.isEmpty() ? null : input.removeLast();
       }
-      public void done(boolean close) {
+      public void done(ShellResponse response) {
       }
-      public void setPrompt(String prompt) {
-      }
-    }).get();
+    };
+    SyncShellResponseContext respCtx2 = new SyncShellResponseContext(respCtx1);
+    connector.evaluate("foo", respCtx2);
 
     //
-    assertTrue(actual instanceof ShellResponse.Display);
-    assertEquals("juu", actual.getText());
+    ShellResponse resp = respCtx2.getResponse();
+
+    //
+    assertTrue(resp instanceof ShellResponse.Display);
+    assertEquals("juu", resp.getText());
     assertEquals(Collections.singletonList("bar"), output);
     assertEquals(0, input.size());
   }
 
-  public void testCancelEvaluation() {
+  public void testCancelEvaluation() throws InterruptedException {
 
     //
     final ShellResponse ok = new ShellResponse.Ok();
@@ -141,42 +142,46 @@ public class ConnectorTestCase extends TestCase {
     };
 
     //
-    Connector connector = new Connector(executor, shell);
+    AsyncShell  connector = new AsyncShell(executor, shell);
     connector.open();
 
     //
-    connector.submitEvaluation("foo");
-    assertEquals(ConnectorStatus.EVALUATING, connector.getStatus());
+    SyncShellResponseContext respCtx = new SyncShellResponseContext();
+    connector.evaluate("foo", respCtx);
+    assertEquals(Status.EVALUATING, connector.getStatus());
 
     //
     int r;
     for (r = status.get();r == 0;r = status.get()) { }
     assertEquals(1, r);
-    assertEquals(ConnectorStatus.EVALUATING, connector.getStatus());
+    assertEquals(Status.EVALUATING, connector.getStatus());
 
     //
-    connector.cancelEvalutation();
-    assertEquals(ConnectorStatus.AVAILABLE, connector.getStatus());
+    assertTrue(connector.cancel());
+    assertEquals(Status.CANCELED, connector.getStatus());
 
     //
     status.set(2);
     for (r = status.get();r == 2;r = status.get()) { }
     assertEquals(3, r);
+    respCtx.getResponse();
+    assertEquals(Status.AVAILABLE, connector.getStatus());
 
     //
     assertFalse(fail.get());
   }
 
-  public void testAsyncEvaluation() {
-    Connector connector = new Connector(executor, builder.build());
+  public void testAsyncEvaluation() throws InterruptedException {
+    AsyncShell connector = new AsyncShell(executor, builder.build());
     connector.open();
     status = 0;
-    connector.submitEvaluation("invoke " + ConnectorTestCase.class.getName() + " bilto");
+    SyncShellResponseContext respCtx = new SyncShellResponseContext();
+    connector.evaluate("invoke " + ConnectorTestCase.class.getName() + " bilto", respCtx);
     while (status == 0) {
       // Do nothing
     }
     assertEquals(1, status);
-    connector.popResponse();
+    respCtx.getResponse();
   }
 
   public static void bilto() {

@@ -17,20 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.shell.concurrent;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface Shell {
+public enum Status {
 
-  // Try to remove that
-  String getWelcome();
-
-  // Try to remove that
-  String getPrompt();
-
-  void evaluate(String request, ShellResponseContext responseContext);
+  INITIAL, AVAILABLE, EVALUATING, CANCELED, CLOSED
 
 }

@@ -124,6 +124,13 @@ public abstract class ShellResponse {
     }
   }
 
+  public static class Cancelled extends ShellResponse {
+    @Override
+    public String getText() {
+      return "cancelled" ;
+    }
+  }
+
   public static class Error extends ShellResponse {
 
     /** . */

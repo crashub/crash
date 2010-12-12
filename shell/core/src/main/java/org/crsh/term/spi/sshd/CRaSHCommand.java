@@ -20,10 +20,10 @@ package org.crsh.term.spi.sshd;
 
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
-import org.crsh.shell.connector.Connector;
+import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
-import org.crsh.term.TermShellAdapter;
+import org.crsh.term.TermShellAdapter2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   private SSHContext context;
 
   /** . */
-  private Connector connector;
+  private AsyncShell connector;
 
   /** . */
   private CRaSH shell;
@@ -63,7 +63,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   public void start(Environment env) throws IOException {
     context = new SSHContext(env.getPtyModes().get(PtyMode.VERASE));
     shell = factory.builder.build();
-    connector = new Connector(factory.executor, shell);
+    connector = new AsyncShell(factory.executor, shell);
 
     //
     thread = new Thread(this, "CRaSH");
@@ -82,7 +82,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
       OutputStreamWriter writer = new OutputStreamWriter(out);
       Reader reader = new InputStreamReader(in);
       SSHIO io = new SSHIO(reader, writer, context.verase);
-      BaseTerm term = new BaseTerm(io, new TermShellAdapter(connector));
+      BaseTerm term = new BaseTerm(io, new TermShellAdapter2(connector));
       term.run();
     } finally {
       callback.onExit(0);

@@ -158,27 +158,32 @@ public class CRaSH implements Shell {
     //
     log.debug("Invoking request " + request);
 
-    // Create AST
-    Parser parser = new Parser(request);
-    AST ast = parser.parse();
-
     //
     ShellResponse resp;
-    if (ast instanceof AST.Expr) {
-      AST.Expr expr = (AST.Expr)ast;
-
-      // Create commands first
-      try {
-        resp = expr.createCommands(this);
-      } catch (Exception e) {
-        resp = new ShellResponse.Error(ErrorType.EVALUATION, e);
-      }
-
-      if (resp == null) {
-        resp = expr.execute(responseContext, attributes);
-      }
+    if ("bye".equals(request)) {
+      resp = new ShellResponse.Close();
     } else {
-      resp = new ShellResponse.NoCommand();
+      // Create AST
+      Parser parser = new Parser(request);
+      AST ast = parser.parse();
+
+      //
+      if (ast instanceof AST.Expr) {
+        AST.Expr expr = (AST.Expr)ast;
+
+        // Create commands first
+        try {
+          resp = expr.createCommands(this);
+        } catch (Exception e) {
+          resp = new ShellResponse.Error(ErrorType.EVALUATION, e);
+        }
+
+        if (resp == null) {
+          resp = expr.execute(responseContext, attributes);
+        }
+      } else {
+        resp = new ShellResponse.NoCommand();
+      }
     }
 
     //
