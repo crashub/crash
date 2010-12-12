@@ -87,17 +87,17 @@ public class BaseTerm implements Term, Runnable {
 
   private static class Awaiter {
 
-    TermAction action;
+    TermEvent action;
 
     private Awaiter() {
     }
 
-    public synchronized void give(TermAction action) {
+    public synchronized void give(TermEvent action) {
       this.action = action;
       notify();
     }
 
-    public synchronized TermAction take() {
+    public synchronized TermEvent take() {
       try {
         wait();
         return action;
@@ -166,7 +166,7 @@ public class BaseTerm implements Term, Runnable {
     }
 
     //
-    TermAction action = new TermAction.Init();
+    TermEvent action = new TermEvent.Init();
 
     //
     while (status.get() == STATUS_OPEN) {
@@ -194,7 +194,7 @@ public class BaseTerm implements Term, Runnable {
       }
 
       // Consume
-      final TermAction action2 = action;
+      final TermEvent action2 = action;
       action = null;
 
       //
@@ -208,7 +208,7 @@ public class BaseTerm implements Term, Runnable {
           public void setEcho(boolean echo) {
             console.setEchoing(echo);
           }
-          public TermAction read() throws IOException {
+          public TermEvent read() throws IOException {
             return BaseTerm.this.read();
           }
           public void write(String msg) throws IOException {
@@ -247,19 +247,19 @@ public class BaseTerm implements Term, Runnable {
           // Push back
           log.debug("Pushing back action " + action2);
           action = action2;
-        } else if (action2 instanceof TermAction.ReadLine) {
-          CharSequence line = ((TermAction.ReadLine)action2).getLine();
+        } else if (action2 instanceof TermEvent.ReadLine) {
+          CharSequence line = ((TermEvent.ReadLine)action2).getLine();
           historyCursor = -1;
           historyBuffer = null;
           if (line.length() > 0) {
-            history.addFirst(((TermAction.ReadLine)action2).getLine());
+            history.addFirst(((TermEvent.ReadLine)action2).getLine());
           }
         }
       }
     }
   }
 
-  public TermAction read() throws IOException {
+  public TermEvent read() throws IOException {
     Awaiter awaiter;
 
     //
@@ -269,7 +269,7 @@ public class BaseTerm implements Term, Runnable {
     }
 
     //
-    TermAction taken = awaiter.take();
+    TermEvent taken = awaiter.take();
     return taken;
   }
 
@@ -292,7 +292,7 @@ public class BaseTerm implements Term, Runnable {
     }
   }
 
-  public TermAction _read() throws IOException {
+  public TermEvent _read() throws IOException {
 
     while (true) {
       int code = io.read();
@@ -325,7 +325,7 @@ public class BaseTerm implements Term, Runnable {
         case BREAK:
           log.debug("Want to cancel evaluation");
           console.clearBuffer();
-          return new TermAction.CancelEvaluation();
+          return new TermEvent.CancelEvaluation();
         case CHAR:
           if (code >= 0 && code < 128) {
             console.getClientInput().write((char)code);
@@ -341,7 +341,7 @@ public class BaseTerm implements Term, Runnable {
       //
       if (console.getReader().hasNext()) {
         CharSequence input = console.getReader().next();
-        return new TermAction.ReadLine(input);
+        return new TermEvent.ReadLine(input);
       }
     }
   }

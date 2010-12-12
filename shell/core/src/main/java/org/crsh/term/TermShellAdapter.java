@@ -61,7 +61,7 @@ public class TermShellAdapter implements TermProcessor {
     // No nop for now
   }
 
-  public boolean process(TermAction action, TermResponseContext responseContext) {
+  public boolean process(TermEvent action, TermResponseContext responseContext) {
     try {
       return _process(action, responseContext);
     } catch (IOException e) {
@@ -70,10 +70,10 @@ public class TermShellAdapter implements TermProcessor {
     }
   }
 
-  private boolean _process(TermAction action, final TermResponseContext responseContext) throws IOException {
+  private boolean _process(TermEvent action, final TermResponseContext responseContext) throws IOException {
 
     // Take care of that here
-    if (action instanceof TermAction.Init) {
+    if (action instanceof TermEvent.Init) {
       String welcome = shell.open();
       responseContext.write(welcome);
       return true;
@@ -85,8 +85,8 @@ public class TermShellAdapter implements TermProcessor {
     //
     switch (status) {
       case READY:
-        if (action instanceof TermAction.ReadLine) {
-          String line = ((TermAction.ReadLine)action).getLine().toString();
+        if (action instanceof TermEvent.ReadLine) {
+          String line = ((TermEvent.ReadLine)action).getLine().toString();
           status = TermStatus.PROCESSING;
           log.debug("Submitting command " + line);
 
@@ -96,10 +96,10 @@ public class TermShellAdapter implements TermProcessor {
                 status = TermStatus.READING_INPUT;
                 responseContext.setEcho(echo);
                 responseContext.write(msg);
-                TermAction action = responseContext.read();
+                TermEvent action = responseContext.read();
                 CharSequence line = null;
-                if (action instanceof TermAction.ReadLine) {
-                  line = ((TermAction.ReadLine) action).getLine();
+                if (action instanceof TermEvent.ReadLine) {
+                  line = ((TermEvent.ReadLine) action).getLine();
                   log.debug("Read from console");
                 } else {
                   log.debug("Ignoring action " + action + " returning null");
@@ -145,7 +145,7 @@ public class TermShellAdapter implements TermProcessor {
 
             }
           });
-        } else if (action instanceof TermAction.CancelEvaluation) {
+        } else if (action instanceof TermEvent.CancelEvaluation) {
           responseContext.done(false);
         }
         processed = true;
@@ -154,7 +154,7 @@ public class TermShellAdapter implements TermProcessor {
         processed = false;
         break;
       case PROCESSING:
-        if (action instanceof TermAction.CancelEvaluation) {
+        if (action instanceof TermEvent.CancelEvaluation) {
           if (shell.cancel()) {
             log.debug("Evaluation cancelled");
             responseContext.done(false);

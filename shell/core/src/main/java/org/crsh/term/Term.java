@@ -27,7 +27,7 @@ import java.io.IOException;
  */
 public interface Term {
 
-  TermAction read() throws IOException;
+  TermEvent read() throws IOException;
 
   void write(String prompt) throws IOException;
 

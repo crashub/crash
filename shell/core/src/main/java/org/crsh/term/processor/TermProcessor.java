@@ -19,7 +19,7 @@
 
 package org.crsh.term.processor;
 
-import org.crsh.term.TermAction;
+import org.crsh.term.TermEvent;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -27,6 +27,6 @@ import org.crsh.term.TermAction;
  */
 public interface TermProcessor {
 
-  boolean process(TermAction action, TermResponseContext responseContext);
+  boolean process(TermEvent action, TermResponseContext responseContext);
 
 }

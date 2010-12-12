@@ -42,7 +42,7 @@ public class TestTerm implements Term {
   private boolean closed;
 
   /** . */
-  private BlockingDeque<TermAction> actions;
+  private BlockingDeque<TermEvent> actions;
 
   /** . */
   private final TermProcessor processor;
@@ -57,12 +57,12 @@ public class TestTerm implements Term {
       final AtomicBoolean wantClose = new AtomicBoolean(false);
       while (!closed) {
         try {
-          final TermAction action = actions.takeFirst();
+          final TermEvent action = actions.takeFirst();
           final AtomicBoolean done = new AtomicBoolean(false);
           TermResponseContext ctx = new TermResponseContext() {
             public void setEcho(boolean echo) {
             }
-            public TermAction read() throws IOException {
+            public TermEvent read() throws IOException {
               return TestTerm.this.read();
             }
             public void write(String msg) throws IOException {
@@ -101,7 +101,7 @@ public class TestTerm implements Term {
   public TestTerm(TermProcessor processor) {
     this.writer = new StringBuilder();
     this.closed = false;
-    this.actions = new LinkedBlockingDeque<TermAction>();
+    this.actions = new LinkedBlockingDeque<TermEvent>();
     this.processor = processor;
 
     //
@@ -114,14 +114,14 @@ public class TestTerm implements Term {
     return s;
   }
 
-  public void add(TermAction action) {
+  public void add(TermEvent action) {
     if (action == null) {
       throw new NullPointerException();
     }
     actions.addLast(action);
   }
 
-  public TermAction read() throws IOException {
+  public TermEvent read() throws IOException {
     if (closed) {
       throw new IllegalStateException();
     }

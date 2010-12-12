@@ -36,12 +36,12 @@ import java.util.concurrent.TimeUnit;
 public class BaseTermTestCase extends TestCase {
 
   private static final TermProcessor ECHO_PROCESSOR = new TermProcessor() {
-    public boolean process(TermAction action, TermResponseContext responseContext) {
-      if (action instanceof TermAction.Init) {
+    public boolean process(TermEvent action, TermResponseContext responseContext) {
+      if (action instanceof TermEvent.Init) {
         responseContext.done(false);
         return true;
-      } else if (action instanceof TermAction.ReadLine) {
-        String line = ((TermAction.ReadLine)action).getLine().toString();
+      } else if (action instanceof TermEvent.ReadLine) {
+        String line = ((TermEvent.ReadLine)action).getLine().toString();
         if ("bye".equals(line)) {
           responseContext.done(true);
           return true;
@@ -55,7 +55,7 @@ public class BaseTermTestCase extends TestCase {
             return false;
           }
         }
-      } else if (action instanceof TermAction.CancelEvaluation) {
+      } else if (action instanceof TermEvent.CancelEvaluation) {
         responseContext.done(false);
         return true;
       } else {

@@ -85,7 +85,7 @@ public class TermShellAdapterTestCase extends TestCase {
     System.out.println("1");
 
     //
-    term.add(new TermAction.ReadLine("foo"));
+    term.add(new TermEvent.ReadLine("foo"));
 
     //
     System.out.println("2");
@@ -107,7 +107,7 @@ public class TermShellAdapterTestCase extends TestCase {
     System.out.println("3");
 
     // Send a line
-    term.add(new TermAction.ReadLine("juu"));
+    term.add(new TermEvent.ReadLine("juu"));
 
     // Wait until it is ready again
     while (adapter.getStatus() != TermStatus.READY) {
@@ -117,7 +117,7 @@ public class TermShellAdapterTestCase extends TestCase {
     System.out.println("ABC");
 
     // Say bye
-    term.add(new TermAction.ReadLine("bye"));
+    term.add(new TermEvent.ReadLine("bye"));
 
     // Wait until it is shutdown
 /*

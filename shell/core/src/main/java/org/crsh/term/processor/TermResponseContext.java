@@ -19,7 +19,7 @@
 
 package org.crsh.term.processor;
 
-import org.crsh.term.TermAction;
+import org.crsh.term.TermEvent;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ public interface TermResponseContext {
 
   void setEcho(boolean echo);
 
-  TermAction read() throws IOException;
+  TermEvent read() throws IOException;
 
   void write(String msg) throws IOException;
 

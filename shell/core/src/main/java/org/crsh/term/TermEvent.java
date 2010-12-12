@@ -23,23 +23,23 @@ package org.crsh.term;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TermAction {
+public class TermEvent {
 
   @Override
   public String toString() {
     return getClass().getSimpleName() + "[]";
   }
 
-  public static class Init extends TermAction {
+  public static class Init extends TermEvent {
   }
 
-  public static class CancelEvaluation extends TermAction {
+  public static class CancelEvaluation extends TermEvent {
   }
 
-  public static class Complete extends TermAction {
+  public static class Complete extends TermEvent {
   }
 
-  public static class ReadLine extends TermAction {
+  public static class ReadLine extends TermEvent {
 
     /** . */
     private final CharSequence line;
