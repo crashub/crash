@@ -17,10 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term;
+package org.crsh.term.processor;
 
-import org.crsh.term.processor.TermProcessor;
-import org.crsh.term.processor.TermResponseContext;
+import org.crsh.term.Term;
+import org.crsh.term.TermEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -25,7 +25,7 @@ import net.wimpi.telnetd.shell.Shell;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.term.BaseTerm;
 import org.crsh.shell.impl.CRaSH;
-import org.crsh.term.Processor;
+import org.crsh.term.processor.Processor;
 import org.crsh.term.TermShellAdapter;
 
 /**

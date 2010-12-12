@@ -21,6 +21,7 @@ package org.crsh.term;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.crsh.term.processor.Processor;
 import org.crsh.term.processor.TermProcessor;
 import org.crsh.term.processor.TermResponseContext;
 import org.crsh.term.spi.TestTermConnector;
