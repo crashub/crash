@@ -56,7 +56,7 @@ public class Processor implements Runnable {
   private static final int STATUS_CLOSING = 4;
 
   /** . */
-  private final Term term;
+  final Term term;
 
   /** . */
   private final TermProcessor processor;
@@ -105,7 +105,7 @@ public class Processor implements Runnable {
       System.out.println("Found request " + request + " in queue");
 
       //
-      request.give(event);
+      request.handle(event);
 
       //
       try {
@@ -124,84 +124,8 @@ public class Processor implements Runnable {
 
   private class ShellInvoker implements EventRequest {
 
-    public void give(TermEvent event) {
+    public void handle(TermEvent event) {
 
-      TermResponseContext ctx = new TermResponseContext() {
-
-        /** . */
-        private String prompt;
-
-        public void setEcho(boolean echo) {
-          term.setEcho(echo);
-        }
-        public TermEvent read() throws IOException {
-
-          // Go in the queue and wait for an event
-          final CountDownLatch latch = new CountDownLatch(1);
-          final AtomicReference<TermEvent> eventRef = new AtomicReference<TermEvent>();
-
-          System.out.println("Adding event request callback to the queue");
-          requestQueue.add(new EventRequest() {
-            public void give(TermEvent event) {
-              eventRef.set(event);
-              latch.countDown();
-            }
-          });
-
-          //
-          System.out.println("About to wait delivery of event");
-          try {
-            latch.await();
-          }
-          catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-
-          //
-          System.out.println("Got event " + eventRef.get());
-          return eventRef.get();
-        }
-        public void write(String msg) throws IOException {
-          term.write(msg);
-        }
-
-        public void setPrompt(String prompt) {
-          this.prompt = prompt;
-        }
-
-        public void done(boolean close) {
-          try {
-            String p = prompt == null ? "% " : prompt;
-            term.write("\r\n");
-            term.write(p);
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-
-          //
-          System.out.println("Adding new shell invoker to the queue as work is done");
-          requestQueue.add(new ShellInvoker());
-
-          //
-          if (close) {
-            // If we succeded we close the term
-            // It will cause an exception to be thrown for the thread that are waiting in the
-            // blocking read operation
-            close();
-          }
-        }
-      };
-
-      // Process
-      processor.process(event, ctx);
-
-      // Maybe this should not be placed here
-      if (event instanceof TermEvent.ReadLine) {
-        CharSequence line = ((TermEvent.ReadLine)event).getLine();
-        if (line.length() > 0) {
-          term.addToHistory(line);
-        }
-      }
     }
   }
 
@@ -219,11 +143,4 @@ public class Processor implements Runnable {
       }
     }
   }
-
-  private interface EventRequest {
-
-    void give(TermEvent event);
-
-  }
-
 }
