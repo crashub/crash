@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ConnectorTestCase extends TestCase {
+public class AsyncShellTestCase extends TestCase {
 
   /** . */
   protected ShellFactory builder;
@@ -176,7 +176,7 @@ public class ConnectorTestCase extends TestCase {
     connector.open();
     status = 0;
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
-    connector.evaluate("invoke " + ConnectorTestCase.class.getName() + " bilto", respCtx);
+    connector.evaluate("invoke " + AsyncShellTestCase.class.getName() + " bilto", respCtx);
     while (status == 0) {
       // Do nothing
     }
