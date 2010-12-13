@@ -20,6 +20,8 @@
 package org.crsh.term;
 
 /**
+ * An event emitted by a term.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
@@ -33,7 +35,7 @@ public class TermEvent {
   public static class Init extends TermEvent {
   }
 
-  public static class CancelEvaluation extends TermEvent {
+  public static class Break extends TermEvent {
   }
 
   public static class Complete extends TermEvent {

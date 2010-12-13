@@ -134,7 +134,7 @@ public class BaseTerm implements Term {
         case BREAK:
           log.debug("Want to cancel evaluation");
           console.clearBuffer();
-          return new TermEvent.CancelEvaluation();
+          return new TermEvent.Break();
         case CHAR:
           if (code >= 0 && code < 128) {
             console.getClientInput().write((char)code);

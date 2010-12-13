@@ -22,19 +22,47 @@ package org.crsh.term;
 import java.io.IOException;
 
 /**
+ * An high level term abstraction.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface Term {
 
+  /**
+   * Set the echo mode on the term.
+   *
+   * @param echo the echo mode
+   */
   void setEcho(boolean echo);
 
+  /**
+   * Read the next term event. This operation is a blocking operation that blocks until data is available or until
+   * term is closed.
+   *
+   * @return the next term event
+   * @throws IOException any io exception
+   */
   TermEvent read() throws IOException;
 
-  void write(String prompt) throws IOException;
+  /**
+   * Write a message on the console.
+   *
+   * @param msg the message to write
+   * @throws IOException any io exception
+   */
+  void write(String msg) throws IOException;
 
-  void close();
-
+  /**
+   * Append a line to the term history.
+   *
+   * @param line the history line to append
+   */
   void addToHistory(CharSequence line);
+
+  /**
+   * Close the term. If threads are blocked in the {@link #read()} operation, those thread should be unblocked.
+   */
+  void close();
 
 }

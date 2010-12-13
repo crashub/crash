@@ -56,7 +56,7 @@ public class BaseTermTestCase extends TestCase {
             return false;
           }
         }
-      } else if (action instanceof TermEvent.CancelEvaluation) {
+      } else if (action instanceof TermEvent.Break) {
         responseContext.done(false);
         return true;
       } else {

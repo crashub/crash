@@ -23,6 +23,8 @@ import junit.framework.TestCase;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
+import org.crsh.term.processor.TermShellAdapter;
+import org.crsh.term.processor.TermStatus;
 
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;

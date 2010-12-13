@@ -26,7 +26,7 @@ import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.term.BaseTerm;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.processor.Processor;
-import org.crsh.term.TermShellAdapter;
+import org.crsh.term.processor.TermShellAdapter;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>

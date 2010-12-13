@@ -17,13 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term;
+package org.crsh.term.processor;
 
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellResponseContext;
 import org.crsh.shell.concurrent.AsyncShell;
-import org.crsh.term.processor.TermProcessor;
-import org.crsh.term.processor.TermResponseContext;
+import org.crsh.term.TermEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +145,7 @@ public class TermShellAdapter implements TermProcessor {
 
             }
           });
-        } else if (action instanceof TermEvent.CancelEvaluation) {
+        } else if (action instanceof TermEvent.Break) {
           responseContext.done(false);
         }
         processed = true;
@@ -155,7 +154,7 @@ public class TermShellAdapter implements TermProcessor {
         processed = false;
         break;
       case PROCESSING:
-        if (action instanceof TermEvent.CancelEvaluation) {
+        if (action instanceof TermEvent.Break) {
           if (shell.cancel()) {
             log.debug("Evaluation cancelled");
             responseContext.done(false);
