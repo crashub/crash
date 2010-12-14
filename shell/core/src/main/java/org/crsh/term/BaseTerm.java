@@ -178,8 +178,4 @@ public class BaseTerm implements Term {
   public void write(String msg) throws IOException {
     console.getWriter().write(msg);
   }
-
-//  public void bufferInsert(String msg) throws IOException {
-//    console.getClientInput().write(msg);
-//  }
 }
