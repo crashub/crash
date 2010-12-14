@@ -59,7 +59,7 @@ public interface Term {
    * @param msg the message to insert
    * @throws IOException any io exception
    */
-  void bufferInsert(String msg) throws IOException;
+  // void bufferInsert(String msg) throws IOException;
 
   /**
    * Append a line to the term history.
