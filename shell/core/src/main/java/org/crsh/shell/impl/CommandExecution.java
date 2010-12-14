@@ -20,21 +20,70 @@
 package org.crsh.shell.impl;
 
 import org.crsh.command.ShellCommand;
+import org.crsh.shell.ErrorType;
+import org.crsh.shell.ShellProcess;
+import org.crsh.shell.ShellProcessContext;
+import org.crsh.shell.ShellResponse;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class CommandExecution {
+class CommandExecution implements ShellProcess {
 
   /** . */
-  final ShellCommand<?, ?> command;
+  private final CRaSH crash;
 
   /** . */
-  final String[] args;
+  private final String request;
 
-  public CommandExecution(ShellCommand<?, ?> command, String[] args) {
-    this.command = command;
-    this.args = args;
+  /** . */
+  private final ShellProcessContext context;
+
+  CommandExecution(CRaSH crash, String request, ShellProcessContext context) {
+    this.crash = crash;
+    this.request = request;
+    this.context = context;
+  }
+
+  void execute() {
+
+    //
+    context.begin(this);
+
+    //
+    ShellResponse resp;
+    if ("bye".equals(request)) {
+      resp = new ShellResponse.Close();
+    } else {
+      // Create AST
+      Parser parser = new Parser(request);
+      AST ast = parser.parse();
+
+      //
+      if (ast instanceof AST.Expr) {
+        AST.Expr expr = (AST.Expr)ast;
+
+        // Create commands first
+        try {
+          resp = expr.createCommands(crash);
+        } catch (Exception e) {
+          resp = new ShellResponse.Error(ErrorType.EVALUATION, e);
+        }
+
+        if (resp == null) {
+          resp = expr.execute(context, crash.attributes);
+        }
+      } else {
+        resp = new ShellResponse.NoCommand();
+      }
+    }
+
+    //
+    context.end(resp);
+  }
+
+  public void cancel() {
+    // No op for now
   }
 }

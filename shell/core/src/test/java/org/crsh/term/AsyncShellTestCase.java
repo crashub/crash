@@ -75,7 +75,7 @@ public class AsyncShellTestCase extends TestCase {
       @Override
       public void process(String request, ShellProcessContext processContext) {
         String a = processContext.readLine("bar", true);
-        processContext.done(new ShellResponse.Display(a));
+        processContext.end(new ShellResponse.Display(a));
       }
     };
 
@@ -85,11 +85,13 @@ public class AsyncShellTestCase extends TestCase {
 
     //
     ShellProcessContext respCtx1 = new ShellProcessContext() {
+      public void begin(ShellProcess process) {
+      }
       public String readLine(String msg, boolean echo) {
         output.addLast(msg);
         return input.isEmpty() ? null : input.removeLast();
       }
-      public void done(ShellResponse response) {
+      public void end(ShellResponse response) {
       }
     };
     SyncShellResponseContext respCtx2 = new SyncShellResponseContext(respCtx1);
@@ -118,6 +120,12 @@ public class AsyncShellTestCase extends TestCase {
       public void process(String request, ShellProcessContext processContext) {
 
         //
+        processContext.begin(new ShellProcess() {
+          public void cancel() {
+          }
+        });
+
+        //
         fail.set(!"foo".equals(request));
 
         //
@@ -137,7 +145,7 @@ public class AsyncShellTestCase extends TestCase {
         }
 
         //
-        processContext.done(ok);
+        processContext.end(ok);
       }
     };
 
@@ -157,7 +165,7 @@ public class AsyncShellTestCase extends TestCase {
     assertEquals(Status.EVALUATING, connector.getStatus());
 
     //
-    assertTrue(connector.cancel());
+    respCtx.cancel();
     assertEquals(Status.CANCELED, connector.getStatus());
 
     //

@@ -65,7 +65,7 @@ public class TestShell implements Shell {
     try {
       TestShellAction action = queue.take();
       ShellResponse resp = action.evaluate(request, processContext);
-      processContext.done(resp);
+      processContext.end(resp);
     } catch (Exception e) {
       throw new AssertionError(e);
     }

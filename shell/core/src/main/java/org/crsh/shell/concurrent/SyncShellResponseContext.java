@@ -19,6 +19,7 @@
 
 package org.crsh.shell.concurrent;
 
+import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 
@@ -39,6 +40,9 @@ public class SyncShellResponseContext implements ShellProcessContext {
   /** . */
   private final CountDownLatch latch;
 
+  /** . */
+  private ShellProcess process;
+
   public SyncShellResponseContext() {
     this(null);
   }
@@ -49,6 +53,17 @@ public class SyncShellResponseContext implements ShellProcessContext {
     this.response = null;
   }
 
+  public void cancel() {
+    if (process == null) {
+      throw new IllegalStateException();
+    }
+    process.cancel();
+  }
+
+  public void begin(ShellProcess process) {
+    this.process = process;
+  }
+
   public String readLine(String msg, boolean echo) {
     if (wrapped != null) {
       return wrapped.readLine(msg, echo);
@@ -57,13 +72,13 @@ public class SyncShellResponseContext implements ShellProcessContext {
     }
   }
 
-  public void done(ShellResponse response) {
+  public void end(ShellResponse response) {
     this.response = response;
     this.latch.countDown();
 
     //
     if (wrapped != null) {
-      wrapped.done(response);
+      wrapped.end(response);
     }
   }
 

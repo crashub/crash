@@ -23,12 +23,8 @@ package org.crsh.shell;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellProcessContext {
+public interface ShellProcess {
 
-  void begin(ShellProcess process);
-
-  String readLine(String msg, boolean echo);
-
-  void end(ShellResponse response);
+  void cancel();
 
 }

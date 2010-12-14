@@ -19,6 +19,7 @@
 
 package org.crsh.term.processor;
 
+import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.concurrent.AsyncShell;
@@ -43,9 +44,13 @@ public class TermShellAdapter implements TermProcessor {
   /** . */
   private volatile TermStatus status;
 
+  /** . */
+  private volatile ShellProcess process;
+
   public TermShellAdapter(AsyncShell connector) {
     this.shell = connector;
     this.status = TermStatus.READY;
+    this.process = null;
   }
 
   public String getPrompt() {
@@ -91,6 +96,10 @@ public class TermShellAdapter implements TermProcessor {
           log.debug("Submitting command " + line);
 
           shell.process(line, new ShellProcessContext() {
+            public void begin(ShellProcess process) {
+              TermShellAdapter.this.process = process;
+            }
+
             public String readLine(String msg, boolean echo) {
               try {
                 status = TermStatus.READING_INPUT;
@@ -118,7 +127,7 @@ public class TermShellAdapter implements TermProcessor {
               }
             }
 
-            public void done(ShellResponse response) {
+            public void end(ShellResponse response) {
 
               // Update prompt first
               String prompt = shell.getPrompt();
@@ -127,11 +136,12 @@ public class TermShellAdapter implements TermProcessor {
               //
               if (response instanceof ShellResponse.Close) {
                 status = TermStatus.SHUTDOWN;
+                process = null;
                 responseContext.done(true);
               }
               else {
                 if (response instanceof ShellResponse.Cancelled) {
-//                  responseContext.done(false);
+                  process = null;
                 }
                 else {
                   String ret = response.getText();
@@ -142,6 +152,7 @@ public class TermShellAdapter implements TermProcessor {
                   catch (IOException e) {
                     log.error("Write to term failure", e);
                   }
+                  process = null;
                   responseContext.done(false);
                 }
                 status = TermStatus.READY;
@@ -160,13 +171,8 @@ public class TermShellAdapter implements TermProcessor {
         break;
       case PROCESSING:
         if (action instanceof TermEvent.Break) {
-          if (shell.cancel()) {
-            log.debug("Evaluation cancelled");
-            responseContext.done(false);
-          // We signal it's done here but the command may still be processing
-          } else {
-            log.debug("Attempt to cancel evaluation failed");
-          }
+          process.cancel();
+          responseContext.done(false);
         } else {
           log.debug("Ignoring action " + action);
         }

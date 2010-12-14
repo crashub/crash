@@ -20,6 +20,7 @@
 package org.crsh.shell.concurrent;
 
 import org.crsh.shell.Shell;
+import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 
@@ -72,19 +73,6 @@ public class AsyncShell implements Shell {
     }
   }
 
-  public boolean cancel() {
-    synchronized (lock) {
-      boolean cancelled;
-      if (status == Status.EVALUATING) {
-        status = Status.CANCELED;
-        cancelled = true;
-      } else {
-        cancelled = false;
-      }
-      return cancelled;
-    }
-  }
-
   public void close() {
     synchronized (lock) {
       switch (status) {
@@ -101,7 +89,7 @@ public class AsyncShell implements Shell {
     }
   }
 
-  private class Foo implements ShellProcessContext, Runnable {
+  private class Foo implements ShellProcessContext, Runnable, ShellProcess {
 
 
     /** . */
@@ -110,23 +98,35 @@ public class AsyncShell implements Shell {
     /** . */
     private final ShellProcessContext caller;
 
+    /** . */
+    private ShellProcess callee;
+
     private Foo(String request, ShellProcessContext caller) {
       this.request = request;
       this.caller = caller;
+      this.callee = null;
     }
+
+    // ShellProcessContext implementation ******************************************************************************
 
     public String readLine(String msg, boolean echo) {
       return caller.readLine(msg, echo);
     }
-    public void done(ShellResponse response) {
+
+    public void begin(ShellProcess process) {
+      caller.begin(this);
+      callee = process;
+    }
+
+    public void end(ShellResponse response) {
 
       synchronized (lock) {
 
         // Signal response
         if (status == Status.CANCELED) {
-          caller.done(new ShellResponse.Cancelled());
+          caller.end(new ShellResponse.Cancelled());
         } else {
-          caller.done(response);
+          caller.end(response);
         }
 
         // Update state
@@ -135,6 +135,19 @@ public class AsyncShell implements Shell {
         status = nextStatus;
       }
     }
+
+    // ShellProcess implementation *************************************************************************************
+
+    public void cancel() {
+      synchronized (lock) {
+        if (status == Status.EVALUATING) {
+          status = Status.CANCELED;
+          callee.cancel();
+        }
+      }
+    }
+
+    // Runnable implementation *****************************************************************************************
 
     public void run() {
       shell.process(request, current);
