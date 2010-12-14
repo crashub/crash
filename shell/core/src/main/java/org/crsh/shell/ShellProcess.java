@@ -20,11 +20,16 @@
 package org.crsh.shell;
 
 /**
+ * The shell process.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface ShellProcess {
 
+  /**
+   * Attempt to cancel the shell process.
+   */
   void cancel();
 
 }

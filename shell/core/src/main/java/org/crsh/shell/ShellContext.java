@@ -21,11 +21,18 @@ package org.crsh.shell;
 import java.util.List;
 
 /**
+ * The shell context.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface ShellContext {
 
+  /**
+   * Returns the version.
+   *
+   * @return the version
+   */
   String getVersion();
 
   Resource loadResource(String resourceId, ResourceKind resourceKind);

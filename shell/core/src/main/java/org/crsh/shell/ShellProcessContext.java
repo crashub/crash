@@ -20,15 +20,35 @@
 package org.crsh.shell;
 
 /**
+ * The process context is the main interaction interface between a shell process and its context.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface ShellProcessContext {
 
+  /**
+   * This method is invoked before the process work begins. It provides the process callback that
+   * can be used during the process execution by the context.
+   *
+   * @param process the process
+   */
   void begin(ShellProcess process);
 
+  /**
+   * A callback made by the process when it needs to read a line of text on the term.
+   *
+   * @param msg the message to display prior reading the term
+   * @param echo whether the input line should be echoed or not
+   * @return the line read or null if no line was possible to be read
+   */
   String readLine(String msg, boolean echo);
 
+  /**
+   * This method is invoked when the process ends.
+   *
+   * @param response the shell response
+   */
   void end(ShellResponse response);
 
 }

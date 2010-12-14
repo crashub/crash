@@ -27,12 +27,26 @@ import java.util.List;
  */
 public interface Shell {
 
-  // Try to remove that
+  /**
+   * Returns the welcome message.
+   *
+   * @return the welcome message
+   */
   String getWelcome();
 
-  // Try to remove that
+  /**
+   * Returns the shell prompt.
+   *
+   * @return the shell prompt
+   */
   String getPrompt();
 
+  /**
+   * Process a request.
+   *
+   * @param request the request to process
+   * @param processContext the process context
+   */
   void process(String request, ShellProcessContext processContext);
 
   /**
