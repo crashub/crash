@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.processor;
+package org.crsh;
 
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;

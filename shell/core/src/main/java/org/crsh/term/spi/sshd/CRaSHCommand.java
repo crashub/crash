@@ -20,9 +20,9 @@ package org.crsh.term.spi.sshd;
 
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
+import org.crsh.Processor;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.impl.CRaSH;
-import org.crsh.term.processor.Processor;
 import org.crsh.term.BaseTerm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

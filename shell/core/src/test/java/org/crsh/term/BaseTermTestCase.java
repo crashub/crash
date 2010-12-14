@@ -21,11 +21,11 @@ package org.crsh.term;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.crsh.Processor;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.term.processor.Processor;
 import org.crsh.term.spi.TestTermIO;
 
 import java.io.IOException;
