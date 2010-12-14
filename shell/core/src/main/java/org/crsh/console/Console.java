@@ -162,6 +162,10 @@ public final class Console {
     this.size = 0;
   }
 
+  public CharSequence getBufferToCursor() {
+    return new String(buffer, 0, curAt);
+  }
+
   public boolean isEchoing() {
     return echoing;
   }

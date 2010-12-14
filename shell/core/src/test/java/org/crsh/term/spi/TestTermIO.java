@@ -58,6 +58,10 @@ public class TestTermIO implements TermIO {
     }
   }
 
+  public TestTermIO appendTab() {
+    return append(TerminalIO.TABULATOR);
+  }
+
   public TestTermIO appendDel() {
     return append(TerminalIO.DELETE);
   }
@@ -106,6 +110,8 @@ public class TestTermIO implements TermIO {
         return CodeType.BREAK;
       case TerminalIO.DELETE:
         return CodeType.DELETE;
+      case TerminalIO.TABULATOR:
+        return CodeType.TAB;
       case TerminalIO.UP:
         return CodeType.UP;
       case TerminalIO.DOWN:

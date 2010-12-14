@@ -143,8 +143,8 @@ public class BaseTerm implements Term {
           }
           break;
         case TAB:
-          log.info("Swallowing tab");
-          break;
+          log.debug("Tab");
+          return new TermEvent.Complete(console.getBufferToCursor());
       }
 
       //

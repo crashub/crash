@@ -39,6 +39,22 @@ public class TermEvent {
   }
 
   public static class Complete extends TermEvent {
+
+    /** . */
+    private CharSequence line;
+
+    public Complete(CharSequence line) {
+      this.line = line;
+    }
+
+    public CharSequence getLine() {
+      return line;
+    }
+
+    @Override
+    public String toString() {
+      return "Complete[line=" + line + "]";
+    }
   }
 
   public static class ReadLine extends TermEvent {
@@ -53,10 +69,10 @@ public class TermEvent {
     public CharSequence getLine() {
       return line;
     }
+
     @Override
     public String toString() {
       return "ReadLine[line=" + line + "]";
     }
-
   }
 }
