@@ -70,7 +70,4 @@ public class TestShell implements Shell {
       throw new AssertionError(e);
     }
   }
-
-  public void doClose() {
-  }
 }

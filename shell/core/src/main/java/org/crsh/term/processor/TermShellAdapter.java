@@ -19,10 +19,10 @@
 
 package org.crsh.term.processor;
 
+import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.term.TermEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class TermShellAdapter implements TermProcessor {
   private final Logger log = LoggerFactory.getLogger(TermShellAdapter.class);
 
   /** . */
-  private final AsyncShell shell;
+  private final Shell shell;
 
   /** . */
   private volatile TermStatus status;
@@ -47,7 +47,7 @@ public class TermShellAdapter implements TermProcessor {
   /** . */
   private volatile ShellProcess process;
 
-  public TermShellAdapter(AsyncShell connector) {
+  public TermShellAdapter(Shell connector) {
     this.shell = connector;
     this.status = TermStatus.READY;
     this.process = null;
@@ -78,7 +78,7 @@ public class TermShellAdapter implements TermProcessor {
 
     // Take care of that here
     if (action instanceof TermEvent.Init) {
-      String welcome = shell.open();
+      String welcome = shell.getWelcome();
       responseContext.write(welcome);
       responseContext.done(false);
       return true;

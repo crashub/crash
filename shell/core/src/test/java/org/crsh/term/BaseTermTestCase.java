@@ -21,9 +21,13 @@ package org.crsh.term;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.crsh.shell.Shell;
+import org.crsh.shell.ShellProcess;
+import org.crsh.shell.ShellProcessContext;
+import org.crsh.shell.ShellResponse;
 import org.crsh.term.processor.Processor;
 import org.crsh.term.processor.TermProcessor;
-import org.crsh.term.processor.TermResponseContext;
+import org.crsh.term.processor.TermShellAdapter;
 import org.crsh.term.spi.TestTermConnector;
 
 import java.io.IOException;
@@ -36,38 +40,24 @@ import java.util.concurrent.TimeUnit;
  */
 public class BaseTermTestCase extends TestCase {
 
-  private static final TermProcessor ECHO_PROCESSOR = new TermProcessor() {
-    public boolean process(TermEvent action, TermResponseContext responseContext) {
-      if (action instanceof TermEvent.Init) {
-        responseContext.done(false);
-        return true;
-      } else if (action instanceof TermEvent.ReadLine) {
-        String line = ((TermEvent.ReadLine)action).getLine().toString();
-        if ("bye".equals(line)) {
-          responseContext.done(true);
-          return true;
-        } else {
-          try {
-            responseContext.write(line);
-            responseContext.done(false);
-            return true;
-          }
-          catch (IOException e) {
-            return false;
-          }
+  /** . */
+  private static final Shell ECHO_SHELL = new TestShell() {
+    @Override
+    public String getWelcome() {
+      return "";
+    }
+    @Override
+    public void process(String request, ShellProcessContext processContext) {
+      processContext.begin(new ShellProcess() {
+        public void cancel() {
         }
-      } else if (action instanceof TermEvent.Break) {
-        responseContext.done(false);
-        return true;
-      } else {
-        responseContext.done(true);
-        return true;
-      }
+      });
+      processContext.end(new ShellResponse.Display(request));
     }
   };
 
   public void testLine() throws Exception {
-    Controller controller = create(ECHO_PROCESSOR);
+    Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
     //
@@ -83,7 +73,7 @@ public class BaseTermTestCase extends TestCase {
   }
 
   public void testDel() throws Exception {
-    Controller controller = create(ECHO_PROCESSOR);
+    Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
     //
@@ -102,7 +92,7 @@ public class BaseTermTestCase extends TestCase {
   }
 
   public void testBreak() throws Exception {
-    Controller controller = create(ECHO_PROCESSOR);
+    Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
     //
@@ -125,7 +115,7 @@ public class BaseTermTestCase extends TestCase {
   }
 
   public void testInsert() throws Exception {
-    Controller controller = create(ECHO_PROCESSOR);
+    Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
     //
@@ -146,7 +136,7 @@ public class BaseTermTestCase extends TestCase {
   }
 
   public void testIdempotentMoveRight() throws Exception {
-    Controller controller = create(ECHO_PROCESSOR);
+    Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
     //
@@ -164,7 +154,7 @@ public class BaseTermTestCase extends TestCase {
   }
 
   public void testIdempotentMoveLeft() throws Exception {
-    Controller controller = create(ECHO_PROCESSOR);
+    Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
     //
@@ -182,7 +172,7 @@ public class BaseTermTestCase extends TestCase {
   }
 
   public void testMoveUp() throws Exception {
-    Controller controller = create(ECHO_PROCESSOR);
+    Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
     //
@@ -208,7 +198,7 @@ public class BaseTermTestCase extends TestCase {
   }
 
   public void testIdempotentMoveUp() throws Exception {
-    Controller controller = create(ECHO_PROCESSOR);
+    Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
     //
@@ -235,7 +225,7 @@ public class BaseTermTestCase extends TestCase {
   }
 
   public void testIdempotentMoveDown() throws Exception {
-    Controller controller = create(ECHO_PROCESSOR);
+    Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
     //
@@ -258,8 +248,8 @@ public class BaseTermTestCase extends TestCase {
     controller.assertStop();
   }
 
-  private Controller create(TermProcessor processor) throws IOException {
-    return new Controller(new TestTermConnector(), processor);
+  private Controller create(Shell processor) throws IOException {
+    return new Controller(new TestTermConnector(), new TermShellAdapter(processor));
   }
 
   private class Controller implements Runnable {
