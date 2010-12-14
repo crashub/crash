@@ -19,8 +19,8 @@
 
 package org.crsh.term;
 
-import org.crsh.console.Console;
-import org.crsh.console.ViewWriter;
+import org.crsh.term.console.Console;
+import org.crsh.term.console.ViewWriter;
 import org.crsh.term.spi.TermIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

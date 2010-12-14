@@ -17,25 +17,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.console;
+package org.crsh.term.console;
 
-import java.io.IOException;
+import java.util.NoSuchElementException;
 
 /**
+ * The console reader provides read oriented operation for the console.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ViewReader {
+public abstract class ConsoleReader {
 
-  public abstract CharSequence replace(CharSequence s) throws IOException;
+  public abstract int getSize();
 
-  public abstract void write(char c) throws IOException;
+  public abstract boolean hasNext();
 
-  public abstract void write(CharSequence s) throws IOException;
+  public abstract CharSequence next() throws NoSuchElementException;
 
-  public abstract void del() throws IOException;
-
-  public abstract void moveRight() throws IOException;
-
-  public abstract void moveLeft() throws IOException;
 }

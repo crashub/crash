@@ -17,10 +17,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.console;
+package org.crsh.term.console;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
+import org.crsh.term.console.ViewWriter;
 
 import java.io.IOException;
 

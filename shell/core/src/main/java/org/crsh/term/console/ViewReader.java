@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,46 +16,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.console;
+
+package org.crsh.term.console;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ConsoleNoMoveTestCase extends AbstractConsoleTestCase {
+public abstract class ViewReader {
 
-  @Override
-  protected boolean getSupportsCursorMove() {
-    return false;
-  }
+  public abstract CharSequence replace(CharSequence s) throws IOException;
 
-  @Override
-  protected String getExpectedMoveLeftInsert() {
-    return "ab";
-  }
+  public abstract void write(char c) throws IOException;
 
-  @Override
-  protected String getExpectedMoveLeftDel() {
-    return "a";
-  }
+  public abstract void write(CharSequence s) throws IOException;
 
-  @Override
-  protected String getExpectedMoveRightInsert() {
-    return "abcd";
-  }
+  public abstract void del() throws IOException;
 
-  @Override
-  protected String getExpectedMoveRightDel() {
-    return "ab";
-  }
+  public abstract void moveRight() throws IOException;
 
-  @Override
-  protected String getExpectedMoveRightAtEndOfLine() {
-    return "ab";
-  }
-
-  @Override
-  protected String getExpectedMoveLeftAtBeginningOfLine() {
-    return "ab";
-  }
+  public abstract void moveLeft() throws IOException;
 }
