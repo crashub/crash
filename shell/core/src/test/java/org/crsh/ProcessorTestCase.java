@@ -45,7 +45,7 @@ public class ProcessorTestCase extends TestCase {
   private static final Shell ECHO_SHELL = new TestShell() {
     @Override
     public String getWelcome() {
-      return "\r\n% ";
+      return "";
     }
     @Override
     public void process(String request, final ShellProcessContext processContext) {

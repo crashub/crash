@@ -147,4 +147,12 @@ public class BaseTermTestCase extends TestCase {
     io.appendTab();
     assertComplete("a");
   }
+
+  public void testBufferInsert() throws Exception {
+    io.append("a");
+    io.moveLeft();
+    term.bufferInsert("b");
+    io.append("\r\n");
+    assertLine("ba");
+  }
 }

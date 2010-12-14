@@ -158,7 +158,7 @@ public class BaseTerm implements Term {
   }
 
   public void bufferInsert(String msg) throws IOException {
-
+    console.getViewReader().write(msg);
   }
 
   public void addToHistory(CharSequence line) {
