@@ -210,7 +210,6 @@ public class Processor implements Runnable {
             }
             process = null;
           }
-          // status = TermStatus.READY;
         }
 
         //
@@ -218,7 +217,6 @@ public class Processor implements Runnable {
       }
       finally {
         process = null;
-//        requestQueue.add(new ShellInvoker());
       }
     }
   }
