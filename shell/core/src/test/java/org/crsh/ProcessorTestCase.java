@@ -30,6 +30,8 @@ import org.crsh.term.TestShell;
 import org.crsh.term.spi.TestTermIO;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +55,11 @@ public class ProcessorTestCase extends TestCase {
         }
       });
       processContext.end(new ShellResponse.Display(request));
+    }
+
+    @Override
+    public List<String> complete(String prefix) {
+      return Arrays.asList(new StringBuilder(prefix).reverse().toString());
     }
   };
 
@@ -246,6 +253,17 @@ public class ProcessorTestCase extends TestCase {
 
     //
     controller.assertStop();
+  }
+
+  public void testCompletion() throws Exception {
+
+    Controller controller = create(ECHO_SHELL);
+    controller.assertStart();
+
+    controller.connector.append("ab");
+    controller.connector.appendTab();
+    controller.connector.assertChars("abba");
+
   }
 
   private Controller create(Shell shell) throws IOException {

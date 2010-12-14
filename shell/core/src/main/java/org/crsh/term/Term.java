@@ -46,12 +46,20 @@ public interface Term {
   TermEvent read() throws IOException;
 
   /**
-   * Write a message on the console.
+   * Write a message on the console, the text will be appended.
    *
    * @param msg the message to write
    * @throws IOException any io exception
    */
   void write(String msg) throws IOException;
+
+//  /**
+//   * Insert a message on the console just after the cursor.
+//   *
+//   * @param msg the message to insert
+//   * @throws IOException any io exception
+//   */
+//  void bufferInsert(String msg) throws IOException;
 
   /**
    * Append a line to the term history.

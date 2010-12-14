@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -125,6 +126,23 @@ public class Processor implements Runnable {
         } else {
           log.debug("Ignoring action " + event);
           writePrompt();
+        }
+      } else if (event instanceof TermEvent.Complete) {
+        TermEvent.Complete complete = (TermEvent.Complete)event;
+        String prefix = complete.getLine().toString();
+        log.debug("About to get completions for " + prefix);
+        List<String> completion = shell.complete(prefix);
+        log.debug("Completions for " + prefix + " are " + completion);
+        if (completion.size() >= 1) {
+
+          // Try to find a common prefix
+
+          try {
+            term.write(completion.get(0));
+          }
+          catch (IOException e) {
+            e.printStackTrace();
+          }
         }
       }
 
