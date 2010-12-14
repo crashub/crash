@@ -54,10 +54,10 @@ public final class Console {
   private boolean echoing;
 
   /** . */
-  private final ViewWriter viewReader;
+  private final ViewWriter viewWriter;
 
   /** . */
-  private final ViewReader viewWriter = new ViewReader() {
+  private final ViewReader viewReader = new ViewReader() {
 
     @Override
     public CharSequence replace(CharSequence s) throws IOException {
@@ -129,12 +129,12 @@ public final class Console {
         char c = s.charAt(i);
         writeNoFlush(c);
       }
-      viewReader.flush();
+      viewWriter.flush();
     }
 
     public void write(char c) throws IOException {
       writeNoFlush(c);
-      viewReader.flush();
+      viewWriter.flush();
     }
 
     private void writeNoFlush(char c) throws IOException {
@@ -142,21 +142,21 @@ public final class Console {
         previousCR = false;
       } else if (c == '\r' || c == '\n') {
         previousCR = c == '\r';
-        viewReader.writeCRLF();
+        viewWriter.writeCRLF();
       } else {
-        viewReader.write(c);
+        viewWriter.write(c);
       }
     }
   };
 
-  public Console(ViewWriter viewReader) {
+  public Console(ViewWriter viewWriter) {
     this.buffer = new char[128];
     this.size = 0;
     this.curAt = 0;
     this.lines = new LinkedList<CharSequence>();
     this.previousCR = false;
     this.echoing = true;
-    this.viewReader = viewReader;
+    this.viewWriter = viewWriter;
   }
 
   /**
@@ -189,8 +189,8 @@ public final class Console {
     return reader;
   }
 
-  public ViewReader getViewWriter() {
-    return viewWriter;
+  public ViewReader getViewReader() {
+    return viewReader;
   }
 
   public ConsoleWriter getWriter() {
@@ -248,7 +248,7 @@ public final class Console {
       moveLeft();
       // Redisplay from cursor to end
       String disp = new String(buffer, curAt, size - curAt + 1);
-      viewReader.write(disp);
+      viewWriter.write(disp);
       // position cursor one to left from where started
       int saveCurAt = curAt;
       curAt = size + 1;   // Size before delete
@@ -264,9 +264,9 @@ public final class Console {
 
   private void moveRight() throws IOException {
     if (curAt < size) {
-      if (viewReader.writeMoveRight())
+      if (viewWriter.writeMoveRight())
       {
-        viewReader.flush();
+        viewWriter.flush();
         curAt++;
       }
     }
@@ -274,9 +274,9 @@ public final class Console {
 
   private void moveLeft() throws IOException {
     if (curAt > 0) {
-      if (viewReader.writeMoveLeft())
+      if (viewWriter.writeMoveLeft())
       {
-        viewReader.flush();
+        viewWriter.flush();
         curAt--;
       }
     }
@@ -284,29 +284,29 @@ public final class Console {
 
   private void echo(char c) throws IOException {
     if (echoing) {
-      viewReader.write(c);
-      viewReader.flush();
+      viewWriter.write(c);
+      viewWriter.flush();
     }
   }
 
   private void echo(String s) throws IOException {
     if (echoing) {
-      viewReader.write(s);
-      viewReader.flush();
+      viewWriter.write(s);
+      viewWriter.flush();
     }
   }
 
   private void echoDel() throws IOException {
     if (echoing) {
-      viewReader.writeDel();
-      viewReader.flush();
+      viewWriter.writeDel();
+      viewWriter.flush();
     }
   }
 
   private void echoCRLF() throws IOException {
     if (echoing) {
-      viewReader.writeCRLF();
-      viewReader.flush();
+      viewWriter.writeCRLF();
+      viewWriter.flush();
     }
   }
 
@@ -342,7 +342,7 @@ public final class Console {
       // Adjust size and display from inserted character to end
       ++size;
       String disp = new String(buffer, curAt, size - curAt);
-      viewReader.write(disp);
+      viewWriter.write(disp);
       // Move cursor to original character
       int saveCurAt = ++curAt;
       curAt = size;

@@ -108,14 +108,14 @@ public class BaseTerm implements Term {
       CodeType type = io.decode(code);
       switch (type) {
         case DELETE:
-          console.getViewWriter().del();
+          console.getViewReader().del();
           break;
         case UP:
         case DOWN:
           int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
           if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
             CharSequence s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
-            CharSequence t = console.getViewWriter().replace(s);
+            CharSequence t = console.getViewReader().replace(s);
             if (historyCursor == -1) {
               historyBuffer = t;
             }
@@ -126,10 +126,10 @@ public class BaseTerm implements Term {
           }
           break;
         case RIGHT:
-          console.getViewWriter().moveRight();
+          console.getViewReader().moveRight();
           break;
         case LEFT:
-          console.getViewWriter().moveLeft();
+          console.getViewReader().moveLeft();
           break;
         case BREAK:
           log.debug("Want to cancel evaluation");
@@ -137,7 +137,7 @@ public class BaseTerm implements Term {
           return new TermEvent.Break();
         case CHAR:
           if (code >= 0 && code < 128) {
-            console.getViewWriter().write((char)code);
+            console.getViewReader().write((char)code);
           } else {
             log.debug("Unhandled char " + code);
           }
@@ -155,6 +155,10 @@ public class BaseTerm implements Term {
         return new TermEvent.ReadLine(input);
       }
     }
+  }
+
+  public void bufferInsert(String msg) throws IOException {
+
   }
 
   public void addToHistory(CharSequence line) {

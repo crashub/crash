@@ -58,7 +58,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testNoCR() throws IOException {
     Console console = newConsole();
-    console.getViewWriter().write("a");
+    console.getViewReader().write("a");
     assertFalse(console.getReader().hasNext());
     assertEquals(1, console.getReader().getSize());
   }
@@ -66,7 +66,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   public void testReadLine() throws IOException {
     for (String test : new String[]{"a\n","a\r","a\r\n"}) {
       Console console = newConsole();
-      console.getViewWriter().write(test);
+      console.getViewReader().write(test);
       assertTrue(console.getReader().hasNext());
       assertEquals("a", console.getReader().next());
       assertFalse(console.getReader().hasNext());
@@ -76,7 +76,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     //
     for (String test : new String[]{"a\n\n","a\n\r","a\r\r"}) {
       Console console = newConsole();
-      console.getViewWriter().write(test);
+      console.getViewReader().write(test);
       assertTrue(console.getReader().hasNext());
       assertEquals("a", console.getReader().next());
       assertEquals("", console.getReader().next());
@@ -87,9 +87,9 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testErase() throws IOException {
     Console console = newConsole();
-    console.getViewWriter().write("a");
-    console.getViewWriter().del();
-    console.getViewWriter().write("b\n");
+    console.getViewReader().write("a");
+    console.getViewReader().del();
+    console.getViewReader().write("b\n");
     assertTrue(console.getReader().hasNext());
     assertEquals("b", console.getReader().next());
     assertFalse(console.getReader().hasNext());
@@ -97,9 +97,9 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testMoveLeftInsert() throws IOException {
     Console console = newConsole();
-    console.getViewWriter().write("a");
-    console.getViewWriter().moveLeft();
-    console.getViewWriter().write("b\n");
+    console.getViewReader().write("a");
+    console.getViewReader().moveLeft();
+    console.getViewReader().write("b\n");
     assertTrue(console.getReader().hasNext());
     assertEquals(getExpectedMoveLeftInsert(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
@@ -109,10 +109,10 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testMoveLeftDel() throws IOException {
     Console console = newConsole();
-    console.getViewWriter().write("ab");
-    console.getViewWriter().moveLeft();
-    console.getViewWriter().del();
-    console.getViewWriter().write("\n");
+    console.getViewReader().write("ab");
+    console.getViewReader().moveLeft();
+    console.getViewReader().del();
+    console.getViewReader().write("\n");
     assertTrue(console.getReader().hasNext());
     assertEquals(getExpectedMoveLeftDel(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
@@ -122,11 +122,11 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testMoveRightInsert() throws IOException {
     Console console = newConsole();
-    console.getViewWriter().write("abc");
-    console.getViewWriter().moveLeft();
-    console.getViewWriter().moveLeft();
-    console.getViewWriter().moveRight();
-    console.getViewWriter().write("d\n");
+    console.getViewReader().write("abc");
+    console.getViewReader().moveLeft();
+    console.getViewReader().moveLeft();
+    console.getViewReader().moveRight();
+    console.getViewReader().write("d\n");
     assertTrue(console.getReader().hasNext());
     assertEquals(getExpectedMoveRightInsert(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
@@ -136,12 +136,12 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testMoveRightDel() throws IOException {
     Console console = newConsole();
-    console.getViewWriter().write("abc");
-    console.getViewWriter().moveLeft();
-    console.getViewWriter().moveLeft();
-    console.getViewWriter().moveRight();
-    console.getViewWriter().del();
-    console.getViewWriter().write("\n");
+    console.getViewReader().write("abc");
+    console.getViewReader().moveLeft();
+    console.getViewReader().moveLeft();
+    console.getViewReader().moveRight();
+    console.getViewReader().del();
+    console.getViewReader().write("\n");
     assertTrue(console.getReader().hasNext());
     assertEquals(getExpectedMoveRightDel(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
@@ -151,9 +151,9 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testMoveRightAtEndOfLine() throws IOException {
     Console console = newConsole();
-    console.getViewWriter().write("a");
-    console.getViewWriter().moveRight();
-    console.getViewWriter().write("b\n");
+    console.getViewReader().write("a");
+    console.getViewReader().moveRight();
+    console.getViewReader().write("b\n");
     assertTrue(console.getReader().hasNext());
     assertEquals(getExpectedMoveRightAtEndOfLine(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
@@ -163,10 +163,10 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testMoveLeftAtBeginningOfLine() throws IOException {
     Console console = newConsole();
-    console.getViewWriter().write("a");
-    console.getViewWriter().moveLeft();
-    console.getViewWriter().moveLeft();
-    console.getViewWriter().write("b\n");
+    console.getViewReader().write("a");
+    console.getViewReader().moveLeft();
+    console.getViewReader().moveLeft();
+    console.getViewReader().write("b\n");
     assertTrue(console.getReader().hasNext());
     assertEquals(getExpectedMoveLeftAtBeginningOfLine(), console.getReader().next());
     assertFalse(console.getReader().hasNext());
@@ -176,10 +176,10 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testClearBuffer() throws Exception {
     Console console = newConsole();
-    console.getViewWriter().write("a");
+    console.getViewReader().write("a");
     console.clearBuffer();
     assertFalse(console.getReader().hasNext());
-    console.getViewWriter().write("b\n");
+    console.getViewReader().write("b\n");
     assertEquals("b", console.getReader().next());
     assertFalse(console.getReader().hasNext());
   }

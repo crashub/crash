@@ -58,6 +58,10 @@ public class ConsoleTerm implements Term {
     console.flush();
   }
 
+  public void bufferInsert(String msg) throws IOException {
+    // Not supported
+  }
+
   public void addToHistory(CharSequence line) {
     // Not supported
   }
