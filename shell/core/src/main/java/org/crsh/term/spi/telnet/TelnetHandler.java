@@ -26,7 +26,6 @@ import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.term.BaseTerm;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.processor.Processor;
-import org.crsh.term.processor.TermShellAdapter;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -35,13 +34,10 @@ import org.crsh.term.processor.TermShellAdapter;
 public class TelnetHandler implements Shell {
 
   /** . */
-  private TermShellAdapter decoder;
-
-  /** . */
   private BaseTerm term;
 
   /** . */
-  private AsyncShell connector;
+  private AsyncShell asyncShell;
 
   /** . */
   private CRaSH shell;
@@ -53,10 +49,9 @@ public class TelnetHandler implements Shell {
 
     //
     shell = TelnetLifeCycle.instance.getShellFactory().build();
-    connector = new AsyncShell(TelnetLifeCycle.instance.getExecutor(), shell);
-    decoder = new TermShellAdapter(connector);
+    asyncShell = new AsyncShell(TelnetLifeCycle.instance.getExecutor(), shell);
     term = new BaseTerm(new TelnetIO(conn));
-    processor = new Processor(term, decoder);
+    processor = new Processor(term, asyncShell);
 
     //
     try {
@@ -70,8 +65,7 @@ public class TelnetHandler implements Shell {
   }
 
   private void close() {
-    decoder.close();
-    connector.close();
+    asyncShell.close();
     shell.close();
   }
 

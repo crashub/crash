@@ -26,9 +26,7 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.term.processor.Processor;
-import org.crsh.term.processor.TermProcessor;
-import org.crsh.term.processor.TermShellAdapter;
-import org.crsh.term.spi.TestTermConnector;
+import org.crsh.term.spi.TestTermIO;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -44,12 +42,13 @@ public class BaseTermTestCase extends TestCase {
   private static final Shell ECHO_SHELL = new TestShell() {
     @Override
     public String getWelcome() {
-      return "";
+      return "\r\n% ";
     }
     @Override
-    public void process(String request, ShellProcessContext processContext) {
+    public void process(String request, final ShellProcessContext processContext) {
       processContext.begin(new ShellProcess() {
         public void cancel() {
+          throw new AssertionError();
         }
       });
       processContext.end(new ShellResponse.Display(request));
@@ -248,8 +247,8 @@ public class BaseTermTestCase extends TestCase {
     controller.assertStop();
   }
 
-  private Controller create(Shell processor) throws IOException {
-    return new Controller(new TestTermConnector(), new TermShellAdapter(processor));
+  private Controller create(Shell shell) throws IOException {
+    return new Controller(new TestTermIO(), shell);
   }
 
   private class Controller implements Runnable {
@@ -267,18 +266,18 @@ public class BaseTermTestCase extends TestCase {
     private final Thread thread;
 
     /** . */
-    private final TestTermConnector connector;
+    private final TestTermIO connector;
 
     /** . */
     private final Processor processor;
 
-    private Controller(TestTermConnector connector, TermProcessor processor) {
+    private Controller(TestTermIO connector, Shell shell) {
       this.running = true;
       this.startSync = new CountDownLatch(1);
       this.stopSync = new CountDownLatch(1);
       this.thread = new Thread(this);
       this.connector = connector;
-      this.processor = new Processor(new BaseTerm(connector), processor);
+      this.processor = new Processor(new BaseTerm(connector), shell);
     }
 
     public void assertStart() {

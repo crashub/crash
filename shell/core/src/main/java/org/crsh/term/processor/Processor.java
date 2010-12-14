@@ -19,17 +19,17 @@
 
 package org.crsh.term.processor;
 
+import org.crsh.shell.Shell;
+import org.crsh.shell.ShellProcess;
+import org.crsh.shell.ShellProcessContext;
+import org.crsh.shell.ShellResponse;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -59,19 +59,23 @@ public class Processor implements Runnable {
   private final Term term;
 
   /** . */
-  private final TermProcessor processor;
-
-  /** . */
   private final AtomicInteger status;
 
   /** . */
-  private final BlockingQueue<EventRequest> requestQueue;
+//  private final BlockingQueue<EventRequest> requestQueue;
 
-  public Processor(Term term, TermProcessor processor) {
+  /** . */
+  private final Shell shell;
+
+  /** . */
+  private volatile ShellProcess process;
+
+  public Processor(Term term, Shell shell) {
     this.term = term;
-    this.processor = processor;
     this.status = new AtomicInteger(STATUS_INITIAL);
-    this.requestQueue = new LinkedBlockingQueue<EventRequest>();
+//    this.requestQueue = new LinkedBlockingQueue<EventRequest>();
+    this.shell = shell;
+    this.process = null;
   }
 
   public void run() {
@@ -94,22 +98,48 @@ public class Processor implements Runnable {
     TermEvent event = new TermEvent.Init();
 
     //
-    requestQueue.add(new ShellInvoker());
+//    requestQueue.add(new ShellInvoker());
 
     //
     while (status.get() == STATUS_OPEN) {
 
-      //
-      System.out.println("About to take request from queue to deliver event " + event);
-      EventRequest request = requestQueue.take();
-      System.out.println("Found request " + request + " in queue");
+      if (event instanceof TermEvent.Init) {
+        try {
+          String welcome = shell.getWelcome();
+          System.out.println("Writing " + welcome + " welcome to " + term);
+          term.write(welcome);
+          System.out.println("Wrote welcome");
+        }
+        catch (IOException e) {
+          e.printStackTrace();
+        }
+      } else if (event instanceof TermEvent.ReadLine) {
+        String line = ((TermEvent.ReadLine)event).getLine().toString();
+        log.debug("Submitting command " + line);
 
-      //
-      request.handle(event);
+        //
+        ShellInvoker invoker = new ShellInvoker();
+
+        // Process
+        shell.process(((TermEvent.ReadLine)event).getLine().toString(), invoker);
+
+        if (line.length() > 0) {
+          term.addToHistory(line);
+        }
+      } else if (event instanceof TermEvent.Break) {
+        if (process != null) {
+          process.cancel();
+        } else {
+          log.debug("Ignoring action " + event);
+          writePrompt();
+        }
+      }
 
       //
       try {
+        System.out.println("about to read event");
         event = term.read();
+        System.out.println("event = " + event);
         log.debug("read term data " + event);
       } catch (IOException e) {
         if (status.get() == STATUS_OPEN) {
@@ -122,85 +152,82 @@ public class Processor implements Runnable {
     }
   }
 
-  private class ShellInvoker implements EventRequest {
+  private void writePrompt() {
+    String prompt = shell.getPrompt();
+    try {
+      String p = prompt == null ? "% " : prompt;
+      term.write("\r\n");
+      term.write(p);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
-    public void handle(TermEvent event) {
+  private class ShellInvoker implements ShellProcessContext {
 
-      TermResponseContext ctx = new TermResponseContext() {
+    public void begin(ShellProcess process) {
+      Processor.this.process = process;
+    }
 
-        /** . */
-        private String prompt;
-
-        public void setEcho(boolean echo) {
-          term.setEcho(echo);
+    public String readLine(String msg, boolean echo) {
+      try {
+        term.setEcho(echo);
+        term.write(msg);
+        TermEvent action = term.read();
+        CharSequence line = null;
+        if (action instanceof TermEvent.ReadLine) {
+          line = ((TermEvent.ReadLine)action).getLine();
+          log.debug("Read from console");
         }
-        public TermEvent read() throws IOException {
+        else {
+          log.debug("Ignoring action " + action + " returning null");
+        }
+        term.write("\r\n");
+        return line.toString();
+      }
+      catch (Exception e) {
+        log.error("Reading from console failed", e);
+        return null;
+      }
+      finally {
+        term.setEcho(true);
+      }
+    }
 
-          // Go in the queue and wait for an event
-          final CountDownLatch latch = new CountDownLatch(1);
-          final AtomicReference<TermEvent> eventRef = new AtomicReference<TermEvent>();
+    public void end(ShellResponse response) {
+      try {
 
-          System.out.println("Adding event request callback to the queue");
-          requestQueue.add(new EventRequest() {
-            public void handle(TermEvent event) {
-              eventRef.set(event);
-              latch.countDown();
+        //
+        if (response instanceof ShellResponse.Close) {
+          // If we succeded we close the term
+          // It will cause an exception to be thrown for the thread that are waiting in the
+          // blocking read operation
+          close();
+        }
+        else {
+          if (response instanceof ShellResponse.Cancelled) {
+          }
+          else {
+            String ret = response.getText();
+            log.debug("Command completed with result " + ret);
+            try {
+              term.write(ret);
             }
-          });
-
-          //
-          System.out.println("About to wait delivery of event");
-          try {
-            latch.await();
+            catch (IOException e) {
+              log.error("Write to term failure", e);
+            }
+            process = null;
           }
-          catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-
-          //
-          System.out.println("Got event " + eventRef.get());
-          return eventRef.get();
-        }
-        public void write(String msg) throws IOException {
-          term.write(msg);
+          // status = TermStatus.READY;
         }
 
-        public void setPrompt(String prompt) {
-          this.prompt = prompt;
-        }
-
-        public void done(boolean close) {
-          try {
-            String p = prompt == null ? "% " : prompt;
-            term.write("\r\n");
-            term.write(p);
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-
-          //
-          System.out.println("Adding new shell invoker to the queue as work is done");
-          requestQueue.add(new ShellInvoker());
-
-          //
-          if (close) {
-            // If we succeded we close the term
-            // It will cause an exception to be thrown for the thread that are waiting in the
-            // blocking read operation
-            close();
-          }
-        }
-      };
-
-      // Process
-      processor.process(event, ctx);
-
-      // Maybe this should not be placed here
-      if (event instanceof TermEvent.ReadLine) {
-        CharSequence line = ((TermEvent.ReadLine)event).getLine();
-        if (line.length() > 0) {
-          term.addToHistory(line);
-        }
+        //
+        writePrompt();
+      }
+      finally {
+        process = null;
+        System.out.println("Adding new shell invoker to the queue as work is done");
+//        requestQueue.add(new ShellInvoker());
       }
     }
   }

@@ -34,7 +34,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestTermConnector implements TermIO {
+public class TestTermIO implements TermIO {
 
   /** . */
   private final BlockingQueue<Integer> inner;
@@ -42,7 +42,7 @@ public class TestTermConnector implements TermIO {
   /** . */
   private final BlockingQueue<String> outter;
 
-  public TestTermConnector() throws IOException {
+  public TestTermIO() throws IOException {
     this.inner = new LinkedBlockingQueue<Integer>();
     this.outter = new LinkedBlockingQueue<String>();
   }
@@ -58,35 +58,35 @@ public class TestTermConnector implements TermIO {
     }
   }
 
-  public TestTermConnector appendDel() {
+  public TestTermIO appendDel() {
     return append(TerminalIO.DELETE);
   }
 
-  public TestTermConnector appendMoveUp() {
+  public TestTermIO appendMoveUp() {
     return append(TerminalIO.UP);
   }
 
-  public TestTermConnector appendMoveDown() {
+  public TestTermIO appendMoveDown() {
     return append(TerminalIO.DOWN);
   }
 
-  public TestTermConnector appendMoveRight() {
+  public TestTermIO appendMoveRight() {
     return append(TerminalIO.RIGHT);
   }
 
-  public TestTermConnector appendMoveLeft() {
+  public TestTermIO appendMoveLeft() {
     return append(TerminalIO.LEFT);
   }
 
-  public TestTermConnector appendBreak() {
+  public TestTermIO appendBreak() {
     return append(3);
   }
 
-  public TestTermConnector append(char c) {
+  public TestTermIO append(char c) {
     return append((int)c);
   }
 
-  public TestTermConnector append(CharSequence s) {
+  public TestTermIO append(CharSequence s) {
     for (int i = 0;i < s.length();i++) {
       char c = s.charAt(i);
       append(c);
@@ -94,7 +94,7 @@ public class TestTermConnector implements TermIO {
     return this;
   }
 
-  private TestTermConnector append(int c) {
+  private TestTermIO append(int c) {
       // Should assert this is true somehow
       inner.add(c);
       return this;
@@ -123,11 +123,11 @@ public class TestTermConnector implements TermIO {
     
   }
 
-  public TestTermConnector assertChar(char c) {
+  public TestTermIO assertChar(char c) {
     return assertRead(String.valueOf(c));
   }
 
-  public TestTermConnector assertChars(String s) {
+  public TestTermIO assertChars(String s) {
     for (int i = 0;i < s.length();i++) {
       char c = s.charAt(i);
       assertChar(c);
@@ -135,23 +135,23 @@ public class TestTermConnector implements TermIO {
     return this;
   }
 
-  public TestTermConnector assertDel() {
+  public TestTermIO assertDel() {
     return assertRead("del");
   }
 
-  public TestTermConnector assertMoveLeft() {
+  public TestTermIO assertMoveLeft() {
     return assertRead("left");
   }
 
-  public TestTermConnector assertMoveRight() {
+  public TestTermIO assertMoveRight() {
     return assertRead("right");
   }
 
-  public TestTermConnector assertCRLF() {
+  public TestTermIO assertCRLF() {
     return assertRead("crlf");
   }
 
-  private TestTermConnector assertRead(String expected) {
+  private TestTermIO assertRead(String expected) {
     if (expected.length() == 0) {
       Assert.fail();
     }
