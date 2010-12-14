@@ -24,9 +24,8 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 /**
- * This class provides an abstraction for a console. This implementation wraps the input and output of a terminal,
- * but later another implementation of console could be perform (I am thinking here about the {@link java.io.Console}
- * ).
+ * <p>This class provides an abstraction for a console. This implementation wraps the input and output of a terminal
+ * based on a bidirectional io.</p>
  *
  * <p>Interactions between terminal and console are done though the {@link ViewReader} and {@link ViewWriter}
  * classes.</p>
