@@ -169,18 +169,21 @@ public class CRaSH implements Shell {
    * For now basic implementation
    */
   public List<String> complete(String prefix) {
+    System.out.println("want prefix of " + prefix);
     prefix = prefix.trim();
     int pos = prefix.indexOf(' ');
+    List<String> completions;
     if (pos == -1) {
-      List<String> completions = new ArrayList<String>();
+      completions = new ArrayList<String>();
       for (String resourceId : context.listResourceId(ResourceKind.SCRIPT)) {
         if (resourceId.startsWith(prefix)) {
-          completions.add(resourceId);
+          completions.add(resourceId.substring(prefix.length()));
         }
       }
-      return completions;
     } else {
-      return Collections.emptyList();
+      completions = Collections.emptyList();
     }
+    System.out.println("Found completions " + completions);
+    return completions;
   }
 }

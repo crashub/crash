@@ -25,6 +25,7 @@ import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
+import org.crsh.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,13 +137,18 @@ public class Processor implements Runnable {
         log.debug("Completions for " + prefix + " are " + completion);
         if (completion.size() >= 1) {
 
-          // Try to find a common prefix
+          // Try to find the greatest common prefix
+          // perhaps not the best way to do it :-)
+          String completionPrefix = Strings.findLongestCommonPrefix(completion);
 
-          try {
-            term.write(completion.get(0));
-          }
-          catch (IOException e) {
-            e.printStackTrace();
+          //
+          if (completionPrefix.length() > 0) {
+            try {
+              term.bufferInsert(completionPrefix);
+            }
+            catch (IOException e) {
+              e.printStackTrace();
+            }
           }
         }
       }

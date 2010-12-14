@@ -50,7 +50,7 @@ public class AsyncShell implements Shell {
 
   public AsyncShell(ExecutorService executor, Shell shell) {
     this.lock = new Object();
-    this.status = Status.INITIAL;
+    this.status = Status.AVAILABLE;
     this.shell = shell;
     this.current = null;
     this.executor = executor;
@@ -59,17 +59,6 @@ public class AsyncShell implements Shell {
   public Status getStatus() {
     synchronized (lock) {
       return status;
-    }
-  }
-
-  public String open() {
-    synchronized (lock) {
-      if (status != Status.INITIAL) {
-        throw new IllegalStateException("Cannot open shell in state " + status);
-      }
-      String ret = shell.getWelcome();
-      status = Status.AVAILABLE;
-      return ret;
     }
   }
 

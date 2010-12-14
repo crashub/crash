@@ -255,15 +255,30 @@ public class ProcessorTestCase extends TestCase {
     controller.assertStop();
   }
 
-  public void testCompletion() throws Exception {
-
+  public void testCompletion1() throws Exception {
     Controller controller = create(ECHO_SHELL);
     controller.assertStart();
 
+    //
     controller.connector.append("ab");
     controller.connector.appendTab();
     controller.connector.assertChars("abba");
+  }
 
+  public void testCompletion2() throws Exception {
+    Controller controller = create(ECHO_SHELL);
+    controller.assertStart();
+
+    //
+//    controller.connector.append("ab");
+//    controller.connector.moveLeft();
+//    controller.connector.appendTab();
+//    controller.connector.assertChars("ab");
+//    controller.connector.assertMoveLeft();
+//    controller.connector.assertMoveLeft();
+
+//    controller.connector.assertChars("d");
+//    controller.connector.assertMoveLeft();
   }
 
   private Controller create(Shell shell) throws IOException {
