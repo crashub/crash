@@ -22,7 +22,7 @@ package org.crsh.shell.impl;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellResponseContext;
+import org.crsh.shell.ShellProcessContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ abstract class AST {
       return resp;
     }
 
-    ShellResponse execute(ShellResponseContext responseContext, Map<String,Object> attributes) {
+    ShellResponse execute(ShellProcessContext responseContext, Map<String,Object> attributes) {
 
 //      (need to find better than that)
 //      ShellResponse response = new ShellResponse.NoCommand();
@@ -76,7 +76,7 @@ abstract class AST {
     }
 
     private ShellResponse execute(
-        ShellResponseContext responseContext,
+        ShellProcessContext responseContext,
         Map<String,Object> attributes,
         ArrayList consumed) {
 

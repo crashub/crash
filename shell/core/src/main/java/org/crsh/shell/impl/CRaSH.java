@@ -150,8 +150,8 @@ public class CRaSH implements Shell {
     return (String)groovyShell.evaluate("prompt();");
   }
 
-  public void evaluate(String request, ShellResponseContext responseContext) {
-    if (responseContext == null) {
+  public void process(String request, ShellProcessContext processContext) {
+    if (processContext == null) {
       throw new NullPointerException();
     }
 
@@ -179,7 +179,7 @@ public class CRaSH implements Shell {
         }
 
         if (resp == null) {
-          resp = expr.execute(responseContext, attributes);
+          resp = expr.execute(processContext, attributes);
         }
       } else {
         resp = new ShellResponse.NoCommand();
@@ -187,7 +187,7 @@ public class CRaSH implements Shell {
     }
 
     //
-    responseContext.done(resp);
+    processContext.done(resp);
   }
 
   /**

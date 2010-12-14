@@ -20,8 +20,8 @@
 package org.crsh.term;
 
 import org.crsh.shell.Shell;
+import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellResponseContext;
 
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -61,11 +61,11 @@ public class TestShell implements Shell {
     return "% ";
   }
 
-  public void evaluate(String request, ShellResponseContext responseContext) {
+  public void process(String request, ShellProcessContext processContext) {
     try {
       TestShellAction action = queue.take();
-      ShellResponse resp = action.evaluate(request, responseContext);
-      responseContext.done(resp);
+      ShellResponse resp = action.evaluate(request, processContext);
+      processContext.done(resp);
     } catch (Exception e) {
       throw new AssertionError(e);
     }

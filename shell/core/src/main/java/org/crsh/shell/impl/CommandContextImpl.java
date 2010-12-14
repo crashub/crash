@@ -20,8 +20,8 @@
 package org.crsh.shell.impl;
 
 import org.crsh.command.CommandContext;
+import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.io.ShellPrinter;
-import org.crsh.shell.ShellResponseContext;
 import org.crsh.util.LineFeedWriter;
 
 import java.io.StringWriter;
@@ -34,7 +34,7 @@ import java.util.*;
 class CommandContextImpl<C, P> implements CommandContext<C, P> {
 
   /** . */
-  private final ShellResponseContext responseContext;
+  private final ShellProcessContext responseContext;
 
   /** . */
   private final Map<String, Object> attributes;
@@ -52,7 +52,7 @@ class CommandContextImpl<C, P> implements CommandContext<C, P> {
   private Iterable<C> consumedItems;
 
   CommandContextImpl(
-      ShellResponseContext responseContext,
+      ShellProcessContext responseContext,
       Iterable<C> consumedItems,
       Map<String, Object> attributes) {
     this.attributes = attributes;

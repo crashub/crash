@@ -33,7 +33,7 @@ public interface Shell {
   // Try to remove that
   String getPrompt();
 
-  void evaluate(String request, ShellResponseContext responseContext);
+  void process(String request, ShellProcessContext processContext);
 
   /**
    * Completion.

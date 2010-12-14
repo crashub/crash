@@ -73,9 +73,9 @@ public class AsyncShellTestCase extends TestCase {
     //
     Shell shell = new TestShell() {
       @Override
-      public void evaluate(String request, ShellResponseContext responseContext) {
-        String a = responseContext.readLine("bar", true);
-        responseContext.done(new ShellResponse.Display(a));
+      public void process(String request, ShellProcessContext processContext) {
+        String a = processContext.readLine("bar", true);
+        processContext.done(new ShellResponse.Display(a));
       }
     };
 
@@ -84,7 +84,7 @@ public class AsyncShellTestCase extends TestCase {
     connector.open();
 
     //
-    ShellResponseContext respCtx1 = new ShellResponseContext() {
+    ShellProcessContext respCtx1 = new ShellProcessContext() {
       public String readLine(String msg, boolean echo) {
         output.addLast(msg);
         return input.isEmpty() ? null : input.removeLast();
@@ -93,7 +93,7 @@ public class AsyncShellTestCase extends TestCase {
       }
     };
     SyncShellResponseContext respCtx2 = new SyncShellResponseContext(respCtx1);
-    connector.evaluate("foo", respCtx2);
+    connector.process("foo", respCtx2);
 
     //
     ShellResponse resp = respCtx2.getResponse();
@@ -115,7 +115,7 @@ public class AsyncShellTestCase extends TestCase {
     //
     Shell shell = new TestShell() {
       @Override
-      public void evaluate(String request, ShellResponseContext responseContext) {
+      public void process(String request, ShellProcessContext processContext) {
 
         //
         fail.set(!"foo".equals(request));
@@ -137,7 +137,7 @@ public class AsyncShellTestCase extends TestCase {
         }
 
         //
-        responseContext.done(ok);
+        processContext.done(ok);
       }
     };
 
@@ -147,7 +147,7 @@ public class AsyncShellTestCase extends TestCase {
 
     //
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
-    connector.evaluate("foo", respCtx);
+    connector.process("foo", respCtx);
     assertEquals(Status.EVALUATING, connector.getStatus());
 
     //
@@ -176,7 +176,7 @@ public class AsyncShellTestCase extends TestCase {
     connector.open();
     status = 0;
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
-    connector.evaluate("invoke " + AsyncShellTestCase.class.getName() + " bilto", respCtx);
+    connector.process("invoke " + AsyncShellTestCase.class.getName() + " bilto", respCtx);
     while (status == 0) {
       // Do nothing
     }

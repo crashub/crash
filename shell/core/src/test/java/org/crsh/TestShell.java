@@ -20,7 +20,7 @@
 package org.crsh;
 
 import org.crsh.shell.Shell;
-import org.crsh.shell.ShellResponseContext;
+import org.crsh.shell.ShellProcessContext;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class TestShell implements Shell {
     return "% ";
   }
 
-  public void evaluate(String request, ShellResponseContext responseContext) {
+  public void process(String request, ShellProcessContext processContext) {
     throw new UnsupportedOperationException();
   }
 

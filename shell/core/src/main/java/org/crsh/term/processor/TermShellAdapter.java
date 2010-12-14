@@ -20,7 +20,7 @@
 package org.crsh.term.processor;
 
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellResponseContext;
+import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.term.TermEvent;
 import org.slf4j.Logger;
@@ -90,7 +90,7 @@ public class TermShellAdapter implements TermProcessor {
           status = TermStatus.PROCESSING;
           log.debug("Submitting command " + line);
 
-          shell.evaluate(line, new ShellResponseContext() {
+          shell.process(line, new ShellProcessContext() {
             public String readLine(String msg, boolean echo) {
               try {
                 status = TermStatus.READING_INPUT;
@@ -99,17 +99,20 @@ public class TermShellAdapter implements TermProcessor {
                 TermEvent action = responseContext.read();
                 CharSequence line = null;
                 if (action instanceof TermEvent.ReadLine) {
-                  line = ((TermEvent.ReadLine) action).getLine();
+                  line = ((TermEvent.ReadLine)action).getLine();
                   log.debug("Read from console");
-                } else {
+                }
+                else {
                   log.debug("Ignoring action " + action + " returning null");
                 }
                 responseContext.write("\r\n");
                 return line.toString();
-              } catch (Exception e) {
+              }
+              catch (Exception e) {
                 log.error("Reading from console failed", e);
                 return null;
-              } finally {
+              }
+              finally {
                 responseContext.setEcho(true);
                 status = TermStatus.PROCESSING;
               }
@@ -125,22 +128,24 @@ public class TermShellAdapter implements TermProcessor {
               if (response instanceof ShellResponse.Close) {
                 status = TermStatus.SHUTDOWN;
                 responseContext.done(true);
-              } else {
+              }
+              else {
                 if (response instanceof ShellResponse.Cancelled) {
 //                  responseContext.done(false);
-                } else {
+                }
+                else {
                   String ret = response.getText();
                   log.debug("Command completed with result " + ret);
                   try {
                     responseContext.write(ret);
-                  } catch (IOException e) {
+                  }
+                  catch (IOException e) {
                     log.error("Write to term failure", e);
                   }
                   responseContext.done(false);
                 }
                 status = TermStatus.READY;
               }
-
 
 
             }

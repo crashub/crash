@@ -21,7 +21,7 @@ package org.crsh.shell.concurrent;
 
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellResponseContext;
+import org.crsh.shell.ShellProcessContext;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -101,16 +101,16 @@ public class AsyncShell implements Shell {
     }
   }
 
-  private class Foo implements ShellResponseContext, Runnable {
+  private class Foo implements ShellProcessContext, Runnable {
 
 
     /** . */
     private final String request;
 
     /** . */
-    private final ShellResponseContext caller;
+    private final ShellProcessContext caller;
 
-    private Foo(String request, ShellResponseContext caller) {
+    private Foo(String request, ShellProcessContext caller) {
       this.request = request;
       this.caller = caller;
     }
@@ -137,7 +137,7 @@ public class AsyncShell implements Shell {
     }
 
     public void run() {
-      shell.evaluate(request, current);
+      shell.process(request, current);
     }
   }
 
@@ -155,7 +155,7 @@ public class AsyncShell implements Shell {
     return shell.complete(prefix);
   }
 
-  public void evaluate(String request, ShellResponseContext responseContext) {
+  public void process(String request, ShellProcessContext processContext) {
 
     synchronized (lock) {
 
@@ -166,7 +166,7 @@ public class AsyncShell implements Shell {
       //
       // Update state
       status = Status.EVALUATING;
-      current = new Foo(request, responseContext);
+      current = new Foo(request, processContext);
     }
 
     //

@@ -22,7 +22,7 @@ package org.crsh.term;
 import junit.framework.TestCase;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellResponseContext;
+import org.crsh.shell.ShellProcessContext;
 import org.crsh.term.processor.TermShellAdapter;
 import org.crsh.term.processor.TermStatus;
 
@@ -94,7 +94,7 @@ public class TermShellAdapterTestCase extends TestCase {
 
     //
     shell.append(new TestShellAction() {
-      public ShellResponse evaluate(String request, ShellResponseContext responseContext) throws Exception {
+      public ShellResponse evaluate(String request, ShellProcessContext responseContext) throws Exception {
         String resp = responseContext.readLine("bar", true);
         return new ShellResponse.Display(resp);
       }

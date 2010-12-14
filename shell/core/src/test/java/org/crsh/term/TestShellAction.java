@@ -20,7 +20,7 @@
 package org.crsh.term;
 
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellResponseContext;
+import org.crsh.shell.ShellProcessContext;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -28,6 +28,6 @@ import org.crsh.shell.ShellResponseContext;
  */
 public interface TestShellAction {
 
-  ShellResponse evaluate(String request, ShellResponseContext responseContext) throws Exception;
+  ShellResponse evaluate(String request, ShellProcessContext responseContext) throws Exception;
 
 }

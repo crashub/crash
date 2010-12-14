@@ -19,8 +19,8 @@
 
 package org.crsh.shell.concurrent;
 
+import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellResponseContext;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -28,10 +28,10 @@ import java.util.concurrent.CountDownLatch;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SyncShellResponseContext implements ShellResponseContext {
+public class SyncShellResponseContext implements ShellProcessContext {
 
   /** . */
-  private final ShellResponseContext wrapped;
+  private final ShellProcessContext wrapped;
 
   /** . */
   private ShellResponse response;
@@ -43,7 +43,7 @@ public class SyncShellResponseContext implements ShellResponseContext {
     this(null);
   }
 
-  public SyncShellResponseContext(ShellResponseContext wrapped) {
+  public SyncShellResponseContext(ShellProcessContext wrapped) {
     this.wrapped = wrapped;
     this.latch = new CountDownLatch(1);
     this.response = null;

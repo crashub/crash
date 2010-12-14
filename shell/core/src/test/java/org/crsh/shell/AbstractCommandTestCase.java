@@ -78,7 +78,7 @@ public abstract class AbstractCommandTestCase extends TestCase {
 
   protected final ShellResponse evaluate(String s) {
     final AtomicReference<ShellResponse> resp = new AtomicReference<ShellResponse>();
-    ShellResponseContext ctx = new ShellResponseContext() {
+    ShellProcessContext ctx = new ShellProcessContext() {
       public String readLine(String msg, boolean echo) {
         throw new UnsupportedOperationException("The command does not have access to console line reading");
       }
@@ -86,7 +86,7 @@ public abstract class AbstractCommandTestCase extends TestCase {
         resp.set(response);
       }
     };
-    shell.evaluate(s, ctx);
+    shell.process(s, ctx);
     return resp.get();
   }
 
