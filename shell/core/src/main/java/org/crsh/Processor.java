@@ -103,6 +103,7 @@ public class Processor implements Runnable {
           log.debug("Writing welcome message to term");
           term.write(welcome);
           log.debug("Wrote welcome message to term");
+          writePrompt();
         }
         catch (IOException e) {
           e.printStackTrace();
