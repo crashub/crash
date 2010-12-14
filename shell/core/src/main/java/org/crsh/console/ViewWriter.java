@@ -22,20 +22,25 @@ package org.crsh.console;
 import java.io.IOException;
 
 /**
+ * Perform client write.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ClientInput {
+public abstract class ViewWriter {
 
-  public abstract CharSequence replace(CharSequence s) throws IOException;
+  protected abstract void flush() throws IOException;
 
-  public abstract void write(char c) throws IOException;
+  protected abstract void writeCRLF() throws IOException;
 
-  public abstract void write(CharSequence s) throws IOException;
+  protected abstract void write(CharSequence s) throws IOException;
 
-  public abstract void del() throws IOException;
+  protected abstract void write(char c) throws IOException;
 
-  public abstract void moveRight() throws IOException;
+  protected abstract void writeDel() throws IOException;
 
-  public abstract void moveLeft() throws IOException;
+  protected abstract boolean writeMoveLeft() throws IOException;
+
+  protected abstract boolean writeMoveRight() throws IOException;
+
 }

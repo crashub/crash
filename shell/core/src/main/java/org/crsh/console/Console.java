@@ -24,6 +24,13 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 /**
+ * This class provides an abstraction for a console. This implementation wraps the input and output of a terminal,
+ * but later another implementation of console could be perform (I am thinking here about the {@link java.io.Console}
+ * ).
+ *
+ * <p>Interactions between terminal and console are done though the {@link ViewReader} and {@link ViewWriter}
+ * classes.</p>
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
@@ -48,10 +55,10 @@ public final class Console {
   private boolean echoing;
 
   /** . */
-  private final ClientOutput clientOutput;
+  private final ViewWriter viewReader;
 
   /** . */
-  private final ClientInput clientInput = new ClientInput() {
+  private final ViewReader viewWriter = new ViewReader() {
 
     @Override
     public CharSequence replace(CharSequence s) throws IOException {
@@ -123,12 +130,12 @@ public final class Console {
         char c = s.charAt(i);
         writeNoFlush(c);
       }
-      clientOutput.flush();
+      viewReader.flush();
     }
 
     public void write(char c) throws IOException {
       writeNoFlush(c);
-      clientOutput.flush();
+      viewReader.flush();
     }
 
     private void writeNoFlush(char c) throws IOException {
@@ -136,21 +143,21 @@ public final class Console {
         previousCR = false;
       } else if (c == '\r' || c == '\n') {
         previousCR = c == '\r';
-        clientOutput.writeCRLF();
+        viewReader.writeCRLF();
       } else {
-        clientOutput.write(c);
+        viewReader.write(c);
       }
     }
   };
 
-  public Console(ClientOutput clientOutput) {
+  public Console(ViewWriter viewReader) {
     this.buffer = new char[128];
     this.size = 0;
     this.curAt = 0;
     this.lines = new LinkedList<CharSequence>();
     this.previousCR = false;
     this.echoing = true;
-    this.clientOutput = clientOutput;
+    this.viewReader = viewReader;
   }
 
   /**
@@ -183,8 +190,8 @@ public final class Console {
     return reader;
   }
 
-  public ClientInput getClientInput() {
-    return clientInput;
+  public ViewReader getViewWriter() {
+    return viewWriter;
   }
 
   public ConsoleWriter getWriter() {
@@ -242,7 +249,7 @@ public final class Console {
       moveLeft();
       // Redisplay from cursor to end
       String disp = new String(buffer, curAt, size - curAt + 1);
-      clientOutput.write(disp);
+      viewReader.write(disp);
       // position cursor one to left from where started
       int saveCurAt = curAt;
       curAt = size + 1;   // Size before delete
@@ -258,9 +265,9 @@ public final class Console {
 
   private void moveRight() throws IOException {
     if (curAt < size) {
-      if (clientOutput.writeMoveRight())
+      if (viewReader.writeMoveRight())
       {
-        clientOutput.flush();
+        viewReader.flush();
         curAt++;
       }
     }
@@ -268,9 +275,9 @@ public final class Console {
 
   private void moveLeft() throws IOException {
     if (curAt > 0) {
-      if (clientOutput.writeMoveLeft())
+      if (viewReader.writeMoveLeft())
       {
-        clientOutput.flush();
+        viewReader.flush();
         curAt--;
       }
     }
@@ -278,29 +285,29 @@ public final class Console {
 
   private void echo(char c) throws IOException {
     if (echoing) {
-      clientOutput.write(c);
-      clientOutput.flush();
+      viewReader.write(c);
+      viewReader.flush();
     }
   }
 
   private void echo(String s) throws IOException {
     if (echoing) {
-      clientOutput.write(s);
-      clientOutput.flush();
+      viewReader.write(s);
+      viewReader.flush();
     }
   }
 
   private void echoDel() throws IOException {
     if (echoing) {
-      clientOutput.writeDel();
-      clientOutput.flush();
+      viewReader.writeDel();
+      viewReader.flush();
     }
   }
 
   private void echoCRLF() throws IOException {
     if (echoing) {
-      clientOutput.writeCRLF();
-      clientOutput.flush();
+      viewReader.writeCRLF();
+      viewReader.flush();
     }
   }
 
@@ -336,7 +343,7 @@ public final class Console {
       // Adjust size and display from inserted character to end
       ++size;
       String disp = new String(buffer, curAt, size - curAt);
-      clientOutput.write(disp);
+      viewReader.write(disp);
       // Move cursor to original character
       int saveCurAt = ++curAt;
       curAt = size;

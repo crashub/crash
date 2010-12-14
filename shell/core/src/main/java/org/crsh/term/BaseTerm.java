@@ -19,8 +19,8 @@
 
 package org.crsh.term;
 
-import org.crsh.console.ClientOutput;
 import org.crsh.console.Console;
+import org.crsh.console.ViewWriter;
 import org.crsh.term.spi.TermIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class BaseTerm implements Term {
     this.historyBuffer = null;
     this.historyCursor = -1;
     this.io = io;
-    this.console = new Console(new ClientOutput() {
+    this.console = new Console(new ViewWriter() {
 
       @Override
       protected void flush() throws IOException {
@@ -108,14 +108,14 @@ public class BaseTerm implements Term {
       CodeType type = io.decode(code);
       switch (type) {
         case DELETE:
-          console.getClientInput().del();
+          console.getViewWriter().del();
           break;
         case UP:
         case DOWN:
           int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
           if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
             CharSequence s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
-            CharSequence t = console.getClientInput().replace(s);
+            CharSequence t = console.getViewWriter().replace(s);
             if (historyCursor == -1) {
               historyBuffer = t;
             }
@@ -126,10 +126,10 @@ public class BaseTerm implements Term {
           }
           break;
         case RIGHT:
-          console.getClientInput().moveRight();
+          console.getViewWriter().moveRight();
           break;
         case LEFT:
-          console.getClientInput().moveLeft();
+          console.getViewWriter().moveLeft();
           break;
         case BREAK:
           log.debug("Want to cancel evaluation");
@@ -137,7 +137,7 @@ public class BaseTerm implements Term {
           return new TermEvent.Break();
         case CHAR:
           if (code >= 0 && code < 128) {
-            console.getClientInput().write((char)code);
+            console.getViewWriter().write((char)code);
           } else {
             log.debug("Unhandled char " + code);
           }

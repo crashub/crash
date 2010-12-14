@@ -22,6 +22,7 @@ package org.crsh.console;
 import java.util.NoSuchElementException;
 
 /**
+ * The console reader provides read oriented operation for the console.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$

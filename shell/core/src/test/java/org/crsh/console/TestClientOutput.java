@@ -28,7 +28,7 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestClientOutput extends ClientOutput {
+public class TestClientOutput extends ViewWriter {
 
   /** . */
   private final StringBuilder line = new StringBuilder();

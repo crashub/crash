@@ -22,13 +22,28 @@ package org.crsh.console;
 import java.io.IOException;
 
 /**
+ * The console writer controls the output as seen by the client of the console.
+ * It never changes the console internal state.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public abstract class ConsoleWriter {
 
+  /**
+   * Write a char sequence to the output.
+   *
+   * @param s the char sequence
+   * @throws IOException any io exception
+   */
   public abstract void write(CharSequence s) throws IOException;
 
+  /**
+   * Write a single char to the output.
+   *
+   * @param c the char to write
+   * @throws IOException any io exception
+   */
   public abstract void write(char c) throws IOException;
 
 }
