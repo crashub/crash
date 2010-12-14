@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -74,14 +75,18 @@ public class AsyncShellTestCase extends TestCase {
     Shell shell = new TestShell() {
       @Override
       public void process(String request, ShellProcessContext processContext) {
+        processContext.begin(new ShellProcess() {
+          public void cancel() {
+          }
+        });
         String a = processContext.readLine("bar", true);
         processContext.end(new ShellResponse.Display(a));
       }
     };
 
     //
-    AsyncShell connector = new AsyncShell(executor, shell);
-    connector.open();
+    AsyncShell asyncShell = new AsyncShell(executor, shell);
+    asyncShell.open();
 
     //
     ShellProcessContext respCtx1 = new ShellProcessContext() {
@@ -95,7 +100,7 @@ public class AsyncShellTestCase extends TestCase {
       }
     };
     SyncShellResponseContext respCtx2 = new SyncShellResponseContext(respCtx1);
-    connector.process("foo", respCtx2);
+    asyncShell.process("foo", respCtx2);
 
     //
     ShellResponse resp = respCtx2.getResponse();
@@ -113,6 +118,7 @@ public class AsyncShellTestCase extends TestCase {
     final ShellResponse ok = new ShellResponse.Ok();
     final AtomicBoolean fail = new AtomicBoolean(false);
     final AtomicInteger status = new AtomicInteger(0);
+    final AtomicInteger cancelled = new AtomicInteger(0);
 
     //
     Shell shell = new TestShell() {
@@ -122,6 +128,7 @@ public class AsyncShellTestCase extends TestCase {
         //
         processContext.begin(new ShellProcess() {
           public void cancel() {
+            cancelled.getAndIncrement();
           }
         });
 
@@ -150,30 +157,39 @@ public class AsyncShellTestCase extends TestCase {
     };
 
     //
-    AsyncShell  connector = new AsyncShell(executor, shell);
-    connector.open();
+    AsyncShell  asyncShell = new AsyncShell(executor, shell);
+    asyncShell.open();
 
     //
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
-    connector.process("foo", respCtx);
-    assertEquals(Status.EVALUATING, connector.getStatus());
+    asyncShell.process("foo", respCtx);
+    assertEquals(Status.EVALUATING, asyncShell.getStatus());
+    assertEquals(0, cancelled.get());
 
     //
     int r;
     for (r = status.get();r == 0;r = status.get()) { }
     assertEquals(1, r);
-    assertEquals(Status.EVALUATING, connector.getStatus());
+    assertEquals(Status.EVALUATING, asyncShell.getStatus());
+    assertEquals(0, cancelled.get());
 
     //
     respCtx.cancel();
-    assertEquals(Status.CANCELED, connector.getStatus());
+    assertEquals(Status.CANCELED, asyncShell.getStatus());
+    assertEquals(1, cancelled.get());
+
+    //
+    respCtx.cancel();
+    assertEquals(Status.CANCELED, asyncShell.getStatus());
+    assertEquals(1, cancelled.get());
 
     //
     status.set(2);
     for (r = status.get();r == 2;r = status.get()) { }
     assertEquals(3, r);
     respCtx.getResponse();
-    assertEquals(Status.AVAILABLE, connector.getStatus());
+    assertEquals(Status.AVAILABLE, asyncShell.getStatus());
+    assertEquals(1, cancelled.get());
 
     //
     assertFalse(fail.get());

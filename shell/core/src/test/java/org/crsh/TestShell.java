@@ -45,7 +45,4 @@ public class TestShell implements Shell {
   public List<String> complete(String prefix) {
     throw new UnsupportedOperationException();
   }
-
-  public void doClose() {
-  }
 }
