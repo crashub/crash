@@ -62,9 +62,6 @@ public class Processor implements Runnable {
   private final AtomicInteger status;
 
   /** . */
-//  private final BlockingQueue<EventRequest> requestQueue;
-
-  /** . */
   private final Shell shell;
 
   /** . */
@@ -73,7 +70,6 @@ public class Processor implements Runnable {
   public Processor(Term term, Shell shell) {
     this.term = term;
     this.status = new AtomicInteger(STATUS_INITIAL);
-//    this.requestQueue = new LinkedBlockingQueue<EventRequest>();
     this.shell = shell;
     this.process = null;
   }
@@ -98,17 +94,14 @@ public class Processor implements Runnable {
     TermEvent event = new TermEvent.Init();
 
     //
-//    requestQueue.add(new ShellInvoker());
-
-    //
     while (status.get() == STATUS_OPEN) {
 
       if (event instanceof TermEvent.Init) {
         try {
           String welcome = shell.getWelcome();
-          System.out.println("Writing " + welcome + " welcome to " + term);
+          log.debug("Writing welcome message to term");
           term.write(welcome);
-          System.out.println("Wrote welcome");
+          log.debug("Wrote welcome message to term");
         }
         catch (IOException e) {
           e.printStackTrace();
@@ -137,10 +130,9 @@ public class Processor implements Runnable {
 
       //
       try {
-        System.out.println("about to read event");
+        log.debug("About to read next term event");
         event = term.read();
-        System.out.println("event = " + event);
-        log.debug("read term data " + event);
+        log.debug("Read next term event " + event);
       } catch (IOException e) {
         if (status.get() == STATUS_OPEN) {
           log.error("Could not read term data", e);
@@ -226,7 +218,6 @@ public class Processor implements Runnable {
       }
       finally {
         process = null;
-        System.out.println("Adding new shell invoker to the queue as work is done");
 //        requestQueue.add(new ShellInvoker());
       }
     }
