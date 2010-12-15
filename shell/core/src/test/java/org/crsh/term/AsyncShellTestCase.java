@@ -85,8 +85,7 @@ public class AsyncShellTestCase extends TestCase {
     };
 
     //
-    AsyncShell asyncShell = new AsyncShell(executor, shell);
-    asyncShell.open();
+    Shell asyncShell = new AsyncShell(executor, shell);
 
     //
     ShellProcessContext respCtx1 = new ShellProcessContext() {
@@ -158,7 +157,6 @@ public class AsyncShellTestCase extends TestCase {
 
     //
     AsyncShell  asyncShell = new AsyncShell(executor, shell);
-    asyncShell.open();
 
     //
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
@@ -197,7 +195,6 @@ public class AsyncShellTestCase extends TestCase {
 
   public void testAsyncEvaluation() throws InterruptedException {
     AsyncShell connector = new AsyncShell(executor, builder.build());
-    connector.open();
     status = 0;
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
     connector.process("invoke " + AsyncShellTestCase.class.getName() + " bilto", respCtx);
