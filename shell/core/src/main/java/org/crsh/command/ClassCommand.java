@@ -19,6 +19,8 @@
 package org.crsh.command;
 
 /**
+ * The class command is a specialization of the {@link BaseCommand} for simple command implementations.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */

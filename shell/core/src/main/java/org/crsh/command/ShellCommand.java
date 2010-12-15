@@ -19,15 +19,35 @@
 package org.crsh.command;
 
 /**
+ * The base interface for a shell command.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
+ * @param <C> the consumed type
+ * @param <P> the produced type
  */
 public interface ShellCommand<C, P> {
 
+  /**
+   *
+   * @param context the command execution context
+   * @param args the command arguments
+   * @throws ScriptException any script exception
+   */
   void execute(CommandContext<C, P> context, String... args) throws ScriptException;
 
+  /**
+   * Returns the class of the produced type.
+   *
+   * @return the produced type
+   */
   Class<P> getProducedType();
 
+  /**
+   * Returns the class of the consumed type.
+   *
+   * @return the consumed type
+   */
   Class<C> getConsumedType();
 
 }

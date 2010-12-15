@@ -29,8 +29,13 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 /**
+ * A base command that should be subclasses by Groovy commands. For this matter it inherits the
+ * {@link GroovyObjectSupport} class.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
+ * @param <C> the consumed type
+ * @param <P> the produced type
  */
 public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements ShellCommand<C, P> {
 
@@ -111,11 +116,11 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
    *
    * @return true if arguments must be unquoted
    */
-  protected boolean getUnquoteArguments() {
+  public final boolean getUnquoteArguments() {
     return unquoteArguments;
   }
 
-  public void setUnquoteArguments(boolean unquoteArguments) {
+  public final void setUnquoteArguments(boolean unquoteArguments) {
     this.unquoteArguments = unquoteArguments;
   }
 
