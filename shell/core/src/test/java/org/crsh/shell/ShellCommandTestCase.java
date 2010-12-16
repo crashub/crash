@@ -18,14 +18,17 @@
  */
 package org.crsh.shell;
 
+import com.beust.jcommander.ParameterException;
 import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.ClassCommand;
+import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.impl.GroovyScriptCommand;
+import org.kohsuke.args4j.CmdLineException;
 
 import java.util.Arrays;
 
@@ -52,9 +55,9 @@ public class ShellCommandTestCase extends TestCase {
     shell = new GroovyShell(loader);
   }
 
-  public void testOptionInjectionInCommandClass() throws Exception {
+  public void testOptionInjectionInCommandClassArgs4j() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
-      "@org.kohsuke.args4j.Option(name=\"-str\") def String str = 'default value';" +
+      "@org.kohsuke.args4j.Option(name=\"-str\", required = true) def String str = 'default value';" +
       "public Object execute() {" +
       "return str;" +
       "}" +
@@ -63,11 +66,37 @@ public class ShellCommandTestCase extends TestCase {
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
     assertEquals("abc", new TestCommandContext().execute(cmd, "-str", "abc"));
+    try {
+      new TestCommandContext().execute(cmd);
+    }
+    catch (ScriptException e) {
+      assertTrue(e.getCause() instanceof CmdLineException);
+    }
   }
 
-  public void testArgumentInjectionInCommandClass() throws Exception {
+  public void testOptionInjectionInCommandClassJCommander() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
-      "@org.kohsuke.args4j.Argument def String str = 'default value';" +
+      "@com.beust.jcommander.Parameter(names=\"-str\", required = true) def String str = 'default value';" +
+      "public Object execute() {" +
+      "return str;" +
+      "}" +
+      "}");
+
+    //
+    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    assertEquals("abc", new TestCommandContext().execute(cmd, "-str", "abc"));
+    try {
+      new TestCommandContext().execute(cmd);
+      fail();
+    }
+    catch (ScriptException e) {
+      assert(e.getCause() instanceof ParameterException);
+    }
+  }
+
+  public void testArgumentInjectionInCommandClassArgs4j() throws Exception {
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
+      "@org.kohsuke.args4j.Argument def String str;" +
       "public Object execute() {" +
       "return str;" +
       "}" +
@@ -76,6 +105,19 @@ public class ShellCommandTestCase extends TestCase {
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
     assertEquals("b", new TestCommandContext().execute(cmd, "b"));
+  }
+
+  public void testArgumentInjectionInCommandClassJCommander() throws Exception {
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
+      "@com.beust.jcommander.Parameter def List<String> str;" +
+      "public Object execute() {" +
+      "return str;" +
+      "}" +
+      "}");
+
+    //
+    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    assertEquals(Arrays.asList("b"), new TestCommandContext().execute(cmd, "b"));
   }
 
   public void testContextAccessInCommandClass() throws Exception {
@@ -139,6 +181,8 @@ public class ShellCommandTestCase extends TestCase {
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
     assertEquals("" + Arrays.asList("'foo'"), new TestCommandContext().execute(cmd, "'foo'"));
   }
+
+
 
   public void testContextAccessInScript() throws Exception {
     Class clazz = loader.parseClass("System.out.println('bar:' + bar) ; return bar;");

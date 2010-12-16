@@ -37,6 +37,11 @@
       <artifactId>args4j</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>com.beust</groupId>
+      <artifactId>jcommander</artifactId>
+    </dependency>
+
     <!-- SSHD connector dependencies -->
 
     <dependency>
