@@ -19,6 +19,8 @@
 
 package org.crsh.command.info;
 
+import java.lang.reflect.Type;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -29,14 +31,14 @@ public class ArgumentInfo extends ParameterInfo {
   private final int index;
 
   public ArgumentInfo(
+    Type javaType,
     int index,
-    ParameterType type,
     String description,
     boolean required,
-    boolean password) {
+    boolean password) throws IllegalParameterTypeException {
     super(
+      javaType,
       description,
-      type,
       required,
       password);
 

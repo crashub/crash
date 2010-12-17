@@ -19,6 +19,10 @@
 
 package org.crsh.command.info;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -37,15 +41,19 @@ public abstract class ParameterInfo {
   /** . */
   private final boolean password;
 
+  /** . */
+  private final Type javaType;
+
   public ParameterInfo(
+    Type javaType,
     String description,
-    ParameterType type,
     boolean required,
-    boolean password) {
+    boolean password) throws IllegalParameterTypeException {
 
     //
+    this.javaType = javaType;
     this.description = description;
-    this.type = type;
+    this.type = create(javaType);
     this.required = required;
     this.password = password;
   }
@@ -64,5 +72,51 @@ public abstract class ParameterInfo {
 
   public boolean isPassword() {
     return password;
+  }
+
+  private ParameterType create(Type type) throws IllegalParameterTypeException {
+
+    Class<?> classType;
+    Multiplicity multiplicity;
+    if (type instanceof Class<?>) {
+      classType = (Class<Object>)type;
+      multiplicity = Multiplicity.SINGLE;
+    } else if (type instanceof ParameterizedType) {
+      ParameterizedType parameterizedType = (ParameterizedType)type;
+      Type rawType = parameterizedType.getRawType();
+      if (rawType instanceof Class<?>) {
+        Class<?> classRawType = (Class<Object>)rawType;
+        if (List.class.equals(classRawType)) {
+          Type elementType = parameterizedType.getActualTypeArguments()[0];
+          if (elementType instanceof Class<?>) {
+            classType = (Class<Object>)elementType;
+            multiplicity = Multiplicity.LIST;
+          } else {
+            throw new IllegalParameterTypeException();
+          }
+        } else {
+          throw new IllegalParameterTypeException();
+        }
+      } else {
+        throw new IllegalParameterTypeException();
+      }
+    } else {
+      throw new IllegalParameterTypeException();
+    }
+
+    //
+    ValueType valueType;
+    if (classType == String.class) {
+      valueType = ValueType.STRING;
+    } else if (classType == Integer.class || classType == int.class) {
+      valueType = ValueType.INTEGER;
+    } else if (classType == Boolean.class || classType == boolean.class) {
+      valueType = ValueType.BOOLEAN;
+    } else {
+      throw new IllegalParameterTypeException();
+    }
+
+    //
+    return new ParameterType(valueType, multiplicity);
   }
 }

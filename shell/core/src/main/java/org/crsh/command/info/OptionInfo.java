@@ -19,6 +19,7 @@
 
 package org.crsh.command.info;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -34,15 +35,15 @@ public class OptionInfo extends ParameterInfo {
   private final List<String> names;
 
   public OptionInfo(
+    Type javaType,
     List<String> names,
-    ParameterType type,
     String description,
     boolean required,
     int arity,
-    boolean password) {
+    boolean password) throws IllegalParameterTypeException {
     super(
+      javaType,
       description,
-      type,
       required,
       password);
 

@@ -127,52 +127,6 @@ public abstract class CommandInfo<T> {
     return descriptionAnn != null ? descriptionAnn.value() : "";
   }
 
-  private static ParameterType create(Type type) throws IllegalParameterTypeException {
-
-    Class<?> classType;
-    Multiplicity multiplicity;
-    if (type instanceof Class<?>) {
-      classType = (Class<Object>)type;
-      multiplicity = Multiplicity.SINGLE;
-    } else if (type instanceof ParameterizedType) {
-      ParameterizedType parameterizedType = (ParameterizedType)type;
-      Type rawType = parameterizedType.getRawType();
-      if (rawType instanceof Class<?>) {
-        Class<?> classRawType = (Class<Object>)rawType;
-        if (List.class.equals(classRawType)) {
-          Type elementType = parameterizedType.getActualTypeArguments()[0];
-          if (elementType instanceof Class<?>) {
-            classType = (Class<Object>)elementType;
-            multiplicity = Multiplicity.LIST;
-          } else {
-            throw new IllegalParameterTypeException();
-          }
-        } else {
-          throw new IllegalParameterTypeException();
-        }
-      } else {
-        throw new IllegalParameterTypeException();
-      }
-    } else {
-      throw new IllegalParameterTypeException();
-    }
-
-    //
-    ValueType valueType;
-    if (classType == String.class) {
-      valueType = ValueType.STRING;
-    } else if (classType == Integer.class || classType == int.class) {
-      valueType = ValueType.INTEGER;
-    } else if (classType == Boolean.class || classType == boolean.class) {
-      valueType = ValueType.BOOLEAN;
-    } else {
-      throw new IllegalParameterTypeException();
-    }
-
-    //
-    return new ParameterType(valueType, multiplicity);
-  }
-
   protected static ParameterInfo create(
     Type type,
     Description descriptionAnn,
@@ -182,18 +136,16 @@ public abstract class CommandInfo<T> {
       if (optionAnn != null) {
         throw new IntrospectionException();
       }
-      ParameterType parameterType = create(type);
       return new ArgumentInfo(
+        type,
         argumentAnn.index(),
-        parameterType,
         description(descriptionAnn),
         argumentAnn.required(),
         argumentAnn.password());
     } else if (optionAnn != null) {
-      ParameterType parameterType = create(type);
       return new OptionInfo(
+        type,
         Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
-        parameterType,
         description(descriptionAnn),
         optionAnn.required(),
         optionAnn.arity(),
