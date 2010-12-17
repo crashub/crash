@@ -64,7 +64,7 @@ public class CommandInfoTestCase extends TestCase {
     assertEquals(Arrays.asList("-i"),i.getNames());
   }
 
-  public void testArgument() throws IntrospectionException {
+  public void testArgument1() throws IntrospectionException {
     class A {
       @Argument()
       private int i;
@@ -73,5 +73,20 @@ public class CommandInfoTestCase extends TestCase {
     assertEquals(1, Utils.list(c.getArguments()).size());
     ArgumentInfo i = c.getArgument(0);
     assertEquals(0,i.getIndex());
+  }
+
+  public void testArgument2() throws IntrospectionException {
+    class A {
+      @Argument()
+      private int i;
+      @Argument(index = 1)
+      private int j;
+    }
+    CommandInfo<A> c = CommandInfo.create(A.class);
+    assertEquals(2, Utils.list(c.getArguments()).size());
+    ArgumentInfo i = c.getArgument(0);
+    assertEquals(0,i.getIndex());
+    ArgumentInfo j = c.getArgument(1);
+    assertEquals(1,j.getIndex());
   }
 }
