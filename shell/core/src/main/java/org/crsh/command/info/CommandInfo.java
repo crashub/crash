@@ -37,6 +37,10 @@ import java.util.TreeMap;
  */
 public abstract class CommandInfo<T> {
 
+  public static <T> CommandInfo<T> create(Class<T> type) throws IntrospectionException {
+    return new ClassCommandInfo<T>(type);
+  }
+
   /** . */
   private final String name;
 
@@ -49,7 +53,7 @@ public abstract class CommandInfo<T> {
   /** . */
   private final List<ArgumentInfo> arguments;
 
-  public CommandInfo(String name, String description, List<ParameterInfo> parameters) throws IntrospectionException {
+  CommandInfo(String name, String description, List<ParameterInfo> parameters) throws IntrospectionException {
 
     Map<String, ParameterInfo> parameterMap = Collections.emptyMap();
     TreeMap<Integer, ArgumentInfo> argumentMap = new TreeMap<Integer, ArgumentInfo>();
