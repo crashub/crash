@@ -55,6 +55,11 @@ public class OptionInfo extends ParameterInfo {
     }
 
     //
+    if (getType().getMultiplicity() == Multiplicity.LIST && getType().getValueType() == SimpleValueType.BOOLEAN) {
+      throw new IllegalParameterException();
+    }
+
+    //
     for (String name : names) {
       if (name == null || name.length() == 0) {
         throw new IllegalParameterException();

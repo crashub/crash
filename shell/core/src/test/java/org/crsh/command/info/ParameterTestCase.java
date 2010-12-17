@@ -44,6 +44,11 @@ public class ParameterTestCase extends TestCase {
     }
     assertIllegalParameter(B.class);
 
+    class C {
+      @Option(names = "-o")
+      List<Boolean> o;
+    }
+    assertIllegalParameter(C.class);
   }
 
   public void testIllegalTypes() throws IntrospectionException {
@@ -161,18 +166,6 @@ public class ParameterTestCase extends TestCase {
     OptionInfo i = c.getOption("-o");
     ValueType t = i.getType();
     assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
-    assertEquals(SimpleValueType.BOOLEAN, t.getValueType());
-  }
-
-  public void testOptionBooleanListType() throws IntrospectionException {
-    class A {
-      @Option(names = "-o")
-      List<Boolean> o;
-    }
-    CommandInfo<A> c = CommandInfo.create(A.class);
-    OptionInfo i = c.getOption("-o");
-    ValueType t = i.getType();
-    assertEquals(Multiplicity.LIST, t.getMultiplicity());
     assertEquals(SimpleValueType.BOOLEAN, t.getValueType());
   }
 
