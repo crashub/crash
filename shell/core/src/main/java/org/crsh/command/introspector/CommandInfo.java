@@ -41,7 +41,7 @@ public abstract class CommandInfo<T> {
   private final String description;
 
   /** . */
-  private final Map<String, ParameterInfo> parameterMap;
+  private final Map<String, ParameterInfo> options;
 
   public CommandInfo(String name, String description, List<ParameterInfo> parameters) {
     HashMap<String, ParameterInfo> parameterMap = new HashMap<String, ParameterInfo>();
@@ -53,18 +53,18 @@ public abstract class CommandInfo<T> {
 
     //
     this.description = description;
-    this.parameterMap = parameterMap;
+    this.options = parameterMap;
     this.name = name;
   }
 
   public abstract Class<T> getType();
 
-  public Iterable<ParameterInfo> getParameters() {
-    return parameterMap.values();
+  public Iterable<ParameterInfo> getOptions() {
+    return options.values();
   }
 
-  public ParameterInfo getParameter(String name) {
-    return parameterMap.get(name);
+  public ParameterInfo getOption(String name) {
+    return options.get(name);
   }
 
   public String getName() {
