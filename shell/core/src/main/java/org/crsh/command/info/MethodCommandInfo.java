@@ -17,11 +17,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.introspector;
+package org.crsh.command.info;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class IntrospectionException extends Exception {
+public class MethodCommandInfo<T> extends CommandInfo<T> {
+
+  /** . */
+  private final ClassCommandInfo<T> owner;
+
+  public MethodCommandInfo(ClassCommandInfo<T> owner, String name, String description, List<ParameterInfo> parameters) throws IntrospectionException {
+    super(name, description, parameters);
+
+    //
+    this.owner = owner;
+  }
+
+  @Override
+  public Class<T> getType() {
+    return owner.getType();
+  }
 }

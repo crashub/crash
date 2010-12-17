@@ -17,34 +17,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.introspector;
-
-import java.util.List;
+package org.crsh.command.info;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class OptionInfo extends ParameterInfo {
-
-  /** . */
-  private final int arity;
-
-  /** . */
-  private final List<String> names;
-
-  public OptionInfo(List<String> names, String description, boolean required, int arity, boolean password) {
-    super(description, required, password);
-
-    this.arity = arity;
-    this.names = names;
-  }
-
-  public int getArity() {
-    return arity;
-  }
-
-  public List<String> getNames() {
-    return names;
-  }
+public class IntrospectionException extends Exception {
 }

@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.introspector;
+package org.crsh.command.info;
 
 import org.crsh.command.Argument;
 import org.crsh.command.Description;

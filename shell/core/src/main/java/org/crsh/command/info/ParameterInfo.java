@@ -17,28 +17,38 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.introspector;
-
-import java.util.List;
+package org.crsh.command.info;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class MethodCommandInfo<T> extends CommandInfo<T> {
+public abstract class ParameterInfo {
 
   /** . */
-  private final ClassCommandInfo<T> owner;
+  private final String description;
 
-  public MethodCommandInfo(ClassCommandInfo<T> owner, String name, String description, List<ParameterInfo> parameters) throws IntrospectionException {
-    super(name, description, parameters);
+  /** . */
+  private final boolean required;
 
-    //
-    this.owner = owner;
+  /** . */
+  private final boolean password;
+
+  public ParameterInfo(String description, boolean required, boolean password) {
+    this.description = description;
+    this.required = required;
+    this.password = password;
   }
 
-  @Override
-  public Class<T> getType() {
-    return owner.getType();
+  public String getDescription() {
+    return description;
+  }
+
+  public boolean isRequired() {
+    return required;
+  }
+
+  public boolean isPassword() {
+    return password;
   }
 }

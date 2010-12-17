@@ -17,38 +17,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.introspector;
+package org.crsh.command.info;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ParameterInfo {
+public class ArgumentInfo extends ParameterInfo {
 
   /** . */
-  private final String description;
+  private final int index;
 
-  /** . */
-  private final boolean required;
-
-  /** . */
-  private final boolean password;
-
-  public ParameterInfo(String description, boolean required, boolean password) {
-    this.description = description;
-    this.required = required;
-    this.password = password;
+  public ArgumentInfo(int index, String description, boolean required,boolean password) {
+    super(description, required, password);
+    this.index = index;
   }
 
-  public String getDescription() {
-    return description;
-  }
-
-  public boolean isRequired() {
-    return required;
-  }
-
-  public boolean isPassword() {
-    return password;
+  public int getIndex() {
+    return index;
   }
 }
