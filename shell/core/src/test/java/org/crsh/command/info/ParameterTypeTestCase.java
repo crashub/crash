@@ -26,12 +26,56 @@ import org.crsh.command.Option;
 import org.crsh.util.Utils;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public class ParameterTypeTestCase extends TestCase {
+
+  public void testIllegalTypes() throws IntrospectionException {
+
+    class A {
+      @Option(names = "-o")
+      Exception o;
+    }
+    assertIllegalType(A.class);
+
+    class B {
+      @Option(names = "-o")
+      List<Exception> o;
+    }
+    assertIllegalType(B.class);
+
+    class C {
+      @Option(names = "-o")
+      double o;
+    }
+    assertIllegalType(A.class);
+
+    class D {
+      @Option(names = "-o")
+      Double o;
+    }
+    assertIllegalType(A.class);
+
+    class E {
+      @Option(names = "-o")
+      List<Double> o;
+    }
+    assertIllegalType(B.class);
+
+  }
+
+  private void assertIllegalType(Class<?> type) throws IntrospectionException {
+    try {
+      CommandInfo.create(type);
+      fail();
+    }
+    catch (IllegalParameterTypeException e) {
+    }
+  }
 
   public void testOptionIntType() throws IntrospectionException {
     class A {
@@ -57,6 +101,18 @@ public class ParameterTypeTestCase extends TestCase {
     assertEquals(ValueType.INTEGER, t.getValueType());
   }
 
+  public void testOptionIntListType() throws IntrospectionException {
+    class A {
+      @Option(names = "-o")
+      List<Integer> o;
+    }
+    CommandInfo<A> c = CommandInfo.create(A.class);
+    OptionInfo i = c.getOption("-o");
+    ParameterType t = i.getType();
+    assertEquals(Multiplicity.LIST, t.getMultiplicity());
+    assertEquals(ValueType.INTEGER, t.getValueType());
+  }
+
   public void testOptionStringType() throws IntrospectionException {
     class A {
       @Option(names = "-o")
@@ -66,6 +122,18 @@ public class ParameterTypeTestCase extends TestCase {
     OptionInfo i = c.getOption("-o");
     ParameterType t = i.getType();
     assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
+    assertEquals(ValueType.STRING, t.getValueType());
+  }
+
+  public void testOptionStringListType() throws IntrospectionException {
+    class A {
+      @Option(names = "-o")
+      List<String> o;
+    }
+    CommandInfo<A> c = CommandInfo.create(A.class);
+    OptionInfo i = c.getOption("-o");
+    ParameterType t = i.getType();
+    assertEquals(Multiplicity.LIST, t.getMultiplicity());
     assertEquals(ValueType.STRING, t.getValueType());
   }
 
@@ -90,6 +158,18 @@ public class ParameterTypeTestCase extends TestCase {
     OptionInfo i = c.getOption("-o");
     ParameterType t = i.getType();
     assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
+    assertEquals(ValueType.BOOLEAN, t.getValueType());
+  }
+
+  public void testOptionBooleanListType() throws IntrospectionException {
+    class A {
+      @Option(names = "-o")
+      List<Boolean> o;
+    }
+    CommandInfo<A> c = CommandInfo.create(A.class);
+    OptionInfo i = c.getOption("-o");
+    ParameterType t = i.getType();
+    assertEquals(Multiplicity.LIST, t.getMultiplicity());
     assertEquals(ValueType.BOOLEAN, t.getValueType());
   }
 }
