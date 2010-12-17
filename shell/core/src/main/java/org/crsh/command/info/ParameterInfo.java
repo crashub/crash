@@ -33,7 +33,7 @@ public abstract class ParameterInfo {
   private final String description;
 
   /** . */
-  private final ParameterType type;
+  private final ValueType type;
 
   /** . */
   private final boolean required;
@@ -48,7 +48,7 @@ public abstract class ParameterInfo {
     Type javaType,
     String description,
     boolean required,
-    boolean password) throws IllegalParameterTypeException {
+    boolean password) throws IllegalValueTypeException, IllegalParameterException {
 
     //
     this.javaType = javaType;
@@ -62,7 +62,7 @@ public abstract class ParameterInfo {
     return description;
   }
 
-  public ParameterType getType() {
+  public ValueType getType() {
     return type;
   }
 
@@ -74,7 +74,7 @@ public abstract class ParameterInfo {
     return password;
   }
 
-  private ParameterType create(Type type) throws IllegalParameterTypeException {
+  private ValueType create(Type type) throws IllegalValueTypeException {
 
     Class<?> classType;
     Multiplicity multiplicity;
@@ -92,31 +92,31 @@ public abstract class ParameterInfo {
             classType = (Class<Object>)elementType;
             multiplicity = Multiplicity.LIST;
           } else {
-            throw new IllegalParameterTypeException();
+            throw new IllegalValueTypeException();
           }
         } else {
-          throw new IllegalParameterTypeException();
+          throw new IllegalValueTypeException();
         }
       } else {
-        throw new IllegalParameterTypeException();
+        throw new IllegalValueTypeException();
       }
     } else {
-      throw new IllegalParameterTypeException();
+      throw new IllegalValueTypeException();
     }
 
     //
-    ValueType valueType;
+    SimpleValueType valueType;
     if (classType == String.class) {
-      valueType = ValueType.STRING;
+      valueType = SimpleValueType.STRING;
     } else if (classType == Integer.class || classType == int.class) {
-      valueType = ValueType.INTEGER;
+      valueType = SimpleValueType.INTEGER;
     } else if (classType == Boolean.class || classType == boolean.class) {
-      valueType = ValueType.BOOLEAN;
+      valueType = SimpleValueType.BOOLEAN;
     } else {
-      throw new IllegalParameterTypeException();
+      throw new IllegalValueTypeException();
     }
 
     //
-    return new ParameterType(valueType, multiplicity);
+    return new ValueType(valueType, multiplicity);
   }
 }

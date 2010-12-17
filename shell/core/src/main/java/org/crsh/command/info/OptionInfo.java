@@ -40,12 +40,17 @@ public class OptionInfo extends ParameterInfo {
     String description,
     boolean required,
     int arity,
-    boolean password) throws IllegalParameterTypeException {
+    boolean password) throws IllegalValueTypeException, IllegalParameterException {
     super(
       javaType,
       description,
       required,
       password);
+
+    //
+    if (arity > 1 && getType().getMultiplicity() == Multiplicity.SINGLE) {
+      throw new IllegalParameterException();
+    }
 
     //
     this.arity = arity;

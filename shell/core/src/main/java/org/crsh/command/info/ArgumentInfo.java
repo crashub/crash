@@ -35,7 +35,7 @@ public class ArgumentInfo extends ParameterInfo {
     int index,
     String description,
     boolean required,
-    boolean password) throws IllegalParameterTypeException {
+    boolean password) throws IllegalValueTypeException, IllegalParameterException {
     super(
       javaType,
       description,

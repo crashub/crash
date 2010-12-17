@@ -23,5 +23,5 @@ package org.crsh.command.info;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class IllegalParameterTypeException extends IntrospectionException {
+public class IllegalValueTypeException extends IntrospectionException {
 }

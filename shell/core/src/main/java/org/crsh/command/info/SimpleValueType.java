@@ -23,24 +23,12 @@ package org.crsh.command.info;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ParameterType {
+public class SimpleValueType {
 
-  /** . */
-  private final ValueType valueType;
+  public static final SimpleValueType STRING = new SimpleValueType();
+  public static final SimpleValueType INTEGER = new SimpleValueType();
+  public static final SimpleValueType BOOLEAN = new SimpleValueType();
 
-  /** . */
-  private final Multiplicity multiplicity;
-
-  public ParameterType(ValueType valueType, Multiplicity multiplicity) {
-    this.valueType = valueType;
-    this.multiplicity = multiplicity;
-  }
-
-  public ValueType getValueType() {
-    return valueType;
-  }
-
-  public Multiplicity getMultiplicity() {
-    return multiplicity;
+  private SimpleValueType() {
   }
 }
