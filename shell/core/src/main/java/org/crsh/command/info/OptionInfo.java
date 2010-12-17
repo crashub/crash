@@ -20,6 +20,8 @@
 package org.crsh.command.info;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,8 +55,15 @@ public class OptionInfo extends ParameterInfo {
     }
 
     //
+    for (String name : names) {
+      if (name == null || name.length() == 0) {
+        throw new IllegalParameterException();
+      }
+    }
+
+    //
     this.arity = arity;
-    this.names = names;
+    this.names = Collections.unmodifiableList(new ArrayList<String>(names));
   }
 
   public int getArity() {

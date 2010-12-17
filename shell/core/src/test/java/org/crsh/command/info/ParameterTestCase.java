@@ -28,7 +28,23 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ParameterTypeTestCase extends TestCase {
+public class ParameterTestCase extends TestCase {
+
+  public void testIllegalParameter() throws IntrospectionException {
+
+    class A {
+      @Option(names = "-o", arity = 2)
+      int o;
+    }
+    assertIllegalParameter(A.class);
+
+    class B {
+      @Option(names = "")
+      int o;
+    }
+    assertIllegalParameter(B.class);
+
+  }
 
   public void testIllegalTypes() throws IntrospectionException {
 
@@ -48,43 +64,20 @@ public class ParameterTypeTestCase extends TestCase {
       @Option(names = "-o")
       double o;
     }
-    assertIllegalValueType(A.class);
+    assertIllegalValueType(C.class);
 
     class D {
       @Option(names = "-o")
       Double o;
     }
-    assertIllegalValueType(A.class);
+    assertIllegalValueType(D.class);
 
     class E {
       @Option(names = "-o")
       List<Double> o;
     }
-    assertIllegalValueType(B.class);
+    assertIllegalValueType(E.class);
 
-    class F {
-      @Option(names = "-o", arity = 2)
-      double o;
-    }
-    assertIllegalValueType(B.class);
-  }
-
-  private void assertIllegalValueType(Class<?> type) throws IntrospectionException {
-    try {
-      CommandInfo.create(type);
-      fail();
-    }
-    catch (IllegalValueTypeException e) {
-    }
-  }
-
-  private void assertIllegalParameter(Class<?> type) throws IntrospectionException {
-    try {
-      CommandInfo.create(type);
-      fail();
-    }
-    catch (IllegalParameterException e) {
-    }
   }
 
   public void testOptionIntType() throws IntrospectionException {
@@ -181,5 +174,23 @@ public class ParameterTypeTestCase extends TestCase {
     ValueType t = i.getType();
     assertEquals(Multiplicity.LIST, t.getMultiplicity());
     assertEquals(SimpleValueType.BOOLEAN, t.getValueType());
+  }
+
+  private void assertIllegalValueType(Class<?> type) throws IntrospectionException {
+    try {
+      CommandInfo.create(type);
+      fail();
+    }
+    catch (IllegalValueTypeException e) {
+    }
+  }
+
+  private void assertIllegalParameter(Class<?> type) throws IntrospectionException {
+    try {
+      CommandInfo.create(type);
+      fail();
+    }
+    catch (IllegalParameterException e) {
+    }
   }
 }
