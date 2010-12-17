@@ -28,8 +28,19 @@ public class ArgumentInfo extends ParameterInfo {
   /** . */
   private final int index;
 
-  public ArgumentInfo(int index, String description, boolean required,boolean password) {
-    super(description, required, password);
+  public ArgumentInfo(
+    int index,
+    ParameterType type,
+    String description,
+    boolean required,
+    boolean password) {
+    super(
+      description,
+      type,
+      required,
+      password);
+
+    //
     this.index = index;
   }
 

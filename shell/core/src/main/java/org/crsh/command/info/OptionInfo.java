@@ -33,9 +33,20 @@ public class OptionInfo extends ParameterInfo {
   /** . */
   private final List<String> names;
 
-  public OptionInfo(List<String> names, String description, boolean required, int arity, boolean password) {
-    super(description, required, password);
+  public OptionInfo(
+    List<String> names,
+    ParameterType type,
+    String description,
+    boolean required,
+    int arity,
+    boolean password) {
+    super(
+      description,
+      type,
+      required,
+      password);
 
+    //
     this.arity = arity;
     this.names = names;
   }

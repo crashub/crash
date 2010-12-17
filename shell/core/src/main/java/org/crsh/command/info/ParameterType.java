@@ -23,46 +23,24 @@ package org.crsh.command.info;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ParameterInfo {
+public class ParameterType {
 
   /** . */
-  private final String description;
+  private final ValueType valueType;
 
   /** . */
-  private final ParameterType type;
+  private final Multiplicity multiplicity;
 
-  /** . */
-  private final boolean required;
-
-  /** . */
-  private final boolean password;
-
-  public ParameterInfo(
-    String description,
-    ParameterType type,
-    boolean required,
-    boolean password) {
-
-    //
-    this.description = description;
-    this.type = type;
-    this.required = required;
-    this.password = password;
+  public ParameterType(ValueType valueType, Multiplicity multiplicity) {
+    this.valueType = valueType;
+    this.multiplicity = multiplicity;
   }
 
-  public String getDescription() {
-    return description;
+  public ValueType getValueType() {
+    return valueType;
   }
 
-  public ParameterType getType() {
-    return type;
-  }
-
-  public boolean isRequired() {
-    return required;
-  }
-
-  public boolean isPassword() {
-    return password;
+  public Multiplicity getMultiplicity() {
+    return multiplicity;
   }
 }

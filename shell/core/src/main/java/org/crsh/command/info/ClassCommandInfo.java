@@ -27,6 +27,7 @@ import org.crsh.command.Option;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +86,7 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
         Description descriptionAnn = introspected.getAnnotation(Description.class);
         Argument argumentAnn = f.getAnnotation(Argument.class);
         Option optionAnn = f.getAnnotation(Option.class);
-        ParameterInfo parameter = create(descriptionAnn, argumentAnn, optionAnn);
+        ParameterInfo parameter = create(f.getGenericType(), descriptionAnn, argumentAnn, optionAnn);
         if (parameter != null) {
           parameters.add(parameter);
         }
@@ -105,7 +106,11 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
         Command command = m.getAnnotation(Command.class);
         if (command != null) {
           List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
-          for (Annotation[] parameterAnnotations : m.getParameterAnnotations()) {
+          Type[] parameterTypes = m.getGenericParameterTypes();
+          Annotation[][] parameterAnnotationMatrix = m.getParameterAnnotations();
+          for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
+            Annotation[] parameterAnnotations = parameterAnnotationMatrix[i];
+            Type parameterType = parameterTypes[i];
             Description descriptionAnn = null;
             Argument argumentAnn = null;
             Option optionAnn = null;
@@ -118,7 +123,7 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
                 descriptionAnn = (Description)parameterAnnotation;
               }
             }
-            ParameterInfo parameter = create(descriptionAnn, argumentAnn, optionAnn);
+            ParameterInfo parameter = create(parameterType, descriptionAnn, argumentAnn, optionAnn);
             if (optionAnn != null) {
               parameters.add(parameter);
             } else {
@@ -126,7 +131,7 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
             }
           }
           Description descriptionAnn = m.getAnnotation(Description.class);
-          commands.add(new MethodCommandInfo(this, m.getName().toLowerCase(), descriptionAnn != null ? descriptionAnn.value() : "", parameters));
+          commands.add(new MethodCommandInfo<T>(this, m.getName().toLowerCase(), descriptionAnn != null ? descriptionAnn.value() : "", parameters));
         }
       }
     }
