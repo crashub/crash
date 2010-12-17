@@ -36,8 +36,6 @@ public @interface Argument {
 
   boolean required() default false;
 
-  int arity() default -1;
-
   boolean password();
 
 }

@@ -30,7 +30,7 @@ public class MethodCommandInfo<T> extends CommandInfo<T> {
   /** . */
   private final ClassCommandInfo<T> owner;
 
-  public MethodCommandInfo(ClassCommandInfo<T> owner, String name, String description, List<ParameterInfo> parameters) {
+  public MethodCommandInfo(ClassCommandInfo<T> owner, String name, String description, List<ParameterInfo> parameters) throws IntrospectionException {
     super(name, description, parameters);
 
     //

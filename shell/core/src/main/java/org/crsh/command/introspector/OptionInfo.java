@@ -28,11 +28,20 @@ import java.util.List;
 public class OptionInfo extends ParameterInfo {
 
   /** . */
+  private final int arity;
+
+  /** . */
   private final List<String> names;
 
   public OptionInfo(List<String> names, String description, boolean required, int arity, boolean password) {
-    super(description, required, arity, password);
+    super(description, required, password);
+
+    this.arity = arity;
     this.names = names;
+  }
+
+  public int getArity() {
+    return arity;
   }
 
   public List<String> getNames() {

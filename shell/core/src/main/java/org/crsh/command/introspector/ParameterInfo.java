@@ -32,15 +32,11 @@ public abstract class ParameterInfo {
   private final boolean required;
 
   /** . */
-  private int arity;
+  private final boolean password;
 
-  /** . */
-  private boolean password;
-
-  public ParameterInfo(String description, boolean required, int arity, boolean password) {
+  public ParameterInfo(String description, boolean required, boolean password) {
     this.description = description;
     this.required = required;
-    this.arity = arity;
     this.password = password;
   }
 
@@ -50,10 +46,6 @@ public abstract class ParameterInfo {
 
   public boolean isRequired() {
     return required;
-  }
-
-  public int getArity() {
-    return arity;
   }
 
   public boolean isPassword() {
