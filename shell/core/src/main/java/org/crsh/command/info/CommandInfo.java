@@ -48,23 +48,23 @@ public abstract class CommandInfo<T> {
   private final String description;
 
   /** . */
-  private final Map<String, ParameterInfo> options;
+  private final Map<String, OptionInfo> options;
 
   /** . */
   private final List<ArgumentInfo> arguments;
 
   CommandInfo(String name, String description, List<ParameterInfo> parameters) throws IntrospectionException {
 
-    Map<String, ParameterInfo> parameterMap = Collections.emptyMap();
+    Map<String, OptionInfo> parameterMap = Collections.emptyMap();
     TreeMap<Integer, ArgumentInfo> argumentMap = new TreeMap<Integer, ArgumentInfo>();
     for (ParameterInfo parameter : parameters) {
       if (parameter instanceof OptionInfo) {
         OptionInfo option = (OptionInfo)parameter;
-        for (String parameterName : option.getNames()) {
+        for (String optionName : option.getNames()) {
           if (parameterMap.isEmpty()) {
-            parameterMap = new HashMap<String, ParameterInfo>();
+            parameterMap = new HashMap<String, OptionInfo>();
           }
-          parameterMap.put(parameterName, parameter);
+          parameterMap.put(optionName, option);
         }
       } else if (parameter instanceof ArgumentInfo) {
         ArgumentInfo argument = (ArgumentInfo)parameter;
@@ -92,11 +92,11 @@ public abstract class CommandInfo<T> {
 
   public abstract Class<T> getType();
 
-  public Iterable<ParameterInfo> getOptions() {
+  public Iterable<OptionInfo> getOptions() {
     return options.values();
   }
 
-  public ParameterInfo getOption(String name) {
+  public OptionInfo getOption(String name) {
     return options.get(name);
   }
 

@@ -38,6 +38,6 @@ public @interface Option {
 
   int arity() default -1;
 
-  boolean password();
+  boolean password() default false;
 
 }

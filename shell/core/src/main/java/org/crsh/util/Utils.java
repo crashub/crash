@@ -17,25 +17,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
+package org.crsh.util;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Argument {
+public class Utils {
 
-  int index() default 0;
-
-  boolean required() default false;
-
-  boolean password() default false;
+  public static <E>List<E> list(Iterable<E> iterable) {
+    ArrayList<E> list = new ArrayList<E>();
+    for (E t : iterable) {
+      list.add(t);
+    }
+    return list;
+  }
 
 }
