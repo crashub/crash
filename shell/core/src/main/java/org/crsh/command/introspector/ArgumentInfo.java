@@ -17,28 +17,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.crsh.command.introspector;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Parameter {
+public class ArgumentInfo extends ParameterInfo {
 
-  String[] names() default {};
+  /** . */
+  private final int index;
 
-  boolean required() default false;
+  public ArgumentInfo(int index, String description, boolean required, int arity, boolean password) {
+    super(description, required, arity, password);
+    this.index = index;
+  }
 
-  int arity() default -1;
-
-  boolean password();
-
-
+  public int getIndex() {
+    return index;
+  }
 }

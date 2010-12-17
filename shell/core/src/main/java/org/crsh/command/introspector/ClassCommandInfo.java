@@ -19,9 +19,10 @@
 
 package org.crsh.command.introspector;
 
+import org.crsh.command.Argument;
 import org.crsh.command.Command;
 import org.crsh.command.Description;
-import org.crsh.command.Parameter;
+import org.crsh.command.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -73,7 +74,7 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
     return commandMap.get(name);
   }
 
-  private static List<ParameterInfo> paremeters(Class<?> introspected) {
+  private static List<ParameterInfo> paremeters(Class<?> introspected) throws IntrospectionException {
     List<ParameterInfo> parameters;
     Class<?> superIntrospected = introspected.getSuperclass();
     if (superIntrospected == null) {
@@ -81,10 +82,12 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
     } else {
       parameters = paremeters(superIntrospected);
       for (Field f : introspected.getDeclaredFields()) {
-        Parameter parameterAnn = f.getAnnotation(Parameter.class);
-        if (parameterAnn != null) {
-          Description descriptionAnn = introspected.getAnnotation(Description.class);
-          parameters.add(create(descriptionAnn, parameterAnn));
+        Description descriptionAnn = introspected.getAnnotation(Description.class);
+        Argument argumentAnn = f.getAnnotation(Argument.class);
+        Option optionAnn = f.getAnnotation(Option.class);
+        ParameterInfo parameter = create(descriptionAnn, argumentAnn, optionAnn);
+        if (parameter != null) {
+          parameters.add(parameter);
         }
       }
     }
@@ -103,17 +106,21 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
         if (command != null) {
           List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
           for (Annotation[] parameterAnnotations : m.getParameterAnnotations()) {
-            Parameter parameterAnn = null;
             Description descriptionAnn = null;
+            Argument argumentAnn = null;
+            Option optionAnn = null;
             for (Annotation parameterAnnotation : parameterAnnotations) {
-              if (parameterAnnotation instanceof Parameter) {
-                parameterAnn = (Parameter)parameterAnnotation;
+              if (parameterAnnotation instanceof Option) {
+                optionAnn = (Option)parameterAnnotation;
+              } else if (parameterAnnotation instanceof Argument) {
+                argumentAnn = (Argument)argumentAnn;
               } else if (parameterAnnotation instanceof Description) {
                 descriptionAnn = (Description)parameterAnnotation;
               }
             }
-            if (parameterAnn != null) {
-              parameters.add(create(descriptionAnn, parameterAnn));
+            ParameterInfo parameter = create(descriptionAnn, argumentAnn, optionAnn);
+            if (optionAnn != null) {
+              parameters.add(parameter);
             } else {
               throw new IntrospectionException();
             }

@@ -19,44 +19,23 @@
 
 package org.crsh.command.introspector;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ParameterInfo {
+public class OptionInfo extends ParameterInfo {
 
   /** . */
-  private final String description;
+  private final List<String> names;
 
-  /** . */
-  private final boolean required;
-
-  /** . */
-  private int arity;
-
-  /** . */
-  private boolean password;
-
-  public ParameterInfo(String description, boolean required, int arity, boolean password) {
-    this.description = description;
-    this.required = required;
-    this.arity = arity;
-    this.password = password;
+  public OptionInfo(List<String> names, String description, boolean required, int arity, boolean password) {
+    super(description, required, arity, password);
+    this.names = names;
   }
 
-  public String getDescription() {
-    return description;
-  }
-
-  public boolean isRequired() {
-    return required;
-  }
-
-  public int getArity() {
-    return arity;
-  }
-
-  public boolean isPassword() {
-    return password;
+  public List<String> getNames() {
+    return names;
   }
 }

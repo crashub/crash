@@ -19,8 +19,9 @@
 
 package org.crsh.command.introspector;
 
+import org.crsh.command.Argument;
 import org.crsh.command.Description;
-import org.crsh.command.Parameter;
+import org.crsh.command.Option;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,8 +47,11 @@ public abstract class CommandInfo<T> {
   public CommandInfo(String name, String description, List<ParameterInfo> parameters) {
     HashMap<String, ParameterInfo> parameterMap = new HashMap<String, ParameterInfo>();
     for (ParameterInfo parameter : parameters) {
-      for (String parameterName : parameter.getNames()) {
-        parameterMap.put(parameterName, parameter);
+      if (parameter instanceof OptionInfo) {
+        OptionInfo option = (OptionInfo)parameter;
+        for (String parameterName : option.getNames()) {
+          parameterMap.put(parameterName, parameter);
+        }
       }
     }
 
@@ -79,12 +83,26 @@ public abstract class CommandInfo<T> {
     return descriptionAnn != null ? descriptionAnn.value() : "";
   }
 
-  protected static ParameterInfo create(Description descriptionAnn, Parameter parameterAnn) {
-    return new ParameterInfo(
-      description(descriptionAnn),
-      Collections.unmodifiableList(Arrays.asList(parameterAnn.names())),
-      parameterAnn.required(),
-      parameterAnn.arity(),
-      parameterAnn.password());
+  protected static ParameterInfo create(Description descriptionAnn, Argument argumentAnn, Option optionAnn) throws IntrospectionException {
+    if (argumentAnn != null) {
+      if (optionAnn != null) {
+        throw new IntrospectionException();
+      }
+      return new ArgumentInfo(
+        argumentAnn.index(),
+        description(descriptionAnn),
+        argumentAnn.required(),
+        argumentAnn.arity(),
+        argumentAnn.password());
+    } else if (optionAnn != null) {
+      return new OptionInfo(
+        Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
+        description(descriptionAnn),
+        optionAnn.required(),
+        optionAnn.arity(),
+        optionAnn.password());
+    } else {
+      return null;
+    }
   }
 }
