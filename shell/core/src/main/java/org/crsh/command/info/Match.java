@@ -27,8 +27,26 @@ import java.util.List;
  */
 public class Match {
 
-  public static class Option {
+  public static class Option extends Match {
 
+    /** . */
+    private final String name;
+
+    /** . */
+    private final List<String> values;
+
+    Option(String name, List<String> values) {
+      this.name = name;
+      this.values = values;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public List<String> getValues() {
+      return values;
+    }
   }
 
   public static class Parameter {
@@ -39,24 +57,4 @@ public class Match {
 
   }
 
-
-
-  /** . */
-  private final String name;
-
-  /** . */
-  private final List<String> values;
-
-  Match(String name, List<String> values) {
-    this.name = name;
-    this.values = values;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public List<String> getValues() {
-    return values;
-  }
 }

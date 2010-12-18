@@ -46,15 +46,15 @@ public class ParserTestCase extends TestCase {
     }
 
     //
-    assertParse(A.class, "-o foo", "", new Match("o", Arrays.asList("foo")));
-    assertParse(A.class, "-p foo bar", "", new Match("p", Arrays.asList("foo", "bar")));
-    assertParse(A.class, "-b foo", " foo", new Match("b", Collections.<String>emptyList()));
-    assertParse(A.class, "-b", "", new Match("b", Collections.<String>emptyList()));
-    assertParse(A.class, "-o foo -p bar juu", "", new Match("o", Arrays.asList("foo")), new Match("p", Arrays.asList("bar", "juu")));
-    assertParse(A.class, "-o foo -b -p bar juu", "", new Match("o", Arrays.asList("foo")), new Match("b", Collections.<String>emptyList()), new Match("p", Arrays.asList("bar", "juu")));
+    assertParse(A.class, "-o foo", "", new Match.Option("o", Arrays.asList("foo")));
+    assertParse(A.class, "-p foo bar", "", new Match.Option("p", Arrays.asList("foo", "bar")));
+    assertParse(A.class, "-b foo", " foo", new Match.Option("b", Collections.<String>emptyList()));
+    assertParse(A.class, "-b", "", new Match.Option("b", Collections.<String>emptyList()));
+    assertParse(A.class, "-o foo -p bar juu", "", new Match.Option("o", Arrays.asList("foo")), new Match.Option("p", Arrays.asList("bar", "juu")));
+    assertParse(A.class, "-o foo -b -p bar juu", "", new Match.Option("o", Arrays.asList("foo")), new Match.Option("b", Collections.<String>emptyList()), new Match.Option("p", Arrays.asList("bar", "juu")));
   }
 
-  private <T> void assertParse(Class<T> type, String s, String rest, Match... expectedMatches) {
+  private <T> void assertParse(Class<T> type, String s, String rest, Match.Option... expectedMatches) {
     CommandInfo<T> info;
     try {
       info = CommandInfo.create(type);
@@ -68,8 +68,8 @@ public class ParserTestCase extends TestCase {
     MatchIterator matcher = parser.parse(s);
     for (int i = 0;i < expectedMatches.length;i++) {
       assertTrue(matcher.hasNext());
-      Match match = matcher.next();
-      Match expectedMatch = expectedMatches[i];
+      Match.Option match = (Match.Option)matcher.next();
+      Match.Option expectedMatch = expectedMatches[i];
       assertEquals(expectedMatch.getName(), match.getName());
       assertEquals(expectedMatch.getValues(), match.getValues());
     }
