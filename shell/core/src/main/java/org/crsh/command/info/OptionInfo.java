@@ -68,6 +68,15 @@ public class OptionInfo extends ParameterInfo {
     }
 
     //
+    if (getType().getValueType() == SimpleValueType.BOOLEAN && arity < 1) {
+      arity = 0;
+    } else {
+      if (arity == -1) {
+        arity = 1;
+      }
+    }
+
+    //
     this.arity = arity;
     this.opts = Collections.unmodifiableList(opts);
   }
