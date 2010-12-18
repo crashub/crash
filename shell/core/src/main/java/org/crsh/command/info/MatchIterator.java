@@ -39,63 +39,20 @@ public class MatchIterator implements Iterator<Match> {
   private String rest;
 
   /** . */
-  private Match next = null;
+  private Iterator<Match> i;
 
   public MatchIterator(ArgumentParser parser, String s) {
     this.parser = parser;
     this.rest = s;
+    this.i = new OptionIterator();
   }
 
   public boolean hasNext() {
-    if (next == null) {
-      Matcher matcher = parser.optionPattern.matcher(rest);
-      if (matcher.matches()) {
-        OptionInfo matched = null;
-        int index = 2;
-        for (OptionInfo option : parser.command.getOptions()) {
-          if (matcher.group(index) != null) {
-            matched = option;
-            break;
-          } else {
-            index += 1 + option.getArity();
-          }
-        }
-
-        //
-        if (matched == null) {
-          throw new AssertionError("Should not happen");
-        }
-
-        //
-        String name = matcher.group(index++);
-        List<String> values = Collections.emptyList();
-        for (int j = 0;j < matched.getArity();j++) {
-          if (values.isEmpty()) {
-            values = new ArrayList<String>();
-          }
-          values.add(matcher.group(index++));
-        }
-        if (matched.getArity() > 0) {
-          values = new ArrayList<String>(values);
-        }
-
-        //
-        next = new Match.Option(name, values);
-        rest = rest.substring(matcher.end(1));
-      } else {
-        // Do nothing ?
-      }
-    }
-    return next != null;
+    return i.hasNext();
   }
 
   public Match next() {
-    if (!hasNext()) {
-      throw new NoSuchElementException();
-    }
-    Match tmp = next;
-    next = null;
-    return tmp;
+    return i.next();
   }
 
   public void remove() {
@@ -104,5 +61,67 @@ public class MatchIterator implements Iterator<Match> {
 
   public String getRest() {
     return rest;
+  }
+
+  private class OptionIterator implements Iterator<Match> {
+
+    /** . */
+    private Match.Option next = null;
+
+    public boolean hasNext() {
+      if (next == null) {
+        Matcher matcher = parser.optionPattern.matcher(rest);
+        if (matcher.matches()) {
+          OptionInfo matched = null;
+          int index = 2;
+          for (OptionInfo option : parser.command.getOptions()) {
+            if (matcher.group(index) != null) {
+              matched = option;
+              break;
+            } else {
+              index += 1 + option.getArity();
+            }
+          }
+
+          //
+          if (matched == null) {
+            throw new AssertionError("Should not happen");
+          }
+
+          //
+          String name = matcher.group(index++);
+          List<String> values = Collections.emptyList();
+          for (int j = 0;j < matched.getArity();j++) {
+            if (values.isEmpty()) {
+              values = new ArrayList<String>();
+            }
+            values.add(matcher.group(index++));
+          }
+          if (matched.getArity() > 0) {
+            values = new ArrayList<String>(values);
+          }
+
+          //
+          next = new Match.Option(name, values);
+          rest = rest.substring(matcher.end(1));
+        } else {
+          // Do nothing ?
+        }
+      }
+      return next != null;
+    }
+
+    public Match.Option next() {
+      if (!hasNext()) {
+        throw new NoSuchElementException();
+      }
+      Match.Option tmp = next;
+      next = null;
+      return tmp;
+    }
+
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
   }
 }
