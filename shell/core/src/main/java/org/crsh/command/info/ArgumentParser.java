@@ -21,7 +21,10 @@ package org.crsh.command.info;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +52,7 @@ public class ArgumentParser<T> {
       if (index > 0) {
         re.append('|');
       }
-      re.append("(?:(\\-[");
+      re.append("(?:\\-([");
       for (Character opt : option.getOpts()) {
         re.append(opt);
       }
@@ -76,13 +79,14 @@ public class ArgumentParser<T> {
     this.optionPattern = Pattern.compile(regex);
   }
 
-  public void parse(String... args) {
-    parse(Arrays.asList(args));
+  public Iterator<Match> parse(String... args) {
+    return parse(Arrays.asList(args));
   }
 
-  public void parse(List<String> args) {
+  public Iterator<Match> parse(List<String> args) {
 
-    StringBuilder sb = new StringBuilder();
+    //
+    final StringBuilder sb = new StringBuilder();
     for (String arg : args) {
       if (sb.length() > 0) {
         sb.append(' ');
@@ -90,41 +94,67 @@ public class ArgumentParser<T> {
       sb.append(arg.trim());
     }
 
-    String s = sb.toString();
-    System.out.println("s = " + s);
-    Matcher matcher = optionPattern.matcher(s);
-    if (matcher.find()) {
-      int index = 1;
-      OptionInfo matched = null;
-      for (OptionInfo option : command.getOptions()) {
-        if (matcher.group(index) != null) {
-          matched = option;
-          break;
-        } else {
-          index += 1 + option.getArity();
+    return new Iterator<Match>() {
+
+      String rest = sb.toString();
+      Match next = null;
+
+      public boolean hasNext() {
+        if (next == null) {
+          Matcher matcher = optionPattern.matcher(rest);
+          if (matcher.find()) {
+            OptionInfo matched = null;
+            int index = 1;
+            for (OptionInfo option : command.getOptions()) {
+              if (matcher.group(index) != null) {
+                matched = option;
+                break;
+              } else {
+                index += 1 + option.getArity();
+              }
+            }
+
+            //
+            if (matched == null) {
+              throw new AssertionError("Should not happen");
+            }
+
+            //
+            String name = matcher.group(index++);
+            List<String> values = Collections.emptyList();
+            for (int j = 0;j < matched.getArity();j++) {
+              if (values.isEmpty()) {
+                values = new ArrayList<String>();
+              }
+              values.add(matcher.group(index++));
+            }
+            if (matched.getArity() > 0) {
+              values = new ArrayList<String>(values);
+            }
+
+            //
+            next = new Match(name, values);
+            rest = rest.substring(matcher.end());
+          } else {
+            // Do nothing ?
+          }
         }
+        return next != null;
       }
 
-      //
-      if (matched == null) {
-        throw new AssertionError("Should not happen");
+      public Match next() {
+        if (!hasNext()) {
+          throw new NoSuchElementException();
+        }
+        Match tmp = next;
+        next = null;
+        return tmp;
       }
 
-      //
-      String m = "Matched " + matched.getOpts();
-      for (int j = 0;j < matched.getArity();j++) {
-        m += " " + matcher.group(++index);
+      public void remove() {
+        throw new UnsupportedOperationException();
       }
-
-      //
-      System.out.println(m);
-    } else {
-      System.out.println("not matched");
-    }
-
-    System.out.println("rest = " + s.substring(matcher.end()));
-
-
+    };
   }
 
 }

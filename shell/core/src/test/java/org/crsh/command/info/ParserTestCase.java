@@ -19,9 +19,13 @@
 
 package org.crsh.command.info;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.command.Option;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -41,14 +45,35 @@ public class ParserTestCase extends TestCase {
       boolean b;
     }
 
-    CommandInfo info = CommandInfo.create(A.class);
-    ArgumentParser parser = new ArgumentParser(info);
-    parser.parse("-o", "foo");
-    parser.parse("-p", "bar", "juu");
-    parser.parse("-b", "juu");
-    parser.parse("-b");
-
-
+    //
+    assertParse(A.class, "-o foo", new Match("o", Arrays.asList("foo")));
+    assertParse(A.class, "-p foo bar", new Match("p", Arrays.asList("foo", "bar")));
+    assertParse(A.class, "-b foo", new Match("b", Collections.<String>emptyList()));
+    assertParse(A.class, "-b", new Match("b", Collections.<String>emptyList()));
+    assertParse(A.class, "-o foo -p bar juu", new Match("o", Arrays.asList("foo")), new Match("p", Arrays.asList("bar", "juu")));
+    assertParse(A.class, "-o foo -b -p bar juu", new Match("o", Arrays.asList("foo")), new Match("b", Collections.<String>emptyList()), new Match("p", Arrays.asList("bar", "juu")));
   }
 
+  private <T> void assertParse(Class<T> type, String s, Match... expectedMatches) {
+    String[] args = s.split("\\s+");
+    CommandInfo<T> info;
+    try {
+      info = CommandInfo.create(type);
+    }
+    catch (IntrospectionException e) {
+      AssertionFailedError afe = new AssertionFailedError();
+      afe.initCause(e);
+      throw afe;
+    }
+    ArgumentParser<T> parser = new ArgumentParser<T>(info);
+    Iterator<Match> matcher = parser.parse(args);
+    for (int i = 0;i < expectedMatches.length;i++) {
+      assertTrue(matcher.hasNext());
+      Match match = matcher.next();
+      Match expectedMatch = expectedMatches[i];
+      assertEquals(expectedMatch.getName(), match.getName());
+      assertEquals(expectedMatch.getValues(), match.getValues());
+    }
+    assertFalse(matcher.hasNext());
+  }
 }
