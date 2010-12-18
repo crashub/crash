@@ -19,7 +19,6 @@
 
 package org.crsh.command.info;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -37,7 +36,6 @@ public class ArgumentParser<T> {
   public ArgumentParser(CommandInfo<T> command) {
 
     StringBuilder re = new StringBuilder("^(");
-    ArrayList<OptionInfo> list = new ArrayList<OptionInfo>();
     int index = 0;
     for (OptionInfo option : command.getOptions()) {
       if (index > 0) {
@@ -56,7 +54,6 @@ public class ArgumentParser<T> {
 
       //
       re.append(')');
-      list.add(option);
       index++;
     }
     re.append(").*");
