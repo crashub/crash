@@ -33,19 +33,13 @@ public class ParameterTestCase extends TestCase {
   public void testIllegalParameter() throws IntrospectionException {
 
     class A {
-      @Option(names = "-o", arity = 2)
+      @Option(opt = 'o', arity = 2)
       int o;
     }
     assertIllegalParameter(A.class);
 
-    class B {
-      @Option(names = "")
-      int o;
-    }
-    assertIllegalParameter(B.class);
-
     class C {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       List<Boolean> o;
     }
     assertIllegalParameter(C.class);
@@ -54,31 +48,31 @@ public class ParameterTestCase extends TestCase {
   public void testIllegalTypes() throws IntrospectionException {
 
     class A {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       Exception o;
     }
     assertIllegalValueType(A.class);
 
     class B {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       List<Exception> o;
     }
     assertIllegalValueType(B.class);
 
     class C {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       double o;
     }
     assertIllegalValueType(C.class);
 
     class D {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       Double o;
     }
     assertIllegalValueType(D.class);
 
     class E {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       List<Double> o;
     }
     assertIllegalValueType(E.class);
@@ -87,7 +81,7 @@ public class ParameterTestCase extends TestCase {
 
   public void testOptionIntType() throws IntrospectionException {
     class A {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       int o;
     }
     CommandInfo<A> c = CommandInfo.create(A.class);
@@ -99,7 +93,7 @@ public class ParameterTestCase extends TestCase {
 
   public void testOptionIntWrapperType() throws IntrospectionException {
     class A {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       Integer o;
     }
     CommandInfo<A> c = CommandInfo.create(A.class);
@@ -111,7 +105,7 @@ public class ParameterTestCase extends TestCase {
 
   public void testOptionIntListType() throws IntrospectionException {
     class A {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       List<Integer> o;
     }
     CommandInfo<A> c = CommandInfo.create(A.class);
@@ -123,7 +117,7 @@ public class ParameterTestCase extends TestCase {
 
   public void testOptionStringType() throws IntrospectionException {
     class A {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       String o;
     }
     CommandInfo<A> c = CommandInfo.create(A.class);
@@ -135,7 +129,7 @@ public class ParameterTestCase extends TestCase {
 
   public void testOptionStringListType() throws IntrospectionException {
     class A {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       List<String> o;
     }
     CommandInfo<A> c = CommandInfo.create(A.class);
@@ -147,7 +141,7 @@ public class ParameterTestCase extends TestCase {
 
   public void testOptionBooleanType() throws IntrospectionException {
     class A {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       boolean o;
     }
     CommandInfo<A> c = CommandInfo.create(A.class);
@@ -159,7 +153,7 @@ public class ParameterTestCase extends TestCase {
 
   public void testOptionBooleanWrapperType() throws IntrospectionException {
     class A {
-      @Option(names = "-o")
+      @Option(opt = 'o')
       Boolean o;
     }
     CommandInfo<A> c = CommandInfo.create(A.class);

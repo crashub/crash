@@ -34,11 +34,11 @@ public class OptionInfo extends ParameterInfo {
   private final int arity;
 
   /** . */
-  private final List<String> names;
+  private final List<Character> opts;
 
   public OptionInfo(
     Type javaType,
-    List<String> names,
+    List<Character> opts,
     String description,
     boolean required,
     int arity,
@@ -60,22 +60,23 @@ public class OptionInfo extends ParameterInfo {
     }
 
     //
-    for (String name : names) {
-      if (name == null || name.length() == 0) {
+    opts = new ArrayList<Character>(opts);
+    for (Character opt : opts) {
+      if (opt == null) {
         throw new IllegalParameterException();
       }
     }
 
     //
     this.arity = arity;
-    this.names = Collections.unmodifiableList(new ArrayList<String>(names));
+    this.opts = Collections.unmodifiableList(opts);
   }
 
   public int getArity() {
     return arity;
   }
 
-  public List<String> getNames() {
-    return names;
+  public List<Character> getOpts() {
+    return opts;
   }
 }

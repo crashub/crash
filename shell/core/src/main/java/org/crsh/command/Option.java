@@ -32,7 +32,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Option {
 
-  String[] names();
+  char[] opt();
+
+  String[] longopt() default {};
 
   boolean required() default false;
 

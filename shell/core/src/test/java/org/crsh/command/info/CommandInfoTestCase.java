@@ -21,7 +21,6 @@ package org.crsh.command.info;
 
 import junit.framework.TestCase;
 import org.crsh.command.Argument;
-import org.crsh.command.Command;
 import org.crsh.command.Description;
 import org.crsh.command.Option;
 import org.crsh.util.Utils;
@@ -55,13 +54,13 @@ public class CommandInfoTestCase extends TestCase {
 
   public void testOption() throws IntrospectionException {
     class A {
-      @Option(names = "-i")
+      @Option(opt = 'i')
       private int i;
     }
     CommandInfo<A> ai = CommandInfo.create(A.class);
     assertEquals(1, Utils.list(ai.getOptions()).size());
     OptionInfo i = ai.getOption("-i");
-    assertEquals(Arrays.asList("-i"),i.getNames());
+    assertEquals(Arrays.asList('i'),i.getOpts());
   }
 
   public void testArgument1() throws IntrospectionException {

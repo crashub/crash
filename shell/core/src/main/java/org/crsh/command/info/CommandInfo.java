@@ -23,10 +23,8 @@ import org.crsh.command.Argument;
 import org.crsh.command.Description;
 import org.crsh.command.Option;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -62,11 +60,11 @@ public abstract class CommandInfo<T> {
     for (ParameterInfo parameter : parameters) {
       if (parameter instanceof OptionInfo) {
         OptionInfo option = (OptionInfo)parameter;
-        for (String optionName : option.getNames()) {
+        for (Character opt : option.getOpts()) {
           if (parameterMap.isEmpty()) {
             parameterMap = new HashMap<String, OptionInfo>();
           }
-          parameterMap.put(optionName, option);
+          parameterMap.put("-" + opt, option);
         }
       } else if (parameter instanceof ArgumentInfo) {
         ArgumentInfo argument = (ArgumentInfo)parameter;
@@ -143,9 +141,15 @@ public abstract class CommandInfo<T> {
         argumentAnn.required(),
         argumentAnn.password());
     } else if (optionAnn != null) {
+
+      List<Character> opt = new ArrayList<Character>();
+      for (char c : optionAnn.opt()) {
+        opt.add(c);
+      }
+
       return new OptionInfo(
         type,
-        Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
+        Collections.unmodifiableList(opt),
         description(descriptionAnn),
         optionAnn.required(),
         optionAnn.arity(),
