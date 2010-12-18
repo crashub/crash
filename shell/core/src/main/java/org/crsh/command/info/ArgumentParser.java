@@ -45,14 +45,14 @@ public class ArgumentParser<T> {
 
   public ArgumentParser(CommandInfo<T> command) {
 
-    StringBuilder re = new StringBuilder("^");
+    StringBuilder re = new StringBuilder("^(");
     ArrayList<OptionInfo> list = new ArrayList<OptionInfo>();
     int index = 0;
     for (OptionInfo option : command.getOptions()) {
       if (index > 0) {
         re.append('|');
       }
-      re.append("(?:\\-([");
+      re.append("(?:\\s*\\-([");
       for (Character opt : option.getOpts()) {
         re.append(opt);
       }
@@ -68,6 +68,7 @@ public class ArgumentParser<T> {
       list.add(option);
       index++;
     }
+    re.append(").*");
 
     //
     String regex = re.toString();
@@ -102,9 +103,9 @@ public class ArgumentParser<T> {
       public boolean hasNext() {
         if (next == null) {
           Matcher matcher = optionPattern.matcher(rest);
-          if (matcher.find()) {
+          if (matcher.matches()) {
             OptionInfo matched = null;
-            int index = 1;
+            int index = 2;
             for (OptionInfo option : command.getOptions()) {
               if (matcher.group(index) != null) {
                 matched = option;
@@ -134,7 +135,7 @@ public class ArgumentParser<T> {
 
             //
             next = new Match(name, values);
-            rest = rest.substring(matcher.end());
+            rest = rest.substring(matcher.end(1));
           } else {
             // Do nothing ?
           }
