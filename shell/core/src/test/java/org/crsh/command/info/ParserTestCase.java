@@ -34,6 +34,42 @@ import java.util.List;
  */
 public class ParserTestCase extends TestCase {
 
+  private static class Test {
+
+    /** . */
+    private final MatchIterator matcher;
+
+    private <T> Test(Class<T> type, String s) {
+      try {
+        CommandInfo<T> command = CommandInfo.create(type);
+        ArgumentParser<T> parser = new ArgumentParser<T>(command);
+        this.matcher = parser.parse(s);
+      }
+      catch (IntrospectionException e) {
+        AssertionFailedError afe = new AssertionFailedError();
+        afe.initCause(e);
+        throw afe;
+      }
+    }
+
+    public Test assertOption(String expectedName, String... expectedValues) {
+      assertTrue(matcher.hasNext());
+      Match.Option match = (Match.Option)matcher.next();
+      assertEquals(expectedName, match.getName());
+      assertEquals(Arrays.asList(expectedValues), match.getValues());
+      return this;
+    }
+
+    public void assertDone(String expectedRest) {
+      assertEquals(expectedRest, matcher.getRest());
+      assertFalse(matcher.hasNext());
+    }
+
+    public void assertDone() {
+      assertDone("");
+    }
+  }
+
   public void testFoo() throws Exception {
 
     class A {
@@ -46,34 +82,11 @@ public class ParserTestCase extends TestCase {
     }
 
     //
-    assertParse(A.class, "-o foo", "", new Match.Option("o", Arrays.asList("foo")));
-    assertParse(A.class, "-p foo bar", "", new Match.Option("p", Arrays.asList("foo", "bar")));
-    assertParse(A.class, "-b foo", " foo", new Match.Option("b", Collections.<String>emptyList()));
-    assertParse(A.class, "-b", "", new Match.Option("b", Collections.<String>emptyList()));
-    assertParse(A.class, "-o foo -p bar juu", "", new Match.Option("o", Arrays.asList("foo")), new Match.Option("p", Arrays.asList("bar", "juu")));
-    assertParse(A.class, "-o foo -b -p bar juu", "", new Match.Option("o", Arrays.asList("foo")), new Match.Option("b", Collections.<String>emptyList()), new Match.Option("p", Arrays.asList("bar", "juu")));
-  }
-
-  private <T> void assertParse(Class<T> type, String s, String rest, Match.Option... expectedMatches) {
-    CommandInfo<T> info;
-    try {
-      info = CommandInfo.create(type);
-    }
-    catch (IntrospectionException e) {
-      AssertionFailedError afe = new AssertionFailedError();
-      afe.initCause(e);
-      throw afe;
-    }
-    ArgumentParser<T> parser = new ArgumentParser<T>(info);
-    MatchIterator matcher = parser.parse(s);
-    for (int i = 0;i < expectedMatches.length;i++) {
-      assertTrue(matcher.hasNext());
-      Match.Option match = (Match.Option)matcher.next();
-      Match.Option expectedMatch = expectedMatches[i];
-      assertEquals(expectedMatch.getName(), match.getName());
-      assertEquals(expectedMatch.getValues(), match.getValues());
-    }
-    assertFalse(matcher.hasNext());
-    assertEquals(rest, matcher.getRest());
+    new Test(A.class, "-o foo").assertOption("o", "foo").assertDone();
+    new Test(A.class, "-p foo bar").assertOption("p", "foo", "bar").assertDone();
+    new Test(A.class, "-b foo").assertOption("b").assertDone(" foo");
+    new Test(A.class, "-b").assertOption("b");
+    new Test(A.class, "-o foo -p bar juu").assertOption("o", "foo").assertOption("p", "bar", "juu").assertDone();
+    new Test(A.class, "-o foo -b -p bar juu").assertOption("o", "foo").assertOption("b").assertOption("p", "bar", "juu").assertDone();
   }
 }
