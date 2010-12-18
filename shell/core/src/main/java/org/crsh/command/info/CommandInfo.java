@@ -25,6 +25,7 @@ import org.crsh.command.Option;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +93,7 @@ public abstract class CommandInfo<T> {
 
   public abstract Class<T> getType();
 
-  public Iterable<OptionInfo> getOptions() {
+  public Collection<OptionInfo> getOptions() {
     return options.values();
   }
 

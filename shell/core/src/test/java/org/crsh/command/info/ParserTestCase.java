@@ -88,5 +88,8 @@ public class ParserTestCase extends TestCase {
     new Test(A.class, "-b").assertOption("b");
     new Test(A.class, "-o foo -p bar juu").assertOption("o", "foo").assertOption("p", "bar", "juu").assertDone();
     new Test(A.class, "-o foo -b -p bar juu").assertOption("o", "foo").assertOption("b").assertOption("p", "bar", "juu").assertDone();
+
+    // Partial matching
+    new Test(A.class, "-p foo").assertOption("p", "foo", null).assertDone();
   }
 }

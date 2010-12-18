@@ -31,40 +31,47 @@ public class ArgumentParser<T> {
   final CommandInfo<T> command;
 
   /** . */
-  final Pattern optionPattern;
+  final Pattern optionsPattern;
 
   public ArgumentParser(CommandInfo<T> command) {
 
-    StringBuilder re = new StringBuilder("^(");
+    //
+    StringBuilder optionsRE = new StringBuilder("^(");
     int index = 0;
     for (OptionInfo option : command.getOptions()) {
       if (index > 0) {
-        re.append('|');
+        optionsRE.append('|');
       }
-      re.append("(?:\\s*\\-([");
+      optionsRE.append("(?:\\s*\\-([");
       for (Character opt : option.getOpts()) {
-        re.append(opt);
+        optionsRE.append(opt);
       }
-      re.append("])");
+      optionsRE.append("])");
 
       //
+
       for (int i = 0;i < option.getArity();i++) {
-        re.append("\\s*").append("([A-Aa-z0-9]*)");
+        optionsRE.append("(?:\\s+").append("([A-Aa-z0-9]+))?");
       }
 
       //
-      re.append(')');
+      optionsRE.append(')');
       index++;
     }
-    re.append(").*");
+    optionsRE.append(").*");
+    String regex = optionsRE.toString();
 
     //
-    String regex = re.toString();
-    System.out.println("regex = " + regex);
+    StringBuilder argumentsRE = new StringBuilder();
+    for (ArgumentInfo argument : command.getArguments()) {
+      argument.getIndex();
+
+
+    }
 
     //
     this.command = command;
-    this.optionPattern = Pattern.compile(regex);
+    this.optionsPattern = Pattern.compile(regex);
   }
 
   public MatchIterator parse(String s) {

@@ -70,7 +70,7 @@ public class MatchIterator implements Iterator<Match> {
 
     public boolean hasNext() {
       if (next == null) {
-        Matcher matcher = parser.optionPattern.matcher(rest);
+        Matcher matcher = parser.optionsPattern.matcher(rest);
         if (matcher.matches()) {
           OptionInfo matched = null;
           int index = 2;
@@ -95,7 +95,8 @@ public class MatchIterator implements Iterator<Match> {
             if (values.isEmpty()) {
               values = new ArrayList<String>();
             }
-            values.add(matcher.group(index++));
+            String value = matcher.group(index++);
+            values.add(value);
           }
           if (matched.getArity() > 0) {
             values = new ArrayList<String>(values);
