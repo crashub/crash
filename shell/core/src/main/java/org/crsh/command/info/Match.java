@@ -27,6 +27,20 @@ import java.util.List;
  */
 public class Match {
 
+  public static class Option {
+
+  }
+
+  public static class Parameter {
+
+  }
+
+  public static class Command {
+
+  }
+
+
+
   /** . */
   private final String name;
 

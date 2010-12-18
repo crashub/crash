@@ -19,14 +19,90 @@
 
 package org.crsh.command.info;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface MatchIterator extends Iterator<Match> {
+public class MatchIterator implements Iterator<Match> {
 
-  String getRest();
+  /** . */
+  private final ArgumentParser<?> parser;
 
+  /** . */
+  private String rest;
+
+  /** . */
+  private Match next = null;
+
+  public MatchIterator(ArgumentParser parser, String s) {
+    this.parser = parser;
+    this.rest = s;
+  }
+
+  public boolean hasNext() {
+    if (next == null) {
+      Matcher matcher = parser.optionPattern.matcher(rest);
+      if (matcher.matches()) {
+        OptionInfo matched = null;
+        int index = 2;
+        for (OptionInfo option : parser.command.getOptions()) {
+          if (matcher.group(index) != null) {
+            matched = option;
+            break;
+          } else {
+            index += 1 + option.getArity();
+          }
+        }
+
+        //
+        if (matched == null) {
+          throw new AssertionError("Should not happen");
+        }
+
+        //
+        String name = matcher.group(index++);
+        List<String> values = Collections.emptyList();
+        for (int j = 0;j < matched.getArity();j++) {
+          if (values.isEmpty()) {
+            values = new ArrayList<String>();
+          }
+          values.add(matcher.group(index++));
+        }
+        if (matched.getArity() > 0) {
+          values = new ArrayList<String>(values);
+        }
+
+        //
+        next = new Match(name, values);
+        rest = rest.substring(matcher.end(1));
+      } else {
+        // Do nothing ?
+      }
+    }
+    return next != null;
+  }
+
+  public Match next() {
+    if (!hasNext()) {
+      throw new NoSuchElementException();
+    }
+    Match tmp = next;
+    next = null;
+    return tmp;
+  }
+
+  public void remove() {
+    throw new UnsupportedOperationException();
+  }
+
+  public String getRest() {
+    return rest;
+  }
 }
