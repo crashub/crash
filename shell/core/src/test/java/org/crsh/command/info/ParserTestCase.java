@@ -55,7 +55,6 @@ public class ParserTestCase extends TestCase {
   }
 
   private <T> void assertParse(Class<T> type, String s, Match... expectedMatches) {
-    String[] args = s.split("\\s+");
     CommandInfo<T> info;
     try {
       info = CommandInfo.create(type);
@@ -66,7 +65,7 @@ public class ParserTestCase extends TestCase {
       throw afe;
     }
     ArgumentParser<T> parser = new ArgumentParser<T>(info);
-    Iterator<Match> matcher = parser.parse(args);
+    Iterator<Match> matcher = parser.parse(s);
     for (int i = 0;i < expectedMatches.length;i++) {
       assertTrue(matcher.hasNext());
       Match match = matcher.next();

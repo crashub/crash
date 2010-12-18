@@ -60,7 +60,7 @@ public class ArgumentParser<T> {
 
       //
       for (int i = 0;i < option.getArity();i++) {
-        re.append(" ").append("([A-Aa-z0-9]*)");
+        re.append("\\s*").append("([A-Aa-z0-9]*)");
       }
 
       //
@@ -80,24 +80,11 @@ public class ArgumentParser<T> {
     this.optionPattern = Pattern.compile(regex);
   }
 
-  public Iterator<Match> parse(String... args) {
-    return parse(Arrays.asList(args));
-  }
-
-  public Iterator<Match> parse(List<String> args) {
-
+  public Iterator<Match> parse(final String s) {
     //
-    final StringBuilder sb = new StringBuilder();
-    for (String arg : args) {
-      if (sb.length() > 0) {
-        sb.append(' ');
-      }
-      sb.append(arg.trim());
-    }
-
     return new Iterator<Match>() {
 
-      String rest = sb.toString();
+      String rest = s;
       Match next = null;
 
       public boolean hasNext() {
