@@ -19,6 +19,7 @@
 
 package org.crsh.command.info;
 
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 /**
@@ -37,11 +38,8 @@ public class ArgumentParser<T> {
 
     //
     StringBuilder optionsRE = new StringBuilder("^(");
-    int index = 0;
-    for (OptionInfo option : command.getOptions()) {
-      if (index > 0) {
-        optionsRE.append('|');
-      }
+    for (Iterator<OptionInfo> it = command.getOptions().iterator();it.hasNext();) {
+      OptionInfo option = it.next();
       optionsRE.append("(?:\\s*\\-([");
       for (Character opt : option.getOpts()) {
         optionsRE.append(opt);
@@ -56,7 +54,11 @@ public class ArgumentParser<T> {
 
       //
       optionsRE.append(')');
-      index++;
+
+      //
+      if (it.hasNext()) {
+        optionsRE.append('|');
+      }
     }
     optionsRE.append(").*");
     String regex = optionsRE.toString();
