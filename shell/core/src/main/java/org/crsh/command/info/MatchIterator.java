@@ -99,7 +99,7 @@ public class MatchIterator implements Iterator<Match> {
             values.add(value);
           }
           if (matched.getArity() > 0) {
-            values = new ArrayList<String>(values);
+            values = Collections.unmodifiableList(values);
           }
 
           //

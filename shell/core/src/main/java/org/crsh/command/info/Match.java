@@ -47,6 +47,14 @@ public class Match {
     public List<String> getValues() {
       return values;
     }
+
+    public boolean isPartial() {
+      return values.contains(null);
+    }
+
+    public boolean isFull() {
+      return !isPartial();
+    }
   }
 
   public static class Parameter {
