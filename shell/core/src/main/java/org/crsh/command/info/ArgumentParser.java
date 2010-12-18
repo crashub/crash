@@ -80,12 +80,16 @@ public class ArgumentParser<T> {
     this.optionPattern = Pattern.compile(regex);
   }
 
-  public Iterator<Match> parse(final String s) {
+  public MatchIterator parse(final String s) {
     //
-    return new Iterator<Match>() {
+    return new MatchIterator() {
 
       String rest = s;
       Match next = null;
+
+      public String getRest() {
+        return rest;
+      }
 
       public boolean hasNext() {
         if (next == null) {

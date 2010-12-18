@@ -46,15 +46,15 @@ public class ParserTestCase extends TestCase {
     }
 
     //
-    assertParse(A.class, "-o foo", new Match("o", Arrays.asList("foo")));
-    assertParse(A.class, "-p foo bar", new Match("p", Arrays.asList("foo", "bar")));
-    assertParse(A.class, "-b foo", new Match("b", Collections.<String>emptyList()));
-    assertParse(A.class, "-b", new Match("b", Collections.<String>emptyList()));
-    assertParse(A.class, "-o foo -p bar juu", new Match("o", Arrays.asList("foo")), new Match("p", Arrays.asList("bar", "juu")));
-    assertParse(A.class, "-o foo -b -p bar juu", new Match("o", Arrays.asList("foo")), new Match("b", Collections.<String>emptyList()), new Match("p", Arrays.asList("bar", "juu")));
+    assertParse(A.class, "-o foo", "", new Match("o", Arrays.asList("foo")));
+    assertParse(A.class, "-p foo bar", "", new Match("p", Arrays.asList("foo", "bar")));
+    assertParse(A.class, "-b foo", " foo", new Match("b", Collections.<String>emptyList()));
+    assertParse(A.class, "-b", "", new Match("b", Collections.<String>emptyList()));
+    assertParse(A.class, "-o foo -p bar juu", "", new Match("o", Arrays.asList("foo")), new Match("p", Arrays.asList("bar", "juu")));
+    assertParse(A.class, "-o foo -b -p bar juu", "", new Match("o", Arrays.asList("foo")), new Match("b", Collections.<String>emptyList()), new Match("p", Arrays.asList("bar", "juu")));
   }
 
-  private <T> void assertParse(Class<T> type, String s, Match... expectedMatches) {
+  private <T> void assertParse(Class<T> type, String s, String rest, Match... expectedMatches) {
     CommandInfo<T> info;
     try {
       info = CommandInfo.create(type);
@@ -65,7 +65,7 @@ public class ParserTestCase extends TestCase {
       throw afe;
     }
     ArgumentParser<T> parser = new ArgumentParser<T>(info);
-    Iterator<Match> matcher = parser.parse(s);
+    MatchIterator matcher = parser.parse(s);
     for (int i = 0;i < expectedMatches.length;i++) {
       assertTrue(matcher.hasNext());
       Match match = matcher.next();
@@ -74,5 +74,6 @@ public class ParserTestCase extends TestCase {
       assertEquals(expectedMatch.getValues(), match.getValues());
     }
     assertFalse(matcher.hasNext());
+    assertEquals(rest, matcher.getRest());
   }
 }
