@@ -103,7 +103,7 @@ public class MatchIterator implements Iterator<Match> {
           }
 
           //
-          next = new Match.Option(name, values);
+          next = new Match.Option(matched, name, values);
           rest = rest.substring(matcher.end(1));
         } else {
           // Do nothing ?

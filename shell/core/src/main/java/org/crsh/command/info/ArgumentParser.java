@@ -20,6 +20,7 @@
 package org.crsh.command.info;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -65,8 +66,15 @@ public class ArgumentParser<T> {
 
     //
     StringBuilder argumentsRE = new StringBuilder();
-    for (ArgumentInfo argument : command.getArguments()) {
-      argument.getIndex();
+    List<ArgumentInfo> arguments = command.getArguments();
+    int index = 0;
+    for (int i = 0;i < arguments.size();i++) {
+      ArgumentInfo argument = arguments.get(i);
+      if (i + 1 < arguments.size()) {
+        ArgumentInfo nextArgument = arguments.get(i + 1);
+        int nextIndex = index + nextArgument.getIndex();
+      }
+
 
 
     }

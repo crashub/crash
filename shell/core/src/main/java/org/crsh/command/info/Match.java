@@ -25,9 +25,25 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Match {
+public class Match<P> {
 
-  public static class Option extends Match {
+  /** . */
+  private final P parameter;
+
+  public Match(P parameter) {
+    if (parameter == null) {
+      throw new NullPointerException();
+    }
+
+    //
+    this.parameter = parameter;
+  }
+
+  public final P getParameter() {
+    return parameter;
+  }
+
+  public final static class Option extends Match<OptionInfo> {
 
     /** . */
     private final String name;
@@ -35,7 +51,10 @@ public class Match {
     /** . */
     private final List<String> values;
 
-    Option(String name, List<String> values) {
+    Option(OptionInfo option, String name, List<String> values) {
+      super(option);
+
+      //
       this.name = name;
       this.values = values;
     }
