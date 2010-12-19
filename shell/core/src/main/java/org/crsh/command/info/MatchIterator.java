@@ -39,7 +39,7 @@ public class MatchIterator implements Iterator<Match> {
   private String rest;
 
   /** . */
-  private Iterator<Match> i;
+  private Iterator<? extends Match<?>> i;
 
   public MatchIterator(ArgumentParser parser, String s) {
     this.parser = parser;
@@ -63,7 +63,13 @@ public class MatchIterator implements Iterator<Match> {
     return rest;
   }
 
-  private class OptionIterator implements Iterator<Match> {
+/*
+  private class ArgumentIterator implements Iterator<Match> {
+
+  }
+*/
+
+  private class OptionIterator implements Iterator<Match.Option> {
 
     /** . */
     private Match.Option next = null;
