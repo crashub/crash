@@ -86,6 +86,7 @@ public class ParserTestCase extends TestCase {
       String o;
     }
     new Test(A.class, "foo").assertArgument(0, 3, "foo").assertDone();
+    new Test(A.class, "foo bar").assertArgument(0, 3, "foo").assertDone(" bar");
     class B {
       @Argument
       List<String> o;
