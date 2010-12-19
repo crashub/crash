@@ -39,6 +39,9 @@ public class MatchIterator implements Iterator<Match> {
   private final ArgumentParser<?> parser;
 
   /** . */
+  private StringBuilder done;
+
+  /** The rest. */
   private String rest;
 
   /** . */
@@ -48,6 +51,19 @@ public class MatchIterator implements Iterator<Match> {
     this.parser = parser;
     this.rest = s;
     this.i = new OptionIterator();
+    this.done = new StringBuilder();
+  }
+
+  private void skipRestTo(int to) {
+    skipRestBy(to - done.length());
+  }
+
+  private void skipRestBy(int diff) {
+    if (diff < 0) {
+      throw new AssertionError();
+    }
+    done.append(rest.substring(0, diff));
+    rest = rest.substring(diff);
   }
 
   public boolean hasNext() {
@@ -82,7 +98,7 @@ public class MatchIterator implements Iterator<Match> {
     ArrayList<Chunk> values = new ArrayList<Chunk>();
     Matcher matcher = Pattern.compile("\\S+").matcher(s);
     while (matcher.find()) {
-      values.add(new Chunk(matcher.group(0), matcher.start()));
+      values.add(new Chunk(matcher.group(0), done.length() + matcher.start()));
     }
 
     //
@@ -153,9 +169,6 @@ public class MatchIterator implements Iterator<Match> {
     return new Iterator<Match.Argument>() {
 
       /** . */
-      private final String rest = MatchIterator.this.rest;
-
-      /** . */
       private final Iterator<Match.Argument> iterator = list.iterator();
 
       public boolean hasNext() {
@@ -164,7 +177,11 @@ public class MatchIterator implements Iterator<Match> {
 
       public Match.Argument next() {
         Match.Argument next = iterator.next();
-        MatchIterator.this.rest = rest.substring(next.getEnd());
+
+        //
+
+        skipRestTo(next.getEnd());
+
         return next;
       }
 
@@ -172,23 +189,6 @@ public class MatchIterator implements Iterator<Match> {
         throw new UnsupportedOperationException();
       }
     };
-/*
-    Iterator<Match.Argument> it =
-    return new Iterator<Match.Argument>() {
-      public boolean hasNext() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-      }
-
-      public Match.Argument next() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-      }
-
-      public void remove() {
-        //To change body of implemented methods use File | Settings | File Templates.
-      }
-    };
-*/
-//    return list.iterator();
   }
 
   private class OptionIterator implements Iterator<Match.Option> {
@@ -228,7 +228,7 @@ public class MatchIterator implements Iterator<Match> {
 
             //
             next = new Match.Option(matched, name, values);
-            rest = rest.substring(matcher.end(1));
+            skipRestBy(matcher.end(1));
           }
           else
           {

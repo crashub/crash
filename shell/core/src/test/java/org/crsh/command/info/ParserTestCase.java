@@ -80,33 +80,48 @@ public class ParserTestCase extends TestCase {
     }
   }
 
+  public void testMixed() throws Exception {
+    class A {
+      @Option(opt = 'o')
+      String o;
+      @Option(opt = 'p')
+      boolean p;
+      @Argument
+      String a;
+      @Argument
+      List<String> b;
+    }
+    new Test(A.class, "-o foo bar").assertOption("o", "foo").assertArgument(7, 10, "bar").assertArgument(10, 10).assertDone();
+    new Test(A.class, "-o foo -p bar").assertOption("o", "foo").assertOption("p").assertArgument(10, 13, "bar").assertArgument(13, 13).assertDone();
+  }
+
   public void testArgument() throws Exception {
     class A {
       @Argument
-      String o;
+      String a;
     }
     new Test(A.class, "foo").assertArgument(0, 3, "foo").assertDone();
     new Test(A.class, "foo bar").assertArgument(0, 3, "foo").assertDone(" bar");
     class B {
       @Argument
-      List<String> o;
+      List<String> a;
     }
     new Test(B.class, "foo").assertArgument(0, 3, "foo").assertDone();
     new Test(B.class, "foo bar").assertArgument(0, 7, "foo", "bar").assertDone();
     class C {
       @Argument
-      String o;
+      String a;
       @Argument
-      List<String> p;
+      List<String> b;
     }
     new Test(C.class, "foo").assertArgument(0, 3, "foo").assertArgument(3, 3).assertDone();
     new Test(C.class, "foo bar").assertArgument(0, 3, "foo").assertArgument(4, 7, "bar").assertDone();
     new Test(C.class, "foo bar juu").assertArgument(0, 3, "foo").assertArgument(4, 11, "bar", "juu").assertDone();
     class D {
       @Argument
-      List<String> o;
+      List<String> a;
       @Argument
-      String p;
+      String b;
     }
     new Test(D.class, "").assertArgument(0, 0).assertDone();
     new Test(D.class, "foo").assertArgument(0, 0).assertArgument(0, 3, "foo").assertDone();
@@ -114,11 +129,11 @@ public class ParserTestCase extends TestCase {
     new Test(D.class, "foo bar juu").assertArgument(0, 7, "foo", "bar").assertArgument(8, 11, "juu").assertDone();
     class E {
       @Argument
-      String o;
+      String a;
       @Argument
-      List<String> p;
+      List<String> b;
       @Argument
-      String q;
+      String c;
     }
     new Test(E.class, "").assertDone();
     new Test(E.class, "foo").assertArgument(0, 3, "foo").assertArgument(3, 3).assertDone();
@@ -135,7 +150,7 @@ public class ParserTestCase extends TestCase {
     new Test(A.class, "foo").assertDone("foo");
   }
 
-  public void testFoo() throws Exception {
+  public void testOptions() throws Exception {
 
     class A {
       @Option(opt = 'o')
