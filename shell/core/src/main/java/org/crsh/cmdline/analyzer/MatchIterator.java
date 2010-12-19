@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class MatchIterator implements Iterator<Match> {
+public class MatchIterator implements Iterator<Match<?>> {
 
   /** . */
   private final ParameterAnalyzer<?> parser;
@@ -83,7 +83,7 @@ public class MatchIterator implements Iterator<Match> {
     }
   }
 
-  public Match next() {
+  public Match<?> next() {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
