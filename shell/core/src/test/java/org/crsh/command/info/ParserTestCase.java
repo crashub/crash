@@ -23,10 +23,11 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.command.Argument;
 import org.crsh.command.Option;
+import org.crsh.command.info.analyzer.ArgumentParser;
+import org.crsh.command.info.analyzer.Match;
+import org.crsh.command.info.analyzer.MatchIterator;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
