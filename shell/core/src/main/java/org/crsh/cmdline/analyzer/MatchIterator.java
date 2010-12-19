@@ -102,7 +102,7 @@ public class MatchIterator<T, B extends ParameterBinding> implements Iterator<Ma
     }
   }
 
-  public Match<?> next() {
+  public Match<B> next() {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
