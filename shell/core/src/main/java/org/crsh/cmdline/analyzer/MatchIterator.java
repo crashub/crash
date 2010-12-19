@@ -22,6 +22,7 @@ package org.crsh.cmdline.analyzer;
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.ParameterBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,10 +38,19 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class MatchIterator implements Iterator<Match<?>> {
+public class MatchIterator<T, B extends ParameterBinding> implements Iterator<Match<?>> {
 
   /** . */
-  private final ParameterAnalyzer<?> parser;
+  private static final int PARSING_OPTIONS = 0;
+
+  /** . */
+  private static final int PARSING_ARGUMENTS = 1;
+
+  /** . */
+  private static final int PARSING_DONE = 2;
+
+  /** . */
+  private final ParameterAnalyzer<T, B> parser;
 
   /** . */
   private StringBuilder done;
@@ -49,13 +59,17 @@ public class MatchIterator implements Iterator<Match<?>> {
   private String rest;
 
   /** . */
-  private Iterator<? extends Match<?>> i;
+  private Iterator<? extends Match<B>> i;
 
-  public MatchIterator(ParameterAnalyzer parser, String s) {
+  /** . */
+  private int status;
+
+  public MatchIterator(ParameterAnalyzer<T, B> parser, String s) {
     this.parser = parser;
     this.rest = s;
     this.i = new OptionIterator();
     this.done = new StringBuilder();
+    this.status = PARSING_OPTIONS;
   }
 
   private void skipRestTo(int to) {
@@ -74,11 +88,16 @@ public class MatchIterator implements Iterator<Match<?>> {
     if (i.hasNext()) {
       return true;
     } else {
-      if (i instanceof OptionIterator) {
-        i = arguments(rest);
-        return i.hasNext();
-      } else {
-        return false;
+      switch (status) {
+        case PARSING_OPTIONS:
+          i = arguments(rest);
+          status = PARSING_ARGUMENTS;
+          return i.hasNext();
+        case PARSING_ARGUMENTS:
+          i = null;
+          status = PARSING_DONE;
+        default:
+          return false;
       }
     }
   }
@@ -98,7 +117,7 @@ public class MatchIterator implements Iterator<Match<?>> {
     return rest;
   }
 
-  private Iterator<Match.Argument> arguments(String s) {
+  private Iterator<Match.Argument<B>> arguments(String s) {
     ArrayList<Chunk> values = new ArrayList<Chunk>();
     Matcher matcher = Pattern.compile("\\S+").matcher(s);
     while (matcher.find()) {
@@ -106,33 +125,33 @@ public class MatchIterator implements Iterator<Match<?>> {
     }
 
     //
-    List<? extends ArgumentDescriptor<?>> arguments = parser.command.getArguments();
+    List<? extends ArgumentDescriptor<B>> arguments = parser.command.getArguments();
 
     // Attempt to match all arguments until we find a list argument
-    final LinkedList<Match.Argument> list = new LinkedList<Match.Argument>();
-    ListIterator<Match.Argument> bilto = list.listIterator();
+    final LinkedList<Match.Argument<B>> list = new LinkedList<Match.Argument<B>>();
+    ListIterator<Match.Argument<B>> bilto = list.listIterator();
     ListIterator<Chunk> headValues = values.listIterator();
     Chunk headLast = null;
     out:
-    for (ListIterator<? extends ArgumentDescriptor<?>> i = arguments.listIterator();i.hasNext();) {
+    for (ListIterator<? extends ArgumentDescriptor<B>> i = arguments.listIterator();i.hasNext();) {
 
       // Get head argument
-      ArgumentDescriptor head = i.next();
+      ArgumentDescriptor<B> head = i.next();
 
       //
       if (head.getType().getMultiplicity() == Multiplicity.SINGLE) {
         if (headValues.hasNext()) {
           Chunk chunk = headValues.next();
-          bilto.add(new Match.Argument(head, chunk.getStart(), chunk.getEnd(), Collections.singletonList(chunk.getValue())));
+          bilto.add(new Match.Argument<B>(head, chunk.getStart(), chunk.getEnd(), Collections.singletonList(chunk.getValue())));
           headLast = chunk;
         } else {
           break;
         }
       } else {
         ListIterator<Chunk> tailValues = values.listIterator(values.size());
-        ListIterator<? extends ArgumentDescriptor<?>> r = arguments.listIterator(arguments.size());
+        ListIterator<? extends ArgumentDescriptor<B>> r = arguments.listIterator(arguments.size());
         while (r.hasPrevious()) {
-          ArgumentDescriptor tail = r.previous();
+          ArgumentDescriptor<B> tail = r.previous();
           if (tail == head) {
             LinkedList<String> foo = new LinkedList<String>();
             Chunk first = null;
@@ -154,14 +173,14 @@ public class MatchIterator implements Iterator<Match<?>> {
               begin = first.getStart();
               end = last.getEnd();
             }
-            bilto.add(new Match.Argument(head, begin, end, foo));
+            bilto.add(new Match.Argument<B>(head, begin, end, foo));
             break out;
           } else {
             if (tailValues.previousIndex() < headValues.nextIndex()) {
               // We cannot satisfy so we don't consume the value and we just continue backward
             } else {
               Chunk chunk = tailValues.previous();
-              bilto.add(new Match.Argument(tail, chunk.getStart(), chunk.getEnd(), Collections.singletonList(chunk.getValue())));
+              bilto.add(new Match.Argument<B>(tail, chunk.getStart(), chunk.getEnd(), Collections.singletonList(chunk.getValue())));
               bilto.previous();
             }
           }
@@ -170,17 +189,17 @@ public class MatchIterator implements Iterator<Match<?>> {
     }
 
     //
-    return new Iterator<Match.Argument>() {
+    return new Iterator<Match.Argument<B>>() {
 
       /** . */
-      private final Iterator<Match.Argument> iterator = list.iterator();
+      private final Iterator<Match.Argument<B>> iterator = list.iterator();
 
       public boolean hasNext() {
         return iterator.hasNext();
       }
 
-      public Match.Argument next() {
-        Match.Argument next = iterator.next();
+      public Match.Argument<B> next() {
+        Match.Argument<B> next = iterator.next();
 
         //
 
@@ -195,18 +214,18 @@ public class MatchIterator implements Iterator<Match<?>> {
     };
   }
 
-  private class OptionIterator implements Iterator<Match.Option> {
+  private class OptionIterator implements Iterator<Match.Option<B>> {
 
     /** . */
-    private Match.Option next = null;
+    private Match.Option<B> next = null;
 
     public boolean hasNext() {
       if (next == null) {
         Matcher matcher = parser.optionsPattern.matcher(rest);
         if (matcher.matches()) {
-          OptionDescriptor matched = null;
+          OptionDescriptor<B> matched = null;
           int index = 2;
-          for (OptionDescriptor option : parser.command.getOptions()) {
+          for (OptionDescriptor<B> option : parser.command.getOptions()) {
             if (matcher.group(index) != null) {
               matched = option;
               break;
@@ -231,7 +250,7 @@ public class MatchIterator implements Iterator<Match<?>> {
             }
 
             //
-            next = new Match.Option(matched, name, values);
+            next = new Match.Option<B>(matched, name, values);
             skipRestBy(matcher.end(1));
           }
           else
@@ -245,11 +264,11 @@ public class MatchIterator implements Iterator<Match<?>> {
       return next != null;
     }
 
-    public Match.Option next() {
+    public Match.Option<B> next() {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }
-      Match.Option tmp = next;
+      Match.Option<B> tmp = next;
       next = null;
       return tmp;
     }

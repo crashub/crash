@@ -21,6 +21,7 @@ package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.ParameterBinding;
 
 import java.util.List;
 
@@ -28,25 +29,12 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Match<P> {
+public class Match<B extends ParameterBinding> {
 
-  /** . */
-  private final P parameter;
+  public final static class Option<B extends ParameterBinding> extends Match<B> {
 
-  public Match(P parameter) {
-    if (parameter == null) {
-      throw new NullPointerException();
-    }
-
-    //
-    this.parameter = parameter;
-  }
-
-  public final P getParameter() {
-    return parameter;
-  }
-
-  public final static class Option extends Match<OptionDescriptor> {
+    /** . */
+    private final OptionDescriptor<B> option;
 
     /** . */
     private final String name;
@@ -54,10 +42,8 @@ public class Match<P> {
     /** . */
     private final List<String> values;
 
-    Option(OptionDescriptor option, String name, List<String> values) {
-      super(option);
-
-      //
+    Option(OptionDescriptor<B> option, String name, List<String> values) {
+      this.option = option;
       this.name = name;
       this.values = values;
     }
@@ -79,7 +65,10 @@ public class Match<P> {
     }
   }
 
-  public static class Argument extends Match<ArgumentDescriptor> {
+  public static class Argument<B extends ParameterBinding> extends Match<B> {
+
+    /** . */
+    private final ArgumentDescriptor<B> argument;
 
     /** . */
     private final List<String> values;
@@ -90,10 +79,8 @@ public class Match<P> {
     /** . */
     private int end;
 
-    public Argument(ArgumentDescriptor argument, int start, int end, List<String> values) {
-      super(argument);
-
-      //
+    public Argument(ArgumentDescriptor<B> argument, int start, int end, List<String> values) {
+      this.argument = argument;
       this.start = start;
       this.end = end;
       this.values = values;
@@ -112,8 +99,10 @@ public class Match<P> {
     }
   }
 
+/*
   public static class Command {
 
   }
+*/
 
 }

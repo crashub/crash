@@ -21,6 +21,7 @@ package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.ParameterBinding;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -30,15 +31,15 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ParameterAnalyzer<T> {
+public class ParameterAnalyzer<T, B extends ParameterBinding> {
 
   /** . */
-  final CommandDescriptor<T, ?> command;
+  final CommandDescriptor<T, B> command;
 
   /** . */
   final Pattern optionsPattern;
 
-  public ParameterAnalyzer(CommandDescriptor<T, ?> command) {
+  public ParameterAnalyzer(CommandDescriptor<T, B> command) {
 
     //
     StringBuilder optionsRE = new StringBuilder("^(");

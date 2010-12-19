@@ -41,8 +41,8 @@ public class ParserTestCase extends TestCase {
 
     private <T> Test(Class<T> type, String s) {
       try {
-        CommandDescriptor<T, ?> command = CommandDescriptor.create(type);
-        ParameterAnalyzer<T> parser = new ParameterAnalyzer<T>(command);
+        CommandDescriptor<T, ParameterBinding.ClassField> command = CommandDescriptor.create(type);
+        ParameterAnalyzer<T, ParameterBinding.ClassField> parser = new ParameterAnalyzer<T, ParameterBinding.ClassField>(command);
         this.matcher = parser.analyzer(s);
       }
       catch (IntrospectionException e) {
