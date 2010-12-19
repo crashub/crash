@@ -65,19 +65,24 @@ public class ArgumentParser<T> {
     String regex = optionsRE.toString();
 
     //
-    StringBuilder argumentsRE = new StringBuilder();
+/*
+    StringBuilder argumentsRE = new StringBuilder("^(");
     List<ArgumentInfo> arguments = command.getArguments();
     int index = 0;
     for (int i = 0;i < arguments.size();i++) {
       ArgumentInfo argument = arguments.get(i);
+      Integer arity;
       if (i + 1 < arguments.size()) {
         ArgumentInfo nextArgument = arguments.get(i + 1);
         int nextIndex = index + nextArgument.getIndex();
+      } else {
+
       }
 
 
 
     }
+*/
 
     //
     this.command = command;

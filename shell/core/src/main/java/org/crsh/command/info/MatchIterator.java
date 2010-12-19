@@ -63,11 +63,23 @@ public class MatchIterator implements Iterator<Match> {
     return rest;
   }
 
-/*
-  private class ArgumentIterator implements Iterator<Match> {
+  private class ArgumentIterator implements Iterator<Match.Argument> {
 
+    /** . */
+    private Match.Argument next;
+
+    public boolean hasNext() {
+      return false;  
+    }
+
+    public Match.Argument next() {
+      return null;  
+    }
+
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
   }
-*/
 
   private class OptionIterator implements Iterator<Match.Option> {
 

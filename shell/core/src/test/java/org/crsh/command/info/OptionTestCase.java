@@ -28,7 +28,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ParameterTestCase extends TestCase {
+public class OptionTestCase extends TestCase {
 
   public void testIllegalParameter() throws IntrospectionException {
 

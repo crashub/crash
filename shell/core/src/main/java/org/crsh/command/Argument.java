@@ -32,8 +32,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Argument {
 
-  int index() default 0;
-
   boolean required() default false;
 
   boolean password() default false;

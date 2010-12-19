@@ -76,7 +76,7 @@ public class Match<P> {
     }
   }
 
-  public static class Parameter {
+  public static class Argument {
 
   }
 

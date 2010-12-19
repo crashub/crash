@@ -26,6 +26,7 @@ import org.crsh.command.Option;
 import org.crsh.util.Utils;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -70,22 +71,25 @@ public class CommandInfoTestCase extends TestCase {
     }
     CommandInfo<A> c = CommandInfo.create(A.class);
     assertEquals(1, Utils.list(c.getArguments()).size());
-    ArgumentInfo i = c.getArgument(0);
-    assertEquals(0,i.getIndex());
+    ArgumentInfo i = c.getArguments().get(0);
+    assertEquals(SimpleValueType.INTEGER, i.getType().getValueType());
+    assertEquals(Multiplicity.SINGLE, i.getType().getMultiplicity());
   }
 
   public void testArgument2() throws IntrospectionException {
     class A {
-      @Argument()
+      @Argument
       private int i;
-      @Argument(index = 1)
-      private int j;
+      @Argument
+      private List<Integer> j;
     }
     CommandInfo<A> c = CommandInfo.create(A.class);
     assertEquals(2, Utils.list(c.getArguments()).size());
-    ArgumentInfo i = c.getArgument(0);
-    assertEquals(0,i.getIndex());
-    ArgumentInfo j = c.getArgument(1);
-    assertEquals(1,j.getIndex());
+    ArgumentInfo i = c.getArguments().get(0);
+    assertEquals(SimpleValueType.INTEGER, i.getType().getValueType());
+    assertEquals(Multiplicity.SINGLE, i.getType().getMultiplicity());
+    ArgumentInfo j = c.getArguments().get(1);
+    assertEquals(SimpleValueType.INTEGER, j.getType().getValueType());
+    assertEquals(Multiplicity.LIST, j.getType().getMultiplicity());
   }
 }

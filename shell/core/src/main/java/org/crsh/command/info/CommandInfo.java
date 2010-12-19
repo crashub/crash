@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -56,38 +55,30 @@ public abstract class CommandInfo<T> {
 
   CommandInfo(String name, String description, List<ParameterInfo> parameters) throws IntrospectionException {
 
-    Map<String, OptionInfo> parameterMap = Collections.emptyMap();
-    TreeMap<Integer, ArgumentInfo> argumentMap = new TreeMap<Integer, ArgumentInfo>();
+    Map<String, OptionInfo> options = Collections.emptyMap();
+    List<ArgumentInfo> arguments = Collections.emptyList();
     for (ParameterInfo parameter : parameters) {
       if (parameter instanceof OptionInfo) {
         OptionInfo option = (OptionInfo)parameter;
         for (Character opt : option.getOpts()) {
-          if (parameterMap.isEmpty()) {
-            parameterMap = new HashMap<String, OptionInfo>();
+          if (options.isEmpty()) {
+            options = new HashMap<String, OptionInfo>();
           }
-          parameterMap.put("-" + opt, option);
+          options.put("-" + opt, option);
         }
       } else if (parameter instanceof ArgumentInfo) {
         ArgumentInfo argument = (ArgumentInfo)parameter;
-        if (argumentMap.put(argument.getIndex(), argument) != null) {
-          throw new IntrospectionException();
+        if (arguments.isEmpty()) {
+          arguments = new ArrayList<ArgumentInfo>();
         }
+        arguments.add(argument);
       }
-    }
-
-    // Check consistency
-    List<ArgumentInfo> arguments = Collections.emptyList();
-    for (ArgumentInfo argument : argumentMap.values()) {
-      if (arguments.isEmpty()) {
-        arguments = new ArrayList<ArgumentInfo>();
-      }
-      arguments.add(argument);
     }
 
     //
     this.description = description;
-    this.options = parameterMap;
-    this.arguments = arguments;
+    this.options = options.isEmpty() ? options : Collections.unmodifiableMap(options);
+    this.arguments = arguments.isEmpty() ? arguments : Collections.unmodifiableList(arguments);
     this.name = name;
   }
 
@@ -99,15 +90,6 @@ public abstract class CommandInfo<T> {
 
   public OptionInfo getOption(String name) {
     return options.get(name);
-  }
-
-  public ArgumentInfo getArgument(int index) {
-    for (ArgumentInfo argument : arguments) {
-      if (argument.getIndex() >= index) {
-        return argument;
-      }
-    }
-    return null;
   }
 
   public List<ArgumentInfo> getArguments() {
@@ -137,7 +119,6 @@ public abstract class CommandInfo<T> {
       }
       return new ArgumentInfo(
         type,
-        argumentAnn.index(),
         description(descriptionAnn),
         argumentAnn.required(),
         argumentAnn.password());

@@ -27,12 +27,8 @@ import java.lang.reflect.Type;
  */
 public class ArgumentInfo extends ParameterInfo {
 
-  /** . */
-  private final int index;
-
   public ArgumentInfo(
     Type javaType,
-    int index,
     String description,
     boolean required,
     boolean password) throws IllegalValueTypeException, IllegalParameterException {
@@ -41,12 +37,5 @@ public class ArgumentInfo extends ParameterInfo {
       description,
       required,
       password);
-
-    //
-    this.index = index;
-  }
-
-  public int getIndex() {
-    return index;
   }
 }
