@@ -20,7 +20,6 @@
 package org.crsh.command.info;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -55,7 +55,7 @@ public class MatchIterator implements Iterator<Match> {
       return true;
     } else {
       if (i instanceof OptionIterator) {
-        i = arguments(rest).iterator();
+        i = arguments(rest);
         return i.hasNext();
       } else {
         return false;
@@ -78,15 +78,20 @@ public class MatchIterator implements Iterator<Match> {
     return rest;
   }
 
-  private List<Match.Argument> arguments(String s) {
+  private Iterator<Match.Argument> arguments(String s) {
+    ArrayList<Chunk> values = new ArrayList<Chunk>();
+    Matcher matcher = Pattern.compile("\\S+").matcher(s);
+    while (matcher.find()) {
+      values.add(new Chunk(matcher.group(0), matcher.start()));
+    }
 
-    List<String> values = Arrays.asList(s.split("\\s+"));
+    //
     List<ArgumentInfo> arguments = parser.command.getArguments();
 
     // Attempt to match all arguments until we find a list argument
     LinkedList<Match.Argument> list = new LinkedList<Match.Argument>();
     ListIterator<Match.Argument> bilto = list.listIterator();
-    ListIterator<String> headValues = values.listIterator();
+    ListIterator<Chunk> headValues = values.listIterator();
     out:
     for (ListIterator<ArgumentInfo> i = arguments.listIterator();i.hasNext();) {
 
@@ -94,32 +99,50 @@ public class MatchIterator implements Iterator<Match> {
       ArgumentInfo head = i.next();
 
       //
+      Chunk headLast = null;
       if (head.getType().getMultiplicity() == Multiplicity.SINGLE) {
         if (headValues.hasNext()) {
-          String value = headValues.next();
-          bilto.add(new Match.Argument(head, Collections.singletonList(value)));
-          bilto.next();
+          Chunk chunk = headValues.next();
+          bilto.add(new Match.Argument(head, chunk.getStart(), chunk.getEnd(), Collections.singletonList(chunk.getValue())));
+          headLast = chunk;
         } else {
           break;
         }
       } else {
-        ListIterator<String> tailValues = values.listIterator(values.size());
+        ListIterator<Chunk> tailValues = values.listIterator(values.size());
         ListIterator<ArgumentInfo> r = arguments.listIterator(arguments.size());
         while (r.hasPrevious()) {
           ArgumentInfo tail = r.previous();
           if (tail == head) {
-            List<String> foo = new ArrayList<String>();
-            while (headValues.nextIndex() < tailValues.previousIndex()) {
-              foo.add(headValues.next());
+            LinkedList<String> foo = new LinkedList<String>();
+            Chunk first = null;
+            Chunk last = null;
+            while (headValues.nextIndex() <= tailValues.previousIndex()) {
+              last = headValues.next();
+              first = first == null ? last : first;
+              foo.add(last.getValue());
             }
-            bilto.add(new Match.Argument(head, foo));
+            int begin;
+            int end;
+            if (first == null) {
+              if (headLast == null) {
+                begin = end = 0;
+              } else {
+                begin = end = headLast.getEnd();
+              }
+            } else {
+              begin = first.getStart();
+              end = last.getEnd();
+            }
+            bilto.add(new Match.Argument(head, begin, end, foo));
             break out;
           } else {
-            if (tailValues.previousIndex() == headValues.nextIndex()) {
-              throw new UnsupportedOperationException("todo: not enough");
+            if (tailValues.previousIndex() < headValues.nextIndex()) {
+              // We cannot satisfy so we don't consume the value and we just continue backward
             } else {
-              String value = tailValues.previous();
-              bilto.add(new Match.Argument(tail, Collections.singletonList(value)));
+              Chunk chunk = tailValues.previous();
+              bilto.add(new Match.Argument(tail, chunk.getStart(), chunk.getEnd(), Collections.singletonList(chunk.getValue())));
+              bilto.previous();
             }
           }
         }
@@ -127,8 +150,23 @@ public class MatchIterator implements Iterator<Match> {
     }
 
     //
+/*
+    Iterator<Match.Argument> it =
+    return new Iterator<Match.Argument>() {
+      public boolean hasNext() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+      }
 
-    return list;
+      public Match.Argument next() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+      }
+
+      public void remove() {
+        //To change body of implemented methods use File | Settings | File Templates.
+      }
+    };
+*/
+    return list.iterator();
   }
 
   private class OptionIterator implements Iterator<Match.Option> {

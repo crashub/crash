@@ -81,11 +81,27 @@ public class Match<P> {
     /** . */
     private final List<String> values;
 
-    public Argument(ArgumentInfo argument, List<String> values) {
+    /** . */
+    private int begin;
+
+    /** . */
+    private int end;
+
+    public Argument(ArgumentInfo argument, int begin, int end, List<String> values) {
       super(argument);
 
       //
+      this.begin = begin;
+      this.end = end;
       this.values = values;
+    }
+
+    public int getBegin() {
+      return begin;
+    }
+
+    public int getEnd() {
+      return end;
     }
 
     public List<String> getValues() {

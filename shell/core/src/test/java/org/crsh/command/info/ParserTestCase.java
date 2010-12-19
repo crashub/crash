@@ -78,6 +78,40 @@ public class ParserTestCase extends TestCase {
     }
   }
 
+  public void testArgument() throws Exception {
+    class A {
+      @Argument
+      String o;
+    }
+    new Test(A.class, "foo").assertArgument("foo");
+    class B {
+      @Argument
+      List<String> o;
+    }
+    new Test(B.class, "foo").assertArgument("foo");
+    new Test(B.class, "foo bar").assertArgument("foo", "bar");
+    new Test(A.class, "foo").assertArgument("foo");
+    class C {
+      @Argument
+      String o;
+      @Argument
+      List<String> p;
+    }
+    new Test(C.class, "foo").assertArgument("foo");
+    new Test(C.class, "foo bar").assertArgument("foo").assertArgument("bar");
+    new Test(C.class, "foo bar juu").assertArgument("foo").assertArgument("bar", "juu");
+    class D {
+      @Argument
+      List<String> o;
+      @Argument
+      String p;
+    }
+    new Test(D.class, "").assertArgument().assertDone();
+    new Test(D.class, "foo").assertArgument().assertArgument("foo");
+    new Test(D.class, "foo bar").assertArgument("foo").assertArgument("bar");
+    new Test(D.class, "foo bar juu").assertArgument("foo", "bar").assertArgument("juu");
+  }
+
   public void testEmpty() throws Exception {
     class A {
     }
