@@ -73,7 +73,7 @@ public class ParameterAnalyzer<T> {
     this.optionsPattern = Pattern.compile(regex);
   }
 
-  public MatchIterator parse(String s) {
+  public MatchIterator analyzer(String s) {
     return new MatchIterator(this, s);
   }
 

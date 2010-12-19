@@ -43,7 +43,7 @@ public class ParserTestCase extends TestCase {
       try {
         CommandDescriptor<T, ?> command = CommandDescriptor.create(type);
         ParameterAnalyzer<T> parser = new ParameterAnalyzer<T>(command);
-        this.matcher = parser.parse(s);
+        this.matcher = parser.analyzer(s);
       }
       catch (IntrospectionException e) {
         AssertionFailedError afe = new AssertionFailedError();
