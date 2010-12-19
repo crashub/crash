@@ -111,6 +111,19 @@ public class ParserTestCase extends TestCase {
     new Test(D.class, "foo").assertArgument(0, 0).assertArgument(0, 3, "foo").assertDone();
     new Test(D.class, "foo bar").assertArgument(0, 3, "foo").assertArgument(4, 7, "bar").assertDone();
     new Test(D.class, "foo bar juu").assertArgument(0, 7, "foo", "bar").assertArgument(8, 11, "juu").assertDone();
+    class E {
+      @Argument
+      String o;
+      @Argument
+      List<String> p;
+      @Argument
+      String q;
+    }
+    new Test(E.class, "").assertDone();
+    new Test(E.class, "foo").assertArgument(0, 3, "foo").assertArgument(3, 3).assertDone();
+    new Test(E.class, "foo bar").assertArgument(0, 3, "foo").assertArgument(3, 3).assertArgument(4, 7, "bar").assertDone();
+    new Test(E.class, "foo bar juu").assertArgument(0, 3, "foo").assertArgument(4, 7, "bar").assertArgument(8, 11, "juu").assertDone();
+    new Test(E.class, "foo bar juu daa").assertArgument(0, 3, "foo").assertArgument(4, 11, "bar", "juu").assertArgument(12, 15, "daa").assertDone();
   }
 
   public void testEmpty() throws Exception {
