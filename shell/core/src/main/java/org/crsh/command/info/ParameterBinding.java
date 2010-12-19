@@ -26,9 +26,9 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class JoinPoint {
+public class ParameterBinding {
 
-  public static class ClassField extends JoinPoint {
+  public static class ClassField extends ParameterBinding {
 
     /** . */
     private final Field field;
@@ -42,7 +42,7 @@ public class JoinPoint {
     }
   }
 
-  public static class MethodArgument extends JoinPoint {
+  public static class MethodArgument extends ParameterBinding {
 
     /** . */
     private final Method method;

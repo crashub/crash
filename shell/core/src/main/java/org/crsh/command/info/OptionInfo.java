@@ -28,7 +28,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class OptionInfo<J extends JoinPoint> extends ParameterInfo<J> {
+public class OptionInfo<B extends ParameterBinding> extends ParameterInfo<B> {
 
   /** . */
   private final int arity;
@@ -37,7 +37,7 @@ public class OptionInfo<J extends JoinPoint> extends ParameterInfo<J> {
   private final List<Character> opts;
 
   public OptionInfo(
-    J joinPoint,
+    B joinPoint,
     Type javaType,
     List<Character> opts,
     String description,

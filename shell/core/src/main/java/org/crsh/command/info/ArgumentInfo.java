@@ -25,10 +25,10 @@ import java.lang.reflect.Type;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ArgumentInfo<J extends JoinPoint> extends ParameterInfo<J> {
+public class ArgumentInfo<B extends ParameterBinding> extends ParameterInfo<B> {
 
   public ArgumentInfo(
-    J joinPoint,
+    B joinPoint,
     Type javaType,
     String description,
     boolean required,

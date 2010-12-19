@@ -35,9 +35,9 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CommandInfo<T, J extends JoinPoint> {
+public abstract class CommandInfo<T, B extends ParameterBinding> {
 
-  public static <T> CommandInfo<T, JoinPoint.ClassField> create(Class<T> type) throws IntrospectionException {
+  public static <T> CommandInfo<T, ParameterBinding.ClassField> create(Class<T> type) throws IntrospectionException {
     return new ClassCommandInfo<T>(type);
   }
 
@@ -48,27 +48,27 @@ public abstract class CommandInfo<T, J extends JoinPoint> {
   private final String description;
 
   /** . */
-  private final Map<String, OptionInfo<J>> options;
+  private final Map<String, OptionInfo<B>> options;
 
   /** . */
-  private final List<ArgumentInfo<J>> arguments;
+  private final List<ArgumentInfo<B>> arguments;
 
-  CommandInfo(String name, String description, List<ParameterInfo<J>> parameters) throws IntrospectionException {
+  CommandInfo(String name, String description, List<ParameterInfo<B>> parameters) throws IntrospectionException {
 
-    Map<String, OptionInfo<J>> options = Collections.emptyMap();
-    List<ArgumentInfo<J>> arguments = Collections.emptyList();
+    Map<String, OptionInfo<B>> options = Collections.emptyMap();
+    List<ArgumentInfo<B>> arguments = Collections.emptyList();
     boolean listArgument = false;
-    for (ParameterInfo<J> parameter : parameters) {
+    for (ParameterInfo<B> parameter : parameters) {
       if (parameter instanceof OptionInfo) {
-        OptionInfo<J> option = (OptionInfo<J>)parameter;
+        OptionInfo<B> option = (OptionInfo<B>)parameter;
         for (Character opt : option.getOpts()) {
           if (options.isEmpty()) {
-            options = new HashMap<String, OptionInfo<J>>();
+            options = new HashMap<String, OptionInfo<B>>();
           }
           options.put("-" + opt, option);
         }
       } else if (parameter instanceof ArgumentInfo) {
-        ArgumentInfo<J> argument = (ArgumentInfo<J>)parameter;
+        ArgumentInfo<B> argument = (ArgumentInfo<B>)parameter;
         if (argument.getType().getMultiplicity() == Multiplicity.LIST) {
           if (listArgument) {
             throw new IntrospectionException();
@@ -76,7 +76,7 @@ public abstract class CommandInfo<T, J extends JoinPoint> {
           listArgument = true;
         }
         if (arguments.isEmpty()) {
-          arguments = new ArrayList<ArgumentInfo<J>>();
+          arguments = new ArrayList<ArgumentInfo<B>>();
         }
         arguments.add(argument);
       }
@@ -91,15 +91,15 @@ public abstract class CommandInfo<T, J extends JoinPoint> {
 
   public abstract Class<T> getType();
 
-  public Collection<OptionInfo<J>> getOptions() {
+  public Collection<OptionInfo<B>> getOptions() {
     return options.values();
   }
 
-  public OptionInfo<J> getOption(String name) {
+  public OptionInfo<B> getOption(String name) {
     return options.get(name);
   }
 
-  public List<ArgumentInfo<J>> getArguments() {
+  public List<ArgumentInfo<B>> getArguments() {
     return arguments;
   }
 
@@ -115,8 +115,8 @@ public abstract class CommandInfo<T, J extends JoinPoint> {
     return descriptionAnn != null ? descriptionAnn.value() : "";
   }
 
-  protected static <J extends JoinPoint> ParameterInfo<J> create(
-    J joinPoint,
+  protected static <B extends ParameterBinding> ParameterInfo<B> create(
+    B joinPoint,
     Type type,
     Description descriptionAnn,
     Argument argumentAnn,
@@ -125,7 +125,7 @@ public abstract class CommandInfo<T, J extends JoinPoint> {
       if (optionAnn != null) {
         throw new IntrospectionException();
       }
-      return new ArgumentInfo<J>(
+      return new ArgumentInfo<B>(
         joinPoint,
         type,
         description(descriptionAnn),
@@ -138,7 +138,7 @@ public abstract class CommandInfo<T, J extends JoinPoint> {
         opt.add(c);
       }
 
-      return new OptionInfo<J>(
+      return new OptionInfo<B>(
         joinPoint,
         type,
         Collections.unmodifiableList(opt),

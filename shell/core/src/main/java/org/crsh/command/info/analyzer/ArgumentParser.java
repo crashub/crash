@@ -20,7 +20,6 @@
 package org.crsh.command.info.analyzer;
 
 import org.crsh.command.info.CommandInfo;
-import org.crsh.command.info.JoinPoint;
 import org.crsh.command.info.OptionInfo;
 
 import java.util.Collection;
