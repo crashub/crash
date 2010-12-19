@@ -28,7 +28,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class OptionInfo<B extends ParameterBinding> extends ParameterInfo<B> {
+public class OptionDescriptor<B extends ParameterBinding> extends ParameterDescriptor<B> {
 
   /** . */
   private final int arity;
@@ -36,7 +36,7 @@ public class OptionInfo<B extends ParameterBinding> extends ParameterInfo<B> {
   /** . */
   private final List<Character> opts;
 
-  public OptionInfo(
+  public OptionDescriptor(
     B binding,
     Type javaType,
     List<Character> opts,

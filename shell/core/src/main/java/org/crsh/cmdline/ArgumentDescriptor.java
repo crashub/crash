@@ -25,9 +25,9 @@ import java.lang.reflect.Type;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ArgumentInfo<B extends ParameterBinding> extends ParameterInfo<B> {
+public class ArgumentDescriptor<B extends ParameterBinding> extends ParameterDescriptor<B> {
 
-  public ArgumentInfo(
+  public ArgumentDescriptor(
     B binding,
     Type javaType,
     String description,

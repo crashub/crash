@@ -19,9 +19,9 @@
 
 package org.crsh.cmdline.analyzer;
 
-import org.crsh.cmdline.ArgumentInfo;
+import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.Multiplicity;
-import org.crsh.cmdline.OptionInfo;
+import org.crsh.cmdline.OptionDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -106,7 +106,7 @@ public class MatchIterator implements Iterator<Match> {
     }
 
     //
-    List<? extends ArgumentInfo<?>> arguments = parser.command.getArguments();
+    List<? extends ArgumentDescriptor<?>> arguments = parser.command.getArguments();
 
     // Attempt to match all arguments until we find a list argument
     final LinkedList<Match.Argument> list = new LinkedList<Match.Argument>();
@@ -114,10 +114,10 @@ public class MatchIterator implements Iterator<Match> {
     ListIterator<Chunk> headValues = values.listIterator();
     Chunk headLast = null;
     out:
-    for (ListIterator<? extends ArgumentInfo<?>> i = arguments.listIterator();i.hasNext();) {
+    for (ListIterator<? extends ArgumentDescriptor<?>> i = arguments.listIterator();i.hasNext();) {
 
       // Get head argument
-      ArgumentInfo head = i.next();
+      ArgumentDescriptor head = i.next();
 
       //
       if (head.getType().getMultiplicity() == Multiplicity.SINGLE) {
@@ -130,9 +130,9 @@ public class MatchIterator implements Iterator<Match> {
         }
       } else {
         ListIterator<Chunk> tailValues = values.listIterator(values.size());
-        ListIterator<? extends ArgumentInfo<?>> r = arguments.listIterator(arguments.size());
+        ListIterator<? extends ArgumentDescriptor<?>> r = arguments.listIterator(arguments.size());
         while (r.hasPrevious()) {
-          ArgumentInfo tail = r.previous();
+          ArgumentDescriptor tail = r.previous();
           if (tail == head) {
             LinkedList<String> foo = new LinkedList<String>();
             Chunk first = null;
@@ -204,9 +204,9 @@ public class MatchIterator implements Iterator<Match> {
       if (next == null) {
         Matcher matcher = parser.optionsPattern.matcher(rest);
         if (matcher.matches()) {
-          OptionInfo matched = null;
+          OptionDescriptor matched = null;
           int index = 2;
-          for (OptionInfo option : parser.command.getOptions()) {
+          for (OptionDescriptor option : parser.command.getOptions()) {
             if (matcher.group(index) != null) {
               matched = option;
               break;

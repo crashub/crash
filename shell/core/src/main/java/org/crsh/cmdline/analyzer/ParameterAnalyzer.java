@@ -19,8 +19,8 @@
 
 package org.crsh.cmdline.analyzer;
 
-import org.crsh.cmdline.CommandInfo;
-import org.crsh.cmdline.OptionInfo;
+import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.OptionDescriptor;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,18 +33,18 @@ import java.util.regex.Pattern;
 public class ParameterAnalyzer<T> {
 
   /** . */
-  final CommandInfo<T, ?> command;
+  final CommandDescriptor<T, ?> command;
 
   /** . */
   final Pattern optionsPattern;
 
-  public ParameterAnalyzer(CommandInfo<T, ?> command) {
+  public ParameterAnalyzer(CommandDescriptor<T, ?> command) {
 
     //
     StringBuilder optionsRE = new StringBuilder("^(");
-    Collection<? extends OptionInfo<?>> options = command.getOptions();
-    for (Iterator<? extends OptionInfo<?>> it = options.iterator();it.hasNext();) {
-      OptionInfo<?> option = it.next();
+    Collection<? extends OptionDescriptor<?>> options = command.getOptions();
+    for (Iterator<? extends OptionDescriptor<?>> it = options.iterator();it.hasNext();) {
+      OptionDescriptor<?> option = it.next();
       optionsRE.append("(?:\\s*\\-([");
       for (Character opt : option.getOpts()) {
         optionsRE.append(opt);

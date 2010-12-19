@@ -34,23 +34,23 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ClassCommandInfo<T> extends CommandInfo<T, ParameterBinding.ClassField> {
+public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBinding.ClassField> {
 
   /** . */
   private final Class<T> type;
 
   /** . */
-  private final Map<String, MethodCommandInfo> commandMap;
+  private final Map<String, MethodCommandDescriptor> commandMap;
 
-  public ClassCommandInfo(Class<T> type) throws IntrospectionException {
+  public ClassCommandDescriptor(Class<T> type) throws IntrospectionException {
     super(
       type.getSimpleName().toLowerCase(),
       description(type.getAnnotation(Description.class)),
       paremeters(type));
 
     //
-    Map<String, MethodCommandInfo> commandMap = new HashMap<String, MethodCommandInfo>();
-    for (MethodCommandInfo command : commands(type)) {
+    Map<String, MethodCommandDescriptor> commandMap = new HashMap<String, MethodCommandDescriptor>();
+    for (MethodCommandDescriptor command : commands(type)) {
       commandMap.put(command.getName(), command);
     }
 
@@ -64,19 +64,19 @@ public class ClassCommandInfo<T> extends CommandInfo<T, ParameterBinding.ClassFi
     return type;
   }
 
-  public Iterable<MethodCommandInfo> getCommands() {
+  public Iterable<MethodCommandDescriptor> getCommands() {
     return commandMap.values();
   }
 
-  public MethodCommandInfo getCommand(String name) {
+  public MethodCommandDescriptor getCommand(String name) {
     return commandMap.get(name);
   }
 
-  private static List<ParameterInfo<ParameterBinding.ClassField>> paremeters(Class<?> introspected) throws IntrospectionException {
-    List<ParameterInfo<ParameterBinding.ClassField>> parameters;
+  private static List<ParameterDescriptor<ParameterBinding.ClassField>> paremeters(Class<?> introspected) throws IntrospectionException {
+    List<ParameterDescriptor<ParameterBinding.ClassField>> parameters;
     Class<?> superIntrospected = introspected.getSuperclass();
     if (superIntrospected == null) {
-      parameters = new ArrayList<ParameterInfo<ParameterBinding.ClassField>>();
+      parameters = new ArrayList<ParameterDescriptor<ParameterBinding.ClassField>>();
     } else {
       parameters = paremeters(superIntrospected);
       for (Field f : introspected.getDeclaredFields()) {
@@ -84,7 +84,7 @@ public class ClassCommandInfo<T> extends CommandInfo<T, ParameterBinding.ClassFi
         Argument argumentAnn = f.getAnnotation(Argument.class);
         Option optionAnn = f.getAnnotation(Option.class);
         ParameterBinding.ClassField binding = new ParameterBinding.ClassField(f);
-        ParameterInfo<ParameterBinding.ClassField> parameter = create(binding, f.getGenericType(), descriptionAnn, argumentAnn, optionAnn);
+        ParameterDescriptor<ParameterBinding.ClassField> parameter = create(binding, f.getGenericType(), descriptionAnn, argumentAnn, optionAnn);
         if (parameter != null) {
           parameters.add(parameter);
         }
@@ -93,17 +93,17 @@ public class ClassCommandInfo<T> extends CommandInfo<T, ParameterBinding.ClassFi
     return parameters;
   }
 
-  private List<MethodCommandInfo<T>> commands(Class<?> introspected) throws IntrospectionException {
-    List<MethodCommandInfo<T>> commands;
+  private List<MethodCommandDescriptor<T>> commands(Class<?> introspected) throws IntrospectionException {
+    List<MethodCommandDescriptor<T>> commands;
     Class<?> superIntrospected = introspected.getSuperclass();
     if (superIntrospected == null) {
-      commands = new ArrayList<MethodCommandInfo<T>>();
+      commands = new ArrayList<MethodCommandDescriptor<T>>();
     } else {
       commands = commands(superIntrospected);
       for (Method m : introspected.getDeclaredMethods()) {
         Command command = m.getAnnotation(Command.class);
         if (command != null) {
-          List<ParameterInfo<ParameterBinding.MethodArgument>> parameters = new ArrayList<ParameterInfo<ParameterBinding.MethodArgument>>();
+          List<ParameterDescriptor<ParameterBinding.MethodArgument>> parameters = new ArrayList<ParameterDescriptor<ParameterBinding.MethodArgument>>();
           Type[] parameterTypes = m.getGenericParameterTypes();
           Annotation[][] parameterAnnotationMatrix = m.getParameterAnnotations();
           for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
@@ -122,7 +122,7 @@ public class ClassCommandInfo<T> extends CommandInfo<T, ParameterBinding.ClassFi
               }
             }
             ParameterBinding.MethodArgument binding = new ParameterBinding.MethodArgument(m, i);
-            ParameterInfo<ParameterBinding.MethodArgument> parameter = create(binding, parameterType, descriptionAnn, argumentAnn, optionAnn);
+            ParameterDescriptor<ParameterBinding.MethodArgument> parameter = create(binding, parameterType, descriptionAnn, argumentAnn, optionAnn);
             if (optionAnn != null) {
               parameters.add(parameter);
             } else {
@@ -130,7 +130,7 @@ public class ClassCommandInfo<T> extends CommandInfo<T, ParameterBinding.ClassFi
             }
           }
           Description descriptionAnn = m.getAnnotation(Description.class);
-          commands.add(new MethodCommandInfo<T>(
+          commands.add(new MethodCommandDescriptor<T>(
             this,
             m.getName().toLowerCase(),
             descriptionAnn != null ? descriptionAnn.value() : "",

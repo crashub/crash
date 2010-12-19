@@ -33,10 +33,10 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CommandInfo<T, B extends ParameterBinding> {
+public abstract class CommandDescriptor<T, B extends ParameterBinding> {
 
-  public static <T> CommandInfo<T, ParameterBinding.ClassField> create(Class<T> type) throws IntrospectionException {
-    return new ClassCommandInfo<T>(type);
+  public static <T> CommandDescriptor<T, ParameterBinding.ClassField> create(Class<T> type) throws IntrospectionException {
+    return new ClassCommandDescriptor<T>(type);
   }
 
   /** . */
@@ -46,27 +46,27 @@ public abstract class CommandInfo<T, B extends ParameterBinding> {
   private final String description;
 
   /** . */
-  private final Map<String, OptionInfo<B>> options;
+  private final Map<String, OptionDescriptor<B>> options;
 
   /** . */
-  private final List<ArgumentInfo<B>> arguments;
+  private final List<ArgumentDescriptor<B>> arguments;
 
-  CommandInfo(String name, String description, List<ParameterInfo<B>> parameters) throws IntrospectionException {
+  CommandDescriptor(String name, String description, List<ParameterDescriptor<B>> parameters) throws IntrospectionException {
 
-    Map<String, OptionInfo<B>> options = Collections.emptyMap();
-    List<ArgumentInfo<B>> arguments = Collections.emptyList();
+    Map<String, OptionDescriptor<B>> options = Collections.emptyMap();
+    List<ArgumentDescriptor<B>> arguments = Collections.emptyList();
     boolean listArgument = false;
-    for (ParameterInfo<B> parameter : parameters) {
-      if (parameter instanceof OptionInfo) {
-        OptionInfo<B> option = (OptionInfo<B>)parameter;
+    for (ParameterDescriptor<B> parameter : parameters) {
+      if (parameter instanceof OptionDescriptor) {
+        OptionDescriptor<B> option = (OptionDescriptor<B>)parameter;
         for (Character opt : option.getOpts()) {
           if (options.isEmpty()) {
-            options = new HashMap<String, OptionInfo<B>>();
+            options = new HashMap<String, OptionDescriptor<B>>();
           }
           options.put("-" + opt, option);
         }
-      } else if (parameter instanceof ArgumentInfo) {
-        ArgumentInfo<B> argument = (ArgumentInfo<B>)parameter;
+      } else if (parameter instanceof ArgumentDescriptor) {
+        ArgumentDescriptor<B> argument = (ArgumentDescriptor<B>)parameter;
         if (argument.getType().getMultiplicity() == Multiplicity.LIST) {
           if (listArgument) {
             throw new IntrospectionException();
@@ -74,7 +74,7 @@ public abstract class CommandInfo<T, B extends ParameterBinding> {
           listArgument = true;
         }
         if (arguments.isEmpty()) {
-          arguments = new ArrayList<ArgumentInfo<B>>();
+          arguments = new ArrayList<ArgumentDescriptor<B>>();
         }
         arguments.add(argument);
       }
@@ -89,15 +89,15 @@ public abstract class CommandInfo<T, B extends ParameterBinding> {
 
   public abstract Class<T> getType();
 
-  public Collection<OptionInfo<B>> getOptions() {
+  public Collection<OptionDescriptor<B>> getOptions() {
     return options.values();
   }
 
-  public OptionInfo<B> getOption(String name) {
+  public OptionDescriptor<B> getOption(String name) {
     return options.get(name);
   }
 
-  public List<ArgumentInfo<B>> getArguments() {
+  public List<ArgumentDescriptor<B>> getArguments() {
     return arguments;
   }
 
@@ -113,7 +113,7 @@ public abstract class CommandInfo<T, B extends ParameterBinding> {
     return descriptionAnn != null ? descriptionAnn.value() : "";
   }
 
-  protected static <B extends ParameterBinding> ParameterInfo<B> create(
+  protected static <B extends ParameterBinding> ParameterDescriptor<B> create(
     B binding,
     Type type,
     Description descriptionAnn,
@@ -123,7 +123,7 @@ public abstract class CommandInfo<T, B extends ParameterBinding> {
       if (optionAnn != null) {
         throw new IntrospectionException();
       }
-      return new ArgumentInfo<B>(
+      return new ArgumentDescriptor<B>(
         binding,
         type,
         description(descriptionAnn),
@@ -136,7 +136,7 @@ public abstract class CommandInfo<T, B extends ParameterBinding> {
         opt.add(c);
       }
 
-      return new OptionInfo<B>(
+      return new OptionDescriptor<B>(
         binding,
         type,
         Collections.unmodifiableList(opt),

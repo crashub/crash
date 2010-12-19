@@ -19,8 +19,8 @@
 
 package org.crsh.cmdline.analyzer;
 
-import org.crsh.cmdline.ArgumentInfo;
-import org.crsh.cmdline.OptionInfo;
+import org.crsh.cmdline.ArgumentDescriptor;
+import org.crsh.cmdline.OptionDescriptor;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class Match<P> {
     return parameter;
   }
 
-  public final static class Option extends Match<OptionInfo> {
+  public final static class Option extends Match<OptionDescriptor> {
 
     /** . */
     private final String name;
@@ -54,7 +54,7 @@ public class Match<P> {
     /** . */
     private final List<String> values;
 
-    Option(OptionInfo option, String name, List<String> values) {
+    Option(OptionDescriptor option, String name, List<String> values) {
       super(option);
 
       //
@@ -79,7 +79,7 @@ public class Match<P> {
     }
   }
 
-  public static class Argument extends Match<ArgumentInfo> {
+  public static class Argument extends Match<ArgumentDescriptor> {
 
     /** . */
     private final List<String> values;
@@ -90,7 +90,7 @@ public class Match<P> {
     /** . */
     private int end;
 
-    public Argument(ArgumentInfo argument, int start, int end, List<String> values) {
+    public Argument(ArgumentDescriptor argument, int start, int end, List<String> values) {
       super(argument);
 
       //

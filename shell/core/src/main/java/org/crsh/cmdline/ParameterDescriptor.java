@@ -27,7 +27,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ParameterInfo<B extends ParameterBinding> {
+public abstract class ParameterDescriptor<B extends ParameterBinding> {
 
   /** . */
   private final B binding;
@@ -47,7 +47,7 @@ public abstract class ParameterInfo<B extends ParameterBinding> {
   /** . */
   private final Type javaType;
 
-  public ParameterInfo(
+  public ParameterDescriptor(
     B binding,
     Type javaType,
     String description,
