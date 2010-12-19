@@ -89,9 +89,10 @@ public class MatchIterator implements Iterator<Match> {
     List<ArgumentInfo> arguments = parser.command.getArguments();
 
     // Attempt to match all arguments until we find a list argument
-    LinkedList<Match.Argument> list = new LinkedList<Match.Argument>();
+    final LinkedList<Match.Argument> list = new LinkedList<Match.Argument>();
     ListIterator<Match.Argument> bilto = list.listIterator();
     ListIterator<Chunk> headValues = values.listIterator();
+    Chunk headLast = null;
     out:
     for (ListIterator<ArgumentInfo> i = arguments.listIterator();i.hasNext();) {
 
@@ -99,7 +100,6 @@ public class MatchIterator implements Iterator<Match> {
       ArgumentInfo head = i.next();
 
       //
-      Chunk headLast = null;
       if (head.getType().getMultiplicity() == Multiplicity.SINGLE) {
         if (headValues.hasNext()) {
           Chunk chunk = headValues.next();
@@ -150,6 +150,28 @@ public class MatchIterator implements Iterator<Match> {
     }
 
     //
+    return new Iterator<Match.Argument>() {
+
+      /** . */
+      private final String rest = MatchIterator.this.rest;
+
+      /** . */
+      private final Iterator<Match.Argument> iterator = list.iterator();
+
+      public boolean hasNext() {
+        return iterator.hasNext();
+      }
+
+      public Match.Argument next() {
+        Match.Argument next = iterator.next();
+        MatchIterator.this.rest = rest.substring(next.getEnd());
+        return next;
+      }
+
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
 /*
     Iterator<Match.Argument> it =
     return new Iterator<Match.Argument>() {
@@ -166,7 +188,7 @@ public class MatchIterator implements Iterator<Match> {
       }
     };
 */
-    return list.iterator();
+//    return list.iterator();
   }
 
   private class OptionIterator implements Iterator<Match.Option> {

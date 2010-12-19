@@ -64,6 +64,8 @@ public class ParserTestCase extends TestCase {
     public Test assertArgument(int start, int end, String... expectedValues) {
       assertTrue(matcher.hasNext());
       Match.Argument match = (Match.Argument)matcher.next();
+      assertEquals(start, match.getStart());
+      assertEquals(end, match.getEnd());
       assertEquals(Arrays.asList(expectedValues), match.getValues());
       return this;
     }
@@ -83,22 +85,22 @@ public class ParserTestCase extends TestCase {
       @Argument
       String o;
     }
-    new Test(A.class, "foo").assertArgument(0, 3, "foo");
+    new Test(A.class, "foo").assertArgument(0, 3, "foo").assertDone();
     class B {
       @Argument
       List<String> o;
     }
-    new Test(B.class, "foo").assertArgument(0, 3, "foo");
-    new Test(B.class, "foo bar").assertArgument(0, 7, "foo", "bar");
+    new Test(B.class, "foo").assertArgument(0, 3, "foo").assertDone();
+    new Test(B.class, "foo bar").assertArgument(0, 7, "foo", "bar").assertDone();
     class C {
       @Argument
       String o;
       @Argument
       List<String> p;
     }
-    new Test(C.class, "foo").assertArgument(0, 3, "foo");
-    new Test(C.class, "foo bar").assertArgument(0, 3, "foo").assertArgument(4, 7, "bar");
-    new Test(C.class, "foo bar juu").assertArgument(0, 3, "foo").assertArgument(4, 11, "bar", "juu");
+    new Test(C.class, "foo").assertArgument(0, 3, "foo").assertArgument(3, 3).assertDone();
+    new Test(C.class, "foo bar").assertArgument(0, 3, "foo").assertArgument(4, 7, "bar").assertDone();
+    new Test(C.class, "foo bar juu").assertArgument(0, 3, "foo").assertArgument(4, 11, "bar", "juu").assertDone();
     class D {
       @Argument
       List<String> o;
@@ -106,9 +108,9 @@ public class ParserTestCase extends TestCase {
       String p;
     }
     new Test(D.class, "").assertArgument(0, 0).assertDone();
-    new Test(D.class, "foo").assertArgument(0, 0).assertArgument(0, 3, "foo");
-    new Test(D.class, "foo bar").assertArgument(0, 3, "foo").assertArgument(4, 7, "bar");
-    new Test(D.class, "foo bar juu").assertArgument(0, 7, "foo", "bar").assertArgument(8, 11, "juu");
+    new Test(D.class, "foo").assertArgument(0, 0).assertArgument(0, 3, "foo").assertDone();
+    new Test(D.class, "foo bar").assertArgument(0, 3, "foo").assertArgument(4, 7, "bar").assertDone();
+    new Test(D.class, "foo bar juu").assertArgument(0, 7, "foo", "bar").assertArgument(8, 11, "juu").assertDone();
   }
 
   public void testEmpty() throws Exception {

@@ -82,22 +82,22 @@ public class Match<P> {
     private final List<String> values;
 
     /** . */
-    private int begin;
+    private int start;
 
     /** . */
     private int end;
 
-    public Argument(ArgumentInfo argument, int begin, int end, List<String> values) {
+    public Argument(ArgumentInfo argument, int start, int end, List<String> values) {
       super(argument);
 
       //
-      this.begin = begin;
+      this.start = start;
       this.end = end;
       this.values = values;
     }
 
-    public int getBegin() {
-      return begin;
+    public int getStart() {
+      return start;
     }
 
     public int getEnd() {
