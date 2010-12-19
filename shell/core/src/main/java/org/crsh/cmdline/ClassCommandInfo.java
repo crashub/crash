@@ -19,10 +19,7 @@
 
 package org.crsh.cmdline;
 
-import org.crsh.command.Argument;
-import org.crsh.command.Command;
 import org.crsh.command.Description;
-import org.crsh.command.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

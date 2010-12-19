@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
+package org.crsh.cmdline;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,18 +28,7 @@ import java.lang.annotation.Target;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Option {
-
-  char[] opt();
-
-  String[] longopt() default {};
-
-  boolean required() default false;
-
-  int arity() default -1;
-
-  boolean password() default false;
-
+public @interface Command {
 }

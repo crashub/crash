@@ -21,8 +21,6 @@ package org.crsh.cmdline;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.crsh.command.Argument;
-import org.crsh.command.Option;
 import org.crsh.cmdline.analyzer.ArgumentParser;
 import org.crsh.cmdline.analyzer.Match;
 import org.crsh.cmdline.analyzer.MatchIterator;

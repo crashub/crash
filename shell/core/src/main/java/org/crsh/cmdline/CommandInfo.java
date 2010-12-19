@@ -19,9 +19,7 @@
 
 package org.crsh.cmdline;
 
-import org.crsh.command.Argument;
 import org.crsh.command.Description;
-import org.crsh.command.Option;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

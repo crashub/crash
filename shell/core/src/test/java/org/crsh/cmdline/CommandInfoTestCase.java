@@ -20,9 +20,7 @@
 package org.crsh.cmdline;
 
 import junit.framework.TestCase;
-import org.crsh.command.Argument;
 import org.crsh.command.Description;
-import org.crsh.command.Option;
 import org.crsh.util.Utils;
 
 import java.util.Arrays;
