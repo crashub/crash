@@ -17,11 +17,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.info;
+package org.crsh.info;
+
+import java.lang.reflect.Type;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class IntrospectionException extends Exception {
+public class ArgumentInfo<B extends ParameterBinding> extends ParameterInfo<B> {
+
+  public ArgumentInfo(
+    B binding,
+    Type javaType,
+    String description,
+    boolean required,
+    boolean password) throws IllegalValueTypeException, IllegalParameterException {
+    super(
+      binding,
+      javaType,
+      description,
+      required,
+      password);
+  }
 }

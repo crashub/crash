@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.info;
+package org.crsh.info;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

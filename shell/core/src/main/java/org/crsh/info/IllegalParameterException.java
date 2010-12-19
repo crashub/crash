@@ -17,50 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.info;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+package org.crsh.info;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ParameterBinding {
+public class IllegalParameterException extends IntrospectionException {
 
-  public static class ClassField extends ParameterBinding {
-
-    /** . */
-    private final Field field;
-
-    public ClassField(Field field) {
-      this.field = field;
-    }
-
-    public Field getField() {
-      return field;
-    }
-  }
-
-  public static class MethodArgument extends ParameterBinding {
-
-    /** . */
-    private final Method method;
-
-    /** . */
-    private final int index;
-
-    public MethodArgument(Method method, int index) {
-      this.method = method;
-      this.index = index;
-    }
-
-    public Method getMethod() {
-      return method;
-    }
-
-    public int getIndex() {
-      return index;
-    }
+  public IllegalParameterException() {
   }
 }

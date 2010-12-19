@@ -23,6 +23,12 @@ import junit.framework.TestCase;
 import org.crsh.command.Argument;
 import org.crsh.command.Description;
 import org.crsh.command.Option;
+import org.crsh.info.ArgumentInfo;
+import org.crsh.info.CommandInfo;
+import org.crsh.info.IntrospectionException;
+import org.crsh.info.Multiplicity;
+import org.crsh.info.OptionInfo;
+import org.crsh.info.SimpleValueType;
 import org.crsh.util.Utils;
 
 import java.util.Arrays;

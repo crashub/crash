@@ -17,16 +17,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.info;
+package org.crsh.info;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public enum Multiplicity {
+public class SimpleValueType {
 
-  SINGLE,
+  public static final SimpleValueType STRING = new SimpleValueType();
+  public static final SimpleValueType INTEGER = new SimpleValueType();
+  public static final SimpleValueType BOOLEAN = new SimpleValueType();
 
-  LIST
-
+  private SimpleValueType() {
+  }
 }

@@ -21,6 +21,14 @@ package org.crsh.command.info;
 
 import junit.framework.TestCase;
 import org.crsh.command.Option;
+import org.crsh.info.CommandInfo;
+import org.crsh.info.IllegalParameterException;
+import org.crsh.info.IllegalValueTypeException;
+import org.crsh.info.IntrospectionException;
+import org.crsh.info.Multiplicity;
+import org.crsh.info.OptionInfo;
+import org.crsh.info.SimpleValueType;
+import org.crsh.info.ValueType;
 
 import java.util.List;
 
