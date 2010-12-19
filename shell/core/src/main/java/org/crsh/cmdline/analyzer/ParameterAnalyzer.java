@@ -74,8 +74,8 @@ public class ParameterAnalyzer<T, B extends ParameterBinding> {
     this.optionsPattern = Pattern.compile(regex);
   }
 
-  public MatchIterator analyzer(String s) {
-    return new MatchIterator(this, s);
+  public MatchIterator<T, B> analyzer(String s) {
+    return new MatchIterator<T, B>(this, s);
   }
 
 }
