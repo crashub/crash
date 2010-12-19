@@ -86,8 +86,8 @@ public class ClassCommandInfo<T> extends CommandInfo<T, ParameterBinding.ClassFi
         Description descriptionAnn = introspected.getAnnotation(Description.class);
         Argument argumentAnn = f.getAnnotation(Argument.class);
         Option optionAnn = f.getAnnotation(Option.class);
-        ParameterBinding.ClassField joinPoint = new ParameterBinding.ClassField(f);
-        ParameterInfo<ParameterBinding.ClassField> parameter = create(joinPoint, f.getGenericType(), descriptionAnn, argumentAnn, optionAnn);
+        ParameterBinding.ClassField binding = new ParameterBinding.ClassField(f);
+        ParameterInfo<ParameterBinding.ClassField> parameter = create(binding, f.getGenericType(), descriptionAnn, argumentAnn, optionAnn);
         if (parameter != null) {
           parameters.add(parameter);
         }
@@ -124,8 +124,8 @@ public class ClassCommandInfo<T> extends CommandInfo<T, ParameterBinding.ClassFi
                 descriptionAnn = (Description)parameterAnnotation;
               }
             }
-            ParameterBinding.MethodArgument joinPoint = new ParameterBinding.MethodArgument(m, i);
-            ParameterInfo<ParameterBinding.MethodArgument> parameter = create(joinPoint, parameterType, descriptionAnn, argumentAnn, optionAnn);
+            ParameterBinding.MethodArgument binding = new ParameterBinding.MethodArgument(m, i);
+            ParameterInfo<ParameterBinding.MethodArgument> parameter = create(binding, parameterType, descriptionAnn, argumentAnn, optionAnn);
             if (optionAnn != null) {
               parameters.add(parameter);
             } else {

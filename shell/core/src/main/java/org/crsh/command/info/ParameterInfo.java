@@ -30,7 +30,7 @@ import java.util.List;
 public abstract class ParameterInfo<B extends ParameterBinding> {
 
   /** . */
-  private final B joinPoint;
+  private final B binding;
 
   /** . */
   private final String description;
@@ -48,14 +48,14 @@ public abstract class ParameterInfo<B extends ParameterBinding> {
   private final Type javaType;
 
   public ParameterInfo(
-    B joinPoint,
+    B binding,
     Type javaType,
     String description,
     boolean required,
     boolean password) throws IllegalValueTypeException, IllegalParameterException {
 
     //
-    this.joinPoint = joinPoint;
+    this.binding = binding;
     this.javaType = javaType;
     this.description = description;
     this.type = create(javaType);
@@ -63,8 +63,8 @@ public abstract class ParameterInfo<B extends ParameterBinding> {
     this.password = password;
   }
 
-  public B getJoinPoint() {
-    return joinPoint;
+  public B getBinding() {
+    return binding;
   }
 
   public String getDescription() {

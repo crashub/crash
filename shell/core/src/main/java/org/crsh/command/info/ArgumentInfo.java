@@ -28,13 +28,13 @@ import java.lang.reflect.Type;
 public class ArgumentInfo<B extends ParameterBinding> extends ParameterInfo<B> {
 
   public ArgumentInfo(
-    B joinPoint,
+    B binding,
     Type javaType,
     String description,
     boolean required,
     boolean password) throws IllegalValueTypeException, IllegalParameterException {
     super(
-      joinPoint,
+      binding,
       javaType,
       description,
       required,

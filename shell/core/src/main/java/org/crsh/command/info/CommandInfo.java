@@ -116,7 +116,7 @@ public abstract class CommandInfo<T, B extends ParameterBinding> {
   }
 
   protected static <B extends ParameterBinding> ParameterInfo<B> create(
-    B joinPoint,
+    B binding,
     Type type,
     Description descriptionAnn,
     Argument argumentAnn,
@@ -126,7 +126,7 @@ public abstract class CommandInfo<T, B extends ParameterBinding> {
         throw new IntrospectionException();
       }
       return new ArgumentInfo<B>(
-        joinPoint,
+        binding,
         type,
         description(descriptionAnn),
         argumentAnn.required(),
@@ -139,7 +139,7 @@ public abstract class CommandInfo<T, B extends ParameterBinding> {
       }
 
       return new OptionInfo<B>(
-        joinPoint,
+        binding,
         type,
         Collections.unmodifiableList(opt),
         description(descriptionAnn),

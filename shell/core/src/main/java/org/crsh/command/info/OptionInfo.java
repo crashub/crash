@@ -37,7 +37,7 @@ public class OptionInfo<B extends ParameterBinding> extends ParameterInfo<B> {
   private final List<Character> opts;
 
   public OptionInfo(
-    B joinPoint,
+    B binding,
     Type javaType,
     List<Character> opts,
     String description,
@@ -45,7 +45,7 @@ public class OptionInfo<B extends ParameterBinding> extends ParameterInfo<B> {
     int arity,
     boolean password) throws IllegalValueTypeException, IllegalParameterException {
     super(
-      joinPoint,
+      binding,
       javaType,
       description,
       required,
