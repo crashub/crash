@@ -35,9 +35,9 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CommandInfo<T> {
+public abstract class CommandInfo<T, J extends JoinPoint> {
 
-  public static <T> CommandInfo<T> create(Class<T> type) throws IntrospectionException {
+  public static <T> CommandInfo<T, JoinPoint.ClassField> create(Class<T> type) throws IntrospectionException {
     return new ClassCommandInfo<T>(type);
   }
 
@@ -48,27 +48,27 @@ public abstract class CommandInfo<T> {
   private final String description;
 
   /** . */
-  private final Map<String, OptionInfo> options;
+  private final Map<String, OptionInfo<J>> options;
 
   /** . */
-  private final List<ArgumentInfo> arguments;
+  private final List<ArgumentInfo<J>> arguments;
 
-  CommandInfo(String name, String description, List<ParameterInfo> parameters) throws IntrospectionException {
+  CommandInfo(String name, String description, List<ParameterInfo<J>> parameters) throws IntrospectionException {
 
-    Map<String, OptionInfo> options = Collections.emptyMap();
-    List<ArgumentInfo> arguments = Collections.emptyList();
+    Map<String, OptionInfo<J>> options = Collections.emptyMap();
+    List<ArgumentInfo<J>> arguments = Collections.emptyList();
     boolean listArgument = false;
-    for (ParameterInfo parameter : parameters) {
+    for (ParameterInfo<J> parameter : parameters) {
       if (parameter instanceof OptionInfo) {
-        OptionInfo option = (OptionInfo)parameter;
+        OptionInfo<J> option = (OptionInfo<J>)parameter;
         for (Character opt : option.getOpts()) {
           if (options.isEmpty()) {
-            options = new HashMap<String, OptionInfo>();
+            options = new HashMap<String, OptionInfo<J>>();
           }
           options.put("-" + opt, option);
         }
       } else if (parameter instanceof ArgumentInfo) {
-        ArgumentInfo argument = (ArgumentInfo)parameter;
+        ArgumentInfo<J> argument = (ArgumentInfo<J>)parameter;
         if (argument.getType().getMultiplicity() == Multiplicity.LIST) {
           if (listArgument) {
             throw new IntrospectionException();
@@ -76,7 +76,7 @@ public abstract class CommandInfo<T> {
           listArgument = true;
         }
         if (arguments.isEmpty()) {
-          arguments = new ArrayList<ArgumentInfo>();
+          arguments = new ArrayList<ArgumentInfo<J>>();
         }
         arguments.add(argument);
       }
@@ -91,15 +91,15 @@ public abstract class CommandInfo<T> {
 
   public abstract Class<T> getType();
 
-  public Collection<OptionInfo> getOptions() {
+  public Collection<OptionInfo<J>> getOptions() {
     return options.values();
   }
 
-  public OptionInfo getOption(String name) {
+  public OptionInfo<J> getOption(String name) {
     return options.get(name);
   }
 
-  public List<ArgumentInfo> getArguments() {
+  public List<ArgumentInfo<J>> getArguments() {
     return arguments;
   }
 
@@ -115,7 +115,8 @@ public abstract class CommandInfo<T> {
     return descriptionAnn != null ? descriptionAnn.value() : "";
   }
 
-  protected static ParameterInfo create(
+  protected static <J extends JoinPoint> ParameterInfo<J> create(
+    J joinPoint,
     Type type,
     Description descriptionAnn,
     Argument argumentAnn,
@@ -124,7 +125,8 @@ public abstract class CommandInfo<T> {
       if (optionAnn != null) {
         throw new IntrospectionException();
       }
-      return new ArgumentInfo(
+      return new ArgumentInfo<J>(
+        joinPoint,
         type,
         description(descriptionAnn),
         argumentAnn.required(),
@@ -136,7 +138,8 @@ public abstract class CommandInfo<T> {
         opt.add(c);
       }
 
-      return new OptionInfo(
+      return new OptionInfo<J>(
+        joinPoint,
         type,
         Collections.unmodifiableList(opt),
         description(descriptionAnn),

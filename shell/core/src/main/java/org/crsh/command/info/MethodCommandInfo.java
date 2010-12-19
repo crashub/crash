@@ -25,12 +25,12 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class MethodCommandInfo<T> extends CommandInfo<T> {
+public class MethodCommandInfo<T> extends CommandInfo<T, JoinPoint.MethodArgument> {
 
   /** . */
   private final ClassCommandInfo<T> owner;
 
-  MethodCommandInfo(ClassCommandInfo<T> owner, String name, String description, List<ParameterInfo> parameters) throws IntrospectionException {
+  MethodCommandInfo(ClassCommandInfo<T> owner, String name, String description, List<ParameterInfo<JoinPoint.MethodArgument>> parameters) throws IntrospectionException {
     super(name, description, parameters);
 
     //

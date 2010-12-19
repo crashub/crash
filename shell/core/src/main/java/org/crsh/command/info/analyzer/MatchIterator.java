@@ -106,7 +106,7 @@ public class MatchIterator implements Iterator<Match> {
     }
 
     //
-    List<ArgumentInfo> arguments = parser.command.getArguments();
+    List<? extends ArgumentInfo<?>> arguments = parser.command.getArguments();
 
     // Attempt to match all arguments until we find a list argument
     final LinkedList<Match.Argument> list = new LinkedList<Match.Argument>();
@@ -114,7 +114,7 @@ public class MatchIterator implements Iterator<Match> {
     ListIterator<Chunk> headValues = values.listIterator();
     Chunk headLast = null;
     out:
-    for (ListIterator<ArgumentInfo> i = arguments.listIterator();i.hasNext();) {
+    for (ListIterator<? extends ArgumentInfo<?>> i = arguments.listIterator();i.hasNext();) {
 
       // Get head argument
       ArgumentInfo head = i.next();
@@ -130,7 +130,7 @@ public class MatchIterator implements Iterator<Match> {
         }
       } else {
         ListIterator<Chunk> tailValues = values.listIterator(values.size());
-        ListIterator<ArgumentInfo> r = arguments.listIterator(arguments.size());
+        ListIterator<? extends ArgumentInfo<?>> r = arguments.listIterator(arguments.size());
         while (r.hasPrevious()) {
           ArgumentInfo tail = r.previous();
           if (tail == head) {

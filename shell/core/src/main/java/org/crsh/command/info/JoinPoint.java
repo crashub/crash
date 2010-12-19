@@ -19,25 +19,48 @@
 
 package org.crsh.command.info;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ArgumentInfo<J extends JoinPoint> extends ParameterInfo<J> {
+public class JoinPoint {
 
-  public ArgumentInfo(
-    J joinPoint,
-    Type javaType,
-    String description,
-    boolean required,
-    boolean password) throws IllegalValueTypeException, IllegalParameterException {
-    super(
-      joinPoint,
-      javaType,
-      description,
-      required,
-      password);
+  public static class ClassField extends JoinPoint {
+
+    /** . */
+    private final Field field;
+
+    public ClassField(Field field) {
+      this.field = field;
+    }
+
+    public Field getField() {
+      return field;
+    }
+  }
+
+  public static class MethodArgument extends JoinPoint {
+
+    /** . */
+    private final Method method;
+
+    /** . */
+    private final int index;
+
+    public MethodArgument(Method method, int index) {
+      this.method = method;
+      this.index = index;
+    }
+
+    public Method getMethod() {
+      return method;
+    }
+
+    public int getIndex() {
+      return index;
+    }
   }
 }

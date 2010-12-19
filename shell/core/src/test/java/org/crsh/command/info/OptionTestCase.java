@@ -84,7 +84,7 @@ public class OptionTestCase extends TestCase {
       @Option(opt = 'o')
       int o;
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     OptionInfo i = c.getOption("-o");
     ValueType t = i.getType();
     assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
@@ -96,7 +96,7 @@ public class OptionTestCase extends TestCase {
       @Option(opt = 'o')
       Integer o;
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     OptionInfo i = c.getOption("-o");
     ValueType t = i.getType();
     assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
@@ -108,7 +108,7 @@ public class OptionTestCase extends TestCase {
       @Option(opt = 'o')
       List<Integer> o;
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     OptionInfo i = c.getOption("-o");
     ValueType t = i.getType();
     assertEquals(Multiplicity.LIST, t.getMultiplicity());
@@ -120,7 +120,7 @@ public class OptionTestCase extends TestCase {
       @Option(opt = 'o')
       String o;
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     OptionInfo i = c.getOption("-o");
     ValueType t = i.getType();
     assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
@@ -132,7 +132,7 @@ public class OptionTestCase extends TestCase {
       @Option(opt = 'o')
       List<String> o;
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     OptionInfo i = c.getOption("-o");
     ValueType t = i.getType();
     assertEquals(Multiplicity.LIST, t.getMultiplicity());
@@ -144,7 +144,7 @@ public class OptionTestCase extends TestCase {
       @Option(opt = 'o')
       boolean o;
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     OptionInfo i = c.getOption("-o");
     ValueType t = i.getType();
     assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
@@ -156,7 +156,7 @@ public class OptionTestCase extends TestCase {
       @Option(opt = 'o')
       Boolean o;
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     OptionInfo i = c.getOption("-o");
     ValueType t = i.getType();
     assertEquals(Multiplicity.SINGLE, t.getMultiplicity());

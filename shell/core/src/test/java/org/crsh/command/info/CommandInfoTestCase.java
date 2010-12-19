@@ -37,7 +37,7 @@ public class CommandInfoTestCase extends TestCase {
   public void testCommandImplicitDescription() throws IntrospectionException {
     class A {
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     assertEquals("", c.getDescription());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, Utils.list(c.getOptions()).size());
@@ -47,7 +47,7 @@ public class CommandInfoTestCase extends TestCase {
     @Description("bar")
     class A {
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     assertEquals("bar", c.getDescription());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, Utils.list(c.getOptions()).size());
@@ -58,7 +58,7 @@ public class CommandInfoTestCase extends TestCase {
       @Option(opt = 'i')
       private int i;
     }
-    CommandInfo<A> ai = CommandInfo.create(A.class);
+    CommandInfo<A, ?> ai = CommandInfo.create(A.class);
     assertEquals(1, Utils.list(ai.getOptions()).size());
     OptionInfo i = ai.getOption("-i");
     assertEquals(Arrays.asList('i'),i.getOpts());
@@ -69,7 +69,7 @@ public class CommandInfoTestCase extends TestCase {
       @Argument()
       private int i;
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     assertEquals(1, Utils.list(c.getArguments()).size());
     ArgumentInfo i = c.getArguments().get(0);
     assertEquals(SimpleValueType.INTEGER, i.getType().getValueType());
@@ -83,7 +83,7 @@ public class CommandInfoTestCase extends TestCase {
       @Argument
       private List<Integer> j;
     }
-    CommandInfo<A> c = CommandInfo.create(A.class);
+    CommandInfo<A, ?> c = CommandInfo.create(A.class);
     assertEquals(2, Utils.list(c.getArguments()).size());
     ArgumentInfo i = c.getArguments().get(0);
     assertEquals(SimpleValueType.INTEGER, i.getType().getValueType());

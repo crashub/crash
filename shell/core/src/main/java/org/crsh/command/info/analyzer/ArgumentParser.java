@@ -20,8 +20,10 @@
 package org.crsh.command.info.analyzer;
 
 import org.crsh.command.info.CommandInfo;
+import org.crsh.command.info.JoinPoint;
 import org.crsh.command.info.OptionInfo;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -32,17 +34,18 @@ import java.util.regex.Pattern;
 public class ArgumentParser<T> {
 
   /** . */
-  final CommandInfo<T> command;
+  final CommandInfo<T, ?> command;
 
   /** . */
   final Pattern optionsPattern;
 
-  public ArgumentParser(CommandInfo<T> command) {
+  public ArgumentParser(CommandInfo<T, ?> command) {
 
     //
     StringBuilder optionsRE = new StringBuilder("^(");
-    for (Iterator<OptionInfo> it = command.getOptions().iterator();it.hasNext();) {
-      OptionInfo option = it.next();
+    Collection<? extends OptionInfo<?>> options = command.getOptions();
+    for (Iterator<? extends OptionInfo<?>> it = options.iterator();it.hasNext();) {
+      OptionInfo<?> option = it.next();
       optionsRE.append("(?:\\s*\\-([");
       for (Character opt : option.getOpts()) {
         optionsRE.append(opt);

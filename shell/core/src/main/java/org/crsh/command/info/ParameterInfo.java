@@ -27,7 +27,10 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ParameterInfo {
+public abstract class ParameterInfo<J extends JoinPoint> {
+
+  /** . */
+  private final J joinPoint;
 
   /** . */
   private final String description;
@@ -45,17 +48,23 @@ public abstract class ParameterInfo {
   private final Type javaType;
 
   public ParameterInfo(
+    J joinPoint,
     Type javaType,
     String description,
     boolean required,
     boolean password) throws IllegalValueTypeException, IllegalParameterException {
 
     //
+    this.joinPoint = joinPoint;
     this.javaType = javaType;
     this.description = description;
     this.type = create(javaType);
     this.required = required;
     this.password = password;
+  }
+
+  public J getJoinPoint() {
+    return joinPoint;
   }
 
   public String getDescription() {

@@ -43,7 +43,7 @@ public class ParserTestCase extends TestCase {
 
     private <T> Test(Class<T> type, String s) {
       try {
-        CommandInfo<T> command = CommandInfo.create(type);
+        CommandInfo<T, ?> command = CommandInfo.create(type);
         ArgumentParser<T> parser = new ArgumentParser<T>(command);
         this.matcher = parser.parse(s);
       }

@@ -37,7 +37,7 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ClassCommandInfo<T> extends CommandInfo<T> {
+public class ClassCommandInfo<T> extends CommandInfo<T, JoinPoint.ClassField> {
 
   /** . */
   private final Class<T> type;
@@ -75,18 +75,19 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
     return commandMap.get(name);
   }
 
-  private static List<ParameterInfo> paremeters(Class<?> introspected) throws IntrospectionException {
-    List<ParameterInfo> parameters;
+  private static List<ParameterInfo<JoinPoint.ClassField>> paremeters(Class<?> introspected) throws IntrospectionException {
+    List<ParameterInfo<JoinPoint.ClassField>> parameters;
     Class<?> superIntrospected = introspected.getSuperclass();
     if (superIntrospected == null) {
-      parameters = new ArrayList<ParameterInfo>();
+      parameters = new ArrayList<ParameterInfo<JoinPoint.ClassField>>();
     } else {
       parameters = paremeters(superIntrospected);
       for (Field f : introspected.getDeclaredFields()) {
         Description descriptionAnn = introspected.getAnnotation(Description.class);
         Argument argumentAnn = f.getAnnotation(Argument.class);
         Option optionAnn = f.getAnnotation(Option.class);
-        ParameterInfo parameter = create(f.getGenericType(), descriptionAnn, argumentAnn, optionAnn);
+        JoinPoint.ClassField joinPoint = new JoinPoint.ClassField(f);
+        ParameterInfo<JoinPoint.ClassField> parameter = create(joinPoint, f.getGenericType(), descriptionAnn, argumentAnn, optionAnn);
         if (parameter != null) {
           parameters.add(parameter);
         }
@@ -105,7 +106,7 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
       for (Method m : introspected.getDeclaredMethods()) {
         Command command = m.getAnnotation(Command.class);
         if (command != null) {
-          List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
+          List<ParameterInfo<JoinPoint.MethodArgument>> parameters = new ArrayList<ParameterInfo<JoinPoint.MethodArgument>>();
           Type[] parameterTypes = m.getGenericParameterTypes();
           Annotation[][] parameterAnnotationMatrix = m.getParameterAnnotations();
           for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
@@ -123,7 +124,8 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
                 descriptionAnn = (Description)parameterAnnotation;
               }
             }
-            ParameterInfo parameter = create(parameterType, descriptionAnn, argumentAnn, optionAnn);
+            JoinPoint.MethodArgument joinPoint = new JoinPoint.MethodArgument(m, i);
+            ParameterInfo<JoinPoint.MethodArgument> parameter = create(joinPoint, parameterType, descriptionAnn, argumentAnn, optionAnn);
             if (optionAnn != null) {
               parameters.add(parameter);
             } else {
@@ -131,7 +133,11 @@ public class ClassCommandInfo<T> extends CommandInfo<T> {
             }
           }
           Description descriptionAnn = m.getAnnotation(Description.class);
-          commands.add(new MethodCommandInfo<T>(this, m.getName().toLowerCase(), descriptionAnn != null ? descriptionAnn.value() : "", parameters));
+          commands.add(new MethodCommandInfo<T>(
+            this,
+            m.getName().toLowerCase(),
+            descriptionAnn != null ? descriptionAnn.value() : "",
+            parameters));
         }
       }
     }

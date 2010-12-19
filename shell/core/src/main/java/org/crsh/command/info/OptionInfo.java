@@ -28,7 +28,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class OptionInfo extends ParameterInfo {
+public class OptionInfo<J extends JoinPoint> extends ParameterInfo<J> {
 
   /** . */
   private final int arity;
@@ -37,6 +37,7 @@ public class OptionInfo extends ParameterInfo {
   private final List<Character> opts;
 
   public OptionInfo(
+    J joinPoint,
     Type javaType,
     List<Character> opts,
     String description,
@@ -44,6 +45,7 @@ public class OptionInfo extends ParameterInfo {
     int arity,
     boolean password) throws IllegalValueTypeException, IllegalParameterException {
     super(
+      joinPoint,
       javaType,
       description,
       required,
