@@ -57,6 +57,7 @@ public abstract class CommandInfo<T> {
 
     Map<String, OptionInfo> options = Collections.emptyMap();
     List<ArgumentInfo> arguments = Collections.emptyList();
+    boolean listArgument = false;
     for (ParameterInfo parameter : parameters) {
       if (parameter instanceof OptionInfo) {
         OptionInfo option = (OptionInfo)parameter;
@@ -68,6 +69,12 @@ public abstract class CommandInfo<T> {
         }
       } else if (parameter instanceof ArgumentInfo) {
         ArgumentInfo argument = (ArgumentInfo)parameter;
+        if (argument.getType().getMultiplicity() == Multiplicity.LIST) {
+          if (listArgument) {
+            throw new IntrospectionException();
+          }
+          listArgument = true;
+        }
         if (arguments.isEmpty()) {
           arguments = new ArrayList<ArgumentInfo>();
         }

@@ -92,4 +92,19 @@ public class CommandInfoTestCase extends TestCase {
     assertEquals(SimpleValueType.INTEGER, j.getType().getValueType());
     assertEquals(Multiplicity.LIST, j.getType().getMultiplicity());
   }
+
+  public void testArgument3() throws IntrospectionException {
+    class A {
+      @Argument
+      private List<Integer> i;
+      @Argument
+      private List<Integer> j;
+    }
+    try {
+      CommandInfo.create(A.class);
+      fail();
+    }
+    catch (IntrospectionException e) {
+    }
+  }
 }
