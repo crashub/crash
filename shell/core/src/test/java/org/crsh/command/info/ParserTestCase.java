@@ -21,6 +21,7 @@ package org.crsh.command.info;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.crsh.command.Argument;
 import org.crsh.command.Option;
 
 import java.util.Arrays;
@@ -60,6 +61,13 @@ public class ParserTestCase extends TestCase {
       return this;
     }
 
+    public Test assertArgument(String... expectedValues) {
+      assertTrue(matcher.hasNext());
+      Match.Argument match = (Match.Argument)matcher.next();
+      assertEquals(Arrays.asList(expectedValues), match.getValues());
+      return this;
+    }
+
     public void assertDone(String expectedRest) {
       assertEquals(expectedRest, matcher.getRest());
       assertFalse(matcher.hasNext());
@@ -68,6 +76,14 @@ public class ParserTestCase extends TestCase {
     public void assertDone() {
       assertDone("");
     }
+  }
+
+  public void testEmpty() throws Exception {
+    class A {
+    }
+    new Test(A.class, "").assertDone();
+    new Test(A.class, "-foo").assertDone("-foo");
+    new Test(A.class, "foo").assertDone("foo");
   }
 
   public void testFoo() throws Exception {

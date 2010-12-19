@@ -20,9 +20,12 @@
 package org.crsh.command.info;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 
@@ -48,10 +51,22 @@ public class MatchIterator implements Iterator<Match> {
   }
 
   public boolean hasNext() {
-    return i.hasNext();
+    if (i.hasNext()) {
+      return true;
+    } else {
+      if (i instanceof OptionIterator) {
+        i = arguments(rest).iterator();
+        return i.hasNext();
+      } else {
+        return false;
+      }
+    }
   }
 
   public Match next() {
+    if (!hasNext()) {
+      throw new NoSuchElementException();
+    }
     return i.next();
   }
 
@@ -63,22 +78,57 @@ public class MatchIterator implements Iterator<Match> {
     return rest;
   }
 
-  private class ArgumentIterator implements Iterator<Match.Argument> {
+  private List<Match.Argument> arguments(String s) {
 
-    /** . */
-    private Match.Argument next;
+    List<String> values = Arrays.asList(s.split("\\s+"));
+    List<ArgumentInfo> arguments = parser.command.getArguments();
 
-    public boolean hasNext() {
-      return false;  
+    // Attempt to match all arguments until we find a list argument
+    LinkedList<Match.Argument> list = new LinkedList<Match.Argument>();
+    ListIterator<Match.Argument> bilto = list.listIterator();
+    ListIterator<String> headValues = values.listIterator();
+    out:
+    for (ListIterator<ArgumentInfo> i = arguments.listIterator();i.hasNext();) {
+
+      // Get head argument
+      ArgumentInfo head = i.next();
+
+      //
+      if (head.getType().getMultiplicity() == Multiplicity.SINGLE) {
+        if (headValues.hasNext()) {
+          String value = headValues.next();
+          bilto.add(new Match.Argument(head, Collections.singletonList(value)));
+          bilto.next();
+        } else {
+          break;
+        }
+      } else {
+        ListIterator<String> tailValues = values.listIterator(values.size());
+        ListIterator<ArgumentInfo> r = arguments.listIterator(arguments.size());
+        while (r.hasPrevious()) {
+          ArgumentInfo tail = r.previous();
+          if (tail == head) {
+            List<String> foo = new ArrayList<String>();
+            while (headValues.nextIndex() < tailValues.previousIndex()) {
+              foo.add(headValues.next());
+            }
+            bilto.add(new Match.Argument(head, foo));
+            break out;
+          } else {
+            if (tailValues.previousIndex() == headValues.nextIndex()) {
+              throw new UnsupportedOperationException("todo: not enough");
+            } else {
+              String value = tailValues.previous();
+              bilto.add(new Match.Argument(tail, Collections.singletonList(value)));
+            }
+          }
+        }
+      }
     }
 
-    public Match.Argument next() {
-      return null;  
-    }
+    //
 
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
+    return list;
   }
 
   private class OptionIterator implements Iterator<Match.Option> {
@@ -102,29 +152,30 @@ public class MatchIterator implements Iterator<Match> {
           }
 
           //
-          if (matched == null) {
-            throw new AssertionError("Should not happen");
-          }
-
-          //
-          String name = matcher.group(index++);
-          List<String> values = Collections.emptyList();
-          for (int j = 0;j < matched.getArity();j++) {
-            if (values.isEmpty()) {
-              values = new ArrayList<String>();
+          if (matched != null) {
+            String name = matcher.group(index++);
+            List<String> values = Collections.emptyList();
+            for (int j = 0;j < matched.getArity();j++) {
+              if (values.isEmpty()) {
+                values = new ArrayList<String>();
+              }
+              String value = matcher.group(index++);
+              values.add(value);
             }
-            String value = matcher.group(index++);
-            values.add(value);
-          }
-          if (matched.getArity() > 0) {
-            values = Collections.unmodifiableList(values);
-          }
+            if (matched.getArity() > 0) {
+              values = Collections.unmodifiableList(values);
+            }
 
-          //
-          next = new Match.Option(matched, name, values);
-          rest = rest.substring(matcher.end(1));
+            //
+            next = new Match.Option(matched, name, values);
+            rest = rest.substring(matcher.end(1));
+          }
+          else
+          {
+            //
+          }
         } else {
-          // Do nothing ?
+          //
         }
       }
       return next != null;

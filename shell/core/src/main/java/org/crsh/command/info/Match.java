@@ -76,8 +76,21 @@ public class Match<P> {
     }
   }
 
-  public static class Argument {
+  public static class Argument extends Match<ArgumentInfo> {
 
+    /** . */
+    private final List<String> values;
+
+    public Argument(ArgumentInfo argument, List<String> values) {
+      super(argument);
+
+      //
+      this.values = values;
+    }
+
+    public List<String> getValues() {
+      return values;
+    }
   }
 
   public static class Command {
