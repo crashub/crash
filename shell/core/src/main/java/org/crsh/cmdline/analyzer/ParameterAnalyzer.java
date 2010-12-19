@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ArgumentParser<T> {
+public class ParameterAnalyzer<T> {
 
   /** . */
   final CommandInfo<T, ?> command;
@@ -38,7 +38,7 @@ public class ArgumentParser<T> {
   /** . */
   final Pattern optionsPattern;
 
-  public ArgumentParser(CommandInfo<T, ?> command) {
+  public ParameterAnalyzer(CommandInfo<T, ?> command) {
 
     //
     StringBuilder optionsRE = new StringBuilder("^(");

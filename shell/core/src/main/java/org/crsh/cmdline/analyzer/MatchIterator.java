@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 public class MatchIterator implements Iterator<Match> {
 
   /** . */
-  private final ArgumentParser<?> parser;
+  private final ParameterAnalyzer<?> parser;
 
   /** . */
   private StringBuilder done;
@@ -51,7 +51,7 @@ public class MatchIterator implements Iterator<Match> {
   /** . */
   private Iterator<? extends Match<?>> i;
 
-  public MatchIterator(ArgumentParser parser, String s) {
+  public MatchIterator(ParameterAnalyzer parser, String s) {
     this.parser = parser;
     this.rest = s;
     this.i = new OptionIterator();
