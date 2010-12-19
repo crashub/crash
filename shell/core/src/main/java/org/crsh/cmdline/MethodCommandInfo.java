@@ -17,14 +17,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.info;
+package org.crsh.cmdline;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class IllegalParameterException extends IntrospectionException {
+public class MethodCommandInfo<T> extends CommandInfo<T, ParameterBinding.MethodArgument> {
 
-  public IllegalParameterException() {
+  /** . */
+  private final ClassCommandInfo<T> owner;
+
+  MethodCommandInfo(ClassCommandInfo<T> owner, String name, String description, List<ParameterInfo<ParameterBinding.MethodArgument>> parameters) throws IntrospectionException {
+    super(name, description, parameters);
+
+    //
+    this.owner = owner;
+  }
+
+  @Override
+  public Class<T> getType() {
+    return owner.getType();
   }
 }

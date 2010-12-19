@@ -17,18 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.info;
+package org.crsh.cmdline;
 
 import junit.framework.TestCase;
 import org.crsh.command.Option;
-import org.crsh.info.CommandInfo;
-import org.crsh.info.IllegalParameterException;
-import org.crsh.info.IllegalValueTypeException;
-import org.crsh.info.IntrospectionException;
-import org.crsh.info.Multiplicity;
-import org.crsh.info.OptionInfo;
-import org.crsh.info.SimpleValueType;
-import org.crsh.info.ValueType;
 
 import java.util.List;
 

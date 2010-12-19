@@ -17,30 +17,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.info;
+package org.crsh.cmdline;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ValueType {
-
-  /** . */
-  private final SimpleValueType valueType;
-
-  /** . */
-  private final Multiplicity multiplicity;
-
-  public ValueType(SimpleValueType valueType, Multiplicity multiplicity) {
-    this.valueType = valueType;
-    this.multiplicity = multiplicity;
-  }
-
-  public SimpleValueType getValueType() {
-    return valueType;
-  }
-
-  public Multiplicity getMultiplicity() {
-    return multiplicity;
-  }
+public class IntrospectionException extends Exception {
 }

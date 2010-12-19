@@ -17,17 +17,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.info;
+package org.crsh.cmdline;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.command.Argument;
 import org.crsh.command.Option;
-import org.crsh.info.analyzer.ArgumentParser;
-import org.crsh.info.analyzer.Match;
-import org.crsh.info.analyzer.MatchIterator;
-import org.crsh.info.CommandInfo;
-import org.crsh.info.IntrospectionException;
+import org.crsh.cmdline.analyzer.ArgumentParser;
+import org.crsh.cmdline.analyzer.Match;
+import org.crsh.cmdline.analyzer.MatchIterator;
 
 import java.util.Arrays;
 import java.util.List;

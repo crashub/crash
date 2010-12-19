@@ -17,11 +17,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.info.analyzer;
+package org.crsh.cmdline.analyzer;
 
-import org.crsh.info.ArgumentInfo;
-import org.crsh.info.Multiplicity;
-import org.crsh.info.OptionInfo;
+import org.crsh.cmdline.ArgumentInfo;
+import org.crsh.cmdline.Multiplicity;
+import org.crsh.cmdline.OptionInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;

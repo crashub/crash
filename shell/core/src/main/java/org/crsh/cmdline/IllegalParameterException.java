@@ -17,16 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.info;
+package org.crsh.cmdline;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public enum Multiplicity {
+public class IllegalParameterException extends IntrospectionException {
 
-  SINGLE,
-
-  LIST
-
+  public IllegalParameterException() {
+  }
 }

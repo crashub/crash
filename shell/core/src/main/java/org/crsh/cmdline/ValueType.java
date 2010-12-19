@@ -17,28 +17,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.info;
-
-import java.util.List;
+package org.crsh.cmdline;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class MethodCommandInfo<T> extends CommandInfo<T, ParameterBinding.MethodArgument> {
+public class ValueType {
 
   /** . */
-  private final ClassCommandInfo<T> owner;
+  private final SimpleValueType valueType;
 
-  MethodCommandInfo(ClassCommandInfo<T> owner, String name, String description, List<ParameterInfo<ParameterBinding.MethodArgument>> parameters) throws IntrospectionException {
-    super(name, description, parameters);
+  /** . */
+  private final Multiplicity multiplicity;
 
-    //
-    this.owner = owner;
+  public ValueType(SimpleValueType valueType, Multiplicity multiplicity) {
+    this.valueType = valueType;
+    this.multiplicity = multiplicity;
   }
 
-  @Override
-  public Class<T> getType() {
-    return owner.getType();
+  public SimpleValueType getValueType() {
+    return valueType;
+  }
+
+  public Multiplicity getMultiplicity() {
+    return multiplicity;
   }
 }

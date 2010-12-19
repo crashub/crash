@@ -17,18 +17,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.info;
+package org.crsh.cmdline.analyzer;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SimpleValueType {
+class Chunk {
 
-  public static final SimpleValueType STRING = new SimpleValueType();
-  public static final SimpleValueType INTEGER = new SimpleValueType();
-  public static final SimpleValueType BOOLEAN = new SimpleValueType();
+  /** . */
+  private final String value;
 
-  private SimpleValueType() {
+  /** . */
+  private int start;
+
+  public Chunk(String value, int start) {
+
+    if (value == null) {
+      throw new NullPointerException();
+    }
+    if (start < 0) {
+      throw new IndexOutOfBoundsException();
+    }
+
+    //
+    this.value = value;
+    this.start = start;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public int getEnd() {
+    return start + value.length();
   }
 }
