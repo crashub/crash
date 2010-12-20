@@ -141,6 +141,19 @@ public class ShellCommandTestCase extends TestCase {
 //    assertEquals(Arrays.asList("b"), new TestCommandContext().execute(cmd, "b"));
   }
 
+  public void testArgumentInjectionInCommandCmdLine() throws Exception {
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
+      "@org.crsh.cmdline.Argument def String str;" +
+      "public Object execute() {" +
+      "return str;" +
+      "}" +
+      "}");
+
+    //
+    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    assertEquals("b", new TestCommandContext().execute(cmd, "b"));
+  }
+
   public void testContextAccessInCommandClass() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
       "public Object execute() {" +
