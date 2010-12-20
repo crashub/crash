@@ -68,7 +68,7 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
     return commandMap.values();
   }
 
-  public MethodCommandDescriptor getCommand(String name) {
+  public MethodCommandDescriptor<?> getCommand(String name) {
     return commandMap.get(name);
   }
 

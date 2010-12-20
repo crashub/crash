@@ -105,4 +105,18 @@ public class CommandInfoTestCase extends TestCase {
     catch (IntrospectionException e) {
     }
   }
+
+  public void testSub() throws IntrospectionException {
+
+    class A {
+      @Command
+      void b() {
+      }
+    }
+
+    ClassCommandDescriptor<A> a = CommandDescriptor.create(A.class);
+    MethodCommandDescriptor<?> b = a.getCommand("b");
+    assertNotNull(b);
+
+  }
 }
