@@ -1,5 +1,5 @@
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
+import org.crsh.cmdline.Argument;
+import org.crsh.cmdline.Option;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
@@ -12,13 +12,18 @@ public class log extends org.crsh.command.BaseCommand<Logger, Void> {
   /** The logger methods.*/
   private static final Set<String> methods = ["trace", "debug", "info", "warn", "trace"];
 
-  @Argument(required=false,index=0,usage="The logger name")
+  @Description("The logger name")
+  @Argument
   def String name;
 
-  @Option(name="-l",aliases=["--level"],usage="The logger level (default info)")
+  // @Option(name="-l",aliases=["--level"],usage="The logger level (default info)")
+  @Description("The logger level (default info)")
+  @Option(names="l")
   def String levelName;
 
-  @Option(name="-m",aliases=["--message"],usage="The message to log",required=true)
+  // @Option(name="-m",aliases=["--message"],usage="The message to log",required=true)
+  @Description("The message to log")
+  @Option(names="m",required=true)
   def String msg;
 
   public void execute(CommandContext<Logger, Void> context) throws ScriptException {

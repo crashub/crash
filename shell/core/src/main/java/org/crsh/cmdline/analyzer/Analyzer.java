@@ -63,7 +63,7 @@ public class Analyzer<T, B extends ParameterBinding> {
       //
 
       for (int i = 0;i < option.getArity();i++) {
-        optionsRE.append("(?:\\s+").append("([A-Aa-z0-9]+))?");
+        optionsRE.append("(?:\\s+").append("(?!\\-)(\\S+))?");
       }
 
       //

@@ -1,5 +1,5 @@
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
+import org.crsh.cmdline.Argument;
+import org.crsh.cmdline.Option;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
@@ -10,7 +10,8 @@ import java.io.PrintWriter;
 @Description("Give info about a logger")
 public class loginfo extends org.crsh.command.BaseCommand<Logger, Void> {
 
-  @Argument(required=false,index=0,usage="The logger names")
+  @Description("The logger names")
+  @Argument
   def List<String> names;
 
   /** All levels. */

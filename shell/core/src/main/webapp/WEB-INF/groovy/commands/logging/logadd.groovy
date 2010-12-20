@@ -1,4 +1,4 @@
-import org.kohsuke.args4j.Argument;
+import org.crsh.cmdline.Argument;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
@@ -8,7 +8,8 @@ import org.slf4j.LoggerFactory;
 @Description("Create one or several loggers")
 public class logadd extends org.crsh.command.BaseCommand<Void, Logger> {
 
-  @Argument(required=false,index=0,usage="The logger names to add")
+  @Description("The logger names to add")
+  @Argument
   def List<String> names;
 
   public void execute(CommandContext<Void, Logger> context) throws ScriptException {

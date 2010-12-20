@@ -1,5 +1,5 @@
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
+import org.crsh.cmdline.Argument;
+import org.crsh.cmdline.Option;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
@@ -10,13 +10,19 @@ import java.util.Formatter;
 @Description("List the vm threads")
 public class threadls extends org.crsh.command.BaseCommand<Void, Thread> {
 
-  @Option(name="-n",aliases=["--name"],usage="Retain the thread with the specified name", required=false)
+  @Description("Retain the thread with the specified name")
+  // @Option(name="-n",aliases=["--name"],usage="Retain the thread with the specified name", required=false)
+  @Option(names="n")
   def String name;
 
-  @Option(name="-f",aliases=["--filter"],usage="Filter the threads with a regular expression on their name", required=false)
+  @Description("Filter the threads with a regular expression on their name")
+  // @Option(name="-f",aliases=["--filter"],usage="Filter the threads with a regular expression on their name", required=false)
+  @Option(names="-f")
   def String nameFilter;
 
-  @Option(name="-s",aliases=["--state"],usage="Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)", required=false)
+  @Description("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
+  // @Option(name="-s",aliases=["--state"],usage="Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)", required=false)
+  @Option(names="s")
   def String stateFilter;
 
   public void execute(CommandContext<Void, Thread> context) throws ScriptException {

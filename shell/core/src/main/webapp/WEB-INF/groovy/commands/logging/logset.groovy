@@ -1,5 +1,5 @@
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
+import org.crsh.cmdline.Argument;
+import org.crsh.cmdline.Option;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
@@ -30,13 +30,18 @@ public class logset extends org.crsh.command.BaseCommand<Logger, Void> {
     "error":"ERROR"
     ];
 
-  @Argument(required=false,index=0,usage="The logger names")
+  @Description("The logger names")
+  @Argument
   def List<String> names;
 
-  @Option(name="-l",aliases=["--level"],usage="The logger level to assign among {trace, debug, info, warn, error}")
+  @Description("The logger level to assign among {trace, debug, info, warn, error}")
+  // @Option(name="-l",aliases=["--level"],usage="The logger level to assign among {trace, debug, info, warn, error}")
+  @Option(names="l")
   def String levelName;
 
-  @Option(name="-p",aliases="--plugin",usage="Force the plugin implementation")
+  @Description("Force the plugin implementation")
+  // @Option(name="-p",aliases="--plugin",usage="Force the plugin implementation")
+  @Option(names="p")
   def String plugin;
 
   /** The log invoker.*/
