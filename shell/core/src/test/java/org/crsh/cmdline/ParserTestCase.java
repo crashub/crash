@@ -81,9 +81,9 @@ public class ParserTestCase extends TestCase {
 
   public void testMixed() throws Exception {
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       String o;
-      @Option(opt = 'p')
+      @Option(names = "p")
       boolean p;
       @Argument
       String a;
@@ -152,11 +152,11 @@ public class ParserTestCase extends TestCase {
   public void testOptions() throws Exception {
 
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       String o;
-      @Option(opt = 'p', arity = 2)
+      @Option(names = "p", arity = 2)
       List<String> p;
-      @Option(opt = 'b')
+      @Option(names = "b")
       boolean b;
     }
 

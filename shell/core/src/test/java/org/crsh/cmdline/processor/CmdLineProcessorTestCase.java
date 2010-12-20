@@ -40,7 +40,7 @@ public class CmdLineProcessorTestCase extends TestCase {
   public void testOption() throws Exception {
 
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       String s;
     }
 

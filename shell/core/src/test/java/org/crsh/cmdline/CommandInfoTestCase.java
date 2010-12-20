@@ -53,7 +53,7 @@ public class CommandInfoTestCase extends TestCase {
 
   public void testOption() throws IntrospectionException {
     class A {
-      @Option(opt = 'i')
+      @Option(names = "i")
       private int i;
     }
     CommandDescriptor<A, ?> ai = CommandDescriptor.create(A.class);

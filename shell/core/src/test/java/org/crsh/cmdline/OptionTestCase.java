@@ -32,13 +32,13 @@ public class OptionTestCase extends TestCase {
   public void testIllegalParameter() throws IntrospectionException {
 
     class A {
-      @Option(opt = 'o', arity = 2)
+      @Option(names = "o", arity = 2)
       int o;
     }
     assertIllegalParameter(A.class);
 
     class C {
-      @Option(opt = 'o')
+      @Option(names = "o")
       List<Boolean> o;
     }
     assertIllegalParameter(C.class);
@@ -47,31 +47,31 @@ public class OptionTestCase extends TestCase {
   public void testIllegalTypes() throws IntrospectionException {
 
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       Exception o;
     }
     assertIllegalValueType(A.class);
 
     class B {
-      @Option(opt = 'o')
+      @Option(names = "o")
       List<Exception> o;
     }
     assertIllegalValueType(B.class);
 
     class C {
-      @Option(opt = 'o')
+      @Option(names = "o")
       double o;
     }
     assertIllegalValueType(C.class);
 
     class D {
-      @Option(opt = 'o')
+      @Option(names = "o")
       Double o;
     }
     assertIllegalValueType(D.class);
 
     class E {
-      @Option(opt = 'o')
+      @Option(names = "o")
       List<Double> o;
     }
     assertIllegalValueType(E.class);
@@ -80,7 +80,7 @@ public class OptionTestCase extends TestCase {
 
   public void testOptionIntType() throws IntrospectionException {
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       int o;
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
@@ -92,7 +92,7 @@ public class OptionTestCase extends TestCase {
 
   public void testOptionIntWrapperType() throws IntrospectionException {
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       Integer o;
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
@@ -104,7 +104,7 @@ public class OptionTestCase extends TestCase {
 
   public void testOptionIntListType() throws IntrospectionException {
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       List<Integer> o;
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
@@ -116,7 +116,7 @@ public class OptionTestCase extends TestCase {
 
   public void testOptionStringType() throws IntrospectionException {
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       String o;
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
@@ -128,7 +128,7 @@ public class OptionTestCase extends TestCase {
 
   public void testOptionStringListType() throws IntrospectionException {
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       List<String> o;
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
@@ -140,7 +140,7 @@ public class OptionTestCase extends TestCase {
 
   public void testOptionBooleanType() throws IntrospectionException {
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       boolean o;
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
@@ -152,7 +152,7 @@ public class OptionTestCase extends TestCase {
 
   public void testOptionBooleanWrapperType() throws IntrospectionException {
     class A {
-      @Option(opt = 'o')
+      @Option(names = "o")
       Boolean o;
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);

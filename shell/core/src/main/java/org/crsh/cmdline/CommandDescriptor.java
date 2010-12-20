@@ -130,12 +130,12 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
         argumentAnn.required(),
         argumentAnn.password());
     } else if (optionAnn != null) {
-
       List<Character> opt = new ArrayList<Character>();
-      for (char c : optionAnn.opt()) {
-        opt.add(c);
+      for (String s : optionAnn.names()) {
+        if (s.length() == 1) {
+          opt.add(s.charAt(0));
+        }
       }
-
       return new OptionDescriptor<B>(
         binding,
         type,
