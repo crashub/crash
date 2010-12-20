@@ -24,6 +24,11 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
+import org.crsh.cmdline.ClassCommandDescriptor;
+import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.IntrospectionException;
+import org.crsh.cmdline.ParameterBinding;
+import org.crsh.cmdline.processor.CmdLineProcessor;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
 import org.kohsuke.args4j.CmdLineException;
@@ -66,6 +71,9 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
     private static final Pattern JCOMMANDER = Pattern.compile("^com\\.beust\\.jcommander\\.?$");
 
     /** . */
+    private static final Pattern CMDLINE = Pattern.compile("^org\\.crsh\\.cmdline\\.?$");
+
+    /** . */
     private final int descriptionFramework;
 
     /** . */
@@ -102,6 +110,8 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
             bs |= 0x01;
           } else if (JCOMMANDER.matcher(packageName).matches()) {
             bs |= 0x02;
+          } else if (CMDLINE.matcher(packageName).matches()) {
+            bs |= 0x04;
           }
         }
       }
@@ -209,6 +219,26 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
     return context.readLine(msg, echo);
   }
 
+  private <T extends BaseCommand> void handle(T cmd, String[] args) {
+    try {
+      // WTF
+      Class<T> clazz = (Class<T>)cmd.getClass();
+      CommandDescriptor<T, ParameterBinding.ClassField> descriptor = CommandDescriptor.create(clazz);
+      CmdLineProcessor.Clazz<T> processor = new CmdLineProcessor.Clazz<T>(descriptor);
+      StringBuilder s = new StringBuilder();
+      for (String arg : args) {
+        if (s.length() > 0) {
+          s.append(" ");
+        }
+        s.append(arg);
+      }
+      processor.process(cmd, s.toString());
+    }
+    catch (Exception e) {
+      throw new ScriptException(e.getMessage(), e);
+    }
+  }
+
   public final void execute(CommandContext<C, P> context, String... args) throws ScriptException {
     if (context == null) {
       throw new NullPointerException();
@@ -239,6 +269,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
           parser.printUsage(out, null);
           break;
         case 2:
+        case 4:
           throw new UnsupportedOperationException();
       }
 
@@ -286,6 +317,10 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
           catch (Exception e) {
             throw new ScriptException(e.getMessage(), e);
           }
+          break;
+        case 4:
+          handle(this, args);
+          break;
       }
 
       //

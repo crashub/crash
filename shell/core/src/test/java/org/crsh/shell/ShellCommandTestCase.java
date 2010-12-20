@@ -94,6 +94,28 @@ public class ShellCommandTestCase extends TestCase {
     }
   }
 
+/*
+  public void testOptionInjectionInCommandClassCmdLine() throws Exception {
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
+      "@org.crsh.cmdline.Option(opt='s') def String str = 'default value';" +
+      "public Object execute() {" +
+      "return str;" +
+      "}" +
+      "}");
+
+    //
+    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    assertEquals("abc", new TestCommandContext().execute(cmd, "-s", "abc"));
+    try {
+      new TestCommandContext().execute(cmd);
+      fail();
+    }
+    catch (ScriptException e) {
+      assert(e.getCause() instanceof ParameterException);
+    }
+  }
+*/
+
   public void testArgumentInjectionInCommandClassArgs4j() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
       "@org.kohsuke.args4j.Argument def String str;" +
