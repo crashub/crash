@@ -20,11 +20,15 @@
 package org.crsh.cmdline.processor;
 
 import junit.framework.TestCase;
+import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.ParameterBinding;
 import org.crsh.cmdline.processor.CmdLineProcessor;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -33,7 +37,7 @@ import org.crsh.cmdline.processor.CmdLineProcessor;
 public class CmdLineProcessorTestCase extends TestCase {
 
 
-  public void testFoo() throws Exception {
+  public void testOption() throws Exception {
 
     class A {
       @Option(opt = 'o')
@@ -55,5 +59,46 @@ public class CmdLineProcessorTestCase extends TestCase {
     }
   }
 
+  public void testArgument() throws Exception {
 
+    class A {
+      @Argument
+      String s;
+    }
+
+    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
+
+    A a = new A();
+    conf.process(a, "foo");
+    assertEquals("foo", a.s);
+    conf.process(a, "foo bar");
+    assertEquals("foo", a.s);
+
+    try {
+      conf.process(a, "");
+      fail();
+    }
+    catch (SyntaxException e) {
+    }
+  }
+
+  public void testArgumentList() throws Exception {
+
+    class A {
+      @Argument
+      List<String> s;
+    }
+
+    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
+
+    A a = new A();
+    conf.process(a, "");
+    assertEquals(Arrays.<String>asList(), a.s);
+    conf.process(a, "foo");
+    assertEquals(Arrays.asList("foo"), a.s);
+    conf.process(a, "foo bar");
+    assertEquals(Arrays.asList("foo", "bar"), a.s);
+  }
 }
