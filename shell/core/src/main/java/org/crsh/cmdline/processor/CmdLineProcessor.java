@@ -81,9 +81,7 @@ public abstract class CmdLineProcessor<T, B extends ParameterBinding> {
 
       // Should be better with required / non required
       for (ParameterDescriptor<?> nonSatisfied : foo) {
-        if (nonSatisfied instanceof OptionDescriptor<?> && !nonSatisfied.isRequired()) {
-          // Ok
-        } if (nonSatisfied.getType().getMultiplicity() == Multiplicity.LIST) {
+        if (!nonSatisfied.isRequired()) {
           // Ok
         } else {
           throw new SyntaxException("Non satisfied " + nonSatisfied);

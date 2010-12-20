@@ -35,13 +35,11 @@ import java.util.List;
 public class CmdLineProcessorTestCase extends TestCase {
 
 
-  public void testOption() throws Exception {
-
+  public void testRequiredOption() throws Exception {
     class A {
-      @Option(names = "o")
+      @Option(names = "o", required = true)
       String s;
     }
-
     CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
     CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
@@ -50,6 +48,7 @@ public class CmdLineProcessorTestCase extends TestCase {
     assertEquals("foo", a.s);
 
     try {
+      a = new A();
       conf.process(a, "");
       fail();
     }
@@ -57,23 +56,41 @@ public class CmdLineProcessorTestCase extends TestCase {
     }
   }
 
-  public void testArgument() throws Exception {
-
+  public void testOptionalOption() throws Exception {
     class A {
-      @Argument
+      @Option(names = "o")
       String s;
     }
+    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
+    A a = new A();
+    conf.process(a, "-o foo");
+    assertEquals("foo", a.s);
+
+    a = new A();
+    conf.process(a, "");
+    assertEquals(null, a.s);
+  }
+
+  public void testArgument() throws Exception {
+    class A {
+      @Argument(required = true)
+      String s;
+    }
     CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
     CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
     A a = new A();
     conf.process(a, "foo");
     assertEquals("foo", a.s);
+
+    a = new A();
     conf.process(a, "foo bar");
     assertEquals("foo", a.s);
 
     try {
+      a = new A();
       conf.process(a, "");
       fail();
     }
@@ -81,21 +98,69 @@ public class CmdLineProcessorTestCase extends TestCase {
     }
   }
 
-  public void testArgumentList() throws Exception {
+  public void testOptionalArgument() throws Exception {
+    class A {
+      @Argument
+      String s;
+    }
+    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
+    A a = new A();
+    conf.process(a, "foo");
+    assertEquals("foo", a.s);
+
+    a = new A();
+    conf.process(a, "foo bar");
+    assertEquals("foo", a.s);
+
+    a = new A();
+    conf.process(a, "");
+    assertEquals(null, a.s);
+  }
+
+  public void testOptionalArgumentList() throws Exception {
     class A {
       @Argument
       List<String> s;
     }
-
     CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
     CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
     A a = new A();
     conf.process(a, "");
     assertEquals(null , a.s);
+
+    a = new A();
     conf.process(a, "foo");
     assertEquals(Arrays.asList("foo"), a.s);
+
+    a = new A();
+    conf.process(a, "foo bar");
+    assertEquals(Arrays.asList("foo", "bar"), a.s);
+  }
+
+  public void testRequiredArgumentList() throws Exception {
+    class A {
+      @Argument(required = true)
+      List<String> s;
+    }
+    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
+
+    A a = new A();
+    try {
+      conf.process(a, "");
+      fail();
+    }
+    catch (SyntaxException expected) {
+    }
+
+    a = new A();
+    conf.process(a, "foo");
+    assertEquals(Arrays.asList("foo"), a.s);
+
+    a = new A();
     conf.process(a, "foo bar");
     assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
