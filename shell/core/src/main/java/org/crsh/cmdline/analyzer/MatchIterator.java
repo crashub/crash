@@ -150,7 +150,7 @@ public class MatchIterator<T, B extends ParameterBinding> implements Iterator<Ma
             }
 
             //
-            next = new Match.Option<B>(matched, name, values);
+            next = new Match.Option<B>(matched, name.substring(name.length() == 2 ? 1 : 2), values);
             skipRestBy(matcher.end(1));
           }
           else

@@ -23,11 +23,14 @@ import org.crsh.command.Description;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -46,7 +49,10 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
   private final String description;
 
   /** . */
-  private final Map<String, OptionDescriptor<B>> options;
+  private final Map<String, OptionDescriptor<B>> optionMap;
+
+  /** . */
+  private final Set<OptionDescriptor<B>> options;
 
   /** . */
   private final List<ArgumentDescriptor<B>> arguments;
@@ -59,11 +65,11 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
     for (ParameterDescriptor<B> parameter : parameters) {
       if (parameter instanceof OptionDescriptor) {
         OptionDescriptor<B> option = (OptionDescriptor<B>)parameter;
-        for (Character opt : option.getOpts()) {
+        for (String optionName : option.getNames()) {
           if (options.isEmpty()) {
             options = new HashMap<String, OptionDescriptor<B>>();
           }
-          options.put("-" + opt, option);
+          options.put((optionName.length() == 1 ? "-" : "--") + optionName, option);
         }
       } else if (parameter instanceof ArgumentDescriptor) {
         ArgumentDescriptor<B> argument = (ArgumentDescriptor<B>)parameter;
@@ -82,19 +88,20 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
 
     //
     this.description = description;
-    this.options = options.isEmpty() ? options : Collections.unmodifiableMap(options);
+    this.optionMap = options.isEmpty() ? options : Collections.unmodifiableMap(options);
     this.arguments = arguments.isEmpty() ? arguments : Collections.unmodifiableList(arguments);
+    this.options = options.isEmpty() ? Collections.<OptionDescriptor<B>>emptySet() : Collections.unmodifiableSet(new HashSet<OptionDescriptor<B>>(options.values()));
     this.name = name;
   }
 
   public abstract Class<T> getType();
 
   public Collection<OptionDescriptor<B>> getOptions() {
-    return options.values();
+    return options;
   }
 
   public OptionDescriptor<B> getOption(String name) {
-    return options.get(name);
+    return optionMap.get(name);
   }
 
   public List<ArgumentDescriptor<B>> getArguments() {
@@ -130,16 +137,10 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
         argumentAnn.required(),
         argumentAnn.password());
     } else if (optionAnn != null) {
-      List<Character> opt = new ArrayList<Character>();
-      for (String s : optionAnn.names()) {
-        if (s.length() == 1) {
-          opt.add(s.charAt(0));
-        }
-      }
       return new OptionDescriptor<B>(
         binding,
         type,
-        Collections.unmodifiableList(opt),
+        Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
         description(descriptionAnn),
         optionAnn.required(),
         optionAnn.arity(),

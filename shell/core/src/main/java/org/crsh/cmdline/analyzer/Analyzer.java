@@ -54,11 +54,20 @@ public class Analyzer<T, B extends ParameterBinding> {
     Collection<OptionDescriptor<B>> options = command.getOptions();
     for (Iterator<OptionDescriptor<B>> it = options.iterator();it.hasNext();) {
       OptionDescriptor<B> option = it.next();
-      optionsRE.append("(?:\\s*\\-([");
-      for (Character opt : option.getOpts()) {
-        optionsRE.append(opt);
+      optionsRE.append("(?:\\s*(");
+      boolean needOr = false;
+      for (String name : option.getNames()) {
+        if (needOr) {
+          optionsRE.append('|');
+        }
+        if (name.length() == 1) {
+          optionsRE.append("\\-").append(name);
+        } else {
+          optionsRE.append("\\-\\-").append(name);
+        }
+        needOr = true;
       }
-      optionsRE.append("])");
+      optionsRE.append(")");
 
       //
 

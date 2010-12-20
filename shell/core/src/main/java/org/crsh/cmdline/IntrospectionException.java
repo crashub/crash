@@ -24,4 +24,19 @@ package org.crsh.cmdline;
  * @version $Revision$
  */
 public class IntrospectionException extends Exception {
+
+  public IntrospectionException() {
+  }
+
+  public IntrospectionException(String message) {
+    super(message);
+  }
+
+  public IntrospectionException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public IntrospectionException(Throwable cause) {
+    super(cause);
+  }
 }

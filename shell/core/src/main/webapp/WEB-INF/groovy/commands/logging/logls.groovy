@@ -13,8 +13,7 @@ import javax.management.ObjectName;
 @Description("List the available loggers")
 public class logls extends org.crsh.command.BaseCommand<Void, Logger> {
 
-  // @Option(name="-f",aliases=["--filter"],usage="Filter the logger with a regular expression", required=false)
-  @Option(names="f")
+  @Option(names=["f","filter"])
   @Description("Filter the logger with a regular expression")
   def String filter;
 

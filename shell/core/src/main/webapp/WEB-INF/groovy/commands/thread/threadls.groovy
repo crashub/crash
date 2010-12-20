@@ -11,18 +11,15 @@ import java.util.Formatter;
 public class threadls extends org.crsh.command.BaseCommand<Void, Thread> {
 
   @Description("Retain the thread with the specified name")
-  // @Option(name="-n",aliases=["--name"],usage="Retain the thread with the specified name", required=false)
-  @Option(names="n")
+  @Option(names=["n","name"])
   def String name;
 
   @Description("Filter the threads with a regular expression on their name")
-  // @Option(name="-f",aliases=["--filter"],usage="Filter the threads with a regular expression on their name", required=false)
-  @Option(names="-f")
+  @Option(names=["f","filter"])
   def String nameFilter;
 
   @Description("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
-  // @Option(name="-s",aliases=["--state"],usage="Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)", required=false)
-  @Option(names="s")
+  @Option(names=["s","state"])
   def String stateFilter;
 
   public void execute(CommandContext<Void, Thread> context) throws ScriptException {

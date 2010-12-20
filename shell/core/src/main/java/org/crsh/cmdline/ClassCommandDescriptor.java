@@ -92,11 +92,11 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
     for (OptionDescriptor<ParameterBinding.ClassField> option : getOptions()) {
       sb.append(" [");
       boolean a = false;
-      for (char c : option.getOpts()) {
+      for (String name : option.getNames()) {
         if (a) {
           sb.append(" | ");
         }
-        sb.append('-').append(c);
+        sb.append(name.length() == 1 ? "-" : "--").append(name);
         a = true;
       }
       sb.append("]");
@@ -114,8 +114,8 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
     sb.append("DESCRIPTION\n");
     sb.append(TAB).append("The following options are available:\n\n");
     for (OptionDescriptor<ParameterBinding.ClassField> option : getOptions()) {
-      for (char c : option.getOpts()) {
-        sb.append(TAB).append('-').append(c).append(TAB).append(option.getDescription()).append("\n\n");
+      for (String name : option.getNames()) {
+        sb.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getDescription()).append("\n\n");
       }
     }
 

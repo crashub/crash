@@ -59,7 +59,7 @@ public class CommandInfoTestCase extends TestCase {
     CommandDescriptor<A, ?> ai = CommandDescriptor.create(A.class);
     assertEquals(1, Utils.list(ai.getOptions()).size());
     OptionDescriptor i = ai.getOption("-i");
-    assertEquals(Arrays.asList('i'),i.getOpts());
+    assertEquals(Arrays.asList("i"),i.getNames());
   }
 
   public void testArgument1() throws IntrospectionException {

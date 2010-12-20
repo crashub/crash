@@ -16,14 +16,12 @@ public class log extends org.crsh.command.BaseCommand<Logger, Void> {
   @Argument
   def String name;
 
-  // @Option(name="-l",aliases=["--level"],usage="The logger level (default info)")
   @Description("The logger level (default info)")
-  @Option(names="l")
+  @Option(names=["l","level"])
   def String levelName;
 
-  // @Option(name="-m",aliases=["--message"],usage="The message to log",required=true)
   @Description("The message to log")
-  @Option(names="m",required=true)
+  @Option(names=["m","message"],required=true)
   def String msg;
 
   public void execute(CommandContext<Logger, Void> context) throws ScriptException {

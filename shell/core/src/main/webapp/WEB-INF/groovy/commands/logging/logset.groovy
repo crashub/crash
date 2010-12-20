@@ -35,13 +35,11 @@ public class logset extends org.crsh.command.BaseCommand<Logger, Void> {
   def List<String> names;
 
   @Description("The logger level to assign among {trace, debug, info, warn, error}")
-  // @Option(name="-l",aliases=["--level"],usage="The logger level to assign among {trace, debug, info, warn, error}")
-  @Option(names="l")
+  @Option(names=["l","level"])
   def String levelName;
 
   @Description("Force the plugin implementation")
-  // @Option(name="-p",aliases="--plugin",usage="Force the plugin implementation")
-  @Option(names="p")
+  @Option(names=["p","plugin"])
   def String plugin;
 
   /** The log invoker.*/

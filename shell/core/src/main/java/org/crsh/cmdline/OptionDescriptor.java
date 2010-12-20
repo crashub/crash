@@ -34,12 +34,12 @@ public class OptionDescriptor<B extends ParameterBinding> extends ParameterDescr
   private final int arity;
 
   /** . */
-  private final List<Character> opts;
+  private final List<String> names;
 
   public OptionDescriptor(
     B binding,
     Type javaType,
-    List<Character> opts,
+    List<String> names,
     String description,
     boolean required,
     int arity,
@@ -62,10 +62,16 @@ public class OptionDescriptor<B extends ParameterBinding> extends ParameterDescr
     }
 
     //
-    opts = new ArrayList<Character>(opts);
-    for (Character opt : opts) {
-      if (opt == null) {
-        throw new IllegalParameterException();
+    names = new ArrayList<String>(names);
+    for (String name : names) {
+      if (name.length() == 0) {
+        throw new IllegalParameterException("Option name cannot be empty");
+      }
+      if (name == null) {
+        throw new IllegalParameterException("Option name must not be null");
+      }
+      if (name.contains("-")) {
+        throw new IllegalParameterException("Option name must not contain the hyphen character");
       }
     }
 
@@ -80,14 +86,14 @@ public class OptionDescriptor<B extends ParameterBinding> extends ParameterDescr
 
     //
     this.arity = arity;
-    this.opts = Collections.unmodifiableList(opts);
+    this.names = Collections.unmodifiableList(names);
   }
 
   public int getArity() {
     return arity;
   }
 
-  public List<Character> getOpts() {
-    return opts;
+  public List<String> getNames() {
+    return names;
   }
 }
