@@ -19,8 +19,6 @@
 
 package org.crsh.cmdline.analyzer;
 
-import org.crsh.cmdline.ArgumentDescriptor;
-import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterBinding;
 
@@ -29,7 +27,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,7 +87,7 @@ public class MatchIterator<T, B extends ParameterBinding> implements Iterator<Ma
     } else {
       switch (status) {
         case PARSING_OPTIONS:
-          i = arguments(rest);
+          i = new ArgumentIterator();
           status = PARSING_ARGUMENTS;
           return i.hasNext();
         case PARSING_ARGUMENTS:
@@ -115,103 +112,6 @@ public class MatchIterator<T, B extends ParameterBinding> implements Iterator<Ma
 
   public String getRest() {
     return rest;
-  }
-
-  private Iterator<Match.Argument<B>> arguments(String s) {
-    ArrayList<Chunk> values = new ArrayList<Chunk>();
-    Matcher matcher = Pattern.compile("\\S+").matcher(s);
-    while (matcher.find()) {
-      values.add(new Chunk(matcher.group(0), done.length() + matcher.start()));
-    }
-
-    //
-    List<? extends ArgumentDescriptor<B>> arguments = parser.command.getArguments();
-
-    // Attempt to match all arguments until we find a list argument
-    final LinkedList<Match.Argument<B>> list = new LinkedList<Match.Argument<B>>();
-    ListIterator<Match.Argument<B>> bilto = list.listIterator();
-    ListIterator<Chunk> headValues = values.listIterator();
-    Chunk headLast = null;
-    out:
-    for (ListIterator<? extends ArgumentDescriptor<B>> i = arguments.listIterator();i.hasNext();) {
-
-      // Get head argument
-      ArgumentDescriptor<B> head = i.next();
-
-      //
-      if (head.getType().getMultiplicity() == Multiplicity.SINGLE) {
-        if (headValues.hasNext()) {
-          Chunk chunk = headValues.next();
-          bilto.add(new Match.Argument<B>(head, chunk.getStart(), chunk.getEnd(), Collections.singletonList(chunk.getValue())));
-          headLast = chunk;
-        } else {
-          break;
-        }
-      } else {
-        ListIterator<Chunk> tailValues = values.listIterator(values.size());
-        ListIterator<? extends ArgumentDescriptor<B>> r = arguments.listIterator(arguments.size());
-        while (r.hasPrevious()) {
-          ArgumentDescriptor<B> tail = r.previous();
-          if (tail == head) {
-            LinkedList<String> foo = new LinkedList<String>();
-            Chunk first = null;
-            Chunk last = null;
-            while (headValues.nextIndex() <= tailValues.previousIndex()) {
-              last = headValues.next();
-              first = first == null ? last : first;
-              foo.add(last.getValue());
-            }
-            int begin;
-            int end;
-            if (first == null) {
-              if (headLast == null) {
-                begin = end = 0;
-              } else {
-                begin = end = headLast.getEnd();
-              }
-            } else {
-              begin = first.getStart();
-              end = last.getEnd();
-            }
-            bilto.add(new Match.Argument<B>(head, begin, end, foo));
-            break out;
-          } else {
-            if (tailValues.previousIndex() < headValues.nextIndex()) {
-              // We cannot satisfy so we don't consume the value and we just continue backward
-            } else {
-              Chunk chunk = tailValues.previous();
-              bilto.add(new Match.Argument<B>(tail, chunk.getStart(), chunk.getEnd(), Collections.singletonList(chunk.getValue())));
-              bilto.previous();
-            }
-          }
-        }
-      }
-    }
-
-    //
-    return new Iterator<Match.Argument<B>>() {
-
-      /** . */
-      private final Iterator<Match.Argument<B>> iterator = list.iterator();
-
-      public boolean hasNext() {
-        return iterator.hasNext();
-      }
-
-      public Match.Argument<B> next() {
-        Match.Argument<B> next = iterator.next();
-
-        //
-
-        skipRestTo(next.getEnd());
-
-        return next;
-      }
-
-      public void remove() {
-        throw new UnsupportedOperationException();
-      }
-    };
   }
 
   private class OptionIterator implements Iterator<Match.Option<B>> {
@@ -271,6 +171,60 @@ public class MatchIterator<T, B extends ParameterBinding> implements Iterator<Ma
       Match.Option<B> tmp = next;
       next = null;
       return tmp;
+    }
+
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
+  }
+  
+  private class ArgumentIterator implements Iterator<Match.Argument<B>> {
+
+    private final Iterator<Match.Argument<B>> matches;
+
+    private ArgumentIterator() {
+      LinkedList<Match.Argument<B>> matches = new LinkedList<Match.Argument<B>>();
+      for (Pattern p : parser.getArgumentsPatterns()) {
+        Matcher matcher = p.matcher(rest);
+        if (matcher.find()) {
+
+          for (int i = 1;i <= matcher.groupCount();i++) {
+
+            ArrayList<String> values = new ArrayList<String>();
+
+            //
+            Matcher m2 = Pattern.compile("\\S+").matcher(matcher.group(i));
+            while (m2.find()) {
+              values.add(m2.group(0));
+            }
+
+            //
+            if (values.size() > 0) {
+              Match.Argument<B> match = new Match.Argument<B>(
+                parser.command.getArguments().get(i - 1),
+                done.length() + matcher.start(i),
+                done.length() + matcher.end(i),
+                values
+              );
+              matches.add(match);
+            }
+          }
+          break;
+        }
+      }
+
+      //
+      this.matches = matches.iterator();
+    }
+
+    public boolean hasNext() {
+      return matches.hasNext();
+    }
+
+    public Match.Argument<B> next() {
+      Match.Argument<B> next = matches.next();
+      skipRestTo(next.getEnd());
+      return next;
     }
 
     public void remove() {

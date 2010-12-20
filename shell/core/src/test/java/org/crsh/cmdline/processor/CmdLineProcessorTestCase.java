@@ -22,10 +22,8 @@ package org.crsh.cmdline.processor;
 import junit.framework.TestCase;
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.ParameterBinding;
-import org.crsh.cmdline.processor.CmdLineProcessor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -95,7 +93,7 @@ public class CmdLineProcessorTestCase extends TestCase {
 
     A a = new A();
     conf.process(a, "");
-    assertEquals(Arrays.<String>asList(), a.s);
+    assertEquals(null , a.s);
     conf.process(a, "foo");
     assertEquals(Arrays.asList("foo"), a.s);
     conf.process(a, "foo bar");

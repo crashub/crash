@@ -235,7 +235,6 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
       processor.process(cmd, s.toString());
     }
     catch (Exception e) {
-      e.printStackTrace();
       throw new ScriptException(e.getMessage(), e);
     }
   }
