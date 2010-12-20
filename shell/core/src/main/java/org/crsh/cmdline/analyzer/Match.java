@@ -22,6 +22,7 @@ package org.crsh.cmdline.analyzer;
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterBinding;
+import org.crsh.cmdline.ParameterDescriptor;
 
 import java.util.List;
 
@@ -31,33 +32,46 @@ import java.util.List;
  */
 public class Match<B extends ParameterBinding> {
 
-  public final static class Option<B extends ParameterBinding> extends Match<B> {
+  public static class Parameter<P extends ParameterDescriptor<B>,  B extends ParameterBinding> extends Match<B> {
 
     /** . */
-    private final OptionDescriptor<B> option;
-
-    /** . */
-    private final String name;
+    private final P parameter;
 
     /** . */
     private final List<String> values;
 
-    Option(OptionDescriptor<B> option, String name, List<String> values) {
-      this.option = option;
-      this.name = name;
+    public Parameter(P parameter, List<String> values) {
+      this.parameter = parameter;
       this.values = values;
+    }
+
+    public P getParameter() {
+      return parameter;
+    }
+
+    public List<String> getValues() {
+      return values;
+    }
+  }
+
+  public final static class Option<B extends ParameterBinding> extends Parameter<OptionDescriptor<B>, B> {
+
+    /** . */
+    private final String name;
+
+    Option(OptionDescriptor<B> option, String name, List<String> values) {
+      super(option, values);
+
+      //
+      this.name = name;
     }
 
     public String getName() {
       return name;
     }
 
-    public List<String> getValues() {
-      return values;
-    }
-
     public boolean isPartial() {
-      return values.contains(null);
+      return getValues().contains(null);
     }
 
     public boolean isFull() {
@@ -65,13 +79,7 @@ public class Match<B extends ParameterBinding> {
     }
   }
 
-  public static class Argument<B extends ParameterBinding> extends Match<B> {
-
-    /** . */
-    private final ArgumentDescriptor<B> argument;
-
-    /** . */
-    private final List<String> values;
+  public static class Argument<B extends ParameterBinding> extends Parameter<ArgumentDescriptor<B>, B> {
 
     /** . */
     private int start;
@@ -80,10 +88,11 @@ public class Match<B extends ParameterBinding> {
     private int end;
 
     public Argument(ArgumentDescriptor<B> argument, int start, int end, List<String> values) {
-      this.argument = argument;
+      super(argument, values);
+
+      //
       this.start = start;
       this.end = end;
-      this.values = values;
     }
 
     public int getStart() {
@@ -92,10 +101,6 @@ public class Match<B extends ParameterBinding> {
 
     public int getEnd() {
       return end;
-    }
-
-    public List<String> getValues() {
-      return values;
     }
   }
 

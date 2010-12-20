@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ParameterAnalyzer<T, B extends ParameterBinding> {
+public class Analyzer<T, B extends ParameterBinding> {
 
   /** . */
   final CommandDescriptor<T, B> command;
@@ -39,7 +39,7 @@ public class ParameterAnalyzer<T, B extends ParameterBinding> {
   /** . */
   final Pattern optionsPattern;
 
-  public ParameterAnalyzer(CommandDescriptor<T, B> command) {
+  public Analyzer(CommandDescriptor<T, B> command) {
 
     //
     StringBuilder optionsRE = new StringBuilder("^(");

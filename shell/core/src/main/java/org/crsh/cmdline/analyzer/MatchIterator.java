@@ -50,7 +50,7 @@ public class MatchIterator<T, B extends ParameterBinding> implements Iterator<Ma
   private static final int PARSING_DONE = 2;
 
   /** . */
-  private final ParameterAnalyzer<T, B> parser;
+  private final Analyzer<T, B> parser;
 
   /** . */
   private StringBuilder done;
@@ -64,7 +64,7 @@ public class MatchIterator<T, B extends ParameterBinding> implements Iterator<Ma
   /** . */
   private int status;
 
-  public MatchIterator(ParameterAnalyzer<T, B> parser, String s) {
+  public MatchIterator(Analyzer<T, B> parser, String s) {
     this.parser = parser;
     this.rest = s;
     this.i = new OptionIterator();
