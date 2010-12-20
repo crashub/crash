@@ -46,7 +46,7 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
     super(
       type.getSimpleName().toLowerCase(),
       description(type.getAnnotation(Description.class)),
-      paremeters(type));
+      parameters(type));
 
     //
     Map<String, MethodCommandDescriptor> commandMap = new HashMap<String, MethodCommandDescriptor>();
@@ -115,7 +115,7 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
     sb.append(TAB).append("The following options are available:\n\n");
     for (OptionDescriptor<ParameterBinding.ClassField> option : getOptions()) {
       for (char c : option.getOpts()) {
-        sb.append(TAB).append('-').append(c).append(TAB).append(option.getDescription()).append("\n\n ");
+        sb.append(TAB).append('-').append(c).append(TAB).append(option.getDescription()).append("\n\n");
       }
     }
 
@@ -124,15 +124,15 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
   }
 
 
-  private static List<ParameterDescriptor<ParameterBinding.ClassField>> paremeters(Class<?> introspected) throws IntrospectionException {
+  private static List<ParameterDescriptor<ParameterBinding.ClassField>> parameters(Class<?> introspected) throws IntrospectionException {
     List<ParameterDescriptor<ParameterBinding.ClassField>> parameters;
     Class<?> superIntrospected = introspected.getSuperclass();
     if (superIntrospected == null) {
       parameters = new ArrayList<ParameterDescriptor<ParameterBinding.ClassField>>();
     } else {
-      parameters = paremeters(superIntrospected);
+      parameters = parameters(superIntrospected);
       for (Field f : introspected.getDeclaredFields()) {
-        Description descriptionAnn = introspected.getAnnotation(Description.class);
+        Description descriptionAnn = f.getAnnotation(Description.class);
         Argument argumentAnn = f.getAnnotation(Argument.class);
         Option optionAnn = f.getAnnotation(Option.class);
         ParameterBinding.ClassField binding = new ParameterBinding.ClassField(f);
@@ -168,7 +168,7 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
               if (parameterAnnotation instanceof Option) {
                 optionAnn = (Option)parameterAnnotation;
               } else if (parameterAnnotation instanceof Argument) {
-                argumentAnn = (Argument)argumentAnn;
+                argumentAnn = (Argument)parameterAnnotation;
               } else if (parameterAnnotation instanceof Description) {
                 descriptionAnn = (Description)parameterAnnotation;
               }
