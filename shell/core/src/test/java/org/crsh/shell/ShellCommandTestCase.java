@@ -24,6 +24,7 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.crsh.cmdline.processor.SyntaxException;
 import org.crsh.command.ClassCommand;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
@@ -94,10 +95,9 @@ public class ShellCommandTestCase extends TestCase {
     }
   }
 
-/*
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
-      "@org.crsh.cmdline.Option(opt='s') def String str = 'default value';" +
+      "@org.crsh.cmdline.Option(names=\"s\") def String str = 'default value';" +
       "public Object execute() {" +
       "return str;" +
       "}" +
@@ -111,10 +111,9 @@ public class ShellCommandTestCase extends TestCase {
       fail();
     }
     catch (ScriptException e) {
-      assert(e.getCause() instanceof ParameterException);
+      assert(e.getCause() instanceof SyntaxException);
     }
   }
-*/
 
   public void testArgumentInjectionInCommandClassArgs4j() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
