@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public abstract class CommandDescriptor<T, B extends ParameterBinding> {
 
-  public static <T> CommandDescriptor<T, ParameterBinding.ClassField> create(Class<T> type) throws IntrospectionException {
+  public static <T> ClassCommandDescriptor<T> create(Class<T> type) throws IntrospectionException {
     return new ClassCommandDescriptor<T>(type);
   }
 

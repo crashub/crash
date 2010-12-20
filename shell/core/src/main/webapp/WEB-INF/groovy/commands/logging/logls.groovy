@@ -1,5 +1,4 @@
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
+import org.crsh.cmdline.Option;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
@@ -14,7 +13,8 @@ import javax.management.ObjectName;
 @Description("List the available loggers")
 public class logls extends org.crsh.command.BaseCommand<Void, Logger> {
 
-  @Option(name="-f",aliases=["--filter"],usage="Filter the logger with a regular expression", required=false)
+  @Option(names="f")
+  @Description("Filter the logger with a regular expression")
   def String filter;
 
   public void execute(CommandContext<Void, Logger> context) throws ScriptException {

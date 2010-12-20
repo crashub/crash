@@ -21,6 +21,7 @@ package org.crsh.cmdline.processor;
 
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Multiplicity;
+import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.analyzer.Analyzer;
@@ -79,8 +80,12 @@ public abstract class CmdLineProcessor<T, B extends ParameterBinding> {
       }
 
       // Should be better with required / non required
-      if (!foo.isEmpty()) {
-        throw new SyntaxException();
+      for (ParameterDescriptor<?> nonSatisfied : foo) {
+        if (nonSatisfied instanceof OptionDescriptor<?> && !nonSatisfied.isRequired()) {
+          // Ok
+        } else {
+          throw new SyntaxException("Non satisfied " + nonSatisfied);
+        }
       }
 
       //

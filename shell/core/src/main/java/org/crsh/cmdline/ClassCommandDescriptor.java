@@ -72,6 +72,58 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
     return commandMap.get(name);
   }
 
+  /** . */
+  private static final String TAB = "       ";
+
+  public String getUsage() {
+    StringBuilder sb = new StringBuilder();
+
+    //
+    sb.append("NAME\n");
+    sb.append(TAB).append(type.getSimpleName());
+    if (getDescription().length() > 0) {
+      sb.append(" - ").append(getDescription());
+    }
+    sb.append("\n\n");
+
+    //
+    sb.append("SYNOPSIS\n");
+    sb.append(TAB).append(type.getSimpleName());
+    for (OptionDescriptor<ParameterBinding.ClassField> option : getOptions()) {
+      sb.append(" [");
+      boolean a = false;
+      for (char c : option.getOpts()) {
+        if (a) {
+          sb.append(" | ");
+        }
+        sb.append('-').append(c);
+        a = true;
+      }
+      sb.append("]");
+    }
+    for (ArgumentDescriptor<ParameterBinding.ClassField> argument : getArguments()) {
+      if (argument.getType().getMultiplicity() == Multiplicity.SINGLE) {
+        sb.append(" ...");
+      } else {
+        sb.append(" arg");
+      }
+    }
+    sb.append("\n\n");
+
+    //
+    sb.append("DESCRIPTION\n");
+    sb.append(TAB).append("The following options are available:\n\n");
+    for (OptionDescriptor<ParameterBinding.ClassField> option : getOptions()) {
+      for (char c : option.getOpts()) {
+        sb.append(TAB).append('-').append(c).append(TAB).append(option.getDescription()).append("\n\n ");
+      }
+    }
+
+    //
+    return sb.toString();
+  }
+
+
   private static List<ParameterDescriptor<ParameterBinding.ClassField>> paremeters(Class<?> introspected) throws IntrospectionException {
     List<ParameterDescriptor<ParameterBinding.ClassField>> parameters;
     Class<?> superIntrospected = introspected.getSuperclass();

@@ -235,6 +235,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
       processor.process(cmd, s.toString());
     }
     catch (Exception e) {
+      e.printStackTrace();
       throw new ScriptException(e.getMessage(), e);
     }
   }
@@ -269,8 +270,17 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
           parser.printUsage(out, null);
           break;
         case 2:
-        case 4:
           throw new UnsupportedOperationException();
+        case 4:
+          try {
+            Class<?> clazz = getClass();
+            ClassCommandDescriptor<?> descriptor = CommandDescriptor.create(clazz);
+            out.print(descriptor.getUsage());
+          }
+          catch (IntrospectionException e) {
+            throw new ScriptException(e.getMessage(), e);
+          }
+          break;
       }
 
       //
