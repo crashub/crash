@@ -21,7 +21,6 @@ package org.crsh.cmdline.processor;
 
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Multiplicity;
-import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.analyzer.Analyzer;
@@ -65,13 +64,13 @@ public abstract class CmdLineProcessor<T, B extends ParameterBinding> {
       foo.addAll(descriptor.getOptions());
 
       //
-      List<Match.Parameter<?, ParameterBinding.ClassField>> invocation = new ArrayList<Match.Parameter<?, ParameterBinding.ClassField>>();
+      List<Match.Parameter<ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> invocation = new ArrayList<Match.Parameter<ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>>();
       MatchIterator<T, ParameterBinding.ClassField> iterator = analyzer.analyzer(s);
       while (iterator.hasNext()) {
 
         Match<ParameterBinding.ClassField> match = iterator.next();
         if (match instanceof Match.Parameter<?, ?>) {
-          Match.Parameter<?, ParameterBinding.ClassField> parameterMatch = (Match.Parameter<?, ParameterBinding.ClassField>)match;
+          Match.Parameter<ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField> parameterMatch = (Match.Parameter<ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>)match;
           if (!foo.remove(parameterMatch.getParameter())) {
             throw new SyntaxException();
           }
@@ -89,7 +88,7 @@ public abstract class CmdLineProcessor<T, B extends ParameterBinding> {
       }
 
       //
-      for (Match.Parameter<?, ParameterBinding.ClassField> parameterMatch : invocation) {
+      for (Match.Parameter<ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField> parameterMatch : invocation) {
 
         ParameterDescriptor<ParameterBinding.ClassField> parameter = parameterMatch.getParameter();
         ParameterBinding.ClassField cf = parameter.getBinding();
