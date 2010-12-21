@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 @Description("Set the level of one of several loggers")
-public class logset extends org.crsh.command.BaseCommand<Logger, Void> {
+public class logset extends org.crsh.command.CRaSHCommand<Logger, Void> {
 
   /** . */
   private static final Set<String> plugins = ["jdk","log4j"];

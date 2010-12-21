@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import java.util.Formatter;
 
 @Description("List the vm threads")
-public class threadls extends org.crsh.command.BaseCommand<Void, Thread> {
+public class threadls extends org.crsh.command.CRaSHCommand<Void, Thread> {
 
   @Description("Retain the thread with the specified name")
   @Option(names=["n","name"])

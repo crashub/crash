@@ -19,95 +19,23 @@
 
 package org.crsh.command;
 
-import com.beust.jcommander.JCommander;
-import groovy.lang.GroovyObjectSupport;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
+import org.crsh.cmdline.analyzer.Analyzer;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 /**
  * A base command that should be subclasses by Groovy commands. For this matter it inherits the
- * {@link GroovyObjectSupport} class.
+ * {@link groovy.lang.GroovyObjectSupport} class.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  * @param <C> the consumed type
  * @param <P> the produced type
  */
-public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCommand<C, P> {
-
-  private static final class MetaData {
-
-    /** . */
-    private static final ConcurrentHashMap<String, MetaData> metaDataCache = new ConcurrentHashMap<String, MetaData>();
-
-    static MetaData getMetaData(Class<?> clazz) {
-      MetaData metaData = metaDataCache.get(clazz.getName());
-      if (metaData == null || !metaData.isValid(clazz)) {
-        metaData = new MetaData(clazz);
-        metaDataCache.put(clazz.getName(), metaData);
-      }
-      return metaData;
-    }
-
-    /** . */
-    private static final Pattern ARGS4J = Pattern.compile("^org\\.kohsuke\\.args4j\\.?$");
-
-    /** . */
-    private static final Pattern JCOMMANDER = Pattern.compile("^com\\.beust\\.jcommander\\.?$");
-
-    /** . */
-    private final int descriptionFramework;
-
-    /** . */
-    private final String fqn;
-
-    /** . */
-    private final int identityHashCode;
-
-    private MetaData(Class<?> clazz) {
-      this.descriptionFramework = findDescriptionFramework(clazz);
-      this.fqn = clazz.getName();
-      this.identityHashCode = System.identityHashCode(clazz);
-    }
-
-    private boolean isValid(Class<?> clazz) {
-      return identityHashCode == System.identityHashCode(clazz) && fqn.equals(clazz.getName());
-    }
-
-    private int findDescriptionFramework(Class<?> clazz) {
-      if (clazz == null) {
-        throw new NullPointerException();
-      }
-      Class<?> superClazz = clazz.getSuperclass();
-      int bs;
-      if (superClazz != null) {
-        bs = findDescriptionFramework(superClazz);
-      } else {
-        bs = 0;
-      }
-      for (Field f : clazz.getDeclaredFields()) {
-        for (Annotation annotation : f.getDeclaredAnnotations()) {
-          String packageName = annotation.annotationType().getPackage().getName();
-          if (ARGS4J.matcher(packageName).matches()) {
-            bs |= 0x01;
-          } else if (JCOMMANDER.matcher(packageName).matches()) {
-            bs |= 0x02;
-          }
-        }
-      }
-      return bs;
-    }
-  }
+public abstract class CRaSHCommand<C, P> extends GroovyCommand implements ShellCommand<C, P> {
 
   /** . */
   private CommandContext<C, P> context;
@@ -122,14 +50,14 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
   private Class<P> producedType;
 
   /** . */
-  private final MetaData metaData;
+  private final ClassDescriptor<?> descriptor;
 
-  protected BaseCommand() {
+  protected CRaSHCommand() throws IntrospectionException {
     this.context = null;
     this.unquoteArguments = true;
     this.consumedType = (Class<C>)TypeResolver.resolve(getClass(), ShellCommand.class, 0);
     this.producedType = (Class<P>)TypeResolver.resolve(getClass(), ShellCommand.class, 1);
-    this.metaData = MetaData.getMetaData(getClass());
+    this.descriptor = CommandDescriptor.create(getClass());
   }
 
   public Class<P> getProducedType() {
@@ -189,27 +117,13 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
       }
 
       //
-      switch (metaData.descriptionFramework) {
-        default:
-          System.out.println("Not only one description framework");
-        case 0:
-          break;
-        case 1:
-          CmdLineParser parser = new CmdLineParser(this);
-          parser.printUsage(out, null);
-          break;
-        case 2:
-          throw new UnsupportedOperationException();
-        case 4:
-          try {
-            Class<?> clazz = getClass();
-            ClassDescriptor<?> descriptor = CommandDescriptor.create(clazz);
-            out.print(descriptor.getUsage());
-          }
-          catch (IntrospectionException e) {
-            throw new ScriptException(e.getMessage(), e);
-          }
-          break;
+      try {
+        Class<?> clazz = getClass();
+        ClassDescriptor<?> descriptor = CommandDescriptor.create(clazz);
+        out.print(descriptor.getUsage());
+      }
+      catch (IntrospectionException e) {
+        throw new ScriptException(e.getMessage(), e);
       }
 
       //
@@ -234,29 +148,20 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
       }
 
       //
-      switch (metaData.descriptionFramework) {
-        default:
-          System.out.println("Not only one description framework");
-        case 0:
-          break;
-        case 1:
-          try {
-            CmdLineParser parser = new CmdLineParser(this);
-            parser.parseArgument(args);
+      try {
+        // WTF
+        Analyzer analyzer = new Analyzer(descriptor);
+        StringBuilder s = new StringBuilder();
+        for (String arg : args) {
+          if (s.length() > 0) {
+            s.append(" ");
           }
-          catch (CmdLineException e) {
-            throw new ScriptException(e.getMessage(), e);
-          }
-           break;
-        case 2:
-          try {
-            JCommander jc = new JCommander(this);
-            jc.parse(args);
-          }
-          catch (Exception e) {
-            throw new ScriptException(e.getMessage(), e);
-          }
-          break;
+          s.append(arg);
+        }
+        analyzer.analyze(s.toString()).process(this);
+      }
+      catch (Exception e) {
+        throw new ScriptException(e.getMessage(), e);
       }
 
       //

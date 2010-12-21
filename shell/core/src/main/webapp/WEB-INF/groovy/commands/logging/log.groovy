@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 @Description("Log a message to a logger")
-public class log extends org.crsh.command.BaseCommand<Logger, Void> {
+public class log extends org.crsh.command.CRaSHCommand<Logger, Void> {
 
   /** The logger methods.*/
   private static final Set<String> methods = ["trace", "debug", "info", "warn", "trace"];

@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Description("Create one or several loggers")
-public class logadd extends org.crsh.command.BaseCommand<Void, Logger> {
+public class logadd extends org.crsh.command.CRaSHCommand<Void, Logger> {
 
   @Description("The logger names to add")
   @Argument

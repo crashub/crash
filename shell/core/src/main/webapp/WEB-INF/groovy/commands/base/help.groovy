@@ -7,7 +7,7 @@ import org.kohsuke.args4j.Argument;
 import org.crsh.command.Description;
 
 @Description("Provides basic help")
-class help extends org.crsh.command.ClassCommand
+class help extends org.crsh.command.CRaSHCommand
 {
 
   /** . */

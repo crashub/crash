@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 
 @Description("Stop threads, use with care!")
-public class threadstop extends org.crsh.command.BaseCommand<Thread, Void> {
+public class threadstop extends org.crsh.command.CRaSHCommand<Thread, Void> {
 
   public void execute(CommandContext<Thread, Void> context) throws ScriptException {
     if (context.piped) {

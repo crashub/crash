@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.PrintWriter;
 
 @Description("Give info about a logger")
-public class loginfo extends org.crsh.command.BaseCommand<Logger, Void> {
+public class loginfo extends org.crsh.command.CRaSHCommand<Logger, Void> {
 
   @Description("The logger names")
   @Argument

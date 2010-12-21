@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import javax.management.ObjectName;
 
 @Description("List the available loggers")
-public class logls extends org.crsh.command.BaseCommand<Void, Logger> {
+public class logls extends org.crsh.command.CRaSHCommand<Void, Logger> {
 
   @Option(names=["f","filter"])
   @Description("Filter the logger with a regular expression")
