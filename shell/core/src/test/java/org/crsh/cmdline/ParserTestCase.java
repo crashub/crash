@@ -22,13 +22,14 @@ package org.crsh.cmdline;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.cmdline.analyzer.Analyzer;
-import org.crsh.cmdline.analyzer.Match;
-import org.crsh.cmdline.analyzer.MatchIterator;
+import org.crsh.cmdline.analyzer.ArgumentMatch;
+import org.crsh.cmdline.analyzer.CommandMatch;
+import org.crsh.cmdline.analyzer.OptionMatch;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -39,13 +40,24 @@ public class ParserTestCase extends TestCase {
   private static class Test {
 
     /** . */
-    private final MatchIterator matcher;
+    private final LinkedList<OptionMatch<ParameterBinding.ClassField>> optionMatches;
+
+    /** . */
+    private final LinkedList<ArgumentMatch<ParameterBinding.ClassField>> argumentMatches;
+
+    /** . */
+    private final String rest;
 
     private <T> Test(Class<T> type, String s) {
       try {
-        CommandDescriptor<T, ParameterBinding.ClassField> command = CommandDescriptor.create(type);
-        Analyzer<T, ParameterBinding.ClassField> parser = new Analyzer<T, ParameterBinding.ClassField>(command);
-        this.matcher = parser.analyzer(s);
+        ClassCommandDescriptor<T> command = CommandDescriptor.create(type);
+        Analyzer<T, ClassCommandDescriptor<T>, ParameterBinding.ClassField> parser = Analyzer.create(command);
+        CommandMatch<T, ClassCommandDescriptor<T>, ParameterBinding.ClassField> match = parser.analyze(s);
+
+        //
+        this.optionMatches = new LinkedList<OptionMatch<ParameterBinding.ClassField>>(match.getOptionMatches());
+        this.argumentMatches = new LinkedList<ArgumentMatch<ParameterBinding.ClassField>>(match.getArgumentMatches());
+        this.rest = match.getRest();
       }
       catch (IntrospectionException e) {
         AssertionFailedError afe = new AssertionFailedError();
@@ -55,16 +67,16 @@ public class ParserTestCase extends TestCase {
     }
 
     public Test assertOption(String expectedName, String... expectedValues) {
-      assertTrue(matcher.hasNext());
-      Match.Option match = (Match.Option)matcher.next();
+      assertTrue(optionMatches.size() > 0);
+      OptionMatch<ParameterBinding.ClassField> match = optionMatches.removeFirst();
       assertEquals(expectedName, match.getName());
       assertEquals(Arrays.asList(expectedValues), match.getValues());
       return this;
     }
 
     public Test assertArgument(int start, int end, String... expectedValues) {
-      assertTrue(matcher.hasNext());
-      Match.Argument match = (Match.Argument)matcher.next();
+      assertTrue(argumentMatches.size() > 0);
+      ArgumentMatch<ParameterBinding.ClassField> match = argumentMatches.removeFirst();
       assertEquals(start, match.getStart());
       assertEquals(end, match.getEnd());
       assertEquals(Arrays.asList(expectedValues), match.getValues());
@@ -72,8 +84,9 @@ public class ParserTestCase extends TestCase {
     }
 
     public void assertDone(String expectedRest) {
-      assertEquals(expectedRest, matcher.getRest());
-      assertFalse(matcher.hasNext());
+      assertEquals(expectedRest, rest);
+      assertEquals(Collections.<OptionMatch<ParameterBinding.ClassField>>emptyList(), optionMatches);
+      assertEquals(Collections.<ArgumentMatch<ParameterBinding.ClassField>>emptyList(), argumentMatches);
     }
 
     public void assertDone() {

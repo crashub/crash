@@ -17,37 +17,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.util;
+package org.crsh.cmdline.analyzer;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
+import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.ParameterBinding;
+
 import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Utils {
+public abstract  class CommandMatch<T, C extends CommandDescriptor<T, B>, B extends ParameterBinding> {
 
-  public static <E> ArrayList<E> newArrayList() {
-    return new ArrayList<E>();
+  /** . */
+  private final List<OptionMatch<B>> optionMatches;
+
+  /** . */
+  private final List<ArgumentMatch<B>> argumentMatches;
+
+  /** . */
+  private final String rest;
+
+  public CommandMatch(List<OptionMatch<B>> optionMatches, List<ArgumentMatch<B>> argumentMatches, String rest) {
+    this.optionMatches = optionMatches;
+    this.argumentMatches = argumentMatches;
+    this.rest = rest;
   }
 
-  public static <E> LinkedList<E> newLinkedList() {
-    return new LinkedList<E>();
+  public abstract C getCommand();
+
+  public List<OptionMatch<B>> getOptionMatches() {
+    return optionMatches;
   }
 
-  public static <E> HashSet<E> newHashSet() {
-    return new HashSet<E>();
+  public List<ArgumentMatch<B>> getArgumentMatches() {
+    return argumentMatches;
   }
 
-  public static <E>List<E> list(Iterable<E> iterable) {
-    ArrayList<E> list = new ArrayList<E>();
-    for (E t : iterable) {
-      list.add(t);
-    }
-    return list;
+  public String getRest() {
+    return rest;
   }
-
 }

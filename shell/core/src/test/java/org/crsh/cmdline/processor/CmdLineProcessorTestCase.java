@@ -21,6 +21,7 @@ package org.crsh.cmdline.processor;
 
 import junit.framework.TestCase;
 import org.crsh.cmdline.Argument;
+import org.crsh.cmdline.ClassCommandDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.ParameterBinding;
@@ -40,7 +41,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Option(names = "o", required = true)
       String s;
     }
-    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    ClassCommandDescriptor<A> desc = CommandDescriptor.create(A.class);
     CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
     A a = new A();
@@ -61,7 +62,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Option(names = "o")
       String s;
     }
-    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    ClassCommandDescriptor<A> desc = CommandDescriptor.create(A.class);
     CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
     A a = new A();
@@ -78,7 +79,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Argument(required = true)
       String s;
     }
-    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    ClassCommandDescriptor<A> desc = CommandDescriptor.create(A.class);
     CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
     A a = new A();
@@ -103,7 +104,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Argument
       String s;
     }
-    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    ClassCommandDescriptor<A> desc = CommandDescriptor.create(A.class);
     CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
     A a = new A();
@@ -124,7 +125,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Argument
       List<String> s;
     }
-    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    ClassCommandDescriptor<A> desc = CommandDescriptor.create(A.class);
     CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
     A a = new A();
@@ -145,7 +146,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Argument(required = true)
       List<String> s;
     }
-    CommandDescriptor<A, ParameterBinding.ClassField> desc = CommandDescriptor.create(A.class);
+    ClassCommandDescriptor<A> desc = CommandDescriptor.create(A.class);
     CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
 
     A a = new A();

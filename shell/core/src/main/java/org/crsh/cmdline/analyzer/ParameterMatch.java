@@ -17,37 +17,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.util;
+package org.crsh.cmdline.analyzer;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
+import org.crsh.cmdline.ParameterBinding;
+import org.crsh.cmdline.ParameterDescriptor;
+
 import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Utils {
+public class ParameterMatch<P extends ParameterDescriptor<B>, B extends ParameterBinding> {
 
-  public static <E> ArrayList<E> newArrayList() {
-    return new ArrayList<E>();
+  /** . */
+  private final P parameter;
+
+  /** . */
+  private final List<String> values;
+
+  public ParameterMatch(P parameter, List<String> values) {
+    this.parameter = parameter;
+    this.values = values;
   }
 
-  public static <E> LinkedList<E> newLinkedList() {
-    return new LinkedList<E>();
+  public P getParameter() {
+    return parameter;
   }
 
-  public static <E> HashSet<E> newHashSet() {
-    return new HashSet<E>();
+  public List<String> getValues() {
+    return values;
   }
-
-  public static <E>List<E> list(Iterable<E> iterable) {
-    ArrayList<E> list = new ArrayList<E>();
-    for (E t : iterable) {
-      list.add(t);
-    }
-    return list;
-  }
-
 }

@@ -17,37 +17,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.util;
+package org.crsh.cmdline.analyzer;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
+import org.crsh.cmdline.ClassCommandDescriptor;
+import org.crsh.cmdline.ParameterBinding;
+
 import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Utils {
+public class ClassMatch<T> extends CommandMatch<T, ClassCommandDescriptor<T>, ParameterBinding.ClassField> {
 
-  public static <E> ArrayList<E> newArrayList() {
-    return new ArrayList<E>();
+  /** . */
+  private final ClassCommandDescriptor<T> descriptor;
+
+  public ClassMatch(
+    ClassCommandDescriptor<T> descriptor,
+    List<OptionMatch<ParameterBinding.ClassField>> optionMatches,
+    List<ArgumentMatch<ParameterBinding.ClassField>> argumentMatches,
+    String rest) {
+    super(optionMatches, argumentMatches, rest);
+
+    //
+    this.descriptor = descriptor;
   }
 
-  public static <E> LinkedList<E> newLinkedList() {
-    return new LinkedList<E>();
+  @Override
+  public ClassCommandDescriptor<T> getCommand() {
+    return descriptor;
   }
-
-  public static <E> HashSet<E> newHashSet() {
-    return new HashSet<E>();
-  }
-
-  public static <E>List<E> list(Iterable<E> iterable) {
-    ArrayList<E> list = new ArrayList<E>();
-    for (E t : iterable) {
-      list.add(t);
-    }
-    return list;
-  }
-
 }

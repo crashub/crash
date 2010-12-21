@@ -17,37 +17,38 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.util;
+package org.crsh.cmdline.analyzer;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
+import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.ParameterBinding;
+
 import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Utils {
+public class OptionMatch<B extends ParameterBinding> extends ParameterMatch<OptionDescriptor<B>, B> {
 
-  public static <E> ArrayList<E> newArrayList() {
-    return new ArrayList<E>();
+  /** . */
+  private final String name;
+
+  OptionMatch(OptionDescriptor<B> option, String name, List<String> values) {
+    super(option, values);
+
+    //
+    this.name = name;
   }
 
-  public static <E> LinkedList<E> newLinkedList() {
-    return new LinkedList<E>();
+  public String getName() {
+    return name;
   }
 
-  public static <E> HashSet<E> newHashSet() {
-    return new HashSet<E>();
+  public boolean isPartial() {
+    return getValues().contains(null);
   }
 
-  public static <E>List<E> list(Iterable<E> iterable) {
-    ArrayList<E> list = new ArrayList<E>();
-    for (E t : iterable) {
-      list.add(t);
-    }
-    return list;
+  public boolean isFull() {
+    return !isPartial();
   }
-
 }
