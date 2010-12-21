@@ -24,6 +24,8 @@ import junit.framework.TestCase;
 import org.crsh.cmdline.analyzer.Analyzer;
 import org.crsh.cmdline.analyzer.ArgumentMatch;
 import org.crsh.cmdline.analyzer.ClassMatch;
+import org.crsh.cmdline.analyzer.CommandMatch;
+import org.crsh.cmdline.analyzer.MethodMatch;
 import org.crsh.cmdline.analyzer.OptionMatch;
 
 import java.util.Arrays;
@@ -40,24 +42,42 @@ public class ParserTestCase extends TestCase {
   private static class Test {
 
     /** . */
-    private final LinkedList<OptionMatch<ParameterBinding.ClassField>> optionMatches;
+    private LinkedList<OptionMatch<?>> sharedOptionMatches;
 
     /** . */
-    private final LinkedList<ArgumentMatch<ParameterBinding.ClassField>> argumentMatches;
+    private LinkedList<OptionMatch<?>> optionMatches;
 
     /** . */
-    private final String rest;
+    private LinkedList<ArgumentMatch<?>> argumentMatches;
+
+    /** . */
+    private String rest;
+
+    /** . */
+    private String methodName;
 
     private <T> Test(Class<T> type, String s) {
       try {
         ClassDescriptor<T> command = CommandDescriptor.create(type);
         Analyzer<T> parser = new Analyzer<T>(command);
-        ClassMatch<T> match = (ClassMatch<T>)parser.analyze(s);
+        CommandMatch<T, ?, ?> match = parser.analyze(s);
 
         //
-        this.optionMatches = new LinkedList<OptionMatch<ParameterBinding.ClassField>>(match.getOptionMatches());
-        this.argumentMatches = new LinkedList<ArgumentMatch<ParameterBinding.ClassField>>(match.getArgumentMatches());
-        this.rest = match.getRest();
+        if (match instanceof ClassMatch<?>) {
+          this.sharedOptionMatches = new LinkedList<OptionMatch<?>>();
+          this.optionMatches = new LinkedList<OptionMatch<?>>(match.getOptionMatches());
+          this.argumentMatches = new LinkedList<ArgumentMatch<?>>(match.getArgumentMatches());
+          this.rest = match.getRest();
+          this.methodName = null;
+        } else {
+          MethodMatch<?> methodMatch = (MethodMatch<?>)match;
+          this.sharedOptionMatches = new LinkedList<OptionMatch<?>>(methodMatch.getSharedOptionMatches());
+          this.optionMatches = new LinkedList<OptionMatch<?>>(methodMatch.getOptionMatches());
+          this.argumentMatches = new LinkedList<ArgumentMatch<?>>(methodMatch.getArgumentMatches());
+          this.rest = match.getRest();
+          this.methodName = methodMatch.getCommand().getName();
+        }
+
       }
       catch (IntrospectionException e) {
         AssertionFailedError afe = new AssertionFailedError();
@@ -66,9 +86,17 @@ public class ParserTestCase extends TestCase {
       }
     }
 
+    public Test assertSharedOption(String expectedName, String... expectedValues) {
+      assertTrue(sharedOptionMatches.size() > 0);
+      OptionMatch<?> match = sharedOptionMatches.removeFirst();
+      assertEquals(expectedName, match.getName());
+      assertEquals(Arrays.asList(expectedValues), match.getValues());
+      return this;
+    }
+
     public Test assertOption(String expectedName, String... expectedValues) {
       assertTrue(optionMatches.size() > 0);
-      OptionMatch<ParameterBinding.ClassField> match = optionMatches.removeFirst();
+      OptionMatch<?> match = optionMatches.removeFirst();
       assertEquals(expectedName, match.getName());
       assertEquals(Arrays.asList(expectedValues), match.getValues());
       return this;
@@ -76,15 +104,23 @@ public class ParserTestCase extends TestCase {
 
     public Test assertArgument(int start, int end, String... expectedValues) {
       assertTrue(argumentMatches.size() > 0);
-      ArgumentMatch<ParameterBinding.ClassField> match = argumentMatches.removeFirst();
+      ArgumentMatch<?> match = argumentMatches.removeFirst();
       assertEquals(start, match.getStart());
       assertEquals(end, match.getEnd());
       assertEquals(Arrays.asList(expectedValues), match.getValues());
       return this;
     }
 
+    public Test assertMethod(String name) {
+      assertEquals(methodName, name);
+      methodName = null;
+      return this;
+    }
+
     public void assertDone(String expectedRest) {
       assertEquals(expectedRest, rest);
+      assertNull(methodName);
+      assertEquals(Collections.<OptionMatch<ParameterBinding.ClassField>>emptyList(), sharedOptionMatches);
       assertEquals(Collections.<OptionMatch<ParameterBinding.ClassField>>emptyList(), optionMatches);
       assertEquals(Collections.<ArgumentMatch<ParameterBinding.ClassField>>emptyList(), argumentMatches);
     }
@@ -194,7 +230,22 @@ public class ParserTestCase extends TestCase {
       void m() {
       }
     }
-    // new Test(A.class, "m").assertDone();
 
+    //
+    new Test(A.class, "m").assertMethod("m").assertDone();
+  }
+
+  public void testMixedMethod() throws Exception {
+
+    class A {
+      @Option(names = "s")
+      String s;
+      @Command
+      void m(@Option(names = "o") String o, @Argument String a) {
+      }
+    }
+
+    //
+    new Test(A.class, "-s foo m -o bar juu").assertSharedOption("s", "foo").assertMethod("m").assertOption("o", "bar").assertArgument(16, 19, "juu").assertDone();
   }
 }

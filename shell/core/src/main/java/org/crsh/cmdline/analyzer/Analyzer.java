@@ -63,6 +63,7 @@ public class Analyzer<T> {
       String f = m.group(1);
       MethodDescriptor<T> sub = descriptor.getMethod(f);
       if (sub != null) {
+        bilto.skipRestBy(m.end(1));
         CommandAnalyzer<T, MethodDescriptor<T>, ParameterBinding.MethodArgument> methodAnalyzer = new CommandAnalyzer<T, MethodDescriptor<T>, ParameterBinding.MethodArgument>(sub);
         List<OptionMatch<ParameterBinding.MethodArgument>> methodOptions = methodAnalyzer.analyzeOptions(bilto);
         List<ArgumentMatch<ParameterBinding.MethodArgument>> methodArguments = methodAnalyzer.analyzeArguments(bilto);

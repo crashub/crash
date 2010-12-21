@@ -175,7 +175,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
             }
             ParameterBinding.MethodArgument binding = new ParameterBinding.MethodArgument(m, i);
             ParameterDescriptor<ParameterBinding.MethodArgument> parameter = create(binding, parameterType, descriptionAnn, argumentAnn, optionAnn);
-            if (optionAnn != null) {
+            if (parameter != null) {
               parameters.add(parameter);
             } else {
               throw new IntrospectionException();
