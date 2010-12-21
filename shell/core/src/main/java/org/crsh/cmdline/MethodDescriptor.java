@@ -25,12 +25,12 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class MethodCommandDescriptor<T> extends CommandDescriptor<T, ParameterBinding.MethodArgument> {
+public class MethodDescriptor<T> extends CommandDescriptor<T, ParameterBinding.MethodArgument> {
 
   /** . */
-  private final ClassCommandDescriptor<T> owner;
+  private final ClassDescriptor<T> owner;
 
-  MethodCommandDescriptor(ClassCommandDescriptor<T> owner, String name, String description, List<ParameterDescriptor<ParameterBinding.MethodArgument>> parameters) throws IntrospectionException {
+  MethodDescriptor(ClassDescriptor<T> owner, String name, String description, List<ParameterDescriptor<ParameterBinding.MethodArgument>> parameters) throws IntrospectionException {
     super(name, description, parameters);
 
     //

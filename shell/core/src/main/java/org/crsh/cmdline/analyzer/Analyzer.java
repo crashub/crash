@@ -20,7 +20,7 @@
 package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.ArgumentDescriptor;
-import org.crsh.cmdline.ClassCommandDescriptor;
+import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
@@ -43,20 +43,20 @@ import java.util.regex.Pattern;
 public abstract class Analyzer<T, C extends CommandDescriptor<T, B>, B extends ParameterBinding> {
 
   public static <T,  C extends CommandDescriptor<T, B>, B extends ParameterBinding> Analyzer<T, C, B> create(C command) {
-    if (command instanceof ClassCommandDescriptor<?>) {
-      Analyzer analyzer = new ClassAnalyzer<T>((ClassCommandDescriptor<T>)command);
+    if (command instanceof ClassDescriptor<?>) {
+      Analyzer analyzer = new ClassAnalyzer<T>((ClassDescriptor<T>)command);
       return analyzer;
     } else {
       throw new UnsupportedOperationException();
     }
   }
 
-  private static class ClassAnalyzer<T> extends Analyzer<T, ClassCommandDescriptor<T>, ParameterBinding.ClassField> {
+  private static class ClassAnalyzer<T> extends Analyzer<T, ClassDescriptor<T>, ParameterBinding.ClassField> {
 
     /** . */
-    private final ClassCommandDescriptor<T> command;
+    private final ClassDescriptor<T> command;
 
-    private ClassAnalyzer(ClassCommandDescriptor<T> command) {
+    private ClassAnalyzer(ClassDescriptor<T> command) {
       super(command);
 
       //

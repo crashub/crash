@@ -50,9 +50,9 @@ public class ParserTestCase extends TestCase {
 
     private <T> Test(Class<T> type, String s) {
       try {
-        ClassCommandDescriptor<T> command = CommandDescriptor.create(type);
-        Analyzer<T, ClassCommandDescriptor<T>, ParameterBinding.ClassField> parser = Analyzer.create(command);
-        CommandMatch<T, ClassCommandDescriptor<T>, ParameterBinding.ClassField> match = parser.analyze(s);
+        ClassDescriptor<T> command = CommandDescriptor.create(type);
+        Analyzer<T, ClassDescriptor<T>, ParameterBinding.ClassField> parser = Analyzer.create(command);
+        CommandMatch<T, ClassDescriptor<T>, ParameterBinding.ClassField> match = parser.analyze(s);
 
         //
         this.optionMatches = new LinkedList<OptionMatch<ParameterBinding.ClassField>>(match.getOptionMatches());

@@ -19,7 +19,7 @@
 
 package org.crsh.cmdline.processor;
 
-import org.crsh.cmdline.ClassCommandDescriptor;
+import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterBinding;
@@ -52,9 +52,9 @@ public abstract class CmdLineProcessor<T, C extends CommandDescriptor<T, B>, B e
     this.analyzer = Analyzer.create(commandDescriptor);
   }
 
-  public static class Clazz<T> extends CmdLineProcessor<T, ClassCommandDescriptor<T>, ParameterBinding.ClassField> {
+  public static class Clazz<T> extends CmdLineProcessor<T, ClassDescriptor<T>, ParameterBinding.ClassField> {
 
-    public Clazz(ClassCommandDescriptor<T> commandDescriptor) {
+    public Clazz(ClassDescriptor<T> commandDescriptor) {
       super(commandDescriptor);
     }
 
@@ -67,7 +67,7 @@ public abstract class CmdLineProcessor<T, C extends CommandDescriptor<T, B>, B e
 
       //
       List<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> invocation = newArrayList();
-      CommandMatch<T, ClassCommandDescriptor<T>, ParameterBinding.ClassField> iterator = analyzer.analyze(s);
+      CommandMatch<T, ClassDescriptor<T>, ParameterBinding.ClassField> iterator = analyzer.analyze(s);
 
       //
       for (OptionMatch<ParameterBinding.ClassField> optionMatch : iterator.getOptionMatches()) {

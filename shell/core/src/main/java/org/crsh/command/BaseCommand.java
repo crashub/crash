@@ -24,7 +24,7 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
-import org.crsh.cmdline.ClassCommandDescriptor;
+import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.processor.CmdLineProcessor;
@@ -222,7 +222,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
     try {
       // WTF
       Class<T> clazz = (Class<T>)cmd.getClass();
-      ClassCommandDescriptor<T> descriptor = CommandDescriptor.create(clazz);
+      ClassDescriptor<T> descriptor = CommandDescriptor.create(clazz);
       CmdLineProcessor.Clazz<T> processor = new CmdLineProcessor.Clazz<T>(descriptor);
       StringBuilder s = new StringBuilder();
       for (String arg : args) {
@@ -272,7 +272,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
         case 4:
           try {
             Class<?> clazz = getClass();
-            ClassCommandDescriptor<?> descriptor = CommandDescriptor.create(clazz);
+            ClassDescriptor<?> descriptor = CommandDescriptor.create(clazz);
             out.print(descriptor.getUsage());
           }
           catch (IntrospectionException e) {

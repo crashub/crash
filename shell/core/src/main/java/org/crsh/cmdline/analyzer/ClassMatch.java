@@ -19,7 +19,7 @@
 
 package org.crsh.cmdline.analyzer;
 
-import org.crsh.cmdline.ClassCommandDescriptor;
+import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.ParameterBinding;
 
 import java.util.List;
@@ -28,13 +28,13 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ClassMatch<T> extends CommandMatch<T, ClassCommandDescriptor<T>, ParameterBinding.ClassField> {
+public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ParameterBinding.ClassField> {
 
   /** . */
-  private final ClassCommandDescriptor<T> descriptor;
+  private final ClassDescriptor<T> descriptor;
 
   public ClassMatch(
-    ClassCommandDescriptor<T> descriptor,
+    ClassDescriptor<T> descriptor,
     List<OptionMatch<ParameterBinding.ClassField>> optionMatches,
     List<ArgumentMatch<ParameterBinding.ClassField>> argumentMatches,
     String rest) {
@@ -45,7 +45,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassCommandDescriptor<T>, Pa
   }
 
   @Override
-  public ClassCommandDescriptor<T> getCommand() {
+  public ClassDescriptor<T> getCommand() {
     return descriptor;
   }
 }

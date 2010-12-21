@@ -38,8 +38,8 @@ import java.util.Set;
  */
 public abstract class CommandDescriptor<T, B extends ParameterBinding> {
 
-  public static <T> ClassCommandDescriptor<T> create(Class<T> type) throws IntrospectionException {
-    return new ClassCommandDescriptor<T>(type);
+  public static <T> ClassDescriptor<T> create(Class<T> type) throws IntrospectionException {
+    return new ClassDescriptor<T>(type);
   }
 
   /** . */

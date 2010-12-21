@@ -34,23 +34,23 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBinding.ClassField> {
+public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.ClassField> {
 
   /** . */
   private final Class<T> type;
 
   /** . */
-  private final Map<String, MethodCommandDescriptor> commandMap;
+  private final Map<String, MethodDescriptor> commandMap;
 
-  public ClassCommandDescriptor(Class<T> type) throws IntrospectionException {
+  public ClassDescriptor(Class<T> type) throws IntrospectionException {
     super(
       type.getSimpleName().toLowerCase(),
       description(type.getAnnotation(Description.class)),
       parameters(type));
 
     //
-    Map<String, MethodCommandDescriptor> commandMap = new HashMap<String, MethodCommandDescriptor>();
-    for (MethodCommandDescriptor command : commands(type)) {
+    Map<String, MethodDescriptor> commandMap = new HashMap<String, MethodDescriptor>();
+    for (MethodDescriptor command : commands(type)) {
       commandMap.put(command.getName(), command);
     }
 
@@ -64,11 +64,11 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
     return type;
   }
 
-  public Iterable<MethodCommandDescriptor> getCommands() {
+  public Iterable<MethodDescriptor> getCommands() {
     return commandMap.values();
   }
 
-  public MethodCommandDescriptor<?> getCommand(String name) {
+  public MethodDescriptor<?> getCommand(String name) {
     return commandMap.get(name);
   }
 
@@ -145,11 +145,11 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
     return parameters;
   }
 
-  private List<MethodCommandDescriptor<T>> commands(Class<?> introspected) throws IntrospectionException {
-    List<MethodCommandDescriptor<T>> commands;
+  private List<MethodDescriptor<T>> commands(Class<?> introspected) throws IntrospectionException {
+    List<MethodDescriptor<T>> commands;
     Class<?> superIntrospected = introspected.getSuperclass();
     if (superIntrospected == null) {
-      commands = new ArrayList<MethodCommandDescriptor<T>>();
+      commands = new ArrayList<MethodDescriptor<T>>();
     } else {
       commands = commands(superIntrospected);
       for (Method m : introspected.getDeclaredMethods()) {
@@ -182,7 +182,7 @@ public class ClassCommandDescriptor<T> extends CommandDescriptor<T, ParameterBin
             }
           }
           Description descriptionAnn = m.getAnnotation(Description.class);
-          commands.add(new MethodCommandDescriptor<T>(
+          commands.add(new MethodDescriptor<T>(
             this,
             m.getName().toLowerCase(),
             descriptionAnn != null ? descriptionAnn.value() : "",
