@@ -24,7 +24,6 @@ import junit.framework.TestCase;
 import org.crsh.cmdline.analyzer.Analyzer;
 import org.crsh.cmdline.analyzer.ArgumentMatch;
 import org.crsh.cmdline.analyzer.ClassMatch;
-import org.crsh.cmdline.analyzer.CommandMatch;
 import org.crsh.cmdline.analyzer.OptionMatch;
 
 import java.util.Arrays;
