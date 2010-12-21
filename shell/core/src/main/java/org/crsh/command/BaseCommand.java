@@ -27,7 +27,7 @@ import groovy.lang.MissingPropertyException;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
-import org.crsh.cmdline.processor.CmdLineProcessor;
+import org.crsh.cmdline.analyzer.Analyzer;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
 import org.kohsuke.args4j.CmdLineException;
@@ -223,7 +223,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
       // WTF
       Class<T> clazz = (Class<T>)cmd.getClass();
       ClassDescriptor<T> descriptor = CommandDescriptor.create(clazz);
-      CmdLineProcessor<T> processor = new CmdLineProcessor<T>(descriptor);
+      Analyzer<T> analyzer = new Analyzer<T>(descriptor);
       StringBuilder s = new StringBuilder();
       for (String arg : args) {
         if (s.length() > 0) {
@@ -231,7 +231,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
         }
         s.append(arg);
       }
-      processor.process(cmd, s.toString());
+      analyzer.analyze(s.toString()).process(cmd);
     }
     catch (Exception e) {
       throw new ScriptException(e.getMessage(), e);

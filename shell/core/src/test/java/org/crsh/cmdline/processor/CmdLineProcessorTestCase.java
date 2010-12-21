@@ -24,6 +24,7 @@ import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Option;
+import org.crsh.cmdline.analyzer.Analyzer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,15 +42,15 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
+    Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    conf.process(a, "-o foo");
+    analyzer.analyze("-o foo").process(a);
     assertEquals("foo", a.s);
 
     try {
       a = new A();
-      conf.process(a, "");
+      analyzer.analyze("").process(a);
       fail();
     }
     catch (SyntaxException e) {
@@ -62,14 +63,14 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
+    Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    conf.process(a, "-o foo");
+    analyzer.analyze("-o foo").process(a);
     assertEquals("foo", a.s);
 
     a = new A();
-    conf.process(a, "");
+    analyzer.analyze("").process(a);
     assertEquals(null, a.s);
   }
 
@@ -79,19 +80,19 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
+    Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    conf.process(a, "foo");
+    analyzer.analyze("foo").process(a);
     assertEquals("foo", a.s);
 
     a = new A();
-    conf.process(a, "foo bar");
+    analyzer.analyze("foo bar").process(a);
     assertEquals("foo", a.s);
 
     try {
       a = new A();
-      conf.process(a, "");
+      analyzer.analyze("").process(a);
       fail();
     }
     catch (SyntaxException e) {
@@ -104,18 +105,18 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
+    Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    conf.process(a, "foo");
+    analyzer.analyze("foo").process(a);
     assertEquals("foo", a.s);
 
     a = new A();
-    conf.process(a, "foo bar");
+    analyzer.analyze("foo bar").process(a);
     assertEquals("foo", a.s);
 
     a = new A();
-    conf.process(a, "");
+    analyzer.analyze("").process(a);
     assertEquals(null, a.s);
   }
 
@@ -125,18 +126,18 @@ public class CmdLineProcessorTestCase extends TestCase {
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
+    Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    conf.process(a, "");
+    analyzer.analyze("").process(a);
     assertEquals(null , a.s);
 
     a = new A();
-    conf.process(a, "foo");
+    analyzer.analyze("foo").process(a);
     assertEquals(Arrays.asList("foo"), a.s);
 
     a = new A();
-    conf.process(a, "foo bar");
+    analyzer.analyze("foo bar").process(a);
     assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
 
@@ -146,22 +147,22 @@ public class CmdLineProcessorTestCase extends TestCase {
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
+    Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
     try {
-      conf.process(a, "");
+      analyzer.analyze("").process(a);
       fail();
     }
     catch (SyntaxException expected) {
     }
 
     a = new A();
-    conf.process(a, "foo");
+    analyzer.analyze("foo").process(a);
     assertEquals(Arrays.asList("foo"), a.s);
 
     a = new A();
-    conf.process(a, "foo bar");
+    analyzer.analyze("foo bar").process(a);
     assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
 }

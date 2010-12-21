@@ -21,6 +21,7 @@ package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.ParameterBinding;
+import org.crsh.cmdline.processor.SyntaxException;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract  class CommandMatch<T, D extends CommandDescriptor<T, B>, B extends ParameterBinding> {
+public abstract  class CommandMatch<C, D extends CommandDescriptor<C, B>, B extends ParameterBinding> {
 
   /** . */
   private final List<OptionMatch<B>> optionMatches;
@@ -46,6 +47,8 @@ public abstract  class CommandMatch<T, D extends CommandDescriptor<T, B>, B exte
   }
 
   public abstract D getDescriptor();
+
+  public abstract void process(C command) throws SyntaxException;
 
   public List<OptionMatch<B>> getOptionMatches() {
     return optionMatches;
