@@ -115,7 +115,7 @@ public class CommandInfoTestCase extends TestCase {
     }
 
     ClassDescriptor<A> a = CommandDescriptor.create(A.class);
-    MethodDescriptor<?> b = a.getCommand("b");
+    MethodDescriptor<?> b = a.getMethod("b");
     assertNotNull(b);
 
   }

@@ -41,7 +41,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
+    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
 
     A a = new A();
     conf.process(a, "-o foo");
@@ -62,7 +62,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
+    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
 
     A a = new A();
     conf.process(a, "-o foo");
@@ -79,7 +79,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
+    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
 
     A a = new A();
     conf.process(a, "foo");
@@ -104,7 +104,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
+    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
 
     A a = new A();
     conf.process(a, "foo");
@@ -125,7 +125,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
+    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
 
     A a = new A();
     conf.process(a, "");
@@ -146,7 +146,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    CmdLineProcessor.Clazz<A> conf = new CmdLineProcessor.Clazz<A>(desc);
+    CmdLineProcessor<A> conf = new CmdLineProcessor<A>(desc);
 
     A a = new A();
     try {

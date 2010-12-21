@@ -40,7 +40,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
   private final Class<T> type;
 
   /** . */
-  private final Map<String, MethodDescriptor> commandMap;
+  private final Map<String, MethodDescriptor<T>> commandMap;
 
   public ClassDescriptor(Class<T> type) throws IntrospectionException {
     super(
@@ -49,8 +49,8 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
       parameters(type));
 
     //
-    Map<String, MethodDescriptor> commandMap = new HashMap<String, MethodDescriptor>();
-    for (MethodDescriptor command : commands(type)) {
+    Map<String, MethodDescriptor<T>> commandMap = new HashMap<String, MethodDescriptor<T>>();
+    for (MethodDescriptor<T> command : commands(type)) {
       commandMap.put(command.getName(), command);
     }
 
@@ -64,11 +64,11 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
     return type;
   }
 
-  public Iterable<MethodDescriptor> getCommands() {
+  public Iterable<MethodDescriptor<T>> getCommands() {
     return commandMap.values();
   }
 
-  public MethodDescriptor<?> getCommand(String name) {
+  public MethodDescriptor<T> getMethod(String name) {
     return commandMap.get(name);
   }
 

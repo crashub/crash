@@ -23,6 +23,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.cmdline.analyzer.Analyzer;
 import org.crsh.cmdline.analyzer.ArgumentMatch;
+import org.crsh.cmdline.analyzer.ClassMatch;
 import org.crsh.cmdline.analyzer.CommandMatch;
 import org.crsh.cmdline.analyzer.OptionMatch;
 
@@ -51,8 +52,8 @@ public class ParserTestCase extends TestCase {
     private <T> Test(Class<T> type, String s) {
       try {
         ClassDescriptor<T> command = CommandDescriptor.create(type);
-        Analyzer<T, ClassDescriptor<T>, ParameterBinding.ClassField> parser = Analyzer.create(command);
-        CommandMatch<T, ClassDescriptor<T>, ParameterBinding.ClassField> match = parser.analyze(s);
+        Analyzer<T> parser = new Analyzer<T>(command);
+        ClassMatch<T> match = (ClassMatch<T>)parser.analyze(s);
 
         //
         this.optionMatches = new LinkedList<OptionMatch<ParameterBinding.ClassField>>(match.getOptionMatches());
@@ -185,5 +186,16 @@ public class ParserTestCase extends TestCase {
 
     // Partial matching
     new Test(A.class, "-p foo").assertOption("p", "foo", null).assertDone();
+  }
+
+  public void testMethod() throws Exception {
+
+    class A {
+      @Command
+      void m() {
+      }
+    }
+    // new Test(A.class, "m").assertDone();
+
   }
 }

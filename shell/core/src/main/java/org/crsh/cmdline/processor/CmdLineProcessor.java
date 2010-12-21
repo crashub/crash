@@ -20,12 +20,12 @@
 package org.crsh.cmdline.processor;
 
 import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.analyzer.Analyzer;
 import org.crsh.cmdline.analyzer.ArgumentMatch;
+import org.crsh.cmdline.analyzer.ClassMatch;
 import org.crsh.cmdline.analyzer.CommandMatch;
 import org.crsh.cmdline.analyzer.OptionMatch;
 import org.crsh.cmdline.analyzer.ParameterMatch;
@@ -39,38 +39,37 @@ import java.util.Set;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CmdLineProcessor<T, C extends CommandDescriptor<T, B>, B extends ParameterBinding> {
+public class CmdLineProcessor<T> {
 
   /** . */
-  protected final CommandDescriptor<T, B> descriptor;
+  protected final ClassDescriptor<T> descriptor;
 
   /** . */
-  protected final Analyzer<T, C, B> analyzer;
+  protected final Analyzer<T> analyzer;
 
-  public CmdLineProcessor(C commandDescriptor) {
-    this.descriptor = commandDescriptor;
-    this.analyzer = Analyzer.create(commandDescriptor);
+  public CmdLineProcessor(ClassDescriptor<T> descriptor) {
+    this.descriptor = descriptor;
+    this.analyzer = new Analyzer<T>(descriptor);
   }
 
-  public static class Clazz<T> extends CmdLineProcessor<T, ClassDescriptor<T>, ParameterBinding.ClassField> {
+  public void process(T object, String s) throws CmdLineException {
 
-    public Clazz(ClassDescriptor<T> commandDescriptor) {
-      super(commandDescriptor);
-    }
+    //
+    Set<ParameterDescriptor<?>> foo = newHashSet();
+    foo.addAll(descriptor.getArguments());
+    foo.addAll(descriptor.getOptions());
 
-    public void process(T object, String s) throws CmdLineException {
+    //
+    List<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> invocation = newArrayList();
+    CommandMatch<T, ?, ?> atch = analyzer.analyze(s);
+
+    //
+    if (atch instanceof ClassMatch<?>) {
+
+      ClassMatch<T> classMatch = (ClassMatch<T>)atch;
 
       //
-      Set<ParameterDescriptor<?>> foo = newHashSet();
-      foo.addAll(descriptor.getArguments());
-      foo.addAll(descriptor.getOptions());
-
-      //
-      List<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> invocation = newArrayList();
-      CommandMatch<T, ClassDescriptor<T>, ParameterBinding.ClassField> iterator = analyzer.analyze(s);
-
-      //
-      for (OptionMatch<ParameterBinding.ClassField> optionMatch : iterator.getOptionMatches()) {
+      for (OptionMatch<ParameterBinding.ClassField> optionMatch : classMatch.getOptionMatches()) {
         if (!foo.remove(optionMatch.getParameter())) {
           throw new SyntaxException();
         }
@@ -78,7 +77,7 @@ public abstract class CmdLineProcessor<T, C extends CommandDescriptor<T, B>, B e
       }
 
       //
-      for (ArgumentMatch<ParameterBinding.ClassField> argumentMatch : iterator.getArgumentMatches()) {
+      for (ArgumentMatch<ParameterBinding.ClassField> argumentMatch : classMatch.getArgumentMatches()) {
         if (!foo.remove(argumentMatch.getParameter())) {
           throw new SyntaxException();
         }
@@ -118,6 +117,8 @@ public abstract class CmdLineProcessor<T, C extends CommandDescriptor<T, B>, B e
           throw new RuntimeException(e);
         }
       }
+    } else {
+      throw new UnsupportedOperationException();
     }
   }
 }

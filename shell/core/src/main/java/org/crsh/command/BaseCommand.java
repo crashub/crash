@@ -223,7 +223,7 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
       // WTF
       Class<T> clazz = (Class<T>)cmd.getClass();
       ClassDescriptor<T> descriptor = CommandDescriptor.create(clazz);
-      CmdLineProcessor.Clazz<T> processor = new CmdLineProcessor.Clazz<T>(descriptor);
+      CmdLineProcessor<T> processor = new CmdLineProcessor<T>(descriptor);
       StringBuilder s = new StringBuilder();
       for (String arg : args) {
         if (s.length() > 0) {
