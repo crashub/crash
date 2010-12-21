@@ -28,7 +28,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract  class CommandMatch<T, C extends CommandDescriptor<T, B>, B extends ParameterBinding> {
+public abstract  class CommandMatch<T, D extends CommandDescriptor<T, B>, B extends ParameterBinding> {
 
   /** . */
   private final List<OptionMatch<B>> optionMatches;
@@ -45,7 +45,7 @@ public abstract  class CommandMatch<T, C extends CommandDescriptor<T, B>, B exte
     this.rest = rest;
   }
 
-  public abstract C getCommand();
+  public abstract D getDescriptor();
 
   public List<OptionMatch<B>> getOptionMatches() {
     return optionMatches;

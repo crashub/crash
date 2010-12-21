@@ -75,7 +75,7 @@ public class ParserTestCase extends TestCase {
           this.optionMatches = new LinkedList<OptionMatch<?>>(methodMatch.getOptionMatches());
           this.argumentMatches = new LinkedList<ArgumentMatch<?>>(methodMatch.getArgumentMatches());
           this.rest = match.getRest();
-          this.methodName = methodMatch.getCommand().getName();
+          this.methodName = methodMatch.getDescriptor().getName();
         }
 
       }

@@ -54,7 +54,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
   }
 
   @Override
-  public MethodDescriptor<T> getCommand() {
+  public MethodDescriptor<T> getDescriptor() {
     return descriptor;
   }
 }

@@ -61,12 +61,12 @@ public class CmdLineProcessor<T> {
 
     //
     List<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> invocation = newArrayList();
-    CommandMatch<T, ?, ?> atch = analyzer.analyze(s);
+    CommandMatch<T, ?, ?> match = analyzer.analyze(s);
 
     //
-    if (atch instanceof ClassMatch<?>) {
+    if (match instanceof ClassMatch<?>) {
 
-      ClassMatch<T> classMatch = (ClassMatch<T>)atch;
+      ClassMatch<T> classMatch = (ClassMatch<T>)match;
 
       //
       for (OptionMatch<ParameterBinding.ClassField> optionMatch : classMatch.getOptionMatches()) {

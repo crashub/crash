@@ -45,7 +45,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
   }
 
   @Override
-  public ClassDescriptor<T> getCommand() {
+  public ClassDescriptor<T> getDescriptor() {
     return descriptor;
   }
 }
