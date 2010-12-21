@@ -190,5 +190,32 @@ public class CmdLineProcessorTestCase extends TestCase {
     assertEquals("foo", a.s);
     assertEquals("bar", a.o);
     assertEquals("juu", a.a);
+
+    //
+    a = new A();
+    analyzer.analyze("m -o bar juu").process(a);
+    assertEquals(null, a.s);
+    assertEquals("bar", a.o);
+    assertEquals("juu", a.a);
+
+    //
+    a = new A();
+    analyzer.analyze("m juu").process(a);
+    assertEquals(null, a.s);
+    assertEquals(null, a.o);
+    assertEquals("juu", a.a);
+
+    //
+    a = new A();
+    analyzer.analyze("m -o bar").process(a);
+    assertEquals(null, a.s);
+    assertEquals("bar", a.o);
+    assertEquals(null, a.a);
+
+    a = new A();
+    analyzer.analyze("m").process(a);
+    assertEquals(null, a.s);
+    assertEquals(null, a.o);
+    assertEquals(null, a.a);
   }
 }

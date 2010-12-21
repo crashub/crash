@@ -106,20 +106,27 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
     // Prepare invocation
     MethodDescriptor<T> descriptor = getDescriptor();
     Method m = descriptor.getMethod();
-    Object[] mArgs = new Object[m.getParameterTypes().length];
+    Class<?>[] parameterTypes = m.getParameterTypes();
+    Object[] mArgs = new Object[parameterTypes.length];
     for (int i = 0;i < mArgs.length;i++) {
       ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument> parameterMatch = used.get(i);
-      if (parameterMatch == null) {
-        throw new UnsupportedOperationException("todo");
-      }
-      ParameterDescriptor<ParameterBinding.MethodArgument> parameter = parameterMatch.getParameter();
 
-      // Copied
+      //
       Object v;
-      if (parameter.getType().getMultiplicity() == Multiplicity.LIST) {
-        v = parameterMatch.getValues();
-      } else {
-        v = parameterMatch.getValues().get(0);
+      if (parameterMatch == null) {
+        if (parameterTypes[i].isPrimitive()) {
+          throw new UnsupportedOperationException("Todo : primitive handling");
+        } else {
+          v = null;
+        }
+      }
+      else {
+        ParameterDescriptor<ParameterBinding.MethodArgument> parameter = parameterMatch.getParameter();
+        if (parameter.getType().getMultiplicity() == Multiplicity.LIST) {
+          v = parameterMatch.getValues();
+        } else {
+          v = parameterMatch.getValues().get(0);
+        }
       }
 
       //
