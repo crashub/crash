@@ -20,6 +20,7 @@
 package org.crsh.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +41,10 @@ public class Utils {
 
   public static <E> HashSet<E> newHashSet() {
     return new HashSet<E>();
+  }
+
+  public static <K, V> HashMap<K, V> newHashMap() {
+    return new HashMap<K, V>();
   }
 
   public static <E>List<E> list(Iterable<E> iterable) {

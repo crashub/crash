@@ -20,9 +20,20 @@
 package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.MethodDescriptor;
+import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterBinding;
+import org.crsh.cmdline.ParameterDescriptor;
+import org.crsh.cmdline.processor.CmdInvocationException;
+import org.crsh.cmdline.processor.CmdLineException;
+import org.crsh.cmdline.processor.CmdSyntaxException;
 
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.crsh.util.Utils.newHashMap;
+import static org.crsh.util.Utils.newHashSet;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -59,11 +70,71 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
   }
 
   @Override
-  public void process(T command) {
+  public void process(T command) throws CmdLineException {
 
+    //
+    Map<Integer, ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument>> used = newHashMap();
+    Set<ParameterDescriptor<?>> unused = newHashSet();
+    unused.addAll(descriptor.getArguments());
+    unused.addAll(descriptor.getOptions());
 
-    throw new UnsupportedOperationException();
+    //
+    for (OptionMatch<ParameterBinding.MethodArgument> optionMatch : getOptionMatches()) {
+      if (!unused.remove(optionMatch.getParameter())) {
+        throw new CmdSyntaxException();
+      }
+      used.put(optionMatch.getParameter().getBinding().getIndex(), optionMatch);
+    }
 
+    //
+    for (ArgumentMatch<ParameterBinding.MethodArgument> argumentMatch : getArgumentMatches()) {
+      if (!unused.remove(argumentMatch.getParameter())) {
+        throw new CmdSyntaxException();
+      }
+      used.put(argumentMatch.getParameter().getBinding().getIndex(), argumentMatch);
+    }
 
+    // Should be better with required / non required
+    for (ParameterDescriptor<?> nonSatisfied : unused) {
+      if (!nonSatisfied.isRequired()) {
+        // Ok
+      } else {
+        throw new CmdSyntaxException("Non satisfied " + nonSatisfied);
+      }
+    }
+
+    // Prepare invocation
+    MethodDescriptor<T> descriptor = getDescriptor();
+    Method m = descriptor.getMethod();
+    Object[] mArgs = new Object[m.getParameterTypes().length];
+    for (int i = 0;i < mArgs.length;i++) {
+      ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument> parameterMatch = used.get(i);
+      if (parameterMatch == null) {
+        throw new UnsupportedOperationException("todo");
+      }
+      ParameterDescriptor<ParameterBinding.MethodArgument> parameter = parameterMatch.getParameter();
+
+      // Copied
+      Object v;
+      if (parameter.getType().getMultiplicity() == Multiplicity.LIST) {
+        v = parameterMatch.getValues();
+      } else {
+        v = parameterMatch.getValues().get(0);
+      }
+
+      //
+      mArgs[i] = v;
+    }
+
+    // First configure command
+    owner.process(command);
+
+    //
+    try {
+      m.invoke(command, mArgs);
+    }
+    catch (Exception e) {
+      throw new CmdInvocationException(e.getMessage(), e);
+    }
   }
 }

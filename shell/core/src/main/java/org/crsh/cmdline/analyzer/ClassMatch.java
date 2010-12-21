@@ -23,7 +23,8 @@ import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterBinding;
 import org.crsh.cmdline.ParameterDescriptor;
-import org.crsh.cmdline.processor.SyntaxException;
+import org.crsh.cmdline.processor.CmdLineException;
+import org.crsh.cmdline.processor.CmdSyntaxException;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -58,7 +59,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
   }
 
   @Override
-  public void process(T command) throws SyntaxException {
+  public void process(T command) throws CmdLineException {
     List<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> used = newArrayList();
     Set<ParameterDescriptor<?>> unused = newHashSet();
     unused.addAll(descriptor.getArguments());
@@ -67,7 +68,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
     //
     for (OptionMatch<ParameterBinding.ClassField> optionMatch : getOptionMatches()) {
       if (!unused.remove(optionMatch.getParameter())) {
-        throw new SyntaxException();
+        throw new CmdSyntaxException();
       }
       used.add(optionMatch);
     }
@@ -75,7 +76,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
     //
     for (ArgumentMatch<ParameterBinding.ClassField> argumentMatch : getArgumentMatches()) {
       if (!unused.remove(argumentMatch.getParameter())) {
-        throw new SyntaxException();
+        throw new CmdSyntaxException();
       }
       used.add(argumentMatch);
     }
@@ -85,7 +86,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
       if (!nonSatisfied.isRequired()) {
         // Ok
       } else {
-        throw new SyntaxException("Non satisfied " + nonSatisfied);
+        throw new CmdSyntaxException("Non satisfied " + nonSatisfied);
       }
     }
 

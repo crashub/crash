@@ -22,6 +22,7 @@ package org.crsh.cmdline.processor;
 import junit.framework.TestCase;
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.analyzer.Analyzer;
@@ -53,7 +54,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       analyzer.analyze("").process(a);
       fail();
     }
-    catch (SyntaxException e) {
+    catch (CmdSyntaxException e) {
     }
   }
 
@@ -95,7 +96,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       analyzer.analyze("").process(a);
       fail();
     }
-    catch (SyntaxException e) {
+    catch (CmdSyntaxException e) {
     }
   }
 
@@ -154,7 +155,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       analyzer.analyze("").process(a);
       fail();
     }
-    catch (SyntaxException expected) {
+    catch (CmdSyntaxException expected) {
     }
 
     a = new A();
@@ -164,5 +165,30 @@ public class CmdLineProcessorTestCase extends TestCase {
     a = new A();
     analyzer.analyze("foo bar").process(a);
     assertEquals(Arrays.asList("foo", "bar"), a.s);
+  }
+
+  public static class A {
+    @Option(names = "s")
+    String s;
+    @Command
+    public void m(@Option(names = "o") String o, @Argument String a) {
+      this.o = o;
+      this.a = a;
+    }
+    String o;
+    String a;
+  }
+
+  public void testMethodInvocation() throws Exception {
+
+    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    Analyzer<A> analyzer = new Analyzer<A>(desc);
+
+    //
+    A a = new A();
+    analyzer.analyze("-s foo m -o bar juu").process(a);
+    assertEquals("foo", a.s);
+    assertEquals("bar", a.o);
+    assertEquals("juu", a.a);
   }
 }

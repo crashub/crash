@@ -173,7 +173,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
                 descriptionAnn = (Description)parameterAnnotation;
               }
             }
-            ParameterBinding.MethodArgument binding = new ParameterBinding.MethodArgument(m, i);
+            ParameterBinding.MethodArgument binding = new ParameterBinding.MethodArgument(i);
             ParameterDescriptor<ParameterBinding.MethodArgument> parameter = create(binding, parameterType, descriptionAnn, argumentAnn, optionAnn);
             if (parameter != null) {
               parameters.add(parameter);
@@ -184,6 +184,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
           Description descriptionAnn = m.getAnnotation(Description.class);
           commands.add(new MethodDescriptor<T>(
             this,
+            m,
             m.getName().toLowerCase(),
             descriptionAnn != null ? descriptionAnn.value() : "",
             parameters));

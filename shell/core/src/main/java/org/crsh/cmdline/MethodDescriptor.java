@@ -19,6 +19,7 @@
 
 package org.crsh.cmdline;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -30,11 +31,24 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, ParameterBinding.M
   /** . */
   private final ClassDescriptor<T> owner;
 
-  MethodDescriptor(ClassDescriptor<T> owner, String name, String description, List<ParameterDescriptor<ParameterBinding.MethodArgument>> parameters) throws IntrospectionException {
+  /** . */
+  private final Method method;
+
+  MethodDescriptor(
+    ClassDescriptor<T> owner,
+    Method method,
+    String name,
+    String description,
+    List<ParameterDescriptor<ParameterBinding.MethodArgument>> parameters) throws IntrospectionException {
     super(name, description, parameters);
 
     //
     this.owner = owner;
+    this.method = method;
+  }
+
+  public Method getMethod() {
+    return method;
   }
 
   public ClassDescriptor<T> getOwner() {

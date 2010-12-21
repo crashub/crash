@@ -17,41 +17,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline;
-
-import java.lang.reflect.Field;
+package org.crsh.cmdline.processor;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ParameterBinding {
+public class CmdSyntaxException extends CmdLineException {
 
-  public static class ClassField extends ParameterBinding {
-
-    /** . */
-    private final Field field;
-
-    public ClassField(Field field) {
-      this.field = field;
-    }
-
-    public Field getField() {
-      return field;
-    }
+  public CmdSyntaxException() {
   }
 
-  public static class MethodArgument extends ParameterBinding {
+  public CmdSyntaxException(String message) {
+    super(message);
+  }
 
-    /** . */
-    private final int index;
+  public CmdSyntaxException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public MethodArgument(int index) {
-      this.index = index;
-    }
-
-    public int getIndex() {
-      return index;
-    }
+  public CmdSyntaxException(Throwable cause) {
+    super(cause);
   }
 }

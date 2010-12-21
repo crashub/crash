@@ -24,7 +24,7 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.cmdline.processor.SyntaxException;
+import org.crsh.cmdline.processor.CmdSyntaxException;
 import org.crsh.command.ClassCommand;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
@@ -111,7 +111,7 @@ public class ShellCommandTestCase extends TestCase {
       fail();
     }
     catch (ScriptException e) {
-      assert(e.getCause() instanceof SyntaxException);
+      assert(e.getCause() instanceof CmdSyntaxException);
     }
   }
 

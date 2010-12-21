@@ -23,20 +23,20 @@ package org.crsh.cmdline.processor;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SyntaxException extends CmdLineException {
+public class CmdInvocationException extends CmdLineException {
 
-  public SyntaxException() {
+  public CmdInvocationException() {
   }
 
-  public SyntaxException(String message) {
+  public CmdInvocationException(String message) {
     super(message);
   }
 
-  public SyntaxException(String message, Throwable cause) {
+  public CmdInvocationException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public SyntaxException(Throwable cause) {
+  public CmdInvocationException(Throwable cause) {
     super(cause);
   }
 }
