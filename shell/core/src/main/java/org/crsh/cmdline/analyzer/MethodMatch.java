@@ -31,26 +31,22 @@ import java.util.List;
 public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, ParameterBinding.MethodArgument> {
 
   /** . */
-  private final List<OptionMatch<ParameterBinding.ClassField>> sharedOptionMatches;
-
-  /** . */
   private final MethodDescriptor<T> descriptor;
 
+  /** . */
+  private final ClassMatch<T> owner;
+
   public MethodMatch(
+    ClassMatch<T> owner,
     MethodDescriptor<T> descriptor,
-    List<OptionMatch<ParameterBinding.ClassField>> sharedOptionMatches,
     List<OptionMatch<ParameterBinding.MethodArgument>> optionMatches,
     List<ArgumentMatch<ParameterBinding.MethodArgument>> argumentMatches,
     String rest) {
     super(optionMatches, argumentMatches, rest);
 
     //
-    this.sharedOptionMatches = sharedOptionMatches;
+    this.owner = owner;
     this.descriptor = descriptor;
-  }
-
-  public List<OptionMatch<ParameterBinding.ClassField>> getSharedOptionMatches() {
-    return sharedOptionMatches;
   }
 
   @Override
@@ -58,8 +54,16 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
     return descriptor;
   }
 
+  public ClassMatch<T> getOwner() {
+    return owner;
+  }
+
   @Override
   public void process(T command) {
+
+
+    throw new UnsupportedOperationException();
+
 
   }
 }

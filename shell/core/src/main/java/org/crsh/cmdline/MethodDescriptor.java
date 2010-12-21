@@ -37,6 +37,10 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, ParameterBinding.M
     this.owner = owner;
   }
 
+  public ClassDescriptor<T> getOwner() {
+    return owner;
+  }
+
   @Override
   public Class<T> getType() {
     return owner.getType();
