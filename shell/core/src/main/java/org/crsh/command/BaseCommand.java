@@ -20,10 +20,7 @@
 package org.crsh.command;
 
 import com.beust.jcommander.JCommander;
-import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
-import groovy.lang.MissingMethodException;
-import groovy.lang.MissingPropertyException;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
@@ -47,7 +44,7 @@ import java.util.regex.Pattern;
  * @param <C> the consumed type
  * @param <P> the produced type
  */
-public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements ShellCommand<C, P> {
+public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCommand<C, P> {
 
   private static final class MetaData {
 
@@ -149,51 +146,6 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
     return consumedType;
   }
 
-  @Override
-  public final Object invokeMethod(String name, Object args) {
-    try {
-      return super.invokeMethod(name, args);
-    }
-    catch (MissingMethodException e) {
-      Object o = context.getAttributes().get(name);
-      if (o instanceof Closure) {
-        Closure closure = (Closure)o;
-        if (args instanceof Object[]) {
-          Object[] array = (Object[])args;
-          if (array.length == 0) {
-            return closure.call();
-          } else {
-            return closure.call(array);
-          }
-        } else {
-          return closure.call(args);
-        }
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  @Override
-  public final Object getProperty(String property) {
-    try {
-      return super.getProperty(property);
-    }
-    catch (MissingPropertyException e) {
-      return context.getAttributes().get(property);
-    }
-  }
-
-  @Override
-  public final void setProperty(String property, Object newValue) {
-    try {
-      super.setProperty(property, newValue);
-    }
-    catch (MissingPropertyException e) {
-      context.getAttributes().put(property, newValue);
-    }
-  }
-
   /**
    * Returns true if the command wants its arguments to be unquoted.
    *
@@ -236,6 +188,11 @@ public abstract class BaseCommand<C, P> extends GroovyObjectSupport implements S
     catch (Exception e) {
       throw new ScriptException(e.getMessage(), e);
     }
+  }
+
+  @Override
+  protected final CommandContext<?, ?> getContext() {
+    return context;
   }
 
   public final void execute(CommandContext<C, P> context, String... args) throws ScriptException {
