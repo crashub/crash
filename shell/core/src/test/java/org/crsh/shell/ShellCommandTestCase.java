@@ -26,9 +26,9 @@ import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.cmdline.processor.CmdSyntaxException;
 import org.crsh.command.ClassCommand;
-import org.crsh.command.CommandProvider;
-import org.crsh.command.ScriptException;
+import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
+import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.GroovyScriptCommand;
 import org.kohsuke.args4j.CmdLineException;
 
@@ -106,17 +106,33 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    CommandProvider provider = (CommandProvider)clazz.newInstance();
-    ShellCommand cmd = provider.create("-s", "abc");
+    ShellCommand provider = (ShellCommand)clazz.newInstance();
+    CommandInvoker cmd = provider.createInvoker("-s", "abc");
     assertEquals("abc", new TestCommandContext().execute(cmd, "-s", "abc"));
     try {
-      cmd = provider.create();
+      cmd = provider.createInvoker();
       new TestCommandContext().execute(cmd);
       fail();
     }
     catch (ScriptException e) {
       assert(e.getCause() instanceof CmdSyntaxException);
     }
+  }
+
+  public void testContextAccessFromCommandClassCmdLine() throws Exception {
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+      "@org.crsh.cmdline.Command\n" +
+      "public Object main() {" +
+      "return juu;" +
+      "}" +
+      "}");
+
+    //
+    ShellCommand provider = (ShellCommand)clazz.newInstance();
+    CommandInvoker cmd = provider.createInvoker();
+    TestCommandContext<Void, Void> ctx = new TestCommandContext();
+    ctx.getAttributes().put("juu", "daa");
+    assertEquals("daa", ctx.execute(cmd));
   }
 
   public void testArgumentInjectionInCommandClassArgs4j() throws Exception {
@@ -154,8 +170,8 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    CommandProvider provider = (CommandProvider)clazz.newInstance();
-    ShellCommand cmd = provider.create("b");
+    ShellCommand provider = (ShellCommand)clazz.newInstance();
+    CommandInvoker cmd = provider.createInvoker("b");
     assertEquals("b", new TestCommandContext().execute(cmd, "b"));
   }
 
@@ -168,8 +184,8 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    CommandProvider provider = (CommandProvider)clazz.newInstance();
-    ShellCommand cmd = provider.create();
+    ShellCommand provider = (ShellCommand)clazz.newInstance();
+    CommandInvoker cmd = provider.createInvoker();
     assertEquals("foo", new TestCommandContext().execute(cmd));
   }
 
@@ -239,7 +255,7 @@ public class ShellCommandTestCase extends TestCase {
 
   public void testContextAccessInScript() throws Exception {
     Class clazz = loader.parseClass("System.out.println('bar:' + bar) ; return bar;");
-    ShellCommand script = (ShellCommand)clazz.newInstance();
+    CommandInvoker script = (CommandInvoker)clazz.newInstance();
     TestCommandContext ctx = new TestCommandContext();
     ctx.getAttributes().put("bar", "bar_value");
     assertEquals("bar_value", ctx.execute(script));
@@ -247,13 +263,13 @@ public class ShellCommandTestCase extends TestCase {
 
   public void testArgumentAccessInScript() throws Exception {
     Class clazz = loader.parseClass("return args[0];");
-    ShellCommand script = (ShellCommand)clazz.newInstance();
+    CommandInvoker script = (CommandInvoker)clazz.newInstance();
     assertEquals("arg_value", new TestCommandContext().execute(script, "arg_value"));
   }
 
   public void testArgumentAccessInClosure() throws Exception {
     Class clazz = loader.parseClass("{ arg -> return arg };");
-    ShellCommand script = (ShellCommand)clazz.newInstance();
+    CommandInvoker script = (CommandInvoker)clazz.newInstance();
     assertEquals("arg_value", new TestCommandContext().execute(script, "arg_value"));
   }
 }

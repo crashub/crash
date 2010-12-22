@@ -20,7 +20,7 @@
 package org.crsh.shell;
 
 import org.crsh.command.CommandContext;
-import org.crsh.command.ShellCommand;
+import org.crsh.command.CommandInvoker;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.LineFeedWriter;
 
@@ -46,13 +46,13 @@ public class TestCommandContext<C, P> implements CommandContext<C, P> {
   private LinkedList<P> products;
 
   /** . */
-  private Map<String, Object> properties;
+  private Map<String, Object> attributes;
 
   public Map<String, Object> getAttributes() {
-    if (properties == null) {
-      properties = new HashMap<String, Object>();
+    if (attributes == null) {
+      attributes = new HashMap<String, Object>();
     }
-    return properties;
+    return attributes;
   }
 
   public String readLine(String msg, boolean echo) {
@@ -85,7 +85,7 @@ public class TestCommandContext<C, P> implements CommandContext<C, P> {
     return products;
   }
 
-  public String execute(ShellCommand<C, P> command, String... args) {
+  public String execute(CommandInvoker<C, P> command, String... args) {
     if (buffer != null) {
       buffer.getBuffer().setLength(0);
     }

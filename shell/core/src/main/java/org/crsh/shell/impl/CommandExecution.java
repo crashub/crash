@@ -19,7 +19,6 @@
 
 package org.crsh.shell.impl;
 
-import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;

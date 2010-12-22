@@ -37,7 +37,7 @@ import java.lang.reflect.Type;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CRaSHCommand extends GroovyCommand implements CommandProvider {
+public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand {
 
   /** . */
   private CommandContext context;
@@ -83,7 +83,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements CommandProvi
     return context;
   }
 
-  public ShellCommand<?, ?> create(String... args) {
+  public CommandInvoker<?, ?> createInvoker(String... args) {
     if (args == null) {
       throw new NullPointerException();
     }
@@ -105,7 +105,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements CommandProvi
 
     //
     if (match != null) {
-      return new ShellCommand() {
+      return new CommandInvoker() {
 
         Class consumedType = Void.class;
         Class producedType = Void.class;
@@ -134,6 +134,9 @@ public abstract class CRaSHCommand extends GroovyCommand implements CommandProvi
           CommandContext commandContext,
           String... args) throws ScriptException {
 
+          //
+          CRaSHCommand.this.context = commandContext;
+
           try {
             InvocationContext invocationContext = new InvocationContext();
             invocationContext.setAttribute(CommandContext.class, commandContext);
@@ -143,10 +146,11 @@ public abstract class CRaSHCommand extends GroovyCommand implements CommandProvi
             if (o != null) {
               commandContext.getWriter().print(o);
             }
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             e.printStackTrace();
             throw new ScriptException(e.getMessage(), e);
+          } finally {
+            CRaSHCommand.this.context = null;
           }
         }
 

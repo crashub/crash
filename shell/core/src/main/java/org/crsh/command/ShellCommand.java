@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,47 +16,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.crsh.command;
 
-import org.crsh.shell.io.ShellPrinter;
-
 /**
- * The base interface for a shell command.
+ * <p>The shell command allows a single source to provide a customized invoker according to the context
+ * of the arguments. More importantly it allows to decouple the obtention of a command related to its
+ * arguments from the actual execution of the command. This somewhat matters because the command execution
+ * pipeline has notion of consumed and produced types, thanks to this, the consumed and produced
+ * types can vary according to the arguments.</p>
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
- * @param <C> the consumed type
- * @param <P> the produced type
  */
-public interface ShellCommand<C, P> {
+public interface ShellCommand {
 
   /**
-   * Print command usage.
+   * Provides an invoker for the specified arguments.
    *
-   * @param printer the printer
+   * @param args the arguments
+   * @return the command to provide
    */
-  void usage(ShellPrinter printer);
-
-  /**
-   *
-   * @param context the command execution context
-   * @param args the command arguments
-   * @throws ScriptException any script exception
-   */
-  void execute(CommandContext<C, P> context, String... args) throws ScriptException;
-
-  /**
-   * Returns the class of the produced type.
-   *
-   * @return the produced type
-   */
-  Class<P> getProducedType();
-
-  /**
-   * Returns the class of the consumed type.
-   *
-   * @return the consumed type
-   */
-  Class<C> getConsumedType();
+  CommandInvoker<?, ?> createInvoker(String... args);
 
 }

@@ -22,9 +22,9 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.CommandContext;
-import org.crsh.command.CommandProvider;
-import org.crsh.command.ScriptException;
+import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
+import org.crsh.command.ScriptException;
 import org.crsh.shell.*;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TimestampedObject;
@@ -50,13 +50,13 @@ public class CRaSH implements Shell {
   private final ShellContext context;
 
   /** . */
-  private final Map<String, TimestampedObject<CommandProvider>> commands;
+  private final Map<String, TimestampedObject<Class<? extends ShellCommand>>> commands;
 
   /** . */
   final Map<String, Object> attributes;
 
-  CommandProvider getCommand(String name) {
-    TimestampedObject<CommandProvider> providerRef = commands.get(name);
+  ShellCommand getCommand(String name) {
+    TimestampedObject<Class<? extends ShellCommand>> providerRef = commands.get(name);
 
     //
     Resource script = context.loadResource(name, ResourceKind.SCRIPT);
@@ -73,21 +73,11 @@ public class CRaSH implements Shell {
       if (providerRef == null) {
         Class<?> clazz = groovyShell.getClassLoader().parseClass(script.getContent(), name);
         if (ShellCommand.class.isAssignableFrom(clazz)) {
-          Class<ShellCommand<Object, Object>> commandClazz = (Class<ShellCommand<Object, Object>>)clazz.asSubclass(ShellCommand.class);
-          providerRef = wrap(script.getTimestamp(), commandClazz);
+          Class<? extends ShellCommand> providerClass = clazz.asSubclass(ShellCommand.class);
+          providerRef = new TimestampedObject<Class<? extends ShellCommand>>(script.getTimestamp(), providerClass);
           commands.put(name, providerRef);
-        } else if (CommandProvider.class.isAssignableFrom(clazz)) {
-          Class<? extends CommandProvider> providerClass = clazz.asSubclass(CommandProvider.class);
-          try {
-            CommandProvider provider = providerClass.newInstance();
-            providerRef = new TimestampedObject<CommandProvider>(script.getTimestamp(), provider);
-            commands.put(name, providerRef);
-          }
-          catch (Exception e) {
-            throw new Error(e);
-          }
         } else {
-          log.error("Parsed script does not implements " + ShellCommand.class.getName());
+          log.error("Parsed script does not implements " + CommandInvoker.class.getName());
         }
       }
     }
@@ -98,17 +88,22 @@ public class CRaSH implements Shell {
     }
 
     //
-    return providerRef.getObject();
+    try {
+      return providerRef.getObject().newInstance();
+    }
+    catch (Exception e) {
+      throw new Error(e);
+    }
   }
 
-  private <C, P> TimestampedObject<CommandProvider> wrap(
+  private <C, P> TimestampedObject<ShellCommand> wrap(
     long timestamp,
-    final Class<ShellCommand<C, P>> commandClass) {
-    CommandProvider provider = new CommandProvider() {
-      public ShellCommand<?, ?> create(String... args) {
+    final Class<CommandInvoker<C, P>> commandClass) {
+    ShellCommand provider = new ShellCommand() {
+      public CommandInvoker<?, ?> createInvoker(String... args) {
         try {
-          final ShellCommand<C, P> command = commandClass.newInstance();
-          return new ShellCommand<C, P>() {
+          final CommandInvoker<C, P> command = commandClass.newInstance();
+          return new CommandInvoker<C, P>() {
             public void usage(ShellPrinter printer) {
               command.usage(printer);
             }
@@ -128,7 +123,7 @@ public class CRaSH implements Shell {
         }
       }
     };
-    return new TimestampedObject<CommandProvider>(timestamp, provider);
+    return new TimestampedObject<ShellCommand>(timestamp, provider);
   }
 
   public GroovyShell getGroovyShell() {
@@ -162,7 +157,7 @@ public class CRaSH implements Shell {
     //
     this.attributes = attributes;
     this.groovyShell = groovyShell;
-    this.commands = new ConcurrentHashMap<String, TimestampedObject<CommandProvider>>();
+    this.commands = new ConcurrentHashMap<String, TimestampedObject<Class<? extends ShellCommand>>>();
     this.context = context;
   }
 

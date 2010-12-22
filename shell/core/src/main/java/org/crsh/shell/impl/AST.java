@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl;
 
-import org.crsh.command.CommandProvider;
+import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
@@ -144,7 +144,7 @@ abstract class AST {
     final Term next;
 
     /** . */
-    private ShellCommand command;
+    private CommandInvoker command;
 
     /** . */
     private String[] args;
@@ -165,20 +165,20 @@ abstract class AST {
       String name = commandDefinition.get(0);
 
       //
-      ShellCommand command = null;
-      CommandProvider provider = crash.getCommand(name);
-      if (provider != null) {
-        command = provider.create(args);
+      CommandInvoker invoker = null;
+      ShellCommand command = crash.getCommand(name);
+      if (command != null) {
+        invoker = command.createInvoker(args);
       }
 
       //
-      if (command == null) {
+      if (invoker == null) {
         return new ShellResponse.UnknownCommand(name);
       }
 
       //
       this.args = args;
-      this.command = command;
+      this.command = invoker;
 
       //
       if (next != null) {

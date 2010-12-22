@@ -20,7 +20,6 @@
 package org.crsh.command;
 
 import com.beust.jcommander.JCommander;
-import groovy.lang.GroovyObjectSupport;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
@@ -42,7 +41,7 @@ import java.util.regex.Pattern;
  * @param <C> the consumed type
  * @param <P> the produced type
  */
-public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCommand<C, P> {
+public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCommand, CommandInvoker<C, P> {
 
   private static final class MetaData {
 
@@ -126,8 +125,8 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
   protected BaseCommand() {
     this.context = null;
     this.unquoteArguments = true;
-    this.consumedType = (Class<C>)TypeResolver.resolve(getClass(), ShellCommand.class, 0);
-    this.producedType = (Class<P>)TypeResolver.resolve(getClass(), ShellCommand.class, 1);
+    this.consumedType = (Class<C>)TypeResolver.resolve(getClass(), CommandInvoker.class, 0);
+    this.producedType = (Class<P>)TypeResolver.resolve(getClass(), CommandInvoker.class, 1);
     this.metaData = MetaData.getMetaData(getClass());
   }
 
@@ -199,6 +198,10 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
           }
           break;
       }
+  }
+
+  public final CommandInvoker<?, ?> createInvoker(String... args) {
+    return this;
   }
 
   public final void execute(CommandContext<C, P> context, String... args) throws ScriptException {
