@@ -27,8 +27,7 @@ import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
 
 /**
- * A base command that should be subclasses by Groovy commands. For this matter it inherits the
- * {@link groovy.lang.GroovyObjectSupport} class.
+ * A real CRaSH command, the most powerful kind of command.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$

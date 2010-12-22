@@ -20,11 +20,23 @@
 package org.crsh.command;
 
 /**
+ * <p>The command providers allows a single source to provide several commands according to the context
+ * of the arguments. More importantly it allows to decouple the obtention of a command related to its
+ * arguments from the actual execution of the command. This somewhat matters with the command execution
+ * pipeline that has notion of consumed and produced types, thanks to this, the consumed and produced
+ * types can vary according to the arguments.</p>
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface CommandProvider {
 
+  /**
+   * Provides a command for the specified arguments.
+   *
+   * @param args the arguments
+   * @return the command to provide
+   */
   ShellCommand<?, ?> create(String... args);
 
 }

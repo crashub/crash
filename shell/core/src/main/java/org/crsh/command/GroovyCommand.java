@@ -25,6 +25,9 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 
 /**
+ * A base command that should be subclasses by Groovy commands. For this matter it inherits the
+ * {@link GroovyObjectSupport} class.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */

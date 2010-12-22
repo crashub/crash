@@ -35,8 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
- * A base command that should be subclasses by Groovy commands. For this matter it inherits the
- * {@link GroovyObjectSupport} class.
+ * The base command.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
