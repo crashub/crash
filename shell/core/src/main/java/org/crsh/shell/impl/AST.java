@@ -98,8 +98,12 @@ abstract class AST {
           ctx = new CommandContextImpl(responseContext, consumed, attributes);
         }
 
-        // Execute command
-        current.command.execute(ctx, current.args);
+        // Do something usefull with command
+        if (current.args.length > 0 && ("-h".equals(current.args[0]) || "--help".equals(current.args[0]))) {
+          current.command.usage(ctx.getWriter());
+        } else {
+          current.command.execute(ctx, current.args);
+        }
 
         // Append anything that was in the buffer
         if (ctx.getBuffer() != null) {

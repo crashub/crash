@@ -25,6 +25,7 @@ import groovy.lang.Script;
 import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
+import org.crsh.shell.io.ShellPrinter;
 
 /**
  * This class provides the base class for Groovy scripts. It should not be used directly as it is rather used
@@ -51,6 +52,10 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     catch (MissingPropertyException e) {
       return null;
     }
+  }
+
+  public void usage(ShellPrinter printer) {
+    printer.print("Bare script: no usage");
   }
 
   public void execute(CommandContext<Void, Void> context, String... args) throws ScriptException {

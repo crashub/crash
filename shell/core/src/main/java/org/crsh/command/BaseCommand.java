@@ -169,23 +169,12 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
     return context;
   }
 
-  public final void execute(CommandContext<C, P> context, String... args) throws ScriptException {
-    if (context == null) {
-      throw new NullPointerException();
-    }
-    if (args == null) {
-      throw new NullPointerException();
-    }
-
-    //
-    if (args.length > 0 && ("-h".equals(args[0]) || "--help".equals(args[0]))) {
-      ShellPrinter out = context.getWriter();
-
+  public final void usage(ShellPrinter printer) {
       //
       Description description = getClass().getAnnotation(Description.class);
       if (description != null) {
-        out.write(description.value());
-        out.write("\n");
+        printer.write(description.value());
+        printer.write("\n");
       }
 
       //
@@ -196,7 +185,7 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
           break;
         case 1:
           CmdLineParser parser = new CmdLineParser(this);
-          parser.printUsage(out, null);
+          parser.printUsage(printer, null);
           break;
         case 2:
           throw new UnsupportedOperationException();
@@ -204,16 +193,24 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
           try {
             Class<?> clazz = getClass();
             ClassDescriptor<?> descriptor = CommandDescriptor.create(clazz);
-            out.print(descriptor.getUsage());
+            printer.print(descriptor.getUsage());
           }
           catch (IntrospectionException e) {
             throw new ScriptException(e.getMessage(), e);
           }
           break;
       }
+  }
 
-      //
-    } else {
+  public final void execute(CommandContext<C, P> context, String... args) throws ScriptException {
+    if (context == null) {
+      throw new NullPointerException();
+    }
+    if (args == null) {
+      throw new NullPointerException();
+    }
+
+    //
       // Remove surrounding quotes if there are
       if (unquoteArguments) {
         String[] foo = new String[args.length];
@@ -269,7 +266,6 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
       finally {
         this.context = null;
       }
-    }
   }
 
   protected abstract void execute(CommandContext<C, P> context) throws ScriptException;

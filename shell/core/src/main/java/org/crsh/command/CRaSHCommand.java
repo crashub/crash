@@ -97,6 +97,24 @@ public abstract class CRaSHCommand<C, P> extends GroovyCommand implements ShellC
     return context;
   }
 
+  public final void usage(ShellPrinter printer) {
+    Description description = getClass().getAnnotation(Description.class);
+    if (description != null) {
+      printer.write(description.value());
+      printer.write("\n");
+    }
+
+    //
+    try {
+      Class<?> clazz = getClass();
+      ClassDescriptor<?> descriptor = CommandDescriptor.create(clazz);
+      printer.print(descriptor.getUsage());
+    }
+    catch (IntrospectionException e) {
+      throw new ScriptException(e.getMessage(), e);
+    }
+  }
+
   public final void execute(CommandContext<C, P> context, String... args) throws ScriptException {
     if (context == null) {
       throw new NullPointerException();
@@ -105,78 +123,66 @@ public abstract class CRaSHCommand<C, P> extends GroovyCommand implements ShellC
       throw new NullPointerException();
     }
 
+    // Remove surrounding quotes if there are
+    if (unquoteArguments) {
+      String[] foo = new String[args.length];
+      for (int i = 0;i < args.length;i++) {
+        String arg = args[i];
+        if (arg.charAt(0) == '\'') {
+          if (arg.charAt(arg.length() - 1) == '\'') {
+            arg = arg.substring(1, arg.length() - 1);
+          }
+        } else if (arg.charAt(0) == '"') {
+          if (arg.charAt(arg.length() - 1) == '"') {
+            arg = arg.substring(1, arg.length() - 1);
+          }
+        }
+        foo[i] = arg;
+      }
+      args = foo;
+    }
+
     //
-    if (args.length > 0 && ("-h".equals(args[0]) || "--help".equals(args[0]))) {
-      ShellPrinter out = context.getWriter();
-
-      //
-      Description description = getClass().getAnnotation(Description.class);
-      if (description != null) {
-        out.write(description.value());
-        out.write("\n");
-      }
-
-      //
-      try {
-        Class<?> clazz = getClass();
-        ClassDescriptor<?> descriptor = CommandDescriptor.create(clazz);
-        out.print(descriptor.getUsage());
-      }
-      catch (IntrospectionException e) {
-        throw new ScriptException(e.getMessage(), e);
-      }
-
-      //
-    } else {
-      // Remove surrounding quotes if there are
-      if (unquoteArguments) {
-        String[] foo = new String[args.length];
-        for (int i = 0;i < args.length;i++) {
-          String arg = args[i];
-          if (arg.charAt(0) == '\'') {
-            if (arg.charAt(arg.length() - 1) == '\'') {
-              arg = arg.substring(1, arg.length() - 1);
-            }
-          } else if (arg.charAt(0) == '"') {
-            if (arg.charAt(arg.length() - 1) == '"') {
-              arg = arg.substring(1, arg.length() - 1);
-            }
-          }
-          foo[i] = arg;
+    try {
+      // WTF
+      Analyzer analyzer = new Analyzer(descriptor);
+      StringBuilder s = new StringBuilder();
+      for (String arg : args) {
+        if (s.length() > 0) {
+          s.append(" ");
         }
-        args = foo;
+        s.append(arg);
       }
+      analyzer.analyze(s.toString()).process(this);
+    }
+    catch (Exception e) {
+      throw new ScriptException(e.getMessage(), e);
+    }
+
+    //
+    try {
+      this.context = context;
 
       //
-      try {
-        // WTF
-        Analyzer analyzer = new Analyzer(descriptor);
-        StringBuilder s = new StringBuilder();
-        for (String arg : args) {
-          if (s.length() > 0) {
-            s.append(" ");
-          }
-          s.append(arg);
-        }
-        analyzer.analyze(s.toString()).process(this);
-      }
-      catch (Exception e) {
-        throw new ScriptException(e.getMessage(), e);
-      }
-
-      //
-      try {
-        this.context = context;
-
-        //
-        execute(context);
-      }
-      finally {
-        this.context = null;
-      }
+      execute(context);
+    }
+    finally {
+      this.context = null;
     }
   }
 
-  protected abstract void execute(CommandContext<C, P> context) throws ScriptException;
+  protected void execute(CommandContext<C, P> context) throws ScriptException {
 
+    //
+    Object o = execute();
+
+    //
+    if (o != null) {
+      context.getWriter().print(o);
+    }
+  }
+
+  protected Object execute() throws ScriptException {
+    return null;
+  }
 }

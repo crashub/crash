@@ -96,7 +96,7 @@ public class ShellCommandTestCase extends TestCase {
   }
 
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
       "@org.crsh.cmdline.Option(names=\"s\", required=true) def String str = 'default value';" +
       "public Object execute() {" +
       "return str;" +
@@ -104,7 +104,7 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    ShellCommand cmd = (ShellCommand)clazz.newInstance();
     assertEquals("abc", new TestCommandContext().execute(cmd, "-s", "abc"));
     try {
       new TestCommandContext().execute(cmd);
@@ -142,7 +142,7 @@ public class ShellCommandTestCase extends TestCase {
   }
 
   public void testArgumentInjectionInCommandCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
       "@org.crsh.cmdline.Argument def String str;" +
       "public Object execute() {" +
       "return str;" +
@@ -150,7 +150,7 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    ShellCommand cmd = (ShellCommand)clazz.newInstance();
     assertEquals("b", new TestCommandContext().execute(cmd, "b"));
   }
 
