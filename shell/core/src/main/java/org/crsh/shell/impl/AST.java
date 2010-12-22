@@ -100,10 +100,11 @@ abstract class AST {
         }
 
         // Do something usefull with command
-        if (current.args.length > 0 && ("-h".equals(current.args[0]) || "--help".equals(current.args[0]))) {
+        String[] args = current.args;
+        if (args.length > 0 && ("-h".equals(args[args.length - 1]) || "--help".equals(args[args.length - 1]))) {
           current.command.usage(ctx.getWriter());
         } else {
-          current.command.execute(ctx, current.args);
+          current.command.execute(ctx, args);
         }
 
         // Append anything that was in the buffer

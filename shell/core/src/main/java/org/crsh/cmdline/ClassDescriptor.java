@@ -142,7 +142,6 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
     return sb.toString();
   }
 
-
   private static List<ParameterDescriptor<ParameterBinding.ClassField>> parameters(Class<?> introspected) throws IntrospectionException {
     List<ParameterDescriptor<ParameterBinding.ClassField>> parameters;
     Class<?> superIntrospected = introspected.getSuperclass();

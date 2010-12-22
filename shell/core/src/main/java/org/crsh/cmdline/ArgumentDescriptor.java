@@ -19,6 +19,7 @@
 
 package org.crsh.cmdline;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Type;
 
 /**
@@ -39,5 +40,13 @@ public class ArgumentDescriptor<B extends ParameterBinding> extends ParameterDes
       description,
       required,
       password);
+  }
+
+  public void printUsage(PrintWriter writer) {
+    if (getType().getMultiplicity() == Multiplicity.SINGLE) {
+      writer.append("...");
+    } else {
+      writer.append("arg");
+    }
   }
 }

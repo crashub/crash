@@ -19,6 +19,7 @@
 
 package org.crsh.cmdline;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,6 +96,19 @@ public class OptionDescriptor<B extends ParameterBinding> extends ParameterDescr
 
   public List<String> getNames() {
     return names;
+  }
+
+  public void printUsage(PrintWriter writer) {
+    writer.append("[");
+    boolean a = false;
+    for (String optionName : names) {
+      if (a) {
+        writer.append(" | ");
+      }
+      writer.append(optionName.length() == 1 ? "-" : "--").append(optionName);
+      a = true;
+    }
+    writer.append("]");
   }
 
   @Override

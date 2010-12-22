@@ -83,24 +83,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements CommandProvi
     return context;
   }
 
-  public final void usage(ShellPrinter printer) {
-    Description description = getClass().getAnnotation(Description.class);
-    if (description != null) {
-      printer.write(description.value());
-      printer.write("\n");
-    }
-
-    //
-    try {
-      Class<?> clazz = getClass();
-      ClassDescriptor<?> descriptor = CommandDescriptor.create(clazz);
-      printer.print(descriptor.getUsage());
-    }
-    catch (IntrospectionException e) {
-      throw new ScriptException(e.getMessage(), e);
-    }
-  }
-
   public ShellCommand<?, ?> create(String... args) {
     if (args == null) {
       throw new NullPointerException();
@@ -145,7 +127,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements CommandProvi
         }
 
         public void usage(ShellPrinter printer) {
-          printer.println("todo");
+          match.getDescriptor().printUsage(printer);
         }
 
         public void execute(

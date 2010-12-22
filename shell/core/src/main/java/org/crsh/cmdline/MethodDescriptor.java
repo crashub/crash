@@ -19,6 +19,7 @@
 
 package org.crsh.cmdline;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -54,5 +55,60 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, ParameterBinding.M
   @Override
   public Class<T> getType() {
     return owner.getType();
+  }
+
+  /** . */
+  private static final String TAB = "       ";
+
+  public void printUsage(PrintWriter writer) {
+    writer.append("NAME\n");
+    writer.append(TAB).append(owner.getName()).append(" ").append(getName());
+    if (getDescription().length() > 0) {
+      writer.append(" - ").append(getDescription());
+    }
+    writer.append("\n\n");
+
+    //
+    writer.append("SYNOPSIS\n");
+
+    //
+    writer.append(TAB).append(owner.getName());
+
+    //
+    for (OptionDescriptor<?> option : owner.getOptions()) {
+      writer.append(" ");
+      option.printUsage(writer);
+    }
+
+    //
+    writer.append(" ").append(getName());
+
+    for (OptionDescriptor<?> option : getOptions()) {
+      writer.append(" ");
+      option.printUsage(writer);
+    }
+    for (ArgumentDescriptor<?> argument : getArguments()) {
+      writer.append(" ");
+      argument.printUsage(writer);
+    }
+    writer.append("\n\n");
+
+    //
+    writer.append("DESCRIPTION\n");
+    writer.append(TAB).append("The following options are available:\n\n");
+
+    //
+    for (OptionDescriptor<?> option : owner.getOptions()) {
+      for (String name : option.getNames()) {
+        writer.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getDescription()).append("\n\n");
+      }
+    }
+
+    //
+    for (OptionDescriptor<?> option : getOptions()) {
+      for (String name : option.getNames()) {
+        writer.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getDescription()).append("\n\n");
+      }
+    }
   }
 }
