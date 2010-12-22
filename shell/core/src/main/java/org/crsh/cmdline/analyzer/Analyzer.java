@@ -49,30 +49,56 @@ public class Analyzer<T> {
   /** . */
   private final ClassDescriptor<T> descriptor;
 
+  /** . */
+  private final String mainName;
+
   public Analyzer(ClassDescriptor<T> descriptor) {
+    this(null, descriptor);
+  }
+
+  public Analyzer(String mainName, ClassDescriptor<T> descriptor) {
     this.analyzer = new CommandAnalyzer<T, ClassDescriptor<T>, ParameterBinding.ClassField>(descriptor);
     this.descriptor = descriptor;
+    this.mainName = mainName;
   }
 
   public CommandMatch<T, ?, ?> analyze(String s) {
+
+    //
     Bilto bilto = new Bilto(s);
+
+    // Read all common options we are able to
     List<OptionMatch<ParameterBinding.ClassField>> options = analyzer.analyzeOptions(bilto);
+
+    List<OptionMatch<ParameterBinding.MethodArgument>> methodOptions = null;
+    List<ArgumentMatch<ParameterBinding.MethodArgument>> methodArguments = null;
+    MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+)");
     Matcher m = p.matcher(bilto.rest);
     if (m.find()) {
       String f = m.group(1);
-      MethodDescriptor<T> sub = descriptor.getMethod(f);
-      if (sub != null) {
-        ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ParameterBinding.ClassField>>emptyList(), bilto.rest);
+      method = descriptor.getMethod(f);
+      if (method != null) {
         bilto.skipRestBy(m.end(1));
-        CommandAnalyzer<T, MethodDescriptor<T>, ParameterBinding.MethodArgument> methodAnalyzer = new CommandAnalyzer<T, MethodDescriptor<T>, ParameterBinding.MethodArgument>(sub);
-        List<OptionMatch<ParameterBinding.MethodArgument>> methodOptions = methodAnalyzer.analyzeOptions(bilto);
-        List<ArgumentMatch<ParameterBinding.MethodArgument>> methodArguments = methodAnalyzer.analyzeArguments(bilto);
-        return new MethodMatch<T>(owner, sub, methodOptions, methodArguments, bilto.rest);
       }
     }
-    List<ArgumentMatch<ParameterBinding.ClassField>> arguments = analyzer.analyzeArguments(bilto);
-    return new ClassMatch<T>(descriptor, options, arguments, bilto.rest);
+
+    // Try to consume with main method name then
+    if (method == null) {
+      method = descriptor.getMethod(mainName);
+    }
+
+    //
+    if (method != null) {
+      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ParameterBinding.ClassField>>emptyList(), bilto.rest);
+      CommandAnalyzer<T, MethodDescriptor<T>, ParameterBinding.MethodArgument> methodAnalyzer = new CommandAnalyzer<T, MethodDescriptor<T>, ParameterBinding.MethodArgument>(method);
+      methodOptions = methodAnalyzer.analyzeOptions(bilto);
+      methodArguments = methodAnalyzer.analyzeArguments(bilto);
+      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, bilto.rest);
+    } else {
+      List<ArgumentMatch<ParameterBinding.ClassField>> arguments = analyzer.analyzeArguments(bilto);
+      return new ClassMatch<T>(descriptor, options, arguments, bilto.rest);
+    }
   }
 
   static class Bilto {

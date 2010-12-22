@@ -96,4 +96,9 @@ public class OptionDescriptor<B extends ParameterBinding> extends ParameterDescr
   public List<String> getNames() {
     return names;
   }
+
+  @Override
+  public String toString() {
+    return "OptionDescriptor[" + names + "]";
+  }
 }

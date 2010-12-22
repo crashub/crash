@@ -70,7 +70,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
   }
 
   @Override
-  public void process(T command) throws CmdLineException {
+  public Object invoke(T command) throws CmdLineException {
 
     // Configure command
 
@@ -136,11 +136,11 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
     }
 
     // First configure command
-    owner.process(command);
+    owner.invoke(command);
 
     //
     try {
-      m.invoke(command, mArgs);
+      return m.invoke(command, mArgs);
     }
     catch (Exception e) {
       throw new CmdInvocationException(e.getMessage(), e);

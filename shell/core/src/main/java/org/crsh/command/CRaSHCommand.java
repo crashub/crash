@@ -143,45 +143,35 @@ public abstract class CRaSHCommand<C, P> extends GroovyCommand implements ShellC
 
     //
     try {
-      // WTF
-      Analyzer analyzer = new Analyzer(descriptor);
-      StringBuilder s = new StringBuilder();
-      for (String arg : args) {
-        if (s.length() > 0) {
-          s.append(" ");
-        }
-        s.append(arg);
-      }
-      analyzer.analyze(s.toString()).process(this);
-    }
-    catch (Exception e) {
-      throw new ScriptException(e.getMessage(), e);
-    }
-
-    //
-    try {
       this.context = context;
 
       //
-      execute(context);
+      try {
+        // WTF
+        Analyzer analyzer = new Analyzer("main", descriptor);
+        StringBuilder s = new StringBuilder();
+        for (String arg : args) {
+          if (s.length() > 0) {
+            s.append(" ");
+          }
+          s.append(arg);
+        }
+
+        //
+        Object o = analyzer.analyze(s.toString()).invoke(this);
+
+        //
+        if (o != null) {
+          context.getWriter().print(o);
+        }
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+        throw new ScriptException(e.getMessage(), e);
+      }
     }
     finally {
       this.context = null;
     }
-  }
-
-  protected void execute(CommandContext<C, P> context) throws ScriptException {
-
-    //
-    Object o = execute();
-
-    //
-    if (o != null) {
-      context.getWriter().print(o);
-    }
-  }
-
-  protected Object execute() throws ScriptException {
-    return null;
   }
 }

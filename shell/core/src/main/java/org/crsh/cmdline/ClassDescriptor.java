@@ -44,9 +44,6 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
   /** . */
   private final Map<String, MethodDescriptor<T>> methodMap;
 
-  /** . */
-  private final MethodDescriptor<T> main;
-
   public ClassDescriptor(Class<T> type) throws IntrospectionException {
     super(
       type.getSimpleName().toLowerCase(),
@@ -72,21 +69,13 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
     }
 
     //
-    MethodDescriptor main = commandMap.get("main");
-
-    //
     this.methodMap = commandMap;
     this.type = type;
-    this.main = main;
   }
 
   @Override
   public Class<T> getType() {
     return type;
-  }
-
-  public MethodDescriptor<T> getMainMethod() {
-    return main;
   }
 
   public Iterable<MethodDescriptor<T>> getMethods() {

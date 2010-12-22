@@ -1,10 +1,5 @@
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.services.jcr.RepositoryService;
-import javax.jcr.Credentials;
-import javax.jcr.SimpleCredentials;
-import org.kohsuke.args4j.Option;
-import org.kohsuke.args4j.Argument;
 import org.crsh.command.Description;
+import org.crsh.cmdline.Command;
 
 @Description("Provides basic help")
 class help extends org.crsh.command.CRaSHCommand
@@ -33,7 +28,8 @@ class help extends org.crsh.command.CRaSHCommand
   "setperm",
   "xpath"];
 
-  public Object execute() throws ScriptException {
+  @Command
+  Object main() {
     def ret = "Try one of these commands with the -h or --help switch (";
     shellContext.listResourceId(org.crsh.shell.ResourceKind.SCRIPT).eachWithIndex() {
       cmd, index ->
