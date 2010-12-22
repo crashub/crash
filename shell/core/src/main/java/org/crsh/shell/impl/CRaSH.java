@@ -56,29 +56,36 @@ public class CRaSH implements Shell {
   final Map<String, Object> attributes;
 
   CommandProvider getCommand(String name) {
-    TimestampedObject<CommandProvider> provider = commands.get(name);
+    TimestampedObject<CommandProvider> providerRef = commands.get(name);
 
     //
     Resource script = context.loadResource(name, ResourceKind.SCRIPT);
 
     //
     if (script != null) {
-      if (provider != null) {
-        if (script.getTimestamp() != provider.getTimestamp()) {
-          provider = null;
+      if (providerRef != null) {
+        if (script.getTimestamp() != providerRef.getTimestamp()) {
+          providerRef = null;
         }
       }
 
       //
-      if (provider == null) {
+      if (providerRef == null) {
         Class<?> clazz = groovyShell.getClassLoader().parseClass(script.getContent(), name);
         if (ShellCommand.class.isAssignableFrom(clazz)) {
           Class<ShellCommand<Object, Object>> commandClazz = (Class<ShellCommand<Object, Object>>)clazz.asSubclass(ShellCommand.class);
-          TimestampedObject a = wrap(script.getTimestamp(), commandClazz);
-          provider = a;
-          commands.put(name, provider);
+          providerRef = wrap(script.getTimestamp(), commandClazz);
+          commands.put(name, providerRef);
         } else if (CommandProvider.class.isAssignableFrom(clazz)) {
-          throw new UnsupportedOperationException("todo");
+          Class<? extends CommandProvider> providerClass = clazz.asSubclass(CommandProvider.class);
+          try {
+            CommandProvider provider = providerClass.newInstance();
+            providerRef = new TimestampedObject<CommandProvider>(script.getTimestamp(), provider);
+            commands.put(name, providerRef);
+          }
+          catch (Exception e) {
+            throw new Error(e);
+          }
         } else {
           log.error("Parsed script does not implements " + ShellCommand.class.getName());
         }
@@ -86,12 +93,12 @@ public class CRaSH implements Shell {
     }
 
     //
-    if (provider == null) {
+    if (providerRef == null) {
       return null;
     }
 
     //
-    return provider.getObject();
+    return providerRef.getObject();
   }
 
   private <C, P> TimestampedObject<CommandProvider> wrap(
@@ -116,10 +123,7 @@ public class CRaSH implements Shell {
             }
           };
         }
-        catch (InstantiationException e) {
-          throw new Error(e);
-        }
-        catch (IllegalAccessException e) {
+        catch (Exception e) {
           throw new Error(e);
         }
       }

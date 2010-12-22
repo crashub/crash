@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.cmdline.processor.CmdSyntaxException;
 import org.crsh.command.ClassCommand;
+import org.crsh.command.CommandProvider;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.impl.GroovyScriptCommand;
@@ -105,9 +106,11 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
+    CommandProvider provider = (CommandProvider)clazz.newInstance();
+    ShellCommand cmd = provider.create("-s", "abc");
     assertEquals("abc", new TestCommandContext().execute(cmd, "-s", "abc"));
     try {
+      cmd = provider.create();
       new TestCommandContext().execute(cmd);
       fail();
     }
@@ -151,7 +154,8 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
+    CommandProvider provider = (CommandProvider)clazz.newInstance();
+    ShellCommand cmd = provider.create("b");
     assertEquals("b", new TestCommandContext().execute(cmd, "b"));
   }
 
@@ -164,7 +168,8 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
+    CommandProvider provider = (CommandProvider)clazz.newInstance();
+    ShellCommand cmd = provider.create();
     assertEquals("foo", new TestCommandContext().execute(cmd));
   }
 

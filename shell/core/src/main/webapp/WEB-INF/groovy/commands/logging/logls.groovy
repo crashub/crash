@@ -10,14 +10,15 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 import javax.management.ObjectName;
 
-@Description("List the available loggers")
-public class logls extends org.crsh.command.CRaSHCommand<Void, Logger> {
+public class logls extends org.crsh.command.CRaSHCommand {
 
-  @Option(names=["f","filter"])
-  @Description("Filter the logger with a regular expression")
-  def String filter;
-
-  public void execute(CommandContext<Void, Logger> context) throws ScriptException {
+  @Description("List the available loggers")
+  @org.crsh.cmdline.Command
+  public void main(
+    CommandContext<Void, Logger> context,
+    @Option(names=["f","filter"])
+    @Description("Filter the logger with a regular expression")
+    String filter) throws ScriptException {
 
     // Regex filter
     def pattern = Pattern.compile(filter != null ? filter : ".*");

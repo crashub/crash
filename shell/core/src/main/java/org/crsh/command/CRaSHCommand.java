@@ -24,30 +24,26 @@ import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.analyzer.Analyzer;
 import org.crsh.cmdline.analyzer.InvocationContext;
+import org.crsh.cmdline.analyzer.MethodMatch;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * A real CRaSH command, the most powerful kind of command.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
- * @param <C> the consumed type
- * @param <P> the produced type
  */
-public abstract class CRaSHCommand<C, P> extends GroovyCommand implements ShellCommand<C, P> {
+public abstract class CRaSHCommand extends GroovyCommand implements CommandProvider {
 
   /** . */
-  private CommandContext<C, P> context;
+  private CommandContext context;
 
   /** . */
   private boolean unquoteArguments;
-
-  /** . */
-  private Class<C> consumedType;
-
-  /** . */
-  private Class<P> producedType;
 
   /** . */
   private final ClassDescriptor<?> descriptor;
@@ -55,17 +51,7 @@ public abstract class CRaSHCommand<C, P> extends GroovyCommand implements ShellC
   protected CRaSHCommand() throws IntrospectionException {
     this.context = null;
     this.unquoteArguments = true;
-    this.consumedType = (Class<C>)TypeResolver.resolve(getClass(), ShellCommand.class, 0);
-    this.producedType = (Class<P>)TypeResolver.resolve(getClass(), ShellCommand.class, 1);
     this.descriptor = CommandDescriptor.create(getClass());
-  }
-
-  public Class<P> getProducedType() {
-    return producedType;
-  }
-
-  public Class<C> getConsumedType() {
-    return consumedType;
   }
 
   /**
@@ -115,64 +101,83 @@ public abstract class CRaSHCommand<C, P> extends GroovyCommand implements ShellC
     }
   }
 
-  public final void execute(CommandContext<C, P> context, String... args) throws ScriptException {
-    if (context == null) {
-      throw new NullPointerException();
-    }
+  public ShellCommand<?, ?> create(String... args) {
     if (args == null) {
       throw new NullPointerException();
     }
-
-    // Remove surrounding quotes if there are
-    if (unquoteArguments) {
-      String[] foo = new String[args.length];
-      for (int i = 0;i < args.length;i++) {
-        String arg = args[i];
-        if (arg.charAt(0) == '\'') {
-          if (arg.charAt(arg.length() - 1) == '\'') {
-            arg = arg.substring(1, arg.length() - 1);
-          }
-        } else if (arg.charAt(0) == '"') {
-          if (arg.charAt(arg.length() - 1) == '"') {
-            arg = arg.substring(1, arg.length() - 1);
-          }
-        }
-        foo[i] = arg;
+    
+    // WTF
+    Analyzer analyzer = new Analyzer("main", descriptor);
+    StringBuilder s = new StringBuilder();
+    for (String arg : args) {
+      if (s.length() > 0) {
+        s.append(" ");
       }
-      args = foo;
+      s.append(arg);
     }
 
     //
-    try {
-      this.context = context;
+    InvocationContext invocationContext = new InvocationContext();
+    invocationContext.setAttribute(CommandContext.class, context);
+    final MethodMatch match = (MethodMatch)analyzer.analyze(s.toString());
 
-      //
-      try {
-        // WTF
-        Analyzer analyzer = new Analyzer("main", descriptor);
-        StringBuilder s = new StringBuilder();
-        for (String arg : args) {
-          if (s.length() > 0) {
-            s.append(" ");
+    //
+    if (match != null) {
+      return new ShellCommand() {
+
+        Class consumedType = Void.class;
+        Class producedType = Void.class;
+
+        {
+          // Try to find a command context argument
+          Method m = match.getDescriptor().getMethod();
+
+          //
+          Class<?>[] parameterTypes = m.getParameterTypes();
+          for (int i = 0;i < parameterTypes.length;i++) {
+            Class<?> parameterType = parameterTypes[i];
+            if (CommandContext.class.isAssignableFrom(parameterType)) {
+              Type contextGenericParameterType = m.getGenericParameterTypes()[i];
+              consumedType = (Class)TypeResolver.resolve(contextGenericParameterType, CommandContext.class, 0);
+              producedType = (Class)TypeResolver.resolve(contextGenericParameterType, CommandContext.class, 1);
+            }
           }
-          s.append(arg);
         }
 
-        //
-        Object o = analyzer.analyze(s.toString()).invoke(new InvocationContext(), this);
-
-        //
-        if (o != null) {
-          context.getWriter().print(o);
+        public void usage(ShellPrinter printer) {
+          printer.println("todo");
         }
-      }
-      catch (Exception e) {
-        e.printStackTrace();
-        throw new ScriptException(e.getMessage(), e);
-      }
-    }
-    finally {
-      this.context = null;
+
+        public void execute(
+          CommandContext commandContext,
+          String... args) throws ScriptException {
+
+          try {
+            InvocationContext invocationContext = new InvocationContext();
+            invocationContext.setAttribute(CommandContext.class, commandContext);
+            Object o = match.invoke(invocationContext, CRaSHCommand.this);
+
+            //
+            if (o != null) {
+              commandContext.getWriter().print(o);
+            }
+          }
+          catch (Exception e) {
+            e.printStackTrace();
+            throw new ScriptException(e.getMessage(), e);
+          }
+        }
+
+        public Class getProducedType() {
+          return producedType;
+        }
+
+        public Class getConsumedType() {
+          return consumedType;
+        }
+      };
+    } else {
+      return null;
     }
   }
 }
