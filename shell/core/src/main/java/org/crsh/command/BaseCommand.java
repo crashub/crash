@@ -210,62 +210,61 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
       throw new NullPointerException();
     }
 
-    //
-      // Remove surrounding quotes if there are
-      if (unquoteArguments) {
-        String[] foo = new String[args.length];
-        for (int i = 0;i < args.length;i++) {
-          String arg = args[i];
-          if (arg.charAt(0) == '\'') {
-            if (arg.charAt(arg.length() - 1) == '\'') {
-              arg = arg.substring(1, arg.length() - 1);
-            }
-          } else if (arg.charAt(0) == '"') {
-            if (arg.charAt(arg.length() - 1) == '"') {
-              arg = arg.substring(1, arg.length() - 1);
-            }
+    // Remove surrounding quotes if there are
+    if (unquoteArguments) {
+      String[] foo = new String[args.length];
+      for (int i = 0;i < args.length;i++) {
+        String arg = args[i];
+        if (arg.charAt(0) == '\'') {
+          if (arg.charAt(arg.length() - 1) == '\'') {
+            arg = arg.substring(1, arg.length() - 1);
           }
-          foo[i] = arg;
+        } else if (arg.charAt(0) == '"') {
+          if (arg.charAt(arg.length() - 1) == '"') {
+            arg = arg.substring(1, arg.length() - 1);
+          }
         }
-        args = foo;
+        foo[i] = arg;
       }
+      args = foo;
+    }
+
+    //
+    switch (metaData.descriptionFramework) {
+      default:
+        System.out.println("Not only one description framework");
+      case 0:
+        break;
+      case 1:
+        try {
+          CmdLineParser parser = new CmdLineParser(this);
+          parser.parseArgument(args);
+        }
+        catch (CmdLineException e) {
+          throw new ScriptException(e.getMessage(), e);
+        }
+         break;
+      case 2:
+        try {
+          JCommander jc = new JCommander(this);
+          jc.parse(args);
+        }
+        catch (Exception e) {
+          throw new ScriptException(e.getMessage(), e);
+        }
+        break;
+    }
+
+    //
+    try {
+      this.context = context;
 
       //
-      switch (metaData.descriptionFramework) {
-        default:
-          System.out.println("Not only one description framework");
-        case 0:
-          break;
-        case 1:
-          try {
-            CmdLineParser parser = new CmdLineParser(this);
-            parser.parseArgument(args);
-          }
-          catch (CmdLineException e) {
-            throw new ScriptException(e.getMessage(), e);
-          }
-           break;
-        case 2:
-          try {
-            JCommander jc = new JCommander(this);
-            jc.parse(args);
-          }
-          catch (Exception e) {
-            throw new ScriptException(e.getMessage(), e);
-          }
-          break;
-      }
-
-      //
-      try {
-        this.context = context;
-
-        //
-        execute(context);
-      }
-      finally {
-        this.context = null;
-      }
+      execute(context);
+    }
+    finally {
+      this.context = null;
+    }
   }
 
   protected abstract void execute(CommandContext<C, P> context) throws ScriptException;
