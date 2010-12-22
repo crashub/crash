@@ -1,7 +1,7 @@
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.Option;
+import org.crsh.cmdline.Command;
 import org.crsh.command.ScriptException;
-import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -16,13 +16,12 @@ public class log extends org.crsh.command.CRaSHCommand {
   /** The logger methods.*/
   private static final Set<String> methods = ["trace", "debug", "info", "warn", "trace"];
 
-  @Description("Log a message to a logger")
-  @org.crsh.cmdline.Command
+  @Command(description="Log a message to a logger")
   public void main(
     CommandContext<Logger, Void> context,
-    @Description("The message to log") @Option(names=["m","message"],required=true) String msg,
-    @Description("The logger name") @Argument String name,
-    @Description("The logger level (default info)") @Option(names=["l","level"]) String levelName) throws ScriptException {
+    @Option(names=["m","message"],required=true,description="The message to log") String msg,
+    @Argument(description="The logger name") String name,
+    @Option(names=["l","level"],description="The logger level (default info)") String levelName) throws ScriptException {
 
     //
     if (levelName == null)
@@ -48,13 +47,11 @@ public class log extends org.crsh.command.CRaSHCommand {
     logger."$methodName"(msg);
   }
 
-  @Description("List the available loggers")
-  @org.crsh.cmdline.Command
+  @Command(description="List the available loggers")
   public void ls(
     CommandContext<Void, Logger> context,
-    @Option(names=["f","filter"])
-    @Description("Filter the logger with a regular expression")
-    String filter) throws ScriptException {
+    @Option(names=["f","filter"],description="Filter the logger with a regular expression") String filter
+    ) throws ScriptException {
 
     // Regex filter
     def pattern = Pattern.compile(filter != null ? filter : ".*");
@@ -102,6 +99,161 @@ public class log extends org.crsh.command.CRaSHCommand {
          context.produce(logger);
          context.writer.println(it);
        }
+    }
+  }
+
+  @Command(description="Create one or several loggers")
+  public void add(
+    CommandContext<Void, Logger> context,
+    @Argument(description="The logger names to add") List<String> names) throws ScriptException {
+    names.each {
+      if (it.length() > 0) {
+        Logger logger = LoggerFactory.getLogger(it);
+        context.produce(logger);
+        context.writer.println(it);
+      }
+    }
+  }
+
+  /** All levels. */
+  private static final List<String> levels = ["trace","debug","info","warn","error"];
+
+  @Command(description="Give info about a logger")
+  public void info(
+    CommandContext<Logger, Void> context,
+    @Argument(description="The logger names") List<String> names) throws ScriptException {
+    if (context.piped) {
+      context.consume().each() {
+        info(context.writer, it);
+      }
+    } else {
+      names.each() {
+        def logger = LoggerFactory.getLogger(it);
+        info(context.writer, logger);
+      }
+    }
+  }
+
+  private void info(PrintWriter writer, Logger logger) {
+    if (logger != null) {
+      for (String level : levels) {
+        if (logger[level + "Enabled"]) {
+          writer.println(logger.name + "<" + level.toUpperCase() + ">");
+          break;
+        }
+      }
+    }
+  }
+
+  /** . */
+  private static final Set<String> plugins = ["jdk","log4j"];
+
+  /** . */
+  private static final Map<String,java.util.logging.Level> julLevels = [
+    "trace":"FINEST",
+    "debug":"FINER",
+    "info":"INFO",
+    "warn":"WARNING",
+    "error":"SEVERE"
+    ];
+
+  /** . */
+  private static final Map<String,java.util.logging.Level> log4jLevels = [
+    "trace":"TRACE",
+    "debug":"DEBUG",
+    "info":"INFO",
+    "warn":"WARNING",
+    "error":"ERROR"
+    ];
+
+
+  @Command(description="Set the level of one of several loggers")
+  public void set(
+    CommandContext<Logger, Void> context,
+    @Argument(description="The logger names") List<String> names,
+    @Option(names=["l","level"],description="The logger level to assign among {trace, debug, info, warn, error}") String levelName,
+    @Option(names=["p","plugin"],description="Force the plugin implementation") String plugin) throws ScriptException {
+
+    //
+    def cl = Thread.currentThread().contextClassLoader;
+
+    //
+    if (plugin != null) {
+      plugin = plugin.toLowerCase();
+      if (plugins[plugin] == null)
+        throw new ScriptException("Plugin $plugin not supported");
+    } else {
+      // Auto detect plugin from SLF4J
+      def ilfName = LoggerFactory.ILoggerFactory.class.simpleName;
+      switch (ilfName) {
+        case "JDK14LoggerFactory":
+          plugin = "jdk";
+          break;
+        case "Log4jLoggerFactory":
+          plugin = "log4j";
+          break;
+        case "JBossLoggerFactory":
+          // Here we see if we have log4j in the classpath and we use it
+          try {
+            logManager = cl.loadClass("org.apache.log4j.LogManager");
+            plugin = "log4j";
+          }
+          catch (ClassNotFoundException nf) {
+          }
+       }
+    }
+
+    //
+    if (plugin == null)
+      throw new ScriptException("No usable plugin");
+
+    // The log invoker
+    def invoker;
+
+    // The non portable part
+    switch (plugin) {
+      case "jdk":
+        def f = cl.loadClass("org.slf4j.impl.JDK14LoggerAdapter").getDeclaredField("logger");
+        f.accessible = true;
+        invoker = { Logger logger ->
+          def julLogger = f.get(logger);
+          def level = null;
+          if (levelName != null) {
+            def julLevelName = julLevels[levelName.toLowerCase()];
+            if (julLevelName == null)
+              throw new ScriptException("Unrecognized level $levelName");
+            level = java.util.logging.Level[julLevelName];
+          }
+          julLogger.level = level;
+        };
+        break;
+      case "log4j":
+        invoker = { Logger logger ->
+          def l = cl.loadClass("org.apache.log4j.Logger");
+          def log4jLogger = l.getLogger(logger.name);
+          context.writer.println(log4jLogger);
+          def level = null;
+          if (levelName != null) {
+            def log4jLevelName = log4jLevels[levelName];
+            if (log4jLevelName == null)
+              throw new ScriptException("Unrecognized level name $levelName");
+            level = cl.loadClass("org.apache.log4j.Level")[log4jLevelName];
+          }
+          log4jLogger.level = level;
+        }
+        break;
+    }
+
+    //
+    if (context.piped) {
+      context.consume().each() {
+        invoker(it);
+      }
+    } else {
+      names.each() {
+        def logger = LoggerFactory.getLogger(it);
+        invoker(logger);
+      }
     }
   }
 }

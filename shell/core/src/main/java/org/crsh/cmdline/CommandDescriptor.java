@@ -127,7 +127,6 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
   protected static <B extends ParameterBinding> ParameterDescriptor<B> create(
     B binding,
     Type type,
-    Description descriptionAnn,
     Argument argumentAnn,
     Option optionAnn) throws IntrospectionException {
     if (argumentAnn != null) {
@@ -137,7 +136,7 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
       return new ArgumentDescriptor<B>(
         binding,
         type,
-        description(descriptionAnn),
+        argumentAnn.description(),
         argumentAnn.required(),
         argumentAnn.password());
     } else if (optionAnn != null) {
@@ -145,7 +144,7 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
         binding,
         type,
         Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
-        description(descriptionAnn),
+        optionAnn.description(),
         optionAnn.required(),
         optionAnn.arity(),
         optionAnn.password());

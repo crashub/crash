@@ -151,11 +151,10 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
     } else {
       parameters = parameters(superIntrospected);
       for (Field f : introspected.getDeclaredFields()) {
-        Description descriptionAnn = f.getAnnotation(Description.class);
         Argument argumentAnn = f.getAnnotation(Argument.class);
         Option optionAnn = f.getAnnotation(Option.class);
         ParameterBinding.ClassField binding = new ParameterBinding.ClassField(f);
-        ParameterDescriptor<ParameterBinding.ClassField> parameter = create(binding, f.getGenericType(), descriptionAnn, argumentAnn, optionAnn);
+        ParameterDescriptor<ParameterBinding.ClassField> parameter = create(binding, f.getGenericType(), argumentAnn, optionAnn);
         if (parameter != null) {
           parameters.add(parameter);
         }
@@ -180,7 +179,6 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
           for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
             Annotation[] parameterAnnotations = parameterAnnotationMatrix[i];
             Type parameterType = parameterTypes[i];
-            Description descriptionAnn = null;
             Argument argumentAnn = null;
             Option optionAnn = null;
             for (Annotation parameterAnnotation : parameterAnnotations) {
@@ -188,24 +186,21 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
                 optionAnn = (Option)parameterAnnotation;
               } else if (parameterAnnotation instanceof Argument) {
                 argumentAnn = (Argument)parameterAnnotation;
-              } else if (parameterAnnotation instanceof Description) {
-                descriptionAnn = (Description)parameterAnnotation;
               }
             }
             ParameterBinding.MethodArgument binding = new ParameterBinding.MethodArgument(i);
-            ParameterDescriptor<ParameterBinding.MethodArgument> parameter = create(binding, parameterType, descriptionAnn, argumentAnn, optionAnn);
+            ParameterDescriptor<ParameterBinding.MethodArgument> parameter = create(binding, parameterType, argumentAnn, optionAnn);
             if (parameter != null) {
               parameters.add(parameter);
             } else {
               log.debug("Method argument with index " + i + " of method " + m + " is not annotated");
             }
           }
-          Description descriptionAnn = m.getAnnotation(Description.class);
           commands.add(new MethodDescriptor<T>(
             this,
             m,
             m.getName().toLowerCase(),
-            descriptionAnn != null ? descriptionAnn.value() : "",
+            command.description(),
             parameters));
         }
       }
