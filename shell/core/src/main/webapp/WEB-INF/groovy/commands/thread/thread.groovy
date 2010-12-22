@@ -1,5 +1,6 @@
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.Option;
+import org.crsh.cmdline.Command;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
 import org.crsh.command.CommandContext;
@@ -7,22 +8,23 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 import java.util.Formatter;
 
-@Description("List the vm threads")
-public class threadls extends org.crsh.command.CRaSHCommand<Void, Thread> {
+public class thread extends org.crsh.command.CRaSHCommand {
 
-  @Description("Retain the thread with the specified name")
-  @Option(names=["n","name"])
-  def String name;
-
-  @Description("Filter the threads with a regular expression on their name")
-  @Option(names=["f","filter"])
-  def String nameFilter;
-
-  @Description("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
-  @Option(names=["s","state"])
-  def String stateFilter;
-
-  public void execute(CommandContext<Void, Thread> context) throws ScriptException {
+  @Command(description="List the vm threads")
+  public void ls(
+    CommandContext<Void, Thread> context,
+    @Option(
+      names=["n","name"],
+      description="Retain the thread with the specified name")
+    String name,
+    @Option(
+      names=["f","filter"],
+      description="Filter the threads with a regular expression on their name")
+    String nameFilter,
+    @Option(
+      names=["s","state"],
+      description="Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
+    String stateFilter) throws ScriptException {
 
     // Regex filter
     if (name != null) {
@@ -73,6 +75,16 @@ public class threadls extends org.crsh.command.CRaSHCommand<Void, Thread> {
       group = parent;
     }
     return group;
+  }
+
+  @Command(description="List the vm threads")
+  public void stop(CommandContext<Thread, Void> context) throws ScriptException {
+    if (context.piped) {
+      context.consume().each() {
+        it.stop();
+        context.writer.println("Kill thread $it");
+      }
+    }
   }
 }
 
