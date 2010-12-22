@@ -119,4 +119,22 @@ public class CommandInfoTestCase extends TestCase {
     assertNotNull(b);
 
   }
+
+  public void testOverlappingOption() throws IntrospectionException {
+
+    class A {
+      @Option(names = "a")
+      String a;
+      @Command
+      void b(@Option(names = "a") String a) {
+      }
+    }
+
+    try {
+      CommandDescriptor.create(A.class);
+      fail();
+    }
+    catch (IntrospectionException e) {
+    }
+  }
 }

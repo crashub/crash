@@ -96,6 +96,10 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
 
   public abstract Class<T> getType();
 
+  public Set<String> getOptionNames() {
+    return optionMap.keySet();
+  }
+
   public Collection<OptionDescriptor<B>> getOptions() {
     return options;
   }

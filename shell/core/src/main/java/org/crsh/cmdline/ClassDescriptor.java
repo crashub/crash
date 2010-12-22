@@ -27,8 +27,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -40,7 +42,10 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
   private final Class<T> type;
 
   /** . */
-  private final Map<String, MethodDescriptor<T>> commandMap;
+  private final Map<String, MethodDescriptor<T>> methodMap;
+
+  /** . */
+  private final MethodDescriptor<T> main;
 
   public ClassDescriptor(Class<T> type) throws IntrospectionException {
     super(
@@ -49,14 +54,30 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
       parameters(type));
 
     //
+    Set<String> optionNames = getOptionNames();
+
+    // Make sure we can add it
     Map<String, MethodDescriptor<T>> commandMap = new HashMap<String, MethodDescriptor<T>>();
-    for (MethodDescriptor<T> command : commands(type)) {
-      commandMap.put(command.getName(), command);
+    for (MethodDescriptor<T> method : commands(type)) {
+
+      Set<String> diff = new HashSet<String>(optionNames);
+      diff.retainAll(method.getOptionNames());
+      if (diff.size() > 0) {
+        throw new IntrospectionException("Cannot add method " + method.getName() + " because it has common "
+        + " options with its class: " + diff);
+      }
+
+      //
+      commandMap.put(method.getName(), method);
     }
 
     //
-    this.commandMap = commandMap;
+    MethodDescriptor main = commandMap.get("main");
+
+    //
+    this.methodMap = commandMap;
     this.type = type;
+    this.main = main;
   }
 
   @Override
@@ -64,12 +85,16 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
     return type;
   }
 
-  public Iterable<MethodDescriptor<T>> getCommands() {
-    return commandMap.values();
+  public MethodDescriptor<T> getMainMethod() {
+    return main;
+  }
+
+  public Iterable<MethodDescriptor<T>> getMethods() {
+    return methodMap.values();
   }
 
   public MethodDescriptor<T> getMethod(String name) {
-    return commandMap.get(name);
+    return methodMap.get(name);
   }
 
   /** . */

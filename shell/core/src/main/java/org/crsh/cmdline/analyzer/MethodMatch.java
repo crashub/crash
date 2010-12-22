@@ -72,6 +72,8 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
   @Override
   public void process(T command) throws CmdLineException {
 
+    // Configure command
+
     //
     Map<Integer, ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument>> used = newHashMap();
     Set<ParameterDescriptor<?>> unused = newHashSet();
