@@ -26,9 +26,11 @@ import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.analyzer.Analyzer;
+import org.crsh.cmdline.analyzer.InvocationContext;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -46,12 +48,12 @@ public class CmdLineProcessorTestCase extends TestCase {
     Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    analyzer.analyze("-o foo").invoke(a);
+    analyzer.analyze("-o foo").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     try {
       a = new A();
-      analyzer.analyze("").invoke(a);
+      analyzer.analyze("").invoke(new InvocationContext(), a);
       fail();
     }
     catch (CmdSyntaxException e) {
@@ -67,11 +69,11 @@ public class CmdLineProcessorTestCase extends TestCase {
     Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    analyzer.analyze("-o foo").invoke(a);
+    analyzer.analyze("-o foo").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.analyze("").invoke(a);
+    analyzer.analyze("").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
   }
 
@@ -84,16 +86,16 @@ public class CmdLineProcessorTestCase extends TestCase {
     Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    analyzer.analyze("foo").invoke(a);
+    analyzer.analyze("foo").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.analyze("foo bar").invoke(a);
+    analyzer.analyze("foo bar").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     try {
       a = new A();
-      analyzer.analyze("").invoke(a);
+      analyzer.analyze("").invoke(new InvocationContext(), a);
       fail();
     }
     catch (CmdSyntaxException e) {
@@ -109,15 +111,15 @@ public class CmdLineProcessorTestCase extends TestCase {
     Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    analyzer.analyze("foo").invoke(a);
+    analyzer.analyze("foo").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.analyze("foo bar").invoke(a);
+    analyzer.analyze("foo bar").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.analyze("").invoke(a);
+    analyzer.analyze("").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
   }
 
@@ -130,15 +132,15 @@ public class CmdLineProcessorTestCase extends TestCase {
     Analyzer<A> analyzer = new Analyzer<A>(desc);
 
     A a = new A();
-    analyzer.analyze("").invoke(a);
+    analyzer.analyze("").invoke(new InvocationContext(), a);
     assertEquals(null , a.s);
 
     a = new A();
-    analyzer.analyze("foo").invoke(a);
+    analyzer.analyze("foo").invoke(new InvocationContext(), a);
     assertEquals(Arrays.asList("foo"), a.s);
 
     a = new A();
-    analyzer.analyze("foo bar").invoke(a);
+    analyzer.analyze("foo bar").invoke(new InvocationContext(), a);
     assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
 
@@ -152,18 +154,18 @@ public class CmdLineProcessorTestCase extends TestCase {
 
     A a = new A();
     try {
-      analyzer.analyze("").invoke(a);
+      analyzer.analyze("").invoke(new InvocationContext(), a);
       fail();
     }
     catch (CmdSyntaxException expected) {
     }
 
     a = new A();
-    analyzer.analyze("foo").invoke(a);
+    analyzer.analyze("foo").invoke(new InvocationContext(), a);
     assertEquals(Arrays.asList("foo"), a.s);
 
     a = new A();
-    analyzer.analyze("foo bar").invoke(a);
+    analyzer.analyze("foo bar").invoke(new InvocationContext(), a);
     assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
 
@@ -186,34 +188,34 @@ public class CmdLineProcessorTestCase extends TestCase {
 
     //
     A a = new A();
-    analyzer.analyze("-s foo m -o bar juu").invoke(a);
+    analyzer.analyze("-s foo m -o bar juu").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
     assertEquals("bar", a.o);
     assertEquals("juu", a.a);
 
     //
     a = new A();
-    analyzer.analyze("m -o bar juu").invoke(a);
+    analyzer.analyze("m -o bar juu").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
     assertEquals("bar", a.o);
     assertEquals("juu", a.a);
 
     //
     a = new A();
-    analyzer.analyze("m juu").invoke(a);
+    analyzer.analyze("m juu").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
     assertEquals(null, a.o);
     assertEquals("juu", a.a);
 
     //
     a = new A();
-    analyzer.analyze("m -o bar").invoke(a);
+    analyzer.analyze("m -o bar").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
     assertEquals("bar", a.o);
     assertEquals(null, a.a);
 
     a = new A();
-    analyzer.analyze("m").invoke(a);
+    analyzer.analyze("m").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
     assertEquals(null, a.o);
     assertEquals(null, a.a);
@@ -235,7 +237,30 @@ public class CmdLineProcessorTestCase extends TestCase {
 
     //
     B b = new B();
-    analyzer.analyze("").invoke(b);
+    analyzer.analyze("").invoke(new InvocationContext(), b);
     assertEquals(1, b.count);
+  }
+
+  public static class C {
+
+    Locale locale;
+
+    @Command
+    public void main(Locale locale) {
+      this.locale = locale;
+    }
+  }
+
+  public void testInvocationAttributeInjection() throws Exception {
+
+    ClassDescriptor<C> desc = CommandDescriptor.create(C.class);
+    Analyzer<C> analyzer = new Analyzer<C>("main", desc);
+
+    //
+    C c = new C();
+    InvocationContext context = new InvocationContext();
+    context.setAttribute(Locale.class, Locale.FRENCH);
+    analyzer.analyze("").invoke(context, c);
+    assertEquals(Locale.FRENCH, c.locale);
   }
 }

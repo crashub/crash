@@ -23,6 +23,7 @@ import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.analyzer.Analyzer;
+import org.crsh.cmdline.analyzer.InvocationContext;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
 
@@ -158,7 +159,7 @@ public abstract class CRaSHCommand<C, P> extends GroovyCommand implements ShellC
         }
 
         //
-        Object o = analyzer.analyze(s.toString()).invoke(this);
+        Object o = analyzer.analyze(s.toString()).invoke(new InvocationContext(), this);
 
         //
         if (o != null) {

@@ -70,7 +70,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
   }
 
   @Override
-  public Object invoke(T command) throws CmdLineException {
+  public Object invoke(InvocationContext context, T command) throws CmdLineException {
 
     // Configure command
 
@@ -116,10 +116,12 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
       //
       Object v;
       if (parameterMatch == null) {
-        if (parameterTypes[i].isPrimitive()) {
+        Class<?> parameterType = parameterTypes[i];
+        if (parameterType.isPrimitive()) {
           throw new UnsupportedOperationException("Todo : primitive handling");
         } else {
-          v = null;
+          // Attempt to obtain from invocation context
+          v = context.getAttribute(parameterType);
         }
       }
       else {
@@ -136,7 +138,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
     }
 
     // First configure command
-    owner.invoke(command);
+    owner.invoke(context, command);
 
     //
     try {

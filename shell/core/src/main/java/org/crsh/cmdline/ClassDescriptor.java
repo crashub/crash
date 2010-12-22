@@ -20,6 +20,8 @@
 package org.crsh.cmdline;
 
 import org.crsh.command.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -37,6 +39,9 @@ import java.util.Set;
  * @version $Revision$
  */
 public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.ClassField> {
+
+  /** . */
+  private static final Logger log = LoggerFactory.getLogger(ClassDescriptor.class);
 
   /** . */
   private final Class<T> type;
@@ -192,7 +197,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
             if (parameter != null) {
               parameters.add(parameter);
             } else {
-              throw new IntrospectionException();
+              log.debug("Method argument with index " + i + " of method " + m + " is not annotated");
             }
           }
           Description descriptionAnn = m.getAnnotation(Description.class);

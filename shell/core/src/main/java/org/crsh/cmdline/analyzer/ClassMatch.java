@@ -59,7 +59,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
   }
 
   @Override
-  public Object invoke(T command) throws CmdLineException {
+  public Object invoke(InvocationContext context, T command) throws CmdLineException {
     List<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> used = newArrayList();
     Set<ParameterDescriptor<?>> unused = newHashSet();
     unused.addAll(descriptor.getArguments());
