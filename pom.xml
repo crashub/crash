@@ -70,6 +70,11 @@
       <!-- Module core -->
       <dependency>
         <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.cmdline</artifactId>
+        <version>1.0.0-beta18-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
         <type>jar</type>

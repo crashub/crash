@@ -19,16 +19,72 @@
 
 package org.crsh.cmdline;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SimpleValueType {
+public abstract class SimpleValueType<T> {
 
-  public static final SimpleValueType STRING = new SimpleValueType();
-  public static final SimpleValueType INTEGER = new SimpleValueType();
-  public static final SimpleValueType BOOLEAN = new SimpleValueType();
+  /** . */
+  public static final SimpleValueType<String> STRING = new SimpleValueType<String>(String.class) {
+    @Override
+    public String parse(String s) {
+      return s;
+    }
+  };
 
-  private SimpleValueType() {
+  /** . */
+  public static final SimpleValueType<Integer> INTEGER = new SimpleValueType<Integer>(Integer.class) {
+    @Override
+    public Integer parse(String s) {
+      return Integer.parseInt(s);
+    }
+  };
+
+  /** . */
+  public static final SimpleValueType<Boolean> BOOLEAN = new SimpleValueType<Boolean>(Boolean.class) {
+    @Override
+    public Boolean parse(String s) {
+      return Boolean.parseBoolean(s);
+    }
+  };
+
+  /** . */
+  private static final Map<Class<?>, SimpleValueType<?>> registry;
+
+  static {
+    Map<Class<?>, SimpleValueType<?>> tmp = new HashMap<Class<?>, SimpleValueType<?>>();
+    tmp.put(String.class, STRING);
+    tmp.put(Integer.class, INTEGER);
+    tmp.put(Boolean.class, BOOLEAN);
+
+    //
+    registry = tmp;
   }
+
+  public static SimpleValueType<?> get(Class<?> clazz) {
+    return registry.get(clazz);
+  }
+
+  /** . */
+  private final Class<T> javaType;
+
+  private SimpleValueType(Class<T> javaType) {
+    if (javaType == null) {
+      throw new NullPointerException();
+    }
+
+    //
+    this.javaType = javaType;
+  }
+
+  public Class<T> getJavaType() {
+    return javaType;
+  }
+
+  public abstract T parse(String s);
+
 }
