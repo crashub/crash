@@ -35,14 +35,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class MatchFactory<T> {
+public class Matcher<T> {
 
   /** . */
   private final CommandAnalyzer<T, ClassDescriptor<T>, ClassFieldBinding> analyzer;
@@ -53,17 +52,17 @@ public class MatchFactory<T> {
   /** . */
   private final String mainName;
 
-  public MatchFactory(ClassDescriptor<T> descriptor) {
+  public Matcher(ClassDescriptor<T> descriptor) {
     this(null, descriptor);
   }
 
-  public MatchFactory(String mainName, ClassDescriptor<T> descriptor) {
+  public Matcher(String mainName, ClassDescriptor<T> descriptor) {
     this.analyzer = new CommandAnalyzer<T, ClassDescriptor<T>, ClassFieldBinding>(descriptor);
     this.descriptor = descriptor;
     this.mainName = mainName;
   }
 
-  public CommandMatch<T, ?, ?> create(String s) {
+  public CommandMatch<T, ?, ?> match(String s) {
 
     //
     StringCursor bilto = new StringCursor(s);
@@ -75,7 +74,7 @@ public class MatchFactory<T> {
     List<ArgumentMatch<MethodArgumentBinding>> methodArguments = null;
     MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+)");
-    Matcher m = p.matcher(bilto.getValue());
+    java.util.regex.Matcher m = p.matcher(bilto.getValue());
     if (m.find()) {
       String f = m.group(1);
       method = descriptor.getMethod(f);
@@ -173,7 +172,7 @@ public class MatchFactory<T> {
     public List<ArgumentMatch<B>> analyzeArguments(StringCursor bilto) {
       LinkedList<ArgumentMatch<B>> argumentMatches = new LinkedList<ArgumentMatch<B>>();
       for (Pattern p : argumentsPatterns) {
-        Matcher matcher = p.matcher(bilto.getValue());
+        java.util.regex.Matcher matcher = p.matcher(bilto.getValue());
         if (matcher.find()) {
 
           for (int i = 1;i <= matcher.groupCount();i++) {
@@ -181,7 +180,7 @@ public class MatchFactory<T> {
             ArrayList<String> values = new ArrayList<String>();
 
             //
-            Matcher m2 = Pattern.compile("\\S+").matcher(matcher.group(i));
+            java.util.regex.Matcher m2 = Pattern.compile("\\S+").matcher(matcher.group(i));
             while (m2.find()) {
               values.add(m2.group(0));
             }
@@ -215,7 +214,7 @@ public class MatchFactory<T> {
     public List<OptionMatch<B>> analyzeOptions(StringCursor bilto) {
       List<OptionMatch<B>> optionMatches = new ArrayList<OptionMatch<B>>();
       while (true) {
-        Matcher matcher = optionsPattern.matcher(bilto.getValue());
+        java.util.regex.Matcher matcher = optionsPattern.matcher(bilto.getValue());
         if (matcher.matches()) {
           OptionDescriptor<B> matched = null;
           int index = 2;

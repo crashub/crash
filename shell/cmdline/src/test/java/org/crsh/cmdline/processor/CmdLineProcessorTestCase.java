@@ -26,7 +26,7 @@ import org.crsh.cmdline.CmdSyntaxException;
 import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Option;
-import org.crsh.cmdline.matcher.MatchFactory;
+import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.InvocationContext;
 
 import java.util.Arrays;
@@ -46,15 +46,15 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    MatchFactory<A> analyzer = new MatchFactory<A>(desc);
+    Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
-    analyzer.create("-o foo").invoke(new InvocationContext(), a);
+    analyzer.match("-o foo").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     try {
       a = new A();
-      analyzer.create("").invoke(new InvocationContext(), a);
+      analyzer.match("").invoke(new InvocationContext(), a);
       fail();
     }
     catch (CmdSyntaxException e) {
@@ -67,14 +67,14 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    MatchFactory<A> analyzer = new MatchFactory<A>(desc);
+    Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
-    analyzer.create("-o foo").invoke(new InvocationContext(), a);
+    analyzer.match("-o foo").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.create("").invoke(new InvocationContext(), a);
+    analyzer.match("").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
   }
 
@@ -84,19 +84,19 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    MatchFactory<A> analyzer = new MatchFactory<A>(desc);
+    Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
-    analyzer.create("foo").invoke(new InvocationContext(), a);
+    analyzer.match("foo").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.create("foo bar").invoke(new InvocationContext(), a);
+    analyzer.match("foo bar").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     try {
       a = new A();
-      analyzer.create("").invoke(new InvocationContext(), a);
+      analyzer.match("").invoke(new InvocationContext(), a);
       fail();
     }
     catch (CmdSyntaxException e) {
@@ -109,18 +109,18 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    MatchFactory<A> analyzer = new MatchFactory<A>(desc);
+    Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
-    analyzer.create("foo").invoke(new InvocationContext(), a);
+    analyzer.match("foo").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.create("foo bar").invoke(new InvocationContext(), a);
+    analyzer.match("foo bar").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.create("").invoke(new InvocationContext(), a);
+    analyzer.match("").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
   }
 
@@ -130,18 +130,18 @@ public class CmdLineProcessorTestCase extends TestCase {
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    MatchFactory<A> analyzer = new MatchFactory<A>(desc);
+    Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
-    analyzer.create("").invoke(new InvocationContext(), a);
+    analyzer.match("").invoke(new InvocationContext(), a);
     assertEquals(null , a.s);
 
     a = new A();
-    analyzer.create("foo").invoke(new InvocationContext(), a);
+    analyzer.match("foo").invoke(new InvocationContext(), a);
     assertEquals(Arrays.asList("foo"), a.s);
 
     a = new A();
-    analyzer.create("foo bar").invoke(new InvocationContext(), a);
+    analyzer.match("foo bar").invoke(new InvocationContext(), a);
     assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
 
@@ -151,22 +151,22 @@ public class CmdLineProcessorTestCase extends TestCase {
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    MatchFactory<A> analyzer = new MatchFactory<A>(desc);
+    Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
     try {
-      analyzer.create("").invoke(new InvocationContext(), a);
+      analyzer.match("").invoke(new InvocationContext(), a);
       fail();
     }
     catch (CmdSyntaxException expected) {
     }
 
     a = new A();
-    analyzer.create("foo").invoke(new InvocationContext(), a);
+    analyzer.match("foo").invoke(new InvocationContext(), a);
     assertEquals(Arrays.asList("foo"), a.s);
 
     a = new A();
-    analyzer.create("foo bar").invoke(new InvocationContext(), a);
+    analyzer.match("foo bar").invoke(new InvocationContext(), a);
     assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
 
@@ -185,38 +185,38 @@ public class CmdLineProcessorTestCase extends TestCase {
   public void testMethodInvocation() throws Exception {
 
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    MatchFactory<A> analyzer = new MatchFactory<A>(desc);
+    Matcher<A> analyzer = new Matcher<A>(desc);
 
     //
     A a = new A();
-    analyzer.create("-s foo m -o bar juu").invoke(new InvocationContext(), a);
+    analyzer.match("-s foo m -o bar juu").invoke(new InvocationContext(), a);
     assertEquals("foo", a.s);
     assertEquals("bar", a.o);
     assertEquals("juu", a.a);
 
     //
     a = new A();
-    analyzer.create("m -o bar juu").invoke(new InvocationContext(), a);
+    analyzer.match("m -o bar juu").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
     assertEquals("bar", a.o);
     assertEquals("juu", a.a);
 
     //
     a = new A();
-    analyzer.create("m juu").invoke(new InvocationContext(), a);
+    analyzer.match("m juu").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
     assertEquals(null, a.o);
     assertEquals("juu", a.a);
 
     //
     a = new A();
-    analyzer.create("m -o bar").invoke(new InvocationContext(), a);
+    analyzer.match("m -o bar").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
     assertEquals("bar", a.o);
     assertEquals(null, a.a);
 
     a = new A();
-    analyzer.create("m").invoke(new InvocationContext(), a);
+    analyzer.match("m").invoke(new InvocationContext(), a);
     assertEquals(null, a.s);
     assertEquals(null, a.o);
     assertEquals(null, a.a);
@@ -234,11 +234,11 @@ public class CmdLineProcessorTestCase extends TestCase {
 
   public void testMainMethodInvocation() throws Exception {
     ClassDescriptor<B> desc = CommandDescriptor.create(B.class);
-    MatchFactory<B> analyzer = new MatchFactory<B>("main", desc);
+    Matcher<B> analyzer = new Matcher<B>("main", desc);
 
     //
     B b = new B();
-    analyzer.create("").invoke(new InvocationContext(), b);
+    analyzer.match("").invoke(new InvocationContext(), b);
     assertEquals(1, b.count);
   }
 
@@ -255,13 +255,13 @@ public class CmdLineProcessorTestCase extends TestCase {
   public void testInvocationAttributeInjection() throws Exception {
 
     ClassDescriptor<C> desc = CommandDescriptor.create(C.class);
-    MatchFactory<C> analyzer = new MatchFactory<C>("main", desc);
+    Matcher<C> analyzer = new Matcher<C>("main", desc);
 
     //
     C c = new C();
     InvocationContext context = new InvocationContext();
     context.setAttribute(Locale.class, Locale.FRENCH);
-    analyzer.create("").invoke(context, c);
+    analyzer.match("").invoke(context, c);
     assertEquals(Locale.FRENCH, c.locale);
   }
 
@@ -287,12 +287,12 @@ public class CmdLineProcessorTestCase extends TestCase {
     //
     D d = new D();
     InvocationContext context = new InvocationContext();
-    new MatchFactory<D>("a", desc).create("-o 5").invoke(context, d);
+    new Matcher<D>("a", desc).match("-o 5").invoke(context, d);
     assertEquals((Integer)5, d.i);
 
     //
     d = new D();
-    new MatchFactory<D>("b", desc).create("-o 5").invoke(context, d);
+    new Matcher<D>("b", desc).match("-o 5").invoke(context, d);
     assertEquals((Integer)5, d.i);
   }
 }

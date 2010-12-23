@@ -22,7 +22,7 @@ package org.crsh.command;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
-import org.crsh.cmdline.matcher.MatchFactory;
+import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.ClassMatch;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
@@ -91,7 +91,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
     
     // WTF
-    MatchFactory analyzer = new MatchFactory("main", descriptor);
+    Matcher analyzer = new Matcher("main", descriptor);
     StringBuilder s = new StringBuilder();
     for (String arg : args) {
       if (s.length() > 0) {
@@ -103,7 +103,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     //
     InvocationContext invocationContext = new InvocationContext();
     invocationContext.setAttribute(CommandContext.class, context);
-    final CommandMatch match = analyzer.create(s.toString());
+    final CommandMatch match = analyzer.match(s.toString());
 
     //
     if (match instanceof MethodMatch) {
