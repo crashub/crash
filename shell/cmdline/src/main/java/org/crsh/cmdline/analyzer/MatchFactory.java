@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Analyzer<T> {
+public class MatchFactory<T> {
 
   /** . */
   private final CommandAnalyzer<T, ClassDescriptor<T>, ClassFieldBinding> analyzer;
@@ -53,20 +53,20 @@ public class Analyzer<T> {
   /** . */
   private final String mainName;
 
-  public Analyzer(ClassDescriptor<T> descriptor) {
+  public MatchFactory(ClassDescriptor<T> descriptor) {
     this(null, descriptor);
   }
 
-  public Analyzer(String mainName, ClassDescriptor<T> descriptor) {
+  public MatchFactory(String mainName, ClassDescriptor<T> descriptor) {
     this.analyzer = new CommandAnalyzer<T, ClassDescriptor<T>, ClassFieldBinding>(descriptor);
     this.descriptor = descriptor;
     this.mainName = mainName;
   }
 
-  public CommandMatch<T, ?, ?> analyze(String s) {
+  public CommandMatch<T, ?, ?> create(String s) {
 
     //
-    Bilto bilto = new Bilto(s);
+    StringCursor bilto = new StringCursor(s);
 
     // Read all common options we are able to
     List<OptionMatch<ClassFieldBinding>> options = analyzer.analyzeOptions(bilto);
@@ -75,12 +75,12 @@ public class Analyzer<T> {
     List<ArgumentMatch<MethodArgumentBinding>> methodArguments = null;
     MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+)");
-    Matcher m = p.matcher(bilto.rest);
+    Matcher m = p.matcher(bilto.getRest());
     if (m.find()) {
       String f = m.group(1);
       method = descriptor.getMethod(f);
       if (method != null) {
-        bilto.skipRestBy(m.end(1));
+        bilto.skip(m.end(1));
       }
     }
 
@@ -91,40 +91,14 @@ public class Analyzer<T> {
 
     //
     if (method != null) {
-      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), bilto.rest);
+      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), bilto.getRest());
       CommandAnalyzer<T, MethodDescriptor<T>, MethodArgumentBinding> methodAnalyzer = new CommandAnalyzer<T, MethodDescriptor<T>, MethodArgumentBinding>(method);
       methodOptions = methodAnalyzer.analyzeOptions(bilto);
       methodArguments = methodAnalyzer.analyzeArguments(bilto);
-      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, bilto.rest);
+      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, bilto.getRest());
     } else {
       List<ArgumentMatch<ClassFieldBinding>> arguments = analyzer.analyzeArguments(bilto);
-      return new ClassMatch<T>(descriptor, options, arguments, bilto.rest);
-    }
-  }
-
-  static class Bilto {
-
-    /** . */
-    private StringBuilder done;
-
-    /** The rest. */
-    private String rest;
-
-    Bilto(String rest) {
-      this.rest = rest;
-      this.done = new StringBuilder();
-    }
-
-    private void skipRestTo(int to) {
-      skipRestBy(to - done.length());
-    }
-
-    private void skipRestBy(int diff) {
-      if (diff < 0) {
-        throw new AssertionError();
-      }
-      done.append(rest.substring(0, diff));
-      rest = rest.substring(diff);
+      return new ClassMatch<T>(descriptor, options, arguments, bilto.getRest());
     }
   }
 
@@ -196,10 +170,10 @@ public class Analyzer<T> {
       this.argumentsPatterns = Collections.unmodifiableList(argumentPatterns);
     }
 
-    public List<ArgumentMatch<B>> analyzeArguments(Bilto bilto) {
+    public List<ArgumentMatch<B>> analyzeArguments(StringCursor bilto) {
       LinkedList<ArgumentMatch<B>> argumentMatches = new LinkedList<ArgumentMatch<B>>();
       for (Pattern p : argumentsPatterns) {
-        Matcher matcher = p.matcher(bilto.rest);
+        Matcher matcher = p.matcher(bilto.getRest());
         if (matcher.find()) {
 
           for (int i = 1;i <= matcher.groupCount();i++) {
@@ -216,8 +190,8 @@ public class Analyzer<T> {
             if (values.size() > 0) {
               ArgumentMatch<B> match = new ArgumentMatch<B>(
                 command.getArguments().get(i - 1),
-                bilto.done.length() + matcher.start(i),
-                bilto.done.length() + matcher.end(i),
+                bilto.getCount() + matcher.start(i),
+                bilto.getCount()  + matcher.end(i),
                 values
               );
 
@@ -231,17 +205,17 @@ public class Analyzer<T> {
 
       //
       if (argumentMatches.size() > 0) {
-        bilto.skipRestTo(argumentMatches.getLast().getEnd());
+        bilto.seek(argumentMatches.getLast().getEnd());
       }
 
       //
       return argumentMatches;
     }
 
-    public List<OptionMatch<B>> analyzeOptions(Bilto bilto) {
+    public List<OptionMatch<B>> analyzeOptions(StringCursor bilto) {
       List<OptionMatch<B>> optionMatches = new ArrayList<OptionMatch<B>>();
       while (true) {
-        Matcher matcher = optionsPattern.matcher(bilto.rest);
+        Matcher matcher = optionsPattern.matcher(bilto.getRest());
         if (matcher.matches()) {
           OptionDescriptor<B> matched = null;
           int index = 2;
@@ -271,7 +245,7 @@ public class Analyzer<T> {
 
             //
             optionMatches.add(new OptionMatch<B>(matched, name.substring(name.length() == 2 ? 1 : 2), values));
-            bilto.skipRestBy(matcher.end(1));
+            bilto.skip(matcher.end(1));
           }
           else {
             break;

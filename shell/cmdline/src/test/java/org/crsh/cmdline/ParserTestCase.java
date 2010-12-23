@@ -21,7 +21,7 @@ package org.crsh.cmdline;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.crsh.cmdline.analyzer.Analyzer;
+import org.crsh.cmdline.analyzer.MatchFactory;
 import org.crsh.cmdline.analyzer.ArgumentMatch;
 import org.crsh.cmdline.analyzer.ClassMatch;
 import org.crsh.cmdline.analyzer.CommandMatch;
@@ -60,8 +60,8 @@ public class ParserTestCase extends TestCase {
     private <T> Test(Class<T> type, String s) {
       try {
         ClassDescriptor<T> command = CommandDescriptor.create(type);
-        Analyzer<T> parser = new Analyzer<T>(command);
-        CommandMatch<T, ?, ?> match = parser.analyze(s);
+        MatchFactory<T> parser = new MatchFactory<T>(command);
+        CommandMatch<T, ?, ?> match = parser.create(s);
 
         //
         if (match instanceof ClassMatch<?>) {
