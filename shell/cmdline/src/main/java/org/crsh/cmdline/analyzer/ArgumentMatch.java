@@ -20,7 +20,7 @@
 package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.ArgumentDescriptor;
-import org.crsh.cmdline.binding.ParameterBinding;
+import org.crsh.cmdline.binding.TypeBinding;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ArgumentMatch<B extends ParameterBinding> extends ParameterMatch<ArgumentDescriptor<B>, B> {
+public class ArgumentMatch<B extends TypeBinding> extends ParameterMatch<ArgumentDescriptor<B>, B> {
 
   /** . */
   private int start;

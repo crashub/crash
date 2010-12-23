@@ -27,7 +27,7 @@ import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
-import org.crsh.cmdline.binding.ParameterBinding;
+import org.crsh.cmdline.binding.TypeBinding;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,7 +128,7 @@ public class Analyzer<T> {
     }
   }
 
-  private class CommandAnalyzer<T, C extends CommandDescriptor<T, B>, B extends ParameterBinding> {
+  private class CommandAnalyzer<T, C extends CommandDescriptor<T, B>, B extends TypeBinding> {
 
     /** . */
     final CommandDescriptor<T, B> command;

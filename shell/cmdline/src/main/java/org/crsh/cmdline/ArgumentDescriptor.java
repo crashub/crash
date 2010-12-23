@@ -19,7 +19,7 @@
 
 package org.crsh.cmdline;
 
-import org.crsh.cmdline.binding.ParameterBinding;
+import org.crsh.cmdline.binding.TypeBinding;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
@@ -28,7 +28,7 @@ import java.lang.reflect.Type;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ArgumentDescriptor<B extends ParameterBinding> extends ParameterDescriptor<B> {
+public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescriptor<B> {
 
   public ArgumentDescriptor(
     B binding,

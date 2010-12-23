@@ -19,7 +19,7 @@
 
 package org.crsh.cmdline;
 
-import org.crsh.cmdline.binding.ParameterBinding;
+import org.crsh.cmdline.binding.TypeBinding;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import java.util.Set;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CommandDescriptor<T, B extends ParameterBinding> {
+public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
   public static <T> ClassDescriptor<T> create(Class<T> type) throws IntrospectionException {
     return new ClassDescriptor<T>(type);
@@ -120,7 +120,7 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
     return description;
   }
 
-  protected static <B extends ParameterBinding> ParameterDescriptor<B> create(
+  protected static <B extends TypeBinding> ParameterDescriptor<B> create(
     B binding,
     Type type,
     Argument argumentAnn,

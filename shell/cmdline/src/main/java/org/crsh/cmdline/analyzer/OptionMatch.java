@@ -20,7 +20,7 @@
 package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.OptionDescriptor;
-import org.crsh.cmdline.binding.ParameterBinding;
+import org.crsh.cmdline.binding.TypeBinding;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class OptionMatch<B extends ParameterBinding> extends ParameterMatch<OptionDescriptor<B>, B> {
+public class OptionMatch<B extends TypeBinding> extends ParameterMatch<OptionDescriptor<B>, B> {
 
   /** . */
   private final String name;

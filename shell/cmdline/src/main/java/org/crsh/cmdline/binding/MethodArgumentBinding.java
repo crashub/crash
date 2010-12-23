@@ -23,7 +23,7 @@ package org.crsh.cmdline.binding;
 * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
 * @version $Revision$
 */
-public class MethodArgumentBinding extends ParameterBinding {
+public class MethodArgumentBinding extends TypeBinding {
 
   /** . */
   private final int index;

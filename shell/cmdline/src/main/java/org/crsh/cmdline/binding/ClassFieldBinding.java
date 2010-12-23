@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
 * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
 * @version $Revision$
 */
-public class ClassFieldBinding extends ParameterBinding {
+public class ClassFieldBinding extends TypeBinding {
 
   /** . */
   private final Field field;
