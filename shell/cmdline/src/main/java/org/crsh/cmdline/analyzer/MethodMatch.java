@@ -19,15 +19,20 @@
 
 package org.crsh.cmdline.analyzer;
 
+import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.CmdLineException;
 import org.crsh.cmdline.CmdSyntaxException;
+import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.CmdInvocationException;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -71,28 +76,47 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
   @Override
   public Object invoke(InvocationContext context, T command) throws CmdLineException {
 
-    // Configure command
+    //
+    List<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>> classParameters = new ArrayList<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>>();
+    Map<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>> methodParameters = new HashMap<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>>();
 
     //
-    Map<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>> used = new HashMap<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>>();
+    Map<ParameterDescriptor<?>, List<String>> abc = new HashMap<ParameterDescriptor<?>, List<String>>();
+
+    //
     Set<ParameterDescriptor<?>> unused = new HashSet<ParameterDescriptor<?>>();
     unused.addAll(descriptor.getArguments());
     unused.addAll(descriptor.getOptions());
+    unused.addAll(owner.getDescriptor().getOptions());
 
     //
     for (OptionMatch<MethodArgumentBinding> optionMatch : getOptionMatches()) {
-      if (!unused.remove(optionMatch.getParameter())) {
+      OptionDescriptor<MethodArgumentBinding> parameter = optionMatch.getParameter();
+      if (!unused.remove(parameter)) {
         throw new CmdSyntaxException();
       }
-      used.put(optionMatch.getParameter().getBinding().getIndex(), optionMatch);
+      methodParameters.put(parameter.getBinding().getIndex(), optionMatch);
+      abc.put(parameter, optionMatch.getValues());
     }
 
     //
     for (ArgumentMatch<MethodArgumentBinding> argumentMatch : getArgumentMatches()) {
-      if (!unused.remove(argumentMatch.getParameter())) {
+      ArgumentDescriptor<MethodArgumentBinding> parameter = argumentMatch.getParameter();
+      if (!unused.remove(parameter)) {
         throw new CmdSyntaxException();
       }
-      used.put(argumentMatch.getParameter().getBinding().getIndex(), argumentMatch);
+      methodParameters.put(parameter.getBinding().getIndex(), argumentMatch);
+      abc.put(parameter, argumentMatch.getValues());
+    }
+
+    //
+    for (OptionMatch<ClassFieldBinding> optionMatch : owner.getOptionMatches()) {
+      OptionDescriptor<ClassFieldBinding> parameter = optionMatch.getParameter();
+      if (!unused.remove(parameter)) {
+        throw new CmdSyntaxException();
+      }
+      classParameters.add(optionMatch);
+      abc.put(parameter, optionMatch.getValues());
     }
 
     // Should be better with required / non required
@@ -104,13 +128,36 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
       }
     }
 
+    // Convert values
+    Map<ParameterDescriptor<?>, Object> values = new HashMap<ParameterDescriptor<?>, Object>();
+    for (Map.Entry<ParameterDescriptor<?>, List<String>> entry : abc.entrySet()) {
+
+      // First convert the entire list
+      List<Object> l = new ArrayList<Object>();
+      for (String s : entry.getValue()) {
+        Object o = entry.getKey().getType().parse(s);
+        l.add(o);
+      }
+
+      // Then figure out if we need to unwrap somehow
+      Object v;
+      if (entry.getKey().getMultiplicity() == Multiplicity.SINGLE) {
+        v = l.get(0);
+      } else {
+        v = l;
+      }
+
+      //
+      values.put(entry.getKey(), v);
+    }
+
     // Prepare invocation
     MethodDescriptor<T> descriptor = getDescriptor();
     Method m = descriptor.getMethod();
     Class<?>[] parameterTypes = m.getParameterTypes();
     Object[] mArgs = new Object[parameterTypes.length];
     for (int i = 0;i < mArgs.length;i++) {
-      ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding> parameterMatch = used.get(i);
+      ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding> parameterMatch = methodParameters.get(i);
 
       //
       Object v;
@@ -122,25 +169,26 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
           // Attempt to obtain from invocation context
           v = context.getAttribute(parameterType);
         }
-      }
-      else {
-        ParameterDescriptor<MethodArgumentBinding> parameter = parameterMatch.getParameter();
-        if (parameter.getMultiplicity() == Multiplicity.LIST) {
-          v = parameterMatch.getValues();
-        } else {
-          v = parameterMatch.getValues().get(0);
-        }
+      } else {
+        v = values.get(parameterMatch.getParameter());
       }
 
       //
       mArgs[i] = v;
     }
 
-    // First configure command
-    owner.invoke(context, command);
-
     //
     try {
+      // First configure command
+      for (ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding> parameterMatch : classParameters) {
+        ParameterDescriptor<ClassFieldBinding> parameter = parameterMatch.getParameter();
+        Object value = values.get(parameter);
+        Field f = parameter.getBinding().getField();
+        f.setAccessible(true);
+        f.set(command, value);
+      }
+
+      //
       return m.invoke(command, mArgs);
     }
     catch (Exception e) {
