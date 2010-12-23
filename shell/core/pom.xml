@@ -17,6 +17,11 @@
 
     <!-- Should be provided by assembly plugin will fail if so -->
     <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.cmdline</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>

@@ -37,6 +37,7 @@
         <include>org.bouncycastle:bcprov-jdk15</include>
         <include>org.apache.mina:mina-core</include>
         <include>net.wimpi:telnetd-x</include>
+        <include>org.crsh:crsh.shell.cmdline</include>
         <include>org.crsh:crsh.shell.core</include>
       </includes>
     </dependencySet>

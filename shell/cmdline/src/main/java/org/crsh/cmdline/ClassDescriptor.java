@@ -19,7 +19,6 @@
 
 package org.crsh.cmdline;
 
-import org.crsh.command.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +53,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
   public ClassDescriptor(Class<T> type) throws IntrospectionException {
     super(
       type.getSimpleName().toLowerCase(),
-      description(type.getAnnotation(Description.class)),
+      "",
       parameters(type));
 
     //

@@ -20,8 +20,6 @@
 package org.crsh.cmdline;
 
 import junit.framework.TestCase;
-import org.crsh.command.Description;
-import org.crsh.util.Utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,17 +36,16 @@ public class CommandInfoTestCase extends TestCase {
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
     assertEquals("", c.getDescription());
     assertEquals(0, c.getArguments().size());
-    assertEquals(0, Utils.list(c.getOptions()).size());
+    assertEquals(0, c.getOptions().size());
   }
 
   public void testCommandDescription() throws IntrospectionException {
-    @Description("bar")
     class A {
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
-    assertEquals("bar", c.getDescription());
+    assertEquals("", c.getDescription());
     assertEquals(0, c.getArguments().size());
-    assertEquals(0, Utils.list(c.getOptions()).size());
+    assertEquals(0, c.getOptions().size());
   }
 
   public void testOption() throws IntrospectionException {
@@ -57,7 +54,7 @@ public class CommandInfoTestCase extends TestCase {
       private int i;
     }
     CommandDescriptor<A, ?> ai = CommandDescriptor.create(A.class);
-    assertEquals(1, Utils.list(ai.getOptions()).size());
+    assertEquals(1,ai.getOptions().size());
     OptionDescriptor i = ai.getOption("-i");
     assertEquals(Arrays.asList("i"),i.getNames());
   }
@@ -68,7 +65,7 @@ public class CommandInfoTestCase extends TestCase {
       private int i;
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
-    assertEquals(1, Utils.list(c.getArguments()).size());
+    assertEquals(1, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
     assertEquals(SimpleValueType.INTEGER, i.getType().getValueType());
     assertEquals(Multiplicity.SINGLE, i.getType().getMultiplicity());
@@ -82,7 +79,7 @@ public class CommandInfoTestCase extends TestCase {
       private List<Integer> j;
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
-    assertEquals(2, Utils.list(c.getArguments()).size());
+    assertEquals(2, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
     assertEquals(SimpleValueType.INTEGER, i.getType().getValueType());
     assertEquals(Multiplicity.SINGLE, i.getType().getMultiplicity());

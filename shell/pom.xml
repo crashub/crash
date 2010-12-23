@@ -13,6 +13,7 @@
   <name>Shell parent</name>
 
   <modules>
+    <module>cmdline</module>
     <module>core</module>
     <module>jcr</module>
   </modules>

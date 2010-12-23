@@ -19,8 +19,6 @@
 
 package org.crsh.cmdline;
 
-import org.crsh.command.Description;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,10 +116,6 @@ public abstract class CommandDescriptor<T, B extends ParameterBinding> {
 
   public String getDescription() {
     return description;
-  }
-
-  protected static String description(Description descriptionAnn) {
-    return descriptionAnn != null ? descriptionAnn.value() : "";
   }
 
   protected static <B extends ParameterBinding> ParameterDescriptor<B> create(

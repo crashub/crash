@@ -27,11 +27,10 @@ import org.crsh.cmdline.processor.CmdLineException;
 import org.crsh.cmdline.processor.CmdSyntaxException;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static org.crsh.util.Utils.newArrayList;
-import static org.crsh.util.Utils.newHashSet;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -60,8 +59,8 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
 
   @Override
   public Object invoke(InvocationContext context, T command) throws CmdLineException {
-    List<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> used = newArrayList();
-    Set<ParameterDescriptor<?>> unused = newHashSet();
+    List<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> used = new ArrayList<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>>();
+    Set<ParameterDescriptor<?>> unused = new HashSet<ParameterDescriptor<?>>();
     unused.addAll(descriptor.getArguments());
     unused.addAll(descriptor.getOptions());
 

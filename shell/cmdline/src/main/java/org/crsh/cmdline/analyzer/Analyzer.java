@@ -26,7 +26,6 @@ import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterBinding;
-import static org.crsh.util.Utils.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -196,7 +195,7 @@ public class Analyzer<T> {
     }
 
     public List<ArgumentMatch<B>> analyzeArguments(Bilto bilto) {
-      LinkedList<ArgumentMatch<B>> argumentMatches = newLinkedList();
+      LinkedList<ArgumentMatch<B>> argumentMatches = new LinkedList<ArgumentMatch<B>>();
       for (Pattern p : argumentsPatterns) {
         Matcher matcher = p.matcher(bilto.rest);
         if (matcher.find()) {

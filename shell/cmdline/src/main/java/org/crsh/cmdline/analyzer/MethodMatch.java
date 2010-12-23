@@ -28,12 +28,11 @@ import org.crsh.cmdline.processor.CmdLineException;
 import org.crsh.cmdline.processor.CmdSyntaxException;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.crsh.util.Utils.newHashMap;
-import static org.crsh.util.Utils.newHashSet;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -75,8 +74,8 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
     // Configure command
 
     //
-    Map<Integer, ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument>> used = newHashMap();
-    Set<ParameterDescriptor<?>> unused = newHashSet();
+    Map<Integer, ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument>> used = new HashMap<Integer, ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument>>();
+    Set<ParameterDescriptor<?>> unused = new HashSet<ParameterDescriptor<?>>();
     unused.addAll(descriptor.getArguments());
     unused.addAll(descriptor.getOptions());
 
