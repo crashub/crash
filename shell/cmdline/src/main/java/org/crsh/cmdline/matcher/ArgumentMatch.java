@@ -17,10 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.analyzer;
+package org.crsh.cmdline.matcher;
 
+import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
-import org.crsh.cmdline.ParameterDescriptor;
 
 import java.util.List;
 
@@ -28,24 +28,27 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBinding> {
+public class ArgumentMatch<B extends TypeBinding> extends ParameterMatch<ArgumentDescriptor<B>, B> {
 
   /** . */
-  private final P parameter;
+  private int start;
 
   /** . */
-  private final List<String> values;
+  private int end;
 
-  public ParameterMatch(P parameter, List<String> values) {
-    this.parameter = parameter;
-    this.values = values;
+  public ArgumentMatch(ArgumentDescriptor<B> argument, int start, int end, List<String> values) {
+    super(argument, values);
+
+    //
+    this.start = start;
+    this.end = end;
   }
 
-  public P getParameter() {
-    return parameter;
+  public int getStart() {
+    return start;
   }
 
-  public List<String> getValues() {
-    return values;
+  public int getEnd() {
+    return end;
   }
 }

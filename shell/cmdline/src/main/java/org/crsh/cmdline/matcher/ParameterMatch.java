@@ -17,37 +17,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.analyzer;
+package org.crsh.cmdline.matcher;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.ParameterDescriptor;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class InvocationContext {
+public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBinding> {
 
   /** . */
-  private final Map<Class<?>, Object> attributes;
+  private final P parameter;
 
-  public InvocationContext() {
-    this.attributes = new HashMap<Class<?>, Object>();
+  /** . */
+  private final List<String> values;
+
+  public ParameterMatch(P parameter, List<String> values) {
+    this.parameter = parameter;
+    this.values = values;
   }
 
-  public <T> void setAttribute(Class<T> key, T value) {
-    if (key == null) {
-      throw new NullPointerException();
-    }
-    if (value == null) {
-      attributes.remove(key);
-    } else {
-      attributes.put(key, value);
-    }
+  public P getParameter() {
+    return parameter;
   }
 
-  public <T> T getAttribute(Class<T> key) {
-    Object value = attributes.get(key);
-    return value != null ? key.cast(value) : null;
+  public List<String> getValues() {
+    return values;
   }
 }

@@ -17,41 +17,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.analyzer;
+package org.crsh.cmdline.matcher;
 
 /**
-* @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
-* @version $Revision$
-*/
-final class StringCursor {
+ * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+ * @version $Revision$
+ */
+class Chunk {
 
   /** . */
-  private int index;
+  private final String value;
 
   /** . */
-  private final String s;
+  private int start;
 
-  StringCursor(String s) {
-    this.s = s;
-    this.index = 0;
-  }
+  public Chunk(String value, int start) {
 
-  public int getIndex() {
-    return index;
-  }
-
-  String getValue() {
-    return s.substring(index);
-  }
-
-  void seek(int to) {
-    skip(to - index);
-  }
-
-  void skip(int delta) {
-    if (delta < 0) {
-      throw new AssertionError();
+    if (value == null) {
+      throw new NullPointerException();
     }
-    index += delta;
+    if (start < 0) {
+      throw new IndexOutOfBoundsException();
+    }
+
+    //
+    this.value = value;
+    this.start = start;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public int getEnd() {
+    return start + value.length();
   }
 }

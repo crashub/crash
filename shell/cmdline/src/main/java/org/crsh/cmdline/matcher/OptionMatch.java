@@ -17,43 +17,38 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.analyzer;
+package org.crsh.cmdline.matcher;
+
+import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.binding.TypeBinding;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class Chunk {
+public class OptionMatch<B extends TypeBinding> extends ParameterMatch<OptionDescriptor<B>, B> {
 
   /** . */
-  private final String value;
+  private final String name;
 
-  /** . */
-  private int start;
-
-  public Chunk(String value, int start) {
-
-    if (value == null) {
-      throw new NullPointerException();
-    }
-    if (start < 0) {
-      throw new IndexOutOfBoundsException();
-    }
+  OptionMatch(OptionDescriptor<B> option, String name, List<String> values) {
+    super(option, values);
 
     //
-    this.value = value;
-    this.start = start;
+    this.name = name;
   }
 
-  public String getValue() {
-    return value;
+  public String getName() {
+    return name;
   }
 
-  public int getStart() {
-    return start;
+  public boolean isPartial() {
+    return getValues().contains(null);
   }
 
-  public int getEnd() {
-    return start + value.length();
+  public boolean isFull() {
+    return !isPartial();
   }
 }

@@ -17,38 +17,37 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.analyzer;
+package org.crsh.cmdline.matcher;
 
-import org.crsh.cmdline.OptionDescriptor;
-import org.crsh.cmdline.binding.TypeBinding;
-
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class OptionMatch<B extends TypeBinding> extends ParameterMatch<OptionDescriptor<B>, B> {
+public class InvocationContext {
 
   /** . */
-  private final String name;
+  private final Map<Class<?>, Object> attributes;
 
-  OptionMatch(OptionDescriptor<B> option, String name, List<String> values) {
-    super(option, values);
-
-    //
-    this.name = name;
+  public InvocationContext() {
+    this.attributes = new HashMap<Class<?>, Object>();
   }
 
-  public String getName() {
-    return name;
+  public <T> void setAttribute(Class<T> key, T value) {
+    if (key == null) {
+      throw new NullPointerException();
+    }
+    if (value == null) {
+      attributes.remove(key);
+    } else {
+      attributes.put(key, value);
+    }
   }
 
-  public boolean isPartial() {
-    return getValues().contains(null);
-  }
-
-  public boolean isFull() {
-    return !isPartial();
+  public <T> T getAttribute(Class<T> key) {
+    Object value = attributes.get(key);
+    return value != null ? key.cast(value) : null;
   }
 }

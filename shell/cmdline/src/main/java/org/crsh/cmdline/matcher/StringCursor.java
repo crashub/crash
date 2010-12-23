@@ -17,38 +17,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.analyzer;
-
-import org.crsh.cmdline.ArgumentDescriptor;
-import org.crsh.cmdline.binding.TypeBinding;
-
-import java.util.List;
+package org.crsh.cmdline.matcher;
 
 /**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
-public class ArgumentMatch<B extends TypeBinding> extends ParameterMatch<ArgumentDescriptor<B>, B> {
+* @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+* @version $Revision$
+*/
+final class StringCursor {
 
   /** . */
-  private int start;
+  private int index;
 
   /** . */
-  private int end;
+  private final String s;
 
-  public ArgumentMatch(ArgumentDescriptor<B> argument, int start, int end, List<String> values) {
-    super(argument, values);
-
-    //
-    this.start = start;
-    this.end = end;
+  StringCursor(String s) {
+    this.s = s;
+    this.index = 0;
   }
 
-  public int getStart() {
-    return start;
+  public int getIndex() {
+    return index;
   }
 
-  public int getEnd() {
-    return end;
+  String getValue() {
+    return s.substring(index);
+  }
+
+  void seek(int to) {
+    skip(to - index);
+  }
+
+  void skip(int delta) {
+    if (delta < 0) {
+      throw new AssertionError();
+    }
+    index += delta;
   }
 }

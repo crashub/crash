@@ -26,8 +26,8 @@ import org.crsh.cmdline.CmdSyntaxException;
 import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Option;
-import org.crsh.cmdline.analyzer.MatchFactory;
-import org.crsh.cmdline.analyzer.InvocationContext;
+import org.crsh.cmdline.matcher.MatchFactory;
+import org.crsh.cmdline.matcher.InvocationContext;
 
 import java.util.Arrays;
 import java.util.List;

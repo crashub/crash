@@ -21,12 +21,12 @@ package org.crsh.cmdline;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.crsh.cmdline.analyzer.MatchFactory;
-import org.crsh.cmdline.analyzer.ArgumentMatch;
-import org.crsh.cmdline.analyzer.ClassMatch;
-import org.crsh.cmdline.analyzer.CommandMatch;
-import org.crsh.cmdline.analyzer.MethodMatch;
-import org.crsh.cmdline.analyzer.OptionMatch;
+import org.crsh.cmdline.matcher.MatchFactory;
+import org.crsh.cmdline.matcher.ArgumentMatch;
+import org.crsh.cmdline.matcher.ClassMatch;
+import org.crsh.cmdline.matcher.CommandMatch;
+import org.crsh.cmdline.matcher.MethodMatch;
+import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 
 import java.util.Arrays;
