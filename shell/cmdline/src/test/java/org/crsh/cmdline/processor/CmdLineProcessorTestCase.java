@@ -264,4 +264,35 @@ public class CmdLineProcessorTestCase extends TestCase {
     analyzer.analyze("").invoke(context, c);
     assertEquals(Locale.FRENCH, c.locale);
   }
+
+  public static class D {
+
+    private Integer i;
+
+    @Command
+    public void a(@Option(names = "o") Integer i) {
+      this.i = i;
+    }
+
+    @Command
+    public void b(@Option(names = "o") int i) {
+      this.i = i;
+    }
+  }
+
+  public void testInvocationTypeConversionInjection() throws Exception {
+
+    ClassDescriptor<D> desc = CommandDescriptor.create(D.class);
+
+    //
+    D d = new D();
+    InvocationContext context = new InvocationContext();
+    new Analyzer<D>("a", desc).analyze("-o 5").invoke(context, d);
+    assertEquals((Integer)5, d.i);
+
+    //
+    d = new D();
+    new Analyzer<D>("b", desc).analyze("-o 5").invoke(context, d);
+    assertEquals((Integer)5, d.i);
+  }
 }
