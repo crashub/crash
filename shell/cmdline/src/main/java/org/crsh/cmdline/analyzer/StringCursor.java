@@ -23,36 +23,35 @@ package org.crsh.cmdline.analyzer;
 * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
 * @version $Revision$
 */
-class StringCursor {
+final class StringCursor {
 
   /** . */
-  private StringBuilder done;
+  private int index;
 
-  /** The rest. */
-  private String rest;
+  /** . */
+  private final String s;
 
-  StringCursor(String rest) {
-    this.rest = rest;
-    this.done = new StringBuilder();
+  StringCursor(String s) {
+    this.s = s;
+    this.index = 0;
   }
 
-  public int getCount() {
-    return done.length();
+  public int getIndex() {
+    return index;
   }
 
-  String getRest() {
-    return rest;
+  String getValue() {
+    return s.substring(index);
   }
 
   void seek(int to) {
-    skip(to - done.length());
+    skip(to - index);
   }
 
   void skip(int delta) {
     if (delta < 0) {
       throw new AssertionError();
     }
-    done.append(rest.substring(0, delta));
-    rest = rest.substring(delta);
+    index += delta;
   }
 }

@@ -75,7 +75,7 @@ public class MatchFactory<T> {
     List<ArgumentMatch<MethodArgumentBinding>> methodArguments = null;
     MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+)");
-    Matcher m = p.matcher(bilto.getRest());
+    Matcher m = p.matcher(bilto.getValue());
     if (m.find()) {
       String f = m.group(1);
       method = descriptor.getMethod(f);
@@ -91,14 +91,14 @@ public class MatchFactory<T> {
 
     //
     if (method != null) {
-      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), bilto.getRest());
+      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), bilto.getValue());
       CommandAnalyzer<T, MethodDescriptor<T>, MethodArgumentBinding> methodAnalyzer = new CommandAnalyzer<T, MethodDescriptor<T>, MethodArgumentBinding>(method);
       methodOptions = methodAnalyzer.analyzeOptions(bilto);
       methodArguments = methodAnalyzer.analyzeArguments(bilto);
-      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, bilto.getRest());
+      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, bilto.getValue());
     } else {
       List<ArgumentMatch<ClassFieldBinding>> arguments = analyzer.analyzeArguments(bilto);
-      return new ClassMatch<T>(descriptor, options, arguments, bilto.getRest());
+      return new ClassMatch<T>(descriptor, options, arguments, bilto.getValue());
     }
   }
 
@@ -173,7 +173,7 @@ public class MatchFactory<T> {
     public List<ArgumentMatch<B>> analyzeArguments(StringCursor bilto) {
       LinkedList<ArgumentMatch<B>> argumentMatches = new LinkedList<ArgumentMatch<B>>();
       for (Pattern p : argumentsPatterns) {
-        Matcher matcher = p.matcher(bilto.getRest());
+        Matcher matcher = p.matcher(bilto.getValue());
         if (matcher.find()) {
 
           for (int i = 1;i <= matcher.groupCount();i++) {
@@ -190,8 +190,8 @@ public class MatchFactory<T> {
             if (values.size() > 0) {
               ArgumentMatch<B> match = new ArgumentMatch<B>(
                 command.getArguments().get(i - 1),
-                bilto.getCount() + matcher.start(i),
-                bilto.getCount()  + matcher.end(i),
+                bilto.getIndex() + matcher.start(i),
+                bilto.getIndex()  + matcher.end(i),
                 values
               );
 
@@ -215,7 +215,7 @@ public class MatchFactory<T> {
     public List<OptionMatch<B>> analyzeOptions(StringCursor bilto) {
       List<OptionMatch<B>> optionMatches = new ArrayList<OptionMatch<B>>();
       while (true) {
-        Matcher matcher = optionsPattern.matcher(bilto.getRest());
+        Matcher matcher = optionsPattern.matcher(bilto.getValue());
         if (matcher.matches()) {
           OptionDescriptor<B> matched = null;
           int index = 2;
