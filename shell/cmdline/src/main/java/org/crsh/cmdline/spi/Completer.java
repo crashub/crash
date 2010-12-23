@@ -17,14 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline;
+package org.crsh.cmdline.spi;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface Converter<I, O> {
+public interface Completer {
 
-  O convert(I input);
+  Iterable<String> complete(String prefix);
 
 }
