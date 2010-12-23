@@ -45,7 +45,7 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
   }
 
   public void printUsage(PrintWriter writer) {
-    if (getType().getMultiplicity() == Multiplicity.SINGLE) {
+    if (getMultiplicity() == Multiplicity.SINGLE) {
       writer.append("...");
     } else {
       writer.append("arg");

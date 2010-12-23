@@ -73,7 +73,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         }
       } else if (parameter instanceof ArgumentDescriptor) {
         ArgumentDescriptor<B> argument = (ArgumentDescriptor<B>)parameter;
-        if (argument.getType().getMultiplicity() == Multiplicity.LIST) {
+        if (argument.getMultiplicity() == Multiplicity.LIST) {
           if (listArgument) {
             throw new IntrospectionException();
           }

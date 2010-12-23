@@ -125,7 +125,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
       }
       else {
         ParameterDescriptor<MethodArgumentBinding> parameter = parameterMatch.getParameter();
-        if (parameter.getType().getMultiplicity() == Multiplicity.LIST) {
+        if (parameter.getMultiplicity() == Multiplicity.LIST) {
           v = parameterMatch.getValues();
         } else {
           v = parameterMatch.getValues().get(0);

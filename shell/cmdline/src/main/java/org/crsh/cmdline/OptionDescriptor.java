@@ -55,12 +55,12 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
       password);
 
     //
-    if (arity > 1 && getType().getMultiplicity() == Multiplicity.SINGLE) {
+    if (arity > 1 && getMultiplicity() == Multiplicity.SINGLE) {
       throw new IllegalParameterException();
     }
 
     //
-    if (getType().getMultiplicity() == Multiplicity.LIST && getType().getValueType() == SimpleValueType.BOOLEAN) {
+    if (getMultiplicity() == Multiplicity.LIST && getType() == SimpleValueType.BOOLEAN) {
       throw new IllegalParameterException();
     }
 
@@ -79,7 +79,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     }
 
     //
-    if (getType().getValueType() == SimpleValueType.BOOLEAN && arity < 1) {
+    if (getType() == SimpleValueType.BOOLEAN && arity < 1) {
       arity = 0;
     } else {
       if (arity == -1) {

@@ -38,7 +38,10 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   private final String description;
 
   /** . */
-  private final ValueType type;
+  private final SimpleValueType type;
+
+  /** . */
+  private final Multiplicity multiplicity;
 
   /** . */
   private final boolean required;
@@ -56,44 +59,13 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     boolean required,
     boolean password) throws IllegalValueTypeException, IllegalParameterException {
 
-    //
-    this.binding = binding;
-    this.javaType = javaType;
-    this.description = description;
-    this.type = create(javaType);
-    this.required = required;
-    this.password = password;
-  }
-
-  public B getBinding() {
-    return binding;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public ValueType getType() {
-    return type;
-  }
-
-  public boolean isRequired() {
-    return required;
-  }
-
-  public boolean isPassword() {
-    return password;
-  }
-
-  private ValueType create(Type type) throws IllegalValueTypeException {
-
     Class<?> classType;
     Multiplicity multiplicity;
-    if (type instanceof Class<?>) {
-      classType = (Class<Object>)type;
+    if (javaType instanceof Class<?>) {
+      classType = (Class<Object>)javaType;
       multiplicity = Multiplicity.SINGLE;
-    } else if (type instanceof ParameterizedType) {
-      ParameterizedType parameterizedType = (ParameterizedType)type;
+    } else if (javaType instanceof ParameterizedType) {
+      ParameterizedType parameterizedType = (ParameterizedType)javaType;
       Type rawType = parameterizedType.getRawType();
       if (rawType instanceof Class<?>) {
         Class<?> classRawType = (Class<Object>)rawType;
@@ -128,6 +100,37 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     }
 
     //
-    return new ValueType(valueType, multiplicity);
+    this.binding = binding;
+    this.javaType = javaType;
+    this.description = description;
+    this.type = valueType;
+    this.multiplicity = multiplicity;
+    this.required = required;
+    this.password = password;
+  }
+
+  public B getBinding() {
+    return binding;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+
+  public boolean isRequired() {
+    return required;
+  }
+
+  public boolean isPassword() {
+    return password;
+  }
+
+  public SimpleValueType getType() {
+    return type;
+  }
+
+  public Multiplicity getMultiplicity() {
+    return multiplicity;
   }
 }

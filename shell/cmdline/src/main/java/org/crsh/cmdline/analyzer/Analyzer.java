@@ -180,7 +180,7 @@ public class Analyzer<T> {
       for (int i = arguments.size();i > 0;i--) {
         StringBuilder argumentsRE = new StringBuilder("^");
         for (ArgumentDescriptor<B> argument : arguments.subList(0, i)) {
-          if (argument.getType().getMultiplicity() == Multiplicity.SINGLE) {
+          if (argument.getMultiplicity() == Multiplicity.SINGLE) {
             argumentsRE.append("\\s*(?<!\\S)(\\S+)");
           }
           else {

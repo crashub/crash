@@ -98,7 +98,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
 
       //
       Object v;
-      if (parameter.getType().getMultiplicity() == Multiplicity.LIST) {
+      if (parameter.getMultiplicity() == Multiplicity.LIST) {
         v = parameterMatch.getValues();
       } else {
         v = parameterMatch.getValues().get(0);

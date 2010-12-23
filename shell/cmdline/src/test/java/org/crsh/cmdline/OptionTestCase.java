@@ -85,9 +85,8 @@ public class OptionTestCase extends TestCase {
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
     OptionDescriptor i = c.getOption("-o");
-    ValueType t = i.getType();
-    assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
-    assertEquals(SimpleValueType.INTEGER, t.getValueType());
+    assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
+    assertEquals(SimpleValueType.INTEGER, i.getType());
   }
 
   public void testOptionIntWrapperType() throws IntrospectionException {
@@ -97,9 +96,8 @@ public class OptionTestCase extends TestCase {
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
     OptionDescriptor i = c.getOption("-o");
-    ValueType t = i.getType();
-    assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
-    assertEquals(SimpleValueType.INTEGER, t.getValueType());
+    assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
+    assertEquals(SimpleValueType.INTEGER, i.getType());
   }
 
   public void testOptionIntListType() throws IntrospectionException {
@@ -109,9 +107,8 @@ public class OptionTestCase extends TestCase {
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
     OptionDescriptor i = c.getOption("-o");
-    ValueType t = i.getType();
-    assertEquals(Multiplicity.LIST, t.getMultiplicity());
-    assertEquals(SimpleValueType.INTEGER, t.getValueType());
+    assertEquals(Multiplicity.LIST, i.getMultiplicity());
+    assertEquals(SimpleValueType.INTEGER, i.getType());
   }
 
   public void testOptionStringType() throws IntrospectionException {
@@ -121,9 +118,8 @@ public class OptionTestCase extends TestCase {
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
     OptionDescriptor i = c.getOption("-o");
-    ValueType t = i.getType();
-    assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
-    assertEquals(SimpleValueType.STRING, t.getValueType());
+    assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
+    assertEquals(SimpleValueType.STRING, i.getType());
   }
 
   public void testOptionStringListType() throws IntrospectionException {
@@ -133,9 +129,8 @@ public class OptionTestCase extends TestCase {
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
     OptionDescriptor i = c.getOption("-o");
-    ValueType t = i.getType();
-    assertEquals(Multiplicity.LIST, t.getMultiplicity());
-    assertEquals(SimpleValueType.STRING, t.getValueType());
+    assertEquals(Multiplicity.LIST, i.getMultiplicity());
+    assertEquals(SimpleValueType.STRING, i.getType());
   }
 
   public void testOptionBooleanType() throws IntrospectionException {
@@ -145,9 +140,8 @@ public class OptionTestCase extends TestCase {
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
     OptionDescriptor i = c.getOption("-o");
-    ValueType t = i.getType();
-    assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
-    assertEquals(SimpleValueType.BOOLEAN, t.getValueType());
+    assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
+    assertEquals(SimpleValueType.BOOLEAN, i.getType());
   }
 
   public void testOptionBooleanWrapperType() throws IntrospectionException {
@@ -157,9 +151,8 @@ public class OptionTestCase extends TestCase {
     }
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
     OptionDescriptor i = c.getOption("-o");
-    ValueType t = i.getType();
-    assertEquals(Multiplicity.SINGLE, t.getMultiplicity());
-    assertEquals(SimpleValueType.BOOLEAN, t.getValueType());
+    assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
+    assertEquals(SimpleValueType.BOOLEAN, i.getType());
   }
 
   private void assertIllegalValueType(Class<?> type) throws IntrospectionException {
