@@ -31,6 +31,9 @@ package org.crsh.command;
  */
 public interface ShellCommand {
 
+
+  Iterable<String> complete(String... args);
+
   /**
    * Provides an invoker for the specified arguments.
    *

@@ -32,6 +32,7 @@ import org.crsh.util.TypeResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Collections;
 
 /**
  * A real CRaSH command, the most powerful kind of command.
@@ -83,6 +84,11 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   @Override
   protected final CommandContext<?, ?> getContext() {
     return context;
+  }
+
+  public Iterable<String> complete(String... args) {
+    // todo
+    return Collections.emptyList();
   }
 
   public CommandInvoker<?, ?> createInvoker(String... args) {

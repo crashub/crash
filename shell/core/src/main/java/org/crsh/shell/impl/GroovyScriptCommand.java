@@ -28,6 +28,8 @@ import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.io.ShellPrinter;
 
+import java.util.Collections;
+
 /**
  * This class provides the base class for Groovy scripts. It should not be used directly as it is rather used
  * for configuring a Groovy {@link org.codehaus.groovy.control.CompilerConfiguration#setScriptBaseClass(String)} class.
@@ -40,16 +42,16 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   /** . */
   private String[] args;
 
-  public Class<Void> getProducedType() {
+  public final Class<Void> getProducedType() {
     return Void.class;
   }
 
-  public Class<Void> getConsumedType() {
+  public final Class<Void> getConsumedType() {
     return Void.class;
   }
 
   @Override
-  public Object getProperty(String property) {
+  public final Object getProperty(String property) {
     try {
       return super.getProperty(property);
     }
@@ -58,11 +60,15 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public void usage(ShellPrinter printer) {
+  public final void usage(ShellPrinter printer) {
     printer.print("Bare script: no usage");
   }
 
-  public void invoke(CommandContext<Void, Void> context) throws ScriptException {
+  public final Iterable<String> complete(String... args) {
+    return Collections.emptyList();
+  }
+
+  public final void invoke(CommandContext<Void, Void> context) throws ScriptException {
 
     // Set up current binding
     Binding binding = new Binding(context.getAttributes());
@@ -88,7 +94,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public CommandInvoker<?, ?> createInvoker(String... args) {
+  public final CommandInvoker<?, ?> createInvoker(String... args) {
     this.args = args;
     return this;
   }

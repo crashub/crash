@@ -27,6 +27,7 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
@@ -166,6 +167,10 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
   @Override
   protected final CommandContext<?, ?> getContext() {
     return context;
+  }
+
+  public final Iterable<String> complete(String... args) {
+    return Collections.emptyList();
   }
 
   public final void usage(ShellPrinter printer) {
