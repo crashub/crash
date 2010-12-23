@@ -22,6 +22,7 @@ package org.crsh.cmdline.processor;
 import junit.framework.TestCase;
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CmdSyntaxException;
 import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Option;

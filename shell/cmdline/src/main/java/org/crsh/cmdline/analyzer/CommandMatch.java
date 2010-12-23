@@ -19,9 +19,9 @@
 
 package org.crsh.cmdline.analyzer;
 
+import org.crsh.cmdline.CmdLineException;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.ParameterBinding;
-import org.crsh.cmdline.processor.CmdLineException;
 
 import java.util.List;
 

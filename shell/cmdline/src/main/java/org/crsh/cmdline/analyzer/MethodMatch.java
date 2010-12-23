@@ -19,13 +19,13 @@
 
 package org.crsh.cmdline.analyzer;
 
+import org.crsh.cmdline.CmdLineException;
+import org.crsh.cmdline.CmdSyntaxException;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterBinding;
 import org.crsh.cmdline.ParameterDescriptor;
-import org.crsh.cmdline.processor.CmdInvocationException;
-import org.crsh.cmdline.processor.CmdLineException;
-import org.crsh.cmdline.processor.CmdSyntaxException;
+import org.crsh.cmdline.CmdInvocationException;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
