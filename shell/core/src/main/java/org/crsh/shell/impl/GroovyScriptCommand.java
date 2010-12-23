@@ -25,6 +25,7 @@ import groovy.lang.Script;
 import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptException;
 import org.crsh.command.CommandInvoker;
+import org.crsh.command.ShellCommand;
 import org.crsh.shell.io.ShellPrinter;
 
 /**
@@ -34,7 +35,10 @@ import org.crsh.shell.io.ShellPrinter;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class GroovyScriptCommand extends Script implements CommandInvoker<Void, Void> {
+public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker<Void, Void> {
+
+  /** . */
+  private String[] args;
 
   public Class<Void> getProducedType() {
     return Void.class;
@@ -58,7 +62,7 @@ public abstract class GroovyScriptCommand extends Script implements CommandInvok
     printer.print("Bare script: no usage");
   }
 
-  public void execute(CommandContext<Void, Void> context, String... args) throws ScriptException {
+  public void invoke(CommandContext<Void, Void> context) throws ScriptException {
 
     // Set up current binding
     Binding binding = new Binding(context.getAttributes());
@@ -82,5 +86,10 @@ public abstract class GroovyScriptCommand extends Script implements CommandInvok
     if (res != null) {
       context.getWriter().print(res);
     }
+  }
+
+  public CommandInvoker<?, ?> createInvoker(String... args) {
+    this.args = args;
+    return this;
   }
 }

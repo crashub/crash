@@ -21,12 +21,9 @@ package org.crsh.shell.impl;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
-import org.crsh.command.ScriptException;
 import org.crsh.shell.*;
-import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TimestampedObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,36 +91,6 @@ public class CRaSH implements Shell {
     catch (Exception e) {
       throw new Error(e);
     }
-  }
-
-  private <C, P> TimestampedObject<ShellCommand> wrap(
-    long timestamp,
-    final Class<CommandInvoker<C, P>> commandClass) {
-    ShellCommand provider = new ShellCommand() {
-      public CommandInvoker<?, ?> createInvoker(String... args) {
-        try {
-          final CommandInvoker<C, P> command = commandClass.newInstance();
-          return new CommandInvoker<C, P>() {
-            public void usage(ShellPrinter printer) {
-              command.usage(printer);
-            }
-            public void execute(CommandContext<C, P> context, String... args) throws ScriptException {
-              command.execute(context, args);
-            }
-            public Class<P> getProducedType() {
-              return command.getProducedType();
-            }
-            public Class<C> getConsumedType() {
-              return command.getConsumedType();
-            }
-          };
-        }
-        catch (Exception e) {
-          throw new Error(e);
-        }
-      }
-    };
-    return new TimestampedObject<ShellCommand>(timestamp, provider);
   }
 
   public GroovyShell getGroovyShell() {

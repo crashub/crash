@@ -104,7 +104,7 @@ abstract class AST {
         if (args.length > 0 && ("-h".equals(args[args.length - 1]) || "--help".equals(args[args.length - 1]))) {
           current.command.usage(ctx.getWriter());
         } else {
-          current.command.execute(ctx, args);
+          current.command.invoke(ctx);
         }
 
         // Append anything that was in the buffer

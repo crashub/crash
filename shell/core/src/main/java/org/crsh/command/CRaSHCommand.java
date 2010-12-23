@@ -130,9 +130,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           match.getDescriptor().printUsage(printer);
         }
 
-        public void execute(
-          CommandContext commandContext,
-          String... args) throws ScriptException {
+        public void invoke(CommandContext commandContext) throws ScriptException {
 
           //
           CRaSHCommand.this.context = commandContext;

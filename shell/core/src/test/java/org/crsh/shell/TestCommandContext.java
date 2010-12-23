@@ -21,6 +21,7 @@ package org.crsh.shell;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
+import org.crsh.command.ShellCommand;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.LineFeedWriter;
 
@@ -85,11 +86,12 @@ public class TestCommandContext<C, P> implements CommandContext<C, P> {
     return products;
   }
 
-  public String execute(CommandInvoker<C, P> command, String... args) {
+  public String execute(ShellCommand command, String... args) {
     if (buffer != null) {
       buffer.getBuffer().setLength(0);
     }
-    command.execute(this, args);
+    CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.createInvoker(args);
+    invoker.invoke(this);
     return buffer != null ? buffer.toString() : null;
   }
 }

@@ -122,12 +122,16 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
   /** . */
   private final MetaData metaData;
 
+  /** . */
+  private String[] args;
+
   protected BaseCommand() {
     this.context = null;
     this.unquoteArguments = true;
     this.consumedType = (Class<C>)TypeResolver.resolve(getClass(), CommandInvoker.class, 0);
     this.producedType = (Class<P>)TypeResolver.resolve(getClass(), CommandInvoker.class, 1);
     this.metaData = MetaData.getMetaData(getClass());
+    this.args = null;
   }
 
   public Class<P> getProducedType() {
@@ -201,10 +205,11 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
   }
 
   public final CommandInvoker<?, ?> createInvoker(String... args) {
+    this.args = args;
     return this;
   }
 
-  public final void execute(CommandContext<C, P> context, String... args) throws ScriptException {
+  public final void invoke(CommandContext<C, P> context) throws ScriptException {
     if (context == null) {
       throw new NullPointerException();
     }
