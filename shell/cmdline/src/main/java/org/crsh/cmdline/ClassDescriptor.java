@@ -19,6 +19,8 @@
 
 package org.crsh.cmdline;
 
+import org.crsh.cmdline.binding.ClassFieldBinding;
+import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +41,7 @@ import java.util.Set;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.ClassField> {
+public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> {
 
   /** . */
   private static final Logger log = LoggerFactory.getLogger(ClassDescriptor.class);
@@ -116,18 +118,18 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
     }
   }
 
-  private static List<ParameterDescriptor<ParameterBinding.ClassField>> parameters(Class<?> introspected) throws IntrospectionException {
-    List<ParameterDescriptor<ParameterBinding.ClassField>> parameters;
+  private static List<ParameterDescriptor<ClassFieldBinding>> parameters(Class<?> introspected) throws IntrospectionException {
+    List<ParameterDescriptor<ClassFieldBinding>> parameters;
     Class<?> superIntrospected = introspected.getSuperclass();
     if (superIntrospected == null) {
-      parameters = new ArrayList<ParameterDescriptor<ParameterBinding.ClassField>>();
+      parameters = new ArrayList<ParameterDescriptor<ClassFieldBinding>>();
     } else {
       parameters = parameters(superIntrospected);
       for (Field f : introspected.getDeclaredFields()) {
         Argument argumentAnn = f.getAnnotation(Argument.class);
         Option optionAnn = f.getAnnotation(Option.class);
-        ParameterBinding.ClassField binding = new ParameterBinding.ClassField(f);
-        ParameterDescriptor<ParameterBinding.ClassField> parameter = create(binding, f.getGenericType(), argumentAnn, optionAnn);
+        ClassFieldBinding binding = new ClassFieldBinding(f);
+        ParameterDescriptor<ClassFieldBinding> parameter = create(binding, f.getGenericType(), argumentAnn, optionAnn);
         if (parameter != null) {
           parameters.add(parameter);
         }
@@ -146,7 +148,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
       for (Method m : introspected.getDeclaredMethods()) {
         Command command = m.getAnnotation(Command.class);
         if (command != null) {
-          List<ParameterDescriptor<ParameterBinding.MethodArgument>> parameters = new ArrayList<ParameterDescriptor<ParameterBinding.MethodArgument>>();
+          List<ParameterDescriptor<MethodArgumentBinding>> parameters = new ArrayList<ParameterDescriptor<MethodArgumentBinding>>();
           Type[] parameterTypes = m.getGenericParameterTypes();
           Annotation[][] parameterAnnotationMatrix = m.getParameterAnnotations();
           for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
@@ -161,8 +163,8 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
                 argumentAnn = (Argument)parameterAnnotation;
               }
             }
-            ParameterBinding.MethodArgument binding = new ParameterBinding.MethodArgument(i);
-            ParameterDescriptor<ParameterBinding.MethodArgument> parameter = create(binding, parameterType, argumentAnn, optionAnn);
+            MethodArgumentBinding binding = new MethodArgumentBinding(i);
+            ParameterDescriptor<MethodArgumentBinding> parameter = create(binding, parameterType, argumentAnn, optionAnn);
             if (parameter != null) {
               parameters.add(parameter);
             } else {

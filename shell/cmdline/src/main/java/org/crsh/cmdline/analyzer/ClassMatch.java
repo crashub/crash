@@ -20,9 +20,9 @@
 package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.CmdSyntaxException;
 import org.crsh.cmdline.Multiplicity;
-import org.crsh.cmdline.ParameterBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.CmdLineException;
 
@@ -36,15 +36,15 @@ import java.util.Set;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ParameterBinding.ClassField> {
+public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFieldBinding> {
 
   /** . */
   private final ClassDescriptor<T> descriptor;
 
   public ClassMatch(
     ClassDescriptor<T> descriptor,
-    List<OptionMatch<ParameterBinding.ClassField>> optionMatches,
-    List<ArgumentMatch<ParameterBinding.ClassField>> argumentMatches,
+    List<OptionMatch<ClassFieldBinding>> optionMatches,
+    List<ArgumentMatch<ClassFieldBinding>> argumentMatches,
     String rest) {
     super(optionMatches, argumentMatches, rest);
 
@@ -59,13 +59,13 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
 
   @Override
   public Object invoke(InvocationContext context, T command) throws CmdLineException {
-    List<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>> used = new ArrayList<ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField>>();
+    List<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>> used = new ArrayList<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>>();
     Set<ParameterDescriptor<?>> unused = new HashSet<ParameterDescriptor<?>>();
     unused.addAll(descriptor.getArguments());
     unused.addAll(descriptor.getOptions());
 
     //
-    for (OptionMatch<ParameterBinding.ClassField> optionMatch : getOptionMatches()) {
+    for (OptionMatch<ClassFieldBinding> optionMatch : getOptionMatches()) {
       if (!unused.remove(optionMatch.getParameter())) {
         throw new CmdSyntaxException();
       }
@@ -73,7 +73,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
     }
 
     //
-    for (ArgumentMatch<ParameterBinding.ClassField> argumentMatch : getArgumentMatches()) {
+    for (ArgumentMatch<ClassFieldBinding> argumentMatch : getArgumentMatches()) {
       if (!unused.remove(argumentMatch.getParameter())) {
         throw new CmdSyntaxException();
       }
@@ -90,10 +90,10 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, Parameter
     }
 
     //
-    for (ParameterMatch<? extends ParameterDescriptor<ParameterBinding.ClassField>, ParameterBinding.ClassField> parameterMatch : used) {
+    for (ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding> parameterMatch : used) {
 
-      ParameterDescriptor<ParameterBinding.ClassField> parameter = parameterMatch.getParameter();
-      ParameterBinding.ClassField cf = parameter.getBinding();
+      ParameterDescriptor<ClassFieldBinding> parameter = parameterMatch.getParameter();
+      ClassFieldBinding cf = parameter.getBinding();
       Field f = cf.getField();
 
       //

@@ -21,9 +21,9 @@ package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.CmdLineException;
 import org.crsh.cmdline.CmdSyntaxException;
+import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.Multiplicity;
-import org.crsh.cmdline.ParameterBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.CmdInvocationException;
 
@@ -38,7 +38,7 @@ import java.util.Set;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, ParameterBinding.MethodArgument> {
+public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodArgumentBinding> {
 
   /** . */
   private final MethodDescriptor<T> descriptor;
@@ -49,8 +49,8 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
   public MethodMatch(
     ClassMatch<T> owner,
     MethodDescriptor<T> descriptor,
-    List<OptionMatch<ParameterBinding.MethodArgument>> optionMatches,
-    List<ArgumentMatch<ParameterBinding.MethodArgument>> argumentMatches,
+    List<OptionMatch<MethodArgumentBinding>> optionMatches,
+    List<ArgumentMatch<MethodArgumentBinding>> argumentMatches,
     String rest) {
     super(optionMatches, argumentMatches, rest);
 
@@ -74,13 +74,13 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
     // Configure command
 
     //
-    Map<Integer, ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument>> used = new HashMap<Integer, ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument>>();
+    Map<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>> used = new HashMap<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>>();
     Set<ParameterDescriptor<?>> unused = new HashSet<ParameterDescriptor<?>>();
     unused.addAll(descriptor.getArguments());
     unused.addAll(descriptor.getOptions());
 
     //
-    for (OptionMatch<ParameterBinding.MethodArgument> optionMatch : getOptionMatches()) {
+    for (OptionMatch<MethodArgumentBinding> optionMatch : getOptionMatches()) {
       if (!unused.remove(optionMatch.getParameter())) {
         throw new CmdSyntaxException();
       }
@@ -88,7 +88,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
     }
 
     //
-    for (ArgumentMatch<ParameterBinding.MethodArgument> argumentMatch : getArgumentMatches()) {
+    for (ArgumentMatch<MethodArgumentBinding> argumentMatch : getArgumentMatches()) {
       if (!unused.remove(argumentMatch.getParameter())) {
         throw new CmdSyntaxException();
       }
@@ -110,7 +110,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
     Class<?>[] parameterTypes = m.getParameterTypes();
     Object[] mArgs = new Object[parameterTypes.length];
     for (int i = 0;i < mArgs.length;i++) {
-      ParameterMatch<? extends ParameterDescriptor<ParameterBinding.MethodArgument>, ParameterBinding.MethodArgument> parameterMatch = used.get(i);
+      ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding> parameterMatch = used.get(i);
 
       //
       Object v;
@@ -124,7 +124,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, Paramet
         }
       }
       else {
-        ParameterDescriptor<ParameterBinding.MethodArgument> parameter = parameterMatch.getParameter();
+        ParameterDescriptor<MethodArgumentBinding> parameter = parameterMatch.getParameter();
         if (parameter.getType().getMultiplicity() == Multiplicity.LIST) {
           v = parameterMatch.getValues();
         } else {

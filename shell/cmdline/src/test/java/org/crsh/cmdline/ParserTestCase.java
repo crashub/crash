@@ -27,6 +27,7 @@ import org.crsh.cmdline.analyzer.ClassMatch;
 import org.crsh.cmdline.analyzer.CommandMatch;
 import org.crsh.cmdline.analyzer.MethodMatch;
 import org.crsh.cmdline.analyzer.OptionMatch;
+import org.crsh.cmdline.binding.ClassFieldBinding;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -120,9 +121,9 @@ public class ParserTestCase extends TestCase {
     public void assertDone(String expectedRest) {
       assertEquals(expectedRest, rest);
       assertNull(methodName);
-      assertEquals(Collections.<OptionMatch<ParameterBinding.ClassField>>emptyList(), sharedOptionMatches);
-      assertEquals(Collections.<OptionMatch<ParameterBinding.ClassField>>emptyList(), optionMatches);
-      assertEquals(Collections.<ArgumentMatch<ParameterBinding.ClassField>>emptyList(), argumentMatches);
+      assertEquals(Collections.<OptionMatch<ClassFieldBinding>>emptyList(), sharedOptionMatches);
+      assertEquals(Collections.<OptionMatch<ClassFieldBinding>>emptyList(), optionMatches);
+      assertEquals(Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), argumentMatches);
     }
 
     public void assertDone() {

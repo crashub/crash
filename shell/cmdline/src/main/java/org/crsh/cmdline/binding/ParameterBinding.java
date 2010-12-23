@@ -17,9 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline;
-
-import java.lang.reflect.Field;
+package org.crsh.cmdline.binding;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -27,31 +25,4 @@ import java.lang.reflect.Field;
  */
 public class ParameterBinding {
 
-  public static class ClassField extends ParameterBinding {
-
-    /** . */
-    private final Field field;
-
-    public ClassField(Field field) {
-      this.field = field;
-    }
-
-    public Field getField() {
-      return field;
-    }
-  }
-
-  public static class MethodArgument extends ParameterBinding {
-
-    /** . */
-    private final int index;
-
-    public MethodArgument(int index) {
-      this.index = index;
-    }
-
-    public int getIndex() {
-      return index;
-    }
-  }
 }

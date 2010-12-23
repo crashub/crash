@@ -21,11 +21,13 @@ package org.crsh.cmdline.analyzer;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
-import org.crsh.cmdline.ParameterBinding;
+import org.crsh.cmdline.binding.ParameterBinding;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +45,7 @@ import java.util.regex.Pattern;
 public class Analyzer<T> {
 
   /** . */
-  private final CommandAnalyzer<T, ClassDescriptor<T>, ParameterBinding.ClassField> analyzer;
+  private final CommandAnalyzer<T, ClassDescriptor<T>, ClassFieldBinding> analyzer;
 
   /** . */
   private final ClassDescriptor<T> descriptor;
@@ -56,7 +58,7 @@ public class Analyzer<T> {
   }
 
   public Analyzer(String mainName, ClassDescriptor<T> descriptor) {
-    this.analyzer = new CommandAnalyzer<T, ClassDescriptor<T>, ParameterBinding.ClassField>(descriptor);
+    this.analyzer = new CommandAnalyzer<T, ClassDescriptor<T>, ClassFieldBinding>(descriptor);
     this.descriptor = descriptor;
     this.mainName = mainName;
   }
@@ -67,10 +69,10 @@ public class Analyzer<T> {
     Bilto bilto = new Bilto(s);
 
     // Read all common options we are able to
-    List<OptionMatch<ParameterBinding.ClassField>> options = analyzer.analyzeOptions(bilto);
+    List<OptionMatch<ClassFieldBinding>> options = analyzer.analyzeOptions(bilto);
 
-    List<OptionMatch<ParameterBinding.MethodArgument>> methodOptions = null;
-    List<ArgumentMatch<ParameterBinding.MethodArgument>> methodArguments = null;
+    List<OptionMatch<MethodArgumentBinding>> methodOptions = null;
+    List<ArgumentMatch<MethodArgumentBinding>> methodArguments = null;
     MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+)");
     Matcher m = p.matcher(bilto.rest);
@@ -89,13 +91,13 @@ public class Analyzer<T> {
 
     //
     if (method != null) {
-      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ParameterBinding.ClassField>>emptyList(), bilto.rest);
-      CommandAnalyzer<T, MethodDescriptor<T>, ParameterBinding.MethodArgument> methodAnalyzer = new CommandAnalyzer<T, MethodDescriptor<T>, ParameterBinding.MethodArgument>(method);
+      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), bilto.rest);
+      CommandAnalyzer<T, MethodDescriptor<T>, MethodArgumentBinding> methodAnalyzer = new CommandAnalyzer<T, MethodDescriptor<T>, MethodArgumentBinding>(method);
       methodOptions = methodAnalyzer.analyzeOptions(bilto);
       methodArguments = methodAnalyzer.analyzeArguments(bilto);
       return new MethodMatch<T>(owner, method, methodOptions, methodArguments, bilto.rest);
     } else {
-      List<ArgumentMatch<ParameterBinding.ClassField>> arguments = analyzer.analyzeArguments(bilto);
+      List<ArgumentMatch<ClassFieldBinding>> arguments = analyzer.analyzeArguments(bilto);
       return new ClassMatch<T>(descriptor, options, arguments, bilto.rest);
     }
   }

@@ -19,6 +19,8 @@
 
 package org.crsh.cmdline;
 
+import org.crsh.cmdline.binding.ParameterBinding;
+
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;

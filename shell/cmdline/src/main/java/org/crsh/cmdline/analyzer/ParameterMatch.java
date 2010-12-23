@@ -19,7 +19,7 @@
 
 package org.crsh.cmdline.analyzer;
 
-import org.crsh.cmdline.ParameterBinding;
+import org.crsh.cmdline.binding.ParameterBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 
 import java.util.List;

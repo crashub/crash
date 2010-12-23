@@ -17,38 +17,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline;
+package org.crsh.cmdline.binding;
 
-import org.crsh.cmdline.binding.ParameterBinding;
-
-import java.io.PrintWriter;
-import java.lang.reflect.Type;
+import java.lang.reflect.Field;
 
 /**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
-public class ArgumentDescriptor<B extends ParameterBinding> extends ParameterDescriptor<B> {
+* @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+* @version $Revision$
+*/
+public class ClassFieldBinding extends ParameterBinding {
 
-  public ArgumentDescriptor(
-    B binding,
-    Type javaType,
-    String description,
-    boolean required,
-    boolean password) throws IllegalValueTypeException, IllegalParameterException {
-    super(
-      binding,
-      javaType,
-      description,
-      required,
-      password);
+  /** . */
+  private final Field field;
+
+  public ClassFieldBinding(Field field) {
+    this.field = field;
   }
 
-  public void printUsage(PrintWriter writer) {
-    if (getType().getMultiplicity() == Multiplicity.SINGLE) {
-      writer.append("...");
-    } else {
-      writer.append("arg");
-    }
+  public Field getField() {
+    return field;
   }
 }

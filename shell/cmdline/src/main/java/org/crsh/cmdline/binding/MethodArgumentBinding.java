@@ -17,38 +17,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline;
-
-import org.crsh.cmdline.binding.ParameterBinding;
-
-import java.io.PrintWriter;
-import java.lang.reflect.Type;
+package org.crsh.cmdline.binding;
 
 /**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
-public class ArgumentDescriptor<B extends ParameterBinding> extends ParameterDescriptor<B> {
+* @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+* @version $Revision$
+*/
+public class MethodArgumentBinding extends ParameterBinding {
 
-  public ArgumentDescriptor(
-    B binding,
-    Type javaType,
-    String description,
-    boolean required,
-    boolean password) throws IllegalValueTypeException, IllegalParameterException {
-    super(
-      binding,
-      javaType,
-      description,
-      required,
-      password);
+  /** . */
+  private final int index;
+
+  public MethodArgumentBinding(int index) {
+    this.index = index;
   }
 
-  public void printUsage(PrintWriter writer) {
-    if (getType().getMultiplicity() == Multiplicity.SINGLE) {
-      writer.append("...");
-    } else {
-      writer.append("arg");
-    }
+  public int getIndex() {
+    return index;
   }
 }
