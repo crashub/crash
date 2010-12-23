@@ -21,10 +21,8 @@ package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
-import org.crsh.cmdline.CmdSyntaxException;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterDescriptor;
-import org.crsh.cmdline.CmdLineException;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

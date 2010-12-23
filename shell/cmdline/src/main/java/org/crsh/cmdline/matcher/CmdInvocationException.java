@@ -17,26 +17,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline;
+package org.crsh.cmdline.matcher;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CmdSyntaxException extends CmdLineException {
+public class CmdInvocationException extends CmdLineException {
 
-  public CmdSyntaxException() {
+  public CmdInvocationException() {
   }
 
-  public CmdSyntaxException(String message) {
+  public CmdInvocationException(String message) {
     super(message);
   }
 
-  public CmdSyntaxException(String message, Throwable cause) {
+  public CmdInvocationException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public CmdSyntaxException(Throwable cause) {
+  public CmdInvocationException(Throwable cause) {
     super(cause);
   }
 }

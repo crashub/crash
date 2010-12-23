@@ -24,7 +24,7 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.cmdline.CmdSyntaxException;
+import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.command.ClassCommand;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.ScriptException;
