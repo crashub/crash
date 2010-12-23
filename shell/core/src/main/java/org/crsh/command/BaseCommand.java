@@ -20,9 +20,6 @@
 package org.crsh.command;
 
 import com.beust.jcommander.JCommander;
-import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.IntrospectionException;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
 import org.kohsuke.args4j.CmdLineException;
@@ -191,16 +188,6 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
           break;
         case 2:
           throw new UnsupportedOperationException();
-        case 4:
-          try {
-            Class<?> clazz = getClass();
-            ClassDescriptor<?> descriptor = CommandDescriptor.create(clazz);
-            printer.print(descriptor.getUsage());
-          }
-          catch (IntrospectionException e) {
-            throw new ScriptException(e.getMessage(), e);
-          }
-          break;
       }
   }
 

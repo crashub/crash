@@ -23,11 +23,13 @@ import org.crsh.command.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,55 +93,28 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ParameterBinding.Cl
     return methodMap.get(name);
   }
 
-  /** . */
-  private static final String TAB = "       ";
-
-  public String getUsage() {
-    StringBuilder sb = new StringBuilder();
+  public void printUsage(PrintWriter writer) {
 
     //
-    sb.append("NAME\n");
-    sb.append(TAB).append(type.getSimpleName());
-    if (getDescription().length() > 0) {
-      sb.append(" - ").append(getDescription());
-    }
-    sb.append("\n\n");
+    writer.append("usage: ").append(getName());
 
     //
-    sb.append("SYNOPSIS\n");
-    sb.append(TAB).append(type.getSimpleName());
-    for (OptionDescriptor<ParameterBinding.ClassField> option : getOptions()) {
-      sb.append(" [");
-      boolean a = false;
-      for (String name : option.getNames()) {
-        if (a) {
-          sb.append(" | ");
-        }
-        sb.append(name.length() == 1 ? "-" : "--").append(name);
-        a = true;
-      }
-      sb.append("]");
-    }
-    for (ArgumentDescriptor<ParameterBinding.ClassField> argument : getArguments()) {
-      if (argument.getType().getMultiplicity() == Multiplicity.SINGLE) {
-        sb.append(" ...");
-      } else {
-        sb.append(" arg");
-      }
-    }
-    sb.append("\n\n");
-
-    //
-    sb.append("DESCRIPTION\n");
-    sb.append(TAB).append("The following options are available:\n\n");
-    for (OptionDescriptor<ParameterBinding.ClassField> option : getOptions()) {
-      for (String name : option.getNames()) {
-        sb.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getDescription()).append("\n\n");
-      }
+    for (OptionDescriptor<?> option : getOptions()) {
+      option.printUsage(writer);
     }
 
     //
-    return sb.toString();
+    writer.append(" COMMAND [ARGS]\n\n");
+
+    //
+    writer.append("The most commonly used ").append(getName()).append(" commands are:\n");
+
+    //
+    String formatString = "   %1$-16s %2$s\n";
+    for (MethodDescriptor<T> method : getMethods()) {
+      Formatter formatter = new Formatter(writer);
+      formatter.format(formatString, method.getName(), method.getDescription());
+    }
   }
 
   private static List<ParameterDescriptor<ParameterBinding.ClassField>> parameters(Class<?> introspected) throws IntrospectionException {

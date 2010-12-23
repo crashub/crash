@@ -23,6 +23,8 @@ import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.analyzer.Analyzer;
+import org.crsh.cmdline.analyzer.ClassMatch;
+import org.crsh.cmdline.analyzer.CommandMatch;
 import org.crsh.cmdline.analyzer.InvocationContext;
 import org.crsh.cmdline.analyzer.MethodMatch;
 import org.crsh.shell.io.ShellPrinter;
@@ -101,10 +103,15 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     //
     InvocationContext invocationContext = new InvocationContext();
     invocationContext.setAttribute(CommandContext.class, context);
-    final MethodMatch match = (MethodMatch)analyzer.analyze(s.toString());
+    final CommandMatch match = analyzer.analyze(s.toString());
 
     //
-    if (match != null) {
+    if (match instanceof MethodMatch) {
+
+      //
+      final MethodMatch methodMatch = (MethodMatch)match;
+
+      //
       return new CommandInvoker() {
 
         Class consumedType = Void.class;
@@ -112,7 +119,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
         {
           // Try to find a command context argument
-          Method m = match.getDescriptor().getMethod();
+          Method m = methodMatch.getDescriptor().getMethod();
 
           //
           Class<?>[] parameterTypes = m.getParameterTypes();
@@ -127,7 +134,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         }
 
         public void usage(ShellPrinter printer) {
-          match.getDescriptor().printUsage(printer);
+          methodMatch.getDescriptor().printUsage(printer);
         }
 
         public void invoke(CommandContext commandContext) throws ScriptException {
@@ -160,6 +167,30 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           return consumedType;
         }
       };
+    } else if (match instanceof ClassMatch) {
+
+      //
+      final ClassMatch classMatch = (ClassMatch)match;
+
+      //
+      return new CommandInvoker<Void, Void>() {
+        public void usage(ShellPrinter printer) {
+          classMatch.getDescriptor().printUsage(printer);
+        }
+
+        public void invoke(CommandContext<Void, Void> context) throws ScriptException {
+          classMatch.getDescriptor().printUsage(context.getWriter());
+        }
+
+        public Class<Void> getProducedType() {
+          return Void.class;
+        }
+
+        public Class<Void> getConsumedType() {
+          return Void.class;
+        }
+      };
+
     } else {
       return null;
     }

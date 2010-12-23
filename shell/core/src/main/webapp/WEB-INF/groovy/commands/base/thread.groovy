@@ -77,7 +77,7 @@ public class thread extends org.crsh.command.CRaSHCommand {
     return group;
   }
 
-  @Command(description="List the vm threads")
+  @Command(description="Stop vm threads")
   public void stop(CommandContext<Thread, Void> context) throws ScriptException {
     if (context.piped) {
       context.consume().each() {

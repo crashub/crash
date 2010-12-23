@@ -16,8 +16,8 @@ public class log extends org.crsh.command.CRaSHCommand {
   /** The logger methods.*/
   private static final Set<String> methods = ["trace", "debug", "info", "warn", "trace"];
 
-  @Command(description="Log a message to a logger")
-  public void main(
+  @Command(description="Send a message to a logger")
+  public void send(
     CommandContext<Logger, Void> context,
     @Option(names=["m","message"],required=true,description="The message to log") String msg,
     @Argument(description="The logger name") String name,
