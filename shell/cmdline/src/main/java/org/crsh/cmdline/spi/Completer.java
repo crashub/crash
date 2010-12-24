@@ -19,12 +19,14 @@
 
 package org.crsh.cmdline.spi;
 
+import org.crsh.cmdline.ParameterDescriptor;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface Completer {
 
-  Iterable<String> complete(String prefix);
+  Iterable<String> complete(ParameterDescriptor<?> parameter, String prefix);
 
 }
