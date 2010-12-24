@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,6 +69,11 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
 
   public ClassMatch<T> getOwner() {
     return owner;
+  }
+
+  @Override
+  public Iterator<String> complete() {
+    throw new UnsupportedOperationException();
   }
 
   @Override

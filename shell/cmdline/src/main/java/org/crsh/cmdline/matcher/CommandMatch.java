@@ -22,6 +22,7 @@ package org.crsh.cmdline.matcher;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,6 +49,8 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
   public abstract D getDescriptor();
 
   public abstract Object invoke(InvocationContext context, C command) throws CmdLineException;
+
+  public abstract Iterator<String> complete();
 
   public List<OptionMatch<B>> getOptionMatches() {
     return optionMatches;

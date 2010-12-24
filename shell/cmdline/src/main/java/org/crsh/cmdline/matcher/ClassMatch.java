@@ -27,6 +27,7 @@ import org.crsh.cmdline.ParameterDescriptor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -53,6 +54,11 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
   @Override
   public ClassDescriptor<T> getDescriptor() {
     return descriptor;
+  }
+
+  @Override
+  public Iterator<String> complete() {
+    throw new UnsupportedOperationException();
   }
 
   @Override
