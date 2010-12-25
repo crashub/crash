@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,7 +67,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         OptionDescriptor<B> option = (OptionDescriptor<B>)parameter;
         for (String optionName : option.getNames()) {
           if (options.isEmpty()) {
-            options = new HashMap<String, OptionDescriptor<B>>();
+            options = new LinkedHashMap<String, OptionDescriptor<B>>();
           }
           options.put((optionName.length() == 1 ? "-" : "--") + optionName, option);
         }
@@ -90,7 +90,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     this.description = description;
     this.optionMap = options.isEmpty() ? options : Collections.unmodifiableMap(options);
     this.arguments = arguments.isEmpty() ? arguments : Collections.unmodifiableList(arguments);
-    this.options = options.isEmpty() ? Collections.<OptionDescriptor<B>>emptySet() : Collections.unmodifiableSet(new HashSet<OptionDescriptor<B>>(options.values()));
+    this.options = options.isEmpty() ? Collections.<OptionDescriptor<B>>emptySet() : Collections.unmodifiableSet(new LinkedHashSet<OptionDescriptor<B>>(options.values()));
     this.name = name;
   }
 

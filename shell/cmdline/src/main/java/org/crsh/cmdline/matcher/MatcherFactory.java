@@ -216,7 +216,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
             argumentsRE.append("\\s*(?<!\\S)(\\S+|$)");
           }
           else {
-            argumentsRE.append("\\s*(?<!\\S)((?:\\s*(?:\\S+))*)");
+            argumentsRE.append("\\s*(?<!\\S)((?:\\s*(?:\\S+|$))*)");
           }
         } else {
           if (argument.getMultiplicity() == Multiplicity.SINGLE) {
