@@ -209,12 +209,22 @@ final class MatcherFactory<T, B extends TypeBinding> {
     //
     for (int i = arguments.size();i > 0;i--) {
       StringBuilder argumentsRE = new StringBuilder("^");
-      for (ArgumentDescriptor<?> argument : arguments.subList(0, i)) {
-        if (argument.getMultiplicity() == Multiplicity.SINGLE) {
-          argumentsRE.append("\\s*(?<!\\S)(\\S+)");
-        }
-        else {
-          argumentsRE.append("\\s*(?<!\\S)((?:\\s*(?:\\S+))*)");
+      for (int j = 0;j < i;j++) {
+        ArgumentDescriptor<?> argument = arguments.get(j);
+        if (j == i - 1) {
+          if (argument.getMultiplicity() == Multiplicity.SINGLE) {
+            argumentsRE.append("\\s*(?<!\\S)(\\S+|$)");
+          }
+          else {
+            argumentsRE.append("\\s*(?<!\\S)((?:\\s*(?:\\S+))*)");
+          }
+        } else {
+          if (argument.getMultiplicity() == Multiplicity.SINGLE) {
+            argumentsRE.append("\\s*(?<!\\S)(\\S+)");
+          }
+          else {
+            argumentsRE.append("\\s*(?<!\\S)((?:\\s*(?:\\S+))*)");
+          }
         }
       }
       argumentPatterns.add(Pattern.compile(argumentsRE.toString()));
