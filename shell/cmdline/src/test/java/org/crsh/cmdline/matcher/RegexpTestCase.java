@@ -39,7 +39,7 @@ public class RegexpTestCase extends TestCase {
     }
 
     ClassDescriptor<?> desc = CommandDescriptor.create(A.class);
-    String re = Matcher.buildOptions(new StringBuilder(), desc.getOptions()).toString();
+    String re = MatcherFactory.buildOptions(new StringBuilder(), desc.getOptions()).toString();
     Pattern p = Pattern.compile(re);
 
     //
