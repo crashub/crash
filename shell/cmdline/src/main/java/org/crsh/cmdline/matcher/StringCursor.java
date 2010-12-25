@@ -19,6 +19,8 @@
 
 package org.crsh.cmdline.matcher;
 
+import java.util.regex.Pattern;
+
 /**
 * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
 * @version $Revision$
@@ -53,5 +55,9 @@ final class StringCursor {
       throw new AssertionError();
     }
     index += delta;
+  }
+
+  boolean isEmpty() {
+    return index == s.length();
   }
 }

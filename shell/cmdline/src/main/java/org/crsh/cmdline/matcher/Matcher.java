@@ -70,27 +70,31 @@ public class Matcher<T> {
     // Read all common options we are able to
     List<OptionMatch<ClassFieldBinding>> options = analyzer.analyzeOptions(cursor);
 
-    if (options.size() > 0) {
-
-      OptionMatch<?> last = options.get(options.size() - 1);
-
-      List<String> values = last.getValues();
-
-      Class<? extends Completer> completerType = last.getParameter().getCompleterType();
-
-      if (completerType != EmptyCompleter.class) {
-
-        if (values.size() > 0) {
-          String prefix = values.get(values.size() - 1);
-          try {
-            Completer completer = completerType.newInstance();
-            return completer.complete(last.getParameter(), prefix);
+    if (cursor.isEmpty()) {
+      if (options.size() > 0) {
+        OptionMatch<?> last = options.get(options.size() - 1);
+        List<String> values = last.getValues();
+        Class<? extends Completer> completerType = last.getParameter().getCompleterType();
+        if (completerType != EmptyCompleter.class) {
+          if (values.size() > 0) {
+            String prefix = values.get(values.size() - 1);
+            if (prefix != null) {
+              try {
+                Completer completer = completerType.newInstance();
+                return completer.complete(last.getParameter(), prefix);
+              }
+              catch (Exception e) {
+                e.printStackTrace();
+              }
+            } else {
+              //
+            }
+          } else {
+            //
           }
-          catch (Exception e) {
-            e.printStackTrace();
-          }
+        } else {
+          //
         }
-
       } else {
         //
       }
@@ -98,7 +102,7 @@ public class Matcher<T> {
       //
     }
 
-
+    //
     return Collections.emptyList();
   }
 

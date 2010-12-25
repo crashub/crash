@@ -48,11 +48,15 @@ public class CompleteTestCase extends TestCase {
       @Option(names = "a", completer = FooCompleter.class) String a;
     }
 
+    //
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
     Matcher<A> matcher = new Matcher<A>(desc);
     assertEquals(Arrays.asList(""), matcher.complete("-a "));
     assertEquals(Arrays.asList("a"), matcher.complete("-a a"));
     assertEquals(Arrays.asList("ba"), matcher.complete("-a ab"));
+    assertEquals(Arrays.<String>asList(), matcher.complete("-a -b"));
+    assertEquals(Arrays.<String>asList(), matcher.complete("-a b "));
+    assertEquals(Arrays.<String>asList(), matcher.complete("-a b c"));
   }
 
 }
