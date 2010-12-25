@@ -176,27 +176,12 @@ public class Matcher<T> {
     public CommandAnalyzer(CommandDescriptor<T, B> command) {
 
       //
-      StringBuilder findOptionsRE = buildOptions(new StringBuilder(), command.getOptions());
-
-      //
-      List<Pattern> argumentPatterns = new ArrayList<Pattern>();
-      List<ArgumentDescriptor<B>> arguments = command.getArguments();
-      for (int i = arguments.size();i > 0;i--) {
-        StringBuilder argumentsRE = new StringBuilder("^");
-        for (ArgumentDescriptor<B> argument : arguments.subList(0, i)) {
-          if (argument.getMultiplicity() == Multiplicity.SINGLE) {
-            argumentsRE.append("\\s*(?<!\\S)(\\S+)");
-          }
-          else {
-            argumentsRE.append("\\s*(?<!\\S)((?:\\s*(?:\\S+))*)");
-          }
-        }
-        argumentPatterns.add(Pattern.compile(argumentsRE.toString()));
-      }
+      StringBuilder optionsRE = buildOptions(new StringBuilder(), command.getOptions());
+      List<Pattern> argumentPatterns = buildArguments(command.getArguments());
 
       //
       this.command = command;
-      this.optionsPattern = Pattern.compile(findOptionsRE.toString());
+      this.optionsPattern = Pattern.compile(optionsRE.toString());
       this.argumentsPatterns = Collections.unmodifiableList(argumentPatterns);
     }
 
@@ -342,6 +327,27 @@ public class Matcher<T> {
       //
       return optionMatches;
     }
+  }
+
+  static List<Pattern> buildArguments(List<? extends ArgumentDescriptor<?>> arguments) {
+    List<Pattern> argumentPatterns = new ArrayList<Pattern>();
+
+    //
+    for (int i = arguments.size();i > 0;i--) {
+      StringBuilder argumentsRE = new StringBuilder("^");
+      for (ArgumentDescriptor<?> argument : arguments.subList(0, i)) {
+        if (argument.getMultiplicity() == Multiplicity.SINGLE) {
+          argumentsRE.append("\\s*(?<!\\S)(\\S+)");
+        }
+        else {
+          argumentsRE.append("\\s*(?<!\\S)((?:\\s*(?:\\S+))*)");
+        }
+      }
+      argumentPatterns.add(Pattern.compile(argumentsRE.toString()));
+    }
+
+    //
+    return argumentPatterns;
   }
 
   static StringBuilder buildOptions(StringBuilder sb, Iterable<? extends OptionDescriptor<?>> options) {
