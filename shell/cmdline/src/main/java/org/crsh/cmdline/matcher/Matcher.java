@@ -69,42 +69,15 @@ public class Matcher<T> {
     StringCursor cursor = new StringCursor(s);
 
     // Read all common options we are able to
-    List<OptionMatch<ClassFieldBinding>> options = analyzer.analyzeOptions(cursor);
+    List<String> completions = analyzer.completeOptions(cursor);
 
-    if (cursor.isEmpty()) {
-      if (options.size() > 0) {
-        OptionMatch<?> last = options.get(options.size() - 1);
-        List<String> values = last.getValues();
-        Class<? extends Completer> completerType = last.getParameter().getCompleterType();
-        if (completerType != EmptyCompleter.class) {
-          if (values.size() > 0) {
-            String prefix = values.get(values.size() - 1);
-            if (prefix != null) {
-              try {
-                Completer completer = completerType.newInstance();
-                return completer.complete(last.getParameter(), prefix);
-              }
-              catch (Exception e) {
-                e.printStackTrace();
-              }
-            } else {
-              //
-            }
-          } else {
-            //
-          }
-        } else {
-          //
-        }
-      } else {
-        //
-      }
-    } else {
-      //
+    //
+    if (completions != null) {
+      return completions;
     }
 
     //
-    MethodDescriptor<T> method;
+    MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+|$)");
     java.util.regex.Matcher m = p.matcher(cursor.getValue());
     if (m.find()) {
@@ -121,24 +94,31 @@ public class Matcher<T> {
           return a;
         }
       } else {
-        int end = m.end(1);
-        if (end == cursor.length()) {
+        cursor.skip(m.end(1));
+        if (cursor.isEmpty()) {
           return Collections.singletonList("");
         }
       }
-
-
-/*
-      method = descriptor.getMethod(name);
-      if (method != null) {
-        cursor.skip(m.end(1));
-      }
-*/
     }
 
+    //
+    if (method != null) {
+
+      CommandAnalyzer<T, MethodArgumentBinding> methodAnalyzer = new CommandAnalyzer<T, MethodArgumentBinding>(method);
+
+      completions = methodAnalyzer.completeOptions(cursor);
+
+
+
+    }
 
     //
-    return Collections.emptyList();
+    if (completions == null) {
+      completions = Collections.emptyList();
+    }
+
+    //
+    return completions;
   }
 
   public CommandMatch<T, ?, ?> match(String s) {
@@ -258,6 +238,48 @@ public class Matcher<T> {
 
       //
       return argumentMatches;
+    }
+
+    public List<String> completeOptions(StringCursor cursor) {
+
+      //
+      List<OptionMatch<B>> options = analyzeOptions(cursor);
+
+      //
+      if (cursor.isEmpty()) {
+        if (options.size() > 0) {
+          OptionMatch<?> last = options.get(options.size() - 1);
+          List<String> values = last.getValues();
+          Class<? extends Completer> completerType = last.getParameter().getCompleterType();
+          if (completerType != EmptyCompleter.class) {
+            if (values.size() > 0) {
+              String prefix = values.get(values.size() - 1);
+              if (prefix != null) {
+                try {
+                  Completer completer = completerType.newInstance();
+                  return completer.complete(last.getParameter(), prefix);
+                }
+                catch (Exception e) {
+                  e.printStackTrace();
+                }
+              } else {
+                //
+              }
+            } else {
+              //
+            }
+          } else {
+            //
+          }
+        } else {
+          //
+        }
+      } else {
+        //
+      }
+
+      //
+      return null;
     }
 
     public List<OptionMatch<B>> analyzeOptions(StringCursor bilto) {

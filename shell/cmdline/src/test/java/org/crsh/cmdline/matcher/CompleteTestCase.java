@@ -65,7 +65,7 @@ public class CompleteTestCase extends TestCase {
     class A {
       @Option(names = "a", completer = FooCompleter.class) String a;
       @Command
-      void foo() { }
+      void foo(@Option(names = "b", completer = FooCompleter.class) String b) { }
       @Command
       void faa() { }
     }
@@ -85,6 +85,28 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Arrays.asList("oo","aa"), matcher.complete("-a a f"));
     assertEquals(Arrays.asList(""), matcher.complete("-a a foo"));
     assertEquals(Arrays.<String>asList(), matcher.complete("-a a foo "));
+  }
+
+  public void testCommandOption() throws Exception {
+    class A {
+      @Command
+      void foo(@Option(names = "a", completer = FooCompleter.class) String a) { }
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    Matcher<A> matcher = new Matcher<A>(desc);
+
+    //
+    assertEquals(Arrays.asList("foo"), matcher.complete(""));
+    assertEquals(Arrays.asList("oo"), matcher.complete("f"));
+    assertEquals(Arrays.asList(""), matcher.complete("foo"));
+    assertEquals(Arrays.<String>asList(), matcher.complete("foo "));
+
+    //
+    assertEquals(Arrays.asList(""), matcher.complete("foo -a "));
+    assertEquals(Arrays.asList("a"), matcher.complete("foo -a a"));
+    assertEquals(Arrays.asList("ba"), matcher.complete("foo -a ab"));
   }
 
 }
