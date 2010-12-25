@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 /**
@@ -71,23 +72,34 @@ final class MatcherFactory<T, B extends TypeBinding> {
           ArrayList<String> values = new ArrayList<String>();
 
           //
-          java.util.regex.Matcher m2 = Pattern.compile("\\S+").matcher(matcher.group(i));
+          String matched = matcher.group(i);
+          java.util.regex.Matcher m2 = Pattern.compile("\\S+").matcher(matched);
+          MatchResult last = null;
           while (m2.find()) {
             values.add(m2.group(0));
+            last = m2.toMatchResult();
+          }
+
+          // If we have some space between the last match and the totally matched values
+          // it means that the values were at the end of line and we need to include an
+          // empty string, for instance:
+          // "a b c " -> ["a","b","c",""]
+          if (last != null) {
+            if (last.end() < matched.length()) {
+              values.add("");
+            }
           }
 
           //
-          if (values.size() > 0) {
-            ArgumentMatch<B> match = new ArgumentMatch<B>(
-              command.getArguments().get(i - 1),
-              cursor.getIndex() + matcher.start(i),
-              cursor.getIndex()  + matcher.end(i),
-              values
-            );
+          ArgumentMatch<B> match = new ArgumentMatch<B>(
+            command.getArguments().get(i - 1),
+            cursor.getIndex() + matcher.start(i),
+            cursor.getIndex()  + matcher.end(i),
+            values
+          );
 
-            //
-            argumentMatches.add(match);
-          }
+          //
+          argumentMatches.add(match);
         }
         break;
       }
@@ -102,16 +114,47 @@ final class MatcherFactory<T, B extends TypeBinding> {
     return argumentMatches;
   }
 
-  List<String> completeArguemnts(StringCursor cursor) {
+  List<String> completeArguements(StringCursor cursor) {
 
     //
     List<ArgumentMatch<B>> matches = analyzeArguments(cursor);
 
     //
+    if (cursor.isEmpty()) {
+      if (matches.size() > 0) {
+        ArgumentMatch<?> last = matches.get(matches.size() - 1);
+        List<String> values = last.getValues();
+        Class<? extends Completer> completerType = last.getParameter().getCompleterType();
+        if (completerType != EmptyCompleter.class) {
+          String prefix;
+          if (values.size() == 0) {
+            prefix = "";
+          } else {
+            prefix = values.get(values.size() - 1);
+          }
+          if (prefix != null) {
+            try {
+              Completer completer = completerType.newInstance();
+              return completer.complete(last.getParameter(), prefix);
+            }
+            catch (Exception e) {
+              e.printStackTrace();
+            }
+          } else {
+            //
+          }
+        } else {
+          //
+        }
+      } else {
+        //
+      }
+    } else {
+      //
+    }
+
+    //
     return null;
-
-
-
   }
 
   List<String> completeOptions(StringCursor cursor) {

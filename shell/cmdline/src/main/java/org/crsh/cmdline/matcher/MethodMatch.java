@@ -132,26 +132,39 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
     }
 
     // Convert values
-    Map<ParameterDescriptor<?>, Object> values = new HashMap<ParameterDescriptor<?>, Object>();
+    Map<ParameterDescriptor<?>, Object> parameterValues = new HashMap<ParameterDescriptor<?>, Object>();
     for (Map.Entry<ParameterDescriptor<?>, List<String>> entry : abc.entrySet()) {
+
+      //
+      ParameterDescriptor<?> parameter = entry.getKey();
+      List<String> value = entry.getValue();
 
       // First convert the entire list
       List<Object> l = new ArrayList<Object>();
-      for (String s : entry.getValue()) {
-        Object o = entry.getKey().getType().parse(s);
+      for (String s : value) {
+        Object o = parameter.getType().parse(s);
         l.add(o);
+      }
+
+      //
+      if (parameter.isRequired() && l.isEmpty()) {
+        throw new CmdSyntaxException("Non satisfied " + parameter);
       }
 
       // Then figure out if we need to unwrap somehow
       Object v;
-      if (entry.getKey().getMultiplicity() == Multiplicity.SINGLE) {
-        v = l.get(0);
-      } else {
+      if (parameter.getMultiplicity() == Multiplicity.LIST) {
         v = l;
+      } else {
+        if (l.isEmpty()) {
+          continue;
+        } else {
+          v = l.get(0);
+        }
       }
 
       //
-      values.put(entry.getKey(), v);
+      parameterValues.put(parameter, v);
     }
 
     // Prepare invocation
@@ -173,7 +186,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
           v = context.getAttribute(parameterType);
         }
       } else {
-        v = values.get(parameterMatch.getParameter());
+        v = parameterValues.get(parameterMatch.getParameter());
       }
 
       //
@@ -185,7 +198,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
       // First configure command
       for (ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding> parameterMatch : classParameters) {
         ParameterDescriptor<ClassFieldBinding> parameter = parameterMatch.getParameter();
-        Object value = values.get(parameter);
+        Object value = parameterValues.get(parameter);
         Field f = parameter.getBinding().getField();
         f.setAccessible(true);
         f.set(command, value);

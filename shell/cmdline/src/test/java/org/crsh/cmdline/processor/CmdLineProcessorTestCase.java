@@ -30,6 +30,7 @@ import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.InvocationContext;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -134,7 +135,7 @@ public class CmdLineProcessorTestCase extends TestCase {
 
     A a = new A();
     analyzer.match("").invoke(new InvocationContext(), a);
-    assertEquals(null , a.s);
+    assertEquals(Collections.<String>emptyList(), a.s);
 
     a = new A();
     analyzer.match("foo").invoke(new InvocationContext(), a);

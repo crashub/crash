@@ -20,6 +20,7 @@
 package org.crsh.cmdline.matcher;
 
 import junit.framework.TestCase;
+import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
@@ -41,6 +42,44 @@ public class CompleteTestCase extends TestCase {
     public List<String> complete(ParameterDescriptor<?> parameter, String prefix) {
       return Arrays.asList(new StringBuilder(prefix).reverse().toString());
     }
+  }
+
+  public void testSingleArgument() throws Exception {
+
+    class A {
+      @Command
+      void m(@Argument(completer =  FooCompleter.class) String arg) {}
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    Matcher<A> matcher = new Matcher<A>(desc);
+
+    assertEquals(Arrays.asList(""), matcher.complete("m "));
+    assertEquals(Arrays.asList("a"), matcher.complete("m a"));
+    assertEquals(Arrays.asList("ba"), matcher.complete("m ab"));
+    assertEquals(Arrays.<String>asList(), matcher.complete("m a "));
+    assertEquals(Arrays.<String>asList(), matcher.complete("m a c"));
+  }
+
+  public void testMultiArgument() throws Exception {
+
+    class A {
+      @Command
+      void m(@Argument(completer =  FooCompleter.class) List<String> arg) {}
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    Matcher<A> matcher = new Matcher<A>(desc);
+
+    //
+    assertEquals(Arrays.asList(""), matcher.complete("m "));
+    assertEquals(Arrays.asList("a"), matcher.complete("m a"));
+    assertEquals(Arrays.asList("ba"), matcher.complete("m ab"));
+    assertEquals(Arrays.asList(""), matcher.complete("m a "));
+    assertEquals(Arrays.asList("c"), matcher.complete("m a c"));
+    assertEquals(Arrays.asList("dc"), matcher.complete("m a cd"));
   }
 
   public void testOption() throws Exception {

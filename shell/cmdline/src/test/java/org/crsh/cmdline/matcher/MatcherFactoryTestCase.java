@@ -45,6 +45,7 @@ public class MatcherFactoryTestCase extends TestCase {
 
     assertEquals(1, re.size());
     Pattern p = re.get(0);
+    System.out.println("p = " + p);
 
     //
     java.util.regex.Matcher m1 = p.matcher("a");
@@ -69,6 +70,12 @@ public class MatcherFactoryTestCase extends TestCase {
     assertTrue(m4.find());
     assertEquals("a ", m4.group(1));
     assertFalse(m4.find());
+
+    //
+    java.util.regex.Matcher m5 = p.matcher(" ");
+    assertTrue(m5.find());
+    assertEquals("", m5.group(1));
+    assertFalse(m5.find());
   }
 
   public void testMultiSingleArgument() throws Exception {

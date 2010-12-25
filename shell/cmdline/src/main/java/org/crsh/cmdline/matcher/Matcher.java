@@ -108,10 +108,8 @@ public class Matcher<T> {
 
       //
       if (completions == null) {
-
+        completions = methodAnalyzer.completeArguements(cursor);
       }
-
-
     }
 
     //

@@ -99,13 +99,23 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
       ParameterDescriptor<ClassFieldBinding> parameter = parameterMatch.getParameter();
       ClassFieldBinding cf = parameter.getBinding();
       Field f = cf.getField();
+      List<String> values = parameterMatch.getValues();
+
+      //
+      if (parameter.isRequired() && values.isEmpty()) {
+        throw new CmdSyntaxException("Non satisfied " + parameter);
+      }
 
       //
       Object v;
       if (parameter.getMultiplicity() == Multiplicity.LIST) {
-        v = parameterMatch.getValues();
+        v = values;
       } else {
-        v = parameterMatch.getValues().get(0);
+        if (values.isEmpty()) {
+          continue;
+        } else {
+          v = values.get(0);
+        }
       }
 
       //
