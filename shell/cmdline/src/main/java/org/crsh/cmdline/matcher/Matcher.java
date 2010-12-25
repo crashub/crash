@@ -105,9 +105,12 @@ public class Matcher<T> {
     if (method != null) {
 
       CommandAnalyzer<T, MethodArgumentBinding> methodAnalyzer = new CommandAnalyzer<T, MethodArgumentBinding>(method);
-
       completions = methodAnalyzer.completeOptions(cursor);
 
+      //
+      if (completions == null) {
+
+      }
 
 
     }
@@ -198,10 +201,10 @@ public class Matcher<T> {
       this.argumentsPatterns = Collections.unmodifiableList(argumentPatterns);
     }
 
-    public List<ArgumentMatch<B>> analyzeArguments(StringCursor bilto) {
+    public List<ArgumentMatch<B>> analyzeArguments(StringCursor cursor) {
       LinkedList<ArgumentMatch<B>> argumentMatches = new LinkedList<ArgumentMatch<B>>();
       for (Pattern p : argumentsPatterns) {
-        java.util.regex.Matcher matcher = p.matcher(bilto.getValue());
+        java.util.regex.Matcher matcher = p.matcher(cursor.getValue());
         if (matcher.find()) {
 
           for (int i = 1;i <= matcher.groupCount();i++) {
@@ -218,8 +221,8 @@ public class Matcher<T> {
             if (values.size() > 0) {
               ArgumentMatch<B> match = new ArgumentMatch<B>(
                 command.getArguments().get(i - 1),
-                bilto.getIndex() + matcher.start(i),
-                bilto.getIndex()  + matcher.end(i),
+                cursor.getIndex() + matcher.start(i),
+                cursor.getIndex()  + matcher.end(i),
                 values
               );
 
@@ -233,22 +236,34 @@ public class Matcher<T> {
 
       //
       if (argumentMatches.size() > 0) {
-        bilto.seek(argumentMatches.getLast().getEnd());
+        cursor.seek(argumentMatches.getLast().getEnd());
       }
 
       //
       return argumentMatches;
     }
 
+    public List<String> completeArguemnts(StringCursor cursor) {
+
+      //
+      List<ArgumentMatch<B>> matches = analyzeArguments(cursor);
+
+      //
+      return null;
+
+
+
+    }
+
     public List<String> completeOptions(StringCursor cursor) {
 
       //
-      List<OptionMatch<B>> options = analyzeOptions(cursor);
+      List<OptionMatch<B>> matches = analyzeOptions(cursor);
 
       //
       if (cursor.isEmpty()) {
-        if (options.size() > 0) {
-          OptionMatch<?> last = options.get(options.size() - 1);
+        if (matches.size() > 0) {
+          OptionMatch<?> last = matches.get(matches.size() - 1);
           List<String> values = last.getValues();
           Class<? extends Completer> completerType = last.getParameter().getCompleterType();
           if (completerType != EmptyCompleter.class) {
@@ -282,10 +297,10 @@ public class Matcher<T> {
       return null;
     }
 
-    public List<OptionMatch<B>> analyzeOptions(StringCursor bilto) {
+    public List<OptionMatch<B>> analyzeOptions(StringCursor cursor) {
       List<OptionMatch<B>> optionMatches = new ArrayList<OptionMatch<B>>();
       while (true) {
-        java.util.regex.Matcher matcher = findOptionsPattern.matcher(bilto.getValue());
+        java.util.regex.Matcher matcher = findOptionsPattern.matcher(cursor.getValue());
         if (matcher.matches()) {
           OptionDescriptor<B> matched = null;
           int index = 2;
@@ -315,7 +330,7 @@ public class Matcher<T> {
 
             //
             optionMatches.add(new OptionMatch<B>(matched, name.substring(name.length() == 2 ? 1 : 2), values));
-            bilto.skip(matcher.end(1));
+            cursor.skip(matcher.end(1));
           }
           else {
             break;
