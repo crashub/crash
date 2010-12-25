@@ -10,11 +10,13 @@ import java.util.logging.LoggingMXBean;
 import java.util.Collections;
 import java.util.regex.Pattern;
 import javax.management.ObjectName;
+import org.crsh.cmdline.ParameterDescriptor;
+import org.crsh.cmdline.OptionDescriptor;
 
 public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdline.spi.Completer {
 
   /** The logger methods.*/
-  private static final Set<String> methods = ["trace", "debug", "info", "warn", "trace"];
+  private static final Set<String> methods = ["trace", "debug", "info", "warn", "error"];
 
   @Command(description="Send a message to a logger")
   public void send(
@@ -259,6 +261,18 @@ public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdli
 
   public List<String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
     System.out.println("Want completion of parameter " + parameter);
+    if (parameter instanceof OptionDescriptor) {
+      OptionDescriptor opt = (OptionDescriptor)parameter;
+      if (opt.getNames().contains("l")) {
+        def c = [];
+        methods.each() {
+          if (it.startsWith(prefix)) {
+            c.add(it.substring(prefix.length()));
+          }
+        }
+        return c;
+      }
+    }
     return ["foo"];
   }
 }
