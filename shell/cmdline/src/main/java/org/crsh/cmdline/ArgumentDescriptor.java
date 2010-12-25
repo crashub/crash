@@ -30,8 +30,12 @@ import java.lang.reflect.Type;
  */
 public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescriptor<B> {
 
+  /** . */
+  private final String name;
+
   public ArgumentDescriptor(
     B binding,
+    String name,
     Type javaType,
     String description,
     boolean required,
@@ -42,13 +46,15 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
       description,
       required,
       password);
+
+    //
+    this.name = name;
   }
 
   public void printUsage(PrintWriter writer) {
     if (getMultiplicity() == Multiplicity.SINGLE) {
-      writer.append("...");
-    } else {
-      writer.append("arg");
+      writer.append("... ");
     }
+    writer.append((name == null || name.length() == 0) ? "arg" : name);
   }
 }

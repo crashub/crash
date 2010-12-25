@@ -131,6 +131,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
       }
       return new ArgumentDescriptor<B>(
         binding,
+        argumentAnn.name(),
         type,
         argumentAnn.description(),
         argumentAnn.required(),
