@@ -65,21 +65,21 @@ public class Matcher<T> {
   public CommandMatch<T, ?, ?> match(String s) {
 
     //
-    StringCursor bilto = new StringCursor(s);
+    StringCursor cursor = new StringCursor(s);
 
     // Read all common options we are able to
-    List<OptionMatch<ClassFieldBinding>> options = analyzer.analyzeOptions(bilto);
+    List<OptionMatch<ClassFieldBinding>> options = analyzer.analyzeOptions(cursor);
 
     List<OptionMatch<MethodArgumentBinding>> methodOptions = null;
     List<ArgumentMatch<MethodArgumentBinding>> methodArguments = null;
     MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+)");
-    java.util.regex.Matcher m = p.matcher(bilto.getValue());
+    java.util.regex.Matcher m = p.matcher(cursor.getValue());
     if (m.find()) {
       String f = m.group(1);
       method = descriptor.getMethod(f);
       if (method != null) {
-        bilto.skip(m.end(1));
+        cursor.skip(m.end(1));
       }
     }
 
@@ -90,14 +90,14 @@ public class Matcher<T> {
 
     //
     if (method != null) {
-      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), bilto.getValue());
+      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), cursor.getValue());
       CommandAnalyzer<T, MethodArgumentBinding> methodAnalyzer = new CommandAnalyzer<T, MethodArgumentBinding>(method);
-      methodOptions = methodAnalyzer.analyzeOptions(bilto);
-      methodArguments = methodAnalyzer.analyzeArguments(bilto);
-      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, bilto.getValue());
+      methodOptions = methodAnalyzer.analyzeOptions(cursor);
+      methodArguments = methodAnalyzer.analyzeArguments(cursor);
+      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, cursor.getValue());
     } else {
-      List<ArgumentMatch<ClassFieldBinding>> arguments = analyzer.analyzeArguments(bilto);
-      return new ClassMatch<T>(descriptor, options, arguments, bilto.getValue());
+      List<ArgumentMatch<ClassFieldBinding>> arguments = analyzer.analyzeArguments(cursor);
+      return new ClassMatch<T>(descriptor, options, arguments, cursor.getValue());
     }
   }
 
