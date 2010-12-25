@@ -32,6 +32,18 @@ import java.util.List;
  */
 public class EmptyCompleter implements Completer {
 
+  /** . */
+  private static final EmptyCompleter instance = new EmptyCompleter();
+
+  /**
+   * Returns the empty completer instance.
+   *
+   * @return the instance
+   */
+  public static EmptyCompleter getInstance() {
+    return instance;
+  }
+
   /**
    * Returns the value returned by {@link java.util.Collections#emptyList()}.
    */

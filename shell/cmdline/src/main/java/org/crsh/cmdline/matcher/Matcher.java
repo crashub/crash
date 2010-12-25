@@ -63,12 +63,16 @@ public class Matcher<T> {
   }
 
   public List<String> complete(String s) {
+    return complete(EmptyCompleter.getInstance(), s);
+  }
+
+  public List<String> complete(Completer completer, String s) {
 
     //
     StringCursor cursor = new StringCursor(s);
 
     // Read all common options we are able to
-    List<String> completions = analyzer.completeOptions(cursor);
+    List<String> completions = analyzer.completeOptions(completer, cursor);
 
     //
     if (completions != null) {
@@ -104,11 +108,11 @@ public class Matcher<T> {
     if (method != null) {
 
       MatcherFactory<T, MethodArgumentBinding> methodAnalyzer = new MatcherFactory<T, MethodArgumentBinding>(method);
-      completions = methodAnalyzer.completeOptions(cursor);
+      completions = methodAnalyzer.completeOptions(completer, cursor);
 
       //
       if (completions == null) {
-        completions = methodAnalyzer.completeArguements(cursor);
+        completions = methodAnalyzer.completeArguements(completer, cursor);
       }
     }
 

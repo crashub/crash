@@ -114,7 +114,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
     return argumentMatches;
   }
 
-  List<String> completeArguements(StringCursor cursor) {
+  List<String> completeArguements(Completer completer, StringCursor cursor) {
 
     //
     List<ArgumentMatch<B>> matches = analyzeArguments(cursor);
@@ -124,22 +124,26 @@ final class MatcherFactory<T, B extends TypeBinding> {
       if (matches.size() > 0) {
         ArgumentMatch<?> last = matches.get(matches.size() - 1);
         List<String> values = last.getValues();
-        Class<? extends Completer> completerType = last.getParameter().getCompleterType();
-        if (completerType != EmptyCompleter.class) {
-          String prefix;
-          if (values.size() == 0) {
-            prefix = "";
-          } else {
-            prefix = values.get(values.size() - 1);
-          }
-          if (prefix != null) {
+        String prefix;
+        if (values.size() == 0) {
+          prefix = "";
+        } else {
+          prefix = values.get(values.size() - 1);
+        }
+        if (prefix != null) {
+          Class<? extends Completer> completerType = last.getParameter().getCompleterType();
+          if (completerType != EmptyCompleter.class) {
             try {
-              Completer completer = completerType.newInstance();
-              return completer.complete(last.getParameter(), prefix);
+              completer = completerType.newInstance();
             }
             catch (Exception e) {
               e.printStackTrace();
             }
+          } else {
+            //
+          }
+          if (completer != null) {
+            return completer.complete(last.getParameter(), prefix);
           } else {
             //
           }
@@ -157,7 +161,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
     return null;
   }
 
-  List<String> completeOptions(StringCursor cursor) {
+  List<String> completeOptions(Completer completer, StringCursor cursor) {
 
     //
     List<OptionMatch<B>> matches = analyzeOptions(cursor);
@@ -168,17 +172,21 @@ final class MatcherFactory<T, B extends TypeBinding> {
         OptionMatch<?> last = matches.get(matches.size() - 1);
         List<String> values = last.getValues();
         Class<? extends Completer> completerType = last.getParameter().getCompleterType();
-        if (completerType != EmptyCompleter.class) {
-          if (values.size() > 0) {
-            String prefix = values.get(values.size() - 1);
-            if (prefix != null) {
+        if (values.size() > 0) {
+          String prefix = values.get(values.size() - 1);
+          if (prefix != null) {
+            if (completerType != EmptyCompleter.class) {
               try {
-                Completer completer = completerType.newInstance();
-                return completer.complete(last.getParameter(), prefix);
+                completer = completerType.newInstance();
               }
               catch (Exception e) {
                 e.printStackTrace();
               }
+            } else {
+              //
+            }
+            if (completer != null) {
+              return completer.complete(last.getParameter(), prefix);
             } else {
               //
             }
