@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 public class Matcher<T> {
 
   /** . */
-  private final CommandAnalyzer<T, ClassDescriptor<T>, ClassFieldBinding> analyzer;
+  private final CommandAnalyzer<T, ClassFieldBinding> analyzer;
 
   /** . */
   private final ClassDescriptor<T> descriptor;
@@ -57,7 +57,7 @@ public class Matcher<T> {
   }
 
   public Matcher(String mainName, ClassDescriptor<T> descriptor) {
-    this.analyzer = new CommandAnalyzer<T, ClassDescriptor<T>, ClassFieldBinding>(descriptor);
+    this.analyzer = new CommandAnalyzer<T, ClassFieldBinding>(descriptor);
     this.descriptor = descriptor;
     this.mainName = mainName;
   }
@@ -91,7 +91,7 @@ public class Matcher<T> {
     //
     if (method != null) {
       ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), bilto.getValue());
-      CommandAnalyzer<T, MethodDescriptor<T>, MethodArgumentBinding> methodAnalyzer = new CommandAnalyzer<T, MethodDescriptor<T>, MethodArgumentBinding>(method);
+      CommandAnalyzer<T, MethodArgumentBinding> methodAnalyzer = new CommandAnalyzer<T, MethodArgumentBinding>(method);
       methodOptions = methodAnalyzer.analyzeOptions(bilto);
       methodArguments = methodAnalyzer.analyzeArguments(bilto);
       return new MethodMatch<T>(owner, method, methodOptions, methodArguments, bilto.getValue());
@@ -101,7 +101,7 @@ public class Matcher<T> {
     }
   }
 
-  private class CommandAnalyzer<T, C extends CommandDescriptor<T, B>, B extends TypeBinding> {
+  private class CommandAnalyzer<T, B extends TypeBinding> {
 
     /** . */
     final CommandDescriptor<T, B> command;
