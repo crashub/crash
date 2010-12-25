@@ -27,12 +27,14 @@ import org.crsh.cmdline.matcher.ClassMatch;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.MethodMatch;
+import org.crsh.cmdline.spi.Completer;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * A real CRaSH command, the most powerful kind of command.
@@ -86,9 +88,26 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return context;
   }
 
-  public Iterable<String> complete(String... args) {
-    // todo
-    return Collections.emptyList();
+  public List<String> complete(String... args) {
+    if (args == null) {
+      throw new NullPointerException();
+    }
+
+    // WTF
+    Matcher analyzer = new Matcher("main", descriptor);
+    StringBuilder s = new StringBuilder();
+    for (String arg : args) {
+      if (s.length() > 0) {
+        s.append(" ");
+      }
+      s.append(arg);
+    }
+
+    //
+    Completer completer = this instanceof Completer ? (Completer)this : null;
+
+    //
+    return analyzer.complete(completer, s.toString());
   }
 
   public CommandInvoker<?, ?> createInvoker(String... args) {

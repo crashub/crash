@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 import javax.management.ObjectName;
 
-public class log extends org.crsh.command.CRaSHCommand {
+public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdline.spi.Completer {
 
   /** The logger methods.*/
   private static final Set<String> methods = ["trace", "debug", "info", "warn", "trace"];
@@ -255,5 +255,10 @@ public class log extends org.crsh.command.CRaSHCommand {
         invoker(logger);
       }
     }
+  }
+
+  public List<String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
+    System.out.println("Want completion of parameter " + parameter);
+    return ["foo"];
   }
 }

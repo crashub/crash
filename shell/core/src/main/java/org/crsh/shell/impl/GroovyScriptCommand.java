@@ -29,6 +29,7 @@ import org.crsh.command.ShellCommand;
 import org.crsh.shell.io.ShellPrinter;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * This class provides the base class for Groovy scripts. It should not be used directly as it is rather used
@@ -64,7 +65,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     printer.print("Bare script: no usage");
   }
 
-  public final Iterable<String> complete(String... args) {
+  public final List<String> complete(String... args) {
     return Collections.emptyList();
   }
 

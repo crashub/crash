@@ -60,4 +60,9 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
     }
     writer.append((name == null || name.length() == 0) ? "arg" : name);
   }
+
+  @Override
+  public String toString() {
+    return "ArgumentDescriptor[" + name + "]";
+  }
 }

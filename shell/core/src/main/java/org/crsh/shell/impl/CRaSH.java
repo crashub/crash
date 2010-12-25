@@ -25,11 +25,14 @@ import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.*;
 import org.crsh.util.TimestampedObject;
+import org.crsh.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -164,7 +167,7 @@ public class CRaSH implements Shell {
    */
   public List<String> complete(String prefix) {
     System.out.println("want prefix of " + prefix);
-    prefix = prefix.trim();
+    prefix = Utils.trimLeft(prefix);
     int pos = prefix.indexOf(' ');
     List<String> completions;
     if (pos == -1) {
@@ -175,7 +178,29 @@ public class CRaSH implements Shell {
         }
       }
     } else {
-      completions = Collections.emptyList();
+
+      String commandName = prefix.substring(0, pos);
+      prefix = prefix.substring(pos);
+      ShellCommand command = getCommand(commandName);
+      if (command != null) {
+
+        Pattern p = Pattern.compile("\\S+");
+        Matcher matcher = p.matcher(prefix);
+        List<String> a = new ArrayList<String>();
+        while (matcher.find()) {
+          a.add(matcher.group(0));
+        }
+
+        //
+        if (prefix.length() > 0 && prefix.charAt(prefix.length() - 1) == ' ') {
+          a.add("");
+        }
+
+        //
+        completions = command.complete(a.toArray(new String[a.size()]));
+      } else {
+        completions = Collections.emptyList();
+      }
     }
     System.out.println("Found completions " + completions);
     return completions;

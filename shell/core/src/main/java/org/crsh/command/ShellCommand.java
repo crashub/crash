@@ -19,6 +19,8 @@
 
 package org.crsh.command;
 
+import java.util.List;
+
 /**
  * <p>The shell command allows a single source to provide a customized invoker according to the context
  * of the arguments. More importantly it allows to decouple the obtention of a command related to its
@@ -31,8 +33,13 @@ package org.crsh.command;
  */
 public interface ShellCommand {
 
-
-  Iterable<String> complete(String... args);
+  /**
+   * Provide completions for the specified arguments.
+   *
+   * @param args the arguments to complete
+   * @return the completions
+   */
+  List<String> complete(String... args);
 
   /**
    * Provides an invoker for the specified arguments.

@@ -55,4 +55,23 @@ public class Utils {
     return list;
   }
 
+  public static String trimLeft(String s) {
+    if (s == null) {
+      throw new NullPointerException("No null string accepted");
+    }
+    int index = 0;
+    int len = s.length();
+    while (index < len) {
+      if (s.charAt(index) == ' ') {
+        index++;
+      } else {
+        break;
+      }
+    }
+    if (index > 0) {
+      return s.substring(index);
+    } else {
+      return s;
+    }
+  }
 }
