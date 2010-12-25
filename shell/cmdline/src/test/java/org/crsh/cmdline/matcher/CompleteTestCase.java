@@ -17,18 +17,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.spi;
+package org.crsh.cmdline.matcher;
 
+import junit.framework.TestCase;
+import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.Option;
 import org.crsh.cmdline.ParameterDescriptor;
+import org.crsh.cmdline.spi.Completer;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface Completer {
+public class CompleteTestCase extends TestCase {
 
-  List<String> complete(ParameterDescriptor<?> parameter, String prefix);
+  public static class FooCompleter implements Completer {
+    public List<String> complete(ParameterDescriptor<?> parameter, String prefix) {
+      return Arrays.asList(new StringBuilder(prefix).reverse().toString());
+    }
+  }
+
+  public void testOption() throws Exception {
+
+    class A {
+      @Option(names = "a", completer = FooCompleter.class) String a;
+    }
+
+    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    Matcher<A> matcher = new Matcher<A>(desc);
+    assertEquals(Arrays.asList(""), matcher.complete("-a "));
+    assertEquals(Arrays.asList("a"), matcher.complete("-a a"));
+    assertEquals(Arrays.asList("ba"), matcher.complete("-a ab"));
+  }
 
 }

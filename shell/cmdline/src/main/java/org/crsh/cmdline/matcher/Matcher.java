@@ -21,6 +21,7 @@ package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
@@ -28,11 +29,10 @@ import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -60,6 +60,46 @@ public class Matcher<T> {
     this.analyzer = new CommandAnalyzer<T, ClassFieldBinding>(descriptor);
     this.descriptor = descriptor;
     this.mainName = mainName;
+  }
+
+  public List<String> complete(String s) {
+
+    //
+    StringCursor cursor = new StringCursor(s);
+
+    // Read all common options we are able to
+    List<OptionMatch<ClassFieldBinding>> options = analyzer.analyzeOptions(cursor);
+
+    if (options.size() > 0) {
+
+      OptionMatch<?> last = options.get(options.size() - 1);
+
+      List<String> values = last.getValues();
+
+      Class<? extends Completer> completerType = last.getParameter().getCompleterType();
+
+      if (completerType != EmptyCompleter.class) {
+
+        if (values.size() > 0) {
+          String prefix = values.get(values.size() - 1);
+          try {
+            Completer completer = completerType.newInstance();
+            return completer.complete(last.getParameter(), prefix);
+          }
+          catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+
+      } else {
+        //
+      }
+    } else {
+      //
+    }
+
+
+    return Collections.emptyList();
   }
 
   public CommandMatch<T, ?, ?> match(String s) {
@@ -101,51 +141,21 @@ public class Matcher<T> {
     }
   }
 
-  private class CommandAnalyzer<T, B extends TypeBinding> {
+  private static class CommandAnalyzer<T, B extends TypeBinding> {
 
     /** . */
     final CommandDescriptor<T, B> command;
 
     /** . */
-    final Pattern optionsPattern;
+    final Pattern findOptionsPattern;
 
     /** . */
     final List<Pattern> argumentsPatterns;
 
     public CommandAnalyzer(CommandDescriptor<T, B> command) {
-      StringBuilder optionsRE = new StringBuilder("^(");
-      Collection<OptionDescriptor<B>> options = command.getOptions();
-      for (Iterator<OptionDescriptor<B>> it = options.iterator();it.hasNext();) {
-        OptionDescriptor<B> option = it.next();
-        optionsRE.append("(?:\\s*(");
-        boolean needOr = false;
-        for (String name : option.getNames()) {
-          if (needOr) {
-            optionsRE.append('|');
-          }
-          if (name.length() == 1) {
-            optionsRE.append("\\-").append(name);
-          } else {
-            optionsRE.append("\\-\\-").append(name);
-          }
-          needOr = true;
-        }
-        optionsRE.append(")");
 
-        //
-        for (int i = 0;i < option.getArity();i++) {
-          optionsRE.append("(?:\\s+").append("(?!\\-)(\\S+))?");
-        }
-
-        //
-        optionsRE.append(')');
-
-        //
-        if (it.hasNext()) {
-          optionsRE.append('|');
-        }
-      }
-      optionsRE.append(").*");
+      //
+      StringBuilder findOptionsRE = buildOptions(new StringBuilder(), command.getOptions());
 
       //
       List<Pattern> argumentPatterns = new ArrayList<Pattern>();
@@ -165,7 +175,7 @@ public class Matcher<T> {
 
       //
       this.command = command;
-      this.optionsPattern = Pattern.compile(optionsRE.toString());
+      this.findOptionsPattern = Pattern.compile(findOptionsRE.toString());
       this.argumentsPatterns = Collections.unmodifiableList(argumentPatterns);
     }
 
@@ -214,7 +224,7 @@ public class Matcher<T> {
     public List<OptionMatch<B>> analyzeOptions(StringCursor bilto) {
       List<OptionMatch<B>> optionMatches = new ArrayList<OptionMatch<B>>();
       while (true) {
-        java.util.regex.Matcher matcher = optionsPattern.matcher(bilto.getValue());
+        java.util.regex.Matcher matcher = findOptionsPattern.matcher(bilto.getValue());
         if (matcher.matches()) {
           OptionDescriptor<B> matched = null;
           int index = 2;
@@ -257,5 +267,52 @@ public class Matcher<T> {
       //
       return optionMatches;
     }
+  }
+
+  static StringBuilder buildOptions(StringBuilder sb, Iterable<? extends OptionDescriptor<?>> options) {
+    sb.append("^(");
+
+    //
+    boolean hasPrevious = false;
+    for (OptionDescriptor<?> option : options) {
+
+      //
+      if (hasPrevious) {
+        sb.append('|');
+      }
+
+      //
+      sb.append("(?:\\s*(");
+      boolean needOr = false;
+      for (String name : option.getNames()) {
+        if (needOr) {
+          sb.append('|');
+        }
+        if (name.length() == 1) {
+          sb.append("\\-").append(name);
+        } else {
+          sb.append("\\-\\-").append(name);
+        }
+        needOr = true;
+      }
+      sb.append(")");
+
+      //
+      for (int i = 0;i < option.getArity();i++) {
+        sb.append("(?:\\s+((?:(?!\\-)\\S+)|$))?");
+      }
+
+      //
+      sb.append(')');
+
+      //
+      hasPrevious = true;
+    }
+
+    //
+    sb.append(").*");
+
+    //
+    return sb;
   }
 }

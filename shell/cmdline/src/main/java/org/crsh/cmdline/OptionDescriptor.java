@@ -20,6 +20,7 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.spi.Completer;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
@@ -46,13 +47,15 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     String description,
     boolean required,
     int arity,
-    boolean password) throws IllegalValueTypeException, IllegalParameterException {
+    boolean password,
+    Class<? extends Completer> completerType) throws IllegalValueTypeException, IllegalParameterException {
     super(
       binding,
       javaType,
       description,
       required,
-      password);
+      password,
+      completerType);
 
     //
     if (arity > 1 && getMultiplicity() == Multiplicity.SINGLE) {

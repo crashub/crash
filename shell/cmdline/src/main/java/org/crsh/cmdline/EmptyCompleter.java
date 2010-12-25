@@ -21,26 +21,21 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.spi.Completer;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collections;
+import java.util.List;
 
 /**
+ * A {@link Completer} implementation that returns no completion results.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Target({ElementType.FIELD,ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Argument {
+public class EmptyCompleter implements Completer {
 
-  String name() default "";
-
-  String description() default "";
-
-  boolean required() default false;
-
-  boolean password() default false;
-
-  Class<? extends Completer> completer() default EmptyCompleter.class;
+  /**
+   * Returns the value returned by {@link java.util.Collections#emptyList()}.
+   */
+  public List<String> complete(ParameterDescriptor<?> parameter, String prefix) {
+    return Collections.emptyList();
+  }
 }

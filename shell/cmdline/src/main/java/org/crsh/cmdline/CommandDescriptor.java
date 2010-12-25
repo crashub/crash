@@ -135,7 +135,8 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         type,
         argumentAnn.description(),
         argumentAnn.required(),
-        argumentAnn.password());
+        argumentAnn.password(),
+        argumentAnn.completer());
     } else if (optionAnn != null) {
       return new OptionDescriptor<B>(
         binding,
@@ -144,7 +145,8 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         optionAnn.description(),
         optionAnn.required(),
         optionAnn.arity(),
-        optionAnn.password());
+        optionAnn.password(),
+        optionAnn.completer());
     } else {
       return null;
     }

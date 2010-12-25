@@ -20,6 +20,7 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.spi.Completer;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -52,12 +53,16 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   /** . */
   private final Type javaType;
 
+  /** . */
+  private final Class<? extends Completer> completerType;
+
   public ParameterDescriptor(
     B binding,
     Type javaType,
     String description,
     boolean required,
-    boolean password) throws IllegalValueTypeException, IllegalParameterException {
+    boolean password,
+    Class<? extends Completer> completerType) throws IllegalValueTypeException, IllegalParameterException {
 
     Class<?> classType;
     Multiplicity multiplicity;
@@ -107,30 +112,35 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     this.multiplicity = multiplicity;
     this.required = required;
     this.password = password;
+    this.completerType = completerType;
   }
 
-  public B getBinding() {
+  public final B getBinding() {
     return binding;
   }
 
-  public String getDescription() {
+  public final String getDescription() {
     return description;
   }
 
 
-  public boolean isRequired() {
+  public final boolean isRequired() {
     return required;
   }
 
-  public boolean isPassword() {
+  public final boolean isPassword() {
     return password;
   }
 
-  public SimpleValueType getType() {
+  public final SimpleValueType getType() {
     return type;
   }
 
-  public Multiplicity getMultiplicity() {
+  public final Multiplicity getMultiplicity() {
     return multiplicity;
+  }
+
+  public final Class<? extends Completer> getCompleterType() {
+    return completerType;
   }
 }
