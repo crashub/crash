@@ -60,4 +60,8 @@ final class StringCursor {
   boolean isEmpty() {
     return index == s.length();
   }
+
+  int length() {
+    return s.length() - index;
+  }
 }

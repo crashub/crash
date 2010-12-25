@@ -31,8 +31,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Formatter;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +62,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     Set<String> optionNames = getOptionNames();
 
     // Make sure we can add it
-    Map<String, MethodDescriptor<T>> commandMap = new HashMap<String, MethodDescriptor<T>>();
+    Map<String, MethodDescriptor<T>> methodMap = new LinkedHashMap<String, MethodDescriptor<T>>();
     for (MethodDescriptor<T> method : commands(type)) {
 
       Set<String> diff = new HashSet<String>(optionNames);
@@ -73,11 +73,11 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
       }
 
       //
-      commandMap.put(method.getName(), method);
+      methodMap.put(method.getName(), method);
     }
 
     //
-    this.methodMap = commandMap;
+    this.methodMap = methodMap;
     this.type = type;
   }
 

@@ -21,6 +21,7 @@ package org.crsh.cmdline.matcher;
 
 import junit.framework.TestCase;
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.ParameterDescriptor;
@@ -57,6 +58,33 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Arrays.<String>asList(), matcher.complete("-a -b"));
     assertEquals(Arrays.<String>asList(), matcher.complete("-a b "));
     assertEquals(Arrays.<String>asList(), matcher.complete("-a b c"));
+  }
+
+  public void testCommand() throws Exception {
+
+    class A {
+      @Option(names = "a", completer = FooCompleter.class) String a;
+      @Command
+      void foo() { }
+      @Command
+      void faa() { }
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    Matcher<A> matcher = new Matcher<A>(desc);
+
+    //
+    assertEquals(Arrays.asList("foo","faa"), matcher.complete(""));
+    assertEquals(Arrays.asList("oo","aa"), matcher.complete("f"));
+    assertEquals(Arrays.asList(""), matcher.complete("foo"));
+    assertEquals(Arrays.<String>asList(), matcher.complete("foo "));
+
+    //
+    assertEquals(Arrays.asList("foo","faa"), matcher.complete("-a a "));
+    assertEquals(Arrays.asList("oo","aa"), matcher.complete("-a a f"));
+    assertEquals(Arrays.asList(""), matcher.complete("-a a foo"));
+    assertEquals(Arrays.<String>asList(), matcher.complete("-a a foo "));
   }
 
 }

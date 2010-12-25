@@ -32,6 +32,7 @@ import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -101,6 +102,40 @@ public class Matcher<T> {
     } else {
       //
     }
+
+    //
+    MethodDescriptor<T> method;
+    Pattern p = Pattern.compile("^\\s*(\\S+|$)");
+    java.util.regex.Matcher m = p.matcher(cursor.getValue());
+    if (m.find()) {
+      String name = m.group(1);
+      method = descriptor.getMethod(name);
+      if (method == null) {
+        ArrayList<String> a = new ArrayList<String>();
+        for (MethodDescriptor<T> candidate : descriptor.getMethods()) {
+          if (candidate.getName().startsWith(name)) {
+            a.add(candidate.getName().substring(name.length()));
+          }
+        }
+        if (a.size() > 0) {
+          return a;
+        }
+      } else {
+        int end = m.end(1);
+        if (end == cursor.length()) {
+          return Collections.singletonList("");
+        }
+      }
+
+
+/*
+      method = descriptor.getMethod(name);
+      if (method != null) {
+        cursor.skip(m.end(1));
+      }
+*/
+    }
+
 
     //
     return Collections.emptyList();
