@@ -32,7 +32,6 @@ import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -169,7 +168,7 @@ public class Matcher<T> {
     final CommandDescriptor<T, B> command;
 
     /** . */
-    final Pattern findOptionsPattern;
+    final Pattern optionsPattern;
 
     /** . */
     final List<Pattern> argumentsPatterns;
@@ -197,7 +196,7 @@ public class Matcher<T> {
 
       //
       this.command = command;
-      this.findOptionsPattern = Pattern.compile(findOptionsRE.toString());
+      this.optionsPattern = Pattern.compile(findOptionsRE.toString());
       this.argumentsPatterns = Collections.unmodifiableList(argumentPatterns);
     }
 
@@ -300,7 +299,7 @@ public class Matcher<T> {
     public List<OptionMatch<B>> analyzeOptions(StringCursor cursor) {
       List<OptionMatch<B>> optionMatches = new ArrayList<OptionMatch<B>>();
       while (true) {
-        java.util.regex.Matcher matcher = findOptionsPattern.matcher(cursor.getValue());
+        java.util.regex.Matcher matcher = optionsPattern.matcher(cursor.getValue());
         if (matcher.matches()) {
           OptionDescriptor<B> matched = null;
           int index = 2;
