@@ -19,9 +19,9 @@ public class log extends CRaSHCommand implements Completer {
   @Command(description="Send a message to a logger")
   public void send(
     CommandContext<Logger, Void> context,
-    @Message String msg,
-    @LoggerName String name,
-    @Level String levelName) throws ScriptException {
+    @MsgOpt String msg,
+    @LoggerArg String name,
+    @LevelOpt String levelName) throws ScriptException {
 
     //
     if (levelName == null)
@@ -87,7 +87,7 @@ public class log extends CRaSHCommand implements Completer {
   }
 
   @Command(description="List the available loggers")
-  public void ls(CommandContext<Void, Logger> context, @Filter String filter) throws ScriptException {
+  public void ls(CommandContext<Void, Logger> context, @FilterOpt String filter) throws ScriptException {
 
     // Regex filter
     def pattern = Pattern.compile(filter != null ? filter : ".*");
@@ -107,7 +107,7 @@ public class log extends CRaSHCommand implements Completer {
   }
 
   @Command(description="Create one or several loggers")
-  public void add(CommandContext<Void, Logger> context, @LoggerName List<String> names) throws ScriptException {
+  public void add(CommandContext<Void, Logger> context, @LoggerArg List<String> names) throws ScriptException {
     names.each {
       if (it.length() > 0) {
         Logger logger = LoggerFactory.getLogger(it);
@@ -121,7 +121,7 @@ public class log extends CRaSHCommand implements Completer {
   private static final List<String> levels = ["trace","debug","info","warn","error"];
 
   @Command(description="Give info about a logger")
-  public void info(CommandContext<Logger, Void> context, @LoggerName List<String> names) throws ScriptException {
+  public void info(CommandContext<Logger, Void> context, @LoggerArg List<String> names) throws ScriptException {
     if (context.piped) {
       context.consume().each() {
         info(context.writer, it);
@@ -170,9 +170,9 @@ public class log extends CRaSHCommand implements Completer {
   @Command(description="Set the level of one of several loggers")
   public void set(
     CommandContext<Logger, Void> context,
-    @LoggerName List<String> names,
-    @Level String levelName,
-    @Plugin String plugin) throws ScriptException {
+    @LoggerArg List<String> names,
+    @LevelOpt String levelName,
+    @PluginOpt String plugin) throws ScriptException {
 
     //
     def cl = Thread.currentThread().contextClassLoader;
@@ -258,7 +258,7 @@ public class log extends CRaSHCommand implements Completer {
   }
 
   public List<String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
-    if (parameter.annotation instanceof Level) {
+    if (parameter.annotation instanceof LevelOpt) {
       def c = [];
       methods.each() {
         if (it.startsWith(prefix)) {
@@ -266,7 +266,7 @@ public class log extends CRaSHCommand implements Completer {
         }
       }
       return c;
-    } else if (parameter.annotation instanceof LoggerName) {
+    } else if (parameter.annotation instanceof LoggerArg) {
       def c = [];
       loggers.each() {
         if (it.startsWith(prefix)) {
@@ -281,20 +281,20 @@ public class log extends CRaSHCommand implements Completer {
 
 @Retention(RetentionPolicy.RUNTIME)
 @Option(names=["l","level"],description="The logger level to assign among {trace, debug, info, warn, error}")
-@interface Level { }
+@interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
 @Option(names=["m","message"],required=true,description="The message to log")
-@interface Message { }
+@interface MsgOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
 @Argument(description="The logger name")
-@interface LoggerName { }
+@interface LoggerArg { }
 
 @Retention(RetentionPolicy.RUNTIME)
 @Option(names=["f","filter"],description="Filter the logger with a regular expression")
-@interface Filter { }
+@interface FilterOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
 @Option(names=["p","plugin"],description="Force the plugin implementation")
-@interface Plugin { }
+@interface PluginOpt { }
