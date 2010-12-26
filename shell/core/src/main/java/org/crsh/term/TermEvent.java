@@ -32,15 +32,18 @@ public class TermEvent {
     return getClass().getSimpleName() + "[]";
   }
 
-  public static class Init extends TermEvent {
-  }
-
+  /**
+   * Signals a control-break.
+   */
   public static class Break extends TermEvent {
   }
 
+  /**
+   * Signals the completion of a text line.
+   */
   public static class Complete extends TermEvent {
 
-    /** . */
+    /** The line to be completed. */
     private CharSequence line;
 
     public Complete(CharSequence line) {
@@ -57,6 +60,9 @@ public class TermEvent {
     }
   }
 
+  /**
+   * Signals a line was submitted for processing.
+   */
   public static class ReadLine extends TermEvent {
 
     /** . */

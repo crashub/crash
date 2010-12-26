@@ -93,12 +93,13 @@ public class Processor implements Runnable {
     }
 
     //
-    TermEvent event = new TermEvent.Init();
+    TermEvent event = null;
 
     //
     while (status.get() == STATUS_OPEN) {
 
-      if (event instanceof TermEvent.Init) {
+      //
+      if (event == null) {
         try {
           String welcome = shell.getWelcome();
           log.debug("Writing welcome message to term");
