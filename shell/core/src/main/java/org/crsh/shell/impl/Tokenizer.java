@@ -30,9 +30,6 @@ import java.util.LinkedList;
 class Tokenizer {
 
   /** . */
-  private static final int NORMAL = 0;
-
-  /** . */
   private final CharSequence s;
 
   /** . */
@@ -102,10 +99,8 @@ class Tokenizer {
     //
     Character lastQuote = null;
     while (c != null) {
-      if (c == '+' || c == '|') {
-        if (lastQuote == null) {
-          break;
-        }
+      if (lastQuote == null && (c == '+' || c == '|')) {
+        break;
       } else {
         line.append(c);
         switch (c) {
