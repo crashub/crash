@@ -175,6 +175,7 @@ public class Processor implements Runnable {
         if (completion.size() == 0) {
           completionPrefix = "";
         } else if (completion.size() == 1) {
+          // The completion is not ambiguous we pad with a space char
           completionPrefix = completion.get(0) + " ";
         } else {
           completionPrefix = Strings.findLongestCommonPrefix(completion);
