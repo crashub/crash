@@ -166,11 +166,8 @@ public class CRaSH implements Shell {
    * For now basic implementation
    */
   public List<String> complete(final String prefix) {
-    System.out.println("want prefix of " + prefix);
+    log.debug("Want prefix of " + prefix);
     AST ast = new Parser(prefix).parse();
-    List<String> completions = Collections.emptyList();
-
-    //
     String termPrefix;
     if (ast != null) {
       AST.Term last = ast.lastTerm();
@@ -180,6 +177,8 @@ public class CRaSH implements Shell {
     }
 
     //
+    log.debug("Retained term prefix is " + prefix);
+    List<String> completions = Collections.emptyList();
     int pos = termPrefix.indexOf(' ');
     if (pos == -1) {
       completions = new ArrayList<String>();
