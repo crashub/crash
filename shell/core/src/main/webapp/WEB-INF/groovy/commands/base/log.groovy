@@ -107,9 +107,7 @@ public class log extends CRaSHCommand implements Completer {
   }
 
   @Command(description="Create one or several loggers")
-  public void add(
-    CommandContext<Void, Logger> context,
-    @Argument(description="The logger names to add") List<String> names) throws ScriptException {
+  public void add(CommandContext<Void, Logger> context, @LoggerName List<String> names) throws ScriptException {
     names.each {
       if (it.length() > 0) {
         Logger logger = LoggerFactory.getLogger(it);
@@ -260,7 +258,6 @@ public class log extends CRaSHCommand implements Completer {
   }
 
   public List<String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
-    System.out.println("Want completion of parameter " + parameter.annotation);
     if (parameter.annotation instanceof Level) {
       def c = [];
       methods.each() {
