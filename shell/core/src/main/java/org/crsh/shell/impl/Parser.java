@@ -76,9 +76,9 @@ class Parser {
       if (token == Token.PLUS) {
         token = tokenizer.nextToken();
         AST.Term next = parseTerm();
-        return new AST.Term(command.chunks, next);
+        return new AST.Term(command.line, command.chunks, next);
       } else {
-        return new AST.Term(command.chunks);
+        return new AST.Term(command.line, command.chunks);
       }
     } else {
       throw new SyntaxException("Syntax error");

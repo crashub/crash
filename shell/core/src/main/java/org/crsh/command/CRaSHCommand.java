@@ -33,7 +33,6 @@ import org.crsh.util.TypeResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -88,15 +87,15 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return context;
   }
 
-  public List<String> complete(String... args) {
-    if (args == null) {
+  public List<String> complete(String line, String... chunks) {
+    if (chunks == null) {
       throw new NullPointerException();
     }
 
     // WTF
     Matcher analyzer = new Matcher("main", descriptor);
     StringBuilder s = new StringBuilder();
-    for (String arg : args) {
+    for (String arg : chunks) {
       if (s.length() > 0) {
         s.append(" ");
       }

@@ -94,45 +94,47 @@ class Tokenizer {
 
   private Token parseCommand() throws ScriptException {
 
-    // The command chunks
+    //
     LinkedList<String> chunks = new LinkedList<String>();
+    StringBuilder chunk = new StringBuilder();
+    StringBuilder line = new StringBuilder();
 
     //
-    StringBuilder chunk = new StringBuilder();
     Character lastQuote = null;
-    out:
     while (c != null) {
-      switch (c) {
-        case ' ':
-          if (lastQuote == null) {
-            if (chunk.length() > 0) {
-              chunks.addLast(chunk.toString());
-              chunk.setLength(0);
+      if (c == '+' || c == '|') {
+        if (lastQuote == null) {
+          break;
+        }
+      } else {
+        line.append(c);
+        switch (c) {
+          case ' ':
+            if (lastQuote == null) {
+              if (chunk.length() > 0) {
+                chunks.addLast(chunk.toString());
+                chunk.setLength(0);
+              }
+            } else {
+              chunk.append(c);
             }
-          } else {
+            break;
+          case '"':
+          case '\'':
+            if (lastQuote == null) {
+              lastQuote = c;
+              chunk.append(c);
+            } else if (lastQuote != c) {
+              chunk.append(c);
+            } else {
+              chunk.append(c);
+              lastQuote = null;
+            }
+            break;
+          default:
             chunk.append(c);
-          }
-          break;
-        case '"':
-        case '\'':
-          if (lastQuote == null) {
-            lastQuote = c;
-            chunk.append(c);
-          } else if (lastQuote != c) {
-            chunk.append(c);
-          } else {
-            chunk.append(c);
-            lastQuote = null;
-          }
-          break;
-        case '+':
-        case '|':
-          if (lastQuote == null) {
-            break out;
-          }
-        default:
-          chunk.append(c);
-          break;
+            break;
+        }
       }
 
       //
@@ -150,6 +152,6 @@ class Tokenizer {
     }
 
     //
-    return new Token.Command(chunks);
+    return new Token.Command(line.toString(), chunks);
   }
 }

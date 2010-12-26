@@ -53,9 +53,13 @@ abstract class Token {
   public static class Command extends Token {
 
     /** . */
+    final String line;
+
+    /** . */
     final List<String> chunks;
 
-    public Command(List<String> chunks) {
+    public Command(String line, List<String> chunks) {
+      this.line = line;
       this.chunks = chunks;
     }
 

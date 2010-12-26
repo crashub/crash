@@ -35,6 +35,8 @@ import java.util.Map;
  */
 abstract class AST {
 
+  abstract Term lastTerm();
+
   static class Expr extends AST {
 
     /** . */
@@ -133,12 +135,26 @@ abstract class AST {
         return response;
       }
     }
+
+    @Override
+    Term lastTerm() {
+      if (next != null) {
+        return next.lastTerm();
+      }
+      if (term != null) {
+        return term.lastTerm();
+      }
+      return null;
+    }
   }
 
   static class Term extends AST {
 
     /** . */
-    final List<String> commandDefinition;
+    private final String line;
+
+    /** . */
+    final List<String> chunks;
 
     /** . */
     final Term next;
@@ -149,20 +165,22 @@ abstract class AST {
     /** . */
     private String[] args;
 
-    Term(List<String> commandDefinition, Term next) {
-      this.commandDefinition = commandDefinition;
+    Term(String line, List<String> chunks, Term next) {
+      this.line = line;
+      this.chunks = chunks;
       this.next = next;
     }
 
-    Term(List<String> commandDefinition) {
-      this.commandDefinition = commandDefinition;
+    Term(String line, List<String> chunks) {
+      this.line = line;
+      this.chunks = chunks;
       this.next = null;
     }
 
     private ShellResponse.UnknownCommand createCommands(CRaSH crash) {
-      String[] args = new String[commandDefinition.size() - 1];
-      commandDefinition.subList(1, commandDefinition.size()).toArray(args);
-      String name = commandDefinition.get(0);
+      String[] args = new String[chunks.size() - 1];
+      chunks.subList(1, chunks.size()).toArray(args);
+      String name = chunks.get(0);
 
       //
       CommandInvoker invoker = null;
@@ -185,6 +203,23 @@ abstract class AST {
         return next.createCommands(crash);
       } else {
         return null;
+      }
+    }
+
+    String getLine() {
+      return line;
+    }
+
+    List<String> getChunks() {
+      return chunks;
+    }
+
+    @Override
+    Term lastTerm() {
+      if (next != null) {
+        return next.lastTerm();
+      } else {
+        return this;
       }
     }
   }
