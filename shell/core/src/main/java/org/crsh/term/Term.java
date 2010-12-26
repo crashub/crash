@@ -48,18 +48,27 @@ public interface Term {
   /**
    * Write a message on the console, the text will be appended.
    *
+   *
    * @param msg the message to write
    * @throws IOException any io exception
    */
-  void write(String msg) throws IOException;
+  void write(CharSequence msg) throws IOException;
 
   /**
    * Insert a message on the console just after the cursor.
    *
+   *
    * @param msg the message to insert
    * @throws IOException any io exception
    */
-  void bufferInsert(String msg) throws IOException;
+  void bufferInsert(CharSequence msg) throws IOException;
+
+  /**
+   * Returns the current buffer;
+   *
+   * @return the buffer
+   */
+  CharSequence getBuffer();
 
   /**
    * Append a line to the term history.

@@ -53,12 +53,17 @@ public class ConsoleTerm implements Term {
     }
   }
 
-  public void write(String msg) throws IOException {
+  public void write(CharSequence msg) throws IOException {
     console.writer().print(msg);
     console.flush();
   }
 
-  public void bufferInsert(String msg) throws IOException {
+  public CharSequence getBuffer() {
+    // Not supported
+    return "";
+  }
+
+  public void bufferInsert(CharSequence msg) throws IOException {
     // Not supported
   }
 

@@ -168,37 +168,46 @@ public class CRaSH implements Shell {
   public List<String> complete(final String prefix) {
     System.out.println("want prefix of " + prefix);
     AST ast = new Parser(prefix).parse();
-    AST.Term last = ast.lastTerm();
     List<String> completions = Collections.emptyList();
-    if (last != null) {
-      String termPrefix = Utils.trimLeft(last.getLine());
-      int pos = termPrefix.indexOf(' ');
-      if (pos == -1) {
-        completions = new ArrayList<String>();
-        for (String resourceId : context.listResourceId(ResourceKind.SCRIPT)) {
-          if (resourceId.startsWith(termPrefix)) {
-            completions.add(resourceId.substring(termPrefix.length()));
-          }
-        }
-      } else {
-        String commandName = termPrefix.substring(0, pos);
-        termPrefix = termPrefix.substring(pos);
-        ShellCommand command = getCommand(commandName);
-        if (command != null) {
-          Pattern p = Pattern.compile("\\S+");
-          Matcher matcher = p.matcher(termPrefix);
-          List<String> a = new ArrayList<String>();
-          while (matcher.find()) {
-            a.add(matcher.group(0));
-          }
-          if (termPrefix.length() > 0 && termPrefix.charAt(termPrefix.length() - 1) == ' ') {
-            a.add("");
-          }
-          completions = command.complete(null, a.toArray(new String[a.size()]));
+
+    //
+    String termPrefix;
+    if (ast != null) {
+      AST.Term last = ast.lastTerm();
+      termPrefix = Utils.trimLeft(last.getLine());
+    } else {
+      termPrefix = "";
+    }
+
+    //
+    int pos = termPrefix.indexOf(' ');
+    if (pos == -1) {
+      completions = new ArrayList<String>();
+      for (String resourceId : context.listResourceId(ResourceKind.SCRIPT)) {
+        if (resourceId.startsWith(termPrefix)) {
+          completions.add(resourceId.substring(termPrefix.length()));
         }
       }
+    } else {
+      String commandName = termPrefix.substring(0, pos);
+      termPrefix = termPrefix.substring(pos);
+      ShellCommand command = getCommand(commandName);
+      if (command != null) {
+        Pattern p = Pattern.compile("\\S+");
+        Matcher matcher = p.matcher(termPrefix);
+        List<String> a = new ArrayList<String>();
+        while (matcher.find()) {
+          a.add(matcher.group(0));
+        }
+        if (termPrefix.length() > 0 && termPrefix.charAt(termPrefix.length() - 1) == ' ') {
+          a.add("");
+        }
+        completions = command.complete(null, a.toArray(new String[a.size()]));
+      }
     }
-    System.out.println("Found completions for " + prefix + ": " + completions);
+
+    //
+    log.debug("Found completions for " + prefix + ": " + completions);
     return completions;
   }
 }

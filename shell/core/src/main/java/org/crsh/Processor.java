@@ -193,7 +193,7 @@ public class Processor implements Runnable {
         } else {
           if (completions.size() > 1) {
             // We propose
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder("\n");
             for (Iterator<String> i = completions.iterator();i.hasNext();) {
               String completion = i.next();
               sb.append(completion);
@@ -201,12 +201,14 @@ public class Processor implements Runnable {
                 sb.append(" ");
               }
             }
+            sb.append("\n");
             try {
               term.write(sb.toString());
             }
             catch (IOException e) {
               e.printStackTrace();
             }
+            writePrompt();
           }
         }
       } else if (event instanceof TermEvent.Close) {
@@ -221,6 +223,7 @@ public class Processor implements Runnable {
       String p = prompt == null ? "% " : prompt;
       term.write("\r\n");
       term.write(p);
+      term.write(term.getBuffer());
     } catch (IOException e) {
       e.printStackTrace();
     }

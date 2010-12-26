@@ -159,12 +159,16 @@ public class BaseTerm implements Term {
     }
   }
 
-  public void bufferInsert(String msg) throws IOException {
+  public void bufferInsert(CharSequence msg) throws IOException {
     console.getViewReader().write(msg);
   }
 
   public void addToHistory(CharSequence line) {
     history.addFirst(line);
+  }
+
+  public CharSequence getBuffer() {
+    return console.getBufferToCursor();
   }
 
   public void close() {
@@ -177,7 +181,7 @@ public class BaseTerm implements Term {
     }
   }
 
-  public void write(String msg) throws IOException {
+  public void write(CharSequence msg) throws IOException {
     console.getWriter().write(msg);
   }
 }

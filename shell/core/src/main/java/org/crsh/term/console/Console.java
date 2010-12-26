@@ -168,6 +168,10 @@ public final class Console {
     this.size = 0;
   }
 
+  public CharSequence getBuffer() {
+    return new String(buffer, 0, size);
+  }
+
   public CharSequence getBufferToCursor() {
     return new String(buffer, 0, curAt);
   }
