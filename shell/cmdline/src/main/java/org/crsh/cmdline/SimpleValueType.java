@@ -19,9 +19,6 @@
 
 package org.crsh.cmdline;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -31,7 +28,7 @@ public abstract class SimpleValueType<T> {
   /** . */
   public static final SimpleValueType<String> STRING = new SimpleValueType<String>(String.class) {
     @Override
-    public String parse(String s) {
+    public <S extends String> String parse(Class<S> type, String s) {
       return s;
     }
   };
@@ -39,7 +36,7 @@ public abstract class SimpleValueType<T> {
   /** . */
   public static final SimpleValueType<Integer> INTEGER = new SimpleValueType<Integer>(Integer.class) {
     @Override
-    public Integer parse(String s) {
+    public <S extends Integer> Integer parse(Class<S> type, String s) {
       return Integer.parseInt(s);
     }
   };
@@ -47,26 +44,33 @@ public abstract class SimpleValueType<T> {
   /** . */
   public static final SimpleValueType<Boolean> BOOLEAN = new SimpleValueType<Boolean>(Boolean.class) {
     @Override
-    public Boolean parse(String s) {
+    public <S extends Boolean> Boolean parse(Class<S> type, String s) {
       return Boolean.parseBoolean(s);
     }
   };
 
   /** . */
-  private static final Map<Class<?>, SimpleValueType<?>> registry;
+  public static final SimpleValueType<Enum> ENUM = new SimpleValueType<Enum>(Enum.class) {
+    @Override
+    public <S extends Enum> Enum parse(Class<S> type, String s) {
+      return Enum.valueOf(type, s);
+    }
+  };
 
-  static {
-    Map<Class<?>, SimpleValueType<?>> tmp = new HashMap<Class<?>, SimpleValueType<?>>();
-    tmp.put(String.class, STRING);
-    tmp.put(Integer.class, INTEGER);
-    tmp.put(Boolean.class, BOOLEAN);
-
-    //
-    registry = tmp;
-  }
+  /** . */
+  private static final SimpleValueType<?>[] types = { STRING, INTEGER, BOOLEAN, ENUM};
 
   public static SimpleValueType<?> get(Class<?> clazz) {
-    return registry.get(clazz);
+    SimpleValueType<?> bestType = null;
+    int bestDegree = Integer.MAX_VALUE;
+    for (SimpleValueType<?> type : types) {
+      int degree = type.getRelativeDegree(clazz);
+      if (degree != -1 && degree < bestDegree) {
+        bestType = type;
+        bestDegree = degree;
+      }
+    }
+    return bestType;
   }
 
   /** . */
@@ -81,10 +85,24 @@ public abstract class SimpleValueType<T> {
     this.javaType = javaType;
   }
 
+  public int getRelativeDegree(Class<?> clazz) {
+    if (javaType == clazz) {
+      return 0;
+    } else if (javaType.isAssignableFrom(clazz)) {
+      int degree = 0;
+      for (Class<?> current = clazz;current != javaType;current = current.getSuperclass()) {
+        degree++;
+      }
+      return degree;
+    } else {
+      return -1;
+    }
+  }
+
   public Class<T> getJavaType() {
     return javaType;
   }
 
-  public abstract T parse(String s);
+  public abstract <S extends T> T parse(Class<S> type, String s);
 
 }

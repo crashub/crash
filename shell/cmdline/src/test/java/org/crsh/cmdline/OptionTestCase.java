@@ -21,6 +21,7 @@ package org.crsh.cmdline;
 
 import junit.framework.TestCase;
 
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 /**
@@ -153,6 +154,17 @@ public class OptionTestCase extends TestCase {
     OptionDescriptor i = c.getOption("-o");
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(SimpleValueType.BOOLEAN, i.getType());
+  }
+
+  public void testOptionEnumType() throws IntrospectionException {
+    class A {
+      @Option(names = "o")
+      RetentionPolicy o;
+    }
+    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    OptionDescriptor i = c.getOption("-o");
+    assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
+    assertEquals(SimpleValueType.ENUM, i.getType());
   }
 
   private void assertIllegalValueType(Class<?> type) throws IntrospectionException {
