@@ -169,20 +169,24 @@ public class Processor implements Runnable {
         log.debug("About to get completions for " + prefix);
         List<String> completion = shell.complete(prefix);
         log.debug("Completions for " + prefix + " are " + completion);
-        if (completion.size() >= 1) {
 
-          // Try to find the greatest common prefix
-          // perhaps not the best way to do it :-)
-          String completionPrefix = Strings.findLongestCommonPrefix(completion);
+        // Try to find the greatest prefix among all the results
+        String completionPrefix;
+        if (completion.size() == 0) {
+          completionPrefix = "";
+        } else if (completion.size() == 1) {
+          completionPrefix = completion.get(0) + " ";
+        } else {
+          completionPrefix = Strings.findLongestCommonPrefix(completion);
+        }
 
-          //
-          if (completionPrefix.length() > 0) {
-            try {
-              term.bufferInsert(completionPrefix);
-            }
-            catch (IOException e) {
-              e.printStackTrace();
-            }
+        //
+        if (completionPrefix.length() > 0) {
+          try {
+            term.bufferInsert(completionPrefix);
+          }
+          catch (IOException e) {
+            e.printStackTrace();
           }
         }
       } else if (event instanceof TermEvent.Close) {
