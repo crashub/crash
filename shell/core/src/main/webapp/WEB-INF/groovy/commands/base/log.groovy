@@ -1,8 +1,3 @@
-import org.crsh.cmdline.Argument;
-import org.crsh.cmdline.Option;
-import org.crsh.cmdline.Command;
-import org.crsh.command.ScriptException;
-import org.crsh.command.CommandContext;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import java.util.logging.LogManager;
@@ -12,10 +7,11 @@ import java.util.regex.Pattern;
 import javax.management.ObjectName;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.spi.Completer;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdline.spi.Completer {
+public class log extends CRaSHCommand implements Completer {
 
   /** The logger methods.*/
   private static final Set<String> methods = ["trace", "debug", "info", "warn", "error"];

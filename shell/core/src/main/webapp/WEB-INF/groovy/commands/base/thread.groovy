@@ -1,14 +1,8 @@
-import org.crsh.cmdline.Argument;
-import org.crsh.cmdline.Option;
-import org.crsh.cmdline.Command;
-import org.crsh.command.ScriptException;
-import org.crsh.command.Description;
-import org.crsh.command.CommandContext;
 import java.util.Collections;
 import java.util.regex.Pattern;
 import java.util.Formatter;
 
-public class thread extends org.crsh.command.CRaSHCommand {
+public class thread extends CRaSHCommand {
 
   @Command(description="List the vm threads")
   public void ls(

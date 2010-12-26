@@ -1,10 +1,4 @@
-import org.crsh.command.Description;
-import org.crsh.cmdline.Command;
-import org.crsh.cmdline.Argument;
-import org.crsh.command.ScriptException;
-
-
-class sleep extends org.crsh.command.CRaSHCommand
+class sleep extends CRaSHCommand
 {
 
   @Command(description = "Provides basic help")

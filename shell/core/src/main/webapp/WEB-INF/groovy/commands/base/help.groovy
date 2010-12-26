@@ -1,8 +1,4 @@
-import org.crsh.command.Description;
-import org.crsh.cmdline.Command;
-
-@Description("Provides basic help")
-class help extends org.crsh.command.CRaSHCommand
+class help extends CRaSHCommand
 {
 
   /** . */
