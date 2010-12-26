@@ -22,6 +22,7 @@ package org.crsh.cmdline;
 import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -56,13 +57,17 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   /** . */
   private final Class<? extends Completer> completerType;
 
+  /** The annotation when it exists.  */
+  private final Annotation annotation;
+
   public ParameterDescriptor(
     B binding,
     Type javaType,
     String description,
     boolean required,
     boolean password,
-    Class<? extends Completer> completerType) throws IllegalValueTypeException, IllegalParameterException {
+    Class<? extends Completer> completerType,
+    Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
 
     Class<?> classType;
     Multiplicity multiplicity;
@@ -113,6 +118,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     this.required = required;
     this.password = password;
     this.completerType = completerType;
+    this.annotation = annotation;
   }
 
   public final B getBinding() {
@@ -123,6 +129,9 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     return description;
   }
 
+  public Annotation getAnnotation() {
+    return annotation;
+  }
 
   public final boolean isRequired() {
     return required;

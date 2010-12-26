@@ -21,6 +21,10 @@ package org.crsh.cmdline;
 
 import junit.framework.TestCase;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.List;
 
@@ -133,5 +137,25 @@ public class CommandInfoTestCase extends TestCase {
     }
     catch (IntrospectionException e) {
     }
+  }
+
+  @Target({ElementType.FIELD})
+  @Retention(RetentionPolicy.RUNTIME)
+  @Option(names="l")
+  @interface Level {
+  }
+
+  public void testAnnotation() throws IntrospectionException {
+
+    class A {
+      @Level
+      String l;
+    }
+
+    CommandDescriptor<A, ?> a = CommandDescriptor.create(A.class);
+    assertEquals(1,a.getOptions().size());
+    OptionDescriptor i = a.getOption("-l");
+    assertEquals(Arrays.asList("l"),i.getNames());
+    assertTrue(i.getAnnotation() instanceof Level);
   }
 }

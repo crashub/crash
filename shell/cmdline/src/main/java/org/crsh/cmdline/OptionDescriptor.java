@@ -23,6 +23,7 @@ import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
 import java.io.PrintWriter;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,14 +49,16 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     boolean required,
     int arity,
     boolean password,
-    Class<? extends Completer> completerType) throws IllegalValueTypeException, IllegalParameterException {
+    Class<? extends Completer> completerType,
+    Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
     super(
       binding,
       javaType,
       description,
       required,
       password,
-      completerType);
+      completerType,
+      annotation);
 
     //
     if (arity > 1 && getMultiplicity() == Multiplicity.SINGLE) {

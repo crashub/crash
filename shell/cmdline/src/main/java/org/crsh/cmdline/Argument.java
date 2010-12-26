@@ -30,9 +30,9 @@ import java.lang.annotation.Target;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Target({ElementType.FIELD,ElementType.PARAMETER})
+@Target({ElementType.FIELD,ElementType.PARAMETER,ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Argument {
+public @interface  Argument {
 
   String name() default "";
 

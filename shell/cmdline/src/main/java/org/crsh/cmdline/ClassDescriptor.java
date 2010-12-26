@@ -30,6 +30,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -126,16 +127,60 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     } else {
       parameters = parameters(superIntrospected);
       for (Field f : introspected.getDeclaredFields()) {
+        Tuple tuple = get(f.getAnnotations());
         Argument argumentAnn = f.getAnnotation(Argument.class);
         Option optionAnn = f.getAnnotation(Option.class);
         ClassFieldBinding binding = new ClassFieldBinding(f);
-        ParameterDescriptor<ClassFieldBinding> parameter = create(binding, f.getGenericType(), argumentAnn, optionAnn);
+        ParameterDescriptor<ClassFieldBinding> parameter = create(
+          binding,
+          f.getGenericType(),
+          tuple.argumentAnn,
+          tuple.optionAnn,
+          tuple.ann);
         if (parameter != null) {
           parameters.add(parameter);
         }
       }
     }
     return parameters;
+  }
+
+  /**
+   * Jus grouping some data for conveniency
+   */
+  private static class Tuple {
+    final Argument argumentAnn;
+    final Option optionAnn ;
+    final Annotation ann;
+    private Tuple(Argument argumentAnn, Option optionAnn, Annotation ann) {
+      this.argumentAnn = argumentAnn;
+      this.optionAnn = optionAnn;
+      this.ann = ann;
+    }
+  }
+
+  private static Tuple get(Annotation... ab) {
+    Argument argumentAnn = null;
+    Option optionAnn = null;
+    Annotation ann = null;
+    for (Annotation parameterAnnotation : ab) {
+      if (parameterAnnotation instanceof Option) {
+        optionAnn = (Option)parameterAnnotation;
+      } else if (parameterAnnotation instanceof Argument) {
+        argumentAnn = (Argument)parameterAnnotation;
+      } else {
+        // Look at annotated annotations
+        Class<? extends Annotation> a = parameterAnnotation.annotationType();
+        if (a.getAnnotation(Option.class) != null) {
+          optionAnn = a.getAnnotation(Option.class);
+          ann = parameterAnnotation;
+        } else if (a.getAnnotation(Argument.class) != null) {
+          argumentAnn =  a.getAnnotation(Argument.class);
+          ann = parameterAnnotation;
+        }
+      }
+    }
+    return new Tuple(argumentAnn, optionAnn, ann);
   }
 
   private List<MethodDescriptor<T>> commands(Class<?> introspected) throws IntrospectionException {
@@ -152,19 +197,20 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
           Type[] parameterTypes = m.getGenericParameterTypes();
           Annotation[][] parameterAnnotationMatrix = m.getParameterAnnotations();
           for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
+
+
             Annotation[] parameterAnnotations = parameterAnnotationMatrix[i];
             Type parameterType = parameterTypes[i];
-            Argument argumentAnn = null;
-            Option optionAnn = null;
-            for (Annotation parameterAnnotation : parameterAnnotations) {
-              if (parameterAnnotation instanceof Option) {
-                optionAnn = (Option)parameterAnnotation;
-              } else if (parameterAnnotation instanceof Argument) {
-                argumentAnn = (Argument)parameterAnnotation;
-              }
-            }
+            Tuple tuple = get(parameterAnnotations);
+
+
             MethodArgumentBinding binding = new MethodArgumentBinding(i);
-            ParameterDescriptor<MethodArgumentBinding> parameter = create(binding, parameterType, argumentAnn, optionAnn);
+            ParameterDescriptor<MethodArgumentBinding> parameter = create(
+              binding,
+              parameterType,
+              tuple.argumentAnn,
+              tuple.optionAnn,
+              tuple.ann);
             if (parameter != null) {
               parameters.add(parameter);
             } else {

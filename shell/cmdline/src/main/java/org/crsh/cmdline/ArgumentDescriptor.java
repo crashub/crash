@@ -23,6 +23,7 @@ import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
 import java.io.PrintWriter;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
@@ -41,14 +42,16 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
     String description,
     boolean required,
     boolean password,
-    Class<? extends Completer> completerType) throws IllegalValueTypeException, IllegalParameterException {
+    Class<? extends Completer> completerType,
+    Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
     super(
       binding,
       javaType,
       description,
       required,
       password,
-      completerType);
+      completerType,
+      annotation);
 
     //
     this.name = name;

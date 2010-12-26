@@ -21,6 +21,7 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,7 +125,8 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     B binding,
     Type type,
     Argument argumentAnn,
-    Option optionAnn) throws IntrospectionException {
+    Option optionAnn,
+    Annotation ann) throws IntrospectionException {
     if (argumentAnn != null) {
       if (optionAnn != null) {
         throw new IntrospectionException();
@@ -136,7 +138,8 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         argumentAnn.description(),
         argumentAnn.required(),
         argumentAnn.password(),
-        argumentAnn.completer());
+        argumentAnn.completer(),
+        ann);
     } else if (optionAnn != null) {
       return new OptionDescriptor<B>(
         binding,
@@ -146,7 +149,8 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         optionAnn.required(),
         optionAnn.arity(),
         optionAnn.password(),
-        optionAnn.completer());
+        optionAnn.completer(),
+        ann);
     } else {
       return null;
     }
