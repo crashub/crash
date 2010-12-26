@@ -61,7 +61,6 @@ public class TelnetHandler implements Shell {
     //
     processor.addListener(new ProcessorListener() {
       public void closed() {
-        System.out.println("Closing io");
         io.close();
       }
     });
@@ -69,7 +68,6 @@ public class TelnetHandler implements Shell {
     //
     processor.addListener(new ProcessorListener() {
       public void closed() {
-        System.out.println("Closing async shell");
         asyncShell.close();
       }
     });
@@ -77,7 +75,6 @@ public class TelnetHandler implements Shell {
     //
     processor.addListener(new ProcessorListener() {
       public void closed() {
-        System.out.println("Closing crash");
         shell.close();
       }
     });
