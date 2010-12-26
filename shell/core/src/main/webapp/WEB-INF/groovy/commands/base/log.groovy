@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 import javax.management.ObjectName;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdline.spi.Completer {
 
@@ -21,9 +23,9 @@ public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdli
   @Command(description="Send a message to a logger")
   public void send(
     CommandContext<Logger, Void> context,
-    @Option(names=["m","message"],required=true,description="The message to log") String msg,
-    @Argument(description="The logger name") String name,
-    @Option(names=["l","level"],description="The logger level (default info)") String levelName) throws ScriptException {
+    @Message String msg,
+    @LoggerName String name,
+    @Level String levelName) throws ScriptException {
 
     //
     if (levelName == null)
@@ -50,10 +52,7 @@ public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdli
   }
 
   @Command(description="List the available loggers")
-  public void ls(
-    CommandContext<Void, Logger> context,
-    @Option(names=["f","filter"],description="Filter the logger with a regular expression") String filter
-    ) throws ScriptException {
+  public void ls(CommandContext<Void, Logger> context, @Filter String filter) throws ScriptException {
 
     // Regex filter
     def pattern = Pattern.compile(filter != null ? filter : ".*");
@@ -121,9 +120,7 @@ public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdli
   private static final List<String> levels = ["trace","debug","info","warn","error"];
 
   @Command(description="Give info about a logger")
-  public void info(
-    CommandContext<Logger, Void> context,
-    @Argument(description="The logger names") List<String> names) throws ScriptException {
+  public void info(CommandContext<Logger, Void> context, @LoggerName List<String> names) throws ScriptException {
     if (context.piped) {
       context.consume().each() {
         info(context.writer, it);
@@ -172,9 +169,9 @@ public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdli
   @Command(description="Set the level of one of several loggers")
   public void set(
     CommandContext<Logger, Void> context,
-    @Argument(description="The logger names") List<String> names,
-    @Option(names=["l","level"],description="The logger level to assign among {trace, debug, info, warn, error}") String levelName,
-    @Option(names=["p","plugin"],description="Force the plugin implementation") String plugin) throws ScriptException {
+    @LoggerName List<String> names,
+    @Level String levelName,
+    @Plugin String plugin) throws ScriptException {
 
     //
     def cl = Thread.currentThread().contextClassLoader;
@@ -260,19 +257,36 @@ public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdli
   }
 
   public List<String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
-    System.out.println("Want completion of parameter " + parameter);
-    if (parameter instanceof OptionDescriptor) {
-      OptionDescriptor opt = (OptionDescriptor)parameter;
-      if (opt.getNames().contains("l")) {
-        def c = [];
-        methods.each() {
-          if (it.startsWith(prefix)) {
-            c.add(it.substring(prefix.length()));
-          }
+    System.out.println("Want completion of parameter " + parameter.annotation);
+    if (parameter.annotation instanceof Level) {
+      def c = [];
+      methods.each() {
+        if (it.startsWith(prefix)) {
+          c.add(it.substring(prefix.length()));
         }
-        return c;
       }
+      return c;
     }
     return ["foo"];
   }
 }
+
+@Retention(RetentionPolicy.RUNTIME)
+@Option(names=["l","level"],description="The logger level to assign among {trace, debug, info, warn, error}")
+@interface Level { }
+
+@Retention(RetentionPolicy.RUNTIME)
+@Option(names=["m","message"],required=true,description="The message to log")
+@interface Message { }
+
+@Retention(RetentionPolicy.RUNTIME)
+@Argument(description="The logger name")
+@interface LoggerName { }
+
+@Retention(RetentionPolicy.RUNTIME)
+@Option(names=["f","filter"],description="Filter the logger with a regular expression")
+@interface Filter { }
+
+@Retention(RetentionPolicy.RUNTIME)
+@Option(names=["p","plugin"],description="Force the plugin implementation")
+@interface Plugin { }
