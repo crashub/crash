@@ -51,13 +51,7 @@ public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdli
     logger."$methodName"(msg);
   }
 
-  @Command(description="List the available loggers")
-  public void ls(CommandContext<Void, Logger> context, @Filter String filter) throws ScriptException {
-
-    // Regex filter
-    def pattern = Pattern.compile(filter != null ? filter : ".*");
-
-    //
+  private Collection<String> getLoggers() {
     def names = [] as Set;
     def factory = LoggerFactory.ILoggerFactory;
     def factoryName = factory.class.simpleName;
@@ -91,6 +85,19 @@ public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdli
     } else {
       System.out.println("Implement log lister for implementation " + factory.getClass().getName());
     }
+
+    //
+    return names;
+  }
+
+  @Command(description="List the available loggers")
+  public void ls(CommandContext<Void, Logger> context, @Filter String filter) throws ScriptException {
+
+    // Regex filter
+    def pattern = Pattern.compile(filter != null ? filter : ".*");
+
+    //
+    def names = loggers;
 
     //
     names.each {
@@ -266,8 +273,16 @@ public class log extends org.crsh.command.CRaSHCommand implements org.crsh.cmdli
         }
       }
       return c;
+    } else if (parameter.annotation instanceof LoggerName) {
+      def c = [];
+      loggers.each() {
+        if (it.startsWith(prefix)) {
+          c.add(it.substring(prefix.length()));
+        }
+      }
+      return c;
     }
-    return ["foo"];
+    return [];
   }
 }
 
