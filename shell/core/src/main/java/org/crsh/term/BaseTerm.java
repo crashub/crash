@@ -107,6 +107,8 @@ public class BaseTerm implements Term {
       int code = io.read();
       CodeType type = io.decode(code);
       switch (type) {
+        case CLOSE:
+          return new TermEvent.Close();
         case DELETE:
           console.getViewReader().del();
           break;

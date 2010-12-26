@@ -22,6 +22,7 @@ package org.crsh.term.spi.telnet;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
+import org.crsh.ProcessorListener;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.term.BaseTerm;
 import org.crsh.shell.impl.CRaSH;
@@ -45,39 +46,55 @@ public class TelnetHandler implements Shell {
   /** . */
   private Processor processor;
 
+  /** . */
+  private TelnetIO io;
+
   public void run(Connection conn) {
 
     //
     shell = TelnetLifeCycle.instance.getShellFactory().build();
     asyncShell = new AsyncShell(TelnetLifeCycle.instance.getExecutor(), shell);
-    term = new BaseTerm(new TelnetIO(conn));
+    io = new TelnetIO(conn);
+    term = new BaseTerm(io);
     processor = new Processor(term, asyncShell);
 
     //
-    try {
-      conn.addConnectionListener(this);
+    processor.addListener(new ProcessorListener() {
+      public void closed() {
+        System.out.println("Closing io");
+        io.close();
+      }
+    });
 
-      //
-      processor.run();
-    } finally {
-      close();
-    }
-  }
+    //
+    processor.addListener(new ProcessorListener() {
+      public void closed() {
+        System.out.println("Closing async shell");
+        asyncShell.close();
+      }
+    });
 
-  private void close() {
-    asyncShell.close();
-    shell.close();
+    //
+    processor.addListener(new ProcessorListener() {
+      public void closed() {
+        System.out.println("Closing crash");
+        shell.close();
+      }
+    });
+
+    //
+    processor.run();
   }
 
   public void connectionIdle(ConnectionEvent connectionEvent) {
   }
 
   public void connectionTimedOut(ConnectionEvent connectionEvent) {
-    close();
+    System.out.println("connectionTimedOut");
   }
 
   public void connectionLogoutRequest(ConnectionEvent connectionEvent) {
-    close();
+    System.out.println("logoutRequest");
   }
 
   public void connectionSentBreak(ConnectionEvent connectionEvent) {

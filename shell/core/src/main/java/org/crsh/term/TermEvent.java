@@ -35,6 +35,12 @@ public class TermEvent {
   /**
    * Signals a control-break.
    */
+  public static class Close extends TermEvent {
+  }
+
+  /**
+   * Signals a control-break.
+   */
   public static class Break extends TermEvent {
   }
 

@@ -28,8 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -64,49 +67,61 @@ public class SSHIO implements TermIO {
   /** . */
   private int status;
 
-  public SSHIO(Reader reader, Writer writer, int verase) {
-    this.reader = reader;
-    this.writer = writer;
+  /** . */
+  private final CRaSHCommand command;
+
+  /** . */
+  final AtomicBoolean closed;
+
+  public SSHIO(CRaSHCommand command, int verase) {
+    this.command = command;
+    this.writer = new OutputStreamWriter(command.out);
+    this.reader = new InputStreamReader(command.in);
     this.verase = verase;
     this.status = STATUS_NORMAL;
+    this.closed = new AtomicBoolean(false);
   }
 
   public int read() throws IOException {
     while (true) {
-      int r = reader.read();
-      switch (status) {
-        case STATUS_NORMAL:
-          if (r == 27) {
-            status = STATUS_READ_ESC_1;
-          } else {
-            return r;
-          }
-          break;
-        case STATUS_READ_ESC_1:
-          if (r == 91) {
-            status = STATUS_READ_ESC_2;
-          } else {
+      if (closed.get()) {
+        return TerminalIO.HANDLED;
+      } else {
+        int r = reader.read();
+        switch (status) {
+          case STATUS_NORMAL:
+            if (r == 27) {
+              status = STATUS_READ_ESC_1;
+            } else {
+              return r;
+            }
+            break;
+          case STATUS_READ_ESC_1:
+            if (r == 91) {
+              status = STATUS_READ_ESC_2;
+            } else {
+              status = STATUS_NORMAL;
+              log.error("Unrecognized stream data " + r + " after reading ESC code");
+            }
+            break;
+          case STATUS_READ_ESC_2:
             status = STATUS_NORMAL;
-            log.error("Unrecognized stream data " + r + " after reading ESC code");
-          }
-          break;
-        case STATUS_READ_ESC_2:
-          status = STATUS_NORMAL;
-          switch (r) {
-            case 65:
-              return TerminalIO.UP;
-            case 66:
-              return TerminalIO.DOWN;
-            case 67:
-              // Swallow RIGHT
-              break;
-            case 68:
-              // Swallow LEFT
-              break;
-            default:
-              log.error("Unrecognized stream data " + r + " after reading ESC+91 code");
-              break;
-          }
+            switch (r) {
+              case 65:
+                return TerminalIO.UP;
+              case 66:
+                return TerminalIO.DOWN;
+              case 67:
+                // Swallow RIGHT
+                break;
+              case 68:
+                // Swallow LEFT
+                break;
+              default:
+                log.error("Unrecognized stream data " + r + " after reading ESC+91 code");
+                break;
+            }
+        }
       }
     }
   }
@@ -116,6 +131,8 @@ public class SSHIO implements TermIO {
       return CodeType.DELETE;
     } else {
       switch (code) {
+        case TerminalIO.HANDLED:
+          return CodeType.CLOSE;
         case 3:
           return CodeType.BREAK;
         case 9:
@@ -131,8 +148,12 @@ public class SSHIO implements TermIO {
   }
 
   public void close() {
-    Safe.close(reader);
-    Safe.close(writer);
+    if (closed.get()) {
+      log.debug("Attempt to closed again");
+    } else {
+      log.debug("Closing SSHIO");
+      command.session.close(false);
+    }
   }
 
   public void flush() throws IOException {

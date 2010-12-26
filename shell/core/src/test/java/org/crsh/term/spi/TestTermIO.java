@@ -58,6 +58,10 @@ public class TestTermIO implements TermIO {
     }
   }
 
+  public boolean isClosed() {
+    throw new UnsupportedOperationException();
+  }
+
   public TestTermIO appendTab() {
     return append(TerminalIO.TABULATOR);
   }

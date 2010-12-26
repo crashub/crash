@@ -17,30 +17,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term;
+package org.crsh;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public enum CodeType {
+public interface ProcessorListener {
 
-  CLOSE,
-
-  DELETE,
-
-  UP,
-
-  DOWN,
-
-  CHAR,
-
-  RIGHT,
-
-  LEFT,
-
-  TAB,
-
-  BREAK,
+  /**
+   * Closed.
+   */
+  void closed();
 
 }

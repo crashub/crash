@@ -21,6 +21,7 @@ package org.crsh.term.spi.sshd;
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
 import org.crsh.Processor;
+import org.crsh.shell.Shell;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
@@ -28,9 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -55,15 +53,19 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   private SSHContext context;
 
   /** . */
-  private AsyncShell asyncShell;
+  private SSHIO io;
 
   /** . */
-  private CRaSH shell;
+  private Processor processor;
 
   public void start(Environment env) throws IOException {
+    Shell shell = factory.builder.build();
+    AsyncShell asyncShell = new AsyncShell(factory.executor, shell);
+
+    //
     context = new SSHContext(env.getPtyModes().get(PtyMode.VERASE));
-    shell = factory.builder.build();
-    asyncShell = new AsyncShell(factory.executor, shell);
+    io = new SSHIO(this, context.verase);
+    processor = new Processor(new BaseTerm(io), asyncShell);
 
     //
     thread = new Thread(this, "CRaSH");
@@ -71,19 +73,12 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   }
 
   public void destroy() {
-    asyncShell.close();
-    shell.close();
+    io.closed.set(true);
     thread.interrupt();
   }
 
   public void run() {
-
     try {
-      OutputStreamWriter writer = new OutputStreamWriter(out);
-      Reader reader = new InputStreamReader(in);
-      SSHIO io = new SSHIO(reader, writer, context.verase);
-      BaseTerm term = new BaseTerm(io);
-      Processor processor = new Processor(term, asyncShell);
       processor.run();
     } finally {
       callback.onExit(0);

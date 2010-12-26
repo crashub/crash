@@ -119,9 +119,8 @@ public class AsyncShell implements Shell {
         }
 
         // Update state
-        Status nextStatus = response instanceof ShellResponse.Close ? Status.CLOSED : Status.AVAILABLE;
         current = null;
-        status = nextStatus;
+        status = Status.AVAILABLE;
       }
     }
 

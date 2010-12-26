@@ -25,7 +25,9 @@ import net.wimpi.telnetd.net.Connection;
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
 
+import java.io.EOFException;
 import java.io.IOException;
+import java.net.SocketException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -45,7 +47,15 @@ public class TelnetIO implements TermIO {
   }
 
   public int read() throws IOException {
-    return termIO.read();
+    try {
+      return termIO.read();
+    }
+    catch (EOFException e) {
+      return TerminalIO.HANDLED;
+    }
+    catch (SocketException e) {
+      return TerminalIO.HANDLED;
+    }
   }
 
   public CodeType decode(int code) {
@@ -65,6 +75,8 @@ public class TelnetIO implements TermIO {
         return CodeType.RIGHT;
       case TerminalIO.LEFT:
         return CodeType.LEFT;
+      case TerminalIO.HANDLED:
+        return CodeType.CLOSE;
       default:
         return CodeType.CHAR;
     }
