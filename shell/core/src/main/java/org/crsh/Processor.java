@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -167,18 +168,18 @@ public class Processor implements Runnable {
         TermEvent.Complete complete = (TermEvent.Complete)event;
         String prefix = complete.getLine().toString();
         log.debug("About to get completions for " + prefix);
-        List<String> completion = shell.complete(prefix);
-        log.debug("Completions for " + prefix + " are " + completion);
+        List<String> completions = shell.complete(prefix);
+        log.debug("Completions for " + prefix + " are " + completions);
 
         // Try to find the greatest prefix among all the results
         String completionPrefix;
-        if (completion.size() == 0) {
+        if (completions.size() == 0) {
           completionPrefix = "";
-        } else if (completion.size() == 1) {
+        } else if (completions.size() == 1) {
           // The completion is not ambiguous we pad with a space char
-          completionPrefix = completion.get(0) + " ";
+          completionPrefix = completions.get(0) + " ";
         } else {
-          completionPrefix = Strings.findLongestCommonPrefix(completion);
+          completionPrefix = Strings.findLongestCommonPrefix(completions);
         }
 
         //
@@ -188,6 +189,24 @@ public class Processor implements Runnable {
           }
           catch (IOException e) {
             e.printStackTrace();
+          }
+        } else {
+          if (completions.size() > 1) {
+            // We propose
+            StringBuilder sb = new StringBuilder();
+            for (Iterator<String> i = completions.iterator();i.hasNext();) {
+              String completion = i.next();
+              sb.append(completion);
+              if (i.hasNext()) {
+                sb.append(" ");
+              }
+            }
+            try {
+              term.write(sb.toString());
+            }
+            catch (IOException e) {
+              e.printStackTrace();
+            }
           }
         }
       } else if (event instanceof TermEvent.Close) {
