@@ -1,7 +1,7 @@
 import org.kohsuke.args4j.Argument;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
-import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
 
 @Description("""Add a mixin to one or several nodes. It consumes a node stream or path arguments.""")
 public class addmixin extends org.crsh.command.BaseCommand<Node,Void> {
@@ -12,7 +12,7 @@ public class addmixin extends org.crsh.command.BaseCommand<Node,Void> {
   @Argument(index=1,metaVar="mixin paths",usage="The paths of the node to add mixin to")
   def List<String> paths;
 
-  public void execute(CommandContext<Node, Void> context) throws ScriptException {
+  public void execute(InvocationContext<Node, Void> context) throws ScriptException {
     assertConnected();
 
     //

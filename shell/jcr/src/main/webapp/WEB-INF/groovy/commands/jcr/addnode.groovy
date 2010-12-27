@@ -2,7 +2,7 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import org.crsh.command.ScriptException;
 import org.crsh.command.Description;
-import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
 
 @Description("Creates one or several nodes. It produces all the nodes that were created by the command.")
 public class addnode extends org.crsh.command.BaseCommand<Void, Node> {
@@ -13,7 +13,7 @@ public class addnode extends org.crsh.command.BaseCommand<Void, Node> {
   @Option(name="-t",aliases=["--type"],usage="The name of the primary node type to create")
   def String primaryNodeTypeName;
 
-  public void execute(CommandContext<Void, Node> context) throws ScriptException {
+  public void execute(InvocationContext<Void, Node> context) throws ScriptException {
     assertConnected();
 
     //

@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.io.ShellPrinter;
@@ -35,7 +35,7 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestCommandContext<C, P> implements CommandContext<C, P> {
+public class TestInvocationContext<C, P> implements InvocationContext<C, P> {
 
   /** . */
   private StringWriter buffer;

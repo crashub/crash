@@ -7,7 +7,7 @@ import javax.jcr.Property;
 import org.crsh.command.Description;
 import org.exoplatform.services.jcr.access.AccessControlList;
 import java.util.ArrayList;
-import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
 
 @Description("Set the permissions on a JCR node, the mixing exo:privilegeable is added when it is not already present")
 public class setperm extends org.crsh.command.BaseCommand<Node, Node> {
@@ -53,7 +53,7 @@ public class setperm extends org.crsh.command.BaseCommand<Node, Node> {
     node.setPermission(identity, permissions.toArray(new String[permissions.size()]));
   }
 
-  public void execute(CommandContext<Node, Node> context) throws ScriptException {
+  public void execute(InvocationContext<Node, Node> context) throws ScriptException {
 
     //
     context.writer <<= "Updates permissions of nodes";

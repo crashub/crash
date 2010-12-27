@@ -107,7 +107,7 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
   }
 
   /** . */
-  private CommandContext<C, P> context;
+  private InvocationContext<C, P> context;
 
   /** . */
   private boolean unquoteArguments;
@@ -166,7 +166,7 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
   }
 
   @Override
-  protected final CommandContext<?, ?> getContext() {
+  protected final InvocationContext<?, ?> getContext() {
     return context;
   }
 
@@ -202,7 +202,7 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
     return this;
   }
 
-  public final void invoke(CommandContext<C, P> context) throws ScriptException {
+  public final void invoke(InvocationContext<C, P> context) throws ScriptException {
     if (context == null) {
       throw new NullPointerException();
     }
@@ -267,6 +267,6 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
     }
   }
 
-  protected abstract void execute(CommandContext<C, P> context) throws ScriptException;
+  protected abstract void execute(InvocationContext<C, P> context) throws ScriptException;
 
 }

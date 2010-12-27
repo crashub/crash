@@ -6,7 +6,7 @@ public class thread extends CRaSHCommand {
 
   @Command(description="List the vm threads")
   public void ls(
-    CommandContext<Void, Thread> context,
+    InvocationContext<Void, Thread> context,
     @Option(
       names=["n","name"],
       description="Retain the thread with the specified name")
@@ -72,7 +72,7 @@ public class thread extends CRaSHCommand {
   }
 
   @Command(description="Stop vm threads")
-  public void stop(CommandContext<Thread, Void> context) throws ScriptException {
+  public void stop(InvocationContext<Thread, Void> context) throws ScriptException {
     if (context.piped) {
       context.consume().each() {
         it.stop();

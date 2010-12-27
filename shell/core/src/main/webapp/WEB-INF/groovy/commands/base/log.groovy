@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 public class log extends CRaSHCommand implements Completer {
 
   @Command(description="Send a message to a logger")
-  public void send(CommandContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg String name, @LevelOpt Level level) throws ScriptException {
+  public void send(InvocationContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg String name, @LevelOpt Level level) throws ScriptException {
     level = level ?: Level.info;
     if (context.piped) {
       context.consume().each() {
@@ -68,7 +68,7 @@ public class log extends CRaSHCommand implements Completer {
   }
 
   @Command(description="List the available loggers")
-  public void ls(CommandContext<Void, Logger> context, @FilterOpt String filter) throws ScriptException {
+  public void ls(InvocationContext<Void, Logger> context, @FilterOpt String filter) throws ScriptException {
 
     // Regex filter
     def pattern = Pattern.compile(filter ?: ".*");
@@ -85,7 +85,7 @@ public class log extends CRaSHCommand implements Completer {
   }
 
   @Command(description="Create one or several loggers")
-  public void add(CommandContext<Void, Logger> context, @LoggerArg List<String> names) throws ScriptException {
+  public void add(InvocationContext<Void, Logger> context, @LoggerArg List<String> names) throws ScriptException {
     names.each {
       if (it.length() > 0) {
         Logger logger = LoggerFactory.getLogger(it);
@@ -96,7 +96,7 @@ public class log extends CRaSHCommand implements Completer {
   }
 
   @Command(description="Give info about a logger")
-  public void info(CommandContext<Logger, Void> context, @LoggerArg List<String> names) throws ScriptException {
+  public void info(InvocationContext<Logger, Void> context, @LoggerArg List<String> names) throws ScriptException {
     if (context.piped) {
       context.consume().each() {
         info(context.writer, it);
@@ -122,7 +122,7 @@ public class log extends CRaSHCommand implements Completer {
 
   @Command(description="Set the level of one of several loggers")
   public void set(
-    CommandContext<Logger, Void> context,
+    InvocationContext<Logger, Void> context,
     @LoggerArg List<String> names,
     @LevelOpt Level level,
     @PluginOpt Plugin plugin) throws ScriptException {

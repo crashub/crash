@@ -5,7 +5,7 @@ import javax.jcr.Workspace;
 import org.crsh.command.ScriptException;
 import org.kohsuke.args4j.Argument;
 import org.crsh.command.Description;
-import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
 
 @Description("""Move a node to another location. The command can consume the nodes, those nodes will be moved\
 instead of the source argument. Any node moved is produced by this command.""")
@@ -17,7 +17,7 @@ public class mv extends org.crsh.command.BaseCommand<Node, Node> {
   @Argument(required=false,index=1,usage="The destination path absolute or relative")
   def String target;
 
-  public void execute(CommandContext<Node, Void> context) throws ScriptException {
+  public void execute(InvocationContext<Node, Void> context) throws ScriptException {
     assertConnected()
 
     //

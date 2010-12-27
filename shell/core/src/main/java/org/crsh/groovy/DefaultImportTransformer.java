@@ -29,7 +29,7 @@ import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.Command;
 import org.crsh.cmdline.Option;
 import org.crsh.command.CRaSHCommand;
-import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class DefaultImportTransformer implements ASTTransformation {
     Option.class,
     Command.class,
     ScriptException.class,
-    CommandContext.class,
+    InvocationContext.class,
     CRaSHCommand.class,
   };
 

@@ -5,7 +5,7 @@ import org.kohsuke.args4j.Option;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import org.crsh.command.Description;
-import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
 
 @Description("""Updates a property of the current node. When the command is piped it sets the property\
  of the consumed nodes.""")
@@ -20,7 +20,7 @@ public class set extends org.crsh.command.BaseCommand<Node, Void> {
   @Option(name="-t",aliases=["--type"],usage="The property type to use when the property does not exist")
   def PropertyType propertyType = PropertyType.STRING;
 
-  public void execute(CommandContext<Node, Void> context) throws ScriptException {
+  public void execute(InvocationContext<Node, Void> context) throws ScriptException {
     if (context.piped) {
       context.consume().each { node ->
         update(node);

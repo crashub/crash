@@ -93,12 +93,12 @@ abstract class AST {
       for (Term current = term;current != null;current = current.next) {
 
         // Build command context
-        CommandContextImpl ctx;
+        InvocationContextImpl ctx;
         if (current.command.getConsumedType() == Void.class) {
-          ctx = new CommandContextImpl(responseContext, null, attributes);
+          ctx = new InvocationContextImpl(responseContext, null, attributes);
         } else {
           // For now we assume we have compatible consumed/produced types
-          ctx = new CommandContextImpl(responseContext, consumed, attributes);
+          ctx = new InvocationContextImpl(responseContext, consumed, attributes);
         }
 
         // Do something usefull with command

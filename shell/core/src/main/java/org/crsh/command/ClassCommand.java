@@ -30,7 +30,7 @@ public abstract class ClassCommand extends BaseCommand<Void, Void> {
   }
 
   @Override
-  protected void execute(CommandContext<Void, Void> context) throws ScriptException {
+  protected void execute(InvocationContext<Void, Void> context) throws ScriptException {
 
     //
     Object o = execute();

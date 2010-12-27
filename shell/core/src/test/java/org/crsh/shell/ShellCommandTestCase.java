@@ -66,9 +66,9 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("abc", new TestCommandContext().execute(cmd, "-str", "abc"));
+    assertEquals("abc", new TestInvocationContext().execute(cmd, "-str", "abc"));
     try {
-      new TestCommandContext().execute(cmd);
+      new TestInvocationContext().execute(cmd);
     }
     catch (ScriptException e) {
       assertTrue(e.getCause() instanceof CmdLineException);
@@ -85,9 +85,9 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("abc", new TestCommandContext().execute(cmd, "-str", "abc"));
+    assertEquals("abc", new TestInvocationContext().execute(cmd, "-str", "abc"));
     try {
-      new TestCommandContext().execute(cmd);
+      new TestInvocationContext().execute(cmd);
       fail();
     }
     catch (ScriptException e) {
@@ -106,9 +106,9 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ShellCommand command = (ShellCommand)clazz.newInstance();
-    assertEquals("abc", new TestCommandContext().execute(command, "-s", "abc"));
+    assertEquals("abc", new TestInvocationContext().execute(command, "-s", "abc"));
     try {
-      new TestCommandContext().execute(command);
+      new TestInvocationContext().execute(command);
       fail();
     }
     catch (ScriptException e) {
@@ -126,7 +126,7 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ShellCommand cmd = (ShellCommand)clazz.newInstance();
-    TestCommandContext<Void, Void> ctx = new TestCommandContext();
+    TestInvocationContext<Void, Void> ctx = new TestInvocationContext();
     ctx.getAttributes().put("juu", "daa");
     assertEquals("daa", ctx.execute(cmd));
   }
@@ -141,7 +141,7 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("b", new TestCommandContext().execute(cmd, "b"));
+    assertEquals("b", new TestInvocationContext().execute(cmd, "b"));
   }
 
   public void testArgumentInjectionInCommandClassJCommander() throws Exception {
@@ -154,7 +154,7 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-//    assertEquals(Arrays.asList("b"), new TestCommandContext().execute(cmd, "b"));
+//    assertEquals(Arrays.asList("b"), new TestInvocationContext().execute(cmd, "b"));
   }
 
   public void testArgumentInjectionInCommandCmdLine() throws Exception {
@@ -167,7 +167,7 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ShellCommand cmd = (ShellCommand)clazz.newInstance();
-    assertEquals("b", new TestCommandContext().execute(cmd, "b"));
+    assertEquals("b", new TestInvocationContext().execute(cmd, "b"));
   }
 
   public void testMainInCommandCmdLine() throws Exception {
@@ -180,7 +180,7 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     ShellCommand cmd = (ShellCommand)clazz.newInstance();
-    assertEquals("foo", new TestCommandContext().execute(cmd));
+    assertEquals("foo", new TestInvocationContext().execute(cmd));
   }
 
   public void testContextAccessInCommandClass() throws Exception {
@@ -191,7 +191,7 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    TestCommandContext ctx = new TestCommandContext();
+    TestInvocationContext ctx = new TestInvocationContext();
     ctx.getAttributes().put("bar", "bar_value");
 
     // Execute directly
@@ -207,7 +207,7 @@ public class ShellCommandTestCase extends TestCase {
       "}");
 
     //
-    TestCommandContext ctx = new TestCommandContext();
+    TestInvocationContext ctx = new TestInvocationContext();
     Closure closure = (Closure)shell.evaluate("{ -> return 'from_closure'; }");
     ctx.getAttributes().put("bar", closure);
 
@@ -227,7 +227,7 @@ public class ShellCommandTestCase extends TestCase {
 
     // Execute directly
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("" + Arrays.asList("foo"), new TestCommandContext().execute(cmd, "'foo'"));
+    assertEquals("" + Arrays.asList("foo"), new TestInvocationContext().execute(cmd, "'foo'"));
   }
 
   public void testArgumentQuoteInClass2() throws Exception {
@@ -242,7 +242,7 @@ public class ShellCommandTestCase extends TestCase {
 
     // Execute directly
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("" + Arrays.asList("'foo'"), new TestCommandContext().execute(cmd, "'foo'"));
+    assertEquals("" + Arrays.asList("'foo'"), new TestInvocationContext().execute(cmd, "'foo'"));
   }
 
 
@@ -250,7 +250,7 @@ public class ShellCommandTestCase extends TestCase {
   public void testContextAccessInScript() throws Exception {
     Class clazz = loader.parseClass("System.out.println('bar:' + bar) ; return bar;");
     ShellCommand script = (ShellCommand)clazz.newInstance();
-    TestCommandContext ctx = new TestCommandContext();
+    TestInvocationContext ctx = new TestInvocationContext();
     ctx.getAttributes().put("bar", "bar_value");
     assertEquals("bar_value", ctx.execute(script));
   }
@@ -258,12 +258,12 @@ public class ShellCommandTestCase extends TestCase {
   public void testArgumentAccessInScript() throws Exception {
     Class clazz = loader.parseClass("return args[0];");
     ShellCommand script = (ShellCommand)clazz.newInstance();
-    assertEquals("arg_value", new TestCommandContext().execute(script, "arg_value"));
+    assertEquals("arg_value", new TestInvocationContext().execute(script, "arg_value"));
   }
 
   public void testArgumentAccessInClosure() throws Exception {
     Class clazz = loader.parseClass("{ arg -> return arg };");
     ShellCommand script = (ShellCommand)clazz.newInstance();
-    assertEquals("arg_value", new TestCommandContext().execute(script, "arg_value"));
+    assertEquals("arg_value", new TestInvocationContext().execute(script, "arg_value"));
   }
 }

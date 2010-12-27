@@ -4,7 +4,7 @@ import org.crsh.shell.ui.UIBuilder;
 import org.kohsuke.args4j.Option;
 import org.crsh.command.Description;
 import javax.jcr.Node;
-import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
 
 @Description("""Executes a query with the SQL dialect, by default results are limited to 5.\
 All results matched by the query are produced by this command.""")
@@ -26,7 +26,7 @@ public class select extends org.crsh.command.BaseCommand<Void, Node> {
      unquoteArguments = false;
   }
 
-  public void execute(CommandContext<Void, Node> context) throws ScriptException {
+  public void execute(InvocationContext<Void, Node> context) throws ScriptException {
     assertConnected();
 
     //

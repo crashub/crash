@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl;
 
-import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.LineFeedWriter;
@@ -31,7 +31,7 @@ import java.util.*;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class CommandContextImpl<C, P> implements CommandContext<C, P> {
+class InvocationContextImpl<C, P> implements InvocationContext<C, P> {
 
   /** . */
   private final ShellProcessContext responseContext;
@@ -51,10 +51,10 @@ class CommandContextImpl<C, P> implements CommandContext<C, P> {
   /** . */
   private Iterable<C> consumedItems;
 
-  CommandContextImpl(
-      ShellProcessContext responseContext,
-      Iterable<C> consumedItems,
-      Map<String, Object> attributes) {
+  InvocationContextImpl(
+    ShellProcessContext responseContext,
+    Iterable<C> consumedItems,
+    Map<String, Object> attributes) {
     this.attributes = attributes;
     this.responseContext = responseContext;
     this.writer = null;

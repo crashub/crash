@@ -1,14 +1,9 @@
-import org.kohsuke.args4j.Argument;
-import org.crsh.command.ScriptException;
-import org.crsh.command.Description;
+import org.crsh.jcr.command.PathArg;
 
-@Description("Change the current directory")
-public class commit extends org.crsh.command.ClassCommand {
+public class commit extends org.crsh.jcr.command.JCRCommand {
 
-  @Argument(required=false,index=0,usage="The path of the node to change the current node to")
-  def String path;
-
-  public Object execute() throws ScriptException {
+  @Command(description="Change the current directory")
+  public Object main(@PathArg String path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);
     setCurrentNode(node);

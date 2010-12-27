@@ -33,7 +33,7 @@ import groovy.lang.MissingPropertyException;
  */
 public abstract class GroovyCommand extends GroovyObjectSupport {
 
-  protected abstract CommandContext<?, ?> getContext();
+  protected abstract InvocationContext<?, ?> getContext();
 
   @Override
   public final Object invokeMethod(String name, Object args) {
@@ -41,7 +41,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       return super.invokeMethod(name, args);
     }
     catch (MissingMethodException e) {
-      CommandContext<?, ?> context = getContext();
+      InvocationContext<?, ?> context = getContext();
       Object o = context.getAttributes().get(name);
       if (o instanceof Closure) {
         Closure closure = (Closure)o;
@@ -67,7 +67,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       return super.getProperty(property);
     }
     catch (MissingPropertyException e) {
-      CommandContext<?, ?> context = getContext();
+      InvocationContext<?, ?> context = getContext();
       return context.getAttributes().get(property);
     }
   }
@@ -78,7 +78,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       super.setProperty(property, newValue);
     }
     catch (MissingPropertyException e) {
-      CommandContext<?, ?> context = getContext();
+      InvocationContext<?, ?> context = getContext();
       context.getAttributes().put(property, newValue);
     }
   }
