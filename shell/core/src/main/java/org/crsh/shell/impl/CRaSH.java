@@ -201,7 +201,7 @@ public class CRaSH implements Shell {
         if (termPrefix.length() > 0 && termPrefix.charAt(termPrefix.length() - 1) == ' ') {
           a.add("");
         }
-        completions = command.complete(null, a.toArray(new String[a.size()]));
+        completions = command.complete(new CommandContextImpl(attributes), null, a.toArray(new String[a.size()]));
       }
     }
 

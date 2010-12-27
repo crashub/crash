@@ -50,7 +50,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
-  private InvocationContext context;
+  private CommandContext context;
 
   /** . */
   private boolean unquoteArguments;
@@ -82,18 +82,19 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   }
 
   protected final String readLine(String msg, boolean echo) {
-    if (context == null) {
-      throw new IllegalStateException("No current context");
+    if (context instanceof InvocationContext) {
+      return ((InvocationContext)context).readLine(msg, echo);
+    } else {
+      throw new IllegalStateException("No current context of interaction with the term");
     }
-    return context.readLine(msg, echo);
   }
 
   @Override
-  protected final InvocationContext<?, ?> getContext() {
+  protected final CommandContext getContext() {
     return context;
   }
 
-  public List<String> complete(String line, String... chunks) {
+  public List<String> complete(CommandContext context, String line, String... chunks) {
     if (chunks == null) {
       throw new NullPointerException();
     }
@@ -113,11 +114,16 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
     //
     try {
+      this.context = context;
+
+      //
       return analyzer.complete(completer, s.toString());
     }
     catch (CmdCompletionException e) {
       log.error("Error during completion of line " + line, e);
       return Collections.emptyList();
+    } finally {
+      this.context = null;
     }
   }
 
@@ -137,8 +143,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
 
     //
-    org.crsh.cmdline.matcher.InvocationContext invocationContext = new org.crsh.cmdline.matcher.InvocationContext();
-    invocationContext.setAttribute(InvocationContext.class, context);
     final CommandMatch match = analyzer.match(s.toString());
 
     //

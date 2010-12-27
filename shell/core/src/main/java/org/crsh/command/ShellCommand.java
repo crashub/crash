@@ -36,11 +36,12 @@ public interface ShellCommand {
   /**
    * Provide completions for the specified arguments.
    *
+   * @param context the command context
    * @param line the original submitted line
    * @param chunks the line splitted in chunks
    * @return the completions
    */
-  List<String> complete(String line, String... chunks);
+  List<String> complete(CommandContext context, String line, String... chunks);
 
   /**
    * Provides an invoker for the specified arguments.

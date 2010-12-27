@@ -22,6 +22,7 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
+import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.command.CommandInvoker;
@@ -65,7 +66,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     printer.print("Bare script: no usage");
   }
 
-  public final List<String> complete(String line, String... chunks) {
+  public final List<String> complete(CommandContext context, String line, String... chunks) {
     return Collections.emptyList();
   }
 

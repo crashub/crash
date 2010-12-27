@@ -25,19 +25,20 @@ import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.LineFeedWriter;
 
 import java.io.StringWriter;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class InvocationContextImpl<C, P> implements InvocationContext<C, P> {
+class InvocationContextImpl<C, P> extends CommandContextImpl implements InvocationContext<C, P> {
 
   /** . */
   private final ShellProcessContext responseContext;
 
-  /** . */
-  private final Map<String, Object> attributes;
 
   /** . */
   private ShellPrinter writer;
@@ -55,7 +56,7 @@ class InvocationContextImpl<C, P> implements InvocationContext<C, P> {
     ShellProcessContext responseContext,
     Iterable<C> consumedItems,
     Map<String, Object> attributes) {
-    this.attributes = attributes;
+    super(attributes);
     this.responseContext = responseContext;
     this.writer = null;
     this.buffer = null;
@@ -69,10 +70,6 @@ class InvocationContextImpl<C, P> implements InvocationContext<C, P> {
 
   public StringWriter getBuffer() {
     return buffer;
-  }
-
-  public Map<String, Object> getAttributes() {
-    return attributes;
   }
 
   public boolean isPiped() {

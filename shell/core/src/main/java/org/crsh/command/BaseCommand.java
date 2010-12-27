@@ -170,7 +170,7 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
     return context;
   }
 
-  public final List<String> complete(String line, String... chunks) {
+  public final List<String> complete(CommandContext context, String line, String... chunks) {
     return Collections.emptyList();
   }
 
