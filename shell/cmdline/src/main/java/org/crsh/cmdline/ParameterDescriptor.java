@@ -55,7 +55,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   private final Type javaType;
 
   /** . */
-  private final Class<?> javaComponentType;
+  private final Class<?> javaValueType;
 
   /** . */
   private final Class<? extends Completer> completerType;
@@ -124,11 +124,19 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     this.password = password;
     this.completerType = completerType;
     this.annotation = annotation;
-    this.javaComponentType = javaComponentType;
+    this.javaValueType = javaComponentType;
   }
 
   public Object parse(String s) {
-    return type.parse(javaComponentType, s);
+    return type.parse(javaValueType, s);
+  }
+
+  public Type getJavaType() {
+    return javaType;
+  }
+
+  public Class<?> getJavaValueType() {
+    return javaValueType;
   }
 
   public final B getBinding() {
