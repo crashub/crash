@@ -72,10 +72,11 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     Class<? extends Completer> completerType,
     Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
 
-    Class<?> javaComponentType;
+    //
+    Class<?> javaValueType;
     Multiplicity multiplicity;
     if (javaType instanceof Class<?>) {
-      javaComponentType = (Class<Object>)javaType;
+      javaValueType = (Class<Object>)javaType;
       multiplicity = Multiplicity.SINGLE;
     } else if (javaType instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType)javaType;
@@ -85,7 +86,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
         if (List.class.equals(classRawType)) {
           Type elementType = parameterizedType.getActualTypeArguments()[0];
           if (elementType instanceof Class<?>) {
-            javaComponentType = (Class<Object>)elementType;
+            javaValueType = (Class<Object>)elementType;
             multiplicity = Multiplicity.LIST;
           } else {
             throw new IllegalValueTypeException();
@@ -102,16 +103,21 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
 
     //
     SimpleValueType valueType;
-    if (javaComponentType == String.class) {
+    if (javaValueType == String.class) {
       valueType = SimpleValueType.STRING;
-    } else if (javaComponentType == Integer.class || javaComponentType == int.class) {
+    } else if (javaValueType == Integer.class || javaValueType == int.class) {
       valueType = SimpleValueType.INTEGER;
-    } else if (javaComponentType == Boolean.class || javaComponentType == boolean.class) {
+    } else if (javaValueType == Boolean.class || javaValueType == boolean.class) {
       valueType = SimpleValueType.BOOLEAN;
-    } else if (Enum.class.isAssignableFrom(javaComponentType)) {
+    } else if (Enum.class.isAssignableFrom(javaValueType)) {
       valueType = SimpleValueType.ENUM;
     } else {
       throw new IllegalValueTypeException();
+    }
+
+    //
+    if (completerType == EmptyCompleter.class) {
+      completerType = valueType.getCompleter();
     }
 
     //
@@ -124,7 +130,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     this.password = password;
     this.completerType = completerType;
     this.annotation = annotation;
-    this.javaValueType = javaComponentType;
+    this.javaValueType = javaValueType;
   }
 
   public Object parse(String s) {

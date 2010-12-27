@@ -17,18 +17,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.spi;
-
-import org.crsh.cmdline.ParameterDescriptor;
-
-import java.util.List;
+package org.crsh.cmdline.matcher;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface Completer {
+public class CmdCompletionException extends CmdLineException {
+  public CmdCompletionException() {
+  }
 
-  List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception;
+  public CmdCompletionException(String message) {
+    super(message);
+  }
 
+  public CmdCompletionException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public CmdCompletionException(Throwable cause) {
+    super(cause);
+  }
 }

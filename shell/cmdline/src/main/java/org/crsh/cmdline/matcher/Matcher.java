@@ -19,21 +19,15 @@
 
 package org.crsh.cmdline.matcher;
 
-import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.binding.ClassFieldBinding;
-import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.MethodDescriptor;
-import org.crsh.cmdline.Multiplicity;
-import org.crsh.cmdline.OptionDescriptor;
-import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -62,11 +56,11 @@ public class Matcher<T> {
     this.mainName = mainName;
   }
 
-  public List<String> complete(String s) {
+  public List<String> complete(String s) throws CmdCompletionException {
     return complete(EmptyCompleter.getInstance(), s);
   }
 
-  public List<String> complete(Completer completer, String s) {
+  public List<String> complete(Completer completer, String s) throws CmdCompletionException {
 
     //
     StringCursor cursor = new StringCursor(s);
@@ -112,7 +106,7 @@ public class Matcher<T> {
 
       //
       if (completions == null) {
-        completions = methodAnalyzer.completeArguements(completer, cursor);
+        completions = methodAnalyzer.completeArguments(completer, cursor);
       }
     }
 

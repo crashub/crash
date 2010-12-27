@@ -114,7 +114,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
     return argumentMatches;
   }
 
-  List<String> completeArguements(Completer completer, StringCursor cursor) {
+  List<String> completeArguments(Completer completer, StringCursor cursor) throws CmdCompletionException {
 
     //
     List<ArgumentMatch<B>> matches = analyzeArguments(cursor);
@@ -137,13 +137,18 @@ final class MatcherFactory<T, B extends TypeBinding> {
               completer = completerType.newInstance();
             }
             catch (Exception e) {
-              e.printStackTrace();
+              throw new CmdCompletionException(e);
             }
           } else {
             //
           }
           if (completer != null) {
-            return completer.complete(last.getParameter(), prefix);
+            try {
+              return completer.complete(last.getParameter(), prefix);
+            }
+            catch (Exception e) {
+              throw new CmdCompletionException(e);
+            }
           } else {
             //
           }
@@ -161,7 +166,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
     return null;
   }
 
-  List<String> completeOptions(Completer completer, StringCursor cursor) {
+  List<String> completeOptions(Completer completer, StringCursor cursor) throws CmdCompletionException {
 
     //
     List<OptionMatch<B>> matches = analyzeOptions(cursor);
@@ -180,13 +185,18 @@ final class MatcherFactory<T, B extends TypeBinding> {
                 completer = completerType.newInstance();
               }
               catch (Exception e) {
-                e.printStackTrace();
+                throw new CmdCompletionException(e);
               }
             } else {
               //
             }
             if (completer != null) {
-              return completer.complete(last.getParameter(), prefix);
+              try {
+                return completer.complete(last.getParameter(), prefix);
+              }
+              catch (Exception e) {
+                throw new CmdCompletionException(e);
+              }
             } else {
               //
             }

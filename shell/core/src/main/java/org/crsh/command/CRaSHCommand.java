@@ -22,6 +22,7 @@ package org.crsh.command;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
+import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.ClassMatch;
 import org.crsh.cmdline.matcher.CommandMatch;
@@ -30,9 +31,12 @@ import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -42,6 +46,9 @@ import java.util.List;
  * @version $Revision$
  */
 public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand {
+
+  /** . */
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   private CommandContext context;
@@ -106,7 +113,13 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     Completer completer = this instanceof Completer ? (Completer)this : null;
 
     //
-    return analyzer.complete(completer, s.toString());
+    try {
+      return analyzer.complete(completer, s.toString());
+    }
+    catch (CmdCompletionException e) {
+      log.error("Error during completion of line " + line, e);
+      return Collections.emptyList();
+    }
   }
 
   public CommandInvoker<?, ?> createInvoker(String... args) {

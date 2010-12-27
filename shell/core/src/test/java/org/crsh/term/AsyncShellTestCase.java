@@ -198,9 +198,8 @@ public class AsyncShellTestCase extends TestCase {
     status = 0;
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
     connector.process("invoke " + AsyncShellTestCase.class.getName() + " bilto", respCtx);
-    while (status == 0) {
-      // Do nothing
-    }
+    ShellResponse resp = respCtx.getResponse();
+    assertTrue("Was not expecting response to be " + resp.getText(), resp instanceof ShellResponse.Ok);
     assertEquals(1, status);
     respCtx.getResponse();
   }

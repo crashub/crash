@@ -28,6 +28,7 @@ import org.crsh.cmdline.Option;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
 
+import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -126,6 +127,20 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Arrays.<String>asList(), matcher.complete("-a a foo "));
   }
 
+  public void testEnum() throws Exception {
+    class A {
+      @Command
+      void foo(@Option(names = "a") RetentionPolicy a) { }
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    Matcher<A> matcher = new Matcher<A>(desc);
+
+    //
+    assertEquals(Arrays.asList("RCE"), matcher.complete("foo -a SOU"));
+  }
+
   public void testCommandOption() throws Exception {
     class A {
       @Command
@@ -148,4 +163,60 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Arrays.asList("ba"), matcher.complete("foo -a ab"));
   }
 
+  static abstract class AbstractCompleter implements Completer {
+  }
+
+  static class RuntimeExceptionCompleter implements Completer {
+    public List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+      throw new RuntimeException();
+    }
+  }
+
+  static class ExceptionCompleter implements Completer {
+    public List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+      throw new Exception();
+    }
+  }
+
+  public void testFailure() throws Exception {
+
+    //
+    class A {
+      @Command
+      void foo(@Option(names = "a", completer = ExceptionCompleter.class) String a) { }
+    }
+    Matcher<A> matcherA = new Matcher<A>(CommandDescriptor.create(A.class));
+    try {
+      matcherA.complete("foo -a b");
+      fail();
+    }
+    catch (CmdCompletionException e) {
+    }
+
+    //
+    class B {
+      @Command
+      void foo(@Option(names = "a", completer = RuntimeExceptionCompleter.class) String a) { }
+    }
+    Matcher<B> matcherB = new Matcher<B>(CommandDescriptor.create(B.class));
+    try {
+      matcherB.complete("foo -a b");
+      fail();
+    }
+    catch (CmdCompletionException e) {
+    }
+
+    //
+    class C {
+      @Command
+      void foo(@Option(names = "a", completer = AbstractCompleter.class) String a) { }
+    }
+    Matcher<C> matcherC = new Matcher<C>(CommandDescriptor.create(C.class));
+    try {
+      matcherC.complete("foo -a b");
+      fail();
+    }
+    catch (CmdCompletionException e) {
+    }
+  }
 }

@@ -60,7 +60,9 @@ public class DefaultImportTransformer implements ASTTransformation {
     log.debug("Transforming source to add default import package");
     for (Class<?> defaultImport : defaultImports) {
       log.debug("Adding default import for class " + defaultImport.getName());
-      source.getAST().addImport(defaultImport.getSimpleName(), ClassHelper.make(defaultImport));
+      if (source.getAST().getImport(defaultImport.getSimpleName()) == null) {
+        source.getAST().addImport(defaultImport.getSimpleName(), ClassHelper.make(defaultImport));
+      }
     }
   }
 }
