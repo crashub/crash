@@ -24,11 +24,37 @@ import org.crsh.cmdline.ParameterDescriptor;
 import java.util.List;
 
 /**
+ * A completer provides completion suffixes for a given prefix. The cmdline framework uses it when
+ * computing a completion.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface Completer {
 
+  /**
+   * <p>Query the completer for a set of completion for the given prefix. The returned list
+   * should provide the possible suffixes matching the prefix argument. The cmdline framework
+   * interprets the result the following way:
+   *
+   * <ul>
+   * <li>An empty list means no completion can be determined, the framework will not do anything</li>
+   * <li>A singleton list of an empty string, means the match was entire and the framework should complete with a
+   * white space.</li>
+   * <li>A list containing string with a common prefix should insert this common prefix by the framework.</li>
+   * <li>A list containing strings with no common prefix other than the empty string should display the list
+   * of possible completions. The shown result could be truncanted.</li>
+   * </ul>
+   * </p>
+   *
+   * <p>For instance, a completer that would complete colors could return the list ["lack","lue"]
+   * when it is asked to complete the prefix "b".</p>
+   *
+   * @param parameter the completed parameter
+   * @param prefix the prefix to complete
+   * @return the possible suffixes
+   * @throws Exception any exception that would prevent completion to perform correctly
+   */
   List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception;
 
 }
