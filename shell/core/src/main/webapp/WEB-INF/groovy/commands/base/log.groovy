@@ -147,13 +147,7 @@ public class log extends CRaSHCommand implements Completer {
 
   public List<String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
     def c = [];
-    if (parameter.annotation instanceof LevelOpt) {
-      Level.each() {
-        if (it.name().startsWith(prefix)) {
-          c.add(it.name().substring(prefix.length()));
-        }
-      }
-    } else if (parameter.annotation instanceof LoggerArg) {
+    if (parameter.annotation instanceof LoggerArg) {
       loggers.each() {
         if (it.startsWith(prefix)) {
           c.add(it.substring(prefix.length()));
@@ -223,7 +217,7 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Option(names=["l","level"],description="The logger level to assign among {trace, debug, info, warn, error}")
+@Option(names=["l","level"],description="The logger level to assign among {trace, debug, info, warn, error}",completer=org.crsh.cmdline.EnumCompleter)
 @interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
