@@ -28,7 +28,9 @@ import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.binding.ClassFieldBinding;
+import org.crsh.cmdline.matcher.Value;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -91,7 +93,11 @@ public class ParserTestCase extends TestCase {
       assertTrue(sharedOptionMatches.size() > 0);
       OptionMatch<?> match = sharedOptionMatches.removeFirst();
       assertEquals(expectedName, match.getName());
-      assertEquals(Arrays.asList(expectedValues), match.getValues());
+      ArrayList<String> values = new ArrayList<String>();
+      for (Value value : match.getValues()) {
+        values.add(value.getValue());
+      }
+      assertEquals(Arrays.asList(expectedValues), values);
       return this;
     }
 
@@ -99,7 +105,11 @@ public class ParserTestCase extends TestCase {
       assertTrue(optionMatches.size() > 0);
       OptionMatch<?> match = optionMatches.removeFirst();
       assertEquals(expectedName, match.getName());
-      assertEquals(Arrays.asList(expectedValues), match.getValues());
+      ArrayList<String> values = new ArrayList<String>();
+      for (Value value : match.getValues()) {
+        values.add(value.getValue());
+      }
+      assertEquals(Arrays.asList(expectedValues), values);
       return this;
     }
 
@@ -108,7 +118,11 @@ public class ParserTestCase extends TestCase {
       ArgumentMatch<?> match = argumentMatches.removeFirst();
       assertEquals(start, match.getStart());
       assertEquals(end, match.getEnd());
-      assertEquals(Arrays.asList(expectedValues), match.getValues());
+      ArrayList<String> values = new ArrayList<String>();
+      for (Value value : match.getValues()) {
+        values.add(value.getValue());
+      }
+      assertEquals(Arrays.asList(expectedValues), values);
       return this;
     }
 

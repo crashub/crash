@@ -154,6 +154,8 @@ public class CompleteTestCase extends TestCase {
     class A {
       @Command
       void foo(@Option(names = "a") RetentionPolicy a) { }
+      @Command
+      void bar(@Argument RetentionPolicy a) { }
     }
 
     //
@@ -161,14 +163,16 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = new Matcher<A>(desc);
 
     //
-    assertEquals(Arrays.asList("SOURCE ","CLASS ","RUNTIME "), matcher.complete("foo -a "));
-    assertEquals(Arrays.asList("SOURCE\"","CLASS\"","RUNTIME\""), matcher.complete("foo -a \""));
-    assertEquals(Arrays.asList("SOURCE'","CLASS'","RUNTIME'"), matcher.complete("foo -a '"));
-    assertEquals(Arrays.asList("RCE "), matcher.complete("foo -a SOU"));
-    assertEquals(Arrays.asList("RCE\""), matcher.complete("foo -a \"SOU"));
-    assertEquals(Arrays.asList("RCE'"), matcher.complete("foo -a 'SOU"));
-    assertEquals(Arrays.asList(" "), matcher.complete("foo -a SOURCE"));
-//    assertEquals(Arrays.asList(" "), matcher.complete("foo -a \"SOURCE\""));
+    for (String m : Arrays.asList("foo -a", "bar")) {
+      assertEquals(Arrays.asList("SOURCE ","CLASS ","RUNTIME "), matcher.complete(m + " "));
+      assertEquals(Arrays.asList("SOURCE\"","CLASS\"","RUNTIME\""), matcher.complete(m + " \""));
+      assertEquals(Arrays.asList("SOURCE'","CLASS'","RUNTIME'"), matcher.complete(m + " '"));
+      assertEquals(Arrays.asList("RCE "), matcher.complete(m + " SOU"));
+      assertEquals(Arrays.asList("RCE\""), matcher.complete(m + " \"SOU"));
+      assertEquals(Arrays.asList("RCE'"), matcher.complete(m + " 'SOU"));
+      assertEquals(Arrays.asList(" "), matcher.complete(m + " SOURCE"));
+      assertEquals(Arrays.asList(" "), matcher.complete(m + " \"SOURCE\""));
+    }
   }
 
   public void testCommandOption() throws Exception {

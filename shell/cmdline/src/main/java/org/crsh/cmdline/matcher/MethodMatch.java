@@ -32,7 +32,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,7 +78,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
     Map<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>> methodParameters = new HashMap<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>>();
 
     //
-    Map<ParameterDescriptor<?>, List<String>> abc = new HashMap<ParameterDescriptor<?>, List<String>>();
+    Map<ParameterDescriptor<?>, List<Value>> abc = new HashMap<ParameterDescriptor<?>, List<Value>>();
 
     //
     Set<ParameterDescriptor<?>> unused = new HashSet<ParameterDescriptor<?>>();
@@ -128,16 +127,16 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
 
     // Convert values
     Map<ParameterDescriptor<?>, Object> parameterValues = new HashMap<ParameterDescriptor<?>, Object>();
-    for (Map.Entry<ParameterDescriptor<?>, List<String>> entry : abc.entrySet()) {
+    for (Map.Entry<ParameterDescriptor<?>, List<Value>> entry : abc.entrySet()) {
 
       //
       ParameterDescriptor<?> parameter = entry.getKey();
-      List<String> value = entry.getValue();
+      List<Value> values = entry.getValue();
 
       // First convert the entire list
       List<Object> l = new ArrayList<Object>();
-      for (String s : value) {
-        Object o = parameter.parse(s);
+      for (Value value : values) {
+        Object o = parameter.parse(value.getValue());
         l.add(o);
       }
 

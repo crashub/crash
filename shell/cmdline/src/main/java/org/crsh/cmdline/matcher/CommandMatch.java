@@ -22,7 +22,6 @@ package org.crsh.cmdline.matcher;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**

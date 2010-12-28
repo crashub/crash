@@ -27,7 +27,6 @@ import org.crsh.cmdline.ParameterDescriptor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -94,7 +93,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
       ParameterDescriptor<ClassFieldBinding> parameter = parameterMatch.getParameter();
       ClassFieldBinding cf = parameter.getBinding();
       Field f = cf.getField();
-      List<String> values = parameterMatch.getValues();
+      List<Value> values = parameterMatch.getValues();
 
       //
       if (parameter.isRequired() && values.isEmpty()) {
@@ -104,12 +103,16 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
       //
       Object v;
       if (parameter.getMultiplicity() == Multiplicity.LIST) {
-        v = values;
+        ArrayList<String> tmp = new ArrayList<String>(values.size());
+        for (Value value : values) {
+          tmp.add(value.getValue());
+        }
+        v = tmp;
       } else {
         if (values.isEmpty()) {
           continue;
         } else {
-          v = values.get(0);
+          v = values.get(0).getValue();
         }
       }
 

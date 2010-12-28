@@ -43,12 +43,4 @@ public class OptionMatch<B extends TypeBinding> extends ParameterMatch<OptionDes
   public String getName() {
     return name;
   }
-
-  public boolean isPartial() {
-    return getValues().contains(null);
-  }
-
-  public boolean isFull() {
-    return !isPartial();
-  }
 }
