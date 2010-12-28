@@ -29,10 +29,10 @@ import org.crsh.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -192,16 +192,7 @@ public class CRaSH implements Shell {
       termPrefix = termPrefix.substring(pos);
       ShellCommand command = getCommand(commandName);
       if (command != null) {
-        Pattern p = Pattern.compile("\\S+");
-        Matcher matcher = p.matcher(termPrefix);
-        List<String> a = new ArrayList<String>();
-        while (matcher.find()) {
-          a.add(matcher.group(0));
-        }
-        if (termPrefix.length() > 0 && termPrefix.charAt(termPrefix.length() - 1) == ' ') {
-          a.add("");
-        }
-        completions = command.complete(new CommandContextImpl(attributes), null, a.toArray(new String[a.size()]));
+        completions = command.complete(new CommandContextImpl(attributes), termPrefix);
       }
     }
 

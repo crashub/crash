@@ -19,13 +19,29 @@
 
 package org.crsh.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public class Strings {
+
+  /** . */
+  private static final Pattern p = Pattern.compile("\\S+");
+
+  public static List<String> chunks(CharSequence s) {
+    List<String> chunks = new ArrayList<String>();
+    Matcher m = p.matcher(s);
+    while (m.find()) {
+      chunks.add(m.group());
+    }
+    return chunks;
+  }
 
   /**
    * @see #findLongestCommonPrefix(Iterable)

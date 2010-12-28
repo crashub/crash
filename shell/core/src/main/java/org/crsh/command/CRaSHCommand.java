@@ -94,20 +94,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return context;
   }
 
-  public Map<String, String> complete(CommandContext context, String line, String... chunks) {
-    if (chunks == null) {
-      throw new NullPointerException();
-    }
+  public Map<String, String> complete(CommandContext context, String line) {
 
     // WTF
     Matcher analyzer = new Matcher("main", descriptor);
-    StringBuilder s = new StringBuilder();
-    for (String arg : chunks) {
-      if (s.length() > 0) {
-        s.append(" ");
-      }
-      s.append(arg);
-    }
 
     //
     Completer completer = this instanceof Completer ? (Completer)this : null;
@@ -117,7 +107,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       this.context = context;
 
       //
-      return analyzer.complete(completer, s.toString());
+      return analyzer.complete(completer, line);
     }
     catch (CmdCompletionException e) {
       log.error("Error during completion of line " + line, e);
@@ -127,11 +117,8 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
   }
 
-  public CommandInvoker<?, ?> createInvoker(String line, String... args) {
-    if (args == null) {
-      throw new NullPointerException();
-    }
-    
+  public CommandInvoker<?, ?> createInvoker(String line) {
+
     // Remove surrounding quotes if there are
     if (unquoteArguments) {
       // todo ?

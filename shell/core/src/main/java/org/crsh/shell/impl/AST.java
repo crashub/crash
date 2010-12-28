@@ -19,7 +19,6 @@
 
 package org.crsh.shell.impl;
 
-import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
@@ -192,7 +191,7 @@ abstract class AST {
         name = m.group(1);
         ShellCommand command = crash.getCommand(name);
         if (command != null) {
-          invoker = command.createInvoker(line.substring(m.end()), args);
+          invoker = command.createInvoker(line.substring(m.end()));
         }
       }
 

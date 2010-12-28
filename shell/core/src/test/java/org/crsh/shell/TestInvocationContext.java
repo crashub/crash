@@ -97,7 +97,7 @@ public class TestInvocationContext<C, P> implements InvocationContext<C, P> {
       }
       sb.append(arg);
     }
-    CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.createInvoker(sb.toString(), args);
+    CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.createInvoker(sb.toString());
     invoker.invoke(this);
     return buffer != null ? buffer.toString() : null;
   }

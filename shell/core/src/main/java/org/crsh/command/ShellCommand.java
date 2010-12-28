@@ -19,7 +19,6 @@
 
 package org.crsh.command;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,22 +36,18 @@ public interface ShellCommand {
   /**
    * Provide completions for the specified arguments.
    *
-   *
    * @param context the command context
    * @param line the original command line arguments
-   * @param chunks the line splitted in chunks
    * @return the completions
    */
-  Map<String, String> complete(CommandContext context, String line, String... chunks);
+  Map<String, String> complete(CommandContext context, String line);
 
   /**
    * Provides an invoker for the specified arguments.
    *
-   *
    * @param line the command line arguments
-   * @param args the arguments
    * @return the command to provide
    */
-  CommandInvoker<?, ?> createInvoker(String line, String... args);
+  CommandInvoker<?, ?> createInvoker(String line);
 
 }

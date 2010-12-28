@@ -145,12 +145,12 @@ public class log extends CRaSHCommand implements Completer {
     }
   }
 
-  public List<String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
-    def c = [];
+  public Map<String, String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
+    def c = [:];
     if (parameter.annotation instanceof LoggerArg) {
       loggers.each() {
         if (it.startsWith(prefix)) {
-          c.add(it.substring(prefix.length()) + " ");
+          c.put(it.substring(prefix.length()), true);
         }
       }
     }

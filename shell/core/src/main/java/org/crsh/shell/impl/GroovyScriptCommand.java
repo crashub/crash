@@ -28,8 +28,10 @@ import org.crsh.command.ScriptException;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.io.ShellPrinter;
+import org.crsh.util.Strings;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,7 +68,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     printer.print("Bare script: no usage");
   }
 
-  public final Map<String, String> complete(CommandContext context, String line, String... chunks) {
+  public final Map<String, String> complete(CommandContext context, String line) {
     return Collections.emptyMap();
   }
 
@@ -96,8 +98,9 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public final CommandInvoker<?, ?> createInvoker(String line, String... args) {
-    this.args = args;
+  public final CommandInvoker<?, ?> createInvoker(String line) {
+    List<String> chunks = Strings.chunks(line);
+    this.args = chunks.toArray(new String[chunks.size()]);
     return this;
   }
 }
