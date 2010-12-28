@@ -123,6 +123,10 @@ public class Value {
     return determined;
   }
 
+  public boolean isUsable() {
+    return value != null && value.length() > 0;
+  }
+
   @Override
   public String toString() {
     return "Value[raw=" + rawValue + "]";

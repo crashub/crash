@@ -136,8 +136,10 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
       // First convert the entire list
       List<Object> l = new ArrayList<Object>();
       for (Value value : values) {
-        Object o = parameter.parse(value.getValue());
-        l.add(o);
+        if (value.isUsable()) {
+          Object o = parameter.parse(value.getValue());
+          l.add(o);
+        }
       }
 
       //

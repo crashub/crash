@@ -125,25 +125,34 @@ public class CmdLineProcessorTestCase extends TestCase {
     assertEquals(null, a.s);
   }
 
+  public static class BC {
+    @Argument
+    List<String> s;
+    @Command
+    public void bar(@Argument List<String> s) { this.s = s; }
+  }
+
   public void testOptionalArgumentList() throws Exception {
-    class A {
-      @Argument
-      List<String> s;
+    ClassDescriptor<BC> desc = CommandDescriptor.create(BC.class);
+    Matcher<BC> analyzer = new Matcher<BC>(desc);
+
+    for (String s : Arrays.asList("", "bar ")) {
+      BC a = new BC();
+      analyzer.match(s + "").invoke(new InvocationContext(), a);
+      assertEquals(Collections.<String>emptyList(), a.s);
+
+      a = new BC();
+      analyzer.match(s + "foo").invoke(new InvocationContext(), a);
+      assertEquals(Arrays.asList("foo"), a.s);
+
+      a = new BC();
+      analyzer.match(s + "foo bar").invoke(new InvocationContext(), a);
+      assertEquals(Arrays.asList("foo", "bar"), a.s);
+
+      a = new BC();
+      analyzer.match(s + "foo ").invoke(new InvocationContext(), a);
+      assertEquals(Arrays.asList("foo"), a.s);
     }
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    Matcher<A> analyzer = new Matcher<A>(desc);
-
-    A a = new A();
-    analyzer.match("").invoke(new InvocationContext(), a);
-    assertEquals(Collections.<String>emptyList(), a.s);
-
-    a = new A();
-    analyzer.match("foo").invoke(new InvocationContext(), a);
-    assertEquals(Arrays.asList("foo"), a.s);
-
-    a = new A();
-    analyzer.match("foo bar").invoke(new InvocationContext(), a);
-    assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
 
   public void testRequiredArgumentList() throws Exception {
