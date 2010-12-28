@@ -80,10 +80,10 @@ public class Matcher<T> {
     if (m.find()) {
       String name = m.group(1);
       method = descriptor.getMethod(name);
-      if (method == null) {
+      if (method == null || method.getName().equals(mainName)) {
         ArrayList<String> a = new ArrayList<String>();
         for (MethodDescriptor<T> candidate : descriptor.getMethods()) {
-          if (candidate.getName().startsWith(name)) {
+          if (candidate.getName().startsWith(name) && !candidate.getName().equals(mainName)) {
             a.add(candidate.getName().substring(name.length()) + " ");
           }
         }

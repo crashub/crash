@@ -108,11 +108,13 @@ public class CompleteTestCase extends TestCase {
       void foo(@Option(names = "b", completer = FooCompleter.class) String b) { }
       @Command
       void faa() { }
+      @Command
+      void main() { }
     }
 
     //
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
-    Matcher<A> matcher = new Matcher<A>(desc);
+    Matcher<A> matcher = new Matcher<A>("main", desc);
 
     //
     assertEquals(Arrays.asList("foo ","faa "), matcher.complete(""));
