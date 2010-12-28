@@ -24,7 +24,6 @@ import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.command.CRaSHCommand;
 
-import javax.jcr.Session;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,17 +37,6 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
   }
 
   public List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-    if (parameter.getAnnotation() instanceof PathArg) {
-
-      String path = (String)getProperty("currentPath");
-      Session session = (Session)getProperty("session");
-
-      //
-      System.out.println("Computing completion from prefix " + prefix + " in context of path " + path + " with session " + session);
-
-    }
-
-    //
     return Collections.emptyList();
   }
 }
