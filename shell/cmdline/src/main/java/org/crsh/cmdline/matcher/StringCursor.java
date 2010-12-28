@@ -19,8 +19,6 @@
 
 package org.crsh.cmdline.matcher;
 
-import java.util.regex.Pattern;
-
 /**
 * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
 * @version $Revision$
