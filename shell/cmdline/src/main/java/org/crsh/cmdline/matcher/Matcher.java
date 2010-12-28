@@ -84,7 +84,7 @@ public class Matcher<T> {
         ArrayList<String> a = new ArrayList<String>();
         for (MethodDescriptor<T> candidate : descriptor.getMethods()) {
           if (candidate.getName().startsWith(name)) {
-            a.add(candidate.getName().substring(name.length()));
+            a.add(candidate.getName().substring(name.length()) + " ");
           }
         }
         if (a.size() > 0) {
@@ -93,7 +93,7 @@ public class Matcher<T> {
       } else {
         cursor.skip(m.end(1));
         if (cursor.isEmpty()) {
-          return Collections.singletonList("");
+          return Collections.singletonList(" ");
         }
       }
     }

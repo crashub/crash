@@ -59,7 +59,7 @@ public class EnumCompleter implements Completer {
           if (completions.isEmpty()) {
             completions = new ArrayList<String>();
           }
-          completions.add(name.substring(prefix.length()));
+          completions.add(name.substring(prefix.length()) + " ");
         }
       }
     }

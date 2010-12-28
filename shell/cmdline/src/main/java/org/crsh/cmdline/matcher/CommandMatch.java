@@ -50,8 +50,6 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
 
   public abstract Object invoke(InvocationContext context, C command) throws CmdLineException;
 
-  public abstract Iterator<String> complete();
-
   public List<OptionMatch<B>> getOptionMatches() {
     return optionMatches;
   }

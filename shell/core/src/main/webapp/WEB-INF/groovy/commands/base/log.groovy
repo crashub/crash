@@ -150,7 +150,7 @@ public class log extends CRaSHCommand implements Completer {
     if (parameter.annotation instanceof LoggerArg) {
       loggers.each() {
         if (it.startsWith(prefix)) {
-          c.add(it.substring(prefix.length()));
+          c.add(it.substring(prefix.length()) + " ");
         }
       }
     }

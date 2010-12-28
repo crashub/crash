@@ -115,15 +115,15 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = new Matcher<A>(desc);
 
     //
-    assertEquals(Arrays.asList("foo","faa"), matcher.complete(""));
-    assertEquals(Arrays.asList("oo","aa"), matcher.complete("f"));
-    assertEquals(Arrays.asList(""), matcher.complete("foo"));
+    assertEquals(Arrays.asList("foo ","faa "), matcher.complete(""));
+    assertEquals(Arrays.asList("oo ","aa "), matcher.complete("f"));
+    assertEquals(Arrays.asList(" "), matcher.complete("foo"));
     assertEquals(Arrays.<String>asList(), matcher.complete("foo "));
 
     //
-    assertEquals(Arrays.asList("foo","faa"), matcher.complete("-a a "));
-    assertEquals(Arrays.asList("oo","aa"), matcher.complete("-a a f"));
-    assertEquals(Arrays.asList(""), matcher.complete("-a a foo"));
+    assertEquals(Arrays.asList("foo ","faa "), matcher.complete("-a a "));
+    assertEquals(Arrays.asList("oo ","aa "), matcher.complete("-a a f"));
+    assertEquals(Arrays.asList(" "), matcher.complete("-a a foo"));
     assertEquals(Arrays.<String>asList(), matcher.complete("-a a foo "));
   }
 
@@ -138,7 +138,7 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = new Matcher<A>(desc);
 
     //
-    assertEquals(Arrays.asList("RCE"), matcher.complete("foo -a SOU"));
+    assertEquals(Arrays.asList("RCE "), matcher.complete("foo -a SOU"));
   }
 
   public void testCommandOption() throws Exception {
@@ -152,9 +152,9 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = new Matcher<A>(desc);
 
     //
-    assertEquals(Arrays.asList("foo"), matcher.complete(""));
-    assertEquals(Arrays.asList("oo"), matcher.complete("f"));
-    assertEquals(Arrays.asList(""), matcher.complete("foo"));
+    assertEquals(Arrays.asList("foo "), matcher.complete(""));
+    assertEquals(Arrays.asList("oo "), matcher.complete("f"));
+    assertEquals(Arrays.asList(" "), matcher.complete("foo"));
     assertEquals(Arrays.<String>asList(), matcher.complete("foo "));
 
     //

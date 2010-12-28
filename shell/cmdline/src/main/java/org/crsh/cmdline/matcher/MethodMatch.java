@@ -72,11 +72,6 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
   }
 
   @Override
-  public Iterator<String> complete() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public Object invoke(InvocationContext context, T command) throws CmdLineException {
 
     //
