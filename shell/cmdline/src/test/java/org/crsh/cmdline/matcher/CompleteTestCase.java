@@ -24,14 +24,15 @@ import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
 
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -40,8 +41,8 @@ import java.util.List;
 public class CompleteTestCase extends TestCase {
 
   public static class FooCompleter implements Completer {
-    public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) {
-      return Arrays.asList(new StringBuilder(prefix).reverse().toString());
+    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+      return Collections.singletonMap(new StringBuilder(prefix).reverse().toString(), false);
     }
   }
 
@@ -201,13 +202,13 @@ public class CompleteTestCase extends TestCase {
   }
 
   static class RuntimeExceptionCompleter implements Completer {
-    public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception {
+    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
       throw new RuntimeException();
     }
   }
 
   static class ExceptionCompleter implements Completer {
-    public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception {
+    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
       throw new Exception();
     }
   }

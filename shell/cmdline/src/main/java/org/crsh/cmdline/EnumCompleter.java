@@ -22,9 +22,9 @@ package org.crsh.cmdline;
 import org.crsh.cmdline.spi.Completer;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A completer for enums.
@@ -46,8 +46,8 @@ public class EnumCompleter implements Completer {
     return instance;
   }
 
-  public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception {
-    List<String> completions = Collections.emptyList();
+  public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+    Map<String, Boolean> completions = Collections.emptyMap();
     if (parameter.getType() == SimpleValueType.ENUM) {
       Class<?> vt = parameter.getJavaValueType();
       Method valuesM = vt.getDeclaredMethod("values");
@@ -57,9 +57,9 @@ public class EnumCompleter implements Completer {
         String name = (String)nameM.invoke(value);
         if (name.startsWith(prefix)) {
           if (completions.isEmpty()) {
-            completions = new ArrayList<String>();
+            completions = new HashMap<String, Boolean>();
           }
-          completions.add(name.substring(prefix.length()) + terminator.getValue());
+          completions.put(name.substring(prefix.length()), true);
         }
       }
     }

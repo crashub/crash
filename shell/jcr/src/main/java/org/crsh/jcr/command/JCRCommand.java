@@ -19,7 +19,6 @@
 
 package org.crsh.jcr.command;
 
-import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
@@ -29,9 +28,9 @@ import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Session;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -42,7 +41,7 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
   protected JCRCommand() throws IntrospectionException {
   }
 
-  public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception {
+  public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
     if (parameter.getAnnotation() instanceof PathArg) {
 
       String path = (String)getProperty("currentPath");
@@ -73,17 +72,22 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
               relative = relative.getNode(name);
               prefix = prefix.substring(index + 1);
             } else {
-              return Collections.emptyList();
+              return Collections.emptyMap();
             }
           }
         }
 
         // Compute the next possible completions
-        List<String> completions = new ArrayList<String>();
+        Map<String, Boolean> completions = new HashMap<String, Boolean>();
         for (NodeIterator i = relative.getNodes(prefix + '*');i.hasNext();) {
           Node child = i.nextNode();
-          char end = child.hasNodes() ? '/' : terminator.getValue();
-          completions.add(child.getName().substring(prefix.length()) + end);
+          String suffix = child.getName().substring(prefix.length());
+          if (child.hasNodes()) {
+            completions.put(suffix + '/', false);
+
+          } else {
+            completions.put(suffix, true);
+          }
         }
 
         //
@@ -92,6 +96,6 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
     }
 
     //
-    return Collections.emptyList();
+    return Collections.emptyMap();
   }
 }

@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
@@ -154,7 +155,12 @@ final class MatcherFactory<T, B extends TypeBinding> {
           }
           if (completer != null) {
             try {
-              return completer.complete(last.getParameter(), prefix, delimiter);
+              Map<String, Boolean> res = completer.complete(last.getParameter(), prefix);
+              List<String> foo = new ArrayList<String>();
+              for (Map.Entry<String, Boolean> entry : res.entrySet()) {
+                foo.add(entry.getKey() + (entry.getValue() ? delimiter.getValue() : ""));
+              }
+              return foo;
             }
             catch (Exception e) {
               throw new CmdCompletionException(e);
@@ -205,7 +211,12 @@ final class MatcherFactory<T, B extends TypeBinding> {
               }
               if (completer != null) {
                 try {
-                  return completer.complete(last.getParameter(), prefix, delimiter);
+                  Map<String, Boolean> res = completer.complete(last.getParameter(), prefix);
+                  List<String> foo = new ArrayList<String>();
+                  for (Map.Entry<String, Boolean> entry : res.entrySet()) {
+                    foo.add(entry.getKey() + (entry.getValue() ? delimiter.getValue() : ""));
+                  }
+                  return foo;
                 }
                 catch (Exception e) {
                   throw new CmdCompletionException(e);

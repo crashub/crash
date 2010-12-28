@@ -23,6 +23,7 @@ import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.ParameterDescriptor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A completer provides completion suffixes for a given prefix. The cmdline framework uses it when
@@ -57,12 +58,13 @@ public interface Completer {
    * </p>
    *
    *
+   *
+   *
    * @param parameter the completed parameter
    * @param prefix the prefix to complete
-   * @param terminator the terminator
    * @return the possible suffixes
    * @throws Exception any exception that would prevent completion to perform correctly
    */
-  List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception;
+  Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception;
 
 }
