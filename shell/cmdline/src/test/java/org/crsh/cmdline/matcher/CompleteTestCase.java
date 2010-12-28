@@ -129,6 +129,27 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Arrays.<String>asList(), matcher.complete("-a a foo "));
   }
 
+  public void testCommand2() throws Exception {
+
+    class A {
+      @Command
+      void main(@Argument(completer = FooCompleter.class) String s) { }
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    Matcher<A> matcher = new Matcher<A>("main", desc);
+
+    //
+    assertEquals(Arrays.asList(""), matcher.complete(""));
+    assertEquals(Arrays.asList("m"), matcher.complete("m"));
+    assertEquals(Arrays.asList("am"), matcher.complete("ma"));
+    assertEquals(Arrays.asList("iam"), matcher.complete("mai"));
+    assertEquals(Arrays.asList("niam"), matcher.complete("main"));
+    assertEquals(Arrays.<String>asList(), matcher.complete("main "));
+    assertEquals(Arrays.<String>asList(), matcher.complete("main a"));
+  }
+
   public void testEnum() throws Exception {
     class A {
       @Command

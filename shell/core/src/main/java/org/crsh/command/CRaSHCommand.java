@@ -127,23 +127,21 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
   }
 
-  public CommandInvoker<?, ?> createInvoker(String... args) {
+  public CommandInvoker<?, ?> createInvoker(String line, String... args) {
     if (args == null) {
       throw new NullPointerException();
     }
     
-    // WTF
-    Matcher analyzer = new Matcher("main", descriptor);
-    StringBuilder s = new StringBuilder();
-    for (String arg : args) {
-      if (s.length() > 0) {
-        s.append(" ");
-      }
-      s.append(arg);
+    // Remove surrounding quotes if there are
+    if (unquoteArguments) {
+      // todo ?
     }
 
+    // WTF
+    Matcher analyzer = new Matcher("main", descriptor);
+
     //
-    final CommandMatch match = analyzer.match(s.toString());
+    final CommandMatch match = analyzer.match(line);
 
     //
     if (match instanceof MethodMatch) {

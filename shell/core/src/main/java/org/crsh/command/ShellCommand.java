@@ -37,7 +37,7 @@ public interface ShellCommand {
    * Provide completions for the specified arguments.
    *
    * @param context the command context
-   * @param line the original submitted line
+   * @param line the original command line arguments
    * @param chunks the line splitted in chunks
    * @return the completions
    */
@@ -46,9 +46,11 @@ public interface ShellCommand {
   /**
    * Provides an invoker for the specified arguments.
    *
+   *
+   * @param line the command line arguments
    * @param args the arguments
    * @return the command to provide
    */
-  CommandInvoker<?, ?> createInvoker(String... args);
+  CommandInvoker<?, ?> createInvoker(String line, String... args);
 
 }

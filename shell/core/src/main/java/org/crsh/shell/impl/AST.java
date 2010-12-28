@@ -19,6 +19,7 @@
 
 package org.crsh.shell.impl;
 
+import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
@@ -28,6 +29,7 @@ import org.crsh.shell.ShellProcessContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -180,13 +182,18 @@ abstract class AST {
     private ShellResponse.UnknownCommand createCommands(CRaSH crash) {
       String[] args = new String[chunks.size() - 1];
       chunks.subList(1, chunks.size()).toArray(args);
-      String name = chunks.get(0);
 
       //
       CommandInvoker invoker = null;
-      ShellCommand command = crash.getCommand(name);
-      if (command != null) {
-        invoker = command.createInvoker(args);
+      Pattern p = Pattern.compile("^\\s*(\\S+)");
+      java.util.regex.Matcher m = p.matcher(line);
+      String name = null;
+      if (m.find()) {
+        name = m.group(1);
+        ShellCommand command = crash.getCommand(name);
+        if (command != null) {
+          invoker = command.createInvoker(line.substring(m.end()), args);
+        }
       }
 
       //

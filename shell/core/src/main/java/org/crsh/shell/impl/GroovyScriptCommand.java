@@ -96,7 +96,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public final CommandInvoker<?, ?> createInvoker(String... args) {
+  public final CommandInvoker<?, ?> createInvoker(String line, String... args) {
     this.args = args;
     return this;
   }

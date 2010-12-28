@@ -197,7 +197,7 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
       }
   }
 
-  public final CommandInvoker<?, ?> createInvoker(String... args) {
+  public final CommandInvoker<?, ?> createInvoker(String line, String... args) {
     this.args = args;
     return this;
   }

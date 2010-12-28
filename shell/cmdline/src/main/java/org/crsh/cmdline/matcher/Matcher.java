@@ -74,16 +74,19 @@ public class Matcher<T> {
     }
 
     //
+    MethodDescriptor<T> main = mainName != null ? descriptor.getMethod(mainName) : null;
+
+    //
     MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+|$)");
     java.util.regex.Matcher m = p.matcher(cursor.getValue());
     if (m.find()) {
       String name = m.group(1);
       method = descriptor.getMethod(name);
-      if (method == null || method.getName().equals(mainName)) {
+      if (method == null || method == main) {
         ArrayList<String> a = new ArrayList<String>();
         for (MethodDescriptor<T> candidate : descriptor.getMethods()) {
-          if (candidate.getName().startsWith(name) && !candidate.getName().equals(mainName)) {
+          if (candidate != main && candidate.getName().startsWith(name)) {
             a.add(candidate.getName().substring(name.length()) + " ");
           }
         }
@@ -96,6 +99,11 @@ public class Matcher<T> {
           return Collections.singletonList(" ");
         }
       }
+    }
+
+    //
+    if (method == null) {
+      method = main;
     }
 
     //

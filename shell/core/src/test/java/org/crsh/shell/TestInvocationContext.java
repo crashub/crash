@@ -90,7 +90,14 @@ public class TestInvocationContext<C, P> implements InvocationContext<C, P> {
     if (buffer != null) {
       buffer.getBuffer().setLength(0);
     }
-    CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.createInvoker(args);
+    StringBuilder sb = new StringBuilder();
+    for (String arg : args) {
+      if (sb.length() > 0) {
+        sb.append(" ");
+      }
+      sb.append(arg);
+    }
+    CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.createInvoker(sb.toString(), args);
     invoker.invoke(this);
     return buffer != null ? buffer.toString() : null;
   }
