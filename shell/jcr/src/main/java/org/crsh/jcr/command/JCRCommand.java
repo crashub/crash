@@ -24,6 +24,11 @@ import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.command.CRaSHCommand;
 
+import javax.jcr.Item;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Session;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,6 +42,55 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
   }
 
   public List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+    if (parameter.getAnnotation() instanceof PathArg) {
+
+      String path = (String)getProperty("currentPath");
+      Session session = (Session)getProperty("session");
+
+      //
+      if (session != null) {
+
+        Node relative = null;
+
+        if (prefix.length() == 0 || prefix.charAt(0) != '/') {
+          if (path != null) {
+            Item item = session.getItem(path);
+            if (item instanceof Node) {
+              relative = (Node)item;
+            }
+          }
+        } else {
+          relative = session.getRootNode();
+          prefix = prefix.substring(1);
+        }
+
+        // Now navigate using the prefix
+        if (relative != null) {
+          for (int index = prefix.indexOf('/');index != -1;index = prefix.indexOf('/')) {
+            String name = prefix.substring(0, index);
+            if (relative.hasNode(name)) {
+              relative = relative.getNode(name);
+              prefix = prefix.substring(index + 1);
+            } else {
+              return Collections.emptyList();
+            }
+          }
+        }
+
+        // Compute the next possible completions
+        List<String> completions = new ArrayList<String>();
+        for (NodeIterator i = relative.getNodes(prefix + '*');i.hasNext();) {
+          Node child = i.nextNode();
+          String end = child.hasNodes() ? "/" : " ";
+          completions.add(child.getName().substring(prefix.length()) + end);
+        }
+
+        //
+        return completions;
+      }
+    }
+
+    //
     return Collections.emptyList();
   }
 }
