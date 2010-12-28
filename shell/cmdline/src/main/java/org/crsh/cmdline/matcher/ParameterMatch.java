@@ -19,10 +19,13 @@
 
 package org.crsh.cmdline.matcher;
 
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -34,18 +37,79 @@ public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBind
   private final P parameter;
 
   /** . */
+  private final List<String> rawValues;
+
+  /** . */
   private final List<String> values;
 
-  public ParameterMatch(P parameter, List<String> values) {
+  /** . */
+  private final List<Delimiter> delimiters;
+
+  public ParameterMatch(P parameter, List<String> rawValues) {
+
+    // Unquote if necessary
+    ArrayList<String> values = new ArrayList<String>(rawValues);
+    ArrayList<Delimiter> delimiters = new ArrayList<Delimiter>();
+    ListIterator<String> i = values.listIterator();
+    while (i.hasNext()) {
+      String s = i.next();
+      Delimiter delimiter = Delimiter.WHITE_SPACE;
+      if (s != null) {
+        if (s.length() == 1) {
+          char c = s.charAt(0);
+          switch (c) {
+            case '\'':
+              i.set("");
+              delimiter = Delimiter.SIMPLE_QUOTE;
+              break;
+            case '"':
+              i.set("");
+              delimiter = Delimiter.DOUBLE_QUOTE;
+              break;
+          }
+        } else if (s.length() >= 2) {
+          char first = s.charAt(0);
+          char last = s.charAt(s.length() - 1);
+          if (first == '"') {
+            delimiter = Delimiter.DOUBLE_QUOTE;
+            if (last == '"') {
+              i.set(s.substring(1, s.length() - 1));
+            } else {
+              i.set(s.substring(1));
+            }
+          } else if (first == '\'') {
+            delimiter = Delimiter.SIMPLE_QUOTE;
+            if (last == '\'') {
+              i.set(s.substring(1, s.length() - 1));
+            } else {
+              i.set(s.substring(1));
+            }
+          }
+        }
+      }
+      delimiters.add(delimiter);
+    }
+
+    //
     this.parameter = parameter;
+    this.rawValues = rawValues;
     this.values = values;
+    this.delimiters = delimiters;
   }
 
   public P getParameter() {
     return parameter;
   }
 
+  public List<String> getRawValues() {
+    return rawValues;
+  }
+
   public List<String> getValues() {
     return values;
+  }
+
+  public List<Delimiter> getDelimiters() {
+    return delimiters;
   }
 }

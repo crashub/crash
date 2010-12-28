@@ -46,7 +46,7 @@ public class EnumCompleter implements Completer {
     return instance;
   }
 
-  public List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+  public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception {
     List<String> completions = Collections.emptyList();
     if (parameter.getType() == SimpleValueType.ENUM) {
       Class<?> vt = parameter.getJavaValueType();
@@ -59,7 +59,7 @@ public class EnumCompleter implements Completer {
           if (completions.isEmpty()) {
             completions = new ArrayList<String>();
           }
-          completions.add(name.substring(prefix.length()) + " ");
+          completions.add(name.substring(prefix.length()) + terminator.getValue());
         }
       }
     }

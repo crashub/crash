@@ -24,13 +24,13 @@ import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
 
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,7 +40,7 @@ import java.util.List;
 public class CompleteTestCase extends TestCase {
 
   public static class FooCompleter implements Completer {
-    public List<String> complete(ParameterDescriptor<?> parameter, String prefix) {
+    public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) {
       return Arrays.asList(new StringBuilder(prefix).reverse().toString());
     }
   }
@@ -161,7 +161,14 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = new Matcher<A>(desc);
 
     //
+    assertEquals(Arrays.asList("SOURCE ","CLASS ","RUNTIME "), matcher.complete("foo -a "));
+    assertEquals(Arrays.asList("SOURCE\"","CLASS\"","RUNTIME\""), matcher.complete("foo -a \""));
+    assertEquals(Arrays.asList("SOURCE'","CLASS'","RUNTIME'"), matcher.complete("foo -a '"));
     assertEquals(Arrays.asList("RCE "), matcher.complete("foo -a SOU"));
+    assertEquals(Arrays.asList("RCE\""), matcher.complete("foo -a \"SOU"));
+    assertEquals(Arrays.asList("RCE'"), matcher.complete("foo -a 'SOU"));
+    assertEquals(Arrays.asList(" "), matcher.complete("foo -a SOURCE"));
+//    assertEquals(Arrays.asList(" "), matcher.complete("foo -a \"SOURCE\""));
   }
 
   public void testCommandOption() throws Exception {
@@ -190,13 +197,13 @@ public class CompleteTestCase extends TestCase {
   }
 
   static class RuntimeExceptionCompleter implements Completer {
-    public List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+    public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception {
       throw new RuntimeException();
     }
   }
 
   static class ExceptionCompleter implements Completer {
-    public List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+    public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception {
       throw new Exception();
     }
   }

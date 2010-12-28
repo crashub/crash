@@ -21,6 +21,7 @@ package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
@@ -126,11 +127,15 @@ final class MatcherFactory<T, B extends TypeBinding> {
       if (matches.size() > 0) {
         ArgumentMatch<?> last = matches.get(matches.size() - 1);
         List<String> values = last.getValues();
+        List<Delimiter> delimiters = last.getDelimiters();
         String prefix;
+        Delimiter delimiter;
         if (values.size() == 0) {
           prefix = "";
+          delimiter = Delimiter.WHITE_SPACE;
         } else {
           prefix = values.get(values.size() - 1);
+          delimiter = delimiters.get(values.size() - 1);
         }
         if (prefix != null) {
           Class<? extends Completer> completerType = last.getParameter().getCompleterType();
@@ -146,7 +151,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
           }
           if (completer != null) {
             try {
-              return completer.complete(last.getParameter(), prefix);
+              return completer.complete(last.getParameter(), prefix, delimiter);
             }
             catch (Exception e) {
               throw new CmdCompletionException(e);
@@ -178,9 +183,11 @@ final class MatcherFactory<T, B extends TypeBinding> {
       if (matches.size() > 0) {
         OptionMatch<?> last = matches.get(matches.size() - 1);
         List<String> values = last.getValues();
+        List<Delimiter> delimiters = last.getDelimiters();
         Class<? extends Completer> completerType = last.getParameter().getCompleterType();
         if (values.size() > 0) {
           String prefix = values.get(values.size() - 1);
+          Delimiter delimiter = delimiters.get(values.size() - 1);
           if (prefix != null) {
             if (completerType != EmptyCompleter.class) {
               try {
@@ -194,7 +201,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
             }
             if (completer != null) {
               try {
-                return completer.complete(last.getParameter(), prefix);
+                return completer.complete(last.getParameter(), prefix, delimiter);
               }
               catch (Exception e) {
                 throw new CmdCompletionException(e);

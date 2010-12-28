@@ -19,6 +19,7 @@
 
 package org.crsh.cmdline.spi;
 
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.ParameterDescriptor;
 
 import java.util.List;
@@ -55,11 +56,13 @@ public interface Completer {
    * </ul>
    * </p>
    *
+   *
    * @param parameter the completed parameter
    * @param prefix the prefix to complete
+   * @param terminator the terminator
    * @return the possible suffixes
    * @throws Exception any exception that would prevent completion to perform correctly
    */
-  List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception;
+  List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception;
 
 }

@@ -46,12 +46,10 @@ final class StringCursor implements CharSequence {
       if (lastQuote == null) {
         if (c == '\'' || c == '"') {
           lastQuote = c;
-          c = ' ';
         }
         sb.append(c);
       } else {
         if (c == lastQuote) {
-          c = ' ';
           lastQuote = null;
         } else if (Character.isWhitespace(c)) {
           c = '_';

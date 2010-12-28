@@ -19,6 +19,7 @@
 
 package org.crsh.jcr.command;
 
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
@@ -41,7 +42,7 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
   protected JCRCommand() throws IntrospectionException {
   }
 
-  public List<String> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+  public List<String> complete(ParameterDescriptor<?> parameter, String prefix, Delimiter terminator) throws Exception {
     if (parameter.getAnnotation() instanceof PathArg) {
 
       String path = (String)getProperty("currentPath");
@@ -81,7 +82,7 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
         List<String> completions = new ArrayList<String>();
         for (NodeIterator i = relative.getNodes(prefix + '*');i.hasNext();) {
           Node child = i.nextNode();
-          String end = child.hasNodes() ? "/" : " ";
+          char end = child.hasNodes() ? '/' : terminator.getValue();
           completions.add(child.getName().substring(prefix.length()) + end);
         }
 
