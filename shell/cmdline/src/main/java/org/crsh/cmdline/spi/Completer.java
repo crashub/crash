@@ -34,21 +34,26 @@ public interface Completer {
 
   /**
    * <p>Query the completer for a set of completion for the given prefix. The returned list
-   * should provide the possible suffixes matching the prefix argument. The cmdline framework
-   * interprets the result the following way:
+   * should provide the possible suffixes matching the prefix argument. The following guidelines
+   * should be respected:
    *
    * <ul>
-   * <li>An empty list means no completion can be determined, the framework will not do anything</li>
-   * <li>A singleton list of an empty string, means the match was entire and the framework should complete with a
-   * white space.</li>
+   * <li>An empty list means no completion can be determined, the framework will not do anything.</li>
+   * <li>A singleton list means the match was entire and the framework will complete it.</li>
    * <li>A list containing string with a common prefix should insert this common prefix by the framework.</li>
    * <li>A list containing strings with no common prefix other than the empty string should display the list
    * of possible completions. The shown result could be truncanted.</li>
    * </ul>
+   * <ul>When a match is considered as full, the completion should contain a trailing white space.</ul>
    * </p>
    *
-   * <p>For instance, a completer that would complete colors could return the list ["lack","lue"]
-   * when it is asked to complete the prefix "b".</p>
+   * <p>Example, a completer that would complete path could
+   * <ul>
+   * <li>return the list ["lack ","lue "] for the prefix "b".</li>
+   * <li>return the list ["e "] for the prefix "blu".</li>
+   * <li>return the list [] for the prefix "z".</li>
+   * </ul>
+   * </p>
    *
    * @param parameter the completed parameter
    * @param prefix the prefix to complete
