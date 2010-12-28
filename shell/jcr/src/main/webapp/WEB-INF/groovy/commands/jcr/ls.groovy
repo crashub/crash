@@ -1,35 +1,24 @@
+import org.crsh.jcr.command.PathArg;
 import org.crsh.shell.ui.UIBuilder;
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
-import org.crsh.command.Description;
 
-@Description("List the content of a node")
-public class ls extends org.crsh.command.ClassCommand {
+public class ls extends org.crsh.jcr.command.JCRCommand {
 
-  @Argument(required=false,index=0,usage="Path of the node content to list")
-  def String path;
-
-  @Option(name="-d",aliases=["--depth"],usage="Print depth")
-  def Integer depth;
-
-  public Object execute() throws ScriptException {
+  @Command(description = "List the content of a node")
+  public Object main(
+  // Path of the node content to list
+  @PathArg String path,
+  @Option(names=["d","depth"],description="Print depth") Integer depth) throws ScriptException {
     assertConnected();
 
     //
     def node = path == null ? getCurrentNode() : findNodeByPath(path);
-
-    //
-    def builder = new UIBuilder();
-
-    //
     if (depth == null || depth < 1) {
       depth = 1;
     }
 
     //
+    def builder = new UIBuilder();
     formatNode(builder, node, depth, depth);
-
-    //
     return builder;
   }
 }

@@ -4,7 +4,6 @@
 
 - SLF4J profiler
 
-- rename login.groovy and logout.groovy to something better
 - help --verbose
 
 - repackage WEB-INF with "crash" directory
@@ -12,3 +11,6 @@
 - study how the ConsoleWriter should affect the buffer because it fucking does probably
 
 - use @Inject :-) yeah baby
+
+
+- more Conversion, for instance String -> JCR node from current session
