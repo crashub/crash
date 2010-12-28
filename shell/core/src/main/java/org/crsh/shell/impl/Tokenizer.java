@@ -142,9 +142,11 @@ class Tokenizer {
     }
 
     //
+/*
     if (lastQuote != null) {
       throw new ScriptException("Quote " + lastQuote + " is not closed");
     }
+*/
 
     //
     return new Token.Command(line.toString(), chunks);

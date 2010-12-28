@@ -52,8 +52,8 @@ public class TokenizerTestCase extends TestCase {
     new TestTokenizer("\"|\"").assertCommand("\"|\"");
 
     // Non terminated quotes
-    new TestTokenizer("\"").assertFail();
-    new TestTokenizer("'").assertFail();
+    new TestTokenizer("\"").assertCommand("\"");
+    new TestTokenizer("'").assertCommand("'");
 
     //
     new TestTokenizer("a b").assertCommand("a","b");

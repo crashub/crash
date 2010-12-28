@@ -23,43 +23,105 @@ package org.crsh.cmdline.matcher;
 * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
 * @version $Revision$
 */
-final class StringCursor {
+final class StringCursor implements CharSequence {
 
   /** . */
-  private int index;
+  private int start;
 
   /** . */
-  private final String s;
+  private int end;
+
+  /** . */
+  private final String sanitized;
+
+  /** . */
+  private final String original;
 
   StringCursor(String s) {
-    this.s = s;
-    this.index = 0;
+
+    // Build a sanitized version of the string
+    Character lastQuote = null;
+    StringBuilder sb = new StringBuilder();
+    for (char c : s.toCharArray()) {
+      if (lastQuote == null) {
+        if (c == '\'' || c == '"') {
+          lastQuote = c;
+          c = ' ';
+        }
+        sb.append(c);
+      } else {
+        if (c == lastQuote) {
+          c = ' ';
+          lastQuote = null;
+        } else if (Character.isWhitespace(c)) {
+          c = '_';
+        }
+        sb.append(c);
+      }
+    }
+
+    //
+    this.sanitized = sb.toString();
+    this.start = 0;
+    this.end = s.length();
+    this.original = s;
   }
 
-  public int getIndex() {
-    return index;
+  private StringCursor(StringCursor that, int start, int end) {
+    this.sanitized = that.sanitized;
+    this.start = start;
+    this.end = end;
+    this.original = that.original;
   }
 
-  String getValue() {
-    return s.substring(index);
+  public String getOriginal() {
+    return original.substring(start, end);
+  }
+
+  public int getStart() {
+    return start;
   }
 
   void seek(int to) {
-    skip(to - index);
+    skip(to - start);
   }
 
   void skip(int delta) {
     if (delta < 0) {
       throw new AssertionError();
     }
-    index += delta;
+    start += delta;
   }
 
   boolean isEmpty() {
-    return index == s.length();
+    return start == end;
   }
 
-  int length() {
-    return s.length() - index;
+  public char charAt(int idx) {
+    if (idx < 0 || idx > end - start) {
+      throw new StringIndexOutOfBoundsException();
+    }
+    return sanitized.charAt(start + idx);
+  }
+
+  public CharSequence subSequence(int start, int end) {
+    return new StringCursor(this, this.start + start, this.start + end);
+  }
+
+  public int length() {
+    return end - start;
+  }
+
+
+  public String toString() {
+    return sanitized.substring(start, end);
+  }
+
+  String group(java.util.regex.Matcher matcher, int index) {
+    if (matcher.start(index) == -1 && matcher.end(index) == -1) {
+      return null;
+    } else {
+      return original.substring(start + matcher.start(index), start + matcher.end(index));
+    }
   }
 }

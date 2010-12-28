@@ -79,9 +79,9 @@ public class Matcher<T> {
     //
     MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+|$)");
-    java.util.regex.Matcher m = p.matcher(cursor.getValue());
+    java.util.regex.Matcher m = p.matcher(cursor);
     if (m.find()) {
-      String name = m.group(1);
+      String name = cursor.group(m, 1);
       method = descriptor.getMethod(name);
       if (method == null || method == main) {
         ArrayList<String> a = new ArrayList<String>();
@@ -139,9 +139,9 @@ public class Matcher<T> {
     List<ArgumentMatch<MethodArgumentBinding>> methodArguments = null;
     MethodDescriptor<T> method = null;
     Pattern p = Pattern.compile("^\\s*(\\S+)");
-    java.util.regex.Matcher m = p.matcher(cursor.getValue());
+    java.util.regex.Matcher m = p.matcher(cursor);
     if (m.find()) {
-      String f = m.group(1);
+      String f = cursor.group(m, 1);
       method = descriptor.getMethod(f);
       if (method != null) {
         cursor.skip(m.end(1));
@@ -155,14 +155,14 @@ public class Matcher<T> {
 
     //
     if (method != null) {
-      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), cursor.getValue());
+      ClassMatch<T> owner = new ClassMatch<T>(descriptor, options, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), cursor.getOriginal());
       MatcherFactory<T, MethodArgumentBinding> methodAnalyzer = new MatcherFactory<T, MethodArgumentBinding>(method);
       methodOptions = methodAnalyzer.analyzeOptions(cursor);
       methodArguments = methodAnalyzer.analyzeArguments(cursor);
-      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, cursor.getValue());
+      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, cursor.getOriginal());
     } else {
       List<ArgumentMatch<ClassFieldBinding>> arguments = analyzer.analyzeArguments(cursor);
-      return new ClassMatch<T>(descriptor, options, arguments, cursor.getValue());
+      return new ClassMatch<T>(descriptor, options, arguments, cursor.getOriginal());
     }
   }
 

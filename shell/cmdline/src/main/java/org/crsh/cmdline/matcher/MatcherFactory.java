@@ -64,7 +64,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
   List<ArgumentMatch<B>> analyzeArguments(StringCursor cursor) {
     LinkedList<ArgumentMatch<B>> argumentMatches = new LinkedList<ArgumentMatch<B>>();
     for (Pattern p : argumentsPatterns) {
-      java.util.regex.Matcher matcher = p.matcher(cursor.getValue());
+      java.util.regex.Matcher matcher = p.matcher(cursor);
       if (matcher.find()) {
 
         for (int i = 1;i <= matcher.groupCount();i++) {
@@ -76,7 +76,9 @@ final class MatcherFactory<T, B extends TypeBinding> {
           java.util.regex.Matcher m2 = Pattern.compile("\\S+").matcher(matched);
           MatchResult last = null;
           while (m2.find()) {
-            values.add(m2.group(0));
+            int start = matcher.start(i) + m2.start();
+            int end = matcher.start(i) + m2.end();
+            values.add(cursor.getOriginal().substring(start, end));
             last = m2.toMatchResult();
           }
 
@@ -93,8 +95,8 @@ final class MatcherFactory<T, B extends TypeBinding> {
           //
           ArgumentMatch<B> match = new ArgumentMatch<B>(
             command.getArguments().get(i - 1),
-            cursor.getIndex() + matcher.start(i),
-            cursor.getIndex()  + matcher.end(i),
+            cursor.getStart() + matcher.start(i),
+            cursor.getStart()  + matcher.end(i),
             values
           );
 
@@ -220,7 +222,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
   List<OptionMatch<B>> analyzeOptions(StringCursor cursor) {
     List<OptionMatch<B>> optionMatches = new ArrayList<OptionMatch<B>>();
     while (true) {
-      java.util.regex.Matcher matcher = optionsPattern.matcher(cursor.getValue());
+      java.util.regex.Matcher matcher = optionsPattern.matcher(cursor);
       if (matcher.matches()) {
         OptionDescriptor<B> matched = null;
         int index = 2;
@@ -235,13 +237,13 @@ final class MatcherFactory<T, B extends TypeBinding> {
 
         //
         if (matched != null) {
-          String name = matcher.group(index++);
+          String name = cursor.group(matcher, index++);
           List<String> values = Collections.emptyList();
           for (int j = 0;j < matched.getArity();j++) {
             if (values.isEmpty()) {
               values = new ArrayList<String>();
             }
-            String value = matcher.group(index++);
+            String value = cursor.group(matcher, index++);
             values.add(value);
           }
           if (matched.getArity() > 0) {
