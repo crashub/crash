@@ -22,7 +22,7 @@ package org.crsh;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcessContext;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -42,7 +42,7 @@ public class TestShell implements Shell {
     throw new UnsupportedOperationException();
   }
 
-  public List<String> complete(String prefix) {
+  public Map<String, String> complete(String prefix) {
     throw new UnsupportedOperationException();
   }
 }

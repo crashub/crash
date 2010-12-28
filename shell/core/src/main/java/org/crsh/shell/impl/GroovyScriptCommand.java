@@ -30,7 +30,7 @@ import org.crsh.command.ShellCommand;
 import org.crsh.shell.io.ShellPrinter;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides the base class for Groovy scripts. It should not be used directly as it is rather used
@@ -66,8 +66,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     printer.print("Bare script: no usage");
   }
 
-  public final List<String> complete(CommandContext context, String line, String... chunks) {
-    return Collections.emptyList();
+  public final Map<String, String> complete(CommandContext context, String line, String... chunks) {
+    return Collections.emptyMap();
   }
 
   public final void invoke(InvocationContext<Void, Void> context) throws ScriptException {

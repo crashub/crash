@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -52,9 +52,10 @@ public interface Shell {
   /**
    * Completion.
    *
+   *
    * @param prefix the prefix to complete
    * @return the sorted list of available suffixes
    */
-  List<String> complete(String prefix);
+  Map<String, String> complete(String prefix);
 
 }

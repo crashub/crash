@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -168,23 +169,24 @@ public class Processor implements Runnable {
         TermEvent.Complete complete = (TermEvent.Complete)event;
         String prefix = complete.getLine().toString();
         log.debug("About to get completions for " + prefix);
-        List<String> completions = shell.complete(prefix);
+        Map<String, String> completions = shell.complete(prefix);
         log.debug("Completions for " + prefix + " are " + completions);
 
         // Try to find the greatest prefix among all the results
-        String completionPrefix;
+        String commonCompletion;
         if (completions.size() == 0) {
-          completionPrefix = "";
+          commonCompletion = "";
         } else if (completions.size() == 1) {
-          completionPrefix = completions.get(0);
+          Map.Entry<String, String> entry = completions.entrySet().iterator().next();
+          commonCompletion = entry.getKey() + entry.getValue();
         } else {
-          completionPrefix = Strings.findLongestCommonPrefix(completions);
+          commonCompletion = Strings.findLongestCommonPrefix(completions.keySet());
         }
 
         //
-        if (completionPrefix.length() > 0) {
+        if (commonCompletion.length() > 0) {
           try {
-            term.bufferInsert(completionPrefix);
+            term.bufferInsert(commonCompletion);
           }
           catch (IOException e) {
             e.printStackTrace();
@@ -193,7 +195,7 @@ public class Processor implements Runnable {
           if (completions.size() > 1) {
             // We propose
             StringBuilder sb = new StringBuilder("\n");
-            for (Iterator<String> i = completions.iterator();i.hasNext();) {
+            for (Iterator<String> i = completions.keySet().iterator();i.hasNext();) {
               String completion = i.next();
               sb.append(completion);
               if (i.hasNext()) {

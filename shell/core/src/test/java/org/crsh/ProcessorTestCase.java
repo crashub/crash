@@ -30,8 +30,8 @@ import org.crsh.term.TestShell;
 import org.crsh.term.spi.TestTermIO;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -58,8 +58,8 @@ public class ProcessorTestCase extends TestCase {
     }
 
     @Override
-    public List<String> complete(String prefix) {
-      return Arrays.asList(new StringBuilder(prefix).reverse().toString());
+    public Map<String, String> complete(String prefix) {
+      return Collections.singletonMap(new StringBuilder(prefix).reverse().toString(), "");
     }
   };
 

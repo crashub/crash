@@ -20,6 +20,7 @@
 package org.crsh.command;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>The shell command allows a single source to provide a customized invoker according to the context
@@ -36,12 +37,13 @@ public interface ShellCommand {
   /**
    * Provide completions for the specified arguments.
    *
+   *
    * @param context the command context
    * @param line the original command line arguments
    * @param chunks the line splitted in chunks
    * @return the completions
    */
-  List<String> complete(CommandContext context, String line, String... chunks);
+  Map<String, String> complete(CommandContext context, String line, String... chunks);
 
   /**
    * Provides an invoker for the specified arguments.

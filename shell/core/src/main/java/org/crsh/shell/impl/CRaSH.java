@@ -165,7 +165,7 @@ public class CRaSH implements Shell {
   /**
    * For now basic implementation
    */
-  public List<String> complete(final String prefix) {
+  public Map<String, String> complete(final String prefix) {
     log.debug("Want prefix of " + prefix);
     AST ast = new Parser(prefix).parse();
     String termPrefix;
@@ -178,13 +178,13 @@ public class CRaSH implements Shell {
 
     //
     log.debug("Retained term prefix is " + prefix);
-    List<String> completions = Collections.emptyList();
+    Map<String, String> completions = Collections.emptyMap();
     int pos = termPrefix.indexOf(' ');
     if (pos == -1) {
-      completions = new ArrayList<String>();
+      completions = new HashMap<String, String>();
       for (String resourceId : context.listResourceId(ResourceKind.SCRIPT)) {
         if (resourceId.startsWith(termPrefix)) {
-          completions.add(resourceId.substring(termPrefix.length()));
+          completions.put(resourceId.substring(termPrefix.length()), " ");
         }
       }
     } else {

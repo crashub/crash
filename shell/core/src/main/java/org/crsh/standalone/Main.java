@@ -27,7 +27,7 @@ import org.crsh.shell.ShellResponse;
 import org.crsh.term.ConsoleTerm;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -59,8 +59,8 @@ public class Main {
         }
       }
 
-      public List<String> complete(String prefix) {
-        return Collections.emptyList();
+      public Map<String, String> complete(String prefix) {
+        return Collections.emptyMap();
       }
     });
 

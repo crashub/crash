@@ -30,6 +30,7 @@ import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +119,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
     return argumentMatches;
   }
 
-  List<String> completeArguments(Completer completer, StringCursor cursor) throws CmdCompletionException {
+  Map<String, String> completeArguments(Completer completer, StringCursor cursor) throws CmdCompletionException {
 
     //
     List<ArgumentMatch<B>> matches = analyzeArguments(cursor);
@@ -136,7 +137,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
         } else {
           Value value = values.get(values.size() - 1);
           if (value.isDetermined()) {
-            return Collections.singletonList(" ");
+            return Collections.singletonMap("", " ");
           }
           prefix = value.getValue();
           delimiter = value.getDelimiter();
@@ -156,9 +157,9 @@ final class MatcherFactory<T, B extends TypeBinding> {
           if (completer != null) {
             try {
               Map<String, Boolean> res = completer.complete(last.getParameter(), prefix);
-              List<String> foo = new ArrayList<String>();
+              Map<String, String> foo = new HashMap<String, String>();
               for (Map.Entry<String, Boolean> entry : res.entrySet()) {
-                foo.add(entry.getKey() + (entry.getValue() ? delimiter.getValue() : ""));
+                foo.put(entry.getKey(), entry.getValue() ? "" + delimiter.getValue() : "");
               }
               return foo;
             }
@@ -182,7 +183,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
     return null;
   }
 
-  List<String> completeOptions(Completer completer, StringCursor cursor) throws CmdCompletionException {
+  Map<String, String> completeOptions(Completer completer, StringCursor cursor) throws CmdCompletionException {
 
     //
     List<OptionMatch<B>> matches = analyzeOptions(cursor);
@@ -212,9 +213,9 @@ final class MatcherFactory<T, B extends TypeBinding> {
               if (completer != null) {
                 try {
                   Map<String, Boolean> res = completer.complete(last.getParameter(), prefix);
-                  List<String> foo = new ArrayList<String>();
+                  Map<String, String> foo = new HashMap<String, String>();
                   for (Map.Entry<String, Boolean> entry : res.entrySet()) {
-                    foo.add(entry.getKey() + (entry.getValue() ? delimiter.getValue() : ""));
+                    foo.put(entry.getKey(), entry.getValue() ? "" + delimiter.getValue() : "");
                   }
                   return foo;
                 }
@@ -228,7 +229,7 @@ final class MatcherFactory<T, B extends TypeBinding> {
               //
             }
           } else {
-            return Collections.singletonList(" ");
+            return Collections.singletonMap("", " ");
           }
         } else {
           //

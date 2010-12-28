@@ -26,9 +26,10 @@ import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.spi.Completer;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -56,17 +57,17 @@ public class Matcher<T> {
     this.mainName = mainName;
   }
 
-  public List<String> complete(String s) throws CmdCompletionException {
+  public Map<String, String> complete(String s) throws CmdCompletionException {
     return complete(EmptyCompleter.getInstance(), s);
   }
 
-  public List<String> complete(Completer completer, String s) throws CmdCompletionException {
+  public Map<String, String> complete(Completer completer, String s) throws CmdCompletionException {
 
     //
     StringCursor cursor = new StringCursor(s);
 
     // Read all common options we are able to
-    List<String> completions = analyzer.completeOptions(completer, cursor);
+    Map<String, String> completions = analyzer.completeOptions(completer, cursor);
 
     //
     if (completions != null) {
@@ -84,10 +85,10 @@ public class Matcher<T> {
       String name = cursor.group(m, 1);
       method = descriptor.getMethod(name);
       if (method == null || method == main) {
-        ArrayList<String> a = new ArrayList<String>();
+        Map<String, String> a = new HashMap<String, String>();
         for (MethodDescriptor<T> candidate : descriptor.getMethods()) {
           if (candidate != main && candidate.getName().startsWith(name)) {
-            a.add(candidate.getName().substring(name.length()) + " ");
+            a.put(candidate.getName().substring(name.length()), " ");
           }
         }
         if (a.size() > 0) {
@@ -96,7 +97,7 @@ public class Matcher<T> {
       } else {
         cursor.skip(m.end(1));
         if (cursor.isEmpty()) {
-          return Collections.singletonList(" ");
+          return Collections.singletonMap("", " ");
         }
       }
     }
@@ -120,7 +121,7 @@ public class Matcher<T> {
 
     //
     if (completions == null) {
-      completions = Collections.emptyList();
+      completions = Collections.emptyMap();
     }
 
     //

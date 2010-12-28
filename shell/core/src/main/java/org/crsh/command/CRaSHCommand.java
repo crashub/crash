@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 /**
  * A real CRaSH command, the most powerful kind of command.
@@ -94,7 +94,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return context;
   }
 
-  public List<String> complete(CommandContext context, String line, String... chunks) {
+  public Map<String, String> complete(CommandContext context, String line, String... chunks) {
     if (chunks == null) {
       throw new NullPointerException();
     }
@@ -121,7 +121,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
     catch (CmdCompletionException e) {
       log.error("Error during completion of line " + line, e);
-      return Collections.emptyList();
+      return Collections.emptyMap();
     } finally {
       this.context = null;
     }

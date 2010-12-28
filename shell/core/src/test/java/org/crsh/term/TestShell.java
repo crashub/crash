@@ -23,7 +23,7 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -53,7 +53,7 @@ public class TestShell implements Shell {
     return "Welcome\r\n% ";
   }
 
-  public List<String> complete(String prefix) {
+  public Map<String, String> complete(String prefix) {
     throw new UnsupportedOperationException();
   }
 

@@ -24,7 +24,7 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -152,7 +152,7 @@ public class AsyncShell implements Shell {
     return shell.getPrompt();
   }
 
-  public List<String> complete(String prefix) {
+  public Map<String, String> complete(String prefix) {
     return shell.complete(prefix);
   }
 
