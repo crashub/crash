@@ -19,10 +19,8 @@
 
 package org.crsh.cmdline.spi;
 
-import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.ParameterDescriptor;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,34 +33,42 @@ import java.util.Map;
 public interface Completer {
 
   /**
-   * <p>Query the completer for a set of completion for the given prefix. The returned list
-   * should provide the possible suffixes matching the prefix argument. The following guidelines
+   * <p>Query the completer for a set of completion for the given prefix. The returned Map
+   * should provide the possible suffixes matching the prefix argument. Each map entry maps
+   * to a possible completion: an entry key is the possible completion, its corresponding
+   * boolean value indicates wether the value can be further more completed or not.
+   *
+   * The following guidelines
    * should be respected:
    *
    * <ul>
-   * <li>An empty list means no completion can be determined, the framework will not do anything.</li>
-   * <li>A singleton list means the match was entire and the framework will complete it.</li>
-   * <li>A list containing string with a common prefix should insert this common prefix by the framework.</li>
-   * <li>A list containing strings with no common prefix other than the empty string should display the list
-   * of possible completions. The shown result could be truncanted.</li>
+   * <li>An empty map means no completion can be determined, the framework will not do anything.</li>
+   * <li>A singleton map means the match was entire and the framework will complete it with the sole map entry.</li>
+   * <li>A map containing string sharing a common prefix instruct the framework to insert this common prefix.</li>
+   * <li>A list containing strings with no common prefix (other than the empty string) instruct the framework to display
+   * the list of possible completions.</li>
    * </ul>
-   * <ul>When a match is considered as full, the completion should contain a trailing white space.</ul>
+   * <ul>When a match is considered as full (the entry value is set to true), the completion should contain a trailing value
+   * that is usually a white space (but it could be a quote for quoted values).</ul>
    * </p>
    *
-   * <p>Example, a completer that would complete path could
+   * <p>Example: a completer that would complete colors could
    * <ul>
-   * <li>return the list ["lack ","lue "] for the prefix "b".</li>
-   * <li>return the list ["e "] for the prefix "blu".</li>
-   * <li>return the list [] for the prefix "z".</li>
+   * <li>return the map ["lack ":true,"lue ":true] for the prefix "b".</li>
+   * <li>return the amp ["e ":true] for the prefix "blu".</li>
+   * <li>return the map [] for the prefix "z".</li>
    * </ul>
    * </p>
    *
-   *
-   *
+   * <p>Example: a completer that would complete java packages could
+   * <ul>
+   * <li>return the map ["ext":true,"ext.spi":false] for the prefix "java.t"</li>
+   * </ul>
+   * </p>
    *
    * @param parameter the completed parameter
    * @param prefix the prefix to complete
-   * @return the possible suffixes
+   * @return the possible suffix map
    * @throws Exception any exception that would prevent completion to perform correctly
    */
   Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception;
