@@ -1,16 +1,13 @@
 - write AbstractTerm unit tests
 - write IO tests
 - write pipe consistency
-
-- SLF4J profiler
-
-- help --verbose
-
-- repackage WEB-INF with "crash" directory
-
-- study how the ConsoleWriter should affect the buffer because it fucking does probably
-
 - use @Inject :-) yeah baby
-
-
 - more Conversion, for instance String -> JCR node from current session
+- ability to describe a meta argument like, maybe just a convention with "description" is fine
+@Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
+@interface LevelOpt {
+  String description() default "";
+}
+
+- standalone ?
+- documentation generation from commands would be just great, like a servlet :-)
