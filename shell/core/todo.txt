@@ -11,3 +11,5 @@
 
 - standalone ?
 - documentation generation from commands would be just great, like a servlet :-)
+- make port configurable
+- make an installer
