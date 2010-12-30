@@ -94,8 +94,9 @@ public interface TermIO {
    *
    * @return true if the cursor moved.
    * @throws IOException any io exception
+   * @param c
    */
-  boolean moveRight() throws IOException;
+  boolean moveRight(char c) throws IOException;
 
   /**
    * Move the cursor left.

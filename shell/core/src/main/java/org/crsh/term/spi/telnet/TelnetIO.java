@@ -109,7 +109,7 @@ public class TelnetIO implements TermIO {
     termIO.write("\r\n");
   }
 
-  public boolean moveRight() throws IOException {
+  public boolean moveRight(char c) throws IOException {
     termIO.moveRight(1);
     return true;
   }

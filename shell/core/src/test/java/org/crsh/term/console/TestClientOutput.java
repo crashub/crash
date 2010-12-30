@@ -21,7 +21,6 @@ package org.crsh.term.console;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
-import org.crsh.term.console.ViewWriter;
 
 import java.io.IOException;
 
@@ -92,7 +91,7 @@ public class TestClientOutput extends ViewWriter {
   }
 
   @Override
-  protected boolean writeMoveRight() {
+  protected boolean writeMoveRight(char c) {
     if (supportsCursorMove) {
       position++;
       return true;

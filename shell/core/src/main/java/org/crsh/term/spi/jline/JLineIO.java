@@ -102,13 +102,13 @@ public class JLineIO implements TermIO {
     System.out.println();
   }
 
-  public boolean moveRight() throws IOException {
-    System.out.print(" ");
+  public boolean moveRight(char c) throws IOException {
+    System.out.print(c);
     return true;
   }
 
   public boolean moveLeft() throws IOException {
     System.out.print("\b");
-    return false;
+    return true;
   }
 }

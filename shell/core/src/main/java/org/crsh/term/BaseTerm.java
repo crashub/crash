@@ -90,8 +90,8 @@ public class BaseTerm implements Term {
       }
 
       @Override
-      protected boolean writeMoveRight() throws IOException {
-        return io.moveRight();
+      protected boolean writeMoveRight(char c) throws IOException {
+        return io.moveRight(c);
       }
     });
   }

@@ -268,7 +268,7 @@ public final class Console {
 
   private void moveRight() throws IOException {
     if (curAt < size) {
-      if (viewWriter.writeMoveRight())
+      if (viewWriter.writeMoveRight(buffer[curAt]))
       {
         viewWriter.flush();
         curAt++;

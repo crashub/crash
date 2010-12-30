@@ -210,7 +210,7 @@ public class TestTermIO implements TermIO {
     outter.add("[crlf]");
   }
 
-  public boolean moveRight() throws IOException {
+  public boolean moveRight(char c) throws IOException {
     System.out.print("[right]");
     outter.add("[right]");
     return true;

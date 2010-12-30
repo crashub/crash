@@ -23,7 +23,6 @@ import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
 import org.crsh.util.OutputCode;
-import org.crsh.util.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +175,7 @@ public class SSHIO implements TermIO {
     writer.write("\r\n");
   }
 
-  public boolean moveRight() throws IOException {
+  public boolean moveRight(char c) throws IOException {
     return false;
   }
 

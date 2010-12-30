@@ -41,6 +41,6 @@ public abstract class ViewWriter {
 
   protected abstract boolean writeMoveLeft() throws IOException;
 
-  protected abstract boolean writeMoveRight() throws IOException;
+  protected abstract boolean writeMoveRight(char c) throws IOException;
 
 }
