@@ -21,6 +21,9 @@ package org.crsh.servlet;
 import org.crsh.shell.Resource;
 import org.crsh.shell.ResourceKind;
 import org.crsh.shell.ShellContext;
+import org.crsh.vfs.File;
+import org.crsh.vfs.VFS;
+import org.crsh.vfs.spi.servlet.ServletContextDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +58,7 @@ public class ServletShellContext implements ShellContext {
   private ScheduledExecutorService executor;
 
   /** . */
-  private volatile List<String> dirs;
+  private volatile List<File<?>> dirs;
 
   public ServletShellContext(ServletContext servletContext, ClassLoader loader) {
     if (servletContext == null) {
@@ -89,7 +92,10 @@ public class ServletShellContext implements ShellContext {
     this.loader = loader;
     this.version = version;
     this.dirs = Collections.emptyList();
+    this.vfs = VFS.wrap(new ServletContextDriver(servletContext, "/WEB-INF/"));
   }
+
+  private final VFS<?> vfs;
 
   public ServletContext getServletContext() {
     return servletContext;
@@ -109,9 +115,10 @@ public class ServletShellContext implements ShellContext {
           if ("login".equals(resourceId) || "logout".equals(resourceId)) {
             StringBuilder sb = new StringBuilder();
             long timestamp = Long.MIN_VALUE;
-            for (String path : dirs) {
-              URL url = servletContext.getResource(path + resourceId + ".groovy");
-              if (url != null) {
+            for (File<?> path : dirs) {
+              File<?> f = path.child(resourceId + ".groovy");
+              if (f != null) {
+                URL url = f.toURL();
                 Resource sub = Resource.create(url);
                 if (sub != null) {
                   sb.append(sub.getContent());
@@ -124,18 +131,25 @@ public class ServletShellContext implements ShellContext {
           break;
         case SCRIPT:
           // Find the resource first, we find for the first found
-          for (String path : dirs) {
-            URL url = servletContext.getResource(path + resourceId + ".groovy");
-            if (url != null) {
-              return Resource.create(url);
+          for (File<?> path : dirs) {
+            File<?> f = path.child(resourceId + ".groovy");
+            if (f != null) {
+              URL url = f.toURL();
+              if (url != null) {
+                return Resource.create(url);
+              }
             }
           }
           break;
         case CONFIG:
           if ("telnet.properties".equals(resourceId)) {
-            URL url = servletContext.getResource("/WEB-INF/telnet/telnet.properties");
-            if (url != null) {
-              return Resource.create(url);
+            File<?> telnet = vfs.getRoot().child("telnet");
+            if (telnet != null) {
+              File<?> props = telnet.child("telnet.properties");
+              if (props != null) {
+                URL url = props.toURL();
+                return Resource.create(url);
+              }
             }
           }
           break;
@@ -146,21 +160,25 @@ public class ServletShellContext implements ShellContext {
     return res;
   }
 
-  private final Pattern p = Pattern.compile(".*/(.+)\\.groovy");
+  private final Pattern p = Pattern.compile("(.+)\\.groovy");
 
   public List<String> listResourceId(ResourceKind kind) {
     switch (kind) {
       case SCRIPT:
         SortedSet<String> all = new TreeSet<String>();
-        for (String path : dirs) {
-          @SuppressWarnings("unchecked")
-          Set<String> files = servletContext.getResourcePaths(path);
-          for (String file : files) {
-            Matcher matcher = p.matcher(file);
-            if (matcher.matches()) {
-              all.add(matcher.group(1));
+        try {
+          for (File<?> path : dirs) {
+            for (File<?> file : path.children()) {
+              String name = file.getName();
+              Matcher matcher = p.matcher(name);
+              if (matcher.matches()) {
+                all.add(matcher.group(1));
+              }
             }
           }
+        }
+        catch (IOException e) {
+          e.printStackTrace();
         }
         all.remove("login");
         all.remove("logout");
@@ -180,17 +198,22 @@ public class ServletShellContext implements ShellContext {
       executor.scheduleWithFixedDelay(new Runnable() {
         int count = 0;
         public void run() {
-          @SuppressWarnings("unchecked")
-          Set<String> set = servletContext.getResourcePaths("/WEB-INF/groovy/commands/");
-          if (set != null) {
-            List<String> newDirs = new ArrayList<String>();
-            newDirs.add("/WEB-INF/groovy/commands/");
-            for (String path : set) {
-              if (path.endsWith("/")) {
+
+          try {
+            File<?> root = vfs.getRoot();
+            File<?> groovy = root.child("groovy");
+            File<?> commands = groovy.child("commands");
+            List<File<?>> newDirs = new ArrayList<File<?>>();
+            newDirs.add(commands);
+            for (File<?> path : commands.children()) {
+              if (path.isDir()) {
                 newDirs.add(path);
               }
             }
             dirs = newDirs;
+          }
+          catch (IOException e) {
+            e.printStackTrace();
           }
         }
       }, 0, 1, TimeUnit.SECONDS);
