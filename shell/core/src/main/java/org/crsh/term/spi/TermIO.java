@@ -92,9 +92,9 @@ public interface TermIO {
   /**
    * Move the cursor right.
    *
+   * @param c the char skipped over
    * @return true if the cursor moved.
    * @throws IOException any io exception
-   * @param c
    */
   boolean moveRight(char c) throws IOException;
 
