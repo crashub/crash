@@ -24,7 +24,9 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.term.ConsoleTerm;
+import org.crsh.term.BaseTerm;
+import org.crsh.term.Term;
+import org.crsh.term.spi.jline.JLineIO;
 
 import java.util.Collections;
 import java.util.Map;
@@ -35,9 +37,9 @@ import java.util.Map;
  */
 public class Main {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
 
-    ConsoleTerm term = new ConsoleTerm();
+    Term term = new BaseTerm(new JLineIO());
     Processor processor = new Processor(term, new Shell() {
       public String getWelcome() {
         return "Welcome";
