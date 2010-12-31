@@ -226,6 +226,11 @@
         <artifactId>telnetd-x</artifactId>
         <version>2.1.1-CRASH-r14</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-api</artifactId>
+        <version>1.0.0-alpha-11</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
