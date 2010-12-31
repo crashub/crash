@@ -17,46 +17,50 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.vfs.spi.jarurl;
+package org.crsh.vfs.spi.file;
 
-import java.net.MalformedURLException;
+import org.crsh.vfs.spi.FSDriver;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.jar.JarEntry;
+import java.util.Arrays;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Handle {
+public class FileDriver implements FSDriver<File> {
 
   /** . */
-  private final JarURLDriver driver;
+  private final File root;
 
-  /** . */
-  final String name;
+  public FileDriver(File root) {
+    if (root == null) {
+      throw new NullPointerException();
+    }
 
-  /** . */
-  Map<String, Handle> children;
-
-  /** . */
-  JarEntry entry;
-
-  Handle(JarURLDriver driver, String name) {
-    this.driver = driver;
-    this.name = name;
-    this.children = new HashMap<String, Handle>();
+    //
+    this.root = root;
   }
 
-  public boolean isDir() {
-     return entry == null || entry.isDirectory();
+  public File root() throws IOException {
+    return root;
   }
 
-  public URL toURL() throws IllegalArgumentException, IllegalStateException, MalformedURLException {
-     if (isDir()) {
-        throw new IllegalStateException("Cannot create dir URL");
-     }
-     return new URL("jar", "", driver.jarURL.toString() + "!/" + entry.getName());
+  public String name(File handle) throws IOException {
+    return handle.getName();
+  }
+
+  public boolean isDir(File handle) throws IOException {
+    return handle.isDirectory();
+  }
+
+  public Iterable<File> children(File handle) throws IOException {
+    return Arrays.asList(handle.listFiles());
+  }
+
+  public URL toURL(File handle) throws IOException {
+    return handle.toURI().toURL();
   }
 }
