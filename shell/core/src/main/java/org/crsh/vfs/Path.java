@@ -166,4 +166,8 @@ public final class Path implements Iterable<String> {
   public int hashCode() {
     return super.hashCode() ^ (dir ? 1 : 0);
   }
+
+  public String toString() {
+    return "Path[value=" + getValue() + "]";
+  }
 }

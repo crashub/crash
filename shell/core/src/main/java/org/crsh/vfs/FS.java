@@ -60,10 +60,10 @@ public class FS {
     if (path == null) {
       throw new NullPointerException();
     }
-    if (path.isDir()) {
-      throw new IllegalArgumentException("Must be a dir");
+    if (!path.isDir()) {
+      throw new IllegalArgumentException("Path " + path + " must be a dir");
     }
-    Enumeration<URL> en = cl.getResources(path.getValue());
+    Enumeration<URL> en = cl.getResources(path.getValue().substring(1));
     while (en.hasMoreElements()) {
       URL url = en.nextElement();
       String protocol = url.getProtocol();

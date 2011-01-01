@@ -46,18 +46,28 @@ public class JarURLDriver extends AbstractFSDriver<Handle> {
     Handle handle = handles.get(path);
     if (handle == null) {
       handle = new Handle(driver, path);
-      Handle parent;
+      int to = path.length();
+      if (path.charAt(to - 1) == '/') {
+        to--;
+      }
+      int from = -1;
+      for (int i = to - 1;i >= 0;i--) {
+        if (path.charAt(i) == '/') {
+          from = i;
+          break;
+        }
+      }
       String name;
-      int pos = path.lastIndexOf('/');
-      if (pos == -1) {
-        parent = handles.get("/");
-        name = path;
+      Handle parent;
+      if (from == -1) {
+        parent = handles.get("");
+        name = path.substring(0, to);
       } else {
-        parent = get(driver, handles, path.substring(0, pos + 1));
-        name = path.substring(pos + 1);
+        parent = get(driver, handles, path.substring(0, from));
+        name = path.substring(from + 1, to);
       }
       parent.children.put(name, handle);
-      handles.put(path, handle);
+      handles.put(path.substring(0, to), handle);
     }
     return handle;
   }
@@ -65,14 +75,14 @@ public class JarURLDriver extends AbstractFSDriver<Handle> {
   public JarURLDriver(JarURLConnection conn) throws IOException {
     JarFile file = conn.getJarFile();
     Map<String, Handle> handles = new HashMap<String, Handle>();
-    handles.put("/", root = new Handle(this, "/"));
+    handles.put("", root = new Handle(this, ""));
     for (JarEntry entry : Collections.list(file.entries())) {
       Handle handle = get(this, handles, entry.getName());
       handle.entry = entry;
     }
 
     //
-    this.jarURL = conn.getURL();
+    this.jarURL = conn.getJarFileURL();
   }
 
   public Handle root() throws IOException {
@@ -80,11 +90,11 @@ public class JarURLDriver extends AbstractFSDriver<Handle> {
   }
 
   public String name(Handle handle) throws IOException {
-    return handle.name;
+    return handle.path.getName();
   }
 
   public boolean isDir(Handle handle) throws IOException {
-    return handle.isDir();
+    return handle.path.isDir();
   }
 
   public Iterable<Handle> children(Handle handle) throws IOException {

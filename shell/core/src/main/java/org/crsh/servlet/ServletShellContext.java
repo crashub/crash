@@ -186,27 +186,30 @@ public class ServletShellContext implements ShellContext {
     return loader;
   }
 
+  protected void refresh() {
+    try {
+      File commands = vfs.get(Path.get("/commands/"));
+      List<File> newDirs = new ArrayList<File>();
+      newDirs.add(commands);
+      for (File path : commands.children()) {
+        if (path.isDir()) {
+          newDirs.add(path);
+        }
+      }
+      dirs = newDirs;
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   public synchronized  void start() {
     if (executor == null) {
       executor =  new ScheduledThreadPoolExecutor(1);
       executor.scheduleWithFixedDelay(new Runnable() {
         int count = 0;
         public void run() {
-
-          try {
-            File commands = vfs.get(Path.get("/commands/"));
-            List<File> newDirs = new ArrayList<File>();
-            newDirs.add(commands);
-            for (File path : commands.children()) {
-              if (path.isDir()) {
-                newDirs.add(path);
-              }
-            }
-            dirs = newDirs;
-          }
-          catch (IOException e) {
-            e.printStackTrace();
-          }
+          refresh();
         }
       }, 0, 1, TimeUnit.SECONDS);
     } else {

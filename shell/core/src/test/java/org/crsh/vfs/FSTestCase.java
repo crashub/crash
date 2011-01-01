@@ -20,7 +20,15 @@
 package org.crsh.vfs;
 
 import junit.framework.TestCase;
+import org.crsh.vfs.spi.jarurl.*;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
+import java.io.InputStream;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Iterator;
 
 /**
@@ -39,5 +47,55 @@ public class FSTestCase extends TestCase {
     assertFalse(orgChildren.hasNext());
     assertEquals("crsh", crsh.getName());
     assertEquals(true, crsh.isDir());
+  }
+
+  public void testJar() throws Exception {
+
+    //
+    JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "archive.jar");
+    archive.addClass(FSTestCase.class);
+    java.io.File tmp = java.io.File.createTempFile("test", ".jar");
+    tmp.deleteOnExit();
+    archive.as(ZipExporter.class).exportZip(tmp, true);
+    URLClassLoader cl = new URLClassLoader(new URL[]{tmp.toURI().toURL()});
+    URL classURL = cl.findResource(FSTestCase.class.getName().replace('.', '/') + ".class");
+    JarURLConnection conn = (JarURLConnection)classURL.openConnection();
+
+    //
+    JarURLDriver driver = new JarURLDriver(conn);
+    org.crsh.vfs.spi.jarurl.Handle root = driver.root();
+    assertEquals("", driver.name(root));
+    assertTrue(driver.isDir(root));
+
+    //
+    Iterator<org.crsh.vfs.spi.jarurl.Handle> rootChildren = driver.children(root).iterator();
+    org.crsh.vfs.spi.jarurl.Handle org = rootChildren.next();
+    assertFalse(rootChildren.hasNext());
+    assertEquals("org", driver.name(org));
+    assertTrue(driver.isDir(org));
+
+    //
+    Iterator<org.crsh.vfs.spi.jarurl.Handle> orgChildren = driver.children(org).iterator();
+    org.crsh.vfs.spi.jarurl.Handle crsh = orgChildren.next();
+    assertFalse(orgChildren.hasNext());
+    assertEquals("crsh", driver.name(crsh));
+    assertTrue(driver.isDir(crsh));
+
+    //
+    Iterator<org.crsh.vfs.spi.jarurl.Handle> vfsChildren = driver.children(crsh).iterator();
+    org.crsh.vfs.spi.jarurl.Handle vfs = vfsChildren.next();
+    assertFalse(vfsChildren.hasNext());
+    assertEquals("vfs", driver.name(vfs));
+    assertTrue(driver.isDir(vfs));
+
+    //
+    Iterator<org.crsh.vfs.spi.jarurl.Handle> clazzChildren = driver.children(vfs).iterator();
+    org.crsh.vfs.spi.jarurl.Handle clazz = clazzChildren.next();
+    assertFalse(clazzChildren.hasNext());
+    assertEquals(FSTestCase.class.getSimpleName() + ".class", driver.name(clazz));
+    assertFalse(driver.isDir(clazz));
+    URL clazzURL = driver.toURL(clazz);
+    InputStream in = clazzURL.openStream();
+    in.close();
   }
 }

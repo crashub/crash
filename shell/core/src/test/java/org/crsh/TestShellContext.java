@@ -19,116 +19,20 @@
 
 package org.crsh;
 
-import org.crsh.shell.Resource;
-import org.crsh.shell.ResourceKind;
-import org.crsh.shell.ShellContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import org.crsh.servlet.ServletShellContext;
+import org.crsh.vfs.FS;
+import org.crsh.vfs.Path;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestShellContext implements ShellContext {
+public class TestShellContext extends ServletShellContext {
 
-  /** . */
-  private final Logger log = LoggerFactory.getLogger(getClass());
-
-  /** . */
-  private List<String> scriptPaths;
-
-  public TestShellContext(String... scriptPaths) {
-
-    try {
-      Enumeration<URL> en = ((URLClassLoader)Thread.currentThread().getContextClassLoader()).findResources("/");
-      System.out.println("Enumerating");
-      while (en.hasMoreElements()) {
-        URL url = en.nextElement();
-        System.out.println("url = " + url);
-      }
-    }
-    catch (IOException e) {
-      throw new AssertionError(e);
-    }
-
-    this.scriptPaths = new ArrayList<String>(Arrays.asList(scriptPaths));
-  }
-
-  public String getVersion() {
-    return "1.0.0";
-  }
-
-  public Resource loadResource(String resourceId, ResourceKind resourceKind) {
-
-    if (resourceId == null) {
-      throw new NullPointerException("No null resource id");
-    }
-    if (resourceKind == null) {
-      throw new NullPointerException("No null resource kind");
-    }
+  public TestShellContext(String... scriptPaths) throws Exception {
+    super(new FS().mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/")), Thread.currentThread().getContextClassLoader());
 
     //
-    Resource res = null;
-    switch (resourceKind) {
-      case LIFECYCLE:
-        if ("login".equals(resourceId) || "logout".equals(resourceId)) {
-          StringBuilder sb = new StringBuilder();
-          long timestamp = Long.MIN_VALUE;
-          for (String path : scriptPaths) {
-            Resource url = getResource(path + resourceId + ".groovy");
-            if (url != null) {
-              sb.append(url.getContent());
-              timestamp = Math.max(timestamp, url.getTimestamp());
-            }
-          }
-          res = new Resource(sb.toString(), timestamp);
-        }
-        break;
-      case SCRIPT:
-        for (String scriptPath : scriptPaths) {
-          res = getResource(scriptPath + resourceId + ".groovy");
-          if (res != null) {
-            break;
-          }
-        }
-        break;
-      case CONFIG:
-        if ("telnet.properties".equals(resourceId)) {
-          res = getResource("crash/telnet/telnet.properties");
-        } else {
-          resourceId = null;
-        }
-        break;
-      default:
-        throw new AssertionError();
-    }
-
-    //
-    return res;
-  }
-
-  public List<String> listResourceId(ResourceKind kind) {
-    throw new UnsupportedOperationException();
-  }
-
-  private Resource getResource(String path) {
-    URL url = Thread.currentThread().getContextClassLoader().getResource(path);
-    if (url != null) {
-      return Resource.create(url);
-    } else {
-      return null;
-    }
-  }
-
-  public ClassLoader getLoader() {
-    return Thread.currentThread().getContextClassLoader();
+    refresh();
   }
 }

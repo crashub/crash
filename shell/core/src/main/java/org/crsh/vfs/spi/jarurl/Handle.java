@@ -19,6 +19,8 @@
 
 package org.crsh.vfs.spi.jarurl;
 
+import org.crsh.vfs.Path;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -35,7 +37,7 @@ public class Handle {
   private final JarURLDriver driver;
 
   /** . */
-  final String name;
+  final Path path;
 
   /** . */
   Map<String, Handle> children;
@@ -43,9 +45,9 @@ public class Handle {
   /** . */
   JarEntry entry;
 
-  Handle(JarURLDriver driver, String name) {
+  Handle(JarURLDriver driver, String path) {
     this.driver = driver;
-    this.name = name;
+    this.path = Path.get("/" + path);
     this.children = new HashMap<String, Handle>();
   }
 
@@ -54,9 +56,10 @@ public class Handle {
   }
 
   public URL toURL() throws IllegalArgumentException, IllegalStateException, MalformedURLException {
-     if (isDir()) {
-        throw new IllegalStateException("Cannot create dir URL");
-     }
-     return new URL("jar", "", driver.jarURL.toString() + "!/" + entry.getName());
+    if (isDir()) {
+      throw new IllegalStateException("Cannot create dir URL");
+    }
+    String file = driver.jarURL.toString() + "!/" + entry.getName();
+    return new URL("jar", "", file);
   }
 }
