@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 public class ServletContextDriver implements FSDriver<String> {
 
   /** A valid path. */
-  private static final Pattern pathPattern = Pattern.compile("^/.*(?<=/)([^/]+)(/?)$");
+  private static final Pattern pathPattern = Pattern.compile("^/.*(?<=/)([^/]+)(/)?$");
 
   /** . */
   private final ServletContext ctx;
@@ -67,7 +67,9 @@ public class ServletContextDriver implements FSDriver<String> {
   }
 
   public boolean isDir(String file) throws IOException {
-    return matcher(file).group(2) != null;
+    Matcher matcher = matcher(file);
+    String slash = matcher.group(2);
+    return slash != null;
   }
 
   public Iterable<String> children(String parent) throws IOException {

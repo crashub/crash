@@ -21,8 +21,9 @@ package org.crsh.servlet;
 import org.crsh.shell.Resource;
 import org.crsh.shell.ResourceKind;
 import org.crsh.shell.ShellContext;
-import org.crsh.vfs.File;
-import org.crsh.vfs.VFS;
+import org.crsh.vfs.impl.FS;
+import org.crsh.vfs.impl.File;
+import org.crsh.vfs.impl.Path;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,7 @@ public class ServletShellContext implements ShellContext {
   private ScheduledExecutorService executor;
 
   /** . */
-  private volatile List<File<?>> dirs;
+  private volatile List<File> dirs;
 
   public ServletShellContext(ServletContext servletContext, ClassLoader loader) {
     if (servletContext == null) {
@@ -92,10 +93,10 @@ public class ServletShellContext implements ShellContext {
     this.loader = loader;
     this.version = version;
     this.dirs = Collections.emptyList();
-    this.vfs = VFS.wrap(new ServletContextDriver(servletContext, "/WEB-INF/"));
+    this.vfs = new FS(new ServletContextDriver(servletContext, "/WEB-INF/"));
   }
 
-  private final VFS<?> vfs;
+  private final FS vfs;
 
   public ServletContext getServletContext() {
     return servletContext;
@@ -115,10 +116,10 @@ public class ServletShellContext implements ShellContext {
           if ("login".equals(resourceId) || "logout".equals(resourceId)) {
             StringBuilder sb = new StringBuilder();
             long timestamp = Long.MIN_VALUE;
-            for (File<?> path : dirs) {
-              File<?> f = path.child(resourceId + ".groovy");
+            for (File path : dirs) {
+              File f = path.child(resourceId + ".groovy", false);
               if (f != null) {
-                URL url = f.toURL();
+                URL url = f.getURL();
                 Resource sub = Resource.create(url);
                 if (sub != null) {
                   sb.append(sub.getContent());
@@ -131,10 +132,10 @@ public class ServletShellContext implements ShellContext {
           break;
         case SCRIPT:
           // Find the resource first, we find for the first found
-          for (File<?> path : dirs) {
-            File<?> f = path.child(resourceId + ".groovy");
+          for (File path : dirs) {
+            File f = path.child(resourceId + ".groovy", false);
             if (f != null) {
-              URL url = f.toURL();
+              URL url = f.getURL();
               if (url != null) {
                 return Resource.create(url);
               }
@@ -143,11 +144,10 @@ public class ServletShellContext implements ShellContext {
           break;
         case CONFIG:
           if ("telnet.properties".equals(resourceId)) {
-            File<?> telnet = vfs.getRoot().child("telnet");
+            File telnet = vfs.get(Path.get("/telnet/telnet.properties"));
             if (telnet != null) {
-              File<?> props = telnet.child("telnet.properties");
-              if (props != null) {
-                URL url = props.toURL();
+              if (telnet != null) {
+                URL url = telnet.getURL();
                 return Resource.create(url);
               }
             }
@@ -167,8 +167,8 @@ public class ServletShellContext implements ShellContext {
       case SCRIPT:
         SortedSet<String> all = new TreeSet<String>();
         try {
-          for (File<?> path : dirs) {
-            for (File<?> file : path.children()) {
+          for (File path : dirs) {
+            for (File file : path.children()) {
               String name = file.getName();
               Matcher matcher = p.matcher(name);
               if (matcher.matches()) {
@@ -200,12 +200,10 @@ public class ServletShellContext implements ShellContext {
         public void run() {
 
           try {
-            File<?> root = vfs.getRoot();
-            File<?> groovy = root.child("groovy");
-            File<?> commands = groovy.child("commands");
-            List<File<?>> newDirs = new ArrayList<File<?>>();
+            File commands = vfs.get(Path.get("/groovy/commands/"));
+            List<File> newDirs = new ArrayList<File>();
             newDirs.add(commands);
-            for (File<?> path : commands.children()) {
+            for (File path : commands.children()) {
               if (path.isDir()) {
                 newDirs.add(path);
               }
