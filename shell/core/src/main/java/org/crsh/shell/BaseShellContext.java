@@ -16,11 +16,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.servlet;
+package org.crsh.shell;
 
 import org.crsh.vfs.Resource;
-import org.crsh.shell.ResourceKind;
-import org.crsh.shell.ShellContext;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.File;
@@ -45,10 +43,10 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ServletShellContext implements ShellContext {
+public class BaseShellContext implements ShellContext {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(ServletShellContext.class);
+  private static final Logger log = LoggerFactory.getLogger(BaseShellContext.class);
 
   /** . */
   private final ClassLoader loader;
@@ -62,7 +60,7 @@ public class ServletShellContext implements ShellContext {
   /** . */
   private volatile List<File> dirs;
 
-  public ServletShellContext(FS fs, ClassLoader loader) {
+  public BaseShellContext(FS fs, ClassLoader loader) {
     if (loader == null) {
       throw new NullPointerException();
     }

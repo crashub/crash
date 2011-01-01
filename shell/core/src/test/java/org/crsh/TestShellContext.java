@@ -19,7 +19,7 @@
 
 package org.crsh;
 
-import org.crsh.servlet.ServletShellContext;
+import org.crsh.shell.BaseShellContext;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 
@@ -27,7 +27,7 @@ import org.crsh.vfs.Path;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestShellContext extends ServletShellContext {
+public class TestShellContext extends BaseShellContext {
 
   public TestShellContext(String... scriptPaths) throws Exception {
     super(new FS().mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/")), Thread.currentThread().getContextClassLoader());

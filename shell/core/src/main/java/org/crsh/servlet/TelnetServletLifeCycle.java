@@ -19,6 +19,7 @@
 
 package org.crsh.servlet;
 
+import org.crsh.shell.BaseShellContext;
 import org.crsh.term.spi.telnet.TelnetLifeCycle;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
@@ -37,12 +38,12 @@ public class TelnetServletLifeCycle implements ServletContextListener {
   private TelnetLifeCycle lifeCycle;
 
   /** . */
-  private ServletShellContext shellContext;
+  private BaseShellContext shellContext;
 
   public void contextInitialized(ServletContextEvent sce) {
     ServletContext sc = sce.getServletContext();
     FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/crash/"));
-    ServletShellContext shellContext = new ServletShellContext(fs, Thread.currentThread().getContextClassLoader());
+    BaseShellContext shellContext = new BaseShellContext(fs, Thread.currentThread().getContextClassLoader());
     TelnetLifeCycle lifeCycle = new TelnetLifeCycle(shellContext);
     this.lifeCycle = lifeCycle;
     this.shellContext = shellContext;

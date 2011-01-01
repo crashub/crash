@@ -19,6 +19,7 @@
 
 package org.crsh.servlet;
 
+import org.crsh.shell.BaseShellContext;
 import org.crsh.term.spi.sshd.SSHLifeCycle;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
@@ -42,7 +43,7 @@ public class SSHServletLifeCycle implements ServletContextListener {
   private SSHLifeCycle lifeCycle;
   
   /** . */
-  private ServletShellContext shellContext;
+  private BaseShellContext shellContext;
 
   public void contextInitialized(ServletContextEvent sce) {
 
@@ -61,7 +62,7 @@ public class SSHServletLifeCycle implements ServletContextListener {
 
     //
     FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/crash/"));
-    ServletShellContext shellContext = new ServletShellContext(fs, Thread.currentThread().getContextClassLoader());
+    BaseShellContext shellContext = new BaseShellContext(fs, Thread.currentThread().getContextClassLoader());
     SSHLifeCycle lifeCycle = new SSHLifeCycle(shellContext);
 
     //
