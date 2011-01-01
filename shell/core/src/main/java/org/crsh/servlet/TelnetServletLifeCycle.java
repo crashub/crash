@@ -41,7 +41,7 @@ public class TelnetServletLifeCycle implements ServletContextListener {
 
   public void contextInitialized(ServletContextEvent sce) {
     ServletContext sc = sce.getServletContext();
-    FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/"));
+    FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/crash/"));
     ServletShellContext shellContext = new ServletShellContext(fs, Thread.currentThread().getContextClassLoader());
     TelnetLifeCycle lifeCycle = new TelnetLifeCycle(shellContext);
     this.lifeCycle = lifeCycle;

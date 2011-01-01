@@ -194,7 +194,7 @@ public class ServletShellContext implements ShellContext {
         public void run() {
 
           try {
-            File commands = vfs.get(Path.get("/crash/commands/"));
+            File commands = vfs.get(Path.get("/commands/"));
             List<File> newDirs = new ArrayList<File>();
             newDirs.add(commands);
             for (File path : commands.children()) {

@@ -102,7 +102,7 @@ public class TestShellContext implements ShellContext {
         break;
       case CONFIG:
         if ("telnet.properties".equals(resourceId)) {
-          res = getResource("telnet/telnet.properties");
+          res = getResource("crash/telnet/telnet.properties");
         } else {
           resourceId = null;
         }

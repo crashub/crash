@@ -55,12 +55,12 @@ public class SSHServletLifeCycle implements ServletContextListener {
     // Use the default one
     if (keyPath == null) {
       log.debug("No key path found in web.xml will use the default one");
-      keyPath = sc.getRealPath("/WEB-INF/sshd/hostkey.pem");
+      keyPath = sc.getRealPath("/WEB-INF/crash/sshd/hostkey.pem");
       log.debug("Going to use the key path at " + keyPath);
     }
 
     //
-    FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/"));
+    FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/crash/"));
     ServletShellContext shellContext = new ServletShellContext(fs, Thread.currentThread().getContextClassLoader());
     SSHLifeCycle lifeCycle = new SSHLifeCycle(shellContext);
 
