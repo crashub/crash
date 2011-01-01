@@ -17,50 +17,67 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.vfs.spi.file;
+package org.crsh.vfs.spi.mount;
 
+import org.crsh.vfs.Path;
 import org.crsh.vfs.spi.AbstractFSDriver;
+import org.crsh.vfs.spi.FSDriver;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class FileDriver extends AbstractFSDriver<File> {
+public class MountDriver<H> extends AbstractFSDriver<H> {
 
   /** . */
-  private final File root;
+  private final Path path;
 
-  public FileDriver(File root) {
-    if (root == null) {
+  /** . */
+  private final FSDriver<H> driver;
+
+  public MountDriver(Path path, FSDriver<H> driver) {
+    if (path == null) {
       throw new NullPointerException();
+    }
+    if (driver == null) {
+      throw new NullPointerException();
+    }
+    if (!path.isDir()) {
+      throw new IllegalArgumentException("Mount path must be a dir");
     }
 
     //
-    this.root = root;
+    this.path = path;
+    this.driver = driver;
   }
 
-  public File root() throws IOException {
+  public H root() throws IOException {
+    H root = driver.root();
+    for (String name : path) {
+      root = driver.child(root, name);
+      if (root == null) {
+        break;
+      }
+    }
     return root;
   }
 
-  public String name(File handle) throws IOException {
-    return handle.getName();
+  public String name(H handle) throws IOException {
+    return driver.name(handle);
   }
 
-  public boolean isDir(File handle) throws IOException {
-    return handle.isDirectory();
+  public boolean isDir(H handle) throws IOException {
+    return driver.isDir(handle);
   }
 
-  public Iterable<File> children(File handle) throws IOException {
-    return Arrays.asList(handle.listFiles());
+  public Iterable<H> children(H handle) throws IOException {
+    return driver.children(handle);
   }
 
-  public URL toURL(File handle) throws IOException {
-    return handle.toURI().toURL();
+  public URL toURL(H handle) throws IOException {
+    return driver.toURL(handle);
   }
 }

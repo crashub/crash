@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,6 +46,13 @@ public class FS {
 
   public File get(Path path) throws IOException {
     return new File(this, path);
+  }
+
+  public static FSDriver getDriver(URLClassLoader cl) throws IOException, URISyntaxException {
+    if (cl == null) {
+      throw new NullPointerException();
+    }
+    return null;
   }
 
   public static FSDriver getDriver(Class<?> clazz) throws IOException, URISyntaxException {

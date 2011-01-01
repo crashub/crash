@@ -43,6 +43,8 @@ public interface FSDriver<H> {
 
   boolean isDir(H handle) throws IOException;
 
+  H child(H handle, String name) throws IOException;
+
   Iterable<H> children(H handle) throws IOException;
 
   URL toURL(H handle) throws IOException;

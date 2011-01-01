@@ -19,7 +19,7 @@
 
 package org.crsh.vfs.spi.jarurl;
 
-import org.crsh.vfs.spi.FSDriver;
+import org.crsh.vfs.spi.AbstractFSDriver;
 
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -34,7 +34,7 @@ import java.util.jar.JarFile;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class JarURLDriver implements FSDriver<Handle> {
+public class JarURLDriver extends AbstractFSDriver<Handle> {
 
   /** . */
   final Handle root;

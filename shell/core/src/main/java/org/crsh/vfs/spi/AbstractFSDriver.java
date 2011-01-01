@@ -17,50 +17,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.vfs.spi.file;
+package org.crsh.vfs.spi;
 
-import org.crsh.vfs.spi.AbstractFSDriver;
-
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class FileDriver extends AbstractFSDriver<File> {
+public abstract class AbstractFSDriver<H> implements FSDriver<H> {
 
-  /** . */
-  private final File root;
-
-  public FileDriver(File root) {
-    if (root == null) {
+  public H child(H handle, String name) throws IOException {
+    if (handle == null) {
       throw new NullPointerException();
     }
-
-    //
-    this.root = root;
-  }
-
-  public File root() throws IOException {
-    return root;
-  }
-
-  public String name(File handle) throws IOException {
-    return handle.getName();
-  }
-
-  public boolean isDir(File handle) throws IOException {
-    return handle.isDirectory();
-  }
-
-  public Iterable<File> children(File handle) throws IOException {
-    return Arrays.asList(handle.listFiles());
-  }
-
-  public URL toURL(File handle) throws IOException {
-    return handle.toURI().toURL();
+    if (name == null) {
+      throw new NullPointerException();
+    }
+    for (H child : children(handle)) {
+      String childName = name(child);
+      if (childName.equals(name)) {
+        return child;
+      }
+    }
+    return null;
   }
 }

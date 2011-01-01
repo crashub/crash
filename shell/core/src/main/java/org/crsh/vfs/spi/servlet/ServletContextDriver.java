@@ -19,7 +19,7 @@
 
 package org.crsh.vfs.spi.servlet;
 
-import org.crsh.vfs.spi.FSDriver;
+import org.crsh.vfs.spi.AbstractFSDriver;
 
 import javax.servlet.ServletContext;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ServletContextDriver implements FSDriver<String> {
+public class ServletContextDriver extends AbstractFSDriver<String> {
 
   /** A valid path. */
   private static final Pattern pathPattern = Pattern.compile("^/.*(?<=/)([^/]+)(/)?$");
