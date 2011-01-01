@@ -18,6 +18,8 @@
  */
 package org.crsh.shell;
 
+import org.crsh.vfs.Resource;
+
 import java.util.List;
 
 /**

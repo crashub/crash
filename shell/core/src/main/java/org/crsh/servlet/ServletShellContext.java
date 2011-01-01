@@ -18,7 +18,7 @@
  */
 package org.crsh.servlet;
 
-import org.crsh.shell.Resource;
+import org.crsh.vfs.Resource;
 import org.crsh.shell.ResourceKind;
 import org.crsh.shell.ShellContext;
 import org.crsh.vfs.FS;
@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -113,8 +112,7 @@ public class ServletShellContext implements ShellContext {
             for (File path : dirs) {
               File f = path.child(resourceId + ".groovy", false);
               if (f != null) {
-                URL url = f.getURL();
-                Resource sub = Resource.create(url);
+                Resource sub = f.getResource();
                 if (sub != null) {
                   sb.append(sub.getContent());
                   timestamp = Math.max(timestamp, sub.getTimestamp());
@@ -129,10 +127,7 @@ public class ServletShellContext implements ShellContext {
           for (File path : dirs) {
             File f = path.child(resourceId + ".groovy", false);
             if (f != null) {
-              URL url = f.getURL();
-              if (url != null) {
-                return Resource.create(url);
-              }
+              return f.getResource();
             }
           }
           break;
@@ -141,8 +136,7 @@ public class ServletShellContext implements ShellContext {
             File telnet = vfs.get(Path.get("/telnet/telnet.properties"));
             if (telnet != null) {
               if (telnet != null) {
-                URL url = telnet.getURL();
-                return Resource.create(url);
+                return telnet.getResource();
               }
             }
           }

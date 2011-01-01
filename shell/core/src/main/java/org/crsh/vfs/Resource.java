@@ -17,39 +17,16 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.vfs;
 
-import org.crsh.util.IO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public class Resource {
-
-  /** . */
-  private static final Logger log = LoggerFactory.getLogger(Resource.class);
-
-  public static Resource create(URL url) {
-    try {
-      URLConnection conn = url.openConnection();
-      long timestamp = conn.getLastModified();
-      InputStream in = url.openStream();
-      String content = IO.readAsUTF8(in);
-      return new Resource(content, timestamp);
-    }
-    catch (IOException e) {
-      log.warn("Could not obtain resource " + url, e);
-      return null;
-    }
-  }
 
   /** . */
   private final String content;

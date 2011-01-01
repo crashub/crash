@@ -19,8 +19,14 @@
 
 package org.crsh.vfs;
 
+import org.crsh.util.IO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -32,6 +38,9 @@ import java.util.List;
  * @version $Revision$
  */
 public final class File {
+
+  /** . */
+  private static final Logger log = LoggerFactory.getLogger(Resource.class);
 
   /** . */
   private final FS fs;
@@ -61,6 +70,21 @@ public final class File {
 
   public String getName() {
     return path.getName();
+  }
+
+  public Resource getResource() throws IOException {
+    try {
+      URL url = getURL();
+      URLConnection conn = url.openConnection();
+      long timestamp = conn.getLastModified();
+      InputStream in = url.openStream();
+      String content = IO.readAsUTF8(in);
+      return new Resource(content, timestamp);
+    }
+    catch (IOException e) {
+      log.warn("Could not obtain resource " + path, e);
+      return null;
+    }
   }
 
   public URL getURL() throws IOException {

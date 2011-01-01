@@ -26,6 +26,7 @@ import org.crsh.command.ShellCommand;
 import org.crsh.shell.*;
 import org.crsh.util.TimestampedObject;
 import org.crsh.util.Utils;
+import org.crsh.vfs.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
