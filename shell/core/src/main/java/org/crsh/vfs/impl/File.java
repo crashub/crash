@@ -134,4 +134,9 @@ public final class File {
     }
     return handles;
   }
+
+  @Override
+  public String toString() {
+    return "File[path=" + path.getValue() + "]";
+  }
 }

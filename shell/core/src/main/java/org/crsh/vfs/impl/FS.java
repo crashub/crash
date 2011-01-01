@@ -20,8 +20,13 @@
 package org.crsh.vfs.impl;
 
 import org.crsh.vfs.spi.FSDriver;
+import org.crsh.vfs.spi.file.FileDriver;
+import org.crsh.vfs.spi.jarurl.JarURLDriver;
 
 import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,8 +47,19 @@ public class FS {
     return new File(this, path);
   }
 
-
-
-
-
+  public static FSDriver getDriver(Class<?> clazz) throws IOException, URISyntaxException {
+    if (clazz == null) {
+      throw new NullPointerException();
+    }
+    URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
+    String protocol = url.getProtocol();
+    if (protocol.equals("file")) {
+      return new FileDriver(new java.io.File(url.toURI()));
+    } else if (protocol.equals("jar")) {
+      JarURLConnection conn = (JarURLConnection)url.openConnection();
+      return new JarURLDriver(conn);
+    } else {
+      throw new IllegalArgumentException("Protocol " + protocol + " not supported");
+    }
+  }
 }
