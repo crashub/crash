@@ -60,9 +60,9 @@ public class AsyncShellTestCase extends TestCase {
     //
     executor = Executors.newSingleThreadExecutor();
     context = new TestShellContext(
-      "groovy/commands/base/",
-      "groovy/commands/jcr/",
-      "groovy/commands/test/");
+      "crash/commands/base/",
+      "crash/commands/jcr/",
+      "crash/commands/test/");
     builder = new ShellFactory(context);
   }
 

@@ -57,9 +57,9 @@ public abstract class AbstractCommandTestCase extends TestCase {
 
     //
     ShellFactory builder = new ShellFactory(new TestShellContext(
-      "groovy/commands/base/",
-      "groovy/commands/jcr/",
-      "groovy/commands/test/"
+      "crash/commands/base/",
+      "crash/commands/jcr/",
+      "crash/commands/test/"
     ));
 
     //

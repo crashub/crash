@@ -35,9 +35,9 @@ public class TelnetTestCase extends TestCase {
   protected void setUp() throws Exception {
 
     TelnetLifeCycle lf = new TelnetLifeCycle(new TestShellContext(
-      "groovy/commands/base/",
-      "groovy/commands/jcr/",
-      "groovy/commands/test/"));
+      "crash/commands/base/",
+      "crash/commands/jcr/",
+      "crash/commands/test/"));
     lf.doInit();
 
     this.lf = lf;
