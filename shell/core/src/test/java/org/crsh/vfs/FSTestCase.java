@@ -29,7 +29,7 @@ import java.util.Iterator;
  */
 public class FSTestCase extends TestCase {
   public void testFoo() throws Exception {
-    FS fs = new FS(FS.getDriver(FSTestCase.class));
+    FS fs = new FS().mount(FSTestCase.class);
     File root = fs.get(Path.get("/"));
     File org = root.child("org", true);
     assertEquals("org", org.getName());

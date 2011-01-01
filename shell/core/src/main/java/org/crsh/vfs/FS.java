@@ -22,13 +22,14 @@ package org.crsh.vfs;
 import org.crsh.vfs.spi.FSDriver;
 import org.crsh.vfs.spi.file.FileDriver;
 import org.crsh.vfs.spi.jarurl.JarURLDriver;
+import org.crsh.vfs.spi.mount.MountDriver;
 
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -40,34 +41,61 @@ public class FS {
   /** . */
   final List<Mount<?>> mounts;
 
-  public FS(FSDriver<?> driver) {
-    this.mounts = Arrays.<Mount<?>>asList(Mount.wrap(driver));
+  public FS(FSDriver<?>... drivers) {
+    List<Mount<?>> mounts = new ArrayList<Mount<?>>();
+    for (FSDriver<?> driver : drivers) {
+      mounts.add(Mount.wrap(driver));
+    }
+    this.mounts = mounts;
   }
 
   public File get(Path path) throws IOException {
     return new File(this, path);
   }
 
-  public static FSDriver getDriver(URLClassLoader cl) throws IOException, URISyntaxException {
+  public FS mount(ClassLoader cl, Path path) throws IOException, URISyntaxException {
     if (cl == null) {
       throw new NullPointerException();
     }
-    return null;
+    if (path == null) {
+      throw new NullPointerException();
+    }
+    if (path.isDir()) {
+      throw new IllegalArgumentException("Must be a dir");
+    }
+    Enumeration<URL> en = cl.getResources(path.getValue());
+    while (en.hasMoreElements()) {
+      URL url = en.nextElement();
+      String protocol = url.getProtocol();
+      if ("file".equals(protocol)) {
+        java.io.File root = new java.io.File(url.toURI());
+        mounts.add(Mount.wrap(new FileDriver(root)));
+      } else if ("jar".equals(protocol)) {
+        JarURLConnection conn = (JarURLConnection)url.openConnection();
+        JarURLDriver jarDriver = new JarURLDriver(conn);
+        MountDriver<?> mountDriver = new MountDriver(path, jarDriver);
+        mounts.add(Mount.wrap(mountDriver));
+      }
+    }
+    return this;
   }
 
-  public static FSDriver getDriver(Class<?> clazz) throws IOException, URISyntaxException {
+  public FS mount(Class<?> clazz) throws IOException, URISyntaxException {
     if (clazz == null) {
       throw new NullPointerException();
     }
     URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
     String protocol = url.getProtocol();
+    FSDriver<?> driver;
     if (protocol.equals("file")) {
-      return new FileDriver(new java.io.File(url.toURI()));
+      driver = new FileDriver(new java.io.File(url.toURI()));
     } else if (protocol.equals("jar")) {
       JarURLConnection conn = (JarURLConnection)url.openConnection();
-      return new JarURLDriver(conn);
+      driver = new JarURLDriver(conn);
     } else {
       throw new IllegalArgumentException("Protocol " + protocol + " not supported");
     }
+    mounts.add(Mount.wrap(driver));
+    return this;
   }
 }

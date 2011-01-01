@@ -25,9 +25,12 @@ import org.crsh.shell.ShellContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -43,6 +46,19 @@ public class TestShellContext implements ShellContext {
   private List<String> scriptPaths;
 
   public TestShellContext(String... scriptPaths) {
+
+    try {
+      Enumeration<URL> en = ((URLClassLoader)Thread.currentThread().getContextClassLoader()).findResources("/");
+      System.out.println("Enumerating");
+      while (en.hasMoreElements()) {
+        URL url = en.nextElement();
+        System.out.println("url = " + url);
+      }
+    }
+    catch (IOException e) {
+      throw new AssertionError(e);
+    }
+
     this.scriptPaths = new ArrayList<String>(Arrays.asList(scriptPaths));
   }
 
