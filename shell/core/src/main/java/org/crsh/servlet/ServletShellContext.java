@@ -24,16 +24,21 @@ import org.crsh.shell.ShellContext;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.File;
-import org.crsh.vfs.spi.servlet.ServletContextDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,9 +52,6 @@ public class ServletShellContext implements ShellContext {
   private static final Logger log = LoggerFactory.getLogger(ServletShellContext.class);
 
   /** . */
-  private final ServletContext servletContext;
-
-  /** . */
   private final ClassLoader loader;
 
   /** . */
@@ -61,10 +63,7 @@ public class ServletShellContext implements ShellContext {
   /** . */
   private volatile List<File> dirs;
 
-  public ServletShellContext(ServletContext servletContext, ClassLoader loader) {
-    if (servletContext == null) {
-      throw new NullPointerException();
-    }
+  public ServletShellContext(FS fs, ClassLoader loader) {
     if (loader == null) {
       throw new NullPointerException();
     }
@@ -89,18 +88,13 @@ public class ServletShellContext implements ShellContext {
     }
 
     //
-    this.servletContext = servletContext;
     this.loader = loader;
     this.version = version;
     this.dirs = Collections.emptyList();
-    this.vfs = new FS(new ServletContextDriver(servletContext, "/WEB-INF/"));
+    this.vfs = fs;
   }
 
   private final FS vfs;
-
-  public ServletContext getServletContext() {
-    return servletContext;
-  }
 
   public String getVersion() {
     return version;

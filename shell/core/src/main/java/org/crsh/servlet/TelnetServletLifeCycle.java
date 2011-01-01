@@ -19,8 +19,9 @@
 
 package org.crsh.servlet;
 
-import org.crsh.shell.ShellContext;
 import org.crsh.term.spi.telnet.TelnetLifeCycle;
+import org.crsh.vfs.FS;
+import org.crsh.vfs.spi.servlet.ServletContextDriver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -40,7 +41,8 @@ public class TelnetServletLifeCycle implements ServletContextListener {
 
   public void contextInitialized(ServletContextEvent sce) {
     ServletContext sc = sce.getServletContext();
-    ServletShellContext shellContext = new ServletShellContext(sc, Thread.currentThread().getContextClassLoader());
+    FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/"));
+    ServletShellContext shellContext = new ServletShellContext(fs, Thread.currentThread().getContextClassLoader());
     TelnetLifeCycle lifeCycle = new TelnetLifeCycle(shellContext);
     this.lifeCycle = lifeCycle;
     this.shellContext = shellContext;

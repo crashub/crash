@@ -20,6 +20,8 @@
 package org.crsh.servlet;
 
 import org.crsh.term.spi.sshd.SSHLifeCycle;
+import org.crsh.vfs.FS;
+import org.crsh.vfs.spi.servlet.ServletContextDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +59,9 @@ public class SSHServletLifeCycle implements ServletContextListener {
       log.debug("Going to use the key path at " + keyPath);
     }
 
-    ServletShellContext shellContext = new ServletShellContext(sc, Thread.currentThread().getContextClassLoader());
+    //
+    FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/"));
+    ServletShellContext shellContext = new ServletShellContext(fs, Thread.currentThread().getContextClassLoader());
     SSHLifeCycle lifeCycle = new SSHLifeCycle(shellContext);
 
     //
