@@ -17,50 +17,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.vfs.impl;
-
-import org.crsh.vfs.spi.FSDriver;
-
-import java.io.IOException;
+package org.crsh.vfs;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class Mount<H> {
-
-  static <H> Mount<H> wrap(FSDriver<H> driver) {
-    return new Mount<H>(driver);
-  }
+class Key {
 
   /** . */
-  private final FSDriver<H> driver;
+  final String name;
 
-  Mount(FSDriver<H> driver) {
-    this.driver = driver;
+  /** . */
+  final boolean dir;
+
+  Key(String name, boolean dir) {
+    if (name == null) {
+      throw new NullPointerException();
+    }
+    this.name = name;
+    this.dir = dir;
   }
 
-  Handle<H> getHandle(Path path) throws IOException {
-    H current = driver.root();
-    for (String name : path) {
-      H next = null;
-      for (H child : driver.children(current)) {
-        String childName = driver.name(child);
-        if (childName.equals(name)) {
-          next = child;
-          break;
-        }
-      }
-      if (next == null) {
-        return null;
-      } else {
-        current = next;
-      }
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
     }
-    if (path.isDir() == driver.isDir(current)) {
-      return new Handle<H>(driver, current);
-    } else {
-      return null;
+    if (obj instanceof Key) {
+      Key that = (Key)obj;
+      return name.equals(that.name) && dir == that.dir;
     }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode() ^ (dir ? 0xFFFFFFFF : 0);
   }
 }

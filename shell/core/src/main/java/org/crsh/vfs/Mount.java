@@ -17,42 +17,50 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.vfs.impl;
+package org.crsh.vfs;
+
+import org.crsh.vfs.spi.FSDriver;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class Key {
+class Mount<H> {
 
-  /** . */
-  final String name;
-
-  /** . */
-  final boolean dir;
-
-  Key(String name, boolean dir) {
-    if (name == null) {
-      throw new NullPointerException();
-    }
-    this.name = name;
-    this.dir = dir;
+  static <H> Mount<H> wrap(FSDriver<H> driver) {
+    return new Mount<H>(driver);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj instanceof Key) {
-      Key that = (Key)obj;
-      return name.equals(that.name) && dir == that.dir;
-    }
-    return false;
+  /** . */
+  private final FSDriver<H> driver;
+
+  Mount(FSDriver<H> driver) {
+    this.driver = driver;
   }
 
-  @Override
-  public int hashCode() {
-    return name.hashCode() ^ (dir ? 0xFFFFFFFF : 0);
+  Handle<H> getHandle(Path path) throws IOException {
+    H current = driver.root();
+    for (String name : path) {
+      H next = null;
+      for (H child : driver.children(current)) {
+        String childName = driver.name(child);
+        if (childName.equals(name)) {
+          next = child;
+          break;
+        }
+      }
+      if (next == null) {
+        return null;
+      } else {
+        current = next;
+      }
+    }
+    if (path.isDir() == driver.isDir(current)) {
+      return new Handle<H>(driver, current);
+    } else {
+      return null;
+    }
   }
 }

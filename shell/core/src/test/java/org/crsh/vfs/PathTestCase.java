@@ -20,7 +20,6 @@
 package org.crsh.vfs;
 
 import junit.framework.TestCase;
-import org.crsh.vfs.impl.Path;
 
 import java.util.Iterator;
 

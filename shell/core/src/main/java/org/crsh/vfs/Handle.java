@@ -17,14 +17,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.vfs.impl;
+package org.crsh.vfs;
 
 import org.crsh.vfs.spi.FSDriver;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
