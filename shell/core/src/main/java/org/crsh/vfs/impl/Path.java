@@ -124,6 +124,10 @@ public final class Path implements Iterable<String> {
     };
   }
 
+  public int getSize() {
+    return names.length;
+  }
+
   public boolean isDir() {
     return dir;
   }
