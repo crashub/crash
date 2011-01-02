@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.plugin.web;
+package org.crsh.plugin;
 
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginLifeCycle;
