@@ -20,9 +20,9 @@
 package org.crsh.term.spi.telnet;
 
 import net.wimpi.telnetd.TelnetD;
-import org.crsh.shell.ResourceKind;
+import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.ResourceKind;
 import org.crsh.term.CRaSHLifeCycle;
-import org.crsh.shell.ShellContext;
 
 import java.io.ByteArrayInputStream;
 import java.util.Properties;
@@ -39,7 +39,7 @@ public class TelnetLifeCycle extends CRaSHLifeCycle {
   /** . */
   static TelnetLifeCycle instance;
 
-  public TelnetLifeCycle(ShellContext context) {
+  public TelnetLifeCycle(PluginContext context) {
     super(context);
   }
 

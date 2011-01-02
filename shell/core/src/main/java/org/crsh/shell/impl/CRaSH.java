@@ -23,6 +23,8 @@ import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
+import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.*;
 import org.crsh.util.TimestampedObject;
 import org.crsh.util.Utils;
@@ -48,7 +50,7 @@ public class CRaSH implements Shell {
   private final GroovyShell groovyShell;
 
   /** . */
-  private final ShellContext context;
+  private final PluginContext context;
 
   /** . */
   private final Map<String, TimestampedObject<Class<? extends ShellCommand>>> commands;
@@ -109,7 +111,7 @@ public class CRaSH implements Shell {
     attributes.put(name, value);
   }
 
-  public CRaSH(final ShellContext context) {
+  public CRaSH(final PluginContext context) {
     HashMap<String, Object> attributes = new HashMap<String, Object>();
 
     // Set context available to scripts

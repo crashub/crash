@@ -18,6 +18,7 @@
  */
 package org.crsh.shell;
 
+import org.crsh.plugin.PluginContext;
 import org.crsh.shell.impl.CRaSH;
 
 /**
@@ -27,9 +28,9 @@ import org.crsh.shell.impl.CRaSH;
 public class ShellFactory {
 
   /** . */
-  private final ShellContext context;
+  private final PluginContext context;
 
-  public ShellFactory(ShellContext context) {
+  public ShellFactory(PluginContext context) {
     if (context == null) {
       throw new NullPointerException();
     }

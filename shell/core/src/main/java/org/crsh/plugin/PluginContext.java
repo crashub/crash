@@ -16,12 +16,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.plugin;
 
-import org.crsh.vfs.Resource;
 import org.crsh.vfs.FS;
-import org.crsh.vfs.Path;
 import org.crsh.vfs.File;
+import org.crsh.vfs.Path;
+import org.crsh.vfs.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +40,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * The plugin context.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class BaseShellContext implements ShellContext {
+public class PluginContext {
 
   /** . */
   private static final Logger log = LoggerFactory.getLogger(BaseShellContext.class);
@@ -60,7 +62,7 @@ public class BaseShellContext implements ShellContext {
   /** . */
   private volatile List<File> dirs;
 
-  public BaseShellContext(FS fs, ClassLoader loader) {
+  public PluginContext(FS fs, ClassLoader loader) {
     if (loader == null) {
       throw new NullPointerException();
     }
@@ -218,4 +220,5 @@ public class BaseShellContext implements ShellContext {
       log.warn("Attempt to stop when stopped");
     }
   }
+
 }

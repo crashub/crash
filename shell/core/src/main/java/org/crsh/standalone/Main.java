@@ -20,11 +20,7 @@
 package org.crsh.standalone;
 
 import org.crsh.Processor;
-import org.crsh.shell.BaseShellContext;
-import org.crsh.shell.Shell;
-import org.crsh.shell.ShellProcess;
-import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.ShellResponse;
+import org.crsh.plugin.BaseShellContext;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
@@ -32,9 +28,6 @@ import org.crsh.term.spi.jline.JLineIO;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.File;
 import org.crsh.vfs.Path;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>

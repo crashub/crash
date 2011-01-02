@@ -16,31 +16,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.plugin;
 
-import org.crsh.vfs.Resource;
-
-import java.util.List;
+import org.crsh.vfs.FS;
 
 /**
- * The shell context.
- *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellContext {
+public class BaseShellContext extends PluginContext {
 
-  /**
-   * Returns the version.
-   *
-   * @return the version
-   */
-  String getVersion();
-
-  Resource loadResource(String resourceId, ResourceKind resourceKind);
-
-  List<String> listResourceId(ResourceKind kind);
-
-  ClassLoader getLoader();
-
+  public BaseShellContext(FS fs, ClassLoader loader) {
+    super(fs, loader);
+  }
 }

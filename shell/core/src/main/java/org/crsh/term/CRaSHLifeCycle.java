@@ -18,8 +18,8 @@
  */
 package org.crsh.term;
 
+import org.crsh.plugin.PluginContext;
 import org.crsh.shell.ShellFactory;
-import org.crsh.shell.ShellContext;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,12 +34,12 @@ public abstract class CRaSHLifeCycle {
   private ShellFactory builder;
 
   /** . */
-  private final ShellContext context;
+  private final PluginContext context;
 
   /** . */
   private ExecutorService executor;
 
-  protected CRaSHLifeCycle(ShellContext context) {
+  protected CRaSHLifeCycle(PluginContext context) {
     if (context == null) {
       throw new NullPointerException();
     }
@@ -83,7 +83,7 @@ public abstract class CRaSHLifeCycle {
     return builder;
   }
 
-  public final ShellContext getShellContext() {
+  public final PluginContext getShellContext() {
     return context;
   }
 

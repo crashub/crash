@@ -19,7 +19,7 @@
 
 package org.crsh.servlet;
 
-import org.crsh.shell.BaseShellContext;
+import org.crsh.plugin.BaseShellContext;
 import org.crsh.term.spi.sshd.SSHLifeCycle;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
