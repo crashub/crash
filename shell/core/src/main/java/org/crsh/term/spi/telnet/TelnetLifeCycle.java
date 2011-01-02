@@ -23,6 +23,8 @@ import net.wimpi.telnetd.TelnetD;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.term.CRaSHLifeCycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.util.Properties;
@@ -34,13 +36,27 @@ import java.util.Properties;
 public class TelnetLifeCycle extends CRaSHLifeCycle {
 
   /** . */
+  private final Logger log = LoggerFactory.getLogger(TelnetLifeCycle.class);
+
+  /** . */
   private TelnetD daemon;
 
   /** . */
   static TelnetLifeCycle instance;
 
+  /** . */
+  private Integer port;
+
   public TelnetLifeCycle(PluginContext context) {
     super(context);
+  }
+
+  public Integer getPort() {
+    return port;
+  }
+
+  public void setPort(Integer port) {
+    this.port = port;
   }
 
   @Override
@@ -52,6 +68,16 @@ public class TelnetLifeCycle extends CRaSHLifeCycle {
     //
     String s = getShellContext().loadResource("telnet.properties", ResourceKind.CONFIG).getContent();
     Properties props = new Properties();
+
+    //
+    if (port != null) {
+      log.debug("Explicit telnet port configuration with value " + port);
+      props.put("std.port", port.toString());
+    } else {
+      log.debug("Use default telnet port configuration " + props.getProperty("std.port"));
+    }
+
+    //
     props.load(new ByteArrayInputStream(s.getBytes("ISO-8859-1")));
     TelnetD daemon = TelnetD.createTelnetD(props);
     daemon.start();

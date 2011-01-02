@@ -21,6 +21,8 @@ package org.crsh.term.spi.telnet;
 
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.Property;
+import org.crsh.plugin.PropertyDescriptor;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -34,15 +36,25 @@ public class TelnetPlugin extends CRaSHPlugin {
   @Override
   public void init() {
     PluginContext context = getContext();
+
+    //
     TelnetLifeCycle lifeCycle = new TelnetLifeCycle(context);
-    this.lifeCycle = lifeCycle;
+    Property<Integer> portProp = context.getProperty(PropertyDescriptor.TELNET_PORT);
+    if (portProp != null) {
+      lifeCycle.setPort(portProp.getValue());
+    }
 
     //
     lifeCycle.init();
+
+    //
+    this.lifeCycle = lifeCycle;
   }
 
   @Override
   public void destroy() {
-    lifeCycle.destroy();
+    if (lifeCycle != null) {
+      lifeCycle.destroy();
+    }
   }
 }
