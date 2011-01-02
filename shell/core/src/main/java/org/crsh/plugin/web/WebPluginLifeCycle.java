@@ -21,11 +21,14 @@ package org.crsh.plugin.web;
 
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginLifeCycle;
+import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.Enumeration;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -36,10 +39,25 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
   public void contextInitialized(ServletContextEvent sce) {
 
     //
-    FS fs = new FS(new ServletContextDriver(sce.getServletContext(), "/WEB-INF/crash/"));
+    ServletContext sc = sce.getServletContext();
+
+    //
+    FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/crash/"));
 
     //
     PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
+
+    // Configure from web.xml
+    Enumeration<String> names = sc.getInitParameterNames();
+    while (names.hasMoreElements()) {
+      String name = names.nextElement();
+      if (name.startsWith("crash.")) {
+        String value = sc.getInitParameter(name).trim();
+        String key = name.substring("crash.".length());
+        PropertyDescriptor<?> desc = PropertyDescriptor.ALL.get(key);
+        context.setProperty(desc, value);
+      }
+    }
 
     //
     start(context);

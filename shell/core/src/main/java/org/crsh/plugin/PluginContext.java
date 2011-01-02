@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -61,6 +63,9 @@ public class PluginContext {
 
   /** . */
   private volatile List<File> dirs;
+
+  /** . */
+  private final Map<PropertyDescriptor<?>, Property<?>> properties;
 
   /**
    * Create a new plugin context.
@@ -101,15 +106,72 @@ public class PluginContext {
     this.version = version;
     this.dirs = Collections.emptyList();
     this.vfs = fs;
+    this.properties = new HashMap<PropertyDescriptor<?>, Property<?>>();
   }
 
   private final FS vfs;
 
-  public String getVersion() {
+  public final String getVersion() {
     return version;
   }
 
-  public Resource loadResource(String resourceId, ResourceKind resourceKind) {
+  /**
+   * Returns a context property or null if it cannot be found.
+   *
+   * @param desc the property descriptor
+   * @param <T> the property parameter type
+   * @return the property
+   * @throws NullPointerException if the descriptor argument is null
+   */
+  public final <T> Property<T> getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
+    if (desc == null) {
+      throw new NullPointerException();
+    }
+    return (Property<T>)properties.get(desc);
+  }
+
+  /**
+   * Set a context property to a new value. If the provided value is null, then the property is removed.
+   *
+   * @param desc the property descriptor
+   * @param value the property value
+   * @param <T> the property parameter type
+   * @throws NullPointerException if the descriptor argument is null
+   */
+  public final <T> void setProperty(PropertyDescriptor<T> desc, T value) throws NullPointerException {
+    if (desc == null) {
+      throw new NullPointerException();
+    }
+    if (value == null) {
+      properties.remove(desc);
+    } else {
+      Property<T> property = new Property<T>(desc, value);
+      properties.put(desc, property);
+    }
+  }
+
+  /**
+   * Set a context property to a new value. If the provided value is null, then the property is removed.
+   *
+   * @param desc the property descriptor
+   * @param value the property value
+   * @param <T> the property parameter type
+   * @throws NullPointerException if the descriptor argument is null
+   * @throws IllegalArgumentException if the string value cannot be converted to the property type
+   */
+  public final <T> void setProperty(PropertyDescriptor<T> desc, String value) throws NullPointerException, IllegalArgumentException {
+    if (desc == null) {
+      throw new NullPointerException();
+    }
+    if (value == null) {
+      properties.remove(desc);
+    } else {
+      Property<T> property = desc.toProperty(value);
+      properties.put(desc, property);
+    }
+  }
+
+  public final Resource loadResource(String resourceId, ResourceKind resourceKind) {
     Resource res = null;
     try {
 
@@ -168,7 +230,7 @@ public class PluginContext {
 
   private final Pattern p = Pattern.compile("(.+)\\.groovy");
 
-  public List<String> listResourceId(ResourceKind kind) {
+  public final List<String> listResourceId(ResourceKind kind) {
     switch (kind) {
       case SCRIPT:
         SortedSet<String> all = new TreeSet<String>();
@@ -194,11 +256,11 @@ public class PluginContext {
     }
   }
 
-  public ClassLoader getLoader() {
+  public final ClassLoader getLoader() {
     return loader;
   }
 
-  protected void refresh() {
+  protected final void refresh() {
     try {
       File commands = vfs.get(Path.get("/commands/"));
       List<File> newDirs = new ArrayList<File>();
@@ -215,7 +277,7 @@ public class PluginContext {
     }
   }
 
-  public synchronized  void start() {
+  public final synchronized  void start() {
     if (executor == null) {
       executor =  new ScheduledThreadPoolExecutor(1);
       executor.scheduleWithFixedDelay(new Runnable() {
@@ -229,7 +291,7 @@ public class PluginContext {
     }
   }
 
-  public synchronized void stop() {
+  public final synchronized void stop() {
     if (executor != null) {
       ScheduledExecutorService tmp = executor;
       executor = null;
