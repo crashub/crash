@@ -19,6 +19,8 @@
 
 package org.crsh.plugin;
 
+import org.crsh.config.ConfigProperty;
+import org.crsh.config.PropertyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,18 @@ public class PluginLifeCycle implements ServletContextListener {
   private PluginManager<CRaSHPlugin> manager;
 
   public void contextInitialized(ServletContextEvent sce) {
+
+/*
+    for (PropertyInfo<?> propertyInfo : PropertyInfo.ALL) {
+      String value = sce.getServletContext().getInitParameter(propertyInfo.name);
+      if (value != null) {
+        ConfigProperty<?> property = propertyInfo.toProperty(value);
+      }
+
+    }
+*/
+
+    //
     manager = new PluginManager<CRaSHPlugin>(Thread.currentThread().getContextClassLoader(), CRaSHPlugin.class);
 
     // Load plugins

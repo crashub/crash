@@ -42,9 +42,9 @@ public class Config {
 
     //
     if (value != null) {
-      properties.put(key.key, new ConfigProperty<T>(key, value));
+      properties.put(key.name, new ConfigProperty<T>(key, value));
     } else {
-      properties.remove(key.key);
+      properties.remove(key.name);
     }
   }
 
