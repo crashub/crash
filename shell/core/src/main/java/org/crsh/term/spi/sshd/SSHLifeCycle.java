@@ -78,8 +78,7 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
   @Override
   protected void doInit() {
     try {
-      ClassLoader pluginCL = getShellContext().getLoader();
-      PluginManager<CommandPlugin> commandPlugins = new PluginManager<CommandPlugin>(pluginCL, CommandPlugin.class);
+      PluginManager<CommandPlugin> commandPlugins = new PluginManager<CommandPlugin>(getShellContext(), CommandPlugin.class);
 
       //
       SshServer server = SshServer.setUpDefaultServer();

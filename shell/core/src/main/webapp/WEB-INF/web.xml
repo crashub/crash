@@ -53,7 +53,7 @@
   </listener>
 
   <listener>
-    <listener-class>org.crsh.plugin.PluginLifeCycle</listener-class>
+    <listener-class>org.crsh.plugin.web.WebPluginLifeCycle</listener-class>
   </listener>
 
 </web-app>

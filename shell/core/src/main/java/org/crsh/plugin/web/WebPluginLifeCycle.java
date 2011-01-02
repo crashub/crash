@@ -17,31 +17,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.plugin;
+package org.crsh.plugin.web;
+
+import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.PluginLifeCycle;
+import org.crsh.vfs.FS;
+import org.crsh.vfs.spi.servlet.ServletContextDriver;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CRaSHPlugin {
+public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContextListener {
 
-  /** . */
-  PluginContext context;
+  public void contextInitialized(ServletContextEvent sce) {
 
-  protected final PluginContext getContext() {
-    return context;
+    //
+    FS fs = new FS(new ServletContextDriver(sce.getServletContext(), "/WEB-INF/crash/"));
+
+    //
+    PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
+
+    //
+    start(context);
   }
 
-  public void init() {
+  public void contextDestroyed(ServletContextEvent sce) {
+    stop();
   }
-
-  public void start() {
-  }
-
-  public void stop() {
-  }
-
-  public void destroy() {
-  }
-
 }

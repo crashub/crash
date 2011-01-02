@@ -38,7 +38,7 @@ public class PluginManager<P extends CRaSHPlugin> {
   private final Logger log = LoggerFactory.getLogger(PluginManager.class);
 
   /** . */
-  private final ClassLoader classLoader;
+  private final PluginContext context;
 
   /** . */
   private List<P> plugins;
@@ -46,8 +46,8 @@ public class PluginManager<P extends CRaSHPlugin> {
   /** . */
   private final Class<P> pluginType;
 
-  public PluginManager(ClassLoader classLoader, Class<P> pluginType) {
-    this.classLoader = classLoader;
+  public PluginManager(PluginContext context, Class<P> pluginType) {
+    this.context = context;
     this.pluginType = pluginType;
     this.plugins = null;
   }
@@ -58,7 +58,7 @@ public class PluginManager<P extends CRaSHPlugin> {
       //
       ArrayList<P> plugins = new ArrayList<P>();
       try {
-        ServiceLoader<P> loader = ServiceLoader.load(pluginType, classLoader);
+        ServiceLoader<P> loader = ServiceLoader.load(pluginType, context.getLoader());
         for (P plugin : loader) {
           log.info("Loaded plugin " + plugin);
           plugins.add(plugin);
@@ -70,7 +70,14 @@ public class PluginManager<P extends CRaSHPlugin> {
 
       //
       for (Iterator<P> i = plugins.iterator();i.hasNext();) {
+
+        //
         P plugin = i.next();
+
+        //
+        plugin.context = context;
+
+        //
         try {
           plugin.init();
           log.info("Initialized plugin " + plugin);

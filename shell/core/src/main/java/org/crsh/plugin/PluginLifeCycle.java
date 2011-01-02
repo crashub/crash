@@ -19,27 +19,26 @@
 
 package org.crsh.plugin;
 
-import org.crsh.config.ConfigProperty;
-import org.crsh.config.PropertyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class PluginLifeCycle implements ServletContextListener {
+public abstract class PluginLifeCycle {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(PluginLifeCycle.class);
+  protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   private PluginManager<CRaSHPlugin> manager;
 
-  public void contextInitialized(ServletContextEvent sce) {
+  /** . */
+  private PluginContext context;
+
+  public final void start(PluginContext context) {
+    this.context = context;
 
 /*
     for (PropertyInfo<?> propertyInfo : PropertyInfo.ALL) {
@@ -52,12 +51,16 @@ public class PluginLifeCycle implements ServletContextListener {
 */
 
     //
-    manager = new PluginManager<CRaSHPlugin>(Thread.currentThread().getContextClassLoader(), CRaSHPlugin.class);
+    manager = new PluginManager<CRaSHPlugin>(context, CRaSHPlugin.class);
 
     // Load plugins
     manager.getPlugins();
+
+    //
+    context.start();
   }
 
-  public void contextDestroyed(ServletContextEvent sce) {
+  public final void stop() {
+    context.stop();
   }
 }
