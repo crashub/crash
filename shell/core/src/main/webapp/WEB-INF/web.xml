@@ -44,9 +44,11 @@
     <description>The telnet port</description>
   </context-param>
 
+<!--
   <listener>
     <listener-class>org.crsh.servlet.TelnetServletLifeCycle</listener-class>
   </listener>
+-->
 
   <listener>
     <listener-class>org.crsh.servlet.SSHServletLifeCycle</listener-class>

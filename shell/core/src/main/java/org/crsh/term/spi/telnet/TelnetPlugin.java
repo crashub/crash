@@ -17,48 +17,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.servlet;
+package org.crsh.term.spi.telnet;
 
+import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
-import org.crsh.term.spi.telnet.TelnetLifeCycle;
-import org.crsh.vfs.FS;
-import org.crsh.vfs.spi.servlet.ServletContextDriver;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetServletLifeCycle implements ServletContextListener {
+public class TelnetPlugin extends CRaSHPlugin {
 
   /** . */
   private TelnetLifeCycle lifeCycle;
 
-  /** . */
-  private PluginContext context;
-
-  public void contextInitialized(ServletContextEvent sce) {
-    ServletContext sc = sce.getServletContext();
-    FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/crash/"));
-    PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
+  @Override
+  public void init() {
+    PluginContext context = getContext();
     TelnetLifeCycle lifeCycle = new TelnetLifeCycle(context);
     this.lifeCycle = lifeCycle;
-    this.context = context;
 
     //
     lifeCycle.init();
-    context.start();
   }
 
-  public void contextDestroyed(ServletContextEvent sce) {
-    if (lifeCycle != null) {
-      lifeCycle.destroy();
-    }
-    if (context != null) {
-      context.stop();
-    }
+  @Override
+  public void destroy() {
+    lifeCycle.destroy();
   }
 }
