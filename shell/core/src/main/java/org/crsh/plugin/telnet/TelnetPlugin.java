@@ -17,12 +17,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.spi.telnet;
+package org.crsh.plugin.telnet;
 
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.Property;
 import org.crsh.plugin.PropertyDescriptor;
+import org.crsh.term.spi.telnet.TelnetLifeCycle;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>

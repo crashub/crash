@@ -17,12 +17,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.spi.sshd;
+package org.crsh.plugin.ssh;
 
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.Property;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.term.spi.sshd.SSHLifeCycle;
 import org.crsh.vfs.Resource;
 
 import java.io.File;

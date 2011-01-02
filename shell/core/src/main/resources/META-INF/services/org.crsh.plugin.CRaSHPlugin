@@ -1,2 +1,2 @@
-org.crsh.term.spi.telnet.TelnetPlugin
-org.crsh.term.spi.sshd.SSHPlugin
+org.crsh.plugin.telnet.TelnetPlugin
+org.crsh.plugin.ssh.SSHPlugin
