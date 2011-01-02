@@ -62,7 +62,17 @@ public class PluginContext {
   /** . */
   private volatile List<File> dirs;
 
-  public PluginContext(FS fs, ClassLoader loader) {
+  /**
+   * Create a new plugin context.
+   *
+   * @param fs the file system
+   * @param loader the loader
+   * @throws NullPointerException if any parameter argument is null
+   */
+  public PluginContext(FS fs, ClassLoader loader) throws NullPointerException {
+    if (fs == null) {
+      throw new NullPointerException();
+    }
     if (loader == null) {
       throw new NullPointerException();
     }
