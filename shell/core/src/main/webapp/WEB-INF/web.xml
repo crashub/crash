@@ -50,9 +50,11 @@
   </listener>
 -->
 
+<!--
   <listener>
     <listener-class>org.crsh.servlet.SSHServletLifeCycle</listener-class>
   </listener>
+-->
 
   <listener>
     <listener-class>org.crsh.plugin.web.WebPluginLifeCycle</listener-class>

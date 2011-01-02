@@ -79,7 +79,7 @@ public final class File {
       long timestamp = conn.getLastModified();
       InputStream in = url.openStream();
       String content = IO.readAsUTF8(in);
-      return new Resource(content, timestamp);
+      return new Resource(content, timestamp, url);
     }
     catch (IOException e) {
       log.warn("Could not obtain resource " + path, e);

@@ -19,8 +19,7 @@
 
 package org.crsh.vfs;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.net.URL;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -34,9 +33,19 @@ public class Resource {
   /** . */
   private long timestamp;
 
+  /** URL is optional, when it has one it indicates the URL of the resource. */
+  private final URL url;
+
   public Resource(String content, long timestamp) {
     this.content = content;
     this.timestamp = timestamp;
+    this.url = null;
+  }
+
+  public Resource(String content, long timestamp, URL url) {
+    this.content = content;
+    this.timestamp = timestamp;
+    this.url = url;
   }
 
   public String getContent() {
@@ -45,5 +54,9 @@ public class Resource {
 
   public long getTimestamp() {
     return timestamp;
+  }
+
+  public URL getURL() {
+    return url;
   }
 }

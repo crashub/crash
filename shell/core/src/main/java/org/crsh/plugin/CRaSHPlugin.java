@@ -19,11 +19,17 @@
 
 package org.crsh.plugin;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public abstract class CRaSHPlugin {
+
+  /** . */
+  protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   PluginContext context;

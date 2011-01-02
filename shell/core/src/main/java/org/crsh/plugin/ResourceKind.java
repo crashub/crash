@@ -38,5 +38,10 @@ public enum ResourceKind {
   /**
    * Lifecycle script.
    */
-  LIFECYCLE
+  LIFECYCLE,
+
+  /**
+   * Security key.
+   */
+  KEY
 }

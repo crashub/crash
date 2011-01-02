@@ -151,6 +151,14 @@ public class PluginContext {
             }
           }
           break;
+        case KEY:
+          if ("hostkey.pem".equals(resourceId)) {
+            File key = vfs.get((Path.get("/sshd/hostkey.pem")));
+            if (key != null) {
+              return key.getResource();
+            }
+          }
+          break;
       }
     } catch (IOException e) {
       log.warn("Could not obtain resource " + resourceId, e);
