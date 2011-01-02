@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 public class PluginContext {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(BaseShellContext.class);
+  private static final Logger log = LoggerFactory.getLogger(PluginContext.class);
 
   /** . */
   private final ClassLoader loader;

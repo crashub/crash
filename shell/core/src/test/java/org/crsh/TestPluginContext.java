@@ -16,17 +16,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.plugin;
 
+package org.crsh;
+
+import org.crsh.plugin.PluginContext;
 import org.crsh.vfs.FS;
+import org.crsh.vfs.Path;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class BaseShellContext extends PluginContext {
+public class TestPluginContext extends PluginContext {
 
-  public BaseShellContext(FS fs, ClassLoader loader) {
-    super(fs, loader);
+  public TestPluginContext() throws Exception {
+    super(new FS().mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/")), Thread.currentThread().getContextClassLoader());
+
+    //
+    refresh();
   }
 }

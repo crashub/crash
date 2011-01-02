@@ -21,7 +21,7 @@ package org.crsh.term;
 
 import junit.framework.TestCase;
 import org.crsh.TestShell;
-import org.crsh.TestShellContext;
+import org.crsh.TestPluginContext;
 import org.crsh.shell.*;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.concurrent.Status;
@@ -33,7 +33,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -45,7 +44,7 @@ public class AsyncShellTestCase extends TestCase {
   protected ShellFactory builder;
 
   /** . */
-  protected TestShellContext context;
+  protected TestPluginContext context;
 
   /** . */
   protected ExecutorService executor;
@@ -59,10 +58,8 @@ public class AsyncShellTestCase extends TestCase {
 
     //
     executor = Executors.newSingleThreadExecutor();
-    context = new TestShellContext(
-      "crash/commands/base/",
-      "crash/commands/jcr/",
-      "crash/commands/test/");
+    context = new TestPluginContext(
+    );
     builder = new ShellFactory(context);
   }
 

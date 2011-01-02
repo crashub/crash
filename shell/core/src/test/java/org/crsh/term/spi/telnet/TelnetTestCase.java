@@ -20,7 +20,7 @@
 package org.crsh.term.spi.telnet;
 
 import junit.framework.TestCase;
-import org.crsh.TestShellContext;
+import org.crsh.TestPluginContext;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -34,10 +34,8 @@ public class TelnetTestCase extends TestCase {
   @Override
   protected void setUp() throws Exception {
 
-    TelnetLifeCycle lf = new TelnetLifeCycle(new TestShellContext(
-      "crash/commands/base/",
-      "crash/commands/jcr/",
-      "crash/commands/test/"));
+    TelnetLifeCycle lf = new TelnetLifeCycle(new TestPluginContext(
+    ));
     lf.doInit();
 
     this.lf = lf;

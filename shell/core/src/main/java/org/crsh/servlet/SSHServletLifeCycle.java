@@ -19,7 +19,7 @@
 
 package org.crsh.servlet;
 
-import org.crsh.plugin.BaseShellContext;
+import org.crsh.plugin.PluginContext;
 import org.crsh.term.spi.sshd.SSHLifeCycle;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
@@ -43,7 +43,7 @@ public class SSHServletLifeCycle implements ServletContextListener {
   private SSHLifeCycle lifeCycle;
   
   /** . */
-  private BaseShellContext shellContext;
+  private PluginContext context;
 
   public void contextInitialized(ServletContextEvent sce) {
 
@@ -62,8 +62,8 @@ public class SSHServletLifeCycle implements ServletContextListener {
 
     //
     FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/crash/"));
-    BaseShellContext shellContext = new BaseShellContext(fs, Thread.currentThread().getContextClassLoader());
-    SSHLifeCycle lifeCycle = new SSHLifeCycle(shellContext);
+    PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
+    SSHLifeCycle lifeCycle = new SSHLifeCycle(context);
 
     //
     lifeCycle.setKeyPath(keyPath);
@@ -71,19 +71,19 @@ public class SSHServletLifeCycle implements ServletContextListener {
 
     //
     this.lifeCycle = lifeCycle;
-    this.shellContext = shellContext;
+    this.context = context;
 
     //
     lifeCycle.init();
-    shellContext.start();
+    context.start();
   }
 
   public void contextDestroyed(ServletContextEvent sce) {
     if (lifeCycle != null) {
       lifeCycle.destroy();
     }
-    if (shellContext != null) {
-      shellContext.stop();
+    if (context != null) {
+      context.stop();
     }
   }
 }

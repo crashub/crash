@@ -19,7 +19,7 @@
 
 package org.crsh.servlet;
 
-import org.crsh.plugin.BaseShellContext;
+import org.crsh.plugin.PluginContext;
 import org.crsh.term.spi.telnet.TelnetLifeCycle;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
@@ -38,27 +38,27 @@ public class TelnetServletLifeCycle implements ServletContextListener {
   private TelnetLifeCycle lifeCycle;
 
   /** . */
-  private BaseShellContext shellContext;
+  private PluginContext context;
 
   public void contextInitialized(ServletContextEvent sce) {
     ServletContext sc = sce.getServletContext();
     FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/crash/"));
-    BaseShellContext shellContext = new BaseShellContext(fs, Thread.currentThread().getContextClassLoader());
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(shellContext);
+    PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
+    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(context);
     this.lifeCycle = lifeCycle;
-    this.shellContext = shellContext;
+    this.context = context;
 
     //
     lifeCycle.init();
-    shellContext.start();
+    context.start();
   }
 
   public void contextDestroyed(ServletContextEvent sce) {
     if (lifeCycle != null) {
       lifeCycle.destroy();
     }
-    if (shellContext != null) {
-      shellContext.stop();
+    if (context != null) {
+      context.stop();
     }
   }
 }

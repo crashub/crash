@@ -20,7 +20,7 @@
 package org.crsh.standalone;
 
 import org.crsh.Processor;
-import org.crsh.plugin.BaseShellContext;
+import org.crsh.plugin.PluginContext;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
@@ -75,7 +75,7 @@ public class Main {
       }
     });
 */
-    BaseShellContext context = new BaseShellContext(fs, Thread.currentThread().getContextClassLoader());
+    PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
     context.start();
     Processor processor = new Processor(term, new CRaSH(context));
 
