@@ -41,17 +41,23 @@ public class log extends CRaSHCommand implements Completer {
       names.addAll(mbean.loggerNames);
 
       // This is a trick to get the logger names per web application in Tomcat environment
-      def server = org.apache.tomcat.util.modeler.Registry.registry.MBeanServer;
-      ObjectName on = new ObjectName("*:j2eeType=WebModule,*");
-      def res = server.queryNames(on, null).each {
-        def loader = server.getAttribute(it, "loader");
-        def oldCL = Thread.currentThread().contextClassLoader;
-        try {
-          Thread.currentThread().contextClassLoader = loader.classLoader;
-          names.addAll(mbean.loggerNames);
-          } finally {
-          Thread.currentThread().contextClassLoader = oldCL;
+      try {
+        def registryClass = Thread.currentThread().contextClassLoader.loadClass("org.apache.tomcat.util.modeler.Registry");
+        def getRegistry = registry.getMethod("getRegistry");
+        def registry = registry.invoke(null);
+        def server = registry.MBeanServer;
+        ObjectName on = new ObjectName("*:j2eeType=WebModule,*");
+        def res = server.queryNames(on, null).each {
+          def loader = server.getAttribute(it, "loader");
+          def oldCL = Thread.currentThread().contextClassLoader;
+          try {
+            Thread.currentThread().contextClassLoader = loader.classLoader;
+            names.addAll(mbean.loggerNames);
+            } finally {
+            Thread.currentThread().contextClassLoader = oldCL;
+          }
         }
+      } catch (Exception ignore) {
       }
     } else if (factoryName.equals("JBossLoggerFactory")) {
       // JBoss AS

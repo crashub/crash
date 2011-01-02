@@ -20,13 +20,18 @@
 package org.crsh.standalone;
 
 import org.crsh.Processor;
+import org.crsh.shell.BaseShellContext;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
 import org.crsh.term.spi.jline.JLineIO;
+import org.crsh.vfs.FS;
+import org.crsh.vfs.File;
+import org.crsh.vfs.Path;
 
 import java.util.Collections;
 import java.util.Map;
@@ -39,7 +44,18 @@ public class Main {
 
   public static void main(String[] args) throws Exception {
 
+    FS fs = new FS();
+    fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
+
+    File f = fs.get(Path.get("/commands/"));
+    System.out.println("f = " + f);
+    System.out.println("children = " + f.children());
+
+
+
+
     Term term = new BaseTerm(new JLineIO());
+/*
     Processor processor = new Processor(term, new Shell() {
       public String getWelcome() {
         return "Welcome";
@@ -65,6 +81,10 @@ public class Main {
         return Collections.emptyMap();
       }
     });
+*/
+    BaseShellContext context = new BaseShellContext(fs, Thread.currentThread().getContextClassLoader());
+    context.start();
+    Processor processor = new Processor(term, new CRaSH(context));
 
     //
     processor.run();
