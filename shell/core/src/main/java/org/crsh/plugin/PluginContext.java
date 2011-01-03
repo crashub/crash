@@ -120,7 +120,7 @@ public class PluginContext {
    *
    * @param desc the property descriptor
    * @param <T> the property parameter type
-   * @return the property
+   * @return the property value
    * @throws NullPointerException if the descriptor argument is null
    */
   public final <T> T getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
