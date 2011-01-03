@@ -31,6 +31,8 @@ import org.crsh.term.CRaSHLifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -55,6 +57,9 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
   /** . */
   private String keyPath;
 
+  /** . */
+  private URL keyURL;
+
   public SSHLifeCycle(PluginContext context) {
     super(context);
   }
@@ -75,6 +80,14 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
     this.keyPath = keyPath;
   }
 
+  public URL getKeyURL() {
+    return keyURL;
+  }
+
+  public void setKeyURL(URL keyURL) {
+    this.keyURL = keyURL;
+  }
+
   @Override
   protected void doInit() {
     try {
@@ -85,7 +98,7 @@ public class SSHLifeCycle extends CRaSHLifeCycle {
       server.setPort(port);
       server.setShellFactory(new CRaSHCommandFactory(getShellFactory(), getExecutor()));
       server.setCommandFactory(new SCPCommandFactory(commandPlugins));
-      server.setKeyPairProvider(new PEMGeneratorHostKeyProvider(keyPath));
+      server.setKeyPairProvider(new CRaSHPEMGeneratorHostKeyProvider(keyPath, keyURL));
 
       //
       server.setPasswordAuthenticator(new PasswordAuthenticator() {

@@ -123,11 +123,12 @@ public class PluginContext {
    * @return the property
    * @throws NullPointerException if the descriptor argument is null
    */
-  public final <T> Property<T> getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
+  public final <T> T getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
     if (desc == null) {
       throw new NullPointerException();
     }
-    return (Property<T>)properties.get(desc);
+    Property<T> property = (Property<T>)properties.get(desc);
+    return property != null ? property.getValue() : desc.defaultValue;
   }
 
   /**
@@ -219,7 +220,7 @@ public class PluginContext {
           break;
         case KEY:
           if ("hostkey.pem".equals(resourceId)) {
-            File key = vfs.get((Path.get("/sshd/hostkey.pem")));
+            File key = vfs.get((Path.get("/ssh/hostkey.pem")));
             if (key != null) {
               return key.getResource();
             }

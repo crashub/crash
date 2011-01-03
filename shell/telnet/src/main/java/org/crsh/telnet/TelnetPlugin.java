@@ -40,9 +40,9 @@ public class TelnetPlugin extends CRaSHPlugin {
 
     //
     TelnetLifeCycle lifeCycle = new TelnetLifeCycle(context);
-    Property<Integer> portProp = context.getProperty(PropertyDescriptor.TELNET_PORT);
-    if (portProp != null) {
-      lifeCycle.setPort(portProp.getValue());
+    Integer port = context.getProperty(PropertyDescriptor.TELNET_PORT);
+    if (port != null) {
+      lifeCycle.setPort(port);
     }
 
     //

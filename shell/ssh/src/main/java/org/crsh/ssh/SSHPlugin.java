@@ -42,19 +42,22 @@ public class SSHPlugin extends CRaSHPlugin {
   public void init() {
 
     //
-    int port;
-    Property<Integer> portProp = getContext().getProperty(PropertyDescriptor.SSH_PORT);
-    if (portProp == null) {
+    Integer port = getContext().getProperty(PropertyDescriptor.SSH_PORT);
+    if (port == null) {
       log.info("Could not boot SSHD due to missing due to missing port configuration");
       return;
-    } else {
-      port = portProp.getValue();
     }
 
     //
-    Property<String> keyPathProp = getContext().getProperty(PropertyDescriptor.SSH_KEYPATH);
-    String keyPath = null;
-    if (keyPathProp == null) {
+    Resource res = getContext().loadResource("hostkey.pem", ResourceKind.KEY);
+    URL keyURL = null;
+    if (res != null) {
+      keyURL = res.getURL();
+    }
+
+    //
+    String keyPath = getContext().getProperty(PropertyDescriptor.SSH_KEYPATH);
+    if (keyPath == null) {
       Resource r = getContext().loadResource("hostkey.pem", ResourceKind.KEY);
       if (r != null) {
         // Use the default one
@@ -72,12 +75,14 @@ public class SSHPlugin extends CRaSHPlugin {
           }
         }
       }
-    } else {
-      keyPath = keyPathProp.getValue();
     }
+
+    //
     if (keyPath == null) {
-      log.info("Could not boot SSHD due to missing key path or missing port");
-      return;
+      if (keyURL == null) {
+        log.info("Could not boot SSHD due to missing key");
+        return;
+      }
     }
 
     //
@@ -85,6 +90,7 @@ public class SSHPlugin extends CRaSHPlugin {
     SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext());
     lifeCycle.setKeyPath(keyPath);
     lifeCycle.setPort(port);
+    lifeCycle.setKeyURL(keyURL);
     lifeCycle.init();
 
     //
