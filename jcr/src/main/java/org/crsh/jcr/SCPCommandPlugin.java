@@ -20,9 +20,9 @@
 package org.crsh.jcr;
 
 import org.apache.sshd.server.Command;
-import org.crsh.term.spi.sshd.FailCommand;
-import org.crsh.term.spi.sshd.scp.CommandPlugin;
-import org.crsh.term.spi.sshd.scp.SCPAction;
+import org.crsh.ssh.term.FailCommand;
+import org.crsh.ssh.term.scp.CommandPlugin;
+import org.crsh.ssh.term.scp.SCPAction;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 

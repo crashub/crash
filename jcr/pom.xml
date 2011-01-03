@@ -19,6 +19,10 @@
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.ssh</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>javax.jcr</groupId>
@@ -27,7 +31,7 @@
 
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.core</artifactId>
+      <artifactId>crsh.shell.packaging</artifactId>
       <type>war</type>
     </dependency>
 
@@ -82,9 +86,16 @@
         <executions>
           <execution>
             <id>make-assembly</id>
+            <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
+            <configuration>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>src/main/assembly/packaging.xml</descriptor>
+              </descriptors>
+            </configuration>
           </execution>
         </executions>
       </plugin>

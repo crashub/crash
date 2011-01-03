@@ -19,8 +19,8 @@
 package org.crsh.jcr;
 
 import org.apache.sshd.server.Environment;
-import org.crsh.term.spi.sshd.AbstractCommand;
-import org.crsh.term.spi.sshd.SSHLifeCycle;
+import org.crsh.ssh.term.AbstractCommand;
+import org.crsh.ssh.term.SSHLifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

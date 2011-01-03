@@ -39,7 +39,7 @@
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.shell.core:war</include>
+        <include>org.crsh:crsh.shell.packaging:war</include>
       </includes>
     </dependencySet>
   </dependencySets>
