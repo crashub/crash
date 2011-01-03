@@ -70,7 +70,7 @@
       <!-- Module core -->
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.shell.cmdline</artifactId>
+        <artifactId>crsh.cmdline</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -241,6 +241,7 @@
   </dependencyManagement>
 
   <modules>
+    <module>cmdline</module>
     <module>shell</module>
     <module>doc</module>
     <module>distrib</module>

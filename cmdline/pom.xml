@@ -6,7 +6,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
-  <artifactId>crsh.shell.cmdline</artifactId>
+  <artifactId>crsh.cmdline</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0-beta18-SNAPSHOT</version>
 

@@ -18,7 +18,7 @@
     <!-- Should be provided by assembly plugin will fail if so -->
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.cmdline</artifactId>
+      <artifactId>crsh.cmdline</artifactId>
     </dependency>
 
     <dependency>
