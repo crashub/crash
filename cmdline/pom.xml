@@ -10,7 +10,7 @@
   <packaging>jar</packaging>
   <version>1.0.0-beta18-SNAPSHOT</version>
 
-  <name>CRaSH core</name>
+  <name>CRaSH cmdline</name>
   <description>The CRaSH cmdline module</description>
 
   <dependencies>
