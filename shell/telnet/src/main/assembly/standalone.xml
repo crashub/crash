@@ -38,6 +38,7 @@
       </unpackOptions>
       <includes>
         <include>net.wimpi:telnetd-x</include>
+        <include>commons-logging:commons-logging</include>
       </includes>
     </dependencySet>
   </dependencySets>
