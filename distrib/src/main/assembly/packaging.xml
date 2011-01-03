@@ -60,8 +60,16 @@
     <dependencySet>
       <outputDirectory>/src</outputDirectory>
       <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+          <exclude>META-INF/**</exclude>
+        </excludes>
+      </unpackOptions>
       <includes>
+        <include>org.crsh:crsh.cmdline:jar:sources</include>
         <include>org.crsh:crsh.shell.core:jar:sources</include>
+        <include>org.crsh:crsh.shell.telnet:jar:sources</include>
+        <include>org.crsh:crsh.shell.ssh:jar:sources</include>
         <include>org.crsh:crsh.jcr:jar:sources</include>
       </includes>
     </dependencySet>

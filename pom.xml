@@ -77,6 +77,12 @@
         <artifactId>crsh.cmdline</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
       </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.cmdline</artifactId>
+        <version>1.0.0-beta18-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
 
       <!-- Module shell core -->
       <dependency>
@@ -110,12 +116,24 @@
         <artifactId>crsh.shell.telnet</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
       </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.telnet</artifactId>
+        <version>1.0.0-beta18-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
 
       <!-- Module shell ssh -->
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.ssh</artifactId>
+        <version>1.0.0-beta18-SNAPSHOT</version>
+        <classifier>sources</classifier>
       </dependency>
 
       <!-- Module shell packaging -->
