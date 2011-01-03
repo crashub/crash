@@ -15,6 +15,7 @@
   <modules>
     <module>core</module>
     <module>telnet</module>
+    <module>ssh</module>
   </modules>
 
   <build>
