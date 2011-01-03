@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.spi.telnet;
+package org.crsh.telnet.term;
 
 import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;

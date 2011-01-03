@@ -18,7 +18,7 @@
     <!-- Should be provided by assembly plugin will fail if so -->
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.core</artifactId>
+      <artifactId>crsh.shell.core</artifactId>
     </dependency>
 
     <!-- Telnet connector dependencies -->
@@ -29,6 +29,13 @@
     </dependency>
 
     <!-- For unit testing purpose -->
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>

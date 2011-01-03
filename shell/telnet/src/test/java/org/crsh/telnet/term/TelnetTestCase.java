@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -17,45 +17,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.plugin.telnet;
+package org.crsh.telnet.term;
 
-import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.Property;
-import org.crsh.plugin.PropertyDescriptor;
-import org.crsh.term.spi.telnet.TelnetLifeCycle;
+import junit.framework.TestCase;
+import org.crsh.TestPluginContext;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetPlugin extends CRaSHPlugin {
+public class TelnetTestCase extends TestCase {
 
   /** . */
-  private TelnetLifeCycle lifeCycle;
+  private TelnetLifeCycle lf;
 
   @Override
-  public void init() {
-    PluginContext context = getContext();
+  protected void setUp() throws Exception {
 
-    //
-    TelnetLifeCycle lifeCycle = new TelnetLifeCycle(context);
-    Property<Integer> portProp = context.getProperty(PropertyDescriptor.TELNET_PORT);
-    if (portProp != null) {
-      lifeCycle.setPort(portProp.getValue());
-    }
+    TelnetLifeCycle lf = new TelnetLifeCycle(new TestPluginContext(
+    ));
+    lf.doInit();
 
-    //
-    lifeCycle.init();
-
-    //
-    this.lifeCycle = lifeCycle;
+    this.lf = lf;
   }
 
   @Override
-  public void destroy() {
-    if (lifeCycle != null) {
-      lifeCycle.destroy();
-    }
+  protected void tearDown() throws Exception {
+    lf.doDestroy();
+    lf = null;
+  }
+
+  public void testFoo(){
   }
 }
