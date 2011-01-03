@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.spi.sshd;
+package org.crsh.ssh;
 
 import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;

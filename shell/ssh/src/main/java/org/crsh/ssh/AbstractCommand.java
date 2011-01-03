@@ -16,35 +16,54 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.term.spi.sshd;
+package org.crsh.ssh;
 
-import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
-import org.crsh.shell.ShellFactory;
+import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.SessionAware;
+import org.apache.sshd.server.session.ServerSession;
 
-import java.util.concurrent.ExecutorService;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CRaSHCommandFactory implements Factory<Command> {
+public abstract class AbstractCommand implements Command, SessionAware {
 
   /** . */
-  final ShellFactory builder;
+  protected InputStream in;
 
   /** . */
-  final ExecutorService executor;
+  protected OutputStream out;
 
-  public CRaSHCommandFactory(ShellFactory builder, ExecutorService executor) {
-    if (builder == null) {
-      throw new NullPointerException("No null builder accepted");
-    }
-    this.builder = builder;
-    this.executor = executor;
+  /** . */
+  protected OutputStream err;
+
+  /** . */
+  protected ExitCallback callback;
+
+  /** . */
+  protected ServerSession session;
+
+  public final void setInputStream(InputStream in) {
+    this.in = in;
   }
 
-  public Command create() {
-    return new CRaSHCommand(this);
+  public final void setOutputStream(OutputStream out) {
+    this.out = out;
+  }
+
+  public final void setErrorStream(OutputStream err) {
+    this.err = err;
+  }
+
+  public final void setExitCallback(ExitCallback callback) {
+    this.callback = callback;
+  }
+
+  public void setSession(ServerSession session) {
+    this.session = session;
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2003-2009 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,19 +16,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.ssh;
 
-package org.crsh.term.spi.sshd.scp;
-
+import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
-import org.crsh.plugin.CRaSHPlugin;
+import org.crsh.shell.ShellFactory;
+
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CommandPlugin extends CRaSHPlugin
-{
+public class CRaSHCommandFactory implements Factory<Command> {
 
-   public abstract Command createCommand(String command);
+  /** . */
+  final ShellFactory builder;
 
+  /** . */
+  final ExecutorService executor;
+
+  public CRaSHCommandFactory(ShellFactory builder, ExecutorService executor) {
+    if (builder == null) {
+      throw new NullPointerException("No null builder accepted");
+    }
+    this.builder = builder;
+    this.executor = executor;
+  }
+
+  public Command create() {
+    return new CRaSHCommand(this);
+  }
 }

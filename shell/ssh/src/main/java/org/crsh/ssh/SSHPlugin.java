@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.plugin.ssh;
+package org.crsh.ssh;
 
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.Property;
