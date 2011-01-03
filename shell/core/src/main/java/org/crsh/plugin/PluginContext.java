@@ -143,9 +143,11 @@ public class PluginContext {
       throw new NullPointerException();
     }
     if (value == null) {
+      log.debug("Removing property " + desc.name);
       properties.remove(desc);
     } else {
       Property<T> property = new Property<T>(desc, value);
+      log.debug("Setting property " + desc.name + " to value " + property.getValue());
       properties.put(desc, property);
     }
   }
@@ -164,9 +166,11 @@ public class PluginContext {
       throw new NullPointerException();
     }
     if (value == null) {
+      log.debug("Removing property " + desc.name);
       properties.remove(desc);
     } else {
       Property<T> property = desc.toProperty(value);
+      log.debug("Setting property " + desc.name + " to value " + property.getValue());
       properties.put(desc, property);
     }
   }

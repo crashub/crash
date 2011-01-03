@@ -95,4 +95,10 @@ public class PluginManager<P extends CRaSHPlugin> {
     //
     return plugins;
   }
+
+  public void shutdown() {
+    for (CRaSHPlugin plugin : plugins) {
+      plugin.destroy();
+    }
+  }
 }

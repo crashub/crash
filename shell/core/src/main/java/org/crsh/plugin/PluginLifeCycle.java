@@ -37,30 +37,43 @@ public abstract class PluginLifeCycle {
   /** . */
   private PluginContext context;
 
+  public PluginContext getContext() {
+    return context;
+  }
+
   public final void start(PluginContext context) {
     this.context = context;
 
-/*
-    for (PropertyInfo<?> propertyInfo : PropertyInfo.ALL) {
-      String value = sce.getServletContext().getInitParameter(propertyInfo.name);
+    // Override default properties from command line
+    for (PropertyDescriptor<?> desc : PropertyDescriptor.ALL.values()) {
+      String value = System.getProperty(desc.name);
       if (value != null) {
-        ConfigProperty<?> property = propertyInfo.toProperty(value);
+        try {
+          log.info("Configuring property " + desc.name + " from system properties");
+          context.setProperty(desc, value);
+        }
+        catch (IllegalArgumentException e) {
+          e.printStackTrace();
+        }
       }
-
     }
-*/
 
     //
     manager = new PluginManager<CRaSHPlugin>(context, CRaSHPlugin.class);
 
-    // Load plugins
-    manager.getPlugins();
-
     //
     context.start();
+
+    // Load plugins
+    manager.getPlugins();
   }
 
   public final void stop() {
+
+    //
+    manager.shutdown();
+
+    //
     context.stop();
   }
 }

@@ -88,7 +88,7 @@ public abstract class PropertyDescriptor<T> {
     INTERNAL_ALL.put(name, this);
   }
 
-  public final T parse(String s) {
+  public final T parse(String s) throws NullPointerException, IllegalArgumentException {
     if (s == null) {
       throw new NullPointerException("Cannot parse null property values");
     }
@@ -100,7 +100,7 @@ public abstract class PropertyDescriptor<T> {
     }
   }
 
-  public final Property<T> toProperty(String s) {
+  public final Property<T> toProperty(String s) throws NullPointerException, IllegalArgumentException {
     T value = parse(s);
     return new Property<T>(this, value);
   }

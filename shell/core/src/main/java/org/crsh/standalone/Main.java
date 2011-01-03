@@ -40,21 +40,22 @@ public class Main {
   public static void main(String[] args) throws Exception {
 
     //
-    FS fs = new FS();
-    fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
+    final Bootstrap bootstrap = new Bootstrap();
 
-    //
-    PluginContext pluginContext = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
-    pluginContext.start();
+    // Register shutdown hook
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        bootstrap.shutdown();
+      }
+    });
 
-    PluginManager<CRaSHPlugin> mgr = new PluginManager<CRaSHPlugin>(pluginContext, CRaSHPlugin.class);
-
-    // Force load
-    mgr.getPlugins();
+    // Do bootstrap
+    bootstrap.bootstrap();
 
     // Start crash for this command line
     Term term = new BaseTerm(new JLineIO());
-    Processor processor = new Processor(term, new CRaSH(pluginContext));
+    Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
 
     //
     processor.run();

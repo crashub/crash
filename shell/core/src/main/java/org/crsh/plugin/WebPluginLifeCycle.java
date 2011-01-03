@@ -19,9 +19,6 @@
 
 package org.crsh.plugin;
 
-import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.PluginLifeCycle;
-import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
 
