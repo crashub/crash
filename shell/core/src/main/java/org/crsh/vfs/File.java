@@ -75,16 +75,20 @@ public final class File {
   public Resource getResource() throws IOException {
     try {
       URL url = getURL();
-      URLConnection conn = url.openConnection();
-      long timestamp = conn.getLastModified();
-      InputStream in = url.openStream();
-      String content = IO.readAsUTF8(in);
-      return new Resource(content, timestamp, url);
+      if (url == null) {
+        log.warn("Could not obtain resource " + path);
+      } else {
+        URLConnection conn = url.openConnection();
+        long timestamp = conn.getLastModified();
+        InputStream in = url.openStream();
+        String content = IO.readAsUTF8(in);
+        return new Resource(content, timestamp, url);
+      }
     }
     catch (IOException e) {
-      log.warn("Could not obtain resource " + path, e);
-      return null;
+      log.warn("Could not retrieve resource " + path, e);
     }
+    return null;
   }
 
   public URL getURL() throws IOException {
