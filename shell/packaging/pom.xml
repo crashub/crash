@@ -15,10 +15,22 @@
 
   <dependencies>
 
-    <!-- Should be provided by assembly plugin will fail if so -->
+    <!-- -->
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.cmdline</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.telnet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.ssh</artifactId>
     </dependency>
 
     <dependency>
@@ -53,24 +65,46 @@
       <version>0.9.94</version>
     </dependency>
 
+    <!-- SSHD connector dependencies -->
+
+    <dependency>
+      <groupId>org.apache.sshd</groupId>
+      <artifactId>sshd-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.sshd</groupId>
+      <artifactId>sshd-pam</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.mina</groupId>
+      <artifactId>mina-core</artifactId>
+    </dependency>
+
+    <!-- Telnet connector dependencies -->
+
+    <dependency>
+      <groupId>net.wimpi</groupId>
+      <artifactId>telnetd-x</artifactId>
+    </dependency>
+
+  </dependencies>
+
   <build>
 
     <finalName>crsh-${project.version}</finalName>
-
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>src/main/webapp/WEB-INF/</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-    </testResources>
 
     <plugins>
 
@@ -80,9 +114,16 @@
         <executions>
           <execution>
             <id>make-assembly</id>
+            <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
+            <configuration>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>src/main/assembly/packaging.xml</descriptor>
+              </descriptors>
+            </configuration>
           </execution>
         </executions>
       </plugin>

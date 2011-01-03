@@ -32,13 +32,15 @@
       <outputDirectory>/WEB-INF/lib</outputDirectory>
       <includes>
         <include>args4j:args4j</include>
-        <!--<include>org.apache.sshd:sshd-core</include>-->
-        <!--<include>org.apache.sshd:sshd-pam</include>-->
-        <!--<include>org.bouncycastle:bcprov-jdk15</include>-->
-        <!--<include>org.apache.mina:mina-core</include>-->
-        <!--<include>net.wimpi:telnetd-x</include>-->
+        <include>org.apache.sshd:sshd-core</include>
+        <include>org.apache.sshd:sshd-pam</include>
+        <include>org.bouncycastle:bcprov-jdk15</include>
+        <include>org.apache.mina:mina-core</include>
+        <include>net.wimpi:telnetd-x</include>
         <include>org.crsh:crsh.cmdline</include>
         <include>org.crsh:crsh.shell.core</include>
+        <include>org.crsh:crsh.shell.telnet</include>
+        <include>org.crsh:crsh.shell.ssh</include>
       </includes>
     </dependencySet>
   </dependencySets>
@@ -51,16 +53,6 @@
         <include>**/*</include>
       </includes>
     </fileSet>
-<!--
-    <fileSet>
-      <directory>target/classes</directory>
-      <outputDirectory>/WEB-INF/classes</outputDirectory>
-      <includes>
-        <include>**/*</include>
-      </includes>
-    </fileSet>
--->
   </fileSets>
-
 
 </assembly>
