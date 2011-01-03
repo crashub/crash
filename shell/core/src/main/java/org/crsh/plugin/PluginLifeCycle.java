@@ -46,7 +46,8 @@ public abstract class PluginLifeCycle {
 
     // Override default properties from command line
     for (PropertyDescriptor<?> desc : PropertyDescriptor.ALL.values()) {
-      String value = System.getProperty(desc.name);
+      String key = "crash." + desc.name;
+      String value = System.getProperty(key);
       if (value != null) {
         try {
           log.info("Configuring property " + desc.name + " from system properties");

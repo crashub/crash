@@ -68,6 +68,7 @@ public class TelnetLifeCycle extends CRaSHLifeCycle {
     //
     String s = getShellContext().loadResource("telnet.properties", ResourceKind.CONFIG).getContent();
     Properties props = new Properties();
+    props.load(new ByteArrayInputStream(s.getBytes("ISO-8859-1")));
 
     //
     if (port != null) {
@@ -78,7 +79,6 @@ public class TelnetLifeCycle extends CRaSHLifeCycle {
     }
 
     //
-    props.load(new ByteArrayInputStream(s.getBytes("ISO-8859-1")));
     TelnetD daemon = TelnetD.createTelnetD(props);
     daemon.start();
 
