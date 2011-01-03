@@ -23,6 +23,8 @@ import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginLifeCycle;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
+import org.crsh.vfs.spi.FSDriver;
+import org.crsh.vfs.spi.file.FileDriver;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -33,7 +35,14 @@ public class Bootstrap extends PluginLifeCycle {
   public void bootstrap() throws Exception {
 
     //
-    FS fs = new FS();
+    java.io.File f = new java.io.File("crash");
+    FSDriver<?>[] drivers = new FSDriver<?>[0];
+    if (f.exists() && f.isDirectory()) {
+      drivers = new FSDriver<?>[]{new FileDriver(f)};
+    }
+
+    //
+    FS fs = new FS(drivers);
     fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
 
     //
