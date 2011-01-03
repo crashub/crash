@@ -51,7 +51,7 @@
           <include>crash/**</include>
         </includes>
       </unpackOptions>
-      <outputDirectory>/WEB-INF/crash</outputDirectory>
+      <outputDirectory>/WEB-INF</outputDirectory>
       <includes>
         <include>org.crsh:crsh.shell.core</include>
         <include>org.crsh:crsh.shell.telnet</include>
