@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.ssh;
+package org.crsh.ssh.term;
 
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.Session;

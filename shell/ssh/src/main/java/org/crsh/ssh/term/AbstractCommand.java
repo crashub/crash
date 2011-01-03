@@ -16,45 +16,54 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.ssh.scp;
+package org.crsh.ssh.term;
 
 import org.apache.sshd.server.Command;
-import org.apache.sshd.server.CommandFactory;
-import org.crsh.plugin.PluginManager;
-import org.crsh.term.spi.sshd.FailCommand;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.SessionAware;
+import org.apache.sshd.server.session.ServerSession;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SCPCommandFactory implements CommandFactory {
+public abstract class AbstractCommand implements Command, SessionAware {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(SCPCommandFactory.class);
+  protected InputStream in;
 
   /** . */
-  private final PluginManager<CommandPlugin> plugins;
+  protected OutputStream out;
 
-  public SCPCommandFactory(PluginManager<CommandPlugin> plugins) {
-    this.plugins = plugins;
+  /** . */
+  protected OutputStream err;
+
+  /** . */
+  protected ExitCallback callback;
+
+  /** . */
+  protected ServerSession session;
+
+  public final void setInputStream(InputStream in) {
+    this.in = in;
   }
 
-  public Command createCommand(String command) {
-    // Just in case
-    command = command.trim();
+  public final void setOutputStream(OutputStream out) {
+    this.out = out;
+  }
 
-    //
-    log.debug("About to execute shell command " + command);
+  public final void setErrorStream(OutputStream err) {
+    this.err = err;
+  }
 
-    for (CommandPlugin plugin : plugins.getPlugins()) {
-      Command cmd = plugin.createCommand(command);
-      if (cmd != null) {
-        return cmd;
-      }
-    }
+  public final void setExitCallback(ExitCallback callback) {
+    this.callback = callback;
+  }
 
-    return new FailCommand("Unrecognized command " + command);
+  public void setSession(ServerSession session) {
+    this.session = session;
   }
 }

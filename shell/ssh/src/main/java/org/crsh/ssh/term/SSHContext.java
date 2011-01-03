@@ -16,29 +16,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.ssh;
-
-import org.apache.sshd.server.Environment;
-
-import java.io.IOException;
+package org.crsh.ssh.term;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class FailCommand extends AbstractCommand {
+public class SSHContext {
 
   /** . */
-  private String failure;
+  public final int verase;
 
-  public FailCommand(String failure) {
-    this.failure = failure;
-  }
-
-  public void start(Environment env) throws IOException {
-    throw new IOException("Failure " + failure);
-  }
-
-  public void destroy() {
+  public SSHContext(int verase) {
+    this.verase = verase;
   }
 }

@@ -16,54 +16,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.ssh;
+package org.crsh.ssh.term;
 
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.ExitCallback;
-import org.apache.sshd.server.SessionAware;
-import org.apache.sshd.server.session.ServerSession;
+import org.apache.sshd.server.Environment;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class AbstractCommand implements Command, SessionAware {
+public class FailCommand extends AbstractCommand {
 
   /** . */
-  protected InputStream in;
+  private String failure;
 
-  /** . */
-  protected OutputStream out;
-
-  /** . */
-  protected OutputStream err;
-
-  /** . */
-  protected ExitCallback callback;
-
-  /** . */
-  protected ServerSession session;
-
-  public final void setInputStream(InputStream in) {
-    this.in = in;
+  public FailCommand(String failure) {
+    this.failure = failure;
   }
 
-  public final void setOutputStream(OutputStream out) {
-    this.out = out;
+  public void start(Environment env) throws IOException {
+    throw new IOException("Failure " + failure);
   }
 
-  public final void setErrorStream(OutputStream err) {
-    this.err = err;
-  }
-
-  public final void setExitCallback(ExitCallback callback) {
-    this.callback = callback;
-  }
-
-  public void setSession(ServerSession session) {
-    this.session = session;
+  public void destroy() {
   }
 }
