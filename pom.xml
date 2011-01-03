@@ -107,31 +107,31 @@
       <!-- Module JCR -->
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.shell.jcr</artifactId>
+        <artifactId>crsh.jcr</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.shell.jcr</artifactId>
+        <artifactId>crsh.jcr</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.shell.jcr</artifactId>
+        <artifactId>crsh.jcr</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.shell.jcr</artifactId>
+        <artifactId>crsh.jcr</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.shell.jcr</artifactId>
+        <artifactId>crsh.jcr</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
@@ -243,6 +243,7 @@
   <modules>
     <module>cmdline</module>
     <module>shell</module>
+    <module>jcr</module>
     <module>doc</module>
     <module>distrib</module>
   </modules>

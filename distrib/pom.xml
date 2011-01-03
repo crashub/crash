@@ -29,12 +29,12 @@
           </dependency>
           <dependency>
             <groupId>org.crsh</groupId>
-            <artifactId>crsh.shell.jcr</artifactId>
+            <artifactId>crsh.jcr</artifactId>
             <type>war</type>
           </dependency>
           <dependency>
             <groupId>org.crsh</groupId>
-            <artifactId>crsh.shell.jcr</artifactId>
+            <artifactId>crsh.jcr</artifactId>
             <classifier>sources</classifier>
           </dependency>
           <dependency>

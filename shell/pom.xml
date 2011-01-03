@@ -14,7 +14,6 @@
 
   <modules>
     <module>core</module>
-    <module>jcr</module>
   </modules>
 
   <build>
