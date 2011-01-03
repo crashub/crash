@@ -81,6 +81,7 @@
 
     <finalName>crsh-${project.version}</finalName>
 
+<!--
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
@@ -95,6 +96,7 @@
         </includes>
       </testResource>
     </testResources>
+-->
 
     <plugins>
 
@@ -102,12 +104,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
-          <execution>
-            <id>make-assembly</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
           <execution>
             <id>make-standalone</id>
             <phase>package</phase>
