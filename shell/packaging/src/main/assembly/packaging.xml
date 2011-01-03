@@ -54,6 +54,8 @@
       <outputDirectory>/WEB-INF/crash</outputDirectory>
       <includes>
         <include>org.crsh:crsh.shell.core</include>
+        <include>org.crsh:crsh.shell.telnet</include>
+        <include>org.crsh:crsh.shell.ssh</include>
       </includes>
     </dependencySet>
   </dependencySets>
