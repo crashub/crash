@@ -19,7 +19,6 @@
 
 package org.crsh.ssh.term;
 
-import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
 import org.crsh.util.OutputCode;
@@ -38,6 +37,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Revision$
  */
 public class SSHIO implements TermIO {
+
+  /** Copied from net.wimpi.telnetd.io.TerminalIO. */
+  private static final int UP = 1001;
+
+  /** Copied from net.wimpi.telnetd.io.TerminalIO. */
+  private static final int DOWN = 1002;
+
+  /** Copied from net.wimpi.telnetd.io.TerminalIO. */
+  private static final int HANDLED = 1305;
 
   /** . */
   private static final Logger log = LoggerFactory.getLogger(SSHIO.class);
@@ -84,7 +92,7 @@ public class SSHIO implements TermIO {
   public int read() throws IOException {
     while (true) {
       if (closed.get()) {
-        return TerminalIO.HANDLED;
+        return HANDLED;
       } else {
         int r = reader.read();
         switch (status) {
@@ -107,9 +115,9 @@ public class SSHIO implements TermIO {
             status = STATUS_NORMAL;
             switch (r) {
               case 65:
-                return TerminalIO.UP;
+                return UP;
               case 66:
-                return TerminalIO.DOWN;
+                return DOWN;
               case 67:
                 // Swallow RIGHT
                 break;
@@ -130,15 +138,15 @@ public class SSHIO implements TermIO {
       return CodeType.DELETE;
     } else {
       switch (code) {
-        case TerminalIO.HANDLED:
+        case HANDLED:
           return CodeType.CLOSE;
         case 3:
           return CodeType.BREAK;
         case 9:
           return CodeType.TAB;
-        case TerminalIO.UP:
+        case UP:
           return CodeType.UP;
-        case TerminalIO.DOWN:
+        case DOWN:
           return CodeType.DOWN;
         default:
           return CodeType.CHAR;
