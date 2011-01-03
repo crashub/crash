@@ -27,7 +27,7 @@ class help extends CRaSHCommand
   @Command
   Object main() {
     def ret = "Try one of these commands with the -h or --help switch (";
-    shellContext.listResourceId(org.crsh.shell.ResourceKind.SCRIPT).eachWithIndex() {
+    shellContext.listResourceId(org.crsh.plugin.ResourceKind.SCRIPT).eachWithIndex() {
       cmd, index ->
       if (index > 0)
         ret += ",";
