@@ -20,7 +20,9 @@
 package org.crsh.standalone;
 
 import org.crsh.Processor;
+import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.PluginManager;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
@@ -37,47 +39,22 @@ public class Main {
 
   public static void main(String[] args) throws Exception {
 
+    //
     FS fs = new FS();
     fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
 
-    File f = fs.get(Path.get("/commands/"));
-    System.out.println("f = " + f);
-    System.out.println("children = " + f.children());
+    //
+    PluginContext pluginContext = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
+    pluginContext.start();
 
+    PluginManager<CRaSHPlugin> mgr = new PluginManager<CRaSHPlugin>(pluginContext, CRaSHPlugin.class);
 
+    // Force load
+    mgr.getPlugins();
 
-
+    // Start crash for this command line
     Term term = new BaseTerm(new JLineIO());
-/*
-    Processor processor = new Processor(term, new Shell() {
-      public String getWelcome() {
-        return "Welcome";
-      }
-
-      public String getPrompt() {
-        return "% ";
-      }
-
-      public void process(String request, ShellProcessContext processContext) {
-        processContext.begin(new ShellProcess() {
-          public void cancel() {
-          }
-        });
-        if ("bye".equals(request)) {
-          processContext.end(new ShellResponse.Close());
-        } else {
-          processContext.end(new ShellResponse.Display(request));
-        }
-      }
-
-      public Map<String, String> complete(String prefix) {
-        return Collections.emptyMap();
-      }
-    });
-*/
-    PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
-    context.start();
-    Processor processor = new Processor(term, new CRaSH(context));
+    Processor processor = new Processor(term, new CRaSH(pluginContext));
 
     //
     processor.run();
