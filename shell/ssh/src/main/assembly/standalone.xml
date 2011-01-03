@@ -37,26 +37,11 @@
         </excludes>
       </unpackOptions>
       <includes>
-        <include>org.slf4j:slf4j-api</include>
-        <include>jline:jline</include>
-        <include>args4j:args4j</include>
-        <include>org.crsh:crsh.cmdline</include>
-        <include>org.codehaus.groovy:groovy-all</include>
+        <include>org.apache.sshd:sshd-core</include>
+        <include>org.apache.sshd:sshd-pam</include>
+        <include>org.bouncycastle:bcprov-jdk15</include>
+        <include>org.apache.mina:mina-core</include>
       </includes>
-    </dependencySet>
-    <dependencySet>
-      <useTransitiveDependencies>false</useTransitiveDependencies>
-      <outputDirectory>/</outputDirectory>
-      <unpack>true</unpack>
-      <unpackOptions>
-        <excludes>
-          <exclude>META-INF/**</exclude>
-        </excludes>
-      </unpackOptions>
-      <includes>
-        <include>org.slf4j:slf4j-jdk14</include>
-      </includes>
-      <scope>test</scope>
     </dependencySet>
   </dependencySets>
 
