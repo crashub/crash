@@ -20,13 +20,11 @@
 package org.crsh.ssh;
 
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.plugin.Property;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.ssh.term.SSHLifeCycle;
 import org.crsh.vfs.Resource;
 
-import java.io.File;
 import java.net.URL;
 
 /**
@@ -57,25 +55,6 @@ public class SSHPlugin extends CRaSHPlugin {
 
     //
     String keyPath = getContext().getProperty(PropertyDescriptor.SSH_KEYPATH);
-    if (keyPath == null) {
-      Resource r = getContext().loadResource("hostkey.pem", ResourceKind.KEY);
-      if (r != null) {
-        // Use the default one
-        log.debug("No key path found in web.xml will try to use the default one");
-        URL url = r.getURL();
-        if (url != null) {
-          if ("file".equals(url.getProtocol())) {
-            try {
-              File file = new File(url.toURI());
-              keyPath = file.getAbsolutePath();
-            }
-            catch (Exception e) {
-              e.printStackTrace();
-            }
-          }
-        }
-      }
-    }
 
     //
     if (keyPath == null) {
