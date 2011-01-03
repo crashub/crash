@@ -113,6 +113,13 @@
         <version>1.0.0-beta18-SNAPSHOT</version>
       </dependency>
 
+      <!-- Module ssh -->
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.ssh</artifactId>
+        <version>1.0.0-beta18-SNAPSHOT</version>
+      </dependency>
+
       <!-- Module JCR -->
       <dependency>
         <groupId>org.crsh</groupId>
