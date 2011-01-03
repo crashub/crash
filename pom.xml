@@ -62,6 +62,10 @@
     <arguments>-Prelease</arguments>
     <autoVersionSubmodules>true</autoVersionSubmodules>
 
+    <!-- Java 5 -->
+    <maven.compiler.source>5</maven.compiler.source>
+    <maven.compiler.target>5</maven.compiler.target>
+
   </properties>
 
   <dependencyManagement>
@@ -284,11 +288,6 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.3.2</version>
         </plugin>
@@ -327,8 +326,109 @@
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>1.5</version>
         </plugin>
+
+        <!-- Module packaging -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2</version>
+          <executions>
+            <execution>
+              <id>make-assembly</id>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <appendAssemblyId>false</appendAssemblyId>
+                <descriptors>
+                  <descriptor>src/main/assembly/packaging.xml</descriptor>
+                </descriptors>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
       </plugins>
+
     </pluginManagement>
+
+    <plugins>
+
+      <!-- Install test jar -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>deploy</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-warfile</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+                    <copy tofile="${HOME}/java/gatein/portal/trunk/packaging/tomcat/pkg/target/tomcat/webapps/crsh.war" file="${project.build.directory}/${project.build.finalName}.war">
+                    </copy>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-javadoc</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

@@ -53,41 +53,6 @@
       <version>0.9.94</version>
     </dependency>
 
-    <!-- SSHD connector dependencies -->
-
-    <dependency>
-      <groupId>org.apache.sshd</groupId>
-      <artifactId>sshd-core</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.sshd</groupId>
-      <artifactId>sshd-pam</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.mina</groupId>
-      <artifactId>mina-core</artifactId>
-    </dependency>
-
-    <!-- Telnet connector dependencies -->
-
-    <dependency>
-      <groupId>net.wimpi</groupId>
-      <artifactId>telnetd-x</artifactId>
-    </dependency>
-
     <!-- For unit testing purpose -->
 
     <dependency>
@@ -103,6 +68,11 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap</groupId>
       <artifactId>shrinkwrap-impl-base</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.wimpi</groupId>
+      <artifactId>telnetd-x</artifactId>
       <scope>test</scope>
     </dependency>
 

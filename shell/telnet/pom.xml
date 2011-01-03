@@ -15,7 +15,7 @@
 
   <dependencies>
 
-    <!-- Should be provided by assembly plugin will fail if so -->
+    <!-- Core dependencies -->
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.core</artifactId>
@@ -44,104 +44,5 @@
     </dependency>
 
   </dependencies>
-  <build>
-
-    <finalName>crsh-${project.version}</finalName>
-
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>src/main/webapp/WEB-INF/</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-    </testResources>
-
-    <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>make-standalone</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <appendAssemblyId>true</appendAssemblyId>
-              <archive>
-                <manifest>
-                  <mainClass>org.crsh.standalone.Main</mainClass>
-                </manifest>
-              </archive>
-              <descriptors>
-                <descriptor>src/main/assembly/standalone.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-    </plugins>
-
-  </build>
-
-  <profiles>
-
-    <profile>
-      <id>main</id>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-test</id>
-                  <configuration>
-                    <skip>true</skip>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.1.1</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-                <phase>test</phase>
-              </execution>
-            </executions>
-            <configuration>
-              <mainClass>org.crsh.standalone.Main</mainClass>
-              <classpathScope>test</classpathScope>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  </profiles>
 
 </project>

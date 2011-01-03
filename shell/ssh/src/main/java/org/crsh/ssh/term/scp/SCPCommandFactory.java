@@ -21,7 +21,7 @@ package org.crsh.ssh.term.scp;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.CommandFactory;
 import org.crsh.plugin.PluginManager;
-import org.crsh.term.spi.sshd.FailCommand;
+import org.crsh.ssh.term.FailCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

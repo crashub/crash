@@ -25,9 +25,9 @@ import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginManager;
+import org.crsh.ssh.term.scp.CommandPlugin;
+import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.term.CRaSHLifeCycle;
-import org.crsh.term.spi.sshd.scp.CommandPlugin;
-import org.crsh.term.spi.sshd.scp.SCPCommandFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
