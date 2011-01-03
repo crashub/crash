@@ -17,11 +17,20 @@
       <profile>
         <id>release</id>
         <dependencies>
+
+          <!-- Wars -->
           <dependency>
             <groupId>org.crsh</groupId>
-            <artifactId>crsh.shell.core</artifactId>
+            <artifactId>crsh.shell.packaging</artifactId>
             <type>war</type>
           </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.jcr</artifactId>
+            <type>war</type>
+          </dependency>
+
+          <!-- Sources -->
           <dependency>
             <groupId>org.crsh</groupId>
             <artifactId>crsh.shell.core</artifactId>
@@ -30,13 +39,10 @@
           <dependency>
             <groupId>org.crsh</groupId>
             <artifactId>crsh.jcr</artifactId>
-            <type>war</type>
-          </dependency>
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.jcr</artifactId>
             <classifier>sources</classifier>
           </dependency>
+
+          <!-- Doc -->
           <dependency>
             <groupId>org.crsh</groupId>
             <artifactId>crsh.doc</artifactId>
@@ -48,6 +54,8 @@
             <classifier>html</classifier>
             <type>zip</type>
           </dependency>
+
+          <!-- Javadoc -->
           <dependency>
             <groupId>org.crsh</groupId>
             <artifactId>crsh.shell.core</artifactId>
@@ -76,7 +84,6 @@
                   <phase>generate-resources</phase>
                 </execution>
               </executions>
-
             </plugin>
 
             <!-- Final assembly -->
@@ -97,6 +104,12 @@
                   <goals>
                     <goal>single</goal>
                   </goals>
+                  <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                      <descriptor>src/main/assembly/packaging.xml</descriptor>
+                    </descriptors>
+                  </configuration>
                 </execution>
               </executions>
             </plugin>
