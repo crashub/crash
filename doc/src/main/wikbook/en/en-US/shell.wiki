@@ -1,18 +1,33 @@
-= Deployment =
+= Running CRaSH =
 
-CRaSH is a war file that deploys in a servlet container and there are two packaging available
+CRaSH provides has various ways to be started, it can even be easilty embedded.
+
+== Web archive deployment ==
+
+CRaSH can use a standard web archive to be deployed in a web container. The war file is used for its packaging capabilities
+and triggering the CRaSH life cycle start/stop. In this mode CRaSH has two packaging available:
 
 * A core war file found under //deploy/core/crash.war// provides the base CRaSH functionnalities.
 * A GateIn war file found under //deploy/gatein/crash.war// provides the additional JCR features but deploys only in
- a GateIn server.
+ a GateIn server (Tomcat or JBoss)
 
 You have to copy the crash.war in the appropriate server, regardless of the packaging you use.
+
+== Standalone mode ==
+
+The standalone mode allows you to run CRaSH from the command line. For this matter a few special jars are made available
+to you. Each jar adds a functionnality when it is added on the classpath, also each jar embeds its dependencies in order
+to save you the burden of having a long classpath
+
+to continue
 
 = Shell usage =
 
 == Connection ==
 
-You need to connect using telnet or SSH to use the shell.
+You need to connect using telnet, SSH to use the shell, there is a third special mode using the JVM input and output.
+
+=== Telnet access ===
 
 Telnet connection is done on port 5000:
 
@@ -32,6 +47,10 @@ Welcome to julien.local + !
 It is Fri Dec 03 16:20:40 CET 2010 now
 {{/screen}}
 
+The ##bye## command disconnect from the shell.
+
+=== SSH access ===
+
 SSH connection is done on port 2000 with the password **//crash//**:
 
 {{screen}}
@@ -45,12 +64,18 @@ It is Fri Jan 08 21:12:53 CET 2010 now.
 
 The ##bye## command disconnect from the shell.
 
+=== Native access ===
+
+A third mode is available for standalone CRaSH usage because it uses the JVM native input and output. When you are using
+it, CRaSh will be available just after the JVM is launched.
+
 == Features ==
 
 * Line edition: the current line can be edited via left and right arrow keys
 * History: the key up and key down enable history browsing
 * Quoting: simple quotes or double quotes allow to insert blanks in command options and arguments, for instance
 //"old boy"// or //'old boy'//. One quote style can quote another, like //"ol' boy"//.
+* Completion: an advanced completion system is available
 
 = Command usage =
 
