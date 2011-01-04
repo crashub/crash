@@ -2,6 +2,9 @@ class help extends CRaSHCommand
 {
 
   /** . */
+  private static final String TAB = "  ";
+
+  /** . */
   private static final List<String> commands = [
   "addnode",
   "addmixin",
@@ -26,14 +29,12 @@ class help extends CRaSHCommand
 
   @Command
   Object main() {
-    def ret = "Try one of these commands with the -h or --help switch (";
-    shellContext.listResourceId(org.crsh.plugin.ResourceKind.SCRIPT).eachWithIndex() {
-      cmd, index ->
-      if (index > 0)
-        ret += ",";
-      ret += cmd;
+    def ret = "Try one of these commands with the -h or --help switch:\n";
+    shellContext.listResourceId(org.crsh.plugin.ResourceKind.SCRIPT).each() {
+      cmd ->
+      ret += "\n$TAB$cmd";
     }
-    ret += ")";
+    ret += "\n";
     return ret;
   }
 }

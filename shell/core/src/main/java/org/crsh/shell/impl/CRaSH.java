@@ -114,8 +114,9 @@ public class CRaSH implements Shell {
   public CRaSH(final PluginContext context) {
     HashMap<String, Object> attributes = new HashMap<String, Object>();
 
-    // Set context available to scripts
+    // Set variable available to all scripts
     attributes.put("shellContext", context);
+    attributes.put("shell", this);
 
     //
     CompilerConfiguration config = new CompilerConfiguration();
