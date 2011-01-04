@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -17,25 +17,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
-
-import org.codehaus.groovy.control.MultipleCompilationErrorsException;
-import org.crsh.shell.impl.CreateCommandException;
+package org.crsh.command;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CommandExecutionTestCase extends AbstractCommandTestCase {
+public enum DescriptionMode {
 
-  public void testFailure() throws Exception {
-    Throwable t = assertError("fail");
-    assertEquals(Exception.class, t.getClass());
-  }
+  /**
+   * The command descriptiion in one line.
+   */
+  DESCRIBE,
 
-  public void testInvalid() throws Exception {
-    Throwable t = assertError("invalid");
-    assertEquals(CreateCommandException.class, t.getClass());
-    assertEquals(MultipleCompilationErrorsException.class, t.getCause().getClass());
-  }
+  /**
+   * The command usage.
+   */
+  USAGE,
+
+  /**
+   * The command manual.
+   */
+  MAN
+
 }

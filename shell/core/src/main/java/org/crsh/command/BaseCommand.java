@@ -176,6 +176,10 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
     return Collections.emptyMap();
   }
 
+  public String describe(String line, DescriptionMode mode) {
+    return null;
+  }
+
   public final void usage(ShellPrinter printer) {
       //
       Description description = getClass().getAnnotation(Description.class);

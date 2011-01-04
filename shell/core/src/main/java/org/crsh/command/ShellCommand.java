@@ -19,6 +19,8 @@
 
 package org.crsh.command;
 
+import org.crsh.shell.io.ShellPrinter;
+
 import java.util.Map;
 
 /**
@@ -41,6 +43,15 @@ public interface ShellCommand {
    * @return the completions
    */
   Map<String, String> complete(CommandContext context, String line);
+
+  /**
+   * Returns a description of the command or null if none can be found.
+   *
+   * @param line the usage line
+   * @param mode the description mode
+   * @return the description
+   */
+  String describe(String line, DescriptionMode mode);
 
   /**
    * Provides an invoker for the specified arguments.

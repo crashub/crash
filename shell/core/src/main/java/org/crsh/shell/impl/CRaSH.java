@@ -20,6 +20,7 @@ package org.crsh.shell.impl;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
@@ -44,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CRaSH implements Shell {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(CRaSH.class);
+  static final Logger log = LoggerFactory.getLogger(CRaSH.class);
 
   /** . */
   private final GroovyShell groovyShell;
@@ -58,7 +59,14 @@ public class CRaSH implements Shell {
   /** . */
   final Map<String, Object> attributes;
 
-  ShellCommand getCommand(String name) {
+  /**
+   * Attempt to obtain a command instance. Null is returned when such command does not exist.
+   *
+   * @param name the command name
+   * @return a command instance
+   * @throws CreateCommandException if an error occured preventing the command creation
+   */
+  public ShellCommand getCommand(String name) throws CreateCommandException {
     TimestampedObject<Class<? extends ShellCommand>> providerRef = commands.get(name);
 
     //
@@ -74,13 +82,23 @@ public class CRaSH implements Shell {
 
       //
       if (providerRef == null) {
-        Class<?> clazz = groovyShell.getClassLoader().parseClass(script.getContent(), name);
+
+        Class<?> clazz;
+        try {
+          clazz = groovyShell.getClassLoader().parseClass(script.getContent(), name);
+        }
+        catch (CompilationFailedException e) {
+          throw new CreateCommandException("Could not compile command script", e);
+        }
+
+        //
         if (ShellCommand.class.isAssignableFrom(clazz)) {
           Class<? extends ShellCommand> providerClass = clazz.asSubclass(ShellCommand.class);
           providerRef = new TimestampedObject<Class<? extends ShellCommand>>(script.getTimestamp(), providerClass);
           commands.put(name, providerRef);
         } else {
-          log.error("Parsed script does not implements " + CommandInvoker.class.getName());
+          throw new CreateCommandException("Parsed script " + clazz.getName() +
+            " does not implements " + CommandInvoker.class.getName());
         }
       }
     }
@@ -95,7 +113,7 @@ public class CRaSH implements Shell {
       return providerRef.getObject().newInstance();
     }
     catch (Exception e) {
-      throw new Error(e);
+      throw new CreateCommandException("Could not create command " + providerRef.getObject().getName() + " instance", e);
     }
   }
 
@@ -194,9 +212,14 @@ public class CRaSH implements Shell {
     } else {
       String commandName = termPrefix.substring(0, pos);
       termPrefix = termPrefix.substring(pos);
-      ShellCommand command = getCommand(commandName);
-      if (command != null) {
-        completions = command.complete(new CommandContextImpl(attributes), termPrefix);
+      try {
+        ShellCommand command = getCommand(commandName);
+        if (command != null) {
+          completions = command.complete(new CommandContextImpl(attributes), termPrefix);
+        }
+      }
+      catch (CreateCommandException e) {
+        log.debug("Could not create command for completion of " + prefix, e);
       }
     }
 

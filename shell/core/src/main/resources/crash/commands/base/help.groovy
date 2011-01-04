@@ -1,3 +1,5 @@
+import org.crsh.command.DescriptionMode;
+
 class help extends CRaSHCommand
 {
 
@@ -27,12 +29,19 @@ class help extends CRaSHCommand
   "setperm",
   "xpath"];
 
-  @Command
+  @Command(description = "Provides basic help")
   Object main() {
-    def ret = "Try one of these commands with the -h or --help switch:\n";
+    def ret = "Try one of these commands with the -h or --help switch:\n\n";
     shellContext.listResourceId(org.crsh.plugin.ResourceKind.SCRIPT).each() {
-      cmd ->
-      ret += "\n$TAB$cmd";
+      cmdName ->
+    try {
+        def cmd = shell.getCommand(cmdName);
+        if (cmd != null) {
+          def desc = cmd.describe(cmdName, DescriptionMode.DESCRIBE) ?: "";
+          ret += "$TAB$cmdName $desc\n";
+        }
+      } catch (org.crsh.shell.impl.CreateCommandException ignore) {
+      }
     }
     ret += "\n";
     return ret;

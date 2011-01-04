@@ -56,8 +56,8 @@ abstract class AST {
       this.next = next;
     }
 
-    ShellResponse.UnknownCommand createCommands(CRaSH crash) {
-      ShellResponse.UnknownCommand resp = term.createCommands(crash);
+    ShellResponse createCommands(CRaSH crash) {
+      ShellResponse resp = term.createCommands(crash);
       if (resp == null) {
         if (next != null) {
           return next.createCommands(crash);
@@ -178,7 +178,7 @@ abstract class AST {
       this.next = null;
     }
 
-    private ShellResponse.UnknownCommand createCommands(CRaSH crash) {
+    private ShellResponse createCommands(CRaSH crash) {
       String[] args = new String[chunks.size() - 1];
       chunks.subList(1, chunks.size()).toArray(args);
 
@@ -189,9 +189,16 @@ abstract class AST {
       String name = null;
       if (m.find()) {
         name = m.group(1);
-        ShellCommand command = crash.getCommand(name);
-        if (command != null) {
-          invoker = command.createInvoker(line.substring(m.end()));
+        ShellCommand command;
+        try {
+          command = crash.getCommand(name);
+          if (command != null) {
+            invoker = command.createInvoker(line.substring(m.end()));
+          }
+        }
+        catch (CreateCommandException e) {
+          crash.log.error("Could not create command " + name, e);
+          return new ShellResponse.Error(ErrorType.INTERNAL, e);
         }
       }
 

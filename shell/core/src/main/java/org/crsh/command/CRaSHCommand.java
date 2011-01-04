@@ -33,6 +33,8 @@ import org.crsh.util.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -115,6 +117,35 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     } finally {
       this.context = null;
     }
+  }
+
+  public String describe(String line, DescriptionMode mode) {
+
+    // WTF
+    Matcher analyzer = new Matcher("main", descriptor);
+
+    //
+    CommandMatch match = analyzer.match("line");
+
+    //
+    switch (mode) {
+      case DESCRIBE:
+        return match.getDescriptor().getDescription();
+      case MAN:
+        if (match instanceof MethodMatch) {
+          MethodMatch methodMatch = (MethodMatch)match;
+          StringWriter sw = new StringWriter();
+          PrintWriter pw = new PrintWriter(sw);
+          methodMatch.getDescriptor().printUsage(pw);
+          return sw.toString();
+        } else {
+          break;
+        }
+      case USAGE:
+    }
+
+    //
+    return null;
   }
 
   public CommandInvoker<?, ?> createInvoker(String line) {
