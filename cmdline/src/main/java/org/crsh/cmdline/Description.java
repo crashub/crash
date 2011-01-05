@@ -19,26 +19,35 @@
 
 package org.crsh.cmdline;
 
-import org.crsh.cmdline.spi.Completer;
-
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Target({ElementType.FIELD,ElementType.PARAMETER,ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Argument {
+public @interface Description {
 
-  String name() default "";
+  /**
+   * Returns the display description.
+   *
+   * @return the display descrption
+   */
+  String display() default "";
 
-  boolean required() default false;
+  /**
+   * Returns the usage description.
+   *
+   * @return the usage description
+   */
+  String usage() default "";
 
-  boolean password() default false;
+  /**
+   * Returns the manual description.
+   *
+   * @return a manual description
+   */
+  String man() default "";
 
-  Class<? extends Completer> completer() default EmptyCompleter.class;
 }

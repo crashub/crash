@@ -2,7 +2,8 @@ import org.crsh.jcr.command.PathArg;
 
 public class check extends org.crsh.jcr.command.JCRCommand {
   // The path of the node to checkin
-  @Command(description="Checkin a node")
+  @Description(display = "Checkin a node")
+  @Command
   public void IN(@PathArg String path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);
@@ -10,7 +11,8 @@ public class check extends org.crsh.jcr.command.JCRCommand {
   }
 
   // The path of the node to checkout
-  @Command(description="Checkout a node")
+  @Description(display = "Checkout a node")
+  @Command
   public void OUT(@PathArg String path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);

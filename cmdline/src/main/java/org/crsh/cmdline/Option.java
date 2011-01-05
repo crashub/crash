@@ -34,8 +34,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Option {
 
-  String description() default "";
-
   String[] names();
 
   boolean required() default false;

@@ -20,6 +20,7 @@
 package org.crsh.jcr.command;
 
 import org.crsh.cmdline.Argument;
+import org.crsh.cmdline.Description;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,6 +30,7 @@ import java.lang.annotation.RetentionPolicy;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Argument(description="A node path")
+@Description(display = "A node path")
+@Argument
 public @interface PathArg {
 }

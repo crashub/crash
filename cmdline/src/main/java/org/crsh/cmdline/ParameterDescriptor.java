@@ -37,7 +37,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   private final B binding;
 
   /** . */
-  private final String description;
+  private final InfoDescriptor info;
 
   /** . */
   private final SimpleValueType type;
@@ -66,7 +66,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   public ParameterDescriptor(
     B binding,
     Type javaType,
-    String description,
+    InfoDescriptor info,
     boolean required,
     boolean password,
     Class<? extends Completer> completerType,
@@ -123,7 +123,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     //
     this.binding = binding;
     this.javaType = javaType;
-    this.description = description;
+    this.info = info;
     this.type = valueType;
     this.multiplicity = multiplicity;
     this.required = required;
@@ -150,7 +150,11 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   }
 
   public final String getDescription() {
-    return description;
+    return info != null ? info.getDisplay() : "";
+  }
+
+  public InfoDescriptor getInfo() {
+    return info;
   }
 
   public Annotation getAnnotation() {

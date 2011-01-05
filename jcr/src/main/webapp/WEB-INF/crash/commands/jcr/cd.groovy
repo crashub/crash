@@ -8,7 +8,8 @@ import javax.jcr.Item;
 
 public class commit extends org.crsh.jcr.command.JCRCommand {
 
-  @Command(description="Change the current directory")
+  @Description(display = "Change the current directory")
+  @Command
   public Object main(@PathArg String path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);

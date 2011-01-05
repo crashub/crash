@@ -29,7 +29,8 @@ class help extends CRaSHCommand
   "setperm",
   "xpath"];
 
-  @Command(description = "Provides basic help")
+  @Description(display = "Provides basic help")
+  @Command
   Object main() {
     def ret = "Try one of these commands with the -h or --help switch:\n\n";
     shellContext.listResourceId(org.crsh.plugin.ResourceKind.SCRIPT).each() {

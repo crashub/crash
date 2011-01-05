@@ -40,6 +40,8 @@ import java.util.Set;
 public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
   public static <T> ClassDescriptor<T> create(Class<T> type) throws IntrospectionException {
+
+    //
     return new ClassDescriptor<T>(type);
   }
 
@@ -47,7 +49,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   private final String name;
 
   /** . */
-  private final String description;
+  private final InfoDescriptor info;
 
   /** . */
   private final Map<String, OptionDescriptor<B>> optionMap;
@@ -58,7 +60,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   /** . */
   private final List<ArgumentDescriptor<B>> arguments;
 
-  CommandDescriptor(String name, String description, List<ParameterDescriptor<B>> parameters) throws IntrospectionException {
+  CommandDescriptor(String name, InfoDescriptor info, List<ParameterDescriptor<B>> parameters) throws IntrospectionException {
 
     Map<String, OptionDescriptor<B>> options = Collections.emptyMap();
     List<ArgumentDescriptor<B>> arguments = Collections.emptyList();
@@ -88,7 +90,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     }
 
     //
-    this.description = description;
+    this.info = info;
     this.optionMap = options.isEmpty() ? options : Collections.unmodifiableMap(options);
     this.arguments = arguments.isEmpty() ? arguments : Collections.unmodifiableList(arguments);
     this.options = options.isEmpty() ? Collections.<OptionDescriptor<B>>emptySet() : Collections.unmodifiableSet(new LinkedHashSet<OptionDescriptor<B>>(options.values()));
@@ -118,7 +120,25 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   }
 
   public String getDescription() {
-    return description;
+    return info != null ? info.getDisplay() : "";
+  }
+
+  public InfoDescriptor getInfo() {
+    return info;
+  }
+
+  protected static InfoDescriptor info(Annotation[] annotations) {
+    for (Annotation ann : annotations) {
+      if (ann instanceof  Description) {
+        Description descriptionAnn = (Description)ann;
+        return new InfoDescriptor(
+          descriptionAnn.display(),
+          descriptionAnn.usage(),
+          descriptionAnn.man()
+        );
+      }
+    }
+    return null;
   }
 
   protected static <B extends TypeBinding> ParameterDescriptor<B> create(
@@ -126,16 +146,21 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     Type type,
     Argument argumentAnn,
     Option optionAnn,
+    InfoDescriptor info,
     Annotation ann) throws IntrospectionException {
+
+    //
     if (argumentAnn != null) {
       if (optionAnn != null) {
         throw new IntrospectionException();
       }
+
+      //
       return new ArgumentDescriptor<B>(
         binding,
         argumentAnn.name(),
         type,
-        argumentAnn.description(),
+        info,
         argumentAnn.required(),
         argumentAnn.password(),
         argumentAnn.completer(),
@@ -145,7 +170,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         binding,
         type,
         Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
-        optionAnn.description(),
+        info,
         optionAnn.required(),
         optionAnn.arity(),
         optionAnn.password(),
@@ -154,5 +179,63 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     } else {
       return null;
     }
+  }
+
+  /**
+   * Jus grouping some data for conveniency
+   */
+  protected static class Tuple {
+    final Argument argumentAnn;
+    final Option optionAnn;
+    final InfoDescriptor descriptionAnn;
+    final Annotation ann;
+    private Tuple(Argument argumentAnn, Option optionAnn, InfoDescriptor info, Annotation ann) {
+      this.argumentAnn = argumentAnn;
+      this.optionAnn = optionAnn;
+      this.descriptionAnn = info;
+      this.ann = ann;
+    }
+  }
+
+  protected static Tuple get(Annotation... ab) {
+    Argument argumentAnn = null;
+    Option optionAnn = null;
+    InfoDescriptor descriptionAnn = null;
+    Annotation info = null;
+    for (Annotation parameterAnnotation : ab) {
+      if (parameterAnnotation instanceof Option) {
+        optionAnn = (Option)parameterAnnotation;
+      } else if (parameterAnnotation instanceof Argument) {
+        argumentAnn = (Argument)parameterAnnotation;
+      } else if (parameterAnnotation instanceof Description) {
+        descriptionAnn = new InfoDescriptor((Description)parameterAnnotation);
+      } else {
+
+        // Look at annotated annotations
+        Class<? extends Annotation> a = parameterAnnotation.annotationType();
+        if (a.getAnnotation(Option.class) != null) {
+          optionAnn = a.getAnnotation(Option.class);
+          info = parameterAnnotation;
+        } else if (a.getAnnotation(Argument.class) != null) {
+          argumentAnn =  a.getAnnotation(Argument.class);
+          info = parameterAnnotation;
+        }
+
+        //
+        if (info != null) {
+          Description annotationDescriptionAnn = a.getAnnotation(Description.class);
+          if (annotationDescriptionAnn != null) {
+            InfoDescriptor annotationInfo = new InfoDescriptor(annotationDescriptionAnn);
+            if (descriptionAnn == null) {
+              descriptionAnn = annotationInfo;
+            } else {
+              descriptionAnn = new InfoDescriptor(descriptionAnn, annotationInfo);
+            }
+          }
+        }
+      }
+    }
+
+    return new Tuple(argumentAnn, optionAnn, descriptionAnn, info);
   }
 }

@@ -13,7 +13,8 @@ import java.lang.annotation.RetentionPolicy;
 
 public class log extends CRaSHCommand implements Completer {
 
-  @Command(description="Send a message to a logger")
+  @Description(display="Send a message to a logger")
+  @Command
   public void send(InvocationContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg String name, @LevelOpt Level level) throws ScriptException {
     level = level ?: Level.info;
     if (context.piped) {
@@ -73,7 +74,8 @@ public class log extends CRaSHCommand implements Completer {
     return names;
   }
 
-  @Command(description="List the available loggers")
+  @Description(display = "List the available loggers");
+  @Command
   public void ls(InvocationContext<Void, Logger> context, @FilterOpt String filter) throws ScriptException {
 
     // Regex filter
@@ -90,7 +92,8 @@ public class log extends CRaSHCommand implements Completer {
     }
   }
 
-  @Command(description="Create one or several loggers")
+  @Description(display = "Create one or several loggers")
+  @Command
   public void add(InvocationContext<Void, Logger> context, @LoggerArg List<String> names) throws ScriptException {
     names.each {
       if (it.length() > 0) {
@@ -101,7 +104,8 @@ public class log extends CRaSHCommand implements Completer {
     }
   }
 
-  @Command(description="Give info about a logger")
+  @Description(display = "Give info about a logger")
+  @Command
   public void info(InvocationContext<Logger, Void> context, @LoggerArg List<String> names) throws ScriptException {
     if (context.piped) {
       context.consume().each() {
@@ -126,7 +130,8 @@ public class log extends CRaSHCommand implements Completer {
     }
   }
 
-  @Command(description="Set the level of one of several loggers")
+  @Description(display = "Set the level of one of several loggers")
+  @Command
   public void set(
     InvocationContext<Logger, Void> context,
     @LoggerArg List<String> names,
@@ -223,21 +228,26 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Option(names=["l","level"],description="The logger level to assign among {trace, debug, info, warn, error}",completer=org.crsh.cmdline.EnumCompleter)
+@Description(display = "The logger level to assign among {trace, debug, info, warn, error}")
+@Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
 @interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Option(names=["m","message"],required=true,description="The message to log")
+@Description(display = "The message to log")
+@Option(names=["m","message"],required=true)
 @interface MsgOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Argument(description="The logger name")
+@Description(display = "The logger name")
+@Argument
 @interface LoggerArg { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Option(names=["f","filter"],description="Filter the logger with a regular expression")
+@Description(display = "Filter the logger with a regular expression")
+@Option(names=["f","filter"])
 @interface FilterOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Option(names=["p","plugin"],description="Force the plugin implementation")
+@Description(display = "Force the plugin implementation")
+@Option(names=["p","plugin"])
 @interface PluginOpt { }
