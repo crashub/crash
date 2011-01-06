@@ -25,6 +25,7 @@ import org.crsh.util.Strings;
 import org.crsh.util.TypeResolver;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -125,6 +126,10 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
 
   /** . */
   private String[] args;
+
+  /** . */
+  @Option(name = "-h", aliases = "--help")
+  private boolean help;
 
   protected BaseCommand() {
     this.context = null;
@@ -263,14 +268,18 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
     }
 
     //
-    try {
-      this.context = context;
+    if (help) {
+      usage(context.getWriter());
+    } else {
+      try {
+        this.context = context;
 
-      //
-      execute(context);
-    }
-    finally {
-      this.context = null;
+        //
+        execute(context);
+      }
+      finally {
+        this.context = null;
+      }
     }
   }
 

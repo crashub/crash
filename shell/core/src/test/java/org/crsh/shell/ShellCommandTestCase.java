@@ -18,7 +18,6 @@
  */
 package org.crsh.shell;
 
-import com.beust.jcommander.ParameterException;
 import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
@@ -75,26 +74,6 @@ public class ShellCommandTestCase extends TestCase {
     }
   }
 
-  public void testOptionInjectionInCommandClassJCommander() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
-      "@com.beust.jcommander.Parameter(names=\"-str\", required = true) def String str = 'default value';" +
-      "public Object execute() {" +
-      "return str;" +
-      "}" +
-      "}");
-
-    //
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("abc", new TestInvocationContext().execute(cmd, "-str", "abc"));
-    try {
-      new TestInvocationContext().execute(cmd);
-      fail();
-    }
-    catch (ScriptException e) {
-      assert(e.getCause() instanceof ParameterException);
-    }
-  }
-
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
       "@org.crsh.cmdline.Option(names=\"s\", required=true) def String str = 'default value';" +
@@ -142,19 +121,6 @@ public class ShellCommandTestCase extends TestCase {
     //
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
     assertEquals("b", new TestInvocationContext().execute(cmd, "b"));
-  }
-
-  public void testArgumentInjectionInCommandClassJCommander() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
-      "@com.beust.jcommander.Parameter def List<String> str;" +
-      "public Object execute() {" +
-      "return str;" +
-      "}" +
-      "}");
-
-    //
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
-//    assertEquals(Arrays.asList("b"), new TestInvocationContext().execute(cmd, "b"));
   }
 
   public void testArgumentInjectionInCommandCmdLine() throws Exception {

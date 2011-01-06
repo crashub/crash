@@ -19,8 +19,6 @@
 
 package org.crsh.shell.impl;
 
-import java.util.List;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -55,17 +53,13 @@ abstract class Token {
     /** . */
     final String line;
 
-    /** . */
-    final List<String> chunks;
-
-    public Command(String line, List<String> chunks) {
+    public Command(String line) {
       this.line = line;
-      this.chunks = chunks;
     }
 
     @Override
     public String toString() {
-      return "Command[" + chunks + "]";
+      return "Command[" + line + "]";
     }
   }
 }

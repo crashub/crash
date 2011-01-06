@@ -22,11 +22,15 @@ package org.crsh.command;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.IntrospectionException;
+import org.crsh.cmdline.Option;
+import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.ClassMatch;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.MethodMatch;
+import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
@@ -60,10 +64,15 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   /** . */
   private final ClassDescriptor<?> descriptor;
 
+  /** . */
+  @Option(names = {"h","help"})
+  private boolean help;
+
   protected CRaSHCommand() throws IntrospectionException {
     this.context = null;
     this.unquoteArguments = true;
     this.descriptor = CommandDescriptor.create(getClass());
+    this.help = false;
   }
 
   /**
@@ -125,23 +134,24 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     Matcher analyzer = new Matcher("main", descriptor);
 
     //
-    CommandMatch match = analyzer.match("line");
+    System.out.println("line = " + line);
+    CommandMatch match = analyzer.match(line);
+    System.out.println("match = " + match);
 
     //
     switch (mode) {
       case DESCRIBE:
         return match.getDescriptor().getDescription();
       case MAN:
-        if (match instanceof MethodMatch) {
-          MethodMatch methodMatch = (MethodMatch)match;
-          StringWriter sw = new StringWriter();
-          PrintWriter pw = new PrintWriter(sw);
-          methodMatch.printMan(pw);
-          return sw.toString();
-        } else {
-          break;
-        }
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        match.printMan(pw);
+        return sw.toString();
       case USAGE:
+        StringWriter sw2 = new StringWriter();
+        PrintWriter pw2 = new PrintWriter(sw2);
+        match.printUsage(pw2);
+        return sw2.toString();
     }
 
     //
@@ -159,13 +169,26 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     Matcher analyzer = new Matcher("main", descriptor);
 
     //
-    final CommandMatch match = analyzer.match(line);
+    final CommandMatch<CRaSHCommand, ?, ?> match = analyzer.match(line);
 
     //
     if (match instanceof MethodMatch) {
 
       //
-      final MethodMatch methodMatch = (MethodMatch)match;
+      final MethodMatch<?> methodMatch = (MethodMatch)match;
+
+      //
+      boolean help = false;
+      for (OptionMatch optionMatch : methodMatch.getOwner().getOptionMatches()) {
+        ParameterDescriptor<?> parameterDesc = optionMatch.getParameter();
+        if (parameterDesc instanceof OptionDescriptor<?>) {
+          OptionDescriptor<?> optionDesc = (OptionDescriptor<?>)parameterDesc;
+          if (optionDesc.getNames().contains("h")) {
+            help = true;
+          }
+        }
+      }
+      final boolean doHelp = help;
 
       //
       return new CommandInvoker() {
@@ -195,24 +218,26 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
         public void invoke(InvocationContext context) throws ScriptException {
 
-          //
-          CRaSHCommand.this.context = context;
-
-          try {
-            org.crsh.cmdline.matcher.InvocationContext invocationContext = new org.crsh.cmdline.matcher.InvocationContext();
-            invocationContext.setAttribute(InvocationContext.class, context);
-            Object o = match.invoke(invocationContext, CRaSHCommand.this);
-
-            //
-            if (o != null) {
-              context.getWriter().print(o);
+          if (doHelp) {
+            usage(context.getWriter());
+          } else {
+            CRaSHCommand.this.context = context;
+            try {
+              org.crsh.cmdline.matcher.InvocationContext invocationContext = new org.crsh.cmdline.matcher.InvocationContext();
+              invocationContext.setAttribute(InvocationContext.class, context);
+              Object o = match.invoke(invocationContext, CRaSHCommand.this);
+              if (o != null) {
+                context.getWriter().print(o);
+              }
+            } catch (Exception e) {
+              e.printStackTrace();
+              throw new ScriptException(e.getMessage(), e);
+            } finally {
+              CRaSHCommand.this.context = null;
             }
-          } catch (Exception e) {
-            e.printStackTrace();
-            throw new ScriptException(e.getMessage(), e);
-          } finally {
-            CRaSHCommand.this.context = null;
           }
+
+          //
         }
 
         public Class getProducedType() {
@@ -226,16 +251,33 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     } else if (match instanceof ClassMatch) {
 
       //
-      final ClassMatch classMatch = (ClassMatch)match;
+      final ClassMatch<?> classMatch = (ClassMatch)match;
+
+      //
+      boolean help = false;
+      for (OptionMatch optionMatch : classMatch.getOptionMatches()) {
+        ParameterDescriptor<?> parameterDesc = optionMatch.getParameter();
+        if (parameterDesc instanceof OptionDescriptor<?>) {
+          OptionDescriptor<?> optionDesc = (OptionDescriptor<?>)parameterDesc;
+          if (optionDesc.getNames().contains("h")) {
+            help = true;
+          }
+        }
+      }
+      final boolean doHelp = help;
 
       //
       return new CommandInvoker<Void, Void>() {
         public void usage(ShellPrinter printer) {
-          classMatch.printMan(printer);
+          classMatch.printUsage(printer);
         }
 
         public void invoke(InvocationContext<Void, Void> context) throws ScriptException {
-          classMatch.printMan(context.getWriter());
+          if (doHelp) {
+
+          } else {
+            classMatch.printUsage(context.getWriter());
+          }
         }
 
         public Class<Void> getProducedType() {

@@ -93,11 +93,6 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
 
   @Override
   public void printUsage(PrintWriter writer) {
-
-  }
-
-  public void printMan(PrintWriter writer) {
-
     if (methodMap.size() == 1) {
       methodMap.values().iterator().next().printMan(writer, false);
     } else {
@@ -112,6 +107,14 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
         Formatter formatter = new Formatter(writer);
         formatter.format(formatString, method.getName(), method.getDescription());
       }
+    }
+  }
+
+  public void printMan(PrintWriter writer) {
+    if (methodMap.size() == 1) {
+      methodMap.values().iterator().next().printMan(writer, false);
+    } else {
+      writer.print("todo");
     }
   }
 

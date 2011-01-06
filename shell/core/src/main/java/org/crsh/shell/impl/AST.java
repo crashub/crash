@@ -26,7 +26,6 @@ import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -95,7 +94,7 @@ abstract class AST {
 
         // Build command context
         InvocationContextImpl ctx;
-        if (current.command.getConsumedType() == Void.class) {
+        if (current.invoker.getConsumedType() == Void.class) {
           ctx = new InvocationContextImpl(responseContext, null, attributes);
         } else {
           // For now we assume we have compatible consumed/produced types
@@ -103,12 +102,17 @@ abstract class AST {
         }
 
         // Do something usefull with command
+/*
         String[] args = current.args;
         if (args.length > 0 && ("-h".equals(args[args.length - 1]) || "--help".equals(args[args.length - 1]))) {
-          current.command.usage(ctx.getWriter());
+          String s = current.command.describe(current.line, DescriptionMode.USAGE);
+          if (s != null) {
+            ctx.getWriter().print(s);
+          }
         } else {
-          current.command.invoke(ctx);
         }
+*/
+        current.invoker.invoke(ctx);
 
         // Append anything that was in the buffer
         if (ctx.getBuffer() != null) {
@@ -116,7 +120,7 @@ abstract class AST {
         }
 
         // Append produced if possible
-        if (current.command.getProducedType() == Void.class) {
+        if (current.invoker.getProducedType() == Void.class) {
           // Do nothing
         } else {
           produced.addAll(ctx.getProducedItems());
@@ -152,44 +156,34 @@ abstract class AST {
   static class Term extends AST {
 
     /** . */
-    private final String line;
-
-    /** . */
-    final List<String> chunks;
+    final String line;
 
     /** . */
     final Term next;
 
     /** . */
-    private CommandInvoker command;
+    private ShellCommand command;
 
     /** . */
-    private String[] args;
+    private CommandInvoker invoker;
 
-    Term(String line, List<String> chunks, Term next) {
+    Term(String line, Term next) {
       this.line = line;
-      this.chunks = chunks;
       this.next = next;
     }
 
-    Term(String line, List<String> chunks) {
+    Term(String line) {
       this.line = line;
-      this.chunks = chunks;
       this.next = null;
     }
 
     private ShellResponse createCommands(CRaSH crash) {
-      String[] args = new String[chunks.size() - 1];
-      chunks.subList(1, chunks.size()).toArray(args);
-
-      //
       CommandInvoker invoker = null;
       Pattern p = Pattern.compile("^\\s*(\\S+)");
       java.util.regex.Matcher m = p.matcher(line);
       String name = null;
       if (m.find()) {
         name = m.group(1);
-        ShellCommand command;
         try {
           command = crash.getCommand(name);
           if (command != null) {
@@ -208,8 +202,7 @@ abstract class AST {
       }
 
       //
-      this.args = args;
-      this.command = invoker;
+      this.invoker = invoker;
 
       //
       if (next != null) {
@@ -221,10 +214,6 @@ abstract class AST {
 
     String getLine() {
       return line;
-    }
-
-    List<String> getChunks() {
-      return chunks;
     }
 
     @Override

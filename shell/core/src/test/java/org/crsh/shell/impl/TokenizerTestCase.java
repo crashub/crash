@@ -22,8 +22,6 @@ package org.crsh.shell.impl;
 import junit.framework.TestCase;
 import org.crsh.command.ScriptException;
 
-import java.util.Arrays;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -32,48 +30,49 @@ public class TokenizerTestCase extends TestCase {
 
   public void testEmpty() {
     new TestTokenizer("").assertEOF();
-    new TestTokenizer(" ").assertEOF();
+    new TestTokenizer(" ").assertCommand(" ").assertEOF();
   }
 
   public void testCommand() {
-    new TestTokenizer("a").assertCommand("a");
-    new TestTokenizer("' '").assertCommand("' '");
-    new TestTokenizer("\" \"").assertCommand("\" \"");
-    new TestTokenizer("'\"'").assertCommand("'\"'");
-    new TestTokenizer("\"'\"").assertCommand("\"'\"");
-    new TestTokenizer(" ' ' ").assertCommand("' '");
+    new TestTokenizer("a").assertCommand("a").assertEOF();
+    new TestTokenizer("' '").assertCommand("' '").assertEOF();
+    new TestTokenizer("\" \"").assertCommand("\" \"").assertEOF();
+    new TestTokenizer("'\"'").assertCommand("'\"'").assertEOF();
+    new TestTokenizer("\"'\"").assertCommand("\"'\"").assertEOF();
+    new TestTokenizer(" ' ' ").assertCommand(" ' ' ").assertEOF();
 
     // Test escape special char in simple quote
-    new TestTokenizer("'+'").assertCommand("'+'");
-    new TestTokenizer("'|'").assertCommand("'|'");
+    new TestTokenizer("'+'").assertCommand("'+'").assertEOF();
+    new TestTokenizer("'|'").assertCommand("'|'").assertEOF();
 
     // Test escape special char in double quote
-    new TestTokenizer("\"+\"").assertCommand("\"+\"");
-    new TestTokenizer("\"|\"").assertCommand("\"|\"");
+    new TestTokenizer("\"+\"").assertCommand("\"+\"").assertEOF();
+    new TestTokenizer("\"|\"").assertCommand("\"|\"").assertEOF();
 
     // Non terminated quotes
-    new TestTokenizer("\"").assertCommand("\"");
-    new TestTokenizer("'").assertCommand("'");
+    new TestTokenizer("\"").assertCommand("\"").assertEOF();
+    new TestTokenizer("'").assertCommand("'").assertEOF();
 
     //
-    new TestTokenizer("a b").assertCommand("a","b");
+    new TestTokenizer("a b").assertCommand("a b").assertEOF();
   }
 
   public void testPlus() {
-    new TestTokenizer("+").assertPlus();
+    new TestTokenizer("+").assertPlus().assertEOF();
   }
 
   public void testPipe() {
-    new TestTokenizer("|").assertPipe();
+    new TestTokenizer("|").assertPipe().assertEOF();
   }
 
   public void testComposite() {
     TestTokenizer tokenizer = new TestTokenizer("a | b c + d");
-    tokenizer.assertCommand("a");
+    tokenizer.assertCommand("a ");
     tokenizer.assertPipe();
-    tokenizer.assertCommand("b", "c");
+    tokenizer.assertCommand(" b c ");
     tokenizer.assertPlus();
-    tokenizer.assertCommand("d");
+    tokenizer.assertCommand(" d");
+    tokenizer.assertEOF();
   }
 
   private static class TestTokenizer extends Tokenizer {
@@ -82,29 +81,33 @@ public class TokenizerTestCase extends TestCase {
       super(s);
     }
 
-    public void assertPipe() {
+    public TestTokenizer assertPipe() {
       assertEquals(Token.PIPE, nextToken());
+      return this;
     }
 
-    public void assertPlus() {
+    public TestTokenizer assertPlus() {
       assertEquals(Token.PLUS, nextToken());
+      return this;
     }
 
     public void assertEOF() {
       assertEquals(Token.EOF, nextToken());
     }
 
-    public void assertCommand(String... chunks) {
+    public TestTokenizer assertCommand(String line) {
       Token.Command c = (Token.Command)nextToken();
-      assertEquals(Arrays.asList(chunks), c.chunks);
+      assertEquals(line, c.line);
+      return this;
     }
 
-    public void assertFail() {
+    public TestTokenizer assertFail() {
       try {
         nextToken();
         fail();
       } catch (ScriptException ignore) {
       }
+      return this;
     }
   }
 }

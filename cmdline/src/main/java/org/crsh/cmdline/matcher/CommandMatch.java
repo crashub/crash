@@ -52,6 +52,8 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
 
   public abstract void printMan(PrintWriter writer);
 
+  public abstract void printUsage(PrintWriter writer);
+
   public List<OptionMatch<B>> getOptionMatches() {
     return optionMatches;
   }

@@ -90,6 +90,15 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
   }
 
   @Override
+  public void printUsage(PrintWriter writer) {
+    if (implicit) {
+      getOwner().printUsage(writer);
+    } else {
+      descriptor.printUsage(writer);
+    }
+  }
+
+  @Override
   public Object invoke(InvocationContext context, T command) throws CmdLineException {
 
     //

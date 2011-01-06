@@ -62,6 +62,11 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
   }
 
   @Override
+  public void printUsage(PrintWriter writer) {
+    descriptor.printUsage(writer);
+  }
+
+  @Override
   public Object invoke(InvocationContext context, T command) throws CmdLineException {
     List<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>> used = new ArrayList<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>>();
     Set<ParameterDescriptor<?>> unused = new HashSet<ParameterDescriptor<?>>();

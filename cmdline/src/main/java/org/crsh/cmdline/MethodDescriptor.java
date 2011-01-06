@@ -116,7 +116,60 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
 
   @Override
   public void printUsage(PrintWriter writer) {
+    printMan(writer, true);
+  }
 
+  public void printUsage(PrintWriter writer, boolean printName) {
+
+    writer.append("usage: ").append(owner.getName());
+    if (printName) {
+      writer.append(" ").append(getName());
+    }
+
+    //
+    for (OptionDescriptor<?> option : owner.getOptions()) {
+      writer.append(" ");
+      option.printUsage(writer);
+    }
+    if (printName) {
+      writer.append(" ").append(getName());
+    }
+
+    //
+    for (OptionDescriptor<?> option : getOptions()) {
+      writer.append(" ");
+      option.printUsage(writer);
+    }
+    for (ArgumentDescriptor<?> argument : getArguments()) {
+      writer.append(" ");
+      argument.printUsage(writer);
+    }
+
+    //
+    writer.append("\n\n");
+
+    //
+    for (OptionDescriptor<?> option : owner.getOptions()) {
+      writer.append(TAB);
+      option.printUsage(writer);
+      writer.append(" ");
+      writer.append(option.getDescription());
+    }
+    for (OptionDescriptor<?> option : getOptions()) {
+      writer.append(TAB);
+      option.printUsage(writer);
+      writer.append(" ");
+      writer.append(option.getDescription());
+    }
+    for (ArgumentDescriptor<?> argument : getArguments()) {
+      writer.append(TAB);
+      argument.printUsage(writer);
+      writer.append(" ");
+      writer.append(argument.getDescription());
+    }
+
+    //
+    writer.append("\n\n");
   }
 
   public void printMan(PrintWriter writer) {
@@ -145,8 +198,6 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
       writer.append(" ");
       option.printUsage(writer);
     }
-
-    //
     if (printName) {
       writer.append(" ").append(getName());
     }

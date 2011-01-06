@@ -21,8 +21,6 @@ package org.crsh.shell.impl;
 
 import org.crsh.command.ScriptException;
 
-import java.util.LinkedList;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -66,13 +64,6 @@ class Tokenizer {
   }
 
   public Token nextToken() {
-
-    // Remove any white char first
-    while (c != null && Character.isWhitespace(c)) {
-      next();
-    }
-
-    //
     if (c == null) {
       return Token.EOF;
     } else {
@@ -92,8 +83,6 @@ class Tokenizer {
   private Token parseCommand() throws ScriptException {
 
     //
-    LinkedList<String> chunks = new LinkedList<String>();
-    StringBuilder chunk = new StringBuilder();
     StringBuilder line = new StringBuilder();
 
     //
@@ -104,30 +93,16 @@ class Tokenizer {
       } else {
         line.append(c);
         switch (c) {
-          case ' ':
-            if (lastQuote == null) {
-              if (chunk.length() > 0) {
-                chunks.addLast(chunk.toString());
-                chunk.setLength(0);
-              }
-            } else {
-              chunk.append(c);
-            }
-            break;
           case '"':
           case '\'':
             if (lastQuote == null) {
               lastQuote = c;
-              chunk.append(c);
             } else if (lastQuote != c) {
-              chunk.append(c);
             } else {
-              chunk.append(c);
               lastQuote = null;
             }
             break;
           default:
-            chunk.append(c);
             break;
         }
       }
@@ -137,18 +112,6 @@ class Tokenizer {
     }
 
     //
-    if (chunk.length() > 0) {
-      chunks.addLast(chunk.toString());
-    }
-
-    //
-/*
-    if (lastQuote != null) {
-      throw new ScriptException("Quote " + lastQuote + " is not closed");
-    }
-*/
-
-    //
-    return new Token.Command(line.toString(), chunks);
+    return new Token.Command(line.toString());
   }
 }
