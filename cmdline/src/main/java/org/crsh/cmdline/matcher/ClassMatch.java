@@ -24,6 +24,7 @@ import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterDescriptor;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,6 +54,11 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
   @Override
   public ClassDescriptor<T> getDescriptor() {
     return descriptor;
+  }
+
+  @Override
+  public void printMan(PrintWriter writer) {
+    descriptor.printMan(writer);
   }
 
   @Override

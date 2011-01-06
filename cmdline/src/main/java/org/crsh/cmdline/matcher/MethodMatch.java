@@ -27,6 +27,7 @@ import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterDescriptor;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -48,9 +49,13 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
   /** . */
   private final ClassMatch<T> owner;
 
+  /** . */
+  private final boolean implicit;
+
   public MethodMatch(
     ClassMatch<T> owner,
     MethodDescriptor<T> descriptor,
+    boolean implicit,
     List<OptionMatch<MethodArgumentBinding>> optionMatches,
     List<ArgumentMatch<MethodArgumentBinding>> argumentMatches,
     String rest) {
@@ -59,6 +64,11 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
     //
     this.owner = owner;
     this.descriptor = descriptor;
+    this.implicit = implicit;
+  }
+
+  public boolean isImplicit() {
+    return implicit;
   }
 
   @Override
@@ -68,6 +78,15 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
 
   public ClassMatch<T> getOwner() {
     return owner;
+  }
+
+  @Override
+  public void printMan(PrintWriter writer) {
+    if (implicit) {
+      getOwner().printMan(writer);
+    } else {
+      descriptor.printMan(writer);
+    }
   }
 
   @Override

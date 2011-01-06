@@ -114,9 +114,21 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
   /** . */
   private static final String TAB = "       ";
 
+  @Override
   public void printUsage(PrintWriter writer) {
+
+  }
+
+  public void printMan(PrintWriter writer) {
+    printMan(writer, true);
+  }
+
+  void printMan(PrintWriter writer, boolean printName) {
     writer.append("NAME\n");
-    writer.append(TAB).append(owner.getName()).append(" ").append(getName());
+    writer.append(TAB).append(owner.getName());
+    if (printName) {
+      writer.append(" ").append(getName());
+    }
     if (getDescription().length() > 0) {
       writer.append(" - ").append(getDescription());
     }
@@ -135,8 +147,11 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     }
 
     //
-    writer.append(" ").append(getName());
+    if (printName) {
+      writer.append(" ").append(getName());
+    }
 
+    //
     for (OptionDescriptor<?> option : getOptions()) {
       writer.append(" ");
       option.printUsage(writer);

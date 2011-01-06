@@ -150,8 +150,12 @@ public class Matcher<T> {
     }
 
     // Try to consume with main method name then
+    boolean implicit;
     if (method == null) {
       method = descriptor.getMethod(mainName);
+      implicit = true;
+    } else {
+      implicit = false;
     }
 
     //
@@ -160,7 +164,7 @@ public class Matcher<T> {
       MatcherFactory<T, MethodArgumentBinding> methodAnalyzer = new MatcherFactory<T, MethodArgumentBinding>(method);
       methodOptions = methodAnalyzer.analyzeOptions(cursor);
       methodArguments = methodAnalyzer.analyzeArguments(cursor);
-      return new MethodMatch<T>(owner, method, methodOptions, methodArguments, cursor.getOriginal());
+      return new MethodMatch<T>(owner, method, implicit, methodOptions, methodArguments, cursor.getOriginal());
     } else {
       List<ArgumentMatch<ClassFieldBinding>> arguments = analyzer.analyzeArguments(cursor);
       return new ClassMatch<T>(descriptor, options, arguments, cursor.getOriginal());

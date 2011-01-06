@@ -136,7 +136,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           MethodMatch methodMatch = (MethodMatch)match;
           StringWriter sw = new StringWriter();
           PrintWriter pw = new PrintWriter(sw);
-          methodMatch.getDescriptor().printUsage(pw);
+          methodMatch.getDescriptor().printMan(pw);
           return sw.toString();
         } else {
           break;
@@ -190,7 +190,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         }
 
         public void usage(ShellPrinter printer) {
-          methodMatch.getDescriptor().printUsage(printer);
+          methodMatch.printMan(printer);
         }
 
         public void invoke(InvocationContext context) throws ScriptException {
@@ -231,11 +231,11 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       //
       return new CommandInvoker<Void, Void>() {
         public void usage(ShellPrinter printer) {
-          classMatch.getDescriptor().printUsage(printer);
+          classMatch.printMan(printer);
         }
 
         public void invoke(InvocationContext<Void, Void> context) throws ScriptException {
-          classMatch.getDescriptor().printUsage(context.getWriter());
+          classMatch.printMan(context.getWriter());
         }
 
         public Class<Void> getProducedType() {

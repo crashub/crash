@@ -91,27 +91,27 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     return methodMap.get(name);
   }
 
+  @Override
   public void printUsage(PrintWriter writer) {
 
-    //
-    writer.append("usage: ").append(getName());
+  }
 
-    //
-    for (OptionDescriptor<?> option : getOptions()) {
-      option.printUsage(writer);
-    }
+  public void printMan(PrintWriter writer) {
 
-    //
-    writer.append(" COMMAND [ARGS]\n\n");
-
-    //
-    writer.append("The most commonly used ").append(getName()).append(" commands are:\n");
-
-    //
-    String formatString = "   %1$-16s %2$s\n";
-    for (MethodDescriptor<T> method : getMethods()) {
-      Formatter formatter = new Formatter(writer);
-      formatter.format(formatString, method.getName(), method.getDescription());
+    if (methodMap.size() == 1) {
+      methodMap.values().iterator().next().printMan(writer, false);
+    } else {
+      writer.append("usage: ").append(getName());
+      for (OptionDescriptor<?> option : getOptions()) {
+        option.printUsage(writer);
+      }
+      writer.append(" COMMAND [ARGS]\n\n");
+      writer.append("The most commonly used ").append(getName()).append(" commands are:\n");
+      String formatString = "   %1$-16s %2$s\n";
+      for (MethodDescriptor<T> method : getMethods()) {
+        Formatter formatter = new Formatter(writer);
+        formatter.format(formatString, method.getName(), method.getDescription());
+      }
     }
   }
 

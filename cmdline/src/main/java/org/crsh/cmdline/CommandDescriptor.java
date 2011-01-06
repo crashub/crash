@@ -21,6 +21,7 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
 
+import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -98,6 +99,10 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   }
 
   public abstract Class<T> getType();
+
+  public abstract void printUsage(PrintWriter writer);
+
+  public abstract void printMan(PrintWriter writer);
 
   public Set<String> getOptionNames() {
     return optionMap.keySet();
