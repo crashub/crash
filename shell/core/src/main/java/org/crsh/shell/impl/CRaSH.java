@@ -65,8 +65,13 @@ public class CRaSH implements Shell {
    * @param name the command name
    * @return a command instance
    * @throws CreateCommandException if an error occured preventing the command creation
+   * @throws NullPointerException if the name argument is null
    */
-  public ShellCommand getCommand(String name) throws CreateCommandException {
+  public ShellCommand getCommand(String name) throws CreateCommandException, NullPointerException {
+    if (name == null) {
+      throw new NullPointerException("No null argument alloed");
+    }
+
     TimestampedObject<Class<? extends ShellCommand>> providerRef = commands.get(name);
 
     //

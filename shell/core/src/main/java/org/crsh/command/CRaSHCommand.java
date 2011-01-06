@@ -136,7 +136,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           MethodMatch methodMatch = (MethodMatch)match;
           StringWriter sw = new StringWriter();
           PrintWriter pw = new PrintWriter(sw);
-          methodMatch.getDescriptor().printMan(pw);
+          methodMatch.printMan(pw);
           return sw.toString();
         } else {
           break;
