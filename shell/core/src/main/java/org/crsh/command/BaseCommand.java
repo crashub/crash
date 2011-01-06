@@ -19,7 +19,6 @@
 
 package org.crsh.command;
 
-import com.beust.jcommander.JCommander;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.Strings;
 import org.crsh.util.TypeResolver;
@@ -63,9 +62,6 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
     private static final Pattern ARGS4J = Pattern.compile("^org\\.kohsuke\\.args4j\\.?$");
 
     /** . */
-    private static final Pattern JCOMMANDER = Pattern.compile("^com\\.beust\\.jcommander\\.?$");
-
-    /** . */
     private final int descriptionFramework;
 
     /** . */
@@ -100,8 +96,6 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
           String packageName = annotation.annotationType().getPackage().getName();
           if (ARGS4J.matcher(packageName).matches()) {
             bs |= 0x01;
-          } else if (JCOMMANDER.matcher(packageName).matches()) {
-            bs |= 0x02;
           }
         }
       }
@@ -253,15 +247,6 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
           parser.parseArgument(args);
         }
         catch (CmdLineException e) {
-          throw new ScriptException(e.getMessage(), e);
-        }
-         break;
-      case 2:
-        try {
-          JCommander jc = new JCommander(this);
-          jc.parse(args);
-        }
-        catch (Exception e) {
           throw new ScriptException(e.getMessage(), e);
         }
         break;
