@@ -130,6 +130,8 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
   public String describe(String line, DescriptionMode mode) {
 
+    System.out.println("describe:" + line);
+
     // WTF
     Matcher analyzer = new Matcher("main", descriptor);
 
@@ -158,7 +160,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return null;
   }
 
-  public CommandInvoker<?, ?> createInvoker(String line) {
+  public CommandInvoker<?, ?> createInvoker(final String line) {
 
     // Remove surrounding quotes if there are
     if (unquoteArguments) {
@@ -212,14 +214,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           }
         }
 
-        public void usage(ShellPrinter printer) {
-          methodMatch.printMan(printer);
-        }
-
         public void invoke(InvocationContext context) throws ScriptException {
 
           if (doHelp) {
-            usage(context.getWriter());
+            match.printUsage(context.getWriter());
           } else {
             CRaSHCommand.this.context = context;
             try {
@@ -268,13 +266,9 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
       //
       return new CommandInvoker<Void, Void>() {
-        public void usage(ShellPrinter printer) {
-          classMatch.printUsage(printer);
-        }
-
         public void invoke(InvocationContext<Void, Void> context) throws ScriptException {
           if (doHelp) {
-
+            match.printUsage(context.getWriter());
           } else {
             classMatch.printUsage(context.getWriter());
           }

@@ -65,10 +65,6 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public final void usage(ShellPrinter printer) {
-    printer.print("Bare script: no usage");
-  }
-
   public final Map<String, String> complete(CommandContext context, String line) {
     return Collections.emptyMap();
   }

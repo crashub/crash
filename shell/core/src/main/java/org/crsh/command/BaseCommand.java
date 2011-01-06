@@ -19,13 +19,14 @@
 
 package org.crsh.command;
 
-import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.Strings;
 import org.crsh.util.TypeResolver;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -122,6 +123,9 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
   private String[] args;
 
   /** . */
+  private String line;
+
+  /** . */
   @Option(name = "-h", aliases = "--help")
   private boolean help;
 
@@ -132,6 +136,7 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
     this.producedType = (Class<P>)TypeResolver.resolve(getClass(), CommandInvoker.class, 1);
     this.metaData = MetaData.getMetaData(getClass());
     this.args = null;
+    this.line = null;
   }
 
   public Class<P> getProducedType() {
@@ -176,35 +181,47 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
   }
 
   public String describe(String line, DescriptionMode mode) {
-    return null;
-  }
+    Description description = getClass().getAnnotation(Description.class);
 
-  public final void usage(ShellPrinter printer) {
-      //
-      Description description = getClass().getAnnotation(Description.class);
-      if (description != null) {
-        printer.write(description.value());
-        printer.write("\n");
-      }
+    //
+    switch (mode) {
+      case DESCRIBE:
+        return description != null ? description.value() : null;
+      case USAGE:
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
 
-      //
-      switch (metaData.descriptionFramework) {
-        default:
-          System.out.println("Not only one description framework");
-        case 0:
-          break;
-        case 1:
-          CmdLineParser parser = new CmdLineParser(this);
-          parser.printUsage(printer, null);
-          break;
-        case 2:
-          throw new UnsupportedOperationException();
-      }
+        //
+        if (description != null) {
+          pw.write(description.value());
+          pw.write("\n");
+        }
+
+        //
+        switch (metaData.descriptionFramework) {
+          default:
+            System.out.println("Not only one description framework");
+          case 0:
+            break;
+          case 1:
+            CmdLineParser parser = new CmdLineParser(this);
+            parser.printUsage(pw, null);
+            break;
+          case 2:
+            throw new UnsupportedOperationException();
+        }
+
+        //
+        return sw.toString();
+      default:
+        return null;
+    }
   }
 
   public final CommandInvoker<?, ?> createInvoker(String line) {
     List<String> chunks = Strings.chunks(line);
     this.args = chunks.toArray(new String[chunks.size()]);
+    this.line = line;
     return this;
   }
 
@@ -254,7 +271,10 @@ public abstract class BaseCommand<C, P> extends GroovyCommand implements ShellCo
 
     //
     if (help) {
-      usage(context.getWriter());
+      String usage = describe(line, DescriptionMode.USAGE);
+      if (usage != null) {
+        context.getWriter().println(usage);
+      }
     } else {
       try {
         this.context = context;

@@ -18,8 +18,6 @@
  */
 package org.crsh.command;
 
-import org.crsh.shell.io.ShellPrinter;
-
 /**
  * The base interface for a shell command.
  *
@@ -29,13 +27,6 @@ import org.crsh.shell.io.ShellPrinter;
  * @param <P> the produced type
  */
 public interface CommandInvoker<C, P> {
-
-  /**
-   * Print command usage.
-   *
-   * @param printer the printer
-   */
-  void usage(ShellPrinter printer);
 
   /**
    *

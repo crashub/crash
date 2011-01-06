@@ -94,7 +94,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   @Override
   public void printUsage(PrintWriter writer) {
     if (methodMap.size() == 1) {
-      methodMap.values().iterator().next().printMan(writer, false);
+      methodMap.values().iterator().next().printUsage(writer, false);
     } else {
       writer.append("usage: ").append(getName());
       for (OptionDescriptor<?> option : getOptions()) {
