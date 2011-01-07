@@ -87,11 +87,9 @@ public class TelnetHandler implements Shell {
   }
 
   public void connectionTimedOut(ConnectionEvent connectionEvent) {
-    System.out.println("connectionTimedOut");
   }
 
   public void connectionLogoutRequest(ConnectionEvent connectionEvent) {
-    System.out.println("logoutRequest");
   }
 
   public void connectionSentBreak(ConnectionEvent connectionEvent) {
