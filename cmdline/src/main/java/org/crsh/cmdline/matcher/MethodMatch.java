@@ -135,9 +135,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
 
       //
       if (v == null) {
-        if (parameterType.isPrimitive()) {
-          throw new UnsupportedOperationException("Todo : primitive handling");
-        } else if (parameter.isRequired()) {
+        if (parameterType.isPrimitive() || parameter.isRequired()) {
           throw new CmdSyntaxException("Non satisfied parameter " + parameter);
         }
       }

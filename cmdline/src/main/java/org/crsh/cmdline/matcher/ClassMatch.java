@@ -93,16 +93,15 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
         if (parameter.isRequired()) {
           throw new CmdSyntaxException("Non satisfied parameter " + parameter);
         }
-      }
-
-      //
-      Field f = parameter.getBinding().getField();
-      try {
-        f.setAccessible(true);
-        f.set(command, value);
-      }
-      catch (Exception e) {
-        throw new CmdInvocationException(e.getMessage(), e);
+      } else {
+        Field f = parameter.getBinding().getField();
+        try {
+          f.setAccessible(true);
+          f.set(command, value);
+        }
+        catch (Exception e) {
+          throw new CmdInvocationException(e.getMessage(), e);
+        }
       }
     }
 

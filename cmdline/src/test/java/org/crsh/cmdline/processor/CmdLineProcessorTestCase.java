@@ -22,6 +22,7 @@ package org.crsh.cmdline.processor;
 import junit.framework.TestCase;
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.matcher.CmdLineException;
 import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.Command;
 import org.crsh.cmdline.CommandDescriptor;
@@ -41,7 +42,7 @@ import java.util.Locale;
 public class CmdLineProcessorTestCase extends TestCase {
 
 
-  public void testRequiredOption() throws Exception {
+  public void testRequiredClassOption() throws Exception {
     class A {
       @Option(names = "o", required = true)
       String s;
@@ -62,7 +63,7 @@ public class CmdLineProcessorTestCase extends TestCase {
     }
   }
 
-  public void testOptionalOption() throws Exception {
+  public void testOptionalClassOption() throws Exception {
     class A {
       @Option(names = "o")
       String s;
@@ -79,7 +80,7 @@ public class CmdLineProcessorTestCase extends TestCase {
     assertEquals(null, a.s);
   }
 
-  public void testPrimitiveArgument() throws Exception {
+  public void testPrimitiveClassArgument() throws Exception {
     class A {
       @Argument
       int i;
@@ -95,16 +96,42 @@ public class CmdLineProcessorTestCase extends TestCase {
     analyzer.match("5 6").invoke(new InvocationContext(), a);
     assertEquals(5, a.i);
 
+    a = new A();
+    a.i = -3;
+    analyzer.match("").invoke(new InvocationContext(), a);
+    assertEquals(-3, a.i);
+  }
+
+  public static class PMA {
+    int i;
+    @Command
+    public void m(@Argument int i) {
+      this.i = i;
+    }
+  }
+
+  public void testPrimitiveMethodArgument() throws Exception {
+    ClassDescriptor<PMA> desc = CommandDescriptor.create(PMA.class);
+    Matcher<PMA> analyzer = new Matcher<PMA>(desc);
+
+    PMA a = new PMA();
+    analyzer.match("m 5").invoke(new InvocationContext(), a);
+    assertEquals(5, a.i);
+
+    a = new PMA();
+    analyzer.match("m 5 6").invoke(new InvocationContext(), a);
+    assertEquals(5, a.i);
+
+    a = new PMA();
     try {
-      a = new A();
-      analyzer.match("").invoke(new InvocationContext(), a);
+      analyzer.match("m").invoke(new InvocationContext(), a);
       fail();
     }
     catch (CmdSyntaxException e) {
     }
   }
 
-  public void testOptionalArgument() throws Exception {
+  public void testOptionalClassArgument() throws Exception {
     class A {
       @Argument
       String s;
