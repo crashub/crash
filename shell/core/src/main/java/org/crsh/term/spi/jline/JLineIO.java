@@ -73,6 +73,10 @@ public class JLineIO implements TermIO {
         return CodeType.RIGHT;
       case ConsoleReader.EXIT:
         return CodeType.CLOSE;
+      case ConsoleReader.PREV_HISTORY:
+        return CodeType.UP;
+      case ConsoleReader.NEXT_HISTORY:
+        return CodeType.DOWN;
       default:
         return CodeType.CHAR;
     }
