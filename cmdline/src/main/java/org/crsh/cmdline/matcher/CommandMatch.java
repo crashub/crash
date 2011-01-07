@@ -20,10 +20,16 @@
 package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.Multiplicity;
+import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -48,7 +54,70 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
 
   public abstract D getDescriptor();
 
-  public abstract Object invoke(InvocationContext context, C command) throws CmdLineException;
+  public final Object invoke(InvocationContext context, C command) throws CmdLineException {
+
+    //
+    Map<ParameterDescriptor<?>, List<Value>> abc = new HashMap<ParameterDescriptor<?>, List<Value>>();
+
+    //
+    Set<ParameterDescriptor<?>> unused = getParameters();
+
+    //
+    for (ParameterMatch<?, ?> parameterMatch : getParameterMatches()) {
+      ParameterDescriptor<?> parameter = parameterMatch.getParameter();
+      if (!unused.remove(parameter)) {
+        throw new CmdSyntaxException();
+      }
+      abc.put(parameter, parameterMatch.getValues());
+    }
+
+    // Convert values
+    Map<ParameterDescriptor<?>, Object> parameterValues = new HashMap<ParameterDescriptor<?>, Object>();
+    for (Map.Entry<ParameterDescriptor<?>, List<Value>> entry : abc.entrySet()) {
+
+      //
+      ParameterDescriptor<?> parameter = entry.getKey();
+      List<Value> values = entry.getValue();
+
+      // First convert the entire list
+      List<Object> l = new ArrayList<Object>();
+      for (Value value : values) {
+        if (value.isUsable()) {
+          Object o = parameter.parse(value.getValue());
+          l.add(o);
+        }
+      }
+
+      //
+      if (parameter.isRequired() && l.isEmpty()) {
+        throw new CmdSyntaxException("Non satisfied " + parameter);
+      }
+
+      // Then figure out if we need to unwrap somehow
+      Object v;
+      if (parameter.getMultiplicity() == Multiplicity.LIST) {
+        v = l;
+      } else {
+        if (l.isEmpty()) {
+          continue;
+        } else {
+          v = l.get(0);
+        }
+      }
+
+      //
+      parameterValues.put(parameter, v);
+    }
+
+    //
+    return doInvoke(context, command, parameterValues);
+  }
+
+  protected abstract Object doInvoke(InvocationContext context, C command, Map<ParameterDescriptor<?>, Object> values) throws CmdLineException;
+
+  public abstract Set<ParameterDescriptor<?>> getParameters();
+
+  public abstract List<ParameterMatch<?, ?>> getParameterMatches();
 
   public abstract void printMan(PrintWriter writer);
 

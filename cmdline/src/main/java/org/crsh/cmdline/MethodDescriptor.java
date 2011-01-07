@@ -28,7 +28,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -89,6 +91,12 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
   /** . */
   private final Method method;
 
+  /** . */
+  private final int size;
+
+  /** . */
+  private final Map<Integer, ParameterDescriptor<MethodArgumentBinding>> parameterMap;
+
   MethodDescriptor(
     ClassDescriptor<T> owner,
     Method method,
@@ -97,9 +105,30 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     List<ParameterDescriptor<MethodArgumentBinding>> parameters) throws IntrospectionException {
     super(name, info, parameters);
 
+    Map<Integer, ParameterDescriptor<MethodArgumentBinding>> parameterMap = new HashMap<Integer, ParameterDescriptor<MethodArgumentBinding>>();
+    for (ParameterDescriptor<MethodArgumentBinding> parameter : parameters) {
+      parameterMap.put(parameter.getBinding().getIndex(), parameter);
+    }
+
     //
     this.owner = owner;
     this.method = method;
+    this.size = method.getParameterTypes().length;
+    this.parameterMap = parameterMap;
+  }
+
+  /**
+   * Returns the parameter descriptor for the specified method parameter index.
+   *
+   * @param index the parameter index
+   * @return the parameter descriptor or null if none can be bound
+   * @throws IndexOutOfBoundsException if the index is not valid
+   */
+  public ParameterDescriptor<MethodArgumentBinding> getParameter(int index) throws IndexOutOfBoundsException {
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException("Bad index value " + index);
+    }
+    return parameterMap.get(index);
   }
 
   public Method getMethod() {

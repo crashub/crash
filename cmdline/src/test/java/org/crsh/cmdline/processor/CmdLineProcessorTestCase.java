@@ -79,21 +79,21 @@ public class CmdLineProcessorTestCase extends TestCase {
     assertEquals(null, a.s);
   }
 
-  public void testArgument() throws Exception {
+  public void testPrimitiveArgument() throws Exception {
     class A {
-      @Argument(required = true)
-      String s;
+      @Argument
+      int i;
     }
     ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
     Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
-    analyzer.match("foo").invoke(new InvocationContext(), a);
-    assertEquals("foo", a.s);
+    analyzer.match("5").invoke(new InvocationContext(), a);
+    assertEquals(5, a.i);
 
     a = new A();
-    analyzer.match("foo bar").invoke(new InvocationContext(), a);
-    assertEquals("foo", a.s);
+    analyzer.match("5 6").invoke(new InvocationContext(), a);
+    assertEquals(5, a.i);
 
     try {
       a = new A();

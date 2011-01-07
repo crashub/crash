@@ -29,6 +29,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -67,76 +68,41 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
   }
 
   @Override
-  public Object invoke(InvocationContext context, T command) throws CmdLineException {
-    List<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>> used = new ArrayList<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>>();
+  public Set<ParameterDescriptor<?>> getParameters() {
     Set<ParameterDescriptor<?>> unused = new HashSet<ParameterDescriptor<?>>();
     unused.addAll(descriptor.getArguments());
     unused.addAll(descriptor.getOptions());
+    return unused;
+  }
 
-    //
-    for (OptionMatch<ClassFieldBinding> optionMatch : getOptionMatches()) {
-      if (!unused.remove(optionMatch.getParameter())) {
-        throw new CmdSyntaxException();
-      }
-      used.add(optionMatch);
-    }
+  @Override
+  public List<ParameterMatch<?, ?>> getParameterMatches() {
+    List<ParameterMatch<?, ?>> matches = new ArrayList<ParameterMatch<?, ?>>();
+    matches.addAll(getOptionMatches());
+    matches.addAll(getArgumentMatches());
+    return matches;
+  }
 
-    //
-    for (ArgumentMatch<ClassFieldBinding> argumentMatch : getArgumentMatches()) {
-      if (!unused.remove(argumentMatch.getParameter())) {
-        throw new CmdSyntaxException();
-      }
-      used.add(argumentMatch);
-    }
-
-    // Should be better with required / non required
-    for (ParameterDescriptor<?> nonSatisfied : unused) {
-      if (!nonSatisfied.isRequired()) {
-        // Ok
-      } else {
-        throw new CmdSyntaxException("Non satisfied " + nonSatisfied);
-      }
-    }
-
-    //
-    for (ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding> parameterMatch : used) {
-
-      ParameterDescriptor<ClassFieldBinding> parameter = parameterMatch.getParameter();
-      ClassFieldBinding cf = parameter.getBinding();
-      Field f = cf.getField();
+  @Override
+  protected Object doInvoke(InvocationContext context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdLineException {
+    for (ParameterDescriptor<ClassFieldBinding> parameter : descriptor.getParameters()) {
+      Object value = values.get(parameter);
 
       //
-      List<String> values = new ArrayList<String>();
-      for (Value value : parameterMatch.getValues()) {
-        if (value.isUsable()) {
-          values.add(value.getValue());
+      if (value == null) {
+        if (parameter.isRequired()) {
+          throw new CmdSyntaxException("Non satisfied parameter " + parameter);
         }
       }
 
       //
-      if (parameter.isRequired() && values.isEmpty()) {
-        throw new CmdSyntaxException("Non satisfied " + parameter);
-      }
-
-      //
-      Object v;
-      if (parameter.getMultiplicity() == Multiplicity.LIST) {
-        v = values;
-      } else {
-        if (values.isEmpty()) {
-          continue;
-        } else {
-          v = values.get(0);
-        }
-      }
-
-      //
-      f.setAccessible(true);
+      Field f = parameter.getBinding().getField();
       try {
-        f.set(command, v);
+        f.setAccessible(true);
+        f.set(command, value);
       }
       catch (Exception e) {
-        throw new RuntimeException(e);
+        throw new CmdInvocationException(e.getMessage(), e);
       }
     }
 

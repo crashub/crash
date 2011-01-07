@@ -19,19 +19,13 @@
 
 package org.crsh.cmdline.matcher;
 
-import org.crsh.cmdline.ArgumentDescriptor;
-import org.crsh.cmdline.OptionDescriptor;
-import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.MethodDescriptor;
-import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterDescriptor;
 
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -99,97 +93,25 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
   }
 
   @Override
-  public Object invoke(InvocationContext context, T command) throws CmdLineException {
-
-    //
-    List<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>> classParameters = new ArrayList<ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding>>();
-    Map<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>> methodParameters = new HashMap<Integer, ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding>>();
-
-    //
-    Map<ParameterDescriptor<?>, List<Value>> abc = new HashMap<ParameterDescriptor<?>, List<Value>>();
-
-    //
+  public Set<ParameterDescriptor<?>> getParameters() {
     Set<ParameterDescriptor<?>> unused = new HashSet<ParameterDescriptor<?>>();
     unused.addAll(descriptor.getArguments());
     unused.addAll(descriptor.getOptions());
     unused.addAll(owner.getDescriptor().getOptions());
+    return unused;
+  }
 
-    //
-    for (OptionMatch<MethodArgumentBinding> optionMatch : getOptionMatches()) {
-      OptionDescriptor<MethodArgumentBinding> parameter = optionMatch.getParameter();
-      if (!unused.remove(parameter)) {
-        throw new CmdSyntaxException();
-      }
-      methodParameters.put(parameter.getBinding().getIndex(), optionMatch);
-      abc.put(parameter, optionMatch.getValues());
-    }
+  @Override
+  public List<ParameterMatch<?, ?>> getParameterMatches() {
+    List<ParameterMatch<?, ?>> matches = new ArrayList<ParameterMatch<?, ?>>();
+    matches.addAll(getOptionMatches());
+    matches.addAll(getArgumentMatches());
+    matches.addAll(owner.getOptionMatches());
+    return matches;
+  }
 
-    //
-    for (ArgumentMatch<MethodArgumentBinding> argumentMatch : getArgumentMatches()) {
-      ArgumentDescriptor<MethodArgumentBinding> parameter = argumentMatch.getParameter();
-      if (!unused.remove(parameter)) {
-        throw new CmdSyntaxException();
-      }
-      methodParameters.put(parameter.getBinding().getIndex(), argumentMatch);
-      abc.put(parameter, argumentMatch.getValues());
-    }
-
-    //
-    for (OptionMatch<ClassFieldBinding> optionMatch : owner.getOptionMatches()) {
-      OptionDescriptor<ClassFieldBinding> parameter = optionMatch.getParameter();
-      if (!unused.remove(parameter)) {
-        throw new CmdSyntaxException();
-      }
-      classParameters.add(optionMatch);
-      abc.put(parameter, optionMatch.getValues());
-    }
-
-    // Should be better with required / non required
-    for (ParameterDescriptor<?> nonSatisfied : unused) {
-      if (!nonSatisfied.isRequired()) {
-        // Ok
-      } else {
-        throw new CmdSyntaxException("Non satisfied " + nonSatisfied);
-      }
-    }
-
-    // Convert values
-    Map<ParameterDescriptor<?>, Object> parameterValues = new HashMap<ParameterDescriptor<?>, Object>();
-    for (Map.Entry<ParameterDescriptor<?>, List<Value>> entry : abc.entrySet()) {
-
-      //
-      ParameterDescriptor<?> parameter = entry.getKey();
-      List<Value> values = entry.getValue();
-
-      // First convert the entire list
-      List<Object> l = new ArrayList<Object>();
-      for (Value value : values) {
-        if (value.isUsable()) {
-          Object o = parameter.parse(value.getValue());
-          l.add(o);
-        }
-      }
-
-      //
-      if (parameter.isRequired() && l.isEmpty()) {
-        throw new CmdSyntaxException("Non satisfied " + parameter);
-      }
-
-      // Then figure out if we need to unwrap somehow
-      Object v;
-      if (parameter.getMultiplicity() == Multiplicity.LIST) {
-        v = l;
-      } else {
-        if (l.isEmpty()) {
-          continue;
-        } else {
-          v = l.get(0);
-        }
-      }
-
-      //
-      parameterValues.put(parameter, v);
-    }
+  @Override
+  protected Object doInvoke(InvocationContext context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdLineException {
 
     // Prepare invocation
     MethodDescriptor<T> descriptor = getDescriptor();
@@ -197,38 +119,38 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
     Class<?>[] parameterTypes = m.getParameterTypes();
     Object[] mArgs = new Object[parameterTypes.length];
     for (int i = 0;i < mArgs.length;i++) {
-      ParameterMatch<? extends ParameterDescriptor<MethodArgumentBinding>, MethodArgumentBinding> parameterMatch = methodParameters.get(i);
+      ParameterDescriptor<MethodArgumentBinding> parameter = descriptor.getParameter(i);
+
+      //
+      Class<?> parameterType = parameterTypes[i];
 
       //
       Object v;
-      if (parameterMatch == null) {
-        Class<?> parameterType = parameterTypes[i];
+      if (parameter == null) {
+        // Attempt to obtain from invocation context
+        v = context.getAttribute(parameterType);
+      } else {
+        v = values.get(parameter);
+      }
+
+      //
+      if (v == null) {
         if (parameterType.isPrimitive()) {
           throw new UnsupportedOperationException("Todo : primitive handling");
-        } else {
-          // Attempt to obtain from invocation context
-          v = context.getAttribute(parameterType);
+        } else if (parameter.isRequired()) {
+          throw new CmdSyntaxException("Non satisfied parameter " + parameter);
         }
-      } else {
-        v = parameterValues.get(parameterMatch.getParameter());
       }
 
       //
       mArgs[i] = v;
     }
 
-    //
-    try {
-      // First configure command
-      for (ParameterMatch<? extends ParameterDescriptor<ClassFieldBinding>, ClassFieldBinding> parameterMatch : classParameters) {
-        ParameterDescriptor<ClassFieldBinding> parameter = parameterMatch.getParameter();
-        Object value = parameterValues.get(parameter);
-        Field f = parameter.getBinding().getField();
-        f.setAccessible(true);
-        f.set(command, value);
-      }
+    // First configure command
+    owner.doInvoke(context, command, values);
 
-      //
+    // Perform method invocation
+    try {
       return m.invoke(command, mArgs);
     }
     catch (Exception e) {

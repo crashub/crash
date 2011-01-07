@@ -120,6 +120,9 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
       completerType = valueType.getCompleter();
     }
 
+    // Make it required if it's a primitive
+    required |= javaValueType.isPrimitive();
+
     //
     this.binding = binding;
     this.javaType = javaType;

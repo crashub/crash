@@ -177,7 +177,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     if (match instanceof MethodMatch) {
 
       //
-      final MethodMatch<?> methodMatch = (MethodMatch)match;
+      final MethodMatch<CRaSHCommand> methodMatch = (MethodMatch<CRaSHCommand>)match;
 
       //
       boolean help = false;
@@ -223,7 +223,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             try {
               org.crsh.cmdline.matcher.InvocationContext invocationContext = new org.crsh.cmdline.matcher.InvocationContext();
               invocationContext.setAttribute(InvocationContext.class, context);
-              Object o = match.invoke(invocationContext, CRaSHCommand.this);
+              Object o = methodMatch.invoke(invocationContext, CRaSHCommand.this);
               if (o != null) {
                 context.getWriter().print(o);
               }

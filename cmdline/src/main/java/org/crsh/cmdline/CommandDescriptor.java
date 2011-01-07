@@ -61,6 +61,9 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   /** . */
   private final List<ArgumentDescriptor<B>> arguments;
 
+  /** . */
+  private final List<ParameterDescriptor<B>> parameters;
+
   CommandDescriptor(String name, InfoDescriptor info, List<ParameterDescriptor<B>> parameters) throws IntrospectionException {
 
     Map<String, OptionDescriptor<B>> options = Collections.emptyMap();
@@ -96,6 +99,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     this.arguments = arguments.isEmpty() ? arguments : Collections.unmodifiableList(arguments);
     this.options = options.isEmpty() ? Collections.<OptionDescriptor<B>>emptySet() : Collections.unmodifiableSet(new LinkedHashSet<OptionDescriptor<B>>(options.values()));
     this.name = name;
+    this.parameters = parameters.isEmpty() ? Collections.<ParameterDescriptor<B>>emptyList() : Collections.<ParameterDescriptor<B>>unmodifiableList(new ArrayList<ParameterDescriptor<B>>(parameters));
   }
 
   public abstract Class<T> getType();
@@ -104,31 +108,35 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
   public abstract void printMan(PrintWriter writer);
 
-  public Set<String> getOptionNames() {
+  public final Collection<ParameterDescriptor<B>> getParameters() {
+    return parameters;
+  }
+
+  public final Set<String> getOptionNames() {
     return optionMap.keySet();
   }
 
-  public Collection<OptionDescriptor<B>> getOptions() {
+  public final Collection<OptionDescriptor<B>> getOptions() {
     return options;
   }
 
-  public OptionDescriptor<B> getOption(String name) {
+  public final OptionDescriptor<B> getOption(String name) {
     return optionMap.get(name);
   }
 
-  public List<ArgumentDescriptor<B>> getArguments() {
+  public final List<ArgumentDescriptor<B>> getArguments() {
     return arguments;
   }
 
-  public String getName() {
+  public final String getName() {
     return name;
   }
 
-  public String getDescription() {
+  public final String getDescription() {
     return info != null ? info.getDisplay() : "";
   }
 
-  public InfoDescriptor getInfo() {
+  public final InfoDescriptor getInfo() {
     return info;
   }
 
