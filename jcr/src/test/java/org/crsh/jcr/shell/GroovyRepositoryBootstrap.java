@@ -35,8 +35,6 @@ public class GroovyRepositoryBootstrap {
   /** . */
   private static boolean initialized;
 
-
-
   public static synchronized Repository getRepository() throws Exception {
     if (!initialized) {
       RepositoryBootstrap repoBoostrap = new RepositoryBootstrap();
