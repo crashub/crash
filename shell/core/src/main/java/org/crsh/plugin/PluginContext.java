@@ -265,7 +265,11 @@ public class PluginContext {
     return loader;
   }
 
-  protected final void refresh() {
+  /**
+   * Refresh the fs system view. This is normally triggered by the periodic job but it can be manually
+   * invoked to trigger explicit refreshes.
+   */
+  public final void refresh() {
     try {
       File commands = vfs.get(Path.get("/commands/"));
       List<File> newDirs = new ArrayList<File>();

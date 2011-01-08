@@ -81,25 +81,6 @@
   </dependencies>
   <build>
 
-    <finalName>crsh-${project.version}</finalName>
-
-<!--
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>src/main/webapp/WEB-INF/</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-    </testResources>
--->
-
     <plugins>
 
       <plugin>
@@ -113,7 +94,7 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <appendAssemblyId>true</appendAssemblyId>
+              <classifier>standalone</classifier>
               <archive>
                 <manifest>
                   <mainClass>org.crsh.standalone.Main</mainClass>

@@ -38,25 +38,12 @@
       </unpackOptions>
       <includes>
         <include>org.slf4j:slf4j-api</include>
+        <include>org.slf4j:slf4j-jdk14</include>
         <include>jline:jline</include>
         <include>args4j:args4j</include>
         <include>org.crsh:crsh.cmdline</include>
         <include>org.codehaus.groovy:groovy-all</include>
       </includes>
-    </dependencySet>
-    <dependencySet>
-      <useTransitiveDependencies>false</useTransitiveDependencies>
-      <outputDirectory>/</outputDirectory>
-      <unpack>true</unpack>
-      <unpackOptions>
-        <excludes>
-          <exclude>META-INF/**</exclude>
-        </excludes>
-      </unpackOptions>
-      <includes>
-        <include>org.slf4j:slf4j-jdk14</include>
-      </includes>
-      <scope>test</scope>
     </dependencySet>
   </dependencySets>
 
