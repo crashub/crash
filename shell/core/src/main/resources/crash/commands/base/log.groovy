@@ -74,7 +74,7 @@ public class log extends CRaSHCommand implements Completer {
     return names;
   }
 
-  @Description(display = "List the available loggers");
+  @Description(display = "List the available loggers")
   @Command
   public void ls(InvocationContext<Void, Logger> context, @FilterOpt String filter) throws ScriptException {
 
