@@ -20,7 +20,7 @@
 package org.crsh.command;
 
 import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.OptionDescriptor;
@@ -32,7 +32,6 @@ import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +70,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   protected CRaSHCommand() throws IntrospectionException {
     this.context = null;
     this.unquoteArguments = true;
-    this.descriptor = CommandDescriptor.create(getClass());
+    this.descriptor = CommandFactory.create(getClass());
     this.help = false;
   }
 

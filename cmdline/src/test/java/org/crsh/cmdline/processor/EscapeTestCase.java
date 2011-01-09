@@ -22,17 +22,13 @@ package org.crsh.cmdline.processor;
 import junit.framework.TestCase;
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.Command;
-import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.Option;
-import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -46,7 +42,7 @@ public class EscapeTestCase extends TestCase {
       @Option(names = "o")
       String s;
     }
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> analyzer = new Matcher<A>(desc);
 
     //
@@ -70,7 +66,7 @@ public class EscapeTestCase extends TestCase {
       @Argument
       List<String> s;
     }
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> analyzer = new Matcher<A>(desc);
 
     //

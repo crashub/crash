@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.Command;
-import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
@@ -55,7 +55,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = new Matcher<A>(desc);
 
     assertEquals(Collections.singletonMap("", ""), matcher.complete("m "));
@@ -73,7 +73,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = new Matcher<A>(desc);
 
     //
@@ -92,7 +92,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = new Matcher<A>(desc);
     assertEquals(Collections.singletonMap("", ""), matcher.complete("-a "));
     assertEquals(Collections.singletonMap("a", ""), matcher.complete("-a a"));
@@ -115,7 +115,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = new Matcher<A>("main", desc);
 
     //
@@ -149,7 +149,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = new Matcher<A>("main", desc);
 
     //
@@ -171,7 +171,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = new Matcher<A>(desc);
 
     //
@@ -213,7 +213,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = new Matcher<A>(desc);
 
     //
@@ -250,7 +250,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void foo(@Option(names = "a", completer = ExceptionCompleter.class) String a) { }
     }
-    Matcher<A> matcherA = new Matcher<A>(CommandDescriptor.create(A.class));
+    Matcher<A> matcherA = new Matcher<A>(CommandFactory.create(A.class));
     try {
       matcherA.complete("foo -a b");
       fail();
@@ -263,7 +263,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void foo(@Option(names = "a", completer = RuntimeExceptionCompleter.class) String a) { }
     }
-    Matcher<B> matcherB = new Matcher<B>(CommandDescriptor.create(B.class));
+    Matcher<B> matcherB = new Matcher<B>(CommandFactory.create(B.class));
     try {
       matcherB.complete("foo -a b");
       fail();
@@ -276,7 +276,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void foo(@Option(names = "a", completer = AbstractCompleter.class) String a) { }
     }
-    Matcher<C> matcherC = new Matcher<C>(CommandDescriptor.create(C.class));
+    Matcher<C> matcherC = new Matcher<C>(CommandFactory.create(C.class));
     try {
       matcherC.complete("foo -a b");
       fail();

@@ -84,7 +84,7 @@ public class OptionTestCase extends TestCase {
       @Option(names = "o")
       int o;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     OptionDescriptor i = c.getOption("-o");
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(SimpleValueType.INTEGER, i.getType());
@@ -95,7 +95,7 @@ public class OptionTestCase extends TestCase {
       @Option(names = "o")
       Integer o;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     OptionDescriptor i = c.getOption("-o");
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(SimpleValueType.INTEGER, i.getType());
@@ -106,7 +106,7 @@ public class OptionTestCase extends TestCase {
       @Option(names = "o")
       List<Integer> o;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     OptionDescriptor i = c.getOption("-o");
     assertEquals(Multiplicity.LIST, i.getMultiplicity());
     assertEquals(SimpleValueType.INTEGER, i.getType());
@@ -117,7 +117,7 @@ public class OptionTestCase extends TestCase {
       @Option(names = "o")
       String o;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     OptionDescriptor i = c.getOption("-o");
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(SimpleValueType.STRING, i.getType());
@@ -128,7 +128,7 @@ public class OptionTestCase extends TestCase {
       @Option(names = "o")
       List<String> o;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     OptionDescriptor i = c.getOption("-o");
     assertEquals(Multiplicity.LIST, i.getMultiplicity());
     assertEquals(SimpleValueType.STRING, i.getType());
@@ -139,7 +139,7 @@ public class OptionTestCase extends TestCase {
       @Option(names = "o")
       boolean o;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     OptionDescriptor i = c.getOption("-o");
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(SimpleValueType.BOOLEAN, i.getType());
@@ -150,7 +150,7 @@ public class OptionTestCase extends TestCase {
       @Option(names = "o")
       Boolean o;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     OptionDescriptor i = c.getOption("-o");
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(SimpleValueType.BOOLEAN, i.getType());
@@ -161,7 +161,7 @@ public class OptionTestCase extends TestCase {
       @Option(names = "o")
       RetentionPolicy o;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     OptionDescriptor i = c.getOption("-o");
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(SimpleValueType.ENUM, i.getType());
@@ -169,7 +169,7 @@ public class OptionTestCase extends TestCase {
 
   private void assertIllegalValueType(Class<?> type) throws IntrospectionException {
     try {
-      CommandDescriptor.create(type);
+      CommandFactory.create(type);
       fail();
     }
     catch (IllegalValueTypeException e) {
@@ -178,7 +178,7 @@ public class OptionTestCase extends TestCase {
 
   private void assertIllegalParameter(Class<?> type) throws IntrospectionException {
     try {
-      CommandDescriptor.create(type);
+      CommandFactory.create(type);
       fail();
     }
     catch (IllegalParameterException e) {

@@ -22,7 +22,7 @@ package org.crsh.cmdline.matcher;
 import junit.framework.TestCase;
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.Option;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class MatcherFactoryTestCase extends TestCase {
       @Argument List<String> a;
     }
 
-    ClassDescriptor<?> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<?> desc = CommandFactory.create(A.class);
     List<Pattern> re = MatcherFactory.buildArguments(desc.getArguments());
 
     assertEquals(1, re.size());
@@ -85,7 +85,7 @@ public class MatcherFactoryTestCase extends TestCase {
       @Argument String b;
     }
 
-    ClassDescriptor<?> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<?> desc = CommandFactory.create(A.class);
     List<Pattern> re = MatcherFactory.buildArguments(desc.getArguments());
 
     assertEquals(2, re.size());
@@ -153,7 +153,7 @@ public class MatcherFactoryTestCase extends TestCase {
       @Argument String a;
     }
 
-    ClassDescriptor<?> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<?> desc = CommandFactory.create(A.class);
     List<Pattern> re = MatcherFactory.buildArguments(desc.getArguments());
 
     assertEquals(1, re.size());
@@ -191,7 +191,7 @@ public class MatcherFactoryTestCase extends TestCase {
       @Argument String b;
     }
 
-    ClassDescriptor<?> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<?> desc = CommandFactory.create(A.class);
     List<Pattern> re = MatcherFactory.buildArguments(desc.getArguments());
 
     assertEquals(2, re.size());
@@ -232,7 +232,7 @@ public class MatcherFactoryTestCase extends TestCase {
       @Option(names = "a") String a;
     }
 
-    ClassDescriptor<?> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<?> desc = CommandFactory.create(A.class);
     String re = MatcherFactory.buildOptions(new StringBuilder(), desc.getOptions()).toString();
     Pattern p = Pattern.compile(re);
 

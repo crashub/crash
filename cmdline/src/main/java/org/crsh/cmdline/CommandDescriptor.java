@@ -22,10 +22,7 @@ package org.crsh.cmdline;
 import org.crsh.cmdline.binding.TypeBinding;
 
 import java.io.PrintWriter;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -39,12 +36,6 @@ import java.util.Set;
  * @version $Revision$
  */
 public abstract class CommandDescriptor<T, B extends TypeBinding> {
-
-  public static <T> ClassDescriptor<T> create(Class<T> type) throws IntrospectionException {
-
-    //
-    return new ClassDescriptor<T>(type);
-  }
 
   /** . */
   private final String name;
@@ -64,7 +55,10 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   /** . */
   private final List<ParameterDescriptor<B>> parameters;
 
-  CommandDescriptor(String name, InfoDescriptor info, List<ParameterDescriptor<B>> parameters) throws IntrospectionException {
+  CommandDescriptor(
+    String name,
+    InfoDescriptor info,
+    List<ParameterDescriptor<B>> parameters) throws IntrospectionException {
 
     Map<String, OptionDescriptor<B>> options = Collections.emptyMap();
     List<ArgumentDescriptor<B>> arguments = Collections.emptyList();
@@ -145,93 +139,5 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
   public final InfoDescriptor getInfo() {
     return info;
-  }
-
-  protected static <B extends TypeBinding> ParameterDescriptor<B> create(
-    B binding,
-    Type type,
-    Argument argumentAnn,
-    Option optionAnn,
-    InfoDescriptor info,
-    Annotation ann) throws IntrospectionException {
-
-    //
-    if (argumentAnn != null) {
-      if (optionAnn != null) {
-        throw new IntrospectionException();
-      }
-
-      //
-      return new ArgumentDescriptor<B>(
-        binding,
-        argumentAnn.name(),
-        type,
-        info,
-        argumentAnn.required(),
-        argumentAnn.password(),
-        argumentAnn.completer(),
-        ann);
-    } else if (optionAnn != null) {
-      return new OptionDescriptor<B>(
-        binding,
-        type,
-        Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
-        info,
-        optionAnn.required(),
-        optionAnn.arity(),
-        optionAnn.password(),
-        optionAnn.completer(),
-        ann);
-    } else {
-      return null;
-    }
-  }
-
-  /**
-   * Jus grouping some data for conveniency
-   */
-  protected static class Tuple {
-    final Argument argumentAnn;
-    final Option optionAnn;
-    final InfoDescriptor descriptionAnn;
-    final Annotation ann;
-    private Tuple(Argument argumentAnn, Option optionAnn, InfoDescriptor info, Annotation ann) {
-      this.argumentAnn = argumentAnn;
-      this.optionAnn = optionAnn;
-      this.descriptionAnn = info;
-      this.ann = ann;
-    }
-  }
-
-  protected static Tuple get(Annotation... ab) {
-    Argument argumentAnn = null;
-    Option optionAnn = null;
-    InfoDescriptor description = new InfoDescriptor(ab);
-    Annotation info = null;
-    for (Annotation parameterAnnotation : ab) {
-      if (parameterAnnotation instanceof Option) {
-        optionAnn = (Option)parameterAnnotation;
-      } else if (parameterAnnotation instanceof Argument) {
-        argumentAnn = (Argument)parameterAnnotation;
-      } else {
-
-        // Look at annotated annotations
-        Class<? extends Annotation> a = parameterAnnotation.annotationType();
-        if (a.getAnnotation(Option.class) != null) {
-          optionAnn = a.getAnnotation(Option.class);
-          info = parameterAnnotation;
-        } else if (a.getAnnotation(Argument.class) != null) {
-          argumentAnn =  a.getAnnotation(Argument.class);
-          info = parameterAnnotation;
-        }
-
-        //
-        if (info != null) {
-          description = new InfoDescriptor(description, new InfoDescriptor(a));
-        }
-      }
-    }
-
-    return new Tuple(argumentAnn, optionAnn, description, info);
   }
 }

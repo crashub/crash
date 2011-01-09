@@ -49,11 +49,14 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   /** . */
   private final Map<String, MethodDescriptor<T>> methodMap;
 
-  public ClassDescriptor(Class<T> type) throws IntrospectionException {
+  public ClassDescriptor(
+    Class<T> type,
+    InfoDescriptor info,
+    List<ParameterDescriptor<ClassFieldBinding>> parameters) throws IntrospectionException {
     super(
       type.getSimpleName().toLowerCase(),
-      new InfoDescriptor(type),
-      parameters(type));
+      info,
+      parameters);
 
     //
     Set<String> optionNames = getOptionNames();
@@ -123,31 +126,6 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     }
   }
 
-  private static List<ParameterDescriptor<ClassFieldBinding>> parameters(Class<?> introspected) throws IntrospectionException {
-    List<ParameterDescriptor<ClassFieldBinding>> parameters;
-    Class<?> superIntrospected = introspected.getSuperclass();
-    if (superIntrospected == null) {
-      parameters = new ArrayList<ParameterDescriptor<ClassFieldBinding>>();
-    } else {
-      parameters = parameters(superIntrospected);
-      for (Field f : introspected.getDeclaredFields()) {
-        Tuple tuple = get(f.getAnnotations());
-        ClassFieldBinding binding = new ClassFieldBinding(f);
-        ParameterDescriptor<ClassFieldBinding> parameter = create(
-          binding,
-          f.getGenericType(),
-          tuple.argumentAnn,
-          tuple.optionAnn,
-          tuple.descriptionAnn,
-          tuple.ann);
-        if (parameter != null) {
-          parameters.add(parameter);
-        }
-      }
-    }
-    return parameters;
-  }
-
   private List<MethodDescriptor<T>> commands(Class<?> introspected) throws IntrospectionException {
     List<MethodDescriptor<T>> commands;
     Class<?> superIntrospected = introspected.getSuperclass();
@@ -156,7 +134,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     } else {
       commands = commands(superIntrospected);
       for (Method m : introspected.getDeclaredMethods()) {
-        MethodDescriptor<T> mDesc = MethodDescriptor.create(this, m);
+        MethodDescriptor<T> mDesc = CommandFactory.create(this, m);
         if (mDesc != null) {
           commands.add(mDesc);
         }

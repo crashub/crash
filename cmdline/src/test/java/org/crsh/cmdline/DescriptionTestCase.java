@@ -35,7 +35,7 @@ public class DescriptionTestCase extends TestCase {
 
     class A { }
 
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     assertEquals("", c.getDescription());
     assertEquals(new InfoDescriptor(), c.getInfo());
   }
@@ -47,7 +47,7 @@ public class DescriptionTestCase extends TestCase {
     @Man("class_man")
     class A { }
 
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     assertEquals("class_display", c.getDescription());
     assertEquals("class_display", c.getInfo().getDisplay());
     assertEquals("class_usage", c.getInfo().getUsage());
@@ -63,7 +63,7 @@ public class DescriptionTestCase extends TestCase {
       @Command void m() {}
     }
 
-    ClassDescriptor<A> c = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     assertEquals("method_display", m.getDescription());
     assertEquals("method_display", m.getInfo().getDisplay());
@@ -81,7 +81,7 @@ public class DescriptionTestCase extends TestCase {
         @Option(names = "a") String s) {}
     }
 
-    ClassDescriptor<A> c = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
     assertEquals("option_display", a.getDescription());
@@ -107,7 +107,7 @@ public class DescriptionTestCase extends TestCase {
       @Command void m(@Foo String s) {}
     }
 
-    ClassDescriptor<A> c = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
     assertEquals("foo_display", a.getDescription());
@@ -122,7 +122,7 @@ public class DescriptionTestCase extends TestCase {
       @Command void m(@Bar String s) {}
     }
 
-    ClassDescriptor<A> c = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
     assertEquals("", a.getDescription());
@@ -137,7 +137,7 @@ public class DescriptionTestCase extends TestCase {
         @Foo String s) {}
     }
 
-    ClassDescriptor<A> c = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
     assertEquals("option_display", a.getDescription());

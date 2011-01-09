@@ -37,7 +37,7 @@ public class CommandInfoTestCase extends TestCase {
   public void testCommandImplicitDescription() throws IntrospectionException {
     class A {
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     assertEquals("", c.getDescription());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, c.getOptions().size());
@@ -46,7 +46,7 @@ public class CommandInfoTestCase extends TestCase {
   public void testCommandDescription() throws IntrospectionException {
     class A {
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     assertEquals("", c.getDescription());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, c.getOptions().size());
@@ -57,7 +57,7 @@ public class CommandInfoTestCase extends TestCase {
       @Option(names = "i")
       private int i;
     }
-    CommandDescriptor<A, ?> ai = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> ai = CommandFactory.create(A.class);
     assertEquals(1,ai.getOptions().size());
     OptionDescriptor i = ai.getOption("-i");
     assertEquals(Arrays.asList("i"),i.getNames());
@@ -68,7 +68,7 @@ public class CommandInfoTestCase extends TestCase {
       @Argument()
       private int i;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     assertEquals(1, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
     assertEquals(SimpleValueType.INTEGER, i.getType());
@@ -82,7 +82,7 @@ public class CommandInfoTestCase extends TestCase {
       @Argument
       private List<Integer> j;
     }
-    CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
     assertEquals(2, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
     assertEquals(SimpleValueType.INTEGER, i.getType());
@@ -100,7 +100,7 @@ public class CommandInfoTestCase extends TestCase {
       private List<Integer> j;
     }
     try {
-      CommandDescriptor.create(A.class);
+      CommandFactory.create(A.class);
       fail();
     }
     catch (IntrospectionException e) {
@@ -115,7 +115,7 @@ public class CommandInfoTestCase extends TestCase {
       }
     }
 
-    ClassDescriptor<A> a = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> a = CommandFactory.create(A.class);
     MethodDescriptor<?> b = a.getMethod("b");
     assertNotNull(b);
 
@@ -132,7 +132,7 @@ public class CommandInfoTestCase extends TestCase {
     }
 
     try {
-      CommandDescriptor.create(A.class);
+      CommandFactory.create(A.class);
       fail();
     }
     catch (IntrospectionException e) {
@@ -152,7 +152,7 @@ public class CommandInfoTestCase extends TestCase {
       String l;
     }
 
-    CommandDescriptor<A, ?> a = CommandDescriptor.create(A.class);
+    CommandDescriptor<A, ?> a = CommandFactory.create(A.class);
     assertEquals(1,a.getOptions().size());
     OptionDescriptor i = a.getOption("-l");
     assertEquals(Arrays.asList("l"),i.getNames());

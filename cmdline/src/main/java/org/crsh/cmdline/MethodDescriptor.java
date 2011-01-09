@@ -24,9 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,50 +39,6 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
 
   /** . */
   private static final Logger log = LoggerFactory.getLogger(MethodDescriptor.class);
-
-  public static <T> MethodDescriptor<T> create(ClassDescriptor<T> owner, Method m) throws IntrospectionException {
-    Command command = m.getAnnotation(Command.class);
-    if (command != null) {
-      List<ParameterDescriptor<MethodArgumentBinding>> parameters = new ArrayList<ParameterDescriptor<MethodArgumentBinding>>();
-      Type[] parameterTypes = m.getGenericParameterTypes();
-      Annotation[][] parameterAnnotationMatrix = m.getParameterAnnotations();
-      for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
-
-
-        Annotation[] parameterAnnotations = parameterAnnotationMatrix[i];
-        Type parameterType = parameterTypes[i];
-        Tuple tuple = get(parameterAnnotations);
-
-
-        MethodArgumentBinding binding = new MethodArgumentBinding(i);
-        ParameterDescriptor<MethodArgumentBinding> parameter = create(
-          binding,
-          parameterType,
-          tuple.argumentAnn,
-          tuple.optionAnn,
-          tuple.descriptionAnn,
-          tuple.ann);
-        if (parameter != null) {
-          parameters.add(parameter);
-        } else {
-          log.debug("Method argument with index " + i + " of method " + m + " is not annotated");
-        }
-      }
-
-      //
-      InfoDescriptor info = new InfoDescriptor(m);
-
-      //
-      return new MethodDescriptor<T>(
-        owner,
-        m,
-        m.getName().toLowerCase(),
-        info,
-        parameters);
-    } else {
-      return null;
-    }
-  }
 
   /** . */
   private final ClassDescriptor<T> owner;

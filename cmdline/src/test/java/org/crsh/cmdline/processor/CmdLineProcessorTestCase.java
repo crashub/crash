@@ -22,10 +22,9 @@ package org.crsh.cmdline.processor;
 import junit.framework.TestCase;
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.matcher.CmdLineException;
+import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.Command;
-import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.InvocationContext;
@@ -47,7 +46,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Option(names = "o", required = true)
       String s;
     }
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
@@ -68,7 +67,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Option(names = "o")
       String s;
     }
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
@@ -85,7 +84,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Argument
       int i;
     }
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
@@ -111,7 +110,7 @@ public class CmdLineProcessorTestCase extends TestCase {
   }
 
   public void testPrimitiveMethodArgument() throws Exception {
-    ClassDescriptor<PMA> desc = CommandDescriptor.create(PMA.class);
+    ClassDescriptor<PMA> desc = CommandFactory.create(PMA.class);
     Matcher<PMA> analyzer = new Matcher<PMA>(desc);
 
     PMA a = new PMA();
@@ -136,7 +135,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Argument
       String s;
     }
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
@@ -160,7 +159,7 @@ public class CmdLineProcessorTestCase extends TestCase {
   }
 
   public void testOptionalArgumentList() throws Exception {
-    ClassDescriptor<BC> desc = CommandDescriptor.create(BC.class);
+    ClassDescriptor<BC> desc = CommandFactory.create(BC.class);
     Matcher<BC> analyzer = new Matcher<BC>(desc);
 
     for (String s : Arrays.asList("", "bar ")) {
@@ -187,7 +186,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       @Argument(required = true)
       List<String> s;
     }
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> analyzer = new Matcher<A>(desc);
 
     A a = new A();
@@ -221,7 +220,7 @@ public class CmdLineProcessorTestCase extends TestCase {
 
   public void testMethodInvocation() throws Exception {
 
-    ClassDescriptor<A> desc = CommandDescriptor.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> analyzer = new Matcher<A>(desc);
 
     //
@@ -270,7 +269,7 @@ public class CmdLineProcessorTestCase extends TestCase {
   }
 
   public void testMainMethodInvocation() throws Exception {
-    ClassDescriptor<B> desc = CommandDescriptor.create(B.class);
+    ClassDescriptor<B> desc = CommandFactory.create(B.class);
     Matcher<B> analyzer = new Matcher<B>("main", desc);
 
     //
@@ -291,7 +290,7 @@ public class CmdLineProcessorTestCase extends TestCase {
 
   public void testInvocationAttributeInjection() throws Exception {
 
-    ClassDescriptor<C> desc = CommandDescriptor.create(C.class);
+    ClassDescriptor<C> desc = CommandFactory.create(C.class);
     Matcher<C> analyzer = new Matcher<C>("main", desc);
 
     //
@@ -319,7 +318,7 @@ public class CmdLineProcessorTestCase extends TestCase {
 
   public void testInvocationTypeConversionInjection() throws Exception {
 
-    ClassDescriptor<D> desc = CommandDescriptor.create(D.class);
+    ClassDescriptor<D> desc = CommandFactory.create(D.class);
 
     //
     D d = new D();
