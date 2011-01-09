@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Describes a command.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
@@ -109,35 +111,78 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    */
   public abstract Map<String, ? extends CommandDescriptor<T, ?>> getSubordinates();
 
+  /**
+   * Returns the command parameters, the returned collection contains the command options and
+   * the command arguments.
+   *
+   * @return the command parameters
+   */
   public final Collection<ParameterDescriptor<B>> getParameters() {
     return parameters;
   }
 
+  /**
+   * Returns the command option names.
+   *
+   * @return the command option names
+   */
   public final Set<String> getOptionNames() {
     return optionMap.keySet();
   }
 
+  /**
+   * Returns the command options.
+   *
+   * @return the command options
+   */
   public final Collection<OptionDescriptor<B>> getOptions() {
     return options;
   }
 
+  /**
+   * Returns a command option by its name.
+   *
+   * @param name the option name
+   * @return the option
+   */
   public final OptionDescriptor<B> getOption(String name) {
     return optionMap.get(name);
   }
 
+  /**
+   * Returns a list of the command arguments.
+   *
+   * @return the command arguments
+   */
   public final List<ArgumentDescriptor<B>> getArguments() {
     return arguments;
   }
 
+  /**
+   * Returns the command name.
+   *
+   * @return the command name
+   */
   public final String getName() {
     return name;
   }
 
-  public final String getUsage() {
-    return description != null ? description.getUsage() : "";
-  }
-
+  /**
+   * Returns the command description.
+   *
+   * @return the command description
+   */
   public final Description getDescription() {
     return description;
+  }
+
+  /**
+   * Returns the command usage, shortcut for invoking <code>getDescription().getUsage()</code> on this
+   * object.
+   *
+   * @return the command usage
+   */
+  public final String getUsage() {
+    return description != null ? description.getUsage() : "";
   }
 }
