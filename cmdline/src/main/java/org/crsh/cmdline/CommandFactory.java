@@ -44,7 +44,7 @@ public class CommandFactory {
   private static final Logger log = LoggerFactory.getLogger(CommandFactory.class);
 
   public static <T> ClassDescriptor<T> create(Class<T> type) throws IntrospectionException {
-    return new ClassDescriptor<T>(type, new InfoDescriptor(type), parameters(type));
+    return new ClassDescriptor<T>(type, new Description(type), parameters(type));
   }
 
   protected static <B extends TypeBinding> ParameterDescriptor<B> create(
@@ -52,7 +52,7 @@ public class CommandFactory {
     Type type,
     Argument argumentAnn,
     Option optionAnn,
-    InfoDescriptor info,
+    Description info,
     Annotation ann) throws IntrospectionException {
 
     //
@@ -90,7 +90,7 @@ public class CommandFactory {
   protected static Tuple get(Annotation... ab) {
     Argument argumentAnn = null;
     Option optionAnn = null;
-    InfoDescriptor description = new InfoDescriptor(ab);
+    Description description = new Description(ab);
     Annotation info = null;
     for (Annotation parameterAnnotation : ab) {
       if (parameterAnnotation instanceof Option) {
@@ -111,7 +111,7 @@ public class CommandFactory {
 
         //
         if (info != null) {
-          description = new InfoDescriptor(description, new InfoDescriptor(a));
+          description = new Description(description, new Description(a));
         }
       }
     }
@@ -149,7 +149,7 @@ public class CommandFactory {
       }
 
       //
-      InfoDescriptor info = new InfoDescriptor(m);
+      Description info = new Description(m);
 
       //
       return new MethodDescriptor<T>(
@@ -169,9 +169,9 @@ public class CommandFactory {
   protected static class Tuple {
     final Argument argumentAnn;
     final Option optionAnn;
-    final InfoDescriptor descriptionAnn;
+    final Description descriptionAnn;
     final Annotation ann;
-    private Tuple(Argument argumentAnn, Option optionAnn, InfoDescriptor info, Annotation ann) {
+    private Tuple(Argument argumentAnn, Option optionAnn, Description info, Annotation ann) {
       this.argumentAnn = argumentAnn;
       this.optionAnn = optionAnn;
       this.descriptionAnn = info;

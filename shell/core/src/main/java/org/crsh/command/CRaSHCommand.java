@@ -138,7 +138,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     //
     switch (mode) {
       case DESCRIBE:
-        return match.getDescriptor().getDescription();
+        return match.getDescriptor().getUsage();
       case MAN:
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);

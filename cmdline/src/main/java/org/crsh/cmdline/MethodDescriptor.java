@@ -56,7 +56,7 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     ClassDescriptor<T> owner,
     Method method,
     String name,
-    InfoDescriptor info,
+    Description info,
     List<ParameterDescriptor<MethodArgumentBinding>> parameters) throws IntrospectionException {
     super(name, info, parameters);
 
@@ -142,19 +142,19 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
       writer.append(TAB);
       option.printUsage(writer);
       writer.append(" ");
-      writer.append(option.getDescription());
+      writer.append(option.getUsage());
     }
     for (OptionDescriptor<?> option : getOptions()) {
       writer.append(TAB);
       option.printUsage(writer);
       writer.append(" ");
-      writer.append(option.getDescription());
+      writer.append(option.getUsage());
     }
     for (ArgumentDescriptor<?> argument : getArguments()) {
       writer.append(TAB);
       argument.printUsage(writer);
       writer.append(" ");
-      writer.append(argument.getDescription());
+      writer.append(argument.getUsage());
     }
 
     //
@@ -173,8 +173,8 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     if (printName) {
       writer.append(" ").append(getName());
     }
-    if (getDescription().length() > 0) {
-      writer.append(" - ").append(getDescription());
+    if (getUsage().length() > 0) {
+      writer.append(" - ").append(getUsage());
     }
     writer.append("\n\n");
 
@@ -199,9 +199,9 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     writer.append("\n\n");
 
     // Description
-    if (getInfo().getMan().length() > 0) {
+    if (getDescription().getMan().length() > 0) {
       writer.append("DESCRIPTION\n");
-      writer.append(getInfo().getMan());
+      writer.append(getDescription().getMan());
       writer.append("\n");
     }
 
@@ -213,7 +213,7 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
       writer.append("OPTIONS\n");
       for (OptionDescriptor<?> option : options) {
         for (String name : option.getNames()) {
-          writer.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getDescription()).append("\n\n");
+          writer.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getUsage()).append("\n\n");
         }
       }
     }

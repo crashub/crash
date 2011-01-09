@@ -45,7 +45,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     B binding,
     Type javaType,
     List<String> names,
-    InfoDescriptor info,
+    Description info,
     boolean required,
     int arity,
     boolean password,

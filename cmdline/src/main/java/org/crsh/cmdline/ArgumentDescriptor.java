@@ -39,7 +39,7 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
     B binding,
     String name,
     Type javaType,
-    InfoDescriptor info,
+    Description info,
     boolean required,
     boolean password,
     Class<? extends Completer> completerType,

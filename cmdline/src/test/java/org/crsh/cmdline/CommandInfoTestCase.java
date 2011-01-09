@@ -38,7 +38,7 @@ public class CommandInfoTestCase extends TestCase {
     class A {
     }
     CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
-    assertEquals("", c.getDescription());
+    assertEquals("", c.getUsage());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, c.getOptions().size());
   }
@@ -47,7 +47,7 @@ public class CommandInfoTestCase extends TestCase {
     class A {
     }
     CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
-    assertEquals("", c.getDescription());
+    assertEquals("", c.getUsage());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, c.getOptions().size());
   }

@@ -36,8 +36,8 @@ public class DescriptionTestCase extends TestCase {
     class A { }
 
     CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
-    assertEquals("", c.getDescription());
-    assertEquals(new InfoDescriptor(), c.getInfo());
+    assertEquals("", c.getUsage());
+    assertEquals(new Description(), c.getDescription());
   }
 
   public void testClassDescription() throws Exception {
@@ -47,9 +47,9 @@ public class DescriptionTestCase extends TestCase {
     class A { }
 
     CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
-    assertEquals("class_usage", c.getDescription());
-    assertEquals("class_usage", c.getInfo().getUsage());
-    assertEquals("class_man", c.getInfo().getMan());
+    assertEquals("class_usage", c.getUsage());
+    assertEquals("class_usage", c.getDescription().getUsage());
+    assertEquals("class_man", c.getDescription().getMan());
   }
 
   public void testMethodDescription() throws Exception {
@@ -62,9 +62,9 @@ public class DescriptionTestCase extends TestCase {
 
     ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
-    assertEquals("method_usage", m.getDescription());
-    assertEquals("method_usage", m.getInfo().getUsage());
-    assertEquals("method_man", m.getInfo().getMan());
+    assertEquals("method_usage", m.getUsage());
+    assertEquals("method_usage", m.getDescription().getUsage());
+    assertEquals("method_man", m.getDescription().getMan());
   }
 
   public void testParameterDescription() throws Exception {
@@ -79,9 +79,9 @@ public class DescriptionTestCase extends TestCase {
     ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
-    assertEquals("option_usage", a.getDescription());
-    assertEquals("option_usage", a.getInfo().getUsage());
-    assertEquals("option_man", a.getInfo().getMan());
+    assertEquals("option_usage", a.getUsage());
+    assertEquals("option_usage", a.getDescription().getUsage());
+    assertEquals("option_man", a.getDescription().getMan());
   }
 
   @Option(names = "a")
@@ -103,9 +103,9 @@ public class DescriptionTestCase extends TestCase {
     ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
-    assertEquals("foo_usage", a.getDescription());
-    assertEquals("foo_usage", a.getInfo().getUsage());
-    assertEquals("foo_man", a.getInfo().getMan());
+    assertEquals("foo_usage", a.getUsage());
+    assertEquals("foo_usage", a.getDescription().getUsage());
+    assertEquals("foo_man", a.getDescription().getMan());
   }
 
   public void testParameterMetaDescription2() throws Exception {
@@ -117,8 +117,8 @@ public class DescriptionTestCase extends TestCase {
     ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
-    assertEquals("", a.getDescription());
-    assertEquals(new InfoDescriptor(), a.getInfo());
+    assertEquals("", a.getUsage());
+    assertEquals(new Description(), a.getDescription());
   }
 
   public void testParameterMetaDescription3() throws Exception {
@@ -132,8 +132,8 @@ public class DescriptionTestCase extends TestCase {
     ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
-    assertEquals("option_usage", a.getDescription());
-    assertEquals("option_usage", a.getInfo().getUsage());
-    assertEquals("foo_man", a.getInfo().getMan());
+    assertEquals("option_usage", a.getUsage());
+    assertEquals("option_usage", a.getDescription().getUsage());
+    assertEquals("foo_man", a.getDescription().getMan());
   }
 }

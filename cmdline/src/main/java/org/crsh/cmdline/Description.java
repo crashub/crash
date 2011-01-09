@@ -26,7 +26,7 @@ import java.lang.reflect.AnnotatedElement;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public final class InfoDescriptor {
+public final class Description {
 
   /** . */
   private final String usage;
@@ -34,11 +34,11 @@ public final class InfoDescriptor {
   /** . */
   private final String man;
 
-  public InfoDescriptor() {
+  public Description() {
     this.usage = this.man = "";
   }
 
-  InfoDescriptor(InfoDescriptor child, InfoDescriptor parent) {
+  Description(Description child, Description parent) {
     if (child == null) {
       throw new NullPointerException();
     }
@@ -51,7 +51,7 @@ public final class InfoDescriptor {
     this.man = child.man.length() > 0 ? child.man : parent.man;
   }
 
-  InfoDescriptor(String usage, String man) {
+  Description(String usage, String man) {
     if (usage == null) {
       throw new NullPointerException();
     }
@@ -64,11 +64,11 @@ public final class InfoDescriptor {
     this.man = man;
   }
 
-  public InfoDescriptor(AnnotatedElement annotated) {
+  public Description(AnnotatedElement annotated) {
     this(annotated.getAnnotations());
   }
 
-  InfoDescriptor(Annotation... annotations) {
+  Description(Annotation... annotations) {
     if (annotations == null) {
       throw new NullPointerException();
     }
@@ -101,8 +101,8 @@ public final class InfoDescriptor {
   public boolean equals(Object obj) {
     if (obj == this) {
       return true;
-    } else if (obj instanceof InfoDescriptor) {
-      InfoDescriptor that = (InfoDescriptor)obj;
+    } else if (obj instanceof Description) {
+      Description that = (Description)obj;
       return usage.equals(that.usage) && man.equals(that.man);
     } else {
       return false;

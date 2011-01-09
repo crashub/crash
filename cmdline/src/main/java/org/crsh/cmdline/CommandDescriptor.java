@@ -41,7 +41,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   private final String name;
 
   /** . */
-  private final InfoDescriptor info;
+  private final Description description;
 
   /** . */
   private final Map<String, OptionDescriptor<B>> optionMap;
@@ -57,7 +57,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
   CommandDescriptor(
     String name,
-    InfoDescriptor info,
+    Description description,
     List<ParameterDescriptor<B>> parameters) throws IntrospectionException {
 
     Map<String, OptionDescriptor<B>> options = Collections.emptyMap();
@@ -88,7 +88,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     }
 
     //
-    this.info = info;
+    this.description = description;
     this.optionMap = options.isEmpty() ? options : Collections.unmodifiableMap(options);
     this.arguments = arguments.isEmpty() ? arguments : Collections.unmodifiableList(arguments);
     this.options = options.isEmpty() ? Collections.<OptionDescriptor<B>>emptySet() : Collections.unmodifiableSet(new LinkedHashSet<OptionDescriptor<B>>(options.values()));
@@ -133,11 +133,11 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     return name;
   }
 
-  public final String getDescription() {
-    return info != null ? info.getUsage() : "";
+  public final String getUsage() {
+    return description != null ? description.getUsage() : "";
   }
 
-  public final InfoDescriptor getInfo() {
-    return info;
+  public final Description getDescription() {
+    return description;
   }
 }

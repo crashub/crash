@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -51,7 +50,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
 
   public ClassDescriptor(
     Class<T> type,
-    InfoDescriptor info,
+    Description info,
     List<ParameterDescriptor<ClassFieldBinding>> parameters) throws IntrospectionException {
     super(
       type.getSimpleName().toLowerCase(),
@@ -113,7 +112,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
       String formatString = "   %1$-16s %2$s\n";
       for (MethodDescriptor<T> method : getMethods()) {
         Formatter formatter = new Formatter(writer);
-        formatter.format(formatString, method.getName(), method.getDescription());
+        formatter.format(formatString, method.getName(), method.getUsage());
       }
     }
   }
