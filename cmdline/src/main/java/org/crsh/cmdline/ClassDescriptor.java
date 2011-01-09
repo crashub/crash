@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * A command backed by a class.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
@@ -85,14 +87,6 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     return type;
   }
 
-  public Iterable<MethodDescriptor<T>> getMethods() {
-    return methodMap.values();
-  }
-
-  public MethodDescriptor<T> getMethod(String name) {
-    return methodMap.get(name);
-  }
-
   @Override
   public Map<String, ? extends CommandDescriptor<T, ?>> getSubordinates() {
     return methodMap;
@@ -123,6 +117,14 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     } else {
       writer.print("todo");
     }
+  }
+
+  public Iterable<MethodDescriptor<T>> getMethods() {
+    return methodMap.values();
+  }
+
+  public MethodDescriptor<T> getMethod(String name) {
+    return methodMap.get(name);
   }
 
   private List<MethodDescriptor<T>> commands(Class<?> introspected) throws IntrospectionException {
