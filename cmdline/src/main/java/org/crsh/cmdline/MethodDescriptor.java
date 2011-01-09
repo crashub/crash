@@ -206,6 +206,8 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
   }
 
   void printMan(PrintWriter writer, boolean printName) {
+
+    // Name
     writer.append("NAME\n");
     writer.append(TAB).append(owner.getName());
     if (printName) {
@@ -216,13 +218,9 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     }
     writer.append("\n\n");
 
-    //
+    // Synopsis
     writer.append("SYNOPSIS\n");
-
-    //
     writer.append(TAB).append(owner.getName());
-
-    //
     for (OptionDescriptor<?> option : owner.getOptions()) {
       writer.append(" ");
       option.printUsage(writer);
@@ -230,8 +228,6 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     if (printName) {
       writer.append(" ").append(getName());
     }
-
-    //
     for (OptionDescriptor<?> option : getOptions()) {
       writer.append(" ");
       option.printUsage(writer);
@@ -242,21 +238,23 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     }
     writer.append("\n\n");
 
-    //
-    writer.append("DESCRIPTION\n");
-    writer.append(TAB).append("The following options are available:\n\n");
-
-    //
-    for (OptionDescriptor<?> option : owner.getOptions()) {
-      for (String name : option.getNames()) {
-        writer.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getDescription()).append("\n\n");
-      }
+    // Description
+    if (getInfo().getMan().length() > 0) {
+      writer.append("DESCRIPTION\n");
+      writer.append(getInfo().getMan());
+      writer.append("\n");
     }
 
-    //
-    for (OptionDescriptor<?> option : getOptions()) {
-      for (String name : option.getNames()) {
-        writer.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getDescription()).append("\n\n");
+    // Options
+    List<OptionDescriptor<?>> options = new ArrayList<OptionDescriptor<?>>();
+    options.addAll(owner.getOptions());
+    options.addAll(getOptions());
+    if (options.size() > 0) {
+      writer.append("OPTIONS\n");
+      for (OptionDescriptor<?> option : options) {
+        for (String name : option.getNames()) {
+          writer.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getDescription()).append("\n\n");
+        }
       }
     }
   }

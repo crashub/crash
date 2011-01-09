@@ -13,7 +13,16 @@ import java.lang.annotation.RetentionPolicy;
 
 public class log extends CRaSHCommand implements Completer {
 
-  @Description(display="Send a message to a logger")
+  @Description("Send a message to a logger")
+  @Man("""\
+The send command log one or several loggers with a specified message. For instance the following impersonates
+the javax.management.mbeanserver class and send a message on its own logger.
+
+#% log send -m hello javax.management.mbeanserver
+
+Send is a <Logger, Void> command, it can log messages to consumed log objects:
+
+% log ls | log send -m hello -l warn""")
   @Command
   public void send(InvocationContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg String name, @LevelOpt Level level) throws ScriptException {
     level = level ?: Level.info;
@@ -74,7 +83,23 @@ public class log extends CRaSHCommand implements Completer {
     return names;
   }
 
-  @Description("List the available loggers")
+  @Description("list the available loggers")
+  @Man("""\
+The logls command list all the available loggers., for instance:
+
+% logls
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/].[default]
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/eXoGadgetServer].[concat]
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/dashboard].[jsp]
+...
+
+The -f switch provides filtering with a Java regular expression
+
+% logls -f javax.*
+javax.management.mbeanserver
+javax.management.modelmbean
+
+The logls command is a <Void,Logger> command, therefore any logger produced can be consumed.""")
   @Command
   public void ls(InvocationContext<Void, Logger> context, @FilterOpt String filter) throws ScriptException {
 
@@ -104,7 +129,18 @@ public class log extends CRaSHCommand implements Completer {
     }
   }
 
-  @Description("Give info about a logger")
+  @Man("""\
+The loginfo command displays information about one or several loggers.
+
+% loginfo javax.management.modelmbean
+javax.management.modelmbean<INFO>
+
+The loginfo command is a <Logger,Void> command and it can consumed logger produced by the logls command:
+
+% logls -f javax.* | loginfo
+javax.management.mbeanserver<INFO>
+javax.management.modelmbean<INFO>""")
+  @Description("display info about a logger")
   @Command
   public void info(InvocationContext<Logger, Void> context, @LoggerArg List<String> names) throws ScriptException {
     if (context.piped) {
@@ -130,7 +166,19 @@ public class log extends CRaSHCommand implements Completer {
     }
   }
 
-  @Description("Set the level of one of several loggers")
+  @Man("""\
+The set command sets the level of a logger. One or several logger names can be specified as arguments
+and the -l option specify the level among the trace, debug, info, warn and error levels. When no level is
+specified, the level is cleared and the level will be inherited from its ancestors.
+
+% logset -l trace foo
+% logset foo
+
+The logger name can be omitted and instead stream of logger can be consumed as it is a <Logger,Void> command.
+The following set the level warn on all the available loggers:
+
+% log ls | log set -l warn""")
+  @Description("configures the level of one of several loggers")
   @Command
   public void set(
     InvocationContext<Logger, Void> context,
@@ -219,7 +267,7 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
   Object getLog4jObject() {
     return Thread.currentThread().getContextClassLoader().loadClass("org.apache.log4j.Level")[log4j];
   }
-  Object getJdkObject() {
+  Object getJDKObject() {
     return java.util.logging.Level[jdk];
   }
   void log(Logger logger, String msg) {
