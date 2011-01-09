@@ -29,16 +29,13 @@ import java.lang.reflect.AnnotatedElement;
 public final class InfoDescriptor {
 
   /** . */
-  private final String display;
-
-  /** . */
   private final String usage;
 
   /** . */
   private final String man;
 
   public InfoDescriptor() {
-    this.display = this.usage = this.man = "";
+    this.usage = this.man = "";
   }
 
   InfoDescriptor(InfoDescriptor child, InfoDescriptor parent) {
@@ -50,15 +47,11 @@ public final class InfoDescriptor {
     }
 
     //
-    this.display = child.display.length() > 0 ? child.display : parent.display;
     this.usage = child.usage.length() > 0 ? child.usage : parent.usage;
     this.man = child.man.length() > 0 ? child.man : parent.man;
   }
 
-  InfoDescriptor(String display, String usage, String man) {
-    if (display == null) {
-      throw new NullPointerException();
-    }
+  InfoDescriptor(String usage, String man) {
     if (usage == null) {
       throw new NullPointerException();
     }
@@ -67,7 +60,6 @@ public final class InfoDescriptor {
     }
 
     //
-    this.display = display;
     this.usage = usage;
     this.man = man;
   }
@@ -82,25 +74,19 @@ public final class InfoDescriptor {
     }
 
     //
-    String display = "";
     String usage = "";
     String man = "";
     for (Annotation annotation : annotations) {
-      if (annotation instanceof Description) {
-        display = ((Description)annotation).value();
+      if (annotation instanceof Usage) {
+        usage = ((Usage)annotation).value();
       } else if (annotation instanceof Man) {
         man = ((Man)annotation).value();
       }
     }
 
     //
-    this.display  = display;
     this.usage  = usage;
     this.man  = man;
-  }
-
-  public String getDisplay() {
-    return display;
   }
 
   public String getUsage() {
@@ -117,7 +103,7 @@ public final class InfoDescriptor {
       return true;
     } else if (obj instanceof InfoDescriptor) {
       InfoDescriptor that = (InfoDescriptor)obj;
-      return display.equals(that.display) && usage.equals(that.usage) && man.equals(that.man);
+      return usage.equals(that.usage) && man.equals(that.man);
     } else {
       return false;
     }

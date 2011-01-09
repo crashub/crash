@@ -1,7 +1,5 @@
-class sleep extends CRaSHCommand
-{
-
-  @Description("Sleep for some time")
+class sleep extends CRaSHCommand {
+  @Usage("Sleep for some time")
   @Command
   Object main(@Description("Sleep time in seconds") @Argument int time) throws ScriptException {
     if (time < 0)

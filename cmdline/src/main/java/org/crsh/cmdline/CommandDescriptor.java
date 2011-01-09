@@ -134,7 +134,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   }
 
   public final String getDescription() {
-    return info != null ? info.getDisplay() : "";
+    return info != null ? info.getUsage() : "";
   }
 
   public final InfoDescriptor getInfo() {

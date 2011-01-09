@@ -29,6 +29,6 @@ import java.lang.annotation.RetentionPolicy;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Description {
+public @interface Usage {
   String value();
 }

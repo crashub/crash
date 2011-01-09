@@ -42,30 +42,28 @@ public class DescriptionTestCase extends TestCase {
 
   public void testClassDescription() throws Exception {
 
-    @Description("class_display")
+    @Usage("class_usage")
     @Man("class_man")
     class A { }
 
     CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
-    assertEquals("class_display", c.getDescription());
-    assertEquals("class_display", c.getInfo().getDisplay());
-//    assertEquals("class_usage", c.getInfo().getUsage());
+    assertEquals("class_usage", c.getDescription());
+    assertEquals("class_usage", c.getInfo().getUsage());
     assertEquals("class_man", c.getInfo().getMan());
   }
 
   public void testMethodDescription() throws Exception {
 
     class A {
-      @Description("method_display")
+      @Usage("method_usage")
       @Man("method_man")
       @Command void m() {}
     }
 
     ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
-    assertEquals("method_display", m.getDescription());
-    assertEquals("method_display", m.getInfo().getDisplay());
-//    assertEquals("method_usage", m.getInfo().getUsage());
+    assertEquals("method_usage", m.getDescription());
+    assertEquals("method_usage", m.getInfo().getUsage());
     assertEquals("method_man", m.getInfo().getMan());
   }
 
@@ -73,7 +71,7 @@ public class DescriptionTestCase extends TestCase {
 
     class A {
       @Command void m(
-        @Description("option_display")
+        @Usage("option_usage")
         @Man("option_man")
         @Option(names = "a") String s) {}
     }
@@ -81,14 +79,13 @@ public class DescriptionTestCase extends TestCase {
     ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
-    assertEquals("option_display", a.getDescription());
-    assertEquals("option_display", a.getInfo().getDisplay());
-//    assertEquals("option_usage", a.getInfo().getUsage());
+    assertEquals("option_usage", a.getDescription());
+    assertEquals("option_usage", a.getInfo().getUsage());
     assertEquals("option_man", a.getInfo().getMan());
   }
 
   @Option(names = "a")
-  @Description("foo_display")
+  @Usage("foo_usage")
   @Man("foo_man")
   @Retention(RetentionPolicy.RUNTIME)
   public static @interface Foo { }
@@ -106,9 +103,8 @@ public class DescriptionTestCase extends TestCase {
     ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
-    assertEquals("foo_display", a.getDescription());
-    assertEquals("foo_display", a.getInfo().getDisplay());
-//    assertEquals("foo_usage", a.getInfo().getUsage());
+    assertEquals("foo_usage", a.getDescription());
+    assertEquals("foo_usage", a.getInfo().getUsage());
     assertEquals("foo_man", a.getInfo().getMan());
   }
 
@@ -129,16 +125,15 @@ public class DescriptionTestCase extends TestCase {
 
     class A {
       @Command void m(
-        @Description("option_display")
+        @Usage("option_usage")
         @Foo String s) {}
     }
 
     ClassDescriptor<A> c = CommandFactory.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
-    assertEquals("option_display", a.getDescription());
-    assertEquals("option_display", a.getInfo().getDisplay());
-//    assertEquals("foo_usage", a.getInfo().getUsage());
+    assertEquals("option_usage", a.getDescription());
+    assertEquals("option_usage", a.getInfo().getUsage());
     assertEquals("foo_man", a.getInfo().getMan());
   }
 }

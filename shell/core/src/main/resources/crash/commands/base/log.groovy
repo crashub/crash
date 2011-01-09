@@ -13,7 +13,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class log extends CRaSHCommand implements Completer {
 
-  @Description("Send a message to a logger")
+  @Usage("Send a message to a logger")
   @Man("""\
 The send command log one or several loggers with a specified message. For instance the following impersonates
 the javax.management.mbeanserver class and send a message on its own logger.
@@ -83,7 +83,7 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
     return names;
   }
 
-  @Description("list the available loggers")
+  @Usage("list the available loggers")
   @Man("""\
 The logls command list all the available loggers., for instance:
 
@@ -117,7 +117,7 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
     }
   }
 
-  @Description("Create one or several loggers")
+  @Usage("Create one or several loggers")
   @Command
   public void add(InvocationContext<Void, Logger> context, @LoggerArg List<String> names) throws ScriptException {
     names.each {
@@ -140,7 +140,7 @@ The loginfo command is a <Logger,Void> command and it can consumed logger produc
 % logls -f javax.* | loginfo
 javax.management.mbeanserver<INFO>
 javax.management.modelmbean<INFO>""")
-  @Description("display info about a logger")
+  @Usage("display info about a logger")
   @Command
   public void info(InvocationContext<Logger, Void> context, @LoggerArg List<String> names) throws ScriptException {
     if (context.piped) {
@@ -178,7 +178,7 @@ The logger name can be omitted and instead stream of logger can be consumed as i
 The following set the level warn on all the available loggers:
 
 % log ls | log set -l warn""")
-  @Description("configures the level of one of several loggers")
+  @Usage("configures the level of one of several loggers")
   @Command
   public void set(
     InvocationContext<Logger, Void> context,
@@ -276,26 +276,26 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description("The logger level to assign among {trace, debug, info, warn, error}")
+@Usage("The logger level to assign among {trace, debug, info, warn, error}")
 @Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
 @interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description("The message to log")
+@Usage("The message to log")
 @Option(names=["m","message"],required=true)
 @interface MsgOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description("The logger name")
+@Usage("The logger name")
 @Argument
 @interface LoggerArg { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description("Filter the logger with a regular expression")
+@Usage("Filter the logger with a regular expression")
 @Option(names=["f","filter"])
 @interface FilterOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description("Force the plugin implementation")
+@Usage("Force the plugin implementation")
 @Option(names=["p","plugin"])
 @interface PluginOpt { }

@@ -150,7 +150,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   }
 
   public final String getDescription() {
-    return info != null ? info.getDisplay() : "";
+    return info != null ? info.getUsage() : "";
   }
 
   public InfoDescriptor getInfo() {
