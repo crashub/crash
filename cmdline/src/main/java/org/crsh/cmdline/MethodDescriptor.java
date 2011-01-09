@@ -28,6 +28,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,6 +130,11 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
       throw new IndexOutOfBoundsException("Bad index value " + index);
     }
     return parameterMap.get(index);
+  }
+
+  @Override
+  public Map<String, ? extends CommandDescriptor<T, ?>> getSubordinates() {
+    return Collections.emptyMap();
   }
 
   public Method getMethod() {

@@ -108,6 +108,13 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
   public abstract void printMan(PrintWriter writer);
 
+  /**
+   * Returns the command subordinates as a map.
+   *
+   * @return the subordinates
+   */
+  public abstract Map<String, ? extends CommandDescriptor<T, ?>> getSubordinates();
+
   public final Collection<ParameterDescriptor<B>> getParameters() {
     return parameters;
   }

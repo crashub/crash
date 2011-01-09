@@ -92,6 +92,11 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   }
 
   @Override
+  public Map<String, ? extends CommandDescriptor<T, ?>> getSubordinates() {
+    return methodMap;
+  }
+
+  @Override
   public void printUsage(PrintWriter writer) {
     if (methodMap.size() == 1) {
       methodMap.values().iterator().next().printUsage(writer, false);
