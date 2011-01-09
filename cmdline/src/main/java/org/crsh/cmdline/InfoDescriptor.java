@@ -88,8 +88,6 @@ public final class InfoDescriptor {
     for (Annotation annotation : annotations) {
       if (annotation instanceof Description) {
         display = ((Description)annotation).value();
-      } else if (annotation instanceof Usage) {
-        usage = ((Usage)annotation).value();
       } else if (annotation instanceof Man) {
         man = ((Man)annotation).value();
       }
