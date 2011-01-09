@@ -40,6 +40,13 @@ public interface TermIO {
   int read() throws IOException;
 
   /**
+   * Returns the term width in chars. When the value is not positive it means the value could not be determined.
+   *
+   * @return the term width
+   */
+  int getWidth();
+
+  /**
    * Decode the intput value.
    *
    * @param code the code

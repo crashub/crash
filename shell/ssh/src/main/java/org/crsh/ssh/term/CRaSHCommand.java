@@ -64,8 +64,8 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
     final AsyncShell asyncShell = new AsyncShell(factory.executor, shell);
 
     //
-    context = new SSHContext(env.getPtyModes().get(PtyMode.VERASE));
-    io = new SSHIO(this, context.verase);
+    context = new SSHContext(env);
+    io = new SSHIO(this);
     processor = new Processor(new BaseTerm(io), asyncShell);
 
     //
@@ -92,6 +92,10 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
     //
     thread = new Thread(this, "CRaSH");
     thread.start();
+  }
+
+  public SSHContext getContext() {
+    return context;
   }
 
   public void destroy() {

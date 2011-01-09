@@ -60,9 +60,6 @@ public class SSHIO implements TermIO {
   private final Writer writer;
 
   /** . */
-  private final int verase;
-
-  /** . */
   private static final int STATUS_NORMAL = 0;
 
   /** . */
@@ -80,11 +77,10 @@ public class SSHIO implements TermIO {
   /** . */
   final AtomicBoolean closed;
 
-  public SSHIO(CRaSHCommand command, int verase) {
+  public SSHIO(CRaSHCommand command) {
     this.command = command;
     this.writer = new OutputStreamWriter(command.out);
     this.reader = new InputStreamReader(command.in);
-    this.verase = verase;
     this.status = STATUS_NORMAL;
     this.closed = new AtomicBoolean(false);
   }
@@ -133,8 +129,12 @@ public class SSHIO implements TermIO {
     }
   }
 
+  public int getWidth() {
+    return command.getContext().getWidth();
+  }
+
   public CodeType decode(int code) {
-    if (code == verase) {
+    if (code == command.getContext().verase) {
       return CodeType.DELETE;
     } else {
       switch (code) {

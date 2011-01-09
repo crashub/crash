@@ -76,6 +76,9 @@ public abstract class AbstractCommandTestCase extends TestCase {
   protected final ShellResponse evaluate(String s) {
     final AtomicReference<ShellResponse> resp = new AtomicReference<ShellResponse>();
     ShellProcessContext ctx = new ShellProcessContext() {
+      public int getWidth() {
+        return 32;
+      }
       public void begin(ShellProcess process) {
       }
       public String readLine(String msg, boolean echo) {

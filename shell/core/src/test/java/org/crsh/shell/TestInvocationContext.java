@@ -56,6 +56,10 @@ public class TestInvocationContext<C, P> implements InvocationContext<C, P> {
     return attributes;
   }
 
+  public int getWidth() {
+    return 32;
+  }
+
   public String readLine(String msg, boolean echo) {
     throw new UnsupportedOperationException();
   }

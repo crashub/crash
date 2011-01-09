@@ -58,6 +58,10 @@ public class TelnetIO implements TermIO {
     }
   }
 
+  public int getWidth() {
+    return termIO.getColumns();
+  }
+
   public CodeType decode(int code) {
     switch (code) {
       case 3:

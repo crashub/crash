@@ -43,6 +43,10 @@ public class ConsoleTerm implements Term {
     this.echo = echo;
   }
 
+  public int getWidth() {
+    return 10;
+  }
+
   public TermEvent read() throws IOException {
     if (echo) {
       String line = console.readLine();

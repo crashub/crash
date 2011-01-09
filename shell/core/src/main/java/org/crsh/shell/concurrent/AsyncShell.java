@@ -98,6 +98,10 @@ public class AsyncShell implements Shell {
 
     // ShellProcessContext implementation ******************************************************************************
 
+    public int getWidth() {
+      return caller.getWidth();
+    }
+
     public String readLine(String msg, boolean echo) {
       return caller.readLine(msg, echo);
     }

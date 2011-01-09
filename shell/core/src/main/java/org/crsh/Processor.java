@@ -232,6 +232,10 @@ public class Processor implements Runnable {
 
   private class ShellInvoker implements ShellProcessContext {
 
+    public int getWidth() {
+      return term.getWidth();
+    }
+
     public void begin(ShellProcess process) {
       Processor.this.process = process;
     }

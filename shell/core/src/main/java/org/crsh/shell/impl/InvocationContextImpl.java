@@ -37,8 +37,7 @@ import java.util.Map;
 class InvocationContextImpl<C, P> extends CommandContextImpl implements InvocationContext<C, P> {
 
   /** . */
-  private final ShellProcessContext responseContext;
-
+  private final ShellProcessContext processContext;
 
   /** . */
   private ShellPrinter writer;
@@ -53,15 +52,19 @@ class InvocationContextImpl<C, P> extends CommandContextImpl implements Invocati
   private Iterable<C> consumedItems;
 
   InvocationContextImpl(
-    ShellProcessContext responseContext,
+    ShellProcessContext processContext,
     Iterable<C> consumedItems,
     Map<String, Object> attributes) {
     super(attributes);
-    this.responseContext = responseContext;
+    this.processContext = processContext;
     this.writer = null;
     this.buffer = null;
     this.consumedItems = consumedItems;
     this.products = Collections.emptyList();
+  }
+
+  public int getWidth() {
+    return processContext.getWidth();
   }
 
   public List<P> getProducedItems() {
@@ -98,6 +101,6 @@ class InvocationContextImpl<C, P> extends CommandContextImpl implements Invocati
     return writer;
   }
   public String readLine(String msg, boolean echo) {
-    return responseContext.readLine(msg, echo);
+    return processContext.readLine(msg, echo);
   }
 }

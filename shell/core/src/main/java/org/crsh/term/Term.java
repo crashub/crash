@@ -29,6 +29,14 @@ import java.io.IOException;
  */
 public interface Term {
 
+
+  /**
+   * Returns the term width in chars. When the value is not positive it means the value could not be determined.
+   *
+   * @return the term width
+   */
+  int getWidth();
+
   /**
    * Set the echo mode on the term.
    *

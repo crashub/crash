@@ -60,6 +60,10 @@ public class SyncShellResponseContext implements ShellProcessContext {
     process.cancel();
   }
 
+  public int getWidth() {
+    return wrapped.getWidth();
+  }
+
   public void begin(ShellProcess process) {
     this.process = process;
   }

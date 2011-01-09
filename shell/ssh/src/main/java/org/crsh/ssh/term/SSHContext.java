@@ -18,6 +18,11 @@
  */
 package org.crsh.ssh.term;
 
+import org.apache.sshd.common.PtyMode;
+import org.apache.sshd.server.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -25,9 +30,30 @@ package org.crsh.ssh.term;
 public class SSHContext {
 
   /** . */
+  private static final Logger log = LoggerFactory.getLogger(SSHContext.class);
+
+  /** . */
   public final int verase;
 
-  public SSHContext(int verase) {
-    this.verase = verase;
+  /** . */
+  private final Environment env;
+
+  public SSHContext(Environment env) {
+    this.env = env;
+    this.verase = env.getPtyModes().get(PtyMode.VERASE);
+  }
+
+  public int getWidth() {
+    String s = env.getEnv().get(Environment.ENV_COLUMNS);
+    int width = 0;
+    if (s != null) {
+      try {
+        width = Integer.parseInt(s);
+      }
+      catch (NumberFormatException e) {
+        log.warn("Could not parse ssh term width " + s);
+      }
+    }
+    return width;
   }
 }

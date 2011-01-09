@@ -32,6 +32,13 @@ import java.util.Map;
  */
 public interface InvocationContext<C, P> extends CommandContext {
 
+  /**
+   * Returns the term width in chars. When the value is not positive it means the value could not be determined.
+   *
+   * @return the term width
+   */
+  int getWidth();
+
   String readLine(String msg, boolean echo);
 
   ShellPrinter getWriter();

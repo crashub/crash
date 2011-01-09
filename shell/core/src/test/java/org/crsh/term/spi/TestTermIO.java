@@ -42,9 +42,13 @@ public class TestTermIO implements TermIO {
   /** . */
   private final BlockingQueue<String> outter;
 
+  /** . */
+  private int width;
+
   public TestTermIO() throws IOException {
     this.inner = new LinkedBlockingQueue<Integer>();
     this.outter = new LinkedBlockingQueue<String>();
+    this.width = 32;
   }
 
   public int read() throws IOException {
@@ -58,8 +62,15 @@ public class TestTermIO implements TermIO {
     }
   }
 
-  public boolean isClosed() {
-    throw new UnsupportedOperationException();
+  public int getWidth() {
+    return width;
+  }
+
+  public void setWidth(int width) {
+    if (width < 1) {
+      throw new IllegalArgumentException("No negative width accepted");
+    }
+    this.width = width;
   }
 
   public TestTermIO appendTab() {

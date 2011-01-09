@@ -96,6 +96,10 @@ public class BaseTerm implements Term {
     });
   }
 
+  public int getWidth() {
+    return io.getWidth();
+  }
+
   public void setEcho(boolean echo) {
     console.setEchoing(echo);
   }

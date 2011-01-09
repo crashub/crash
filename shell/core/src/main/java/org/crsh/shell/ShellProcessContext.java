@@ -28,6 +28,13 @@ package org.crsh.shell;
 public interface ShellProcessContext {
 
   /**
+   * Returns the term width in chars. When the value is not positive it means the value could not be determined.
+   *
+   * @return the term width
+   */
+  int getWidth();
+
+  /**
    * This method is invoked before the process work begins. It provides the process callback that
    * can be used during the process execution by the context.
    *

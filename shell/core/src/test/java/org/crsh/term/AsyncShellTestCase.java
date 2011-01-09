@@ -86,6 +86,9 @@ public class AsyncShellTestCase extends TestCase {
 
     //
     ShellProcessContext respCtx1 = new ShellProcessContext() {
+      public int getWidth() {
+        return 32;
+      }
       public void begin(ShellProcess process) {
       }
       public String readLine(String msg, boolean echo) {
