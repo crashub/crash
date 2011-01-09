@@ -28,26 +28,5 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Description {
-
-  /**
-   * Returns the display description.
-   *
-   * @return the display descrption
-   */
-  String display() default "";
-
-  /**
-   * Returns the usage description.
-   *
-   * @return the usage description
-   */
-  String usage() default "";
-
-  /**
-   * Returns the manual description.
-   *
-   * @return a manual description
-   */
-  String man() default "";
-
+  String value();
 }

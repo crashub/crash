@@ -3,12 +3,12 @@ import org.crsh.shell.ui.UIBuilder;
 
 public class ls extends org.crsh.jcr.command.JCRCommand {
 
-  @Description(display = "List the content of a node")
+  @Description("List the content of a node")
   @Command
   public Object main(
   // Path of the node content to list
   @PathArg String path,
-  @Description(display = "Print depth")
+  @Description("Print depth")
   @Option(names=["d","depth"]) Integer depth) throws ScriptException {
     assertConnected();
 

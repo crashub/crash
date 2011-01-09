@@ -71,7 +71,7 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
       }
 
       //
-      InfoDescriptor info = info(m.getAnnotations());
+      InfoDescriptor info = new InfoDescriptor(m);
 
       //
       return new MethodDescriptor<T>(

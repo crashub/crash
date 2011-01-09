@@ -19,6 +19,9 @@
 
 package org.crsh.cmdline;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -33,6 +36,10 @@ public final class InfoDescriptor {
 
   /** . */
   private final String man;
+
+  public InfoDescriptor() {
+    this.display = this.usage = this.man = "";
+  }
 
   InfoDescriptor(InfoDescriptor child, InfoDescriptor parent) {
     if (child == null) {
@@ -65,15 +72,33 @@ public final class InfoDescriptor {
     this.man = man;
   }
 
-  InfoDescriptor(Description description) {
-    if (description == null) {
+  public InfoDescriptor(AnnotatedElement annotated) {
+    this(annotated.getAnnotations());
+  }
+
+  InfoDescriptor(Annotation... annotations) {
+    if (annotations == null) {
       throw new NullPointerException();
     }
 
     //
-    this.display  = description.display();
-    this.usage  = description.usage();
-    this.man  = description.man();
+    String display = "";
+    String usage = "";
+    String man = "";
+    for (Annotation annotation : annotations) {
+      if (annotation instanceof Description) {
+        display = ((Description)annotation).value();
+      } else if (annotation instanceof Usage) {
+        usage = ((Usage)annotation).value();
+      } else if (annotation instanceof Man) {
+        man = ((Man)annotation).value();
+      }
+    }
+
+    //
+    this.display  = display;
+    this.usage  = usage;
+    this.man  = man;
   }
 
   public String getDisplay() {
@@ -86,5 +111,17 @@ public final class InfoDescriptor {
 
   public String getMan() {
     return man;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    } else if (obj instanceof InfoDescriptor) {
+      InfoDescriptor that = (InfoDescriptor)obj;
+      return display.equals(that.display) && usage.equals(that.usage) && man.equals(that.man);
+    } else {
+      return false;
+    }
   }
 }

@@ -29,7 +29,7 @@ class help extends CRaSHCommand
   "setperm",
   "xpath"];
 
-  @Description(display = "Provides basic help")
+  @Description("Provides basic help")
   @Command
   Object main() {
     def ret = "Try one of these commands with the -h or --help switch:\n\n";

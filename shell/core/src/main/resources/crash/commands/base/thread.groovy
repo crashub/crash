@@ -4,17 +4,17 @@ import java.util.Formatter;
 
 public class thread extends CRaSHCommand {
 
-  @Description(display = "List the vm threads")
+  @Description("List the vm threads")
   @Command
   public void ls(
     InvocationContext<Void, Thread> context,
-    @Description(display = "Retain the thread with the specified name")
+    @Description("Retain the thread with the specified name")
     @Option(names=["n","name"])
     String name,
-    @Description(display = "Filter the threads with a regular expression on their name")
+    @Description("Filter the threads with a regular expression on their name")
     @Option(names=["f","filter"])
     String nameFilter,
-    @Description(display = "Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
+    @Description("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
     @Option(names=["s","state"])
     String stateFilter) throws ScriptException {
 
@@ -69,7 +69,7 @@ public class thread extends CRaSHCommand {
     return group;
   }
 
-  @Description(display = "Stop vm threads")
+  @Description("Stop vm threads")
   @Command
   public void stop(InvocationContext<Thread, Void> context) throws ScriptException {
     if (context.piped) {

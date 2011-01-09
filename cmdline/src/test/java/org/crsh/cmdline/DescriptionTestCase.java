@@ -37,12 +37,14 @@ public class DescriptionTestCase extends TestCase {
 
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
     assertEquals("", c.getDescription());
-    assertEquals(null, c.getInfo());
+    assertEquals(new InfoDescriptor(), c.getInfo());
   }
 
   public void testClassDescription() throws Exception {
 
-    @Description(display = "class_display", usage = "class_usage", man = "class_man")
+    @Description("class_display")
+    @Usage("class_usage")
+    @Man("class_man")
     class A { }
 
     CommandDescriptor<A, ?> c = CommandDescriptor.create(A.class);
@@ -55,7 +57,9 @@ public class DescriptionTestCase extends TestCase {
   public void testMethodDescription() throws Exception {
 
     class A {
-      @Description(display = "method_display", usage = "method_usage", man = "method_man")
+      @Description("method_display")
+      @Usage("method_usage")
+      @Man("method_man")
       @Command void m() {}
     }
 
@@ -70,7 +74,11 @@ public class DescriptionTestCase extends TestCase {
   public void testParameterDescription() throws Exception {
 
     class A {
-      @Command void m(@Description(display = "option_display", usage = "option_usage", man = "option_man") @Option(names = "a") String s) {}
+      @Command void m(
+        @Description("option_display")
+        @Usage("option_usage")
+        @Man("option_man")
+        @Option(names = "a") String s) {}
     }
 
     ClassDescriptor<A> c = CommandDescriptor.create(A.class);
@@ -83,7 +91,9 @@ public class DescriptionTestCase extends TestCase {
   }
 
   @Option(names = "a")
-  @Description(display = "foo_display", usage = "foo_usage", man = "foo_man")
+  @Description("foo_display")
+  @Usage("foo_usage")
+  @Man("foo_man")
   @Retention(RetentionPolicy.RUNTIME)
   public static @interface Foo { }
 
@@ -116,13 +126,15 @@ public class DescriptionTestCase extends TestCase {
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
     assertEquals("", a.getDescription());
-    assertEquals(null, a.getInfo());
+    assertEquals(new InfoDescriptor(), a.getInfo());
   }
 
   public void testParameterMetaDescription3() throws Exception {
 
     class A {
-      @Command void m(@Description(display = "option_display") @Foo String s) {}
+      @Command void m(
+        @Description("option_display")
+        @Foo String s) {}
     }
 
     ClassDescriptor<A> c = CommandDescriptor.create(A.class);

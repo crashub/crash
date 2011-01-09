@@ -74,7 +74,7 @@ public class log extends CRaSHCommand implements Completer {
     return names;
   }
 
-  @Description(display = "List the available loggers")
+  @Description("List the available loggers")
   @Command
   public void ls(InvocationContext<Void, Logger> context, @FilterOpt String filter) throws ScriptException {
 
@@ -92,7 +92,7 @@ public class log extends CRaSHCommand implements Completer {
     }
   }
 
-  @Description(display = "Create one or several loggers")
+  @Description("Create one or several loggers")
   @Command
   public void add(InvocationContext<Void, Logger> context, @LoggerArg List<String> names) throws ScriptException {
     names.each {
@@ -104,7 +104,7 @@ public class log extends CRaSHCommand implements Completer {
     }
   }
 
-  @Description(display = "Give info about a logger")
+  @Description("Give info about a logger")
   @Command
   public void info(InvocationContext<Logger, Void> context, @LoggerArg List<String> names) throws ScriptException {
     if (context.piped) {
@@ -130,7 +130,7 @@ public class log extends CRaSHCommand implements Completer {
     }
   }
 
-  @Description(display = "Set the level of one of several loggers")
+  @Description("Set the level of one of several loggers")
   @Command
   public void set(
     InvocationContext<Logger, Void> context,
@@ -228,26 +228,26 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description(display = "The logger level to assign among {trace, debug, info, warn, error}")
+@Description("The logger level to assign among {trace, debug, info, warn, error}")
 @Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
 @interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description(display = "The message to log")
+@Description("The message to log")
 @Option(names=["m","message"],required=true)
 @interface MsgOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description(display = "The logger name")
+@Description("The logger name")
 @Argument
 @interface LoggerArg { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description(display = "Filter the logger with a regular expression")
+@Description("Filter the logger with a regular expression")
 @Option(names=["f","filter"])
 @interface FilterOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Description(display = "Force the plugin implementation")
+@Description("Force the plugin implementation")
 @Option(names=["p","plugin"])
 @interface PluginOpt { }

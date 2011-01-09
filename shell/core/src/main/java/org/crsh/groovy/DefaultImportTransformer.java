@@ -28,7 +28,9 @@ import org.codehaus.groovy.transform.GroovyASTTransformation;
 import org.crsh.cmdline.Argument;
 import org.crsh.cmdline.Command;
 import org.crsh.cmdline.Description;
+import org.crsh.cmdline.Man;
 import org.crsh.cmdline.Option;
+import org.crsh.cmdline.Usage;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
@@ -49,6 +51,8 @@ public class DefaultImportTransformer implements ASTTransformation {
 
   /** . */
   private static final Class<?>[] defaultImports = {
+    Man.class,
+    Usage.class,
     Description.class,
     Argument.class,
     Option.class,

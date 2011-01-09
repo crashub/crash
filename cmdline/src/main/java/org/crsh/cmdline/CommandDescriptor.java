@@ -140,20 +140,6 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     return info;
   }
 
-  protected static InfoDescriptor info(Annotation[] annotations) {
-    for (Annotation ann : annotations) {
-      if (ann instanceof  Description) {
-        Description descriptionAnn = (Description)ann;
-        return new InfoDescriptor(
-          descriptionAnn.display(),
-          descriptionAnn.usage(),
-          descriptionAnn.man()
-        );
-      }
-    }
-    return null;
-  }
-
   protected static <B extends TypeBinding> ParameterDescriptor<B> create(
     B binding,
     Type type,
@@ -213,15 +199,13 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   protected static Tuple get(Annotation... ab) {
     Argument argumentAnn = null;
     Option optionAnn = null;
-    InfoDescriptor descriptionAnn = null;
+    InfoDescriptor description = new InfoDescriptor(ab);
     Annotation info = null;
     for (Annotation parameterAnnotation : ab) {
       if (parameterAnnotation instanceof Option) {
         optionAnn = (Option)parameterAnnotation;
       } else if (parameterAnnotation instanceof Argument) {
         argumentAnn = (Argument)parameterAnnotation;
-      } else if (parameterAnnotation instanceof Description) {
-        descriptionAnn = new InfoDescriptor((Description)parameterAnnotation);
       } else {
 
         // Look at annotated annotations
@@ -236,19 +220,11 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
         //
         if (info != null) {
-          Description annotationDescriptionAnn = a.getAnnotation(Description.class);
-          if (annotationDescriptionAnn != null) {
-            InfoDescriptor annotationInfo = new InfoDescriptor(annotationDescriptionAnn);
-            if (descriptionAnn == null) {
-              descriptionAnn = annotationInfo;
-            } else {
-              descriptionAnn = new InfoDescriptor(descriptionAnn, annotationInfo);
-            }
-          }
+          description = new InfoDescriptor(description, new InfoDescriptor(a));
         }
       }
     }
 
-    return new Tuple(argumentAnn, optionAnn, descriptionAnn, info);
+    return new Tuple(argumentAnn, optionAnn, description, info);
   }
 }

@@ -5,13 +5,13 @@ import org.crsh.command.InvocationContext;
 
 public class addnode extends org.crsh.jcr.command.JCRCommand {
 
-  @Description(display = "Creates one or several nodes. It produces all the nodes that were created by the command.")
+  @Description("Creates one or several nodes. It produces all the nodes that were created by the command.")
   @Command
   public void main(
     InvocationContext<Void, Node> context,
     // The paths of the new node to be created, the paths can either be absolute or relative.
     @PathArg List<String> paths,
-    @Description(display = "The name of the primary node type to create")
+    @Description("The name of the primary node type to create")
     @Option(names=["t","types"]) String primaryNodeTypeName)
     throws ScriptException {
     assertConnected();

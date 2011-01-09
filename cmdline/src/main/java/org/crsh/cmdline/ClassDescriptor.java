@@ -52,7 +52,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   public ClassDescriptor(Class<T> type) throws IntrospectionException {
     super(
       type.getSimpleName().toLowerCase(),
-      info(type.getAnnotations()),
+      new InfoDescriptor(type),
       parameters(type));
 
     //
