@@ -66,6 +66,9 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   /** . */
   private final ClassDescriptor<?> descriptor;
 
+  /** The unmatched text, only valid during an invocation. */
+  private String unmatched;
+
   /** . */
   @Option(names = {"h","help"})
   @Usage("command usage")
@@ -77,6 +80,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     this.unquoteArguments = true;
     this.descriptor = CommandFactory.create(getClass());
     this.help = false;
+    this.unmatched = null;
   }
 
   /**
@@ -104,12 +108,16 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
   }
 
+  public final String getUnmatched() {
+    return unmatched;
+  }
+
   @Override
   protected final CommandContext getContext() {
     return context;
   }
 
-  public Map<String, String> complete(CommandContext context, String line) {
+  public final Map<String, String> complete(CommandContext context, String line) {
 
     // WTF
     Matcher analyzer = new Matcher("main", descriptor);
@@ -132,7 +140,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
   }
 
-  public String describe(String line, DescriptionMode mode) {
+  public final String describe(String line, DescriptionMode mode) {
 
     // WTF
     Matcher analyzer = new Matcher("main", descriptor);
@@ -165,7 +173,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return null;
   }
 
-  public CommandInvoker<?, ?> createInvoker(final String line) {
+  public final CommandInvoker<?, ?> createInvoker(final String line) {
 
     // Remove surrounding quotes if there are
     if (unquoteArguments) {
@@ -230,6 +238,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             }
           } else {
             CRaSHCommand.this.context = context;
+            CRaSHCommand.this.unmatched = methodMatch.getRest();
             try {
               org.crsh.cmdline.matcher.InvocationContext invocationContext = new org.crsh.cmdline.matcher.InvocationContext();
               invocationContext.setAttribute(InvocationContext.class, context);
@@ -242,6 +251,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               throw new ScriptException(e.getMessage(), e);
             } finally {
               CRaSHCommand.this.context = null;
+              CRaSHCommand.this.unmatched = null;
             }
           }
 
