@@ -106,6 +106,12 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     return names;
   }
 
+  /**
+   * Prints the option names as an alternative of switches surrounded by a square brace,
+   * for instance:  "[-f --foo]"
+   *
+   * @param writer the writer to print to
+   */
   public void printUsage(PrintWriter writer) {
     writer.append("[");
     boolean a = false;

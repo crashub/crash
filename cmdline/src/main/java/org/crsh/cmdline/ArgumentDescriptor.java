@@ -57,6 +57,18 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
     this.name = name;
   }
 
+  /**
+   * Prints the argument:
+   *
+   * <ul>
+   * <li>Single valued arguments use the "$arg" pattern.</li>
+   * <li>Multi valued arguments use the "... $arg" pattern.</li>
+   * </ul>
+   *
+   * Where $arg is the value "arg" or the argument name when it is not null.
+   *
+   * @param writer the writer to print to
+   */
   public void printUsage(PrintWriter writer) {
     if (getMultiplicity() == Multiplicity.LIST) {
       writer.append("... ");
