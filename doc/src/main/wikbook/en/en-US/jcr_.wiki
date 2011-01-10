@@ -40,16 +40,6 @@ accept a path argument that can be absolute or relative.
 | +-/folder
 {{/screen}}
 
-=== Changing the current node ===
-
-The ##cd## command allows to change the current path. The command used with no argument, change to the root
-directory but you can provide a path argument that can be absolute or relative.
-
-{{screen}}
-[/]% cd /gadgets
-/gadgets
-{{/screen}}
-
 === Printing the current node ===
 
 The ##pwd## command shows the current node path.

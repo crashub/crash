@@ -3,11 +3,27 @@ import org.crsh.shell.ui.UIBuilder;
 
 public class ls extends org.crsh.jcr.command.JCRCommand {
 
-  @Usage("List the content of a node")
+  @Usage("list the content of a node")
+  @Man("""\
+The ls command displays the content of a node. By default it lists the content of the current node, however it also
+accepts a path argument that can be absolute or relative.
+
+[/]% ls
+/
++-properties
+| +-jcr:primaryType: nt:unstructured
+| +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
+| +-exo:owner: '__system'
+| +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administrators set_property,*:/platform/administrators remove]
++-children
+| +-/workspace
+| +-/contents
+| +-/Users
+| +-/gadgets
+| +-/folder""")
   @Command
   public Object main(
-  // Path of the node content to list
-  @PathArg String path,
+  @Usage("the path of the node content to list") @PathArg String path,
   @Usage("Print depth")
   @Option(names=["d","depth"]) Integer depth) throws ScriptException {
     assertConnected();
