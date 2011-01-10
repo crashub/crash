@@ -37,19 +37,10 @@ class Util {
   static final Pattern INDENT_PATTERN = Pattern.compile("(?<=^|\\n)[ \\t\\x0B\\f\\r]*(?=\\S)");
 
   /** . */
-  static final String FORMAT_STRING = "   %1$-16s %2$s\n";
-
-  /** . */
-  static final int TAB_SIZE = 7;
-
-  /** . */
   static final String MAN_TAB = _tab(7);
 
   /** . */
   static final String MAN_TAB_EXTRA = _tab(7 + 4);
-
-  /** . */
-  static final String TAB = _tab(TAB_SIZE);
 
   /** . */
   static final String[] tabIndex;
@@ -127,6 +118,40 @@ class Util {
               throw new NoSuchElementException();
             }
             T[] tmp = next;
+            next = null;
+            return tmp;
+          }
+          public void remove() {
+            throw new UnsupportedOperationException();
+          }
+        };
+      }
+    };
+  }
+
+  static <T> Iterable<? extends T> join(final Iterable<? extends T>... iterables) {
+    return new Iterable<T>() {
+      public Iterator<T> iterator() {
+        return new Iterator<T>() {
+          int index;
+          Iterator<? extends T> current;
+          T next;
+          public boolean hasNext() {
+            if (next == null) {
+              while ((current == null || !current.hasNext()) && index < iterables.length) {
+                current = iterables[index++].iterator();
+              }
+              if (current != null && current.hasNext()) {
+                next = current.next();
+              }
+            }
+            return next != null;
+          }
+          public T next() {
+            if (!hasNext()) {
+              throw new NoSuchElementException();
+            }
+            T tmp = next;
             next = null;
             return tmp;
           }

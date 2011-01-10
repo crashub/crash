@@ -105,9 +105,10 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
       }
       writer.append(" COMMAND [ARGS]\n\n");
       writer.append("The most commonly used ").append(getName()).append(" commands are:\n");
+      String format = "   %1$-16s %2$s\n";
       for (MethodDescriptor<T> method : getMethods()) {
         Formatter formatter = new Formatter(writer);
-        formatter.format(Util.FORMAT_STRING, method.getName(), method.getUsage());
+        formatter.format(format, method.getName(), method.getUsage());
       }
     }
   }
@@ -144,7 +145,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
 
       // Options
       if (getOptions().size() > 0) {
-        writer.append("OPTIONS\n");
+        writer.append("PARAMETERS\n");
         for (OptionDescriptor<?> option : getOptions()) {
           writer.append(Util.MAN_TAB);
           option.printUsage(writer);

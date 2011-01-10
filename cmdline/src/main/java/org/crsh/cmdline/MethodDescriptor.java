@@ -204,19 +204,19 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
       writer.append("\n\n");
     }
 
-    // Options
+    // Parameters
     List<OptionDescriptor<?>> options = new ArrayList<OptionDescriptor<?>>();
     options.addAll(owner.getOptions());
     options.addAll(getOptions());
     if (options.size() > 0) {
-      writer.append("\nOPTIONS\n");
-      for (OptionDescriptor<?> option : getOptions()) {
+      writer.append("\nPARAMETERS\n");
+      for (ParameterDescriptor<?> parameter : Util.join(owner.getOptions(), getParameters())) {
         writer.append(Util.MAN_TAB);
-        option.printUsage(writer);
-        String optionText = option.getDescription().getBestEffortMan();
-        if (optionText.length() > 0) {
+        parameter.printUsage(writer);
+        String parameterText = parameter.getDescription().getBestEffortMan();
+        if (parameterText.length() > 0) {
           writer.append("\n");
-          indent(Util.MAN_TAB_EXTRA, optionText, writer);
+          indent(Util.MAN_TAB_EXTRA, parameterText, writer);
         }
         writer.append("\n\n");
       }
