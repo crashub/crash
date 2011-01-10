@@ -8,13 +8,13 @@ public class thread extends CRaSHCommand {
   @Command
   public void ls(
     InvocationContext<Void, Thread> context,
-    @Usage("Retain the thread with the specified name")
+    @Usage("retain the thread with the specified name")
     @Option(names=["n","name"])
     String name,
-    @Usage("Filter the threads with a regular expression on their name")
+    @Usage("filter the threads with a regular expression on their name")
     @Option(names=["f","filter"])
     String nameFilter,
-    @Usage("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
+    @Usage("filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
     @Option(names=["s","state"])
     String stateFilter) throws ScriptException {
 
@@ -69,7 +69,7 @@ public class thread extends CRaSHCommand {
     return group;
   }
 
-  @Usage("Stop vm threads")
+  @Usage("stop vm threads")
   @Command
   public void stop(InvocationContext<Thread, Void> context) throws ScriptException {
     if (context.piped) {
