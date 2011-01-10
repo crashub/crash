@@ -166,7 +166,7 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
   void printMan(Appendable writer, boolean printName) throws IOException {
 
     // Name
-    writer.append("\nNAME\n");
+    writer.append("NAME\n");
     writer.append(Util.MAN_TAB).append(owner.getName());
     if (printName) {
       writer.append(" ").append(getName());
@@ -174,10 +174,10 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     if (getUsage().length() > 0) {
       writer.append(" - ").append(getUsage());
     }
-    writer.append("\n");
+    writer.append("\n\n");
 
     // Synopsis
-    writer.append("\nSYNOPSIS\n");
+    writer.append("SYNOPSIS\n");
     writer.append(Util.MAN_TAB).append(owner.getName());
     for (OptionDescriptor<?> option : owner.getOptions()) {
       writer.append(" ");
@@ -194,14 +194,14 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
       writer.append(" ");
       argument.printUsage(writer);
     }
-    writer.append("\n");
+    writer.append("\n\n");
 
     // Description
     String man = getDescription().getMan();
     if (man.length() > 0) {
-      writer.append("\nDESCRIPTION\n");
+      writer.append("DESCRIPTION\n");
       indent(Util.MAN_TAB, man, writer);
-      writer.append("\n");
+      writer.append("\n\n");
     }
 
     // Options
@@ -211,14 +211,14 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     if (options.size() > 0) {
       writer.append("\nOPTIONS\n");
       for (OptionDescriptor<?> option : getOptions()) {
-        writer.append('\n');
         writer.append(Util.MAN_TAB);
         option.printUsage(writer);
         String optionText = option.getDescription().getBestEffortMan();
         if (optionText.length() > 0) {
+          writer.append("\n");
           indent(Util.MAN_TAB_EXTRA, optionText, writer);
         }
-        writer.append('\n');
+        writer.append("\n\n");
       }
     }
   }
