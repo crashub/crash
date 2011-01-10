@@ -21,10 +21,9 @@ package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
-import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterDescriptor;
 
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,12 +57,12 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
   }
 
   @Override
-  public void printMan(PrintWriter writer) {
+  public void printMan(Appendable writer) throws IOException {
     descriptor.printMan(writer);
   }
 
   @Override
-  public void printUsage(PrintWriter writer) {
+  public void printUsage(Appendable writer) throws IOException {
     descriptor.printUsage(writer);
   }
 

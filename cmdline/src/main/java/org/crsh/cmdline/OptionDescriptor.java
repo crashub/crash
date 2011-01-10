@@ -22,6 +22,7 @@ package org.crsh.cmdline;
 import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -111,8 +112,9 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
    * for instance:  "[-f --foo]"
    *
    * @param writer the writer to print to
+   * @throws IOException any io exception
    */
-  public void printUsage(PrintWriter writer) {
+  public void printUsage(Appendable writer) throws IOException {
     writer.append("[");
     boolean a = false;
     for (String optionName : names) {

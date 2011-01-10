@@ -20,13 +20,16 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.MethodArgumentBinding;
+import static org.crsh.cmdline.Util.tuples;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,76 +103,69 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     return owner.getType();
   }
 
-  /** . */
-  private static final String TAB = "       ";
-
   @Override
-  public void printUsage(PrintWriter writer) {
-    printMan(writer, true);
+  public void printUsage(Appendable writer) throws IOException {
+    printUsage(writer, true);
   }
 
-  public void printUsage(PrintWriter writer, boolean printName) {
+  void printUsage(Appendable writer, boolean printName) throws IOException {
+    int length = 0;
+    List<String> parameterUsages = new ArrayList<String>();
+    List<String> parameterBilto = new ArrayList<String>();
 
+    //
     writer.append("usage: ").append(owner.getName());
-    if (printName) {
-      writer.append(" ").append(getName());
-    }
 
     //
     for (OptionDescriptor<?> option : owner.getOptions()) {
       writer.append(" ");
-      option.printUsage(writer);
-    }
-    if (printName) {
-      writer.append(" ").append(getName());
+      StringBuilder sb = new StringBuilder();
+      option.printUsage(sb);
+      String usage = sb.toString();
+      writer.append(usage);
+
+      length = Math.max(length, usage.length());
+      parameterUsages.add(usage);
+      parameterBilto.add(option.getUsage());
     }
 
     //
-    for (OptionDescriptor<?> option : getOptions()) {
-      writer.append(" ");
-      option.printUsage(writer);
-    }
-    for (ArgumentDescriptor<?> argument : getArguments()) {
-      writer.append(" ");
-      argument.printUsage(writer);
-    }
+    writer.append(printName ? (" " + getName()) : "");
 
     //
+    for (ParameterDescriptor<?> parameter : getParameters()) {
+      writer.append(" ");
+      StringBuilder sb = new StringBuilder();
+      parameter.printUsage(sb);
+      String usage = sb.toString();
+      writer.append(usage);
+
+      length = Math.max(length, usage.length());
+      parameterBilto.add(parameter.getUsage());
+      parameterUsages.add(usage);
+    }
     writer.append("\n\n");
 
     //
-    for (OptionDescriptor<?> option : owner.getOptions()) {
-      writer.append(TAB);
-      option.printUsage(writer);
-      writer.append(" ");
-      writer.append(option.getUsage());
-    }
-    for (OptionDescriptor<?> option : getOptions()) {
-      writer.append(TAB);
-      option.printUsage(writer);
-      writer.append(" ");
-      writer.append(option.getUsage());
-    }
-    for (ArgumentDescriptor<?> argument : getArguments()) {
-      writer.append(TAB);
-      argument.printUsage(writer);
-      writer.append(" ");
-      writer.append(argument.getUsage());
+    String format = "   %1$-" + length + "s %2$s\n";
+    for (String[] tuple : tuples(String.class, parameterUsages, parameterBilto)) {
+      Formatter formatter = new Formatter(writer);
+      formatter.format(format, tuple[0], tuple[1]);
     }
 
     //
     writer.append("\n\n");
   }
 
-  public void printMan(PrintWriter writer) {
+  public void printMan(Appendable writer) throws IOException {
     printMan(writer, true);
   }
 
-  void printMan(PrintWriter writer, boolean printName) {
+  void printMan(Appendable writer, boolean printName) throws IOException {
 
     // Name
     writer.append("NAME\n");
-    writer.append(TAB).append(owner.getName());
+    writer.append(Util.TAB).append(owner.getName());
     if (printName) {
       writer.append(" ").append(getName());
     }
@@ -180,7 +176,7 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
 
     // Synopsis
     writer.append("SYNOPSIS\n");
-    writer.append(TAB).append(owner.getName());
+    writer.append(Util.TAB).append(owner.getName());
     for (OptionDescriptor<?> option : owner.getOptions()) {
       writer.append(" ");
       option.printUsage(writer);
@@ -213,7 +209,7 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
       writer.append("OPTIONS\n");
       for (OptionDescriptor<?> option : options) {
         for (String name : option.getNames()) {
-          writer.append(TAB).append(name.length() == 1 ? "-" : "--").append(name).append(TAB).append(option.getUsage()).append("\n\n");
+          writer.append(Util.TAB).append(name.length() == 1 ? "-" : "--").append(name).append(Util.TAB).append(option.getUsage()).append("\n\n");
         }
       }
     }

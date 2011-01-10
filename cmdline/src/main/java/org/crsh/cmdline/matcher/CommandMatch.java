@@ -24,6 +24,7 @@ import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,9 +120,9 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
 
   public abstract List<ParameterMatch<?, ?>> getParameterMatches();
 
-  public abstract void printMan(PrintWriter writer);
+  public abstract void printMan(Appendable writer) throws IOException;
 
-  public abstract void printUsage(PrintWriter writer);
+  public abstract void printUsage(Appendable writer) throws IOException;
 
   public List<OptionMatch<B>> getOptionMatches() {
     return optionMatches;

@@ -22,9 +22,11 @@ package org.crsh.command;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.IntrospectionException;
+import org.crsh.cmdline.Man;
 import org.crsh.cmdline.Option;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
+import org.crsh.cmdline.Usage;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.ClassMatch;
@@ -36,6 +38,7 @@ import org.crsh.util.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
@@ -65,6 +68,8 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
   /** . */
   @Option(names = {"h","help"})
+  @Usage("command usage")
+  @Man("Provides command usage")
   private boolean help;
 
   protected CRaSHCommand() throws IntrospectionException {
@@ -136,19 +141,24 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     CommandMatch match = analyzer.match(line);
 
     //
-    switch (mode) {
-      case DESCRIBE:
-        return match.getDescriptor().getUsage();
-      case MAN:
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        match.printMan(pw);
-        return sw.toString();
-      case USAGE:
-        StringWriter sw2 = new StringWriter();
-        PrintWriter pw2 = new PrintWriter(sw2);
-        match.printUsage(pw2);
-        return sw2.toString();
+    try {
+      switch (mode) {
+        case DESCRIBE:
+          return match.getDescriptor().getUsage();
+        case MAN:
+          StringWriter sw = new StringWriter();
+          PrintWriter pw = new PrintWriter(sw);
+          match.printMan(pw);
+          return sw.toString();
+        case USAGE:
+          StringWriter sw2 = new StringWriter();
+          PrintWriter pw2 = new PrintWriter(sw2);
+          match.printUsage(pw2);
+          return sw2.toString();
+      }
+    }
+    catch (IOException e) {
+      throw new AssertionError(e);
     }
 
     //
@@ -212,7 +222,12 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         public void invoke(InvocationContext context) throws ScriptException {
 
           if (doHelp) {
-            match.printUsage(context.getWriter());
+            try {
+              match.printUsage(context.getWriter());
+            }
+            catch (IOException e) {
+              throw new AssertionError(e);
+            }
           } else {
             CRaSHCommand.this.context = context;
             try {
@@ -262,10 +277,15 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       //
       return new CommandInvoker<Void, Void>() {
         public void invoke(InvocationContext<Void, Void> context) throws ScriptException {
-          if (doHelp) {
-            match.printUsage(context.getWriter());
-          } else {
-            classMatch.printUsage(context.getWriter());
+          try {
+            if (doHelp) {
+              match.printUsage(context.getWriter());
+            } else {
+              classMatch.printUsage(context.getWriter());
+            }
+          }
+          catch (IOException e) {
+            throw new AssertionError(e);
           }
         }
 

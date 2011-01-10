@@ -22,6 +22,7 @@ package org.crsh.cmdline;
 import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -180,4 +181,6 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   public final Class<? extends Completer> getCompleterType() {
     return completerType;
   }
+
+  public abstract void printUsage(Appendable writer) throws IOException;
 }

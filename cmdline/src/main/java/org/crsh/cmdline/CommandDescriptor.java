@@ -21,10 +21,12 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -89,20 +91,33 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
       }
     }
 
+    // Clone and partition : option then arguments, we keep the provided order inside a partition
+    ArrayList<ParameterDescriptor<B>> parametersClone = new ArrayList<ParameterDescriptor<B>>();
+    for (ParameterDescriptor<B> param : parameters) {
+      if (param instanceof OptionDescriptor<?>) {
+        parametersClone.add(param);
+      }
+    }
+    for (ParameterDescriptor<B> param : parameters) {
+      if (param instanceof ArgumentDescriptor<?>) {
+        parametersClone.add(param);
+      }
+    }
+
     //
     this.description = description;
     this.optionMap = options.isEmpty() ? options : Collections.unmodifiableMap(options);
     this.arguments = arguments.isEmpty() ? arguments : Collections.unmodifiableList(arguments);
     this.options = options.isEmpty() ? Collections.<OptionDescriptor<B>>emptySet() : Collections.unmodifiableSet(new LinkedHashSet<OptionDescriptor<B>>(options.values()));
     this.name = name;
-    this.parameters = parameters.isEmpty() ? Collections.<ParameterDescriptor<B>>emptyList() : Collections.<ParameterDescriptor<B>>unmodifiableList(new ArrayList<ParameterDescriptor<B>>(parameters));
+    this.parameters = Collections.unmodifiableList(parametersClone);
   }
 
   public abstract Class<T> getType();
 
-  public abstract void printUsage(PrintWriter writer);
+  public abstract void printUsage(Appendable writer) throws IOException;
 
-  public abstract void printMan(PrintWriter writer);
+  public abstract void printMan(Appendable writer) throws IOException;
 
   /**
    * Returns the command subordinates as a map.

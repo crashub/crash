@@ -23,7 +23,7 @@ import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -93,7 +93,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   }
 
   @Override
-  public void printUsage(PrintWriter writer) {
+  public void printUsage(Appendable writer) throws IOException {
     if (methodMap.size() == 1) {
       methodMap.values().iterator().next().printUsage(writer, false);
     } else {
@@ -103,19 +103,18 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
       }
       writer.append(" COMMAND [ARGS]\n\n");
       writer.append("The most commonly used ").append(getName()).append(" commands are:\n");
-      String formatString = "   %1$-16s %2$s\n";
       for (MethodDescriptor<T> method : getMethods()) {
         Formatter formatter = new Formatter(writer);
-        formatter.format(formatString, method.getName(), method.getUsage());
+        formatter.format(Util.FORMAT_STRING, method.getName(), method.getUsage());
       }
     }
   }
 
-  public void printMan(PrintWriter writer) {
+  public void printMan(Appendable writer) throws IOException {
     if (methodMap.size() == 1) {
       methodMap.values().iterator().next().printMan(writer, false);
     } else {
-      writer.print("todo");
+      writer.append("todo");
     }
   }
 

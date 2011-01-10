@@ -23,7 +23,7 @@ import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
 
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -75,7 +75,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
   }
 
   @Override
-  public void printMan(PrintWriter writer) {
+  public void printMan(Appendable writer) throws IOException {
     if (implicit) {
       getOwner().printMan(writer);
     } else {
@@ -84,7 +84,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
   }
 
   @Override
-  public void printUsage(PrintWriter writer) {
+  public void printUsage(Appendable writer) throws IOException {
     if (implicit) {
       getOwner().printUsage(writer);
     } else {

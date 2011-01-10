@@ -13,7 +13,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class log extends CRaSHCommand implements Completer {
 
-  @Usage("Send a message to a logger")
+  @Usage("send a message to a logger")
   @Man("""\
 The send command log one or several loggers with a specified message. For instance the following impersonates
 the javax.management.mbeanserver class and send a message on its own logger.
@@ -117,7 +117,7 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
     }
   }
 
-  @Usage("Create one or several loggers")
+  @Usage("create one or several loggers")
   @Command
   public void add(InvocationContext<Void, Logger> context, @LoggerArg List<String> names) throws ScriptException {
     names.each {
@@ -276,26 +276,26 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("The logger level to assign among {trace, debug, info, warn, error}")
+@Usage("the logger level to assign among {trace, debug, info, warn, error}")
 @Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
 @interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("The message to log")
+@Usage("the message to log")
 @Option(names=["m","message"],required=true)
 @interface MsgOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("The logger name")
-@Argument
+@Usage("the logger name")
+@Argument(name = "name")
 @interface LoggerArg { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("Filter the logger with a regular expression")
+@Usage("filter the logger with a regular expression")
 @Option(names=["f","filter"])
 @interface FilterOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("Force the plugin implementation")
+@Usage("force the plugin implementation")
 @Option(names=["p","plugin"])
 @interface PluginOpt { }
