@@ -19,10 +19,13 @@
 
 package org.crsh.cmdline;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -31,18 +34,66 @@ import java.util.NoSuchElementException;
 class Util {
 
   /** . */
+  static final Pattern INDENT_PATTERN = Pattern.compile("(?<=^|\\n)[ \\t\\x0B\\f\\r]*(?=\\S)");
+
+  /** . */
   static final String FORMAT_STRING = "   %1$-16s %2$s\n";
 
   /** . */
   static final int TAB_SIZE = 7;
 
   /** . */
-  static final String TAB;
+  static final String MAN_TAB = _tab(7);
+
+  /** . */
+  static final String MAN_TAB_EXTRA = _tab(7 + 4);
+
+  /** . */
+  static final String TAB = _tab(TAB_SIZE);
+
+  /** . */
+  static final String[] tabIndex;
 
   static {
-    char[] tmp = new char[TAB_SIZE];
+    String[] tmp = new String[20];
+    for (int i = 0;i < tmp.length;i++) {
+      tmp[i] = _tab(i);
+    }
+    tabIndex = tmp;
+  }
+
+  static String tab(int size) {
+    if (size < 0) {
+      throw new IllegalArgumentException();
+    }
+    if (size < tabIndex.length) {
+      return tabIndex[size];
+    } else {
+      return _tab(size);
+    }
+  }
+
+  private static String _tab(int size) {
+    char[] tmp = new char[size];
     Arrays.fill(tmp, ' ');
-    TAB = new String(tmp);
+    return new String(tmp);
+  }
+
+  static <A extends Appendable> A indent(int tab, CharSequence s, A appendable) throws IOException {
+    return indent(tab(tab), s, appendable);
+  }
+
+  static <A extends Appendable> A indent(String tab, CharSequence s, A appendable) throws IOException {
+    Matcher matcher = INDENT_PATTERN.matcher(s);
+    int prev = 0;
+    while (matcher.find()) {
+      int start = matcher.start();
+      appendable.append(s, prev, start);
+      appendable.append(tab);
+      prev = matcher.end();
+    }
+    appendable.append(s, prev, s.length());
+    return appendable;
   }
 
   static <T> Iterable<T[]> tuples(final Class<T> type, final Iterable<? extends T>... iterables) {

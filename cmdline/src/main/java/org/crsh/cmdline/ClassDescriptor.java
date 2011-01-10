@@ -20,6 +20,8 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.ClassFieldBinding;
+import static org.crsh.cmdline.Util.indent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +116,60 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     if (methodMap.size() == 1) {
       methodMap.values().iterator().next().printMan(writer, false);
     } else {
-      writer.append("todo");
+
+      // Name
+      writer.append("\nNAME\n");
+      writer.append(Util.MAN_TAB).append(getName());
+      if (getUsage().length() > 0) {
+        writer.append(" - ").append(getUsage());
+      }
+      writer.append("\n");
+
+      // Synopsis
+      writer.append("\nSYNOPSIS\n");
+      writer.append(Util.MAN_TAB).append(getName());
+      for (OptionDescriptor<?> option : getOptions()) {
+        writer.append(" ");
+        option.printUsage(writer);
+      }
+      writer.append(" COMMAND [ARGS]\n");
+
+      //
+      String man = getDescription().getMan();
+      if (man.length() > 0) {
+        writer.append("\nDESCRIPTION\n");
+        indent(Util.MAN_TAB, man, writer);
+        writer.append("\n");
+      }
+
+      // Options
+      if (getOptions().size() > 0) {
+        writer.append("\nOPTIONS\n");
+        for (OptionDescriptor<?> option : getOptions()) {
+          writer.append('\n');
+          writer.append(Util.MAN_TAB);
+          option.printUsage(writer);
+          String optionText = option.getDescription().getBestEffortMan();
+          if (optionText.length() > 0) {
+            writer.append('\n');
+            indent(Util.MAN_TAB_EXTRA, optionText, writer);
+          }
+          writer.append('\n');
+        }
+      }
+
+      //
+      writer.append("\nCOMMANDS\n");
+      for (MethodDescriptor<T> method : getMethods()) {
+        writer.append('\n');
+        writer.append(Util.MAN_TAB).append(method.getName());
+        String methodText = method.getDescription().getBestEffortMan();
+        if (methodText.length() > 0) {
+          writer.append('\n');
+          indent(Util.MAN_TAB_EXTRA, methodText, writer);
+        }
+        writer.append('\n');
+      }
     }
   }
 

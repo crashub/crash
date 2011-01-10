@@ -20,6 +20,8 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.MethodArgumentBinding;
+
+import static org.crsh.cmdline.Util.indent;
 import static org.crsh.cmdline.Util.tuples;
 
 import org.slf4j.Logger;
@@ -164,19 +166,19 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
   void printMan(Appendable writer, boolean printName) throws IOException {
 
     // Name
-    writer.append("NAME\n");
-    writer.append(Util.TAB).append(owner.getName());
+    writer.append("\nNAME\n");
+    writer.append(Util.MAN_TAB).append(owner.getName());
     if (printName) {
       writer.append(" ").append(getName());
     }
     if (getUsage().length() > 0) {
       writer.append(" - ").append(getUsage());
     }
-    writer.append("\n\n");
+    writer.append("\n");
 
     // Synopsis
-    writer.append("SYNOPSIS\n");
-    writer.append(Util.TAB).append(owner.getName());
+    writer.append("\nSYNOPSIS\n");
+    writer.append(Util.MAN_TAB).append(owner.getName());
     for (OptionDescriptor<?> option : owner.getOptions()) {
       writer.append(" ");
       option.printUsage(writer);
@@ -192,12 +194,13 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
       writer.append(" ");
       argument.printUsage(writer);
     }
-    writer.append("\n\n");
+    writer.append("\n");
 
     // Description
-    if (getDescription().getMan().length() > 0) {
-      writer.append("DESCRIPTION\n");
-      writer.append(getDescription().getMan());
+    String man = getDescription().getMan();
+    if (man.length() > 0) {
+      writer.append("\nDESCRIPTION\n");
+      indent(Util.MAN_TAB, man, writer);
       writer.append("\n");
     }
 
@@ -206,11 +209,16 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     options.addAll(owner.getOptions());
     options.addAll(getOptions());
     if (options.size() > 0) {
-      writer.append("OPTIONS\n");
-      for (OptionDescriptor<?> option : options) {
-        for (String name : option.getNames()) {
-          writer.append(Util.TAB).append(name.length() == 1 ? "-" : "--").append(name).append(Util.TAB).append(option.getUsage()).append("\n\n");
+      writer.append("\nOPTIONS\n");
+      for (OptionDescriptor<?> option : getOptions()) {
+        writer.append('\n');
+        writer.append(Util.MAN_TAB);
+        option.printUsage(writer);
+        String optionText = option.getDescription().getBestEffortMan();
+        if (optionText.length() > 0) {
+          indent(Util.MAN_TAB_EXTRA, optionText, writer);
         }
+        writer.append('\n');
       }
     }
   }

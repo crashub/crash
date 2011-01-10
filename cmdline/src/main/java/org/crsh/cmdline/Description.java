@@ -97,6 +97,14 @@ public final class Description {
     return man;
   }
 
+  String getBestEffortMan() {
+    if (man.length() > 0) {
+      return man;
+    } else {
+      return usage;
+    }
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj == this) {
