@@ -6,7 +6,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Item;
 
-public class commit extends org.crsh.jcr.command.JCRCommand {
+public class cd extends org.crsh.jcr.command.JCRCommand {
 
   @Usage("Change the current directory")
   @Command

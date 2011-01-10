@@ -167,9 +167,19 @@ be nevertheless invoked.
 Likewise when a command does not produce a stream but is involved in a distribution, it will not produce anything but
 will be nevertheless invoked.
 
-= Logging =
+= Base commands =
 
-{{include document="logging.wiki" /}}
+== ##sleep## command ==
+{{include document="sleep.wiki" /}}
+
+== ##man## command ==
+{{include document="man.wiki" /}}
+
+== ##log## command ==
+{{include document="log.wiki" /}}
+
+== ##thread## command ==
+{{include document="thread.wiki" /}}
 
 = JCR =
 

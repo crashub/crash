@@ -109,6 +109,12 @@
         <version>1.0.0-beta18-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.core</artifactId>
+        <version>1.0.0-beta18-SNAPSHOT</version>
+        <classifier>standalone</classifier>
+      </dependency>
 
       <!-- Module shell telnet -->
       <dependency>
@@ -179,6 +185,12 @@
         <artifactId>crsh.jcr</artifactId>
         <version>1.0.0-beta18-SNAPSHOT</version>
         <classifier>sources</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.jcr</artifactId>
+        <version>1.0.0-beta18-SNAPSHOT</version>
+        <classifier>standalone</classifier>
       </dependency>
 
       <dependency>

@@ -34,23 +34,62 @@
   <description>The CRaSH documentation</description>
 
   <properties>
-    <wikbook.version>0.9.28</wikbook.version>
+    <wikbook.version>0.9.32</wikbook.version>
     <crash.version>${project.version}</crash.version>
     <wikbook.source>${pom.basedir}/src/main/wikbook</wikbook.source>
     <wikbook.target>${project.build.directory}/wikbook</wikbook.target>
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+      <classifier>standalone</classifier>
+    </dependency>
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr</artifactId>
+      <classifier>standalone</classifier>
+    </dependency>
+
     <dependency>
       <groupId>org.wikbook</groupId>
       <artifactId>wikbook.docbkxstyle</artifactId>
       <version>${wikbook.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.exoplatform.jcr</groupId>
+      <artifactId>exo.jcr.component.core</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
 
     <plugins>
+
+     <plugin>
+       <groupId>org.codehaus.mojo</groupId>
+       <artifactId>exec-maven-plugin</artifactId>
+       <version>1.1.1</version>
+       <executions>
+         <execution>
+           <goals>
+             <goal>java</goal>
+           </goals>
+           <phase>prepare-package</phase>
+         </execution>
+       </executions>
+       <configuration>
+         <mainClass>org.crsh.doc.Generator</mainClass>
+         <arguments>
+           <argument>${wikbook.target}/man</argument>
+         </arguments>
+       </configuration>
+     </plugin>
 
       <!-- The wikbook maven plugin generates the docbook document from the wiki source -->
      <plugin>
@@ -67,6 +106,7 @@
         </executions>
         <configuration>
           <sourceDirectory>${wikbook.source}/en/en-US</sourceDirectory>
+          <extraSourceDirectory>${wikbook.target}/man</extraSourceDirectory>
           <sourceFileName>book.wiki</sourceFileName>
           <destinationDirectory>${wikbook.target}/src</destinationDirectory>
           <destinationFileName>index.xml</destinationFileName>
