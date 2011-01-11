@@ -5,3 +5,6 @@
 
 === ##ls## command ===
 {{include document="ls.wiki" /}}
+
+=== ##mixin## command ===
+{{include document="mixin.wiki" /}}

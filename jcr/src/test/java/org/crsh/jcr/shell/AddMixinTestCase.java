@@ -30,7 +30,7 @@ public class AddMixinTestCase extends AbstractJCRCommandTestCase {
   public void testAddVersionable() throws Exception {
     assertLogin();
     groovyShell.evaluate("session.rootNode.addNode('foo');");
-    Iterator<?> produced = assertOk("addmixin mix:versionable foo").getProduced().iterator();
+    Iterator<?> produced = assertOk("mixin add mix:versionable foo").getProduced().iterator();
     assertFalse(produced.hasNext());
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
   }
@@ -38,7 +38,7 @@ public class AddMixinTestCase extends AbstractJCRCommandTestCase {
   public void testConsume() throws Exception {
     assertLogin();
     groovyShell.evaluate("return session.rootNode.addNode('foo');");
-    Iterator<?> produced = assertOk("produce /foo | addmixin mix:versionable").getProduced().iterator();
+    Iterator<?> produced = assertOk("produce /foo | mixin add mix:versionable").getProduced().iterator();
     assertFalse(produced.hasNext());
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').isNodeType('mix:versionable')"));
   }
