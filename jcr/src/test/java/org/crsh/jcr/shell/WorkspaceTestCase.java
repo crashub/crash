@@ -23,10 +23,10 @@ package org.crsh.jcr.shell;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ConnectTestCase extends AbstractJCRCommandTestCase {
+public class WorkspaceTestCase extends AbstractJCRCommandTestCase {
 
   public void testRootConnect() throws Exception {
-    assertOk("connect -u root -p exo ws");
+    assertOk("ws login -u root -p exo ws");
     assertNotNull(shell.getAttribute("session"));
     assertEquals("/", shell.getAttribute("currentPath"));
   }

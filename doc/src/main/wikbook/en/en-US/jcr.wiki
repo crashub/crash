@@ -1,5 +1,8 @@
 == JCR commands ==
 
+=== ##ws## command ===
+{{include document="ws.wiki" /}}
+
 === ##cd## command ===
 {{include document="cd.wiki" /}}
 

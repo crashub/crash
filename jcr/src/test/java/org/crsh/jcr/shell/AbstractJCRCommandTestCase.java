@@ -68,11 +68,11 @@ public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase
       }
     }
     root.getSession().save();
-    evaluate("disconnect");
+    evaluate("ws logout");
   }
 
   protected final void assertLogin() {
-    assertOk("connect -u exo -p exo ws");
+    assertOk("ws login -u exo -p exo ws");
   }
 
   protected final List<String> getStringValues(Property p) throws RepositoryException {
