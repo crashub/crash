@@ -5,7 +5,7 @@ import org.crsh.command.Description;
 import org.crsh.command.InvocationContext;
 
 @Description("Collect a set of nodes")
-public class addnode extends org.crsh.command.BaseCommand<Node, Node> {
+public class consume extends org.crsh.command.BaseCommand<Node, Node> {
   public void execute(InvocationContext<Node, Void> context) throws ScriptException {
     context.consume().each {
       context.produce(it);

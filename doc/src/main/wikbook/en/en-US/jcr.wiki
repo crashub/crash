@@ -9,5 +9,8 @@
 === ##ls## command ===
 {{include document="ls.wiki" /}}
 
+=== ##node## command ===
+{{include document="node.wiki" /}}
+
 === ##mixin## command ===
 {{include document="mixin.wiki" /}}

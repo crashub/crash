@@ -30,39 +30,39 @@ public class AddNodeTestCase extends AbstractJCRCommandTestCase {
 
   public void testAddRelativeNode() throws Exception {
     assertLogin();
-    assertOk("addnode foo");
+    assertOk("node add foo");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
     assertOk("cd foo");
-    assertOk("addnode ../bar");
+    assertOk("node add ../bar");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('bar');"));
   }
 
   public void testAddAbsoluteNode() throws Exception {
     assertLogin();
-    assertOk("addnode /foo");
+    assertOk("node add /foo");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
     assertOk("cd foo");
-    assertOk("addnode /bar");
+    assertOk("node add /bar");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('bar');"));
   }
 
   public void testAddNodes() throws Exception {
     assertLogin();
-    assertOk("addnode foo /foo/bar");
+    assertOk("node add foo /foo/bar");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo/bar');"));
   }
 
   public void testAddWithNodeType() throws Exception {
     assertLogin();
-    assertOk("addnode -t nt:file foo");
+    assertOk("node add -t nt:file foo");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
     assertEquals("nt:file", groovyShell.evaluate("return session.rootNode.getNode('foo').primaryNodeType.name;"));
   }
 
   public void testProduce() throws Exception {
     assertLogin();
-    Iterator<?> produced = assertOk("addnode foo").getProduced().iterator();
+    Iterator<?> produced = assertOk("node add foo").getProduced().iterator();
     assertTrue(produced.hasNext());
     assertEquals("/foo", ((Node)produced.next()).getPath());
     assertFalse(produced.hasNext());

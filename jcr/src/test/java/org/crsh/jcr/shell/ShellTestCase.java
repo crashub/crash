@@ -85,7 +85,7 @@ public class ShellTestCase extends AbstractJCRCommandTestCase {
 
   public void testPipe() throws Exception {
     assertLogin();
-    assertOk("addnode foo | addnode bar");
+    assertOk("node add foo | node add bar");
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('foo');"));
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('bar');"));
   }

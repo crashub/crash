@@ -49,26 +49,6 @@ The ##pwd## command shows the current node path.
 /gadgets
 {{/screen}}
 
-=== Creating a node ===
-
-The ##addnode## command creates one of several nodes. The command takes at least one node as argument, but it can
- take more. Each path can be either absolute or relative. Relative path creates nodes relative to the current node.
- By default the node type is the default repository node type, but the option ##-t## can be used to specify another one.
-
-{{screen}}
-[/registry]% addnode foo
-Node /foo created
-{{/screen}}
-
-{{screen}}
-[/registry]% addnode -t nt:file bar juu
-Node /bar /juu created
-{{/screen}}
-
-{{note}}
-The ##addnode## command is a ##<Void,Node>## command that produces all the nodes that were created.
-{{/note}}
-
 === Copying a node ===
 
 The ##cp## command copies a node to a target location in the JCR tree.
