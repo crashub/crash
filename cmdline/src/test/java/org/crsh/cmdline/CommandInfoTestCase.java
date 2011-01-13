@@ -20,6 +20,9 @@
 package org.crsh.cmdline;
 
 import junit.framework.TestCase;
+import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cmdline.annotations.Command;
+import org.crsh.cmdline.annotations.Option;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

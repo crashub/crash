@@ -17,18 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+package org.crsh.cmdline.annotations;
 
 /**
- * Describes shortly in one line an usage.
- *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Usage {
-  String value();
+public @interface Required {
+  boolean value();
 }

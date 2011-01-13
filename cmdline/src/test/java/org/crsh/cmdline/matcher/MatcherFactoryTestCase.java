@@ -20,10 +20,10 @@
 package org.crsh.cmdline.matcher;
 
 import junit.framework.TestCase;
-import org.crsh.cmdline.Argument;
+import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
-import org.crsh.cmdline.Option;
+import org.crsh.cmdline.annotations.Option;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -150,7 +150,8 @@ public class MatcherFactoryTestCase extends TestCase {
   public void testSingleArgument() throws Exception {
 
     class A {
-      @Argument String a;
+      @Argument
+      String a;
     }
 
     ClassDescriptor<?> desc = CommandFactory.create(A.class);

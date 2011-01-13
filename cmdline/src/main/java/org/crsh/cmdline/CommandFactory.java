@@ -19,6 +19,9 @@
 
 package org.crsh.cmdline;
 
+import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cmdline.annotations.Command;
+import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.binding.TypeBinding;

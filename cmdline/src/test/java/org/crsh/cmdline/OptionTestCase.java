@@ -20,6 +20,7 @@
 package org.crsh.cmdline;
 
 import junit.framework.TestCase;
+import org.crsh.cmdline.annotations.Option;
 
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;

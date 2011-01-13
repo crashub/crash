@@ -19,6 +19,9 @@
 
 package org.crsh.cmdline;
 
+import org.crsh.cmdline.annotations.Man;
+import org.crsh.cmdline.annotations.Usage;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 

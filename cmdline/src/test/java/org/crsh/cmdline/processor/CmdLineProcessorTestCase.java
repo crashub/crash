@@ -20,12 +20,12 @@
 package org.crsh.cmdline.processor;
 
 import junit.framework.TestCase;
-import org.crsh.cmdline.Argument;
+import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.annotations.Command;
+import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.matcher.CmdSyntaxException;
-import org.crsh.cmdline.Command;
-import org.crsh.cmdline.Option;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.InvocationContext;
 

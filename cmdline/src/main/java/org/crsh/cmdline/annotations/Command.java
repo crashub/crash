@@ -17,20 +17,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.jcr.command;
+package org.crsh.cmdline.annotations;
 
-import org.crsh.cmdline.annotations.Argument;
-import org.crsh.cmdline.annotations.Usage;
-
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("a node path")
-@Argument(name = "path")
-public @interface PathArg {
+public @interface Command {
 }

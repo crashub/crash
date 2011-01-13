@@ -20,6 +20,10 @@
 package org.crsh.cmdline;
 
 import junit.framework.TestCase;
+import org.crsh.cmdline.annotations.Command;
+import org.crsh.cmdline.annotations.Man;
+import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 
 import java.lang.annotation.Retention;
@@ -97,7 +101,8 @@ public class DescriptionTestCase extends TestCase {
   public void testParameterMetaDescription1() throws Exception {
 
     class A {
-      @Command void m(@Foo String s) {}
+      @Command
+      void m(@Foo String s) {}
     }
 
     ClassDescriptor<A> c = CommandFactory.create(A.class);
