@@ -1,6 +1,10 @@
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
+
 import org.crsh.jcr.JCR;
+import org.crsh.jcr.command.ContainerOpt;
+import org.crsh.jcr.command.UserNameOpt;
+import org.crsh.jcr.command.PasswordOpt;
 
 @Man("""\
 The ws command provides a set of commands interacting with JCR workspace.""")
@@ -23,19 +27,13 @@ Connected to workspace portal-system
 """)
   @Command
   public Object login(
-    @Option(names=["u","username"])
-    @Usage("the user name")
-    String userName,
-    @Option(names=["p","password"])
-    @Usage("the user passowrd")
-    def String password,
-    @Option(names=["c","container"])
-    @Usage("portal container name (eXo JCR specific)")
-    def String containerName,
+    @UserNameOpt String userName,
+    @PasswordOpt String password,
+    @ContainerOpt String containerName,
     @Argument
     @Required
     @Usage("the workspace name")
-    def String workspaceName) throws ScriptException {
+    String workspaceName) throws ScriptException {
 
     //
     if (userName != null && password == null) {
