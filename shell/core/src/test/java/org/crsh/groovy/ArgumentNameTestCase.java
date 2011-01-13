@@ -38,11 +38,11 @@ public class ArgumentNameTestCase extends TestCase {
 
     GroovyClassLoader gcl = new GroovyClassLoader();
     Class<?> clazz = gcl.parseClass("public class foo {\n" +
-      "@org.crsh.cmdline.Argument private String a;" +
-      "@org.crsh.cmdline.Argument(name=\"some\") private String b;" +
+      "@Argument private String a;" +
+      "@Argument(name=\"some\") private String b;" +
       "public void bar(" +
-      "@org.crsh.cmdline.Argument String c, " +
-      "@org.crsh.cmdline.Argument(name=\"some\") String d) {}\n" +
+      "@Argument String c, " +
+      "@Argument(name=\"some\") String d) {}\n" +
       "}");
 
     //
