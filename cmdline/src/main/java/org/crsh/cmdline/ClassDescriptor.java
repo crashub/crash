@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -96,7 +97,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
 
   @Override
   public void printUsage(Appendable writer) throws IOException {
-    if (methodMap.size() == 1) {
+    if (Collections.singleton("main").equals(methodMap.keySet())) {
       methodMap.values().iterator().next().printUsage(writer, false);
     } else {
       writer.append("usage: ").append(getName());
@@ -114,7 +115,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   }
 
   public void printMan(Appendable writer) throws IOException {
-    if (methodMap.size() == 1) {
+    if (Collections.singleton("main").equals(methodMap.keySet())) {
       methodMap.values().iterator().next().printMan(writer, false);
     } else {
 
