@@ -19,10 +19,14 @@
 
 package org.crsh.cmdline.annotations;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Required {
   boolean value();
 }

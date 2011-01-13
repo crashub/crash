@@ -25,6 +25,7 @@ import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.annotations.Required;
 import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.InvocationContext;
@@ -43,7 +44,8 @@ public class CmdLineProcessorTestCase extends TestCase {
 
   public void testRequiredClassOption() throws Exception {
     class A {
-      @Option(names = "o", required = true)
+      @Option(names = "o")
+      @Required(true)
       String s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
@@ -183,7 +185,8 @@ public class CmdLineProcessorTestCase extends TestCase {
 
   public void testRequiredArgumentList() throws Exception {
     class A {
-      @Argument(required = true)
+      @Argument
+      @Required(true)
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);

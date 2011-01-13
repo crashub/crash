@@ -22,6 +22,7 @@ package org.crsh.cmdline;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.annotations.Required;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.binding.TypeBinding;
@@ -55,6 +56,7 @@ public class CommandFactory {
     Type type,
     Argument argumentAnn,
     Option optionAnn,
+    boolean required,
     Description info,
     Annotation ann) throws IntrospectionException {
 
@@ -70,7 +72,7 @@ public class CommandFactory {
         argumentAnn.name(),
         type,
         info,
-        argumentAnn.required(),
+        required,
         argumentAnn.password(),
         argumentAnn.completer(),
         ann);
@@ -80,7 +82,7 @@ public class CommandFactory {
         type,
         Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
         info,
-        optionAnn.required(),
+        required,
         optionAnn.arity(),
         optionAnn.password(),
         optionAnn.completer(),
@@ -93,6 +95,7 @@ public class CommandFactory {
   protected static Tuple get(Annotation... ab) {
     Argument argumentAnn = null;
     Option optionAnn = null;
+    Boolean required = null;
     Description description = new Description(ab);
     Annotation info = null;
     for (Annotation parameterAnnotation : ab) {
@@ -100,7 +103,9 @@ public class CommandFactory {
         optionAnn = (Option)parameterAnnotation;
       } else if (parameterAnnotation instanceof Argument) {
         argumentAnn = (Argument)parameterAnnotation;
-      } else {
+      } else if (parameterAnnotation instanceof Required) {
+        required = ((Required)parameterAnnotation).value();
+      } else if (info == null) {
 
         // Look at annotated annotations
         Class<? extends Annotation> a = parameterAnnotation.annotationType();
@@ -114,12 +119,23 @@ public class CommandFactory {
 
         //
         if (info != null) {
+
+          //
           description = new Description(description, new Description(a));
+
+          //
+          if (required == null) {
+            Required metaReq = a.getAnnotation(Required.class);
+            if (metaReq != null) {
+              required = metaReq.value();
+            }
+          }
         }
       }
     }
 
-    return new Tuple(argumentAnn, optionAnn, description, info);
+    //
+    return new Tuple(argumentAnn, optionAnn, required != null && required,description, info);
   }
 
   public static <T> MethodDescriptor<T> create(ClassDescriptor<T> owner, Method m) throws IntrospectionException {
@@ -142,6 +158,7 @@ public class CommandFactory {
           parameterType,
           tuple.argumentAnn,
           tuple.optionAnn,
+          tuple.required,
           tuple.descriptionAnn,
           tuple.ann);
         if (parameter != null) {
@@ -172,11 +189,13 @@ public class CommandFactory {
   protected static class Tuple {
     final Argument argumentAnn;
     final Option optionAnn;
+    final boolean required;
     final Description descriptionAnn;
     final Annotation ann;
-    private Tuple(Argument argumentAnn, Option optionAnn, Description info, Annotation ann) {
+    private Tuple(Argument argumentAnn, Option optionAnn, boolean required, Description info, Annotation ann) {
       this.argumentAnn = argumentAnn;
       this.optionAnn = optionAnn;
+      this.required = required;
       this.descriptionAnn = info;
       this.ann = ann;
     }
@@ -197,6 +216,7 @@ public class CommandFactory {
           f.getGenericType(),
           tuple.argumentAnn,
           tuple.optionAnn,
+          tuple.required,
           tuple.descriptionAnn,
           tuple.ann);
         if (parameter != null) {

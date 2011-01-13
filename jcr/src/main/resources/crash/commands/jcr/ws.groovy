@@ -32,7 +32,8 @@ Connected to workspace portal-system
     @Option(names=["c","container"])
     @Usage("portal container name (eXo JCR specific)")
     def String containerName,
-    @Argument(required=true)
+    @Argument
+    @Required(true)
     @Usage("the workspace name")
     def String workspaceName) throws ScriptException {
 

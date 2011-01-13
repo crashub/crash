@@ -37,8 +37,6 @@ public @interface Argument {
 
   String name() default "";
 
-  boolean required() default false;
-
   boolean password() default false;
 
   Class<? extends Completer> completer() default EmptyCompleter.class;

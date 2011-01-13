@@ -37,8 +37,6 @@ public @interface Option {
 
   String[] names();
 
-  boolean required() default false;
-
   int arity() default -1;
 
   boolean password() default false;
