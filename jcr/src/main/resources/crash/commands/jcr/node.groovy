@@ -57,4 +57,61 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
     //
     context.writer <<= " created";
   }
+
+  @Command
+  @Man("""\
+Exports a node as an nt file in the same workspace:
+
+[/]% node export gadgets /gadgets.xml
+The node has been exported
+""")
+  @Usage("export a node to an nt file")
+  public Object export(
+    @Required @PathArg @Usage("path of the exported node") String src,
+    @Required @PathArg @Usage("path of the exported nt:file node") String dst) throws ScriptException {
+
+    //
+    assertConnected();
+
+    // Source node to export
+    def srcNode = findNodeByPath(src);
+
+    //
+    def session = srcNode.session;
+
+    // Destination parent
+    int pos = dst.lastIndexOf('/');
+    if (pos == -1)
+      throw new ScriptException("The destination must be absolute");
+    def dstParenNodet;
+    def dstName;
+    if (pos == 0) {
+      dstParentNode = findNodeByPath("/");
+      dstName = dst.substring(1);
+    } else {
+      dstParentNode = findNodeByPath(dst.substring(0, pos));
+      dstName = dst.substring(pos + 1);
+    }
+
+    //
+    if (dstParentNode[dstName] != null) {
+      throw new ScriptException("Destination path already exist");
+    }
+
+    // Export
+    def baos = new ByteArrayOutputStream();
+    srcNode.session.exportSystemView(srcNode.path, baos, false, false);
+    baos.close();
+
+    // Create nt file / nt resource
+    def fileNode = dstParentNode.addNode(dstName, "nt:file");
+    def res = fileNode.addNode("jcr:content", "nt:resource");
+    def bais = new ByteArrayInputStream(baos.toByteArray());
+    res.setProperty("jcr:mimeType", "application/xml");
+    res.setProperty("jcr:data", bais);
+    res.setProperty("jcr:lastModified", Calendar.getInstance());
+
+    //
+    return "The node has been exported";
+  }
 }

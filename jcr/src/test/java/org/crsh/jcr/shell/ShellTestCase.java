@@ -51,7 +51,7 @@ public class ShellTestCase extends AbstractJCRCommandTestCase {
   public void testExportImport() throws Exception {
     assertLogin();
     groovyShell.evaluate("session.rootNode.addNode('foo', 'nt:base');");
-    assertOk("exportnode /foo /foo.xml");
+    assertOk("node export /foo /foo.xml");
 
     //
     Node fooXML = (Node)groovyShell.evaluate("node = session.rootNode['foo.xml']");
