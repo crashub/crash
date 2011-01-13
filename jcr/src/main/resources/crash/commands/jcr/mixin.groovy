@@ -17,7 +17,8 @@ add a mixin from an incoming node stream, for instance:
   public void add(
      InvocationContext<Node,Void> context,
      @Usage("the mixin name to add")
-     @Argument(required = true)
+     @Argument
+     @Required(true)
      String mixin,
      @PathArg List<String> paths)
   {
@@ -40,7 +41,7 @@ remove a mixin from an incoming node stream, for instance:
   public void remove(
      InvocationContext<Node,Void> context,
      @Usage("the mixin name to remove")
-     @Argument(required = true)
+     @Required(true)
      String mixin,
      @PathArg List<String> paths)
   {
