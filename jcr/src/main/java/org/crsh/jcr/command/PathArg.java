@@ -30,7 +30,7 @@ import java.lang.annotation.RetentionPolicy;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("A node path")
+@Usage("a node path")
 @Argument(name = "path")
 public @interface PathArg {
 }
