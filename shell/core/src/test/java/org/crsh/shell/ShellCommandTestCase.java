@@ -76,8 +76,8 @@ public class ShellCommandTestCase extends TestCase {
 
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
-      "@org.crsh.cmdline.Option(names=\"s\") @Required def String str = 'default value';" +
-      "@org.crsh.cmdline.Command\n" +
+      "@Option(names=\"s\") @Required def String str = 'default value';" +
+      "@Command\n" +
       "public Object main() {" +
       "return str;" +
       "}" +
@@ -97,7 +97,7 @@ public class ShellCommandTestCase extends TestCase {
 
   public void testContextAccessFromCommandClassCmdLine() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
-      "@org.crsh.cmdline.Command\n" +
+      "@Command\n" +
       "public Object main() {" +
       "return juu;" +
       "}" +
@@ -125,8 +125,8 @@ public class ShellCommandTestCase extends TestCase {
 
   public void testArgumentInjectionInCommandCmdLine() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
-      "@org.crsh.cmdline.Command\n" +
-      "public Object main(@org.crsh.cmdline.Argument String str) {" +
+      "@Command\n" +
+      "public Object main(@Argument String str) {" +
       "return str;" +
       "}" +
       "}");
@@ -138,7 +138,7 @@ public class ShellCommandTestCase extends TestCase {
 
   public void testMainInCommandCmdLine() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
-      "@org.crsh.cmdline.Command\n" +
+      "@Command\n" +
       "public Object main() {" +
       "return 'foo';" +
       "}" +
