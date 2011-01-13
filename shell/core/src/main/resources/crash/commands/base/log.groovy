@@ -283,7 +283,7 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the message to log")
 @Option(names=["m","message"])
-@Required(true)
+@Required
 @interface MsgOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)

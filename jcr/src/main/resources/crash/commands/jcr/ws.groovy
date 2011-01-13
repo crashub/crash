@@ -33,7 +33,7 @@ Connected to workspace portal-system
     @Usage("portal container name (eXo JCR specific)")
     def String containerName,
     @Argument
-    @Required(true)
+    @Required
     @Usage("the workspace name")
     def String workspaceName) throws ScriptException {
 

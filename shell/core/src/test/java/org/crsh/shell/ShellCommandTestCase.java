@@ -76,7 +76,7 @@ public class ShellCommandTestCase extends TestCase {
 
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
-      "@org.crsh.cmdline.Option(names=\"s\") @Required(true) def String str = 'default value';" +
+      "@org.crsh.cmdline.Option(names=\"s\") @Required def String str = 'default value';" +
       "@org.crsh.cmdline.Command\n" +
       "public Object main() {" +
       "return str;" +

@@ -45,7 +45,7 @@ public class CmdLineProcessorTestCase extends TestCase {
   public void testRequiredClassOption() throws Exception {
     class A {
       @Option(names = "o")
-      @Required(true)
+      @Required
       String s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
@@ -186,7 +186,7 @@ public class CmdLineProcessorTestCase extends TestCase {
   public void testRequiredArgumentList() throws Exception {
     class A {
       @Argument
-      @Required(true)
+      @Required
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
