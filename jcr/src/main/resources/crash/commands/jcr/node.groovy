@@ -1,4 +1,5 @@
 import org.crsh.jcr.command.PathArg;
+import javax.jcr.ImportUUIDBehavior;
 
 public class node extends org.crsh.jcr.command.JCRCommand {
 
@@ -113,5 +114,40 @@ The node has been exported
 
     //
     return "The node has been exported";
+  }
+
+  @Command
+  @Usage("imports a node from an nt file")
+  @Man("""\
+Imports a node from an nt:file node located in the workspace:
+
+[/]% importnode /gadgets.xml /
+Node imported
+""")
+  public Object IMPORT(
+    @Required @PathArg @Usage("path of the imported nt:file node") String src,
+    @Required @PathArg @Usage("path of the parent imported node") String dst) throws ScriptException {
+
+    //
+    assertConnected();
+
+    // Source node to export
+    def srcNode = findNodeByPath(src);
+
+    //
+    if (srcNode.primaryNodeType.name != "nt:file")
+      throw new ScriptException("Can only import file");
+
+    // Get content
+    def data = srcNode["jcr:content"]["jcr:data"];
+
+    //
+    def dstNode = findNodeByPath(dst);
+
+    //
+    srcNode.session.importXML(dst, data, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+
+    //
+    return "Node imported";
   }
 }

@@ -62,7 +62,7 @@ public class ShellTestCase extends AbstractJCRCommandTestCase {
 
     //
     groovyShell.evaluate("session.rootNode.foo.remove()");
-    assertOk("importnode /foo.xml /");
+    assertOk("node import /foo.xml /");
     Node foo = (Node)groovyShell.evaluate("return session.rootNode.foo");
     assertNotNull(foo);
     assertEquals("foo", foo.getName());
