@@ -35,7 +35,13 @@ public class FileDriver extends AbstractFSDriver<File> {
   /** . */
   private final File root;
 
-  public FileDriver(File root) {
+  /**
+   * Create a new file driver.
+   *
+   * @param root the root
+   * @throws NullPointerException if the root argument is null
+   */
+  public FileDriver(File root) throws NullPointerException {
     if (root == null) {
       throw new NullPointerException();
     }

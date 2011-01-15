@@ -20,6 +20,7 @@
 package org.crsh.plugin;
 
 import org.crsh.vfs.FS;
+import org.crsh.vfs.Path;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
 
 import javax.servlet.ServletContext;
@@ -39,7 +40,7 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
     ServletContext sc = sce.getServletContext();
 
     //
-    FS fs = new FS(new ServletContextDriver(sc, "/WEB-INF/crash/"));
+    FS fs = new FS().mount(new ServletContextDriver(sc), "/WEB-INF/crash/");
 
     //
     PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());

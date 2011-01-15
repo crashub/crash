@@ -23,7 +23,9 @@ import org.crsh.vfs.spi.FSDriver;
 import org.crsh.vfs.spi.file.FileDriver;
 import org.crsh.vfs.spi.jarurl.JarURLDriver;
 import org.crsh.vfs.spi.mount.MountDriver;
+import org.crsh.vfs.spi.servlet.ServletContextDriver;
 
+import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
@@ -41,16 +43,36 @@ public class FS {
   /** . */
   final List<Mount<?>> mounts;
 
-  public FS(FSDriver<?>... drivers) {
-    List<Mount<?>> mounts = new ArrayList<Mount<?>>();
-    for (FSDriver<?> driver : drivers) {
-      mounts.add(Mount.wrap(driver));
-    }
-    this.mounts = mounts;
+  public FS() {
+    this.mounts = new ArrayList<Mount<?>>();
   }
 
   public File get(Path path) throws IOException {
     return new File(this, path);
+  }
+
+  public <H> FS mount(FSDriver<H> driver, Path path) {
+    if (driver == null) {
+      throw new NullPointerException();
+    }
+    if (path.equals(Path.get("/"))) {
+      mounts.add(Mount.wrap(driver));
+    } else {
+      mounts.add(Mount.wrap(new MountDriver<H>(path, driver)));
+    }
+    return this;
+  }
+
+  public <H> FS mount(FSDriver<H> driver, String path) {
+    return mount(driver, Path.get(path));
+  }
+
+  public <H> FS mount(FSDriver<H> driver) {
+    return mount(driver, "/");
+  }
+
+  public FS mount(java.io.File root) {
+    return mount(new FileDriver(root));
   }
 
   public FS mount(ClassLoader cl, Path path) throws IOException, URISyntaxException {
@@ -69,12 +91,11 @@ public class FS {
       String protocol = url.getProtocol();
       if ("file".equals(protocol)) {
         java.io.File root = new java.io.File(url.toURI());
-        mounts.add(Mount.wrap(new FileDriver(root)));
+        mount(root);
       } else if ("jar".equals(protocol)) {
         JarURLConnection conn = (JarURLConnection)url.openConnection();
         JarURLDriver jarDriver = new JarURLDriver(conn);
-        MountDriver<?> mountDriver = new MountDriver(path, jarDriver);
-        mounts.add(Mount.wrap(mountDriver));
+        mount(jarDriver, path);
       }
     }
     return this;
@@ -95,7 +116,6 @@ public class FS {
     } else {
       throw new IllegalArgumentException("Protocol " + protocol + " not supported");
     }
-    mounts.add(Mount.wrap(driver));
-    return this;
+    return mount(driver);
   }
 }

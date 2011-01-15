@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
+ * The mount driver mounts path of a driver.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */

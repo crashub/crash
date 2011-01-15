@@ -35,32 +35,22 @@ import java.util.regex.Pattern;
 public class ServletContextDriver extends AbstractFSDriver<String> {
 
   /** A valid path. */
-  private static final Pattern pathPattern = Pattern.compile("^/.*(?<=/)([^/]+)(/)?$");
+  static final Pattern pathPattern = Pattern.compile("^(?=/).*?((?<=/)[^/]*)?(/?)$");
 
   /** . */
   private final ServletContext ctx;
 
-  /** . */
-  private final String path;
-
-  public ServletContextDriver(ServletContext ctx, String path) {
+  public ServletContextDriver(ServletContext ctx) {
     if (ctx == null) {
       throw new NullPointerException();
-    }
-    if (path == null) {
-      throw new NullPointerException();
-    }
-    if (matcher(path).group(2) == null) {
-      throw new IllegalArgumentException("Invalid path " + path);
     }
 
     //
     this.ctx = ctx;
-    this.path = path;
   }
 
   public String root() throws IOException {
-    return path;
+    return "/";
   }
 
   public String name(String file) throws IOException {
@@ -70,7 +60,7 @@ public class ServletContextDriver extends AbstractFSDriver<String> {
   public boolean isDir(String file) throws IOException {
     Matcher matcher = matcher(file);
     String slash = matcher.group(2);
-    return slash != null;
+    return "/".equals(slash);
   }
 
   public Iterable<String> children(String parent) throws IOException {

@@ -17,35 +17,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.standalone;
+package org.crsh.vfs.spi.servlet;
 
-import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.PluginLifeCycle;
-import org.crsh.vfs.FS;
-import org.crsh.vfs.Path;
+import junit.framework.TestCase;
+
+import java.util.regex.Matcher;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Bootstrap extends PluginLifeCycle {
+public class ServletContextTestCase extends TestCase {
 
-  public void bootstrap() throws Exception {
-
-    //
-    FS fs = new FS();
-    fs.mount(new java.io.File("crash"));
-    fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
-
-    //
-    PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
-    context.start();
-
-    //
-    start(context);
+  private void assertMatch(String s, String name, String trail) {
+    Matcher m = ServletContextDriver.pathPattern.matcher(s);
+    assertTrue(m.matches());
+    assertEquals(name, m.group(1));
+    assertEquals(trail, m.group(2));
   }
 
-  public void shutdown() {
-    stop();
+  private void assertNotMatch(String s) {
+    Matcher m = ServletContextDriver.pathPattern.matcher(s);
+    assertFalse(m.matches());
+  }
+
+  public void testMatch() throws Exception {
+    assertMatch("/", null, "/");
+    assertMatch("/a", "a", "");
+    assertMatch("/a/", "a", "/");
+    assertMatch("/a/b", "b", "");
+    assertMatch("/a/b/", "b", "/");
+  }
+
+  public void testNotMatch() throws Exception {
+    assertNotMatch("a");
+    assertNotMatch("a/");
+    assertNotMatch("a/a");
   }
 }
