@@ -43,7 +43,7 @@ public class EscapeTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = new Matcher<A>(desc);
+    Matcher<A> analyzer = Matcher.createMatcher(desc);
 
     //
     A a = new A();
@@ -67,7 +67,7 @@ public class EscapeTestCase extends TestCase {
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = new Matcher<A>(desc);
+    Matcher<A> analyzer = Matcher.createMatcher(desc);
 
     //
     A a = new A();

@@ -120,7 +120,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   public final Map<String, String> complete(CommandContext context, String line) {
 
     // WTF
-    Matcher analyzer = new Matcher("main", descriptor);
+    Matcher analyzer = Matcher.createMatcher("main", descriptor);
 
     //
     Completer completer = this instanceof Completer ? (Completer)this : null;
@@ -143,7 +143,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   public final String describe(String line, DescriptionMode mode) {
 
     // WTF
-    Matcher analyzer = new Matcher("main", descriptor);
+    Matcher analyzer = Matcher.createMatcher("main", descriptor);
 
     //
     CommandMatch match = analyzer.match(line);
@@ -181,7 +181,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
 
     // WTF
-    Matcher analyzer = new Matcher("main", descriptor);
+    Matcher analyzer = Matcher.createMatcher("main", descriptor);
 
     //
     final CommandMatch<CRaSHCommand, ?, ?> match = analyzer.match(line);

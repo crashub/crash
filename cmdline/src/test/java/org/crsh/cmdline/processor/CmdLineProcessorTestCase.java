@@ -49,7 +49,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = new Matcher<A>(desc);
+    Matcher<A> analyzer = Matcher.createMatcher(desc);
 
     A a = new A();
     analyzer.match("-o foo").invoke(new InvocationContext(), a);
@@ -70,7 +70,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = new Matcher<A>(desc);
+    Matcher<A> analyzer = Matcher.createMatcher(desc);
 
     A a = new A();
     analyzer.match("-o foo").invoke(new InvocationContext(), a);
@@ -87,7 +87,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       int i;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = new Matcher<A>(desc);
+    Matcher<A> analyzer = Matcher.createMatcher(desc);
 
     A a = new A();
     analyzer.match("5").invoke(new InvocationContext(), a);
@@ -113,7 +113,7 @@ public class CmdLineProcessorTestCase extends TestCase {
 
   public void testPrimitiveMethodArgument() throws Exception {
     ClassDescriptor<PMA> desc = CommandFactory.create(PMA.class);
-    Matcher<PMA> analyzer = new Matcher<PMA>(desc);
+    Matcher<PMA> analyzer = Matcher.createMatcher(desc);
 
     PMA a = new PMA();
     analyzer.match("m 5").invoke(new InvocationContext(), a);
@@ -138,7 +138,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = new Matcher<A>(desc);
+    Matcher<A> analyzer = Matcher.createMatcher(desc);
 
     A a = new A();
     analyzer.match("foo").invoke(new InvocationContext(), a);
@@ -162,7 +162,7 @@ public class CmdLineProcessorTestCase extends TestCase {
 
   public void testOptionalArgumentList() throws Exception {
     ClassDescriptor<BC> desc = CommandFactory.create(BC.class);
-    Matcher<BC> analyzer = new Matcher<BC>(desc);
+    Matcher<BC> analyzer = Matcher.createMatcher(desc);
 
     for (String s : Arrays.asList("", "bar ")) {
       BC a = new BC();
@@ -190,7 +190,7 @@ public class CmdLineProcessorTestCase extends TestCase {
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = new Matcher<A>(desc);
+    Matcher<A> analyzer = Matcher.createMatcher(desc);
 
     A a = new A();
     try {
@@ -224,7 +224,7 @@ public class CmdLineProcessorTestCase extends TestCase {
   public void testMethodInvocation() throws Exception {
 
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = new Matcher<A>(desc);
+    Matcher<A> analyzer = Matcher.createMatcher(desc);
 
     //
     A a = new A();
@@ -273,7 +273,7 @@ public class CmdLineProcessorTestCase extends TestCase {
 
   public void testMainMethodInvocation() throws Exception {
     ClassDescriptor<B> desc = CommandFactory.create(B.class);
-    Matcher<B> analyzer = new Matcher<B>("main", desc);
+    Matcher<B> analyzer = Matcher.createMatcher("main", desc);
 
     //
     B b = new B();
@@ -294,7 +294,7 @@ public class CmdLineProcessorTestCase extends TestCase {
   public void testInvocationAttributeInjection() throws Exception {
 
     ClassDescriptor<C> desc = CommandFactory.create(C.class);
-    Matcher<C> analyzer = new Matcher<C>("main", desc);
+    Matcher<C> analyzer = Matcher.createMatcher("main", desc);
 
     //
     C c = new C();
@@ -326,12 +326,12 @@ public class CmdLineProcessorTestCase extends TestCase {
     //
     D d = new D();
     InvocationContext context = new InvocationContext();
-    new Matcher<D>("a", desc).match("-o 5").invoke(context, d);
+    Matcher.createMatcher("a", desc).match("-o 5").invoke(context, d);
     assertEquals((Integer)5, d.i);
 
     //
     d = new D();
-    new Matcher<D>("b", desc).match("-o 5").invoke(context, d);
+    Matcher.createMatcher("b", desc).match("-o 5").invoke(context, d);
     assertEquals((Integer)5, d.i);
   }
 }

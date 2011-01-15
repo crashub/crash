@@ -56,7 +56,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> matcher = new Matcher<A>(desc);
+    Matcher<A> matcher = Matcher.createMatcher(desc);
 
     assertEquals(Collections.singletonMap("", ""), matcher.complete("m "));
     assertEquals(Collections.singletonMap("a", ""), matcher.complete("m a"));
@@ -74,7 +74,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> matcher = new Matcher<A>(desc);
+    Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
     assertEquals(Collections.singletonMap("", ""), matcher.complete("m "));
@@ -93,7 +93,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> matcher = new Matcher<A>(desc);
+    Matcher<A> matcher = Matcher.createMatcher(desc);
     assertEquals(Collections.singletonMap("", ""), matcher.complete("-a "));
     assertEquals(Collections.singletonMap("a", ""), matcher.complete("-a a"));
     assertEquals(Collections.singletonMap("ba", ""), matcher.complete("-a ab"));
@@ -116,7 +116,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> matcher = new Matcher<A>("main", desc);
+    Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
     Map<String, String> a = new HashMap<String, String>();
@@ -150,7 +150,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> matcher = new Matcher<A>("main", desc);
+    Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
     assertEquals(Collections.singletonMap("", ""), matcher.complete(""));
@@ -172,7 +172,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> matcher = new Matcher<A>(desc);
+    Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
     Map<String, String> a = new HashMap<String, String>();
@@ -214,7 +214,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> matcher = new Matcher<A>(desc);
+    Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
     assertEquals(Collections.singletonMap("foo", " "), matcher.complete(""));
@@ -250,7 +250,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void foo(@Option(names = "a", completer = ExceptionCompleter.class) String a) { }
     }
-    Matcher<A> matcherA = new Matcher<A>(CommandFactory.create(A.class));
+    Matcher<A> matcherA = Matcher.createMatcher(CommandFactory.create(A.class));
     try {
       matcherA.complete("foo -a b");
       fail();
@@ -263,7 +263,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void foo(@Option(names = "a", completer = RuntimeExceptionCompleter.class) String a) { }
     }
-    Matcher<B> matcherB = new Matcher<B>(CommandFactory.create(B.class));
+    Matcher<B> matcherB = Matcher.createMatcher(CommandFactory.create(B.class));
     try {
       matcherB.complete("foo -a b");
       fail();
@@ -276,7 +276,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void foo(@Option(names = "a", completer = AbstractCompleter.class) String a) { }
     }
-    Matcher<C> matcherC = new Matcher<C>(CommandFactory.create(C.class));
+    Matcher<C> matcherC = Matcher.createMatcher(CommandFactory.create(C.class));
     try {
       matcherC.complete("foo -a b");
       fail();
