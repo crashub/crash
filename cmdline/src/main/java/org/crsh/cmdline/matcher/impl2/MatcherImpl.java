@@ -73,14 +73,15 @@ public class MatcherImpl<T> extends Matcher<T> {
 
     CommandDescriptor<T, ?> c = descriptor;
 
+    // Parse options
+    options:
     while (tokenizer.hasNext()) {
-
       Token token = tokenizer.next();
-
       switch (token.type) {
         case LONG_OPTION:
         case SHORT_OPTION:
 
+          // Try to obtain a descriptor
           OptionDescriptor<?> desc = c.getOption(token.value);
           if (desc == null) {
             // We are reading an unknown option
@@ -98,8 +99,8 @@ public class MatcherImpl<T> extends Matcher<T> {
 
           //
           if (desc == null) {
-            // We stop parsing because of an unrecognized option
-            return;
+            // Unrecognized option
+            throw new UnsupportedOperationException("find something smart to do");
           } else {
             int arity = desc.getArity();
             LinkedList<String> values = new LinkedList<String>();
@@ -128,13 +129,20 @@ public class MatcherImpl<T> extends Matcher<T> {
             if (m != null) {
               c = m;
             } else {
-              return;
+              // We have at least an argument but we don't have a valid method command to process it
+              throw new UnsupportedOperationException("find something smart to do");
             }
           } else {
-            throw new UnsupportedOperationException();
+            // We are done parsing options
+            break options;
           }
           break;
       }
     }
+
+    // Now parse arguments
+    c.getArguments();
+
+
   }
 }
