@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.matcher;
+package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
@@ -26,6 +26,10 @@ import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.matcher.ArgumentMatch;
+import org.crsh.cmdline.matcher.CmdCompletionException;
+import org.crsh.cmdline.matcher.OptionMatch;
+import org.crsh.cmdline.matcher.Value;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;

@@ -33,7 +33,7 @@ public class OptionMatch<B extends TypeBinding> extends ParameterMatch<OptionDes
   /** . */
   private final String name;
 
-  OptionMatch(OptionDescriptor<B> option, String name, List<String> values) {
+  public OptionMatch(OptionDescriptor<B> option, String name, List<String> values) {
     super(option, values);
 
     //

@@ -17,12 +17,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.matcher;
+package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
+import org.crsh.cmdline.matcher.ArgumentMatch;
+import org.crsh.cmdline.matcher.ClassMatch;
+import org.crsh.cmdline.matcher.CmdCompletionException;
+import org.crsh.cmdline.matcher.CommandMatch;
+import org.crsh.cmdline.matcher.Matcher;
+import org.crsh.cmdline.matcher.MethodMatch;
+import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.Collections;
@@ -46,11 +53,11 @@ public class MatcherImpl<T> extends Matcher<T> {
   /** . */
   private final String mainName;
 
-  MatcherImpl(ClassDescriptor<T> descriptor) {
+  public MatcherImpl(ClassDescriptor<T> descriptor) {
     this(null, descriptor);
   }
 
-  MatcherImpl(String mainName, ClassDescriptor<T> descriptor) {
+  public MatcherImpl(String mainName, ClassDescriptor<T> descriptor) {
     this.analyzer = new MatcherFactory<T, ClassFieldBinding>(descriptor);
     this.descriptor = descriptor;
     this.mainName = mainName;

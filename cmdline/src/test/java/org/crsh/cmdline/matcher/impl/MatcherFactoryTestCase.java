@@ -17,13 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.matcher;
+package org.crsh.cmdline.matcher.impl;
 
 import junit.framework.TestCase;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.matcher.impl.MatcherFactory;
 
 import java.util.List;
 import java.util.regex.Pattern;

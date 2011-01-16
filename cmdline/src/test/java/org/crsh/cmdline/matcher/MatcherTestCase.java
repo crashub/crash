@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.processor;
+package org.crsh.cmdline.matcher;
 
 import junit.framework.TestCase;
 import org.crsh.cmdline.annotations.Argument;
@@ -39,7 +39,7 @@ import java.util.Locale;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CmdLineProcessorTestCase extends TestCase {
+public class MatcherTestCase extends TestCase {
 
 
   public void testRequiredClassOption() throws Exception {
