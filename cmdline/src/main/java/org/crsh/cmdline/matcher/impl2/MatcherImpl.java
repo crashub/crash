@@ -19,6 +19,7 @@
 
 package org.crsh.cmdline.matcher.impl2;
 
+import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.Matcher;
@@ -32,6 +33,26 @@ import java.util.Map;
  */
 public class MatcherImpl<T> extends Matcher<T> {
 
+  /** . */
+  private final ClassDescriptor<T> descriptor;
+
+  /** . */
+  private final String mainName;
+
+  public MatcherImpl(ClassDescriptor<T> descriptor) {
+    this(null, descriptor);
+  }
+
+  public MatcherImpl(String mainName, ClassDescriptor<T> descriptor) {
+    if (descriptor == null) {
+      throw new NullPointerException();
+    }
+
+    //
+    this.mainName = mainName;
+    this.descriptor = descriptor;
+  }
+
   @Override
   public Map<String, String> complete(Completer completer, String s) throws CmdCompletionException {
     throw new UnsupportedOperationException();
@@ -42,9 +63,28 @@ public class MatcherImpl<T> extends Matcher<T> {
     throw new UnsupportedOperationException();
   }
 
+  private static final int A = 0;
+
   public void foo(String s) {
 
     Tokenizer tokenizer = new Tokenizer(s);
+
+    while (tokenizer.hasNext()) {
+
+      Token token = tokenizer.next();
+
+      switch (token.type) {
+        case LONG_OPTION:
+        case SHORT_OPTION:
+
+          break;
+
+
+      }
+
+
+
+    }
 
 
 

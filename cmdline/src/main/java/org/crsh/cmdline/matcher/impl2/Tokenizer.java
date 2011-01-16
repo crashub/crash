@@ -81,7 +81,7 @@ class Tokenizer implements Iterator<Token> {
     //
     Token next = null;
     if (index < s.length()) {
-      int a = index;
+      int mark = index;
       char c;
       TokenType type;
       c = s.charAt(index);
@@ -103,7 +103,6 @@ class Tokenizer implements Iterator<Token> {
       }
 
       //
-      int mark = index;
       while (index < s.length()) {
         c = s.charAt(index);
         if (Character.isWhitespace(c)) {
@@ -112,7 +111,7 @@ class Tokenizer implements Iterator<Token> {
           index++;
         }
       }
-      next = new Token(a, type, s.subSequence(mark, index));
+      next = new Token(mark, type, s.subSequence(mark, index).toString());
     }
 
     //

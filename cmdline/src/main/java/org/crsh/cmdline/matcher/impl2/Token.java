@@ -32,9 +32,9 @@ class Token {
   final TokenType type;
 
   /** . */
-  final CharSequence value;
+  final String value;
 
-  Token(int index, TokenType type, CharSequence value) {
+  Token(int index, TokenType type, String value) {
 
     if (index < 0) {
       throw new IllegalArgumentException();
@@ -59,7 +59,7 @@ class Token {
     }
     if (obj instanceof Token) {
       Token that = (Token)obj;
-      return index == that.index && type == that.type && value.toString().equals(that.value.toString());
+      return index == that.index && type == that.type && value.equals(that.value);
     }
     return false;
   }

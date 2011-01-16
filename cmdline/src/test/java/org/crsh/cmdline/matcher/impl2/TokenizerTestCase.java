@@ -51,23 +51,23 @@ public class TokenizerTestCase extends TestCase {
 
   public void tesShortOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-a");
-    assertEquals(new Token(0, TokenType.SHORT_OPTION, "a"), tokenizer.next());
+    assertEquals(new Token(0, TokenType.SHORT_OPTION, "-a"), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
   public void tesShortOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" -a");
-    assertEquals(new Token(1, TokenType.SHORT_OPTION, "a"), tokenizer.next());
+    assertEquals(new Token(1, TokenType.SHORT_OPTION, "-a"), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
   public void tesLongOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("--a");
-    assertEquals(new Token(0, TokenType.SHORT_OPTION, "a"), tokenizer.next());
+    assertEquals(new Token(0, TokenType.SHORT_OPTION, "--a"), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
   public void tesLongOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" --a");
-    assertEquals(new Token(1, TokenType.SHORT_OPTION, "a"), tokenizer.next());
+    assertEquals(new Token(1, TokenType.SHORT_OPTION, "--a"), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 }
