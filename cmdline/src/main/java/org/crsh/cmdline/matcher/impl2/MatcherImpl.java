@@ -20,11 +20,15 @@
 package org.crsh.cmdline.matcher.impl2;
 
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.MethodDescriptor;
+import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.spi.Completer;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -63,11 +67,11 @@ public class MatcherImpl<T> extends Matcher<T> {
     throw new UnsupportedOperationException();
   }
 
-  private static final int A = 0;
-
   public void foo(String s) {
 
     Tokenizer tokenizer = new Tokenizer(s);
+
+    CommandDescriptor<T, ?> c = descriptor;
 
     while (tokenizer.hasNext()) {
 
@@ -77,16 +81,60 @@ public class MatcherImpl<T> extends Matcher<T> {
         case LONG_OPTION:
         case SHORT_OPTION:
 
+          OptionDescriptor<?> desc = c.getOption(token.value);
+          if (desc == null) {
+            // We are reading an unknown option
+            // it could match an option of an implicit command
+            if (c instanceof ClassDescriptor<?>) {
+              MethodDescriptor<T> m = ((ClassDescriptor<T>)c).getMethod(mainName);
+              if (m != null) {
+                desc = m.getOption(token.value);
+                if (desc != null) {
+                  c = m;
+                }
+              }
+            }
+          }
+
+          //
+          if (desc == null) {
+            // We stop parsing because of an unrecognized option
+            return;
+          } else {
+            int arity = desc.getArity();
+            LinkedList<String> values = new LinkedList<String>();
+            while (arity > 0) {
+              String value = null;
+              if (tokenizer.hasNext()) {
+                Token a = tokenizer.peek();
+                if (a.type == TokenType.WORD) {
+                  // Assign and iterate
+                  value = a.value;
+                  tokenizer.next();
+                  arity--;
+                }
+              }
+              if (value != null) {
+                values.addLast(value);
+              } else {
+                break;
+              }
+            }
+          }
           break;
-
-
+        case WORD:
+          if (c instanceof ClassDescriptor<?>) {
+            MethodDescriptor<T> m = ((ClassDescriptor<T>)c).getMethod(token.value);
+            if (m != null) {
+              c = m;
+            } else {
+              return;
+            }
+          } else {
+            throw new UnsupportedOperationException();
+          }
+          break;
       }
-
-
-
     }
-
-
-
   }
 }

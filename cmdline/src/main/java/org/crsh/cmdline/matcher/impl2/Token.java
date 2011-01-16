@@ -32,9 +32,19 @@ class Token {
   final TokenType type;
 
   /** . */
+  final String raw;
+
+  /** . */
   final String value;
 
+  /** . */
+  final Termination termination;
+
   Token(int index, TokenType type, String value) {
+    this(index, type, value, value, Termination.DETERMINED);
+  }
+
+  Token(int index, TokenType type, String raw, String value, Termination termination) {
 
     if (index < 0) {
       throw new IllegalArgumentException();
@@ -42,14 +52,22 @@ class Token {
     if (type == null) {
       throw new NullPointerException();
     }
+    if (raw == null) {
+      throw new NullPointerException();
+    }
     if (value == null) {
+      throw new NullPointerException();
+    }
+    if (termination == null) {
       throw new NullPointerException();
     }
 
     //
     this.index = index;
     this.type = type;
+    this.raw = raw;
     this.value = value;
+    this.termination = termination;
   }
 
   @Override
@@ -59,13 +77,13 @@ class Token {
     }
     if (obj instanceof Token) {
       Token that = (Token)obj;
-      return index == that.index && type == that.type && value.equals(that.value);
+      return index == that.index && type == that.type && raw.equals(that.raw) && value.equals(that.value) && termination == that.termination;
     }
     return false;
   }
 
   @Override
   public String toString() {
-    return "Token[index=" + index + ",type=" + type.name() + ",value=" + value + "]";
+    return "Token[index=" + index + ",type=" + type.name() + ",raw=" + raw + ",value=" + value + ",termination=" + termination.name() + "]";
   }
 }

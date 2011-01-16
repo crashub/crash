@@ -19,6 +19,7 @@
 
 package org.crsh.cmdline.matcher.impl2;
 
+import javax.xml.stream.events.Characters;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -103,22 +104,43 @@ class Tokenizer implements Iterator<Token> {
       }
 
       //
+      Character lastQuote = null;
+      StringBuilder value = new StringBuilder();
       while (index < s.length()) {
         c = s.charAt(index);
-        if (Character.isWhitespace(c)) {
-          break;
+        if (lastQuote == null) {
+          if (Character.isWhitespace(c)) {
+            break;
+          } else {
+            if (c == '\'' || c == '"') {
+              lastQuote = c;
+            } else {
+              value.append(c);
+            }
+            index++;
+          }
         } else {
           index++;
+          if (c == lastQuote) {
+            lastQuote = null;
+          } else {
+            value.append(c);
+          }
         }
       }
-      next = new Token(mark, type, s.subSequence(mark, index).toString());
+
+      //
+      Termination termination = lastQuote == null ? Termination.DETERMINED : lastQuote == '\'' ? Termination.SINGLE_QUOTE : Termination.DOUBLE_QUOTE;
+
+      //
+      next = new Token(
+        mark, type,
+        s.subSequence(mark, index).toString(),
+        value.toString(),
+        termination);
     }
 
     //
     return next;
   }
-
-
-
-
 }
