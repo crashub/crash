@@ -19,11 +19,14 @@
 
 package org.crsh.cmdline.matcher.impl2;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class Tokenizer {
+class Tokenizer implements Iterator<Token> {
 
   /** . */
   private final CharSequence s;
@@ -31,12 +34,44 @@ class Tokenizer {
   /** . */
   private int index;
 
+  /** . */
+  private Token next;
+
   Tokenizer(CharSequence s) {
     this.s = s;
     this.index = 0;
   }
 
-  Token next() {
+  public Token next() {
+    if (hasNext()) {
+      Token tmp = next;
+      next = null;
+      return tmp;
+    } else {
+      throw new NoSuchElementException();
+    }
+  }
+
+  public boolean hasNext() {
+    if (next == null) {
+      next = parse();
+    }
+    return next != null;
+  }
+
+  public void remove() {
+    throw new UnsupportedOperationException();
+  }
+
+  Token peek() {
+    if (hasNext()) {
+      return next;
+    } else {
+      return null;
+    }
+  }
+
+  private Token parse() {
 
     //
     while (index < s.length() && Character.isWhitespace(s.charAt(index))) {

@@ -41,4 +41,12 @@ public class MatcherImpl<T> extends Matcher<T> {
   public CommandMatch<T, ?, ?> match(String s) {
     throw new UnsupportedOperationException();
   }
+
+  public void foo(String s) {
+
+    Tokenizer tokenizer = new Tokenizer(s);
+
+
+
+  }
 }

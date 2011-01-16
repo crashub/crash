@@ -29,45 +29,45 @@ public class TokenizerTestCase extends TestCase {
 
   public void testEmpty() throws Exception {
     Tokenizer tokenizer = new Tokenizer("");
-    assertNull(tokenizer.next());
+    assertFalse(tokenizer.hasNext());
   }
 
   public void testSpace() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" ");
-    assertNull(tokenizer.next());
+    assertFalse(tokenizer.hasNext());
   }
 
   public void testWord1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("a");
     assertEquals(new Token(0, TokenType.WORD, "a"), tokenizer.next());
-    assertNull(tokenizer.next());
+    assertFalse(tokenizer.hasNext());
   }
 
   public void testWord2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" a");
     assertEquals(new Token(1, TokenType.WORD, "a"), tokenizer.next());
-    assertNull(tokenizer.next());
+    assertFalse(tokenizer.hasNext());
   }
 
   public void tesShortOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-a");
     assertEquals(new Token(0, TokenType.SHORT_OPTION, "a"), tokenizer.next());
-    assertNull(tokenizer.next());
+    assertFalse(tokenizer.hasNext());
   }
   public void tesShortOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" -a");
     assertEquals(new Token(1, TokenType.SHORT_OPTION, "a"), tokenizer.next());
-    assertNull(tokenizer.next());
+    assertFalse(tokenizer.hasNext());
   }
 
   public void tesLongOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("--a");
     assertEquals(new Token(0, TokenType.SHORT_OPTION, "a"), tokenizer.next());
-    assertNull(tokenizer.next());
+    assertFalse(tokenizer.hasNext());
   }
   public void tesLongOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" --a");
     assertEquals(new Token(1, TokenType.SHORT_OPTION, "a"), tokenizer.next());
-    assertNull(tokenizer.next());
+    assertFalse(tokenizer.hasNext());
   }
 }
