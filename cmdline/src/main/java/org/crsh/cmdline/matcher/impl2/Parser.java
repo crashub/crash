@@ -136,9 +136,9 @@ public class Parser<T> {
               if (command instanceof ClassDescriptor<?>) {
                 MethodDescriptor<T> m = ((ClassDescriptor<T>)command).getMethod(literal.value);
                 if (m != null) {
+                  command = m;
                   tokenizer.next();
                   nextEvent = new Event.Method(m);
-                  nextStatus = Parser.Status.READING_ARG;
                 } else {
                   nextStatus = Status.READING_ARG;
                 }

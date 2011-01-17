@@ -137,7 +137,7 @@ public class ParserTestCase extends TestCase {
     tester.assertOption("o", "a", "b");
   }
 
-  public void testOptions() throws Exception {
+  public void testOptions1() throws Exception {
 
     class A {
       @Option(names = "o") String o;
@@ -180,6 +180,52 @@ public class ParserTestCase extends TestCase {
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertMethod("main");
+    tester.assertOption("p", "b");
+  }
+
+  public void testOptions2() throws Exception {
+
+    class A {
+      @Option(names = "o") String o;
+      @Command
+      public void m(@Option(names = "p") String p) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "-o");
+    tester.assertOption("o");
+    tester = new Tester<A>(cmd, "-o a");
+    tester.assertOption("o", "a");
+    tester = new Tester<A>(cmd, "-o a b");
+    tester.assertOption("o", "a");
+
+    //
+    tester = new Tester<A>(cmd, "m -p");
+    tester.assertMethod("m");
+    tester.assertSeparator();
+    tester.assertOption("p");
+    tester = new Tester<A>(cmd, "m -p a");
+    tester.assertMethod("m");
+    tester.assertSeparator();
+    tester.assertOption("p", "a");
+    tester = new Tester<A>(cmd, "m -p a b");
+    tester.assertMethod("m");
+    tester.assertSeparator();
+    tester.assertOption("p", "a");
+
+    //
+    tester = new Tester<A>(cmd, "-o a m -p");
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertMethod("m");
+    tester.assertSeparator();
+    tester.assertOption("p");
+    tester = new Tester<A>(cmd, "-o a m -p b");
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertMethod("m");
+    tester.assertSeparator();
     tester.assertOption("p", "b");
   }
 }
