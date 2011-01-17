@@ -77,6 +77,22 @@ public class Event {
 
   public static class Error extends Event {
 
+    /** . */
+    public static final int UNKNOWN_CLASS_OPTION = 0;
+
+    /** . */
+    public static final int UNKNOWN_METHOD_OPTION = 1;
+
+    /** . */
+    private final int code;
+
+    public Error(int code) {
+      this.code = code;
+    }
+
+    public int getCode() {
+      return code;
+    }
   }
 
 

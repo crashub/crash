@@ -62,6 +62,50 @@ public class ParserTestCase extends TestCase {
       assertTrue(event.getDescriptor().getNames().contains(name));
       assertEquals(Arrays.asList(values), event.getValues());
     }
+
+    public void assertError(int code) {
+      Event.Error event = (Event.Error)parser.bilto();
+      assertEquals(code, event.getCode());
+    }
+  }
+
+  public void testUnkownClassOption() throws Exception {
+
+    class A {
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "-o");
+    tester.assertError(Event.Error.UNKNOWN_CLASS_OPTION);
+  }
+
+  public void testUnkownMethodOption1() throws Exception {
+
+    class A {
+      @Command
+      void main() {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "-o");
+    tester.assertError(Event.Error.UNKNOWN_METHOD_OPTION);
+  }
+
+  public void testUnkownMethodOption2() throws Exception {
+
+    class A {
+      @Command
+      void m() {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "m -o");
+    tester.assertMethod("m");
+    tester.assertSeparator();
+    tester.assertError(Event.Error.UNKNOWN_METHOD_OPTION);
   }
 
   public void testClassOption() throws Exception {

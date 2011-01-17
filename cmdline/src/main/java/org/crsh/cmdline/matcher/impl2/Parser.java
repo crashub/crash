@@ -121,15 +121,15 @@ public class Parser<T> {
                       nextEvent = new Event.Method(m);
                     } else {
                       nextStatus = Status.ERROR;
-                      nextEvent = new Event.Error();
+                      nextEvent = new Event.Error(Event.Error.UNKNOWN_METHOD_OPTION);
                     }
                   } else {
                     nextStatus = Status.ERROR;
-                    nextEvent = new Event.Error();
+                    nextEvent = new Event.Error(Event.Error.UNKNOWN_CLASS_OPTION);
                   }
                 } else {
                   nextStatus = Status.ERROR;
-                  nextEvent = new Event.Error();
+                  nextEvent = new Event.Error(Event.Error.UNKNOWN_METHOD_OPTION);
                 }
               }
             } else {
