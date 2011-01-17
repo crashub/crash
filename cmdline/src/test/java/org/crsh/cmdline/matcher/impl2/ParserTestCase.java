@@ -166,7 +166,6 @@ public class ParserTestCase extends TestCase {
     tester.assertOption("p", "a");
 
     //
-/*
     tester = new Tester<A>(cmd, "-o -p");
     tester.assertOption("o");
     tester.assertSeparator();
@@ -182,6 +181,5 @@ public class ParserTestCase extends TestCase {
     tester.assertSeparator();
     tester.assertMethod("main");
     tester.assertOption("p", "b");
-*/
   }
 }

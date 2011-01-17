@@ -76,6 +76,7 @@ public class Parser<T> {
     do {
       if (token instanceof Token.Whitespace) {
         nextEvent = new Event.Separator();
+        tokenizer.next();
       } else {
         Token.Literal literal = (Token.Literal)token;
         switch (status) {
@@ -99,6 +100,7 @@ public class Parser<T> {
                         tokenizer.next();
                         arity--;
                       } else {
+                        tokenizer.pushBack();
                         break;
                       }
                     }

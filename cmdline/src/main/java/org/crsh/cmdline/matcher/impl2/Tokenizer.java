@@ -19,6 +19,7 @@
 
 package org.crsh.cmdline.matcher.impl2;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -35,37 +36,55 @@ class Tokenizer implements Iterator<Token> {
   private int index;
 
   /** . */
-  private Token next;
+  private ArrayList<Token> stack;
+
+  /** . */
+  private int ptr;
 
   Tokenizer(CharSequence s) {
     this.s = s;
     this.index = 0;
+    this.stack = new ArrayList<Token>();
+    this.ptr = 0;
   }
 
   public Token next() {
     if (hasNext()) {
-      Token tmp = next;
-      next = null;
-      return tmp;
+      return stack.get(ptr++);
     } else {
       throw new NoSuchElementException();
     }
   }
 
   public boolean hasNext() {
-    if (next == null) {
-      next = parse();
+    if (ptr < stack.size()) {
+      return true;
+    } else {
+      Token next = parse();
+      if (next != null) {
+        stack.add(next);
+        return true;
+      } else {
+        return false;
+      }
     }
-    return next != null;
   }
 
   public void remove() {
     throw new UnsupportedOperationException();
   }
 
+  void pushBack() {
+    if (ptr == 0) {
+      throw new IllegalStateException("Nothing was pulled from the tokenizer");
+    } else {
+      ptr--;
+    }
+  }
+
   Token peek() {
     if (hasNext()) {
-      return next;
+      return stack.get(ptr);
     } else {
       return null;
     }
