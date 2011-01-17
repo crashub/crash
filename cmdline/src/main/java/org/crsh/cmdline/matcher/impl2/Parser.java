@@ -121,26 +121,34 @@ public class Parser<T> {
                       nextEvent = new Event.Method(m);
                     } else {
                       nextStatus = Status.ERROR;
-                      nextEvent = new Event.Error(Event.Error.UNKNOWN_METHOD_OPTION);
+                      nextEvent = new Event.Error(Event.Error.NO_SUCH_METHOD_OPTION);
                     }
                   } else {
                     nextStatus = Status.ERROR;
-                    nextEvent = new Event.Error(Event.Error.UNKNOWN_CLASS_OPTION);
+                    nextEvent = new Event.Error(Event.Error.NO_SUCH_CLASS_OPTION);
                   }
                 } else {
                   nextStatus = Status.ERROR;
-                  nextEvent = new Event.Error(Event.Error.UNKNOWN_METHOD_OPTION);
+                  nextEvent = new Event.Error(Event.Error.NO_SUCH_METHOD_OPTION);
                 }
               }
             } else {
               if (command instanceof ClassDescriptor<?>) {
-                MethodDescriptor<T> m = ((ClassDescriptor<T>)command).getMethod(literal.value);
+                ClassDescriptor<T> classCommand = (ClassDescriptor<T>)command;
+                MethodDescriptor<T> m = classCommand.getMethod(literal.value);
                 if (m != null) {
                   command = m;
                   tokenizer.next();
                   nextEvent = new Event.Method(m);
                 } else {
-                  nextStatus = Status.READING_ARG;
+                  m = classCommand.getMethod(mainName);
+                  if (m != null) {
+                    nextEvent = new Event.Method(m);
+                    nextStatus = Status.READING_ARG;
+                  } else {
+                    nextStatus = Status.ERROR;
+                    nextEvent = new Event.Error(Event.Error.NO_METHOD);
+                  }
                 }
               } else {
                 nextStatus = Status.READING_ARG;
@@ -153,13 +161,14 @@ public class Parser<T> {
             throw new AssertionError();
         }
       }
+
+      //
+      if (nextStatus != null) {
+        this.status = nextStatus;
+      }
     }
     while (nextEvent == null);
 
-    //
-    if (nextStatus != null) {
-      this.status = nextStatus;
-    }
 
     //
     return nextEvent;

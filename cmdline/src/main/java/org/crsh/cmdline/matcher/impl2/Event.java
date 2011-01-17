@@ -78,10 +78,13 @@ public class Event {
   public static class Error extends Event {
 
     /** . */
-    public static final int UNKNOWN_CLASS_OPTION = 0;
+    public static final int NO_SUCH_CLASS_OPTION = 0;
 
     /** . */
-    public static final int UNKNOWN_METHOD_OPTION = 1;
+    public static final int NO_SUCH_METHOD_OPTION = 1;
+
+    /** . */
+    public static final int NO_METHOD = 2;
 
     /** . */
     private final int code;

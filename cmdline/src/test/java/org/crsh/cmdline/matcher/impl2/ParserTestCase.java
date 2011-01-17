@@ -22,6 +22,7 @@ package org.crsh.cmdline.matcher.impl2;
 import junit.framework.TestCase;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 
@@ -77,7 +78,7 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
-    tester.assertError(Event.Error.UNKNOWN_CLASS_OPTION);
+    tester.assertError(Event.Error.NO_SUCH_CLASS_OPTION);
   }
 
   public void testUnkownMethodOption1() throws Exception {
@@ -90,7 +91,7 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
-    tester.assertError(Event.Error.UNKNOWN_METHOD_OPTION);
+    tester.assertError(Event.Error.NO_SUCH_METHOD_OPTION);
   }
 
   public void testUnkownMethodOption2() throws Exception {
@@ -105,7 +106,7 @@ public class ParserTestCase extends TestCase {
     Tester<A> tester = new Tester<A>(cmd, "m -o");
     tester.assertMethod("m");
     tester.assertSeparator();
-    tester.assertError(Event.Error.UNKNOWN_METHOD_OPTION);
+    tester.assertError(Event.Error.NO_SUCH_METHOD_OPTION);
   }
 
   public void testClassOption() throws Exception {
@@ -271,5 +272,24 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("m");
     tester.assertSeparator();
     tester.assertOption("p", "b");
+  }
+
+  public void testMethodArgument() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Argument String a) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "a");
+    tester.assertMethod("main");
+    try {
+      tester.assertSeparator();
+      fail();
+    }
+    catch (UnsupportedOperationException e) {
+    }
   }
 }
