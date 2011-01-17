@@ -82,7 +82,7 @@ public class Parser<T> {
         switch (status) {
           case READING_OPTION:
             if (literal.isOption()) {
-              OptionDescriptor<?> desc = command.getOption(literal.value);
+              OptionDescriptor<?> desc = command.findOption(literal.value);
               if (desc != null) {
                 tokenizer.next();
                 int arity = desc.getArity();
@@ -115,7 +115,7 @@ public class Parser<T> {
                 if (command instanceof ClassDescriptor<?>) {
                   MethodDescriptor<T> m = ((ClassDescriptor<T>)command).getMethod(mainName);
                   if (m != null) {
-                    desc = m.getOption(literal.value);
+                    desc = m.findOption(literal.value);
                     if (desc != null) {
                       command = m;
                       nextEvent = new Event.Method(m);

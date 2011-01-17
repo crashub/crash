@@ -165,6 +165,14 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   }
 
   /**
+   * Find an command option by its name.
+   *
+   * @param name the option name
+   * @return the option
+   */
+  public abstract OptionDescriptor<?> findOption(String name);
+
+  /**
    * Returns a list of the command arguments.
    *
    * @return the command arguments

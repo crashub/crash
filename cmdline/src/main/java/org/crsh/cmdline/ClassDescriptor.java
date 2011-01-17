@@ -96,6 +96,11 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   }
 
   @Override
+  public OptionDescriptor<?> findOption(String name) {
+    return getOption(name);
+  }
+
+  @Override
   public void printUsage(Appendable writer) throws IOException {
     if (Collections.singleton("main").equals(methodMap.keySet())) {
       methodMap.values().iterator().next().printUsage(writer, false);

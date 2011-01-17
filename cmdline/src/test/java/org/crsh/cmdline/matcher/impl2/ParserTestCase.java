@@ -272,6 +272,20 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("m");
     tester.assertSeparator();
     tester.assertOption("p", "b");
+
+    //
+    tester = new Tester<A>(cmd, "m -o a -p");
+    tester.assertMethod("m");
+    tester.assertSeparator();
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertOption("p");
+    tester = new Tester<A>(cmd, "m -o a -p b");
+    tester.assertMethod("m");
+    tester.assertSeparator();
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertOption("p", "b");
   }
 
   public void testMethodArgument() throws Exception {

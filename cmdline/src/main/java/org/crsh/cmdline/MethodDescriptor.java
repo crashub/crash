@@ -106,6 +106,15 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
   }
 
   @Override
+  public OptionDescriptor<?> findOption(String name) {
+    OptionDescriptor<?> option = getOption(name);
+    if (option == null) {
+      option = owner.findOption(name);
+    }
+    return option;
+  }
+
+  @Override
   public void printUsage(Appendable writer) throws IOException {
     printUsage(writer, true);
   }
