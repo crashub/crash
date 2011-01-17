@@ -25,7 +25,6 @@ import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +95,7 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
 
       // Then figure out if we need to unwrap somehow
       Object v;
-      if (parameter.getMultiplicity() == Multiplicity.LIST) {
+      if (parameter.getMultiplicity() == Multiplicity.ZERO_OR_MORE) {
         v = l;
       } else {
         if (l.isEmpty()) {

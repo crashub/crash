@@ -305,14 +305,14 @@ final class MatcherFactory<T, B extends TypeBinding> {
       for (int j = 0;j < i;j++) {
         ArgumentDescriptor<?> argument = arguments.get(j);
         if (j == i - 1) {
-          if (argument.getMultiplicity() == Multiplicity.SINGLE) {
+          if (argument.getMultiplicity() == Multiplicity.ZERO_OR_ONE) {
             argumentsRE.append("\\s*(?<!\\S)(\\S+|$)");
           }
           else {
             argumentsRE.append("\\s*(?<!\\S)((?:\\s*(?:\\S+|$))*)");
           }
         } else {
-          if (argument.getMultiplicity() == Multiplicity.SINGLE) {
+          if (argument.getMultiplicity() == Multiplicity.ZERO_OR_ONE) {
             argumentsRE.append("\\s*(?<!\\S)(\\S+)");
           }
           else {

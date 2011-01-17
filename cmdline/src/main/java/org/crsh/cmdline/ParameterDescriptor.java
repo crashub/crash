@@ -78,7 +78,11 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     Multiplicity multiplicity;
     if (javaType instanceof Class<?>) {
       javaValueType = (Class<Object>)javaType;
-      multiplicity = Multiplicity.SINGLE;
+      if (required) {
+        multiplicity = Multiplicity.ONE;
+      } else {
+        multiplicity = Multiplicity.ZERO_OR_ONE;
+      }
     } else if (javaType instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType)javaType;
       Type rawType = parameterizedType.getRawType();
@@ -88,7 +92,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
           Type elementType = parameterizedType.getActualTypeArguments()[0];
           if (elementType instanceof Class<?>) {
             javaValueType = (Class<Object>)elementType;
-            multiplicity = Multiplicity.LIST;
+            multiplicity = Multiplicity.ZERO_OR_MORE;
           } else {
             throw new IllegalValueTypeException();
           }

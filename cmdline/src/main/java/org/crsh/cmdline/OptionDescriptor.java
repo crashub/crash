@@ -23,7 +23,6 @@ import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -62,12 +61,12 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
       annotation);
 
     //
-    if (arity > 1 && getMultiplicity() == Multiplicity.SINGLE) {
+    if (arity > 1 && getMultiplicity() == Multiplicity.ZERO_OR_ONE) {
       throw new IllegalParameterException();
     }
 
     //
-    if (getMultiplicity() == Multiplicity.LIST && getType() == SimpleValueType.BOOLEAN) {
+    if (getMultiplicity() == Multiplicity.ZERO_OR_MORE && getType() == SimpleValueType.BOOLEAN) {
       throw new IllegalParameterException();
     }
 

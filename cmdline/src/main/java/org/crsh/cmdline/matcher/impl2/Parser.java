@@ -19,12 +19,16 @@
 
 package org.crsh.cmdline.matcher.impl2;
 
+import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.binding.TypeBinding;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -156,6 +160,28 @@ public class Parser<T> {
             }
             break;
           case READING_ARG:
+
+/*
+            LinkedList<Token> remaining = new LinkedList<Token>();
+            int literalCount = 0;
+            do {
+              Token t = tokenizer.next();
+              if (t instanceof Token.Literal) {
+                literalCount++;
+              }
+              remaining.add(t);
+            }
+            while (tokenizer.hasNext());
+
+            //
+            List<? extends ArgumentDescriptor<?>> arguments = command.getArguments();
+
+            // First we assign all the mandatory values
+            for (ArgumentDescriptor<?> argument : arguments) {
+            }
+*/
+
+
             throw new UnsupportedOperationException("todo");
           default:
             throw new AssertionError();

@@ -23,7 +23,6 @@ import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -72,7 +71,7 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
    * @throws IOException any io exception
    */
   public void printUsage(Appendable writer) throws IOException {
-    if (getMultiplicity() == Multiplicity.LIST) {
+    if (getMultiplicity() == Multiplicity.ZERO_OR_MORE) {
       writer.append("... ");
     }
     writer.append((name == null || name.length() == 0) ? "arg" : name);

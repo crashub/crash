@@ -22,11 +22,9 @@ package org.crsh.cmdline;
 import org.crsh.cmdline.binding.TypeBinding;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -78,7 +76,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         }
       } else if (parameter instanceof ArgumentDescriptor) {
         ArgumentDescriptor<B> argument = (ArgumentDescriptor<B>)parameter;
-        if (argument.getMultiplicity() == Multiplicity.LIST) {
+        if (argument.getMultiplicity() == Multiplicity.ZERO_OR_MORE) {
           if (listArgument) {
             throw new IntrospectionException();
           }
