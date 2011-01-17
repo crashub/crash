@@ -23,51 +23,116 @@ package org.crsh.cmdline.matcher.impl2;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-final class Token {
+abstract class Token {
+
+
+  final static class Whitespace extends Token {
+
+    Whitespace(int index, String raw) {
+      super(index, raw);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (obj instanceof Whitespace) {
+        Whitespace that = (Whitespace)obj;
+        return super.equals(obj) && index == that.index;
+      }
+      return false;
+    }
+
+    @Override
+    public String toString() {
+      return "Token.Whitespace[index=" + index + ",raw=" + raw + "]";
+    }
+  }
+
+  final static class Literal extends Token {
+
+    /** . */
+    final TokenType type;
+
+    /** . */
+    final String value;
+
+    /** . */
+    final Termination termination;
+
+    Literal(int index, TokenType type, String value) {
+      this(index, type, value, value, Termination.DETERMINED);
+    }
+
+    Literal(int index, TokenType type, String raw, String value, Termination termination) {
+      super(index, raw);
+
+      //
+      if (type == null) {
+        throw new NullPointerException();
+      }
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      if (termination == null) {
+        throw new NullPointerException();
+      }
+
+      //
+      this.type = type;
+      this.value = value;
+      this.termination = termination;
+    }
+
+    public boolean isOption() {
+      switch (type) {
+        case SHORT_OPTION:
+        case LONG_OPTION:
+          return true;
+        default:
+          return false;
+      }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (obj instanceof Literal) {
+        Literal that = (Literal)obj;
+        return super.equals(obj) && index == that.index && value.equals(that.value) && termination == that.termination;
+      }
+      return false;
+    }
+
+    @Override
+    public String toString() {
+      return "Token.Literal[index=" + index + ",type=" + type.name() + ",raw=" + raw + ",value=" + value + ",termination=" + termination.name() + "]";
+    }
+  }
 
   /** The index in the containing sequence. */
   final int index;
 
   /** . */
-  final TokenType type;
-
-  /** . */
   final String raw;
 
-  /** . */
-  final String value;
 
-  /** . */
-  final Termination termination;
 
-  Token(int index, TokenType type, String value) {
-    this(index, type, value, value, Termination.DETERMINED);
-  }
-
-  Token(int index, TokenType type, String raw, String value, Termination termination) {
+  Token(int index, String raw) {
 
     if (index < 0) {
       throw new IllegalArgumentException();
     }
-    if (type == null) {
-      throw new NullPointerException();
-    }
     if (raw == null) {
-      throw new NullPointerException();
-    }
-    if (value == null) {
-      throw new NullPointerException();
-    }
-    if (termination == null) {
       throw new NullPointerException();
     }
 
     //
     this.index = index;
-    this.type = type;
     this.raw = raw;
-    this.value = value;
-    this.termination = termination;
   }
 
   /**
@@ -88,16 +153,6 @@ final class Token {
     return index + raw.length();
   }
 
-  public boolean isOption() {
-    switch (type) {
-      case SHORT_OPTION:
-      case LONG_OPTION:
-        return true;
-      default:
-        return false;
-    }
-  }
-
   @Override
   public boolean equals(Object obj) {
     if (obj == this) {
@@ -105,13 +160,8 @@ final class Token {
     }
     if (obj instanceof Token) {
       Token that = (Token)obj;
-      return index == that.index && type == that.type && raw.equals(that.raw) && value.equals(that.value) && termination == that.termination;
+      return index == that.index && raw.equals(that.raw);
     }
     return false;
-  }
-
-  @Override
-  public String toString() {
-    return "Token[index=" + index + ",type=" + type.name() + ",raw=" + raw + ",value=" + value + ",termination=" + termination.name() + "]";
   }
 }

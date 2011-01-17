@@ -68,49 +68,59 @@ public class Parser<T> {
     }
 
     //
-    Token token = tokenizer.peek();
-
-    //
     Event nextEvent = null;
     Status nextStatus = null;
 
     //
+    Token token = tokenizer.peek();
     do {
-      switch (status) {
-        case READING_OPTION:
-          if (token.isOption()) {
-            OptionDescriptor<?> desc = command.getOption(token.value);
-            if (desc != null) {
-              tokenizer.next();
-              int arity = desc.getArity();
-              LinkedList<String> values = new LinkedList<String>();
-              while (arity > 0) {
-                String value = null;
-                if (tokenizer.hasNext()) {
-                  Token a = tokenizer.peek();
-                  if (a.type == TokenType.WORD) {
-                    value = a.value;
-                    tokenizer.next();
-                    arity--;
+      if (token instanceof Token.Whitespace) {
+        nextEvent = new Event.Separator();
+      } else {
+        Token.Literal literal = (Token.Literal)token;
+        switch (status) {
+          case READING_OPTION:
+            if (literal.isOption()) {
+              OptionDescriptor<?> desc = command.getOption(literal.value);
+              if (desc != null) {
+                tokenizer.next();
+                int arity = desc.getArity();
+                LinkedList<String> values = new LinkedList<String>();
+                while (arity > 0) {
+                  if (tokenizer.hasNext()) {
+                    Token a = tokenizer.peek();
+                    if (a instanceof Token.Whitespace) {
+                      tokenizer.next();
+                    } else {
+                      Token.Literal b = (Token.Literal)a;
+                      if (b.type == TokenType.WORD) {
+                        String value = b.value;
+                        values.addLast(value);
+                        tokenizer.next();
+                        arity--;
+                      } else {
+                        break;
+                      }
+                    }
+                  } else {
+                    break;
                   }
                 }
-                if (value != null) {
-                  values.addLast(value);
-                } else {
-                  break;
-                }
-              }
-              nextEvent = new Event.Option(desc, values);
-            } else {
-              // We are reading an unknown option
-              // it could match an option of an implicit command
-              if (command instanceof ClassDescriptor<?>) {
-                MethodDescriptor<T> m = ((ClassDescriptor<T>)command).getMethod(mainName);
-                if (m != null) {
-                  desc = m.getOption(token.value);
-                  if (desc != null) {
-                    command = m;
-                    nextEvent = new Event.Method(m);
+                nextEvent = new Event.Option(desc, values);
+              } else {
+                // We are reading an unknown option
+                // it could match an option of an implicit command
+                if (command instanceof ClassDescriptor<?>) {
+                  MethodDescriptor<T> m = ((ClassDescriptor<T>)command).getMethod(mainName);
+                  if (m != null) {
+                    desc = m.getOption(literal.value);
+                    if (desc != null) {
+                      command = m;
+                      nextEvent = new Event.Method(m);
+                    } else {
+                      nextStatus = Status.ERROR;
+                      nextEvent = new Event.Error();
+                    }
                   } else {
                     nextStatus = Status.ERROR;
                     nextEvent = new Event.Error();
@@ -119,30 +129,27 @@ public class Parser<T> {
                   nextStatus = Status.ERROR;
                   nextEvent = new Event.Error();
                 }
-              } else {
-                nextStatus = Status.ERROR;
-                nextEvent = new Event.Error();
               }
-            }
-          } else {
-            if (command instanceof ClassDescriptor<?>) {
-              MethodDescriptor<T> m = ((ClassDescriptor<T>)command).getMethod(token.value);
-              if (m != null) {
-                tokenizer.next();
-                nextEvent = new Event.Method(m);
-                nextStatus = Parser.Status.READING_ARG;
+            } else {
+              if (command instanceof ClassDescriptor<?>) {
+                MethodDescriptor<T> m = ((ClassDescriptor<T>)command).getMethod(literal.value);
+                if (m != null) {
+                  tokenizer.next();
+                  nextEvent = new Event.Method(m);
+                  nextStatus = Parser.Status.READING_ARG;
+                } else {
+                  nextStatus = Status.READING_ARG;
+                }
               } else {
                 nextStatus = Status.READING_ARG;
               }
-            } else {
-              nextStatus = Status.READING_ARG;
             }
-          }
-          break;
-        case READING_ARG:
-          throw new UnsupportedOperationException("todo");
-        default:
-          throw new AssertionError();
+            break;
+          case READING_ARG:
+            throw new UnsupportedOperationException("todo");
+          default:
+            throw new AssertionError();
+        }
       }
     }
     while (nextEvent == null);

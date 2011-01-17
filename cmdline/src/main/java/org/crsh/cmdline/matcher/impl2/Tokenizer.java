@@ -19,7 +19,6 @@
 
 package org.crsh.cmdline.matcher.impl2;
 
-import javax.xml.stream.events.Characters;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -75,17 +74,23 @@ class Tokenizer implements Iterator<Token> {
   private Token parse() {
 
     //
+    Token next = null;
+
+    // Consume any whitespace
+    int mark = index;
     while (index < s.length() && Character.isWhitespace(s.charAt(index))) {
       index++;
     }
 
     //
-    StringBuilder value = new StringBuilder();
+    if (index > mark) {
+      next = new Token.Whitespace(mark, s.subSequence(mark, index).toString());
+    } else if (index < s.length()) {
 
-    //
-    Token next = null;
-    if (index < s.length()) {
-      int mark = index;
+      //
+      StringBuilder value = new StringBuilder();
+
+      //
       char c;
       TokenType type;
       c = s.charAt(index);
@@ -137,7 +142,7 @@ class Tokenizer implements Iterator<Token> {
       Termination termination = lastQuote == null ? Termination.DETERMINED : lastQuote == '\'' ? Termination.SINGLE_QUOTE : Termination.DOUBLE_QUOTE;
 
       //
-      next = new Token(
+      next = new Token.Literal(
         mark, type,
         s.subSequence(mark, index).toString(),
         value.toString(),

@@ -34,58 +34,62 @@ public class TokenizerTestCase extends TestCase {
 
   public void testSpace() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" ");
+    assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
   public void testWord1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("a");
-    assertEquals(new Token(0, TokenType.WORD, "a"), tokenizer.next());
+    assertEquals(new Token.Literal(0, TokenType.WORD, "a"), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
   public void testWord2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" a");
-    assertEquals(new Token(1, TokenType.WORD, "a"), tokenizer.next());
+    assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
+    assertEquals(new Token.Literal(1, TokenType.WORD, "a"), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
   public void testQuotedWord1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"a");
-    assertEquals(new Token(0, TokenType.WORD, "\"a", "a", Termination.DOUBLE_QUOTE), tokenizer.next());
+    assertEquals(new Token.Literal(0, TokenType.WORD, "\"a", "a", Termination.DOUBLE_QUOTE), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
   public void testQuotedWord2() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"a \"");
-    assertEquals(new Token(0, TokenType.WORD, "\"a \"", "a ", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal(0, TokenType.WORD, "\"a \"", "a ", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
   public void testQuotedWord3() throws Exception {
     Tokenizer tokenizer = new Tokenizer("a\" \"b");
-    assertEquals(new Token(0, TokenType.WORD, "a\" \"b", "a b", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal(0, TokenType.WORD, "a\" \"b", "a b", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
   public void testShortOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-a");
-    assertEquals(new Token(0, TokenType.SHORT_OPTION, "-a", "-a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal(0, TokenType.SHORT_OPTION, "-a", "-a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
   public void testShortOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" -a");
-    assertEquals(new Token(1, TokenType.SHORT_OPTION, "-a", "-a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
+    assertEquals(new Token.Literal(1, TokenType.SHORT_OPTION, "-a", "-a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
   public void testLongOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("--a");
-    assertEquals(new Token(0, TokenType.LONG_OPTION, "--a", "--a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal(0, TokenType.LONG_OPTION, "--a", "--a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
   public void testLongOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" --a");
-    assertEquals(new Token(1, TokenType.LONG_OPTION, "--a", "--a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
+    assertEquals(new Token.Literal(1, TokenType.LONG_OPTION, "--a", "--a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 }
