@@ -69,6 +69,10 @@ public class Event {
     public Method(MethodDescriptor<?> descriptor) {
       this.descriptor = descriptor;
     }
+
+    public MethodDescriptor<?> getDescriptor() {
+      return descriptor;
+    }
   }
 
   public static class Error extends Event {

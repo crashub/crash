@@ -22,9 +22,11 @@ package org.crsh.cmdline.matcher.impl2;
 import junit.framework.TestCase;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -45,6 +47,16 @@ public class ParserTestCase extends TestCase {
       this.parser = new Parser<T>(new Tokenizer(s), command, "main");
     }
 
+    public void assertSeparator() {
+      Event event = parser.bilto();
+      assertTrue("was expecting a separator instead of " + event, event instanceof Event.Separator);
+    }
+
+    public void assertMethod(String name) {
+      Event.Method event = (Event.Method)parser.bilto();
+      assertEquals(name, event.getDescriptor().getName());
+    }
+
     public void assertOption(String name, String... values) {
       Event.Option event = (Event.Option)parser.bilto();
       assertTrue(event.getDescriptor().getNames().contains(name));
@@ -52,13 +64,14 @@ public class ParserTestCase extends TestCase {
     }
   }
 
-  public void testFoo() throws Exception {
+  public void testClassOption() throws Exception {
 
     class A {
       @Option(names = "o") String o;
     }
-
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
     Tester<A> tester = new Tester<A>(cmd, "-o");
     tester.assertOption("o");
     tester = new Tester<A>(cmd, "-o a");
@@ -67,4 +80,108 @@ public class ParserTestCase extends TestCase {
     tester.assertOption("o", "a");
   }
 
+  public void testMethodOption() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Option(names = "o") String o) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "-o");
+    tester.assertMethod("main");
+    tester.assertOption("o");
+    tester = new Tester<A>(cmd, "-o a");
+    tester.assertMethod("main");
+    tester.assertOption("o", "a");
+    tester = new Tester<A>(cmd, "-o a b");
+    tester.assertMethod("main");
+    tester.assertOption("o", "a");
+  }
+
+  public void testClassOptionList() throws Exception {
+
+    class A {
+      @Option(names = "o", arity = 2)
+      List<String> o;
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "-o");
+    tester.assertOption("o");
+    tester = new Tester<A>(cmd, "-o a");
+    tester.assertOption("o", "a");
+    tester = new Tester<A>(cmd, "-o a b");
+    tester.assertOption("o", "a", "b");
+  }
+
+  public void testMethodOptionList() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Option(names = "o", arity = 2) List<String> o) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "-o");
+    tester.assertMethod("main");
+    tester.assertOption("o");
+    tester = new Tester<A>(cmd, "-o a");
+    tester.assertMethod("main");
+    tester.assertOption("o", "a");
+    tester = new Tester<A>(cmd, "-o a b");
+    tester.assertMethod("main");
+    tester.assertOption("o", "a", "b");
+  }
+
+  public void testOptions() throws Exception {
+
+    class A {
+      @Option(names = "o") String o;
+      @Command
+      public void main(@Option(names = "p") String p) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "-o");
+    tester.assertOption("o");
+    tester = new Tester<A>(cmd, "-o a");
+    tester.assertOption("o", "a");
+    tester = new Tester<A>(cmd, "-o a b");
+    tester.assertOption("o", "a");
+
+    //
+    tester = new Tester<A>(cmd, "-p");
+    tester.assertMethod("main");
+    tester.assertOption("p");
+    tester = new Tester<A>(cmd, "-p a");
+    tester.assertMethod("main");
+    tester.assertOption("p", "a");
+    tester = new Tester<A>(cmd, "-p a b");
+    tester.assertMethod("main");
+    tester.assertOption("p", "a");
+
+    //
+/*
+    tester = new Tester<A>(cmd, "-o -p");
+    tester.assertOption("o");
+    tester.assertSeparator();
+    tester.assertMethod("main");
+    tester.assertOption("p");
+    tester = new Tester<A>(cmd, "-o a -p");
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertMethod("main");
+    tester.assertOption("p");
+    tester = new Tester<A>(cmd, "-o a -p b");
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertMethod("main");
+    tester.assertOption("p", "b");
+*/
+  }
 }

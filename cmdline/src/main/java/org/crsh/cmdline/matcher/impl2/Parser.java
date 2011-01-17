@@ -155,7 +155,9 @@ public class Parser<T> {
     while (nextEvent == null);
 
     //
-    this.status = nextStatus;
+    if (nextStatus != null) {
+      this.status = nextStatus;
+    }
 
     //
     return nextEvent;
