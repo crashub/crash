@@ -23,7 +23,7 @@ package org.crsh.cmdline.matcher.impl2;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class Token {
+final class Token {
 
   /** The index in the containing sequence. */
   final int index;
@@ -68,6 +68,24 @@ class Token {
     this.raw = raw;
     this.value = value;
     this.termination = termination;
+  }
+
+  /**
+   * Returns the from index is the containing string.
+   *
+   * @return the from index
+   */
+  public int getFrom() {
+    return index;
+  }
+
+  /**
+   * Returns the to index in the containing string.
+   *
+   * @return the to index
+   */
+  public int getTo() {
+    return index + raw.length();
   }
 
   @Override
