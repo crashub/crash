@@ -80,6 +80,9 @@ class Tokenizer implements Iterator<Token> {
     }
 
     //
+    StringBuilder value = new StringBuilder();
+
+    //
     Token next = null;
     if (index < s.length()) {
       int mark = index;
@@ -88,10 +91,12 @@ class Tokenizer implements Iterator<Token> {
       c = s.charAt(index);
       if (c == '-') {
         index++;
+        value.append('-');
         if (index < s.length()) {
           c = s.charAt(index);
           if (c == '-') {
             index++;
+            value.append('-');
             type = TokenType.LONG_OPTION;
           } else {
             type = TokenType.SHORT_OPTION;
@@ -105,7 +110,6 @@ class Tokenizer implements Iterator<Token> {
 
       //
       Character lastQuote = null;
-      StringBuilder value = new StringBuilder();
       while (index < s.length()) {
         c = s.charAt(index);
         if (lastQuote == null) {

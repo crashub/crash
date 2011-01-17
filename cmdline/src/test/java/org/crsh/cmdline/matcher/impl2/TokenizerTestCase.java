@@ -69,23 +69,23 @@ public class TokenizerTestCase extends TestCase {
 
   public void testShortOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-a");
-    assertEquals(new Token(0, TokenType.SHORT_OPTION, "-a", "a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token(0, TokenType.SHORT_OPTION, "-a", "-a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
   public void testShortOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" -a");
-    assertEquals(new Token(1, TokenType.SHORT_OPTION, "-a", "a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token(1, TokenType.SHORT_OPTION, "-a", "-a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
   public void testLongOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("--a");
-    assertEquals(new Token(0, TokenType.LONG_OPTION, "--a", "a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token(0, TokenType.LONG_OPTION, "--a", "--a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
   public void testLongOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" --a");
-    assertEquals(new Token(1, TokenType.LONG_OPTION, "--a", "a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token(1, TokenType.LONG_OPTION, "--a", "--a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 }

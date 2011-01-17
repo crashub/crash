@@ -88,6 +88,16 @@ final class Token {
     return index + raw.length();
   }
 
+  public boolean isOption() {
+    switch (type) {
+      case SHORT_OPTION:
+      case LONG_OPTION:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj == this) {
