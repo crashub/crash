@@ -35,5 +35,14 @@ abstract class Status {
 
   static class End extends Status {
 
+    /** . */
+    final Code code;
+
+    End(Code code) {
+      if (code == null) {
+        throw new AssertionError();
+      }
+      this.code = code;
+    }
   }
 }

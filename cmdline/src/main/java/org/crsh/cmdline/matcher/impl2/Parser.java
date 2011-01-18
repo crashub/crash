@@ -75,7 +75,8 @@ public class Parser<T> {
     Token token = tokenizer.peek();
     do {
       if (token == null) {
-        nextStatus = new Status.End();
+        nextStatus = new Status.End(Code.DONE);
+        // for now need to generate event, but need to find out how to not do
         nextEvent = new Event.End(Code.DONE);
       } else {
         if (token instanceof Token.Whitespace) {
@@ -123,16 +124,13 @@ public class Parser<T> {
                       command = m;
                       nextEvent = new Event.Method(m);
                     } else {
-                      nextStatus = new Status.End();
-                      nextEvent = new Event.End(Code.NO_SUCH_METHOD_OPTION);
+                      nextStatus = new Status.End(Code.NO_SUCH_METHOD_OPTION);
                     }
                   } else {
-                    nextStatus = new Status.End();
-                    nextEvent = new Event.End(Code.NO_SUCH_CLASS_OPTION);
+                    nextStatus = new Status.End(Code.NO_SUCH_CLASS_OPTION);
                   }
                 } else {
-                  nextStatus = new Status.End();
-                  nextEvent = new Event.End(Code.NO_SUCH_METHOD_OPTION);
+                  nextStatus = new Status.End(Code.NO_SUCH_METHOD_OPTION);
                 }
               }
             } else {
@@ -150,8 +148,7 @@ public class Parser<T> {
                     nextStatus = new Status.ReadingArg();
                     command = m;
                   } else {
-                    nextStatus = new Status.End();
-                    nextEvent = new Event.End(Code.NO_METHOD);
+                    nextStatus = new Status.End(Code.NO_METHOD);
                   }
                 }
               } else {
@@ -181,8 +178,7 @@ public class Parser<T> {
                 throw new UnsupportedOperationException();
 
               } else {
-                nextStatus = new Status.End();
-                nextEvent = new Event.End(Code.NO_ARGUMENT);
+                nextStatus = new Status.End(Code.NO_ARGUMENT);
               }
             }
 
@@ -212,7 +208,7 @@ public class Parser<T> {
             throw new UnsupportedOperationException("todo");
 */
           } else if (status instanceof Status.End) {
-            throw new UnsupportedOperationException();
+            nextEvent = new Event.End(((Status.End)status).code);
           } else {
             throw new AssertionError();
           }
