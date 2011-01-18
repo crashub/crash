@@ -75,32 +75,36 @@ public class Event {
     }
   }
 
-  public static class Error extends Event {
+  public static class End extends Event {
+
+    public static enum Code {
+
+      /** . */
+      DONE,
+
+      /** . */
+      NO_SUCH_CLASS_OPTION,
+
+      /** . */
+      NO_SUCH_METHOD_OPTION,
+
+      /** . */
+      NO_METHOD,
+
+      /** No command argument is available to consume the remaining arguments. */
+      NO_ARGUMENT
+
+    }
 
     /** . */
-    public static final int NO_SUCH_CLASS_OPTION = 0;
+    private final Code code;
 
-    /** . */
-    public static final int NO_SUCH_METHOD_OPTION = 1;
-
-    /** . */
-    public static final int NO_METHOD = 2;
-
-    /** No command argument is available to consume the remaining arguments. */
-    public static final int NO_ARGUMENT = 3;
-
-    /** . */
-    private final int code;
-
-    public Error(int code) {
+    public End(Code code) {
       this.code = code;
     }
 
-    public int getCode() {
+    public Code getCode() {
       return code;
     }
-  }
-
-  public static class Done extends Event {
   }
 }

@@ -64,13 +64,13 @@ public class ParserTestCase extends TestCase {
       assertEquals(Arrays.asList(values), event.getValues());
     }
 
-    public void assertError(int code) {
-      Event.Error event = (Event.Error)parser.bilto();
+    public void assertError(Event.End.Code code) {
+      Event.End event = (Event.End)parser.bilto();
       assertEquals(code, event.getCode());
     }
 
     public void assertDone() {
-      Event.Done event = (Event.Done)parser.bilto();
+      assertError(Event.End.Code.DONE);
     }
   }
 
@@ -82,7 +82,7 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
-    tester.assertError(Event.Error.NO_SUCH_CLASS_OPTION);
+    tester.assertError(Event.End.Code.NO_SUCH_CLASS_OPTION);
   }
 
   public void testUnkownMethodOption1() throws Exception {
@@ -95,7 +95,7 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
-    tester.assertError(Event.Error.NO_SUCH_METHOD_OPTION);
+    tester.assertError(Event.End.Code.NO_SUCH_METHOD_OPTION);
   }
 
   public void testUnkownMethodOption2() throws Exception {
@@ -110,7 +110,7 @@ public class ParserTestCase extends TestCase {
     Tester<A> tester = new Tester<A>(cmd, "m -o");
     tester.assertMethod("m");
     tester.assertSeparator();
-    tester.assertError(Event.Error.NO_SUCH_METHOD_OPTION);
+    tester.assertError(Event.End.Code.NO_SUCH_METHOD_OPTION);
   }
 
   public void testClassOption() throws Exception {
@@ -130,7 +130,7 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertError(Event.Error.NO_METHOD);
+    tester.assertError(Event.End.Code.NO_METHOD);
   }
 
   public void testMethodOption() throws Exception {
@@ -154,7 +154,7 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("main");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertError(Event.Error.NO_ARGUMENT);
+    tester.assertError(Event.End.Code.NO_ARGUMENT);
   }
 
   public void testClassOptionList() throws Exception {
@@ -220,7 +220,7 @@ public class ParserTestCase extends TestCase {
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertMethod("main");
-    tester.assertError(Event.Error.NO_ARGUMENT);
+    tester.assertError(Event.End.Code.NO_ARGUMENT);
 
     //
     tester = new Tester<A>(cmd, "-p");
@@ -235,7 +235,7 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("main");
     tester.assertOption("p", "a");
     tester.assertSeparator();
-    tester.assertError(Event.Error.NO_ARGUMENT);
+    tester.assertError(Event.End.Code.NO_ARGUMENT);
 
     //
     tester = new Tester<A>(cmd, "-o -p");
@@ -277,7 +277,7 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertError(Event.Error.NO_METHOD);
+    tester.assertError(Event.End.Code.NO_METHOD);
 
     //
     tester = new Tester<A>(cmd, "m -p");
@@ -295,7 +295,7 @@ public class ParserTestCase extends TestCase {
     tester.assertSeparator();
     tester.assertOption("p", "a");
     tester.assertSeparator();
-    tester.assertError(Event.Error.NO_ARGUMENT);
+    tester.assertError(Event.End.Code.NO_ARGUMENT);
 
     //
     tester = new Tester<A>(cmd, "-o a m -p");

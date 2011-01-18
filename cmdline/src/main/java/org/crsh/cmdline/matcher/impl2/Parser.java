@@ -23,11 +23,8 @@ import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
-import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
-import org.crsh.cmdline.binding.TypeBinding;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -90,7 +87,7 @@ public class Parser<T> {
     do {
       if (token == null) {
         nextStatus = Status.DONE;
-        nextEvent = new Event.Done();
+        nextEvent = new Event.End(Event.End.Code.DONE);
       } else {
         if (token instanceof Token.Whitespace) {
           nextEvent = new Event.Separator();
@@ -139,15 +136,15 @@ public class Parser<T> {
                         nextEvent = new Event.Method(m);
                       } else {
                         nextStatus = Status.ERROR;
-                        nextEvent = new Event.Error(Event.Error.NO_SUCH_METHOD_OPTION);
+                        nextEvent = new Event.End(Event.End.Code.NO_SUCH_METHOD_OPTION);
                       }
                     } else {
                       nextStatus = Status.ERROR;
-                      nextEvent = new Event.Error(Event.Error.NO_SUCH_CLASS_OPTION);
+                      nextEvent = new Event.End(Event.End.Code.NO_SUCH_CLASS_OPTION);
                     }
                   } else {
                     nextStatus = Status.ERROR;
-                    nextEvent = new Event.Error(Event.Error.NO_SUCH_METHOD_OPTION);
+                    nextEvent = new Event.End(Event.End.Code.NO_SUCH_METHOD_OPTION);
                   }
                 }
               } else {
@@ -166,7 +163,7 @@ public class Parser<T> {
                       command = m;
                     } else {
                       nextStatus = Status.ERROR;
-                      nextEvent = new Event.Error(Event.Error.NO_METHOD);
+                      nextEvent = new Event.End(Event.End.Code.NO_METHOD);
                     }
                   }
                 } else {
@@ -186,7 +183,7 @@ public class Parser<T> {
                   }
                 } else {
                   nextStatus = Status.ERROR;
-                  nextEvent = new Event.Error(Event.Error.NO_ARGUMENT);
+                  nextEvent = new Event.End(Event.End.Code.NO_ARGUMENT);
                 }
               }
 
@@ -216,9 +213,8 @@ public class Parser<T> {
             throw new UnsupportedOperationException("todo");
 */
               break;
-            case DONE:
-              nextEvent = new Event.Done();
-              break;
+            case ERROR:
+              throw new UnsupportedOperationException();
             default:
               throw new AssertionError();
           }
