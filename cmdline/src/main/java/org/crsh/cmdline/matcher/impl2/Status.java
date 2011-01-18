@@ -21,6 +21,7 @@ package org.crsh.cmdline.matcher.impl2;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -61,22 +62,14 @@ abstract class Status {
   static class Arg extends Status {
 
     /** . */
-    final Arg next;
+    final LinkedList<Event> events;
 
     /** . */
-    final ArgumentDescriptor<?> descriptor;
+    final Status next;
 
-    /** . */
-    final List<String> values;
-
-    Arg(Arg next, ArgumentDescriptor<?> descriptor, List<String> values) {
+    Arg(LinkedList<Event> events, Status next) {
+      this.events = events;
       this.next = next;
-      this.descriptor = descriptor;
-      this.values = values;
-    }
-
-    Arg(ArgumentDescriptor<?> descriptor, List<String> values) {
-      this(null, descriptor, values);
     }
   }
 

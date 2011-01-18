@@ -419,6 +419,41 @@ public class ParserTestCase extends TestCase {
     tester.assertDone();
   }
 
+  public void testSatisfyAllMethodArgumentList() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Argument(name = "args") List<String> args) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    tester.assertMethod("main");
+    tester.assertArgument("args", "a");
+    tester.assertDone();
+
+    //
+    tester = new Tester<A>(cmd, "a ", true);
+    tester.assertMethod("main");
+    tester.assertArgument("args", "a");
+    tester.assertSeparator();
+    tester.assertDone();
+
+    //
+    tester = new Tester<A>(cmd, "a b", true);
+    tester.assertMethod("main");
+    tester.assertArgument("args", "a", "b");
+    tester.assertDone();
+
+    //
+    tester = new Tester<A>(cmd, "a b ", true);
+    tester.assertMethod("main");
+    tester.assertArgument("args", "a", "b");
+    tester.assertSeparator();
+    tester.assertDone();
+  }
+
   public void testMethodArguments() throws Exception {
 
     class A {
@@ -435,6 +470,31 @@ public class ParserTestCase extends TestCase {
 
     //
     tester = new Tester<A>(cmd, "a b");
+    tester.assertMethod("main");
+    tester.assertArgument("arg1", "a");
+    tester.assertSeparator();
+    tester.assertArgument("arg2", "b");
+    tester.assertDone();
+  }
+
+  public void testSatisfyAllMethodArguments() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Argument(name = "arg1") String arg1, @Argument(name = "arg2") String arg2) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+/*
+    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    tester.assertMethod("main");
+    tester.assertArgument("arg1", "a");
+    tester.assertDone();
+*/
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "a b", true);
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
