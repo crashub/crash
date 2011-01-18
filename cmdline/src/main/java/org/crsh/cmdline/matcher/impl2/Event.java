@@ -77,25 +77,6 @@ public class Event {
 
   public static class End extends Event {
 
-    public static enum Code {
-
-      /** . */
-      DONE,
-
-      /** . */
-      NO_SUCH_CLASS_OPTION,
-
-      /** . */
-      NO_SUCH_METHOD_OPTION,
-
-      /** . */
-      NO_METHOD,
-
-      /** No command argument is available to consume the remaining arguments. */
-      NO_ARGUMENT
-
-    }
-
     /** . */
     private final Code code;
 
@@ -107,4 +88,5 @@ public class Event {
       return code;
     }
   }
+
 }
