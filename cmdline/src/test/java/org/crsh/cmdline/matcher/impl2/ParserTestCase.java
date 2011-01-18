@@ -341,7 +341,12 @@ public class ParserTestCase extends TestCase {
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
     tester.assertMethod("main");
-//    tester.assertDone();
+    try {
+      tester.assertDone();
+    }
+    catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
 
     //
 //    tester = new Tester<A>(cmd, "a b");

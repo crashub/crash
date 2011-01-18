@@ -61,7 +61,7 @@ public class Parser<T> {
   private Status status;
 
   /** . */
-  private Integer currentArgument;
+  private int currentArgument;
 
   public Parser(Tokenizer tokenizer, ClassDescriptor<T> command, String mainName, boolean satisfyAllArguments) {
     this.tokenizer = tokenizer;
@@ -69,7 +69,7 @@ public class Parser<T> {
     this.mainName = mainName;
     this.status = Status.READING_OPTION;
     this.satisfyAllArguments = satisfyAllArguments;
-    this.currentArgument = null;
+    this.currentArgument = 0;
   }
 
   public boolean isSatisfyAllArguments() {
@@ -177,10 +177,23 @@ public class Parser<T> {
                 throw new AssertionError("todo");
               } else {
                 List<? extends ArgumentDescriptor<?>> arguments = command.getArguments();
-                if (arguments.size() > 0) {
-                  if (currentArgument == null) {
-                    throw new UnsupportedOperationException();
+
+                if (currentArgument < arguments.size()) {
+
+/*
+                  ArgumentDescriptor<?> arg = arguments.get(currentArgument++);
+                  switch (arg.getMultiplicity()) {
+                    case ZERO_OR_ONE:
+                    case ONE:
+
+                      break;
+                    case ZERO_OR_MORE:
                   }
+*/
+
+                  //
+                  throw new UnsupportedOperationException();
+
                 } else {
                   nextStatus = Status.END;
                   nextEvent = new Event.End(Code.NO_ARGUMENT);
