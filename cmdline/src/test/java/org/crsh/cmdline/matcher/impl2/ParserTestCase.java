@@ -381,7 +381,7 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("main");
     tester.assertArgument("arg", "a");
     tester.assertSeparator();
-    tester.assertEnd(Code.NO_ARGUMENT);
+    tester.assertDone();
   }
 
   public void testMethodArgumentList() throws Exception {

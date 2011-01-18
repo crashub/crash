@@ -180,6 +180,22 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   }
 
   /**
+   * Returns a a specified argument by its index.
+   *
+   * @return the command argument
+   * @throws IllegalArgumentException if the index is not within the bounds
+   */
+  public final ArgumentDescriptor<B> getArgument(int index) throws IllegalArgumentException {
+    if (index < 0) {
+      throw new IllegalArgumentException();
+    }
+    if (index >= arguments.size()) {
+      throw new IllegalArgumentException();
+    }
+    return arguments.get(index);
+  }
+
+  /**
    * Returns the command name.
    *
    * @return the command name

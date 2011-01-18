@@ -75,10 +75,17 @@ class Tokenizer implements Iterator<Token> {
   }
 
   void pushBack() {
-    if (ptr == 0) {
-      throw new IllegalStateException("Nothing was pulled from the tokenizer");
+    pushBack(1);
+  }
+
+  void pushBack(int count) {
+    if (count < 0) {
+      throw new IllegalArgumentException();
+    }
+    if (ptr - count < 0) {
+      throw new IllegalStateException("Trying to push back too many tokens");
     } else {
-      ptr--;
+      ptr -= count;
     }
   }
 

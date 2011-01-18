@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -81,7 +83,7 @@ public class Parser<T> {
           nextEvent = new Event.Separator();
           tokenizer.next();
         } else {
-          Token.Literal literal = (Token.Literal)token;
+          final Token.Literal literal = (Token.Literal)token;
           if (status instanceof Status.ReadingOption) {
             if (literal.isOption()) {
               OptionDescriptor<?> desc = command.findOption(literal.value);
@@ -195,33 +197,68 @@ public class Parser<T> {
             }
 
           } else if (status instanceof Status.ComputeArg) {
-/*
-            LinkedList<Token> remaining = new LinkedList<Token>();
-            int count = 0;
+
+
+            // Create a pattern that represent our arguments
+            StringBuilder sb = new StringBuilder("^");
+            for (ArgumentDescriptor<?> arg : command.getArguments()) {
+              switch (arg.getMultiplicity()) {
+                case ZERO_OR_ONE:
+                  sb.append("(.?)");
+                  break;
+                case ONE:
+                  sb.append("(.)");
+                  break;
+                case ZERO_OR_MORE:
+                  sb.append("(.*?)");
+                  break;
+              }
+            }
+            Pattern p = Pattern.compile(sb.toString());
+
+            // Create
+            StringBuilder a = new StringBuilder();
+            int tokenCount = 0;
             do {
               Token t = tokenizer.next();
               if (t instanceof Token.Literal) {
-                count++;
+                a.append("_");
               }
-              remaining.add(t);
+              tokenCount++;
             }
             while (tokenizer.hasNext());
+            tokenizer.pushBack(tokenCount);
 
             //
-            List<? extends ArgumentDescriptor<?>> arguments = command.getArguments();
-
-            // First we assign all the mandatory values
-            for (ArgumentDescriptor<?> argument : arguments) {
-              if (argument.getMultiplicity() == Multiplicity.ONE) {
-                count--;
+            Matcher matcher = p.matcher(a);
+            Status.Arg head = null;
+            if (matcher.find()) {
+              for (int i = matcher.groupCount();i > 0;i--) {
+                ArgumentDescriptor<?> argument = command.getArgument(i - 1);
+                String group = matcher.group(i);
+                int count = group.length();
+                List<String> values = new ArrayList<String>(count);
+                while (count > 0) {
+                  Token t = tokenizer.next();
+                  if (t instanceof Token.Literal) {
+                    values.add(((Token.Literal)t).value);
+                    count--;
+                  }
+                }
+                head = new Status.Arg(head, argument, values);
               }
+              nextStatus = head;
+            } else {
+              throw new UnsupportedOperationException();
             }
-
-
-*/
-            throw new UnsupportedOperationException("todo");
           } else if (status instanceof Status.Arg) {
-            throw new UnsupportedOperationException();
+            Status.Arg sa = (Status.Arg)status;
+            nextEvent = new Event.Argument(sa.descriptor, sa.values);
+            if (sa.next != null) {
+              nextStatus = sa.next;
+            } else {
+              nextStatus = new Status.End(Code.DONE);
+            }
           } else if (status instanceof Status.End) {
             nextEvent = new Event.End(((Status.End)status).code);
           } else {
