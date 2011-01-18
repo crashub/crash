@@ -19,6 +19,8 @@
 
 package org.crsh.cmdline.matcher.impl2;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -26,6 +28,10 @@ package org.crsh.cmdline.matcher.impl2;
 abstract class Status {
 
   static class ReadingOption extends Status {
+
+  }
+
+  static class WantReadArg extends Status {
 
   }
 
@@ -44,6 +50,24 @@ abstract class Status {
 
     ReadingArg next() {
       return new ReadingArg(index + 1);
+    }
+  }
+
+  static class Arg extends Status {
+
+    /** . */
+    final Arg next;
+
+    /** . */
+    final List<String> values;
+
+    Arg(Arg next, List<String> values) {
+      this.next = next;
+      this.values = values;
+    }
+
+    Arg(List<String> values) {
+      this(null, values);
     }
   }
 

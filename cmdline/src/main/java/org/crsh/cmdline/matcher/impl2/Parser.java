@@ -143,53 +143,55 @@ public class Parser<T> {
                   m = classCommand.getMethod(mainName);
                   if (m != null) {
                     nextEvent = new Event.Method(m);
-                    nextStatus = new Status.ReadingArg();
+                    nextStatus = new Status.WantReadArg();
                     command = m;
                   } else {
                     nextStatus = new Status.End(Code.NO_METHOD);
                   }
                 }
               } else {
-                nextStatus = new Status.ReadingArg();
+                nextStatus = new Status.WantReadArg();
               }
             }
-          } else if (status instanceof Status.ReadingArg) {
+          } else if (status instanceof Status.WantReadArg) {
             if (satisfyAllArguments) {
-              throw new AssertionError("todo");
+              nextStatus = new Status.Arg(new ArrayList<String>());
             } else {
-              List<? extends ArgumentDescriptor<?>> arguments = command.getArguments();
-              Status.ReadingArg ra = (Status.ReadingArg)status;
-              if (ra.index < arguments.size()) {
-                ArgumentDescriptor<?> argument = arguments.get(ra.index);
-                switch (argument.getMultiplicity()) {
-                  case ZERO_OR_ONE:
-                  case ONE:
-                    tokenizer.next();
-                    nextEvent = new Event.Argument(argument, Arrays.asList(literal.value));
-                    nextStatus = ra.next();
-                    break;
-                  case ZERO_OR_MORE:
-                    tokenizer.next();
-                    List<String> values = new ArrayList<String>();
-                    values.add(literal.value);
-                    while (tokenizer.hasNext()) {
-                      Token capture = tokenizer.next();
-                      if (capture instanceof Token.Literal) {
-                        values.add(((Token.Literal)capture).value);
+              nextStatus = new Status.ReadingArg();
+            }
+          } else if (status instanceof Status.ReadingArg) {
+            List<? extends ArgumentDescriptor<?>> arguments = command.getArguments();
+            Status.ReadingArg ra = (Status.ReadingArg)status;
+            if (ra.index < arguments.size()) {
+              ArgumentDescriptor<?> argument = arguments.get(ra.index);
+              switch (argument.getMultiplicity()) {
+                case ZERO_OR_ONE:
+                case ONE:
+                  tokenizer.next();
+                  nextEvent = new Event.Argument(argument, Arrays.asList(literal.value));
+                  nextStatus = ra.next();
+                  break;
+                case ZERO_OR_MORE:
+                  tokenizer.next();
+                  List<String> values = new ArrayList<String>();
+                  values.add(literal.value);
+                  while (tokenizer.hasNext()) {
+                    Token capture = tokenizer.next();
+                    if (capture instanceof Token.Literal) {
+                      values.add(((Token.Literal)capture).value);
+                    } else {
+                      if (tokenizer.hasNext()) {
+                        // Ok
                       } else {
-                        if (tokenizer.hasNext()) {
-                          // Ok
-                        } else {
-                          tokenizer.pushBack();
-                          break;
-                        }
+                        tokenizer.pushBack();
+                        break;
                       }
                     }
-                    nextEvent = new Event.Argument(argument, values);
-                }
-              } else {
-                nextStatus = new Status.End(Code.NO_ARGUMENT);
+                  }
+                  nextEvent = new Event.Argument(argument, values);
               }
+            } else {
+              nextStatus = new Status.End(Code.NO_ARGUMENT);
             }
 
 /*
@@ -217,6 +219,8 @@ public class Parser<T> {
 
             throw new UnsupportedOperationException("todo");
 */
+          } else if (status instanceof Status.Arg) {
+            throw new UnsupportedOperationException();
           } else if (status instanceof Status.End) {
             nextEvent = new Event.End(((Status.End)status).code);
           } else {
