@@ -45,7 +45,7 @@ public class ParserTestCase extends TestCase {
 
     private Tester(ClassDescriptor<T> command, String s) {
       this.command = command;
-      this.parser = new Parser<T>(new Tokenizer(s), command, "main");
+      this.parser = new Parser<T>(new Tokenizer(s), command, "main", false);
     }
 
     public void assertSeparator() {
@@ -67,6 +67,10 @@ public class ParserTestCase extends TestCase {
     public void assertError(int code) {
       Event.Error event = (Event.Error)parser.bilto();
       assertEquals(code, event.getCode());
+    }
+
+    public void assertDone() {
+      Event.Done event = (Event.Done)parser.bilto();
     }
   }
 
@@ -119,10 +123,14 @@ public class ParserTestCase extends TestCase {
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
     tester.assertOption("o");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a");
     tester.assertOption("o", "a");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertError(Event.Error.NO_METHOD);
   }
 
   public void testMethodOption() throws Exception {
@@ -137,12 +145,16 @@ public class ParserTestCase extends TestCase {
     Tester<A> tester = new Tester<A>(cmd, "-o");
     tester.assertMethod("main");
     tester.assertOption("o");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a");
     tester.assertMethod("main");
     tester.assertOption("o", "a");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertMethod("main");
     tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertError(Event.Error.NO_ARGUMENT);
   }
 
   public void testClassOptionList() throws Exception {
@@ -156,10 +168,13 @@ public class ParserTestCase extends TestCase {
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
     tester.assertOption("o");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a");
     tester.assertOption("o", "a");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a", "b");
+    tester.assertDone();
   }
 
   public void testMethodOptionList() throws Exception {
@@ -174,12 +189,15 @@ public class ParserTestCase extends TestCase {
     Tester<A> tester = new Tester<A>(cmd, "-o");
     tester.assertMethod("main");
     tester.assertOption("o");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a");
     tester.assertMethod("main");
     tester.assertOption("o", "a");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertMethod("main");
     tester.assertOption("o", "a", "b");
+    tester.assertDone();
   }
 
   public void testOptions1() throws Exception {
@@ -194,21 +212,30 @@ public class ParserTestCase extends TestCase {
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
     tester.assertOption("o");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a");
     tester.assertOption("o", "a");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertMethod("main");
+    tester.assertError(Event.Error.NO_ARGUMENT);
 
     //
     tester = new Tester<A>(cmd, "-p");
     tester.assertMethod("main");
     tester.assertOption("p");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-p a");
     tester.assertMethod("main");
     tester.assertOption("p", "a");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-p a b");
     tester.assertMethod("main");
     tester.assertOption("p", "a");
+    tester.assertSeparator();
+    tester.assertError(Event.Error.NO_ARGUMENT);
 
     //
     tester = new Tester<A>(cmd, "-o -p");
@@ -216,16 +243,19 @@ public class ParserTestCase extends TestCase {
     tester.assertSeparator();
     tester.assertMethod("main");
     tester.assertOption("p");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a -p");
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertMethod("main");
     tester.assertOption("p");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a -p b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertMethod("main");
     tester.assertOption("p", "b");
+    tester.assertDone();
   }
 
   public void testOptions2() throws Exception {
@@ -240,24 +270,32 @@ public class ParserTestCase extends TestCase {
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
     tester.assertOption("o");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a");
     tester.assertOption("o", "a");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertError(Event.Error.NO_METHOD);
 
     //
     tester = new Tester<A>(cmd, "m -p");
     tester.assertMethod("m");
     tester.assertSeparator();
     tester.assertOption("p");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "m -p a");
     tester.assertMethod("m");
     tester.assertSeparator();
     tester.assertOption("p", "a");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "m -p a b");
     tester.assertMethod("m");
     tester.assertSeparator();
     tester.assertOption("p", "a");
+    tester.assertSeparator();
+    tester.assertError(Event.Error.NO_ARGUMENT);
 
     //
     tester = new Tester<A>(cmd, "-o a m -p");
@@ -266,12 +304,14 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("m");
     tester.assertSeparator();
     tester.assertOption("p");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "-o a m -p b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertMethod("m");
     tester.assertSeparator();
     tester.assertOption("p", "b");
+    tester.assertDone();
 
     //
     tester = new Tester<A>(cmd, "m -o a -p");
@@ -280,12 +320,14 @@ public class ParserTestCase extends TestCase {
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertOption("p");
+    tester.assertDone();
     tester = new Tester<A>(cmd, "m -o a -p b");
     tester.assertMethod("m");
     tester.assertSeparator();
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertOption("p", "b");
+    tester.assertDone();
   }
 
   public void testMethodArgument() throws Exception {
@@ -299,11 +341,11 @@ public class ParserTestCase extends TestCase {
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
     tester.assertMethod("main");
-    try {
-      tester.assertSeparator();
-      fail();
-    }
-    catch (UnsupportedOperationException e) {
-    }
+//    tester.assertDone();
+
+    //
+//    tester = new Tester<A>(cmd, "a b");
+//    tester.assertMethod("main");
+//    tester.assertDone();
   }
 }

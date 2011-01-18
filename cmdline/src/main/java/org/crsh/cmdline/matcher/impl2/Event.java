@@ -86,6 +86,9 @@ public class Event {
     /** . */
     public static final int NO_METHOD = 2;
 
+    /** No command argument is available to consume the remaining arguments. */
+    public static final int NO_ARGUMENT = 3;
+
     /** . */
     private final int code;
 
@@ -98,6 +101,6 @@ public class Event {
     }
   }
 
-
-
+  public static class Done extends Event {
+  }
 }
