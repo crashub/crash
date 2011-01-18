@@ -24,6 +24,7 @@ import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.binding.TypeBinding;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -213,23 +214,6 @@ public class Parser<T> {
           nextEvent = new Event.Separator();
           tokenizer.next();
         } else {
-          // Create a pattern that represent our arguments
-          StringBuilder sb = new StringBuilder("^");
-          for (ArgumentDescriptor<?> arg : command.getArguments()) {
-            switch (arg.getMultiplicity()) {
-              case ZERO_OR_ONE:
-                sb.append("(.?)");
-                break;
-              case ONE:
-                sb.append("(.)");
-                break;
-              case ZERO_OR_MORE:
-                sb.append("(.*)");
-                break;
-            }
-          }
-          Pattern p = Pattern.compile(sb.toString());
-
           // Create
           StringBuilder a = new StringBuilder();
           int tokenCount = 0;
@@ -243,31 +227,59 @@ public class Parser<T> {
           while (tokenizer.hasNext());
           tokenizer.pushBack(tokenCount);
 
+          List<? extends ArgumentDescriptor<?>> arguments = command.getArguments();
+
           //
-          LinkedList<Event> events = new LinkedList<Event>();
-          Matcher matcher = p.matcher(a);
-          if (matcher.find()) {
-            for (int i = 1;i <= matcher.groupCount();i++) {
-              ArgumentDescriptor<?> argument = command.getArgument(i - 1);
-              String group = matcher.group(i);
-              int count = group.length();
-              List<String> values = new ArrayList<String>(count);
-              while (count > 0) {
-                Token t = tokenizer.next();
-                if (t instanceof Token.Literal) {
-                  values.add(((Token.Literal)t).value);
-                  count--;
-                }
-              }
-              events.addLast(new Event.Argument(argument, values));
-              if (tokenizer.hasNext()) {
-                events.addLast(new Event.Separator());
-                tokenizer.next();
+          for (int j = arguments.size();j >= 0;j--) {
+
+            // Create a pattern that represent our arguments
+            StringBuilder sb = new StringBuilder("^");
+            for (int i = 0;i < j;i++) {
+              ArgumentDescriptor<?> arg = arguments.get(i);
+              switch (arg.getMultiplicity()) {
+                case ZERO_OR_ONE:
+                  sb.append("(.?)");
+                  break;
+                case ONE:
+                  sb.append("(.)");
+                  break;
+                case ZERO_OR_MORE:
+                  sb.append("(.*)");
+                  break;
               }
             }
-            nextStatus = new Status.Arg(events, new Status.End(Code.DONE));
-          } else {
-            throw new UnsupportedOperationException();
+            Pattern p = Pattern.compile(sb.toString());
+
+            //
+            LinkedList<Event> events = new LinkedList<Event>();
+            Matcher matcher = p.matcher(a);
+            if (matcher.find()) {
+              for (int i = 1;i <= matcher.groupCount();i++) {
+                ArgumentDescriptor<?> argument = command.getArgument(i - 1);
+                String group = matcher.group(i);
+                int count = group.length();
+                List<String> values = new ArrayList<String>(count);
+                while (count > 0) {
+                  Token t = tokenizer.next();
+                  if (t instanceof Token.Literal) {
+                    values.add(((Token.Literal)t).value);
+                    count--;
+                  }
+                }
+                events.addLast(new Event.Argument(argument, values));
+                if (tokenizer.hasNext()) {
+                  events.addLast(new Event.Separator());
+                  tokenizer.next();
+                }
+              }
+              nextStatus = new Status.Arg(events, new Status.End(Code.DONE));
+              break;
+            }
+          }
+
+          //
+          if (nextStatus == null) {
+            throw new AssertionError("should not happen");
           }
         }
       } else if (status instanceof Status.Arg) {

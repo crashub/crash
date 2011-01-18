@@ -25,6 +25,7 @@ import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.annotations.Required;
 
 import java.util.Arrays;
 import java.util.List;
@@ -494,6 +495,52 @@ public class ParserTestCase extends TestCase {
 
     //
     tester = new Tester<A>(cmd, "a b", true);
+    tester.assertMethod("main");
+    tester.assertArgument("arg1", "a");
+    tester.assertSeparator();
+    tester.assertArgument("arg2", "b");
+    tester.assertDone();
+  }
+
+  public void testRequiredMethodArguments() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Required @Argument(name = "arg1") String arg1, @Required @Argument(name = "arg2") String arg2) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "a");
+    tester.assertMethod("main");
+    tester.assertArgument("arg1", "a");
+    tester.assertDone();
+
+    //
+    tester = new Tester<A>(cmd, "a b");
+    tester.assertMethod("main");
+    tester.assertArgument("arg1", "a");
+    tester.assertSeparator();
+    tester.assertArgument("arg2", "b");
+    tester.assertDone();
+  }
+
+  public void testSatisfyAllRequiredMethodArguments() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Required @Argument(name = "arg1") String arg1, @Required @Argument(name = "arg2") String arg2) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    tester.assertMethod("main");
+    tester.assertArgument("arg1", "a");
+    tester.assertDone();
+
+    //
+    tester = new Tester<A>(cmd, "a b");
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
