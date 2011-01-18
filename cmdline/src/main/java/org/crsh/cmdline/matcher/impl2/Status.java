@@ -53,6 +53,9 @@ abstract class Status {
     }
   }
 
+  static class ComputeArg extends Status {
+  }
+
   static class Arg extends Status {
 
     /** . */

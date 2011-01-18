@@ -155,7 +155,7 @@ public class Parser<T> {
             }
           } else if (status instanceof Status.WantReadArg) {
             if (satisfyAllArguments) {
-              nextStatus = new Status.Arg(new ArrayList<String>());
+              nextStatus = new Status.ComputeArg();
             } else {
               nextStatus = new Status.ReadingArg();
             }
@@ -194,6 +194,7 @@ public class Parser<T> {
               nextStatus = new Status.End(Code.NO_ARGUMENT);
             }
 
+          } else if (status instanceof Status.ComputeArg) {
 /*
             LinkedList<Token> remaining = new LinkedList<Token>();
             int count = 0;
@@ -217,8 +218,8 @@ public class Parser<T> {
             }
 
 
-            throw new UnsupportedOperationException("todo");
 */
+            throw new UnsupportedOperationException("todo");
           } else if (status instanceof Status.Arg) {
             throw new UnsupportedOperationException();
           } else if (status instanceof Status.End) {

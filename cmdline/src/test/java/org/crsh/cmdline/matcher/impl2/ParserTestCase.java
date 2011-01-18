@@ -44,8 +44,12 @@ public class ParserTestCase extends TestCase {
     private Parser parser;
 
     private Tester(ClassDescriptor<T> command, String s) {
+      this(command, s, false);
+    }
+
+    private Tester(ClassDescriptor<T> command, String s, boolean satisfyArguments) {
       this.command = command;
-      this.parser = new Parser<T>(new Tokenizer(s), command, "main", false);
+      this.parser = new Parser<T>(new Tokenizer(s), command, "main", satisfyArguments);
     }
 
     public void assertSeparator() {
@@ -352,6 +356,28 @@ public class ParserTestCase extends TestCase {
 
     //
     tester = new Tester<A>(cmd, "a b");
+    tester.assertMethod("main");
+    tester.assertArgument("arg", "a");
+    tester.assertSeparator();
+    tester.assertEnd(Code.NO_ARGUMENT);
+  }
+
+  public void testSatisfyAllMethodArgument() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Argument(name = "arg") String arg) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    tester.assertMethod("main");
+    tester.assertArgument("arg", "a");
+    tester.assertDone();
+
+    //
+    tester = new Tester<A>(cmd, "a b", true);
     tester.assertMethod("main");
     tester.assertArgument("arg", "a");
     tester.assertSeparator();
