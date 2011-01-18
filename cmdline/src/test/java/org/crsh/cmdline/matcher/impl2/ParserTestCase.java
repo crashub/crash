@@ -64,6 +64,12 @@ public class ParserTestCase extends TestCase {
       assertEquals(Arrays.asList(values), event.getValues());
     }
 
+    public void assertArgument(String name, String... values) {
+      Event.Argument event = (Event.Argument)parser.bilto();
+      assertEquals(name, event.getDescriptor().getName());
+      assertEquals(Arrays.asList(values), event.getValues());
+    }
+
     public void assertError(Code code) {
       Event.End event = (Event.End)parser.bilto();
       assertEquals(code, event.getCode());
@@ -334,23 +340,21 @@ public class ParserTestCase extends TestCase {
 
     class A {
       @Command
-      public void main(@Argument String a) {}
+      public void main(@Argument(name = "arg") String arg) {}
     }
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
     tester.assertMethod("main");
-    try {
-      tester.assertDone();
-    }
-    catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-    }
+    tester.assertArgument("arg", "a");
+    tester.assertDone();
 
     //
-//    tester = new Tester<A>(cmd, "a b");
-//    tester.assertMethod("main");
-//    tester.assertDone();
+    tester = new Tester<A>(cmd, "a b");
+    tester.assertMethod("main");
+    tester.assertArgument("arg", "a");
+    tester.assertSeparator();
+    tester.assertError(Code.NO_ARGUMENT);
   }
 }

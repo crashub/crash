@@ -25,6 +25,7 @@ import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,16 +50,12 @@ public class Parser<T> {
   /** . */
   private Status status;
 
-  /** . */
-  private int currentArgument;
-
   public Parser(Tokenizer tokenizer, ClassDescriptor<T> command, String mainName, boolean satisfyAllArguments) {
     this.tokenizer = tokenizer;
     this.command = command;
     this.mainName = mainName;
     this.status = new Status.ReadingOption();
     this.satisfyAllArguments = satisfyAllArguments;
-    this.currentArgument = 0;
   }
 
   public boolean isSatisfyAllArguments() {
@@ -160,23 +157,19 @@ public class Parser<T> {
               throw new AssertionError("todo");
             } else {
               List<? extends ArgumentDescriptor<?>> arguments = command.getArguments();
-
-              if (currentArgument < arguments.size()) {
-
-/*
-                  ArgumentDescriptor<?> arg = arguments.get(currentArgument++);
-                  switch (arg.getMultiplicity()) {
-                    case ZERO_OR_ONE:
-                    case ONE:
-
-                      break;
-                    case ZERO_OR_MORE:
-                  }
-*/
-
-                //
-                throw new UnsupportedOperationException();
-
+              Status.ReadingArg ra = (Status.ReadingArg)status;
+              if (ra.index < arguments.size()) {
+                ArgumentDescriptor<?> argument = arguments.get(ra.index);
+                switch (argument.getMultiplicity()) {
+                  case ZERO_OR_ONE:
+                  case ONE:
+                    tokenizer.next();
+                    nextEvent = new Event.Argument(argument, Arrays.asList(literal.value));
+                    nextStatus = ra.next();
+                    break;
+                  case ZERO_OR_MORE:
+                    throw new UnsupportedOperationException();
+                }
               } else {
                 nextStatus = new Status.End(Code.NO_ARGUMENT);
               }

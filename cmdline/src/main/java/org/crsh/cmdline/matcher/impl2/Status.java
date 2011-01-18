@@ -31,6 +31,20 @@ abstract class Status {
 
   static class ReadingArg extends Status {
 
+    /** . */
+    final int index;
+
+    ReadingArg() {
+      this(0);
+    }
+
+    private ReadingArg(int index) {
+      this.index = index;
+    }
+
+    ReadingArg next() {
+      return new ReadingArg(index + 1);
+    }
   }
 
   static class End extends Status {

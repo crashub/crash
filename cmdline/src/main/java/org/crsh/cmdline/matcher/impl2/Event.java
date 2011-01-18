@@ -19,6 +19,7 @@
 
 package org.crsh.cmdline.matcher.impl2;
 
+import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 
@@ -28,7 +29,7 @@ import java.util.List;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Event {
+public abstract class Event {
 
   public static class Option extends Event {
 
@@ -54,6 +55,33 @@ public class Event {
     @Override
     public String toString() {
       return "Event.Option[descriptor=" + descriptor + ",values=" + values +  "]";
+    }
+  }
+
+  public static class Argument extends Event {
+
+    /** . */
+    private final ArgumentDescriptor<?> descriptor;
+
+    /** . */
+    private final List<String> values;
+
+    public Argument(ArgumentDescriptor<?> descriptor, List<String> values) {
+      this.descriptor = descriptor;
+      this.values = values;
+    }
+
+    public ArgumentDescriptor<?> getDescriptor() {
+      return descriptor;
+    }
+
+    public List<String> getValues() {
+      return values;
+    }
+
+    @Override
+    public String toString() {
+      return "Event.Argument[descriptor=" + descriptor + ",values=" + values +  "]";
     }
   }
 

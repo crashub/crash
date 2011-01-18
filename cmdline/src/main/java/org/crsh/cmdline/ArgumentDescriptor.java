@@ -58,6 +58,16 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
   }
 
   /**
+   * Returns the argument name, that can be null. This value is used for display capabilities and does not play a role
+   * when a command line is parsed.
+   *
+   * @return the argument name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
    * Prints the argument:
    *
    * <ul>
