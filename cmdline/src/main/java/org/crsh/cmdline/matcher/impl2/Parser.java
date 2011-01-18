@@ -42,8 +42,6 @@ public class Parser<T> {
 
     END,
 
-    DONE
-
   }
   /** . */
   private final Tokenizer tokenizer;
@@ -86,7 +84,7 @@ public class Parser<T> {
     Token token = tokenizer.peek();
     do {
       if (token == null) {
-        nextStatus = Status.DONE;
+        nextStatus = Status.END;
         nextEvent = new Event.End(Code.DONE);
       } else {
         if (token instanceof Token.Whitespace) {
