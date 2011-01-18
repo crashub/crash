@@ -486,15 +486,14 @@ public class ParserTestCase extends TestCase {
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
     //
-/*
     Tester<A> tester = new Tester<A>(cmd, "a", true);
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
+    tester.assertArgument("arg2");
     tester.assertDone();
-*/
 
     //
-    Tester<A> tester = new Tester<A>(cmd, "a b", true);
+    tester = new Tester<A>(cmd, "a b", true);
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
