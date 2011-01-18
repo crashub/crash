@@ -40,7 +40,7 @@ public class Parser<T> {
 
     READING_ARG,
 
-    ERROR,
+    END,
 
     DONE
 
@@ -135,15 +135,15 @@ public class Parser<T> {
                         command = m;
                         nextEvent = new Event.Method(m);
                       } else {
-                        nextStatus = Status.ERROR;
+                        nextStatus = Status.END;
                         nextEvent = new Event.End(Code.NO_SUCH_METHOD_OPTION);
                       }
                     } else {
-                      nextStatus = Status.ERROR;
+                      nextStatus = Status.END;
                       nextEvent = new Event.End(Code.NO_SUCH_CLASS_OPTION);
                     }
                   } else {
-                    nextStatus = Status.ERROR;
+                    nextStatus = Status.END;
                     nextEvent = new Event.End(Code.NO_SUCH_METHOD_OPTION);
                   }
                 }
@@ -162,7 +162,7 @@ public class Parser<T> {
                       nextStatus = Status.READING_ARG;
                       command = m;
                     } else {
-                      nextStatus = Status.ERROR;
+                      nextStatus = Status.END;
                       nextEvent = new Event.End(Code.NO_METHOD);
                     }
                   }
@@ -182,7 +182,7 @@ public class Parser<T> {
                     throw new UnsupportedOperationException();
                   }
                 } else {
-                  nextStatus = Status.ERROR;
+                  nextStatus = Status.END;
                   nextEvent = new Event.End(Code.NO_ARGUMENT);
                 }
               }
@@ -213,7 +213,7 @@ public class Parser<T> {
             throw new UnsupportedOperationException("todo");
 */
               break;
-            case ERROR:
+            case END:
               throw new UnsupportedOperationException();
             default:
               throw new AssertionError();
