@@ -25,6 +25,7 @@ import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -168,7 +169,23 @@ public class Parser<T> {
                     nextStatus = ra.next();
                     break;
                   case ZERO_OR_MORE:
-                    throw new UnsupportedOperationException();
+                    tokenizer.next();
+                    List<String> values = new ArrayList<String>();
+                    values.add(literal.value);
+                    while (tokenizer.hasNext()) {
+                      Token capture = tokenizer.next();
+                      if (capture instanceof Token.Literal) {
+                        values.add(((Token.Literal)capture).value);
+                      } else {
+                        if (tokenizer.hasNext()) {
+                          // Ok
+                        } else {
+                          tokenizer.pushBack();
+                          break;
+                        }
+                      }
+                    }
+                    nextEvent = new Event.Argument(argument, values);
                 }
               } else {
                 nextStatus = new Status.End(Code.NO_ARGUMENT);
