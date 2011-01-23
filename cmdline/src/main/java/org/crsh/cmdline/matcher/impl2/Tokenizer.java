@@ -30,6 +30,15 @@ import java.util.NoSuchElementException;
 class Tokenizer implements Iterator<Token> {
 
   /** . */
+  private static final int WORD = 0;
+
+  /** . */
+  private static final int SHORT_OPTION = 1;
+
+  /** . */
+  private static final int LONG_OPTION = 2;
+
+  /** . */
   private final CharSequence s;
 
   /** . */
@@ -118,7 +127,7 @@ class Tokenizer implements Iterator<Token> {
 
       //
       char c;
-      TokenType type;
+      int type;
       c = s.charAt(index);
       if (c == '-') {
         index++;
@@ -128,15 +137,15 @@ class Tokenizer implements Iterator<Token> {
           if (c == '-') {
             index++;
             value.append('-');
-            type = TokenType.LONG_OPTION;
+            type = LONG_OPTION;
           } else {
-            type = TokenType.SHORT_OPTION;
+            type = SHORT_OPTION;
           }
         } else {
-          type = TokenType.SHORT_OPTION;
+          type = SHORT_OPTION;
         }
       } else {
-        type = TokenType.WORD;
+        type = WORD;
       }
 
       //
