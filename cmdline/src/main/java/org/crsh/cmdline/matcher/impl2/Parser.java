@@ -74,25 +74,21 @@ public class Parser<T> {
     Token token = tokenizer.peek();
     do {
       Status nextStatus = null;
-      if (token instanceof Token.Whitespace) {
-      } else {
-        final Token.Literal literal = (Token.Literal)token;
-      }
-
       if (status instanceof Status.ReadingOption) {
         if (token == null) {
           nextStatus = new Status.End(Code.DONE);
         } else if (token instanceof Token.Whitespace) {
-          nextEvent = new Event.Separator();
+          nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
         } else {
           Token.Literal literal = (Token.Literal)token;
           if (literal instanceof Token.Literal.Option) {
+            Token.Literal.Option optionToken = (Token.Literal.Option)literal;
             OptionDescriptor<?> desc = command.findOption(literal.value);
             if (desc != null) {
               tokenizer.next();
               int arity = desc.getArity();
-              LinkedList<String> values = new LinkedList<String>();
+              LinkedList<Token.Literal.Word> values = new LinkedList<Token.Literal.Word>();
               while (arity > 0) {
                 if (tokenizer.hasNext()) {
                   Token a = tokenizer.peek();
@@ -101,8 +97,7 @@ public class Parser<T> {
                   } else {
                     Token.Literal b = (Token.Literal)a;
                     if (b instanceof Token.Literal.Word) {
-                      String value = b.value;
-                      values.addLast(value);
+                      values.addLast((Token.Literal.Word)b);
                       tokenizer.next();
                       arity--;
                     } else {
@@ -114,7 +109,7 @@ public class Parser<T> {
                   break;
                 }
               }
-              nextEvent = new Event.Option(desc, values);
+              nextEvent = new Event.Option(desc, optionToken, values);
             } else {
               // We are reading an unknown option
               // it could match an option of an implicit command
@@ -124,7 +119,7 @@ public class Parser<T> {
                   desc = m.findOption(literal.value);
                   if (desc != null) {
                     command = m;
-                    nextEvent = new Event.Method(m);
+                    nextEvent = new Event.Method.Implicit(m, literal);
                   } else {
                     nextStatus = new Status.End(Code.NO_SUCH_METHOD_OPTION);
                   }
@@ -136,17 +131,18 @@ public class Parser<T> {
               }
             }
           } else {
+            Token.Literal.Word wordLiteral = (Token.Literal.Word)literal;
             if (command instanceof ClassDescriptor<?>) {
               ClassDescriptor<T> classCommand = (ClassDescriptor<T>)command;
-              MethodDescriptor<T> m = classCommand.getMethod(literal.value);
+              MethodDescriptor<T> m = classCommand.getMethod(wordLiteral.value);
               if (m != null) {
                 command = m;
                 tokenizer.next();
-                nextEvent = new Event.Method(m);
+                nextEvent = new Event.Method.Explicit(m, wordLiteral);
               } else {
                 m = classCommand.getMethod(mainName);
                 if (m != null) {
-                  nextEvent = new Event.Method(m);
+                  nextEvent = new Event.Method.Implicit(m, wordLiteral);
                   nextStatus = new Status.WantReadArg();
                   command = m;
                 } else {
@@ -168,7 +164,7 @@ public class Parser<T> {
         if (token == null) {
           nextStatus = new Status.End(Code.DONE);
         } else if (token instanceof Token.Whitespace) {
-          nextEvent = new Event.Separator();
+          nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
         } else {
           final Token.Literal literal = (Token.Literal)token;
@@ -180,17 +176,17 @@ public class Parser<T> {
               case ZERO_OR_ONE:
               case ONE:
                 tokenizer.next();
-                nextEvent = new Event.Argument(argument, Arrays.asList(literal.value));
+                nextEvent = new Event.Argument(argument, Arrays.asList(literal));
                 nextStatus = ra.next();
                 break;
               case ZERO_OR_MORE:
                 tokenizer.next();
-                List<String> values = new ArrayList<String>();
-                values.add(literal.value);
+                List<Token.Literal> values = new ArrayList<Token.Literal>();
+                values.add(literal);
                 while (tokenizer.hasNext()) {
                   Token capture = tokenizer.next();
                   if (capture instanceof Token.Literal) {
-                    values.add(((Token.Literal)capture).value);
+                    values.add(((Token.Literal)capture));
                   } else {
                     if (tokenizer.hasNext()) {
                       // Ok
@@ -210,7 +206,7 @@ public class Parser<T> {
         if (token == null) {
           nextStatus = new Status.End(Code.DONE);
         } else if (token instanceof Token.Whitespace) {
-          nextEvent = new Event.Separator();
+          nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
         } else {
           // Create
@@ -257,18 +253,17 @@ public class Parser<T> {
                 ArgumentDescriptor<?> argument = command.getArgument(i - 1);
                 String group = matcher.group(i);
                 int count = group.length();
-                List<String> values = new ArrayList<String>(count);
+                List<Token.Literal> values = new ArrayList<Token.Literal>(count);
                 while (count > 0) {
                   Token t = tokenizer.next();
                   if (t instanceof Token.Literal) {
-                    values.add(((Token.Literal)t).value);
+                    values.add(((Token.Literal)t));
                     count--;
                   }
                 }
                 events.addLast(new Event.Argument(argument, values));
                 if (tokenizer.hasNext()) {
-                  events.addLast(new Event.Separator());
-                  tokenizer.next();
+                  events.addLast(new Event.Separator((Token.Whitespace)tokenizer.next()));
                 }
               }
               nextStatus = new Status.Arg(events, new Status.End(Code.DONE));
@@ -289,7 +284,11 @@ public class Parser<T> {
           nextEvent = sa.events.removeFirst();
         }
       } else if (status instanceof Status.End) {
-        nextEvent = new Event.End(((Status.End)status).code);
+        if (token != null) {
+          nextEvent = new Event.End(((Status.End)status).code, token.getFrom());
+        } else {
+          nextEvent = new Event.End(((Status.End)status).code, tokenizer.getIndex());
+        }
       } else {
         throw new AssertionError();
       }

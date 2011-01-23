@@ -83,6 +83,10 @@ class Tokenizer implements Iterator<Token> {
     throw new UnsupportedOperationException();
   }
 
+  int getIndex() {
+    return index;
+  }
+
   void pushBack() {
     pushBack(1);
   }
