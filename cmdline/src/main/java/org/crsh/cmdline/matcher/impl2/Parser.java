@@ -24,7 +24,6 @@ import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
-import org.crsh.cmdline.binding.TypeBinding;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +87,7 @@ public class Parser<T> {
           tokenizer.next();
         } else {
           Token.Literal literal = (Token.Literal)token;
-          if (literal.isOption()) {
+          if (literal instanceof Token.Literal.Option) {
             OptionDescriptor<?> desc = command.findOption(literal.value);
             if (desc != null) {
               tokenizer.next();
@@ -101,7 +100,7 @@ public class Parser<T> {
                     tokenizer.next();
                   } else {
                     Token.Literal b = (Token.Literal)a;
-                    if (b.type == TokenType.WORD) {
+                    if (b instanceof Token.Literal.Word) {
                       String value = b.value;
                       values.addLast(value);
                       tokenizer.next();

@@ -168,11 +168,31 @@ class Tokenizer implements Iterator<Token> {
       Termination termination = lastQuote == null ? Termination.DETERMINED : lastQuote == '\'' ? Termination.SINGLE_QUOTE : Termination.DOUBLE_QUOTE;
 
       //
-      next = new Token.Literal(
-        mark, type,
-        s.subSequence(mark, index).toString(),
-        value.toString(),
-        termination);
+      switch (type) {
+        case WORD:
+          next = new Token.Literal.Word(
+            mark,
+            s.subSequence(mark, index).toString(),
+            value.toString(),
+            termination);
+          break;
+        case SHORT_OPTION:
+          next = new Token.Literal.Option.Short(
+            mark,
+            s.subSequence(mark, index).toString(),
+            value.toString(),
+            termination);
+          break;
+        case LONG_OPTION:
+          next = new Token.Literal.Option.Long(
+            mark,
+            s.subSequence(mark, index).toString(),
+            value.toString(),
+            termination);
+          break;
+        default:
+          throw new AssertionError();
+      }
     }
 
     //

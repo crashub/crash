@@ -50,10 +50,36 @@ abstract class Token {
     }
   }
 
-  final static class Literal extends Token {
+  abstract static class Literal extends Token {
 
-    /** . */
-    final TokenType type;
+    abstract static class Option extends Literal {
+
+      Option(int index, String raw, String value, Termination termination) {
+        super(index, raw, value, termination);
+      }
+
+      final static class Short extends Option {
+        Short(int index, String raw, String value, Termination termination) {
+          super(index, raw, value, termination);
+        }
+      }
+
+      final static class Long extends Option {
+        Long(int index, String raw, String value, Termination termination) {
+          super(index, raw, value, termination);
+        }
+      }
+
+    }
+
+    final static class Word extends Literal {
+      Word(int index, String raw, String value, Termination termination) {
+        super(index, raw, value, termination);
+      }
+      Word(int index, String value) {
+        super(index, value);
+      }
+    }
 
     /** . */
     final String value;
@@ -61,17 +87,13 @@ abstract class Token {
     /** . */
     final Termination termination;
 
-    Literal(int index, TokenType type, String value) {
-      this(index, type, value, value, Termination.DETERMINED);
+    Literal(int index, String value) {
+      this(index, value, value, Termination.DETERMINED);
     }
 
-    Literal(int index, TokenType type, String raw, String value, Termination termination) {
+    Literal(int index, String raw, String value, Termination termination) {
       super(index, raw);
 
-      //
-      if (type == null) {
-        throw new NullPointerException();
-      }
       if (value == null) {
         throw new NullPointerException();
       }
@@ -80,19 +102,8 @@ abstract class Token {
       }
 
       //
-      this.type = type;
       this.value = value;
       this.termination = termination;
-    }
-
-    public boolean isOption() {
-      switch (type) {
-        case SHORT_OPTION:
-        case LONG_OPTION:
-          return true;
-        default:
-          return false;
-      }
     }
 
     @Override
@@ -100,7 +111,7 @@ abstract class Token {
       if (obj == this) {
         return true;
       }
-      if (obj instanceof Literal) {
+      if (obj.getClass().equals(getClass())) {
         Literal that = (Literal)obj;
         return super.equals(obj) && index == that.index && value.equals(that.value) && termination == that.termination;
       }
@@ -109,7 +120,7 @@ abstract class Token {
 
     @Override
     public String toString() {
-      return "Token.Literal[index=" + index + ",type=" + type.name() + ",raw=" + raw + ",value=" + value + ",termination=" + termination.name() + "]";
+      return getClass().getSimpleName() + "[index=" + index + ",raw=" + raw + ",value=" + value + ",termination=" + termination.name() + "]";
     }
   }
 
@@ -118,8 +129,6 @@ abstract class Token {
 
   /** . */
   final String raw;
-
-
 
   Token(int index, String raw) {
 
