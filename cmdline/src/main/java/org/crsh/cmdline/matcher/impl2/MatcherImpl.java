@@ -68,6 +68,7 @@ public class MatcherImpl<T> extends Matcher<T> {
 
     //
     List<OptionMatch<ClassFieldBinding>> classOptions = new ArrayList<OptionMatch<ClassFieldBinding>>();
+    List<ArgumentMatch<ClassFieldBinding>> classArguments = new ArrayList<ArgumentMatch<ClassFieldBinding>>();
     List<OptionMatch<MethodArgumentBinding>> methodOptions = new ArrayList<OptionMatch<MethodArgumentBinding>>();
     List<ArgumentMatch<MethodArgumentBinding>> methodArguments = new ArrayList<ArgumentMatch<MethodArgumentBinding>>();
     MethodDescriptor<T> method = null;
@@ -81,9 +82,22 @@ public class MatcherImpl<T> extends Matcher<T> {
         // We don't care
       } else if (event instanceof Event.End) {
         // We are done
-        // check error status and react to it
+        // Check error status and react to it maybe
         Event.End end = (Event.End)event;
-        methodEnd = end.getIndex();
+        int endIndex = end.getIndex();
+
+        // We try to match the main if none was found
+        if (method == null) {
+          classEnd = endIndex;
+          if (mainName != null) {
+            method = descriptor.getMethod(mainName);
+          }
+          if (method != null) {
+            methodEnd = classEnd;
+          }
+        } else {
+          methodEnd = classEnd = endIndex;
+        }
         break;
       } else if (event instanceof Event.Option) {
         Event.Option option = (Event.Option)event;
@@ -113,17 +127,16 @@ public class MatcherImpl<T> extends Matcher<T> {
           values.get(argumentEvent.getValues().size() - 1).getTo(),
           argumentEvent.getStrings()
         );
-        methodArguments.add(match);
+        if (argumentEvent.getDescriptor().getOwner() instanceof ClassDescriptor<?>) {
+          classArguments.add(match);
+        } else {
+          methodArguments.add(match);
+        }
       }
     }
 
     //
-    if (classEnd == null) {
-      classEnd = methodEnd;
-    }
-
-    //
-    ClassMatch classMatch = new ClassMatch(descriptor, classOptions, Collections.<ArgumentMatch<ClassFieldBinding>>emptyList(), s.substring(classEnd));
+    ClassMatch classMatch = new ClassMatch(descriptor, classOptions, classArguments, s.substring(classEnd));
     if (method != null) {
       return new MethodMatch(classMatch, method, false, methodOptions, methodArguments, s.substring(methodEnd));
     } else {
