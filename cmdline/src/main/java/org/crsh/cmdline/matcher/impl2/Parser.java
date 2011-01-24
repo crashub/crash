@@ -150,7 +150,7 @@ public final class Parser<T> {
                   nextStatus = new Status.WantReadArg();
                   command = m;
                 } else {
-                  nextStatus = new Status.End(Code.NO_METHOD);
+                  nextStatus = new Status.WantReadArg();
                 }
               }
             } else {

@@ -142,7 +142,7 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertEnd(Code.NO_METHOD, 5);
+    tester.assertEnd(Code.NO_ARGUMENT, 5);
   }
 
   public void testMethodOption() throws Exception {
@@ -289,7 +289,7 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertEnd(Code.NO_METHOD, 5);
+    tester.assertEnd(Code.NO_ARGUMENT, 5);
 
     //
     tester = new Tester<A>(cmd, "m -p");
@@ -340,6 +340,25 @@ public class ParserTestCase extends TestCase {
     tester.assertSeparator();
     tester.assertOption("p", "b");
     tester.assertDone(11);
+  }
+
+  public void testClassArgument() throws Exception {
+
+    class A {
+      @Argument(name = "arg") String arg;
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "a");
+    tester.assertArgument("arg", "a");
+    tester.assertDone(1);
+
+    //
+    tester = new Tester<A>(cmd, "a b");
+    tester.assertArgument("arg", "a");
+    tester.assertSeparator();
+    tester.assertEnd(Code.NO_ARGUMENT, 2);
   }
 
   public void testMethodArgument() throws Exception {

@@ -34,9 +34,6 @@ public enum Code {
   /** . */
   NO_SUCH_METHOD_OPTION,
 
-  /** . */
-  NO_METHOD,
-
   /** No command argument is available to consume the remaining arguments. */
   NO_ARGUMENT
 
