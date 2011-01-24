@@ -82,11 +82,21 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     this.uArguments = Collections.unmodifiableList(arguments);
   }
 
-  void addParameter(ParameterDescriptor<B> parameter) throws IntrospectionException {
+  /**
+   * Add a parameter to the command.
+   *
+   * @param parameter the parameter to add
+   * @throws IntrospectionException any introspection exception that would prevent the parameter to be added
+   * @throws IllegalArgumentException if the parameter is already associated with another command
+   */
+  final void addParameter(ParameterDescriptor<B> parameter) throws IntrospectionException, NullPointerException IllegalArgumentException {
 
     //
+    if (parameter == null) {
+      throw new NullPointerException("No null parameter accepted");
+    }
     if (parameter.owner != null) {
-      throw new IllegalStateException("The parameter is already associated with a command");
+      throw new IllegalArgumentException("The parameter is already associated with a command");
     }
 
     //
