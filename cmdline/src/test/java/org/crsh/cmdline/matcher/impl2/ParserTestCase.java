@@ -583,7 +583,6 @@ public class ParserTestCase extends TestCase {
     tester.assertDone(1);
 
     //
-    System.out.println("--------------");
     tester = new Tester<A>(cmd, "a b", true);
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");

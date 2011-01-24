@@ -23,14 +23,13 @@ import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
+import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -213,7 +212,123 @@ public final class Parser<T> {
           nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
         } else {
+
+          //
+          List<? extends ArgumentDescriptor<?>> arguments = command.getArguments();
+
+          // Count the number ok remaining non whitespace;
+          int tokenCount = 0;
+          int wordCount = 0;
+          do {
+            Token t = tokenizer.next();
+            if (t instanceof Token.Literal) {
+              wordCount++;
+            }
+            tokenCount++;
+          }
+          while (tokenizer.hasNext());
+          tokenizer.pushBack(tokenCount);
+
+          //
+          int oneCount = 0;
+          int zeroOrOneCount = 0;
+          int index = 0;
+          for (ArgumentDescriptor<?> argument : arguments) {
+            Multiplicity multiplicity = argument.getMultiplicity();
+            if (multiplicity == Multiplicity.ONE) {
+              if (oneCount + 1 > wordCount) {
+                break;
+              }
+              oneCount++;
+            } else if (multiplicity == Multiplicity.ZERO_OR_ONE) {
+              zeroOrOneCount++;
+            }
+            index++;
+          }
+
+          // This the number of arguments we can satisfy
+          arguments = arguments.subList(0, index);
+
+          // How many words we can consume for zeroOrOne and zeroOrMore
+          int toConsume = wordCount - oneCount;
+
+          // Correct the zeroOrOneCount and adjust toConsume
+          zeroOrOneCount = Math.min(zeroOrOneCount, toConsume);
+          toConsume -= zeroOrOneCount;
+
+          // The remaining
+          LinkedList<Event> events = new LinkedList<Event>();
+          for (ArgumentDescriptor<?> argument : arguments) {
+            int size;
+            switch (argument.getMultiplicity()) {
+              case ONE:
+                size = 1;
+                break;
+              case ZERO_OR_ONE:
+                if (zeroOrOneCount > 0) {
+                  zeroOrOneCount--;
+                  size = 1;
+                } else {
+                  size = 0;
+                }
+                break;
+              case ZERO_OR_MORE:
+                // We consume the remaining
+                size = toConsume;
+                toConsume = 0;
+                break;
+              default:
+                throw new AssertionError();
+            }
+
+            // Now take care of the size found
+            List<Token.Literal> values = new ArrayList<Token.Literal>(size);
+            while (size > 0) {
+              Token t = tokenizer.next();
+              if (t instanceof Token.Literal) {
+                values.add(((Token.Literal)t));
+                size--;
+              }
+            }
+            events.addLast(new Event.Argument(argument, values));
+
+            // Add the whitespace if needed
+            if (tokenizer.hasNext() && tokenizer.peek() instanceof Token.Whitespace) {
+              events.addLast(new Event.Separator((Token.Whitespace)tokenizer.next()));
+            }
+          }
+
+          //
+          nextStatus = new Status.Arg(events, new Status.End(Code.DONE));
+
+/*
+          // This the number of arguments we can satisfy
+          // now we want to find how many arguments we can consume
+          arguments = arguments.subList(0, index);
+          int max = wordCount;
+          for (ArgumentDescriptor<?> argument : arguments) {
+            switch (argument.getMultiplicity()) {
+              case ZERO_OR_MORE:
+                max = 0;
+                break;
+              case ONE:
+              case ZERO_OR_ONE:
+                max--;
+                break;
+            }
+            if (max <= 0) {
+              break;
+            }
+          }
+          wordCount = Math.min();
+*/
+
+
+
+
+
           // Create
+/*
           StringBuilder a = new StringBuilder();
           int tokenCount = 0;
           do {
@@ -279,6 +394,7 @@ public final class Parser<T> {
           if (nextStatus == null) {
             throw new AssertionError("should not happen");
           }
+*/
         }
       } else if (status instanceof Status.Arg) {
         Status.Arg sa = (Status.Arg)status;
