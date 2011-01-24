@@ -167,7 +167,7 @@ public class MatcherTestCase extends TestCase {
     for (String s : Arrays.asList("", "bar ")) {
       BC a = new BC();
       analyzer.match(s + "").invoke(new InvocationContext(), a);
-      assertEquals(Collections.<String>emptyList(), a.s);
+      assertEquals(null, a.s);
 
       a = new BC();
       analyzer.match(s + "foo").invoke(new InvocationContext(), a);
