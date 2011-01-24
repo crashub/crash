@@ -97,6 +97,12 @@ public final class Parser<T> {
                   Token a = tokenizer.peek();
                   if (a instanceof Token.Whitespace) {
                     tokenizer.next();
+                    if (tokenizer.hasNext() && tokenizer.peek() instanceof Token.Literal.Word) {
+                      // ok
+                    } else {
+                      tokenizer.pushBack();
+                      break;
+                    }
                   } else {
                     Token.Literal b = (Token.Literal)a;
                     if (b instanceof Token.Literal.Word) {

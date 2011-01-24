@@ -136,6 +136,10 @@ public class ParserTestCase extends TestCase {
     Tester<A> tester = new Tester<A>(cmd, "-o");
     tester.assertOption("o");
     tester.assertDone(2);
+    tester = new Tester<A>(cmd, "-o ");
+    tester.assertOption("o");
+    tester.assertSeparator();
+    tester.assertDone(3);
     tester = new Tester<A>(cmd, "-o a");
     tester.assertOption("o", "a");
     tester.assertDone(4);

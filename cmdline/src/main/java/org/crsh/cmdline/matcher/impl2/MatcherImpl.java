@@ -21,6 +21,7 @@ package org.crsh.cmdline.matcher.impl2;
 
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.Delimiter;
+import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
@@ -38,6 +39,7 @@ import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,9 +100,9 @@ public class MatcherImpl<T> extends Matcher<T> {
     List<ArgumentMatch<MethodArgumentBinding>> methodArguments = new ArrayList<ArgumentMatch<MethodArgumentBinding>>();
     MethodDescriptor<T> method = null;
 
-
+    //
     Integer methodEnd = null;
-    Integer classEnd = null;
+    Integer classEnd;
     Event previous = null;
     while (true) {
       Event event = parser.bilto();
@@ -187,6 +189,8 @@ public class MatcherImpl<T> extends Matcher<T> {
 
     Event last = null;
     Event.Separator separator;
+    MethodDescriptor<?> method = null;
+    Event.End end;
 
     //
     while (true) {
@@ -195,10 +199,12 @@ public class MatcherImpl<T> extends Matcher<T> {
       if (event instanceof Event.Separator) {
         separator = (Event.Separator)event;
       } else if (event instanceof Event.End) {
+        end = (Event.End)event;
         break;
       } else if (event instanceof Event.Option) {
         last = event;
       } else if (event instanceof Event.Method) {
+        method = ((Event.Method)event).getDescriptor();
         last = event;
       } else if (event instanceof Event.Argument) {
         last = event;
@@ -206,11 +212,85 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
 
     //
+    if (end.getCode() != Code.DONE) {
+      return Collections.emptyMap();
+    }
+
     if (last != null) {
       if (separator != null) {
         throw new UnsupportedOperationException();
       } else {
-        throw new UnsupportedOperationException();
+
+        String prefix;
+        Class<? extends Completer> completerType;
+        Termination termination;
+
+        if (last instanceof Event.Option) {
+          Event.Option optionEvent = (Event.Option)last;
+          List<Token.Literal.Word> values = optionEvent.getValues();
+          OptionDescriptor<?> option = optionEvent.getDescriptor();
+
+
+          if (values.size() < option.getArity()) {
+
+          }
+
+          completerType = option.getCompleterType();
+          if (values.isEmpty()) {
+            prefix = "";
+            termination = Termination.DETERMINED;
+          } else {
+            Token.Literal.Word word = values.get(values.size() - 1);
+            prefix = word.value;
+            termination = word.termination;
+          }
+
+          //
+          if (completerType != EmptyCompleter.class) {
+            try {
+              completer = completerType.newInstance();
+            }
+            catch (Exception e) {
+              throw new CmdCompletionException(e);
+            }
+
+            String foo;
+            switch (termination) {
+              case DETERMINED:
+                foo = "";
+                break;
+              case DOUBLE_QUOTE:
+                foo = "\"";
+                break;
+              case SINGLE_QUOTE:
+                foo = "'";
+                break;
+              default:
+                throw new AssertionError();
+            }
+
+            //
+            try {
+              Map<String, Boolean> res = completer.complete(option, prefix);
+              Map<String, String> delimiter = new HashMap<String, String>();
+              for (Map.Entry<String, Boolean> entry : res.entrySet()) {
+                delimiter.put(entry.getKey(), entry.getValue() ? "" + foo : "");
+              }
+              return delimiter;
+            }
+            catch (Exception e) {
+              throw new CmdCompletionException(e);
+            }
+          } else {
+            throw new UnsupportedOperationException();
+          }
+        } else if (last instanceof Event.Argument) {
+          throw new UnsupportedOperationException();
+        } else if (last instanceof Event.Method) {
+          throw new UnsupportedOperationException();
+        } else {
+          throw new AssertionError();
+        }
       }
     } else {
       throw new UnsupportedOperationException();
