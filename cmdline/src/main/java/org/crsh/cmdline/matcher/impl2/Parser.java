@@ -266,7 +266,7 @@ public final class Parser<T> {
                   }
                 }
                 events.addLast(new Event.Argument(argument, values));
-                if (tokenizer.hasNext()) {
+                if (tokenizer.hasNext() && tokenizer.peek() instanceof Token.Whitespace) {
                   events.addLast(new Event.Separator((Token.Whitespace)tokenizer.next()));
                 }
               }

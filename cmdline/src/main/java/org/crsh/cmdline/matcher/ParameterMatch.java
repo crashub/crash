@@ -23,6 +23,7 @@ import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,6 +38,11 @@ public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBind
 
   /** . */
   private final List<Value> values;
+
+  public ParameterMatch(P parameter, Value[] values) {
+    this.parameter = parameter;
+    this.values = Arrays.asList(values);
+  }
 
   public ParameterMatch(P parameter, List<String> rawValues) {
 

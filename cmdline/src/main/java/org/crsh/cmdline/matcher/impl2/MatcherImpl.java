@@ -20,6 +20,7 @@
 package org.crsh.cmdline.matcher.impl2;
 
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
@@ -32,6 +33,7 @@ import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.matcher.ParameterMatch;
+import org.crsh.cmdline.matcher.Value;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
@@ -60,6 +62,29 @@ public class MatcherImpl<T> extends Matcher<T> {
     this.descriptor = descriptor;
   }
 
+  private Value[] bilto(List<? extends Token.Literal> literals) {
+    Value[] values = new Value[literals.size()];
+    for (int i = 0;i < literals.size();i++) {
+      Token.Literal literal = literals.get(i);
+      Delimiter delimiter;
+      switch (literal.termination) {
+        case DETERMINED:
+          delimiter = Delimiter.WHITE_SPACE;
+        break;
+        case DOUBLE_QUOTE:
+          delimiter = Delimiter.DOUBLE_QUOTE;
+          break;
+        case SINGLE_QUOTE:
+          delimiter = Delimiter.SIMPLE_QUOTE;
+          break;
+        default:
+          throw new AssertionError();
+      }
+      values[i] = new Value(literal.raw, literal.value, delimiter, true);
+    }
+    return values;
+  }
+
   @Override
   public CommandMatch<T, ?, ?> match(String s) {
 
@@ -76,15 +101,21 @@ public class MatcherImpl<T> extends Matcher<T> {
 
     Integer methodEnd = null;
     Integer classEnd = null;
+    Event previous = null;
     while (true) {
       Event event = parser.bilto();
       if (event instanceof Event.Separator) {
-        // We don't care
+        //
       } else if (event instanceof Event.End) {
         // We are done
         // Check error status and react to it maybe
         Event.End end = (Event.End)event;
-        int endIndex = end.getIndex();
+        int endIndex;
+        if (previous instanceof Event.Separator) {
+          endIndex = ((Event.Separator)previous).getToken().getFrom();
+        } else {
+          endIndex = end.getIndex();
+        }
 
         // We try to match the main if none was found
         if (method == null) {
@@ -100,9 +131,9 @@ public class MatcherImpl<T> extends Matcher<T> {
         }
         break;
       } else if (event instanceof Event.Option) {
-        Event.Option option = (Event.Option)event;
-        OptionDescriptor<?> desc = option.getDescriptor();
-        OptionMatch match = new OptionMatch(desc, option.getToken().getName(), option.getStrings());
+        Event.Option optionEvent = (Event.Option)event;
+        OptionDescriptor<?> desc = optionEvent.getDescriptor();
+        OptionMatch match = new OptionMatch(desc, optionEvent.getToken().getName(), bilto(optionEvent.getValues()));
         if (desc.getOwner() instanceof ClassDescriptor<?>) {
           classOptions.add(match);
         } else {
@@ -121,18 +152,22 @@ public class MatcherImpl<T> extends Matcher<T> {
       } else if (event instanceof Event.Argument) {
         Event.Argument argumentEvent = (Event.Argument)event;
         List<Token.Literal> values = argumentEvent.getValues();
-        ArgumentMatch match = new ArgumentMatch(
-          argumentEvent.getDescriptor(),
-          values.get(0).getFrom(),
-          values.get(argumentEvent.getValues().size() - 1).getTo(),
-          argumentEvent.getStrings()
-        );
-        if (argumentEvent.getDescriptor().getOwner() instanceof ClassDescriptor<?>) {
-          classArguments.add(match);
-        } else {
-          methodArguments.add(match);
+        ArgumentMatch match;
+        if (values.size() > 0) {
+          match = new ArgumentMatch(
+            argumentEvent.getDescriptor(),
+            values.get(0).getFrom(),
+            values.get(argumentEvent.getValues().size() - 1).getTo(),
+            bilto(argumentEvent.getValues())
+          );
+          if (argumentEvent.getDescriptor().getOwner() instanceof ClassDescriptor<?>) {
+            classArguments.add(match);
+          } else {
+            methodArguments.add(match);
+          }
         }
       }
+      previous = event;
     }
 
     //
@@ -146,6 +181,39 @@ public class MatcherImpl<T> extends Matcher<T> {
 
   @Override
   public Map<String, String> complete(Completer completer, String s) throws CmdCompletionException {
-    throw new UnsupportedOperationException();
+
+    Tokenizer tokenizer = new Tokenizer(s);
+    Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, false);
+
+    Event last = null;
+    Event.Separator separator;
+
+    //
+    while (true) {
+      Event event = parser.bilto();
+      separator = null;
+      if (event instanceof Event.Separator) {
+        separator = (Event.Separator)event;
+      } else if (event instanceof Event.End) {
+        break;
+      } else if (event instanceof Event.Option) {
+        last = event;
+      } else if (event instanceof Event.Method) {
+        last = event;
+      } else if (event instanceof Event.Argument) {
+        last = event;
+      }
+    }
+
+    //
+    if (last != null) {
+      if (separator != null) {
+        throw new UnsupportedOperationException();
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } else {
+      throw new UnsupportedOperationException();
+    }
   }
 }

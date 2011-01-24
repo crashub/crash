@@ -39,6 +39,13 @@ public class Value {
   /** . */
   private final boolean determined;
 
+  public Value(String rawValue, String value, Delimiter delimiter, boolean determined) {
+    this.rawValue = rawValue;
+    this.value = value;
+    this.delimiter = delimiter;
+    this.determined = determined;
+  }
+
   public Value(String s) {
 
     //

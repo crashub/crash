@@ -567,4 +567,28 @@ public class ParserTestCase extends TestCase {
     tester.assertArgument("arg2", "b");
     tester.assertDone(3);
   }
+
+  public void testSatisfyAllMixedMethodArguments() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Argument(name = "arg1") List<String> arg1, @Argument(name = "arg2") String arg2) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "a");
+    tester.assertMethod("main");
+    tester.assertArgument("arg1", "a");
+    tester.assertDone(1);
+
+    //
+    System.out.println("--------------");
+    tester = new Tester<A>(cmd, "a b", true);
+    tester.assertMethod("main");
+    tester.assertArgument("arg1", "a");
+    tester.assertSeparator();
+    tester.assertArgument("arg2", "b");
+    tester.assertDone(3);
+  }
 }
