@@ -32,7 +32,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Formatter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,27 +53,17 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
   /** . */
   private final int size;
 
-  /** . */
-  private final Map<Integer, ParameterDescriptor<MethodArgumentBinding>> parameterMap;
-
   MethodDescriptor(
     ClassDescriptor<T> owner,
     Method method,
     String name,
-    Description info,
-    List<ParameterDescriptor<MethodArgumentBinding>> parameters) throws IntrospectionException {
-    super(name, info, parameters);
-
-    Map<Integer, ParameterDescriptor<MethodArgumentBinding>> parameterMap = new HashMap<Integer, ParameterDescriptor<MethodArgumentBinding>>();
-    for (ParameterDescriptor<MethodArgumentBinding> parameter : parameters) {
-      parameterMap.put(parameter.getBinding().getIndex(), parameter);
-    }
+    Description info) throws IntrospectionException {
+    super(name, info);
 
     //
     this.owner = owner;
     this.method = method;
     this.size = method.getParameterTypes().length;
-    this.parameterMap = parameterMap;
   }
 
   /**
@@ -88,7 +77,12 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
     if (index < 0 || index >= size) {
       throw new IndexOutOfBoundsException("Bad index value " + index);
     }
-    return parameterMap.get(index);
+    for (ParameterDescriptor<MethodArgumentBinding> argument : getParameters()) {
+      if (argument.getBinding().getIndex() == index) {
+        return argument;
+      }
+    }
+    return null;
   }
 
   @Override

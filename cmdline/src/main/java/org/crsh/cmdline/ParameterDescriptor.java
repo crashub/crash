@@ -64,6 +64,9 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   /** The annotation when it exists.  */
   private final Annotation annotation;
 
+  /** . */
+  CommandDescriptor<?, B> owner;
+
   public ParameterDescriptor(
     B binding,
     Type javaType,
@@ -140,6 +143,10 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
 
   public Object parse(String s) {
     return type.parse(javaValueType, s);
+  }
+
+  public CommandDescriptor<?, B> getOwner() {
+    return owner;
   }
 
   public Type getJavaType() {

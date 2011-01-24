@@ -48,7 +48,11 @@ public class CommandFactory {
   private static final Logger log = LoggerFactory.getLogger(CommandFactory.class);
 
   public static <T> ClassDescriptor<T> create(Class<T> type) throws IntrospectionException {
-    return new ClassDescriptor<T>(type, new Description(type), parameters(type));
+    ClassDescriptor<T> descriptor = new ClassDescriptor<T>(type, new Description(type));
+    for (ParameterDescriptor<ClassFieldBinding> parameter : parameters(type)) {
+      descriptor.addParameter(parameter);
+    }
+    return descriptor;
   }
 
   protected static <B extends TypeBinding> ParameterDescriptor<B> create(
@@ -141,16 +145,22 @@ public class CommandFactory {
   public static <T> MethodDescriptor<T> create(ClassDescriptor<T> owner, Method m) throws IntrospectionException {
     Command command = m.getAnnotation(Command.class);
     if (command != null) {
-      List<ParameterDescriptor<MethodArgumentBinding>> parameters = new ArrayList<ParameterDescriptor<MethodArgumentBinding>>();
+
+      //
+      Description info = new Description(m);
+      MethodDescriptor<T> descriptor = new MethodDescriptor<T>(
+        owner,
+        m,
+        m.getName().toLowerCase(),
+        info);
+
       Type[] parameterTypes = m.getGenericParameterTypes();
       Annotation[][] parameterAnnotationMatrix = m.getParameterAnnotations();
       for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
 
-
         Annotation[] parameterAnnotations = parameterAnnotationMatrix[i];
         Type parameterType = parameterTypes[i];
         Tuple tuple = get(parameterAnnotations);
-
 
         MethodArgumentBinding binding = new MethodArgumentBinding(i);
         ParameterDescriptor<MethodArgumentBinding> parameter = create(
@@ -162,22 +172,14 @@ public class CommandFactory {
           tuple.descriptionAnn,
           tuple.ann);
         if (parameter != null) {
-          parameters.add(parameter);
+          descriptor.addParameter(parameter);
         } else {
           log.debug("Method argument with index " + i + " of method " + m + " is not annotated");
         }
       }
 
       //
-      Description info = new Description(m);
-
-      //
-      return new MethodDescriptor<T>(
-        owner,
-        m,
-        m.getName().toLowerCase(),
-        info,
-        parameters);
+      return descriptor;
     } else {
       return null;
     }

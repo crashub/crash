@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,7 +49,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   private final Map<String, OptionDescriptor<B>> optionMap;
 
   /** . */
-  private final Set<OptionDescriptor<B>> options;
+  private boolean listArgument;
 
   /** . */
   private final List<ArgumentDescriptor<B>> arguments;
@@ -57,58 +57,66 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   /** . */
   private final List<ParameterDescriptor<B>> parameters;
 
-  CommandDescriptor(
-    String name,
-    Description description,
-    List<ParameterDescriptor<B>> parameters) throws IntrospectionException {
+  /** . */
+  private final Map<String, OptionDescriptor<B>> uOptionMap;
 
-    Map<String, OptionDescriptor<B>> options = Collections.emptyMap();
-    List<ArgumentDescriptor<B>> arguments = Collections.emptyList();
-    boolean listArgument = false;
-    for (ParameterDescriptor<B> parameter : parameters) {
-      if (parameter instanceof OptionDescriptor) {
-        OptionDescriptor<B> option = (OptionDescriptor<B>)parameter;
-        for (String optionName : option.getNames()) {
-          if (options.isEmpty()) {
-            options = new LinkedHashMap<String, OptionDescriptor<B>>();
-          }
-          options.put((optionName.length() == 1 ? "-" : "--") + optionName, option);
-        }
-      } else if (parameter instanceof ArgumentDescriptor) {
-        ArgumentDescriptor<B> argument = (ArgumentDescriptor<B>)parameter;
-        if (argument.getMultiplicity() == Multiplicity.ZERO_OR_MORE) {
-          if (listArgument) {
-            throw new IntrospectionException();
-          }
-          listArgument = true;
-        }
-        if (arguments.isEmpty()) {
-          arguments = new ArrayList<ArgumentDescriptor<B>>();
-        }
-        arguments.add(argument);
-      }
-    }
+  /** . */
+  private final List<ArgumentDescriptor<B>> uArguments;
 
-    // Clone and partition : option then arguments, we keep the provided order inside a partition
-    ArrayList<ParameterDescriptor<B>> parametersClone = new ArrayList<ParameterDescriptor<B>>();
-    for (ParameterDescriptor<B> param : parameters) {
-      if (param instanceof OptionDescriptor<?>) {
-        parametersClone.add(param);
-      }
-    }
-    for (ParameterDescriptor<B> param : parameters) {
-      if (param instanceof ArgumentDescriptor<?>) {
-        parametersClone.add(param);
-      }
-    }
+  /** . */
+  private final List<ParameterDescriptor<B>> uParameters;
+
+  CommandDescriptor(String name, Description description) throws IntrospectionException {
 
     //
     this.description = description;
-    this.optionMap = options.isEmpty() ? options : Collections.unmodifiableMap(options);
-    this.arguments = arguments.isEmpty() ? arguments : Collections.unmodifiableList(arguments);
-    this.options = options.isEmpty() ? Collections.<OptionDescriptor<B>>emptySet() : Collections.unmodifiableSet(new LinkedHashSet<OptionDescriptor<B>>(options.values()));
+    this.optionMap = new LinkedHashMap<String, OptionDescriptor<B>>();
+    this.arguments = new ArrayList<ArgumentDescriptor<B>>();
     this.name = name;
-    this.parameters = Collections.unmodifiableList(parametersClone);
+    this.parameters = new ArrayList<ParameterDescriptor<B>>();
+    this.listArgument = false;
+
+    //
+    this.uOptionMap = Collections.unmodifiableMap(optionMap);
+    this.uParameters = Collections.unmodifiableList(parameters);
+    this.uArguments = Collections.unmodifiableList(arguments);
+  }
+
+  void addParameter(ParameterDescriptor<B> parameter) throws IntrospectionException {
+
+    //
+    if (parameter.owner != null) {
+      throw new IllegalStateException("The parameter is already associated with a command");
+    }
+
+    //
+    if (parameter instanceof OptionDescriptor) {
+      OptionDescriptor<B> option = (OptionDescriptor<B>)parameter;
+      for (String optionName : option.getNames()) {
+        optionMap.put((optionName.length() == 1 ? "-" : "--") + optionName, option);
+      }
+      ListIterator<ParameterDescriptor<B>> i = parameters.listIterator();
+      while (i.hasNext()) {
+        ParameterDescriptor<B> next = i.next();
+        if (next instanceof ArgumentDescriptor<?>) {
+          i.previous();
+          break;
+        }
+      }
+      i.add(parameter);
+      parameter.owner = this;
+    } else if (parameter instanceof ArgumentDescriptor) {
+      ArgumentDescriptor<B> argument = (ArgumentDescriptor<B>)parameter;
+      if (argument.getMultiplicity() == Multiplicity.ZERO_OR_MORE) {
+        if (listArgument) {
+          throw new IntrospectionException();
+        }
+        listArgument = true;
+      }
+      arguments.add(argument);
+      parameters.add(argument);
+      parameter.owner = this;
+    }
   }
 
   public abstract Class<T> getType();
@@ -131,7 +139,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    * @return the command parameters
    */
   public final Collection<ParameterDescriptor<B>> getParameters() {
-    return parameters;
+    return uParameters;
   }
 
   /**
@@ -140,7 +148,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    * @return the command option names
    */
   public final Set<String> getOptionNames() {
-    return optionMap.keySet();
+    return uOptionMap.keySet();
   }
 
   /**
@@ -149,7 +157,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    * @return the command options
    */
   public final Collection<OptionDescriptor<B>> getOptions() {
-    return options;
+    return uOptionMap.values();
   }
 
   /**
@@ -176,7 +184,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    * @return the command arguments
    */
   public final List<ArgumentDescriptor<B>> getArguments() {
-    return arguments;
+    return uArguments;
   }
 
   /**

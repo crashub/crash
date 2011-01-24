@@ -53,14 +53,8 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   /** . */
   private final Map<String, MethodDescriptor<T>> methodMap;
 
-  public ClassDescriptor(
-    Class<T> type,
-    Description info,
-    List<ParameterDescriptor<ClassFieldBinding>> parameters) throws IntrospectionException {
-    super(
-      type.getSimpleName().toLowerCase(),
-      info,
-      parameters);
+  public ClassDescriptor(Class<T> type, Description info) throws IntrospectionException {
+    super(type.getSimpleName().toLowerCase(), info);
 
     //
     Set<String> optionNames = getOptionNames();
@@ -83,6 +77,30 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     //
     this.methodMap = methodMap;
     this.type = type;
+  }
+
+  @Override
+  void addParameter(ParameterDescriptor<ClassFieldBinding> parameter) throws IntrospectionException {
+
+    // Check we can add the option
+    if (parameter instanceof OptionDescriptor<?>) {
+      OptionDescriptor<ClassFieldBinding> option = (OptionDescriptor<ClassFieldBinding>)parameter;
+      Set<String> blah = new HashSet<String>();
+      for (String optionName : option.getNames()) {
+        blah.add((optionName.length() == 1 ? "-" : "--") + optionName);
+      }
+      for (MethodDescriptor<T> method : methodMap.values()) {
+        Set<String> diff = new HashSet<String>(method.getOptionNames());
+        diff.retainAll(blah);
+        if (diff.size() > 0) {
+          throw new IntrospectionException("Cannot add method " + method.getName() + " because it has common "
+          + " options with its class: " + diff);
+        }
+      }
+    }
+
+    //
+    super.addParameter(parameter);
   }
 
   @Override
