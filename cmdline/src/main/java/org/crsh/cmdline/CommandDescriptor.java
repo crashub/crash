@@ -87,9 +87,10 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    *
    * @param parameter the parameter to add
    * @throws IntrospectionException any introspection exception that would prevent the parameter to be added
+   * @throws NullPointerException if the parameter is null
    * @throws IllegalArgumentException if the parameter is already associated with another command
    */
-  final void addParameter(ParameterDescriptor<B> parameter) throws IntrospectionException, NullPointerException IllegalArgumentException {
+  void addParameter(ParameterDescriptor<B> parameter) throws IntrospectionException, NullPointerException, IllegalArgumentException {
 
     //
     if (parameter == null) {
