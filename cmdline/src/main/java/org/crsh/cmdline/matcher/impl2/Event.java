@@ -49,15 +49,19 @@ public abstract class Event {
       this.values = values;
     }
 
-    public OptionDescriptor<?> getDescriptor() {
+    public final Token.Literal.Option getToken() {
+      return token;
+    }
+
+    public final OptionDescriptor<?> getDescriptor() {
       return descriptor;
     }
 
-    public List<Token.Literal.Word> getValues() {
+    public final List<Token.Literal.Word> getValues() {
       return values;
     }
 
-    public List<String> getStrings() {
+    public final List<String> getStrings() {
       List<String> strings = new ArrayList<String>();
       for (Token.Literal.Word value : values) {
         strings.add(value.value);
@@ -66,7 +70,7 @@ public abstract class Event {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
       return "Event.Option[descriptor=" + descriptor + ",values=" + values +  "]";
     }
   }

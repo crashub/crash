@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Parser<T> {
+public final class Parser<T> {
 
   /** . */
   private final Tokenizer tokenizer;
@@ -63,6 +63,10 @@ public class Parser<T> {
 
   public boolean isSatisfyAllArguments() {
     return satisfyAllArguments;
+  }
+
+  public int getIndex() {
+    return tokenizer.getIndex();
   }
 
   public Event bilto() {
