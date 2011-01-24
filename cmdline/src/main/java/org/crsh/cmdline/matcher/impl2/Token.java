@@ -23,7 +23,7 @@ package org.crsh.cmdline.matcher.impl2;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-abstract class Token {
+public abstract class Token {
 
 
   final static class Whitespace extends Token {
@@ -54,22 +54,29 @@ abstract class Token {
 
     abstract static class Option extends Literal {
 
-      Option(int index, String raw, String value, Termination termination) {
+      /** . */
+      private final String name;
+
+      public final String getName() {
+        return name;
+      }
+
+      Option(int index, String raw, String value, Termination termination, String name) {
         super(index, raw, value, termination);
+        this.name = name;
       }
 
       final static class Short extends Option {
         Short(int index, String raw, String value, Termination termination) {
-          super(index, raw, value, termination);
+          super(index, raw, value, termination, value.substring(1));
         }
       }
 
       final static class Long extends Option {
         Long(int index, String raw, String value, Termination termination) {
-          super(index, raw, value, termination);
+          super(index, raw, value, termination, value.substring(2));
         }
       }
-
     }
 
     final static class Word extends Literal {
