@@ -110,8 +110,6 @@ public class CompleteTestCase extends TestCase {
       void foo(@Option(names = "b", completer = FooCompleter.class) String b) { }
       @Command
       void faa() { }
-      @Command
-      void main() { }
     }
 
     //

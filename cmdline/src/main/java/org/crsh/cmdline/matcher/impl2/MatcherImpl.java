@@ -19,13 +19,16 @@
 
 package org.crsh.cmdline.matcher.impl2;
 
+import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
+import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.matcher.ArgumentMatch;
 import org.crsh.cmdline.matcher.ClassMatch;
 import org.crsh.cmdline.matcher.CmdCompletionException;
@@ -187,15 +190,15 @@ public class MatcherImpl<T> extends Matcher<T> {
     Tokenizer tokenizer = new Tokenizer(s);
     Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, false);
 
+    // Last non separator event
     Event last = null;
-    Event.Separator separator;
+    Event.Separator separator = null;
     MethodDescriptor<?> method = null;
     Event.End end;
 
     //
     while (true) {
       Event event = parser.bilto();
-      separator = null;
       if (event instanceof Event.Separator) {
         separator = (Event.Separator)event;
       } else if (event instanceof Event.End) {
@@ -203,94 +206,154 @@ public class MatcherImpl<T> extends Matcher<T> {
         break;
       } else if (event instanceof Event.Option) {
         last = event;
+        separator = null;
       } else if (event instanceof Event.Method) {
         method = ((Event.Method)event).getDescriptor();
         last = event;
+        separator = null;
       } else if (event instanceof Event.Argument) {
         last = event;
+        separator = null;
       }
     }
 
     //
-    if (end.getCode() != Code.DONE) {
+    if (last == null) {
+      if (method == null) {
+        String prefix = s.substring(end.getIndex());
+        Map<String, String> completions = new HashMap<String, String>();
+        for (MethodDescriptor<?> m : descriptor.getMethods()) {
+          String name = m.getName();
+          if (name.startsWith(prefix)) {
+            if (!name.equals(mainName)) {
+              completions.put(name.substring(prefix.length()), " ");
+            }
+          }
+        }
+        return completions;
+      } else {
+        return Collections.emptyMap();
+      }
+    } else if (end.getCode() != Code.DONE) {
       return Collections.emptyMap();
     }
 
-    if (last != null) {
-      if (separator != null) {
-        throw new UnsupportedOperationException();
+    //
+    String prefix;
+    Termination termination;
+    ParameterDescriptor<?> parameter;
+
+    //
+    if (last instanceof Event.Option) {
+      Event.Option optionEvent = (Event.Option)last;
+      List<Token.Literal.Word> values = optionEvent.getValues();
+      OptionDescriptor<?> option = optionEvent.getDescriptor();
+      if (separator == null) {
+        if (values.size() == 0) {
+          return Collections.singletonMap("", " ");
+        } else if (values.size() <= option.getArity()) {
+          Token.Literal.Word word = values.get(values.size() - 1);
+          prefix = word.value;
+          termination = word.termination;
+        } else {
+          return Collections.emptyMap();
+        }
       } else {
+        if (values.size() < option.getArity()) {
+          prefix = "";
+          termination = Termination.DETERMINED;
+        } else {
 
-        String prefix;
-        Class<? extends Completer> completerType;
-        Termination termination;
-
-        if (last instanceof Event.Option) {
-          Event.Option optionEvent = (Event.Option)last;
-          List<Token.Literal.Word> values = optionEvent.getValues();
-          OptionDescriptor<?> option = optionEvent.getDescriptor();
-
-
-          if (values.size() < option.getArity()) {
-
-          }
-
-          completerType = option.getCompleterType();
-          if (values.isEmpty()) {
+          // IT COULD BE AN ARGUMENT CHECK
+          return Collections.emptyMap();
+        }
+      }
+      parameter = option;
+    } else if (last instanceof Event.Argument) {
+      Event.Argument eventArgument = (Event.Argument)last;
+      ArgumentDescriptor<?> argument = eventArgument.getDescriptor();
+      List<Token.Literal> values = eventArgument.getValues();
+      if (separator != null) {
+        switch (argument.getMultiplicity()) {
+          case ZERO_OR_ONE:
+          case ONE:
+            List<? extends ArgumentDescriptor<?>> arguments = argument.getOwner().getArguments();
+            int index = arguments.indexOf(argument) + 1;
+            if (index < arguments.size()) {
+              throw new UnsupportedOperationException("Need to find next argument and use it for completion");
+            } else {
+              return Collections.emptyMap();
+            }
+          case ZERO_OR_MORE:
             prefix = "";
             termination = Termination.DETERMINED;
-          } else {
-            Token.Literal.Word word = values.get(values.size() - 1);
-            prefix = word.value;
-            termination = word.termination;
-          }
-
-          //
-          if (completerType != EmptyCompleter.class) {
-            try {
-              completer = completerType.newInstance();
-            }
-            catch (Exception e) {
-              throw new CmdCompletionException(e);
-            }
-
-            String foo;
-            switch (termination) {
-              case DETERMINED:
-                foo = "";
-                break;
-              case DOUBLE_QUOTE:
-                foo = "\"";
-                break;
-              case SINGLE_QUOTE:
-                foo = "'";
-                break;
-              default:
-                throw new AssertionError();
-            }
-
-            //
-            try {
-              Map<String, Boolean> res = completer.complete(option, prefix);
-              Map<String, String> delimiter = new HashMap<String, String>();
-              for (Map.Entry<String, Boolean> entry : res.entrySet()) {
-                delimiter.put(entry.getKey(), entry.getValue() ? "" + foo : "");
-              }
-              return delimiter;
-            }
-            catch (Exception e) {
-              throw new CmdCompletionException(e);
-            }
-          } else {
-            throw new UnsupportedOperationException();
-          }
-        } else if (last instanceof Event.Argument) {
-          throw new UnsupportedOperationException();
-        } else if (last instanceof Event.Method) {
-          throw new UnsupportedOperationException();
-        } else {
-          throw new AssertionError();
+            parameter = argument;
+            break;
+          default:
+            throw new AssertionError();
         }
+      } else {
+        Token.Literal value = values.get(values.size() - 1);
+        prefix = value.value;
+        termination = value.termination;
+        parameter = argument;
+      }
+    } else if (last instanceof Event.Method) {
+      if (separator != null) {
+        List<? extends ArgumentDescriptor<?>> arguments = method.getArguments();
+        if (arguments.isEmpty()) {
+          return Collections.emptyMap();
+        } else {
+          ArgumentDescriptor<?> argument = arguments.isEmpty() ? null : arguments.get(0);
+          prefix = "";
+          termination = Termination.DETERMINED;
+          parameter = argument;
+        }
+      } else {
+        return Collections.singletonMap("", " ");
+      }
+    } else {
+      throw new AssertionError();
+    }
+
+    //
+    Class<? extends Completer> completerType = parameter.getCompleterType();
+
+    //
+    if (completerType != EmptyCompleter.class) {
+      try {
+        completer = completerType.newInstance();
+      }
+      catch (Exception e) {
+        throw new CmdCompletionException(e);
+      }
+
+      String foo;
+      switch (termination) {
+        case DETERMINED:
+          foo = "";
+          break;
+        case DOUBLE_QUOTE:
+          foo = "\"";
+          break;
+        case SINGLE_QUOTE:
+          foo = "'";
+          break;
+        default:
+          throw new AssertionError();
+      }
+
+      //
+      try {
+        Map<String, Boolean> res = completer.complete(parameter, prefix);
+        Map<String, String> delimiter = new HashMap<String, String>();
+        for (Map.Entry<String, Boolean> entry : res.entrySet()) {
+          delimiter.put(entry.getKey(), entry.getValue() ? "" + foo : "");
+        }
+        return delimiter;
+      }
+      catch (Exception e) {
+        throw new CmdCompletionException(e);
       }
     } else {
       throw new UnsupportedOperationException();
