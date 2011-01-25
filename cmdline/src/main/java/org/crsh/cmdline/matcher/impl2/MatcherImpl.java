@@ -234,6 +234,25 @@ public class MatcherImpl<T> extends Matcher<T> {
       } else {
         return Collections.emptyMap();
       }
+    } else if (end.getCode() == Code.NO_ARGUMENT) {
+      if (method == null) {
+
+        // Copy / paste
+        String prefix = s.substring(end.getIndex());
+        Map<String, String> completions = new HashMap<String, String>();
+        for (MethodDescriptor<?> m : descriptor.getMethods()) {
+          String name = m.getName();
+          if (name.startsWith(prefix)) {
+            if (!name.equals(mainName)) {
+              completions.put(name.substring(prefix.length()), " ");
+            }
+          }
+        }
+        return completions;
+
+      } else {
+        return Collections.emptyMap();
+      }
     } else if (end.getCode() != Code.DONE) {
       return Collections.emptyMap();
     }
@@ -263,9 +282,25 @@ public class MatcherImpl<T> extends Matcher<T> {
           prefix = "";
           termination = Termination.DETERMINED;
         } else {
+          if (method == null) {
 
-          // IT COULD BE AN ARGUMENT CHECK
-          return Collections.emptyMap();
+            // Copy paste from above
+            String _prefix = s.substring(end.getIndex());
+            Map<String, String> _completions = new HashMap<String, String>();
+            for (MethodDescriptor<?> _m : descriptor.getMethods()) {
+              String _name = _m.getName();
+              if (_name.startsWith(_prefix)) {
+                if (!_name.equals(mainName)) {
+                  _completions.put(_name.substring(_prefix.length()), " ");
+                }
+              }
+            }
+            return _completions;
+
+          } else {
+            // IT COULD BE AN ARGUMENT CHECK
+            return Collections.emptyMap();
+          }
         }
       }
       parameter = option;

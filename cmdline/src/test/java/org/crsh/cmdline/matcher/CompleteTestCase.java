@@ -151,7 +151,7 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
-    assertEquals(Collections.singletonMap("", ""), matcher.complete(""));
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete(""));
     assertEquals(Collections.singletonMap("m", ""), matcher.complete("m"));
     assertEquals(Collections.singletonMap("am", ""), matcher.complete("ma"));
     assertEquals(Collections.singletonMap("iam", ""), matcher.complete("mai"));
