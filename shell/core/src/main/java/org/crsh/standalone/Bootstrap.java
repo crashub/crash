@@ -39,7 +39,6 @@ public class Bootstrap extends PluginLifeCycle {
 
     //
     PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
-    context.start();
 
     //
     start(context);
