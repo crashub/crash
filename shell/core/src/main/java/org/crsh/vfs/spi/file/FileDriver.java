@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -63,7 +64,8 @@ public class FileDriver extends AbstractFSDriver<File> {
   }
 
   public Iterable<File> children(File handle) throws IOException {
-    return Arrays.asList(handle.listFiles());
+    File[] files = handle.listFiles();
+    return files != null ? Arrays.asList(files) : Collections.<File>emptyList();
   }
 
   public URL toURL(File handle) throws IOException {

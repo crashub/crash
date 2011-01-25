@@ -103,6 +103,9 @@ public class Processor implements Runnable {
     try {
       main();
     }
+    catch (Throwable t) {
+      t.printStackTrace();
+    }
     finally {
       if (status.get() == STATUS_WANT_CLOSE) {
         close();
