@@ -56,20 +56,9 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   public ClassDescriptor(Class<T> type, Description info) throws IntrospectionException {
     super(type.getSimpleName().toLowerCase(), info);
 
-    //
-    Set<String> optionNames = getOptionNames();
-
     // Make sure we can add it
     Map<String, MethodDescriptor<T>> methodMap = new LinkedHashMap<String, MethodDescriptor<T>>();
     for (MethodDescriptor<T> method : commands(type)) {
-
-      Set<String> diff = new HashSet<String>(optionNames);
-      diff.retainAll(method.getOptionNames());
-      if (diff.size() > 0) {
-        throw new IntrospectionException("Cannot add method " + method.getName() + " because it has common "
-        + " options with its class: " + diff);
-      }
-
       //
       methodMap.put(method.getName(), method);
     }
