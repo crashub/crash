@@ -287,20 +287,22 @@ public final class Parser<T> {
                 throw new AssertionError();
             }
 
-            // Now take care of the size found
-            List<Token.Literal> values = new ArrayList<Token.Literal>(size);
-            while (size > 0) {
-              Token t = tokenizer.next();
-              if (t instanceof Token.Literal) {
-                values.add(((Token.Literal)t));
-                size--;
+            // Now take care of the argument
+            if (size > 0) {
+              List<Token.Literal> values = new ArrayList<Token.Literal>(size);
+              while (size > 0) {
+                Token t = tokenizer.next();
+                if (t instanceof Token.Literal) {
+                  values.add(((Token.Literal)t));
+                  size--;
+                }
               }
-            }
-            events.addLast(new Event.Argument(argument, values));
+              events.addLast(new Event.Argument(argument, values));
 
-            // Add the whitespace if needed
-            if (tokenizer.hasNext() && tokenizer.peek() instanceof Token.Whitespace) {
-              events.addLast(new Event.Separator((Token.Whitespace)tokenizer.next()));
+              // Add the whitespace if needed
+              if (tokenizer.hasNext() && tokenizer.peek() instanceof Token.Whitespace) {
+                events.addLast(new Event.Separator((Token.Whitespace)tokenizer.next()));
+              }
             }
           }
 

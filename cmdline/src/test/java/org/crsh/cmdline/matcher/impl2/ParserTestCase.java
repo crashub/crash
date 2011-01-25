@@ -514,7 +514,6 @@ public class ParserTestCase extends TestCase {
     Tester<A> tester = new Tester<A>(cmd, "a", true);
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
-    tester.assertArgument("arg2");
     tester.assertDone(1);
 
     //
@@ -572,7 +571,7 @@ public class ParserTestCase extends TestCase {
     tester.assertDone(3);
   }
 
-  public void testSatisfyAllMixedMethodArguments() throws Exception {
+  public void testMixedMethodArguments() throws Exception {
 
     class A {
       @Command
@@ -584,6 +583,27 @@ public class ParserTestCase extends TestCase {
     Tester<A> tester = new Tester<A>(cmd, "a");
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
+    tester.assertDone(1);
+
+    //
+    tester = new Tester<A>(cmd, "a b");
+    tester.assertMethod("main");
+    tester.assertArgument("arg1", "a", "b");
+    tester.assertDone(3);
+  }
+
+  public void testSatisfyAllMixedMethodArguments() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Argument(name = "arg1") List<String> arg1, @Argument(name = "arg2") String arg2) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    tester.assertMethod("main");
+    tester.assertArgument("arg2", "a");
     tester.assertDone(1);
 
     //
