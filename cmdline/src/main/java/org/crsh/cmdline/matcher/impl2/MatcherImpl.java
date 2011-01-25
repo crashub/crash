@@ -366,7 +366,7 @@ public class MatcherImpl<T> extends Matcher<T> {
       String foo;
       switch (termination) {
         case DETERMINED:
-          foo = "";
+          foo = " ";
           break;
         case DOUBLE_QUOTE:
           foo = "\"";

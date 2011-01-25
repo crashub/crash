@@ -193,14 +193,14 @@ public class CompleteTestCase extends TestCase {
 
     //
     for (String m : Arrays.asList("foo -a", "bar")) {
-      assertEquals(a, matcher.complete(m + " "));
-      assertEquals(b, matcher.complete(m + " \""));
-      assertEquals(c, matcher.complete(m + " '"));
-      assertEquals(d, matcher.complete(m + " SOU"));
-      assertEquals(e, matcher.complete(m + " \"SOU"));
-      assertEquals(f, matcher.complete(m + " 'SOU"));
-      assertEquals(g, matcher.complete(m + " SOURCE"));
-      assertEquals(h, matcher.complete(m + " \"SOURCE\""));
+      assertEquals("testing " + m, a, matcher.complete(m + " "));
+      assertEquals("testing " + m, b, matcher.complete(m + " \""));
+      assertEquals("testing " + m, c, matcher.complete(m + " '"));
+      assertEquals("testing " + m, d, matcher.complete(m + " SOU"));
+      assertEquals("testing " + m, e, matcher.complete(m + " \"SOU"));
+      assertEquals("testing " + m, f, matcher.complete(m + " 'SOU"));
+      assertEquals("testing " + m, g, matcher.complete(m + " SOURCE"));
+      assertEquals("testing " + m, h, matcher.complete(m + " \"SOURCE\""));
     }
   }
 
