@@ -389,7 +389,7 @@ public class MatcherImpl<T> extends Matcher<T> {
         throw new CmdCompletionException(e);
       }
     } else {
-      throw new UnsupportedOperationException();
+      return Collections.emptyMap();
     }
   }
 }
