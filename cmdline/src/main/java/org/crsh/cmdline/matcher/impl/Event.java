@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.matcher.impl2;
+package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.MethodDescriptor;

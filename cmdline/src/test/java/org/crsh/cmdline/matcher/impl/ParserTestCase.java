@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.matcher.impl2;
+package org.crsh.cmdline.matcher.impl;
 
 import junit.framework.TestCase;
 import org.crsh.cmdline.ClassDescriptor;
@@ -26,6 +26,10 @@ import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Required;
+import org.crsh.cmdline.matcher.impl.Code;
+import org.crsh.cmdline.matcher.impl.Event;
+import org.crsh.cmdline.matcher.impl.Parser;
+import org.crsh.cmdline.matcher.impl.Tokenizer;
 
 import java.util.Arrays;
 import java.util.List;

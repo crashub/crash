@@ -17,9 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.matcher.impl2;
+package org.crsh.cmdline.matcher.impl;
 
 import junit.framework.TestCase;
+import org.crsh.cmdline.matcher.impl.Termination;
+import org.crsh.cmdline.matcher.impl.Token;
+import org.crsh.cmdline.matcher.impl.Tokenizer;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>

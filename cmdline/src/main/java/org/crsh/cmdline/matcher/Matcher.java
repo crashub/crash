@@ -21,7 +21,7 @@ package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.EmptyCompleter;
-import org.crsh.cmdline.matcher.impl2.MatcherImpl;
+import org.crsh.cmdline.matcher.impl.MatcherImpl;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.Map;
