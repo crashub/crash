@@ -144,7 +144,7 @@ public final class Parser<T> {
             if (command instanceof ClassDescriptor<?>) {
               ClassDescriptor<T> classCommand = (ClassDescriptor<T>)command;
               MethodDescriptor<T> m = classCommand.getMethod(wordLiteral.value);
-              if (m != null) {
+              if (m != null && !m.getName().equals(mainName)) {
                 command = m;
                 tokenizer.next();
                 nextEvent = new Event.Method.Explicit(m, wordLiteral);

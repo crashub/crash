@@ -614,4 +614,34 @@ public class ParserTestCase extends TestCase {
     tester.assertArgument("arg2", "b");
     tester.assertDone(3);
   }
+
+  public void testExplicitMainMethod() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Argument(name = "arg") String arg) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "main");
+    tester.assertMethod("main");
+    tester.assertArgument("arg", "main");
+    tester.assertDone(4);
+  }
+
+  public void testSatisfyAllExplicitMainMethod() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Argument(name = "arg") String arg) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "main", true);
+    tester.assertMethod("main");
+    tester.assertArgument("arg", "main");
+    tester.assertDone(4);
+  }
 }
