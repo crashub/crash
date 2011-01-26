@@ -72,15 +72,28 @@ public class TokenizerTestCase extends TestCase {
     assertFalse(tokenizer.hasNext());
   }
 
+  public void testEmptyShortOption() throws Exception {
+    Tokenizer tokenizer = new Tokenizer("-");
+    assertEquals(new Token.Literal.Option.Short(0, "-", "-", Termination.DETERMINED), tokenizer.next());
+    assertFalse(tokenizer.hasNext());
+  }
+
   public void testShortOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-a");
     assertEquals(new Token.Literal.Option.Short(0, "-a", "-a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
+
   public void testShortOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" -a");
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
     assertEquals(new Token.Literal.Option.Short(1, "-a", "-a", Termination.DETERMINED), tokenizer.next());
+    assertFalse(tokenizer.hasNext());
+  }
+
+  public void testEmptyLongOption() throws Exception {
+    Tokenizer tokenizer = new Tokenizer("--");
+    assertEquals(new Token.Literal.Option.Long(0, "--", "--", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
@@ -89,6 +102,7 @@ public class TokenizerTestCase extends TestCase {
     assertEquals(new Token.Literal.Option.Long(0, "--a", "--a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
+
   public void testLongOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" --a");
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
