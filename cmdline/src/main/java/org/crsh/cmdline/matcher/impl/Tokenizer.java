@@ -84,7 +84,12 @@ class Tokenizer implements Iterator<Token> {
   }
 
   int getIndex() {
-    return index;
+    Token peek = peek();
+    if (peek != null) {
+      return peek.index;
+    } else {
+      return index;
+    }
   }
 
   void pushBack() {

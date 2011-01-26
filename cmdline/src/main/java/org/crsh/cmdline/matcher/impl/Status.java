@@ -61,18 +61,17 @@ abstract class Status {
     /** . */
     final LinkedList<Event> events;
 
-    /** . */
-    final Status next;
-
-    Arg(LinkedList<Event> events, Status next) {
+    Arg(LinkedList<Event> events) {
       this.events = events;
-      this.next = next;
     }
   }
 
+/*
   static class Stop extends Status {
 
-    /** . */
+    */
+/** . *//*
+
     final Code code;
 
     Stop(Code code) {
@@ -82,4 +81,5 @@ abstract class Status {
       this.code = code;
     }
   }
+*/
 }

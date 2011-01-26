@@ -79,7 +79,7 @@ public final class Parser<T> {
       Status nextStatus = null;
       if (status instanceof Status.ReadingOption) {
         if (token == null) {
-          nextStatus = new Status.Stop(Code.DONE);
+          nextEvent = new Event.Stop(Code.DONE, tokenizer.getIndex());
         } else if (token instanceof Token.Whitespace) {
           nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
@@ -130,13 +130,13 @@ public final class Parser<T> {
                     command = m;
                     nextEvent = new Event.Method.Implicit(m, literal);
                   } else {
-                    nextStatus = new Status.Stop(Code.NO_SUCH_METHOD_OPTION);
+                    nextEvent = new Event.Stop(Code.NO_SUCH_METHOD_OPTION, token.getFrom());
                   }
                 } else {
-                  nextStatus = new Status.Stop(Code.NO_SUCH_CLASS_OPTION);
+                  nextEvent = new Event.Stop(Code.NO_SUCH_CLASS_OPTION, token.getFrom());
                 }
               } else {
-                nextStatus = new Status.Stop(Code.NO_SUCH_METHOD_OPTION);
+                nextEvent = new Event.Stop(Code.NO_SUCH_METHOD_OPTION, token.getFrom());
               }
             }
           } else {
@@ -171,7 +171,7 @@ public final class Parser<T> {
         }
       } else if (status instanceof Status.ReadingArg) {
         if (token == null) {
-          nextStatus = new Status.Stop(Code.DONE);
+          nextEvent = new Event.Stop(Code.DONE, tokenizer.getIndex());
         } else if (token instanceof Token.Whitespace) {
           nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
@@ -208,12 +208,12 @@ public final class Parser<T> {
                 nextEvent = new Event.Argument(argument, values);
             }
           } else {
-            nextStatus = new Status.Stop(Code.NO_ARGUMENT);
+            nextEvent = new Event.Stop(Code.NO_ARGUMENT, token.getFrom());
           }
         }
       } else if (status instanceof Status.ComputeArg) {
         if (token == null) {
-          nextStatus = new Status.Stop(Code.DONE);
+          nextEvent = new Event.Stop(Code.DONE, tokenizer.getIndex());
         } else if (token instanceof Token.Whitespace) {
           nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
@@ -307,28 +307,25 @@ public final class Parser<T> {
           }
 
           //
-          nextStatus = new Status.Arg(events, new Status.Stop(Code.DONE));
+          events.addLast(new Event.Stop(Code.DONE, tokenizer.getIndex()));
+
+          //
+          nextStatus = new Status.Arg(events);
         }
       } else if (status instanceof Status.Arg) {
         Status.Arg sa = (Status.Arg)status;
-        if (sa.events.isEmpty()) {
-          nextStatus = sa.next;
-        } else {
-          nextEvent = sa.events.removeFirst();
-        }
-      } else if (status instanceof Status.Stop) {
-        if (token != null) {
-          nextEvent = new Event.Stop(((Status.Stop)status).code, token.getFrom());
-        } else {
-          nextEvent = new Event.Stop(((Status.Stop)status).code, tokenizer.getIndex());
-        }
+        nextEvent = sa.events.removeFirst();
       } else {
         throw new AssertionError();
       }
 
       //
       if (nextStatus != null) {
-        this.status = nextStatus;
+        if (nextEvent instanceof Event.Stop) {
+          throw new AssertionError("can't do both at the same time");
+        } else {
+          this.status = nextStatus;
+        }
       }
     }
     while (nextEvent == null);

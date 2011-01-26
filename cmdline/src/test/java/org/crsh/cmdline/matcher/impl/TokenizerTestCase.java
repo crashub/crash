@@ -20,9 +20,6 @@
 package org.crsh.cmdline.matcher.impl;
 
 import junit.framework.TestCase;
-import org.crsh.cmdline.matcher.impl.Termination;
-import org.crsh.cmdline.matcher.impl.Token;
-import org.crsh.cmdline.matcher.impl.Tokenizer;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -68,7 +65,7 @@ public class TokenizerTestCase extends TestCase {
 
   public void testQuotedWord3() throws Exception {
     Tokenizer tokenizer = new Tokenizer("a\" \"b");
-    assertEquals(new Token.Literal.Word(0,"a\" \"b", "a b", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "a\" \"b", "a b", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
@@ -108,5 +105,18 @@ public class TokenizerTestCase extends TestCase {
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
     assertEquals(new Token.Literal.Option.Long(1, "--a", "--a", Termination.DETERMINED), tokenizer.next());
     assertFalse(tokenizer.hasNext());
+  }
+
+  public void testIndex() throws Exception {
+    Tokenizer tokenizer = new Tokenizer("a b");
+    assertEquals(0, tokenizer.getIndex());
+    assertEquals(new Token.Literal.Word(0, "a"), tokenizer.next());
+    assertEquals(1, tokenizer.getIndex());
+    assertEquals(new Token.Literal.Whitespace(1, " "), tokenizer.next());
+    assertEquals(2, tokenizer.getIndex());
+    tokenizer.pushBack(1);
+    assertEquals(1, tokenizer.getIndex());
+    assertEquals(new Token.Literal.Whitespace(1, " "), tokenizer.next());
+    assertEquals(2, tokenizer.getIndex());
   }
 }
