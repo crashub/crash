@@ -187,25 +187,41 @@ public abstract class Event {
     }
   }
 
-  public static final class Stop extends Event {
+  public static abstract class Stop extends Event {
 
-    /** . */
-    private final Code code;
+    public static class Done extends Stop {
+      Done(int index) {
+        super(index);
+      }
+    }
+
+    public static class NoSuchClassOption extends Stop {
+      NoSuchClassOption(int index) {
+        super(index);
+      }
+    }
+
+    public static class NoSuchMethodOption extends Stop {
+      NoSuchMethodOption(int index) {
+        super(index);
+      }
+    }
+
+    public static class NoArgument extends Stop {
+      NoArgument(int index) {
+        super(index);
+      }
+    }
 
     /** . */
     private final int index;
 
-    Stop(Code code, int index) {
-      this.code = code;
+    Stop(int index) {
       this.index = index;
     }
 
     public int getIndex() {
       return index;
-    }
-
-    public Code getCode() {
-      return code;
     }
   }
 
