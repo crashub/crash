@@ -189,40 +189,54 @@ public abstract class Event {
 
   public static abstract class Stop extends Event {
 
-    public static class Done extends Stop {
+    public abstract int getIndex();
+
+    public static final class Done extends Stop {
+
+      /** . */
+      private final int index;
+
       Done(int index) {
-        super(index);
+        this.index = index;
+      }
+
+      @Override
+      public int getIndex() {
+        return index;
       }
     }
 
-    public static class NoSuchClassOption extends Stop {
-      NoSuchClassOption(int index) {
-        super(index);
+    public static abstract class Unresolved extends Stop {
+
+      /** . */
+      private final Token token;
+
+      Unresolved(Token token) {
+        this.token = token;
       }
-    }
 
-    public static class NoSuchMethodOption extends Stop {
-      NoSuchMethodOption(int index) {
-        super(index);
+      @Override
+      public final int getIndex() {
+        return token.getFrom();
       }
-    }
 
-    public static class NoArgument extends Stop {
-      NoArgument(int index) {
-        super(index);
+      public static class NoSuchClassOption extends Unresolved {
+        NoSuchClassOption(Token token) {
+          super(token);
+        }
       }
-    }
 
-    /** . */
-    private final int index;
+      public static class NoSuchMethodOption extends Unresolved {
+        NoSuchMethodOption(Token token) {
+          super(token);
+        }
+      }
 
-    Stop(int index) {
-      this.index = index;
-    }
-
-    public int getIndex() {
-      return index;
+      public static class NoArgument extends Unresolved {
+        NoArgument(Token token) {
+          super(token);
+        }
+      }
     }
   }
-
 }

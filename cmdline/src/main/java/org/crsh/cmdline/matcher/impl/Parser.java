@@ -130,13 +130,13 @@ public final class Parser<T> {
                     command = m;
                     nextEvent = new Event.Method.Implicit(m, literal);
                   } else {
-                    nextEvent = new Event.Stop.NoSuchMethodOption(token.getFrom());
+                    nextEvent = new Event.Stop.Unresolved.NoSuchMethodOption(token);
                   }
                 } else {
-                  nextEvent = new Event.Stop.NoSuchClassOption(token.getFrom());
+                  nextEvent = new Event.Stop.Unresolved.NoSuchClassOption(token);
                 }
               } else {
-                nextEvent = new Event.Stop.NoSuchMethodOption(token.getFrom());
+                nextEvent = new Event.Stop.Unresolved.NoSuchMethodOption(token);
               }
             }
           } else {
@@ -208,7 +208,7 @@ public final class Parser<T> {
                 nextEvent = new Event.Argument(argument, values);
             }
           } else {
-            nextEvent = new Event.Stop.NoArgument(token.getFrom());
+            nextEvent = new Event.Stop.Unresolved.NoArgument(token);
           }
         }
       } else if (status instanceof Status.ComputeArg) {
