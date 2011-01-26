@@ -144,8 +144,8 @@ public class MatcherImpl<T> extends Matcher<T> {
         if (values.size() > 0) {
           match = new ArgumentMatch(
             argumentEvent.getDescriptor(),
-            values.get(0).getFrom(),
-            values.get(argumentEvent.getValues().size() - 1).getTo(),
+            argumentEvent.getFrom(),
+            argumentEvent.getTo(),
             bilto(argumentEvent.getValues())
           );
           if (argumentEvent.getDescriptor().getOwner() instanceof ClassDescriptor<?>) {
@@ -254,7 +254,7 @@ public class MatcherImpl<T> extends Matcher<T> {
         if (values.size() == 0) {
           return Collections.singletonMap("", " ");
         } else if (values.size() <= option.getArity()) {
-          Token.Literal.Word word = values.get(values.size() - 1);
+          Token.Literal.Word word = optionEvent.peekLast();
           prefix = word.value;
           termination = word.termination;
         } else {
@@ -311,7 +311,7 @@ public class MatcherImpl<T> extends Matcher<T> {
             throw new AssertionError();
         }
       } else {
-        Token.Literal value = values.get(values.size() - 1);
+        Token.Literal value = eventArgument.peekLast();
         prefix = value.value;
         termination = value.termination;
         parameter = argument;

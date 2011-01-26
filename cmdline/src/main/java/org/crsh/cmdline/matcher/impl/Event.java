@@ -22,6 +22,7 @@ package org.crsh.cmdline.matcher.impl;
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.ParameterDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,81 +33,99 @@ import java.util.List;
  */
 public abstract class Event {
 
-  public static final class Option extends Event {
+  public abstract static class Parameter<T extends Token.Literal, D extends ParameterDescriptor<?>> extends Event {
 
     /** . */
-    private final OptionDescriptor<?> descriptor;
+    protected final D descriptor;
+
+    /** . */
+    protected final List<T> values;
+
+    public Parameter(D descriptor, List<T> values) {
+      this.descriptor = descriptor;
+      this.values = values;
+    }
+
+    public final D getDescriptor() {
+      return descriptor;
+    }
+
+    public final List<T> getValues() {
+      return values;
+    }
+
+    public final T peekFirst() {
+      return values.isEmpty() ? null : values.get(0);
+    }
+
+    public final T peekLast() {
+      int size = values.size();
+      return size == 0 ? null : values.get(size - 1);
+    }
+
+    public final List<String> getStrings() {
+      List<String> strings = new ArrayList<String>();
+      for (T value : values) {
+        strings.add(value.value);
+      }
+      return strings;
+    }
+
+    public abstract int getFrom();
+
+    public abstract int getTo();
+
+    @Override
+    public String toString() {
+      return getClass().getSimpleName() + "[descriptor=" + descriptor + ",values=" + values +  "]";
+    }
+  }
+
+  public static final class Option extends Parameter<Token.Literal.Word, OptionDescriptor<?>> {
 
     /** . */
     private final Token.Literal.Option token;
 
-    /** . */
-    private final List<Token.Literal.Word> values;
-
     Option(OptionDescriptor<?> descriptor, Token.Literal.Option token, List<Token.Literal.Word> values) {
-      this.descriptor = descriptor;
+      super(descriptor, values);
+
       this.token = token;
-      this.values = values;
     }
 
     public final Token.Literal.Option getToken() {
       return token;
     }
 
-    public final OptionDescriptor<?> getDescriptor() {
-      return descriptor;
-    }
-
-    public final List<Token.Literal.Word> getValues() {
-      return values;
-    }
-
-    public final List<String> getStrings() {
-      List<String> strings = new ArrayList<String>();
-      for (Token.Literal.Word value : values) {
-        strings.add(value.value);
-      }
-      return strings;
+    @Override
+    public int getFrom() {
+      return token.getFrom();
     }
 
     @Override
-    public final String toString() {
-      return "Event.Option[descriptor=" + descriptor + ",values=" + values +  "]";
+    public int getTo() {
+      return values.size() == 0 ? token.getTo() : peekLast().getTo();
     }
   }
 
-  public static final class Argument extends Event {
+  public static final class Argument extends Parameter<Token.Literal, ArgumentDescriptor<?>> {
 
-    /** . */
-    private final ArgumentDescriptor<?> descriptor;
+    Argument(ArgumentDescriptor<?> descriptor, List<Token.Literal> values) throws IllegalArgumentException {
+      super(descriptor, values);
 
-    /** . */
-    private final List<Token.Literal> values;
-
-    Argument(ArgumentDescriptor<?> descriptor, List<Token.Literal> values) {
-      this.descriptor = descriptor;
-      this.values = values;
-    }
-
-    public ArgumentDescriptor<?> getDescriptor() {
-      return descriptor;
-    }
-
-    public List<Token.Literal> getValues() {
-      return values;
-    }
-
-    public List<String> getStrings() {
-      List<String> strings = new ArrayList<String>();
-      for (Token.Literal value : values) {
-        strings.add(value.value);
+      //
+      if (values.size() == 0) {
+        throw new IllegalArgumentException("No empty values");
       }
-      return strings;
     }
 
     @Override
-    public String toString() {
-      return "Event.Argument[descriptor=" + descriptor + ",values=" + values +  "]";
+    public int getFrom() {
+      return peekFirst().getFrom();
+    }
+
+    @Override
+    public int getTo() {
+      return peekLast().getTo();
     }
   }
 
