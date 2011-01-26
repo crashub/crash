@@ -216,27 +216,29 @@ public class MatcherImpl<T> extends Matcher<T> {
       } else {
         return Collections.emptyMap();
       }
-    } else if (end instanceof Event.Stop.Unresolved.NoArgument) {
-      if (method == null) {
+    } else if (end instanceof Event.Stop.Unresolved) {
+      if (end instanceof Event.Stop.Unresolved.NoArgument) {
+        if (method == null) {
 
-        // Copy / paste
-        String prefix = s.substring(end.getIndex());
-        Map<String, String> completions = new HashMap<String, String>();
-        for (MethodDescriptor<?> m : descriptor.getMethods()) {
-          String name = m.getName();
-          if (name.startsWith(prefix)) {
-            if (!name.equals(mainName)) {
-              completions.put(name.substring(prefix.length()), " ");
+          // Copy / paste
+          String prefix = s.substring(end.getIndex());
+          Map<String, String> completions = new HashMap<String, String>();
+          for (MethodDescriptor<?> m : descriptor.getMethods()) {
+            String name = m.getName();
+            if (name.startsWith(prefix)) {
+              if (!name.equals(mainName)) {
+                completions.put(name.substring(prefix.length()), " ");
+              }
             }
           }
-        }
-        return completions;
+          return completions;
 
+        } else {
+          return Collections.emptyMap();
+        }
       } else {
         return Collections.emptyMap();
       }
-    } else if (!(end instanceof Event.Stop.Done)) {
-      return Collections.emptyMap();
     }
 
     //
