@@ -206,12 +206,12 @@ public abstract class Event {
       }
     }
 
-    public static abstract class Unresolved extends Stop {
+    public static abstract class Unresolved<T extends Token> extends Stop {
 
       /** . */
-      private final Token token;
+      private final T token;
 
-      Unresolved(Token token) {
+      Unresolved(T token) {
         this.token = token;
       }
 
@@ -220,19 +220,23 @@ public abstract class Event {
         return token.getFrom();
       }
 
-      public static class NoSuchClassOption extends Unresolved {
-        NoSuchClassOption(Token token) {
+      public T getToken() {
+        return token;
+      }
+
+      public static class NoSuchClassOption extends Unresolved<Token.Literal.Option> {
+        NoSuchClassOption(Token.Literal.Option token) {
           super(token);
         }
       }
 
-      public static class NoSuchMethodOption extends Unresolved {
-        NoSuchMethodOption(Token token) {
+      public static class NoSuchMethodOption extends Unresolved<Token.Literal.Option> {
+        NoSuchMethodOption(Token.Literal.Option token) {
           super(token);
         }
       }
 
-      public static class TooManyArguments extends Unresolved {
+      public static class TooManyArguments extends Unresolved<Token> {
         TooManyArguments(Token token) {
           super(token);
         }

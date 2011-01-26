@@ -237,7 +237,8 @@ public class MatcherImpl<T> extends Matcher<T> {
           return Collections.emptyMap();
         }
       } else if (end instanceof Event.Stop.Unresolved.NoSuchMethodOption) {
-        return Collections.emptyMap();
+        Event.Stop.Unresolved.NoSuchMethodOption nsmo = (Event.Stop.Unresolved.NoSuchMethodOption)end;
+        throw new UnsupportedOperationException("tofinish");
       } else {
         return Collections.emptyMap();
       }

@@ -130,13 +130,13 @@ public final class Parser<T> {
                     command = m;
                     nextEvent = new Event.Method.Implicit(m, literal);
                   } else {
-                    nextEvent = new Event.Stop.Unresolved.NoSuchMethodOption(token);
+                    nextEvent = new Event.Stop.Unresolved.NoSuchMethodOption(optionToken);
                   }
                 } else {
-                  nextEvent = new Event.Stop.Unresolved.NoSuchClassOption(token);
+                  nextEvent = new Event.Stop.Unresolved.NoSuchClassOption(optionToken);
                 }
               } else {
-                nextEvent = new Event.Stop.Unresolved.NoSuchMethodOption(token);
+                nextEvent = new Event.Stop.Unresolved.NoSuchMethodOption(optionToken);
               }
             }
           } else {
