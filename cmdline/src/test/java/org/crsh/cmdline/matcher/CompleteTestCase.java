@@ -99,7 +99,32 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.singletonMap("dc", ""), matcher.complete("m a cd"));
   }
 
-  public void testOption() throws Exception
+  public void _testOption() throws Exception
+  {
+
+    class A {
+      @Option(names = {"a", "add", "addition"}) String add;
+    }
+
+    Map<String, String> a = new HashMap<String, String>();
+    a.put("a", " ");
+    a.put("add", " ");
+    a.put("addition", " ");
+
+    //
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    Matcher<A> matcher = Matcher.createMatcher(desc);
+    assertEquals(a, matcher.complete("-"));
+/*
+    assertEquals(Collections.singletonMap("a", ""), matcher.complete("-a a"));
+    assertEquals(Collections.singletonMap("ba", ""), matcher.complete("-a ab"));
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a -b"));
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a b "));
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a b c"));
+*/
+  }
+
+  public void testOptionValue() throws Exception
   {
 
     class A {
