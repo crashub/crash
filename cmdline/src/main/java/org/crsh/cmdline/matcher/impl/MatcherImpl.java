@@ -217,7 +217,7 @@ public class MatcherImpl<T> extends Matcher<T> {
         return Collections.emptyMap();
       }
     } else if (end instanceof Event.Stop.Unresolved) {
-      if (end instanceof Event.Stop.Unresolved.NoArgument) {
+      if (end instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
 
           // Copy / paste
@@ -236,6 +236,8 @@ public class MatcherImpl<T> extends Matcher<T> {
         } else {
           return Collections.emptyMap();
         }
+      } else if (end instanceof Event.Stop.Unresolved.NoSuchMethodOption) {
+        return Collections.emptyMap();
       } else {
         return Collections.emptyMap();
       }

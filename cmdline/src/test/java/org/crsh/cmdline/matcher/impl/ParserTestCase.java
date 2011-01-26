@@ -146,7 +146,7 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.NoArgument.class, 5);
+    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
   }
 
   public void testMethodOption() throws Exception {
@@ -170,7 +170,7 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("main");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.NoArgument.class, 5);
+    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
   }
 
   public void testClassOptionList() throws Exception {
@@ -236,7 +236,7 @@ public class ParserTestCase extends TestCase {
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertMethod("main");
-    tester.assertEnd(Event.Stop.Unresolved.NoArgument.class, 5);
+    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
 
     //
     tester = new Tester<A>(cmd, "-p");
@@ -251,7 +251,7 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("main");
     tester.assertOption("p", "a");
     tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.NoArgument.class, 5);
+    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
 
     //
     tester = new Tester<A>(cmd, "-o -p");
@@ -293,7 +293,7 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.NoArgument.class, 5);
+    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
 
     //
     tester = new Tester<A>(cmd, "m -p");
@@ -311,7 +311,7 @@ public class ParserTestCase extends TestCase {
     tester.assertSeparator();
     tester.assertOption("p", "a");
     tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.NoArgument.class, 7);
+    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 7);
 
     //
     tester = new Tester<A>(cmd, "-o a m -p");
@@ -362,7 +362,7 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "a b");
     tester.assertArgument("arg", "a");
     tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.NoArgument.class, 2);
+    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 2);
   }
 
   public void testMethodArgument() throws Exception {
@@ -384,7 +384,7 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("main");
     tester.assertArgument("arg", "a");
     tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.NoArgument.class, 2);
+    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 2);
   }
 
   public void testSatisfyAllMethodArgument() throws Exception {

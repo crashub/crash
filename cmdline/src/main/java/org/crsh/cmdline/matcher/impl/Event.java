@@ -232,8 +232,8 @@ public abstract class Event {
         }
       }
 
-      public static class NoArgument extends Unresolved {
-        NoArgument(Token token) {
+      public static class TooManyArguments extends Unresolved {
+        TooManyArguments(Token token) {
           super(token);
         }
       }

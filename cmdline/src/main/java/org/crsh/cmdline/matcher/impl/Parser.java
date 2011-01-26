@@ -208,7 +208,7 @@ public final class Parser<T> {
                 nextEvent = new Event.Argument(argument, values);
             }
           } else {
-            nextEvent = new Event.Stop.Unresolved.NoArgument(token);
+            nextEvent = new Event.Stop.Unresolved.TooManyArguments(token);
           }
         }
       } else if (status instanceof Status.ComputeArg) {
