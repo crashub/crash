@@ -36,16 +36,8 @@ public class ArgumentMatch<B extends TypeBinding> extends ParameterMatch<Argumen
   /** . */
   private int end;
 
-  public ArgumentMatch(ArgumentDescriptor<B> parameter, int start, int end, Value[] values) {
+  public ArgumentMatch(ArgumentDescriptor<B> parameter, int start, int end, List<Value> values) {
     super(parameter, values);
-    this.start = start;
-    this.end = end;
-  }
-
-  public ArgumentMatch(ArgumentDescriptor<B> argument, int start, int end, List<String> values) {
-    super(argument, values);
-
-    //
     this.start = start;
     this.end = end;
   }

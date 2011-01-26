@@ -39,22 +39,9 @@ public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBind
   /** . */
   private final List<Value> values;
 
-  public ParameterMatch(P parameter, Value[] values) {
+  public ParameterMatch(P parameter, List<Value> values) {
     this.parameter = parameter;
-    this.values = Arrays.asList(values);
-  }
-
-  public ParameterMatch(P parameter, List<String> rawValues) {
-
-    // Unquote if necessary
-    ArrayList<Value> values = new ArrayList<Value>(rawValues.size());
-    for (String rawValue : rawValues) {
-      values.add(new Value(rawValue));
-    }
-
-    //
-    this.parameter = parameter;
-    this.values = Collections.unmodifiableList(values);
+    this.values = values;
   }
 
   public P getParameter() {

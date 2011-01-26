@@ -65,25 +65,10 @@ public class MatcherImpl<T> extends Matcher<T> {
     this.descriptor = descriptor;
   }
 
-  private Value[] bilto(List<? extends Token.Literal> literals) {
-    Value[] values = new Value[literals.size()];
-    for (int i = 0;i < literals.size();i++) {
-      Token.Literal literal = literals.get(i);
-      Delimiter delimiter;
-      switch (literal.termination) {
-        case DETERMINED:
-          delimiter = Delimiter.WHITE_SPACE;
-        break;
-        case DOUBLE_QUOTE:
-          delimiter = Delimiter.DOUBLE_QUOTE;
-          break;
-        case SINGLE_QUOTE:
-          delimiter = Delimiter.SIMPLE_QUOTE;
-          break;
-        default:
-          throw new AssertionError();
-      }
-      values[i] = new Value(literal.raw, literal.value, delimiter, true);
+  private List<Value> bilto(List<? extends Token.Literal> literals) {
+    List<Value> values = new ArrayList<Value>(literals.size());
+    for (Token.Literal literal : literals) {
+      values.add(new Value(literal.raw, literal.value));
     }
     return values;
   }

@@ -33,85 +33,9 @@ public class Value {
   /** . */
   private final String value;
 
-  /** . */
-  private final Delimiter delimiter;
-
-  /** . */
-  private final boolean determined;
-
-  public Value(String rawValue, String value, Delimiter delimiter, boolean determined) {
+  public Value(String rawValue, String value) {
     this.rawValue = rawValue;
     this.value = value;
-    this.delimiter = delimiter;
-    this.determined = determined;
-  }
-
-  public Value(String s) {
-
-    //
-    String value;
-    Delimiter delimiter;
-    boolean determined;
-    if (s != null) {
-      if (s.length() == 1) {
-        char c = s.charAt(0);
-        switch (c) {
-          case '\'':
-            value = "";
-            delimiter = Delimiter.SIMPLE_QUOTE;
-            break;
-          case '"':
-            value = "";
-            delimiter = Delimiter.DOUBLE_QUOTE;
-            break;
-          default:
-            value = s;
-            delimiter = Delimiter.WHITE_SPACE;
-            break;
-        }
-        determined = false;
-      } else if (s.length() >= 2) {
-        char first = s.charAt(0);
-        char last = s.charAt(s.length() - 1);
-        if (first == '"') {
-          delimiter = Delimiter.DOUBLE_QUOTE;
-          if (last == '"') {
-            value = s.substring(1, s.length() - 1);
-            determined = true;
-          } else {
-            value = s.substring(1);
-            determined = false;
-          }
-        } else if (first == '\'') {
-          delimiter = Delimiter.SIMPLE_QUOTE;
-          if (last == '\'') {
-            value = s.substring(1, s.length() - 1);
-            determined = true;
-          } else {
-            value = s.substring(1);
-            determined = false;
-          }
-        } else {
-          delimiter = Delimiter.WHITE_SPACE;
-          value = s;
-          determined = false;
-        }
-      } else {
-        delimiter = Delimiter.WHITE_SPACE;
-        value = s;
-        determined = false;
-      }
-    } else {
-      delimiter = null;
-      value = null;
-      determined = false;
-    }
-
-
-    this.rawValue = s;
-    this.value = value;
-    this.delimiter = delimiter;
-    this.determined = determined;
   }
 
   public String getRawValue() {
@@ -120,14 +44,6 @@ public class Value {
 
   public String getValue() {
     return value;
-  }
-
-  public Delimiter getDelimiter() {
-    return delimiter;
-  }
-
-  public boolean isDetermined() {
-    return determined;
   }
 
   public boolean isUsable() {
