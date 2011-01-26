@@ -352,7 +352,7 @@ public class MatcherImpl<T> extends Matcher<T> {
     //
     Class<? extends Completer> completerType = parameter.getCompleterType();
 
-    //
+    // Use the most adapted completer
     if (completerType != EmptyCompleter.class) {
       try {
         completer = completerType.newInstance();
@@ -360,7 +360,12 @@ public class MatcherImpl<T> extends Matcher<T> {
       catch (Exception e) {
         throw new CmdCompletionException(e);
       }
+    }
 
+    //
+    if (completer != null) {
+
+      //
       String foo;
       switch (termination) {
         case DETERMINED:

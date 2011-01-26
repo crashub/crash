@@ -39,8 +39,28 @@ import java.util.Map;
  */
 public class CompleteTestCase extends TestCase {
 
-   public void testSingleArgument() throws Exception
-   {
+  public void testCompleterResolution() throws Exception {
+
+    class A {
+      @Command
+      void m(@Argument() String arg) {}
+      @Command
+      void n(@Argument(completer =  CompleterSupport.Mirror.class) String arg) {}
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    Matcher<A> matcher = Matcher.createMatcher(desc);
+
+    //
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("m ab"));
+    assertEquals(Collections.singletonMap("ba", ""), matcher.complete("n ab"));
+    assertEquals(Collections.singletonMap("ab", ""), matcher.complete(new CompleterSupport.Echo(), "m ab"));
+    assertEquals(Collections.singletonMap("ba", ""), matcher.complete(new CompleterSupport.Echo(), "n ab"));
+  }
+
+  public void testSingleArgument() throws Exception
+  {
 
     class A {
       @Command

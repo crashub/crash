@@ -51,4 +51,10 @@ public class CompleterSupport {
       return Collections.singletonMap(new StringBuilder(prefix).reverse().toString(), false);
     }
   }
+
+  public static class Echo implements Completer {
+    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+      return Collections.singletonMap(prefix, false);
+    }
+  }
 }
