@@ -25,8 +25,6 @@ import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Option;
-import org.crsh.cmdline.ParameterDescriptor;
-import org.crsh.cmdline.spi.Completer;
 
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
@@ -41,17 +39,12 @@ import java.util.Map;
  */
 public class CompleteTestCase extends TestCase {
 
-  public static class FooCompleter implements Completer {
-    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
-      return Collections.singletonMap(new StringBuilder(prefix).reverse().toString(), false);
-    }
-  }
-
-  public void testSingleArgument() throws Exception {
+   public void testSingleArgument() throws Exception
+   {
 
     class A {
       @Command
-      void m(@Argument(completer =  FooCompleter.class) String arg) {}
+      void m(@Argument(completer =  CompleterSupport.Mirror.class) String arg) {}
     }
 
     //
@@ -65,11 +58,12 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("m a c"));
   }
 
-  public void testMultiArgument() throws Exception {
+  public void testMultiArgument() throws Exception
+  {
 
     class A {
       @Command
-      void m(@Argument(completer =  FooCompleter.class) List<String> arg) {}
+      void m(@Argument(completer =  CompleterSupport.Mirror.class) List<String> arg) {}
     }
 
     //
@@ -85,10 +79,11 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.singletonMap("dc", ""), matcher.complete("m a cd"));
   }
 
-  public void testOption() throws Exception {
+  public void testOption() throws Exception
+  {
 
     class A {
-      @Option(names = "a", completer = FooCompleter.class) String a;
+      @Option(names = "a", completer = CompleterSupport.Mirror.class) String a;
     }
 
     //
@@ -102,12 +97,13 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a b c"));
   }
 
-  public void testCommand() throws Exception {
+  public void testCommand() throws Exception
+  {
 
     class A {
-      @Option(names = "a", completer = FooCompleter.class) String a;
+      @Option(names = "a", completer = CompleterSupport.Mirror.class) String a;
       @Command
-      void foo(@Option(names = "b", completer = FooCompleter.class) String b) { }
+      void foo(@Option(names = "b", completer = CompleterSupport.Mirror.class) String b) { }
       @Command
       void faa() { }
     }
@@ -139,11 +135,12 @@ public class CompleteTestCase extends TestCase {
     assertEquals(d, matcher.complete("-a a foo "));
   }
 
-  public void testCommand2() throws Exception {
+  public void testCommand2() throws Exception
+  {
 
     class A {
       @Command
-      void main(@Argument(completer = FooCompleter.class) String s) { }
+      void main(@Argument(completer = CompleterSupport.Mirror.class) String s) { }
     }
 
     //
@@ -160,7 +157,8 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("main a"));
   }
 
-  public void testEnum() throws Exception {
+  public void testEnum() throws Exception
+  {
     class A {
       @Command
       void foo(@Option(names = "a") RetentionPolicy a) { }
@@ -204,10 +202,11 @@ public class CompleteTestCase extends TestCase {
     }
   }
 
-  public void testCommandOption() throws Exception {
+  public void testCommandOption() throws Exception
+  {
     class A {
       @Command
-      void foo(@Option(names = "a", completer = FooCompleter.class) String a) { }
+      void foo(@Option(names = "a", completer = CompleterSupport.Mirror.class) String a) { }
     }
 
     //
@@ -226,27 +225,13 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.singletonMap("ba", ""), matcher.complete("foo -a ab"));
   }
 
-  static abstract class AbstractCompleter implements Completer {
-  }
-
-  static class RuntimeExceptionCompleter implements Completer {
-    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-      throw new RuntimeException();
-    }
-  }
-
-  static class ExceptionCompleter implements Completer {
-    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-      throw new Exception();
-    }
-  }
-
-  public void testFailure() throws Exception {
+  public void testFailure() throws Exception
+  {
 
     //
     class A {
       @Command
-      void foo(@Option(names = "a", completer = ExceptionCompleter.class) String a) { }
+      void foo(@Option(names = "a", completer = CompleterSupport.Exception.class) String a) { }
     }
     Matcher<A> matcherA = Matcher.createMatcher(CommandFactory.create(A.class));
     try {
@@ -259,7 +244,7 @@ public class CompleteTestCase extends TestCase {
     //
     class B {
       @Command
-      void foo(@Option(names = "a", completer = RuntimeExceptionCompleter.class) String a) { }
+      void foo(@Option(names = "a", completer = CompleterSupport.RuntimeException.class) String a) { }
     }
     Matcher<B> matcherB = Matcher.createMatcher(CommandFactory.create(B.class));
     try {
@@ -272,7 +257,7 @@ public class CompleteTestCase extends TestCase {
     //
     class C {
       @Command
-      void foo(@Option(names = "a", completer = AbstractCompleter.class) String a) { }
+      void foo(@Option(names = "a", completer = CompleterSupport.Abstract.class) String a) { }
     }
     Matcher<C> matcherC = Matcher.createMatcher(CommandFactory.create(C.class));
     try {
