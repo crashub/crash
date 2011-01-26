@@ -70,12 +70,12 @@ abstract class Status {
     }
   }
 
-  static class End extends Status {
+  static class Stop extends Status {
 
     /** . */
     final Code code;
 
-    End(Code code) {
+    Stop(Code code) {
       if (code == null) {
         throw new AssertionError();
       }

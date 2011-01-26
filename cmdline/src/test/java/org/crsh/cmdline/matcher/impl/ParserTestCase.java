@@ -26,10 +26,6 @@ import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Required;
-import org.crsh.cmdline.matcher.impl.Code;
-import org.crsh.cmdline.matcher.impl.Event;
-import org.crsh.cmdline.matcher.impl.Parser;
-import org.crsh.cmdline.matcher.impl.Tokenizer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -80,7 +76,7 @@ public class ParserTestCase extends TestCase {
     }
 
     public void assertEnd(Code code, int expectedIndex) {
-      Event.End event = (Event.End)parser.bilto();
+      Event.Stop event = (Event.Stop)parser.bilto();
       assertEquals(code, event.getCode());
       assertEquals(expectedIndex, event.getIndex());
     }

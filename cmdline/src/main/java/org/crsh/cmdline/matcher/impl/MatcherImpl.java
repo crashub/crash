@@ -21,7 +21,6 @@ package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
@@ -94,10 +93,10 @@ public class MatcherImpl<T> extends Matcher<T> {
       Event event = parser.bilto();
       if (event instanceof Event.Separator) {
         //
-      } else if (event instanceof Event.End) {
+      } else if (event instanceof Event.Stop) {
         // We are done
         // Check error status and react to it maybe
-        Event.End end = (Event.End)event;
+        Event.Stop end = (Event.Stop)event;
         int endIndex;
         if (previous instanceof Event.Separator) {
           endIndex = ((Event.Separator)previous).getToken().getFrom();
@@ -177,15 +176,15 @@ public class MatcherImpl<T> extends Matcher<T> {
     Event last = null;
     Event.Separator separator = null;
     MethodDescriptor<?> method = null;
-    Event.End end;
+    Event.Stop end;
 
     //
     while (true) {
       Event event = parser.bilto();
       if (event instanceof Event.Separator) {
         separator = (Event.Separator)event;
-      } else if (event instanceof Event.End) {
-        end = (Event.End)event;
+      } else if (event instanceof Event.Stop) {
+        end = (Event.Stop)event;
         break;
       } else if (event instanceof Event.Option) {
         last = event;

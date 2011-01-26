@@ -187,7 +187,7 @@ public abstract class Event {
     }
   }
 
-  public static final class End extends Event {
+  public static final class Stop extends Event {
 
     /** . */
     private final Code code;
@@ -195,7 +195,7 @@ public abstract class Event {
     /** . */
     private final int index;
 
-    End(Code code, int index) {
+    Stop(Code code, int index) {
       this.code = code;
       this.index = index;
     }
