@@ -214,25 +214,6 @@ public class MatcherImpl<T> extends Matcher<T> {
         }
       }
       return completions;
-    }
-
-    //
-    if (last == null) {
-      if (method == null) {
-        String prefix = s.substring(end.getIndex());
-        Map<String, String> completions = new HashMap<String, String>();
-        for (MethodDescriptor<?> m : descriptor.getMethods()) {
-          String name = m.getName();
-          if (name.startsWith(prefix)) {
-            if (!name.equals(mainName)) {
-              completions.put(name.substring(prefix.length()), " ");
-            }
-          }
-        }
-        return completions;
-      } else {
-        return Collections.emptyMap();
-      }
     } else if (end instanceof Event.Stop.Unresolved) {
       if (end instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
@@ -253,6 +234,25 @@ public class MatcherImpl<T> extends Matcher<T> {
         } else {
           return Collections.emptyMap();
         }
+      } else {
+        return Collections.emptyMap();
+      }
+    }
+
+    //
+    if (last == null) {
+      if (method == null) {
+        String prefix = s.substring(end.getIndex());
+        Map<String, String> completions = new HashMap<String, String>();
+        for (MethodDescriptor<?> m : descriptor.getMethods()) {
+          String name = m.getName();
+          if (name.startsWith(prefix)) {
+            if (!name.equals(mainName)) {
+              completions.put(name.substring(prefix.length()), " ");
+            }
+          }
+        }
+        return completions;
       } else {
         return Collections.emptyMap();
       }
