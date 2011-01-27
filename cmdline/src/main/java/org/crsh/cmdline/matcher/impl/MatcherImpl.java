@@ -275,6 +275,7 @@ public class MatcherImpl<T> extends Matcher<T> {
           Token.Literal.Word word = optionEvent.peekLast();
           prefix = word.value;
           termination = word.termination;
+          parameter = option;
         } else {
           return Collections.emptyMap();
         }
@@ -282,6 +283,7 @@ public class MatcherImpl<T> extends Matcher<T> {
         if (values.size() < option.getArity()) {
           prefix = "";
           termination = Termination.DETERMINED;
+          parameter = option;
         } else {
           if (method == null) {
 
@@ -299,12 +301,21 @@ public class MatcherImpl<T> extends Matcher<T> {
             return _completions;
 
           } else {
-            // IT COULD BE AN ARGUMENT CHECK
-            return Collections.emptyMap();
+
+            // FOOBAR
+            List<? extends ArgumentDescriptor<?>> arguments = method.getArguments();
+            if (arguments.isEmpty()) {
+              return Collections.emptyMap();
+            } else {
+              ArgumentDescriptor<?> argument = arguments.get(0);
+              prefix = "";
+              termination = Termination.DETERMINED;
+              parameter = argument;
+            }
+
           }
         }
       }
-      parameter = option;
     } else if (last instanceof Event.Argument) {
       Event.Argument eventArgument = (Event.Argument)last;
       ArgumentDescriptor<?> argument = eventArgument.getDescriptor();
@@ -336,15 +347,18 @@ public class MatcherImpl<T> extends Matcher<T> {
       }
     } else if (last instanceof Event.Method) {
       if (separator != null) {
+
+        // FOOBAR
         List<? extends ArgumentDescriptor<?>> arguments = method.getArguments();
         if (arguments.isEmpty()) {
           return Collections.emptyMap();
         } else {
-          ArgumentDescriptor<?> argument = arguments.isEmpty() ? null : arguments.get(0);
+          ArgumentDescriptor<?> argument = arguments.get(0);
           prefix = "";
           termination = Termination.DETERMINED;
           parameter = argument;
         }
+
       } else {
         return Collections.singletonMap("", " ");
       }

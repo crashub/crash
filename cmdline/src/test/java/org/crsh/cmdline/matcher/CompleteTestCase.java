@@ -71,6 +71,7 @@ public class CompleteTestCase extends TestCase {
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
+    //
     assertEquals(Collections.singletonMap("", ""), matcher.complete("m "));
     assertEquals(Collections.singletonMap("a", ""), matcher.complete("m a"));
     assertEquals(Collections.singletonMap("ba", ""), matcher.complete("m ab"));
@@ -145,6 +146,23 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a -b"));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a b "));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a b c"));
+  }
+
+  public void testOptionArgument() throws Exception
+  {
+
+    class A {
+      @Command
+      void main(@Option(names = "o") String o, @Argument(completer = CompleterSupport.Foo.class) String arg) { }
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    Matcher<A> matcher = Matcher.createMatcher("main", desc);
+
+    //
+    assertEquals(Collections.singletonMap("foo", " "), matcher.complete("-o bar "));
+    assertEquals(Collections.singletonMap("oo", " "), matcher.complete("-o bar f"));
   }
 
   public void testCommand() throws Exception

@@ -57,4 +57,20 @@ public class CompleterSupport {
       return Collections.singletonMap(prefix, false);
     }
   }
+
+  public static class Foo implements Completer {
+    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+      if (prefix.startsWith("foo")) {
+        return Collections.singletonMap("", true);
+      } else if (prefix.startsWith("fo")) {
+        return Collections.singletonMap("o", true);
+      } else if (prefix.startsWith("f")) {
+        return Collections.singletonMap("oo", true);
+      } else if (prefix.startsWith("")) {
+        return Collections.singletonMap("foo", true);
+      } else {
+        return Collections.emptyMap();
+      }
+    }
+  }
 }
