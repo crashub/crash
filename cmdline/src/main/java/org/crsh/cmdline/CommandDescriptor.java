@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -49,6 +50,12 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   private final Map<String, OptionDescriptor<B>> optionMap;
 
   /** . */
+  private final Set<String> shortOptionNames;
+
+  /** . */
+  private final Set<String> longOptionNames;
+
+  /** . */
   private boolean listArgument;
 
   /** . */
@@ -59,6 +66,12 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
   /** . */
   private final Map<String, OptionDescriptor<B>> uOptionMap;
+
+  /** . */
+  private final Set<String> uShortOptionNames;
+
+  /** . */
+  private final Set<String> uLongOptionNames;
 
   /** . */
   private final List<ArgumentDescriptor<B>> uArguments;
@@ -75,11 +88,15 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     this.name = name;
     this.parameters = new ArrayList<ParameterDescriptor<B>>();
     this.listArgument = false;
+    this.shortOptionNames = new HashSet<String>();
+    this.longOptionNames = new HashSet<String>();
 
     //
     this.uOptionMap = Collections.unmodifiableMap(optionMap);
     this.uParameters = Collections.unmodifiableList(parameters);
     this.uArguments = Collections.unmodifiableList(arguments);
+    this.uShortOptionNames = shortOptionNames;
+    this.uLongOptionNames = longOptionNames;
   }
 
   /**
@@ -104,7 +121,15 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     if (parameter instanceof OptionDescriptor) {
       OptionDescriptor<B> option = (OptionDescriptor<B>)parameter;
       for (String optionName : option.getNames()) {
-        optionMap.put((optionName.length() == 1 ? "-" : "--") + optionName, option);
+        String name;
+        if (optionName.length() == 1) {
+          name = "-" + optionName;
+          shortOptionNames.add(name);
+        } else {
+          name = "--" + optionName;
+          longOptionNames.add(name);
+        }
+        optionMap.put(name, option);
       }
       ListIterator<ParameterDescriptor<B>> i = parameters.listIterator();
       while (i.hasNext()) {
@@ -160,6 +185,24 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    */
   public final Set<String> getOptionNames() {
     return uOptionMap.keySet();
+  }
+
+  /**
+   * Returns the command short option names.
+   *
+   * @return the command long option names
+   */
+  public final Set<String> getShortOptionNames() {
+    return uShortOptionNames;
+  }
+
+  /**
+   * Returns the command long option names.
+   *
+   * @return the command long option names
+   */
+  public final Set<String> getLongOptionNames() {
+    return uLongOptionNames;
   }
 
   /**

@@ -21,6 +21,7 @@ package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
@@ -42,6 +43,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -200,6 +202,21 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
 
     //
+    if (end instanceof Event.Stop.Unresolved.NoSuchOption) {
+      Event.Stop.Unresolved.NoSuchOption nso = (Event.Stop.Unresolved.NoSuchOption)end;
+      String prefix = nso.getToken().value;
+      CommandDescriptor<T, ?> cmd = method != null ? (CommandDescriptor<T, ?>)method : descriptor;
+      Map<String, String> completions = new HashMap<String, String>();
+      Set<String> optionNames = nso.getToken() instanceof Token.Literal.Option.Short ? cmd.getShortOptionNames() : cmd.getLongOptionNames();
+      for (String optionName : optionNames) {
+        if (optionName.startsWith(prefix)) {
+          completions.put(optionName.substring(prefix.length()), " ");
+        }
+      }
+      return completions;
+    }
+
+    //
     if (last == null) {
       if (method == null) {
         String prefix = s.substring(end.getIndex());
@@ -236,9 +253,6 @@ public class MatcherImpl<T> extends Matcher<T> {
         } else {
           return Collections.emptyMap();
         }
-      } else if (end instanceof Event.Stop.Unresolved.NoSuchMethodOption) {
-        Event.Stop.Unresolved.NoSuchMethodOption nsmo = (Event.Stop.Unresolved.NoSuchMethodOption)end;
-        throw new UnsupportedOperationException("tofinish");
       } else {
         return Collections.emptyMap();
       }

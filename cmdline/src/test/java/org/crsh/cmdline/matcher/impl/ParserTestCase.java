@@ -75,7 +75,7 @@ public class ParserTestCase extends TestCase {
       assertEquals(Arrays.asList(values), event.getStrings());
     }
 
-    public void assertEnd(Class<? extends Event.Stop> expectedClass, int expectedIndex) {
+    public void assertEnd(Class expectedClass, int expectedIndex) {
       Event.Stop event = (Event.Stop)parser.bilto();
       assertEquals(expectedClass, event.getClass());
       assertEquals(expectedIndex, event.getIndex());
@@ -94,7 +94,7 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
-    tester.assertEnd(Event.Stop.Unresolved.NoSuchClassOption.class, 0);
+    tester.assertEnd(Event.Stop.Unresolved.NoSuchOption.Class.class, 0);
   }
 
   public void testUnkownMethodOption1() throws Exception {
@@ -107,7 +107,7 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
-    tester.assertEnd(Event.Stop.Unresolved.NoSuchMethodOption.class, 0);
+    tester.assertEnd(Event.Stop.Unresolved.NoSuchOption.Method.class, 0);
   }
 
   public void testUnkownMethodOption2() throws Exception {
@@ -122,7 +122,7 @@ public class ParserTestCase extends TestCase {
     Tester<A> tester = new Tester<A>(cmd, "m -o");
     tester.assertMethod("m");
     tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.NoSuchMethodOption.class, 2);
+    tester.assertEnd(Event.Stop.Unresolved.NoSuchOption.Method.class, 2);
   }
 
   public void testClassOption() throws Exception {

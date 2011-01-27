@@ -224,15 +224,21 @@ public abstract class Event {
         return token;
       }
 
-      public static class NoSuchClassOption extends Unresolved<Token.Literal.Option> {
-        NoSuchClassOption(Token.Literal.Option token) {
+      public static class NoSuchOption extends Unresolved<Token.Literal.Option> {
+        public NoSuchOption(Token.Literal.Option token) {
           super(token);
         }
-      }
 
-      public static class NoSuchMethodOption extends Unresolved<Token.Literal.Option> {
-        NoSuchMethodOption(Token.Literal.Option token) {
-          super(token);
+        public static class Class extends NoSuchOption {
+          Class(Token.Literal.Option token) {
+            super(token);
+          }
+        }
+
+        public static class Method extends NoSuchOption {
+          Method(Token.Literal.Option token) {
+            super(token);
+          }
         }
       }
 
