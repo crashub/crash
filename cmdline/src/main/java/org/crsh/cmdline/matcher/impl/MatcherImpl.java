@@ -178,7 +178,7 @@ public class MatcherImpl<T> extends Matcher<T> {
     Event last = null;
     Event.Separator separator = null;
     MethodDescriptor<?> method = null;
-    Event.Stop end;
+    Event.Stop stop;
 
     //
     while (true) {
@@ -186,7 +186,7 @@ public class MatcherImpl<T> extends Matcher<T> {
       if (event instanceof Event.Separator) {
         separator = (Event.Separator)event;
       } else if (event instanceof Event.Stop) {
-        end = (Event.Stop)event;
+        stop = (Event.Stop)event;
         break;
       } else if (event instanceof Event.Option) {
         last = event;
@@ -202,8 +202,8 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
 
     //
-    if (end instanceof Event.Stop.Unresolved.NoSuchOption) {
-      Event.Stop.Unresolved.NoSuchOption nso = (Event.Stop.Unresolved.NoSuchOption)end;
+    if (stop instanceof Event.Stop.Unresolved.NoSuchOption) {
+      Event.Stop.Unresolved.NoSuchOption nso = (Event.Stop.Unresolved.NoSuchOption)stop;
       String prefix = nso.getToken().value;
       CommandDescriptor<T, ?> cmd = method != null ? (CommandDescriptor<T, ?>)method : descriptor;
       Map<String, String> completions = new HashMap<String, String>();
@@ -214,12 +214,12 @@ public class MatcherImpl<T> extends Matcher<T> {
         }
       }
       return completions;
-    } else if (end instanceof Event.Stop.Unresolved) {
-      if (end instanceof Event.Stop.Unresolved.TooManyArguments) {
+    } else if (stop instanceof Event.Stop.Unresolved) {
+      if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
 
           // Copy / paste
-          String prefix = s.substring(end.getIndex());
+          String prefix = s.substring(stop.getIndex());
           Map<String, String> completions = new HashMap<String, String>();
           for (MethodDescriptor<?> m : descriptor.getMethods()) {
             String name = m.getName();
@@ -242,7 +242,7 @@ public class MatcherImpl<T> extends Matcher<T> {
     //
     if (last == null) {
       if (method == null) {
-        String prefix = s.substring(end.getIndex());
+        String prefix = s.substring(stop.getIndex());
         Map<String, String> completions = new HashMap<String, String>();
         for (MethodDescriptor<?> m : descriptor.getMethods()) {
           String name = m.getName();
@@ -286,7 +286,7 @@ public class MatcherImpl<T> extends Matcher<T> {
           if (method == null) {
 
             // Copy paste from above
-            String _prefix = s.substring(end.getIndex());
+            String _prefix = s.substring(stop.getIndex());
             Map<String, String> _completions = new HashMap<String, String>();
             for (MethodDescriptor<?> _m : descriptor.getMethods()) {
               String _name = _m.getName();
