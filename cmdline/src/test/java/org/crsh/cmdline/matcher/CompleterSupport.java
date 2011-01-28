@@ -60,13 +60,13 @@ public class CompleterSupport {
 
   public static class Foo implements Completer {
     public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
-      if (prefix.startsWith("foo")) {
+      if (prefix.equals("foo")) {
         return Collections.singletonMap("", true);
-      } else if (prefix.startsWith("fo")) {
+      } else if (prefix.equals("fo")) {
         return Collections.singletonMap("o", true);
-      } else if (prefix.startsWith("f")) {
+      } else if (prefix.equals("f")) {
         return Collections.singletonMap("oo", true);
-      } else if (prefix.startsWith("")) {
+      } else if (prefix.equals("")) {
         return Collections.singletonMap("foo", true);
       } else {
         return Collections.emptyMap();

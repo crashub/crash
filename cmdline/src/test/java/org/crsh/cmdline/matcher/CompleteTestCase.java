@@ -45,7 +45,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void m(@Argument() String arg) {}
       @Command
-      void n(@Argument(completer =  CompleterSupport.Mirror.class) String arg) {}
+      void n(@Argument(completer =  CompleterSupport.Foo.class) String arg) {}
     }
 
     //
@@ -53,10 +53,10 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("m ab"));
-    assertEquals(Collections.singletonMap("ba", ""), matcher.complete("n ab"));
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("m fo"));
+    assertEquals(Collections.singletonMap("o", " "), matcher.complete("n fo"));
     assertEquals(Collections.singletonMap("ab", ""), matcher.complete(new CompleterSupport.Echo(), "m ab"));
-    assertEquals(Collections.singletonMap("ba", ""), matcher.complete(new CompleterSupport.Echo(), "n ab"));
+    assertEquals(Collections.singletonMap("o", " "), matcher.complete(new CompleterSupport.Echo(), "n fo"));
   }
 
   public void testSingleArgument() throws Exception
@@ -64,7 +64,7 @@ public class CompleteTestCase extends TestCase {
 
     class A {
       @Command
-      void m(@Argument(completer =  CompleterSupport.Mirror.class) String arg) {}
+      void m(@Argument(completer =  CompleterSupport.Foo.class) String arg) {}
     }
 
     //
@@ -72,11 +72,11 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    assertEquals(Collections.singletonMap("", ""), matcher.complete("m "));
-    assertEquals(Collections.singletonMap("a", ""), matcher.complete("m a"));
-    assertEquals(Collections.singletonMap("ba", ""), matcher.complete("m ab"));
+    assertEquals(Collections.singletonMap("foo", " "), matcher.complete("m "));
+    assertEquals(Collections.singletonMap("oo", " "), matcher.complete("m f"));
+    assertEquals(Collections.singletonMap("o", " "), matcher.complete("m fo"));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("m a "));
-    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("m a c"));
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("m a f"));
   }
 
   public void testMultiArgument() throws Exception
@@ -84,7 +84,7 @@ public class CompleteTestCase extends TestCase {
 
     class A {
       @Command
-      void m(@Argument(completer =  CompleterSupport.Mirror.class) List<String> arg) {}
+      void m(@Argument(completer =  CompleterSupport.Foo.class) List<String> arg) {}
     }
 
     //
@@ -92,12 +92,12 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    assertEquals(Collections.singletonMap("", ""), matcher.complete("m "));
-    assertEquals(Collections.singletonMap("a", ""), matcher.complete("m a"));
-    assertEquals(Collections.singletonMap("ba", ""), matcher.complete("m ab"));
-    assertEquals(Collections.singletonMap("", ""), matcher.complete("m a "));
-    assertEquals(Collections.singletonMap("c", ""), matcher.complete("m a c"));
-    assertEquals(Collections.singletonMap("dc", ""), matcher.complete("m a cd"));
+    assertEquals(Collections.singletonMap("foo", " "), matcher.complete("m "));
+    assertEquals(Collections.singletonMap("oo", " "), matcher.complete("m f"));
+    assertEquals(Collections.singletonMap("o", " "), matcher.complete("m fo"));
+    assertEquals(Collections.singletonMap("foo", " "), matcher.complete("m a "));
+    assertEquals(Collections.singletonMap("oo", " "), matcher.complete("m a f"));
+    assertEquals(Collections.singletonMap("o", " "), matcher.complete("m a fo"));
   }
 
   public void testOption() throws Exception
@@ -134,15 +134,15 @@ public class CompleteTestCase extends TestCase {
   {
 
     class A {
-      @Option(names = "a", completer = CompleterSupport.Mirror.class) String a;
+      @Option(names = "a", completer = CompleterSupport.Foo.class) String a;
     }
 
     //
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = Matcher.createMatcher(desc);
-    assertEquals(Collections.singletonMap("", ""), matcher.complete("-a "));
-    assertEquals(Collections.singletonMap("a", ""), matcher.complete("-a a"));
-    assertEquals(Collections.singletonMap("ba", ""), matcher.complete("-a ab"));
+    assertEquals(Collections.singletonMap("foo", " "), matcher.complete("-a "));
+    assertEquals(Collections.singletonMap("oo", " "), matcher.complete("-a f"));
+    assertEquals(Collections.singletonMap("o", " "), matcher.complete("-a fo"));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a -b"));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a b "));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a b c"));
@@ -169,9 +169,9 @@ public class CompleteTestCase extends TestCase {
   {
 
     class A {
-      @Option(names = "a", completer = CompleterSupport.Mirror.class) String a;
+      @Option(names = "a") String a;
       @Command
-      void foo(@Option(names = "b", completer = CompleterSupport.Mirror.class) String b) { }
+      void foo(@Option(names = "b") String b) { }
       @Command
       void faa() { }
     }
@@ -203,12 +203,12 @@ public class CompleteTestCase extends TestCase {
     assertEquals(d, matcher.complete("-a a foo "));
   }
 
-  public void testCommand2() throws Exception
+  public void testArgumentValuedMain() throws Exception
   {
 
     class A {
       @Command
-      void main(@Argument(completer = CompleterSupport.Mirror.class) String s) { }
+      void main(@Argument(completer = CompleterSupport.Echo.class) String s) { }
     }
 
     //
@@ -218,9 +218,9 @@ public class CompleteTestCase extends TestCase {
     //
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete(""));
     assertEquals(Collections.singletonMap("m", ""), matcher.complete("m"));
-    assertEquals(Collections.singletonMap("am", ""), matcher.complete("ma"));
-    assertEquals(Collections.singletonMap("iam", ""), matcher.complete("mai"));
-    assertEquals(Collections.singletonMap("niam", ""), matcher.complete("main"));
+    assertEquals(Collections.singletonMap("ma", ""), matcher.complete("ma"));
+    assertEquals(Collections.singletonMap("mai", ""), matcher.complete("mai"));
+    assertEquals(Collections.singletonMap("main", ""), matcher.complete("main"));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("main "));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("main a"));
   }
@@ -274,7 +274,7 @@ public class CompleteTestCase extends TestCase {
   {
     class A {
       @Command
-      void foo(@Option(names = "a", completer = CompleterSupport.Mirror.class) String a) { }
+      void bar(@Option(names = "a", completer = CompleterSupport.Foo.class) String a) { }
     }
 
     //
@@ -282,15 +282,15 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    assertEquals(Collections.singletonMap("foo", " "), matcher.complete(""));
-    assertEquals(Collections.singletonMap("oo", " "), matcher.complete("f"));
-    assertEquals(Collections.singletonMap("", " "), matcher.complete("foo"));
-    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("foo "));
+    assertEquals(Collections.singletonMap("bar", " "), matcher.complete(""));
+    assertEquals(Collections.singletonMap("ar", " "), matcher.complete("b"));
+    assertEquals(Collections.singletonMap("", " "), matcher.complete("bar"));
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("bar "));
 
     //
-    assertEquals(Collections.singletonMap("", ""), matcher.complete("foo -a "));
-    assertEquals(Collections.singletonMap("a", ""), matcher.complete("foo -a a"));
-    assertEquals(Collections.singletonMap("ba", ""), matcher.complete("foo -a ab"));
+    assertEquals(Collections.singletonMap("foo", " "), matcher.complete("bar -a "));
+    assertEquals(Collections.singletonMap("oo", " "), matcher.complete("bar -a f"));
+    assertEquals(Collections.singletonMap("o", " "), matcher.complete("bar -a fo"));
   }
 
   public void testFailure() throws Exception
