@@ -65,21 +65,4 @@ abstract class Status {
       this.events = events;
     }
   }
-
-/*
-  static class Stop extends Status {
-
-    */
-/** . *//*
-
-    final Code code;
-
-    Stop(Code code) {
-      if (code == null) {
-        throw new AssertionError();
-      }
-      this.code = code;
-    }
-  }
-*/
 }
