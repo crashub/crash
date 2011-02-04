@@ -188,6 +188,56 @@ public class MatcherImpl<T> extends Matcher<T> {
     return completions;
   }
 
+  private class ParameterCompletion {
+
+    /** . */
+    private final String prefix;
+
+    /** . */
+    private final Termination termination;
+
+    /** . */
+    private final ParameterDescriptor<?> parameter;
+
+    private ParameterCompletion(String prefix, Termination termination, ParameterDescriptor<?> parameter) {
+      this.prefix = prefix;
+      this.termination = termination;
+      this.parameter = parameter;
+    }
+
+    private Map<String, String> complete(Completer completer) throws CmdCompletionException {
+
+      Class<? extends Completer> completerType = parameter.getCompleterType();
+
+      // Use the most adapted completer
+      if (completerType != EmptyCompleter.class) {
+        try {
+          completer = completerType.newInstance();
+        }
+        catch (Exception e) {
+          throw new CmdCompletionException(e);
+        }
+      }
+
+      //
+      if (completer != null) {
+        try {
+          Map<String, Boolean> res = completer.complete(parameter, prefix);
+          Map<String, String> delimiter = new HashMap<String, String>();
+          for (Map.Entry<String, Boolean> entry : res.entrySet()) {
+            delimiter.put(entry.getKey(), entry.getValue() ? termination.getEnd() : "");
+          }
+          return delimiter;
+        }
+        catch (Exception e) {
+          throw new CmdCompletionException(e);
+        }
+      } else {
+        return Collections.emptyMap();
+      }
+    }
+  }
+
   @Override
   public Map<String, String> complete(Completer completer, String s) throws CmdCompletionException {
 
@@ -261,9 +311,7 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
 
     //
-    String prefix;
-    Termination termination;
-    ParameterDescriptor<?> parameter;
+    ParameterCompletion completion;
 
     //
     if (last instanceof Event.Option) {
@@ -275,17 +323,13 @@ public class MatcherImpl<T> extends Matcher<T> {
           return Collections.singletonMap("", " ");
         } else if (values.size() <= option.getArity()) {
           Token.Literal.Word word = optionEvent.peekLast();
-          prefix = word.value;
-          termination = word.termination;
-          parameter = option;
+          completion = new ParameterCompletion(word.value, word.termination, option);
         } else {
           return Collections.emptyMap();
         }
       } else {
         if (values.size() < option.getArity()) {
-          prefix = "";
-          termination = Termination.DETERMINED;
-          parameter = option;
+          completion = new ParameterCompletion("", Termination.DETERMINED, option);
         } else {
           if (method == null) {
             return completeMethods(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
@@ -297,11 +341,8 @@ public class MatcherImpl<T> extends Matcher<T> {
               return Collections.emptyMap();
             } else {
               ArgumentDescriptor<?> argument = arguments.get(0);
-              prefix = "";
-              termination = Termination.DETERMINED;
-              parameter = argument;
+              completion = new ParameterCompletion("", Termination.DETERMINED, argument);
             }
-
           }
         }
       }
@@ -320,18 +361,14 @@ public class MatcherImpl<T> extends Matcher<T> {
               return Collections.emptyMap();
             }
           case ZERO_OR_MORE:
-            prefix = "";
-            termination = Termination.DETERMINED;
-            parameter = argument;
+            completion = new ParameterCompletion("", Termination.DETERMINED, argument);
             break;
           default:
             throw new AssertionError();
         }
       } else {
         Token.Literal value = eventArgument.peekLast();
-        prefix = value.value;
-        termination = value.termination;
-        parameter = argument;
+        completion = new ParameterCompletion(value.value, value.termination, argument);
       }
     } else if (last instanceof Event.Method) {
       if (separator != null) {
@@ -342,9 +379,7 @@ public class MatcherImpl<T> extends Matcher<T> {
           return Collections.emptyMap();
         } else {
           ArgumentDescriptor<?> argument = arguments.get(0);
-          prefix = "";
-          termination = Termination.DETERMINED;
-          parameter = argument;
+          completion = new ParameterCompletion("", Termination.DETERMINED, argument);
         }
 
       } else {
@@ -355,33 +390,6 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
 
     //
-    Class<? extends Completer> completerType = parameter.getCompleterType();
-
-    // Use the most adapted completer
-    if (completerType != EmptyCompleter.class) {
-      try {
-        completer = completerType.newInstance();
-      }
-      catch (Exception e) {
-        throw new CmdCompletionException(e);
-      }
-    }
-
-    //
-    if (completer != null) {
-      try {
-        Map<String, Boolean> res = completer.complete(parameter, prefix);
-        Map<String, String> delimiter = new HashMap<String, String>();
-        for (Map.Entry<String, Boolean> entry : res.entrySet()) {
-          delimiter.put(entry.getKey(), entry.getValue() ? termination.getEnd() : "");
-        }
-        return delimiter;
-      }
-      catch (Exception e) {
-        throw new CmdCompletionException(e);
-      }
-    } else {
-      return Collections.emptyMap();
-    }
+    return completion.complete(completer);
   }
 }
