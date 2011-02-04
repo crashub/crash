@@ -191,7 +191,7 @@ public abstract class Event {
 
     public abstract int getIndex();
 
-    public static final class Done extends Stop {
+    public static abstract class Done extends Stop {
 
       /** . */
       private final int index;
@@ -204,6 +204,19 @@ public abstract class Event {
       public int getIndex() {
         return index;
       }
+
+      public static final class Option extends Done {
+        public Option(int index) {
+          super(index);
+        }
+      }
+
+      public static final class Arg extends Done {
+        public Arg(int index) {
+          super(index);
+        }
+      }
+
     }
 
     public static abstract class Unresolved<T extends Token> extends Stop {

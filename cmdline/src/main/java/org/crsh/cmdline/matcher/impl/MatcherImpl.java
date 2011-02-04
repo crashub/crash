@@ -237,6 +237,10 @@ public class MatcherImpl<T> extends Matcher<T> {
       } else {
         return Collections.emptyMap();
       }
+    } else if (stop instanceof Event.Stop.Done.Option) {
+      // to use ?
+    } else if (stop instanceof Event.Stop.Done.Arg) {
+      // to use ?
     }
 
     //

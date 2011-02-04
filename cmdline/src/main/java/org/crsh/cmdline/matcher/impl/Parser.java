@@ -108,7 +108,7 @@ public final class Parser<T> implements Iterator<Event> {
       Status nextStatus = null;
       if (status instanceof Status.ReadingOption) {
         if (token == null) {
-          nextEvent = new Event.Stop.Done(tokenizer.getIndex());
+          nextEvent = new Event.Stop.Done.Option(tokenizer.getIndex());
         } else if (token instanceof Token.Whitespace) {
           nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
@@ -200,7 +200,7 @@ public final class Parser<T> implements Iterator<Event> {
         }
       } else if (status instanceof Status.ReadingArg) {
         if (token == null) {
-          nextEvent = new Event.Stop.Done(tokenizer.getIndex());
+          nextEvent = new Event.Stop.Done.Arg(tokenizer.getIndex());
         } else if (token instanceof Token.Whitespace) {
           nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
@@ -242,7 +242,7 @@ public final class Parser<T> implements Iterator<Event> {
         }
       } else if (status instanceof Status.ComputeArg) {
         if (token == null) {
-          nextEvent = new Event.Stop.Done(tokenizer.getIndex());
+          nextEvent = new Event.Stop.Done.Arg(tokenizer.getIndex());
         } else if (token instanceof Token.Whitespace) {
           nextEvent = new Event.Separator((Token.Whitespace)token);
           tokenizer.next();
@@ -336,7 +336,7 @@ public final class Parser<T> implements Iterator<Event> {
           }
 
           //
-          events.addLast(new Event.Stop.Done(tokenizer.getIndex()));
+          events.addLast(new Event.Stop.Done.Arg(tokenizer.getIndex()));
 
           //
           nextStatus = new Status.Arg(events);
