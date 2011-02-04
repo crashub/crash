@@ -248,7 +248,18 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
   }
 
+  private Completion argument(MethodDescriptor<?> method, Completer completer) {
+    List<? extends ArgumentDescriptor<?>> arguments = method.getArguments();
+    if (arguments.isEmpty()) {
+      return new EmptyCompletion();
+    } else {
+      ArgumentDescriptor<?> argument = arguments.get(0);
+      return new ParameterCompletion("", Termination.DETERMINED, argument, completer);
+    }
+  }
+
   private class ParameterCompletion extends Completion {
+
 
     /** . */
     private final String prefix;
@@ -391,15 +402,7 @@ public class MatcherImpl<T> extends Matcher<T> {
           if (method == null) {
             return new MethodCompletion(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
           } else {
-
-            // FOOBAR
-            List<? extends ArgumentDescriptor<?>> arguments = method.getArguments();
-            if (arguments.isEmpty()) {
-              return new EmptyCompletion();
-            } else {
-              ArgumentDescriptor<?> argument = arguments.get(0);
-              return new ParameterCompletion("", Termination.DETERMINED, argument, completer);
-            }
+            return argument(method, completer);
           }
         }
       }
@@ -428,16 +431,7 @@ public class MatcherImpl<T> extends Matcher<T> {
       }
     } else if (last instanceof Event.Method) {
       if (separator != null) {
-
-        // FOOBAR
-        List<? extends ArgumentDescriptor<?>> arguments = method.getArguments();
-        if (arguments.isEmpty()) {
-          return new EmptyCompletion();
-        } else {
-          ArgumentDescriptor<?> argument = arguments.get(0);
-          return new ParameterCompletion("", Termination.DETERMINED, argument, completer);
-        }
-
+        return argument(method, completer);
       } else {
         return new SpaceCompletion();
       }
