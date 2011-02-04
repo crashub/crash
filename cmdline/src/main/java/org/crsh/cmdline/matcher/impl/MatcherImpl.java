@@ -168,27 +168,87 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
   }
 
-  /**
-   * Provide a completion over the methods of this class descriptor.
-   *
-   * @param mainName the main method name
-   * @param prefix the prefix
-   * @return the completion map
-   */
-  public Map<String, String> completeMethods(String mainName, String prefix, Termination termination) {
-    Map<String, String> completions = new HashMap<String, String>();
-    for (MethodDescriptor<?> m : descriptor.getMethods()) {
-      String name = m.getName();
-      if (name.startsWith(prefix)) {
-        if (!name.equals(mainName)) {
-          completions.put(name.substring(prefix.length()), termination.getEnd());
-        }
-      }
-    }
-    return completions;
+  private abstract class Completion {
+
+    protected abstract Map<String, String> complete() throws CmdCompletionException;
+
   }
 
-  private class ParameterCompletion {
+  private class EmptyCompletion extends Completion {
+
+    @Override
+    protected Map<String, String> complete() throws CmdCompletionException {
+      return Collections.emptyMap();
+    }
+  }
+
+  private class SpaceCompletion extends Completion {
+
+    @Override
+    protected Map<String, String> complete() throws CmdCompletionException {
+      return Collections.singletonMap("", " ");
+    }
+  }
+
+  private class MethodCompletion extends Completion {
+
+    /** . */
+    private final String mainName;
+
+    /** . */
+    private final  String prefix;
+
+    /** . */
+    private final  Termination termination;
+
+    private MethodCompletion(String mainName, String prefix, Termination termination) {
+      this.mainName = mainName;
+      this.prefix = prefix;
+      this.termination = termination;
+    }
+
+    @Override
+    protected Map<String, String> complete() throws CmdCompletionException {
+      Map<String, String> completions = new HashMap<String, String>();
+      for (MethodDescriptor<?> m : descriptor.getMethods()) {
+        String name = m.getName();
+        if (name.startsWith(prefix)) {
+          if (!name.equals(mainName)) {
+            completions.put(name.substring(prefix.length()), termination.getEnd());
+          }
+        }
+      }
+      return completions;
+    }
+  }
+
+  private class OptionCompletion extends Completion {
+
+    /** . */
+    private final CommandDescriptor<T, ?> descriptor;
+
+    /** . */
+    private final Token.Literal.Option prefix;
+
+    private OptionCompletion(CommandDescriptor<T, ?> descriptor, Token.Literal.Option prefix) {
+      this.descriptor = descriptor;
+      this.prefix = prefix;
+    }
+
+    @Override
+    protected Map<String, String> complete() throws CmdCompletionException {
+      Map<String, String> completions = new HashMap<String, String>();
+      Set<String> optionNames = prefix instanceof Token.Literal.Option.Short ? descriptor.getShortOptionNames() : descriptor.getLongOptionNames();
+      for (String optionName : optionNames) {
+        if (optionName.startsWith(prefix.value)) {
+          completions.put(optionName.substring(prefix.value.length()), " ");
+        }
+      }
+      return completions;
+    }
+  }
+
+  private class ParameterCompletion extends Completion {
 
     /** . */
     private final String prefix;
@@ -199,15 +259,20 @@ public class MatcherImpl<T> extends Matcher<T> {
     /** . */
     private final ParameterDescriptor<?> parameter;
 
-    private ParameterCompletion(String prefix, Termination termination, ParameterDescriptor<?> parameter) {
+    /** . */
+    private final Completer completer;
+
+    private ParameterCompletion(String prefix, Termination termination, ParameterDescriptor<?> parameter, Completer completer) {
       this.prefix = prefix;
       this.termination = termination;
       this.parameter = parameter;
+      this.completer = completer;
     }
 
-    private Map<String, String> complete(Completer completer) throws CmdCompletionException {
+    protected Map<String, String> complete() throws CmdCompletionException {
 
       Class<? extends Completer> completerType = parameter.getCompleterType();
+      Completer completer = this.completer;
 
       // Use the most adapted completer
       if (completerType != EmptyCompleter.class) {
@@ -240,6 +305,10 @@ public class MatcherImpl<T> extends Matcher<T> {
 
   @Override
   public Map<String, String> complete(Completer completer, String s) throws CmdCompletionException {
+    return _complete(completer, s).complete();
+  }
+
+  private Completion _complete(Completer completer, String s) throws CmdCompletionException {
 
     Tokenizer tokenizer = new Tokenizer(s);
     Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, false);
@@ -274,26 +343,17 @@ public class MatcherImpl<T> extends Matcher<T> {
     //
     if (stop instanceof Event.Stop.Unresolved.NoSuchOption) {
       Event.Stop.Unresolved.NoSuchOption nso = (Event.Stop.Unresolved.NoSuchOption)stop;
-      String prefix = nso.getToken().value;
-      CommandDescriptor<T, ?> cmd = method != null ? (CommandDescriptor<T, ?>)method : descriptor;
-      Map<String, String> completions = new HashMap<String, String>();
-      Set<String> optionNames = nso.getToken() instanceof Token.Literal.Option.Short ? cmd.getShortOptionNames() : cmd.getLongOptionNames();
-      for (String optionName : optionNames) {
-        if (optionName.startsWith(prefix)) {
-          completions.put(optionName.substring(prefix.length()), " ");
-        }
-      }
-      return completions;
+      return new OptionCompletion(method != null ? (CommandDescriptor<T, ?>)method : descriptor, nso.getToken());
     } else if (stop instanceof Event.Stop.Unresolved) {
       if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
           Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;
-          return completeMethods(mainName, s.substring(stop.getIndex()), tma.getToken().termination);
+          return new MethodCompletion(mainName, s.substring(stop.getIndex()), tma.getToken().termination);
         } else {
-          return Collections.emptyMap();
+          return new EmptyCompletion();
         }
       } else {
-        return Collections.emptyMap();
+        return new EmptyCompletion();
       }
     } else if (stop instanceof Event.Stop.Done.Option) {
       // to use ?
@@ -304,9 +364,9 @@ public class MatcherImpl<T> extends Matcher<T> {
     //
     if (last == null) {
       if (method == null) {
-        return completeMethods(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
+        return new MethodCompletion(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
       } else {
-        return Collections.emptyMap();
+        return new EmptyCompletion();
       }
     }
 
@@ -320,28 +380,28 @@ public class MatcherImpl<T> extends Matcher<T> {
       OptionDescriptor<?> option = optionEvent.getDescriptor();
       if (separator == null) {
         if (values.size() == 0) {
-          return Collections.singletonMap("", " ");
+          return new SpaceCompletion();
         } else if (values.size() <= option.getArity()) {
           Token.Literal.Word word = optionEvent.peekLast();
-          completion = new ParameterCompletion(word.value, word.termination, option);
+          completion = new ParameterCompletion(word.value, word.termination, option, completer);
         } else {
-          return Collections.emptyMap();
+          return new EmptyCompletion();
         }
       } else {
         if (values.size() < option.getArity()) {
-          completion = new ParameterCompletion("", Termination.DETERMINED, option);
+          completion = new ParameterCompletion("", Termination.DETERMINED, option, completer);
         } else {
           if (method == null) {
-            return completeMethods(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
+            return new MethodCompletion(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
           } else {
 
             // FOOBAR
             List<? extends ArgumentDescriptor<?>> arguments = method.getArguments();
             if (arguments.isEmpty()) {
-              return Collections.emptyMap();
+              return new EmptyCompletion();
             } else {
               ArgumentDescriptor<?> argument = arguments.get(0);
-              completion = new ParameterCompletion("", Termination.DETERMINED, argument);
+              completion = new ParameterCompletion("", Termination.DETERMINED, argument, completer);
             }
           }
         }
@@ -358,17 +418,17 @@ public class MatcherImpl<T> extends Matcher<T> {
             if (index < arguments.size()) {
               throw new UnsupportedOperationException("Need to find next argument and use it for completion");
             } else {
-              return Collections.emptyMap();
+              return new EmptyCompletion();
             }
           case ZERO_OR_MORE:
-            completion = new ParameterCompletion("", Termination.DETERMINED, argument);
+            completion = new ParameterCompletion("", Termination.DETERMINED, argument, completer);
             break;
           default:
             throw new AssertionError();
         }
       } else {
         Token.Literal value = eventArgument.peekLast();
-        completion = new ParameterCompletion(value.value, value.termination, argument);
+        completion = new ParameterCompletion(value.value, value.termination, argument, completer);
       }
     } else if (last instanceof Event.Method) {
       if (separator != null) {
@@ -376,20 +436,20 @@ public class MatcherImpl<T> extends Matcher<T> {
         // FOOBAR
         List<? extends ArgumentDescriptor<?>> arguments = method.getArguments();
         if (arguments.isEmpty()) {
-          return Collections.emptyMap();
+          return new EmptyCompletion();
         } else {
           ArgumentDescriptor<?> argument = arguments.get(0);
-          completion = new ParameterCompletion("", Termination.DETERMINED, argument);
+          completion = new ParameterCompletion("", Termination.DETERMINED, argument, completer);
         }
 
       } else {
-        return Collections.singletonMap("", " ");
+        return new SpaceCompletion();
       }
     } else {
       throw new AssertionError();
     }
 
     //
-    return completion.complete(completer);
+    return completion;
   }
 }
