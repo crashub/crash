@@ -25,10 +25,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Annotate something that can be a command or be involved in a command.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
+
+  /**
+   * The name of the main subordinate.
+   *
+   * @return the main method name
+   */
+  String main() default "";
+
 }

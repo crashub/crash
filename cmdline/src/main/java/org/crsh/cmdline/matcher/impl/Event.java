@@ -33,6 +33,9 @@ import java.util.List;
  */
 public abstract class Event {
 
+  public static final class DoubleDash extends Event {
+  }
+
   public abstract static class Parameter<T extends Token.Literal, D extends ParameterDescriptor<?>> extends Event {
 
     /** . */
