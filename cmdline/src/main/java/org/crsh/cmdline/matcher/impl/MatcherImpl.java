@@ -323,7 +323,6 @@ public class MatcherImpl<T> extends Matcher<T> {
     } else if (last instanceof Event.Argument) {
       Event.Argument eventArgument = (Event.Argument)last;
       ArgumentDescriptor<?> argument = eventArgument.getDescriptor();
-      List<Token.Literal> values = eventArgument.getValues();
       if (separator != null) {
         switch (argument.getMultiplicity()) {
           case ZERO_OR_ONE:
