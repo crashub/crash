@@ -39,6 +39,14 @@ import java.util.NoSuchElementException;
  */
 public final class Parser<T> implements Iterator<Event> {
 
+  public enum Mode {
+
+    INVOKE,
+
+    COMPLETE
+
+  }
+
   /** . */
   private final Tokenizer tokenizer;
 
@@ -46,7 +54,7 @@ public final class Parser<T> implements Iterator<Event> {
   private final String mainName;
 
   /** . */
-  private final boolean satisfyAllArguments;
+  private final Mode mode;
 
   /** . */
   private CommandDescriptor<T, ?> command;
@@ -57,16 +65,16 @@ public final class Parser<T> implements Iterator<Event> {
   /** . */
   private Event next;
 
-  public Parser(Tokenizer tokenizer, ClassDescriptor<T> command, String mainName, boolean satisfyAllArguments) {
+  public Parser(Tokenizer tokenizer, ClassDescriptor<T> command, String mainName, Mode mode) {
     this.tokenizer = tokenizer;
     this.command = command;
     this.mainName = mainName;
     this.status = new Status.ReadingOption();
-    this.satisfyAllArguments = satisfyAllArguments;
+    this.mode = mode;
   }
 
-  public boolean isSatisfyAllArguments() {
-    return satisfyAllArguments;
+  public Mode getMode() {
+    return mode;
   }
 
   public int getIndex() {
@@ -193,10 +201,15 @@ public final class Parser<T> implements Iterator<Event> {
           }
         }
       } else if (status instanceof Status.WantReadArg) {
-        if (satisfyAllArguments) {
-          nextStatus = new Status.ComputeArg();
-        } else {
-          nextStatus = new Status.ReadingArg();
+        switch (mode) {
+          case INVOKE:
+            nextStatus = new Status.ComputeArg();
+            break;
+          case COMPLETE:
+            nextStatus = new Status.ReadingArg();
+            break;
+          default:
+            throw new AssertionError();
         }
       } else if (status instanceof Status.ReadingArg) {
         if (token == null) {

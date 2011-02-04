@@ -45,12 +45,12 @@ public class ParserTestCase extends TestCase {
     private Parser parser;
 
     private Tester(ClassDescriptor<T> command, String s) {
-      this(command, s, false);
+      this(command, s, Parser.Mode.COMPLETE);
     }
 
-    private Tester(ClassDescriptor<T> command, String s, boolean satisfyArguments) {
+    private Tester(ClassDescriptor<T> command, String s, Parser.Mode mode) {
       this.command = command;
-      this.parser = new Parser<T>(new Tokenizer(s), command, "main", satisfyArguments);
+      this.parser = new Parser<T>(new Tokenizer(s), command, "main", mode);
     }
 
     public void assertSeparator() {
@@ -392,13 +392,13 @@ public class ParserTestCase extends TestCase {
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
     //
-    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    Tester<A> tester = new Tester<A>(cmd, "a", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("arg", "a");
     tester.assertEnd(Event.Stop.Done.Arg.class, 1);
 
     //
-    tester = new Tester<A>(cmd, "a b", true);
+    tester = new Tester<A>(cmd, "a b", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("arg", "a");
     tester.assertSeparator();
@@ -449,26 +449,26 @@ public class ParserTestCase extends TestCase {
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
     //
-    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    Tester<A> tester = new Tester<A>(cmd, "a", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("args", "a");
     tester.assertEnd(Event.Stop.Done.Arg.class, 1);
 
     //
-    tester = new Tester<A>(cmd, "a ", true);
+    tester = new Tester<A>(cmd, "a ", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("args", "a");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.Arg.class, 2);
 
     //
-    tester = new Tester<A>(cmd, "a b", true);
+    tester = new Tester<A>(cmd, "a b", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("args", "a", "b");
     tester.assertEnd(Event.Stop.Done.Arg.class, 3);
 
     //
-    tester = new Tester<A>(cmd, "a b ", true);
+    tester = new Tester<A>(cmd, "a b ", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("args", "a", "b");
     tester.assertSeparator();
@@ -507,13 +507,13 @@ public class ParserTestCase extends TestCase {
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
     //
-    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    Tester<A> tester = new Tester<A>(cmd, "a", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertEnd(Event.Stop.Done.Arg.class, 1);
 
     //
-    tester = new Tester<A>(cmd, "a b", true);
+    tester = new Tester<A>(cmd, "a b", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
@@ -553,7 +553,7 @@ public class ParserTestCase extends TestCase {
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
     //
-    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    Tester<A> tester = new Tester<A>(cmd, "a", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertEnd(Event.Stop.Done.Arg.class, 1);
@@ -597,13 +597,13 @@ public class ParserTestCase extends TestCase {
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
     //
-    Tester<A> tester = new Tester<A>(cmd, "a", true);
+    Tester<A> tester = new Tester<A>(cmd, "a", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("arg2", "a");
     tester.assertEnd(Event.Stop.Done.Arg.class, 1);
 
     //
-    tester = new Tester<A>(cmd, "a b", true);
+    tester = new Tester<A>(cmd, "a b", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
@@ -635,7 +635,7 @@ public class ParserTestCase extends TestCase {
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
     //
-    Tester<A> tester = new Tester<A>(cmd, "main", true);
+    Tester<A> tester = new Tester<A>(cmd, "main", Parser.Mode.INVOKE);
     tester.assertMethod("main");
     tester.assertArgument("arg", "main");
     tester.assertEnd(Event.Stop.Done.Arg.class, 4);
