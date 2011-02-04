@@ -217,20 +217,7 @@ public class MatcherImpl<T> extends Matcher<T> {
     } else if (stop instanceof Event.Stop.Unresolved) {
       if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
-
-          // Copy / paste
-          String prefix = s.substring(stop.getIndex());
-          Map<String, String> completions = new HashMap<String, String>();
-          for (MethodDescriptor<?> m : descriptor.getMethods()) {
-            String name = m.getName();
-            if (name.startsWith(prefix)) {
-              if (!name.equals(mainName)) {
-                completions.put(name.substring(prefix.length()), " ");
-              }
-            }
-          }
-          return completions;
-
+          return descriptor.completeMethods(mainName, s.substring(stop.getIndex()));
         } else {
           return Collections.emptyMap();
         }
@@ -246,17 +233,7 @@ public class MatcherImpl<T> extends Matcher<T> {
     //
     if (last == null) {
       if (method == null) {
-        String prefix = s.substring(stop.getIndex());
-        Map<String, String> completions = new HashMap<String, String>();
-        for (MethodDescriptor<?> m : descriptor.getMethods()) {
-          String name = m.getName();
-          if (name.startsWith(prefix)) {
-            if (!name.equals(mainName)) {
-              completions.put(name.substring(prefix.length()), " ");
-            }
-          }
-        }
-        return completions;
+        return descriptor.completeMethods(mainName, s.substring(stop.getIndex()));
       } else {
         return Collections.emptyMap();
       }
@@ -290,20 +267,7 @@ public class MatcherImpl<T> extends Matcher<T> {
           parameter = option;
         } else {
           if (method == null) {
-
-            // Copy paste from above
-            String _prefix = s.substring(stop.getIndex());
-            Map<String, String> _completions = new HashMap<String, String>();
-            for (MethodDescriptor<?> _m : descriptor.getMethods()) {
-              String _name = _m.getName();
-              if (_name.startsWith(_prefix)) {
-                if (!_name.equals(mainName)) {
-                  _completions.put(_name.substring(_prefix.length()), " ");
-                }
-              }
-            }
-            return _completions;
-
+            return descriptor.completeMethods(mainName, s.substring(stop.getIndex()));
           } else {
 
             // FOOBAR
