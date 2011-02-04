@@ -237,7 +237,7 @@ public final class Parser<T> implements Iterator<Event> {
                 nextEvent = new Event.Argument(argument, values);
             }
           } else {
-            nextEvent = new Event.Stop.Unresolved.TooManyArguments(token);
+            nextEvent = new Event.Stop.Unresolved.TooManyArguments(literal);
           }
         }
       } else if (status instanceof Status.ComputeArg) {

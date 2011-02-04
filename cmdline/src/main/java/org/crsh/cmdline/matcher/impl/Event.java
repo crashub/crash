@@ -255,8 +255,8 @@ public abstract class Event {
         }
       }
 
-      public static class TooManyArguments extends Unresolved<Token> {
-        TooManyArguments(Token token) {
+      public static class TooManyArguments extends Unresolved<Token.Literal> {
+        TooManyArguments(Token.Literal token) {
           super(token);
         }
       }

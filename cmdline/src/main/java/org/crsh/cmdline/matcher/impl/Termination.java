@@ -25,10 +25,20 @@ package org.crsh.cmdline.matcher.impl;
  */
 public enum Termination {
 
-  DETERMINED,
+  DETERMINED(' '),
 
-  SINGLE_QUOTE,
+  SINGLE_QUOTE('\''),
 
-  DOUBLE_QUOTE
+  DOUBLE_QUOTE('"');
 
+  /** . */
+  private final String end;
+
+  Termination(char end) {
+    this.end = "" + end;
+  }
+
+  public String getEnd() {
+    return end;
+  }
 }

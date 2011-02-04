@@ -168,6 +168,26 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
   }
 
+  /**
+   * Provide a completion over the methods of this class descriptor.
+   *
+   * @param mainName the main method name
+   * @param prefix the prefix
+   * @return the completion map
+   */
+  public Map<String, String> completeMethods(String mainName, String prefix, Termination termination) {
+    Map<String, String> completions = new HashMap<String, String>();
+    for (MethodDescriptor<?> m : descriptor.getMethods()) {
+      String name = m.getName();
+      if (name.startsWith(prefix)) {
+        if (!name.equals(mainName)) {
+          completions.put(name.substring(prefix.length()), termination.getEnd());
+        }
+      }
+    }
+    return completions;
+  }
+
   @Override
   public Map<String, String> complete(Completer completer, String s) throws CmdCompletionException {
 
@@ -217,7 +237,8 @@ public class MatcherImpl<T> extends Matcher<T> {
     } else if (stop instanceof Event.Stop.Unresolved) {
       if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
-          return descriptor.completeMethods(mainName, s.substring(stop.getIndex()));
+          Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;
+          return completeMethods(mainName, s.substring(stop.getIndex()), tma.getToken().termination);
         } else {
           return Collections.emptyMap();
         }
@@ -233,7 +254,7 @@ public class MatcherImpl<T> extends Matcher<T> {
     //
     if (last == null) {
       if (method == null) {
-        return descriptor.completeMethods(mainName, s.substring(stop.getIndex()));
+        return completeMethods(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
       } else {
         return Collections.emptyMap();
       }
@@ -267,7 +288,7 @@ public class MatcherImpl<T> extends Matcher<T> {
           parameter = option;
         } else {
           if (method == null) {
-            return descriptor.completeMethods(mainName, s.substring(stop.getIndex()));
+            return completeMethods(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
           } else {
 
             // FOOBAR
@@ -348,29 +369,11 @@ public class MatcherImpl<T> extends Matcher<T> {
 
     //
     if (completer != null) {
-
-      //
-      String foo;
-      switch (termination) {
-        case DETERMINED:
-          foo = " ";
-          break;
-        case DOUBLE_QUOTE:
-          foo = "\"";
-          break;
-        case SINGLE_QUOTE:
-          foo = "'";
-          break;
-        default:
-          throw new AssertionError();
-      }
-
-      //
       try {
         Map<String, Boolean> res = completer.complete(parameter, prefix);
         Map<String, String> delimiter = new HashMap<String, String>();
         for (Map.Entry<String, Boolean> entry : res.entrySet()) {
-          delimiter.put(entry.getKey(), entry.getValue() ? "" + foo : "");
+          delimiter.put(entry.getKey(), entry.getValue() ? termination.getEnd() : "");
         }
         return delimiter;
       }

@@ -30,7 +30,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Formatter;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -184,26 +183,6 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
         writer.append("\n\n");
       }
     }
-  }
-
-  /**
-   * Provide a completion over the methods of this class descriptor.
-   *
-   * @param mainName the main method name
-   * @param prefix the prefix
-   * @return the completion map
-   */
-  public Map<String, String> completeMethods(String mainName, String prefix) {
-    Map<String, String> completions = new HashMap<String, String>();
-    for (MethodDescriptor<?> m : methodMap.values()) {
-      String name = m.getName();
-      if (name.startsWith(prefix)) {
-        if (!name.equals(mainName)) {
-          completions.put(name.substring(prefix.length()), " ");
-        }
-      }
-    }
-    return completions;
   }
 
   public Iterable<MethodDescriptor<T>> getMethods() {
