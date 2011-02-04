@@ -28,14 +28,16 @@ import org.crsh.cmdline.OptionDescriptor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public final class Parser<T> {
+public final class Parser<T> implements Iterator<Event> {
 
   /** . */
   private final Tokenizer tokenizer;
@@ -51,6 +53,9 @@ public final class Parser<T> {
 
   /** . */
   private Status status;
+
+  /** . */
+  private Event next;
 
   public Parser(Tokenizer tokenizer, ClassDescriptor<T> command, String mainName, boolean satisfyAllArguments) {
     this.tokenizer = tokenizer;
@@ -68,7 +73,31 @@ public final class Parser<T> {
     return tokenizer.getIndex();
   }
 
-  public Event bilto() {
+  public Status getStatus() {
+    return status;
+  }
+
+  public boolean hasNext() {
+    if (next == null) {
+      next = determine();
+    }
+    return next != null;
+  }
+
+  public Event next() {
+    if (!hasNext()) {
+      throw new NoSuchElementException();
+    }
+    Event tmp = next;
+    next = null;
+    return tmp;
+  }
+
+  public void remove() {
+    throw new UnsupportedOperationException();
+  }
+
+  private Event determine() {
 
     //
     Event nextEvent = null;

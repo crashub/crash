@@ -54,29 +54,29 @@ public class ParserTestCase extends TestCase {
     }
 
     public void assertSeparator() {
-      Event event = parser.bilto();
+      Event event = parser.next();
       assertTrue("was expecting a separator instead of " + event, event instanceof Event.Separator);
     }
 
     public void assertMethod(String name) {
-      Event.Method event = (Event.Method)parser.bilto();
+      Event.Method event = (Event.Method)parser.next();
       assertEquals(name, event.getDescriptor().getName());
     }
 
     public void assertOption(String name, String... values) {
-      Event.Option event = (Event.Option)parser.bilto();
+      Event.Option event = (Event.Option)parser.next();
       assertTrue(event.getDescriptor().getNames().contains(name));
       assertEquals(Arrays.asList(values), event.getStrings());
     }
 
     public void assertArgument(String name, String... values) {
-      Event.Argument event = (Event.Argument)parser.bilto();
+      Event.Argument event = (Event.Argument)parser.next();
       assertEquals(name, event.getDescriptor().getName());
       assertEquals(Arrays.asList(values), event.getStrings());
     }
 
     public void assertEnd(Class expectedClass, int expectedIndex) {
-      Event.Stop event = (Event.Stop)parser.bilto();
+      Event.Stop event = (Event.Stop)parser.next();
       assertEquals(expectedClass, event.getClass());
       assertEquals(expectedIndex, event.getIndex());
     }

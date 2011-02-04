@@ -92,7 +92,7 @@ public class MatcherImpl<T> extends Matcher<T> {
     Integer classEnd;
     Event previous = null;
     while (true) {
-      Event event = parser.bilto();
+      Event event = parser.next();
       if (event instanceof Event.Separator) {
         //
       } else if (event instanceof Event.Stop) {
@@ -182,7 +182,7 @@ public class MatcherImpl<T> extends Matcher<T> {
 
     //
     while (true) {
-      Event event = parser.bilto();
+      Event event = parser.next();
       if (event instanceof Event.Separator) {
         separator = (Event.Separator)event;
       } else if (event instanceof Event.Stop) {
