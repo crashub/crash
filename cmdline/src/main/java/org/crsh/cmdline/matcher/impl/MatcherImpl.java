@@ -371,9 +371,6 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
 
     //
-    ParameterCompletion completion;
-
-    //
     if (last instanceof Event.Option) {
       Event.Option optionEvent = (Event.Option)last;
       List<Token.Literal.Word> values = optionEvent.getValues();
@@ -383,13 +380,13 @@ public class MatcherImpl<T> extends Matcher<T> {
           return new SpaceCompletion();
         } else if (values.size() <= option.getArity()) {
           Token.Literal.Word word = optionEvent.peekLast();
-          completion = new ParameterCompletion(word.value, word.termination, option, completer);
+          return new ParameterCompletion(word.value, word.termination, option, completer);
         } else {
           return new EmptyCompletion();
         }
       } else {
         if (values.size() < option.getArity()) {
-          completion = new ParameterCompletion("", Termination.DETERMINED, option, completer);
+          return new ParameterCompletion("", Termination.DETERMINED, option, completer);
         } else {
           if (method == null) {
             return new MethodCompletion(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
@@ -401,7 +398,7 @@ public class MatcherImpl<T> extends Matcher<T> {
               return new EmptyCompletion();
             } else {
               ArgumentDescriptor<?> argument = arguments.get(0);
-              completion = new ParameterCompletion("", Termination.DETERMINED, argument, completer);
+              return new ParameterCompletion("", Termination.DETERMINED, argument, completer);
             }
           }
         }
@@ -421,14 +418,13 @@ public class MatcherImpl<T> extends Matcher<T> {
               return new EmptyCompletion();
             }
           case ZERO_OR_MORE:
-            completion = new ParameterCompletion("", Termination.DETERMINED, argument, completer);
-            break;
+            return new ParameterCompletion("", Termination.DETERMINED, argument, completer);
           default:
             throw new AssertionError();
         }
       } else {
         Token.Literal value = eventArgument.peekLast();
-        completion = new ParameterCompletion(value.value, value.termination, argument, completer);
+        return new ParameterCompletion(value.value, value.termination, argument, completer);
       }
     } else if (last instanceof Event.Method) {
       if (separator != null) {
@@ -439,7 +435,7 @@ public class MatcherImpl<T> extends Matcher<T> {
           return new EmptyCompletion();
         } else {
           ArgumentDescriptor<?> argument = arguments.get(0);
-          completion = new ParameterCompletion("", Termination.DETERMINED, argument, completer);
+          return new ParameterCompletion("", Termination.DETERMINED, argument, completer);
         }
 
       } else {
@@ -448,8 +444,5 @@ public class MatcherImpl<T> extends Matcher<T> {
     } else {
       throw new AssertionError();
     }
-
-    //
-    return completion;
   }
 }
