@@ -1,14 +1,16 @@
 import org.crsh.command.ScriptException;
-import org.kohsuke.args4j.Argument;
-import org.crsh.command.Description;
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.jcr.command.PathArg
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Command;
 
-@Description("Discards the changes of the current session or a node")
-public class rollback extends org.crsh.command.ClassCommand {
+public class rollback extends org.crsh.jcr.command.JCRCommand {
 
-  @Argument(required=false,index=0,usage="The path of the node to rollback")
-  def String path;
-
-  public Object execute() throws ScriptException {
+  @Usage("rollback changes")
+  @Command
+  @Man("""Rollbacks the changes of the current session. A node can be provided to rollback the state of the
+this nodes and its descendants only.""")
+  public void main(@PathArg @Usage("the path of the node to commit") String path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);
     node.refresh(false);
