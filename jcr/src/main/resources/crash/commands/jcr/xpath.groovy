@@ -1,39 +1,50 @@
-import org.kohsuke.args4j.Argument;
 import javax.jcr.query.Query;
 import org.crsh.shell.ui.UIBuilder;
-import org.kohsuke.args4j.Option;
-import org.crsh.command.Description;
+import org.crsh.command.Description
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Option
+import org.crsh.cmdline.annotations.Argument;
 
 @Description("Executes a query with the XPATH dialect, by default results are limited to 5 ")
-public class xpath extends org.crsh.command.ClassCommand {
+public class xpath extends org.crsh.command.CRaSHCommand {
 
-  @Option(name="-o",aliases=["--offset"],usage="The result offset")
-  def Integer offset = 0;
-
-  @Option(name="-l",aliases=["--limit"],usage="The result limit")
-  def Integer limit = 5;
-
-  @Option(name="-a",aliases=["--all"],usage="Ignore the limit argument")
-  def Boolean all = false;
-
-  @Argument(required=true,index=0,usage="The xpath query to execute")
-  def String xpath;
-
-  {
-     unquoteArguments = false;
-  }
-
-  public Object execute() throws ScriptException {
+  @Usage("execute a JCR xpath query")
+  @Command
+  @Man("""Executes a JCR query with the xpath dialect, by default results are limited to 5.\
+All results matched by the query are produced by this command.""")
+  public void main(
+    InvocationContext<Void, Node> context,
+    @Option(names=["o","offset"])
+    @Usage("the result offset")
+    Integer offset,
+    @Option(names=["l","limit"])
+    @Usage("the result limit")
+    Integer limit,
+    @Option(names=["a","all"])
+    @Usage("ignore the limit argument")
+    Boolean all,
+    @Argument
+    @Usage("the query")
+    String query) throws ScriptException {
+    assertConnected();
     assertConnected();
 
     //
+    offset = offset ?: 0;
+    limit = limit ?: 5;
+    all = all ?: false;
+
+    //
     if (offset < 0) {
-      return "No negative offset accepted";
+      throw new ScriptException("No negative offset accepted; $offset");
     }
 
     //
     if (limit < 0) {
-      return "No negative limit accepted";
+      throw new ScriptException("No negative limit accepted: -limit");
     }
 
     //
@@ -45,13 +56,10 @@ public class xpath extends org.crsh.command.ClassCommand {
     def queryMgr = session.workspace.queryManager;
 
     //
-    def query = queryMgr.createQuery(xpath, Query.XPATH);
+    def select = queryMgr.createQuery(query, Query.XPATH);
 
     //
-    def result = query.execute();
-
-    // Column we will display
-    def columnNames = [];
+    def result = select.execute();
 
     //
     def nodes = result.nodes;
@@ -76,6 +84,6 @@ public class xpath extends org.crsh.command.ClassCommand {
     }
 
     //
-    return builder;
+    context.writer.print(builder);
   }
 }

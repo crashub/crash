@@ -12,7 +12,7 @@ import org.crsh.cmdline.annotations.Option;
 
 public class select extends org.crsh.command.CRaSHCommand {
 
-  @Usage("execute an JCR sql query")
+  @Usage("execute a JCR sql query")
   @Command
   @Man("""Executes a JCR query with the SQL dialect, by default results are limited to 5.\
 All results matched by the query are produced by this command.""")
