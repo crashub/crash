@@ -130,6 +130,21 @@ public class CompleteTestCase extends TestCase {
     assertEquals(c, matcher.complete("--addi"));
   }
 
+  public void testDoubleDash() throws Exception {
+
+    class A {
+      @Command
+      void main(@Option(names = "o") String o, @Argument(completer = CompleterSupport.Foo.class) String arg) { }
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    Matcher<A> matcher = Matcher.createMatcher("main", desc);
+
+    //
+    assertEquals(Collections.singletonMap("oo", " "), matcher.complete("-- f"));
+  }
+
   public void testOptionValue() throws Exception
   {
 
