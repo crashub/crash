@@ -1,13 +1,17 @@
 import org.crsh.command.Description;
-import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Man;
 
-@Description("Print the current path. The current node is produced by this command")
-public class pwd extends org.crsh.command.BaseCommand<Void, Node> {
+public class pwd extends org.crsh.command.CRaSHCommand {
 
-  public void execute(InvocationContext<Node, Void> context) throws ScriptException {
+  @Description("Print the current path. The current node is produced by this command")
+  @Usage("print the current node path")
+  @Command
+  @Man("""Print the current node path, the current node is produced by this command.""")
+  public void main(InvocationContext<Node, Void> context) throws ScriptException {
     context.produce(getCurrentNode());
-
-    //
     context.writer <<= currentPath;
   }
 }
