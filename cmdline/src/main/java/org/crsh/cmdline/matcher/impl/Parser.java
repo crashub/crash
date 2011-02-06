@@ -147,14 +147,15 @@ public final class Parser<T> implements Iterator<Event> {
             Token.Literal.Option optionToken = (Token.Literal.Option)literal;
             if (optionToken.getName().length() == 0 && optionToken instanceof Token.Literal.Option.Long) {
               tokenizer.next();
+              next.addLast(new Event.DoubleDash((Token.Literal.Option.Long)optionToken));
               if (command instanceof ClassDescriptor<?>) {
                 ClassDescriptor<T> classCommand = (ClassDescriptor<T>)command;
                 MethodDescriptor<T> m = classCommand.getMethod(mainName);
                 if (m != null) {
                   command = m;
+                  next.addLast(new Event.Method.Implicit(m, optionToken));
                 }
               }
-              next.addLast(new Event.DoubleDash((Token.Literal.Option.Long)optionToken));
               nextStatus = new Status.WantReadArg();
             } else {
               OptionDescriptor<?> desc = command.findOption(literal.value);

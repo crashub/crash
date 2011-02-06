@@ -656,17 +656,20 @@ public class ParserTestCase extends TestCase {
     //
     Tester<A> tester = new Tester<A>(cmd, "--", Parser.Mode.INVOKE);
     tester.assertDoubleDash();
+    tester.assertMethod("main");
     tester.assertEnd(Event.Stop.Done.Arg.class, 2);
 
     //
     tester = new Tester<A>(cmd, "-- ", Parser.Mode.INVOKE);
     tester.assertDoubleDash();
+    tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.Arg.class, 3);
 
     //
     tester = new Tester<A>(cmd, "-- foo", Parser.Mode.INVOKE);
     tester.assertDoubleDash();
+    tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertArgument("arg", "foo");
     tester.assertEnd(Event.Stop.Done.Arg.class, 6);
