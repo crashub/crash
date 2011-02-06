@@ -1,10 +1,8 @@
 import org.crsh.jcr.command.PathArg;
 
-import org.crsh.cmdline.ParameterDescriptor;
-import javax.jcr.Session;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Item;
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Man;
 
 public class cd extends org.crsh.jcr.command.JCRCommand {
 

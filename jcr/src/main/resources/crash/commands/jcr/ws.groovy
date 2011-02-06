@@ -4,7 +4,12 @@ import javax.jcr.SimpleCredentials;
 import org.crsh.jcr.JCR;
 import org.crsh.jcr.command.ContainerOpt;
 import org.crsh.jcr.command.UserNameOpt;
-import org.crsh.jcr.command.PasswordOpt;
+import org.crsh.jcr.command.PasswordOpt
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.cmdline.annotations.Required;
 
 @Man("""\
 The ws command provides a set of commands interacting with JCR workspace.""")

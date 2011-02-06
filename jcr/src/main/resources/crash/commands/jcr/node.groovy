@@ -1,5 +1,11 @@
 import org.crsh.jcr.command.PathArg;
-import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.ImportUUIDBehavior
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Command
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Option
+import org.crsh.cmdline.annotations.Required;
 
 public class node extends org.crsh.jcr.command.JCRCommand {
 

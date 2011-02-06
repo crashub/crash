@@ -17,7 +17,7 @@ public class mv extends org.crsh.command.BaseCommand<Node, Node> {
   @Argument(required=false,index=1,usage="The destination path absolute or relative")
   def String target;
 
-  public void execute(InvocationContext<Node, Void> context) throws ScriptException {
+  public void execute(InvocationContext<Node, Node> context) throws ScriptException {
     assertConnected()
 
     //

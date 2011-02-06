@@ -1,5 +1,9 @@
 import org.crsh.jcr.command.PathArg;
-import org.crsh.shell.ui.UIBuilder;
+import org.crsh.shell.ui.UIBuilder
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Option;
 
 public class ls extends org.crsh.jcr.command.JCRCommand {
 
