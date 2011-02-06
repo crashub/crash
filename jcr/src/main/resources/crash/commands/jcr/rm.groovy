@@ -1,16 +1,32 @@
 import org.crsh.command.ScriptException;
-import org.kohsuke.args4j.Argument;
 import org.crsh.command.Description;
-import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Man
+import org.crsh.jcr.command.Path
+import org.crsh.cmdline.annotations.Argument;
 
-@Description("Remove one or several node or a property. This command can also consume a stream of node\
-to remove.")
-public class rm extends org.crsh.command.BaseCommand<Node, Void> {
+public class rm extends org.crsh.jcr.command.JCRCommand {
 
-  @Argument(index=0,usage="The paths of the node to remove")
-  def List<String> paths;
+  @Command
+  @Usage("remove one or several node or a property")
+  @Man("""\
+The rm command removes a node or property specified by its path either absolute or relative. This operation
+is executed against the JCR session, meaning that it will not be effective until it is commited to the JCR server.
 
-  public void execute(InvocationContext<Node, Void> context) throws ScriptException {
+[/]% rm foo
+Node /foo removed
+
+It is possible to specify several nodes.
+
+[/]% rm foo bar
+Node /foo /bar removed
+
+rm is a <Node,Void> command removing all the consumed nodes.""")
+  public void main(
+    InvocationContext<Node, Void> context,
+    @Path @Argument @Usage("the paths of the node to remove") List<String> paths) throws ScriptException {
     assertConnected();
 
     //

@@ -1,25 +1,3 @@
-
-=== Removing a node or property ===
-
-The ##rm## command removes a node or property specified by its path either absolute or relative. This operation
-is executed against the JCR session, meaning that it will not be effective until it is commited to the JCR server.
-
-{{screen}}
-[/]% rm foo
-Node /foo removed
-{{/screen}}
-
-It is possible to specify several nodes.
-
-{{screen}}
-[/]% rm foo bar
-Node /foo /bar removed
-{{/screen}}
-
-{{note}}
-##rm## is a ##<Node,Void>## command removing all the consumed nodes.
-{{/note}}
-
 === Updating a property ===
 
 The ##set## command updates the property of a node.

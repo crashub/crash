@@ -18,6 +18,9 @@
 === ##mv## command ===
 {{include document="mv.wiki" /}}
 
+=== ##rm## command ===
+{{include document="rm.wiki" /}}
+
 === ##node## command ===
 {{include document="node.wiki" /}}
 
