@@ -1,42 +1,50 @@
-import org.kohsuke.args4j.Argument;
 import javax.jcr.query.Query;
 import org.crsh.shell.ui.UIBuilder;
-import org.kohsuke.args4j.Option;
-import org.crsh.command.Description;
+
+
 import javax.jcr.Node;
-import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.cmdline.annotations.Option;
 
-@Description("""Executes a query with the SQL dialect, by default results are limited to 5.\
+public class select extends org.crsh.command.CRaSHCommand {
+
+  @Usage("execute an JCR sql query")
+  @Command
+  @Man("""Executes a JCR query with the SQL dialect, by default results are limited to 5.\
 All results matched by the query are produced by this command.""")
-public class select extends org.crsh.command.BaseCommand<Void, Node> {
-
-  @Option(name="-o",aliases=["--offset"],usage="The result offset")
-  def Integer offset = 0;
-
-  @Option(name="-l",aliases=["--limit"],usage="The result limit")
-  def Integer limit = 5;
-
-  @Option(name="-a",aliases=["--all"],usage="Ignore the limit argument")
-  def Boolean all = false;
-
-  @Argument(usage = "the query")
-  def List<String> arguments;
-
-  {
-     unquoteArguments = false;
-  }
-
-  public void execute(InvocationContext<Void, Node> context) throws ScriptException {
+  public void main(
+    InvocationContext<Void, Node> context,
+    @Option(names=["o","offset"])
+    @Usage("the result offset")
+    Integer offset,
+    @Option(names=["l","limit"])
+    @Usage("the result limit")
+    Integer limit,
+    @Option(names=["a","all"])
+    @Usage("ignore the limit argument")
+    Boolean all,
+    @Argument(unquote = false)
+    @Usage("the query")
+    List<String> query) throws ScriptException {
     assertConnected();
 
     //
+    offset = offset ?: 0;
+    limit = limit ?: 5;
+    all = all ?: false;
+
+    //
     if (offset < 0) {
-      throw new ScriptException("No negative offset accepted");
+      throw new ScriptException("No negative offset accepted; $offset");
     }
 
     //
     if (limit < 0) {
-      throw new ScriptException("No negative limit accepted");
+      throw new ScriptException("No negative limit accepted: -limit");
     }
 
     //
@@ -49,16 +57,13 @@ public class select extends org.crsh.command.BaseCommand<Void, Node> {
 
     //
     def statement = "select";
-    arguments.each { statement += " " + it };
+    query.each { statement += " " + it };
 
     //
-    def query = queryMgr.createQuery(statement, Query.SQL);
+    def select = queryMgr.createQuery(statement, Query.SQL);
 
     //
-    def result = query.execute();
-
-    // Column we will display
-    def columnNames = [];
+    def result = select.execute();
 
     //
     def nodes = result.nodes;

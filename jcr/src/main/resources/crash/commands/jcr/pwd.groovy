@@ -6,7 +6,6 @@ import org.crsh.cmdline.annotations.Man;
 
 public class pwd extends org.crsh.command.CRaSHCommand {
 
-  @Description("Print the current path. The current node is produced by this command")
   @Usage("print the current node path")
   @Command
   @Man("""Print the current node path, the current node is produced by this command.""")
