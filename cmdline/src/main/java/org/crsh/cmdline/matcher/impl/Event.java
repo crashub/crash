@@ -34,6 +34,13 @@ import java.util.List;
 public abstract class Event {
 
   public static final class DoubleDash extends Event {
+
+    /** . */
+    protected final Token.Literal.Option.Long token;
+
+    public DoubleDash(Token.Literal.Option.Long token) {
+      this.token = token;
+    }
   }
 
   public abstract static class Parameter<T extends Token.Literal, D extends ParameterDescriptor<?>> extends Event {

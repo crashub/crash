@@ -124,56 +124,69 @@ public final class Parser<T> implements Iterator<Event> {
           Token.Literal literal = (Token.Literal)token;
           if (literal instanceof Token.Literal.Option) {
             Token.Literal.Option optionToken = (Token.Literal.Option)literal;
-            OptionDescriptor<?> desc = command.findOption(literal.value);
-            if (desc != null) {
+            if (optionToken.getName().length() == 0 && optionToken instanceof Token.Literal.Option.Long) {
               tokenizer.next();
-              int arity = desc.getArity();
-              LinkedList<Token.Literal.Word> values = new LinkedList<Token.Literal.Word>();
-              while (arity > 0) {
-                if (tokenizer.hasNext()) {
-                  Token a = tokenizer.peek();
-                  if (a instanceof Token.Whitespace) {
-                    tokenizer.next();
-                    if (tokenizer.hasNext() && tokenizer.peek() instanceof Token.Literal.Word) {
-                      // ok
-                    } else {
-                      tokenizer.pushBack();
-                      break;
-                    }
-                  } else {
-                    Token.Literal b = (Token.Literal)a;
-                    if (b instanceof Token.Literal.Word) {
-                      values.addLast((Token.Literal.Word)b);
-                      tokenizer.next();
-                      arity--;
-                    } else {
-                      tokenizer.pushBack();
-                      break;
-                    }
-                  }
-                } else {
-                  break;
+              if (command instanceof ClassDescriptor<?>) {
+                ClassDescriptor<T> classCommand = (ClassDescriptor<T>)command;
+                MethodDescriptor<T> m = classCommand.getMethod(mainName);
+                if (m != null) {
+                  command = m;
                 }
               }
-              nextEvent = new Event.Option(desc, optionToken, values);
+              nextEvent = new Event.DoubleDash((Token.Literal.Option.Long)optionToken);
+              nextStatus = new Status.WantReadArg();
             } else {
-              // We are reading an unknown option
-              // it could match an option of an implicit command
-              if (command instanceof ClassDescriptor<?>) {
-                MethodDescriptor<T> m = ((ClassDescriptor<T>)command).getMethod(mainName);
-                if (m != null) {
-                  desc = m.findOption(literal.value);
-                  if (desc != null) {
-                    command = m;
-                    nextEvent = new Event.Method.Implicit(m, literal);
+              OptionDescriptor<?> desc = command.findOption(literal.value);
+              if (desc != null) {
+                tokenizer.next();
+                int arity = desc.getArity();
+                LinkedList<Token.Literal.Word> values = new LinkedList<Token.Literal.Word>();
+                while (arity > 0) {
+                  if (tokenizer.hasNext()) {
+                    Token a = tokenizer.peek();
+                    if (a instanceof Token.Whitespace) {
+                      tokenizer.next();
+                      if (tokenizer.hasNext() && tokenizer.peek() instanceof Token.Literal.Word) {
+                        // ok
+                      } else {
+                        tokenizer.pushBack();
+                        break;
+                      }
+                    } else {
+                      Token.Literal b = (Token.Literal)a;
+                      if (b instanceof Token.Literal.Word) {
+                        values.addLast((Token.Literal.Word)b);
+                        tokenizer.next();
+                        arity--;
+                      } else {
+                        tokenizer.pushBack();
+                        break;
+                      }
+                    }
                   } else {
-                    nextEvent = new Event.Stop.Unresolved.NoSuchOption.Method(optionToken);
+                    break;
+                  }
+                }
+                nextEvent = new Event.Option(desc, optionToken, values);
+              } else {
+                // We are reading an unknown option
+                // it could match an option of an implicit command
+                if (command instanceof ClassDescriptor<?>) {
+                  MethodDescriptor<T> m = ((ClassDescriptor<T>)command).getMethod(mainName);
+                  if (m != null) {
+                    desc = m.findOption(literal.value);
+                    if (desc != null) {
+                      command = m;
+                      nextEvent = new Event.Method.Implicit(m, literal);
+                    } else {
+                      nextEvent = new Event.Stop.Unresolved.NoSuchOption.Method(optionToken);
+                    }
+                  } else {
+                    nextEvent = new Event.Stop.Unresolved.NoSuchOption.Class(optionToken);
                   }
                 } else {
-                  nextEvent = new Event.Stop.Unresolved.NoSuchOption.Class(optionToken);
+                  nextEvent = new Event.Stop.Unresolved.NoSuchOption.Method(optionToken);
                 }
-              } else {
-                nextEvent = new Event.Stop.Unresolved.NoSuchOption.Method(optionToken);
               }
             }
           } else {

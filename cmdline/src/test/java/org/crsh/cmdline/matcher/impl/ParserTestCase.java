@@ -75,6 +75,10 @@ public class ParserTestCase extends TestCase {
       assertEquals(Arrays.asList(values), event.getStrings());
     }
 
+    public void assertDoubleDash() {
+      Event.DoubleDash event = (Event.DoubleDash)parser.next();
+    }
+
     public void assertEnd(Class expectedClass, int expectedIndex) {
       Event.Stop event = (Event.Stop)parser.next();
       assertEquals(expectedClass, event.getClass());
@@ -639,5 +643,32 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("main");
     tester.assertArgument("arg", "main");
     tester.assertEnd(Event.Stop.Done.Arg.class, 4);
+  }
+
+  public void testDoubleDash() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Option(names = "o") String o, @Argument(name = "arg") String arg) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "--", Parser.Mode.INVOKE);
+    tester.assertDoubleDash();
+    tester.assertEnd(Event.Stop.Done.Arg.class, 2);
+
+    //
+    tester = new Tester<A>(cmd, "-- ", Parser.Mode.INVOKE);
+    tester.assertDoubleDash();
+    tester.assertSeparator();
+    tester.assertEnd(Event.Stop.Done.Arg.class, 3);
+
+    //
+    tester = new Tester<A>(cmd, "-- foo", Parser.Mode.INVOKE);
+    tester.assertDoubleDash();
+    tester.assertSeparator();
+    tester.assertArgument("arg", "foo");
+    tester.assertEnd(Event.Stop.Done.Arg.class, 6);
   }
 }
