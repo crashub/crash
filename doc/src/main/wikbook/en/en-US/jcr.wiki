@@ -15,6 +15,9 @@
 === ##cp## command ===
 {{include document="cp.wiki" /}}
 
+=== ##mv## command ===
+{{include document="mv.wiki" /}}
+
 === ##node## command ===
 {{include document="node.wiki" /}}
 

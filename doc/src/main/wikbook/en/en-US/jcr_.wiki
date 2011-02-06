@@ -1,14 +1,3 @@
-=== Moving a node ===
-
-The ##mv## command can move a node to a target location in the JCR tree. It can be used also to rename a node.
-
-{{screen}}
-[/registry]% mv Registry Registry2
-{{/screen}}
-
-{{note}}
-##mv## command is a ##<Node,Node>## command consuming a stream of node to move them and producing nodes that were moved.
-{{/note}}
 
 === Removing a node or property ===
 

@@ -1,23 +1,28 @@
 import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.jcr.Workspace;
 
 import org.crsh.command.ScriptException;
-import org.kohsuke.args4j.Argument;
-import org.crsh.command.Description;
-import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Man
+import org.crsh.jcr.command.Path
+import org.crsh.cmdline.annotations.Argument;
 
-@Description("""Move a node to another location. The command can consume the nodes, those nodes will be moved\
-instead of the source argument. Any node moved is produced by this command.""")
-public class mv extends org.crsh.command.BaseCommand<Node, Node> {
+public class mv extends org.crsh.jcr.command.JCRCommand {
 
-  @Argument(required=false,index=0,usage="The path of the source node to move, absolute or relative")
-  def String source;
+  @Command
+  @Usage("move a node")
+  @Man("""\
+The mv command can move a node to a target location in the JCR tree. It can be used also to rename a node. The mv
+command is a <Node,Node> command consuming a stream of node to move them and producing nodes that were moved.
 
-  @Argument(required=false,index=1,usage="The destination path absolute or relative")
-  def String target;
+[/registry]% mv Registry Registry2""")
 
-  public void execute(InvocationContext<Node, Node> context) throws ScriptException {
+
+  public void main(
+    InvocationContext<Node, Node> context,
+    @Path @Argument @Usage("the path of the source node to move, absolute or relative") String source,
+    @Path @Argument @Usage("the destination path absolute or relative") String target) throws ScriptException {
     assertConnected()
 
     //
