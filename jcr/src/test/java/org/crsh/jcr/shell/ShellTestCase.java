@@ -100,7 +100,7 @@ public class ShellTestCase extends AbstractJCRCommandTestCase {
 
   public void testDistribution() throws Exception {
     assertLogin();
-    Iterator<?> produced = assertOk("produce / | set foo foo_value + set bar bar_value + consume").getProduced().iterator();
+    Iterator<?> produced = assertOk("produce / | node set foo foo_value + node set bar bar_value + consume").getProduced().iterator();
     assertTrue(produced.hasNext());
     assertEquals("/", ((Node)produced.next()).getPath());
     assertFalse(produced.hasNext());

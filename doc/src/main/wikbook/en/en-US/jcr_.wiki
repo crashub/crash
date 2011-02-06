@@ -1,36 +1,3 @@
-=== Updating a property ===
-
-The ##set## command updates the property of a node.
-
-Create or destroy property foo with the value bar on the root node:
-
-{{screen}}
-[/]% set foo bar
-Property created
-{{/screen}}
-
-Update the existing foo property:
-
-{{screen}}
-[/]% set foo juu
-{{/screen}}
-
-When a property is created and does not have a property descriptor that constraint its type, you can specify it
-with the //-t// option
-
-{{screen}}
-[/]% set -t LONG long_property 3
-{{/screen}}
-
-Remove a property
-
-{{screen}}
-[/]% set foo
-{{/screen}}
-
-{{note}}
-##set## is a ##<Node,Void>## command updating the property of the consumed node stream.
-{{/note}}
 
 === Exporting a node ===
 
