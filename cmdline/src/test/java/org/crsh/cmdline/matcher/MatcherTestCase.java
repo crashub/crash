@@ -334,4 +334,31 @@ public class MatcherTestCase extends TestCase {
     Matcher.createMatcher("b", desc).match("-o 5").invoke(context, d);
     assertEquals((Integer)5, d.i);
   }
+
+  public static class E {
+
+    private String i;
+
+    @Command
+    public void a(@Option(names = "o", unquote = false) String i) {
+      this.i = i;
+    }
+  }
+
+  public void testQuoted() throws Exception {
+
+    ClassDescriptor<E> desc = CommandFactory.create(E.class);
+
+    //
+    E e = new E();
+    InvocationContext context = new InvocationContext();
+    Matcher.createMatcher("a", desc).match("-o a").invoke(context, e);
+    assertEquals("a", e.i);
+
+    //
+    e = new E();
+    context = new InvocationContext();
+    Matcher.createMatcher("a", desc).match("-o \"a\"").invoke(context, e);
+    assertEquals("\"a\"", e.i);
+  }
 }

@@ -42,6 +42,7 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
     Description info,
     boolean required,
     boolean password,
+    boolean unquote,
     Class<? extends Completer> completerType,
     Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
     super(
@@ -50,6 +51,7 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
       info,
       required,
       password,
+      unquote,
       completerType,
       annotation);
 

@@ -34,6 +34,15 @@ public class Value {
   private final String value;
 
   public Value(String rawValue, String value) {
+    if (rawValue == null) {
+      throw new NullPointerException();
+    }
+    if (value == null) {
+      throw new NullPointerException();
+    }
+    if (rawValue.length() == 0) {
+      throw new IllegalArgumentException();
+    }
     this.rawValue = rawValue;
     this.value = value;
   }
@@ -44,10 +53,6 @@ public class Value {
 
   public String getValue() {
     return value;
-  }
-
-  public boolean isUsable() {
-    return value != null && value.length() > 0;
   }
 
   @Override

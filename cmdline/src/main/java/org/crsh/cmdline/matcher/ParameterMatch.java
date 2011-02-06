@@ -39,9 +39,13 @@ public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBind
   /** . */
   private final List<Value> values;
 
+  /** . */
+  private List<String> strings;
+
   public ParameterMatch(P parameter, List<Value> values) {
     this.parameter = parameter;
     this.values = values;
+    this.strings = null;
   }
 
   public P getParameter() {
@@ -50,5 +54,16 @@ public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBind
 
   public List<Value> getValues() {
     return values;
+  }
+
+  public List<String> getStrings() {
+    if (strings == null) {
+      List<String> strings = new ArrayList<String>(values.size());
+      for (Value value : values) {
+        strings.add(parameter.isUnquote() ? value.getValue() : value.getRawValue());
+      }
+      this.strings = strings;
+    }
+    return strings;
   }
 }

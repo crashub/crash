@@ -39,5 +39,12 @@ public @interface Argument {
 
   boolean password() default false;
 
+  /**
+   * Returns true if the argument value should be unquoted.
+   *
+   * @return the unquote value
+   */
+  boolean unquote() default true;
+
   Class<? extends Completer> completer() default EmptyCompleter.class;
 }

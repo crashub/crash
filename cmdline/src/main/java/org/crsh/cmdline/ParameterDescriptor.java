@@ -65,6 +65,9 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   private final Annotation annotation;
 
   /** . */
+  private final boolean unquote;
+
+  /** . */
   CommandDescriptor<?, B> owner;
 
   public ParameterDescriptor(
@@ -73,6 +76,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     Description description,
     boolean required,
     boolean password,
+    boolean unquote,
     Class<? extends Completer> completerType,
     Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
 
@@ -139,6 +143,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     this.completerType = completerType;
     this.annotation = annotation;
     this.javaValueType = javaValueType;
+    this.unquote = unquote;
   }
 
   public Object parse(String s) {
@@ -175,6 +180,10 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
 
   public final boolean isRequired() {
     return required;
+  }
+
+  public boolean isUnquote() {
+    return unquote;
   }
 
   public final boolean isPassword() {

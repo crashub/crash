@@ -57,7 +57,7 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
   public final Object invoke(InvocationContext context, C command) throws CmdLineException {
 
     //
-    Map<ParameterDescriptor<?>, List<Value>> abc = new HashMap<ParameterDescriptor<?>, List<Value>>();
+    Map<ParameterDescriptor<?>, List<String>> abc = new HashMap<ParameterDescriptor<?>, List<String>>();
 
     //
     Set<ParameterDescriptor<?>> unused = getParameters();
@@ -68,24 +68,22 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
       if (!unused.remove(parameter)) {
         throw new CmdSyntaxException();
       }
-      abc.put(parameter, parameterMatch.getValues());
+      abc.put(parameter, parameterMatch.getStrings());
     }
 
     // Convert values
     Map<ParameterDescriptor<?>, Object> parameterValues = new HashMap<ParameterDescriptor<?>, Object>();
-    for (Map.Entry<ParameterDescriptor<?>, List<Value>> entry : abc.entrySet()) {
+    for (Map.Entry<ParameterDescriptor<?>, List<String>> entry : abc.entrySet()) {
 
       //
       ParameterDescriptor<?> parameter = entry.getKey();
-      List<Value> values = entry.getValue();
+      List<String> values = entry.getValue();
 
       // First convert the entire list
       List<Object> l = new ArrayList<Object>();
-      for (Value value : values) {
-        if (value.isUsable()) {
-          Object o = parameter.parse(value.getValue());
-          l.add(o);
-        }
+      for (String value : values) {
+        Object o = parameter.parse(value);
+        l.add(o);
       }
 
       //

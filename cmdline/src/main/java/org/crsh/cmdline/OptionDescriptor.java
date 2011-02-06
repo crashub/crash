@@ -49,6 +49,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     boolean required,
     int arity,
     boolean password,
+    boolean unquote,
     Class<? extends Completer> completerType,
     Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
     super(
@@ -57,6 +58,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
       info,
       required,
       password,
+      unquote,
       completerType,
       annotation);
 

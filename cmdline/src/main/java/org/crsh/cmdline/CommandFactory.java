@@ -78,6 +78,7 @@ public class CommandFactory {
         info,
         required,
         argumentAnn.password(),
+        argumentAnn.unquote(),
         argumentAnn.completer(),
         ann);
     } else if (optionAnn != null) {
@@ -89,6 +90,7 @@ public class CommandFactory {
         required,
         optionAnn.arity(),
         optionAnn.password(),
+        optionAnn.unquote(),
         optionAnn.completer(),
         ann);
     } else {
