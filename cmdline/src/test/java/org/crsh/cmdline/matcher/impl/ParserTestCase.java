@@ -654,6 +654,36 @@ public class ParserTestCase extends TestCase {
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
     //
+    Tester<A> tester = new Tester<A>(cmd, "--", Parser.Mode.COMPLETE);
+    tester.assertDoubleDash();
+    tester.assertMethod("main");
+    tester.assertEnd(Event.Stop.Done.Arg.class, 2);
+
+    //
+    tester = new Tester<A>(cmd, "-- ", Parser.Mode.COMPLETE);
+    tester.assertDoubleDash();
+    tester.assertMethod("main");
+    tester.assertSeparator();
+    tester.assertEnd(Event.Stop.Done.Arg.class, 3);
+
+    //
+    tester = new Tester<A>(cmd, "-- foo", Parser.Mode.COMPLETE);
+    tester.assertDoubleDash();
+    tester.assertMethod("main");
+    tester.assertSeparator();
+    tester.assertArgument("arg", "foo");
+    tester.assertEnd(Event.Stop.Done.Arg.class, 6);
+  }
+
+  public void testSatisfyAllDoubleDash() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Option(names = "o") String o, @Argument(name = "arg") String arg) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
     Tester<A> tester = new Tester<A>(cmd, "--", Parser.Mode.INVOKE);
     tester.assertDoubleDash();
     tester.assertMethod("main");
