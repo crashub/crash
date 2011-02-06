@@ -20,7 +20,6 @@
 package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.matcher.impl.MatcherImpl;
 import org.crsh.cmdline.spi.Completer;
 
@@ -41,7 +40,7 @@ public abstract class Matcher<T> {
   }
 
   public final Map<String, String> complete(String s) throws CmdCompletionException {
-    return complete(EmptyCompleter.getInstance(), s);
+    return complete(null, s);
   }
 
   public abstract Map<String, String> complete(Completer completer, String s) throws CmdCompletionException;

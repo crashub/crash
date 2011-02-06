@@ -1,3 +1,8 @@
+import org.crsh.command.CRaSHCommand
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Argument
+
 class sleep extends CRaSHCommand {
   @Usage("Sleep for some time")
   @Command

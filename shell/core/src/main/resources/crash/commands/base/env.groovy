@@ -1,3 +1,8 @@
+import org.crsh.command.CRaSHCommand
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Command
+import org.crsh.command.InvocationContext
+
 class env extends CRaSHCommand
 {
   @Usage("Display the term width")

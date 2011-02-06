@@ -1,10 +1,11 @@
-import org.kohsuke.args4j.Argument;
 import org.crsh.command.ScriptException;
-import org.crsh.command.Description
+
+
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Usage
-import org.crsh.jcr.command.PathArg;
+import org.crsh.jcr.command.Path
+import org.crsh.cmdline.annotations.Argument;
 
 public class commit extends org.crsh.jcr.command.JCRCommand {
 
@@ -12,7 +13,7 @@ public class commit extends org.crsh.jcr.command.JCRCommand {
   @Command
   @Man("""Saves the changes done to the current session. A node can be provided to save the state of the
 this nodes and its descendants only.""")
-  public void main(@PathArg @Usage("the path of the node to commit") String path) throws ScriptException {
+  public void main(@Path  @Argument @Usage("the path of the node to commit") String path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);
     node.save();

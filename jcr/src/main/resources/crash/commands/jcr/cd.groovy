@@ -1,8 +1,9 @@
-import org.crsh.jcr.command.PathArg;
+import org.crsh.jcr.command.Path;
 
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Man;
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Argument;
 
 public class cd extends org.crsh.jcr.command.JCRCommand {
 
@@ -16,7 +17,7 @@ node. A relative or absolute path argument can be provided to specify a new curr
 [/gadgets]% cd /gadgets
 [/gadgets]% cd
 [/]%""")
-  public Object main(@PathArg String path) throws ScriptException {
+  public Object main(@Path @Argument String path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);
     setCurrentNode(node);

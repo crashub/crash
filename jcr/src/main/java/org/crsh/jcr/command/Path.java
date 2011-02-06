@@ -17,32 +17,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.annotations;
+package org.crsh.jcr.command;
 
-import java.lang.annotation.ElementType;
+import org.crsh.cmdline.annotations.Usage;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Target({ElementType.FIELD,ElementType.PARAMETER,ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Option {
-
-  String[] names();
-
-  int arity() default -1;
-
-  boolean password() default false;
-
-  /**
-   * Returns true if the argument value should be unquoted.
-   *
-   * @return the unquote value
-   */
-  boolean unquote() default true;
-
+@Usage("a node path")
+public @interface Path {
 }

@@ -22,7 +22,6 @@ package org.crsh.cmdline.matcher.impl;
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
@@ -286,7 +285,7 @@ public class MatcherImpl<T> extends Matcher<T> {
       Completer completer = this.completer;
 
       // Use the most adapted completer
-      if (completerType != EmptyCompleter.class) {
+      if (completerType != null) {
         try {
           completer = completerType.newInstance();
         }

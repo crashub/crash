@@ -24,6 +24,7 @@ import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.annotations.Completed;
 import org.crsh.cmdline.annotations.Option;
 
 import java.lang.annotation.RetentionPolicy;
@@ -45,7 +46,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void m(@Argument() String arg) {}
       @Command
-      void n(@Argument(completer =  CompleterSupport.Foo.class) String arg) {}
+      void n(@Argument @Completed(CompleterSupport.Foo.class) String arg) {}
     }
 
     //
@@ -64,7 +65,7 @@ public class CompleteTestCase extends TestCase {
 
     class A {
       @Command
-      void m(@Argument(completer =  CompleterSupport.Foo.class) String arg) {}
+      void m(@Argument @Completed(CompleterSupport.Foo.class) String arg) {}
     }
 
     //
@@ -84,7 +85,7 @@ public class CompleteTestCase extends TestCase {
 
     class A {
       @Command
-      void m(@Argument(completer =  CompleterSupport.Foo.class) List<String> arg) {}
+      void m(@Argument @Completed(CompleterSupport.Foo.class) List<String> arg) {}
     }
 
     //
@@ -134,7 +135,7 @@ public class CompleteTestCase extends TestCase {
 
     class A {
       @Command
-      void main(@Option(names = "o") String o, @Argument(completer = CompleterSupport.Foo.class) String arg) { }
+      void main(@Option(names = "o") String o, @Argument @Completed(CompleterSupport.Foo.class) String arg) { }
     }
 
     //
@@ -149,7 +150,7 @@ public class CompleteTestCase extends TestCase {
   {
 
     class A {
-      @Option(names = "a", completer = CompleterSupport.Foo.class) String a;
+      @Option(names = "a") @Completed(CompleterSupport.Foo.class) String a;
     }
 
     //
@@ -168,7 +169,7 @@ public class CompleteTestCase extends TestCase {
 
     class A {
       @Command
-      void main(@Option(names = "o") String o, @Argument(completer = CompleterSupport.Foo.class) String arg) { }
+      void main(@Option(names = "o") String o, @Argument @Completed(CompleterSupport.Foo.class) String arg) { }
     }
 
     //
@@ -223,7 +224,7 @@ public class CompleteTestCase extends TestCase {
 
     class A {
       @Command
-      void main(@Argument(completer = CompleterSupport.Echo.class) String s) { }
+      void main(@Argument @Completed(CompleterSupport.Echo.class) String s) { }
     }
 
     //
@@ -289,7 +290,7 @@ public class CompleteTestCase extends TestCase {
   {
     class A {
       @Command
-      void bar(@Option(names = "a", completer = CompleterSupport.Foo.class) String a) { }
+      void bar(@Option(names = "a") @Completed(CompleterSupport.Foo.class) String a) { }
     }
 
     //
@@ -314,7 +315,7 @@ public class CompleteTestCase extends TestCase {
     //
     class A {
       @Command
-      void foo(@Option(names = "a", completer = CompleterSupport.Exception.class) String a) { }
+      void foo(@Option(names = "a") @Completed(CompleterSupport.Exception.class) String a) { }
     }
     Matcher<A> matcherA = Matcher.createMatcher(CommandFactory.create(A.class));
     try {
@@ -327,7 +328,7 @@ public class CompleteTestCase extends TestCase {
     //
     class B {
       @Command
-      void foo(@Option(names = "a", completer = CompleterSupport.RuntimeException.class) String a) { }
+      void foo(@Option(names = "a") @Completed(CompleterSupport.RuntimeException.class) String a) { }
     }
     Matcher<B> matcherB = Matcher.createMatcher(CommandFactory.create(B.class));
     try {
@@ -340,7 +341,7 @@ public class CompleteTestCase extends TestCase {
     //
     class C {
       @Command
-      void foo(@Option(names = "a", completer = CompleterSupport.Abstract.class) String a) { }
+      void foo(@Option(names = "a") @Completed(CompleterSupport.Abstract.class) String a) { }
     }
     Matcher<C> matcherC = Matcher.createMatcher(CommandFactory.create(C.class));
     try {

@@ -1,6 +1,11 @@
 import java.util.Collections;
 import java.util.regex.Pattern;
-import java.util.Formatter;
+import java.util.Formatter
+import org.crsh.command.CRaSHCommand
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Command
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Option;
 
 public class thread extends CRaSHCommand {
 

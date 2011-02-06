@@ -1,11 +1,12 @@
-import org.crsh.jcr.command.PathArg;
+import org.crsh.jcr.command.Path;
 import javax.jcr.ImportUUIDBehavior
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option
-import org.crsh.cmdline.annotations.Required;
+import org.crsh.cmdline.annotations.Required
+import org.crsh.cmdline.annotations.Argument
 
 public class node extends org.crsh.jcr.command.JCRCommand {
 
@@ -27,7 +28,7 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
     InvocationContext<Void, Node> context,
     @Usage("the paths to be created")
     @Man("The paths of the new node to be created, the paths can either be absolute or relative.")
-    @PathArg List<String> paths,
+    @Path @Argument List<String> paths,
     @Usage("the node type name")
     @Man("The name of the primary node type to create.")
     @Option(names=["t","type"]) String primaryNodeTypeName)
@@ -74,8 +75,8 @@ The node has been exported
 """)
   @Usage("export a node to an nt file")
   public Object export(
-    @Required @PathArg @Usage("path of the exported node") String src,
-    @Required @PathArg @Usage("path of the exported nt:file node") String dst) throws ScriptException {
+    @Required @Path @Argument @Usage("path of the exported node") String src,
+    @Required @Path @Argument @Usage("path of the exported nt:file node") String dst) throws ScriptException {
 
     //
     assertConnected();
@@ -131,8 +132,8 @@ Imports a node from an nt:file node located in the workspace:
 Node imported
 """)
   public Object IMPORT(
-    @Required @PathArg @Usage("path of the imported nt:file node") String src,
-    @Required @PathArg @Usage("path of the parent imported node") String dst) throws ScriptException {
+    @Required @Path @Argument @Usage("path of the imported nt:file node") String src,
+    @Required @Path @Argument @Usage("path of the parent imported node") String dst) throws ScriptException {
 
     //
     assertConnected();

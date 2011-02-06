@@ -1,10 +1,10 @@
-import org.crsh.jcr.command.PathArg
+import org.crsh.jcr.command.Path
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Argument
-import org.crsh.cmdline.annotations.Required;
+import org.crsh.cmdline.annotations.Required
 
 @Man("""\
 The mixin command manipulates JCR node mixins. Mixins can be added to or removed from nodes.
@@ -26,7 +26,7 @@ add a mixin from an incoming node stream, for instance:
      @Argument
      @Required
      String mixin,
-     @PathArg List<String> paths)
+     @Path @Argument List<String> paths)
   {
      context.writer <<= "Mixin $mixin added to nodes";
      perform(context, paths, { node ->
@@ -49,7 +49,7 @@ remove a mixin from an incoming node stream, for instance:
      @Usage("the mixin name to remove")
      @Required
      String mixin,
-     @PathArg List<String> paths)
+     @Path @Argument List<String> paths)
   {
      context.writer <<= "Mixin $mixin removed from nodes";
      perform(context, paths, { node ->

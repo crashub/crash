@@ -1,4 +1,7 @@
-import org.crsh.command.DescriptionMode;
+import org.crsh.command.DescriptionMode
+import org.crsh.command.CRaSHCommand
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Command;
 
 class help extends CRaSHCommand
 {

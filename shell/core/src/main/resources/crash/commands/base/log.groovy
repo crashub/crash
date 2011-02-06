@@ -2,14 +2,20 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import java.util.logging.LogManager;
 import java.util.logging.LoggingMXBean;
-import java.util.Collections;
 import java.util.regex.Pattern;
 import javax.management.ObjectName;
-import org.crsh.cmdline.ParameterDescriptor;
-import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.spi.Completer;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.RetentionPolicy
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Option
+import org.crsh.cmdline.annotations.Completed
+import org.crsh.cmdline.annotations.Required
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.command.CRaSHCommand
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Command
+import org.crsh.command.InvocationContext;
 
 public class log extends CRaSHCommand implements Completer {
 
@@ -277,7 +283,7 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the logger level to assign among {trace, debug, info, warn, error}")
-@Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
+@Option(names=["l","level"])
 @interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)

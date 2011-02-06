@@ -1,9 +1,9 @@
-import org.crsh.jcr.command.PathArg;
+import org.crsh.jcr.command.Path;
 import org.crsh.shell.ui.UIBuilder
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.annotations.Option
 
 public class ls extends org.crsh.jcr.command.JCRCommand {
 
@@ -27,7 +27,7 @@ accepts a path argument that can be absolute or relative.
 | +-/folder""")
   @Command
   public Object main(
-  @Usage("the path of the node content to list") @PathArg String path,
+  @Usage("the path of the node content to list") @Path String path,
   @Usage("Print depth")
   @Option(names=["d","depth"]) Integer depth) throws ScriptException {
     assertConnected();
