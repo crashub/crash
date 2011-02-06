@@ -1,12 +1,12 @@
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
 import org.crsh.command.ScriptException;
-import org.crsh.command.Description;
-import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Usage;
 
-@Description("Collect a set of nodes")
-public class consume extends org.crsh.command.BaseCommand<Node, Node> {
-  public void execute(InvocationContext<Node, Void> context) throws ScriptException {
+public class consume extends org.crsh.command.CRaSHCommand {
+  @Command
+  @Usage("collects a set of nodes")
+  public void main(InvocationContext<Node, Node> context) throws ScriptException {
     context.consume().each {
       context.produce(it);
     }
