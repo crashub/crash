@@ -1,4 +1,3 @@
-import org.crsh.command.Description;
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Usage
