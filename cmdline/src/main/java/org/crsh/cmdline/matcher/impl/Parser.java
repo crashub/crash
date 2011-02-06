@@ -39,6 +39,31 @@ import java.util.NoSuchElementException;
  */
 public final class Parser<T> implements Iterator<Event> {
 
+  private static abstract class Status {
+
+    private static class ReadingOption extends Status { }
+    private static class WantReadArg extends Status { }
+    private static class ComputeArg extends Status { }
+    private static class Done extends Status { }
+    private static class ReadingArg extends Status {
+
+      /** . */
+      final int index;
+
+      ReadingArg() {
+        this(0);
+      }
+
+      private ReadingArg(int index) {
+        this.index = index;
+      }
+
+      ReadingArg next() {
+        return new ReadingArg(index + 1);
+      }
+    }
+  }
+
   public enum Mode {
 
     INVOKE,
@@ -63,7 +88,7 @@ public final class Parser<T> implements Iterator<Event> {
   private Status status;
 
   /** . */
-  private Event next;
+  private final LinkedList<Event> next;
 
   public Parser(Tokenizer tokenizer, ClassDescriptor<T> command, String mainName, Mode mode) {
     this.tokenizer = tokenizer;
@@ -71,6 +96,7 @@ public final class Parser<T> implements Iterator<Event> {
     this.mainName = mainName;
     this.status = new Status.ReadingOption();
     this.mode = mode;
+    this.next = new LinkedList<Event>();
   }
 
   public Mode getMode() {
@@ -86,39 +112,34 @@ public final class Parser<T> implements Iterator<Event> {
   }
 
   public boolean hasNext() {
-    if (next == null) {
-      next = determine();
+    if (next.isEmpty()) {
+      determine();
     }
-    return next != null;
+    return next.size() > 0;
   }
 
   public Event next() {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
-    Event tmp = next;
-    next = null;
-    return tmp;
+    return next.removeFirst();
   }
 
   public void remove() {
     throw new UnsupportedOperationException();
   }
 
-  private Event determine() {
-
-    //
-    Event nextEvent = null;
+  private void determine() {
 
     //
     Token token = tokenizer.peek();
-    do {
+    while (next.isEmpty()) {
       Status nextStatus = null;
       if (status instanceof Status.ReadingOption) {
         if (token == null) {
-          nextEvent = new Event.Stop.Done.Option(tokenizer.getIndex());
+          next.addLast(new Event.Stop.Done.Option(tokenizer.getIndex()));
         } else if (token instanceof Token.Whitespace) {
-          nextEvent = new Event.Separator((Token.Whitespace)token);
+          next.addLast(new Event.Separator((Token.Whitespace)token));
           tokenizer.next();
         } else {
           Token.Literal literal = (Token.Literal)token;
@@ -133,7 +154,7 @@ public final class Parser<T> implements Iterator<Event> {
                   command = m;
                 }
               }
-              nextEvent = new Event.DoubleDash((Token.Literal.Option.Long)optionToken);
+              next.addLast(new Event.DoubleDash((Token.Literal.Option.Long)optionToken));
               nextStatus = new Status.WantReadArg();
             } else {
               OptionDescriptor<?> desc = command.findOption(literal.value);
@@ -167,7 +188,7 @@ public final class Parser<T> implements Iterator<Event> {
                     break;
                   }
                 }
-                nextEvent = new Event.Option(desc, optionToken, values);
+                next.addLast(new Event.Option(desc, optionToken, values));
               } else {
                 // We are reading an unknown option
                 // it could match an option of an implicit command
@@ -177,15 +198,15 @@ public final class Parser<T> implements Iterator<Event> {
                     desc = m.findOption(literal.value);
                     if (desc != null) {
                       command = m;
-                      nextEvent = new Event.Method.Implicit(m, literal);
+                      next.addLast(new Event.Method.Implicit(m, literal));
                     } else {
-                      nextEvent = new Event.Stop.Unresolved.NoSuchOption.Method(optionToken);
+                      next.addLast(new Event.Stop.Unresolved.NoSuchOption.Method(optionToken));
                     }
                   } else {
-                    nextEvent = new Event.Stop.Unresolved.NoSuchOption.Class(optionToken);
+                    next.addLast(new Event.Stop.Unresolved.NoSuchOption.Class(optionToken));
                   }
                 } else {
-                  nextEvent = new Event.Stop.Unresolved.NoSuchOption.Method(optionToken);
+                  next.addLast(new Event.Stop.Unresolved.NoSuchOption.Method(optionToken));
                 }
               }
             }
@@ -197,11 +218,11 @@ public final class Parser<T> implements Iterator<Event> {
               if (m != null && !m.getName().equals(mainName)) {
                 command = m;
                 tokenizer.next();
-                nextEvent = new Event.Method.Explicit(m, wordLiteral);
+                next.addLast(new Event.Method.Explicit(m, wordLiteral));
               } else {
                 m = classCommand.getMethod(mainName);
                 if (m != null) {
-                  nextEvent = new Event.Method.Implicit(m, wordLiteral);
+                  next.addLast(new Event.Method.Implicit(m, wordLiteral));
                   nextStatus = new Status.WantReadArg();
                   command = m;
                 } else {
@@ -226,9 +247,9 @@ public final class Parser<T> implements Iterator<Event> {
         }
       } else if (status instanceof Status.ReadingArg) {
         if (token == null) {
-          nextEvent = new Event.Stop.Done.Arg(tokenizer.getIndex());
+          next.addLast(new Event.Stop.Done.Arg(tokenizer.getIndex()));
         } else if (token instanceof Token.Whitespace) {
-          nextEvent = new Event.Separator((Token.Whitespace)token);
+          next.addLast(new Event.Separator((Token.Whitespace)token));
           tokenizer.next();
         } else {
           final Token.Literal literal = (Token.Literal)token;
@@ -240,7 +261,7 @@ public final class Parser<T> implements Iterator<Event> {
               case ZERO_OR_ONE:
               case ONE:
                 tokenizer.next();
-                nextEvent = new Event.Argument(argument, Arrays.asList(literal));
+                next.addLast(new Event.Argument(argument, Arrays.asList(literal)));
                 nextStatus = ra.next();
                 break;
               case ZERO_OR_MORE:
@@ -260,17 +281,17 @@ public final class Parser<T> implements Iterator<Event> {
                     }
                   }
                 }
-                nextEvent = new Event.Argument(argument, values);
+                next.addLast(new Event.Argument(argument, values));
             }
           } else {
-            nextEvent = new Event.Stop.Unresolved.TooManyArguments(literal);
+            next.addLast(new Event.Stop.Unresolved.TooManyArguments(literal));
           }
         }
       } else if (status instanceof Status.ComputeArg) {
         if (token == null) {
-          nextEvent = new Event.Stop.Done.Arg(tokenizer.getIndex());
+          next.addLast(new Event.Stop.Done.Arg(tokenizer.getIndex()));
         } else if (token instanceof Token.Whitespace) {
-          nextEvent = new Event.Separator((Token.Whitespace)token);
+          next.addLast(new Event.Separator((Token.Whitespace)token));
           tokenizer.next();
         } else {
 
@@ -365,27 +386,19 @@ public final class Parser<T> implements Iterator<Event> {
           events.addLast(new Event.Stop.Done.Arg(tokenizer.getIndex()));
 
           //
-          nextStatus = new Status.Arg(events);
+          nextStatus = new Status.Done();
+          next.addAll(events);
         }
-      } else if (status instanceof Status.Arg) {
-        Status.Arg sa = (Status.Arg)status;
-        nextEvent = sa.events.removeFirst();
+      } else if (status instanceof Status.Done) {
+        throw new IllegalStateException();
       } else {
         throw new AssertionError();
       }
 
       //
       if (nextStatus != null) {
-        if (nextEvent instanceof Event.Stop) {
-          throw new AssertionError("can't do both at the same time");
-        } else {
-          this.status = nextStatus;
-        }
+        this.status = nextStatus;
       }
     }
-    while (nextEvent == null);
-
-    //
-    return nextEvent;
   }
 }
