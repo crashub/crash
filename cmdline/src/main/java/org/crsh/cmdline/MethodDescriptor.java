@@ -34,12 +34,16 @@ import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBinding> {
+
+  /** . */
+  private static final Set<String> MAIN_SINGLETON = Collections.singleton("main");
 
   /** . */
   private static final Logger log = LoggerFactory.getLogger(MethodDescriptor.class);
@@ -110,13 +114,10 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
 
   @Override
   public void printUsage(Appendable writer) throws IOException {
-    printUsage(writer, true);
-  }
-
-  void printUsage(Appendable writer, boolean printName) throws IOException {
     int length = 0;
     List<String> parameterUsages = new ArrayList<String>();
     List<String> parameterBilto = new ArrayList<String>();
+    boolean printName = !owner.getSubordinates().keySet().equals(MAIN_SINGLETON);
 
     //
     writer.append("usage: ").append(owner.getName());
@@ -163,10 +164,9 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
   }
 
   public void printMan(Appendable writer) throws IOException {
-    printMan(writer, true);
-  }
 
-  void printMan(Appendable writer, boolean printName) throws IOException {
+    //
+    boolean printName = !owner.getSubordinates().keySet().equals(MAIN_SINGLETON);
 
     // Name
     writer.append("NAME\n");

@@ -109,8 +109,8 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
 
   @Override
   public void printUsage(Appendable writer) throws IOException {
-    if (Collections.singleton("main").equals(methodMap.keySet())) {
-      methodMap.values().iterator().next().printUsage(writer, false);
+    if (methodMap.size() == 1) {
+      methodMap.values().iterator().next().printUsage(writer);
     } else {
       writer.append("usage: ").append(getName());
       for (OptionDescriptor<?> option : getOptions()) {
@@ -127,8 +127,8 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   }
 
   public void printMan(Appendable writer) throws IOException {
-    if (Collections.singleton("main").equals(methodMap.keySet())) {
-      methodMap.values().iterator().next().printMan(writer, false);
+    if (methodMap.size() == 1) {
+      methodMap.values().iterator().next().printMan(writer);
     } else {
 
       // Name
