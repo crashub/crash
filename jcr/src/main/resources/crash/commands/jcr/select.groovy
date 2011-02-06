@@ -14,8 +14,37 @@ public class select extends org.crsh.command.CRaSHCommand {
 
   @Usage("execute a JCR sql query")
   @Command
-  @Man("""Executes a JCR query with the SQL dialect, by default results are limited to 5.\
-All results matched by the query are produced by this command.""")
+  @Man("""Queries in SQL format are possible via the ##select## command. You can write a query with the same syntax defined
+by the specification and add options to control the number of results returned. By default the number of nodes is limited
+to 5 results:
+
+[/]% select * from nt:base
+The query matched 1114 nodes
++-/
+| +-properties
+| | +-jcr:primaryType: nt:unstructured
+| | +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
+| | +-exo:owner: '__system'
+| | +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administratorsset_property,*:/platform/administrators remove]
++-/workspace
+| +-properties
+| | +-jcr:primaryType: mop:workspace
+| | +-jcr:uuid: 'a69f226ec0a80002007ca83e5845cdac'
+...
+
+Display 20 nodes from the offset 10:
+
+[/]% select * from nt:base -o 10 -l 20
+The query matched 1114 nodes
+...
+
+It is possible also to remove the limit of displayed nodes with the -a option (you should use this option with care) :
+
+[/]% select * from nt:base -a
+The query matched 1114 nodes
+...
+
+select is a <Void,Node> command producing all the matched nodes.""")
   public void main(
     InvocationContext<Void, Node> context,
     @Option(names=["o","offset"])

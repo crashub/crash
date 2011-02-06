@@ -1,23 +1,21 @@
-import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.jcr.Workspace;
-
-import java.util.List;
-
-import org.kohsuke.args4j.Argument;
 import org.crsh.command.ScriptException;
-import org.crsh.command.Description;
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.jcr.command.PathArg
+import org.crsh.cmdline.annotations.Required;
 
-@Description("Copy a node to another")
-public class cp extends org.crsh.command.ClassCommand {
+public class cp extends org.crsh.jcr.command.JCRCommand {
 
-  @Argument(required=true,metaVar="source path",index=0,usage="The path of the source node to copy")
-  def String source;
+  @Usage("copy a node to another")
+  @Command
+  @Man("""\
+The cp command copies a node to a target location in the JCR tree.
 
-  @Argument(required=true,metaVar="target path",index=1,usage="The path of the target node to be copied")
-  def String target;
-
-  public Object execute() throws ScriptException {
+[/registry]% cp foo bar""")
+  public void main(
+    @Required @PathArg @Usage("the path of the source node to copy") String source,
+    @Required @PathArg @Usage("the path of the target node to be copied") String target) throws ScriptException {
     assertConnected();
 
     //

@@ -1,62 +1,3 @@
-== JCR commands ==
-
-=== Connecting to a repository ===
-
-You must first connect to a repository before any other JCR based operation. When you are connected the shell will maintain
-a JCR session and allows you to interact with the session in a shell oriented fashion. The ##connect## command
-is used to perform the connection. The repository name must be specified and optionally you can specify a user name
-and password to have more privileges.
-
-{{screen}}
-% connect -c portal portal-system
-Connected to workspace portal-system
-{{/screen}}
-
-or
-
-{{screen}}
-% connect -c portal -u root -p gtn portal-system
-Connected to workspace portal-system
-{{/screen}}
-
-=== Listing the content of a node ===
-
-The ##ls## command shows the content of a node. By default it lists the content of the current node. It can
-accept a path argument that can be absolute or relative.
-
-{{screen}}
-[/]% ls
-/
-+-properties
-| +-jcr:primaryType: nt:unstructured
-| +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
-| +-exo:owner: '__system'
-| +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administrators set_property,*:/platform/administrators remove]
-+-children
-| +-/workspace
-| +-/contents
-| +-/Users
-| +-/gadgets
-| +-/folder
-{{/screen}}
-
-=== Printing the current node ===
-
-The ##pwd## command shows the current node path.
-
-{{screen}}
-[/gadgets]% pwd
-/gadgets
-{{/screen}}
-
-=== Copying a node ===
-
-The ##cp## command copies a node to a target location in the JCR tree.
-
-{{screen}}
-[/registry]% cp Registry Registry2
-{{/screen}}
-
 === Moving a node ===
 
 The ##mv## command can move a node to a target location in the JCR tree. It can be used also to rename a node.
@@ -124,57 +65,6 @@ Remove a property
 ##set## is a ##<Node,Void>## command updating the property of the consumed node stream.
 {{/note}}
 
-=== Commiting or rolling back changes ===
-
-The ##commit## operation saves the current session. Conversely the ##rollback## operation rollback
-session changes. For both operations It is possible to specify a path to commit a part of the tree.
-
-=== Performing a SQL query ===
-
-Queries in SQL format are possible via the ##select## command. You can write a query with the same syntax defined
-by the specification and add options to control the number of results returned. By default the number of nodes is limited
-to 5 results:
-
-{{screen}}
-[/]% select * from nt:base
-The query matched 1114 nodes
-+-/
-| +-properties
-| | +-jcr:primaryType: nt:unstructured
-| | +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
-| | +-exo:owner: '__system'
-| | +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administratorsset_property,*:/platform/administrators remove]
-+-/workspace
-| +-properties
-| | +-jcr:primaryType: mop:workspace
-| | +-jcr:uuid: 'a69f226ec0a80002007ca83e5845cdac'
-...
-{{/screen}}
-
-Display 20 nodes from the offset 10:
-
-{{screen}}
-[/]% select * from nt:base -o 10 -l 20
-The query matched 1114 nodes
-...
-{{/screen}}
-
-It is possible also to remove the limit of displayed nodes with the -a option (you should use this option with care) :
-
-{{screen}}
-[/]% select * from nt:base -a
-The query matched 1114 nodes
-...
-{{/screen}}
-
-{{note}}
-##select## is a ##<Void,Node>## command producing all the matched nodes.
-{{/note}}
-
-=== Performing an XPath query ===
-
-todo
-
 === Exporting a node ===
 
 It is possible to export a node as an nt file of the same workspace with the ##exportnode## command. Then it is
@@ -205,10 +95,6 @@ The ##addmixin## command adds a mixin to an existing node.
 {{note}}
 ##addmixin## is a ##<Node,Void>## command adding the specified mixin to the consumed nodes.
 {{/note}}
-
-=== Checkin / checkout of versionable nodes ===
-
-Use the commands ##checkin## and ##checkout##.
 
 === Configuring the node security ===
 
