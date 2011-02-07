@@ -85,7 +85,37 @@ The ##help## command will display the list of known commands by the shell.
 
 {{screen}}
 [/]% help
-Try one of these commands with the -h or --help switch [addmixin, cd, checkin, checkout, commit, connect, disconnect, exportnode, help, importnode, ls, pwd, rm, rollback, select, set]
+% help
+Try one of these commands with the -h or --help switch:
+
+  cd               changes the current node
+  commit           saves changes
+  consume          collects a set of nodes
+  cp               copy a node to another
+  env              display the term env
+  exportworkspace  Export a workspace on the file system (experimental)
+  fail             Fails
+  help             provides basic help
+  importworkspace  Import a workspace from the file system (experimental)
+  invoke           Invoke a static method
+  log              logging commands
+  ls               list the content of a node
+  man              format and display the on-line manual pages
+  mixin            mixin commands
+  mv               move a node
+  node             node commands
+  produce          produce a set of nodes
+  pwd              print the current node path
+  rm               remove one or several node or a property
+  rollback         rollback changes
+  select           execute a JCR sql query
+  setperm          modify the security permissions of a JCR node
+  sleep            sleep for some time
+  thread           vm thread commands
+  version          versioning commands
+  wait             Invoke a static method
+  ws               workspace commands
+  xpath            execute a JCR xpath query
 {{/screen}}
 
 == Command line usage ==
@@ -98,7 +128,7 @@ The basic CRaSH usage is like any shell, you just type a command with its option
 Typing the command followed by options and arguments will do the job
 
 {{screen}}
-% ls -d /
+% ls /
 ...
 {{/screen}}
 
@@ -108,9 +138,55 @@ Any command help can be displayed by using the -h argument:
 
 {{screen}}
 % ls -h
-List the content of a node
- VAL            : Path of the node content to list
- -d (--depth) N : Print depth
+usage: ls [-h | --help] [-h | --help] [-d | --depth] path
+
+   [-h | --help]  command usage
+   [-h | --help]  command usage
+   [-d | --depth] Print depth
+   path           the path of the node content to list
+{{/screen}}
+
+In addition of that, commands can have a complete manual that can be displayed thanks to the ##man## command:
+
+{{screen}}
+% man ls
+NAME
+       ls - list the content of a node
+
+SYNOPSIS
+       ls [-h | --help] [-h | --help] [-d | --depth] [-d | --depth] path
+
+DESCRIPTION
+       The ls command displays the content of a node. By default it lists the content of the current node, however it also
+       accepts a path argument that can be absolute or relative.
+
+       [/]% ls
+       /
+       +-properties
+       | +-jcr:primaryType: nt:unstructured
+       | +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
+       | +-exo:owner: '__system'
+       | +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administrators set_property,*:/platform/administrators remove]
+       +-children
+       | +-/workspace
+       | +-/contents
+       | +-/Users
+       | +-/gadgets
+       | +-/folder
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       [-h | --help]
+           Provides command usage
+
+       [-d | --depth]
+           Print depth
+
+       path
+           the path of the node content to list
 {{/screen}}
 
 === Advanced command usage ===
