@@ -27,6 +27,7 @@ import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
+import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.matcher.ArgumentMatch;
 import org.crsh.cmdline.matcher.ClassMatch;
 import org.crsh.cmdline.matcher.CmdCompletionException;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -121,11 +123,28 @@ public class MatcherImpl<T> extends Matcher<T> {
       } else if (event instanceof Event.Option) {
         Event.Option optionEvent = (Event.Option)event;
         OptionDescriptor<?> desc = optionEvent.getDescriptor();
-        OptionMatch match = new OptionMatch(desc, optionEvent.getToken().getName(), bilto(optionEvent.getValues()));
+        List options;
         if (desc.getOwner() instanceof ClassDescriptor<?>) {
-          classOptions.add(match);
+          options = classOptions;
         } else {
-          methodOptions.add(match);
+          options = methodOptions;
+        }
+        boolean done = false;
+        for (ListIterator<OptionMatch> i = options.listIterator();i.hasNext();) {
+          OptionMatch om = i.next();
+          if (om.getParameter().equals(desc)) {
+            List<Value> v = new ArrayList<Value>(om.getValues());
+            v.addAll(bilto(optionEvent.getValues()));
+            List<String> names = new ArrayList<String>(om.getNames());
+            names.add(optionEvent.getToken().getName());
+            i.set(new OptionMatch(desc, names, v));
+            done = true;
+            break;
+          }
+        }
+        if (!done) {
+          OptionMatch match = new OptionMatch(desc, optionEvent.getToken().getName(), bilto(optionEvent.getValues()));
+          options.add(match);
         }
       } else if (event instanceof Event.Method) {
         if (event instanceof Event.Method.Implicit) {

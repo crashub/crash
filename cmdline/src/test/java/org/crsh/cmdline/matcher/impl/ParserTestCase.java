@@ -704,4 +704,21 @@ public class ParserTestCase extends TestCase {
     tester.assertArgument("arg", "foo");
     tester.assertEnd(Event.Stop.Done.Arg.class, 6);
   }
+
+  public void testOptionRepetition() throws Exception {
+
+    class A {
+      @Command
+      public void main(@Option(names = "o") List<String> o) {}
+    }
+    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "-o a -o b", Parser.Mode.INVOKE);
+    tester.assertMethod("main");
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertOption("o", "b");
+    tester.assertEnd(Event.Stop.Done.Option.class, 9);
+  }
 }

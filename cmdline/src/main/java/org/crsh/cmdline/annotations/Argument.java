@@ -37,7 +37,7 @@ public @interface Argument {
   boolean password() default false;
 
   /**
-   * Returns true if the argument value should be unquoted.
+   * Indicates whether or not the value should be unquoted.
    *
    * @return the unquote value
    */

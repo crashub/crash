@@ -22,6 +22,7 @@ package org.crsh.cmdline.matcher;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,16 +32,29 @@ import java.util.List;
 public class OptionMatch<B extends TypeBinding> extends ParameterMatch<OptionDescriptor<B>, B> {
 
   /** . */
-  private final String name;
+  private final List<String> names;
 
   public OptionMatch(OptionDescriptor<B> parameter, String name, List<Value> values) {
+    this(parameter, Collections.singletonList(name), values);
+  }
+
+  public OptionMatch(OptionDescriptor<B> parameter, List<String> names, List<Value> values) {
     super(parameter, values);
 
     //
-    this.name = name;
+    if (names.isEmpty()) {
+      throw new IllegalArgumentException("names cannot be empty");
+    }
+
+    //
+    this.names = names;
   }
 
   public String getName() {
-    return name;
+    return names.get(0);
+  }
+
+  public List<String> getNames() {
+    return names;
   }
 }

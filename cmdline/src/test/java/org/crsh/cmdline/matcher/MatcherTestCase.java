@@ -20,6 +20,7 @@
 package org.crsh.cmdline.matcher;
 
 import junit.framework.TestCase;
+import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
@@ -360,5 +361,36 @@ public class MatcherTestCase extends TestCase {
     context = new InvocationContext();
     Matcher.createMatcher("a", desc).match("-o \"a\"").invoke(context, e);
     assertEquals("\"a\"", e.i);
+  }
+
+  public static class F {
+    List<String> s;
+    @Command
+    public void foo(@Option(names = "o") List<String> s) { this.s = s; }
+    @Command
+    public void bar(@Option(names = "o", arity = 2) List<String> s) { this.s = s; }
+  }
+
+  public void testOptionList() throws Exception {
+
+    ClassDescriptor<F> desc = CommandFactory.create(F.class);
+
+    //
+    F f = new F();
+    InvocationContext context = new InvocationContext();
+    Matcher.createMatcher("foo", desc).match("-o a").invoke(context, f);
+    assertEquals(Arrays.asList("a"), f.s);
+
+    //
+    f = new F();
+    context = new InvocationContext();
+    Matcher.createMatcher("foo", desc).match("-o a -o b").invoke(context, f);
+    assertEquals(Arrays.asList("a", "b"), f.s);
+
+    //
+    f = new F();
+    context = new InvocationContext();
+    Matcher.createMatcher("bar", desc).match("-o a b -o c d").invoke(context, f);
+    assertEquals(Arrays.asList("a", "b", "c", "d"), f.s);
   }
 }

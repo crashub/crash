@@ -34,12 +34,22 @@ public @interface Option {
 
   String[] names();
 
+  /**
+   * The option arity. The default value -1 indicates that the annotated java type should imply the arity and the multiplicity.
+   * <ul>
+   * <li>A single valued type will have an arity of 1 and a multiplicity of {@link org.crsh.cmdline.Multiplicity#ZERO_OR_ONE}
+   * or {@link org.crsh.cmdline.Multiplicity#ZERO_OR_ONE} according to the related {@link Required} annotation</li>
+   * <li>A multi valued type will have an unbounded arity and {@link org.crsh.cmdline.Multiplicity#ZERO_OR_MORE} multiplicity.</li>
+   * </ul>
+   *
+   * @return arity
+   */
   int arity() default -1;
 
   boolean password() default false;
 
   /**
-   * Returns true if the argument value should be unquoted.
+   * Indicates whether or not the value should be unquoted.
    *
    * @return the unquote value
    */
