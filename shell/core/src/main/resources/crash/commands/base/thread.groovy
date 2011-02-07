@@ -7,7 +7,7 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option;
 
-@Usage("JVM thread commands")
+@Usage("vm thread commands")
 public class thread extends CRaSHCommand {
 
   @Usage("List the vm threads")

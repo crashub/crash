@@ -3,6 +3,7 @@ import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Argument
 
+@Usage("version checkin and checkout")
 public class check extends org.crsh.jcr.command.JCRCommand {
   // The path of the node to checkin
   @Usage("Checkin a node")

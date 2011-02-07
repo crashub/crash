@@ -10,6 +10,7 @@ import org.crsh.cmdline.annotations.Required
 import org.crsh.cmdline.annotations.Argument
 import org.crsh.jcr.PropertyType
 
+@Usage("node commands")
 public class node extends org.crsh.jcr.command.JCRCommand {
 
   @Usage("creates one or several nodes")

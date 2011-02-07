@@ -5,7 +5,7 @@ import org.crsh.command.InvocationContext
 
 class env extends CRaSHCommand
 {
-  @Usage("Display the term width")
+  @Usage("display the term env")
   @Command
   Object main(InvocationContext<Void, Void> context) throws ScriptException {
     StringBuilder sb = new StringBuilder();

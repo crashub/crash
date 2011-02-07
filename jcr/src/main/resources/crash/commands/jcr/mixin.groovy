@@ -6,9 +6,8 @@ import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Argument
 import org.crsh.cmdline.annotations.Required
 
-@Man("""\
-The mixin command manipulates JCR node mixins. Mixins can be added to or removed from nodes.
-""")
+@Usage("mixin commands")
+@Man("""The mixin command manipulates JCR node mixins. Mixins can be added to or removed from nodes.""")
 public class mixin extends org.crsh.jcr.command.JCRCommand {
 
   // It consumes a node stream or path arguments

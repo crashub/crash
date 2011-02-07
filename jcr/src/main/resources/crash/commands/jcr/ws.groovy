@@ -11,8 +11,8 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Argument
 import org.crsh.cmdline.annotations.Required;
 
-@Man("""\
-The ws command provides a set of commands interacting with JCR workspace.""")
+@Usage("workspace commands")
+@Man("""The ws command provides a set of commands interacting with JCR workspace.""")
 class ws extends org.crsh.jcr.command.JCRCommand
 {
 

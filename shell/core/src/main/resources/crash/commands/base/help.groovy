@@ -9,7 +9,7 @@ class help extends CRaSHCommand
   /** . */
   private static final String TAB = "  ";
 
-  @Usage("Provides basic help")
+  @Usage("provides basic help")
   @Command
   Object main() {
     def names = [];
