@@ -13,3 +13,7 @@ with fast development cycle.
 = Extending the shell =
 
 {{include document="extension.wiki" /}}
+
+= Hey, I want to contribute! =
+
+Drop me an email (see my @ on www.julienviet.com), any kind of help is welcome.

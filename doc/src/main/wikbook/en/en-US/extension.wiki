@@ -56,7 +56,3 @@ is used again to describe briefly the argument. Again it could be possible to us
 A command is a Groovy object and it can access or use the contextual variables. A few variables are maintained by the shell
 and should be considered with caution. The shell also provides a few functions that can be used, those functions defined in
 //login.groovy//
-
-== Hey, I want to contribute! ==
-
-Drop me an email (see my @ on www.julienviet.com), any kind of help is welcome.
