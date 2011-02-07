@@ -41,3 +41,6 @@
 
 === ##version## command ===
 {{include document="version.wiki" /}}
+
+=== ##setperm## command ===
+{{include document="setperm.wiki" /}}
