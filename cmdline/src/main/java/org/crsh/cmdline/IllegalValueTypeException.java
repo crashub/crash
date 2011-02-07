@@ -24,4 +24,18 @@ package org.crsh.cmdline;
  * @version $Revision$
  */
 public class IllegalValueTypeException extends IntrospectionException {
+  public IllegalValueTypeException() {
+  }
+
+  public IllegalValueTypeException(String message) {
+    super(message);
+  }
+
+  public IllegalValueTypeException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public IllegalValueTypeException(Throwable cause) {
+    super(cause);
+  }
 }

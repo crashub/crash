@@ -124,7 +124,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     } else if (Enum.class.isAssignableFrom(javaValueType)) {
       valueType = SimpleValueType.ENUM;
     } else {
-      throw new IllegalValueTypeException();
+      throw new IllegalValueTypeException("Type " + javaValueType.getName() + " is not handled at the moment");
     }
 
     //

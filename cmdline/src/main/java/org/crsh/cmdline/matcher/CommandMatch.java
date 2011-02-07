@@ -66,7 +66,7 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
     for (ParameterMatch<?, ?> parameterMatch : getParameterMatches()) {
       ParameterDescriptor<?> parameter = parameterMatch.getParameter();
       if (!unused.remove(parameter)) {
-        throw new CmdSyntaxException();
+        throw new CmdSyntaxException("Could not find parameter " + parameter);
       }
       abc.put(parameter, parameterMatch.getStrings());
     }
