@@ -1,3 +1,5 @@
+package crash.commands.jcr
+
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
 import org.crsh.command.ScriptException;

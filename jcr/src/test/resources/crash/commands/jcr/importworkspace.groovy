@@ -1,3 +1,5 @@
+package crash.commands.jcr
+
 import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.File;
