@@ -18,18 +18,6 @@ It is possible to import a node from an nt file located in the workspace with th
 Node imported
 {{/screen}}
 
-=== Adding a mixin to a node ===
-
-The ##addmixin## command adds a mixin to an existing node.
-
-{{screen}}
-[/gadgets]% addmixin . mix:versionable
-{{/screen}}
-
-{{note}}
-##addmixin## is a ##<Node,Void>## command adding the specified mixin to the consumed nodes.
-{{/note}}
-
 === Configuring the node security ===
 
 {{warning}}This is command is only available for eXo JCR{{/warning}}
@@ -73,10 +61,6 @@ The ##setperm## command will add automatically the ##exo:privilegeable## mixin o
 ##setperm## is a ##<Node,Void>## command altering the security of the consumed node stream.
 {{/note}}
 
-
-=== Disconnecting ===
-
-The ##disconnect## command disconnect from the repository.
 
 == SCP usage ==
 

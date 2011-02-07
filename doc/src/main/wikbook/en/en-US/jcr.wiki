@@ -38,3 +38,6 @@
 
 === ##rollback## command ===
 {{include document="rollback.wiki" /}}
+
+=== ##version## command ===
+{{include document="version.wiki" /}}
