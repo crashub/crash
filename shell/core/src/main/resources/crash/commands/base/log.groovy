@@ -17,6 +17,7 @@ import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext;
 
+@Usage("logging commands")
 public class log extends CRaSHCommand implements Completer {
 
   @Usage("send a message to a logger")
