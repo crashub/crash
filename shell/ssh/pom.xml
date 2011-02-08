@@ -2,13 +2,13 @@
   <parent>
     <artifactId>crsh.shell</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.0.0-beta18</version>
+    <version>1.0.0-beta19-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.shell.ssh</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-beta18</version>
+  <version>1.0.0-beta19-SNAPSHOT</version>
 
   <name>CRaSH ssh</name>
   <description>The CRaSH ssh module</description>
