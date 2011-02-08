@@ -209,6 +209,11 @@
 
       <!-- Thirdparty dependencies -->
       <dependency>
+        <groupId>jline</groupId>
+        <artifactId>jline</artifactId>
+        <version>0.9.94</version>
+      </dependency>
+      <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
         <version>1.1.1</version>
@@ -288,6 +293,8 @@
         <artifactId>telnetd-x</artifactId>
         <version>2.1.1-CRASH-r14</version>
       </dependency>
+
+      <!-- For testing purposes -->
       <dependency>
         <groupId>org.jboss.shrinkwrap</groupId>
         <artifactId>shrinkwrap-api</artifactId>
@@ -297,6 +304,11 @@
         <groupId>org.jboss.shrinkwrap</groupId>
         <artifactId>shrinkwrap-impl-base</artifactId>
         <version>1.0.0-alpha-11</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.2</version>
       </dependency>
 
     </dependencies>
