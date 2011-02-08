@@ -73,37 +73,19 @@
     </dependency>
 
   </dependencies>
+
   <build>
-
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
             <id>make-standalone</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <classifier>standalone</classifier>
-              <archive>
-                <manifest>
-                  <mainClass>org.crsh.standalone.Main</mainClass>
-                </manifest>
-              </archive>
-              <descriptors>
-                <descriptor>src/main/assembly/standalone.xml</descriptor>
-              </descriptors>
-            </configuration>
           </execution>
         </executions>
       </plugin>
-
     </plugins>
-
   </build>
 
   <!--

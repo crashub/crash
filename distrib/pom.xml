@@ -105,6 +105,16 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-assembly-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>make-packaging</id>
+                </execution>
+              </executions>
+            </plugin>
+<!--
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-assembly-plugin</artifactId>
               <configuration>
                 <finalName>crsh-${project.version}</finalName>
                 <appendAssemblyId>false</appendAssemblyId>
@@ -128,6 +138,7 @@
                 </execution>
               </executions>
             </plugin>
+-->
           </plugins>
         </build>
       </profile>
