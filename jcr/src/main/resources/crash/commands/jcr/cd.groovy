@@ -17,7 +17,10 @@ node. A relative or absolute path argument can be provided to specify a new curr
 [/gadgets]% cd /gadgets
 [/gadgets]% cd
 [/]%""")
-  public Object main(@Argument Path path) throws ScriptException {
+  public Object main(
+    @Argument
+    @Usage("the new path")
+    @Man("The new path that will change the current node navigation") Path path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);
     setCurrentNode(node);

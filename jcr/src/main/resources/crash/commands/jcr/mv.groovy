@@ -21,8 +21,8 @@ command is a <Node,Node> command consuming a stream of node to move them and pro
 
   public void main(
     InvocationContext<Node, Node> context,
-    @Argument @Usage("the path of the source node to move, absolute or relative") Path source,
-    @Argument @Usage("the destination path absolute or relative") Path target) throws ScriptException {
+    @Argument @Usage("the source path") @Man("The path of the source node to move, absolute or relative") Path source,
+    @Argument @Usage("the target path") @Man("The destination path absolute or relative") Path target) throws ScriptException {
     assertConnected()
 
     //

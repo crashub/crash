@@ -19,14 +19,12 @@
 
 package org.crsh.jcr.command;
 
-import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.spi.Value;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Usage("a node path")
 public class Path extends Value {
 
   public static final Path ROOT = new Path("/");

@@ -25,7 +25,7 @@ add a mixin from an incoming node stream, for instance:
      @Argument
      @Required
      String mixin,
-     @Argument List<Path> paths)
+     @Argument @Usage("the paths of the node receiving the mixin") List<Path> paths)
   {
      context.writer <<= "Mixin $mixin added to nodes";
      perform(context, paths, { node ->
@@ -48,7 +48,7 @@ remove a mixin from an incoming node stream, for instance:
      @Usage("the mixin name to remove")
      @Required
      String mixin,
-     @Argument List<Path> paths)
+     @Argument @Usage("the paths of the node receiving the mixin") List<Path> paths)
   {
      context.writer <<= "Mixin $mixin removed from nodes";
      perform(context, paths, { node ->

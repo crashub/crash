@@ -1,4 +1,3 @@
-import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 
 import org.crsh.jcr.JCR;
@@ -23,10 +22,10 @@ When you are connected the shell maintain a JCR session and allows you to intera
 oriented fashion. The repository name must be specified and optionally you can specify a user name and password to
 have more privileges.
 
-% connect -c portal portal-system
+% ws login -c portal portal-system
 Connected to workspace portal-system
 
-% connect -c portal -u root -p gtn portal-system
+% ws login -c portal -u root -p gtn portal-system
 Connected to workspace portal-system
 
 """)
@@ -38,6 +37,7 @@ Connected to workspace portal-system
     @Argument
     @Required
     @Usage("the workspace name")
+    @Man("The name of the workspace to connect to")
     String workspaceName) throws ScriptException {
 
     //

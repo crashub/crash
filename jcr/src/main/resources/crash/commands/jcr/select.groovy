@@ -49,15 +49,19 @@ select is a <Void,Node> command producing all the matched nodes.""")
     InvocationContext<Void, Node> context,
     @Option(names=["o","offset"])
     @Usage("the result offset")
+    @Man("The offset of the first node to display")
     Integer offset,
     @Option(names=["l","limit"])
     @Usage("the result limit")
+    @Man("The number of nodes displayed, by default this value is equals to 5")
     Integer limit,
     @Option(names=["a","all"])
     @Usage("ignore the limit argument")
+    @Man("Display all the results by ignoring the limit argument, this should be used with care for large result set")
     Boolean all,
     @Argument(unquote = false)
     @Usage("the query")
+    @Man("The query, as is")
     List<String> query) throws ScriptException {
     assertConnected();
 

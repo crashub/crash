@@ -95,8 +95,8 @@ Remove a property
 set is a <Node,Void> command updating the property of the consumed node stream.""")
   public void set(
     InvocationContext<Node, Void> context,
-    @Argument @Usage("the name of the property to alter") String propertyName,
-    @Argument @Usage("the new value of the property") String propertyValue,
+    @Argument @Usage("the property name") @Man("The name of the property to alter") String propertyName,
+    @Argument @Usage("the property value") @Man("The new value of the property") String propertyValue,
     @Option(names=["t","type"]) @Usage("the property type to use when it cannot be inferred") PropertyType propertyType) {
 
     //
@@ -152,30 +152,30 @@ The node has been exported
 """)
   @Usage("export a node to an nt file")
   public Object export(
-    @Required @Argument @Usage("path of the exported node") Path src,
-    @Required @Argument @Usage("path of the exported nt:file node") Path dst) throws ScriptException {
+    @Required @Argument @Usage("the source path") @Usage("The path of the exported node") Path source,
+    @Required @Argument @Usage("the target path") @Usage("The path of the exported nt:file node") Path target) throws ScriptException {
 
     //
     assertConnected();
 
     // Source node to export
-    def srcNode = findNodeByPath(src);
+    def srcNode = findNodeByPath(source);
 
     //
     def session = srcNode.session;
 
     // Destination parent
-    int pos = dst.string.lastIndexOf('/');
+    int pos = target.string.lastIndexOf('/');
     if (pos == -1)
       throw new ScriptException("The destination must be absolute");
     def dstParenNodet;
     def dstName;
     if (pos == 0) {
       dstParentNode = findNodeByPath(Path.ROOT);
-      dstName = dst.string.substring(1);
+      dstName = target.string.substring(1);
     } else {
-      dstParentNode = findNodeByPath(dst.string.substring(0, pos));
-      dstName = dst.string.substring(pos + 1);
+      dstParentNode = findNodeByPath(target.string.substring(0, pos));
+      dstName = target.string.substring(pos + 1);
     }
 
     //
@@ -209,14 +209,14 @@ Imports a node from an nt:file node located in the workspace:
 Node imported
 """)
   public Object IMPORT(
-    @Required @Argument @Usage("path of the imported nt:file node") Path src,
-    @Required @Argument @Usage("path of the parent imported node") Path dst) throws ScriptException {
+    @Required @Argument @Usage("the source path") @Man("The path of the imported nt:file node") Path source,
+    @Required @Argument @Usage("the target path")  @Man("The path of the parent imported node") Path target) throws ScriptException {
 
     //
     assertConnected();
 
     // Source node to export
-    def srcNode = findNodeByPath(src);
+    def srcNode = findNodeByPath(source);
 
     //
     if (srcNode.primaryNodeType.name != "nt:file")
@@ -226,10 +226,10 @@ Node imported
     def data = srcNode["jcr:content"]["jcr:data"];
 
     //
-    def dstNode = findNodeByPath(dst);
+    def dstNode = findNodeByPath(target);
 
     //
-    srcNode.session.importXML(dst.string, data, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+    srcNode.session.importXML(target.string, data, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
 
     //
     return "Node imported";
