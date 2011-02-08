@@ -461,7 +461,11 @@
       </build>
     </profile>
 
-    <!-- Main profile -->
+    <!--
+      |  Main profile
+      |  used to test easily CRaSH
+      |  to use it "mvn test -Pmain", used mainly in shell/core, shell/telnet, shell/ssh and jcr modules
+      -->
     <profile>
       <id>main</id>
       <build>
