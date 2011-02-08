@@ -60,7 +60,7 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.singletonMap("o", " "), matcher.complete(new CompleterSupport.Echo(), "n fo"));
   }
 
-  public void testSingleArgument() throws Exception
+  public void testExplicitCommandSingleArgument() throws Exception
   {
 
     class A {
@@ -78,6 +78,26 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.singletonMap("o", " "), matcher.complete("m fo"));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("m a "));
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("m a f"));
+  }
+
+  public void testImplicitCommandSingleArgument() throws Exception
+  {
+
+    class A {
+      @Command
+      void main(@Argument @Completed(CompleterSupport.Foo.class) String arg) {}
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    Matcher<A> matcher = Matcher.createMatcher("main", desc);
+
+    //
+    assertEquals(Collections.singletonMap("foo", " "), matcher.complete(""));
+    assertEquals(Collections.singletonMap("oo", " "), matcher.complete("f"));
+    assertEquals(Collections.singletonMap("o", " "), matcher.complete("fo"));
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("a "));
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("a f"));
   }
 
   public void testMultiArgument() throws Exception
@@ -232,7 +252,7 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
-    assertEquals(Collections.<String, String>emptyMap(), matcher.complete(""));
+    assertEquals(Collections.singletonMap("", ""), matcher.complete(""));
     assertEquals(Collections.singletonMap("m", ""), matcher.complete("m"));
     assertEquals(Collections.singletonMap("ma", ""), matcher.complete("ma"));
     assertEquals(Collections.singletonMap("mai", ""), matcher.complete("mai"));

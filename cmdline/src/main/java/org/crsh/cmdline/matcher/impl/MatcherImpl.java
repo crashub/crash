@@ -395,7 +395,17 @@ public class MatcherImpl<T> extends Matcher<T> {
     //
     if (last == null) {
       if (method == null) {
-        return new MethodCompletion(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
+        if (descriptor.getSubordinates().keySet().equals(Collections.singleton(mainName))) {
+          method = descriptor.getMethod(mainName);
+          List<ArgumentDescriptor<MethodArgumentBinding>> args = method.getArguments();
+          if (args.size() > 0) {
+            return new ParameterCompletion("", Termination.DETERMINED, args.get(0), completer);
+          } else {
+            return new EmptyCompletion();
+          }
+        } else {
+          return new MethodCompletion(mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
+        }
       } else {
         return new EmptyCompletion();
       }
