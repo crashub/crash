@@ -156,7 +156,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
         writer.append("\n\n");
       }
 
-      // Options
+      // Common options
       if (getOptions().size() > 0) {
         writer.append("PARAMETERS\n");
         for (OptionDescriptor<?> option : getOptions()) {
