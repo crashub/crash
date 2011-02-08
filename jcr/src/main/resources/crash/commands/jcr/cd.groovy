@@ -1,9 +1,8 @@
-import org.crsh.jcr.command.Path;
-
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Man
-import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.jcr.command.Path;
 
 public class cd extends org.crsh.jcr.command.JCRCommand {
 

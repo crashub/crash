@@ -1,6 +1,4 @@
 import org.crsh.command.ScriptException;
-
-
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Usage

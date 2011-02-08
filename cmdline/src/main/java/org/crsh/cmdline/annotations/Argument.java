@@ -19,6 +19,9 @@
 
 package org.crsh.cmdline.annotations;
 
+import org.crsh.cmdline.EmptyCompleter;
+import org.crsh.cmdline.spi.Completer;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -43,4 +46,5 @@ public @interface Argument {
    */
   boolean unquote() default true;
 
+  Class<? extends Completer> completer() default EmptyCompleter.class;
 }

@@ -31,7 +31,7 @@ import java.lang.reflect.Constructor;
 public abstract class SimpleValueType<T> {
 
   /** . */
-  public static final SimpleValueType<String> STRING = new SimpleValueType<String>(String.class, null) {
+  public static final SimpleValueType<String> STRING = new SimpleValueType<String>(String.class, EmptyCompleter.class) {
     @Override
     public <S extends String> String parse(Class<S> type, String s) {
       return s;
@@ -39,7 +39,7 @@ public abstract class SimpleValueType<T> {
   };
 
   /** . */
-  public static final SimpleValueType<Integer> INTEGER = new SimpleValueType<Integer>(Integer.class, null) {
+  public static final SimpleValueType<Integer> INTEGER = new SimpleValueType<Integer>(Integer.class, EmptyCompleter.class) {
     @Override
     public <S extends Integer> Integer parse(Class<S> type, String s) {
       return Integer.parseInt(s);
@@ -47,7 +47,7 @@ public abstract class SimpleValueType<T> {
   };
 
   /** . */
-  public static final SimpleValueType<Boolean> BOOLEAN = new SimpleValueType<Boolean>(Boolean.class, BooleanCompleter.class) {
+  public static final SimpleValueType<Boolean> BOOLEAN = new SimpleValueType<Boolean>(Boolean.class, EmptyCompleter.class) {
     @Override
     public <S extends Boolean> Boolean parse(Class<S> type, String s) {
       return Boolean.parseBoolean(s);

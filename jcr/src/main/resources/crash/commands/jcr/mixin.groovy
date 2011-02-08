@@ -1,10 +1,10 @@
-import org.crsh.jcr.command.Path
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Argument
 import org.crsh.cmdline.annotations.Required
+import org.crsh.jcr.command.Path;
 
 @Usage("mixin commands")
 @Man("""The mixin command manipulates JCR node mixins. Mixins can be added to or removed from nodes.""")

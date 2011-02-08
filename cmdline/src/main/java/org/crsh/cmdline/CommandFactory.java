@@ -21,13 +21,11 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
-import org.crsh.cmdline.annotations.Completed;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Required;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.binding.TypeBinding;
-import org.crsh.cmdline.spi.Completer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +62,6 @@ public class CommandFactory {
     Option optionAnn,
     boolean required,
     Description info,
-    Class<? extends Completer> completerType,
     Annotation ann) throws IntrospectionException {
 
     //
@@ -82,7 +79,7 @@ public class CommandFactory {
         required,
         argumentAnn.password(),
         argumentAnn.unquote(),
-        completerType,
+        argumentAnn.completer(),
         ann);
     } else if (optionAnn != null) {
       return new OptionDescriptor<B>(
@@ -94,7 +91,7 @@ public class CommandFactory {
         optionAnn.arity(),
         optionAnn.password(),
         optionAnn.unquote(),
-        completerType,
+        optionAnn.completer(),
         ann);
     } else {
       return null;
@@ -106,7 +103,6 @@ public class CommandFactory {
     Option optionAnn = null;
     Boolean required = null;
     Description description = new Description(ab);
-    Class<? extends Completer> completerType = null;
     Annotation info = null;
     for (Annotation parameterAnnotation : ab) {
       if (parameterAnnotation instanceof Option) {
@@ -115,8 +111,6 @@ public class CommandFactory {
         argumentAnn = (Argument)parameterAnnotation;
       } else if (parameterAnnotation instanceof Required) {
         required = ((Required)parameterAnnotation).value();
-      } else if (parameterAnnotation instanceof Completed) {
-        completerType = ((Completed)parameterAnnotation).value();
       } else if (info == null) {
 
         // Look at annotated annotations
@@ -137,17 +131,9 @@ public class CommandFactory {
 
           //
           if (required == null) {
-            Required metaRequired = a.getAnnotation(Required.class);
-            if (metaRequired != null) {
-              required = metaRequired.value();
-            }
-          }
-
-          //
-          if (completerType == null) {
-            Completed metaCompleted = a.getAnnotation(Completed.class);
-            if (metaCompleted != null) {
-              completerType = metaCompleted.value();
+            Required metaReq = a.getAnnotation(Required.class);
+            if (metaReq != null) {
+              required = metaReq.value();
             }
           }
         }
@@ -155,13 +141,7 @@ public class CommandFactory {
     }
 
     //
-    return new Tuple(
-      argumentAnn,
-      optionAnn,
-      required != null && required,
-      description,
-      completerType,
-      info);
+    return new Tuple(argumentAnn, optionAnn, required != null && required,description, info);
   }
 
   public static <T> MethodDescriptor<T> create(ClassDescriptor<T> owner, Method m) throws IntrospectionException {
@@ -192,7 +172,6 @@ public class CommandFactory {
           tuple.optionAnn,
           tuple.required,
           tuple.descriptionAnn,
-          tuple.completerType,
           tuple.ann);
         if (parameter != null) {
           descriptor.addParameter(parameter);
@@ -216,14 +195,12 @@ public class CommandFactory {
     final Option optionAnn;
     final boolean required;
     final Description descriptionAnn;
-    final Class<? extends Completer> completerType;
     final Annotation ann;
-    private Tuple(Argument argumentAnn, Option optionAnn, boolean required, Description info, Class<? extends Completer> completerType, Annotation ann) {
+    private Tuple(Argument argumentAnn, Option optionAnn, boolean required, Description info, Annotation ann) {
       this.argumentAnn = argumentAnn;
       this.optionAnn = optionAnn;
       this.required = required;
       this.descriptionAnn = info;
-      this.completerType = completerType;
       this.ann = ann;
     }
   }
@@ -245,7 +222,6 @@ public class CommandFactory {
           tuple.optionAnn,
           tuple.required,
           tuple.descriptionAnn,
-          tuple.completerType,
           tuple.ann);
         if (parameter != null) {
           parameters.add(parameter);

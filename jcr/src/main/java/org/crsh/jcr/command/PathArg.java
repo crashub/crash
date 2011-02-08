@@ -17,9 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.annotations;
+package org.crsh.jcr.command;
 
-import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cmdline.annotations.Usage;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,8 +30,7 @@ import java.lang.annotation.RetentionPolicy;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Completed {
-
-  Class<? extends Completer> value();
-
+@Usage("a node path")
+@Argument(name = "path")
+public @interface PathArg {
 }

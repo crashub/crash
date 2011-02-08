@@ -1,4 +1,3 @@
-import org.crsh.jcr.command.Path;
 import javax.jcr.ImportUUIDBehavior
 import javax.jcr.Node;
 import org.crsh.cmdline.annotations.Usage
@@ -6,9 +5,10 @@ import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option
-import org.crsh.cmdline.annotations.Required
-import org.crsh.cmdline.annotations.Argument
+import org.crsh.cmdline.annotations.Required;
 import org.crsh.jcr.PropertyType
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.jcr.command.Path
 
 @Usage("node commands")
 public class node extends org.crsh.jcr.command.JCRCommand {

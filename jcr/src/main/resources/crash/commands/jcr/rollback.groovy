@@ -1,9 +1,10 @@
 import org.crsh.command.ScriptException;
 import org.crsh.cmdline.annotations.Usage
-import org.crsh.jcr.command.Path
+import org.crsh.jcr.command.PathArg
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Argument
+import org.crsh.jcr.command.Path;
 
 public class rollback extends org.crsh.jcr.command.JCRCommand {
 

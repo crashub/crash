@@ -21,45 +21,33 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.spi.Completer;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A completer for the value true/false in lower case.
+ * A {@link Completer} implementation that returns no completion results.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class BooleanCompleter implements Completer {
+public class EmptyCompleter implements Completer {
 
   /** . */
-  private static final BooleanCompleter instance = new BooleanCompleter();
+  private static final EmptyCompleter instance = new EmptyCompleter();
 
   /**
    * Returns the empty completer instance.
    *
    * @return the instance
    */
-  public static BooleanCompleter getInstance() {
+  public static EmptyCompleter getInstance() {
     return instance;
   }
 
-  public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-    Map<String, Boolean> completions = Collections.emptyMap();
-
-    //
-    if (prefix.length() == 0) {
-      completions = new HashMap<String, Boolean>();
-      completions.put("true", true);
-      completions.put("false", true);
-    } else if ("true".startsWith(prefix)) {
-      completions = Collections.singletonMap("true".substring(prefix.length()), true);
-    } else if ("false".startsWith(prefix)) {
-      completions = Collections.singletonMap("false".substring(prefix.length()), true);
-    }
-
-    return completions;
+  /**
+   * Returns the value returned by {@link java.util.Collections#emptyList()}.
+   */
+  public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+    return Collections.emptyMap();
   }
 }

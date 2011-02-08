@@ -131,7 +131,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     }
 
     //
-    if (completerType == null) {
+    if (completerType == EmptyCompleter.class) {
       completerType = valueType.getCompleter();
     }
 

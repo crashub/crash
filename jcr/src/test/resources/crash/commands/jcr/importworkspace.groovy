@@ -1,12 +1,5 @@
 package crash.commands.jcr
 
-import java.io.InputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.Calendar;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.Argument;
 import org.crsh.command.ScriptException;
@@ -15,10 +8,8 @@ import org.crsh.jcr.JCR;
 import org.crsh.util.SubInputStream;
 import javax.jcr.Node;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 
 @Description("Import a workspace from the file system (experimental)")
 class workspaceimport extends org.crsh.command.ClassCommand {

@@ -9,7 +9,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Option
-import org.crsh.cmdline.annotations.Completed
 import org.crsh.cmdline.annotations.Required
 import org.crsh.cmdline.annotations.Argument
 import org.crsh.command.CRaSHCommand
@@ -286,7 +285,7 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the logger level")
 @Man("The logger level to assign among {trace, debug, info, warn, error}")
-@Option(names=["l","level"])
+@Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
 @interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
