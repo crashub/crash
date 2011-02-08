@@ -19,6 +19,10 @@
 
 package org.crsh.doc;
 
+import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.MethodDescriptor;
+import org.crsh.command.CRaSHCommand;
 import org.crsh.command.DescriptionMode;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
@@ -54,14 +58,31 @@ public class Generator {
     CRaSH crash = new CRaSH(ctx);
     for (String s : ctx.listResourceId(ResourceKind.SCRIPT)) {
       ShellCommand cmd = crash.getCommand(s);
-      String man = cmd.describe(s, DescriptionMode.MAN);
-      if (man != null) {
+      StringBuilder man = new StringBuilder();
+      if (cmd instanceof CRaSHCommand) {
+        CRaSHCommand cc = (CRaSHCommand)cmd;
+        ClassDescriptor<?> desc = cc.getDescriptor();
+        if (desc.getSubordinates().size() > 1) {
+          for (CommandDescriptor<?, ?> m : desc.getSubordinates().values()) {
+            man.append("{{screen}}");
+            m.printMan(man);
+            man.append("{{/screen}}");
+          }
+        } else {
+          man.append("{{screen}}");
+          desc.printMan(man);
+          man.append("{{/screen}}");
+        }
+      } else {
+        man.append(cmd.describe(s, DescriptionMode.MAN));
+      }
+      if (man.length() > 0) {
         File f = new File(root, s + ".wiki");
         if (!f.exists()) {
           PrintWriter pw = new PrintWriter(f);
           try {
             System.out.println("Generating wiki file " + f.getCanonicalPath());
-            pw.print("{{screen}}" + man + "{{/screen}}");
+            pw.print(man);
           } finally {
             pw.close();
           }

@@ -84,6 +84,15 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   }
 
   /**
+   * Returns the command descriptor.
+   *
+   * @return the command descriptor
+   */
+  public ClassDescriptor<?> getDescriptor() {
+    return descriptor;
+  }
+
+  /**
    * Returns true if the command wants its arguments to be unquoted.
    *
    * @return true if arguments must be unquoted
