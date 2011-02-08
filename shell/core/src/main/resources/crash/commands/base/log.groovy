@@ -284,12 +284,14 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("the logger level to assign among {trace, debug, info, warn, error}")
+@Usage("the logger level")
+@Man("The logger level to assign among {trace, debug, info, warn, error}")
 @Option(names=["l","level"])
 @interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("the message to log")
+@Usage("the message")
+@Man("The message to log")
 @Option(names=["m","message"])
 @Required
 @interface MsgOpt { }
@@ -302,15 +304,18 @@ class LoggerName extends Value {
 
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the logger name")
+@Man("The name of the logger")
 @Argument(name = "name")
 @interface LoggerArg { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("filter the logger with a regular expression")
+@Usage("a regexp filter")
+@Man("A regular expressions used to filter the loggers")
 @Option(names=["f","filter"])
 @interface FilterOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("force the plugin implementation")
+@Usage("the plugin implementation")
+@Man("Force the plugin implementation to use")
 @Option(names=["p","plugin"])
 @interface PluginOpt { }

@@ -19,6 +19,7 @@
 
 package org.crsh.jcr.command;
 
+import org.crsh.cmdline.annotations.Man;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Usage;
 
@@ -32,5 +33,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @Option(names={"p","password"})
 @Usage("the user passowrd")
+@Man("The user password")
 public @interface PasswordOpt {
 }

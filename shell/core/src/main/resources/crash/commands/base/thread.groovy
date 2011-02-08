@@ -5,7 +5,8 @@ import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
-import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.annotations.Option
+import org.crsh.cmdline.annotations.Man;
 
 @Usage("vm thread commands")
 public class thread extends CRaSHCommand {
@@ -76,6 +77,7 @@ public class thread extends CRaSHCommand {
   }
 
   @Usage("stop vm threads")
+  @Man("Stop a VM thread, this method cannot be called as is and should be used with a pipe to consume a list of threads.")
   @Command
   public void stop(InvocationContext<Thread, Void> context) throws ScriptException {
     if (context.piped) {

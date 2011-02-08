@@ -19,6 +19,7 @@
 
 package org.crsh.jcr.command;
 
+import org.crsh.cmdline.annotations.Man;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Usage;
 
@@ -32,5 +33,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @Option(names={"c","container"})
 @Usage("portal container name (eXo JCR specific)")
+@Man("The portal container name (eXo JCR specific)")
 public @interface ContainerOpt {
 }
