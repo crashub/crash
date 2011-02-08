@@ -20,10 +20,12 @@
 package org.crsh.cmdline.matcher;
 
 /**
+ * A literal value.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Value {
+public final class LiteralValue {
 
   /** . */
   private final String rawValue;
@@ -31,7 +33,7 @@ public class Value {
   /** . */
   private final String value;
 
-  public Value(String rawValue, String value) {
+  public LiteralValue(String rawValue, String value) {
     if (rawValue == null) {
       throw new NullPointerException();
     }
@@ -45,10 +47,20 @@ public class Value {
     this.value = value;
   }
 
+  /**
+   * Returns the value as expressed in the command line.
+   *
+   * @return the raw value
+   */
   public String getRawValue() {
     return rawValue;
   }
 
+  /**
+   * Returns the value as interpreted by the context.
+   *
+   * @return the value
+   */
   public String getValue() {
     return value;
   }

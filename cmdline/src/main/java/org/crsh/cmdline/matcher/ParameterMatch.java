@@ -23,8 +23,6 @@ import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,12 +35,12 @@ public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBind
   private final P parameter;
 
   /** . */
-  private final List<Value> values;
+  private final List<LiteralValue> values;
 
   /** . */
   private List<String> strings;
 
-  public ParameterMatch(P parameter, List<Value> values) {
+  public ParameterMatch(P parameter, List<LiteralValue> values) {
     this.parameter = parameter;
     this.values = values;
     this.strings = null;
@@ -52,14 +50,14 @@ public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBind
     return parameter;
   }
 
-  public List<Value> getValues() {
+  public List<LiteralValue> getValues() {
     return values;
   }
 
   public List<String> getStrings() {
     if (strings == null) {
       List<String> strings = new ArrayList<String>(values.size());
-      for (Value value : values) {
+      for (LiteralValue value : values) {
         strings.add(parameter.isUnquote() ? value.getValue() : value.getRawValue());
       }
       this.strings = strings;

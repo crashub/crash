@@ -34,11 +34,11 @@ public class OptionMatch<B extends TypeBinding> extends ParameterMatch<OptionDes
   /** . */
   private final List<String> names;
 
-  public OptionMatch(OptionDescriptor<B> parameter, String name, List<Value> values) {
+  public OptionMatch(OptionDescriptor<B> parameter, String name, List<LiteralValue> values) {
     this(parameter, Collections.singletonList(name), values);
   }
 
-  public OptionMatch(OptionDescriptor<B> parameter, List<String> names, List<Value> values) {
+  public OptionMatch(OptionDescriptor<B> parameter, List<String> names, List<LiteralValue> values) {
     super(parameter, values);
 
     //

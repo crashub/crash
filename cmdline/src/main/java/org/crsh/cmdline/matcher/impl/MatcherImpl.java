@@ -27,15 +27,14 @@ import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
-import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.matcher.ArgumentMatch;
 import org.crsh.cmdline.matcher.ClassMatch;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.CommandMatch;
+import org.crsh.cmdline.matcher.LiteralValue;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
-import org.crsh.cmdline.matcher.Value;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
@@ -67,10 +66,10 @@ public class MatcherImpl<T> extends Matcher<T> {
     this.descriptor = descriptor;
   }
 
-  private List<Value> bilto(List<? extends Token.Literal> literals) {
-    List<Value> values = new ArrayList<Value>(literals.size());
+  private List<LiteralValue> bilto(List<? extends Token.Literal> literals) {
+    List<LiteralValue> values = new ArrayList<LiteralValue>(literals.size());
     for (Token.Literal literal : literals) {
-      values.add(new Value(literal.raw, literal.value));
+      values.add(new LiteralValue(literal.raw, literal.value));
     }
     return values;
   }
@@ -133,7 +132,7 @@ public class MatcherImpl<T> extends Matcher<T> {
         for (ListIterator<OptionMatch> i = options.listIterator();i.hasNext();) {
           OptionMatch om = i.next();
           if (om.getParameter().equals(desc)) {
-            List<Value> v = new ArrayList<Value>(om.getValues());
+            List<LiteralValue> v = new ArrayList<LiteralValue>(om.getValues());
             v.addAll(bilto(optionEvent.getValues()));
             List<String> names = new ArrayList<String>(om.getNames());
             names.add(optionEvent.getToken().getName());

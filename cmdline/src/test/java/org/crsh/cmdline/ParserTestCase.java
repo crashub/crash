@@ -31,7 +31,7 @@ import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.binding.ClassFieldBinding;
-import org.crsh.cmdline.matcher.Value;
+import org.crsh.cmdline.matcher.LiteralValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,7 +97,7 @@ public class ParserTestCase extends TestCase {
       OptionMatch<?> match = sharedOptionMatches.removeFirst();
       assertEquals(expectedName, match.getName());
       ArrayList<String> values = new ArrayList<String>();
-      for (Value value : match.getValues()) {
+      for (LiteralValue value : match.getValues()) {
         values.add(value.getValue());
       }
       assertEquals(Arrays.asList(expectedValues), values);
@@ -109,7 +109,7 @@ public class ParserTestCase extends TestCase {
       OptionMatch<?> match = optionMatches.removeFirst();
       assertEquals(expectedName, match.getName());
       ArrayList<String> values = new ArrayList<String>();
-      for (Value value : match.getValues()) {
+      for (LiteralValue value : match.getValues()) {
         values.add(value.getValue());
       }
       assertEquals(Arrays.asList(expectedValues), values);
@@ -122,7 +122,7 @@ public class ParserTestCase extends TestCase {
       assertEquals(start, match.getStart());
       assertEquals(end, match.getEnd());
       ArrayList<String> values = new ArrayList<String>();
-      for (Value value : match.getValues()) {
+      for (LiteralValue value : match.getValues()) {
         values.add(value.getValue());
       }
       assertEquals(Arrays.asList(expectedValues), values);
