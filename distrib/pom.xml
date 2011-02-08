@@ -78,6 +78,9 @@
           </dependency>
         </dependencies>
         <build>
+
+          <finalName>crsh-${project.version}</finalName>
+
           <plugins>
 
             <!-- Generate aggregated javadoc -->
@@ -111,34 +114,6 @@
                 </execution>
               </executions>
             </plugin>
-<!--
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <configuration>
-                <finalName>crsh-${project.version}</finalName>
-                <appendAssemblyId>false</appendAssemblyId>
-                <descriptors>
-                  <descriptor>src/main/assembly/packaging.xml</descriptor>
-                </descriptors>
-              </configuration>
-              <executions>
-                <execution>
-                  <id>make-assembly</id>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
-                  <configuration>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptors>
-                      <descriptor>src/main/assembly/packaging.xml</descriptor>
-                    </descriptors>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
--->
           </plugins>
         </build>
       </profile>
