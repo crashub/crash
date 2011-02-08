@@ -3,7 +3,7 @@
   <groupId>org.crsh</groupId>
   <artifactId>crsh.parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-beta18-SNAPSHOT</version>
+  <version>1.0.0-beta18</version>
 
   <name>CRaSH parent</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
@@ -22,9 +22,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://crsh.googlecode.com/svn/trunk/</connection>
-    <developerConnection>scm:svn:https://crsh.googlecode.com/svn/trunk/</developerConnection>
-    <url>http://code.google.com/p/crsh/source/browse/</url>
+    <connection>scm:svn:http://crsh.googlecode.com/svn/tags/1.0.0-beta18</connection>
+    <developerConnection>scm:svn:https://crsh.googlecode.com/svn/tags/1.0.0-beta18</developerConnection>
+    <url>http://code.google.com/p/crsh/source/browse/tags/1.0.0-beta18</url>
   </scm>
 
   <distributionManagement>
@@ -75,12 +75,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cmdline</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cmdline</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -88,31 +88,31 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -120,12 +120,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -133,12 +133,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -146,12 +146,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <type>war</type>
       </dependency>
 
@@ -159,50 +159,50 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>standalone</classifier>
       </dependency>
 
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <type>pdf</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.0.0-beta18-SNAPSHOT</version>
+        <version>1.0.0-beta18</version>
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>
