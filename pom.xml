@@ -433,6 +433,8 @@
   </build>
 
   <profiles>
+
+    <!-- Deploy profile -->
     <profile>
       <id>deploy</id>
       <build>
@@ -458,6 +460,48 @@
         </plugins>
       </build>
     </profile>
+
+    <!-- Main profile -->
+    <profile>
+      <id>main</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>default-test</id>
+                  <configuration>
+                    <skip>true</skip>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <phase>test</phase>
+              </execution>
+            </executions>
+            <configuration>
+              <mainClass>org.crsh.standalone.Main</mainClass>
+              <classpathScope>test</classpathScope>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Release profile -->
     <profile>
       <id>release</id>
       <build>
