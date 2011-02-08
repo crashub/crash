@@ -42,9 +42,9 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
   }
 
   public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-    if (parameter.getAnnotation() instanceof Path) {
+    if (parameter.getJavaValueType() == Path.class) {
 
-      String path = (String)getProperty("currentPath");
+      Path path = (Path)getProperty("currentPath");
       Session session = (Session)getProperty("session");
 
       //
@@ -54,7 +54,7 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
 
         if (prefix.length() == 0 || prefix.charAt(0) != '/') {
           if (path != null) {
-            Item item = session.getItem(path);
+            Item item = session.getItem(path.getString());
             if (item instanceof Node) {
               relative = (Node)item;
             }

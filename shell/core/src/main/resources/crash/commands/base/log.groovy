@@ -214,7 +214,7 @@ The following set the level warn on all the available loggers:
 
   public Map<String, String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
     def c = [:];
-    if (parameter.getJavaType() == LoggerName.class) {
+    if (parameter.getJavaValueType() == LoggerName.class) {
       loggers.each() {
         if (it.startsWith(prefix)) {
           c.put(it.substring(prefix.length()), true);
