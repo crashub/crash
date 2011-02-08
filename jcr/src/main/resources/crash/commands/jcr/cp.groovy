@@ -15,8 +15,8 @@ The cp command copies a node to a target location in the JCR tree.
 
 [/registry]% cp foo bar""")
   public void main(
-    @Required @Path @Argument @Usage("the path of the source node to copy") @Argument String source,
-    @Required @Path @Argument @Usage("the path of the target node to be copied") @Argument String target) throws ScriptException {
+    @Required @Argument @Usage("the path of the source node to copy") @Argument Path source,
+    @Required @Argument @Usage("the path of the target node to be copied") @Argument Path target) throws ScriptException {
     assertConnected();
 
     //
@@ -26,6 +26,6 @@ The cp command copies a node to a target location in the JCR tree.
     def targetPath = absolutePath(target);
 
     //
-    sourceNode.session.workspace.copy(sourceNode.path, targetPath);
+    sourceNode.session.workspace.copy(sourceNode.path, targetPath.string);
   }
 }

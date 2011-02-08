@@ -20,15 +20,22 @@
 package org.crsh.jcr.command;
 
 import org.crsh.cmdline.annotations.Usage;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.crsh.cmdline.spi.Value;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-@Retention(RetentionPolicy.RUNTIME)
 @Usage("a node path")
-public @interface Path {
+public class Path extends Value {
+
+  public static final Path ROOT = new Path("/");
+
+  public Path(String string) throws NullPointerException {
+    super(string);
+  }
+
+  public boolean isAbsolute() {
+    return getString().startsWith("/");
+  }
 }

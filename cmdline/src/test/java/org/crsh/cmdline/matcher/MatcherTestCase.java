@@ -20,19 +20,15 @@
 package org.crsh.cmdline.matcher;
 
 import junit.framework.TestCase;
-import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Required;
-import org.crsh.cmdline.matcher.CmdSyntaxException;
-import org.crsh.cmdline.matcher.Matcher;
-import org.crsh.cmdline.matcher.InvocationContext;
+import org.crsh.cmdline.spi.Value;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -392,5 +388,28 @@ public class MatcherTestCase extends TestCase {
     context = new InvocationContext();
     Matcher.createMatcher("bar", desc).match("-o a b -o c d").invoke(context, f);
     assertEquals(Arrays.asList("a", "b", "c", "d"), f.s);
+  }
+
+  public static class MyValue extends Value {
+    public MyValue(String string) throws NullPointerException {
+      super(string);
+    }
+  }
+
+  public static class G {
+    MyValue o;
+    @Command
+    public void foo(@Option(names = "o") MyValue o) { this.o = o; }
+  }
+
+  public void testValue() throws Exception {
+
+    ClassDescriptor<G> desc = CommandFactory.create(G.class);
+
+    //
+    G g = new G();
+    InvocationContext context = new InvocationContext();
+    Matcher.createMatcher("foo", desc).match("-o a").invoke(context, g);
+    assertEquals(new MyValue("a"), g.o);
   }
 }

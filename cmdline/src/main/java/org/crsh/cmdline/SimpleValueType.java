@@ -20,6 +20,9 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.spi.Value;
+
+import java.lang.reflect.Constructor;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -60,7 +63,16 @@ public abstract class SimpleValueType<T> {
   };
 
   /** . */
-  private static final SimpleValueType<?>[] types = { STRING, INTEGER, BOOLEAN, ENUM};
+  public static final SimpleValueType<Value> VALUE = new SimpleValueType<Value>(Value.class, null) {
+    @Override
+    public <S extends Value> Value parse(Class<S> type, String s) throws Exception {
+      Constructor<S> ctor = type.getConstructor(String.class);
+      return ctor.newInstance(s);
+    }
+  };
+
+  /** . */
+  private static final SimpleValueType<?>[] types = { STRING, INTEGER, BOOLEAN, ENUM, VALUE};
 
   public static SimpleValueType<?> get(Class<?> clazz) {
     SimpleValueType<?> bestType = null;
@@ -113,6 +125,6 @@ public abstract class SimpleValueType<T> {
     return javaType;
   }
 
-  public abstract <S extends T> T parse(Class<S> type, String s);
+  public abstract <S extends T> T parse(Class<S> type, String s) throws Exception;
 
 }

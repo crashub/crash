@@ -8,7 +8,7 @@ public class version extends org.crsh.jcr.command.JCRCommand {
   // The path of the node to checkin
   @Usage("Checkin a node")
   @Command
-  public void checkin(@Path @Argument String path) throws ScriptException {
+  public void checkin(@Argument Path path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);
     node.checkin();
@@ -17,7 +17,7 @@ public class version extends org.crsh.jcr.command.JCRCommand {
   // The path of the node to checkout
   @Usage("Checkout a node")
   @Command
-  public void checkout(@Path @Argument String path) throws ScriptException {
+  public void checkout(@Argument Path path) throws ScriptException {
     assertConnected();
     def node = findNodeByPath(path);
     node.checkout();

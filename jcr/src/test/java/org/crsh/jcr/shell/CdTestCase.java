@@ -19,6 +19,8 @@
 
 package org.crsh.jcr.shell;
 
+import org.crsh.jcr.command.Path;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -34,27 +36,27 @@ public class CdTestCase extends AbstractJCRCommandTestCase {
 
     //
     assertOk("cd foo");
-    assertEquals("/foo", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/foo"), shell.getAttribute("currentPath"));
     assertOk("cd ..");
-    assertEquals("/", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/"), shell.getAttribute("currentPath"));
     assertOk("cd /foo");
-    assertEquals("/foo", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/foo"), shell.getAttribute("currentPath"));
     assertOk("cd .");
-    assertEquals("/foo", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/foo"), shell.getAttribute("currentPath"));
     assertOk("cd");
-    assertEquals("/", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/"), shell.getAttribute("currentPath"));
 
     //
     assertOk("cd 'foo bar'");
-    assertEquals("/foo bar", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/foo bar"), shell.getAttribute("currentPath"));
     assertOk("cd ..");
-    assertEquals("/", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/"), shell.getAttribute("currentPath"));
     assertOk("cd '/foo bar'");
-    assertEquals("/foo bar", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/foo bar"), shell.getAttribute("currentPath"));
     assertOk("cd .");
-    assertEquals("/foo bar", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/foo bar"), shell.getAttribute("currentPath"));
     assertOk("cd");
-    assertEquals("/", shell.getAttribute("currentPath"));
+    assertEquals(new Path("/"), shell.getAttribute("currentPath"));
   }
 
 }

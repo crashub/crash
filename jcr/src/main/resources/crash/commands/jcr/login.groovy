@@ -1,7 +1,8 @@
 import org.crsh.command.ScriptException;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
-import javax.jcr.ValueFormatException;
+import javax.jcr.ValueFormatException
+import org.crsh.jcr.command.Path;
 
 getCurrentNode = { ->
   assertConnected();
@@ -9,7 +10,7 @@ getCurrentNode = { ->
 }
 
 setCurrentNode = { node ->
-  currentPath = node.path;
+  currentPath = new Path(node.path);
 }
 
 assertConnected = { ->
@@ -23,7 +24,7 @@ assertConnected = { ->
  * If the path is relative then the node will be resolved against the current node.
  * @throws ScriptException when the provided path does not point to a valid node
  */
-findNodeByPath = { path ->
+findNodeByPath = { Path path ->
   def item = findItemByPath(path);
   if (item instanceof Node)
     return item;
@@ -36,14 +37,14 @@ findNodeByPath = { path ->
  * If the path is relative then the item will be resolved lrea the current node.
  * @throws ScriptException when the provided path does not point to a valid item
  */
-findItemByPath = { path ->
+findItemByPath = { Path path ->
   assertConnected();
   if (path == null)
-    path = "/";
+    path = Path.ROOT;
   def item = getItemByPath(path);
   if (item != null)
     return item;
-  throw new ScriptException("""$path : no such item""");
+  throw new ScriptException("""$path.string : no such item""");
 };
 
 /**
@@ -55,14 +56,14 @@ findItemByPath = { path ->
  * @throws ScriptException if no path is provided
  * @throws ScriptException when the provided path does not point to a valid node
  */
-getNodeByPath = { path ->
+getNodeByPath = { Path path ->
   def item = getItemByPath(path);
   if (item == null) {
     return null;
   } else if (item instanceof Node) {
     return item;
   } else {
-    throw new ScriptException("The path $path is an item instead of a node");
+    throw new ScriptException("The path $path.string is an item instead of a node");
   }
 }
 
@@ -72,17 +73,17 @@ getNodeByPath = { path ->
  * If the path is relative then the item will be resolved against the current node.
  * @throws ScriptException if no path is provided
  */
-getItemByPath = { path ->
+getItemByPath = { Path path ->
   assertConnected();
   if (path == null)
     throw new ScriptException("No path provided");
-  if (path.startsWith("/"))
-    return session.getItem(path);
+  if (path.isAbsolute())
+    return session.getItem(path.string);
   def node = getCurrentNode();
-  if (node.hasNode(path))
-    return node.getNode(path);
-  if (node.hasProperty(path))
-    return node.getProperty(path);
+  if (node.hasNode(path.string))
+    return node.getNode(path.string);
+  if (node.hasProperty(path.string))
+    return node.getProperty(path.string);
   return null;
 };
 
@@ -94,17 +95,17 @@ getItemByPath = { path ->
  * @return the corresponding absolute path
  * @throws ScriptException if the path argument is null
  */
-absolutePath = { path ->
+absolutePath = { Path path ->
   if (path == null)
     throw new ScriptException("No null path accepted");
   def parent;
-  if (path.charAt(0) == '/') {
+  if (path.isAbsolute()) {
     parent = session.rootNode;
-    path = path.substring(1);
+    path = new Path(path.string.substring(1));
   } else {
     parent = getCurrentNode();
   }
-  return parent.path + path;
+  return new Path(parent.path + path.string);
 };
 
 formatValue = { value ->

@@ -31,7 +31,7 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
     InvocationContext<Void, Node> context,
     @Usage("the paths to be created")
     @Man("The paths of the new node to be created, the paths can either be absolute or relative.")
-    @Path @Argument List<String> paths,
+    @Argument List<Path> paths,
     @Usage("the node type name")
     @Man("The name of the primary node type to create.")
     @Option(names=["t","type"]) String primaryNodeTypeName)
@@ -43,9 +43,9 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
     paths.each {
 
       def parent;
-      if (it.charAt(0) == '/') {
+      if (it.isAbsolute()) {
         parent = session.rootNode;
-        it = it.substring(1);
+        it = new Path(it.string.substring(1));
       } else {
         parent = getCurrentNode();
       }
@@ -53,9 +53,9 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
       //
       def node;
       if (primaryNodeTypeName != null) {
-        node = parent.addNode(it, primaryNodeTypeName);
+        node = parent.addNode(it.string, primaryNodeTypeName);
       } else {
-        node = parent.addNode(it);
+        node = parent.addNode(it.string);
       }
 
       //
@@ -152,8 +152,8 @@ The node has been exported
 """)
   @Usage("export a node to an nt file")
   public Object export(
-    @Required @Path @Argument @Usage("path of the exported node") String src,
-    @Required @Path @Argument @Usage("path of the exported nt:file node") String dst) throws ScriptException {
+    @Required @Argument @Usage("path of the exported node") Path src,
+    @Required @Argument @Usage("path of the exported nt:file node") Path dst) throws ScriptException {
 
     //
     assertConnected();
@@ -165,17 +165,17 @@ The node has been exported
     def session = srcNode.session;
 
     // Destination parent
-    int pos = dst.lastIndexOf('/');
+    int pos = dst.string.lastIndexOf('/');
     if (pos == -1)
       throw new ScriptException("The destination must be absolute");
     def dstParenNodet;
     def dstName;
     if (pos == 0) {
-      dstParentNode = findNodeByPath("/");
-      dstName = dst.substring(1);
+      dstParentNode = findNodeByPath(Path.ROOT);
+      dstName = dst.string.substring(1);
     } else {
-      dstParentNode = findNodeByPath(dst.substring(0, pos));
-      dstName = dst.substring(pos + 1);
+      dstParentNode = findNodeByPath(dst.string.substring(0, pos));
+      dstName = dst.string.substring(pos + 1);
     }
 
     //
@@ -209,8 +209,8 @@ Imports a node from an nt:file node located in the workspace:
 Node imported
 """)
   public Object IMPORT(
-    @Required @Path @Argument @Usage("path of the imported nt:file node") String src,
-    @Required @Path @Argument @Usage("path of the parent imported node") String dst) throws ScriptException {
+    @Required @Argument @Usage("path of the imported nt:file node") Path src,
+    @Required @Argument @Usage("path of the parent imported node") Path dst) throws ScriptException {
 
     //
     assertConnected();
@@ -229,7 +229,7 @@ Node imported
     def dstNode = findNodeByPath(dst);
 
     //
-    srcNode.session.importXML(dst, data, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+    srcNode.session.importXML(dst.string, data, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
 
     //
     return "Node imported";

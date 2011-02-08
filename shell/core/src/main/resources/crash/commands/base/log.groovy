@@ -15,7 +15,8 @@ import org.crsh.cmdline.annotations.Argument
 import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
-import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.spi.Value;
 
 @Usage("logging commands")
 public class log extends CRaSHCommand implements Completer {
@@ -31,7 +32,7 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
 
 % log ls | log send -m hello -l warn""")
   @Command
-  public void send(InvocationContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg String name, @LevelOpt Level level) throws ScriptException {
+  public void send(InvocationContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg LoggerName name, @LevelOpt Level level) throws ScriptException {
     level = level ?: Level.info;
     if (context.piped) {
       context.consume().each() {
@@ -39,7 +40,7 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
       }
     } else {
       if (name != null) {
-        def logger = LoggerFactory.getLogger(name);
+        def logger = LoggerFactory.getLogger(name.string);
         level.log(logger, msg);
       }
     }
@@ -126,10 +127,10 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
 
   @Usage("create one or several loggers")
   @Command
-  public void add(InvocationContext<Void, Logger> context, @LoggerArg List<String> names) throws ScriptException {
+  public void add(InvocationContext<Void, Logger> context, @LoggerArg List<LoggerName> names) throws ScriptException {
     names.each {
       if (it.length() > 0) {
-        Logger logger = LoggerFactory.getLogger(it);
+        Logger logger = LoggerFactory.getLogger(it.string);
         context.produce(logger);
         context.writer.println(it);
       }
@@ -149,14 +150,14 @@ javax.management.mbeanserver<INFO>
 javax.management.modelmbean<INFO>""")
   @Usage("display info about a logger")
   @Command
-  public void info(InvocationContext<Logger, Void> context, @LoggerArg List<String> names) throws ScriptException {
+  public void info(InvocationContext<Logger, Void> context, @LoggerArg List<LoggerName> names) throws ScriptException {
     if (context.piped) {
       context.consume().each() {
         info(context.writer, it);
       }
     } else {
       names.each() {
-        def logger = LoggerFactory.getLogger(it);
+        def logger = LoggerFactory.getLogger(it.string);
         info(context.writer, logger);
       }
     }
@@ -189,7 +190,7 @@ The following set the level warn on all the available loggers:
   @Command
   public void set(
     InvocationContext<Logger, Void> context,
-    @LoggerArg List<String> names,
+    @LoggerArg List<LoggerName> names,
     @LevelOpt Level level,
     @PluginOpt Plugin plugin) throws ScriptException {
 
@@ -205,7 +206,7 @@ The following set the level warn on all the available loggers:
       }
     } else {
       names.each() {
-        def logger = LoggerFactory.getLogger(it);
+        def logger = LoggerFactory.getLogger(it.string);
         plugin.setLevel(logger, level);
       }
     }
@@ -213,7 +214,7 @@ The following set the level warn on all the available loggers:
 
   public Map<String, String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
     def c = [:];
-    if (parameter.annotation instanceof LoggerArg) {
+    if (parameter.getJavaType() == LoggerName.class) {
       loggers.each() {
         if (it.startsWith(prefix)) {
           c.put(it.substring(prefix.length()), true);
@@ -292,6 +293,12 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 @Option(names=["m","message"])
 @Required
 @interface MsgOpt { }
+
+class LoggerName extends Value {
+  LoggerName(String string) {
+    super(string)
+  }
+}
 
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the logger name")

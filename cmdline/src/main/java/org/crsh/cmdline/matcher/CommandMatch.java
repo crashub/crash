@@ -82,8 +82,13 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
       // First convert the entire list
       List<Object> l = new ArrayList<Object>();
       for (String value : values) {
-        Object o = parameter.parse(value);
-        l.add(o);
+        try {
+          Object o = parameter.parse(value);
+          l.add(o);
+        }
+        catch (Exception e) {
+          throw new CmdSyntaxException("Could not convert value " + value, e);
+        }
       }
 
       //

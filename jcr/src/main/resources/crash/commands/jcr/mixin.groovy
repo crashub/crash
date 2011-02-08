@@ -25,7 +25,7 @@ add a mixin from an incoming node stream, for instance:
      @Argument
      @Required
      String mixin,
-     @Path @Argument List<String> paths)
+     @Argument List<Path> paths)
   {
      context.writer <<= "Mixin $mixin added to nodes";
      perform(context, paths, { node ->
@@ -48,7 +48,7 @@ remove a mixin from an incoming node stream, for instance:
      @Usage("the mixin name to remove")
      @Required
      String mixin,
-     @Path @Argument List<String> paths)
+     @Argument List<Path> paths)
   {
      context.writer <<= "Mixin $mixin removed from nodes";
      perform(context, paths, { node ->
@@ -57,7 +57,7 @@ remove a mixin from an incoming node stream, for instance:
      });
   }
 
-  private void perform(InvocationContext<Node,Void> context, List<String> paths, def closure) {
+  private void perform(InvocationContext<Node,Void> context, List<Path> paths, def closure) {
     assertConnected();
     if (context.piped) {
       if (paths != null && !paths.empty) {

@@ -21,6 +21,7 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.spi.Value;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -123,6 +124,8 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
       valueType = SimpleValueType.BOOLEAN;
     } else if (Enum.class.isAssignableFrom(javaValueType)) {
       valueType = SimpleValueType.ENUM;
+    } else if (Value.class.isAssignableFrom(javaValueType)) {
+      valueType = SimpleValueType.VALUE;
     } else {
       throw new IllegalValueTypeException("Type " + javaValueType.getName() + " is not handled at the moment");
     }
@@ -146,7 +149,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     this.unquote = unquote;
   }
 
-  public Object parse(String s) {
+  public Object parse(String s) throws Exception {
     return type.parse(javaValueType, s);
   }
 

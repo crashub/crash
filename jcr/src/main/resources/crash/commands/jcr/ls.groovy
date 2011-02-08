@@ -28,7 +28,7 @@ accepts a path argument that can be absolute or relative.
 | +-/folder""")
   @Command
   public Object main(
-  @Usage("the path of the node content to list") @Path @Argument String path,
+  @Usage("the path of the node content to list") @Argument Path path,
   @Usage("Print depth") @Option(names=["d","depth"]) Integer depth) throws ScriptException {
     assertConnected();
 

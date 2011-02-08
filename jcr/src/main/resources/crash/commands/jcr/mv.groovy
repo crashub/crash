@@ -21,8 +21,8 @@ command is a <Node,Node> command consuming a stream of node to move them and pro
 
   public void main(
     InvocationContext<Node, Node> context,
-    @Path @Argument @Usage("the path of the source node to move, absolute or relative") String source,
-    @Path @Argument @Usage("the destination path absolute or relative") String target) throws ScriptException {
+    @Argument @Usage("the path of the source node to move, absolute or relative") Path source,
+    @Argument @Usage("the destination path absolute or relative") Path target) throws ScriptException {
     assertConnected()
 
     //
@@ -38,7 +38,7 @@ command is a <Node,Node> command consuming a stream of node to move them and pro
     } else {
       def sourceNode = findNodeByPath(source);
       def targetPath = absolutePath(target);
-      sourceNode.session.workspace.move(sourceNode.path, targetPath);
+      sourceNode.session.workspace.move(sourceNode.path, targetPath.string);
       def targetNode = findNodeByPath(targetPath);
       context.produce(targetNode);
     }
