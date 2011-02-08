@@ -59,6 +59,9 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   private boolean listArgument;
 
   /** . */
+  private final List<OptionDescriptor<B>> options;
+
+  /** . */
   private final List<ArgumentDescriptor<B>> arguments;
 
   /** . */
@@ -74,6 +77,9 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   private final Set<String> uLongOptionNames;
 
   /** . */
+  private final List<OptionDescriptor<B>> uOptions;
+
+  /** . */
   private final List<ArgumentDescriptor<B>> uArguments;
 
   /** . */
@@ -85,6 +91,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     this.description = description;
     this.optionMap = new LinkedHashMap<String, OptionDescriptor<B>>();
     this.arguments = new ArrayList<ArgumentDescriptor<B>>();
+    this.options = new ArrayList<OptionDescriptor<B>>();
     this.name = name;
     this.parameters = new ArrayList<ParameterDescriptor<B>>();
     this.listArgument = false;
@@ -94,6 +101,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     //
     this.uOptionMap = Collections.unmodifiableMap(optionMap);
     this.uParameters = Collections.unmodifiableList(parameters);
+    this.uOptions = Collections.unmodifiableList(options);
     this.uArguments = Collections.unmodifiableList(arguments);
     this.uShortOptionNames = shortOptionNames;
     this.uLongOptionNames = longOptionNames;
@@ -131,6 +139,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         }
         optionMap.put(name, option);
       }
+      options.add(option);
       ListIterator<ParameterDescriptor<B>> i = parameters.listIterator();
       while (i.hasNext()) {
         ParameterDescriptor<B> next = i.next();
@@ -211,7 +220,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    * @return the command options
    */
   public final Collection<OptionDescriptor<B>> getOptions() {
-    return uOptionMap.values();
+    return uOptions;
   }
 
   /**
@@ -244,6 +253,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   /**
    * Returns a a specified argument by its index.
    *
+   * @param index the argument index
    * @return the command argument
    * @throws IllegalArgumentException if the index is not within the bounds
    */
