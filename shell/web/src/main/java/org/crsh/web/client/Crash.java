@@ -2,7 +2,6 @@ package org.crsh.web.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
@@ -25,7 +24,7 @@ public class Crash implements EntryPoint {
 //    ta.setCharacterWidth(128);
 //    ta.setVisibleLines(50);
 
-    Term2 term = new Term2(greetingService);
+    Term term = new Term(greetingService);
 
     ScrollPanel panel = new ScrollPanel(term);
     panel.setSize("800px", "600px");

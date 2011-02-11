@@ -27,7 +27,6 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FocusWidget;
@@ -37,7 +36,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public final class Term2 extends FocusWidget {
+public final class Term extends FocusWidget {
 
   /** . */
   private final GreetingServiceAsync crash;
@@ -51,7 +50,7 @@ public final class Term2 extends FocusWidget {
   /** The blinking. */
   private boolean on;
 
-  public Term2(GreetingServiceAsync crash) {
+  public Term(GreetingServiceAsync crash) {
     super(Document.get().createDivElement());
 
     //
@@ -82,7 +81,7 @@ public final class Term2 extends FocusWidget {
         if (KeyCodes.KEY_ENTER == a) {
 
           // Make call
-          Term2.this.crash.process(buffer.toString(), new AsyncCallback<String>() {
+          Term.this.crash.process(buffer.toString(), new AsyncCallback<String>() {
             public void onFailure(Throwable caught) {
             }
             public void onSuccess(String result) {
