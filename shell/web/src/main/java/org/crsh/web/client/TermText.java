@@ -44,7 +44,7 @@ final class TermText extends FocusWidget {
   private int height;
 
   public TermText(int height) {
-    super(Document.get().createDivElement());
+    super(Document.get().createElement("pre"));
 
     //
     if (height <= 0) {
@@ -112,7 +112,8 @@ final class TermText extends FocusWidget {
       if (to == -1) {
         break;
       } else {
-        markup.append("<br/>");
+//        markup.append("<br/>");
+        markup.append("\n");
         from = to + 1;
       }
     }
