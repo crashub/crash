@@ -84,9 +84,16 @@ final class TermText extends FocusWidget {
     t.scheduleRepeating(500);
   }
 
+  /**
+   * Clear all but the last line to preserve current edition
+   */
   public void clear() {
-    buffer.setLength(0);
-    state.setLength(0);
+    int index = state.lastIndexOf("\n");
+    if (index == -1) {
+      state.setLength(0);
+    } else {
+      state.delete(0, index + 1);
+    }
   }
 
   public void print(char c) {

@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Term extends Composite {
+public final class Term extends Composite {
 
   /** . */
   private final TermText text;
