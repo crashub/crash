@@ -43,7 +43,7 @@ final class TermText extends FocusWidget {
   /** . */
   private int height;
 
-  public TermText(int height) {
+  TermText(int height) {
     super(Document.get().createElement("pre"));
 
     //
@@ -84,10 +84,7 @@ final class TermText extends FocusWidget {
     t.scheduleRepeating(500);
   }
 
-  /**
-   * Clear all but the last line to preserve current edition
-   */
-  public void clear() {
+  void clear() {
     int index = state.lastIndexOf("\n");
     if (index == -1) {
       state.setLength(0);
@@ -96,15 +93,15 @@ final class TermText extends FocusWidget {
     }
   }
 
-  public void print(char c) {
+  void print(char c) {
     state.append(c);
   }
 
-  public void print(CharSequence text) {
+  void print(CharSequence text) {
     state.append(text);
   }
 
-  public void repaint() {
+  void repaint() {
 
     //
     StringBuilder markup = new StringBuilder();
