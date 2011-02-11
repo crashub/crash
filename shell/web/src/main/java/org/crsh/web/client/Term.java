@@ -41,9 +41,9 @@ public final class Term extends Composite {
   private final ScrollPanel scroll;
 
   /** . */
-  private final GreetingServiceAsync crash;
+  private final ShellServiceAsync remote;
 
-  public Term(GreetingServiceAsync crash, int height) {
+  public Term(ShellServiceAsync remote, int height) {
 
     //
     TermText text = new TermText(height);
@@ -60,7 +60,7 @@ public final class Term extends Composite {
     //
     this.text = text;
     this.scroll = scroll;
-    this.crash = crash;
+    this.remote = remote;
 
   }
 
@@ -88,7 +88,7 @@ public final class Term extends Composite {
 
         //
         String s = text.bufferSubmit();
-        crash.process(s, new AsyncCallback<String>() {
+        remote.process(s, new AsyncCallback<String>() {
           public void onFailure(Throwable caught) {
           }
 
@@ -110,7 +110,7 @@ public final class Term extends Composite {
 
     // Display prompt
     // we should somehow make this blocking
-    crash.getWelcome(new AsyncCallback<String>() {
+    remote.getWelcome(new AsyncCallback<String>() {
       public void onFailure(Throwable caught) {
       }
 

@@ -1,10 +1,6 @@
 package org.crsh.web.client;
 
-import org.crsh.web.shared.FieldVerifier;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 /**
  * GWT JUnit <b>integration</b> tests must extend GWTTestCase.
@@ -20,9 +16,12 @@ public class GwtTestCrash extends GWTTestCase {
     return "org.crsh.web.CrashJUnit";
   }
 
-  /**
+/*
+  */
+/**
    * Tests the FieldVerifier.
-   */
+   *//*
+
   public void testFieldVerifier() {
     assertFalse(FieldVerifier.isValidName(null));
     assertFalse(FieldVerifier.isValidName(""));
@@ -32,13 +31,15 @@ public class GwtTestCrash extends GWTTestCase {
     assertTrue(FieldVerifier.isValidName("abcd"));
   }
 
-  /**
+  */
+/**
    * This test will send a request to the server using the greetServer method in
    * GreetingService and verify the response.
-   */
+   *//*
+
   public void testGreetingService() {
     // Create the service that we will test.
-    GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
+    GreetingServiceAsync greetingService = GWT.create(ShellService.class);
     ServiceDefTarget target = (ServiceDefTarget) greetingService;
     target.setServiceEntryPoint(GWT.getModuleBaseURL() + "Crash/greet");
 
@@ -65,6 +66,7 @@ public class GwtTestCrash extends GWTTestCase {
       }
     });
   }
+*/
 
 
 }
