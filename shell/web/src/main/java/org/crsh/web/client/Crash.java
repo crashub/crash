@@ -38,6 +38,6 @@ public class Crash implements EntryPoint {
     vertical.add(term);
 
     //
-    RootPanel.get().add(term);
+    RootPanel.get().add(vertical);
   }
 }
