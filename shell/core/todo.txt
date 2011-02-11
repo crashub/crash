@@ -13,3 +13,6 @@
 - documentation generation from commands would be just great, like a servlet :-)
 - make port configurable
 - make an installer
+
+
+- support "\ " (read http://www.tuteurs.ens.fr/unix/shell/commande.html)
