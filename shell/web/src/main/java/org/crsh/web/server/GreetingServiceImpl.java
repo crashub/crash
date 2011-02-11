@@ -70,7 +70,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
     return sb.toString();
   }
 
-  public List<String> complete(String s) {
+  public Map<String, String> complete(String s) {
 
     // Obtain completions from the shell
     Map<String, String> completions = shell.complete(s);
@@ -88,16 +88,12 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
     //
     if (commonCompletion.length() > 0) {
-      return Collections.singletonList(commonCompletion);
+      return Collections.singletonMap(commonCompletion, "");
     } else {
       if (completions.size() > 1) {
-        ArrayList<String> list = new ArrayList<String>();
-        for (String completion : completions.keySet()) {
-          list.add(completion);
-        }
-        return list;
+        return completions;
       } else {
-        return Collections.emptyList();
+        return Collections.emptyMap();
       }
     }
   }

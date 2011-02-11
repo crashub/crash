@@ -19,16 +19,26 @@
 
 package org.crsh.web.client;
 
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -82,13 +92,42 @@ public final class Term extends Composite {
       int code = event.getNativeKeyCode();
       if (KeyCodes.KEY_TAB == code) {
         String prefix = text.getBuffer();
-        remote.complete(prefix, new AsyncCallback<List<String>>() {
+        remote.complete(prefix, new AsyncCallback<Map<String, String>>() {
           public void onFailure(Throwable caught) {
           }
-          public void onSuccess(List<String> result) {
+          public void onSuccess(final Map<String, String> result) {
             if (result.size() == 1) {
-              text.bufferAppend(result.get(0));
+              text.bufferAppend(result.keySet().iterator().next());
               repaint();
+            } else if (result.size() > 1) {
+
+              //
+              List<String> strings = new ArrayList<String>(result.keySet());
+              CellList<String> list = new CellList<String>(new TextCell());
+              ListDataProvider<String> a = new ListDataProvider<String>(strings);
+              a.addDataDisplay(list);
+
+              //
+              final DecoratedPopupPanel popup = new DecoratedPopupPanel();
+              popup.setWidget(list);
+
+              //
+              final SingleSelectionModel<String> model = new SingleSelectionModel<String>();
+              list.setSelectionModel(model);
+              model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+                public void onSelectionChange(SelectionChangeEvent event) {
+                  String selected = model.getSelectedObject();
+                  if (selected != null) {
+                    String value = result.get(selected);
+                    text.bufferAppend(selected + value);
+                  }
+                  popup.hide();
+                  text.setFocus(true);
+                }
+              });
+
+              // Show popup
+              popup.show();
             }
           }
         });
