@@ -112,7 +112,6 @@ final class TermText extends FocusWidget {
       if (to == -1) {
         break;
       } else {
-//        markup.append("<br/>");
         markup.append("\n");
         from = to + 1;
       }
