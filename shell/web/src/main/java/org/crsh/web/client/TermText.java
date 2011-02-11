@@ -93,6 +93,15 @@ final class TermText extends FocusWidget {
     }
   }
 
+  String getBuffer() {
+    return buffer.length() > 0 ? buffer.toString() : "";
+  }
+
+  void bufferAppend(CharSequence s) {
+    buffer.append(s);
+    state.append(s);
+  }
+
   void bufferAppend(char c) {
     buffer.append(c);
     state.append(c);

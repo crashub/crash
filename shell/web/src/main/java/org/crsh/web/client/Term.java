@@ -28,6 +28,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -78,8 +80,21 @@ public final class Term extends Composite {
   private final KeyDownHandler downHandler = new KeyDownHandler() {
     public void onKeyDown(KeyDownEvent event) {
       int code = event.getNativeKeyCode();
-      if (KeyCodes.KEY_BACKSPACE == code) {
+      if (KeyCodes.KEY_TAB == code) {
+        String prefix = text.getBuffer();
+        remote.complete(prefix, new AsyncCallback<List<String>>() {
+          public void onFailure(Throwable caught) {
+          }
+          public void onSuccess(List<String> result) {
+            if (result.size() == 1) {
+              text.bufferAppend(result.get(0));
+              repaint();
+            }
+          }
+        });
+      } else if (KeyCodes.KEY_BACKSPACE == code) {
         text.bufferDrop();
+        repaint();
 
         //
         event.preventDefault();
@@ -91,7 +106,6 @@ public final class Term extends Composite {
         remote.process(s, new AsyncCallback<String>() {
           public void onFailure(Throwable caught) {
           }
-
           public void onSuccess(String result) {
             print(result);
           }
@@ -120,24 +134,26 @@ public final class Term extends Composite {
     });
   }
 
+  private void repaint() {
+    text.repaint();
+    scroll.scrollToBottom();
+  }
+
   /**
    * Clear all but the last line to preserve current edition.
    */
   public void clear() {
     text.clear();
-    text.repaint();
-    scroll.scrollToBottom();
+    repaint();
   }
 
   public void print(char c) {
     text.print(c);
-    text.repaint();
-    scroll.scrollToBottom();
+    repaint();
   }
 
   public void print(CharSequence s) {
     text.print(s);
-    text.repaint();
-    scroll.scrollToBottom();
+    repaint();
   }
 }
