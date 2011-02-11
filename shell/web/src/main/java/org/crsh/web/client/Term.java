@@ -19,14 +19,18 @@
 
 package org.crsh.web.client;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -55,7 +59,17 @@ public class Term extends Composite {
     scroll.setSize("800px", "600px");
 
     //
-    initWidget(scroll);
+    Button clear = new Button();
+    clear.setText("Clear");
+    clear.addClickHandler(clickHandler);
+
+    //
+    VerticalPanel vertical = new VerticalPanel();
+    vertical.add(clear);
+    vertical.add(scroll);
+
+    //
+    initWidget(vertical);
 
     //
     setStyleName("crash-term");
@@ -66,6 +80,12 @@ public class Term extends Composite {
     this.crash = crash;
 
   }
+
+  private final ClickHandler clickHandler = new ClickHandler() {
+    public void onClick(ClickEvent event) {
+      clear();
+    }
+  };
 
   private final KeyPressHandler pressHandler = new KeyPressHandler() {
     public void onKeyPress(KeyPressEvent event) {
@@ -120,6 +140,12 @@ public class Term extends Composite {
         print(result);
       }
     });
+  }
+
+  public void clear() {
+    text.clear();
+    text.repaint();
+    scroll.scrollToBottom();
   }
 
   public void print(char c) {

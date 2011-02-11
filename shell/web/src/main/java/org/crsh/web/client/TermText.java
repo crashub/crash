@@ -72,6 +72,11 @@ final class TermText extends FocusWidget {
     t.scheduleRepeating(500);
   }
 
+  public void clear() {
+    buffer.setLength(0);
+    state.setLength(0);
+  }
+
   public void print(char c) {
     state.append(c);
   }
