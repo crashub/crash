@@ -4,6 +4,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 /** Entry point classes define <code>onModuleLoad()</code>. */
 public class Crash implements EntryPoint {
@@ -20,11 +21,16 @@ public class Crash implements EntryPoint {
   /** This is the entry point method. */
   public void onModuleLoad() {
 
-    final Term ta = new Term(100, greetingService);
-    ta.setCharacterWidth(128);
-    ta.setVisibleLines(50);
+//    final Term ta = new Term(100, greetingService);
+//    ta.setCharacterWidth(128);
+//    ta.setVisibleLines(50);
 
-    RootPanel.get().add(ta);
+    Term2 term = new Term2(greetingService);
+
+    ScrollPanel panel = new ScrollPanel(term);
+    panel.setSize("800px", "600px");
+
+    RootPanel.get().add(panel);
 
 //    ta.print("Julien\nis\nhere");
 //    ta.refresh();
