@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public final class Term extends FocusWidget {
+public final class TermText extends FocusWidget {
 
   /** . */
   private final GreetingServiceAsync crash;
@@ -50,7 +50,7 @@ public final class Term extends FocusWidget {
   /** The blinking. */
   private boolean on;
 
-  public Term(GreetingServiceAsync crash) {
+  public TermText(GreetingServiceAsync crash) {
     super(Document.get().createDivElement());
 
     //
@@ -81,7 +81,7 @@ public final class Term extends FocusWidget {
         if (KeyCodes.KEY_ENTER == a) {
 
           // Make call
-          Term.this.crash.process(buffer.toString(), new AsyncCallback<String>() {
+          TermText.this.crash.process(buffer.toString(), new AsyncCallback<String>() {
             public void onFailure(Throwable caught) {
             }
             public void onSuccess(String result) {
