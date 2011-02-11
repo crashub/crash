@@ -370,4 +370,19 @@ public class CompleteTestCase extends TestCase {
     catch (CmdCompletionException e) {
     }
   }
+
+  public void testArgumentProvidedValue() throws Exception {
+
+    class A {
+      ValueSupport.Provided o;
+      @Command
+      public void foo(@Argument ValueSupport.Provided o) { this.o = o; }
+    }
+
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+
+    //
+    Matcher<A> matcher = Matcher.createMatcher(desc);
+    assertEquals(Collections.<String, String>emptyMap(), matcher.complete("foo "));
+  }
 }

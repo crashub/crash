@@ -63,7 +63,7 @@ public abstract class SimpleValueType<T> {
   };
 
   /** . */
-  public static final SimpleValueType<Value> VALUE = new SimpleValueType<Value>(Value.class, null) {
+  public static final SimpleValueType<Value> VALUE = new SimpleValueType<Value>(Value.class, EmptyCompleter.class) {
     @Override
     public <S extends Value> Value parse(Class<S> type, String s) throws Exception {
       Constructor<S> ctor = type.getConstructor(String.class);

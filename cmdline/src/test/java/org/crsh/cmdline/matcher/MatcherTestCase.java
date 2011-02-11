@@ -390,16 +390,11 @@ public class MatcherTestCase extends TestCase {
     assertEquals(Arrays.asList("a", "b", "c", "d"), f.s);
   }
 
-  public static class MyValue extends Value {
-    public MyValue(String string) throws NullPointerException {
-      super(string);
-    }
-  }
 
   public static class G {
-    MyValue o;
+    ValueSupport.Provided o;
     @Command
-    public void foo(@Option(names = "o") MyValue o) { this.o = o; }
+    public void foo(@Option(names = "o") ValueSupport.Provided o) { this.o = o; }
   }
 
   public void testValue() throws Exception {
@@ -410,6 +405,6 @@ public class MatcherTestCase extends TestCase {
     G g = new G();
     InvocationContext context = new InvocationContext();
     Matcher.createMatcher("foo", desc).match("-o a").invoke(context, g);
-    assertEquals(new MyValue("a"), g.o);
+    assertEquals(new ValueSupport.Provided("a"), g.o);
   }
 }
