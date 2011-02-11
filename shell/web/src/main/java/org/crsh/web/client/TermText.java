@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.FocusWidget;
 final class TermText extends FocusWidget {
 
   /** . */
-  final StringBuilder buffer;
+  private final StringBuilder buffer;
 
   /** The state. */
   private final StringBuilder state;
@@ -91,6 +91,32 @@ final class TermText extends FocusWidget {
     } else {
       state.delete(0, index + 1);
     }
+  }
+
+  void bufferAppend(char c) {
+    buffer.append(c);
+    state.append(c);
+  }
+
+  void bufferDrop() {
+    if (buffer.length() > 0) {
+
+      //
+      buffer.setLength(buffer.length() - 1);
+
+      // Buffer could be zero because of reset button
+      // anyway better safe than sorry
+      if (state.length() > 0) {
+        state.setLength(state.length() - 1);
+      }
+    }
+  }
+
+  String bufferSubmit() {
+    String s = buffer.toString();
+    buffer.setLength(0);
+    state.append('\n');
+    return s;
   }
 
   void print(char c) {

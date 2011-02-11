@@ -68,8 +68,7 @@ public final class Term extends Composite {
     public void onKeyPress(KeyPressEvent event) {
       char c = event.getCharCode();
       if (Character.isLetterOrDigit(c) || c == ' ') {
-        text.buffer.append(c);
-        print(c);
+        text.bufferAppend(c);
       }
       event.preventDefault();
       event.stopPropagation();
@@ -78,23 +77,25 @@ public final class Term extends Composite {
 
   private final KeyDownHandler downHandler = new KeyDownHandler() {
     public void onKeyDown(KeyDownEvent event) {
-      int a = event.getNativeKeyCode();
-      if (KeyCodes.KEY_ENTER == a) {
+      int code = event.getNativeKeyCode();
+      if (KeyCodes.KEY_BACKSPACE == code) {
+        text.bufferDrop();
 
-        // Make call
-        crash.process(text.buffer.toString(), new AsyncCallback<String>() {
+        //
+        event.preventDefault();
+        event.stopPropagation();
+      } else if (KeyCodes.KEY_ENTER == code) {
+
+        //
+        String s = text.bufferSubmit();
+        crash.process(s, new AsyncCallback<String>() {
           public void onFailure(Throwable caught) {
           }
+
           public void onSuccess(String result) {
             print(result);
           }
         });
-
-        // Clear buffer
-        text.buffer.setLength(0);
-
-        // Do we need that ?
-        print('\n');
 
         //
         event.preventDefault();
