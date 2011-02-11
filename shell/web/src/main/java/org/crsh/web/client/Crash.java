@@ -24,10 +24,8 @@ public class Crash implements EntryPoint {
 //    ta.setCharacterWidth(128);
 //    ta.setVisibleLines(50);
 
-    Term term = new Term(greetingService);
+    Term term = new Term(greetingService, 32);
     RootPanel.get().add(term);
-
-    term.print("OIJOIJOIJOIJOIJO");
 
 //    ta.print("Julien\nis\nhere");
 //    ta.refresh();

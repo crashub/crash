@@ -47,10 +47,10 @@ public class Term extends Composite {
   /** . */
   private final GreetingServiceAsync crash;
 
-  public Term(GreetingServiceAsync crash) {
+  public Term(GreetingServiceAsync crash, int height) {
 
     //
-    TermText text = new TermText();
+    TermText text = new TermText(height);
     text.addKeyPressHandler(pressHandler);
     text.addKeyDownHandler(downHandler);
 
@@ -70,9 +70,6 @@ public class Term extends Composite {
 
     //
     initWidget(vertical);
-
-    //
-    setStyleName("crash-term");
 
     //
     this.text = text;

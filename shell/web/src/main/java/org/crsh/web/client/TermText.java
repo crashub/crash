@@ -40,8 +40,16 @@ final class TermText extends FocusWidget {
   /** The blinking. */
   private boolean on;
 
-  public TermText() {
+  /** . */
+  private int height;
+
+  public TermText(int height) {
     super(Document.get().createDivElement());
+
+    //
+    if (height <= 0) {
+      throw new IllegalArgumentException("Cannot give a non positive height");
+    }
 
     //
     addMouseDownHandler(new MouseDownHandler() {
@@ -51,9 +59,13 @@ final class TermText extends FocusWidget {
     });
 
     //
+    setStyleName("crash-text");
+
+    //
     this.state = new StringBuilder();
     this.on = false;
     this.buffer = new StringBuilder();
+    this.height = height;
   }
 
   @Override
@@ -91,8 +103,10 @@ final class TermText extends FocusWidget {
     StringBuilder markup = new StringBuilder();
 
     //
+    int lines = 0;
     int from = 0;
     while (true) {
+      lines++;
       int to = state.indexOf("\n", from);
       markup.append(state, from, to == -1 ? state.length() : to);
       if (to == -1) {
@@ -106,6 +120,11 @@ final class TermText extends FocusWidget {
     // The cursor
     if (on) {
       markup.append("_");
+    }
+
+    // Add missing lines
+    while (lines++ < height) {
+      markup.append("&nbsp;<br/>");
     }
 
     // Update markup state
