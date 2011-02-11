@@ -124,7 +124,7 @@ final class TermText extends FocusWidget {
 
     // Add missing lines
     while (lines++ < height) {
-      markup.append("&nbsp;<br/>");
+      markup.append("&nbsp;\n");
     }
 
     // Update markup state
