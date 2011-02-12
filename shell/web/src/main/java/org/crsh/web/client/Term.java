@@ -20,7 +20,6 @@
 package org.crsh.web.client;
 
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -30,7 +29,6 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Window;
@@ -105,13 +103,36 @@ public final class Term extends Composite {
 
   private final KeyPressHandler pressHandler = new KeyPressHandler() {
     public void onKeyPress(KeyPressEvent event) {
-      char c = event.getCharCode();
-      if (Character.isLetterOrDigit(c) || c == ' ') {
-        text.bufferAppend(c);
-        repaint();
+      int code = event.getNativeEvent().getKeyCode();
+      boolean handled = false;
+      if (code == KeyCodes.KEY_BACKSPACE) {
+        text.bufferDrop();
+        handled = true;
+      } else if (code == KeyCodes.KEY_ENTER) {
+        String s = text.bufferSubmit();
+        remote.process(s, new AsyncCallback<String>() {
+          public void onFailure(Throwable caught) {
+            // to handle
+          }
+          public void onSuccess(String result) {
+            print(result);
+          }
+        });
+        handled = true;
+      } else {
+        char c = event.getCharCode();
+        if (Character.isLetterOrDigit(c) || c == ' ' || c == '-') {
+          text.bufferAppend(c);
+          handled = true;
+        }
       }
-      event.preventDefault();
-      event.stopPropagation();
+
+      //
+      if (handled) {
+        repaint();
+        event.preventDefault();
+        event.stopPropagation();
+      }
     }
   };
 
@@ -182,28 +203,6 @@ public final class Term extends Composite {
             }
           }
         });
-      } else if (KeyCodes.KEY_BACKSPACE == code) {
-        text.bufferDrop();
-        repaint();
-
-        //
-        event.preventDefault();
-        event.stopPropagation();
-      } else if (KeyCodes.KEY_ENTER == code) {
-
-        //
-        String s = text.bufferSubmit();
-        remote.process(s, new AsyncCallback<String>() {
-          public void onFailure(Throwable caught) {
-          }
-          public void onSuccess(String result) {
-            print(result);
-          }
-        });
-
-        //
-        event.preventDefault();
-        event.stopPropagation();
       }
     }
   };
