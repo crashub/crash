@@ -130,35 +130,35 @@ public final class Term extends Composite {
               repaint();
             } else if (result.size() > 1) {
               if (textMouseX != null && textMouseY != null) {
-              //
-              List<String> strings = new ArrayList<String>(result.keySet());
-              CellList<String> list = new CellList<String>(new TextCell());
-              ListDataProvider<String> a = new ListDataProvider<String>(strings);
-              a.addDataDisplay(list);
+                //
+                List<String> strings = new ArrayList<String>(result.keySet());
+                CellList<String> list = new CellList<String>(new TextCell());
+                ListDataProvider<String> a = new ListDataProvider<String>(strings);
+                a.addDataDisplay(list);
 
-              //
-              final DecoratedPopupPanel popup = new DecoratedPopupPanel(true, false);
-              popup.setWidget(list);
+                //
+                final DecoratedPopupPanel popup = new DecoratedPopupPanel(true, false);
+                popup.setWidget(list);
 
-              //
-              final SingleSelectionModel<String> model = new SingleSelectionModel<String>();
-              list.setSelectionModel(model);
-              model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-                public void onSelectionChange(SelectionChangeEvent event) {
-                  String selected = model.getSelectedObject();
-                  if (selected != null) {
-                    String value = result.get(selected);
-                    text.bufferAppend(selected + value);
+                //
+                final SingleSelectionModel<String> model = new SingleSelectionModel<String>();
+                list.setSelectionModel(model);
+                model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+                  public void onSelectionChange(SelectionChangeEvent event) {
+                    String selected = model.getSelectedObject();
+                    if (selected != null) {
+                      String value = result.get(selected);
+                      text.bufferAppend(selected + value);
+                    }
+                    popup.hide();
                   }
-                  popup.hide();
-                }
-              });
+                });
 
-              //
-              popup.setPopupPosition(textMouseX, textMouseY);
+                //
+                popup.setPopupPosition(textMouseX, textMouseY);
 
-              // Show popup
-              popup.show();
+                // Show popup
+                popup.show();
               }
             }
           }
