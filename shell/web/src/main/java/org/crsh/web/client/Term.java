@@ -19,6 +19,7 @@
 
 package org.crsh.web.client;
 
+import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -29,6 +30,8 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -132,8 +135,22 @@ public final class Term extends Composite {
               repaint();
             } else if (result.size() > 1) {
               if (textMouseX != null && textMouseY != null) {
+
+                // I did not find something simpler for styling the cell
+                AbstractCell<String> cell = new AbstractCell<String>() {
+                  @Override
+                  public void render(String value, Object key, SafeHtmlBuilder sb) {
+                    if (value != null) {
+                      sb.appendHtmlConstant("<span class=\"crash-autocomplete\">");
+                      sb.appendEscaped(value);
+                      sb.appendHtmlConstant("</span>");
+                    }
+                  }
+                };
+
+                //
                 List<String> strings = new ArrayList<String>(result.keySet());
-                CellList<String> list = new CellList<String>(new TextCell());
+                CellList<String> list = new CellList<String>(cell);
                 ListDataProvider<String> a = new ListDataProvider<String>(strings);
                 a.addDataDisplay(list);
 

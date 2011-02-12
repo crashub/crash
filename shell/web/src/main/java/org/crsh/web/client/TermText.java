@@ -59,7 +59,7 @@ final class TermText extends FocusWidget {
     });
 
     //
-    setStyleName("crash-text");
+    setStyleName("crash-term");
 
     //
     this.state = new StringBuilder();

@@ -33,6 +33,14 @@ h1 {
   margin: 15px 6px 6px;
 }
 
-.crash-text {
+.crash-term {
   font-family: monospace !important;
+}
+
+.crash-autocomplete {
+  font-family: monospace !important;
+}
+
+.crash-autocomplete:hover {
+  font-weight: bold;
 }
