@@ -25,12 +25,15 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -55,16 +58,27 @@ public final class Term extends Composite {
   /** . */
   private final ShellServiceAsync remote;
 
+  /** . */
+  private final DecoratedPopupPanel popup;
+
+  /** The coordinate of the mouse within the text element. */
+  private Integer textMouseX, textMouseY;
+
   public Term(ShellServiceAsync remote, int height) {
 
     //
     TermText text = new TermText(height);
     text.addKeyPressHandler(pressHandler);
     text.addKeyDownHandler(downHandler);
+    text.addMouseMoveHandler(moveHandler);
 
     //
     ScrollPanel scroll = new ScrollPanel(text);
     scroll.setSize("800px", "600px");
+
+    //
+    DecoratedPopupPanel popup = new DecoratedPopupPanel();
+    popup.addCloseHandler(closePopup);
 
     //
     initWidget(scroll);
@@ -73,8 +87,17 @@ public final class Term extends Composite {
     this.text = text;
     this.scroll = scroll;
     this.remote = remote;
-
+    this.popup = popup;
+    this.textMouseX = null;
+    this.textMouseY = null;
   }
+
+  private final MouseMoveHandler moveHandler = new MouseMoveHandler() {
+    public void onMouseMove(MouseMoveEvent event) {
+      textMouseX = text.getAbsoluteLeft() + event.getX();
+      textMouseY = text.getAbsoluteTop() + event.getY();
+    }
+  };
 
   private final KeyPressHandler pressHandler = new KeyPressHandler() {
     public void onKeyPress(KeyPressEvent event) {
@@ -87,8 +110,14 @@ public final class Term extends Composite {
     }
   };
 
+  private final CloseHandler<PopupPanel> closePopup = new CloseHandler<PopupPanel>() {
+    public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
+      text.setFocus(true);
+    }
+  };
+
   private final KeyDownHandler downHandler = new KeyDownHandler() {
-    public void onKeyDown(KeyDownEvent event) {
+    public void onKeyDown(final KeyDownEvent event) {
       int code = event.getNativeKeyCode();
       if (KeyCodes.KEY_TAB == code) {
         String prefix = text.getBuffer();
@@ -100,7 +129,7 @@ public final class Term extends Composite {
               text.bufferAppend(result.keySet().iterator().next());
               repaint();
             } else if (result.size() > 1) {
-
+              if (textMouseX != null && textMouseY != null) {
               //
               List<String> strings = new ArrayList<String>(result.keySet());
               CellList<String> list = new CellList<String>(new TextCell());
@@ -108,7 +137,7 @@ public final class Term extends Composite {
               a.addDataDisplay(list);
 
               //
-              final DecoratedPopupPanel popup = new DecoratedPopupPanel();
+              final DecoratedPopupPanel popup = new DecoratedPopupPanel(true, false);
               popup.setWidget(list);
 
               //
@@ -122,12 +151,15 @@ public final class Term extends Composite {
                     text.bufferAppend(selected + value);
                   }
                   popup.hide();
-                  text.setFocus(true);
                 }
               });
 
+              //
+              popup.setPopupPosition(textMouseX, textMouseY);
+
               // Show popup
               popup.show();
+              }
             }
           }
         });
