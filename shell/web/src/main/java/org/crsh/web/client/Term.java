@@ -20,6 +20,7 @@
 package org.crsh.web.client;
 
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -31,6 +32,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
@@ -63,16 +65,12 @@ public final class Term extends Composite {
   /** . */
   private final DecoratedPopupPanel popup;
 
-  /** The coordinate of the mouse within the text element. */
-  private Integer textMouseX, textMouseY;
-
   public Term(ShellServiceAsync remote, int height) {
 
     //
     TermText text = new TermText(height);
     text.addKeyPressHandler(pressHandler);
     text.addKeyDownHandler(downHandler);
-    text.addMouseMoveHandler(moveHandler);
 
     //
     ScrollPanel scroll = new ScrollPanel(text);
@@ -90,16 +88,7 @@ public final class Term extends Composite {
     this.scroll = scroll;
     this.remote = remote;
     this.popup = popup;
-    this.textMouseX = null;
-    this.textMouseY = null;
   }
-
-  private final MouseMoveHandler moveHandler = new MouseMoveHandler() {
-    public void onMouseMove(MouseMoveEvent event) {
-      textMouseX = text.getAbsoluteLeft() + event.getX();
-      textMouseY = text.getAbsoluteTop() + event.getY();
-    }
-  };
 
   private final KeyPressHandler pressHandler = new KeyPressHandler() {
     public void onKeyPress(KeyPressEvent event) {
@@ -156,50 +145,48 @@ public final class Term extends Composite {
               text.bufferAppend(result.keySet().iterator().next());
               repaint();
             } else if (result.size() > 1) {
-              if (textMouseX != null && textMouseY != null) {
-
-                // I did not find something simpler for styling the cell
-                AbstractCell<String> cell = new AbstractCell<String>() {
-                  @Override
-                  public void render(String value, Object key, SafeHtmlBuilder sb) {
-                    if (value != null) {
-                      sb.appendHtmlConstant("<span class=\"crash-autocomplete\">");
-                      sb.appendEscaped(value);
-                      sb.appendHtmlConstant("</span>");
-                    }
+              // I did not find something simpler for styling the cell
+              AbstractCell<String> cell = new AbstractCell<String>() {
+                @Override
+                public void render(String value, Object key, SafeHtmlBuilder sb) {
+                  if (value != null) {
+                    sb.appendHtmlConstant("<span class=\"crash-autocomplete\">");
+                    sb.appendEscaped(value);
+                    sb.appendHtmlConstant("</span>");
                   }
-                };
+                }
+              };
 
-                //
-                List<String> strings = new ArrayList<String>(result.keySet());
-                CellList<String> list = new CellList<String>(cell);
-                ListDataProvider<String> a = new ListDataProvider<String>(strings);
-                a.addDataDisplay(list);
+              //
+              List<String> strings = new ArrayList<String>(result.keySet());
+              CellList<String> list = new CellList<String>(cell);
+              ListDataProvider<String> a = new ListDataProvider<String>(strings);
+              a.addDataDisplay(list);
 
-                //
-                popup.setWidget(list);
+              //
+              popup.setWidget(list);
 
-                //
-                final SingleSelectionModel<String> model = new SingleSelectionModel<String>();
-                list.setSelectionModel(model);
-                model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-                  public void onSelectionChange(SelectionChangeEvent event) {
-                    String selected = model.getSelectedObject();
-                    if (selected != null) {
-                      String value = result.get(selected);
-                      text.bufferAppend(selected + value);
-                    }
-                    popup.hide();
-                    repaint();
+              //
+              final SingleSelectionModel<String> model = new SingleSelectionModel<String>();
+              list.setSelectionModel(model);
+              model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+                public void onSelectionChange(SelectionChangeEvent event) {
+                  String selected = model.getSelectedObject();
+                  if (selected != null) {
+                    String value = result.get(selected);
+                    text.bufferAppend(selected + value);
                   }
-                });
+                  popup.hide();
+                  repaint();
+                }
+              });
 
-                //
-                popup.setPopupPosition(textMouseX, textMouseY);
+              //
+              Element elt = DOM.getElementById("crash-cursor");
+              popup.setPopupPosition(elt.getAbsoluteLeft(), elt.getAbsoluteTop());
 
-                // Show popup
-                popup.show();
-              }
+              // Show popup
+              popup.show();
             }
           }
         });

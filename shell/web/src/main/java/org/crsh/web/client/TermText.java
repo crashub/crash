@@ -162,7 +162,7 @@ final class TermText extends FocusWidget {
     }
 
     // The cursor
-    markup.append("<span class=\"crash-cursor\">&nbsp;</span>");
+    markup.append("<span id=\"crash-cursor\" class=\"crash-cursor\">&nbsp;</span>");
 
     // Add missing lines
     while (lines++ < height) {
