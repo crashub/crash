@@ -108,6 +108,7 @@ public final class Term extends Composite {
       char c = event.getCharCode();
       if (Character.isLetterOrDigit(c) || c == ' ') {
         text.bufferAppend(c);
+        repaint();
       }
       event.preventDefault();
       event.stopPropagation();
@@ -168,6 +169,7 @@ public final class Term extends Composite {
                       text.bufferAppend(selected + value);
                     }
                     popup.hide();
+                    repaint();
                   }
                 });
 

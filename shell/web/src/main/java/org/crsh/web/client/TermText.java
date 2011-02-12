@@ -22,6 +22,7 @@ package org.crsh.web.client;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FocusWidget;
 
@@ -76,7 +77,11 @@ final class TermText extends FocusWidget {
     Timer t = new Timer() {
       public void run() {
         on = !on;
-        repaint();
+        if (on) {
+          addStyleName("crash-blink");
+        } else {
+          removeStyleName("crash-blink");
+        }
       }
     };
 
@@ -157,9 +162,7 @@ final class TermText extends FocusWidget {
     }
 
     // The cursor
-    if (on) {
-      markup.append("_");
-    }
+    markup.append("<span class=\"crash-cursor\">&nbsp;</span>");
 
     // Add missing lines
     while (lines++ < height) {

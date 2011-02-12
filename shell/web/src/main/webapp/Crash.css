@@ -34,7 +34,13 @@ h1 {
 }
 
 .crash-term {
+  background: black;
+  color: #adff2f;
   font-family: monospace !important;
+}
+
+.crash-blink .crash-cursor {
+  background: #adff2f;
 }
 
 .crash-autocomplete {
