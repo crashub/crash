@@ -30,6 +30,7 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
@@ -77,7 +78,7 @@ public final class Term extends Composite {
     scroll.setSize("800px", "600px");
 
     //
-    DecoratedPopupPanel popup = new DecoratedPopupPanel();
+    DecoratedPopupPanel popup = new DecoratedPopupPanel(true, false);
     popup.addCloseHandler(closePopup);
 
     //
@@ -111,7 +112,8 @@ public final class Term extends Composite {
   };
 
   private final CloseHandler<PopupPanel> closePopup = new CloseHandler<PopupPanel>() {
-    public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
+    public void onClose(CloseEvent<PopupPanel> event) {
+      event.getTarget().setWidget(null);
       text.setFocus(true);
     }
   };
@@ -130,14 +132,12 @@ public final class Term extends Composite {
               repaint();
             } else if (result.size() > 1) {
               if (textMouseX != null && textMouseY != null) {
-                //
                 List<String> strings = new ArrayList<String>(result.keySet());
                 CellList<String> list = new CellList<String>(new TextCell());
                 ListDataProvider<String> a = new ListDataProvider<String>(strings);
                 a.addDataDisplay(list);
 
                 //
-                final DecoratedPopupPanel popup = new DecoratedPopupPanel(true, false);
                 popup.setWidget(list);
 
                 //
