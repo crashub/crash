@@ -138,129 +138,130 @@ public final class Term extends Composite {
     public void onKeyDown(final KeyDownEvent event) {
       int code = event.getNativeKeyCode();
       if (KeyCodes.KEY_TAB == code) {
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-          public void execute() {
-            handleComplete();
-          }
-        });
+        Scheduler.get().scheduleDeferred(new Completer());
         event.preventDefault();
         event.stopPropagation();
       }
     }
   };
 
-  private void handleComplete() {
-    String prefix = text.getBuffer();
-    remote.complete(prefix, new AsyncCallback<Map<String, String>>() {
-      public void onFailure(Throwable caught) {
-      }
-      public void onSuccess(final Map<String, String> result) {
-        if (result.size() == 1) {
-          text.bufferAppend(result.keySet().iterator().next());
-          repaint();
-        } else if (result.size() > 1) {
-          // Get the cursor for positionning the popup
-          Element elt = DOM.getElementById("crash-cursor");
+  private class Completer implements Scheduler.ScheduledCommand, AsyncCallback<Map<String, String>> {
 
-          // Compute the list of strings from the result
-          final List<String> strings = new ArrayList<String>(result.keySet());
+    public void execute() {
+      String prefix = text.getBuffer();
+      remote.complete(prefix, this);
+    }
 
-          // Build the data provider
-          ListDataProvider<String> a = new ListDataProvider<String>(strings);
+    public void onFailure(Throwable caught) {
+      // Do nothing for now
+    }
 
-          // I did not find something simpler for styling the cell
-          AbstractCell<String> cell = new AbstractCell<String>() {
-            @Override
-            public void render(String value, Object key, SafeHtmlBuilder sb) {
-              if (value != null) {
-                sb.appendHtmlConstant("<span class=\"crash-autocomplete\">");
-                sb.appendEscaped(value);
-                sb.appendHtmlConstant("</span>");
-              }
-            }
-          };
+    public void onSuccess(final Map<String, String> result) {
+      if (result.size() == 1) {
+        text.bufferAppend(result.keySet().iterator().next());
+        repaint();
+      } else if (result.size() > 1) {
+        // Get the cursor for positionning the popup
+        Element elt = DOM.getElementById("crash-cursor");
 
-          // This will update the state to
-          // 1/ update the current text buffer
-          // 2/ hide the popup
-          class Selector implements Scheduler.ScheduledCommand {
+        // Compute the list of strings from the result
+        final List<String> strings = new ArrayList<String>(result.keySet());
 
-            /** . */
-            private final String value;
+        // Build the data provider
+        ListDataProvider<String> a = new ListDataProvider<String>(strings);
 
-            Selector(String value) {
-              this.value = value;
-            }
-
-            public void execute() {
-              text.bufferAppend(value);
-              popup.hide();
+        // I did not find something simpler for styling the cell
+        AbstractCell<String> cell = new AbstractCell<String>() {
+          @Override
+          public void render(String value, Object key, SafeHtmlBuilder sb) {
+            if (value != null) {
+              sb.appendHtmlConstant("<span class=\"crash-autocomplete\">");
+              sb.appendEscaped(value);
+              sb.appendHtmlConstant("</span>");
             }
           }
+        };
 
-          // Our selection model
-          final SingleSelectionModel<String> model = new SingleSelectionModel<String>();
-          model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            public void onSelectionChange(SelectionChangeEvent event) {
-              String selected = model.getSelectedObject();
-              String value = result.get(selected);
-              Scheduler.get().scheduleDeferred(new Selector(selected + value));
-            }
-          });
+        // This will update the state to
+        // 1/ update the current text buffer
+        // 2/ hide the popup
+        class SelectCommand implements Scheduler.ScheduledCommand {
 
-          // We need to extend the CellList because
-          // 1/ need to customize the enter and escape key
-          // 2/ make the setKeyboardSelected method available
-          class CompleteList extends CellList<String> {
-            CompleteList(Cell<String> stringCell) {
-              super(stringCell);
-            }
+          /** . */
+          private final String value;
 
-            @Override
-            protected void onBrowserEvent2(Event event) {
-              if ("keydown".equals(event.getType())) {
-                int code = event.getKeyCode();
-                if (code == KeyCodes.KEY_ENTER) {
-                  int index = getKeyboardSelectedRow();
-                  final String selected = strings.get(index);
-                  String rest = result.get(selected);
-                  String value = selected + rest;
-                  Scheduler.get().scheduleDeferred(new Selector(value));
-                  return;
-                } else if (code == KeyCodes.KEY_ESCAPE) {
-                  Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                    public void execute() {
-                      popup.hide();
-                      repaint();
-                    }
-                  });
-                }
-              }
-              super.onBrowserEvent2(event);
-            }
-
-            @Override
-            protected void setKeyboardSelected(int index, boolean selected, boolean stealFocus) {
-              super.setKeyboardSelected(index, selected, stealFocus);
-            }
+          SelectCommand(String value) {
+            this.value = value;
           }
 
-          // Build the cell list now and select the first entry
-          CompleteList list = new CompleteList(cell);
-          a.addDataDisplay(list);
-          list.setSelectionModel(model);
-          list.setKeyboardSelected(0, true, true);
-
-          // Show popup
-          popup.setWidget(list);
-          popup.setPopupPosition(elt.getAbsoluteLeft(), elt.getAbsoluteTop());
-          popup.show();
-
-          // Need to give focus explicitely here
-          list.setFocus(true);
+          public void execute() {
+            text.bufferAppend(value);
+            popup.hide();
+          }
         }
+
+        // Our selection model
+        final SingleSelectionModel<String> model = new SingleSelectionModel<String>();
+        model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+          public void onSelectionChange(SelectionChangeEvent event) {
+            String selected = model.getSelectedObject();
+            String value = result.get(selected);
+            Scheduler.get().scheduleDeferred(new SelectCommand(selected + value));
+          }
+        });
+
+        // We need to extend the CellList because
+        // 1/ need to customize the enter and escape key
+        // 2/ make the setKeyboardSelected method available
+        class CompleteList extends CellList<String> {
+          CompleteList(Cell<String> stringCell) {
+            super(stringCell);
+          }
+
+          @Override
+          protected void onBrowserEvent2(Event event) {
+            if ("keydown".equals(event.getType())) {
+              int code = event.getKeyCode();
+              if (code == KeyCodes.KEY_ENTER) {
+                int index = getKeyboardSelectedRow();
+                final String selected = strings.get(index);
+                String rest = result.get(selected);
+                String value = selected + rest;
+                Scheduler.get().scheduleDeferred(new SelectCommand(value));
+                return;
+              } else if (code == KeyCodes.KEY_ESCAPE) {
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                  public void execute() {
+                    popup.hide();
+                    repaint();
+                  }
+                });
+              }
+            }
+            super.onBrowserEvent2(event);
+          }
+
+          @Override
+          protected void setKeyboardSelected(int index, boolean selected, boolean stealFocus) {
+            super.setKeyboardSelected(index, selected, stealFocus);
+          }
+        }
+
+        // Build the cell list now and select the first entry
+        CompleteList list = new CompleteList(cell);
+        a.addDataDisplay(list);
+        list.setSelectionModel(model);
+        list.setKeyboardSelected(0, true, true);
+
+        // Show popup
+        popup.setWidget(list);
+        popup.setPopupPosition(elt.getAbsoluteLeft(), elt.getAbsoluteTop());
+        popup.show();
+
+        // Need to give focus explicitely here
+        list.setFocus(true);
       }
-    });
+    }
   }
 
   @Override
