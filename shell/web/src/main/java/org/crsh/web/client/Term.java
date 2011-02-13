@@ -20,7 +20,11 @@
 package org.crsh.web.client;
 
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -30,22 +34,32 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -145,6 +159,16 @@ public final class Term extends Composite {
               text.bufferAppend(result.keySet().iterator().next());
               repaint();
             } else if (result.size() > 1) {
+
+              // Get the cursor for positionning the popup
+              Element elt = DOM.getElementById("crash-cursor");
+
+              // Compute the list of strings from the result
+              final List<String> strings = new ArrayList<String>(result.keySet());
+
+              // Build the data provider
+              ListDataProvider<String> a = new ListDataProvider<String>(strings);
+
               // I did not find something simpler for styling the cell
               AbstractCell<String> cell = new AbstractCell<String>() {
                 @Override
@@ -157,36 +181,82 @@ public final class Term extends Composite {
                 }
               };
 
-              //
-              List<String> strings = new ArrayList<String>(result.keySet());
-              CellList<String> list = new CellList<String>(cell);
-              ListDataProvider<String> a = new ListDataProvider<String>(strings);
-              a.addDataDisplay(list);
-
-              //
-              popup.setWidget(list);
-
-              //
+              // Our selection model
               final SingleSelectionModel<String> model = new SingleSelectionModel<String>();
-              list.setSelectionModel(model);
               model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
                 public void onSelectionChange(SelectionChangeEvent event) {
-                  String selected = model.getSelectedObject();
-                  if (selected != null) {
-                    String value = result.get(selected);
-                    text.bufferAppend(selected + value);
-                  }
-                  popup.hide();
-                  repaint();
+/*
+                  final String selected = model.getSelectedObject();
+                  Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    public void execute() {
+                      if (selected != null) {
+                        String value = result.get(selected);
+                        text.bufferAppend(selected + value);
+                      }
+                      popup.hide();
+                      repaint();
+                    }
+                  });
+*/
                 }
               });
 
-              //
-              Element elt = DOM.getElementById("crash-cursor");
-              popup.setPopupPosition(elt.getAbsoluteLeft(), elt.getAbsoluteTop());
+              class Foo extends CellList<String> {
+                Foo(Cell<String> stringCell) {
+                  super(stringCell);
+                }
+
+                @Override
+                protected void onBrowserEvent2(Event event) {
+                  if ("keydown".equals(event.getType())) {
+                    int code = event.getKeyCode();
+                    if (code == KeyCodes.KEY_ENTER) {
+                      int index = getKeyboardSelectedRow();
+                      String selected = strings.get(index);
+                      String rest = result.get(selected);
+
+                      //
+                      final String value = selected + rest;
+                      Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        public void execute() {
+                          text.bufferAppend(value);
+                          popup.hide();
+                          repaint();
+                        }
+                      });
+
+                      //
+                      return;
+                    }
+                  }
+                  super.onBrowserEvent2(event);
+                }
+
+                @Override
+                protected void setKeyboardSelected(int index, boolean selected, boolean stealFocus) {
+                  super.setKeyboardSelected(index, selected, stealFocus);
+                }
+              }
+
+              // Build the cell list now
+              Foo list = new Foo(cell);
+              a.addDataDisplay(list);
+              list.setSelectionModel(model);
 
               // Show popup
+              popup.setWidget(list);
+              popup.setPopupPosition(elt.getAbsoluteLeft(), elt.getAbsoluteTop());
               popup.show();
+
+              // Give focus to the list
+              list.setFocus(true);
+
+              // Select the first option
+              list.setKeyboardSelected(0, true, true);
+
+              //
+              event.preventDefault();
+              event.stopPropagation();
             }
           }
         });
