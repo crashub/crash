@@ -50,6 +50,9 @@ import java.util.regex.Pattern;
 public class PluginContext {
 
   /** . */
+  private static final Pattern p = Pattern.compile("(.+)\\.groovy");
+
+  /** . */
   private static final Logger log = LoggerFactory.getLogger(PluginContext.class);
 
   /** . */
@@ -66,6 +69,18 @@ public class PluginContext {
 
   /** . */
   private final Map<PropertyDescriptor<?>, Property<?>> properties;
+
+  /** . */
+  private int refreshRate;
+
+  /** . */
+  private TimeUnit refreshTimeUnit;
+
+  /** . */
+  private final FS vfs;
+
+  /** . */
+  private boolean started;
 
   /**
    * Create a new plugin context.
@@ -107,12 +122,51 @@ public class PluginContext {
     this.dirs = Collections.emptyList();
     this.vfs = fs;
     this.properties = new HashMap<PropertyDescriptor<?>, Property<?>>();
+    this.refreshTimeUnit = null;
+    this.refreshRate = 0;
+    this.started = false;
   }
-
-  private final FS vfs;
 
   public final String getVersion() {
     return version;
+  }
+
+  /**
+   * Returns the refresh rate. When the value is not positive, no refreshing is performed. This value is only
+   * read during the {@link #start()} method, any later update will not be taken in account and a restart is required
+   * to change the refresh rate.
+   *
+   * @return the refresh rate
+   */
+  public synchronized int getRefreshRate() {
+    return refreshRate;
+  }
+
+  /**
+   * Update the refresh rate, a non positive value means the refreshing is disabled.
+   *
+   * @param refreshRate the new refresh rate
+   */
+  public synchronized void setRefreshRate(int refreshRate) {
+    this.refreshRate = refreshRate;
+  }
+
+  /**
+   * Returns the refresh time unit.
+   *
+   * @return the time unit
+   */
+  public synchronized TimeUnit getRefreshTimeUnit() {
+    return refreshTimeUnit;
+  }
+
+  /**
+   * Update the refresh time unit, a null value means to use the {@link TimeUnit#SECONDS} time unit.
+   *
+   * @param refreshTimeUnit the new refresh time unit
+   */
+  public synchronized void setRefreshTimeUnit(TimeUnit refreshTimeUnit) {
+    this.refreshTimeUnit = refreshTimeUnit;
   }
 
   /**
@@ -233,8 +287,6 @@ public class PluginContext {
     return res;
   }
 
-  private final Pattern p = Pattern.compile("(.+)\\.groovy");
-
   public final List<String> listResourceId(ResourceKind kind) {
     switch (kind) {
       case SCRIPT:
@@ -287,21 +339,25 @@ public class PluginContext {
   }
 
   public final synchronized  void start() {
-    if (executor == null) {
-      executor =  new ScheduledThreadPoolExecutor(1);
-      executor.scheduleWithFixedDelay(new Runnable() {
-        int count = 0;
-        public void run() {
-          refresh();
-        }
-      }, 0, 1, TimeUnit.SECONDS);
+    if (!started) {
+      if (refreshRate > 0) {
+        TimeUnit tu = refreshTimeUnit != null ? refreshTimeUnit : TimeUnit.SECONDS;
+        executor =  new ScheduledThreadPoolExecutor(1);
+        executor.scheduleWithFixedDelay(new Runnable() {
+          int count = 0;
+          public void run() {
+            refresh();
+          }
+        }, 0, refreshRate, tu);
+      }
+      started = true;
     } else {
       log.warn("Attempt to double start");
     }
   }
 
   public final synchronized void stop() {
-    if (executor != null) {
+    if (started) {
       ScheduledExecutorService tmp = executor;
       executor = null;
       tmp.shutdown();
@@ -309,5 +365,4 @@ public class PluginContext {
       log.warn("Attempt to stop when stopped");
     }
   }
-
 }
