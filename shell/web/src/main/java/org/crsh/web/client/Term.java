@@ -157,7 +157,6 @@ public final class Term extends Composite {
           text.bufferAppend(result.keySet().iterator().next());
           repaint();
         } else if (result.size() > 1) {
-
           // Get the cursor for positionning the popup
           Element elt = DOM.getElementById("crash-cursor");
 
@@ -179,23 +178,33 @@ public final class Term extends Composite {
             }
           };
 
+          // This will update the state to
+          // 1/ update the current text buffer
+          // 2/ hide the popup
+          // 3/ repaint to show the text buffer
+          class Selector implements Scheduler.ScheduledCommand {
+
+            /** . */
+            private final String value;
+
+            Selector(String value) {
+              this.value = value;
+            }
+
+            public void execute() {
+              text.bufferAppend(value);
+              popup.hide();
+              repaint();
+            }
+          }
+
           // Our selection model
           final SingleSelectionModel<String> model = new SingleSelectionModel<String>();
           model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             public void onSelectionChange(SelectionChangeEvent event) {
-/*
-              final String selected = model.getSelectedObject();
-              Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                public void execute() {
-                  if (selected != null) {
-                    String value = result.get(selected);
-                    text.bufferAppend(selected + value);
-                  }
-                  popup.hide();
-                  repaint();
-                }
-              });
-*/
+              String selected = model.getSelectedObject();
+              String value = result.get(selected);
+              Scheduler.get().scheduleDeferred(new Selector(selected + value));
             }
           });
 
@@ -213,20 +222,10 @@ public final class Term extends Composite {
                 int code = event.getKeyCode();
                 if (code == KeyCodes.KEY_ENTER) {
                   int index = getKeyboardSelectedRow();
-                  String selected = strings.get(index);
+                  final String selected = strings.get(index);
                   String rest = result.get(selected);
-
-                  //
-                  final String value = selected + rest;
-                  Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                    public void execute() {
-                      text.bufferAppend(value);
-                      popup.hide();
-                      repaint();
-                    }
-                  });
-
-                  //
+                  String value = selected + rest;
+                  Scheduler.get().scheduleDeferred(new Selector(value));
                   return;
                 } else if (code == KeyCodes.KEY_ESCAPE) {
                   Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
