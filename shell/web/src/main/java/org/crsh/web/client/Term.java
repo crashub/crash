@@ -21,45 +21,31 @@ package org.crsh.web.client;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -152,8 +138,7 @@ public final class Term extends Composite {
       if (KeyCodes.KEY_TAB == code) {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
           public void execute() {
-            Logger.getLogger("foo").log(Level.SEVERE, "fojeoifjzofijozeijfzo");
-            foo();
+            handleComplete();
           }
         });
         event.preventDefault();
@@ -162,7 +147,7 @@ public final class Term extends Composite {
     }
   };
 
-  private void foo() {
+  private void handleComplete() {
     String prefix = text.getBuffer();
     remote.complete(prefix, new AsyncCallback<Map<String, String>>() {
       public void onFailure(Throwable caught) {
@@ -240,6 +225,13 @@ public final class Term extends Composite {
 
                   //
                   return;
+                } else if (code == KeyCodes.KEY_ESCAPE) {
+                  Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    public void execute() {
+                      popup.hide();
+                      repaint();
+                    }
+                  });
                 }
               }
               super.onBrowserEvent2(event);
@@ -260,9 +252,6 @@ public final class Term extends Composite {
           popup.setWidget(list);
           popup.setPopupPosition(elt.getAbsoluteLeft(), elt.getAbsoluteTop());
           popup.show();
-
-          // Give focus to the list
-          list.setFocus(true);
 
           // Select the first option
           list.setKeyboardSelected(0, true, true);
