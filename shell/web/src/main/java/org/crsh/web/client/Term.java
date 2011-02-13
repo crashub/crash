@@ -125,10 +125,12 @@ public final class Term extends Composite {
     }
   };
 
+  // Update state when the popup is closed
   private final CloseHandler<PopupPanel> closePopup = new CloseHandler<PopupPanel>() {
     public void onClose(CloseEvent<PopupPanel> event) {
       event.getTarget().setWidget(null);
       text.setFocus(true);
+      repaint();
     }
   };
 
@@ -181,7 +183,6 @@ public final class Term extends Composite {
           // This will update the state to
           // 1/ update the current text buffer
           // 2/ hide the popup
-          // 3/ repaint to show the text buffer
           class Selector implements Scheduler.ScheduledCommand {
 
             /** . */
@@ -194,7 +195,6 @@ public final class Term extends Composite {
             public void execute() {
               text.bufferAppend(value);
               popup.hide();
-              repaint();
             }
           }
 
