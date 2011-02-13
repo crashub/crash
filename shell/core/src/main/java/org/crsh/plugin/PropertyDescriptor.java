@@ -69,7 +69,7 @@ public abstract class PropertyDescriptor<T> {
   };
 
   /** . */
-  public static final PropertyDescriptor<Integer> VFS_REFRESH_PERIOD = new PropertyDescriptor<Integer>(Integer.class, "vfs.refresh_period", 1, "The refresh rate period") {
+  public static final PropertyDescriptor<Integer> VFS_REFRESH_PERIOD = new PropertyDescriptor<Integer>(Integer.class, "vfs.refresh_period", null, "The refresh rate period") {
     @Override
     public Integer doParse(String s) {
       return Integer.parseInt(s);
