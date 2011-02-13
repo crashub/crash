@@ -71,12 +71,6 @@ public class PluginContext {
   private final Map<PropertyDescriptor<?>, Property<?>> properties;
 
   /** . */
-  private int refreshRate;
-
-  /** . */
-  private TimeUnit refreshTimeUnit;
-
-  /** . */
   private final FS vfs;
 
   /** . */
@@ -122,51 +116,11 @@ public class PluginContext {
     this.dirs = Collections.emptyList();
     this.vfs = fs;
     this.properties = new HashMap<PropertyDescriptor<?>, Property<?>>();
-    this.refreshTimeUnit = null;
-    this.refreshRate = 0;
     this.started = false;
   }
 
   public final String getVersion() {
     return version;
-  }
-
-  /**
-   * Returns the refresh rate. When the value is not positive, no refreshing is performed. This value is only
-   * read during the {@link #start()} method, any later update will not be taken in account and a restart is required
-   * to change the refresh rate.
-   *
-   * @return the refresh rate
-   */
-  public synchronized int getRefreshRate() {
-    return refreshRate;
-  }
-
-  /**
-   * Update the refresh rate, a non positive value means the refreshing is disabled.
-   *
-   * @param refreshRate the new refresh rate
-   */
-  public synchronized void setRefreshRate(int refreshRate) {
-    this.refreshRate = refreshRate;
-  }
-
-  /**
-   * Returns the refresh time unit.
-   *
-   * @return the time unit
-   */
-  public synchronized TimeUnit getRefreshTimeUnit() {
-    return refreshTimeUnit;
-  }
-
-  /**
-   * Update the refresh time unit, a null value means to use the {@link TimeUnit#SECONDS} time unit.
-   *
-   * @param refreshTimeUnit the new refresh time unit
-   */
-  public synchronized void setRefreshTimeUnit(TimeUnit refreshTimeUnit) {
-    this.refreshTimeUnit = refreshTimeUnit;
   }
 
   /**
@@ -339,9 +293,11 @@ public class PluginContext {
   }
 
   public final synchronized  void start() {
+    Integer refreshRate = getProperty(PropertyDescriptor.VFS_REFRESH_PERIOD);
+    TimeUnit timeUnit = getProperty(PropertyDescriptor.VFS_REFRESH_UNIT);
     if (!started) {
-      if (refreshRate > 0) {
-        TimeUnit tu = refreshTimeUnit != null ? refreshTimeUnit : TimeUnit.SECONDS;
+      if (refreshRate != null && refreshRate > 0) {
+        TimeUnit tu = timeUnit != null ? timeUnit : TimeUnit.SECONDS;
         executor =  new ScheduledThreadPoolExecutor(1);
         executor.scheduleWithFixedDelay(new Runnable() {
           int count = 0;

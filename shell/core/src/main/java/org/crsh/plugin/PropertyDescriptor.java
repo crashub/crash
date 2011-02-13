@@ -22,6 +22,7 @@ package org.crsh.plugin;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -53,6 +54,22 @@ public abstract class PropertyDescriptor<T> {
 
   /** . */
   public static final PropertyDescriptor<Integer> TELNET_PORT = new PropertyDescriptor<Integer>(Integer.class, "telnet.port", 5000, "The telnet port") {
+    @Override
+    public Integer doParse(String s) {
+      return Integer.parseInt(s);
+    }
+  };
+
+  /** . */
+  public static final PropertyDescriptor<TimeUnit> VFS_REFRESH_UNIT = new PropertyDescriptor<TimeUnit>(TimeUnit.class, "vfs.refresh_unit", TimeUnit.SECONDS, "The refresh time unit") {
+    @Override
+    public TimeUnit doParse(String s) {
+      return TimeUnit.valueOf(s);
+    }
+  };
+
+  /** . */
+  public static final PropertyDescriptor<Integer> VFS_REFRESH_PERIOD = new PropertyDescriptor<Integer>(Integer.class, "vfs.refresh_period", 1, "The refresh rate period") {
     @Override
     public Integer doParse(String s) {
       return Integer.parseInt(s);

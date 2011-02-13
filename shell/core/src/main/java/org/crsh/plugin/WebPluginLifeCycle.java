@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.Enumeration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
