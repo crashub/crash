@@ -199,8 +199,11 @@ public final class Term extends Composite {
             }
           });
 
-          class Foo extends CellList<String> {
-            Foo(Cell<String> stringCell) {
+          // We need to extend the CellList because
+          // 1/ need to customize the enter and escape key
+          // 2/ make the setKeyboardSelected method available
+          class CompleteList extends CellList<String> {
+            CompleteList(Cell<String> stringCell) {
               super(stringCell);
             }
 
@@ -244,7 +247,7 @@ public final class Term extends Composite {
           }
 
           // Build the cell list now and select the first entry
-          Foo list = new Foo(cell);
+          CompleteList list = new CompleteList(cell);
           a.addDataDisplay(list);
           list.setSelectionModel(model);
           list.setKeyboardSelected(0, true, true);
@@ -253,6 +256,9 @@ public final class Term extends Composite {
           popup.setWidget(list);
           popup.setPopupPosition(elt.getAbsoluteLeft(), elt.getAbsoluteTop());
           popup.show();
+
+          // Need to give focus explicitely here
+          list.setFocus(true);
         }
       }
     });
