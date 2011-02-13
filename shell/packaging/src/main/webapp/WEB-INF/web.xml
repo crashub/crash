@@ -25,6 +25,12 @@
   <display-name>Archetype Created Web Application</display-name>
 
   <context-param>
+    <param-name>crash.vfs.refresh_period</param-name>
+    <param-value>1</param-value>
+    <description>The vfs refresh rate</description>
+  </context-param>
+
+  <context-param>
     <param-name>crash.ssh.port</param-name>
     <param-value>2000</param-value>
     <description>The SSH port</description>
