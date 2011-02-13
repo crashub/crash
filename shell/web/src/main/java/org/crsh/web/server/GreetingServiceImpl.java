@@ -7,49 +7,42 @@ import org.crsh.shell.impl.CRaSH;
 import org.crsh.standalone.Bootstrap;
 import org.crsh.util.Strings;
 import org.crsh.web.client.ShellService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /** The server side implementation of the RPC service. */
 @SuppressWarnings("serial")
-public class GreetingServiceImpl extends RemoteServiceServlet implements
-  ShellService
-{
+public class GreetingServiceImpl extends RemoteServiceServlet implements ShellService {
 
-   public GreetingServiceImpl()
-   {
-   }
+  /** . */
+  private static final Logger log = LoggerFactory.getLogger(GreetingServiceImpl.class);
 
-   public GreetingServiceImpl(Object delegate)
-   {
-      super(delegate);
-   }
+  public GreetingServiceImpl() {
+  }
 
-   {
-      Shell shell = null;
-      try
-      {
-         Bootstrap bootstrap = new Bootstrap();
-         bootstrap.bootstrap();
-         shell = new CRaSH(bootstrap.getContext());
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
+  public GreetingServiceImpl(Object delegate) {
+    super(delegate);
+  }
 
-      this.shell = shell;
-   }
+  {
+    Shell shell = null;
+    try {
+      Bootstrap bootstrap = new Bootstrap();
+      bootstrap.bootstrap();
+      shell = new CRaSH(bootstrap.getContext());
+    }
+    catch (Exception e) {
+      log.error("Bootstrap failed", e);
+    }
 
-   /** . */
-   private final Shell shell;
+    this.shell = shell;
+  }
+
+  /** . */
+  private final Shell shell;
 
   public String getWelcome() {
     return shell.getWelcome() + "\n" + shell.getPrompt();
@@ -80,10 +73,12 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
     String commonCompletion;
     if (completions.size() == 0) {
       commonCompletion = "";
-    } else if (completions.size() == 1) {
+    }
+    else if (completions.size() == 1) {
       Map.Entry<String, String> entry = completions.entrySet().iterator().next();
       commonCompletion = entry.getKey() + entry.getValue();
-    } else {
+    }
+    else {
       commonCompletion = Strings.findLongestCommonPrefix(completions.keySet());
     }
 
@@ -91,7 +86,8 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
     Map<String, String> ret = new HashMap<String, String>();
     if (commonCompletion.length() > 0) {
       ret.put(commonCompletion, "");
-    } else {
+    }
+    else {
       if (completions.size() > 1) {
         ret.putAll(completions);
       }
