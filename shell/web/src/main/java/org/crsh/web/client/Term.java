@@ -137,8 +137,20 @@ public final class Term extends Composite {
   private final KeyDownHandler downHandler = new KeyDownHandler() {
     public void onKeyDown(final KeyDownEvent event) {
       int code = event.getNativeKeyCode();
-      if (KeyCodes.KEY_TAB == code) {
+      if (code == KeyCodes.KEY_TAB) {
         Scheduler.get().scheduleDeferred(new Completer());
+        event.preventDefault();
+        event.stopPropagation();
+      } else if (code == KeyCodes.KEY_UP) {
+        event.preventDefault();
+        event.stopPropagation();
+      } else if (code == KeyCodes.KEY_DOWN) {
+        event.preventDefault();
+        event.stopPropagation();
+      } else if (code == KeyCodes.KEY_LEFT) {
+        event.preventDefault();
+        event.stopPropagation();
+      } else if (code == KeyCodes.KEY_RIGHT) {
         event.preventDefault();
         event.stopPropagation();
       }
