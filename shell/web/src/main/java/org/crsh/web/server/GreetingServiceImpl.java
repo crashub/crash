@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -86,15 +87,15 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
       commonCompletion = Strings.findLongestCommonPrefix(completions.keySet());
     }
 
-    //
+    // Use our hashmap so we are sure it will be correctly serialized
+    Map<String, String> ret = new HashMap<String, String>();
     if (commonCompletion.length() > 0) {
-      return Collections.singletonMap(commonCompletion, "");
+      ret.put(commonCompletion, "");
     } else {
       if (completions.size() > 1) {
-        return completions;
-      } else {
-        return Collections.emptyMap();
+        ret.putAll(completions);
       }
     }
+    return ret;
   }
 }
