@@ -243,18 +243,16 @@ public final class Term extends Composite {
             }
           }
 
-          // Build the cell list now
+          // Build the cell list now and select the first entry
           Foo list = new Foo(cell);
           a.addDataDisplay(list);
           list.setSelectionModel(model);
+          list.setKeyboardSelected(0, true, true);
 
           // Show popup
           popup.setWidget(list);
           popup.setPopupPosition(elt.getAbsoluteLeft(), elt.getAbsoluteTop());
           popup.show();
-
-          // Select the first option
-          list.setKeyboardSelected(0, true, true);
         }
       }
     });
