@@ -1,6 +1,4 @@
-import java.util.Collections;
 import java.util.regex.Pattern;
-import java.util.Formatter
 import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
