@@ -310,7 +310,11 @@
         <artifactId>junit</artifactId>
         <version>3.8.2</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>10.6.2.1</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
