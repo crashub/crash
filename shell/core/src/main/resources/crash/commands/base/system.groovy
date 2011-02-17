@@ -19,7 +19,7 @@ import org.crsh.cmdline.ParameterDescriptor
 @Usage("vm system properties commands")
 class system extends CRaSHCommand implements Completer {
 
-  @Usage("List the vm system properties")
+  @Usage("list the vm system properties")
   @Command
   public void ls(
     InvocationContext<Void, Map.Entry> context) {
@@ -36,7 +36,7 @@ class system extends CRaSHCommand implements Completer {
     }
   }
 
-  @Usage("Set the vm system properties")
+  @Usage("set the vm system properties")
   @Command
   public void set(
     InvocationContext<Void, Void> context,
@@ -45,7 +45,7 @@ class system extends CRaSHCommand implements Completer {
     System.setProperty name.toString(), value
   }
 
-  @Usage("Get the vm system properties")
+  @Usage("get the vm system properties")
   @Command
   public void get(
     InvocationContext<Void, Void> context,
@@ -53,7 +53,7 @@ class system extends CRaSHCommand implements Completer {
     context.writer.print System.getProperty(name.toString())
   }
 
-  @Usage("Remove the vm system properties")
+  @Usage("remove the vm system properties")
   @Command
   public void remove(
     InvocationContext<Void, Void> context,

@@ -9,17 +9,17 @@ import org.crsh.cmdline.annotations.Man;
 @Usage("vm thread commands")
 public class thread extends CRaSHCommand {
 
-  @Usage("List the vm threads")
+  @Usage("list the vm threads")
   @Command
   public void ls(
     InvocationContext<Void, Thread> context,
-    @Usage("retain the thread with the specified name")
+    @Usage("Retain the thread with the specified name")
     @Option(names=["n","name"])
     String name,
-    @Usage("filter the threads with a regular expression on their name")
+    @Usage("Filter the threads with a regular expression on their name")
     @Option(names=["f","filter"])
     String nameFilter,
-    @Usage("filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
+    @Usage("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
     @Option(names=["s","state"])
     String stateFilter) throws ScriptException {
 

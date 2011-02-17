@@ -15,14 +15,14 @@ import org.crsh.cmdline.annotations.Option
  */
 @Usage("memory management commands")
 class memory extends CRaSHCommand {
-  @Usage("Call gc")
+  @Usage("call garbage collector")
   @Command
   public void gc(
     InvocationContext<Void, Map.Entry> context) {
     System.gc()
   }
 
-  @Usage("Show free memory")
+  @Usage("show free memory")
   @Command
   public void free(
     InvocationContext<Void, Map.Entry> context,
@@ -34,7 +34,7 @@ class memory extends CRaSHCommand {
     context.writer.println(unit.compute(Runtime.getRuntime().freeMemory(), decimal) + unit.human)
   }
 
-  @Usage("Show total memory")
+  @Usage("show total memory")
   @Command
   public void total(
     InvocationContext<Void, Map.Entry> context,

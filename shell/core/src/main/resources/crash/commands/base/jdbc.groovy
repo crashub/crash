@@ -20,11 +20,11 @@ import java.sql.DriverManager
 @Usage("JDBC connection")
 class jdbc extends CRaSHCommand {
   
-  @Usage("Connect to database with JDBC connection string")
+  @Usage("connect to database with JDBC connection string")
   @Command
   public void connect(
     InvocationContext<Void, Void> context,
-    @Usage("the connection string") @Argument String connectionString) {
+    @Usage("The connection string") @Argument String connectionString) {
 
     //
     if (connection != null) {
@@ -47,11 +47,11 @@ class jdbc extends CRaSHCommand {
     context.writer.println("Connected to data base : $connectionString")
   }
 
-  @Usage("Open connection from datasource")
+  @Usage("open connection from datasource")
   @Command
   public void open(
     InvocationContext<Void, Void> context,
-    @Usage("the datasource") @Argument String datasource) {
+    @Usage("The datasource") @Argument String datasource) {
 
     //
     if (connection != null) {
@@ -80,17 +80,17 @@ class jdbc extends CRaSHCommand {
     }
   }
 
-  @Usage("Execute SQL query")
+  @Usage("execute SQL query")
   @Command
   public void query(
     InvocationContext<Void, Void> context,
-    @Usage("the command") @Argument(unquote = false) List<String> sqlFragemnts) {
+    @Usage("The query") @Argument(unquote = false) List<String> sqlQuery) {
     if (connection == null) {
       context.writer.println("You are not connected to database, please call jdbc open [JNDI DS]")
     } else {
       Statement statement = connection.createStatement();
       String sql = "";
-      sqlFragemnts.each { sql += " " + it };
+      sqlQuery.each { sql += " " + it };
       try {
         statement.execute(sql)
         ResultSet resultSet = statement.getResultSet();
@@ -124,7 +124,7 @@ class jdbc extends CRaSHCommand {
     }
   }
 
-  @Usage("Close the current connection")
+  @Usage("close the current connection")
   @Command
   public void close(
     InvocationContext<Void, Void> context) {
