@@ -465,8 +465,13 @@
                 <phase>install</phase>
                 <configuration>
                   <tasks>
-                    <copy tofile="${HOME}/java/gatein/portal/trunk/packaging/tomcat/pkg/target/tomcat/webapps/crsh.war" file="${project.build.directory}/${project.build.finalName}.war">
-                    </copy>
+                    <condition property="deploy.directory.configured">
+                      <not><isset property="crsh.deploy.directory"/></not>
+                    </condition>
+                    <fail if="deploy.directory.configured">Please set crsh.deploy.directory property</fail>
+                    <copy
+                        tofile="${crsh.deploy.directory}/crsh.war"
+                        file="${project.build.directory}/${project.build.finalName}.war"/>
                   </tasks>
                 </configuration>
                 <goals>
