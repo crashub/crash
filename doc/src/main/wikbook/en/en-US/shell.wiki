@@ -257,6 +257,15 @@ will be nevertheless invoked.
 == ##thread## command ==
 {{include document="thread.wiki" /}}
 
+== ##system## command ==
+{{include document="system.wiki" /}}
+
+== ##memory## command ==
+{{include document="memory.wiki" /}}
+
+== ##jdbc## command ==
+{{include document="jdbc.wiki" /}}
+
 = JCR =
 
 {{include document="jcr.wiki" /}}

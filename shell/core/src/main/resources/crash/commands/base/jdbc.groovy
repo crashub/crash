@@ -20,7 +20,7 @@ import java.sql.DriverManager
 @Usage("JDBC connection")
 class jdbc extends CRaSHCommand {
   
-  @Usage("Connect connection with connection string")
+  @Usage("Connect to database with JDBC connection string")
   @Command
   public void connect(
     InvocationContext<Void, Void> context,
@@ -47,7 +47,7 @@ class jdbc extends CRaSHCommand {
     context.writer.println("Connected to data base : $connectionString")
   }
 
-  @Usage("Open connection from data source")
+  @Usage("Open connection from datasource")
   @Command
   public void open(
     InvocationContext<Void, Void> context,
@@ -124,7 +124,7 @@ class jdbc extends CRaSHCommand {
     }
   }
 
-  @Usage("Close current connection")
+  @Usage("Close the current connection")
   @Command
   public void close(
     InvocationContext<Void, Void> context) {
