@@ -94,7 +94,10 @@ public final class Term extends Composite {
     public void onKeyPress(KeyPressEvent event) {
       int code = event.getNativeEvent().getKeyCode();
       boolean handled = false;
-      if (code == KeyCodes.KEY_ENTER) {
+      if (code == KeyCodes.KEY_BACKSPACE) {
+        text.bufferDrop();
+        handled = true;
+      } else if (code == KeyCodes.KEY_ENTER) {
         String s = text.bufferSubmit();
         remote.process(s, new AsyncCallback<String>() {
           public void onFailure(Throwable caught) {
@@ -134,12 +137,7 @@ public final class Term extends Composite {
   private final KeyDownHandler downHandler = new KeyDownHandler() {
     public void onKeyDown(final KeyDownEvent event) {
       int code = event.getNativeKeyCode();
-     if (code == KeyCodes.KEY_BACKSPACE) {
-        text.bufferDrop();
-        event.preventDefault();
-        event.stopPropagation();
-        repaint();
-     } else if (code == KeyCodes.KEY_TAB) {
+      if (code == KeyCodes.KEY_TAB) {
         Scheduler.get().scheduleDeferred(new Completer());
         event.preventDefault();
         event.stopPropagation();
