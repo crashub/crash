@@ -14,6 +14,10 @@ with fast development cycle.
 
 {{include document="extension.wiki" /}}
 
+= Developers =
+
+{{include document="developers.wiki" /}}
+
 = Hey, I want to contribute! =
 
 Drop me an email (see my @ on www.julienviet.com), any kind of help is welcome.

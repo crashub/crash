@@ -54,4 +54,20 @@
     <listener-class>org.crsh.plugin.WebPluginLifeCycle</listener-class>
   </listener>
 
+   <!-- Servlets -->
+  <servlet>
+    <servlet-name>greetServlet</servlet-name>
+    <servlet-class>org.crsh.web.server.GreetingServiceImpl</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>greetServlet</servlet-name>
+    <url-pattern>/Crash/greet</url-pattern>
+  </servlet-mapping>
+
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>Crash.html</welcome-file>
+  </welcome-file-list>
+
 </web-app>

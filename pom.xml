@@ -142,6 +142,20 @@
         <classifier>sources</classifier>
       </dependency>
 
+      <!-- Module shell web -->
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.web</artifactId>
+        <version>1.0.0-beta19-SNAPSHOT</version>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.web</artifactId>
+        <version>1.0.0-beta19-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
+
       <!-- Module shell packaging -->
       <dependency>
         <groupId>org.crsh</groupId>

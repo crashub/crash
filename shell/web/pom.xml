@@ -12,7 +12,7 @@
   <artifactId>crsh.shell.web</artifactId>
   <packaging>war</packaging>
   <version>1.0.0-beta19-SNAPSHOT</version>
-  <name>GWT Maven Archetype</name>
+  <name>CRaSH web</name>
 
   <properties>
     <!-- Convenience property to set the GWT version -->
@@ -141,7 +141,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <sdkDir>/Volumes/Main/Users/julien/java/appengine-java-sdk-1.4.2</sdkDir>
+          <sdkDir>${crsh.appengine.sdk}</sdkDir>
         </configuration>
       </plugin>
 

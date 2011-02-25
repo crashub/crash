@@ -58,6 +58,23 @@
         <include>org.crsh:crsh.shell.ssh</include>
       </includes>
     </dependencySet>
+    <dependencySet>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <includes>
+          <include>Crash/**</include>
+          <include>Crash.css</include>
+          <include>Crash.html</include>
+          <include>WEB-INF/lib/**</include>
+          <include>WEB-INF/classes/**</include>
+        </includes>
+      </unpackOptions>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>org.crsh:crsh.shell.web</include>
+      </includes>
+    </dependencySet>
   </dependencySets>
 
   <fileSets>

@@ -1,0 +1,10 @@
+= settings.xml (maven) =
+
+Crash system properties :
+
+{{xml}}
+<properties>
+  <crsh.deploy.directory>/path/to/webapp/directory</crsh.deploy.directory>
+  <crsh.appengine.sdk>/path/to/appengine/sdk</crsh.appengine.sdk>
+</properties>
+{{/xml}}
