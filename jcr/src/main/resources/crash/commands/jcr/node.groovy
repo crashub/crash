@@ -152,8 +152,8 @@ The node has been exported
 """)
   @Usage("export a node to an nt file")
   public Object export(
-    @Required @Argument @Usage("the source path") @Usage("The path of the exported node") Path source,
-    @Required @Argument @Usage("the target path") @Usage("The path of the exported nt:file node") Path target) throws ScriptException {
+    @Required @Argument @Usage("The path of the exported node") Path source,
+    @Required @Argument @Usage("The path of the exported nt:file node") Path target) throws ScriptException {
 
     //
     assertConnected();
