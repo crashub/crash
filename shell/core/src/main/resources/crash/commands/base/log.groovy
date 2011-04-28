@@ -240,7 +240,7 @@ enum Plugin {
       case "JBossLoggerFactory":
         // Here we see if we have log4j in the classpath and we use it
         try {
-          logManager = cl.loadClass("org.apache.log4j.LogManager");
+          Thread.currentThread().getContextClassLoader().loadClass("org.apache.log4j.LogManager");
           return Plugin.log4j;
         }
         catch (ClassNotFoundException nf) {

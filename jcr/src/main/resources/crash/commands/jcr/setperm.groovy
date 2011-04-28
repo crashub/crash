@@ -74,7 +74,7 @@ Node /production updated to [read]
 The setperm command will add automatically the exo:privilegeable mixin on the node when it is missing. The setperm is
 a <Node,Void> command altering the security of the consumed node stream.""")
   public void main(InvocationContext<Node, Node> context,
-    @Argument @Usage("the paths to secure") @Usage("The node path list to secure") List<Path> paths) throws ScriptException {
+    @Argument @Usage("the paths to secure") @Man("The node path list to secure") List<Path> paths) throws ScriptException {
 
     //
     context.writer <<= "Updates permissions of nodes";
