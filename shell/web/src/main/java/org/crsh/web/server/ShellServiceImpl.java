@@ -15,15 +15,15 @@ import java.util.Map;
 
 /** The server side implementation of the RPC service. */
 @SuppressWarnings("serial")
-public class GreetingServiceImpl extends RemoteServiceServlet implements ShellService {
+public class ShellServiceImpl extends RemoteServiceServlet implements ShellService {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(GreetingServiceImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(ShellServiceImpl.class);
 
-  public GreetingServiceImpl() {
+  public ShellServiceImpl() {
   }
 
-  public GreetingServiceImpl(Object delegate) {
+  public ShellServiceImpl(Object delegate) {
     super(delegate);
   }
 

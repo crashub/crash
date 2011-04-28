@@ -7,12 +7,12 @@
 
   <!-- Servlets -->
   <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>org.crsh.web.server.GreetingServiceImpl</servlet-class>
+    <servlet-name>shellServlet</servlet-name>
+    <servlet-class>org.crsh.web.server.ShellServiceImpl</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
+    <servlet-name>shellServlet</servlet-name>
     <url-pattern>/Crash/greet</url-pattern>
   </servlet-mapping>
 

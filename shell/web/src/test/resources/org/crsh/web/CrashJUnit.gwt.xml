@@ -4,6 +4,6 @@
   <inherits name='org.crsh.web.Crash'/>
 
   <!-- Specify the path to any remote services.                   -->
-  <servlet path="/Crash/greet" class="org.crsh.web.server.GreetingServiceImpl" />
+  <servlet path="/Crash/greet" class="org.crsh.web.server.ShellServiceImpl" />
 
 </module>
