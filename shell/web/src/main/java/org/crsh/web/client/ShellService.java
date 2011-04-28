@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /** The client side stub for the RPC service. */
-@RemoteServiceRelativePath("greet")
+@RemoteServiceRelativePath("shell")
 public interface ShellService extends RemoteService {
 
   String getWelcome();

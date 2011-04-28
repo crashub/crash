@@ -13,7 +13,7 @@
 
   <servlet-mapping>
     <servlet-name>shellServlet</servlet-name>
-    <url-pattern>/Crash/greet</url-pattern>
+    <url-pattern>/Crash/shell</url-pattern>
   </servlet-mapping>
 
   <!-- Default page to serve -->

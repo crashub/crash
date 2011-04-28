@@ -15,7 +15,7 @@ public class Crash implements EntryPoint {
     + "attempting to contact the server. Please check your network "
     + "connection and try again.";
 
-  /** Create a remote service proxy to talk to the server-side Greeting service. */
+  /** Create a remote service proxy to talk to the server-side shell service. */
   private final ShellServiceAsync remote = GWT.create(ShellService.class);
 
   /** This is the entry point method. */
