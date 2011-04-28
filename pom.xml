@@ -22,9 +22,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://crsh.googlecode.com/svn/trunk/</connection>
-    <developerConnection>scm:svn:https://crsh.googlecode.com/svn/trunk/</developerConnection>
-    <url>http://code.google.com/p/crsh/source/browse/</url>
+    <connection>scm:git:git://github.com/vietj/crash.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/vietj/crash.git</developerConnection>
+    <url>https://github.com/vietj/crash</url>
   </scm>
 
   <distributionManagement>
@@ -60,6 +60,7 @@
     <!-- maven-release-plugin -->
     <useReleaseProfile>false</useReleaseProfile>
     <arguments>-Prelease</arguments>
+    <pushChanges>false</pushChanges>
     <autoVersionSubmodules>true</autoVersionSubmodules>
 
     <!-- Java 5 -->
