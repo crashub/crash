@@ -3,7 +3,7 @@
   <groupId>org.crsh</groupId>
   <artifactId>crsh.parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-beta19-SNAPSHOT</version>
+  <version>1.0.0-beta19</version>
 
   <name>CRaSH parent</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
@@ -76,12 +76,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cmdline</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cmdline</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -89,31 +89,31 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -121,12 +121,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -134,12 +134,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -147,13 +147,13 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.web</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.web</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -161,12 +161,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <type>war</type>
       </dependency>
 
@@ -174,50 +174,50 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>standalone</classifier>
       </dependency>
 
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <type>pdf</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.0.0-beta19-SNAPSHOT</version>
+        <version>1.0.0-beta19</version>
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>
@@ -471,12 +471,10 @@
                 <configuration>
                   <tasks>
                     <condition property="deploy.directory.configured">
-                      <not><isset property="crsh.deploy.directory"/></not>
+                      <not><isset property="crsh.deploy.directory" /></not>
                     </condition>
                     <fail if="deploy.directory.configured">Please set crsh.deploy.directory property</fail>
-                    <copy
-                        tofile="${crsh.deploy.directory}/crsh.war"
-                        file="${project.build.directory}/${project.build.finalName}.war"/>
+                    <copy tofile="${crsh.deploy.directory}/crsh.war" file="${project.build.directory}/${project.build.finalName}.war" />
                   </tasks>
                 </configuration>
                 <goals>
