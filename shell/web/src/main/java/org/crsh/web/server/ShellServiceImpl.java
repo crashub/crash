@@ -1,6 +1,8 @@
 package org.crsh.web.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.WebPluginLifeCycle;
 import org.crsh.shell.Shell;
 import org.crsh.shell.concurrent.SyncShellResponseContext;
 import org.crsh.shell.impl.CRaSH;
@@ -10,6 +12,10 @@ import org.crsh.web.client.ShellService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +26,9 @@ public class ShellServiceImpl extends RemoteServiceServlet implements ShellServi
   /** . */
   private static final Logger log = LoggerFactory.getLogger(ShellServiceImpl.class);
 
+  /** . */
+  private PluginContext pluginContext;
+
   public ShellServiceImpl() {
   }
 
@@ -27,28 +36,49 @@ public class ShellServiceImpl extends RemoteServiceServlet implements ShellServi
     super(delegate);
   }
 
-  {
-    Shell shell = null;
-    try {
-      Bootstrap bootstrap = new Bootstrap();
-      bootstrap.bootstrap();
-      shell = new CRaSH(bootstrap.getContext());
-    }
-    catch (Exception e) {
-      log.error("Bootstrap failed", e);
-    }
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
 
-    this.shell = shell;
+    // Obtain plugin context for our servlet context
+    pluginContext = WebPluginLifeCycle.getPluginContext(config.getServletContext());
+
+    // We assume it's a demo and we bootstrap something
+    if (pluginContext == null) {
+      try {
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.bootstrap();
+        pluginContext = bootstrap.getContext();
+      } catch (Exception e) {
+        log.error("Bootstrap failed", e);
+      }
+    } else {
+      log.info("Obtained plugin context " + pluginContext);
+    }
   }
 
   /** . */
-  private final Shell shell;
+//  private final Shell shell;
+
+  private Shell getShell() {
+    HttpServletRequest req = this.getThreadLocalRequest();
+    HttpSession session = req.getSession();
+    CRaSH shell = (CRaSH)session.getAttribute(ShellServiceImpl.class.getName());
+    if (shell == null) {
+      log.debug("Created shell");
+      shell = new CRaSH(pluginContext);
+      session.setAttribute(ShellServiceImpl.class.getName(), shell);
+    }
+    return shell;
+  }
 
   public String getWelcome() {
+    Shell shell = getShell();
     return shell.getWelcome() + "\n" + shell.getPrompt();
   }
 
   public String process(String s) {
+    Shell shell = getShell();
     StringBuilder sb = new StringBuilder();
     try {
       SyncShellResponseContext resp = new SyncShellResponseContext();
@@ -65,6 +95,7 @@ public class ShellServiceImpl extends RemoteServiceServlet implements ShellServi
   }
 
   public Map<String, String> complete(String s) {
+    Shell shell = getShell();
 
     // Obtain completions from the shell
     Map<String, String> completions = shell.complete(s);

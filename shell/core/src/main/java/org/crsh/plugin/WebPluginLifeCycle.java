@@ -27,6 +27,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,34 +39,83 @@ import java.util.concurrent.TimeUnit;
  */
 public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContextListener {
 
+  /** . */
+  private static final Object lock = new Object();
+
+  /** . */
+  private static final Map<String, PluginContext> contextMap = new HashMap<String, PluginContext>();
+
+  /** . */
+  private boolean registered = false;
+
+  /**
+   * Returns a plugin context associated with the servlet context or null if such context does not exist.
+   *
+   * @param sc the servlet context
+   * @return the associated plugin context
+   * @throws NullPointerException if the servlet context argument is null
+   */
+  public static PluginContext getPluginContext(ServletContext sc) throws NullPointerException {
+    String contextPath = sc.getContextPath();
+    synchronized (lock) {
+      return contextMap.get(contextPath);
+    }
+  }
+
   public void contextInitialized(ServletContextEvent sce) {
-
-    //
     ServletContext sc = sce.getServletContext();
+    String contextPath = sc.getContextPath();
 
     //
-    FS fs = new FS().mount(new ServletContextDriver(sc), "/WEB-INF/crash/");
+    synchronized (lock) {
+      if (!contextMap.containsKey(contextPath)) {
 
-    //
-    PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
+        //
+        FS fs = new FS().mount(new ServletContextDriver(sc), "/WEB-INF/crash/");
 
-    // Configure from web.xml
-    Enumeration<String> names = sc.getInitParameterNames();
-    while (names.hasMoreElements()) {
-      String name = names.nextElement();
-      if (name.startsWith("crash.")) {
-        String value = sc.getInitParameter(name).trim();
-        String key = name.substring("crash.".length());
-        PropertyDescriptor<?> desc = PropertyDescriptor.ALL.get(key);
-        context.setProperty(desc, value);
+        //
+        PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
+
+        //
+        contextMap.put(contextPath, context);
+        registered = true;
+
+        // Configure from web.xml
+        @SuppressWarnings("unchecked")
+        Enumeration<String> names = sc.getInitParameterNames();
+        while (names.hasMoreElements()) {
+          String name = names.nextElement();
+          if (name.startsWith("crash.")) {
+            String value = sc.getInitParameter(name).trim();
+            String key = name.substring("crash.".length());
+            PropertyDescriptor<?> desc = PropertyDescriptor.ALL.get(key);
+            context.setProperty(desc, value);
+          }
+        }
+
+        //
+        start(context);
       }
     }
-
-    //
-    start(context);
   }
 
   public void contextDestroyed(ServletContextEvent sce) {
-    stop();
+    if (registered) {
+
+      //
+      ServletContext sc = sce.getServletContext();
+      String contextPath = sc.getContextPath();
+
+      //
+      synchronized (lock) {
+
+        //
+        contextMap.remove(contextPath);
+        registered = false;
+
+        //
+        stop();
+      }
+    }
   }
 }
