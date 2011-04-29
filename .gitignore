@@ -4,5 +4,3 @@ target
 release.properties
 .idea
 *.iml
-shell/web/temp
-jcr/nul

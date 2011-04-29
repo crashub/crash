@@ -65,9 +65,6 @@
 
   <build>
 
-    <!-- We change the build dirctory to make possible to see the generated sources in Intellij -->
-    <directory>temp</directory>
-
     <!-- Generate compiled stuff in the folder used for developing mode -->
     <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
 
