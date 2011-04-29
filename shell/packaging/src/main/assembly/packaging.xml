@@ -37,10 +37,13 @@
         <include>org.bouncycastle:bcprov-jdk15</include>
         <include>org.apache.mina:mina-core</include>
         <include>net.wimpi:telnetd-x</include>
+        <include>org.codehaus.groovy:groovy-all</include>
+        <include>com.google.gwt:gwt-servlet</include>
         <include>org.crsh:crsh.cmdline</include>
         <include>org.crsh:crsh.shell.core</include>
         <include>org.crsh:crsh.shell.telnet</include>
         <include>org.crsh:crsh.shell.ssh</include>
+        <include>org.crsh:crsh.shell.web:jar:classes</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -66,8 +69,6 @@
           <include>Crash/**</include>
           <include>Crash.css</include>
           <include>Crash.html</include>
-          <include>WEB-INF/lib/**</include>
-          <include>WEB-INF/classes/**</include>
         </includes>
       </unpackOptions>
       <outputDirectory>/</outputDirectory>

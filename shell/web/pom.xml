@@ -29,18 +29,20 @@
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.core</artifactId>
-      <classifier>standalone</classifier>
     </dependency>
 
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
       <version>1.4.2</version>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-tools-sdk</artifactId>
       <version>1.4.2</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -55,12 +57,6 @@
       <version>2.1.0</version>
       <scope>provided</scope>
     </dependency>  
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.7</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -139,6 +135,15 @@
         </dependencies>
         <configuration>
           <sdkDir>${crsh.appengine.sdk}</sdkDir>
+        </configuration>
+      </plugin>
+
+      <!-- Configure war plugin behavior -->
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <archiveClasses>true</archiveClasses>
+          <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
 

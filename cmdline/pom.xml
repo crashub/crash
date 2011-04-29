@@ -13,28 +13,4 @@
   <name>CRaSH cmdline</name>
   <description>The CRaSH cmdline module</description>
 
-  <dependencies>
-
-    <!-- Should be provided by assembly plugin will fail if so -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-
-    <!-- For unit testing purpose -->
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
-
 </project>
