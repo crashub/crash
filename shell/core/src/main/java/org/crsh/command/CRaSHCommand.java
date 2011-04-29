@@ -27,12 +27,7 @@ import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.annotations.Usage;
-import org.crsh.cmdline.matcher.CmdCompletionException;
-import org.crsh.cmdline.matcher.Matcher;
-import org.crsh.cmdline.matcher.ClassMatch;
-import org.crsh.cmdline.matcher.CommandMatch;
-import org.crsh.cmdline.matcher.MethodMatch;
-import org.crsh.cmdline.matcher.OptionMatch;
+import org.crsh.cmdline.matcher.*;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.util.TypeResolver;
 import org.slf4j.Logger;
@@ -43,6 +38,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -236,7 +232,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           }
         }
 
-        public void invoke(InvocationContext context) throws ScriptException {
+        public void invoke(InvocationContext context) throws Exception {
 
           if (doHelp) {
             try {
@@ -255,9 +251,13 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               if (o != null) {
                 context.getWriter().print(o);
               }
-            } catch (Exception e) {
-              e.printStackTrace();
-              throw new ScriptException(e.getMessage(), e);
+            } catch (CmdInvocationException e) {
+              Throwable cause = e.getCause();
+              if (cause instanceof Exception) {
+                throw (Exception)cause;
+              } else {
+                throw new UndeclaredThrowableException(cause);
+              }
             } finally {
               CRaSHCommand.this.context = null;
               CRaSHCommand.this.unmatched = null;

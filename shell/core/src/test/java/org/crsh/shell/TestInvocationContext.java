@@ -90,7 +90,7 @@ public class TestInvocationContext<C, P> implements InvocationContext<C, P> {
     return products;
   }
 
-  public String execute(ShellCommand command, String... args) {
+  public String execute(ShellCommand command, String... args) throws Exception {
     if (buffer != null) {
       buffer.getBuffer().setLength(0);
     }

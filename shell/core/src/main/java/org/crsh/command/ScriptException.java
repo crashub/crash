@@ -24,6 +24,9 @@ package org.crsh.command;
  */
 public class ScriptException extends RuntimeException {
 
+  public ScriptException() {
+  }
+
   public ScriptException(String message) {
     super(message);
   }

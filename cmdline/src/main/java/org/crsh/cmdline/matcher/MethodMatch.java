@@ -24,6 +24,7 @@ import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -151,8 +152,16 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
     try {
       return m.invoke(command, mArgs);
     }
-    catch (Exception e) {
-      throw new CmdInvocationException(e.getMessage(), e);
+    catch (InvocationTargetException e) {
+      Throwable t = e.getTargetException();
+      if (t instanceof Error) {
+        throw (Error)t;
+      } else {
+        throw new CmdInvocationException(t);
+      }
+    }
+    catch (IllegalAccessException t) {
+      throw new CmdInvocationException(t);
     }
   }
 }

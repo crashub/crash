@@ -74,7 +74,7 @@ abstract class AST {
       try {
         return execute(responseContext, attributes, null);
       } catch (Throwable t) {
-        return new ShellResponse.Error(ErrorType.EVALUATION, t);
+        return new ShellResponse.Error(ErrorType.INTERNAL, t);
       }
     }
 
@@ -112,7 +112,11 @@ abstract class AST {
         } else {
         }
 */
-        current.invoker.invoke(ctx);
+        try {
+          current.invoker.invoke(ctx);
+        } catch (Throwable t) {
+          return new ShellResponse.Error(ErrorType.EVALUATION, t);
+        }
 
         // Append anything that was in the buffer
         if (ctx.getBuffer() != null) {

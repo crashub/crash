@@ -33,7 +33,7 @@ public interface CommandInvoker<C, P> {
    * @param context the command execution context
    * @throws ScriptException any script exception
    */
-  void invoke(InvocationContext<C, P> context) throws ScriptException;
+  void invoke(InvocationContext<C, P> context) throws Exception;
 
   /**
    * Returns the class of the produced type.

@@ -407,4 +407,69 @@ public class MatcherTestCase extends TestCase {
     Matcher.createMatcher("foo", desc).match("-o a").invoke(context, g);
     assertEquals(new ValueSupport.Provided("a"), g.o);
   }
+
+  public static class H {
+    @Command
+    public void foo()  throws Exception { throw new Exception("fooexception"); }
+  }
+
+  public void testException() throws Exception {
+
+    ClassDescriptor<H> desc = CommandFactory.create(H.class);
+
+    //
+    H h = new H();
+    InvocationContext context = new InvocationContext();
+    CommandMatch<H, ?, ?> match = Matcher.createMatcher("foo", desc).match("");
+    try {
+      match.invoke(context, h);
+      fail();
+    } catch (CmdLineException e) {
+      assertEquals(Exception.class, e.getCause().getClass());
+      assertEquals("fooexception", e.getCause().getMessage());
+    }
+  }
+
+  public static class I {
+    @Command
+    public void foo() { throw new RuntimeException("fooruntimeexception"); }
+  }
+
+  public void testRuntimeException() throws Exception {
+
+    ClassDescriptor<I> desc = CommandFactory.create(I.class);
+
+    //
+    I i = new I();
+    InvocationContext context = new InvocationContext();
+    CommandMatch<I, ?, ?> match = Matcher.createMatcher("foo", desc).match("");
+    try {
+      match.invoke(context, i);
+      fail();
+    } catch (CmdLineException e) {
+      assertEquals(RuntimeException.class, e.getCause().getClass());
+      assertEquals("fooruntimeexception", e.getCause().getMessage());
+    }
+  }
+
+  public static class J {
+    @Command
+    public void foo() { throw new Error("fooerror"); }
+  }
+
+  public void testError() throws Exception {
+
+    ClassDescriptor<J> desc = CommandFactory.create(J.class);
+
+    //
+    J j = new J();
+    InvocationContext context = new InvocationContext();
+    CommandMatch<J, ?, ?> match = Matcher.createMatcher("foo", desc).match("");
+    try {
+      match.invoke(context, j);
+      fail();
+    } catch (Error e) {
+      assertEquals("fooerror", e.getMessage());
+    }
+  }
 }

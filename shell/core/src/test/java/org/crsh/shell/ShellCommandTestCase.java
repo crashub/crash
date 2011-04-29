@@ -90,8 +90,7 @@ public class ShellCommandTestCase extends TestCase {
       new TestInvocationContext().execute(command);
       fail();
     }
-    catch (ScriptException e) {
-      assert(e.getCause() instanceof CmdSyntaxException);
+    catch (CmdSyntaxException e) {
     }
   }
 

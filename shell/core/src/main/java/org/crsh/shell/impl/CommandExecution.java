@@ -23,12 +23,17 @@ import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 class CommandExecution implements ShellProcess {
+
+  /** . */
+  private static final Logger log = LoggerFactory.getLogger(CRaSH.class);
 
   /** . */
   private final CRaSH crash;
@@ -75,6 +80,17 @@ class CommandExecution implements ShellProcess {
         }
       } else {
         resp = new ShellResponse.NoCommand();
+      }
+    }
+
+    //
+    if (resp instanceof ShellResponse.Error) {
+      ShellResponse.Error error = (ShellResponse.Error)resp;
+      Throwable t = error.getThrowable();
+      if (t != null) {
+        log.error("Error while evaluating request '" + request + "' " + error.getText(), t);
+      } else {
+        log.error("Error while evaluating request '" + request + "' " + error.getText());
       }
     }
 

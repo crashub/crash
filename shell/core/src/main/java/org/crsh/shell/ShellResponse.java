@@ -155,19 +155,20 @@ public abstract class ShellResponse {
     @Override
     public String getText() {
       String result;
-      if (throwable instanceof java.lang.Error) {
-        throw ((java.lang.Error)throwable);
-      } else if (throwable instanceof ScriptException) {
-        result = "Error: " + throwable.getMessage();
+      String msg = throwable.getMessage();
+      if (msg == null) {
+        msg = throwable.getClass().getSimpleName();
+      }
+      if (throwable instanceof ScriptException) {
+        result = "Error: " + msg;
       } else if (throwable instanceof RuntimeException) {
-        result = "Unexpected exception: " + throwable.getMessage();
-        throwable.printStackTrace(System.err);
+        result = "Unexpected exception: " + msg;
       } else if (throwable instanceof Exception) {
-        result = "Unexpected exception: " + throwable.getMessage();
-        throwable.printStackTrace(System.err);
+        result = "Unexpected exception: " + msg;
+      } else if (throwable instanceof java.lang.Error) {
+        result = "Unexpected error: " + msg;
       } else {
-        result = "Unexpected throwable: " + throwable.getMessage();
-        throwable.printStackTrace(System.err);
+        result = "Unexpected throwable: " + msg;
       }
       return result;
     }
