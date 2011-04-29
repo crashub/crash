@@ -6,12 +6,12 @@
   <parent>
     <artifactId>crsh.shell</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.0.0-beta20</version>
+    <version>1.0.0-beta21-SNAPSHOT</version>
   </parent>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.shell.web</artifactId>
   <packaging>war</packaging>
-  <version>1.0.0-beta20</version>
+  <version>1.0.0-beta21-SNAPSHOT</version>
   <name>CRaSH web</name>
 
   <properties>

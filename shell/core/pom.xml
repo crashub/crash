@@ -2,13 +2,13 @@
   <parent>
     <artifactId>crsh.shell</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.0.0-beta20</version>
+    <version>1.0.0-beta21-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.shell.core</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-beta20</version>
+  <version>1.0.0-beta21-SNAPSHOT</version>
 
   <name>CRaSH core</name>
   <description>The CRaSH core module</description>
