@@ -16,58 +16,73 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.crsh.term;
+package org.crsh;
 
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.ShellResponse;
 
+import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 /**
+ * A base shell.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
  */
-public class TestShell implements Shell {
-
+public class BaseShell implements Shell {
 
   /** . */
-  private final BlockingQueue<TestShellAction> queue;
+  private BaseProcessFactory factory;
 
-  public TestShell() {
-    queue = new ArrayBlockingQueue<TestShellAction>(10);
+  public BaseShell() {
+    this(BaseProcessFactory.NOOP);
   }
 
-  public int getSize() {
-    return queue.size();
+  public BaseShell(BaseProcessFactory factory) {
+    this.factory = factory;
   }
 
-  public void append(TestShellAction action) {
-    queue.add(action);
+  public BaseProcessFactory getFactory() {
+    return factory;
   }
 
+  public void setFactory(BaseProcessFactory factory) {
+    if (factory == null) {
+      throw new NullPointerException();
+    }
+    this.factory = factory;
+  }
+
+  /**
+   * Returns the empty string.
+   *
+   * @return the empty string
+   */
   public String getWelcome() {
-    return "Welcome\r\n% ";
+    return "";
   }
 
-  public Map<String, String> complete(String prefix) {
-    throw new UnsupportedOperationException();
-  }
-
+  /**
+   * Returns the <code>% </code> string.
+   *
+   * @return the <code>% </code> string
+   */
   public String getPrompt() {
     return "% ";
   }
 
+  /**
+   * Execute the base process returned by the factory method {@link org.crsh.BaseProcessFactory#create()}.
+   */
   public void process(String request, ShellProcessContext processContext) {
-    try {
-      TestShellAction action = queue.take();
-      ShellResponse resp = action.evaluate(request, processContext);
-      processContext.end(resp);
-    } catch (Exception e) {
-      throw new AssertionError(e);
-    }
+    BaseProcess process = factory.create();
+    process.process(request, processContext);
+  }
+
+  /**
+   * Returns an empty unmodifiable map.
+   */
+  public Map<String, String> complete(String prefix) {
+    return Collections.emptyMap();
   }
 }

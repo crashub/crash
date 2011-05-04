@@ -16,33 +16,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh;
 
-import org.crsh.shell.Shell;
+import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
-
-import java.util.Map;
+import org.crsh.shell.ShellResponse;
 
 /**
+ * A process that does nothing.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
  */
-public class TestShell implements Shell {
+public class BaseProcess implements ShellProcess {
 
-  public String getWelcome() {
-    return "Welcome\r\n" + getPrompt();
-  }
-
-  public String getPrompt() {
-    return "% ";
-  }
+  /** . */
+  private ShellProcessContext processContext;
 
   public void process(String request, ShellProcessContext processContext) {
-    throw new UnsupportedOperationException();
+    processContext.begin(this);
+    this.processContext = processContext;
+    try {
+      ShellResponse resp = execute(request);
+      processContext.end(resp);
+    } finally {
+      this.processContext = null;
+    }
   }
 
-  public Map<String, String> complete(String prefix) {
-    throw new UnsupportedOperationException();
+  protected final String readLine(String msg, boolean echo) {
+    return processContext.readLine(msg, echo);
+  }
+
+  protected ShellResponse execute(String request) {
+    return new ShellResponse.Ok();
+  }
+
+  public void cancel() {
   }
 }

@@ -20,7 +20,9 @@
 package org.crsh.term;
 
 import junit.framework.TestCase;
-import org.crsh.TestShell;
+import org.crsh.BaseProcess;
+import org.crsh.BaseProcessFactory;
+import org.crsh.BaseShell;
 import org.crsh.TestPluginContext;
 import org.crsh.shell.*;
 import org.crsh.shell.concurrent.AsyncShell;
@@ -69,17 +71,21 @@ public class AsyncShellTestCase extends TestCase {
     input.add("juu");
 
     //
-    Shell shell = new TestShell() {
+    BaseProcessFactory factory = new BaseProcessFactory() {
       @Override
-      public void process(String request, ShellProcessContext processContext) {
-        processContext.begin(new ShellProcess() {
-          public void cancel() {
+      public BaseProcess create() {
+        return new BaseProcess() {
+          @Override
+          protected ShellResponse execute(String request) {
+            String a = readLine("bar", true);
+            return new ShellResponse.Display(a);
           }
-        });
-        String a = processContext.readLine("bar", true);
-        processContext.end(new ShellResponse.Display(a));
+        };
       }
     };
+
+    //
+    Shell shell = new BaseShell(factory);
 
     //
     Shell asyncShell = new AsyncShell(executor, shell);
@@ -119,41 +125,45 @@ public class AsyncShellTestCase extends TestCase {
     final AtomicInteger status = new AtomicInteger(0);
     final AtomicInteger cancelled = new AtomicInteger(0);
 
-    //
-    Shell shell = new TestShell() {
+    BaseProcessFactory factory = new BaseProcessFactory() {
       @Override
-      public void process(String request, ShellProcessContext processContext) {
+      public BaseProcess create() {
+        return new BaseProcess() {
+          @Override
+          protected ShellResponse execute(String request) {
 
-        //
-        processContext.begin(new ShellProcess() {
+            //
+            fail.set(!"foo".equals(request));
+
+            //
+            if (status.get() == 0) {
+              status.set(1);
+              int r = status.get();
+              while (r == 1) {
+                r = status.get();
+              }
+              if (r == 2) {
+                status.set(3);
+              } else {
+                status.set(-1);
+              }
+            } else {
+              status.set(-1);
+            }
+
+            //
+            return ok;
+          }
+          @Override
           public void cancel() {
             cancelled.getAndIncrement();
           }
-        });
-
-        //
-        fail.set(!"foo".equals(request));
-
-        //
-        if (status.get() == 0) {
-          status.set(1);
-          int r = status.get();
-          while (r == 1) {
-            r = status.get();
-          }
-          if (r == 2) {
-            status.set(3);
-          } else {
-            status.set(-1);
-          }
-        } else {
-          status.set(-1);
-        }
-
-        //
-        processContext.end(ok);
+        };
       }
     };
+
+    /** . */
+    Shell shell = new BaseShell(factory);
 
     //
     AsyncShell  asyncShell = new AsyncShell(executor, shell);

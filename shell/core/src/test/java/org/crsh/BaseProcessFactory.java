@@ -16,18 +16,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.crsh.term;
+package org.crsh;
 
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellProcessContext;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
  */
-public interface TestShellAction {
+public abstract class BaseProcessFactory {
 
-  ShellResponse evaluate(String request, ShellProcessContext responseContext) throws Exception;
+  public static BaseProcessFactory NOOP = new BaseProcessFactory() {
+    @Override
+    public BaseProcess create() {
+      return new BaseProcess();
+    }
+  };
+
+  public static BaseProcessFactory ECHO = new BaseProcessFactory() {
+    @Override
+    public BaseProcess create() {
+      return new BaseProcess() {
+        @Override
+        protected ShellResponse execute(String request) {
+          return new ShellResponse.Display(request);
+        }
+      };
+    }
+  };
+
+  public abstract BaseProcess create();
 
 }

@@ -22,11 +22,7 @@ package org.crsh;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.shell.Shell;
-import org.crsh.shell.ShellProcess;
-import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.ShellResponse;
 import org.crsh.term.BaseTerm;
-import org.crsh.term.TestShell;
 import org.crsh.term.spi.TestTermIO;
 
 import java.io.IOException;
@@ -41,30 +37,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ProcessorTestCase extends TestCase {
 
-  /** . */
-  private static final Shell ECHO_SHELL = new TestShell() {
-    @Override
-    public String getWelcome() {
-      return "";
-    }
-    @Override
-    public void process(String request, final ShellProcessContext processContext) {
-      processContext.begin(new ShellProcess() {
-        public void cancel() {
-          fail();
-        }
-      });
-      processContext.end(new ShellResponse.Display(request));
-    }
-
-    @Override
-    public Map<String, String> complete(String prefix) {
-      return Collections.singletonMap(new StringBuilder(prefix).reverse().toString(), "");
-    }
-  };
-
   public void testLine() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
@@ -80,7 +54,7 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testDel() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
@@ -99,7 +73,7 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testBreak() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
@@ -122,7 +96,7 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testInsert() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
@@ -143,7 +117,7 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testIdempotentMoveRight() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
@@ -161,7 +135,7 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testIdempotentMoveLeft() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
@@ -179,7 +153,7 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testMoveUp() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
@@ -205,7 +179,7 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testIdempotentMoveUp() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
@@ -232,7 +206,7 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testIdempotentMoveDown() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
@@ -256,7 +230,12 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testCompletion1() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO) {
+      @Override
+      public Map<String, String> complete(String prefix) {
+        return Collections.singletonMap(new StringBuilder(prefix).reverse().toString(), "");
+      }
+    });
     controller.assertStart();
 
     //
@@ -266,7 +245,7 @@ public class ProcessorTestCase extends TestCase {
   }
 
   public void testCompletion2() throws Exception {
-    Controller controller = create(ECHO_SHELL);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
