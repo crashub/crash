@@ -51,7 +51,7 @@ public class ProcessorTestCase extends TestCase {
     public void process(String request, final ShellProcessContext processContext) {
       processContext.begin(new ShellProcess() {
         public void cancel() {
-          throw new AssertionError();
+          fail();
         }
       });
       processContext.end(new ShellResponse.Display(request));

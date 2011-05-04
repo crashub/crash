@@ -56,8 +56,7 @@ public abstract class AbstractCommandTestCase extends TestCase {
     super.setUp();
 
     //
-    ShellFactory builder = new ShellFactory(new TestPluginContext(
-    ));
+    ShellFactory builder = new ShellFactory(new TestPluginContext());
 
     //
     shell = builder.build();
