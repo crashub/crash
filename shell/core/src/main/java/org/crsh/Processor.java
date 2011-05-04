@@ -25,6 +25,8 @@ import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
+import org.crsh.util.FutureListener;
+import org.crsh.util.LatchedFuture;
 import org.crsh.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -42,34 +45,85 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Processor implements Runnable {
 
+  public static enum State {
+
+    INITIAL,
+
+    OPEN,
+
+    WANT_CLOSE,
+
+    CLOSED;
+
+    /** . */
+    public final Status available;
+
+    /** . */
+    public final Status busy;
+
+    State() {
+      this.available = new Status(this, true);
+      this.busy = new Status(this, false);
+    }
+  }
+
+  public static class Status {
+
+    /** . */
+    private final State state;
+
+    /** . */
+    private final boolean available;
+
+    private Status(State state, boolean available) {
+      this.state = state;
+      this.available = available;
+    }
+
+    public State getState() {
+      return state;
+    }
+
+    public boolean isAvailable() {
+      return available;
+    }
+
+    public boolean isBusy() {
+      return !available;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (o == this) {
+        return true;
+      } else if (o instanceof Status) {
+        Status that = (Status)o;
+        return state == that.state && available == that.available;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  public interface Result {
+
+    State getState();
+
+  }
+
   /** . */
   private final Logger log = LoggerFactory.getLogger(Processor.class);
-
-  /** . */
-  private static final int STATUS_INITIAL = 0;
-
-  /** . */
-  private static final int STATUS_OPEN = 1;
-
-  /** . */
-  private static final int STATUS_CLOSED = 2;
-
-  /** . */
-  private static final int STATUS_WANT_CLOSE = 3;
-
-  /** . */
-  private static final int STATUS_CLOSING = 4;
 
   /** . */
   private final Term term;
 
   /** . */
-  private final AtomicInteger status;
+  private final AtomicReference<Status> status;
 
   /** . */
   private final Shell shell;
 
-  /** . */
+  /** The current process being executed. */
   private volatile ShellProcess process;
 
   /** . */
@@ -77,147 +131,237 @@ public class Processor implements Runnable {
 
   public Processor(Term term, Shell shell) {
     this.term = term;
-    this.status = new AtomicInteger(STATUS_INITIAL);
+    this.status = new AtomicReference<Status>(State.INITIAL.available);
     this.shell = shell;
     this.process = null;
     this.listeners = new ArrayList<ProcessorListener>();
   }
 
   public void run() {
-    try {
-      _run();
-    }
-    catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void _run() throws InterruptedException {
-
-    //
-    if (!status.compareAndSet(STATUS_INITIAL, STATUS_OPEN)) {
-      throw new IllegalStateException();
-    }
-
-    //
-    try {
-      main();
-    }
-    catch (Throwable t) {
-      t.printStackTrace();
-    }
-    finally {
-      if (status.get() == STATUS_WANT_CLOSE) {
-        close();
+    while (true) {
+      Result result = execute();
+      State state = result.getState();
+      if (state == State.CLOSED) {
+        break;
       }
     }
   }
 
-  private void main() {
-    //
-    try {
-      String welcome = shell.getWelcome();
-      log.debug("Writing welcome message to term");
-      term.write(welcome);
-      log.debug("Wrote welcome message to term");
-      writePrompt();
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
+  public boolean isAvailable() {
+    return process == null;
+  }
+
+  public State getState() {
+    return status.get().getState();
+  }
+
+  private static abstract class Task {
+
+    protected abstract LatchedFuture<State> execute();
+
+  }
+
+  public Result execute() {
 
     //
-    while (status.get() == STATUS_OPEN) {
+    final Status _status = status.get();
 
-      //
-      TermEvent event = null;
+    Task task = null;
 
-      try {
-        log.debug("About to read next term event");
-        event = term.read();
-        log.debug("Read next term event " + event);
-      } catch (IOException e) {
-        if (status.get() == STATUS_OPEN) {
-          log.error("Could not read term data", e);
-        } else {
-          log.debug("Exception but term is considered as closed", e);
-          // We continue it will lead to getting out of the loop
-        }
-      }
+    if (_status == State.INITIAL.available) {
 
-      //
-      if (event == null) {
-        // Do nothing wait until next event
-      } else if (event instanceof TermEvent.ReadLine) {
-        String line = ((TermEvent.ReadLine)event).getLine().toString();
-        log.debug("Submitting command " + line);
-
-        //
-        ShellInvoker invoker = new ShellInvoker();
-
-        // Process
-        shell.process(((TermEvent.ReadLine)event).getLine().toString(), invoker);
-
-        if (line.length() > 0) {
-          term.addToHistory(line);
-        }
-      } else if (event instanceof TermEvent.Break) {
-        if (process != null) {
-          process.cancel();
-        } else {
-          log.debug("Ignoring action " + event);
-          writePrompt();
-        }
-      } else if (event instanceof TermEvent.Complete) {
-        TermEvent.Complete complete = (TermEvent.Complete)event;
-        String prefix = complete.getLine().toString();
-        log.debug("About to get completions for " + prefix);
-        Map<String, String> completions = shell.complete(prefix);
-        log.debug("Completions for " + prefix + " are " + completions);
-
-        // Try to find the greatest prefix among all the results
-        String commonCompletion;
-        if (completions.size() == 0) {
-          commonCompletion = "";
-        } else if (completions.size() == 1) {
-          Map.Entry<String, String> entry = completions.entrySet().iterator().next();
-          commonCompletion = entry.getKey() + entry.getValue();
-        } else {
-          commonCompletion = Strings.findLongestCommonPrefix(completions.keySet());
-        }
-
-        //
-        if (commonCompletion.length() > 0) {
+      task = new Task() {
+        @Override
+        protected LatchedFuture<State> execute() {
           try {
-            term.bufferInsert(commonCompletion);
+            String welcome = shell.getWelcome();
+            log.debug("Writing welcome message to term");
+            term.write(welcome);
+            log.debug("Wrote welcome message to term");
+            writePrompt();
           }
           catch (IOException e) {
             e.printStackTrace();
           }
-        } else {
-          if (completions.size() > 1) {
-            // We propose
-            StringBuilder sb = new StringBuilder("\n");
-            for (Iterator<String> i = completions.keySet().iterator();i.hasNext();) {
-              String completion = i.next();
-              sb.append(completion);
-              if (i.hasNext()) {
-                sb.append(" ");
+          return new LatchedFuture<State>(State.OPEN);
+        }
+      };
+
+    } else if (_status == State.OPEN.available) {
+
+      task = new Task() {
+        @Override
+        protected LatchedFuture<State> execute() {
+          //
+          TermEvent event = null;
+
+          try {
+            log.debug("About to read next term event");
+            event = term.read();
+            log.debug("Read next term event " + event);
+          } catch (IOException e) {
+            if (status.get() == State.OPEN.available) {
+              log.error("Could not read term data", e);
+            } else {
+              log.debug("Exception but term is considered as closed", e);
+              // We continue it will lead to getting out of the loop
+            }
+          }
+
+          //
+          if (event == null) {
+            // Do nothing wait until next event
+            return new LatchedFuture<State>(State.OPEN);
+          } else if (event instanceof TermEvent.ReadLine) {
+            String line = ((TermEvent.ReadLine)event).getLine().toString();
+            log.debug("Submitting command " + line);
+
+            //
+            ShellInvoker invoker = new ShellInvoker();
+
+            // Process
+            shell.process(((TermEvent.ReadLine)event).getLine().toString(), invoker);
+
+            //
+            if (line.length() > 0) {
+              term.addToHistory(line);
+            }
+
+            //
+            return invoker.result;
+          } else if (event instanceof TermEvent.Break) {
+            if (process != null) {
+              process.cancel();
+            } else {
+              log.debug("Ignoring action " + event);
+              writePrompt();
+            }
+            return new LatchedFuture<State>(State.OPEN);
+          } else if (event instanceof TermEvent.Complete) {
+            TermEvent.Complete complete = (TermEvent.Complete)event;
+            String prefix = complete.getLine().toString();
+            log.debug("About to get completions for " + prefix);
+            Map<String, String> completions = shell.complete(prefix);
+            log.debug("Completions for " + prefix + " are " + completions);
+
+            // Try to find the greatest prefix among all the results
+            String commonCompletion;
+            if (completions.size() == 0) {
+              commonCompletion = "";
+            } else if (completions.size() == 1) {
+              Map.Entry<String, String> entry = completions.entrySet().iterator().next();
+              commonCompletion = entry.getKey() + entry.getValue();
+            } else {
+              commonCompletion = Strings.findLongestCommonPrefix(completions.keySet());
+            }
+
+            //
+            if (commonCompletion.length() > 0) {
+              try {
+                term.bufferInsert(commonCompletion);
+              }
+              catch (IOException e) {
+                e.printStackTrace();
+              }
+            } else {
+              if (completions.size() > 1) {
+                // We propose
+                StringBuilder sb = new StringBuilder("\n");
+                for (Iterator<String> i = completions.keySet().iterator();i.hasNext();) {
+                  String completion = i.next();
+                  sb.append(completion);
+                  if (i.hasNext()) {
+                    sb.append(" ");
+                  }
+                }
+                sb.append("\n");
+                try {
+                  term.write(sb.toString());
+                }
+                catch (IOException e) {
+                  e.printStackTrace();
+                }
+                writePrompt();
               }
             }
-            sb.append("\n");
-            try {
-              term.write(sb.toString());
-            }
-            catch (IOException e) {
-              e.printStackTrace();
-            }
-            writePrompt();
+            return new LatchedFuture<State>(State.OPEN);
+          } else if (event instanceof TermEvent.Close) {
+            return new LatchedFuture<State>(State.WANT_CLOSE);
+          } else {
+            return new LatchedFuture<State>(State.OPEN);
           }
         }
-      } else if (event instanceof TermEvent.Close) {
-        status.compareAndSet(STATUS_OPEN, STATUS_WANT_CLOSE);
-      }
+      };
+    } else if (_status == State.WANT_CLOSE.available) {
+
+      task = new Task() {
+        @Override
+        protected LatchedFuture<State> execute() {
+          //
+          log.debug("Closing processor");
+
+          // Make a copy
+          ArrayList<ProcessorListener> listeners;
+          synchronized (Processor.this.listeners) {
+            listeners = new ArrayList<ProcessorListener>(Processor.this.listeners);
+          }
+
+          // Status to closed, we won't process any further request
+          // it's important to set the status before closing anything to
+          // avoid a race condition because closing a listener may
+          // cause an interrupted exception
+          status.set(State.CLOSED.available);
+
+          //
+          for (ProcessorListener listener : listeners) {
+            try {
+              log.debug("Closing " + listener.getClass().getSimpleName());
+              listener.closed();
+            }
+            catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+
+          //
+          return new LatchedFuture<State>(State.CLOSED);
+        }
+      };
+    } else {
+      //
+    }
+
+    //
+    if (task != null) {
+
+      // Add listener to update our state
+      final LatchedFuture<State> futureState = task.execute();
+
+      // It will update the status
+      futureState.addListener(new FutureListener<State>() {
+        public void completed(State value) {
+          status.set(value.available);
+        }
+      });
+
+      //
+      return new Result() {
+        public State getState() {
+          try {
+            return futureState.get();
+          } catch (InterruptedException e) {
+            return status.get().getState();
+          } catch (ExecutionException e) {
+            return status.get().getState();
+          }
+        }
+      };
+    } else {
+      return new Result() {
+        public State getState() {
+          return _status.getState();
+        }
+      };
     }
   }
 
@@ -234,6 +378,9 @@ public class Processor implements Runnable {
   }
 
   private class ShellInvoker implements ShellProcessContext {
+
+    /** . */
+    private final LatchedFuture<State> result = new LatchedFuture<State>();
 
     public int getWidth() {
       return term.getWidth();
@@ -273,11 +420,11 @@ public class Processor implements Runnable {
 
         //
         if (response instanceof ShellResponse.Close) {
-          // This should force the next event to be a close event
-          term.close();
+          System.out.println("received close response");
+          result.set(State.WANT_CLOSE);
         } else {
           if (response instanceof ShellResponse.Cancelled) {
-            //
+            result.set(State.OPEN);
           } else {
             String ret = response.getText();
             log.debug("Command completed with result " + ret);
@@ -292,6 +439,9 @@ public class Processor implements Runnable {
 
           //
           writePrompt();
+
+          //
+          result.set(State.OPEN);
         }
       }
       finally {
@@ -309,39 +459,6 @@ public class Processor implements Runnable {
         throw new IllegalStateException("Already listening");
       }
       listeners.add(listener);
-    }
-  }
-
-  private void close() {
-
-    //
-    status.compareAndSet(STATUS_OPEN, STATUS_WANT_CLOSE);
-
-    //
-    if (status.compareAndSet(STATUS_WANT_CLOSE, STATUS_CLOSING)) {
-
-      //
-      log.debug("Closing processor");
-
-      // Make a copy
-      ArrayList<ProcessorListener> listeners = new ArrayList<ProcessorListener>();
-      synchronized (this.listeners) {
-        listeners.addAll(this.listeners);
-      }
-
-      // Status to closed, we won't process any further request
-      status.set(STATUS_CLOSED);
-
-      //
-      for (ProcessorListener listener : listeners) {
-        try {
-          log.debug("Closing " + listener.getClass().getSimpleName());
-          listener.closed();
-        }
-        catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
     }
   }
 }
