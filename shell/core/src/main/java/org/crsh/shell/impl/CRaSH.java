@@ -26,6 +26,7 @@ import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.shell.ErrorType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.util.TimestampedObject;
@@ -94,7 +95,7 @@ public class CRaSH implements Shell {
           clazz = groovyShell.getClassLoader().parseClass(script.getContent(), name);
         }
         catch (CompilationFailedException e) {
-          throw new CreateCommandException("Could not compile command script", e);
+          throw new CreateCommandException(ErrorType.INTERNAL, "Could not compile command script", e);
         }
 
         //
@@ -103,7 +104,7 @@ public class CRaSH implements Shell {
           providerRef = new TimestampedObject<Class<? extends ShellCommand>>(script.getTimestamp(), providerClass);
           commands.put(name, providerRef);
         } else {
-          throw new CreateCommandException("Parsed script " + clazz.getName() +
+          throw new CreateCommandException(ErrorType.INTERNAL, "Parsed script " + clazz.getName() +
             " does not implements " + CommandInvoker.class.getName());
         }
       }
@@ -119,7 +120,7 @@ public class CRaSH implements Shell {
       return providerRef.getObject().newInstance();
     }
     catch (Exception e) {
-      throw new CreateCommandException("Could not create command " + providerRef.getObject().getName() + " instance", e);
+      throw new CreateCommandException(ErrorType.INTERNAL, "Could not create command " + providerRef.getObject().getName() + " instance", e);
     }
   }
 
@@ -175,19 +176,22 @@ public class CRaSH implements Shell {
     return (String)groovyShell.evaluate("prompt();");
   }
 
-  public void process(String request, ShellProcessContext processContext) {
+  public void process(String CRaSHProcessFactory, ShellProcessContext processContext) {
     if (processContext == null) {
       throw new NullPointerException();
     }
 
     //
-    log.debug("Invoking request " + request);
+    log.debug("Invoking request " + CRaSHProcessFactory);
 
     //
-    CommandExecution cmdExe = new CommandExecution(this, request, processContext);
+    CRaSHProcessFactory cmdExe = new CRaSHProcessFactory(this, CRaSHProcessFactory);
 
     //
-    cmdExe.execute();
+    CRaSHProcess process = cmdExe.execute();
+
+    //
+    process.execute(processContext);
   }
 
   /**

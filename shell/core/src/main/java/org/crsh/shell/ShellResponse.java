@@ -139,8 +139,23 @@ public abstract class ShellResponse {
     /** . */
     private final Throwable throwable;
 
+    private final String msg;
+
     public Error(ErrorType type, Throwable throwable) {
       this.type = type;
+      this.msg = build(throwable);
+      this.throwable = throwable;
+    }
+
+    public Error(ErrorType type, String msg) {
+      this.type = type;
+      this.msg = msg;
+      this.throwable = null;
+    }
+
+    public Error(ErrorType type, String msg, Throwable throwable) {
+      this.type = type;
+      this.msg = msg;
       this.throwable = throwable;
     }
 
@@ -154,6 +169,10 @@ public abstract class ShellResponse {
 
     @Override
     public String getText() {
+      return msg;
+    }
+
+    private static String build(Throwable throwable) {
       String result;
       String msg = throwable.getMessage();
       if (msg == null) {
@@ -174,7 +193,7 @@ public abstract class ShellResponse {
     }
 
     public String toString() {
-      return "ShellResponse.Error[type=" + type + ",throwable=" + throwable.getMessage() + "]";
+      return "ShellResponse.Error[type=" + type + ",msg=" + msg + "]";
     }
   }
 }

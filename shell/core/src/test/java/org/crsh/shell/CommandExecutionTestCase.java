@@ -20,7 +20,6 @@
 package org.crsh.shell;
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
-import org.crsh.shell.impl.CreateCommandException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -36,7 +35,6 @@ public class CommandExecutionTestCase extends AbstractCommandTestCase {
 
   public void testInvalid() throws Exception {
     Throwable t = assertError("invalid");
-    assertEquals(CreateCommandException.class, t.getClass());
-    assertEquals(MultipleCompilationErrorsException.class, t.getCause().getClass());
+    assertEquals(MultipleCompilationErrorsException.class, t.getClass());
   }
 }

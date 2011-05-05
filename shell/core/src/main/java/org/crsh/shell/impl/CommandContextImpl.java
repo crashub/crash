@@ -27,12 +27,12 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CommandContextImpl implements CommandContext {
+class CommandContextImpl implements CommandContext {
 
   /** . */
   private final Map<String, Object> attributes;
 
-  public CommandContextImpl(Map<String, Object> attributes) {
+  CommandContextImpl(Map<String, Object> attributes) {
     this.attributes = attributes;
   }
 

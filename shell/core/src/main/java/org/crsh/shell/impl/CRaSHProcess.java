@@ -16,89 +16,60 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.shell.impl;
 
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
  */
-class CommandExecution implements ShellProcess {
+abstract class CRaSHProcess implements ShellProcess {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(CRaSH.class);
+  protected final CRaSH crash;
 
   /** . */
-  private final CRaSH crash;
+  protected final String request;
 
-  /** . */
-  private final String request;
-
-  /** . */
-  private final ShellProcessContext context;
-
-  CommandExecution(CRaSH crash, String request, ShellProcessContext context) {
+  protected CRaSHProcess(CRaSH crash, String request) {
     this.crash = crash;
     this.request = request;
-    this.context = context;
   }
 
-  void execute() {
+  final void execute(ShellProcessContext context) {
 
     //
     context.begin(this);
 
     //
     ShellResponse resp;
-    if ("bye".equals(request)) {
-      resp = new ShellResponse.Close();
-    } else {
-      // Create AST
-      Parser parser = new Parser(request);
-      AST ast = parser.parse();
-
-      //
-      if (ast instanceof AST.Expr) {
-        AST.Expr expr = (AST.Expr)ast;
-
-        // Create commands first
-        try {
-          resp = expr.createCommands(crash);
-        } catch (Exception e) {
-          resp = new ShellResponse.Error(ErrorType.EVALUATION, e);
-        }
-
-        if (resp == null) {
-          resp = expr.execute(context, crash.attributes);
-        }
-      } else {
-        resp = new ShellResponse.NoCommand();
-      }
+    try {
+      resp = invoke(context);
+    } catch (Throwable t) {
+      resp = new ShellResponse.Error(ErrorType.INTERNAL, t);
     }
+
+    //
+    context.end(resp);
 
     //
     if (resp instanceof ShellResponse.Error) {
       ShellResponse.Error error = (ShellResponse.Error)resp;
       Throwable t = error.getThrowable();
       if (t != null) {
-        log.error("Error while evaluating request '" + request + "' " + error.getText(), t);
+        crash.log.error("Error while evaluating request '" + request + "' " + error.getText(), t);
       } else {
-        log.error("Error while evaluating request '" + request + "' " + error.getText());
+        crash.log.error("Error while evaluating request '" + request + "' " + error.getText());
       }
     }
-
-    //
-    context.end(resp);
   }
 
+  abstract ShellResponse invoke(ShellProcessContext context);
+
   public void cancel() {
-    // No op for now
+    // No op
   }
 }

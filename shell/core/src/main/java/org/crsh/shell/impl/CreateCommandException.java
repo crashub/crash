@@ -19,24 +19,44 @@
 
 package org.crsh.shell.impl;
 
+import org.crsh.shell.ErrorType;
+import org.crsh.shell.ShellResponse;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CreateCommandException extends Exception {
+public final class CreateCommandException extends Exception {
 
-  public CreateCommandException() {
+  /** . */
+  private final ShellResponse response;
+
+  CreateCommandException(ShellResponse response) {
+    this.response = response;
   }
 
-  public CreateCommandException(String message) {
+  CreateCommandException(ErrorType errorType, String message) {
     super(message);
+
+    //
+    this.response = new ShellResponse.Error(errorType, message);
   }
 
-  public CreateCommandException(String message, Throwable cause) {
-    super(message, cause);
+  CreateCommandException(ErrorType errorType, String message, Throwable cause) {
+    super(message);
+
+    //
+    this.response = new ShellResponse.Error(errorType, message, cause);
   }
 
-  public CreateCommandException(Throwable cause) {
+  CreateCommandException(ErrorType errorType, Throwable cause) {
     super(cause);
+
+    //
+    this.response = new ShellResponse.Error(errorType, cause);
+  }
+
+  public ShellResponse getResponse() {
+    return response;
   }
 }
