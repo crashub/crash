@@ -35,14 +35,6 @@ public interface ShellProcessContext {
   int getWidth();
 
   /**
-   * This method is invoked before the process work begins. It provides the process callback that
-   * can be used during the process execution by the context.
-   *
-   * @param process the process
-   */
-  void begin(ShellProcess process);
-
-  /**
    * A callback made by the process when it needs to read a line of text on the term.
    *
    * @param msg the message to display prior reading the term

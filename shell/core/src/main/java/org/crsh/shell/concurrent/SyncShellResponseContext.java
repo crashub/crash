@@ -53,19 +53,14 @@ public class SyncShellResponseContext implements ShellProcessContext {
     this.response = null;
   }
 
+/*
   public void cancel() {
-    if (process == null) {
-      throw new IllegalStateException();
-    }
-    process.cancel();
+    throw new UnsupportedOperationException();
   }
 
+*/
   public int getWidth() {
     return wrapped.getWidth();
-  }
-
-  public void begin(ShellProcess process) {
-    this.process = process;
   }
 
   public String readLine(String msg, boolean echo) {

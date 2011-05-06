@@ -87,7 +87,8 @@ public abstract class AbstractCommandTestCase extends TestCase {
         resp.set(response);
       }
     };
-    shell.process(s, ctx);
+    ShellProcess process = shell.createProcess(s);
+    process.execute(ctx);
     return resp.get();
   }
 

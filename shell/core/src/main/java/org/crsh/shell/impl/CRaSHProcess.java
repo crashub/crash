@@ -39,21 +39,16 @@ abstract class CRaSHProcess implements ShellProcess {
     this.request = request;
   }
 
-  final void execute(ShellProcessContext context) {
-
-    //
-    context.begin(this);
-
-    //
+  public void execute(ShellProcessContext processContext) {
     ShellResponse resp;
     try {
-      resp = invoke(context);
+      resp = invoke(processContext);
     } catch (Throwable t) {
       resp = new ShellResponse.Error(ErrorType.INTERNAL, t);
     }
 
     //
-    context.end(resp);
+    processContext.end(resp);
 
     //
     if (resp instanceof ShellResponse.Error) {

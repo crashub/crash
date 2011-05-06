@@ -28,6 +28,7 @@ import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.Shell;
+import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.util.TimestampedObject;
 import org.crsh.util.Utils;
@@ -176,22 +177,14 @@ public class CRaSH implements Shell {
     return (String)groovyShell.evaluate("prompt();");
   }
 
-  public void process(String CRaSHProcessFactory, ShellProcessContext processContext) {
-    if (processContext == null) {
-      throw new NullPointerException();
-    }
+  public ShellProcess createProcess(String request) {
+    log.debug("Invoking request " + request);
 
     //
-    log.debug("Invoking request " + CRaSHProcessFactory);
+    CRaSHProcessFactory factory = new CRaSHProcessFactory(this, request);
 
     //
-    CRaSHProcessFactory cmdExe = new CRaSHProcessFactory(this, CRaSHProcessFactory);
-
-    //
-    CRaSHProcess process = cmdExe.execute();
-
-    //
-    process.execute(processContext);
+    return factory.create();
   }
 
   /**

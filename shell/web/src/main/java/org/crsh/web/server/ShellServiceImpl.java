@@ -82,7 +82,7 @@ public class ShellServiceImpl extends RemoteServiceServlet implements ShellServi
     StringBuilder sb = new StringBuilder();
     try {
       SyncShellResponseContext resp = new SyncShellResponseContext();
-      shell.process(s, resp);
+      shell.createProcess(s).execute(resp);
       String text = resp.getResponse().getText();
       sb.append(text);
     }

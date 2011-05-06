@@ -268,12 +268,11 @@ public class ProcessorTestCase extends TestCase {
     final CountDownLatch latch = new CountDownLatch(1);
     Controller controller = create(new BaseShell(new BaseProcessFactory() {
       @Override
-      public BaseProcess create() {
-        return new BaseProcess() {
+      public BaseProcess create(String request) {
+        return new BaseProcess(request) {
           ShellProcessContext context;
           @Override
           public void process(String request, ShellProcessContext processContext) {
-            processContext.begin(this);
             this.context = processContext;
           }
           @Override
@@ -315,8 +314,8 @@ public class ProcessorTestCase extends TestCase {
 
     Controller controller = create(new BaseShell(new BaseProcessFactory() {
       @Override
-      public BaseProcess create() {
-        return new BaseProcess() {
+      public BaseProcess create(String request) {
+        return new BaseProcess(request) {
           @Override
           protected ShellResponse execute(String request) {
             return new ShellResponse.Close();

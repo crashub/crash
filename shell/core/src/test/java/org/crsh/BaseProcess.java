@@ -30,10 +30,16 @@ import org.crsh.shell.ShellResponse;
 public class BaseProcess implements ShellProcess {
 
   /** . */
+  private final String request;
+
+  /** . */
   private ShellProcessContext processContext;
 
+  public BaseProcess(String request) {
+    this.request = request;
+  }
+
   public void process(String request, ShellProcessContext processContext) {
-    processContext.begin(this);
     this.processContext = processContext;
     try {
       ShellResponse resp = execute(request);
@@ -43,12 +49,17 @@ public class BaseProcess implements ShellProcess {
     }
   }
 
+  protected ShellResponse execute(String request) {
+    return new ShellResponse.Ok();
+  }
+
   protected final String readLine(String msg, boolean echo) {
     return processContext.readLine(msg, echo);
   }
 
-  protected ShellResponse execute(String request) {
-    return new ShellResponse.Ok();
+  public final void execute(ShellProcessContext processContext) {
+    this.processContext = processContext;
+    this.process(request, processContext);
   }
 
   public void cancel() {

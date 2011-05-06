@@ -45,9 +45,9 @@ public interface Shell {
    * Process a request.
    *
    * @param request the request to process
-   * @param processContext the process context
+   * @return the process
    */
-  void process(String request, ShellProcessContext processContext);
+  ShellProcess createProcess(String request);
 
   /**
    * Completion.

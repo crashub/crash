@@ -60,7 +60,7 @@ class CRaSHProcessFactory {
     }
   }
 
-  CRaSHProcess execute() {
+  CRaSHProcess create() {
 
     //
     if ("bye".equals(request)) {

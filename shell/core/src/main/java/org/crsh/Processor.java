@@ -220,7 +220,10 @@ public class Processor implements Runnable {
             ShellInvoker invoker = new ShellInvoker();
 
             // Process
-            shell.process(((TermEvent.ReadLine)event).getLine().toString(), invoker);
+            process = shell.createProcess(((TermEvent.ReadLine) event).getLine().toString());
+
+            //
+            process.execute(invoker);
 
             //
             if (line.length() > 0) {
@@ -384,10 +387,6 @@ public class Processor implements Runnable {
 
     public int getWidth() {
       return term.getWidth();
-    }
-
-    public void begin(ShellProcess process) {
-      Processor.this.process = process;
     }
 
     public String readLine(String msg, boolean echo) {

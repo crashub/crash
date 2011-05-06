@@ -73,8 +73,8 @@ public class AsyncShellTestCase extends TestCase {
     //
     BaseProcessFactory factory = new BaseProcessFactory() {
       @Override
-      public BaseProcess create() {
-        return new BaseProcess() {
+      public BaseProcess create(String request) {
+        return new BaseProcess(request) {
           @Override
           protected ShellResponse execute(String request) {
             String a = readLine("bar", true);
@@ -105,7 +105,7 @@ public class AsyncShellTestCase extends TestCase {
       }
     };
     SyncShellResponseContext respCtx2 = new SyncShellResponseContext(respCtx1);
-    asyncShell.process("foo", respCtx2);
+    asyncShell.createProcess("foo").execute(respCtx2);
 
     //
     ShellResponse resp = respCtx2.getResponse();
@@ -127,8 +127,8 @@ public class AsyncShellTestCase extends TestCase {
 
     BaseProcessFactory factory = new BaseProcessFactory() {
       @Override
-      public BaseProcess create() {
-        return new BaseProcess() {
+      public BaseProcess create(String request) {
+        return new BaseProcess(request) {
           @Override
           protected ShellResponse execute(String request) {
 
@@ -170,7 +170,8 @@ public class AsyncShellTestCase extends TestCase {
 
     //
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
-    asyncShell.process("foo", respCtx);
+    ShellProcess process = asyncShell.createProcess("foo");
+    process.execute(respCtx);
     assertEquals(Status.EVALUATING, asyncShell.getStatus());
     assertEquals(0, cancelled.get());
 
@@ -182,12 +183,12 @@ public class AsyncShellTestCase extends TestCase {
     assertEquals(0, cancelled.get());
 
     //
-    respCtx.cancel();
+    process.cancel();
     assertEquals(Status.CANCELED, asyncShell.getStatus());
     assertEquals(1, cancelled.get());
 
     //
-    respCtx.cancel();
+    process.cancel();
     assertEquals(Status.CANCELED, asyncShell.getStatus());
     assertEquals(1, cancelled.get());
 
@@ -207,7 +208,7 @@ public class AsyncShellTestCase extends TestCase {
     AsyncShell connector = new AsyncShell(executor, builder.build());
     status = 0;
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
-    connector.process("invoke " + AsyncShellTestCase.class.getName() + " bilto", respCtx);
+    connector.createProcess("invoke " + AsyncShellTestCase.class.getName() + " bilto").execute(respCtx);
     ShellResponse resp = respCtx.getResponse();
     assertTrue("Was not expecting response to be " + resp.getText(), resp instanceof ShellResponse.Ok);
     assertEquals(1, status);

@@ -27,15 +27,15 @@ public abstract class BaseProcessFactory {
 
   public static BaseProcessFactory NOOP = new BaseProcessFactory() {
     @Override
-    public BaseProcess create() {
-      return new BaseProcess();
+    public BaseProcess create(String request) {
+      return new BaseProcess(request);
     }
   };
 
   public static BaseProcessFactory ECHO = new BaseProcessFactory() {
     @Override
-    public BaseProcess create() {
-      return new BaseProcess() {
+    public BaseProcess create(String request) {
+      return new BaseProcess(request) {
         @Override
         protected ShellResponse execute(String request) {
           return new ShellResponse.Display(request);
@@ -44,6 +44,6 @@ public abstract class BaseProcessFactory {
     }
   };
 
-  public abstract BaseProcess create();
+  public abstract BaseProcess create(String request);
 
 }

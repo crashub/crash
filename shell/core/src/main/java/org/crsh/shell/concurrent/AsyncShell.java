@@ -43,7 +43,7 @@ public class AsyncShell implements Shell {
   private Shell shell;
 
   /** . */
-  private Foo current;
+  private Process current;
 
   /** . */
   private final ExecutorService executor;
@@ -78,21 +78,20 @@ public class AsyncShell implements Shell {
     }
   }
 
-  private class Foo implements ShellProcessContext, Runnable, ShellProcess {
+  private class Process implements ShellProcessContext, Runnable, ShellProcess {
 
 
     /** . */
     private final String request;
 
     /** . */
-    private final ShellProcessContext caller;
+    private ShellProcessContext caller;
 
     /** . */
     private ShellProcess callee;
 
-    private Foo(String request, ShellProcessContext caller) {
+    private Process(String request) {
       this.request = request;
-      this.caller = caller;
       this.callee = null;
     }
 
@@ -104,11 +103,6 @@ public class AsyncShell implements Shell {
 
     public String readLine(String msg, boolean echo) {
       return caller.readLine(msg, echo);
-    }
-
-    public void begin(ShellProcess process) {
-      caller.begin(this);
-      callee = process;
     }
 
     public void end(ShellResponse response) {
@@ -130,6 +124,25 @@ public class AsyncShell implements Shell {
 
     // ShellProcess implementation *************************************************************************************
 
+    public void execute(ShellProcessContext processContext) {
+      synchronized (lock) {
+
+        if (status != Status.AVAILABLE) {
+          throw new IllegalStateException("State was " + status);
+        }
+
+        //
+        // Update state
+        status = Status.EVALUATING;
+        current = this;
+        callee = shell.createProcess(request);
+        caller = processContext;
+      }
+
+      //
+      executor.submit(current);
+    }
+
     public void cancel() {
       synchronized (lock) {
         if (status == Status.EVALUATING) {
@@ -142,7 +155,7 @@ public class AsyncShell implements Shell {
     // Runnable implementation *****************************************************************************************
 
     public void run() {
-      shell.process(request, current);
+      callee.execute(this);
     }
   }
 
@@ -160,21 +173,7 @@ public class AsyncShell implements Shell {
     return shell.complete(prefix);
   }
 
-  public void process(String request, ShellProcessContext processContext) {
-
-    synchronized (lock) {
-
-      if (status != Status.AVAILABLE) {
-        throw new IllegalStateException("State was " + status);
-      }
-
-      //
-      // Update state
-      status = Status.EVALUATING;
-      current = new Foo(request, processContext);
-    }
-
-    //
-    executor.submit(current);
+  public ShellProcess createProcess(String request) {
+    return new Process(request);
   }
 }

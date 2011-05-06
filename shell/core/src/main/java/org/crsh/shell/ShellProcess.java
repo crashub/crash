@@ -28,6 +28,13 @@ package org.crsh.shell;
 public interface ShellProcess {
 
   /**
+   * Begin the process.
+   *
+   * @param processContext the process context
+   */
+  void execute(ShellProcessContext processContext);
+
+  /**
    * Attempt to cancel the shell process.
    */
   void cancel();

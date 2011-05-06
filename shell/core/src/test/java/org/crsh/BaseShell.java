@@ -19,6 +19,7 @@
 package org.crsh;
 
 import org.crsh.shell.Shell;
+import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 
 import java.util.Collections;
@@ -71,12 +72,8 @@ public class BaseShell implements Shell {
     return "% ";
   }
 
-  /**
-   * Execute the base process returned by the factory method {@link org.crsh.BaseProcessFactory#create()}.
-   */
-  public void process(String request, ShellProcessContext processContext) {
-    BaseProcess process = factory.create();
-    process.process(request, processContext);
+  public ShellProcess createProcess(String request) {
+    return factory.create(request);
   }
 
   /**
