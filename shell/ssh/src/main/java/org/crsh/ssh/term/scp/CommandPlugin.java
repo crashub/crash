@@ -26,9 +26,13 @@ import org.crsh.plugin.CRaSHPlugin;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CommandPlugin extends CRaSHPlugin
-{
+public abstract class CommandPlugin extends CRaSHPlugin<CommandPlugin> {
 
-   public abstract Command createCommand(String command);
+  @Override
+  public CommandPlugin getImplementation() {
+    return this;
+  }
+
+  public abstract Command createCommand(String command);
 
 }

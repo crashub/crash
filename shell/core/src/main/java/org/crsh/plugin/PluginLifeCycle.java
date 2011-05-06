@@ -32,9 +32,6 @@ public abstract class PluginLifeCycle {
   protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
-  private PluginManager<CRaSHPlugin> manager;
-
-  /** . */
   private PluginContext context;
 
   public PluginContext getContext() {
@@ -60,21 +57,10 @@ public abstract class PluginLifeCycle {
     }
 
     //
-    manager = new PluginManager<CRaSHPlugin>(context, CRaSHPlugin.class);
-
-    //
     context.start();
-
-    // Load plugins
-    manager.getPlugins();
   }
 
   public final void stop() {
-
-    //
-    manager.shutdown();
-
-    //
     context.stop();
   }
 }

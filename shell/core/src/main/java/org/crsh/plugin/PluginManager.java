@@ -22,17 +22,13 @@ package org.crsh.plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
+import java.util.*;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class PluginManager<P extends CRaSHPlugin> {
+public class PluginManager {
 
   /** . */
   private final Logger log = LoggerFactory.getLogger(PluginManager.class);
@@ -41,25 +37,21 @@ public class PluginManager<P extends CRaSHPlugin> {
   private final PluginContext context;
 
   /** . */
-  private List<P> plugins;
+  private CRaSHPlugin<?>[] plugins;
 
-  /** . */
-  private final Class<P> pluginType;
-
-  public PluginManager(PluginContext context, Class<P> pluginType) {
+  public PluginManager(PluginContext context) {
     this.context = context;
-    this.pluginType = pluginType;
     this.plugins = null;
   }
 
-  public synchronized Iterable<P> getPlugins() {
+  public synchronized <T> Iterable<T> getPlugins(Class<T> pluginType) {
     if (plugins == null) {
 
       //
-      ArrayList<P> plugins = new ArrayList<P>();
+      ArrayList<CRaSHPlugin<?>> plugins = new ArrayList<CRaSHPlugin<?>>();
       try {
-        ServiceLoader<P> loader = ServiceLoader.load(pluginType, context.getLoader());
-        for (P plugin : loader) {
+        ServiceLoader<CRaSHPlugin> loader = ServiceLoader.load(CRaSHPlugin.class, context.getLoader());
+        for (CRaSHPlugin<?> plugin : loader) {
           log.info("Loaded plugin " + plugin);
           plugins.add(plugin);
         }
@@ -69,10 +61,10 @@ public class PluginManager<P extends CRaSHPlugin> {
       }
 
       //
-      for (Iterator<P> i = plugins.iterator();i.hasNext();) {
+      for (Iterator<CRaSHPlugin<?>> i = plugins.iterator();i.hasNext();) {
 
         //
-        P plugin = i.next();
+        CRaSHPlugin<?> plugin = i.next();
 
         //
         plugin.context = context;
@@ -89,16 +81,32 @@ public class PluginManager<P extends CRaSHPlugin> {
       }
 
       //
-      this.plugins = plugins;
+      this.plugins = plugins.toArray(new CRaSHPlugin<?>[plugins.size()]);
     }
 
     //
-    return plugins;
+    List<T> tmp = Collections.emptyList();
+
+    //
+    for (CRaSHPlugin<?> plugin : plugins) {
+      if (plugin.getType().isAssignableFrom(pluginType)) {
+        if (tmp.isEmpty()) {
+          tmp = new ArrayList<T>();
+        }
+        T t = pluginType.cast(plugin);
+        tmp.add(t);
+      }
+    }
+
+    //
+    return tmp;
   }
 
   public void shutdown() {
-    for (CRaSHPlugin plugin : plugins) {
-      plugin.destroy();
+    if (plugins != null) {
+      for (CRaSHPlugin<?> plugin : plugins) {
+        plugin.destroy();
+      }
     }
   }
 }

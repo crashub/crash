@@ -31,10 +31,15 @@ import java.net.URL;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SSHPlugin extends CRaSHPlugin {
+public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   /** . */
   private SSHLifeCycle lifeCycle;
+
+  @Override
+  public SSHPlugin getImplementation() {
+    return this;
+  }
 
   @Override
   public void init() {

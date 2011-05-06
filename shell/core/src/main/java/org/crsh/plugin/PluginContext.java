@@ -27,14 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +47,9 @@ public class PluginContext {
 
   /** . */
   private static final Logger log = LoggerFactory.getLogger(PluginContext.class);
+
+  /** . */
+  private final PluginManager manager;
 
   /** . */
   private final ClassLoader loader;
@@ -117,6 +113,7 @@ public class PluginContext {
     this.vfs = fs;
     this.properties = new HashMap<PropertyDescriptor<?>, Property<?>>();
     this.started = false;
+    this.manager = new PluginManager(this);
   }
 
   public final String getVersion() {
@@ -293,9 +290,11 @@ public class PluginContext {
   }
 
   public final synchronized  void start() {
-    Integer refreshRate = getProperty(PropertyDescriptor.VFS_REFRESH_PERIOD);
-    TimeUnit timeUnit = getProperty(PropertyDescriptor.VFS_REFRESH_UNIT);
     if (!started) {
+
+      // Start refresh
+      Integer refreshRate = getProperty(PropertyDescriptor.VFS_REFRESH_PERIOD);
+      TimeUnit timeUnit = getProperty(PropertyDescriptor.VFS_REFRESH_UNIT);
       if (refreshRate != null && refreshRate > 0) {
         TimeUnit tu = timeUnit != null ? timeUnit : TimeUnit.SECONDS;
         executor =  new ScheduledThreadPoolExecutor(1);
@@ -306,6 +305,11 @@ public class PluginContext {
           }
         }, 0, refreshRate, tu);
       }
+
+      // Init plugins
+      manager.getPlugins(Object.class);
+
+      //
       started = true;
     } else {
       log.warn("Attempt to double start");
@@ -313,12 +317,25 @@ public class PluginContext {
   }
 
   public final synchronized void stop() {
+
+    //
     if (started) {
-      ScheduledExecutorService tmp = executor;
-      executor = null;
-      tmp.shutdown();
+
+      // Shutdown manager
+      manager.shutdown();
+
+      //
+      if (executor != null) {
+        ScheduledExecutorService tmp = executor;
+        executor = null;
+        tmp.shutdown();
+      }
     } else {
       log.warn("Attempt to stop when stopped");
     }
+  }
+
+  public <T> Iterable<T> getPlugins(Class<T> pluginType) {
+    return manager.getPlugins(pluginType);
   }
 }

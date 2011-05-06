@@ -19,14 +19,16 @@
 
 package org.crsh.plugin;
 
+import org.crsh.util.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
+ * @param <P> the plugin type
  */
-public abstract class CRaSHPlugin {
+public abstract class CRaSHPlugin<P> {
 
   /** . */
   protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -34,9 +36,21 @@ public abstract class CRaSHPlugin {
   /** . */
   PluginContext context;
 
+  private final Class<P> type;
+
+  protected CRaSHPlugin() {
+    this.type = (Class<P>)TypeResolver.resolve(getClass(), CRaSHPlugin.class, 0);
+  }
+
   protected final PluginContext getContext() {
     return context;
   }
+
+  public Class<P> getType() {
+    return type;
+  }
+
+  public abstract P getImplementation();
 
   public void init() {
   }

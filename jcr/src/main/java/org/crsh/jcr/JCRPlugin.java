@@ -30,7 +30,7 @@ import java.beans.IntrospectionException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class JCRPlugin extends CRaSHPlugin
+public class JCRPlugin extends CRaSHPlugin<JCRPlugin>
 {
 
    /** . */
@@ -39,7 +39,12 @@ public class JCRPlugin extends CRaSHPlugin
    /** . */
    private static boolean integrated = false;
 
-   @Override
+  @Override
+  public JCRPlugin getImplementation() {
+    return this;
+  }
+
+  @Override
    public void init()
    {
       // Force integration of node meta class

@@ -29,10 +29,15 @@ import org.crsh.telnet.term.TelnetLifeCycle;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetPlugin extends CRaSHPlugin {
+public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
 
   /** . */
   private TelnetLifeCycle lifeCycle;
+
+  @Override
+  public TelnetPlugin getImplementation() {
+    return this;
+  }
 
   @Override
   public void init() {
