@@ -22,7 +22,7 @@ package org.crsh.telnet.term;
 import net.wimpi.telnetd.TelnetD;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
-import org.crsh.term.CRaSHLifeCycle;
+import org.crsh.term.TermLifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ import java.util.Properties;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetLifeCycle extends CRaSHLifeCycle {
+public class TelnetLifeCycle extends TermLifeCycle {
 
   /** . */
   private final Logger log = LoggerFactory.getLogger(TelnetLifeCycle.class);

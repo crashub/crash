@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class CRaSHLifeCycle {
+public abstract class TermLifeCycle {
 
   /** . */
   private ShellFactory builder;
@@ -39,7 +39,7 @@ public abstract class CRaSHLifeCycle {
   /** . */
   private ExecutorService executor;
 
-  protected CRaSHLifeCycle(PluginContext context) {
+  protected TermLifeCycle(PluginContext context) {
     if (context == null) {
       throw new NullPointerException();
     }

@@ -21,13 +21,11 @@ package org.crsh.ssh.term;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.Session;
 import org.apache.sshd.server.PasswordAuthenticator;
-import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginManager;
-import org.crsh.ssh.term.scp.CommandPlugin;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
-import org.crsh.term.CRaSHLifeCycle;
+import org.crsh.term.TermLifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +35,7 @@ import java.net.URL;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SSHLifeCycle extends CRaSHLifeCycle {
+public class SSHLifeCycle extends TermLifeCycle {
 
   /** . */
   public static final Session.AttributeKey<String> USERNAME = new Session.AttributeKey<java.lang.String>();
