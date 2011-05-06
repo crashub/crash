@@ -106,6 +106,8 @@
         </executions>
         <configuration>
           <webappDirectory>${webappDirectory}</webappDirectory>
+          <archiveClasses>true</archiveClasses>
+          <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
 
@@ -135,15 +137,6 @@
         </dependencies>
         <configuration>
           <sdkDir>${crsh.appengine.sdk}</sdkDir>
-        </configuration>
-      </plugin>
-
-      <!-- Configure war plugin behavior -->
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <archiveClasses>true</archiveClasses>
-          <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
 
