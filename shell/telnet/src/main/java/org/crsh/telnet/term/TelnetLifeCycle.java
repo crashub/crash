@@ -20,6 +20,12 @@
 package org.crsh.telnet.term;
 
 import net.wimpi.telnetd.TelnetD;
+import net.wimpi.telnetd.io.terminal.TerminalManager;
+import net.wimpi.telnetd.net.Connection;
+import net.wimpi.telnetd.net.ConnectionManager;
+import net.wimpi.telnetd.net.PortListener;
+import net.wimpi.telnetd.shell.ShellManager;
+import net.wimpi.telnetd.util.StringUtil;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.term.TermLifeCycle;
@@ -27,7 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -39,13 +48,17 @@ public class TelnetLifeCycle extends TermLifeCycle {
   private final Logger log = LoggerFactory.getLogger(TelnetLifeCycle.class);
 
   /** . */
-  private TelnetD daemon;
-
-  /** . */
-  static TelnetLifeCycle instance;
-
-  /** . */
   private Integer port;
+
+  /** . */
+  private List<PortListener> listeners;
+
+  /** . */
+  private static final ConcurrentHashMap<ConnectionManager, TelnetLifeCycle> map = new ConcurrentHashMap<ConnectionManager, TelnetLifeCycle>();
+
+  static TelnetLifeCycle getLifeCycle(Connection conn) {
+    return map.get(conn.getConnectionData().getManager());
+  }
 
   public TelnetLifeCycle(PluginContext context) {
     super(context);
@@ -61,11 +74,6 @@ public class TelnetLifeCycle extends TermLifeCycle {
 
   @Override
   protected synchronized void doInit() throws Exception {
-    if (instance != null) {
-      throw new IllegalStateException("An instance already exists");
-    }
-
-    //
     String s = getContext().loadResource("telnet.properties", ResourceKind.CONFIG).getContent();
     Properties props = new Properties();
     props.load(new ByteArrayInputStream(s.getBytes("ISO-8859-1")));
@@ -79,20 +87,42 @@ public class TelnetLifeCycle extends TermLifeCycle {
     }
 
     //
-    TelnetD daemon = TelnetD.createTelnetD(props);
-    daemon.start();
+    ShellManager.createShellManager(props);
 
     //
-    this.daemon = daemon;
-    instance = this;
+    TerminalManager.createTerminalManager(props);
+
+    //
+    ArrayList<PortListener> listeners = new ArrayList<PortListener>();
+    String[] listnames = StringUtil.split(props.getProperty("listeners"), ",");
+    for (String listname : listnames) {
+      PortListener listener = PortListener.createPortListener(listname, props);
+      listeners.add(listener);
+    }
+
+    //
+    this.listeners = listeners;
+
+    // Start listeners
+    for (PortListener listener : this.listeners) {
+      listener.start();
+      map.put(listener.getConnectionManager(), this);
+    }
   }
 
   @Override
   protected synchronized void doDestroy() {
-    instance = null;
-    if (daemon != null) {
-      daemon.stop();
-      daemon = null;
+    if (listeners != null) {
+      List<PortListener> listeners = this.listeners;
+      this.listeners = null;
+      for (PortListener listener : listeners) {
+        try {
+          listener.stop();
+        } catch (Exception ignore) {
+        } finally {
+          map.remove(listener.getConnectionManager());
+        }
+      }
     }
   }
 }

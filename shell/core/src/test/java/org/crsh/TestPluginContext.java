@@ -20,6 +20,7 @@
 package org.crsh;
 
 import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.PluginDiscovery;
 import org.crsh.plugin.ServiceLoaderDiscovery;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
@@ -30,13 +31,21 @@ import org.crsh.vfs.Path;
  */
 public class TestPluginContext extends PluginContext {
 
-  public TestPluginContext() throws Exception {
-    super(
-        new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()),
-        new FS().mount(Thread.currentThread().getContextClassLoader(),
-        Path.get("/crash/")), Thread.currentThread().getContextClassLoader());
+  private TestPluginContext(PluginDiscovery discovery, FS fs, ClassLoader loader) throws Exception {
+    super(discovery, fs, loader);
 
     //
     refresh();
+  }
+
+  public TestPluginContext(PluginDiscovery discovery) throws Exception {
+    this(
+        discovery,
+        new FS().mount(Thread.currentThread().getContextClassLoader(),
+        Path.get("/crash/")), Thread.currentThread().getContextClassLoader());
+  }
+
+  public TestPluginContext() throws Exception {
+    this(new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()));
   }
 }

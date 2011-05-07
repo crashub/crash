@@ -21,19 +21,17 @@ package org.crsh.telnet.term;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import net.wimpi.telnetd.io.TerminalIO;
+import org.apache.commons.net.telnet.TelnetClient;
 import org.crsh.TestPluginContext;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.SimplePluginDiscovery;
 import org.crsh.telnet.TelnetPlugin;
+import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
 import org.crsh.term.spi.TermIOHandler;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -41,25 +39,22 @@ import java.util.concurrent.CountDownLatch;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ClientCloseTestCase extends TestCase {
+public class ReadTestCase extends TestCase {
 
   /** . */
   private TestPluginContext ctx;
 
   /** . */
-  private final CountDownLatch latch1 = new CountDownLatch(1);
+  private CountDownLatch latch;
 
   /** . */
-  private final CountDownLatch latch2 = new CountDownLatch(1);
-
-  /** . */
-  private Thread thread;
-
-  /** . */
-  private List<Integer> read = new ArrayList<Integer>();
+  private List<Object> read;
 
   /** . */
   private Throwable failed;
+
+  /** . */
+  private OutputStream out;
 
   private class Handler extends CRaSHPlugin<TermIOHandler> implements TermIOHandler {
     @Override
@@ -67,16 +62,28 @@ public class ClientCloseTestCase extends TestCase {
       return this;
     }
     public void handle(TermIO io) {
-      thread = Thread.currentThread();
-      latch1.countDown();
       try {
-        int i = io.read();
-        read.add(i);
+        int code = io.read();
+        CodeType decode = io.decode(code);
+        read.add(decode);
+        if (decode == CodeType.CHAR) {
+          read.add(code);
+        }
       } catch (Throwable t) {
         failed = t;
       } finally {
-        latch2.countDown();
+        io.close();
+        latch.countDown();
       }
+    }
+  }
+
+  protected final void assertDone() throws InterruptedException {
+    latch.await();
+    if (failed != null) {
+      AssertionFailedError afe = new AssertionFailedError();
+      afe.initCause(failed);
+      throw afe;
     }
   }
 
@@ -88,7 +95,19 @@ public class ClientCloseTestCase extends TestCase {
 
     //
     ctx = new TestPluginContext(discovery);
+    latch = new CountDownLatch(1);
+    read = new ArrayList<Object>();
+    failed = null;
+
+    //
     ctx.start();
+
+    //
+    TelnetClient client = new TelnetClient();
+    client.connect("localhost", 5000);
+
+    //
+    out = client.getOutputStream();
   }
 
   @Override
@@ -96,19 +115,28 @@ public class ClientCloseTestCase extends TestCase {
     ctx.stop();
   }
 
-  public void testMain() throws Exception {
-    Socket socket = new Socket();
-    socket.connect(new InetSocketAddress("localhost", 5000));
-    latch1.await();
-    Thread.sleep(10); // yes it's not deterministic, but well...
-    socket.close();
-    latch2.await();
-    if (failed != null) {
-      AssertionFailedError afe = new AssertionFailedError();
-      afe.initCause(failed);
-      throw afe;
-    }
+  public void testChar() throws Exception {
+    out.write(" A".getBytes());
+    out.flush();
+    assertDone();
+    assertEquals(2, read.size());
+    assertEquals(CodeType.CHAR, read.get(0));
+    assertEquals(65, read.get(1));
+  }
+
+  public void testBreak() throws Exception {
+    out.write(" \t".getBytes());
+    out.flush();
+    assertDone();
     assertEquals(1, read.size());
-    assertEquals(TerminalIO.HANDLED, (int)read.get(0));
+    assertEquals(CodeType.TAB, read.get(0));
+  }
+
+  public void testDelete() throws Exception {
+    out.write(" \b".getBytes());
+    out.flush();
+    assertDone();
+    assertEquals(1, read.size());
+    assertEquals(CodeType.DELETE, read.get(0));
   }
 }

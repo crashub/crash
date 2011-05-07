@@ -38,6 +38,21 @@
     <!-- For unit testing purpose -->
 
     <dependency>
+      <groupId>commons-net</groupId>
+      <artifactId>commons-net</artifactId>
+      <version>2.2</version>
+    </dependency>
+<!--
+    <dependency>
+      <groupId>foo</groupId>
+      <artifactId>bar</artifactId>
+      <version>2.6</version>
+      <scope>system</scope>
+      <systemPath>${pom.basedir}/jta26.jar</systemPath>
+    </dependency>
+-->
+
+    <dependency>
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
       <scope>test</scope>
