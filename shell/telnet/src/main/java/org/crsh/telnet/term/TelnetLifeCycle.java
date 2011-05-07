@@ -66,7 +66,7 @@ public class TelnetLifeCycle extends TermLifeCycle {
     }
 
     //
-    String s = getShellContext().loadResource("telnet.properties", ResourceKind.CONFIG).getContent();
+    String s = getContext().loadResource("telnet.properties", ResourceKind.CONFIG).getContent();
     Properties props = new Properties();
     props.load(new ByteArrayInputStream(s.getBytes("ISO-8859-1")));
 

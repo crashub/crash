@@ -19,10 +19,9 @@
 package org.crsh.term;
 
 import org.crsh.plugin.PluginContext;
-import org.crsh.shell.ShellFactory;
+import org.crsh.term.spi.TermIOHandler;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -31,13 +30,7 @@ import java.util.concurrent.Executors;
 public abstract class TermLifeCycle {
 
   /** . */
-  private ShellFactory builder;
-
-  /** . */
   private final PluginContext context;
-
-  /** . */
-  private ExecutorService executor;
 
   protected TermLifeCycle(PluginContext context) {
     if (context == null) {
@@ -49,14 +42,6 @@ public abstract class TermLifeCycle {
   }
 
   public final void init() {
-    ExecutorService executor = Executors.newFixedThreadPool(3);
-    ShellFactory builder = new ShellFactory(context);
-
-    //
-    this.builder = builder;
-    this.executor = executor;
-
-    //
     try {
       doInit();
     } catch (Exception e) {
@@ -66,24 +51,18 @@ public abstract class TermLifeCycle {
 
   public final void destroy() {
     doDestroy();
-
-    //
-    executor.shutdownNow();
-
-    //
-    this.executor = null;
-    this.builder = null;
   }
 
-  public final ExecutorService getExecutor() {
-    return executor;
+  public final TermIOHandler getHandler() {
+    Iterator<TermIOHandler> handlers = context.getPlugins(TermIOHandler.class).iterator();
+    if (handlers.hasNext()) {
+      return handlers.next();
+    } else {
+      return null;
+    }
   }
 
-  public final ShellFactory getShellFactory() {
-    return builder;
-  }
-
-  public final PluginContext getShellContext() {
+  public final PluginContext getContext() {
     return context;
   }
 

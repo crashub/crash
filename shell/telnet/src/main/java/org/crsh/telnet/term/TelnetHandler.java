@@ -22,11 +22,7 @@ package org.crsh.telnet.term;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
-import org.crsh.ProcessorListener;
-import org.crsh.shell.concurrent.AsyncShell;
-import org.crsh.term.BaseTerm;
-import org.crsh.shell.impl.CRaSH;
-import org.crsh.Processor;
+import org.crsh.term.spi.TermIOHandler;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -34,53 +30,10 @@ import org.crsh.Processor;
  */
 public class TelnetHandler implements Shell {
 
-  /** . */
-  private BaseTerm term;
-
-  /** . */
-  private AsyncShell asyncShell;
-
-  /** . */
-  private CRaSH shell;
-
-  /** . */
-  private Processor processor;
-
-  /** . */
-  private TelnetIO io;
-
   public void run(Connection conn) {
-
-    //
-    shell = TelnetLifeCycle.instance.getShellFactory().build();
-    asyncShell = new AsyncShell(TelnetLifeCycle.instance.getExecutor(), shell);
-    io = new TelnetIO(conn);
-    term = new BaseTerm(io);
-    processor = new Processor(term, asyncShell);
-
-    //
-    processor.addListener(new ProcessorListener() {
-      public void closed() {
-        io.close();
-      }
-    });
-
-    //
-    processor.addListener(new ProcessorListener() {
-      public void closed() {
-        asyncShell.close();
-      }
-    });
-
-    //
-    processor.addListener(new ProcessorListener() {
-      public void closed() {
-        shell.close();
-      }
-    });
-
-    //
-    processor.run();
+    TelnetIO io = new TelnetIO(conn);
+    TermIOHandler handler = TelnetLifeCycle.instance.getHandler();
+    handler.handle(io);
   }
 
   public void connectionIdle(ConnectionEvent connectionEvent) {

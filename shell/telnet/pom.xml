@@ -38,6 +38,11 @@
     <!-- For unit testing purpose -->
 
     <dependency>
+      <groupId>jline</groupId>
+      <artifactId>jline</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.core</artifactId>
       <type>test-jar</type>

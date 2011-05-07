@@ -75,11 +75,12 @@ public class PluginContext {
   /**
    * Create a new plugin context.
    *
+   * @param discovery the plugin discovery
    * @param fs the file system
    * @param loader the loader
    * @throws NullPointerException if any parameter argument is null
    */
-  public PluginContext(FS fs, ClassLoader loader) throws NullPointerException {
+  public PluginContext(PluginDiscovery discovery, FS fs, ClassLoader loader) throws NullPointerException {
     if (fs == null) {
       throw new NullPointerException();
     }
@@ -113,7 +114,7 @@ public class PluginContext {
     this.vfs = fs;
     this.properties = new HashMap<PropertyDescriptor<?>, Property<?>>();
     this.started = false;
-    this.manager = new PluginManager(this);
+    this.manager = new PluginManager(this, discovery);
   }
 
   public final String getVersion() {
@@ -306,8 +307,8 @@ public class PluginContext {
         }, 0, refreshRate, tu);
       }
 
-      // Init plugins
-      manager.getPlugins(Object.class);
+      // Init services
+      manager.getPlugins(Service.class);
 
       //
       started = true;

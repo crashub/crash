@@ -23,9 +23,9 @@ import org.apache.sshd.common.Session;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.PluginManager;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.term.TermLifeCycle;
+import org.crsh.term.spi.TermIOHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,13 +89,15 @@ public class SSHLifeCycle extends TermLifeCycle {
   @Override
   protected void doInit() {
     try {
-      PluginManager commandPlugins = new PluginManager(getShellContext());
+
+      //
+      TermIOHandler handler = getHandler();
 
       //
       SshServer server = SshServer.setUpDefaultServer();
       server.setPort(port);
-      server.setShellFactory(new CRaSHCommandFactory(getShellFactory(), getExecutor()));
-      server.setCommandFactory(new SCPCommandFactory(commandPlugins));
+      server.setShellFactory(new CRaSHCommandFactory(handler));
+      server.setCommandFactory(new SCPCommandFactory(getContext()));
       server.setKeyPairProvider(new CRaSHPEMGeneratorHostKeyProvider(keyPath, keyURL));
 
       //

@@ -40,7 +40,7 @@ public class Main {
   public static void main(String[] args) throws Exception {
 
     //
-    final Bootstrap bootstrap = new Bootstrap();
+    final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
     // Register shutdown hook
     Runtime.getRuntime().addShutdownHook(new Thread() {

@@ -22,6 +22,7 @@ package org.crsh.ssh;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.plugin.Service;
 import org.crsh.ssh.term.SSHLifeCycle;
 import org.crsh.vfs.Resource;
 
@@ -31,7 +32,7 @@ import java.net.URL;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
+public class SSHPlugin extends CRaSHPlugin<SSHPlugin> implements Service {
 
   /** . */
   private SSHLifeCycle lifeCycle;

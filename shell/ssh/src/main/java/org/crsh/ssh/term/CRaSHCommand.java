@@ -18,16 +18,7 @@
  */
 package org.crsh.ssh.term;
 
-import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
-import org.crsh.Processor;
-import org.crsh.ProcessorListener;
-import org.crsh.shell.Shell;
-import org.crsh.shell.concurrent.AsyncShell;
-import org.crsh.shell.impl.CRaSH;
-import org.crsh.term.BaseTerm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -36,9 +27,6 @@ import java.io.IOException;
  * @version $Revision$
  */
 public class CRaSHCommand extends AbstractCommand implements Runnable {
-
-  /** . */
-  private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
   private final CRaSHCommandFactory factory;
@@ -56,38 +44,11 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   /** . */
   private SSHIO io;
 
-  /** . */
-  private Processor processor;
-
   public void start(Environment env) throws IOException {
-    final CRaSH shell = factory.builder.build();
-    final AsyncShell asyncShell = new AsyncShell(factory.executor, shell);
 
     //
     context = new SSHContext(env);
     io = new SSHIO(this);
-    processor = new Processor(new BaseTerm(io), asyncShell);
-
-    //
-    processor.addListener(new ProcessorListener() {
-      public void closed() {
-        io.close();
-      }
-    });
-
-    //
-    processor.addListener(new ProcessorListener() {
-      public void closed() {
-        asyncShell.close();
-      }
-    });
-
-    //
-    processor.addListener(new ProcessorListener() {
-      public void closed() {
-        shell.close();
-      }
-    });
 
     //
     thread = new Thread(this, "CRaSH");
@@ -105,7 +66,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
 
   public void run() {
     try {
-      processor.run();
+      factory.handler.handle(io);
     } finally {
       callback.onExit(0);
     }

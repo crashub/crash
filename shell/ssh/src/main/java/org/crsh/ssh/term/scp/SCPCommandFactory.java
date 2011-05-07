@@ -21,7 +21,7 @@ package org.crsh.ssh.term.scp;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.CommandFactory;
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.plugin.PluginManager;
+import org.crsh.plugin.PluginContext;
 import org.crsh.ssh.term.FailCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +36,10 @@ public class SCPCommandFactory implements CommandFactory {
   private static final Logger log = LoggerFactory.getLogger(SCPCommandFactory.class);
 
   /** . */
-  private final PluginManager plugins;
+  private final PluginContext pluginContext;
 
-  public SCPCommandFactory(PluginManager plugins) {
-    this.plugins = plugins;
+  public SCPCommandFactory(PluginContext pluginContext) {
+    this.pluginContext = pluginContext;
   }
 
   public Command createCommand(String command) {
@@ -49,8 +49,8 @@ public class SCPCommandFactory implements CommandFactory {
     //
     log.debug("About to execute shell command " + command);
 
-    for (CRaSHPlugin<? extends CommandPlugin> plugin : plugins.getPlugins(CommandPlugin.class)) {
-      Command cmd = plugin.getImplementation().createCommand(command);
+    for (CommandPlugin plugin : pluginContext.getPlugins(CommandPlugin.class)) {
+      Command cmd = plugin.createCommand(command);
       if (cmd != null) {
         return cmd;
       }

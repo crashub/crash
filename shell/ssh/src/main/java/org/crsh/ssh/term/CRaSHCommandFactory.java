@@ -20,9 +20,7 @@ package org.crsh.ssh.term;
 
 import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
-import org.crsh.shell.ShellFactory;
-
-import java.util.concurrent.ExecutorService;
+import org.crsh.term.spi.TermIOHandler;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -31,17 +29,15 @@ import java.util.concurrent.ExecutorService;
 public class CRaSHCommandFactory implements Factory<Command> {
 
   /** . */
-  final ShellFactory builder;
+  final TermIOHandler handler;
 
-  /** . */
-  final ExecutorService executor;
-
-  public CRaSHCommandFactory(ShellFactory builder, ExecutorService executor) {
-    if (builder == null) {
+  public CRaSHCommandFactory(TermIOHandler handler) {
+    if (handler == null) {
       throw new NullPointerException("No null builder accepted");
     }
-    this.builder = builder;
-    this.executor = executor;
+
+    //
+    this.handler = handler;
   }
 
   public Command create() {

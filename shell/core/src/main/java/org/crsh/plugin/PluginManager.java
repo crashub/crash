@@ -19,6 +19,7 @@
 
 package org.crsh.plugin;
 
+import org.crsh.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,51 +38,27 @@ public class PluginManager {
   private final PluginContext context;
 
   /** . */
-  private CRaSHPlugin<?>[] plugins;
+  private List<CRaSHPlugin<?>> plugins;
 
-  public PluginManager(PluginContext context) {
+  /** . */
+  private PluginDiscovery discovery;
+
+  public PluginManager(PluginContext context, PluginDiscovery discovery) {
     this.context = context;
     this.plugins = null;
+    this.discovery = discovery;
   }
 
-  public synchronized <T> Iterable<T> getPlugins(Class<T> pluginType) {
+  public synchronized <T> Iterable<T> getPlugins(Class<T> wantedType) {
+
+    //
     if (plugins == null) {
-
-      //
-      ArrayList<CRaSHPlugin<?>> plugins = new ArrayList<CRaSHPlugin<?>>();
-      try {
-        ServiceLoader<CRaSHPlugin> loader = ServiceLoader.load(CRaSHPlugin.class, context.getLoader());
-        for (CRaSHPlugin<?> plugin : loader) {
-          log.info("Loaded plugin " + plugin);
-          plugins.add(plugin);
-        }
-      }
-      catch (ServiceConfigurationError e) {
-        log.error("Could not load plugins of type " + pluginType, e);
-      }
-
-      //
-      for (Iterator<CRaSHPlugin<?>> i = plugins.iterator();i.hasNext();) {
-
-        //
-        CRaSHPlugin<?> plugin = i.next();
-
-        //
+      List<CRaSHPlugin<?>> plugins = Utils.list(discovery.getPlugins());
+      for (CRaSHPlugin<?> plugin : plugins) {
         plugin.context = context;
-
-        //
-        try {
-          plugin.init();
-          log.info("Initialized plugin " + plugin);
-        }
-        catch (Exception e) {
-          i.remove();
-          log.error("Could not initialize plugin " + plugin, e);
-        }
+        plugin.status = CRaSHPlugin.CONSTRUCTED;
       }
-
-      //
-      this.plugins = plugins.toArray(new CRaSHPlugin<?>[plugins.size()]);
+      this.plugins = plugins;
     }
 
     //
@@ -89,12 +66,41 @@ public class PluginManager {
 
     //
     for (CRaSHPlugin<?> plugin : plugins) {
-      if (plugin.getType().isAssignableFrom(pluginType)) {
-        if (tmp.isEmpty()) {
-          tmp = new ArrayList<T>();
+      Class<?> pluginType = plugin.getType();
+      if (wantedType.isAssignableFrom(pluginType)) {
+
+        switch (plugin.status) {
+          default:
+          case CRaSHPlugin.FAILED:
+          case CRaSHPlugin.INITIALIZED:
+            // Do nothing
+            break;
+          case CRaSHPlugin.CONSTRUCTED:
+            int status = CRaSHPlugin.FAILED;
+            try {
+              plugin.status = CRaSHPlugin.INITIALIZING;
+              plugin.init();
+              log.info("Initialized plugin " + plugin);
+              status = CRaSHPlugin.INITIALIZED;
+            }
+            catch (Exception e) {
+              log.error("Could not initialize plugin " + plugin, e);
+            } finally {
+              plugin.status = status;
+            }
+            break;
+          case CRaSHPlugin.INITIALIZING:
+            throw new RuntimeException("Circular dependency");
         }
-        T t = pluginType.cast(plugin);
-        tmp.add(t);
+
+        //
+        if (plugin.status == CRaSHPlugin.INITIALIZED) {
+          if (tmp.isEmpty()) {
+            tmp = new ArrayList<T>();
+          }
+          T t = wantedType.cast(plugin);
+          tmp.add(t);
+        }
       }
     }
 

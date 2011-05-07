@@ -34,12 +34,29 @@ public abstract class CRaSHPlugin<P> {
   protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
+  static final int FAILED = -1;
+
+  /** . */
+  static final int CONSTRUCTED = 0;
+
+  /** . */
+  static final int INITIALIZING = 1;
+
+  /** . */
+  static final int INITIALIZED = 2;
+
+  /** . */
   PluginContext context;
 
+  int status;
+
+  /** . */
   private final Class<P> type;
 
   protected CRaSHPlugin() {
     this.type = (Class<P>)TypeResolver.resolve(getClass(), CRaSHPlugin.class, 0);
+    this.status = CONSTRUCTED;
+    this.context = null;
   }
 
   protected final PluginContext getContext() {

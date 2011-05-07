@@ -20,7 +20,9 @@
 package org.crsh.standalone;
 
 import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.PluginDiscovery;
 import org.crsh.plugin.PluginLifeCycle;
+import org.crsh.plugin.ServiceLoaderDiscovery;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 
@@ -30,7 +32,16 @@ import org.crsh.vfs.Path;
  */
 public class Bootstrap extends PluginLifeCycle {
 
-  public void bootstrap() throws Exception {
+  /** . */
+  private final ClassLoader classLoader;
+
+  /** . */
+  private PluginDiscovery discovery;
+
+  /** . */
+  private FS fileSystem;
+
+  public Bootstrap(ClassLoader classLoader) throws Exception {
 
     //
     FS fs = new FS();
@@ -38,10 +49,30 @@ public class Bootstrap extends PluginLifeCycle {
     fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
 
     //
-    PluginContext context = new PluginContext(fs, Thread.currentThread().getContextClassLoader());
-    context.refresh();
+    this.fileSystem = fs;
+    this.classLoader = classLoader;
+    this.discovery = new ServiceLoaderDiscovery(classLoader);
+  }
 
-    //
+  public PluginDiscovery getDiscovery() {
+    return discovery;
+  }
+
+  public void setDiscovery(PluginDiscovery discovery) {
+    this.discovery = discovery;
+  }
+
+  public FS getFileSystem() {
+    return fileSystem;
+  }
+
+  public void setFileSystem(FS fileSystem) {
+    this.fileSystem = fileSystem;
+  }
+
+  public void bootstrap() throws Exception {
+    PluginContext context = new PluginContext(discovery, fileSystem, classLoader);
+    context.refresh();
     start(context);
   }
 

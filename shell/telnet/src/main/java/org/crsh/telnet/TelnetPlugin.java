@@ -19,17 +19,14 @@
 
 package org.crsh.telnet;
 
-import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.Property;
-import org.crsh.plugin.PropertyDescriptor;
+import org.crsh.plugin.*;
 import org.crsh.telnet.term.TelnetLifeCycle;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
+public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> implements Service {
 
   /** . */
   private TelnetLifeCycle lifeCycle;

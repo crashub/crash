@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,27 +16,38 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.plugin;
 
-package org.crsh;
-
-import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.ServiceLoaderDiscovery;
-import org.crsh.vfs.FS;
-import org.crsh.vfs.Path;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
  */
-public class TestPluginContext extends PluginContext {
+public class SimplePluginDiscovery implements PluginDiscovery {
 
-  public TestPluginContext() throws Exception {
-    super(
-        new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()),
-        new FS().mount(Thread.currentThread().getContextClassLoader(),
-        Path.get("/crash/")), Thread.currentThread().getContextClassLoader());
+  private final LinkedHashSet<CRaSHPlugin<?>> plugins;
 
-    //
-    refresh();
+  public SimplePluginDiscovery() {
+    this.plugins = new LinkedHashSet<CRaSHPlugin<?>>();
+  }
+
+  /**
+   * Add a plugin.
+   *
+   * @param plugin the plugin
+   * @return this object
+   * @throws NullPointerException if the plugin is null
+   */
+  public SimplePluginDiscovery add(CRaSHPlugin<?> plugin) throws NullPointerException {
+    if (plugin == null) {
+      throw new NullPointerException();
+    }
+    plugins.add(plugin);
+    return this;
+  }
+
+  public Iterable<CRaSHPlugin<?>> getPlugins() {
+    return Collections.unmodifiableSet(plugins);
   }
 }
