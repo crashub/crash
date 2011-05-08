@@ -55,12 +55,12 @@ public class TelnetTestCase extends TestCase {
   private boolean running;
 
   /** . */
-  private final AtomicInteger PORTS = new AtomicInteger(5000);
+  private static final AtomicInteger PORTS = new AtomicInteger(5000);
 
   @Override
   protected void setUp() throws Exception {
 
-    int port = this.PORTS.incrementAndGet();
+    int port = PORTS.getAndIncrement();
 
     //
     IOHandler handler = new IOHandler();

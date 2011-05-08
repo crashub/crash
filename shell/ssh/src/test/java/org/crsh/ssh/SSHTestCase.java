@@ -51,7 +51,7 @@ public class SSHTestCase extends TestCase {
   protected void setUp() throws Exception {
 
     //
-    int port = PORTS.incrementAndGet();
+    int port = PORTS.getAndIncrement();
 
     //
     IOHandler handler = new IOHandler();
