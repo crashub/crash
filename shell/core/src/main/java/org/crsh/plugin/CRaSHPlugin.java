@@ -24,6 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * <p>Base class for a plugin, that consist of a subclass of this class and the implementation
+ * of the business interface of the plugin. The business interface of the plugin is simply
+ * represented by the P generic parameter and its associated class <code>Class&lt;P&gt;></code>.</p>
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  * @param <P> the plugin type
@@ -48,6 +52,7 @@ public abstract class CRaSHPlugin<P> {
   /** . */
   PluginContext context;
 
+  /** . */
   int status;
 
   /** . */
@@ -63,22 +68,25 @@ public abstract class CRaSHPlugin<P> {
     return context;
   }
 
-  public Class<P> getType() {
+  public final Class<P> getType() {
     return type;
   }
 
+  /**
+   * Returns the implementation.
+   *
+   * @return the implementation
+   */
   public abstract P getImplementation();
 
   public void init() {
   }
 
-  public void start() {
-  }
-
-  public void stop() {
-  }
-
   public void destroy() {
   }
 
+  @Override
+  public String toString() {
+    return "Plugin[type=" + getClass().getSimpleName() + ",interface=" + type.getSimpleName() + "]";
+  }
 }
