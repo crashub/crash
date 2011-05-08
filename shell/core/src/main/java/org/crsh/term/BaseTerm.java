@@ -113,7 +113,7 @@ public class BaseTerm implements Term {
       switch (type) {
         case CLOSE:
           return new TermEvent.Close();
-        case DELETE:
+        case BACKSPACE:
           console.getViewReader().del();
           break;
         case UP:

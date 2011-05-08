@@ -140,7 +140,7 @@ public class SSHIO implements TermIO {
 
   public CodeType decode(int code) {
     if (code == command.getContext().verase) {
-      return CodeType.DELETE;
+      return CodeType.BACKSPACE;
     } else {
       switch (code) {
         case HANDLED:

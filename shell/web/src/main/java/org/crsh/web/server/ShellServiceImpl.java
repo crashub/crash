@@ -46,7 +46,7 @@ public class ShellServiceImpl extends RemoteServiceServlet implements ShellServi
     // We assume it's a demo and we bootstrap something
     if (pluginContext == null) {
       try {
-        Bootstrap bootstrap = new Bootstrap();
+        Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
         bootstrap.bootstrap();
         pluginContext = bootstrap.getContext();
       } catch (Exception e) {

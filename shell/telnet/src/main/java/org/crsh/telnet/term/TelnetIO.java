@@ -70,7 +70,7 @@ public class TelnetIO implements TermIO {
         return CodeType.TAB;
       case TerminalIO.DELETE:
       case TerminalIO.BACKSPACE:
-        return CodeType.DELETE;
+        return CodeType.BACKSPACE;
       case TerminalIO.UP:
         return CodeType.UP;
       case TerminalIO.DOWN:

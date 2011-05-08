@@ -157,7 +157,7 @@ public class TelnetTestCase extends TestCase {
     out.write(" \b".getBytes());
     out.flush();
     handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.DELETE));
+    handler.assertEvent(new IOEvent.IO(CodeType.BACKSPACE));
     handler.add(IOAction.end());
   }
 }

@@ -124,7 +124,7 @@ public class TestTermIO implements TermIO {
       case 3:
         return CodeType.BREAK;
       case TerminalIO.DELETE:
-        return CodeType.DELETE;
+        return CodeType.BACKSPACE;
       case TerminalIO.TABULATOR:
         return CodeType.TAB;
       case TerminalIO.UP:

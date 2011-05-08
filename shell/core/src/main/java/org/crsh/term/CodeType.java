@@ -27,7 +27,7 @@ public enum CodeType {
 
   CLOSE,
 
-  DELETE,
+  BACKSPACE,
 
   UP,
 

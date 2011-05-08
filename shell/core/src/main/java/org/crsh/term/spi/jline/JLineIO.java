@@ -70,7 +70,7 @@ public class JLineIO implements TermIO {
       case ConsoleReader.COMPLETE:
         return CodeType.TAB;
       case ConsoleReader.DELETE_PREV_CHAR:
-        return CodeType.DELETE;
+        return CodeType.BACKSPACE;
       case ConsoleReader.PREV_CHAR:
         return CodeType.LEFT;
       case ConsoleReader.NEXT_CHAR:
