@@ -145,7 +145,7 @@ public class TelnetTestCase extends TestCase {
     handler.add(IOAction.end());
   }
 
-  public void testBreak() throws Exception {
+  public void testTab() throws Exception {
     out.write(" \t".getBytes());
     out.flush();
     handler.add(IOAction.read());
