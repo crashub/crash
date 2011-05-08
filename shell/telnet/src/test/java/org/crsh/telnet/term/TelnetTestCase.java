@@ -22,6 +22,7 @@ package org.crsh.telnet.term;
 import junit.framework.TestCase;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.crsh.TestPluginContext;
+import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.SimplePluginDiscovery;
 import org.crsh.telnet.TelnetPlugin;
 import org.crsh.term.CodeType;
@@ -30,6 +31,7 @@ import org.crsh.term.IOEvent;
 import org.crsh.term.IOHandler;
 
 import java.io.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -52,9 +54,15 @@ public class TelnetTestCase extends TestCase {
   /** . */
   private boolean running;
 
+  /** . */
+  private final AtomicInteger PORTS = new AtomicInteger(5000);
+
   @Override
   protected void setUp() throws Exception {
 
+    int port = this.PORTS.incrementAndGet();
+
+    //
     IOHandler handler = new IOHandler();
 
     //
@@ -64,13 +72,14 @@ public class TelnetTestCase extends TestCase {
 
     //
     ctx = new TestPluginContext(discovery);
+    ctx.setProperty(PropertyDescriptor.TELNET_PORT, port);
 
     //
     ctx.start();
 
     //
     TelnetClient client = new TelnetClient();
-    client.connect("localhost", 5000);
+    client.connect("localhost", port);
 
     //
     this.out = client.getOutputStream();
