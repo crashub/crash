@@ -20,6 +20,7 @@ package org.crsh.ssh.term;
 
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.Session;
+import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
@@ -53,9 +54,6 @@ public class SSHLifeCycle extends TermLifeCycle {
   private int port;
 
   /** . */
-  private String keyPath;
-
-  /** . */
   private URL keyURL;
 
   public SSHLifeCycle(PluginContext context) {
@@ -68,14 +66,6 @@ public class SSHLifeCycle extends TermLifeCycle {
 
   public void setPort(int port) {
     this.port = port;
-  }
-
-  public String getKeyPath() {
-    return keyPath;
-  }
-
-  public void setKeyPath(String keyPath) {
-    this.keyPath = keyPath;
   }
 
   public URL getKeyURL() {
@@ -98,7 +88,7 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setPort(port);
       server.setShellFactory(new CRaSHCommandFactory(handler));
       server.setCommandFactory(new SCPCommandFactory(getContext()));
-      server.setKeyPairProvider(new CRaSHPEMGeneratorHostKeyProvider(keyPath, keyURL));
+      server.setKeyPairProvider(new URLKeyPairProvider(keyURL));
 
       //
       server.setPasswordAuthenticator(new PasswordAuthenticator() {

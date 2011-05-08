@@ -83,7 +83,7 @@ public interface TermIO {
   void write(char c) throws IOException;
 
   /**
-   * Delete the char.
+   * Delete the char under the cursor.
    *
    * @throws IOException any io exception
    */

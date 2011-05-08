@@ -26,6 +26,8 @@ import org.crsh.plugin.Service;
 import org.crsh.ssh.term.SSHLifeCycle;
 import org.crsh.vfs.Resource;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -57,23 +59,34 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> implements Service {
     URL keyURL = null;
     if (res != null) {
       keyURL = res.getURL();
+      log.debug("Found key url " + keyURL);
+    }
+
+    // If we have a key path, we convert is as an URL
+    String keyPath = getContext().getProperty(PropertyDescriptor.SSH_KEYPATH);
+    if (keyPath != null) {
+      log.debug("Found key path " + keyPath);
+      File f = new File(keyPath);
+      if (f.exists() && f.isFile()) {
+        try {
+          keyURL = f.toURI().toURL();
+        } catch (MalformedURLException e) {
+          log.debug("Ignoring invalid key " + keyPath, e);
+        }
+      } else {
+        log.debug("Ignoring invalid key path " + keyPath);
+      }
     }
 
     //
-    String keyPath = getContext().getProperty(PropertyDescriptor.SSH_KEYPATH);
-
-    //
-    if (keyPath == null) {
-      if (keyURL == null) {
-        log.info("Could not boot SSHD due to missing key");
-        return;
-      }
+    if (keyURL == null) {
+      log.info("Could not boot SSHD due to missing key");
+      return;
     }
 
     //
     log.info("Booting SSHD");
     SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext());
-    lifeCycle.setKeyPath(keyPath);
     lifeCycle.setPort(port);
     lifeCycle.setKeyURL(keyURL);
     lifeCycle.init();

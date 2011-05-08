@@ -49,6 +49,13 @@
       <artifactId>mina-core</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

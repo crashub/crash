@@ -39,8 +39,16 @@ public class SSHContext {
   private final Environment env;
 
   public SSHContext(Environment env) {
+    if (env == null) {
+      throw new NullPointerException("No null env");
+    }
+
+    //
+    Integer verase = env.getPtyModes().get(PtyMode.VERASE);
+
+    //
     this.env = env;
-    this.verase = env.getPtyModes().get(PtyMode.VERASE);
+    this.verase = verase != null ? verase : -1;
   }
 
   public int getWidth() {

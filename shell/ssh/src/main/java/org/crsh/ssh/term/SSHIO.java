@@ -25,11 +25,7 @@ import org.crsh.util.OutputCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -90,7 +86,16 @@ public class SSHIO implements TermIO {
       if (closed.get()) {
         return HANDLED;
       } else {
-        int r = reader.read();
+        int r;
+        try {
+          r = reader.read();
+        } catch (IOException e) {
+          // This would likely happen when the client close the connection
+          // when we are blocked on a read operation by the
+          // CRaShCommand#destroy() method
+          close();
+          return HANDLED;
+        }
         switch (status) {
           case STATUS_NORMAL:
             if (r == 27) {
