@@ -16,23 +16,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.ssh;
+package org.crsh.term;
 
 import junit.framework.Assert;
-import org.crsh.term.CodeType;
 
 import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public abstract class TermEvent {
+public abstract class IOEvent {
 
-  public final void assertEquals(TermEvent event) {
+  public final void assertEquals(IOEvent event) {
     Assert.assertEquals(this, event);
   }
 
-  public static class IO extends TermEvent {
+  public static class IO extends IOEvent {
 
     /** . */
     private final int code;
@@ -85,7 +84,7 @@ public abstract class TermEvent {
     }
   }
 
-  public static class Error extends TermEvent {
+  public static class Error extends IOEvent {
 
     /** . */
     private final IOException cause;

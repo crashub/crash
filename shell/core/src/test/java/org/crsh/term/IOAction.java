@@ -16,42 +16,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.ssh;
+package org.crsh.term;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public abstract class TermAction {
+public abstract class IOAction {
 
-  public static TermAction write(String s) {
+  public static IOAction write(String s) {
     return new Write(s);
   }
 
-  public static TermAction crlf() {
+  public static IOAction crlf() {
     return new CRLF();
   }
 
-  public static TermAction flush() {
+  public static IOAction flush() {
     return new Flush();
   }
 
-  public static TermAction read() {
+  public static IOAction read() {
     return new Read();
   }
 
-  public static TermAction end() {
+  public static IOAction end() {
     return new End();
   }
 
-  public static TermAction close() {
+  public static IOAction close() {
     return new Close();
   }
 
-  public static TermAction del() {
+  public static IOAction del() {
     return new Del();
   }
 
-  public static class Write extends TermAction {
+  public static class Write extends IOAction {
 
     /** . */
     public final String s;
@@ -61,32 +61,32 @@ public abstract class TermAction {
     }
   }
 
-  public static class CRLF extends TermAction {
+  public static class CRLF extends IOAction {
     private CRLF() {
     }
   }
 
-  public static class Del extends TermAction {
+  public static class Del extends IOAction {
     private Del() {
     }
   }
 
-  public static class Flush extends TermAction {
+  public static class Flush extends IOAction {
     private Flush() {
     }
   }
 
-  public static class Read extends TermAction {
+  public static class Read extends IOAction {
     private Read() {
     }
   }
 
-  public static class End extends TermAction {
+  public static class End extends IOAction {
     private End() {
     }
   }
 
-  public static class Close extends TermAction {
+  public static class Close extends IOAction {
     private Close() {
     }
   }

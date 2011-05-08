@@ -16,11 +16,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.ssh;
+package org.crsh.term;
 
 import junit.framework.AssertionFailedError;
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
 import org.crsh.term.spi.TermIOHandler;
 
@@ -28,18 +27,17 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public class FooTermIOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandler {
+public class IOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandler {
 
   /** . */
-  private final BlockingQueue<TermEvent> eventQueue = new LinkedBlockingQueue<TermEvent>();
+  private final BlockingQueue<IOEvent> eventQueue = new LinkedBlockingQueue<IOEvent>();
 
   /** . */
-  private final BlockingQueue<TermAction> actionQueue = new LinkedBlockingQueue<TermAction>();
+  private final BlockingQueue<IOAction> actionQueue = new LinkedBlockingQueue<IOAction>();
 
   @Override
   public TermIOHandler getImplementation() {
@@ -48,7 +46,7 @@ public class FooTermIOHandler extends CRaSHPlugin<TermIOHandler> implements Term
 
   public void handle(TermIO io) {
     while (true) {
-      TermAction action = null;
+      IOAction action = null;
       while (action == null) {
         try {
           action = actionQueue.take();
@@ -61,41 +59,41 @@ public class FooTermIOHandler extends CRaSHPlugin<TermIOHandler> implements Term
         }
       }
       try {
-        if (action instanceof TermAction.Read) {
+        if (action instanceof IOAction.Read) {
           int code = io.read();
           CodeType codeType = io.decode(code);
-          eventQueue.add(new TermEvent.IO(code, codeType));
-        } else if (action instanceof TermAction.Write) {
-          TermAction.Write write = (TermAction.Write)action;
+          eventQueue.add(new IOEvent.IO(code, codeType));
+        } else if (action instanceof IOAction.Write) {
+          IOAction.Write write = (IOAction.Write)action;
           io.write(write.s);
-        } else if (action instanceof TermAction.Close) {
+        } else if (action instanceof IOAction.Close) {
           io.close();
-        } else if (action instanceof TermAction.Flush) {
+        } else if (action instanceof IOAction.Flush) {
           io.flush();
-        } else if (action instanceof TermAction.CRLF) {
+        } else if (action instanceof IOAction.CRLF) {
           io.writeCRLF();
-        } else if (action instanceof TermAction.Del) {
+        } else if (action instanceof IOAction.Del) {
           io.writeDel();
-        } else if (action instanceof TermAction.End) {
+        } else if (action instanceof IOAction.End) {
           break;
         } else {
           throw new UnsupportedOperationException("Unexpected action " + action);
         }
       } catch (IOException e) {
         e.printStackTrace();
-        eventQueue.add(new TermEvent.Error(e));
+        eventQueue.add(new IOEvent.Error(e));
       }
     }
   }
 
-  public FooTermIOHandler add(TermAction action) {
+  public IOHandler add(IOAction action) {
     actionQueue.add(action);
     return this;
   }
 
-  public void assertEvent(TermEvent expectedEvent) {
+  public void assertEvent(IOEvent expectedEvent) {
     try {
-      TermEvent event = eventQueue.poll(10, TimeUnit.SECONDS);
+      IOEvent event = eventQueue.poll(20, TimeUnit.SECONDS);
       expectedEvent.assertEquals(event);
     } catch (InterruptedException e) {
       AssertionFailedError afe = new AssertionFailedError();
@@ -104,7 +102,7 @@ public class FooTermIOHandler extends CRaSHPlugin<TermIOHandler> implements Term
     }
   }
 
-  public TermEvent take() {
+  public IOEvent take() {
     try {
       return eventQueue.take();
     } catch (InterruptedException e) {
@@ -114,11 +112,11 @@ public class FooTermIOHandler extends CRaSHPlugin<TermIOHandler> implements Term
     }
   }
 
-  public TermEvent poll() {
+  public IOEvent poll() {
     return eventQueue.poll();
   }
 
-  public TermEvent peek() {
+  public IOEvent peek() {
     return eventQueue.peek();
   }
 }

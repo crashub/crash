@@ -22,10 +22,12 @@ import junit.framework.TestCase;
 import org.crsh.TestPluginContext;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.SimplePluginDiscovery;
+import org.crsh.term.IOAction;
+import org.crsh.term.IOEvent;
+import org.crsh.term.IOHandler;
 import org.crsh.term.CodeType;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -34,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SSHTestCase extends TestCase {
 
   /** . */
-  private FooTermIOHandler handler;
+  private IOHandler handler;
 
   /** . */
   private SSHClient client;
@@ -52,7 +54,7 @@ public class SSHTestCase extends TestCase {
     int port = PORTS.incrementAndGet();
 
     //
-    FooTermIOHandler handler = new FooTermIOHandler();
+    IOHandler handler = new IOHandler();
     SimplePluginDiscovery discovery = new SimplePluginDiscovery();
     discovery.add(new SSHPlugin());
     discovery.add(handler);
@@ -69,13 +71,13 @@ public class SSHTestCase extends TestCase {
 
   public void testServerReadAfterClientClose() throws Exception {
     client.write("a").flush();
-    handler.add(TermAction.read());
-    handler.assertEvent(new TermEvent.IO('a'));
+    handler.add(IOAction.read());
+    handler.assertEvent(new IOEvent.IO('a'));
 
     //
     client.close();
-    handler.add(TermAction.read()).add(TermAction.end());
-    handler.assertEvent(new TermEvent.IO(CodeType.CLOSE));
+    handler.add(IOAction.read()).add(IOAction.end());
+    handler.assertEvent(new IOEvent.IO(CodeType.CLOSE));
 
     //
     ctx.stop();
@@ -83,13 +85,13 @@ public class SSHTestCase extends TestCase {
 
   public void testClientCloseDuringServerRead() throws Exception {
     client.write("a").flush();
-    handler.add(TermAction.read());
-    handler.assertEvent(new TermEvent.IO('a'));
+    handler.add(IOAction.read());
+    handler.assertEvent(new IOEvent.IO('a'));
 
     //
-    handler.add(TermAction.read()).add(TermAction.end());
+    handler.add(IOAction.read()).add(IOAction.end());
     client.close();
-    handler.assertEvent(new TermEvent.IO(CodeType.CLOSE));
+    handler.assertEvent(new IOEvent.IO(CodeType.CLOSE));
 
     //
     ctx.stop();
@@ -97,17 +99,17 @@ public class SSHTestCase extends TestCase {
 
   public void testClientWrite() throws Exception {
     client.write("HELLO").flush();
-    handler.add(TermAction.read());
-    handler.add(TermAction.read());
-    handler.add(TermAction.read());
-    handler.add(TermAction.read());
-    handler.add(TermAction.read());
-    handler.add(TermAction.end());
-    handler.assertEvent(new TermEvent.IO('H'));
-    handler.assertEvent(new TermEvent.IO('E'));
-    handler.assertEvent(new TermEvent.IO('L'));
-    handler.assertEvent(new TermEvent.IO('L'));
-    handler.assertEvent(new TermEvent.IO('O'));
+    handler.add(IOAction.read());
+    handler.add(IOAction.read());
+    handler.add(IOAction.read());
+    handler.add(IOAction.read());
+    handler.add(IOAction.read());
+    handler.add(IOAction.end());
+    handler.assertEvent(new IOEvent.IO('H'));
+    handler.assertEvent(new IOEvent.IO('E'));
+    handler.assertEvent(new IOEvent.IO('L'));
+    handler.assertEvent(new IOEvent.IO('L'));
+    handler.assertEvent(new IOEvent.IO('O'));
 
     //
     client.close();
@@ -116,12 +118,12 @@ public class SSHTestCase extends TestCase {
 
   public void testServerClose() throws Exception {
     client.write("a").flush();
-    handler.add(TermAction.read());
-    handler.assertEvent(new TermEvent.IO('a'));
+    handler.add(IOAction.read());
+    handler.assertEvent(new IOEvent.IO('a'));
 
     //
-    handler.add(TermAction.close()).add(TermAction.read()).add(TermAction.end());
-    handler.assertEvent(new TermEvent.IO(CodeType.CLOSE));
+    handler.add(IOAction.close()).add(IOAction.read()).add(IOAction.end());
+    handler.assertEvent(new IOEvent.IO(CodeType.CLOSE));
 
     //
     try {
@@ -135,8 +137,8 @@ public class SSHTestCase extends TestCase {
   }
 
   public void testServerWriteChars() throws Exception {
-    handler.add(TermAction.write("HOLA"));
-    handler.add(TermAction.flush());
+    handler.add(IOAction.write("HOLA"));
+    handler.add(IOAction.flush());
     Thread.sleep(10);
     String s = client.read();
     assertEquals("HOLA", s);
@@ -144,28 +146,28 @@ public class SSHTestCase extends TestCase {
   }
 
   public void testServerWriteCRLF() throws Exception {
-    handler.add(TermAction.crlf());
-    handler.add(TermAction.flush());
+    handler.add(IOAction.crlf());
+    handler.add(IOAction.flush());
     Thread.sleep(10);
     assertEquals("\r\n", client.read());
-    handler.add(TermAction.write("\r\n"));
-    handler.add(TermAction.flush());
+    handler.add(IOAction.write("\r\n"));
+    handler.add(IOAction.flush());
     Thread.sleep(10);
     assertEquals("\r\n", client.read());
     ctx.stop();
   }
 
   public void testServerWriteDel() throws Exception {
-    handler.add(TermAction.del());
-    handler.add(TermAction.flush());
+    handler.add(IOAction.del());
+    handler.add(IOAction.flush());
     Thread.sleep(10);
     assertEquals("\b \b", client.read());
     ctx.stop();
   }
 
   public void testServerMoveLeft() throws Exception {
-    handler.add(TermAction.del());
-    handler.add(TermAction.flush());
+    handler.add(IOAction.del());
+    handler.add(IOAction.flush());
     Thread.sleep(10);
     assertEquals("\b \b", client.read());
     ctx.stop();

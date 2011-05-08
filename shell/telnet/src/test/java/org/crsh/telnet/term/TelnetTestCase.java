@@ -19,85 +19,51 @@
 
 package org.crsh.telnet.term;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.crsh.TestPluginContext;
-import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.SimplePluginDiscovery;
 import org.crsh.telnet.TelnetPlugin;
 import org.crsh.term.CodeType;
-import org.crsh.term.spi.TermIO;
-import org.crsh.term.spi.TermIOHandler;
+import org.crsh.term.IOAction;
+import org.crsh.term.IOEvent;
+import org.crsh.term.IOHandler;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ReadTestCase extends TestCase {
+public class TelnetTestCase extends TestCase {
 
   /** . */
   private TestPluginContext ctx;
 
   /** . */
-  private CountDownLatch latch;
-
-  /** . */
-  private List<Object> read;
-
-  /** . */
-  private Throwable failed;
+  private TelnetClient client;
 
   /** . */
   private OutputStream out;
 
-  private class Handler extends CRaSHPlugin<TermIOHandler> implements TermIOHandler {
-    @Override
-    public TermIOHandler getImplementation() {
-      return this;
-    }
-    public void handle(TermIO io) {
-      try {
-        int code = io.read();
-        CodeType decode = io.decode(code);
-        read.add(decode);
-        if (decode == CodeType.CHAR) {
-          read.add(code);
-        }
-      } catch (Throwable t) {
-        failed = t;
-      } finally {
-        io.close();
-        latch.countDown();
-      }
-    }
-  }
+  /** . */
+  private IOHandler handler;
 
-  protected final void assertDone() throws InterruptedException {
-    latch.await();
-    if (failed != null) {
-      AssertionFailedError afe = new AssertionFailedError();
-      afe.initCause(failed);
-      throw afe;
-    }
-  }
+  /** . */
+  private boolean running;
 
   @Override
   protected void setUp() throws Exception {
+
+    IOHandler handler = new IOHandler();
+
+    //
     SimplePluginDiscovery discovery = new SimplePluginDiscovery();
     discovery.add(new TelnetPlugin());
-    discovery.add(new Handler());
+    discovery.add(handler);
 
     //
     ctx = new TestPluginContext(discovery);
-    latch = new CountDownLatch(1);
-    read = new ArrayList<Object>();
-    failed = null;
 
     //
     ctx.start();
@@ -107,36 +73,91 @@ public class ReadTestCase extends TestCase {
     client.connect("localhost", 5000);
 
     //
-    out = client.getOutputStream();
+    this.out = client.getOutputStream();
+    this.handler = handler;
+    this.client = client;
+    this.running = true;
   }
 
   @Override
   protected void tearDown() throws Exception {
-    ctx.stop();
+    stop();
+  }
+
+  private void stop() {
+    if (running) {
+      ctx.stop();
+      running = false;
+    }
+  }
+
+  public void testClientDisconnect() throws Exception {
+    handler.add(IOAction.read());
+
+    //
+    Thread.sleep(10);
+    client.disconnect();
+    Thread.sleep(10);
+
+    //
+    handler.assertEvent(new IOEvent.IO(CodeType.CLOSE));
+  }
+
+  public void testServerShutdown() throws Exception {
+    out.write(" A".getBytes());
+    out.flush();
+    handler.add(IOAction.read());
+    handler.assertEvent(new IOEvent.IO('A'));
+
+    //
+    handler.add(IOAction.read());
+    Thread.sleep(10);
+    stop();
+
+    //
+    handler.assertEvent(new IOEvent.IO(CodeType.CLOSE));
+    handler.add(IOAction.end());
+  }
+
+  public void testHandlerDisconnect() throws Exception {
+    out.write(" A".getBytes());
+    out.flush();
+    handler.add(IOAction.read());
+    handler.assertEvent(new IOEvent.IO('A'));
+
+    //
+    handler.add(IOAction.close());
+    handler.add(IOAction.end());
+    Thread.sleep(10);
+    try {
+      out.write(" A".getBytes());
+      out.flush();
+      fail();
+    } catch (IOException e) {
+    }
   }
 
   public void testChar() throws Exception {
     out.write(" A".getBytes());
     out.flush();
-    assertDone();
-    assertEquals(2, read.size());
-    assertEquals(CodeType.CHAR, read.get(0));
-    assertEquals(65, read.get(1));
+    handler.add(IOAction.read());
+    handler.assertEvent(new IOEvent.IO('A'));
+    handler.add(IOAction.end());
   }
 
   public void testBreak() throws Exception {
     out.write(" \t".getBytes());
     out.flush();
-    assertDone();
-    assertEquals(1, read.size());
-    assertEquals(CodeType.TAB, read.get(0));
+    handler.add(IOAction.read());
+    handler.assertEvent(new IOEvent.IO(CodeType.TAB));
+    handler.add(IOAction.end());
   }
 
   public void testDelete() throws Exception {
     out.write(" \b".getBytes());
     out.flush();
-    assertDone();
-    assertEquals(1, read.size());
-    assertEquals(CodeType.DELETE, read.get(0));
+    handler.add(IOAction.read());
+    handler.assertEvent(new IOEvent.IO(CodeType.DELETE));
+    handler.add(IOAction.end());
   }
 }
