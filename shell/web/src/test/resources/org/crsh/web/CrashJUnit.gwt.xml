@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module>
-  <!-- Inherit our applications main module.                      -->
-  <inherits name='org.crsh.web.Crash'/>
-
-  <!-- Specify the path to any remote services.                   -->
-  <servlet path="/Crash/shell" class="org.crsh.web.server.ShellServiceImpl" />
-
-</module>

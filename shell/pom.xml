@@ -18,7 +18,6 @@
     <module>telnet</module>
     <module>ssh</module>
     <module>packaging</module>
-    <module>web</module>
   </modules>
 
 </project>

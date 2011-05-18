@@ -43,7 +43,6 @@
         <include>org.crsh:crsh.shell.core</include>
         <include>org.crsh:crsh.shell.telnet</include>
         <include>org.crsh:crsh.shell.ssh</include>
-        <include>org.crsh:crsh.shell.web:jar:classes</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -59,21 +58,6 @@
         <include>org.crsh:crsh.shell.core</include>
         <include>org.crsh:crsh.shell.telnet</include>
         <include>org.crsh:crsh.shell.ssh</include>
-      </includes>
-    </dependencySet>
-    <dependencySet>
-      <useTransitiveDependencies>true</useTransitiveDependencies>
-      <unpack>true</unpack>
-      <unpackOptions>
-        <includes>
-          <include>Crash/**</include>
-          <include>Crash.css</include>
-          <include>Crash.html</include>
-        </includes>
-      </unpackOptions>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>org.crsh:crsh.shell.web</include>
       </includes>
     </dependencySet>
   </dependencySets>
