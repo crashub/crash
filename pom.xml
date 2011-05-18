@@ -263,11 +263,6 @@
         <version>2.5</version>
       </dependency>
       <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>1.7.6</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
         <version>0.4.0</version>
@@ -572,6 +567,47 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>groovy-1.6</id>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.6.5</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+    <profile>
+      <id>groovy-1.7</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.7.6</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+    <profile>
+      <id>groovy-1.8</id>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.8.0</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+
   </profiles>
 
 </project>
