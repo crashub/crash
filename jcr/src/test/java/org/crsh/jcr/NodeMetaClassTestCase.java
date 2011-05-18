@@ -81,7 +81,7 @@ public class NodeMetaClassTestCase extends TestCase {
         "import javax.jcr.Node;\n" +
         "Node root = session.getRootNode();\n" +
         "Node foo = root.addNode('foo');\n" +
-        "assert root.foo == foo;\n");
+        "assert root.foo.getPath() == foo.getPath();\n");
   }
 
   public void testEach() throws Exception {
@@ -117,7 +117,7 @@ public class NodeMetaClassTestCase extends TestCase {
         "root.getNodes().eachWithIndex({ Node child, int index ->\n" +
         "  assert child == root[index];\n" +
         "  int indexComplement = index - root.getNodes().size();\n" +
-        "  assert child == root[indexComplement];\n" +
+        "  assert child.getPath() == root[indexComplement].getPath();\n" +
         "});\n");
   }
 
@@ -153,7 +153,7 @@ public class NodeMetaClassTestCase extends TestCase {
         "Node root = session.getRootNode();\n" +
         "Node file = root.addNode('file', 'nt:file');\n" +
         "Node content = file.addNode('jcr:content', 'nt:base');\n" +
-        "assert content == file['jcr:content'];\n");
+        "assert content.getPath() == file['jcr:content'].getPath();\n");
   }
 
   public void testByte1() throws Exception {
