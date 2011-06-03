@@ -1,0 +1,7 @@
+RULE SQLMan monitor JDBC PreparedStatement executeQuery
+CLASS java.net.SocketInputStream
+METHOD read()
+AT ENTRY
+IF org.crsh.telnet.term.ServerShutdownTestCase.wantCountDown
+DO org.crsh.telnet.term.ServerShutdownTestCase.latch.countDown()
+ENDRULE

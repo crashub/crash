@@ -19,16 +19,17 @@
 
 package org.crsh.telnet.term;
 
-import junit.framework.TestCase;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.crsh.TestPluginContext;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.SimplePluginDiscovery;
 import org.crsh.telnet.TelnetPlugin;
-import org.crsh.term.CodeType;
-import org.crsh.term.IOAction;
-import org.crsh.term.IOEvent;
 import org.crsh.term.IOHandler;
+import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.runner.RunWith;
 
 import java.io.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,19 +38,23 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetTestCase extends TestCase {
+@RunWith(BMUnitRunner.class)
+public abstract class AbstractTelnetTestCase extends Assert {
 
   /** . */
-  private TestPluginContext ctx;
+  protected TestPluginContext ctx;
 
   /** . */
-  private TelnetClient client;
+  protected TelnetClient client;
 
   /** . */
-  private OutputStream out;
+  protected OutputStream out;
 
   /** . */
-  private IOHandler handler;
+  protected InputStream in;
+
+  /** . */
+  protected IOHandler handler;
 
   /** . */
   private boolean running;
@@ -57,8 +62,8 @@ public class TelnetTestCase extends TestCase {
   /** . */
   private static final AtomicInteger PORTS = new AtomicInteger(5000);
 
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public final void setUp() throws Exception {
 
     int port = PORTS.getAndIncrement();
 
@@ -83,90 +88,21 @@ public class TelnetTestCase extends TestCase {
 
     //
     this.out = client.getOutputStream();
+    this.in = client.getInputStream();
     this.handler = handler;
     this.client = client;
     this.running = true;
   }
 
-  @Override
-  protected void tearDown() throws Exception {
+  @After
+  public final void tearDown() throws Exception {
     stop();
   }
 
-  private void stop() {
+  protected final void stop() {
     if (running) {
       ctx.stop();
       running = false;
     }
-  }
-
-  public void testClientDisconnect() throws Exception {
-    handler.add(IOAction.read());
-
-    //
-    Thread.sleep(10);
-    client.disconnect();
-    Thread.sleep(10);
-
-    //
-    handler.assertEvent(new IOEvent.IO(CodeType.CLOSE));
-  }
-
-  public void testServerShutdown() throws Exception {
-    out.write(" A".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO('A'));
-
-    //
-    handler.add(IOAction.read());
-    Thread.sleep(10);
-    stop();
-
-    //
-    handler.assertEvent(new IOEvent.IO(CodeType.CLOSE));
-    handler.add(IOAction.end());
-  }
-
-  public void testHandlerDisconnect() throws Exception {
-    out.write(" A".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO('A'));
-
-    //
-    handler.add(IOAction.close());
-    handler.add(IOAction.end());
-    Thread.sleep(10);
-    try {
-      out.write(" A".getBytes());
-      out.flush();
-      fail();
-    } catch (IOException e) {
-    }
-  }
-
-  public void testChar() throws Exception {
-    out.write(" A".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO('A'));
-    handler.add(IOAction.end());
-  }
-
-  public void testTab() throws Exception {
-    out.write(" \t".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.TAB));
-    handler.add(IOAction.end());
-  }
-
-  public void testDelete() throws Exception {
-    out.write(" \b".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.BACKSPACE));
-    handler.add(IOAction.end());
   }
 }

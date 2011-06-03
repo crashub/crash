@@ -55,7 +55,6 @@ public class IOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandl
           // as it can come from the client clause
           // but we want to obtain a next event to continue the
           // unit test
-
         }
       }
       try {
@@ -91,9 +90,13 @@ public class IOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandl
     return this;
   }
 
+  public int getActionCount() {
+    return actionQueue.size();
+  }
+
   public void assertEvent(IOEvent expectedEvent) {
     try {
-      IOEvent event = eventQueue.poll(20, TimeUnit.SECONDS);
+      IOEvent event = eventQueue.poll(2, TimeUnit.SECONDS);
       expectedEvent.assertEquals(event);
     } catch (InterruptedException e) {
       AssertionFailedError afe = new AssertionFailedError();
