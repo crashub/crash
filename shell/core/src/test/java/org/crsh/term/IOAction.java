@@ -51,6 +51,10 @@ public abstract class IOAction {
     return new Del();
   }
 
+  public static IOAction left() {
+    return new Left();
+  }
+
   public static class Write extends IOAction {
 
     /** . */
@@ -68,6 +72,11 @@ public abstract class IOAction {
 
   public static class Del extends IOAction {
     private Del() {
+    }
+  }
+
+  public static class Left extends IOAction {
+    private Left() {
     }
   }
 

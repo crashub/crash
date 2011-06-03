@@ -73,6 +73,8 @@ public class IOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandl
           io.writeCRLF();
         } else if (action instanceof IOAction.Del) {
           io.writeDel();
+        } else if (action instanceof IOAction.Left) {
+          io.moveLeft();
         } else if (action instanceof IOAction.End) {
           break;
         } else {

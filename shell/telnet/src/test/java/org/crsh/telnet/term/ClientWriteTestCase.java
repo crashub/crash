@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public class DataTestCase extends AbstractTelnetTestCase  {
+public class ClientWriteTestCase extends AbstractTelnetTestCase  {
 
   @Test
   public void testChar() throws Exception {
