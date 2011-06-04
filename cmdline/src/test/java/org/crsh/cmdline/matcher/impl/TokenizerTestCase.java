@@ -81,6 +81,18 @@ public class TokenizerTestCase extends TestCase {
     assertFalse(tokenizer.hasNext());
   }
 
+  public void testQuotedWord4() throws Exception {
+    Tokenizer tokenizer = new Tokenizer("\"-a\"");
+    assertEquals(new Token.Literal.Word(0, "\"-a\"", "-a", Termination.DETERMINED), tokenizer.next());
+    assertFalse(tokenizer.hasNext());
+  }
+
+  public void testQuotedWord5() throws Exception {
+    Tokenizer tokenizer = new Tokenizer("\"--a\"");
+    assertEquals(new Token.Literal.Word(0, "\"--a\"", "--a", Termination.DETERMINED), tokenizer.next());
+    assertFalse(tokenizer.hasNext());
+  }
+
   public void testEmptyShortOption() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-");
     assertEquals(new Token.Literal.Option.Short(0, "-", "-", Termination.DETERMINED), tokenizer.next());
