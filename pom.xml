@@ -303,7 +303,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>3.8.2</version>
+        <version>4.8.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.derby</groupId>
@@ -466,6 +466,20 @@
                 <descriptors>
                   <descriptor>src/main/assembly/packaging.xml</descriptor>
                 </descriptors>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>default-test</id>
+              <configuration>
+                <includes>
+                  <include>**/*TestCase.java</include>
+                </includes>
               </configuration>
             </execution>
           </executions>
