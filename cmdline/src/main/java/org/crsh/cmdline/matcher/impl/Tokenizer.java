@@ -139,18 +139,33 @@ class Tokenizer implements Iterator<Token> {
       int type;
       c = s.charAt(index);
       if (c == '-') {
-        index++;
-        value.append('-');
-        if (index < s.length()) {
-          c = s.charAt(index);
+        if (index + 1  < s.length()) {
+          c = s.charAt(index + 1);
           if (c == '-') {
+            if (index + 2 < s.length()) {
+              c = s.charAt(index + 2);
+              if (Character.isLetter(c) || c == ' ') {
+                index += 2;
+                value.append("--");
+                type = LONG_OPTION;
+              } else {
+                type = WORD;
+              }
+            } else {
+              index += 2;
+              value.append("--");
+              type = LONG_OPTION;
+            }
+          } else if (Character.isLetter(c)) {
             index++;
             value.append('-');
-            type = LONG_OPTION;
-          } else {
             type = SHORT_OPTION;
+          } else {
+            type = WORD;
           }
         } else {
+          index++;
+          value.append('-');
           type = SHORT_OPTION;
         }
       } else {

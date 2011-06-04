@@ -51,6 +51,18 @@ public class TokenizerTestCase extends TestCase {
     assertFalse(tokenizer.hasNext());
   }
 
+  public void testWord3() throws Exception {
+    Tokenizer tokenizer = new Tokenizer("-1");
+    assertEquals(new Token.Literal.Word(0, "-1"), tokenizer.next());
+    assertFalse(tokenizer.hasNext());
+  }
+
+  public void testWord4() throws Exception {
+    Tokenizer tokenizer = new Tokenizer("--1");
+    assertEquals(new Token.Literal.Word(0, "--1"), tokenizer.next());
+    assertFalse(tokenizer.hasNext());
+  }
+
   public void testQuotedWord1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"a");
     assertEquals(new Token.Literal.Word(0, "\"a", "a", Termination.DOUBLE_QUOTE), tokenizer.next());
@@ -88,9 +100,16 @@ public class TokenizerTestCase extends TestCase {
     assertFalse(tokenizer.hasNext());
   }
 
-  public void testEmptyLongOption() throws Exception {
+  public void testEmptyLongOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("--");
     assertEquals(new Token.Literal.Option.Long(0, "--", "--", Termination.DETERMINED), tokenizer.next());
+    assertFalse(tokenizer.hasNext());
+  }
+
+  public void testEmptyLongOption2() throws Exception {
+    Tokenizer tokenizer = new Tokenizer("-- ");
+    assertEquals(new Token.Literal.Option.Long(0, "--", "--", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Whitespace(2, " "), tokenizer.next());
     assertFalse(tokenizer.hasNext());
   }
 
