@@ -36,6 +36,7 @@ import org.crsh.cmdline.matcher.LiteralValue;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
+import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;

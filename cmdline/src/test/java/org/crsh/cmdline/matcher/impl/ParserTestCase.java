@@ -26,6 +26,7 @@ import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Required;
+import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
 
 import java.util.Arrays;
 import java.util.List;

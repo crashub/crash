@@ -26,9 +26,9 @@ package org.crsh.cmdline.matcher.impl;
 public abstract class Token {
 
 
-  final static class Whitespace extends Token {
+  public final static class Whitespace extends Token {
 
-    Whitespace(int index, String raw) {
+    public Whitespace(int index, String raw) {
       super(index, raw);
     }
 
@@ -50,9 +50,9 @@ public abstract class Token {
     }
   }
 
-  abstract static class Literal extends Token {
+  public abstract static class Literal extends Token {
 
-    abstract static class Option extends Literal {
+    public abstract static class Option extends Literal {
 
       /** . */
       private final String name;
@@ -61,29 +61,30 @@ public abstract class Token {
         return name;
       }
 
-      Option(int index, String raw, String value, Termination termination, String name) {
+      public Option(int index, String raw, String value, Termination termination, String name) {
         super(index, raw, value, termination);
         this.name = name;
       }
 
-      final static class Short extends Option {
-        Short(int index, String raw, String value, Termination termination) {
+      public final static class Short extends Option {
+        public Short(int index, String raw, String value, Termination termination) {
           super(index, raw, value, termination, value.substring(1));
         }
       }
 
-      final static class Long extends Option {
-        Long(int index, String raw, String value, Termination termination) {
+      public final static class Long extends Option {
+        public Long(int index, String raw, String value, Termination termination) {
           super(index, raw, value, termination, value.substring(2));
         }
       }
     }
 
-    final static class Word extends Literal {
-      Word(int index, String raw, String value, Termination termination) {
+    public final static class Word extends Literal {
+      public Word(int index, String raw, String value, Termination termination) {
         super(index, raw, value, termination);
       }
-      Word(int index, String value) {
+
+      public Word(int index, String value) {
         super(index, value);
       }
     }
@@ -94,11 +95,11 @@ public abstract class Token {
     /** . */
     final Termination termination;
 
-    Literal(int index, String value) {
+    public Literal(int index, String value) {
       this(index, value, value, Termination.DETERMINED);
     }
 
-    Literal(int index, String raw, String value, Termination termination) {
+    public Literal(int index, String raw, String value, Termination termination) {
       super(index, raw);
 
       if (value == null) {

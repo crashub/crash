@@ -25,6 +25,7 @@ import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
+import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
