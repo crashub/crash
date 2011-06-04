@@ -23,11 +23,9 @@ import org.apache.sshd.SshClient;
 import org.apache.sshd.client.channel.ChannelShell;
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.common.util.SttySupport;
-import org.crsh.util.IO;
 import org.crsh.util.Safe;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.util.Map;
 
 /**
@@ -54,7 +52,7 @@ public class SSHClient {
   private OutputStream out;
 
   /** . */
-  private ByteArrayOutputStream in;
+  private InputStream in;
 
   /** . */
   private SshClient client;
@@ -99,21 +97,27 @@ public class SSHClient {
     //
     ChannelShell channel = (ChannelShell)session.createShellChannel();
     channel.setPtyModes(tty);
-    PipedOutputStream pipedIn = new PipedOutputStream();
-    PipedInputStream piped = new PipedInputStream(pipedIn);
-    channel.setIn(piped);
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    ByteArrayOutputStream err = new ByteArrayOutputStream();
-    channel.setOut(out);
-    channel.setErr(err);
+
+    //
+    PipedOutputStream out = new PipedOutputStream();
+    PipedInputStream channelIn = new PipedInputStream(out);
+
+    //
+    PipedOutputStream channelOut = new PipedOutputStream();
+    PipedInputStream in = new PipedInputStream(channelOut);
+
+    //
+    channel.setIn(channelIn);
+    channel.setOut(channelOut);
+    channel.setErr(new ByteArrayOutputStream());
     channel.open();
 
     //
     this.channel = channel;
     this.client = client;
     this.session = session;
-    this.out = pipedIn;
-    this.in = out;
+    this.out = out;
+    this.in = in;
 
     //
     return this;
@@ -123,15 +127,13 @@ public class SSHClient {
     return write(s.toString().getBytes("UTF-8"));
   }
 
+  public int read() throws IOException {
+    return in.read();
+  }
+
   public SSHClient write(byte... bytes) throws IOException {
     out.write(bytes);
     return this;
-  }
-
-  public String read() throws IOException {
-    String s = in.toString("UTF-8");
-    in.reset();
-    return s;
   }
 
   public SSHClient flush() throws IOException {

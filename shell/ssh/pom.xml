@@ -33,22 +33,27 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.apache.sshd</groupId>
       <artifactId>sshd-pam</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
     </dependency>
 
+    <!-- For unit testing purpose -->
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.2</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.core</artifactId>
