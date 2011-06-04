@@ -174,7 +174,7 @@ public class CRaSH implements Shell {
   }
 
   public String getPrompt() {
-    return (String)groovyShell.evaluate("prompt();");
+    return groovyShell.evaluate("prompt();").toString();
   }
 
   public ShellProcess createProcess(String request) {
