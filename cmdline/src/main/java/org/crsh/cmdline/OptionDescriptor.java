@@ -69,11 +69,11 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     //
     names = new ArrayList<String>(names);
     for (String name : names) {
-      if (name.length() == 0) {
-        throw new IllegalParameterException("Option name cannot be empty");
-      }
       if (name == null) {
         throw new IllegalParameterException("Option name must not be null");
+      }
+      if (name.length() == 0) {
+        throw new IllegalParameterException("Option name cannot be empty");
       }
       if (name.contains("-")) {
         throw new IllegalParameterException("Option name must not contain the hyphen character");
