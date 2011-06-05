@@ -166,4 +166,15 @@ public class MoveTestCase extends AbstractJCRCommandTestCase {
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('juu/foo')"));
     assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.hasNode('juu/bar')"));
   }
+
+  public void testNonTrivialRelative() throws Exception {
+    assertLogin();
+    groovyShell.evaluate("session.rootNode.addNode('foo').addNode('bar');");
+    groovyShell.evaluate("session.save();");
+    assertOk("cd foo ");
+    assertOk("mv bar juu");
+    groovyShell.evaluate("session.refresh(true);");
+    assertTrue((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('juu')"));
+    assertFalse((Boolean)groovyShell.evaluate("return session.rootNode.getNode('foo').hasNode('bar')"));
+  }
 }

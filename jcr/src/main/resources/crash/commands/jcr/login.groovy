@@ -105,7 +105,12 @@ absolutePath = { Path path ->
   } else {
     parent = getCurrentNode();
   }
-  return new Path(parent.path + path.string);
+  def parentPath = parent.path;
+  if (parentPath == "/") {
+    return new Path("/" + path.string);
+  } else {
+    return new Path(parent.path + "/" + path.string);
+  }
 };
 
 formatValue = { value ->
