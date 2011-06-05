@@ -18,7 +18,6 @@
  */
 package org.crsh.ssh.term.scp;
 
-import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 
@@ -51,10 +50,6 @@ public class SCPAction {
   /** . */
   @Option(names="d")
   private Boolean directory;
-
-  /** . */
-  @Argument
-  private String argument;
 
   public Boolean isRecursive() {
     return recursive;
@@ -104,14 +99,6 @@ public class SCPAction {
     this.directory = directory;
   }
 
-  public String getArgument() {
-    return argument;
-  }
-
-  public void setArgument(String argument) {
-    this.argument = argument;
-  }
-
   @Command
   public void main() {
     // Do nothing
@@ -120,6 +107,6 @@ public class SCPAction {
   @Override
   public String toString() {
     return "SCPAction[recursive=" + recursive + ",verbose=" + verbose + ",preserve=" + preserve + ",source=" + source +
-      ",sink=" + sink + ",directory=" + directory + ",argument=" + argument + "]";
+      ",sink=" + sink + ",directory=" + directory + "]";
   }
 }
