@@ -42,7 +42,7 @@ public @interface Option {
    * <ul>
    * <li>A single valued type will have an arity of 1 and a multiplicity of {@link org.crsh.cmdline.Multiplicity#ZERO_OR_ONE}
    * or {@link org.crsh.cmdline.Multiplicity#ZERO_OR_ONE} according to the related {@link Required} annotation</li>
-   * <li>A multi valued type will have an unbounded arity and {@link org.crsh.cmdline.Multiplicity#ZERO_OR_MORE} multiplicity.</li>
+   * <li>A multi valued type will have an unbounded arity and {@link org.crsh.cmdline.Multiplicity#MULTI} multiplicity.</li>
    * </ul>
    *
    * @return arity

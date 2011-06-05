@@ -75,7 +75,8 @@ public class CommandInfoTestCase extends TestCase {
     assertEquals(1, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
     assertEquals(SimpleValueType.INTEGER, i.getType());
-    assertEquals(Multiplicity.ZERO_OR_ONE, i.getMultiplicity());
+    assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
+    assertEquals(false, i.isRequired());
   }
 
   public void testArgument2() throws IntrospectionException {
@@ -89,10 +90,11 @@ public class CommandInfoTestCase extends TestCase {
     assertEquals(2, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
     assertEquals(SimpleValueType.INTEGER, i.getType());
-    assertEquals(Multiplicity.ZERO_OR_ONE, i.getMultiplicity());
+    assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
+    assertEquals(false, i.isRequired());
     ArgumentDescriptor j = c.getArguments().get(1);
     assertEquals(SimpleValueType.INTEGER, j.getType());
-    assertEquals(Multiplicity.ZERO_OR_MORE, j.getMultiplicity());
+    assertEquals(Multiplicity.MULTI, j.getMultiplicity());
   }
 
   public void testArgument3() throws IntrospectionException {

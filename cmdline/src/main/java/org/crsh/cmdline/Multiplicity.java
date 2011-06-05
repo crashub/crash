@@ -25,10 +25,8 @@ package org.crsh.cmdline;
  */
 public enum Multiplicity {
 
-  ZERO_OR_ONE,
+  SINGLE,
 
-  ONE,
-
-  ZERO_OR_MORE
+  MULTI
 
 }

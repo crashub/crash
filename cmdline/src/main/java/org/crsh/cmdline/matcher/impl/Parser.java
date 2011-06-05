@@ -260,13 +260,12 @@ public final class Parser<T> implements Iterator<Event> {
           if (ra.index < arguments.size()) {
             ArgumentDescriptor<?> argument = arguments.get(ra.index);
             switch (argument.getMultiplicity()) {
-              case ZERO_OR_ONE:
-              case ONE:
+              case SINGLE:
                 tokenizer.next();
                 next.addLast(new Event.Argument(argument, Arrays.asList(literal)));
                 nextStatus = ra.next();
                 break;
-              case ZERO_OR_MORE:
+              case MULTI:
                 tokenizer.next();
                 List<Token.Literal> values = new ArrayList<Token.Literal>();
                 values.add(literal);
@@ -319,13 +318,15 @@ public final class Parser<T> implements Iterator<Event> {
           int index = 0;
           for (ArgumentDescriptor<?> argument : arguments) {
             Multiplicity multiplicity = argument.getMultiplicity();
-            if (multiplicity == Multiplicity.ONE) {
-              if (oneCount + 1 > wordCount) {
-                break;
+            if (multiplicity == Multiplicity.SINGLE) {
+              if (argument.isRequired()) {
+                if (oneCount + 1 > wordCount) {
+                  break;
+                }
+                oneCount++;
+              } else {
+                zeroOrOneCount++;
               }
-              oneCount++;
-            } else if (multiplicity == Multiplicity.ZERO_OR_ONE) {
-              zeroOrOneCount++;
             }
             index++;
           }
@@ -345,18 +346,19 @@ public final class Parser<T> implements Iterator<Event> {
           for (ArgumentDescriptor<?> argument : arguments) {
             int size;
             switch (argument.getMultiplicity()) {
-              case ONE:
-                size = 1;
-                break;
-              case ZERO_OR_ONE:
-                if (zeroOrOneCount > 0) {
-                  zeroOrOneCount--;
+              case SINGLE:
+                if (argument.isRequired()) {
                   size = 1;
                 } else {
-                  size = 0;
+                  if (zeroOrOneCount > 0) {
+                    zeroOrOneCount--;
+                    size = 1;
+                  } else {
+                    size = 0;
+                  }
                 }
                 break;
-              case ZERO_OR_MORE:
+              case MULTI:
                 // We consume the remaining
                 size = toConsume;
                 toConsume = 0;

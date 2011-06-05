@@ -446,8 +446,7 @@ public class MatcherImpl<T> extends Matcher<T> {
       ArgumentDescriptor<?> argument = eventArgument.getDescriptor();
       if (separator != null) {
         switch (argument.getMultiplicity()) {
-          case ZERO_OR_ONE:
-          case ONE:
+          case SINGLE:
             List<? extends ArgumentDescriptor<?>> arguments = argument.getOwner().getArguments();
             int index = arguments.indexOf(argument) + 1;
             if (index < arguments.size()) {
@@ -455,7 +454,7 @@ public class MatcherImpl<T> extends Matcher<T> {
             } else {
               return new EmptyCompletion();
             }
-          case ZERO_OR_MORE:
+          case MULTI:
             return new ParameterCompletion("", Termination.DETERMINED, argument, completer);
           default:
             throw new AssertionError();

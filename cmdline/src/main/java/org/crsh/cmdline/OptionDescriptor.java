@@ -63,12 +63,12 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
       annotation);
 
     //
-    if (arity > 1 && getMultiplicity() == Multiplicity.ZERO_OR_ONE) {
+    if (arity > 1 && getMultiplicity() == Multiplicity.SINGLE && !isRequired()) {
       throw new IllegalParameterException();
     }
 
     //
-    if (getMultiplicity() == Multiplicity.ZERO_OR_MORE && getType() == SimpleValueType.BOOLEAN) {
+    if (getMultiplicity() == Multiplicity.MULTI && getType() == SimpleValueType.BOOLEAN) {
       throw new IllegalParameterException();
     }
 

@@ -98,7 +98,7 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
 
       // Then figure out if we need to unwrap somehow
       Object v;
-      if (parameter.getMultiplicity() == Multiplicity.ZERO_OR_MORE) {
+      if (parameter.getMultiplicity() == Multiplicity.MULTI) {
         v = l;
       } else {
         if (l.isEmpty()) {

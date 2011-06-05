@@ -86,11 +86,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     Multiplicity multiplicity;
     if (javaType instanceof Class<?>) {
       javaValueType = (Class<Object>)javaType;
-      if (required) {
-        multiplicity = Multiplicity.ONE;
-      } else {
-        multiplicity = Multiplicity.ZERO_OR_ONE;
-      }
+      multiplicity = Multiplicity.SINGLE;
     } else if (javaType instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType)javaType;
       Type rawType = parameterizedType.getRawType();
@@ -100,7 +96,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
           Type elementType = parameterizedType.getActualTypeArguments()[0];
           if (elementType instanceof Class<?>) {
             javaValueType = (Class<Object>)elementType;
-            multiplicity = Multiplicity.ZERO_OR_MORE;
+            multiplicity = Multiplicity.MULTI;
           } else {
             throw new IllegalValueTypeException();
           }
@@ -199,6 +195,14 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
 
   public final Multiplicity getMultiplicity() {
     return multiplicity;
+  }
+
+  public final boolean isSingleValued() {
+    return multiplicity == Multiplicity.SINGLE;
+  }
+
+  public final boolean isMultiValued() {
+    return multiplicity == Multiplicity.MULTI;
   }
 
   public final Class<? extends Completer> getCompleterType() {
