@@ -20,11 +20,16 @@
 package org.crsh.jcr;
 
 import org.apache.sshd.server.Command;
+import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.IntrospectionException;
+import org.crsh.cmdline.matcher.CmdLineException;
+import org.crsh.cmdline.matcher.CommandMatch;
+import org.crsh.cmdline.matcher.InvocationContext;
+import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.ssh.term.FailCommand;
 import org.crsh.ssh.term.scp.CommandPlugin;
 import org.crsh.ssh.term.scp.SCPAction;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -39,8 +44,10 @@ public class SCPCommandPlugin extends CommandPlugin {
       try {
         command = command.substring(4);
         SCPAction action = new SCPAction();
-        CmdLineParser parser = new CmdLineParser(action);
-        parser.parseArgument(command.split("(\\s)+"));
+        ClassDescriptor<SCPAction> descriptor = CommandFactory.create(SCPAction.class);
+        Matcher<SCPAction> analyzer = Matcher.createMatcher("main", descriptor);
+        CommandMatch<SCPAction, ?, ?> match = analyzer.match(command);
+        match.invoke(new InvocationContext(), action);
         if (Boolean.TRUE.equals(action.isSource())) {
           return new SourceCommand(action.getArgument(), Boolean.TRUE.equals(action.isRecursive()));
         }
@@ -48,15 +55,17 @@ public class SCPCommandPlugin extends CommandPlugin {
           return new SinkCommand(action.getArgument(), Boolean.TRUE.equals(action.isRecursive()));
         }
         else {
-          return new FailCommand("No handle that kind of action for now " + action);
+          return new FailCommand("Cannot execute command " + command);
         }
       }
       catch (CmdLineException e) {
-        e.printStackTrace();
-        return null;
+        return new FailCommand("Cannot execute command " + command, e);
+      }
+      catch (IntrospectionException e) {
+        return new FailCommand("Cannot execute command " + command, e);
       }
     } else {
-      return null;
+      return new FailCommand("Cannot execute command " + command);
     }
   }
 }

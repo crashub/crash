@@ -29,14 +29,27 @@ import java.io.IOException;
 public class FailCommand extends AbstractCommand {
 
   /** . */
-  private String failure;
+  private final String failure;
+
+  /** . */
+  private final Throwable throwable;
 
   public FailCommand(String failure) {
     this.failure = failure;
+    this.throwable = null;
+  }
+
+  public FailCommand(String failure, Throwable throwable) {
+    this.failure = failure;
+    this.throwable = throwable;
   }
 
   public void start(Environment env) throws IOException {
-    throw new IOException("Failure " + failure);
+    IOException ioe = new IOException("Failure " + failure);
+    if (throwable != null) {
+      ioe.initCause(throwable);
+    }
+    throw ioe;
   }
 
   public void destroy() {

@@ -18,8 +18,9 @@
  */
 package org.crsh.ssh.term.scp;
 
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
+import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cmdline.annotations.Command;
+import org.crsh.cmdline.annotations.Option;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -28,27 +29,27 @@ import org.kohsuke.args4j.Option;
 public class SCPAction {
 
   /** . */
-  @Option(name = "-r")
+  @Option(names="r")
   private Boolean recursive;
 
   /** . */
-  @Option(name = "-v")
+  @Option(names="v")
   private Boolean verbose;
 
   /** . */
-  @Option(name = "-p")
+  @Option(names="p")
   private Boolean preserve;
 
   /** . */
-  @Option(name = "-f")
+  @Option(names="f")
   private Boolean source;
 
   /** . */
-  @Option(name = "-t")
+  @Option(names="t")
   private Boolean sink;
 
   /** . */
-  @Option(name = "-d")
+  @Option(names="d")
   private Boolean directory;
 
   /** . */
@@ -109,6 +110,11 @@ public class SCPAction {
 
   public void setArgument(String argument) {
     this.argument = argument;
+  }
+
+  @Command
+  public void main() {
+    // Do nothing
   }
 
   @Override
