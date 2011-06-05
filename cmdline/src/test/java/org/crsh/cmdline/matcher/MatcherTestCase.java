@@ -363,8 +363,6 @@ public class MatcherTestCase extends TestCase {
     List<String> s;
     @Command
     public void foo(@Option(names = "o") List<String> s) { this.s = s; }
-    @Command
-    public void bar(@Option(names = "o", arity = 2) List<String> s) { this.s = s; }
   }
 
   public void testOptionList() throws Exception {
@@ -382,12 +380,6 @@ public class MatcherTestCase extends TestCase {
     context = new InvocationContext();
     Matcher.createMatcher("foo", desc).match("-o a -o b").invoke(context, f);
     assertEquals(Arrays.asList("a", "b"), f.s);
-
-    //
-    f = new F();
-    context = new InvocationContext();
-    Matcher.createMatcher("bar", desc).match("-o a b -o c d").invoke(context, f);
-    assertEquals(Arrays.asList("a", "b", "c", "d"), f.s);
   }
 
 

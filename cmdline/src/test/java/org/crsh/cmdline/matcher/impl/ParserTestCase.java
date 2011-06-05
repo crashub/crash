@@ -177,7 +177,7 @@ public class ParserTestCase extends TestCase {
   public void testClassOptionList() throws Exception {
 
     class A {
-      @Option(names = "o", arity = 2)
+      @Option(names = "o")
       List<String> o;
     }
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
@@ -189,16 +189,18 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "-o a");
     tester.assertOption("o", "a");
     tester.assertEnd(Event.Stop.Done.Option.class, 4);
-    tester = new Tester<A>(cmd, "-o a b");
-    tester.assertOption("o", "a", "b");
-    tester.assertEnd(Event.Stop.Done.Option.class, 6);
+    tester = new Tester<A>(cmd, "-o a -o b");
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertOption("o", "b");
+    tester.assertEnd(Event.Stop.Done.Option.class, 9);
   }
 
   public void testMethodOptionList() throws Exception {
 
     class A {
       @Command
-      public void main(@Option(names = "o", arity = 2) List<String> o) {}
+      public void main(@Option(names = "o") List<String> o) {}
     }
     ClassDescriptor<A> cmd = CommandFactory.create(A.class);
 
@@ -211,10 +213,12 @@ public class ParserTestCase extends TestCase {
     tester.assertMethod("main");
     tester.assertOption("o", "a");
     tester.assertEnd(Event.Stop.Done.Option.class, 4);
-    tester = new Tester<A>(cmd, "-o a b");
+    tester = new Tester<A>(cmd, "-o a -o b");
     tester.assertMethod("main");
-    tester.assertOption("o", "a", "b");
-    tester.assertEnd(Event.Stop.Done.Option.class, 6);
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertOption("o", "b");
+    tester.assertEnd(Event.Stop.Done.Option.class, 9);
   }
 
   public void testOptions1() throws Exception {
@@ -704,22 +708,5 @@ public class ParserTestCase extends TestCase {
     tester.assertSeparator();
     tester.assertArgument("arg", "foo");
     tester.assertEnd(Event.Stop.Done.Arg.class, 6);
-  }
-
-  public void testOptionRepetition() throws Exception {
-
-    class A {
-      @Command
-      public void main(@Option(names = "o") List<String> o) {}
-    }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
-
-    //
-    Tester<A> tester = new Tester<A>(cmd, "-o a -o b", Parser.Mode.INVOKE);
-    tester.assertMethod("main");
-    tester.assertOption("o", "a");
-    tester.assertSeparator();
-    tester.assertOption("o", "b");
-    tester.assertEnd(Event.Stop.Done.Option.class, 9);
   }
 }

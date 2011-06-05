@@ -88,7 +88,6 @@ public class CommandFactory {
         Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
         info,
         required,
-        optionAnn.arity(),
         optionAnn.password(),
         optionAnn.unquote(),
         optionAnn.completer(),

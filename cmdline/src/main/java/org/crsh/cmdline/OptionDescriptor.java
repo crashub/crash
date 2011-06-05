@@ -47,7 +47,6 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     List<String> names,
     Description info,
     boolean required,
-    int arity,
     boolean password,
     boolean unquote,
     Class<? extends Completer> completerType,
@@ -61,11 +60,6 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
       unquote,
       completerType,
       annotation);
-
-    //
-    if (arity > 1 && getMultiplicity() == Multiplicity.SINGLE && !isRequired()) {
-      throw new IllegalParameterException();
-    }
 
     //
     if (getMultiplicity() == Multiplicity.MULTI && getType() == SimpleValueType.BOOLEAN) {
@@ -87,16 +81,13 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     }
 
     //
-    if (getType() == SimpleValueType.BOOLEAN && arity < 1) {
+    if (getType() == SimpleValueType.BOOLEAN) {
       arity = 0;
     } else {
-      if (arity == -1) {
-        arity = 1;
-      }
+      arity = 1;
     }
 
     //
-    this.arity = arity;
     this.names = Collections.unmodifiableList(names);
   }
 

@@ -32,18 +32,11 @@ import java.util.List;
 public class OptionTestCase extends TestCase {
 
   public void testIllegalParameter() throws IntrospectionException {
-
     class A {
-      @Option(names = "o", arity = 2)
-      int o;
-    }
-    assertIllegalParameter(A.class);
-
-    class C {
       @Option(names = "o")
       List<Boolean> o;
     }
-    assertIllegalParameter(C.class);
+    assertIllegalParameter(A.class);
   }
 
   public void testIllegalTypes() throws IntrospectionException {
