@@ -464,4 +464,18 @@ public class MatcherTestCase extends TestCase {
       assertEquals("fooerror", e.getMessage());
     }
   }
+
+  public void testBooleanParameter() throws Exception {
+    class A {
+      @Option(names = "o")
+      boolean o;
+    }
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    Matcher<A> analyzer = Matcher.createMatcher(desc);
+
+    //
+    A a = new A();
+    analyzer.match("-o").invoke(new InvocationContext(), a);
+    assertEquals(true, a.o);
+  }
 }

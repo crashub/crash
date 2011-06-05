@@ -20,6 +20,7 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.Value;
 
@@ -148,6 +149,8 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   public Object parse(String s) throws Exception {
     return type.parse(javaValueType, s);
   }
+
+  public abstract Object parse(List<String> values) throws CmdSyntaxException;
 
   public CommandDescriptor<?, B> getOwner() {
     return owner;

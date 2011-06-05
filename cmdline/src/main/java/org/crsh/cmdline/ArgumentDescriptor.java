@@ -20,11 +20,14 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.spi.Completer;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -67,6 +70,31 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
    */
   public String getName() {
     return name;
+  }
+
+  @Override
+  public Object parse(List<String> values) throws CmdSyntaxException {
+    if (getMultiplicity() == Multiplicity.SINGLE) {
+      if (values.size() > 1) {
+        throw new CmdSyntaxException("Too many option values " + values);
+      }
+      String value = values.get(0);
+      try {
+        return parse(value);
+      } catch (Exception e) {
+        throw new CmdSyntaxException("Could not parse " + value);
+      }
+    } else {
+      List<Object> v = new ArrayList<Object>(values.size());
+      for (String value : values) {
+        try {
+          v.add(parse(value));
+        } catch (Exception e) {
+          throw new CmdSyntaxException("Could not parse " + value);
+        }
+      }
+      return v;
+    }
   }
 
   /**

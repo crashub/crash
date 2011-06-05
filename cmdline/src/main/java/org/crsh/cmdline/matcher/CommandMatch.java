@@ -57,10 +57,8 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
   public final Object invoke(InvocationContext context, C command) throws CmdLineException {
 
     //
-    Map<ParameterDescriptor<?>, List<String>> abc = new HashMap<ParameterDescriptor<?>, List<String>>();
-
-    //
     Set<ParameterDescriptor<?>> unused = getParameters();
+    Map<ParameterDescriptor<?>, Object> parameterValues = new HashMap<ParameterDescriptor<?>, Object>();
 
     //
     for (ParameterMatch<?, ?> parameterMatch : getParameterMatches()) {
@@ -68,48 +66,10 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
       if (!unused.remove(parameter)) {
         throw new CmdSyntaxException("Could not find parameter " + parameter);
       }
-      abc.put(parameter, parameterMatch.getStrings());
-    }
-
-    // Convert values
-    Map<ParameterDescriptor<?>, Object> parameterValues = new HashMap<ParameterDescriptor<?>, Object>();
-    for (Map.Entry<ParameterDescriptor<?>, List<String>> entry : abc.entrySet()) {
-
-      //
-      ParameterDescriptor<?> parameter = entry.getKey();
-      List<String> values = entry.getValue();
-
-      // First convert the entire list
-      List<Object> l = new ArrayList<Object>();
-      for (String value : values) {
-        try {
-          Object o = parameter.parse(value);
-          l.add(o);
-        }
-        catch (Exception e) {
-          throw new CmdSyntaxException("Could not convert value " + value, e);
-        }
+      Object v = parameterMatch.computeValue();
+      if (v != null) {
+        parameterValues.put(parameter, v);
       }
-
-      //
-      if (parameter.isRequired() && l.isEmpty()) {
-        throw new CmdSyntaxException("Non satisfied " + parameter);
-      }
-
-      // Then figure out if we need to unwrap somehow
-      Object v;
-      if (parameter.getMultiplicity() == Multiplicity.MULTI) {
-        v = l;
-      } else {
-        if (l.isEmpty()) {
-          continue;
-        } else {
-          v = l.get(0);
-        }
-      }
-
-      //
-      parameterValues.put(parameter, v);
     }
 
     //

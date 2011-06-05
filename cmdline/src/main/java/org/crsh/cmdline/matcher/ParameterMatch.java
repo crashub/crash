@@ -64,4 +64,15 @@ public class ParameterMatch<P extends ParameterDescriptor<B>, B extends TypeBind
     }
     return strings;
   }
+
+  /**
+   * Compute the value from the parameter metadata and the values list.
+   *
+   * @return the invocation value
+   * @throws CmdSyntaxException anything that would prevent the value from being computed
+   */
+  public Object computeValue() throws CmdSyntaxException {
+    List<String> strings = getStrings();
+    return parameter.parse(strings);
+  }
 }
