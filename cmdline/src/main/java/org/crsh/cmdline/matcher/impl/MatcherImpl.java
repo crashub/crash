@@ -22,10 +22,8 @@ package org.crsh.cmdline.matcher.impl;
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
-import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.matcher.ArgumentMatch;
@@ -41,11 +39,9 @@ import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -199,10 +195,10 @@ public class MatcherImpl<T> extends Matcher<T> {
 
   @Override
   public Map<String, String> complete(Completer completer, String s) throws CmdCompletionException {
-    return _complete(completer, s).complete();
+    return getCompletion(completer, s).complete();
   }
 
-  private Completion _complete(Completer completer, String s) throws CmdCompletionException {
+  private Completion getCompletion(Completer completer, String s) throws CmdCompletionException {
 
     Tokenizer tokenizer = new Tokenizer(s);
     Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Parser.Mode.COMPLETE);
