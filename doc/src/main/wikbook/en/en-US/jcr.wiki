@@ -56,7 +56,7 @@ The following command will export the node ///gadgets// in the repository //port
 of the portal container //portal//:
 
 {{screen}}
-scp -P 2000 root@localhost:portal:portal-system:/production/app:gadgets .
+scp -P 2000 root@localhost:portal:portal-system:/production/app:gadgets gadgets.xml
 {{/screen}}
 
 The node will be exported as //app_gadgets.xml//.
@@ -68,7 +68,9 @@ Note that the portal container name is used for GateIn. If you do omit it, then 
 The following command will reimport the node:
 
 {{screen}}
-scp -P 2000 gadgets.xml root@localhost:portal:portal-system/production/app:gadgets
+scp -P 2000 gadgets.xml root@localhost:portal:portal-system:/production/
 {{/screen}}
 
 The exported file format use the JCR system view. You can get more information about that in the JCR specification.
+
+{{caution}}The SCP feature is experimental{{/caution}}
