@@ -49,10 +49,10 @@ public class SCPCommandPlugin extends CommandPlugin {
         CommandMatch<SCPAction, ?, ?> match = analyzer.match(command);
         match.invoke(new InvocationContext(), action);
         if (Boolean.TRUE.equals(action.isSource())) {
-          return new SourceCommand(match.getRest(), Boolean.TRUE.equals(action.isRecursive()));
+          return new SourceCommand(action.getTarget(), Boolean.TRUE.equals(action.isRecursive()));
         }
         else if (Boolean.TRUE.equals(action.isSink())) {
-          return new SinkCommand(match.getRest(), Boolean.TRUE.equals(action.isRecursive()));
+          return new SinkCommand(action.getTarget(), Boolean.TRUE.equals(action.isRecursive()));
         }
         else {
           return new FailCommand("Cannot execute command " + command);

@@ -478,4 +478,32 @@ public class MatcherTestCase extends TestCase {
     analyzer.match("-o").invoke(new InvocationContext(), a);
     assertEquals(true, a.o);
   }
+
+  public void testSCP() throws Exception {
+    class SCP {
+      @Option(names = "t")
+      boolean t;
+      @Argument
+      @Required
+      String target;
+    }
+    ClassDescriptor<SCP> desc = CommandFactory.create(SCP.class);
+    Matcher<SCP> analyzer = Matcher.createMatcher(desc);
+
+    //
+    SCP scp = new SCP();
+    CommandMatch<SCP, ?, ?> matcher = analyzer.match("-t -- portal:collaboration:/Documents");
+    matcher.invoke(new InvocationContext(), scp);
+    assertEquals(true, scp.t);
+    assertEquals("portal:collaboration:/Documents", scp.target);
+
+    //
+    scp = new SCP();
+    matcher = analyzer.match("-t");
+    try {
+      matcher.invoke(new InvocationContext(), scp);
+      fail();
+    } catch (CmdLineException e) {
+    }
+  }
 }
