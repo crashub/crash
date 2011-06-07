@@ -21,6 +21,7 @@ package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.matcher.tokenizer.Termination;
 import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
 
 import java.util.Iterator;
@@ -70,6 +71,10 @@ public final class Parser<T> implements Iterator<Event> {
 
   public Status getStatus() {
     return status;
+  }
+
+  public Termination getTermination() {
+    return tokenizer.getTermination();
   }
 
   public boolean hasNext() {

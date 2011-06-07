@@ -91,179 +91,179 @@ public class TokenizerTestCase extends TestCase {
 
   public void testQuotedWord1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"a");
-    assertEquals(new Token.Literal.Word(0, "\"a", "a", Termination.DOUBLE_QUOTE), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "\"a", "a"), tokenizer.next());
     assertDone(tokenizer);
     tokenizer = new Tokenizer("'a");
-    assertEquals(new Token.Literal.Word(0, "'a", "a", Termination.SINGLE_QUOTE), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "'a", "a"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testQuotedWord2() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"a \"");
-    assertEquals(new Token.Literal.Word(0, "\"a \"", "a ", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "\"a \"", "a "), tokenizer.next());
     assertDone(tokenizer);
     tokenizer = new Tokenizer("\'a \'");
-    assertEquals(new Token.Literal.Word(0, "\'a \'", "a ", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "\'a \'", "a "), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testQuotedWord3() throws Exception {
     Tokenizer tokenizer = new Tokenizer("a\" \"b");
-    assertEquals(new Token.Literal.Word(0, "a\" \"b", "a b", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "a\" \"b", "a b"), tokenizer.next());
     assertDone(tokenizer);
     tokenizer = new Tokenizer("a\' \'b");
-    assertEquals(new Token.Literal.Word(0, "a\' \'b", "a b", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "a\' \'b", "a b"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testQuotedWord4() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"-a\"");
-    assertEquals(new Token.Literal.Option.Short(0, "\"-a\"", "-a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Short(0, "\"-a\"", "-a"), tokenizer.next());
     assertDone(tokenizer);
     tokenizer = new Tokenizer("\'-a\'");
-    assertEquals(new Token.Literal.Option.Short(0, "\'-a\'", "-a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Short(0, "\'-a\'", "-a"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testQuotedWord5() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"--a\"");
-    assertEquals(new Token.Literal.Option.Long(0, "\"--a\"", "--a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Long(0, "\"--a\"", "--a"), tokenizer.next());
     assertDone(tokenizer);
     tokenizer = new Tokenizer("\'--a\'");
-    assertEquals(new Token.Literal.Option.Long(0, "\'--a\'", "--a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Long(0, "\'--a\'", "--a"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testQuotedWord6() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"'\"");
-    assertEquals(new Token.Literal.Option.Word(0, "\"'\"", "'", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Word(0, "\"'\"", "'"), tokenizer.next());
     assertDone(tokenizer);
     tokenizer = new Tokenizer("'\"'");
-    assertEquals(new Token.Literal.Option.Word(0, "'\"'", "\"", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Word(0, "'\"'", "\""), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testQuotedWord7() throws Exception {
     Tokenizer tokenizer = new Tokenizer("a\"\"b");
-    assertEquals(new Token.Literal.Option.Word(0, "a\"\"b", "ab", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Word(0, "a\"\"b", "ab"), tokenizer.next());
     assertDone(tokenizer);
     tokenizer = new Tokenizer("a''b");
-    assertEquals(new Token.Literal.Option.Word(0, "a''b", "ab", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Word(0, "a''b", "ab"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testEmptyShortOption() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-");
-    assertEquals(new Token.Literal.Option.Short(0, "-", "-", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Short(0, "-", "-"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testShortOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-a");
-    assertEquals(new Token.Literal.Option.Short(0, "-a", "-a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Short(0, "-a", "-a"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testShortOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-ab");
-    assertEquals(new Token.Literal.Option.Short(0, "-ab", "-ab", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Short(0, "-ab", "-ab"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testShortOption3() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" -a");
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
-    assertEquals(new Token.Literal.Option.Short(1, "-a", "-a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Short(1, "-a", "-a"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testShortOption4() throws Exception {
     Tokenizer tokenizer = new Tokenizer("- ");
-    assertEquals(new Token.Literal.Option.Short(0, "-", "-", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Short(0, "-", "-"), tokenizer.next());
     assertEquals(new Token.Whitespace(1, " "), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testEmptyLongOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("--");
-    assertEquals(new Token.Literal.Option.Long(0, "--", "--", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Long(0, "--", "--"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testEmptyLongOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer("-- ");
-    assertEquals(new Token.Literal.Option.Long(0, "--", "--", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Long(0, "--", "--"), tokenizer.next());
     assertEquals(new Token.Literal.Whitespace(2, " "), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testLongOption1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("--a");
-    assertEquals(new Token.Literal.Option.Long(0, "--a", "--a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Long(0, "--a", "--a"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testLongOption2() throws Exception {
     Tokenizer tokenizer = new Tokenizer("--ab");
-    assertEquals(new Token.Literal.Option.Long(0, "--ab", "--ab", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Long(0, "--ab", "--ab"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testLongOption3() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" --a");
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
-    assertEquals(new Token.Literal.Option.Long(1, "--a", "--a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Long(1, "--a", "--a"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testBackSlash1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\\a");
-    assertEquals(new Token.Literal.Word(0, "\\a", "a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "\\a", "a"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testBackSlash2() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\\ ");
-    assertEquals(new Token.Literal.Word(0, "\\ ", " ", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "\\ ", " "), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testBackSlash3() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\\-a");
-    assertEquals(new Token.Literal.Option.Short(0, "\\-a", "-a", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Option.Short(0, "\\-a", "-a"), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testEmptyWord1() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"\"");
-    assertEquals(new Token.Literal.Word(0, "\"\"", "", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "\"\"", ""), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testEmptyWord2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" \"\"");
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
-    assertEquals(new Token.Literal.Word(1, "\"\"", "", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(1, "\"\"", ""), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testEmptyWord3() throws Exception {
     Tokenizer tokenizer = new Tokenizer("\"\"\"\"");
-    assertEquals(new Token.Literal.Word(0, "\"\"\"\"", "", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(0, "\"\"\"\"", ""), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testQuoteAfterWhitespace1() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" \"\"");
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
-    assertEquals(new Token.Literal.Word(1, "\"\"", "", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(1, "\"\"", ""), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testQuoteAfterWhitespace2() throws Exception {
     Tokenizer tokenizer = new Tokenizer(" \"b\"");
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
-    assertEquals(new Token.Literal.Word(1, "\"b\"", "b", Termination.DETERMINED), tokenizer.next());
+    assertEquals(new Token.Literal.Word(1, "\"b\"", "b"), tokenizer.next());
     assertDone(tokenizer);
   }
 

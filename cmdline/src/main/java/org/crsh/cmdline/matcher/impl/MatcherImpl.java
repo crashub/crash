@@ -243,7 +243,7 @@ public class MatcherImpl<T> extends Matcher<T> {
       if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
           Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;
-          return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), tma.getToken().getTermination());
+          return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), parser.getTermination());
         } else {
           return new EmptyCompletion();
         }
@@ -288,7 +288,7 @@ public class MatcherImpl<T> extends Matcher<T> {
           return new SpaceCompletion();
         } else if (values.size() <= option.getArity()) {
           Token.Literal.Word word = optionEvent.peekLast();
-          return new ParameterCompletion(word.getValue(), word.getTermination(), option, completer);
+          return new ParameterCompletion(word.getValue(), parser.getTermination(), option, completer);
         } else {
           return new EmptyCompletion();
         }
@@ -323,7 +323,7 @@ public class MatcherImpl<T> extends Matcher<T> {
         }
       } else {
         Token.Literal value = eventArgument.peekLast();
-        return new ParameterCompletion(value.getValue(), value.getTermination(), argument, completer);
+        return new ParameterCompletion(value.getValue(), parser.getTermination(), argument, completer);
       }
     } else if (last instanceof Event.Method) {
       if (separator != null) {

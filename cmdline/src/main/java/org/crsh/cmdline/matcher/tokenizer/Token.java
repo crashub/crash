@@ -61,27 +61,27 @@ public abstract class Token {
         return name;
       }
 
-      Option(int index, String raw, String value, Termination termination, String name) {
-        super(index, raw, value, termination);
+      Option(int index, String raw, String value, String name) {
+        super(index, raw, value);
         this.name = name;
       }
 
       public final static class Short extends Option {
-        Short(int index, String raw, String value, Termination termination) {
-          super(index, raw, value, termination, value.substring(1));
+        Short(int index, String raw, String value) {
+          super(index, raw, value, value.substring(1));
         }
       }
 
       public final static class Long extends Option {
-        Long(int index, String raw, String value, Termination termination) {
-          super(index, raw, value, termination, value.substring(2));
+        Long(int index, String raw, String value) {
+          super(index, raw, value, value.substring(2));
         }
       }
     }
 
     public final static class Word extends Literal {
-      Word(int index, String raw, String value, Termination termination) {
-        super(index, raw, value, termination);
+      Word(int index, String raw, String value) {
+        super(index, raw, value);
       }
 
       Word(int index, String value) {
@@ -92,34 +92,23 @@ public abstract class Token {
     /** . */
     final String value;
 
-    /** . */
-    final Termination termination;
-
     Literal(int index, String value) {
-      this(index, value, value, Termination.DETERMINED);
+      this(index, value, value);
     }
 
-    Literal(int index, String raw, String value, Termination termination) {
+    Literal(int index, String raw, String value) {
       super(index, raw);
 
       if (value == null) {
         throw new NullPointerException();
       }
-      if (termination == null) {
-        throw new NullPointerException();
-      }
 
       //
       this.value = value;
-      this.termination = termination;
     }
 
     public String getValue() {
       return value;
-    }
-
-    public Termination getTermination() {
-      return termination;
     }
 
     @Override
@@ -129,14 +118,14 @@ public abstract class Token {
       }
       if (obj.getClass().equals(getClass())) {
         Literal that = (Literal)obj;
-        return super.equals(obj) && index == that.index && value.equals(that.value) && termination == that.termination;
+        return super.equals(obj) && index == that.index && value.equals(that.value);
       }
       return false;
     }
 
     @Override
     public String toString() {
-      return getClass().getSimpleName() + "[index=" + index + ",raw=" + raw + ",value=" + value + ",termination=" + termination.name() + "]";
+      return getClass().getSimpleName() + "[index=" + index + ",raw=" + raw + ",value=" + value + "]";
     }
   }
 

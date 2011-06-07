@@ -21,10 +21,14 @@ public class Tokenizer implements Iterator<Token> {
   /** . */
   private int ptr;
 
+  /** . */
+  private Termination termination;
+
   public Tokenizer(CharSequence s) {
     this.s = s;
     this.stack = new ArrayList<Token>();
     this.index = 0;
+    this.termination = null;
   }
 
   public boolean hasNext() {
@@ -76,24 +80,25 @@ public class Tokenizer implements Iterator<Token> {
         if (index > from) {
           switch (state.status) {
             case INIT: {
-              token = new Token.Literal.Word(from, s.subSequence(from, index).toString(), state.buffer.toString(), state.escape.termination);
+              token = new Token.Literal.Word(from, s.subSequence(from, index).toString(), state.buffer.toString());
               break;
             }
             case WORD: {
-              token = new Token.Literal.Word(from, s.subSequence(from, index).toString(), state.buffer.toString(), state.escape.termination);
+              token = new Token.Literal.Word(from, s.subSequence(from, index).toString(), state.buffer.toString());
               break;
             }
             case SHORT_OPTION: {
-              token = new Token.Literal.Option.Short(from, s.subSequence(from, index).toString(), state.buffer.toString(), state.escape.termination);
+              token = new Token.Literal.Option.Short(from, s.subSequence(from, index).toString(), state.buffer.toString());
               break;
             }
             case LONG_OPTION: {
-              token = new Token.Literal.Option.Long(from, s.subSequence(from, index).toString(), state.buffer.toString(), state.escape.termination);
+              token = new Token.Literal.Option.Long(from, s.subSequence(from, index).toString(), state.buffer.toString());
               break;
             }
             default:
               throw new AssertionError(state.status);
           }
+          termination = state.escape.termination;
           return token;
         }
       }
@@ -143,5 +148,9 @@ public class Tokenizer implements Iterator<Token> {
     } else {
       return null;
     }
+  }
+
+  public Termination getTermination() {
+    return termination;
   }
 }
