@@ -1,7 +1,5 @@
 package org.crsh.cmdline.matcher.tokenizer;
 
-import org.crsh.cmdline.matcher.impl.Token;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;

@@ -1,7 +1,5 @@
 package org.crsh.cmdline.matcher.tokenizer;
 
-import org.crsh.cmdline.matcher.impl.Termination;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */

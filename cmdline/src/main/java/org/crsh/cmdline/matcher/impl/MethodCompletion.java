@@ -3,6 +3,7 @@ package org.crsh.cmdline.matcher.impl;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
+import org.crsh.cmdline.matcher.tokenizer.Termination;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ class MethodCompletion<T> extends Completion {
   private final  String prefix;
 
   /** . */
-  private final  Termination termination;
+  private final Termination termination;
 
   MethodCompletion(ClassDescriptor<T> descriptor, String mainName, String prefix, Termination termination) {
     this.descriptor = descriptor;

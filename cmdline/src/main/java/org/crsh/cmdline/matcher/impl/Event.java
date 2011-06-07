@@ -23,6 +23,7 @@ import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
+import org.crsh.cmdline.matcher.tokenizer.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public abstract class Event {
     public final List<String> getStrings() {
       List<String> strings = new ArrayList<String>();
       for (T value : values) {
-        strings.add(value.value);
+        strings.add(value.getValue());
       }
       return strings;
     }

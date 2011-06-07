@@ -3,6 +3,7 @@ package org.crsh.cmdline.matcher.impl;
 import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
+import org.crsh.cmdline.matcher.tokenizer.Termination;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.Collections;

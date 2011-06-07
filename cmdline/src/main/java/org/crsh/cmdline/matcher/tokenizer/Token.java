@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.matcher.impl;
+package org.crsh.cmdline.matcher.tokenizer;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -28,7 +28,7 @@ public abstract class Token {
 
   public final static class Whitespace extends Token {
 
-    public Whitespace(int index, String raw) {
+    Whitespace(int index, String raw) {
       super(index, raw);
     }
 
@@ -61,30 +61,30 @@ public abstract class Token {
         return name;
       }
 
-      public Option(int index, String raw, String value, Termination termination, String name) {
+      Option(int index, String raw, String value, Termination termination, String name) {
         super(index, raw, value, termination);
         this.name = name;
       }
 
       public final static class Short extends Option {
-        public Short(int index, String raw, String value, Termination termination) {
+        Short(int index, String raw, String value, Termination termination) {
           super(index, raw, value, termination, value.substring(1));
         }
       }
 
       public final static class Long extends Option {
-        public Long(int index, String raw, String value, Termination termination) {
+        Long(int index, String raw, String value, Termination termination) {
           super(index, raw, value, termination, value.substring(2));
         }
       }
     }
 
     public final static class Word extends Literal {
-      public Word(int index, String raw, String value, Termination termination) {
+      Word(int index, String raw, String value, Termination termination) {
         super(index, raw, value, termination);
       }
 
-      public Word(int index, String value) {
+      Word(int index, String value) {
         super(index, value);
       }
     }
@@ -95,11 +95,11 @@ public abstract class Token {
     /** . */
     final Termination termination;
 
-    public Literal(int index, String value) {
+    Literal(int index, String value) {
       this(index, value, value, Termination.DETERMINED);
     }
 
-    public Literal(int index, String raw, String value, Termination termination) {
+    Literal(int index, String raw, String value, Termination termination) {
       super(index, raw);
 
       if (value == null) {
@@ -112,6 +112,14 @@ public abstract class Token {
       //
       this.value = value;
       this.termination = termination;
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+    public Termination getTermination() {
+      return termination;
     }
 
     @Override
@@ -150,6 +158,15 @@ public abstract class Token {
     //
     this.index = index;
     this.raw = raw;
+  }
+
+  /**
+   * Returns the raw text.
+   *
+   * @return the raw text
+   */
+  public String getRaw() {
+    return raw;
   }
 
   /**

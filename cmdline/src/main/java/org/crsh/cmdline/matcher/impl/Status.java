@@ -1,6 +1,7 @@
 package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.*;
+import org.crsh.cmdline.matcher.tokenizer.Token;
 import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
 
 import java.util.*;
@@ -112,7 +113,7 @@ abstract class Status {
             }
             response.status = new Status.WantReadArg();
           } else {
-            OptionDescriptor<?> desc = req.command.findOption(literal.value);
+            OptionDescriptor<?> desc = req.command.findOption(literal.getValue());
             if (desc != null) {
               req.tokenizer.next();
               int arity = desc.getArity();
@@ -150,7 +151,7 @@ abstract class Status {
               if (req.command instanceof ClassDescriptor<?>) {
                 MethodDescriptor<T> m = ((ClassDescriptor<T>)req.command).getMethod(req.mainName);
                 if (m != null) {
-                  desc = m.findOption(literal.value);
+                  desc = m.findOption(literal.getValue());
                   if (desc != null) {
                     response.command = m;
                     response.add(new Event.Method.Implicit(m, literal));
@@ -169,7 +170,7 @@ abstract class Status {
           Token.Literal.Word wordLiteral = (Token.Literal.Word)literal;
           if (req.command instanceof ClassDescriptor<?>) {
             ClassDescriptor<T> classCommand = (ClassDescriptor<T>)req.command;
-            MethodDescriptor<T> m = classCommand.getMethod(wordLiteral.value);
+            MethodDescriptor<T> m = classCommand.getMethod(wordLiteral.getValue());
             if (m != null && !m.getName().equals(req.mainName)) {
               response.command = m;
               req.tokenizer.next();

@@ -34,6 +34,8 @@ import org.crsh.cmdline.matcher.LiteralValue;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
+import org.crsh.cmdline.matcher.tokenizer.Termination;
+import org.crsh.cmdline.matcher.tokenizer.Token;
 import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
 import org.crsh.cmdline.spi.Completer;
 
@@ -67,7 +69,7 @@ public class MatcherImpl<T> extends Matcher<T> {
   private List<LiteralValue> bilto(List<? extends Token.Literal> literals) {
     List<LiteralValue> values = new ArrayList<LiteralValue>(literals.size());
     for (Token.Literal literal : literals) {
-      values.add(new LiteralValue(literal.raw, literal.value));
+      values.add(new LiteralValue(literal.getRaw(), literal.getValue()));
     }
     return values;
   }
@@ -241,7 +243,7 @@ public class MatcherImpl<T> extends Matcher<T> {
       if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
           Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;
-          return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), tma.getToken().termination);
+          return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), tma.getToken().getTermination());
         } else {
           return new EmptyCompletion();
         }
@@ -286,7 +288,7 @@ public class MatcherImpl<T> extends Matcher<T> {
           return new SpaceCompletion();
         } else if (values.size() <= option.getArity()) {
           Token.Literal.Word word = optionEvent.peekLast();
-          return new ParameterCompletion(word.value, word.termination, option, completer);
+          return new ParameterCompletion(word.getValue(), word.getTermination(), option, completer);
         } else {
           return new EmptyCompletion();
         }
@@ -321,7 +323,7 @@ public class MatcherImpl<T> extends Matcher<T> {
         }
       } else {
         Token.Literal value = eventArgument.peekLast();
-        return new ParameterCompletion(value.value, value.termination, argument, completer);
+        return new ParameterCompletion(value.getValue(), value.getTermination(), argument, completer);
       }
     } else if (last instanceof Event.Method) {
       if (separator != null) {

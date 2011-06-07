@@ -20,8 +20,6 @@
 package org.crsh.cmdline.matcher.tokenizer;
 
 import junit.framework.TestCase;
-import org.crsh.cmdline.matcher.impl.Termination;
-import org.crsh.cmdline.matcher.impl.Token;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
