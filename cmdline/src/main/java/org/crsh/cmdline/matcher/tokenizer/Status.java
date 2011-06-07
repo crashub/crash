@@ -3,7 +3,7 @@ package org.crsh.cmdline.matcher.tokenizer;
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public enum Status {
+enum Status {
 
   INIT,
 
