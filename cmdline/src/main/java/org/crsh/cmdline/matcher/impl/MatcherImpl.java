@@ -76,7 +76,7 @@ public class MatcherImpl<T> extends Matcher<T> {
   public CommandMatch<T, ?, ?> match(String s) {
 
     Tokenizer tokenizer = new Tokenizer(s);
-    Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Parser.Mode.INVOKE);
+    Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Mode.INVOKE);
 
     //
     List<OptionMatch<ClassFieldBinding>> classOptions = new ArrayList<OptionMatch<ClassFieldBinding>>();
@@ -201,7 +201,7 @@ public class MatcherImpl<T> extends Matcher<T> {
   private Completion getCompletion(Completer completer, String s) throws CmdCompletionException {
 
     Tokenizer tokenizer = new Tokenizer(s);
-    Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Parser.Mode.COMPLETE);
+    Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Mode.COMPLETE);
 
     // Last non separator event
     Event last = null;
