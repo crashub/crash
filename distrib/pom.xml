@@ -69,11 +69,9 @@
             <classifier>html</classifier>
             <type>zip</type>
           </dependency>
-
-          <!-- Javadoc -->
           <dependency>
             <groupId>org.crsh</groupId>
-            <artifactId>crsh.shell.core</artifactId>
+            <artifactId>crsh.doc</artifactId>
             <classifier>javadoc</classifier>
           </dependency>
         </dependencies>
@@ -82,27 +80,6 @@
           <finalName>crsh-${project.version}</finalName>
 
           <plugins>
-
-            <!-- Generate aggregated javadoc -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>javadoc</id>
-                  <goals>
-                    <goal>javadoc</goal>
-                  </goals>
-                  <configuration>
-                    <includeDependencySources>true</includeDependencySources>
-                    <dependencySourceIncludes>
-                      <dependencySourceInclude>org.crsh:*</dependencySourceInclude>
-                    </dependencySourceIncludes>
-                  </configuration>
-                  <phase>generate-resources</phase>
-                </execution>
-              </executions>
-            </plugin>
 
             <!-- Final assembly -->
             <plugin>

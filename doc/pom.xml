@@ -71,6 +71,7 @@
 
     <plugins>
 
+     <!-- Generate wikbook from CRaSH commands -->
      <plugin>
        <groupId>org.codehaus.mojo</groupId>
        <artifactId>exec-maven-plugin</artifactId>
@@ -90,7 +91,7 @@
        </configuration>
      </plugin>
 
-      <!-- The wikbook maven plugin generates the docbook document from the wiki source -->
+     <!-- The wikbook maven plugin generates the docbook document from the wiki source -->
      <plugin>
         <groupId>org.wikbook</groupId>
         <artifactId>wikbook.maven</artifactId>
@@ -275,6 +276,71 @@
          </execution>
        </executions>
      </plugin>
+
+      <!-- Generate aggregated javadoc -->
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-dependency-plugin</artifactId>
+         <executions>
+           <execution>
+             <id>unpack</id>
+             <phase>generate-sources</phase>
+             <goals>
+               <goal>unpack</goal>
+             </goals>
+             <configuration>
+               <artifactItems>
+                 <artifactItem>
+                   <groupId>org.crsh</groupId>
+                   <artifactId>crsh.cmdline</artifactId>
+                   <classifier>sources</classifier>
+                 </artifactItem>
+                 <artifactItem>
+                   <groupId>org.crsh</groupId>
+                   <artifactId>crsh.shell.core</artifactId>
+                   <classifier>sources</classifier>
+                 </artifactItem>
+                 <artifactItem>
+                   <groupId>org.crsh</groupId>
+                   <artifactId>crsh.shell.telnet</artifactId>
+                   <classifier>sources</classifier>
+                 </artifactItem>
+                 <artifactItem>
+                   <groupId>org.crsh</groupId>
+                   <artifactId>crsh.shell.ssh</artifactId>
+                   <classifier>sources</classifier>
+                 </artifactItem>
+                 <artifactItem>
+                   <groupId>org.crsh</groupId>
+                   <artifactId>crsh.jcr</artifactId>
+                   <classifier>sources</classifier>
+                 </artifactItem>
+               </artifactItems>
+               <includes>**/*.java</includes>
+               <outputDirectory>${project.build.directory}/sources</outputDirectory>
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>javadoc</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <sourcepath>${project.build.directory}/sources</sourcepath>
+              <quiet>true</quiet>
+              <linksource>true</linksource>
+              <show>private</show>
+            </configuration>
+            <phase>process-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
 
     </plugins>
 

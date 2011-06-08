@@ -87,6 +87,13 @@
         <include>org.crsh:crsh.doc:pdf</include>
       </includes>
     </dependencySet>
+    <dependencySet>
+      <outputDirectory>/doc/javadoc</outputDirectory>
+      <unpack>true</unpack>
+      <includes>
+        <include>org.crsh:crsh.doc:jar:javadoc</include>
+      </includes>
+    </dependencySet>
   </dependencySets>
 
 </assembly>
