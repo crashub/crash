@@ -20,18 +20,13 @@
 package org.crsh.plugin;
 
 import org.crsh.vfs.FS;
-import org.crsh.vfs.Path;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -83,19 +78,6 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
         //
         contextMap.put(contextPath, context);
         registered = true;
-
-        // Configure from web.xml
-        @SuppressWarnings("unchecked")
-        Enumeration<String> names = sc.getInitParameterNames();
-        while (names.hasMoreElements()) {
-          String name = names.nextElement();
-          if (name.startsWith("crash.")) {
-            String value = sc.getInitParameter(name).trim();
-            String key = name.substring("crash.".length());
-            PropertyDescriptor<?> desc = PropertyDescriptor.ALL.get(key);
-            context.setProperty(desc, value);
-          }
-        }
 
         //
         start(context);

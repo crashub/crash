@@ -210,7 +210,7 @@ public class PluginContext {
           for (File path : dirs) {
             File f = path.child(resourceId + ".groovy", false);
             if (f != null) {
-              return f.getResource();
+              res = f.getResource();
             }
           }
           break;
@@ -218,9 +218,13 @@ public class PluginContext {
           if ("telnet.properties".equals(resourceId)) {
             File telnet = vfs.get(Path.get("/telnet/telnet.properties"));
             if (telnet != null) {
-              if (telnet != null) {
-                return telnet.getResource();
-              }
+              res = telnet.getResource();
+            }
+          }
+          if ("crash.properties".equals(resourceId)) {
+            File props = vfs.get(Path.get("/crash.properties"));
+            if (props != null) {
+              res = props.getResource();
             }
           }
           break;
@@ -228,7 +232,7 @@ public class PluginContext {
           if ("hostkey.pem".equals(resourceId)) {
             File key = vfs.get((Path.get("/ssh/hostkey.pem")));
             if (key != null) {
-              return key.getResource();
+              res = key.getResource();
             }
           }
           break;

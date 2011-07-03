@@ -1,6 +1,6 @@
 CRaSH can be configured by tweaking various files of the CRaSH web archive
 
-* //WEB-INF/web.xml//
+* //WEB-INF/crash/crash.properties//
 * //WEB-INF/crash/commands/base/login.groovy//
 * //WEB-INF/crash/commands/jcr/login.groovy//
 
@@ -10,56 +10,31 @@ property name.{{/note}}
 = Change the SSH server key =
 
 The key can be changed by replacing the file //WEB-INF/sshd/hostkey.pem//. Alternatively you can configure the server
-to use an external file by using the //ssh.keypath// parameter. Uncomment the XML section and change the path to the
-key file.
+to use an external file by using the //crash.ssh.keypath// parameter in the //crash.properties//. Uncomment the corresponding
+property and change the path to the key file.
 
-{{xml}}
-<!--
-<context-param>
-  <param-name>crash.ssh.keypath</param-name>
-  <param-value>/path/to/the/key/file</param-value>
-  <description>The path to the key file</description>
-</context-param>
--->
-{{/xml}}
+{{code}}
+#crash.ssh.keypath=/path/to/the/key/file
+{{/code}}
 
 = Change the ports of the telnet or SSH server =
 
-The ports of the server are parameterized by the //ssh.port// and //telnet.port// parameters in the //web.xml// file
+The ports of the server are parameterized by the //crash.ssh.port// and //crash.telnet.port// parameters in the //crash.properties// file
 
-{{xml}}
-<context-param>
-  <param-name>crash.ssh.port</param-name>
-  <param-value>2000</param-value>
-  <description>The SSH port</description>
-</context-param>
-{{/xml}}
+{{code}}
+# SSH configuration
+crash.ssh.port=2000
+{{/code}}
 
-{{xml}}
-<context-param>
-  <param-name>crash.telnet.port</param-name>
-  <param-value>5000</param-value>
-  <description>The telnet port</description>
-</context-param>
-{{/xml}}
+{{code}}
+# Telnet configuration
+crash.telnet.port=5000
+{{/code}}
 
 = Remove the telnet or SSH access =
 
-To remove the telnet access, remove or comment the following XML from the //web.xml// file
-
-{{xml}}
-<listener>
-  <listener-class>org.crsh.term.spi.telnet.TelnetLifeCycle</listener-class>
-</listener>
-{{/xml}}
-
-To remove the SSH access, remove or comment the following XML from the //web.xml// file
-
-{{xml}}
-<listener>
-  <listener-class>org.crsh.term.spi.sshd.SSHLifeCycle</listener-class>
-</listener>
-{{/xml}}
+* to remove the telnet access, remove the jar file in the //WEB-INF/lib/crsh.shell.telnet-$[crash.version].jar// .
+* to remove the SSH access, remove the jar file in the //WEB-INF/lib/crsh.shell.ssh-$[crash.version].jar// .
 
 = Configure the shell default message =
 

@@ -22,52 +22,10 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>Archetype Created Web Application</display-name>
-
-  <context-param>
-    <param-name>crash.vfs.refresh_period</param-name>
-    <param-value>1</param-value>
-    <description>The vfs refresh rate</description>
-  </context-param>
-
-  <context-param>
-    <param-name>crash.ssh.port</param-name>
-    <param-value>2000</param-value>
-    <description>The SSH port</description>
-  </context-param>
-
-  <!--
-  <context-param>
-    <param-name>crash.ssh.keypath</param-name>
-    <param-value>/path/to/the/key/file</param-value>
-    <description>The path to the key file</description>
-  </context-param>
-  -->
-
-  <context-param>
-    <param-name>crash.telnet.port</param-name>
-    <param-value>5000</param-value>
-    <description>The telnet port</description>
-  </context-param>
+  <display-name>CRaSH</display-name>
 
   <listener>
     <listener-class>org.crsh.plugin.WebPluginLifeCycle</listener-class>
   </listener>
-
-   <!-- Servlets -->
-  <servlet>
-    <servlet-name>shellServlet</servlet-name>
-    <servlet-class>org.crsh.web.server.ShellServiceImpl</servlet-class>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>shellServlet</servlet-name>
-    <url-pattern>/Crash/shell</url-pattern>
-  </servlet-mapping>
-
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>Crash.html</welcome-file>
-  </welcome-file-list>
 
 </web-app>

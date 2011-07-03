@@ -19,8 +19,14 @@
 
 package org.crsh.plugin;
 
+import org.crsh.vfs.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -41,17 +47,38 @@ public abstract class PluginLifeCycle {
   public final void start(PluginContext context) {
     this.context = context;
 
+    // Get properties from system properties
+    Properties props = new Properties();
+
+    // Load properties from configuration file
+    Resource res = context.loadResource("crash.properties", ResourceKind.CONFIG);
+    if (res != null) {
+      try {
+        URL url = res.getURL();
+        InputStream in = url.openStream();
+        props.load(in);
+        log.debug("Loaded properties from " + url + " " + props);
+      } catch (IOException e) {
+        log.warn("Could not configure from crash.properties", e);
+      }
+    } else {
+      log.debug("Could not find crash.properties file");
+    }
+
+    // Override default properties from System properties
+    props.putAll(System.getProperties());
+
     // Override default properties from command line
     for (PropertyDescriptor<?> desc : PropertyDescriptor.ALL.values()) {
       String key = "crash." + desc.name;
-      String value = System.getProperty(key);
+      String value = props.getProperty(key);
       if (value != null) {
         try {
-          log.info("Configuring property " + desc.name + " from system properties");
+          log.info("Configuring property " + desc.name + "=" + value + " from properties");
           context.setProperty(desc, value);
         }
         catch (IllegalArgumentException e) {
-          e.printStackTrace();
+          log.error("Could not configure property", e);
         }
       }
     }
