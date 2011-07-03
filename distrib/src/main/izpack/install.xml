@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+<installation version="1.0">
+  <info>
+    <appname>crash</appname>
+    <appversion>1.0.0-beta22</appversion>
+    <authors>
+      <author email="julien@julienviet.com" name="Julien Viet"/>
+    </authors>
+    <url>http://crsh.googlecode.com</url>
+    <uninstaller name="Uninstaller.jar" write="yes"/>
+    <requiresjdk>no</requiresjdk>
+    <writeinstallationinformation>no</writeinstallationinformation>
+    <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
+  </info>
+
+  <resources>
+    <res id="userInputSpec.xml" src="userInputSpec.xml" />
+  </resources>
+
+  <guiprefs height="480" resizable="no" width="640">
+    <modifier key="useFlags" value="yes"/>
+    <modifier key="langDisplayType" value="default"/>
+  </guiprefs>
+
+  <variables>
+    <variable name="crash.telnet.port" value="5000"/>
+    <variable name="crash.ssh.port" value="2000"/>
+  </variables>
+
+  <locale>
+    <langpack iso3="eng"/>
+  </locale>
+
+  <panels>
+    <panel classname="CheckedHelloPanel"/>
+    <panel classname="PacksPanel"/>
+    <panel classname="UserInputPanel" id="userinputpanel.0"/>
+    <panel classname="UserInputPanel" id="userinputpanel.1"/>
+    <panel classname="TargetPanel"/>
+    <panel classname="InstallPanel"/>
+    <panel classname="SimpleFinishPanel"/>
+  </panels>
+
+  <packs>
+    <pack name="crash" preselected="yes" required="yes">
+      <description>The required CRaSH files.</description>
+      <fileset dir="crash" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+        <include name="**/*"/>
+      </fileset>
+      <parsable targetfile="$INSTALL_PATH/WEB-INF/crash/crash.properties"/>
+    </pack>
+    <pack name="groovy" preselected="yes" required="no">
+      <description>Bundle the Groovy library with CRaSH. This is not required when the runtime provides this library already.</description>
+      <fileset dir="groovy" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+        <include name="**/*"/>
+      </fileset>
+    </pack>
+    <pack name="telnet" preselected="yes" required="no">
+      <description>Provides Telnet access to CRaSH.</description>
+      <fileset dir="telnet" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+        <include name="**/*"/>
+      </fileset>
+    </pack>
+    <pack name="ssh" preselected="yes" required="no">
+      <description>Provides SSH access to CRaSH.</description>
+      <fileset dir="ssh" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+        <include name="**/*"/>
+      </fileset>
+    </pack>
+    <pack name="bouncy" preselected="yes" required="no">
+      <description>Bundle the Bouncy Castle libraries with CRaSH required for SSH support. This is not required when the runtime provides this library already.</description>
+      <fileset dir="bouncy" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+        <include name="**/*"/>
+      </fileset>
+    </pack>
+    <pack name="jcr" preselected="yes" required="no">
+      <description>Bundle the CRaSH JCR extension.</description>
+      <fileset dir="jcr" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+        <include name="**/*"/>
+      </fileset>
+    </pack>
+  </packs>
+
+</installation>

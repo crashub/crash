@@ -13,11 +13,219 @@
   <name>CRaSH distrib</name>
   <description>The CRaSH distribution</description>
 
+  <dependencies>
+
+    <!-- Sources -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.cmdline</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.telnet</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.ssh</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+
+    <!-- Doc -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.doc</artifactId>
+      <type>pdf</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.doc</artifactId>
+      <classifier>html</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.doc</artifactId>
+      <classifier>javadoc</classifier>
+    </dependency>
+
+  </dependencies>
+
   <profiles>
+
+      <profile>
+        <id>izpack</id>
+        <dependencies>
+
+          <!-- -->
+          <dependency>
+             <groupId>org.apache.maven</groupId>
+             <artifactId>maven-ant-tasks</artifactId>
+             <version>2.1.1</version>
+          </dependency>
+
+          <!-- -->
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.cmdline</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.shell.core</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>args4j</groupId>
+            <artifactId>args4j</artifactId>
+          </dependency>
+
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.shell.telnet</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>net.wimpi</groupId>
+            <artifactId>telnetd-x</artifactId>
+          </dependency>
+
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.shell.ssh</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.mina</groupId>
+            <artifactId>mina-core</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-pam</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15</artifactId>
+          </dependency>
+
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.jcr</artifactId>
+          </dependency>
+
+        </dependencies>
+        <build>
+          <plugins>
+            <!--  copy other checked resource into staging area, expected by install.xml -->
+            <plugin>
+              <artifactId>maven-antrun-plugin</artifactId>
+              <version>1.6</version>
+              <executions>
+                <execution>
+                  <id>create-staging-area</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                    <goal>run</goal>
+                  </goals>
+                  <configuration>
+                    <tasks>
+                      <copy todir="${project.build.directory}/izpack">
+                        <fileset dir="${basedir}/src/main/izpack" />
+                      </copy>
+
+                      <!-- CRaSH -->
+                      <property name="crash" value="${project.build.directory}/izpack/crash"/>
+                      <copy file="${org.crsh:crsh.cmdline:jar}" todir="${crash}/lib"/>
+                      <copy file="${org.crsh:crsh.shell.core:jar}" todir="${crash}/lib"/>
+                      <copy file="${args4j:args4j:jar}" todir="${crash}/lib"/>
+                      <unzip src="${org.crsh:crsh.shell.core:jar}" dest="${crash}">
+                        <patternset>
+                          <include name="crash/**"/>
+                        </patternset>
+                      </unzip>
+
+                      <!-- Groovy -->
+                      <property name="groovy" value="${project.build.directory}/izpack/groovy"/>
+                      <copy file="${org.codehaus.groovy:groovy-all:jar}" todir="${groovy}/lib"/>
+
+                      <!-- Telnet -->
+                      <property name="telnet" value="${project.build.directory}/izpack/telnet"/>
+                      <copy file="${org.crsh:crsh.shell.telnet:jar}" todir="${telnet}/lib"/>
+                      <copy file="${net.wimpi:telnetd-x:jar}" todir="${telnet}/lib"/>
+                      <unzip src="${org.crsh:crsh.shell.telnet:jar}" dest="${telnet}">
+                        <patternset>
+                          <include name="crash/**"/>
+                        </patternset>
+                      </unzip>
+
+                      <!-- SSH -->
+                      <property name="ssh" value="${project.build.directory}/izpack/ssh"/>
+                      <copy file="${org.crsh:crsh.shell.ssh:jar}" todir="${ssh}/lib"/>
+                      <copy file="${org.apache.mina:mina-core:jar}" todir="${ssh}/lib"/>
+                      <copy file="${org.apache.sshd:sshd-core:jar}" todir="${ssh}/lib"/>
+                      <copy file="${org.apache.sshd:sshd-pam:jar}" todir="${ssh}/lib"/>
+                      <unzip src="${org.crsh:crsh.shell.ssh:jar}" dest="${ssh}">
+                        <patternset>
+                          <include name="crash/**"/>
+                        </patternset>
+                      </unzip>
+
+                      <!-- Bouncy -->
+                      <property name="bouncy" value="${project.build.directory}/izpack/bouncy"/>
+                      <copy file="${org.bouncycastle:bcprov-jdk15:jar}" todir="${bouncy}/lib"/>
+
+                      <!-- JCR -->
+                      <property name="jcr" value="${project.build.directory}/izpack/jcr"/>
+                      <copy file="${org.crsh:crsh.jcr:jar}" todir="${jcr}/lib"/>
+                      <unzip src="${org.crsh:crsh.jcr:jar}" dest="${jcr}">
+                        <patternset>
+                          <include name="crash/**"/>
+                        </patternset>
+                      </unzip>
+
+                    </tasks>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.codehaus.izpack</groupId>
+              <artifactId>izpack-maven-plugin</artifactId>
+              <version>5.0.0-beta8</version>
+              <executions>
+                <execution>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>izpack</goal>
+                  </goals>
+                  <configuration>
+                    <baseDir>${project.build.directory}/izpack</baseDir>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+
       <profile>
         <id>release</id>
         <dependencies>
-
           <!-- Wars -->
           <dependency>
             <groupId>org.crsh</groupId>
@@ -29,58 +237,10 @@
             <artifactId>crsh.jcr</artifactId>
             <type>war</type>
           </dependency>
-
-          <!-- Sources -->
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.cmdline</artifactId>
-            <classifier>sources</classifier>
-          </dependency>
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.shell.core</artifactId>
-            <classifier>sources</classifier>
-          </dependency>
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.shell.telnet</artifactId>
-            <classifier>sources</classifier>
-          </dependency>
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.shell.ssh</artifactId>
-            <classifier>sources</classifier>
-          </dependency>
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.jcr</artifactId>
-            <classifier>sources</classifier>
-          </dependency>
-
-          <!-- Doc -->
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.doc</artifactId>
-            <type>pdf</type>
-          </dependency>
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.doc</artifactId>
-            <classifier>html</classifier>
-            <type>zip</type>
-          </dependency>
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.doc</artifactId>
-            <classifier>javadoc</classifier>
-          </dependency>
         </dependencies>
         <build>
-
           <finalName>crsh-${project.version}</finalName>
-
           <plugins>
-
             <!-- Final assembly -->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
