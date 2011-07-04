@@ -36,6 +36,7 @@
     <panel classname="PacksPanel"/>
     <panel classname="UserInputPanel" id="userinputpanel.0"/>
     <panel classname="UserInputPanel" id="userinputpanel.1"/>
+    <panel classname="UserInputPanel" id="userinputpanel.2"/>
     <panel classname="TargetPanel"/>
     <panel classname="InstallPanel"/>
     <panel classname="SimpleFinishPanel"/>
@@ -44,44 +45,44 @@
   <packs>
     <pack name="crash" preselected="yes" required="yes">
       <description>The required CRaSH files.</description>
-      <fileset dir="crash" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+      <fileset dir="crash" override="update" targetdir="$INSTALL_PATH/$warfile/WEB-INF/">
         <include name="**/*"/>
       </fileset>
-      <parsable targetfile="$INSTALL_PATH/WEB-INF/crash/crash.properties"/>
+      <parsable targetfile="$INSTALL_PATH/$warfile/WEB-INF/crash/crash.properties"/>
     </pack>
     <pack name="groovy" preselected="yes" required="no">
       <description>Bundle the Groovy library with CRaSH. This is not required when the runtime provides this library already.</description>
-      <fileset dir="groovy" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+      <fileset dir="groovy" override="update" targetdir="$INSTALL_PATH/$warfile/WEB-INF/">
         <include name="**/*"/>
       </fileset>
     </pack>
     <pack name="telnet" preselected="yes" required="no">
       <description>Provides Telnet access to CRaSH.</description>
-      <fileset dir="telnet" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+      <fileset dir="telnet" override="update" targetdir="$INSTALL_PATH/$warfile/WEB-INF/">
         <include name="**/*"/>
       </fileset>
     </pack>
     <pack name="ssh" preselected="yes" required="no">
       <description>Provides SSH access to CRaSH.</description>
-      <fileset dir="ssh" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+      <fileset dir="ssh" override="update" targetdir="$INSTALL_PATH/$warfile/WEB-INF/">
         <include name="**/*"/>
       </fileset>
     </pack>
     <pack name="bouncy" preselected="yes" required="no">
       <description>Bundle the Bouncy Castle libraries with CRaSH required for SSH support. This is not required when the runtime provides this library already.</description>
-      <fileset dir="bouncy" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+      <fileset dir="bouncy" override="update" targetdir="$INSTALL_PATH/$warfile/WEB-INF/">
         <include name="**/*"/>
       </fileset>
     </pack>
     <pack name="jcr" preselected="yes" required="no">
       <description>Bundle the CRaSH JCR extension.</description>
-      <fileset dir="jcr" override="update" targetdir="$INSTALL_PATH/WEB-INF/">
+      <fileset dir="jcr" override="update" targetdir="$INSTALL_PATH/$warfile/WEB-INF/">
         <include name="**/*"/>
       </fileset>
     </pack>
     <pack name="doc" preselected="yes" required="no">
       <description>Bundle the CRaSH JCR documentation.</description>
-      <fileset dir="doc" override="update" targetdir="$INSTALL_PATH/doc">
+      <fileset dir="doc" override="update" targetdir="$INSTALL_PATH/$warfile/doc">
         <include name="**/*"/>
       </fileset>
     </pack>
