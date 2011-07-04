@@ -278,6 +278,12 @@
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
         <version>0.4.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.sshd</groupId>
