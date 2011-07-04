@@ -79,6 +79,12 @@
         <include name="**/*"/>
       </fileset>
     </pack>
+    <pack name="doc" preselected="yes" required="no">
+      <description>Bundle the CRaSH JCR documentation.</description>
+      <fileset dir="doc" override="update" targetdir="$INSTALL_PATH/doc">
+        <include name="**/*"/>
+      </fileset>
+    </pack>
   </packs>
 
 </installation>

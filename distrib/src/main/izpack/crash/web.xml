@@ -28,4 +28,8 @@
     <listener-class>org.crsh.plugin.WebPluginLifeCycle</listener-class>
   </listener>
 
+  <welcome-file-list>
+    <welcome-file>doc/index.html</welcome-file>
+  </welcome-file-list>
+
 </web-app>

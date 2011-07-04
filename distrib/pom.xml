@@ -198,6 +198,12 @@
                         </patternset>
                       </unzip>
 
+                      <!-- Doc -->
+                      <property name="doc" value="${project.build.directory}/izpack/doc"/>
+                      <copy file="${org.crsh:crsh.doc:pdf}" tofile="${doc}/crash.pdf"/>
+                      <unzip src="${org.crsh:crsh.doc:zip:html}" dest="${doc}/html"/>
+                      <unzip src="${org.crsh:crsh.doc:jar:javadoc}" dest="${doc}/javadoc"/>
+
                     </tasks>
                   </configuration>
                 </execution>
