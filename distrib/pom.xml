@@ -145,6 +145,9 @@
                   <configuration>
                     <tasks>
                       <copy todir="${project.build.directory}/izpack">
+                        <filterset>
+                          <filter token="version" value="${version}"/>
+                        </filterset>
                         <fileset dir="${basedir}/src/main/izpack" />
                       </copy>
 

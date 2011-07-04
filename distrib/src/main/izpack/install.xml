@@ -2,12 +2,13 @@
 <installation version="1.0">
   <info>
     <appname>crash</appname>
-    <appversion>1.0.0-beta22</appversion>
+    <appversion>@version@</appversion>
     <authors>
-      <author email="julien@julienviet.com" name="Julien Viet"/>
+      <author email="julien.viet@exoplatform.com" name="Julien Viet"/>
+      <author email="alain.defrance@exoplatform.com" name="Alain Defrance"/>
     </authors>
     <url>http://crsh.googlecode.com</url>
-    <uninstaller name="Uninstaller.jar" write="yes"/>
+    <uninstaller write="true" path="$INSTALL_PATH/$warfile/"/>
     <requiresjdk>no</requiresjdk>
     <writeinstallationinformation>no</writeinstallationinformation>
     <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
