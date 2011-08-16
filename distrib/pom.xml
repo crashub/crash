@@ -65,7 +65,7 @@
   <profiles>
 
       <profile>
-        <id>izpack</id>
+        <id>release</id>
         <dependencies>
 
           <!-- -->
