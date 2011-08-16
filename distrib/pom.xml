@@ -128,9 +128,32 @@
             <artifactId>crsh.jcr</artifactId>
           </dependency>
 
+          <!-- Wars -->
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.shell.packaging</artifactId>
+            <type>war</type>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.jcr</artifactId>
+            <type>war</type>
+          </dependency>
+
         </dependencies>
         <build>
+          <finalName>crsh-${project.version}</finalName>
           <plugins>
+            <!-- Final assembly -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>make-packaging</id>
+                </execution>
+              </executions>
+            </plugin>
             <!--  copy other checked resource into staging area, expected by install.xml -->
             <plugin>
               <artifactId>maven-antrun-plugin</artifactId>
@@ -225,38 +248,6 @@
                   <configuration>
                     <baseDir>${project.build.directory}/izpack</baseDir>
                   </configuration>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
-
-      <profile>
-        <id>release</id>
-        <dependencies>
-          <!-- Wars -->
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.shell.packaging</artifactId>
-            <type>war</type>
-          </dependency>
-          <dependency>
-            <groupId>org.crsh</groupId>
-            <artifactId>crsh.jcr</artifactId>
-            <type>war</type>
-          </dependency>
-        </dependencies>
-        <build>
-          <finalName>crsh-${project.version}</finalName>
-          <plugins>
-            <!-- Final assembly -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>make-packaging</id>
                 </execution>
               </executions>
             </plugin>
