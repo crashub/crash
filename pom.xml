@@ -59,7 +59,7 @@
 
     <!-- maven-release-plugin -->
     <useReleaseProfile>false</useReleaseProfile>
-    <arguments>-Prelease,izpack</arguments>
+    <arguments>-Prelease,izpack,sign-artifacts</arguments>
     <pushChanges>false</pushChanges>
     <autoVersionSubmodules>true</autoVersionSubmodules>
 
@@ -439,6 +439,11 @@
           <artifactId>exec-maven-plugin</artifactId>
           <version>1.1.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.1</version>
+        </plugin>
 
         <!-- Make standalone configuration -->
         <plugin>
@@ -523,6 +528,15 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Avoid issues with signature plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <mavenExecutorId>forked-path</mavenExecutorId>
+        </configuration>
       </plugin>
 
     </plugins>
@@ -641,6 +655,26 @@
           </dependency>
         </dependencies>
       </dependencyManagement>
+    </profile>
+
+    <profile>
+      <id>sign-artifacts</id>
+      <build>
+        <plugins>
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
   </profiles>
