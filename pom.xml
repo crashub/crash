@@ -59,7 +59,7 @@
 
     <!-- maven-release-plugin -->
     <useReleaseProfile>false</useReleaseProfile>
-    <arguments>-Prelease</arguments>
+    <arguments>-Prelease,izpack</arguments>
     <pushChanges>false</pushChanges>
     <autoVersionSubmodules>true</autoVersionSubmodules>
 
