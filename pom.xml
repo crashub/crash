@@ -38,6 +38,33 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <developers>
+    <developer>
+      <id>julien.viet</id>
+      <name>Julien Viet</name>
+      <email>julien.viet@exoplatform.com</email>
+      <roles>
+        <role>Owner</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>defrancea</id>
+      <name>Alain Defrance</name>
+      <email>alain.defrance@exoplatform.com</email>
+      <roles>
+        <role>Committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>aheritier</id>
+      <name>Arnaud Heritier</name>
+      <email>arnaud.heritier@exoplatform.com</email>
+      <roles>
+        <role>Committer</role>
+      </roles>
+    </developer>
+  </developers>
+
   <repositories>
     <repository>
       <id>repository.jboss.org</id>
