@@ -2,13 +2,13 @@
   <parent>
     <artifactId>crsh.parent</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.0.0-beta22-SNAPSHOT</version>
+    <version>1.0.0-beta22</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.distrib</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-beta22-SNAPSHOT</version>
+  <version>1.0.0-beta22</version>
 
   <name>CRaSH distrib</name>
   <description>The CRaSH distribution</description>
@@ -146,66 +146,66 @@
                     <tasks>
                       <copy todir="${project.build.directory}/izpack">
                         <filterset>
-                          <filter token="version" value="${version}"/>
+                          <filter token="version" value="${version}" />
                         </filterset>
                         <fileset dir="${basedir}/src/main/izpack" />
                       </copy>
 
                       <!-- CRaSH -->
-                      <property name="crash" value="${project.build.directory}/izpack/crash"/>
-                      <copy file="${org.crsh:crsh.cmdline:jar}" todir="${crash}/lib"/>
-                      <copy file="${org.crsh:crsh.shell.core:jar}" todir="${crash}/lib"/>
-                      <copy file="${args4j:args4j:jar}" todir="${crash}/lib"/>
+                      <property name="crash" value="${project.build.directory}/izpack/crash" />
+                      <copy file="${org.crsh:crsh.cmdline:jar}" todir="${crash}/lib" />
+                      <copy file="${org.crsh:crsh.shell.core:jar}" todir="${crash}/lib" />
+                      <copy file="${args4j:args4j:jar}" todir="${crash}/lib" />
                       <unzip src="${org.crsh:crsh.shell.core:jar}" dest="${crash}">
                         <patternset>
-                          <include name="crash/**"/>
+                          <include name="crash/**" />
                         </patternset>
                       </unzip>
 
                       <!-- Groovy -->
-                      <property name="groovy" value="${project.build.directory}/izpack/groovy"/>
-                      <copy file="${org.codehaus.groovy:groovy-all:jar}" todir="${groovy}/lib"/>
+                      <property name="groovy" value="${project.build.directory}/izpack/groovy" />
+                      <copy file="${org.codehaus.groovy:groovy-all:jar}" todir="${groovy}/lib" />
 
                       <!-- Telnet -->
-                      <property name="telnet" value="${project.build.directory}/izpack/telnet"/>
-                      <copy file="${org.crsh:crsh.shell.telnet:jar}" todir="${telnet}/lib"/>
-                      <copy file="${net.wimpi:telnetd-x:jar}" todir="${telnet}/lib"/>
+                      <property name="telnet" value="${project.build.directory}/izpack/telnet" />
+                      <copy file="${org.crsh:crsh.shell.telnet:jar}" todir="${telnet}/lib" />
+                      <copy file="${net.wimpi:telnetd-x:jar}" todir="${telnet}/lib" />
                       <unzip src="${org.crsh:crsh.shell.telnet:jar}" dest="${telnet}">
                         <patternset>
-                          <include name="crash/**"/>
+                          <include name="crash/**" />
                         </patternset>
                       </unzip>
 
                       <!-- SSH -->
-                      <property name="ssh" value="${project.build.directory}/izpack/ssh"/>
-                      <copy file="${org.crsh:crsh.shell.ssh:jar}" todir="${ssh}/lib"/>
-                      <copy file="${org.apache.mina:mina-core:jar}" todir="${ssh}/lib"/>
-                      <copy file="${org.apache.sshd:sshd-core:jar}" todir="${ssh}/lib"/>
-                      <copy file="${org.apache.sshd:sshd-pam:jar}" todir="${ssh}/lib"/>
+                      <property name="ssh" value="${project.build.directory}/izpack/ssh" />
+                      <copy file="${org.crsh:crsh.shell.ssh:jar}" todir="${ssh}/lib" />
+                      <copy file="${org.apache.mina:mina-core:jar}" todir="${ssh}/lib" />
+                      <copy file="${org.apache.sshd:sshd-core:jar}" todir="${ssh}/lib" />
+                      <copy file="${org.apache.sshd:sshd-pam:jar}" todir="${ssh}/lib" />
                       <unzip src="${org.crsh:crsh.shell.ssh:jar}" dest="${ssh}">
                         <patternset>
-                          <include name="crash/**"/>
+                          <include name="crash/**" />
                         </patternset>
                       </unzip>
 
                       <!-- Bouncy -->
-                      <property name="bouncy" value="${project.build.directory}/izpack/bouncy"/>
-                      <copy file="${org.bouncycastle:bcprov-jdk15:jar}" todir="${bouncy}/lib"/>
+                      <property name="bouncy" value="${project.build.directory}/izpack/bouncy" />
+                      <copy file="${org.bouncycastle:bcprov-jdk15:jar}" todir="${bouncy}/lib" />
 
                       <!-- JCR -->
-                      <property name="jcr" value="${project.build.directory}/izpack/jcr"/>
-                      <copy file="${org.crsh:crsh.jcr:jar}" todir="${jcr}/lib"/>
+                      <property name="jcr" value="${project.build.directory}/izpack/jcr" />
+                      <copy file="${org.crsh:crsh.jcr:jar}" todir="${jcr}/lib" />
                       <unzip src="${org.crsh:crsh.jcr:jar}" dest="${jcr}">
                         <patternset>
-                          <include name="crash/**"/>
+                          <include name="crash/**" />
                         </patternset>
                       </unzip>
 
                       <!-- Doc -->
-                      <property name="doc" value="${project.build.directory}/izpack/doc"/>
-                      <copy file="${org.crsh:crsh.doc:pdf}" tofile="${doc}/crash.pdf"/>
-                      <unzip src="${org.crsh:crsh.doc:zip:html}" dest="${doc}/html"/>
-                      <unzip src="${org.crsh:crsh.doc:jar:javadoc}" dest="${doc}/javadoc"/>
+                      <property name="doc" value="${project.build.directory}/izpack/doc" />
+                      <copy file="${org.crsh:crsh.doc:pdf}" tofile="${doc}/crash.pdf" />
+                      <unzip src="${org.crsh:crsh.doc:zip:html}" dest="${doc}/html" />
+                      <unzip src="${org.crsh:crsh.doc:jar:javadoc}" dest="${doc}/javadoc" />
 
                     </tasks>
                   </configuration>
