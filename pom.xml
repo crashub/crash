@@ -54,7 +54,7 @@
 
   <properties>
     <!-- Repositories URLs -->
-    <crsh.releases.repo.url>http://repository.exoplatform.org/content/repositories/crsh-releases/</crsh.releases.repo.url>
+    <crsh.releases.repo.url>http://repository.exoplatform.org/service/local/staging/deploy/maven2/</crsh.releases.repo.url>
     <crsh.snapshots.repo.url>http://repository.exoplatform.org/content/repositories/crsh-snapshots/</crsh.snapshots.repo.url>
 
     <!-- maven-release-plugin -->
