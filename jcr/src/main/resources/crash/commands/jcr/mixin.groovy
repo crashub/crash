@@ -46,6 +46,7 @@ remove a mixin from an incoming node stream, for instance:
   public void remove(
      InvocationContext<Node,Void> context,
      @Usage("the mixin name to remove")
+     @Argument
      @Required
      String mixin,
      @Argument @Usage("the paths of the node receiving the mixin") List<Path> paths)
