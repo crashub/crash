@@ -56,8 +56,8 @@ public class JCR {
 
         //
         if (repositoryService != null) {
-          Method getDefaultRepositoryMethod = repositoryService.getClass().getMethod("getDefaultRepository");
-          return (Repository)getDefaultRepositoryMethod.invoke(repositoryService);
+          Method getCurrentRepositoryMethod = repositoryService.getClass().getMethod("getCurrentRepository");
+          return (Repository)getCurrentRepositoryMethod.invoke(repositoryService);
         }
       }
     }
