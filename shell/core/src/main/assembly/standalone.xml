@@ -33,7 +33,7 @@
       <unpack>true</unpack>
       <unpackOptions>
         <excludes>
-          <exclude>META-INF/**</exclude>
+          <exclude>META-INF/manifest.mf</exclude>
         </excludes>
       </unpackOptions>
       <includes>

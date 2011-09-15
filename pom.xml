@@ -97,6 +97,9 @@
     <!-- Encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <!-- Base tools path -->
+    <tools.jar>${java.home}/../lib/tools.jar</tools.jar>
+
   </properties>
 
   <dependencyManagement>
@@ -702,6 +705,18 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <id>mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <tools.jar>${java.home}/../Classes/classes.jar</tools.jar>
+      </properties>
     </profile>
 
   </profiles>
