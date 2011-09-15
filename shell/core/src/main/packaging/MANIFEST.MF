@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: julien
+Build-Jdk: 1.6.0_26
+Main-Class: org.crsh.standalone.Main
+Agent-Class: org.crsh.standalone.Agent

@@ -19,6 +19,7 @@
 
 package org.crsh.standalone;
 
+import com.sun.tools.attach.VirtualMachine;
 import org.crsh.Processor;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
@@ -31,6 +32,8 @@ import org.crsh.vfs.FS;
 import org.crsh.vfs.File;
 import org.crsh.vfs.Path;
 
+import java.net.URL;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -38,6 +41,18 @@ import org.crsh.vfs.Path;
 public class Main {
 
   public static void main(String[] args) throws Exception {
+
+    if (args.length > 0) {
+      // Standalone
+      String id = args[0];
+      URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();
+      java.io.File f = new java.io.File(url.toURI());
+      VirtualMachine vm = VirtualMachine.attach(id);
+      vm.loadAgent(f.getCanonicalPath());
+      Thread.sleep(1000);
+      vm.detach();
+      System.exit(0);
+    }
 
     //
     final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
