@@ -48,7 +48,7 @@ public abstract class ViewReader {
    */
   public abstract int del() throws IOException;
 
-  public abstract void moveRight() throws IOException;
+  public abstract boolean moveRight() throws IOException;
 
   public abstract boolean moveLeft() throws IOException;
 }

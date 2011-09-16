@@ -98,8 +98,8 @@ public final class Console {
     }
 
     @Override
-    public void moveRight() throws IOException {
-      Console.this.moveRight();
+    public boolean moveRight() throws IOException {
+      return Console.this.moveRight();
     }
 
     @Override
@@ -311,13 +311,13 @@ public final class Console {
     }
   }
 
-  private void moveRight() throws IOException {
-    if (curAt < size) {
-      if (viewWriter.writeMoveRight(buffer[curAt]))
-      {
-        viewWriter.flush();
-        curAt++;
-      }
+  private boolean moveRight() throws IOException {
+    if (curAt < size && viewWriter.writeMoveRight(buffer[curAt])) {
+      viewWriter.flush();
+      curAt++;
+      return true;
+    } else {
+      return false;
     }
   }
 

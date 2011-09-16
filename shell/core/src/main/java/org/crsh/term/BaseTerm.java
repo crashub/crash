@@ -121,6 +121,9 @@ public class BaseTerm implements Term {
           int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
           if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
             CharSequence s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
+            while (console.getViewReader().moveRight()) {
+              // Do nothing
+            }
             CharSequence t = console.getViewReader().replace(s);
             if (historyCursor == -1) {
               historyBuffer = t;

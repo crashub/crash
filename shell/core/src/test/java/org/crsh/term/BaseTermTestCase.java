@@ -119,6 +119,15 @@ public class BaseTermTestCase extends TestCase {
     assertLine("foo");
   }
 
+  public void testMoveUpDuringEdition() throws Exception {
+    term.addToHistory("foo");
+    io.append("bar");
+    io.appendMoveLeft();
+    io.appendMoveUp();
+    io.append("\r\n");
+    assertLine("foo");
+  }
+
   public void testIdempotentMoveUp() throws Exception {
     term.addToHistory("foo");
     io.appendMoveUp();
