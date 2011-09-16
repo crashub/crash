@@ -39,6 +39,9 @@ public class JLineIO implements TermIO {
   /** . */
   private final short[] keyBindings;
 
+  /** . */
+  private StringBuffer buffer = new StringBuffer();
+
   public JLineIO() throws Exception {
     ConsoleReader reader = new ConsoleReader();
     Method method = ConsoleReader.class.getDeclaredMethod("getKeyForAction", short.class);
@@ -87,36 +90,37 @@ public class JLineIO implements TermIO {
   }
 
   public void close() {
-
+    //
   }
 
   public void flush() throws IOException {
-
+    System.out.print(buffer);
+    buffer.setLength(0);
   }
 
   public void write(String s) throws IOException {
-    System.out.print(s);
+    buffer.append(s);
   }
 
   public void write(char c) throws IOException {
-    System.out.print(c);
+    buffer.append(c);
   }
 
   public void writeDel() throws IOException {
-    System.out.print("\b \b");
+    buffer.append("\b \b");
   }
 
   public void writeCRLF() throws IOException {
-    System.out.println();
+    buffer.append("\n");
   }
 
   public boolean moveRight(char c) throws IOException {
-    System.out.print(c);
+    buffer.append(c);
     return true;
   }
 
   public boolean moveLeft() throws IOException {
-    System.out.print("\b");
+    buffer.append("\b");
     return true;
   }
 }

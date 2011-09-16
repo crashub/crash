@@ -62,26 +62,39 @@ public final class Console {
     @Override
     public CharSequence replace(CharSequence s) throws IOException {
       StringBuilder builder = new StringBuilder();
+      boolean flush = false;
       for (int i = appendDel();i != -1;i = appendDel()) {
         builder.append((char)i);
+        flush = true;
       }
-      appendData(s);
+      flush |= appendData(s);
+      if (flush) {
+        viewWriter.flush();
+      }
       return builder.reverse().toString();
     }
 
     @Override
     public void write(char c) throws IOException {
-      appendData(c);
+      if (appendData(c)) {
+        viewWriter.flush();
+      }
     }
 
     @Override
     public void write(CharSequence s) throws IOException {
-      appendData(s.toString());
+      if (appendData(s.toString())) {
+        viewWriter.flush();
+      }
     }
 
     @Override
     public int del() throws IOException {
-      return appendDel();
+      int ret = appendDel();
+      if (ret != -1) {
+        viewWriter.flush();
+      }
+      return ret;
     }
 
     @Override
@@ -201,31 +214,35 @@ public final class Console {
     return writer;
   }
 
-  private void appendData(CharSequence s) throws IOException {
+  private boolean appendData(CharSequence s) throws IOException {
+    boolean flush = false;
     for (int i = 0;i < s.length();i++) {
-      appendData(s.charAt(i));
+      flush |= appendData(s.charAt(i));
     }
+    return flush;
   }
 
   /**
    * Append a char at the current cursor position and increment the cursor position.
    *
    * @param c the char to append
+   * @return true if flush is required
    * @throws IOException any IOException
    */
-  private void appendData(char c) throws IOException {
+  private boolean appendData(char c) throws IOException {
     if (previousCR && c == '\n') {
       previousCR = false;
+      return false;
     } else if (c == '\r' || c == '\n') {
       previousCR = c == '\r';
       String line = new String(buffer, 0, size);
       lines.add(line);
       size = 0;
       curAt = size;
-      echoCRLF();
+      return echoCRLF();
     } else {
       if (push(c)) {
-        echo(c);
+        return echo(c);
       } else {
         String disp = new String(buffer, curAt, size - curAt);
         viewWriter.write(disp);
@@ -235,7 +252,7 @@ public final class Console {
           viewWriter.writeMoveLeft();
           amount--;
         }
-        viewWriter.flush();
+        return true;
       }
     }
   }
@@ -255,6 +272,11 @@ public final class Console {
       //
       if (popped != -1) {
         echoDel();
+        // We do not care about the return value of echoDel, but we will return a value that indcates
+        // that a flush is required although it may not
+        // to properly carry out the status we should have two things to return
+        // 1/ the popped char
+        // 2/ the boolean indicating if flush is required
       }
 
       //
@@ -279,7 +301,6 @@ public final class Console {
             viewWriter.writeMoveLeft();
             amount--;
           }
-          viewWriter.flush();
         } else {
           throw new UnsupportedOperationException("not implemented");
         }
@@ -309,10 +330,12 @@ public final class Console {
     return moved;
   }
 
-  private void echo(char c) throws IOException {
+  private boolean echo(char c) throws IOException {
     if (echoing) {
       viewWriter.write(c);
-      viewWriter.flush();
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -323,17 +346,21 @@ public final class Console {
     }
   }
 
-  private void echoDel() throws IOException {
+  private boolean echoDel() throws IOException {
     if (echoing) {
       viewWriter.writeDel();
-      viewWriter.flush();
+      return true;
+    } else {
+      return false;
     }
   }
 
-  private void echoCRLF() throws IOException {
+  private boolean echoCRLF() throws IOException {
     if (echoing) {
       viewWriter.writeCRLF();
-      viewWriter.flush();
+      return true;
+    } else {
+      return false;
     }
   }
 
