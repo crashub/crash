@@ -207,6 +207,12 @@ public final class Console {
     }
   }
 
+  /**
+   * Append a char at the current cursor position and increment the cursor position.
+   *
+   * @param c the char to append
+   * @throws IOException any IOException
+   */
   private void appendData(char c) throws IOException {
     if (previousCR && c == '\n') {
       previousCR = false;
@@ -218,7 +224,19 @@ public final class Console {
       curAt = size;
       echoCRLF();
     } else {
-      push(c);
+      if (push(c)) {
+        echo(c);
+      } else {
+        String disp = new String(buffer, curAt, size - curAt);
+        viewWriter.write(disp);
+        int amount = size - curAt - 1;
+        curAt++;
+        while (amount > 0) {
+          viewWriter.writeMoveLeft();
+          amount--;
+        }
+        viewWriter.flush();
+      }
     }
   }
 
@@ -252,11 +270,6 @@ public final class Console {
 
         // We move the cursor to left
         if (viewWriter.writeMoveLeft()) {
-
-          // Flush state
-          viewWriter.flush();
-
-          // Update the view writer state
           StringBuilder disp = new StringBuilder();
           disp.append(buffer, curAt, size - curAt);
           disp.append(' ');
@@ -266,6 +279,7 @@ public final class Console {
             viewWriter.writeMoveLeft();
             amount--;
           }
+          viewWriter.flush();
         } else {
           throw new UnsupportedOperationException("not implemented");
         }
@@ -348,7 +362,15 @@ public final class Console {
     }
   }
 
-  private void push(char c) throws IOException {
+  /**
+   * Push  one char in the buffer at the current cursor position. This operation ensures that the buffer
+   * is large enough and it may increase the buffer capacity when required. The cursor position is incremented
+   * when a char is appended at the last position, otherwise the cursor position remains unchanged.
+   *
+   * @param c the char to push
+   * @return true if the cursor position was incremented
+   */
+  private boolean push(char c) {
     if (size >= buffer.length) {
       char[] tmp = new char[buffer.length * 2 + 1];
       System.arraycopy(buffer, 0, tmp, 0, buffer.length);
@@ -356,27 +378,15 @@ public final class Console {
     }
     if (curAt == size) {
       buffer[size++] = c;
-      curAt = size;
-//      previous = c;
-      echo(c);
+      curAt++;
+      return true;
     } else {
-      // In body
-      // Shift buffer one from position before cursor
-      for (int idx = size-1; idx > curAt - 1; idx--) {
-        buffer[idx+1] = buffer[idx];
+      for (int i = size - 1;i > curAt - 1;i--) {
+        buffer[i + 1] = buffer[i];
       }
       buffer[curAt] = c;
-      // Adjust size and display from inserted character to end
       ++size;
-      String disp = new String(buffer, curAt, size - curAt);
-      viewWriter.write(disp);
-      // Move cursor to original character
-      int saveCurAt = ++curAt;
-      curAt = size;
-      while (curAt > saveCurAt) {
-        moveLeft();
-      }
-//      previous = buffer[curAt-1];
+      return false;
     }
   }
 }
