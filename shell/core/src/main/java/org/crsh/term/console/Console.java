@@ -80,8 +80,8 @@ public final class Console {
     }
 
     @Override
-    public void del() throws IOException {
-      appendDel();
+    public int del() throws IOException {
+      return appendDel();
     }
 
     @Override
@@ -90,8 +90,8 @@ public final class Console {
     }
 
     @Override
-    public void moveLeft() throws IOException {
-      Console.this.moveLeft();
+    public boolean moveLeft() throws IOException {
+      return Console.this.moveLeft();
     }
   };
 
@@ -222,47 +222,57 @@ public final class Console {
     }
   }
 
+  /**
+   * Delete the char before the cursor.
+   *
+   * @return the removed char value or -1 if no char was removed
+   * @throws IOException any IOException
+   */
   private int appendDel() throws IOException {
+
+    // If the cursor is at the most right position (i.e no more chars after)
     if (curAt == size){
       int popped = pop();
 
       //
       if (popped != -1) {
-//        previous = buffer[size];
         echoDel();
-      } else {
-//        previous = -1;
       }
 
       //
       return popped;
     } else {
-      // Cursor in body
-      if (curAt == 0) {
-//        previous = -1;
-        return -1;
+      // We are editing the line
+
+      // Shift all the chars after the cursor
+      int popped = pop();
+
+      //
+      if (popped != -1) {
+
+        // We move the cursor to left
+        if (viewWriter.writeMoveLeft()) {
+
+          // Flush state
+          viewWriter.flush();
+
+          // Update the view writer state
+          StringBuilder disp = new StringBuilder();
+          disp.append(buffer, curAt, size - curAt);
+          disp.append(' ');
+          viewWriter.write(disp);
+          int amount = size - curAt + 1;
+          while (amount > 0) {
+            viewWriter.writeMoveLeft();
+            amount--;
+          }
+        } else {
+          throw new UnsupportedOperationException("not implemented");
+        }
       }
-      // remove previous char from buffer
-      for (int idx = curAt-1; idx < size; idx++) {
-        buffer[idx] = buffer[idx+1];
-      }
-      buffer[size-1] = ' ';
-      // Adjust cursor at and size
-      --size;
-      moveLeft();
-      // Redisplay from cursor to end
-      String disp = new String(buffer, curAt, size - curAt + 1);
-      viewWriter.write(disp);
-      // position cursor one to left from where started
-      int saveCurAt = curAt;
-      curAt = size + 1;   // Size before delete
-      while (curAt > saveCurAt) {
-        moveLeft();
-      }
-      if (curAt == 0) {
-        return -1;
-      }
-      return buffer[curAt - 1];
+
+      //
+      return popped;
     }
   }
 
@@ -276,14 +286,13 @@ public final class Console {
     }
   }
 
-  private void moveLeft() throws IOException {
-    if (curAt > 0) {
-      if (viewWriter.writeMoveLeft())
-      {
-        viewWriter.flush();
-        curAt--;
-      }
+  private boolean moveLeft() throws IOException {
+    boolean moved = curAt > 0 && viewWriter.writeMoveLeft();
+    if (moved) {
+      viewWriter.flush();
+      curAt--;
     }
+    return moved;
   }
 
   private void echo(char c) throws IOException {
@@ -314,13 +323,27 @@ public final class Console {
     }
   }
 
+  /**
+   * Popup one char from buffer at the current cursor position.
+   *
+   * @return the popped char or -1 if none was removed
+   */
   private int pop() {
-    if (size > 0) {
-      --size;
-      curAt = size;
-      return buffer[size];
+    if (curAt > 0) {
+      char popped = buffer[curAt - 1];
+      if (curAt == size) {
+        buffer[curAt] = 0;
+        size = --curAt;
+        return popped;
+      } else {
+        for (int i = curAt;i < size;i++) {
+          buffer[i - 1] = buffer[i];
+        }
+        buffer[--size] = 0;
+        curAt--;
+      }
+      return popped;
     } else {
-      curAt = size;
       return -1;
     }
   }

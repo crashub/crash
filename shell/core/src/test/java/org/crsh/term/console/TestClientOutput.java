@@ -53,7 +53,7 @@ public class TestClientOutput extends ViewWriter {
   }
 
   public void assertEmpty() {
-    Assert.assertEquals(0, line.length());
+    Assert.assertEquals("Was expecting empty line instead of '" + line + "'", 0, line.length());
   }
 
   @Override
@@ -65,12 +65,8 @@ public class TestClientOutput extends ViewWriter {
   protected void write(CharSequence s) throws IOException {
     for (int i = 0;i < s.length();i++) {
       char c = s.charAt(i);
-      if (c == '\r' || c == '\n') {
-        throw new AssertionFailedError();
-      }
+      write(c);
     }
-    line.insert(position, s);
-    position += s.length();
   }
 
   @Override
@@ -78,7 +74,13 @@ public class TestClientOutput extends ViewWriter {
     if (c == '\r' || c == '\n') {
       throw new AssertionFailedError();
     }
-    line.insert(position++, c);
+    if (position < line.length()) {
+      line.setCharAt(position++, c);
+    } else
+    {
+      line.append(c);
+      position++;
+    }
   }
 
   @Override

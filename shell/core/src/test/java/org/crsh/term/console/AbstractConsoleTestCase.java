@@ -34,9 +34,19 @@ public abstract class AbstractConsoleTestCase extends TestCase {
     assertEquals(expected.toString(), actual.toString());
   }
 
-  private Console newConsole() {
-    return new Console(new TestClientOutput(getSupportsCursorMove()));
+  /** . */
+  private TestClientOutput client;
 
+  /** . */
+  private Console console;
+  
+  @Override
+  protected void setUp() throws Exception {
+    resetConsole();
+  }
+  
+  private void resetConsole() {
+    console = new Console(client = new TestClientOutput(getSupportsCursorMove()));
   }
 
   public void testWriterCRLF() throws IOException {
@@ -57,7 +67,6 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   }
 
   public void testNoCR() throws IOException {
-    Console console = newConsole();
     console.getViewReader().write("a");
     assertFalse(console.getReader().hasNext());
     assertEquals(1, console.getReader().getSize());
@@ -65,7 +74,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   public void testReadLine() throws IOException {
     for (String test : new String[]{"a\n","a\r","a\r\n"}) {
-      Console console = newConsole();
+      resetConsole();
       console.getViewReader().write(test);
       assertTrue(console.getReader().hasNext());
       assertEquals("a", console.getReader().next());
@@ -75,7 +84,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
     //
     for (String test : new String[]{"a\n\n","a\n\r","a\r\r"}) {
-      Console console = newConsole();
+      resetConsole();
       console.getViewReader().write(test);
       assertTrue(console.getReader().hasNext());
       assertEquals("a", console.getReader().next());
@@ -86,7 +95,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   }
 
   public void testErase() throws IOException {
-    Console console = newConsole();
+    resetConsole();
     console.getViewReader().write("a");
     console.getViewReader().del();
     console.getViewReader().write("b\n");
@@ -96,7 +105,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   }
 
   public void testMoveLeftInsert() throws IOException {
-    Console console = newConsole();
+    resetConsole();
     console.getViewReader().write("a");
     console.getViewReader().moveLeft();
     console.getViewReader().write("b\n");
@@ -108,10 +117,17 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   protected abstract String getExpectedMoveLeftInsert();
 
   public void testMoveLeftDel() throws IOException {
-    Console console = newConsole();
+    resetConsole();
     console.getViewReader().write("ab");
-    console.getViewReader().moveLeft();
-    console.getViewReader().del();
+    char expected = console.getViewReader().moveLeft() ? 'a' : 'b';
+    assertEquals(expected, console.getViewReader().del());
+    if (getSupportsCursorMove()) {
+      client.assertChars("b ");
+      client.assertEmpty();
+    } else {
+      client.assertChars("a");
+      client.assertEmpty();
+    }
     console.getViewReader().write("\n");
     assertTrue(console.getReader().hasNext());
     assertEquals(getExpectedMoveLeftDel(), console.getReader().next());
@@ -121,7 +137,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   protected abstract String getExpectedMoveLeftDel();
 
   public void testMoveRightInsert() throws IOException {
-    Console console = newConsole();
+    resetConsole();
     console.getViewReader().write("abc");
     console.getViewReader().moveLeft();
     console.getViewReader().moveLeft();
@@ -135,7 +151,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   protected abstract String getExpectedMoveRightInsert();
 
   public void testMoveRightDel() throws IOException {
-    Console console = newConsole();
+    resetConsole();
     console.getViewReader().write("abc");
     console.getViewReader().moveLeft();
     console.getViewReader().moveLeft();
@@ -150,7 +166,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   protected abstract String getExpectedMoveRightDel();
 
   public void testMoveRightAtEndOfLine() throws IOException {
-    Console console = newConsole();
+    resetConsole();
     console.getViewReader().write("a");
     console.getViewReader().moveRight();
     console.getViewReader().write("b\n");
@@ -162,7 +178,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   protected abstract String getExpectedMoveRightAtEndOfLine();
 
   public void testMoveLeftAtBeginningOfLine() throws IOException {
-    Console console = newConsole();
+    resetConsole();
     console.getViewReader().write("a");
     console.getViewReader().moveLeft();
     console.getViewReader().moveLeft();
@@ -175,7 +191,7 @@ public abstract class AbstractConsoleTestCase extends TestCase {
   protected abstract String getExpectedMoveLeftAtBeginningOfLine();
 
   public void testClearBuffer() throws Exception {
-    Console console = newConsole();
+    resetConsole();
     console.getViewReader().write("a");
     console.clearBuffer();
     assertFalse(console.getReader().hasNext());

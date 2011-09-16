@@ -27,15 +27,28 @@ import java.io.IOException;
  */
 public abstract class ViewReader {
 
+  /**
+   * Replace all the characters before the cursor by the provided char sequence.
+   *
+   * @param s the new char sequence
+   * @return the l
+   * @throws IOException any IOException
+   */
   public abstract CharSequence replace(CharSequence s) throws IOException;
 
   public abstract void write(char c) throws IOException;
 
   public abstract void write(CharSequence s) throws IOException;
 
-  public abstract void del() throws IOException;
+  /**
+   * Delete the char under the cursor or return -1 if no char was deleted.
+   *
+   * @return the deleted char
+   * @throws IOException any IOException
+   */
+  public abstract int del() throws IOException;
 
   public abstract void moveRight() throws IOException;
 
-  public abstract void moveLeft() throws IOException;
+  public abstract boolean moveLeft() throws IOException;
 }
