@@ -21,18 +21,13 @@ package org.crsh.standalone;
 
 import com.sun.tools.attach.VirtualMachine;
 import org.crsh.Processor;
-import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.PluginManager;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
 import org.crsh.term.spi.jline.JLineIO;
-import org.crsh.vfs.FS;
-import org.crsh.vfs.File;
-import org.crsh.vfs.Path;
+import org.crsh.term.spi.net.TermIOServer;
 
-import java.net.URL;
+import java.net.*;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -48,31 +43,44 @@ public class Main {
       URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();
       java.io.File f = new java.io.File(url.toURI());
       VirtualMachine vm = VirtualMachine.attach(id);
-      vm.loadAgent(f.getCanonicalPath());
-      Thread.sleep(1000);
-      vm.detach();
-      System.exit(0);
-    }
 
-    //
-    final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
+      TermIOServer server = new TermIOServer(new JLineIO(), 0);
+      int port = server.bind();
+      System.out.println("Bound on port " + port);
 
-    // Register shutdown hook
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        bootstrap.shutdown();
+      //
+      System.out.println("Loading agent");
+      vm.loadAgent(f.getCanonicalPath(), "" + port);
+
+      //
+      try {
+        server.accept();
+        while (server.execute()) {
+          //
+        }
+      } finally {
+        vm.detach();
       }
-    });
+    } else {
+      final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
-    // Do bootstrap
-    bootstrap.bootstrap();
+      // Register shutdown hook
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+        public void run() {
+          bootstrap.shutdown();
+        }
+      });
 
-    // Start crash for this command line
-    Term term = new BaseTerm(new JLineIO());
-    Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
+      // Do bootstrap
+      bootstrap.bootstrap();
 
-    //
-    processor.run();
+      // Start crash for this command line
+      Term term = new BaseTerm(new JLineIO());
+      Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
+
+      //
+      processor.run();
+    }
   }
 }

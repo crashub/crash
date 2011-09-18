@@ -18,6 +18,13 @@
  */
 package org.crsh.standalone;
 
+import org.crsh.Processor;
+import org.crsh.ProcessorListener;
+import org.crsh.shell.impl.CRaSH;
+import org.crsh.term.BaseTerm;
+import org.crsh.term.Term;
+import org.crsh.term.spi.net.TermIOClient;
+
 import java.lang.instrument.Instrumentation;
 
 /**
@@ -27,16 +34,42 @@ public class Agent {
 
   private static int PORT = 12345;
 
-  public static void agentmain(String agentArgs, Instrumentation inst) throws Exception {
+  public static void agentmain(final String agentArgs, Instrumentation inst) throws Exception {
     System.out.println("agent loaded");
 
-    final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
+    Thread t = new Thread() {
+      @Override
+      public void run() {
+        try {
+          int port = Integer.parseInt(agentArgs);
 
-    // Do bootstrap
-    bootstrap.bootstrap();
+          final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
-    // End for now
-    bootstrap.shutdown();
+          // Do bootstrap
+          bootstrap.bootstrap();
 
+          //
+          final TermIOClient client = new TermIOClient(port);
+          System.out.println("connecting to server port " + port);
+          client.connect();
+
+          //
+          Term term = new BaseTerm(client);
+          Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
+          processor.addListener(new ProcessorListener() {
+            public void closed() {
+              client.close();
+            }
+          });
+          processor.run();
+
+          // End for now
+          bootstrap.shutdown();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    };
+    t.start();
   }
 }

@@ -41,6 +41,17 @@ public enum CodeType {
 
   TAB,
 
-  BREAK,
+  BREAK;
+
+  /** . */
+  private static final CodeType[] ALL = values();
+
+  public static CodeType valueOf(int ordinal) {
+    if (ordinal >= 0 && ordinal < ALL.length) {
+      return ALL[ordinal];
+    } else {
+      return null;
+    }
+  }
 
 }

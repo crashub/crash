@@ -20,12 +20,23 @@ package org.crsh.util;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.Socket;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public class Safe {
+
+  public static void close(Socket socket) {
+    if (socket != null) {
+      try {
+        socket.close();
+      }
+      catch (IOException ignore) {
+      }
+    }
+  }
 
   public static void close(Closeable closeable) {
     if (closeable != null) {
