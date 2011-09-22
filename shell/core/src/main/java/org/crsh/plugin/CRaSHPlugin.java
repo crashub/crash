@@ -59,7 +59,7 @@ public abstract class CRaSHPlugin<P> {
   private final Class<P> type;
 
   protected CRaSHPlugin() {
-    this.type = (Class<P>)TypeResolver.resolve(getClass(), CRaSHPlugin.class, 0);
+    this.type = (Class<P>)TypeResolver.resolveToClass(getClass(), CRaSHPlugin.class, 0);
     this.status = CONSTRUCTED;
     this.context = null;
   }

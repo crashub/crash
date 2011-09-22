@@ -1,16 +1,18 @@
 import org.crsh.command.Description;
-import org.kohsuke.args4j.Argument;
-import org.crsh.command.Description;
 import org.crsh.command.ScriptException;
-import java.lang.reflect.Method;
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.cmdline.annotations.Command;
 
 @Description("Invoke a static method")
-public class wait extends org.crsh.command.ClassCommand {
+public class wait extends org.crsh.command.CRaSHCommand {
 
-  @Argument(required=false,index=0,usage="The time to wait in seconds")
-  def String time;
 
-  public Object execute() throws ScriptException {
+  @Command
+  public Object execute(
+      @Usage("The time to wait in seconds")
+      @Argument
+      String time) throws ScriptException {
     if (time == null) {
       time = 5
     }

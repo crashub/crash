@@ -31,7 +31,6 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/WEB-INF/lib</outputDirectory>
       <includes>
-        <include>args4j:args4j</include>
         <include>org.apache.sshd:sshd-core</include>
         <include>org.apache.sshd:sshd-pam</include>
         <include>org.bouncycastle:bcprov-jdk15</include>

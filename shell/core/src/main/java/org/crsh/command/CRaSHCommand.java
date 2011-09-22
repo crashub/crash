@@ -226,8 +226,8 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             Class<?> parameterType = parameterTypes[i];
             if (InvocationContext.class.isAssignableFrom(parameterType)) {
               Type contextGenericParameterType = m.getGenericParameterTypes()[i];
-              consumedType = (Class)TypeResolver.resolve(contextGenericParameterType, InvocationContext.class, 0);
-              producedType = (Class)TypeResolver.resolve(contextGenericParameterType, InvocationContext.class, 1);
+              consumedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
+              producedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 1);
             }
           }
         }

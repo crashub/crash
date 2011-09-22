@@ -23,6 +23,8 @@ import junit.framework.TestCase;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -35,18 +37,29 @@ public class TypeResolverTestCase extends TestCase {
     assertTrue(resolved instanceof TypeVariable);
     TypeVariable tv = (TypeVariable)resolved;
     assertEquals(ThreadLocal.class, tv.getGenericDeclaration());
+    assertEquals(Object.class, TypeResolver.resolveToClass(ThreadLocal.class, ThreadLocal.class, 0));
   }
 
   public void testBar() {
     class A extends ThreadLocal<String> {}
     Type resolved = TypeResolver.resolve(A.class, ThreadLocal.class, 0);
     assertEquals(String.class, resolved);
+    assertEquals(String.class, TypeResolver.resolveToClass(A.class, ThreadLocal.class, 0));
+  }
+
+  public void testZoo() {
+    class A extends ThreadLocal {}
+    TypeVariable resolved = (TypeVariable)TypeResolver.resolve(A.class, ThreadLocal.class, 0);
+    assertEquals("T", resolved.getName());
+    assertEquals(Collections.<Type>singletonList(Object.class), Arrays.asList(resolved.getBounds()));
+    assertEquals(Object.class, TypeResolver.resolveToClass(A.class, ThreadLocal.class, 0));
   }
 
   public void testJuu() {
     class A extends InheritableThreadLocal<String> {}
     Type resolved = TypeResolver.resolve(A.class, ThreadLocal.class, 0);
     assertEquals(String.class, resolved);
+    assertEquals(String.class, TypeResolver.resolveToClass(A.class, ThreadLocal.class, 0));
   }
 
   public void testDaa() {
@@ -54,5 +67,6 @@ public class TypeResolverTestCase extends TestCase {
     assertTrue(resolved instanceof TypeVariable);
     TypeVariable tv = (TypeVariable)resolved;
     assertEquals(InheritableThreadLocal.class, tv.getGenericDeclaration());
+    assertEquals(Object.class, TypeResolver.resolveToClass(InheritableThreadLocal.class, ThreadLocal.class, 0));
   }
 }

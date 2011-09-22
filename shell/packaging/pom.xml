@@ -44,11 +44,6 @@
       <artifactId>groovy-all</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>args4j</groupId>
-      <artifactId>args4j</artifactId>
-    </dependency>
-
     <!-- SSHD connector dependencies -->
 
     <dependency>

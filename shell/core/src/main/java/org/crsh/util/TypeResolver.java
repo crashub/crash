@@ -29,6 +29,36 @@ import java.lang.reflect.TypeVariable;
  */
 public class TypeResolver {
 
+  public static Class<?> resolveToClass(Type implementation, Class<?> type, int parameterIndex) {
+    if (implementation == null) {
+      throw new NullPointerException("No null type accepted");
+    }
+
+    // First resolve to type
+    Type resolvedType = resolve(implementation, type, parameterIndex);
+
+    //
+    if (resolvedType != null) {
+      return resolveToClass(resolvedType);
+    } else {
+      return null;
+    }
+  }
+
+  public static Class resolveToClass(Type type) {
+    if (type == null) {
+      throw new NullPointerException("No null type accepted");
+    }
+    if (type instanceof Class<?>) {
+      return (Class<?>)type;
+    } else if (type instanceof TypeVariable) {
+      TypeVariable resolvedTypeVariable = (TypeVariable)type;
+      return resolveToClass(resolvedTypeVariable.getBounds()[0]);
+    } else {
+      throw new UnsupportedOperationException("Type resolution of " + type + " not yet implemented");
+    }
+  }
+
   /**
    * A simplistic implementation, it may not handle all cases but it should handle enough.
    *

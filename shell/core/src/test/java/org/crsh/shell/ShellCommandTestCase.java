@@ -24,11 +24,8 @@ import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.cmdline.matcher.CmdSyntaxException;
-import org.crsh.command.ClassCommand;
 import org.crsh.command.ShellCommand;
-import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.GroovyScriptCommand;
-import org.kohsuke.args4j.CmdLineException;
 
 import java.util.Arrays;
 
@@ -53,25 +50,6 @@ public class ShellCommandTestCase extends TestCase {
     //
     loader = new GroovyClassLoader(Thread.currentThread().getContextClassLoader(), config);
     shell = new GroovyShell(loader);
-  }
-
-  public void testOptionInjectionInCommandClassArgs4j() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
-      "@org.kohsuke.args4j.Option(name=\"-str\", required = true) def String str = 'default value';" +
-      "public Object execute() {" +
-      "return str;" +
-      "}" +
-      "}");
-
-    //
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("abc", new TestInvocationContext().execute(cmd, "-str", "abc"));
-    try {
-      new TestInvocationContext().execute(cmd);
-    }
-    catch (ScriptException e) {
-      assertTrue(e.getCause() instanceof CmdLineException);
-    }
   }
 
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {
@@ -109,19 +87,6 @@ public class ShellCommandTestCase extends TestCase {
     assertEquals("daa", ctx.execute(cmd));
   }
 
-  public void testArgumentInjectionInCommandClassArgs4j() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
-      "@org.kohsuke.args4j.Argument def String str;" +
-      "public Object execute() {" +
-      "return str;" +
-      "}" +
-      "}");
-
-    //
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
-    assertEquals("b", new TestInvocationContext().execute(cmd, "b"));
-  }
-
   public void testArgumentInjectionInCommandCmdLine() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
       "@Command\n" +
@@ -148,6 +113,7 @@ public class ShellCommandTestCase extends TestCase {
     assertEquals("foo", new TestInvocationContext().execute(cmd));
   }
 
+/*
   public void testContextAccessInCommandClass() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
       "public Object execute() {" +
@@ -209,6 +175,7 @@ public class ShellCommandTestCase extends TestCase {
     ClassCommand cmd = (ClassCommand)clazz.newInstance();
     assertEquals("" + Arrays.asList("'foo'"), new TestInvocationContext().execute(cmd, "'foo'"));
   }
+*/
 
 
 

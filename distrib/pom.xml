@@ -88,10 +88,6 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
           </dependency>
-          <dependency>
-            <groupId>args4j</groupId>
-            <artifactId>args4j</artifactId>
-          </dependency>
 
           <dependency>
             <groupId>org.crsh</groupId>
@@ -155,7 +151,6 @@
                       <property name="crash" value="${project.build.directory}/izpack/crash" />
                       <copy file="${org.crsh:crsh.cmdline:jar}" todir="${crash}/lib" />
                       <copy file="${org.crsh:crsh.shell.core:jar}" todir="${crash}/lib" />
-                      <copy file="${args4j:args4j:jar}" todir="${crash}/lib" />
                       <unzip src="${org.crsh:crsh.shell.core:jar}" dest="${crash}">
                         <patternset>
                           <include name="crash/**" />

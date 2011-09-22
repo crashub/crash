@@ -1,14 +1,17 @@
-import org.kohsuke.args4j.Argument;
 import org.crsh.command.Description;
-import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.cmdline.annotations.Command;
 
 @Description("Echo text")
-public class select extends org.crsh.command.BaseCommand<Void, Node> {
+public class echo extends org.crsh.command.CRaSHCommand {
 
-  @Argument(usage = "the content")
-  def List<String> arguments;
-
-  public void execute(InvocationContext<Void, Node> context) throws ScriptException {
+  @Command
+  public void main(
+    InvocationContext context,
+    @Usage("the content") @Argument
+    List<String> arguments) throws ScriptException {
     arguments.each { context.writer.print(it) }
   }
 }
