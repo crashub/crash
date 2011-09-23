@@ -19,87 +19,37 @@
 
 package org.crsh.shell.impl;
 
-import org.crsh.command.InvocationContext;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.io.ShellPrinter;
-import org.crsh.util.LineFeedWriter;
 
-import java.io.StringWriter;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class InvocationContextImpl<C, P> extends CommandContextImpl implements InvocationContext<C, P> {
+class InvocationContextImpl<C, P> extends AbstractInvocationContext<C, P> {
 
   /** . */
   private final ShellProcessContext processContext;
 
-  /** . */
-  private ShellPrinter writer;
-
-  /** . */
-  private StringWriter buffer;
-
-  /** . */
-  private List<P> products;
-
-  /** . */
-  private Iterable<C> consumedItems;
 
   InvocationContextImpl(
     ShellProcessContext processContext,
     Iterable<C> consumedItems,
     Map<String, Object> attributes) {
-    super(attributes);
+    super(consumedItems, attributes);
     this.processContext = processContext;
-    this.writer = null;
-    this.buffer = null;
-    this.consumedItems = consumedItems;
-    this.products = Collections.emptyList();
+  }
+
+  @Override
+  protected Map<String, Object> attributes(Map<String, Object> attributes) {
+    return new AttributesMap(this, attributes);
   }
 
   public int getWidth() {
     return processContext.getWidth();
   }
 
-  public List<P> getProducedItems() {
-    return products;
-  }
-
-  public StringWriter getBuffer() {
-    return buffer;
-  }
-
-  public boolean isPiped() {
-    return consumedItems != null;
-  }
-
-  public Iterable<C> consume() {
-    if (consumedItems == null) {
-      throw new IllegalStateException("Cannot consume as no pipe operation is involved");
-    }
-    return consumedItems;
-  }
-
-  public void produce(P product) {
-    if (products.isEmpty()) {
-      products = new LinkedList<P>();
-    }
-    products.add(product);
-  }
-
-  public ShellPrinter getWriter() {
-    if (writer == null) {
-      buffer = new StringWriter();
-      writer = new ShellPrinter(new LineFeedWriter(buffer, "\r\n"));
-    }
-    return writer;
-  }
   public String readLine(String msg, boolean echo) {
     return processContext.readLine(msg, echo);
   }

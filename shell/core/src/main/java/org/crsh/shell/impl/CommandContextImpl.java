@@ -33,7 +33,18 @@ class CommandContextImpl implements CommandContext {
   private final Map<String, Object> attributes;
 
   CommandContextImpl(Map<String, Object> attributes) {
-    this.attributes = attributes;
+    this.attributes = attributes(attributes);
+  }
+
+  /**
+   * Provide an opportunity to subclass to change the attribute map. This implementation returns the same
+   * object by default.
+   *
+   * @param attributes the original attributes
+   * @return the replaced attributes
+   */
+  protected Map<String, Object> attributes(Map<String, Object> attributes) {
+    return attributes;
   }
 
   public final Map<String, Object> getAttributes() {

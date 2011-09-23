@@ -22,38 +22,21 @@ package org.crsh.shell;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.AbstractInvocationContext;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.LineFeedWriter;
 
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestInvocationContext<C, P> implements InvocationContext<C, P> {
+public class TestInvocationContext<C, P> extends AbstractInvocationContext<C, P> {
 
-  /** . */
-  private StringWriter buffer;
-
-  /** . */
-  private ShellPrinter writer;
-
-  /** . */
-  private LinkedList<P> products;
-
-  /** . */
-  private Map<String, Object> attributes;
-
-  public Map<String, Object> getAttributes() {
-    if (attributes == null) {
-      attributes = new HashMap<String, Object>();
-    }
-    return attributes;
+  public TestInvocationContext() {
+    super(Collections.<C>emptyList(), new HashMap<String, Object>());
   }
 
   public int getWidth() {
@@ -62,32 +45,6 @@ public class TestInvocationContext<C, P> implements InvocationContext<C, P> {
 
   public String readLine(String msg, boolean echo) {
     throw new UnsupportedOperationException();
-  }
-
-  public ShellPrinter getWriter() {
-    if (writer == null) {
-      writer = new ShellPrinter(new LineFeedWriter(buffer = new StringWriter(), "\r\n"));
-    }
-    return writer;
-  }
-
-  public Iterable<C> consume() {
-    throw new IllegalStateException();
-  }
-
-  public boolean isPiped() {
-    return false;
-  }
-
-  public void produce(P product) {
-    if (products == null) {
-      products = new LinkedList<P>();
-    }
-    products.add(product);
-  }
-
-  public List<P> getProducts() {
-    return products;
   }
 
   public String execute(ShellCommand command, String... args) throws Exception {

@@ -52,6 +52,19 @@ public class ShellCommandTestCase extends TestCase {
     shell = new GroovyShell(loader);
   }
 
+  public void testOut() throws Exception {
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+      "@Command\n" +
+      "public void main() {" +
+      "out.print(\"abc\");" +
+      "}" +
+      "}");
+
+    //
+    ShellCommand command = (ShellCommand)clazz.newInstance();
+    assertEquals("abc", new TestInvocationContext().execute(command));
+  }
+
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
       "@Option(names=\"s\") @Required def String str = 'default value';" +
