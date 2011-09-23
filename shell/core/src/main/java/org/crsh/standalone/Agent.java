@@ -32,8 +32,6 @@ import java.lang.instrument.Instrumentation;
  */
 public class Agent {
 
-  private static int PORT = 12345;
-
   public static void agentmain(final String agentArgs, Instrumentation inst) throws Exception {
     System.out.println("agent loaded");
 

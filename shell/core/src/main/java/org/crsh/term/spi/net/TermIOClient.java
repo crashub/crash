@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -31,7 +32,7 @@ public class TermIOClient implements TermIO {
   private byte[] bytes = new byte[2000];
 
   /** . */
-  private final ByteBuffer buffer = ByteBuffer.wrap(bytes);
+  private ByteBuffer buffer = ByteBuffer.wrap(bytes);
 
   public TermIOClient(int port) {
     this.port = port;
@@ -47,6 +48,20 @@ public class TermIOClient implements TermIO {
     this.socket = socket;
     this.in = in;
     this.out = out;
+  }
+
+  private void put(byte b) {
+    if (buffer.remaining() == 0) {
+      byte[] bytesCopy = new byte[bytes.length * 2 + 1];
+      System.arraycopy(bytes, 0, bytesCopy, 0, bytes.length);
+      ByteBuffer bufferCopy = ByteBuffer.wrap(bytesCopy);
+      bufferCopy.position(buffer.position());
+
+      //
+      bytes = bytesCopy;
+      buffer = bufferCopy;
+    }
+    buffer.put(b);
   }
 
   public int read() throws IOException {
@@ -88,15 +103,15 @@ public class TermIOClient implements TermIO {
   }
 
   public void flush() throws IOException {
-    buffer.put((byte)7);
+    put((byte)7);
     out.write(bytes, 0, buffer.position());
     buffer.clear();
   }
 
   public void write(char c) throws IOException {
-    buffer.put((byte)1);
-    buffer.put((byte)((c & 0xFF00) >> 8));
-    buffer.put((byte)(c & 0xFF));
+    put((byte)1);
+    put((byte)((c & 0xFF00) >> 8));
+    put((byte)(c & 0xFF));
   }
 
   public void write(String s) throws IOException {
@@ -108,34 +123,34 @@ public class TermIOClient implements TermIO {
       if (chunkLen == 1) {
         write(s.charAt(prev++));
       } else {
-        buffer.put((byte)2);
-        buffer.put((byte)(chunkLen - 2));
+        put((byte)2);
+        put((byte)(chunkLen - 2));
         while (prev < pos) {
           char c = s.charAt(prev++);
-          buffer.put((byte)((c & 0xFF00) >> 8));
-          buffer.put((byte)(c & 0xFF));
+          put((byte)((c & 0xFF00) >> 8));
+          put((byte)(c & 0xFF));
         }
       }
     }
   }
 
   public void writeDel() throws IOException {
-    buffer.put((byte)3);
+    put((byte)3);
   }
 
   public void writeCRLF() throws IOException {
-    buffer.put((byte)4);
+    put((byte)4);
   }
 
   public boolean moveRight(char c) throws IOException {
-    buffer.put((byte)5);
-    buffer.put((byte)((c & 0xFF00) >> 8));
-    buffer.put((byte)(c & 0xFF));
+    put((byte)5);
+    put((byte)((c & 0xFF00) >> 8));
+    put((byte)(c & 0xFF));
     return true;
   }
 
   public boolean moveLeft() throws IOException {
-    buffer.put((byte)6);
+    put((byte)6);
     return true;
   }
 }
