@@ -44,6 +44,18 @@ public class TreeElementTestCase extends TestCase {
       , sb.toString());
   }
 
+  public void testFoo() throws Exception {
+    TreeElement elt = new TreeElement();
+    elt.addNode(new LabelElement("1\n1"));
+    StringBuilder sb = new StringBuilder();
+    LineFeedWriter writer = new LineFeedWriter(sb, "_");
+    elt.print(writer);
+    assertEquals(
+      "+-1_" +
+      "  1_"
+      , sb.toString());
+  }
+
   public void testNested() throws Exception {
     TreeElement elt = new TreeElement(new LabelElement("foo"));
     elt.addNode(new TreeElement(new LabelElement("bar")).addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
@@ -57,9 +69,9 @@ public class TreeElementTestCase extends TestCase {
       "| +-1_" +
       "| | 1_" +
       "| +-2_" +
-      "| | 2_" +
+      "|   2_" +
       "+-+-3_" +
-      "| +-4_"
+      "  +-4_"
       , sb.toString());
   }
 }

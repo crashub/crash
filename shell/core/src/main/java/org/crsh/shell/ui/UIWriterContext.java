@@ -23,6 +23,7 @@ import org.crsh.shell.io.ShellWriterContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -31,20 +32,36 @@ import java.util.ArrayList;
 class UIWriterContext implements ShellWriterContext {
 
   /** . */
-  final ArrayList<Boolean> stack;
+  final ArrayList<Pad> stack;
 
   /** . */
   boolean needLF;
 
   UIWriterContext() {
-    this.stack = new ArrayList<Boolean>();
+    this.stack = new ArrayList<Pad>();
     this.needLF = false;
+  }
+
+  private static EnumMap<Pad, String> charMap = new EnumMap<Pad, String>(Pad.class);
+  private static EnumMap<Pad, Pad> nextMap = new EnumMap<Pad, Pad>(Pad.class);
+
+  static {
+    charMap.put(Pad.BRANCH, "+-");
+    charMap.put(Pad.LAST_BRANCH, "+-");
+    charMap.put(Pad.CONTINUE_BRANCH, "| ");
+    charMap.put(Pad.STOP_BRANCH, "  ");
+    nextMap.put(Pad.BRANCH, Pad.CONTINUE_BRANCH);
+    nextMap.put(Pad.CONTINUE_BRANCH, Pad.CONTINUE_BRANCH);
+    nextMap.put(Pad.LAST_BRANCH, Pad.STOP_BRANCH);
+    nextMap.put(Pad.STOP_BRANCH, Pad.STOP_BRANCH);
   }
 
   public void pad(Appendable appendable) throws IOException {
     for (int i = 0;i < stack.size();i++) {
-      appendable.append(stack.get(i) ? "+-" : "| ");
-      stack.set(i, false);
+      Pad abc = stack.get(i);
+      appendable.append(charMap.get(abc));
+      Pad next = nextMap.get(abc);
+      stack.set(i, next);
     }
   }
 

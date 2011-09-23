@@ -76,7 +76,12 @@ public class TreeElement extends Element {
 
     //
     for (int i = 0;i < nodes.size();i++) {
-      ctx.stack.add(Boolean.TRUE);
+
+      // Add the padding ?
+      ctx.stack.add(i == nodes.size() - 1 ? Pad.LAST_BRANCH : Pad.BRANCH);
+//      ctx.stack.add(Foo.TRUE);
+
+      //
       Element node = nodes.get(i);
       node.print(ctx, writer);
       if (ctx.needLF) {
