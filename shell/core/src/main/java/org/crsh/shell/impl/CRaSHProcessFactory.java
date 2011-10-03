@@ -63,7 +63,7 @@ class CRaSHProcessFactory {
   CRaSHProcess create() {
 
     //
-    if ("bye".equals(request)) {
+    if ("bye".equals(request) || "exit".equals(request)) {
       return new SimpleProcess(crash, request, new ShellResponse.Close());
     } else {
 
