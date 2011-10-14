@@ -47,6 +47,14 @@ public interface TermIO {
   int getWidth();
 
   /**
+   * Retrieves the value of a property specified by this TermIO
+   *
+   * @param name the name of the property
+   * @return value of the property
+   */
+  Object getProperty(String name);
+
+  /**
    * Decode the intput value.
    *
    * @param code the code

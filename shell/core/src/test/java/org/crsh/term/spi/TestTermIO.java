@@ -66,6 +66,10 @@ public class TestTermIO implements TermIO {
     return width;
   }
 
+  public Object getProperty(String name) {
+    return null;
+  }
+
   public void setWidth(int width) {
     if (width < 1) {
       throw new IllegalArgumentException("No negative width accepted");

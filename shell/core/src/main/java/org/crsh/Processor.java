@@ -389,6 +389,10 @@ public class Processor implements Runnable {
       return term.getWidth();
     }
 
+    public Object getProperty(String name) {
+      return term.getProperty(name);
+    }
+
     public String readLine(String msg, boolean echo) {
       try {
         term.setEcho(echo);

@@ -22,12 +22,14 @@ package org.crsh.telnet.term;
 import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
+import net.wimpi.telnetd.net.ConnectionData;
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.HashMap;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -60,6 +62,17 @@ public class TelnetIO implements TermIO {
 
   public int getWidth() {
     return termIO.getColumns();
+  }
+
+  public Object getProperty(String name) {
+    ConnectionData data = conn.getConnectionData();
+    if (data != null)
+    {
+      HashMap map = data.getEnvironment();
+      if (map != null) return map.get(name);
+    }
+
+    return null;
   }
 
   public CodeType decode(int code) {

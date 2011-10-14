@@ -84,6 +84,10 @@ public class TermIOClient implements TermIO {
     return 80;
   }
 
+  public Object getProperty(String name) {
+    return null;
+  }
+
   public CodeType decode(int code) {
     code &= 0xFFFF0000;
     if (code == 0) {

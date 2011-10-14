@@ -40,6 +40,11 @@ abstract class CRaSHProcess implements ShellProcess {
   }
 
   public void execute(ShellProcessContext processContext) {
+
+    // Expose the ShellProcessContext object as an attribute for CRaSH commands
+    crash.setAttribute("processContext", processContext);
+
+    //
     ShellResponse resp;
     try {
       resp = invoke(processContext);

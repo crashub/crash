@@ -67,6 +67,10 @@ public class JLineIO implements TermIO {
     return reader.getTermwidth();
   }
 
+  public Object getProperty(String name) {
+    return null;
+  }
+
   public CodeType decode(int code) {
     short action = keyBindings[code];
     switch (action) {
