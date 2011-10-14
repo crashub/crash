@@ -70,16 +70,14 @@ public abstract class PluginLifeCycle {
 
     // Override default properties from command line
     for (PropertyDescriptor<?> desc : PropertyDescriptor.ALL.values()) {
-      String key = "crash." + desc.name;
-      String value = props.getProperty(key);
-      if (value != null) {
-        try {
-          log.info("Configuring property " + desc.name + "=" + value + " from properties");
-          context.setProperty(desc, value);
-        }
-        catch (IllegalArgumentException e) {
-          log.error("Could not configure property", e);
-        }
+      configureProperty(context, props, desc);
+    }
+
+    // Override default properties from plugin defined properties.
+    for (final CRaSHPlugin<?> plugin : context.manager.getPlugins())
+    {
+      for (PropertyDescriptor<?> descriptor : plugin.getConfigurationCapabilities()) {
+        configureProperty(context, props, descriptor);
       }
     }
 
@@ -89,5 +87,19 @@ public abstract class PluginLifeCycle {
 
   public final void stop() {
     context.stop();
+  }
+
+  private void configureProperty(PluginContext context, Properties props, PropertyDescriptor<?> desc) {
+    String key = "crash." + desc.name;
+    String value = props.getProperty(key);
+    if (value != null) {
+      try {
+        log.info("Configuring property " + desc.name + "=" + value + " from properties");
+        context.setProperty(desc, value);
+      }
+      catch (IllegalArgumentException e) {
+        log.error("Could not configure property", e);
+      }
+    }
   }
 }

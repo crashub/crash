@@ -19,7 +19,6 @@
 package org.crsh.ssh;
 
 import org.crsh.TestPluginContext;
-import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.SimplePluginDiscovery;
 import org.crsh.term.CodeType;
 import org.crsh.term.IOAction;
@@ -61,7 +60,7 @@ public class SSHTestCase extends Assert {
     discovery.add(new SSHPlugin());
     discovery.add(handler);
     TestPluginContext ctx = new TestPluginContext(discovery);
-    ctx.setProperty(PropertyDescriptor.SSH_PORT, port);
+    ctx.setProperty(SSHPlugin.SSH_PORT, port);
     ctx.start();
     SSHClient client = new SSHClient(port).connect();
 

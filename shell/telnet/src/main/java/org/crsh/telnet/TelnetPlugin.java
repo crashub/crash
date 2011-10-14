@@ -22,11 +22,21 @@ package org.crsh.telnet;
 import org.crsh.plugin.*;
 import org.crsh.telnet.term.TelnetLifeCycle;
 
+import java.util.Collections;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> implements Service {
+
+  /** . */
+  public static final PropertyDescriptor<Integer> TELNET_PORT = new PropertyDescriptor<Integer>(Integer.class, "telnet.port", 5000, "The telnet port") {
+    @Override
+    public Integer doParse(String s) {
+      return Integer.parseInt(s);
+    }
+  };
 
   /** . */
   private TelnetLifeCycle lifeCycle;
@@ -37,12 +47,17 @@ public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> implements Service {
   }
 
   @Override
+  protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
+    return Collections.<PropertyDescriptor<?>>singletonList(TELNET_PORT);
+  }
+
+  @Override
   public void init() {
     PluginContext context = getContext();
 
     //
     TelnetLifeCycle lifeCycle = new TelnetLifeCycle(context);
-    Integer port = context.getProperty(PropertyDescriptor.TELNET_PORT);
+    Integer port = context.getProperty(TELNET_PORT);
     if (port != null) {
       lifeCycle.setPort(port);
     }

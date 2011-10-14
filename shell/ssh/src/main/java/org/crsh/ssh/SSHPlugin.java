@@ -29,12 +29,29 @@ import org.crsh.vfs.Resource;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public class SSHPlugin extends CRaSHPlugin<SSHPlugin> implements Service {
+
+  /** . */
+  public static final PropertyDescriptor<Integer> SSH_PORT = new PropertyDescriptor<Integer>(Integer.class, "ssh.port", 2000, "The SSH port") {
+    @Override
+    public Integer doParse(String s) {
+      return Integer.parseInt(s);
+    }
+  };
+
+  /** . */
+  public static final PropertyDescriptor<String> SSH_KEYPATH = new PropertyDescriptor<String>(String.class, "ssh.keypath", null, "The path to the key file") {
+    @Override
+    public String doParse(String s) {
+      return s;
+    }
+  };
 
   /** . */
   private SSHLifeCycle lifeCycle;
@@ -45,10 +62,15 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> implements Service {
   }
 
   @Override
+  protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
+    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_KEYPATH);
+  }
+
+  @Override
   public void init() {
 
     //
-    Integer port = getContext().getProperty(PropertyDescriptor.SSH_PORT);
+    Integer port = getContext().getProperty(SSH_PORT);
     if (port == null) {
       log.info("Could not boot SSHD due to missing due to missing port configuration");
       return;
@@ -63,7 +85,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> implements Service {
     }
 
     // If we have a key path, we convert is as an URL
-    String keyPath = getContext().getProperty(PropertyDescriptor.SSH_KEYPATH);
+    String keyPath = getContext().getProperty(SSH_KEYPATH);
     if (keyPath != null) {
       log.debug("Found key path " + keyPath);
       File f = new File(keyPath);

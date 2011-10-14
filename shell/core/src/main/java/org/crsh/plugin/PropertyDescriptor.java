@@ -37,30 +37,6 @@ public abstract class PropertyDescriptor<T> {
   public static final Map<String, PropertyDescriptor<?>> ALL = Collections.unmodifiableMap(INTERNAL_ALL);
 
   /** . */
-  public static final PropertyDescriptor<Integer> SSH_PORT = new PropertyDescriptor<Integer>(Integer.class, "ssh.port", 2000, "The SSH port") {
-    @Override
-    public Integer doParse(String s) {
-      return Integer.parseInt(s);
-    }
-  };
-
-  /** . */
-  public static final PropertyDescriptor<String> SSH_KEYPATH = new PropertyDescriptor<String>(String.class, "ssh.keypath", null, "The path to the key file") {
-    @Override
-    public String doParse(String s) {
-      return s;
-    }
-  };
-
-  /** . */
-  public static final PropertyDescriptor<Integer> TELNET_PORT = new PropertyDescriptor<Integer>(Integer.class, "telnet.port", 5000, "The telnet port") {
-    @Override
-    public Integer doParse(String s) {
-      return Integer.parseInt(s);
-    }
-  };
-
-  /** . */
   public static final PropertyDescriptor<TimeUnit> VFS_REFRESH_UNIT = new PropertyDescriptor<TimeUnit>(TimeUnit.class, "vfs.refresh_unit", TimeUnit.SECONDS, "The refresh time unit") {
     @Override
     public TimeUnit doParse(String s) {
@@ -88,11 +64,7 @@ public abstract class PropertyDescriptor<T> {
   /** . */
   public final String description;
 
-  private PropertyDescriptor(Class<T> type, String name, T defaultValue) {
-    this(type, name, defaultValue, null);
-  }
-
-  private PropertyDescriptor(Class<T> type, String name, T defaultValue, String description) {
+  protected PropertyDescriptor(Class<T> type, String name, T defaultValue, String description) {
     if (name == null) {
       throw new AssertionError();
     }

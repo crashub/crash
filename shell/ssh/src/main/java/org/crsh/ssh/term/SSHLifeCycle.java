@@ -20,10 +20,10 @@ package org.crsh.ssh.term;
 
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.Session;
-import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
+import org.crsh.ssh.AuthenticationPlugin;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.term.TermLifeCycle;
 import org.crsh.term.spi.TermIOHandler;
@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -90,12 +91,37 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setCommandFactory(new SCPCommandFactory(getContext()));
       server.setKeyPairProvider(new URLKeyPairProvider(keyURL));
 
+      AuthenticationPlugin plugin = null;
+      Iterator<AuthenticationPlugin> plugins = getContext().getPlugins(AuthenticationPlugin.class).iterator();
+      if (plugins.hasNext()) {
+        plugin = plugins.next();
+        if (plugins.hasNext()) {
+          throw new RuntimeException("More then one authentication plugin detected.");
+        }
+      }
+
+      final AuthenticationPlugin authPlugin = plugin;
       //
       server.setPasswordAuthenticator(new PasswordAuthenticator() {
         public boolean authenticate(String _username, String _password, ServerSession session) {
-          session.setAttribute(USERNAME, _username);
-          session.setAttribute(PASSWORD, _password);
-          return true;
+          boolean auth = true;
+          if (authPlugin != null)
+          {
+            try {
+              log.debug("Using authentication plugin " + authPlugin + " to authenticate user " + _username);
+              auth = authPlugin.authenticate(_username, _password);
+            } catch (Exception e) {
+              log.error("Exception authenticating user " + _username + " in authentication plugin: " + authPlugin, e);
+              return false;
+            }
+          }
+          //TODO: I don't think we should store the password as an attribute in the server session for security reasons.
+//          if (auth) {
+//            session.setAttribute(USERNAME, _username);
+//            session.setAttribute(PASSWORD, _password);
+//          }
+
+          return auth;
         }
       });
 
