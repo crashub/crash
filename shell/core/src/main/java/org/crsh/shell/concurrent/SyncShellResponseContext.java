@@ -63,6 +63,10 @@ public class SyncShellResponseContext implements ShellProcessContext {
     return wrapped.getWidth();
   }
 
+  public Object getProperty(String name) {
+    return wrapped.getProperty(name);
+  }
+
   public String readLine(String msg, boolean echo) {
     if (wrapped != null) {
       return wrapped.readLine(msg, echo);

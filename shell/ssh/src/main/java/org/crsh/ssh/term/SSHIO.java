@@ -138,6 +138,10 @@ public class SSHIO implements TermIO {
     return command.getContext().getWidth();
   }
 
+  public Object getProperty(String name) {
+    return command.getContext().getProperty(name);
+  }
+
   public CodeType decode(int code) {
     if (code == command.getContext().verase) {
       return CodeType.BACKSPACE;

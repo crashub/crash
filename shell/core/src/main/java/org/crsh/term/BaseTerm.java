@@ -100,6 +100,10 @@ public class BaseTerm implements Term {
     return io.getWidth();
   }
 
+  public Object getProperty(String name) {
+    return io.getProperty(name);
+  }
+
   public void setEcho(boolean echo) {
     console.setEchoing(echo);
   }
