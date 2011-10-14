@@ -21,7 +21,6 @@ package org.crsh.telnet.term;
 
 import org.apache.commons.net.telnet.TelnetClient;
 import org.crsh.TestPluginContext;
-import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.SimplePluginDiscovery;
 import org.crsh.telnet.TelnetPlugin;
 import org.crsh.term.IOHandler;
@@ -77,7 +76,7 @@ public abstract class AbstractTelnetTestCase extends Assert {
 
     //
     ctx = new TestPluginContext(discovery);
-    ctx.setProperty(PropertyDescriptor.TELNET_PORT, port);
+    ctx.setProperty(TelnetPlugin.TELNET_PORT, port);
 
     //
     ctx.start();

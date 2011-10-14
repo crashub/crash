@@ -23,6 +23,10 @@ import org.crsh.util.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * <p>Base class for a plugin, that consist of a subclass of this class and the implementation
  * of the business interface of the plugin. The business interface of the plugin is simply
@@ -58,6 +62,9 @@ public abstract class CRaSHPlugin<P> {
   /** . */
   private final Class<P> type;
 
+  /** . */
+  private List<PropertyDescriptor<?>> configurationCapabilities;
+
   protected CRaSHPlugin() {
     this.type = (Class<P>)TypeResolver.resolveToClass(getClass(), CRaSHPlugin.class, 0);
     this.status = CONSTRUCTED;
@@ -70,6 +77,34 @@ public abstract class CRaSHPlugin<P> {
 
   public final Class<P> getType() {
     return type;
+  }
+
+  /**
+   * Returns a list of {@link PropertyDescriptor} this plugin requires for its configuration.
+   *
+   * @return the configuration capabilities
+   */
+  protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Returns a list of {@link PropertyDescriptor} this plugin requires for its configuration.
+   *
+   * @return the configuration capabilities
+   */
+  public final Iterable<PropertyDescriptor<?>> getConfigurationCapabilities() {
+    if (configurationCapabilities == null) {
+      List<PropertyDescriptor<?>> configurationCapabilities = Collections.emptyList();
+      for (PropertyDescriptor<?> pd : createConfigurationCapabilities()) {
+        if (configurationCapabilities.isEmpty()) {
+          configurationCapabilities = new ArrayList<PropertyDescriptor<?>>();
+        }
+        configurationCapabilities.add(pd);
+      }
+      this.configurationCapabilities = configurationCapabilities.isEmpty() ? configurationCapabilities : Collections.unmodifiableList(configurationCapabilities);
+    }
+    return configurationCapabilities;
   }
 
   /**

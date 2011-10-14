@@ -49,7 +49,7 @@ public class PluginContext {
   private static final Logger log = LoggerFactory.getLogger(PluginContext.class);
 
   /** . */
-  private final PluginManager manager;
+  final PluginManager manager;
 
   /** . */
   private final ClassLoader loader;
@@ -135,6 +135,32 @@ public class PluginContext {
     }
     Property<T> property = (Property<T>)properties.get(desc);
     return property != null ? property.getValue() : desc.defaultValue;
+  }
+
+  /**
+   * Returns a context property or null if it cannot be found.
+   *
+   * @param propertyName the name of the property
+   * @param type the property type
+   * @param <T> the property parameter type
+   * @return the property value
+   * @throws NullPointerException if the descriptor argument is null
+   */
+  public final <T> T getProperty(String propertyName, Class<T> type) throws NullPointerException {
+    if (propertyName == null) {
+      throw new NullPointerException("No null property name accepted");
+    }
+    if (type == null) {
+      throw new NullPointerException("No null property type accepted");
+    }
+    for (PropertyDescriptor<?> pd : properties.keySet())
+    {
+      if (pd.name.equals(propertyName) && type.isAssignableFrom(pd.type))
+      {
+        return type.cast(getProperty(pd));
+      }
+    }
+    return null;
   }
 
   /**
