@@ -229,10 +229,10 @@ public class MatcherImpl<T> extends Matcher<T> {
       } else if (event instanceof Event.Argument) {
         last = event;
         separator = null;
-      } else if (event instanceof Event.DoubleDash) {
+      }/* else if (event instanceof Event.DoubleDash) {
         last = event;
         separator = null;
-      }
+      }*/
     }
 
     //
@@ -276,10 +276,11 @@ public class MatcherImpl<T> extends Matcher<T> {
     }
 
     //
-    if (last instanceof Event.DoubleDash) {
+    /*if (last instanceof Event.DoubleDash) {
       Event.DoubleDash dd = (Event.DoubleDash)last;
       return new OptionCompletion<T>(method != null ? (CommandDescriptor<T, ?>)method : descriptor, dd.token);
-    } else if (last instanceof Event.Option) {
+    } else*/
+    if (last instanceof Event.Option) {
       Event.Option optionEvent = (Event.Option)last;
       List<Token.Literal.Word> values = optionEvent.getValues();
       OptionDescriptor<?> option = optionEvent.getDescriptor();

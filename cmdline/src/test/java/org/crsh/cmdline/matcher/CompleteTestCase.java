@@ -183,6 +183,24 @@ public class CompleteTestCase extends TestCase {
     assertEquals(Collections.<String, String>emptyMap(), matcher.complete("-a b c"));
   }
 
+  public void testImplicitCommandOptionName() throws Exception
+  {
+    class A {
+      @Command
+      void main(@Option(names = {"o", "option"}) String o) { }
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    Matcher<A> matcher = Matcher.createMatcher("main", desc);
+
+    //
+    assertEquals(Collections.singletonMap("o", " "), matcher.complete("-"));
+    assertEquals(Collections.singletonMap("option", " "), matcher.complete("--"));
+    assertEquals(Collections.singletonMap("ption", " "), matcher.complete("--o"));
+    assertEquals(Collections.singletonMap("tion", " "), matcher.complete("--op"));
+  }
+
   public void testOptionArgument() throws Exception
   {
 

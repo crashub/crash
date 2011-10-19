@@ -102,16 +102,44 @@ abstract class Status {
           Token.Literal.Option optionToken = (Token.Literal.Option)literal;
           if (optionToken.getName().length() == 0 && optionToken instanceof Token.Literal.Option.Long) {
             req.tokenizer.next();
-            response.add(new Event.DoubleDash((Token.Literal.Option.Long) optionToken));
-            if (req.command instanceof ClassDescriptor<?>) {
-              ClassDescriptor<T> classCommand = (ClassDescriptor<T>)req.command;
-              MethodDescriptor<T> m = classCommand.getMethod(req.mainName);
-              if (m != null) {
-                response.command = m;
-                response.add(new Event.Method.Implicit(m, optionToken));
+            if (req.tokenizer.hasNext()) {
+              if (req.command instanceof ClassDescriptor<?>) {
+                ClassDescriptor<T> classCommand = (ClassDescriptor<T>)req.command;
+                MethodDescriptor<T> m = classCommand.getMethod(req.mainName);
+                if (m != null) {
+                  response.command = m;
+                  response.add(new Event.Method.Implicit(m, optionToken));
+                }
+              }
+              response.status = new Status.WantReadArg();
+            } else {
+              if (req.mode == Mode.INVOKE) {
+                if (req.command instanceof ClassDescriptor<?>) {
+                  ClassDescriptor<T> classCommand = (ClassDescriptor<T>)req.command;
+                  MethodDescriptor<T> m = classCommand.getMethod(req.mainName);
+                  if (m != null) {
+                    response.command = m;
+                    response.add(new Event.Method.Implicit(m, optionToken));
+                  }
+                }
+                response.status = new Status.Done();
+                response.add(new Event.Stop.Done.Arg(req.tokenizer.getIndex()));
+              } else {
+                if (req.command instanceof ClassDescriptor<?>) {
+                  ClassDescriptor<T> classCommand = (ClassDescriptor<T>)req.command;
+                  MethodDescriptor<T> m = classCommand.getMethod(req.mainName);
+                  if (m != null) {
+                    response.command = m;
+                    response.add(new Event.Method.Implicit(m, optionToken));
+                    response.add(new Event.Stop.Unresolved.NoSuchOption.Method(optionToken));
+                  } else  {
+                    response.add(new Event.Stop.Unresolved.NoSuchOption.Class(optionToken));
+                  }
+                } else {
+                  response.add(new Event.Stop.Unresolved.NoSuchOption.Method(optionToken));
+                }
               }
             }
-            response.status = new Status.WantReadArg();
           } else {
             OptionDescriptor<?> desc = req.command.findOption(literal.getValue());
             if (desc != null) {
@@ -156,7 +184,12 @@ abstract class Status {
                     response.command = m;
                     response.add(new Event.Method.Implicit(m, literal));
                   } else {
-                    response.add(new Event.Stop.Unresolved.NoSuchOption.Method(optionToken));
+                    if (req.command.getOptionNames().size() == 0) {
+                      response.command = m;
+                      response.add(new Event.Method.Implicit(m, literal));
+                    } else {
+                      response.add(new Event.Stop.Unresolved.NoSuchOption.Method(optionToken));
+                    }
                   }
                 } else {
                   response.add(new Event.Stop.Unresolved.NoSuchOption.Class(optionToken));

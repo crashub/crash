@@ -76,10 +76,6 @@ public class ParserTestCase extends TestCase {
       assertEquals(Arrays.asList(values), event.getStrings());
     }
 
-    public void assertDoubleDash() {
-      Event.DoubleDash event = (Event.DoubleDash)parser.next();
-    }
-
     public void assertEnd(Class expectedClass, int expectedIndex) {
       Event.Stop event = (Event.Stop)parser.next();
       assertEquals(expectedClass, event.getClass());
@@ -108,6 +104,7 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
+    tester.assertMethod("main");
     tester.assertEnd(Event.Stop.Unresolved.NoSuchOption.Method.class, 0);
   }
 
@@ -660,20 +657,17 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "--", Mode.COMPLETE);
-    tester.assertDoubleDash();
     tester.assertMethod("main");
-    tester.assertEnd(Event.Stop.Done.Arg.class, 2);
+    tester.assertEnd(Event.Stop.Unresolved.NoSuchOption.Method.class, 0);
 
     //
     tester = new Tester<A>(cmd, "-- ", Mode.COMPLETE);
-    tester.assertDoubleDash();
     tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.Arg.class, 3);
 
     //
     tester = new Tester<A>(cmd, "-- foo", Mode.COMPLETE);
-    tester.assertDoubleDash();
     tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertArgument("arg", "foo");
@@ -690,20 +684,17 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "--", Mode.INVOKE);
-    tester.assertDoubleDash();
     tester.assertMethod("main");
     tester.assertEnd(Event.Stop.Done.Arg.class, 2);
 
     //
     tester = new Tester<A>(cmd, "-- ", Mode.INVOKE);
-    tester.assertDoubleDash();
     tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.Arg.class, 3);
 
     //
     tester = new Tester<A>(cmd, "-- foo", Mode.INVOKE);
-    tester.assertDoubleDash();
     tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertArgument("arg", "foo");
