@@ -99,6 +99,10 @@ abstract class AST {
           // Iterate over all terms
           for (Term current = expr.term;current != null;current = current.next) {
 
+
+
+
+
             // Build command context
             InvocationContextImpl ctx;
             if (current.invoker.getConsumedType() == Void.class) {

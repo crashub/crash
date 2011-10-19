@@ -95,6 +95,9 @@ public class AsyncShellTestCase extends TestCase {
       public int getWidth() {
         return 32;
       }
+      public String getProperty(String name) {
+        return null;
+      }
       public void begin(ShellProcess process) {
       }
       public String readLine(String msg, boolean echo) {

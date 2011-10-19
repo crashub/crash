@@ -99,6 +99,37 @@ public class TermIOServerTestCase extends TestCase {
 //    server.execute();
 
     //
+    out.write(8);
+    out.write(0);
+    out.write('a');
+    out.flush();
+    assertTrue(server.execute());
+    assertEquals(0, in.read());
+
+    //
+    tt.setProperty("a", "b");
+    out.write(8);
+    out.write(0);
+    out.write('a');
+    out.flush();
+    assertTrue(server.execute());
+    assertEquals(2, in.read());
+    assertEquals('b', in.read());
+
+    out.write(8);
+    out.write(4);
+    out.write('w');
+    out.write('i');
+    out.write('d');
+    out.write('t');
+    out.write('h');
+    out.flush();
+    assertTrue(server.execute());
+    assertEquals(3, in.read());
+    assertEquals('3', in.read());
+    assertEquals('2', in.read());
+
+    //
     client.close();
     assertFalse(server.execute());
   }

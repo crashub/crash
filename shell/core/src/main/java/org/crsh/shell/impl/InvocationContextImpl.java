@@ -50,6 +50,10 @@ class InvocationContextImpl<C, P> extends AbstractInvocationContext<C, P> {
     return processContext.getWidth();
   }
 
+  public String getProperty(String propertyName) {
+    return processContext.getProperty(propertyName);
+  }
+
   public String readLine(String msg, boolean echo) {
     return processContext.readLine(msg, echo);
   }

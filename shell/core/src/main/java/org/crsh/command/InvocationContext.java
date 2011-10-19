@@ -39,6 +39,8 @@ public interface InvocationContext<C, P> extends CommandContext {
    */
   int getWidth();
 
+  String getProperty(String propertyName);
+
   String readLine(String msg, boolean echo);
 
   ShellPrinter getWriter();

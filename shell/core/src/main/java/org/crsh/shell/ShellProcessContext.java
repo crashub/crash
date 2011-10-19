@@ -35,6 +35,14 @@ public interface ShellProcessContext {
   int getWidth();
 
   /**
+   * Returns the property defined within this context.
+   *
+   * @param name the name of the property
+   * @return the value of the property
+   */
+  String getProperty(String name);
+
+  /**
    * A callback made by the process when it needs to read a line of text on the term.
    *
    * @param msg the message to display prior reading the term
@@ -49,5 +57,4 @@ public interface ShellProcessContext {
    * @param response the shell response
    */
   void end(ShellResponse response);
-
 }

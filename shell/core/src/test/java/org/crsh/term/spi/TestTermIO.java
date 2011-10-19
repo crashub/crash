@@ -25,6 +25,8 @@ import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -45,10 +47,14 @@ public class TestTermIO implements TermIO {
   /** . */
   private int width;
 
+  /** . */
+  private Map<String, String> properties;
+
   public TestTermIO() throws IOException {
     this.inner = new LinkedBlockingQueue<Integer>();
     this.outter = new LinkedBlockingQueue<String>();
     this.width = 32;
+    this.properties = new HashMap<String, String>();
   }
 
   public int read() throws IOException {
@@ -64,6 +70,18 @@ public class TestTermIO implements TermIO {
 
   public int getWidth() {
     return width;
+  }
+
+  public void setProperty(String name, String value) {
+    if (value != null) {
+      properties.put(name, value);
+    } else {
+      properties.remove(name);
+    }
+  }
+
+  public String getProperty(String name) {
+    return properties.get(name);
   }
 
   public void setWidth(int width) {

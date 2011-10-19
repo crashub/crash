@@ -9,12 +9,16 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.nio.charset.Charset;
 
 /**
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
 public class TermIOClient implements TermIO {
+
+  /** . */
+  private static final Charset UTF_8 = Charset.forName("UTF-8");
 
   /** . */
   private int port;
@@ -64,24 +68,80 @@ public class TermIOClient implements TermIO {
     buffer.put(b);
   }
 
-  public int read() throws IOException {
-    out.write(0);
-    out.flush();
+
+  private int _read(byte[] buffer, int off, int len) throws IOException, Done {
+    int b = in.read(buffer, off, len);
+    if (b == -1) {
+      throw new Done();
+    }
+    return b;
+  }
+
+  private byte _read() throws IOException, Done {
     int b = in.read();
-    CodeType codeType = CodeType.valueOf(b);
-    if (codeType == null) {
-      throw new UnsupportedOperationException("todo " + b);
-    } else if (codeType == CodeType.CHAR) {
-      int b1 = in.read();
-      int b2 = in.read();
-      return (b1 << 8) + b2;
-    } else {
-      return codeType.ordinal() << 16;
+    if (b == -1) {
+      throw new Done();
+    }
+    return (byte)b;
+  }
+
+  public int read() throws IOException {
+    try {
+      out.write(0);
+      out.flush();
+      byte b = _read();
+      CodeType codeType = CodeType.valueOf(b);
+      if (codeType == null) {
+        throw new UnsupportedOperationException("todo " + b);
+      } else if (codeType == CodeType.CHAR) {
+        byte b1 = _read();
+        byte b2 = _read();
+        return (b1 << 8) + b2;
+      } else {
+        return codeType.ordinal() << 16;
+      }
+    } catch (Done done) {
+      throw new UnsupportedOperationException("implement me", done);
     }
   }
 
   public int getWidth() {
-    return 80;
+    String width = getProperty("width");
+    return Integer.parseInt(width);
+  }
+
+  public String getProperty(String name) {
+    // We don't process empty name
+    if (name.length() == 0) {
+      return null;
+    }
+    byte[] bytes = name.getBytes(UTF_8);
+    int len = bytes.length;
+    if (len > 256) {
+      throw new IllegalArgumentException("Property name too long : " + name);
+    }
+    try {
+      out.write(8);
+      out.write(len - 1);
+      out.write(bytes);
+      out.flush();
+      len = _read();
+      if (len == 0) {
+        return null;
+      } else if (len == 1) {
+        return "";
+      } else {
+        bytes = new byte[len - 1];
+        _read(bytes, 0, bytes.length);
+        return new String(bytes, 0, bytes.length);
+      }
+
+      //
+    } catch (Done done) {
+      throw new UnsupportedOperationException("implement me", done);
+    } catch (IOException e) {
+      throw new UnsupportedOperationException("implement me", e);
+    }
   }
 
   public CodeType decode(int code) {

@@ -104,6 +104,44 @@ public class TermIOClientTestCase extends TestCase {
     client.flush();
     assertEquals(6, in.read());
     assertEquals(7, in.read());
+
+    //
+    assertEquals(null, client.getProperty(""));
+
+    //
+    out.write(0);
+    assertEquals(null, client.getProperty("a"));
+    assertEquals(8, in.read());
+    assertEquals(0, in.read());
+    assertEquals('a', in.read());
+
+    //
+    out.write(1);
+    assertEquals("", client.getProperty("a"));
+    assertEquals(8, in.read());
+    assertEquals(0, in.read());
+    assertEquals('a', in.read());
+
+    //
+    out.write(2);
+    out.write('b');
+    assertEquals("b", client.getProperty("a"));
+    assertEquals(8, in.read());
+    assertEquals(0, in.read());
+    assertEquals('a', in.read());
+
+    //
+    out.write(3);
+    out.write('3');
+    out.write('2');
+    assertEquals(32, client.getWidth());
+    assertEquals(8, in.read());
+    assertEquals(4, in.read());
+    assertEquals('w', in.read());
+    assertEquals('i', in.read());
+    assertEquals('d', in.read());
+    assertEquals('t', in.read());
+    assertEquals('h', in.read());
   }
 
 }

@@ -10,11 +10,15 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
 public class TermIOServer {
+
+  /** . */
+  private static final Charset UTF_8 = Charset.forName("UTF-8");
 
   /** . */
   private final TermIO delegate;
@@ -72,9 +76,6 @@ public class TermIOServer {
     this.socket = socketServer.accept();
     this.in = socket.getInputStream();
     this.out = socket.getOutputStream();
-  }
-
-  private static class Done extends Throwable {
   }
 
   private byte read() throws IOException, Done {
@@ -172,6 +173,34 @@ public class TermIOServer {
       delegate.moveLeft();
     } else if (b == 7) {
       delegate.flush();
+    } else if (b == 8) {
+      int len = read() + 1;
+      byte[] bytes = new byte[len];
+      read(bytes, 0, len);
+      String propertyName = new String(bytes, UTF_8);
+      String propertyValue;
+      if ("width".equals(propertyName)) {
+        propertyValue = Integer.toString(delegate.getWidth());
+      } else {
+        propertyValue = delegate.getProperty(propertyName);
+      }
+      if (propertyValue == null) {
+        write((byte)0);
+      } else if (propertyValue.length() == 0) {
+        write((byte)1);
+      } else {
+        bytes = propertyValue.getBytes(UTF_8);
+        len = bytes.length;
+        if (len > 254) {
+          // We don't process that for now
+          // so we say it's null
+          write((byte)0);
+        } else {
+          write((byte)(len + 1));
+          write(bytes);
+        }
+        flush();
+      }
     } else {
       throw new UnsupportedOperationException("cannot handle " + b);
     }

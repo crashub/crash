@@ -64,4 +64,9 @@ public class SSHContext {
     }
     return width;
   }
+
+  public String getProperty(String key)
+  {
+    return env.getEnv().get(key);
+  }
 }

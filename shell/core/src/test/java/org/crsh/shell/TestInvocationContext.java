@@ -43,6 +43,10 @@ public class TestInvocationContext<C, P> extends AbstractInvocationContext<C, P>
     return 32;
   }
 
+  public String getProperty(String propertyName) {
+    return null;
+  }
+
   public String readLine(String msg, boolean echo) {
     throw new UnsupportedOperationException();
   }

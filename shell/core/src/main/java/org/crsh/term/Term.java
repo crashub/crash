@@ -38,6 +38,14 @@ public interface Term {
   int getWidth();
 
   /**
+   * Retrieves the value of a property specified by this Term
+   *
+   * @param name name of the term property
+   * @return value of the term property
+   */
+  String getProperty(String name);
+
+  /**
    * Set the echo mode on the term.
    *
    * @param echo the echo mode

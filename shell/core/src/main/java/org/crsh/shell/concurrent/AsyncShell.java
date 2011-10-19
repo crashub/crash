@@ -101,6 +101,10 @@ public class AsyncShell implements Shell {
       return caller.getWidth();
     }
 
+    public String getProperty(String name) {
+      return caller.getProperty(name);
+    }
+
     public String readLine(String msg, boolean echo) {
       return caller.readLine(msg, echo);
     }
