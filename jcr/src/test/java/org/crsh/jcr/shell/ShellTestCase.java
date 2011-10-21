@@ -67,7 +67,7 @@ public class ShellTestCase extends AbstractJCRCommandTestCase {
     assertNotNull(foo);
     assertEquals("foo", foo.getName());
   }
-    
+
   public void testPWD() throws Exception {
 /*
     assertLogin();

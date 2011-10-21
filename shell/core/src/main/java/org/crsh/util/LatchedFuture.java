@@ -51,7 +51,7 @@ public class LatchedFuture<V> implements Future<V> {
   }
 
   public boolean isCancelled() {
-    return false; 
+    return false;
   }
 
   public boolean isDone() {

@@ -45,7 +45,7 @@ public class AppendableWriter extends Writer {
 
   @Override
   public void flush() throws IOException {
-    
+
   }
 
   @Override

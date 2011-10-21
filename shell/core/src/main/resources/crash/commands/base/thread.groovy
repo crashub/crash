@@ -48,7 +48,7 @@ public class thread extends CRaSHCommand {
       threads = new Thread[threads.length * 2];
     }
 
-    //    
+    //
     def formatString = "%1\$-3s %2\$-8s %3\$-13s %4\$-20s\r\n";
     Formatter formatter = new Formatter(context.writer);
     formatter.format(formatString, "ID", "PRIORITY", "STATE", "NAME");
@@ -64,7 +64,7 @@ public class thread extends CRaSHCommand {
       }
     }
   }
-  
+
   private ThreadGroup getRoot() {
     ThreadGroup group = Thread.currentThread().threadGroup;
     ThreadGroup parent;

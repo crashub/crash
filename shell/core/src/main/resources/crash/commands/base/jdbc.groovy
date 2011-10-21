@@ -19,7 +19,7 @@ import java.sql.DriverManager
  */
 @Usage("JDBC connection")
 class jdbc extends CRaSHCommand {
-  
+
   @Usage("connect to database with JDBC connection string")
   @Command
   public void connect(

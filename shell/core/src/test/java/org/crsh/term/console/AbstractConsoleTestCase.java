@@ -39,12 +39,12 @@ public abstract class AbstractConsoleTestCase extends TestCase {
 
   /** . */
   private Console console;
-  
+
   @Override
   protected void setUp() throws Exception {
     resetConsole();
   }
-  
+
   private void resetConsole() {
     console = new Console(client = new TestClientOutput(getSupportsCursorMove()));
   }
