@@ -34,7 +34,7 @@
   <description>The CRaSH documentation</description>
 
   <properties>
-    <wikbook.version>0.9.32</wikbook.version>
+    <wikbook.version>0.9.34</wikbook.version>
     <crash.version>${project.version}</crash.version>
     <wikbook.source>${pom.basedir}/src/main/wikbook</wikbook.source>
     <wikbook.target>${project.build.directory}/wikbook</wikbook.target>
@@ -140,7 +140,7 @@
      <plugin>
        <groupId>com.agilejava.docbkx</groupId>
        <artifactId>docbkx-maven-plugin</artifactId>
-       <version>2.0.7</version>
+       <version>2.0.13</version>
        <configuration>
 
          <!-- Source -->
@@ -184,7 +184,6 @@
 
              <!-- Stylesheet -->
              <htmlCustomization>${wikbook.target}/src/resources/xsl/html.xsl</htmlCustomization>
-             <htmlStylesheet>css/html.css</htmlStylesheet>
 
              <!-- Copy the image -->
              <postProcess>
@@ -202,27 +201,39 @@
                  </fileset>
                </copy>
              </postProcess>
-
            </configuration>
          </execution>
          <execution>
-           <id>generate-pdf</id>
+           <id>generate-xhtml</id>
            <goals>
-             <goal>generate-pdf</goal>
+             <goal>generate-xhtml</goal>
            </goals>
            <phase>package</phase>
            <configuration>
 
              <!-- Output -->
-             <targetDirectory>${wikbook.target}/output/pdf</targetDirectory>
+             <targetDirectory>${wikbook.target}/output/xhtml</targetDirectory>
+             <targetFileExtension>html</targetFileExtension>
 
              <!-- Stylesheet -->
-             <foCustomization>${wikbook.target}/src/resources/xsl/fopdf.xsl</foCustomization>
+             <xhtmlCustomization>${wikbook.target}/src/resources/xsl/pdf.xsl</xhtmlCustomization>
 
-             <!-- Image configuration -->
-             <imgSrcPath>${wikbook.source}/</imgSrcPath>
-             <admonGraphicsPath>${wikbook.target}/src/resources/images/admons/</admonGraphicsPath>
-
+             <!-- Copy the image -->
+             <postProcess>
+               <copy todir="${wikbook.target}/output/xhtml/images">
+                 <fileset dir="${pom.basedir}/src/main/wikbook/images">
+                   <include name="**" />
+                 </fileset>
+               </copy>
+               <copy todir="${wikbook.target}/output/xhtml">
+                 <fileset dir="${wikbook.target}/src/resources">
+                   <include name="**/*.css" />
+                   <include name="**/*.png" />
+                   <include name="**/*.gif" />
+                   <include name="**/*.jpg" />
+                 </fileset>
+               </copy>
+             </postProcess>
            </configuration>
          </execution>
        </executions>
@@ -234,6 +245,26 @@
            <scope>runtime</scope>
          </dependency>
        </dependencies>
+     </plugin>
+
+     <plugin>
+       <groupId>org.wikbook</groupId>
+       <artifactId>wikbook.html2pdf</artifactId>
+       <version>${wikbook.version}</version>
+       <executions>
+         <execution>
+           <phase>package</phase>
+           <goals>
+             <goal>transform</goal>
+           </goals>
+         </execution>
+       </executions>
+       <configuration>
+         <sourceDirectory>${wikbook.target}/output/xhtml</sourceDirectory>
+         <sourceFileName>index.html</sourceFileName>
+         <destinationDirectory>${wikbook.target}/output/pdf</destinationDirectory>
+         <destinationFileName>index.pdf</destinationFileName>
+       </configuration>
      </plugin>
 
      <!-- Attach the HTML zip -->
