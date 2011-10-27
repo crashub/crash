@@ -18,10 +18,10 @@ abstract class Status {
 
     /** . */
     final Mode mode;
-    
+
     /** . */
     final String mainName;
-    
+
     /** . */
     Tokenizer tokenizer;
 

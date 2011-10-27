@@ -45,7 +45,7 @@ class memory extends CRaSHCommand {
     }
     context.writer.println(unit.compute(Runtime.getRuntime().totalMemory(), decimal) + unit.human)
   }
-  
+
 }
 
 enum Unit { B(1, "b"), K(1024, "Kb"), M(1024 * 1024, "Mb"), G(1024 * 1024 * 1024, "Gb")

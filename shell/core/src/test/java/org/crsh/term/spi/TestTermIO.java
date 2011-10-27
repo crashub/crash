@@ -159,7 +159,7 @@ public class TestTermIO implements TermIO {
   }
 
   public void close() {
-    
+
   }
 
   public TestTermIO assertChar(char c) {
