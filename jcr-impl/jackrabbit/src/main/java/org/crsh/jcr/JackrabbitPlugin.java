@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -18,25 +18,22 @@
  */
 package org.crsh.jcr;
 
-
-import javax.jcr.Repository;
 import java.util.Map;
-import java.util.ServiceLoader;
+import javax.jcr.Repository;
+import org.apache.jackrabbit.commons.JcrUtils;
+import org.crsh.plugin.Service;
 
 /**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+ * @author <a href="mailto:emmanuel.hugonnet@silverpeas.com">Emmanuel Hugonnet</a>
  * @version $Revision$
  */
-public class JCR {
+public class JackrabbitPlugin extends JCRPlugin implements Service {
 
-  private static ServiceLoader<JCRPlugin> jcrPluginLoader = ServiceLoader.load(JCRPlugin.class);
-
-  public static Repository getRepository(Map<String, String> properties) throws Exception {
-    for (JCRPlugin plugin : jcrPluginLoader) {
-      Repository repository = plugin.getRepository(properties);
-      if (repository != null) {
-        return repository;
-      }
+  @Override
+  public Repository getRepository(Map<String, String> properties) throws Exception {
+    Repository repository = JcrUtils.getRepository(properties);
+    if (repository != null) {
+      return repository;
     }
     return null;
   }

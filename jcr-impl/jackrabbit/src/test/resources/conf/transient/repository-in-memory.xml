@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright (C) 2000 - 2011 Silverpeas
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    As a special exception to the terms and conditions of version 3.0 of
+    the GPL, you may redistribute this Program in connection with Free/Libre
+    Open Source Software ("FLOSS") applications as described in Silverpeas's
+    FLOSS exception.  You should have received a copy of the text describing
+    the FLOSS exception, and it is also available here:
+    "http://repository.silverpeas.com/legal/licensing"
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE Repository
+          PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 2.0//EN"
+          "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
+<Repository>
+  <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem" />
+   <!--
+        security configuration
+    -->
+  <Security appName="Jackrabbit">
+        <!--
+            security manager:
+            class: FQN of class implementing the JackrabbitSecurityManager interface
+        -->
+    <SecurityManager class="org.apache.jackrabbit.core.security.simple.SimpleSecurityManager" workspaceName="security">
+            <!--
+            workspace access:
+            class: FQN of class implementing the WorkspaceAccessManager interface
+            -->
+            <!-- <WorkspaceAccessManager class="..."/> -->
+            <!-- <param name="config" value="${rep.home}/security.xml"/> -->
+    </SecurityManager>
+
+        <!--
+            access manager:
+            class: FQN of class implementing the AccessManager interface
+        -->
+    <AccessManager class="org.apache.jackrabbit.core.security.simple.SimpleAccessManager">
+            <!-- <param name="config" value="${rep.home}/access.xml"/> -->
+    </AccessManager>
+
+    <LoginModule class="org.apache.jackrabbit.core.security.simple.SimpleLoginModule">
+      <param name="anonymousId" value="anonymous"/>
+      <param name="adminId" value="exo"/>
+      <param name="adminId" value="root"/>
+    </LoginModule>
+  </Security>
+  <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default" />
+  <Workspace name="${wsp.home}">
+    <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem" />
+    <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemPersistenceManager">
+      <param name="persistent" value="false" />
+    </PersistenceManager>
+  </Workspace>
+  <Versioning rootPath="${rep.home}/version">
+    <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem" />
+    <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemPersistenceManager">
+      <param name="persistent" value="false" />
+    </PersistenceManager>
+  </Versioning>
+</Repository>

@@ -29,7 +29,6 @@ import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.shell.ShellProcessContext;
 import org.crsh.util.TimestampedObject;
 import org.crsh.util.Utils;
 import org.crsh.vfs.Resource;
@@ -72,7 +71,7 @@ public class CRaSH implements Shell {
    */
   public ShellCommand getCommand(String name) throws CreateCommandException, NullPointerException {
     if (name == null) {
-      throw new NullPointerException("No null argument alloed");
+      throw new NullPointerException("No null argument allowed");
     }
 
     TimestampedObject<Class<? extends ShellCommand>> providerRef = commands.get(name);
