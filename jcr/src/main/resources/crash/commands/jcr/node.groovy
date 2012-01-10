@@ -138,7 +138,9 @@ set is a <Node,Void> command updating the property of the consumed node stream."
         node.setProperty(propertyName, propertyValue, requiredType);
       } else {
         // Remove any existing property with that name
-        node.getProperty(propertyName).remove()
+        if (node.hasProperty(propertyName)) {
+          node.getProperty(propertyName).remove()
+        }
       }
     }
   }

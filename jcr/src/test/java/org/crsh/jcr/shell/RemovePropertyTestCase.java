@@ -64,7 +64,7 @@ public class RemovePropertyTestCase extends AbstractJCRCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.getNode('foo').hasProperty('bar')"));
     assertOk("cd foo");
-    assertError("node set bar");
+    assertOk("node set bar");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.getNode('foo').hasProperty('bar')"));
 
   }
