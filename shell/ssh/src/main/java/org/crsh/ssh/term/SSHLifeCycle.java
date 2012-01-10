@@ -104,7 +104,7 @@ public class SSHLifeCycle extends TermLifeCycle {
       //
       server.setPasswordAuthenticator(new PasswordAuthenticator() {
         public boolean authenticate(String _username, String _password, ServerSession session) {
-          boolean auth = true;
+          boolean auth;
           if (authPlugin != null)
           {
             try {
@@ -115,12 +115,17 @@ public class SSHLifeCycle extends TermLifeCycle {
               return false;
             }
           }
-          //TODO: I don't think we should store the password as an attribute in the server session for security reasons.
-//          if (auth) {
-//            session.setAttribute(USERNAME, _username);
-//            session.setAttribute(PASSWORD, _password);
-//          }
+          else 
+          {
+            // Say ok as this will be used later for performing an other kind of authentication
+            auth = true;
+          }
 
+          // We store username and password in session for later reuse
+          session.setAttribute(USERNAME, _username);
+          session.setAttribute(PASSWORD, _password);
+
+          //
           return auth;
         }
       });
