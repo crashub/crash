@@ -116,7 +116,7 @@ set is a <Node,Void> command updating the property of the consumed node stream."
 
   private void update(Node node, String propertyName, String propertyValue, PropertyType propertyType) {
     // Set the property
-    if (node.hasProperty(propertyName)) {
+    if (propertyValue != null && node.hasProperty(propertyName)) {
       // If the current node has already a property, we just update it
       node[propertyName] = propertyValue;
     } else {
@@ -138,7 +138,9 @@ set is a <Node,Void> command updating the property of the consumed node stream."
         node.setProperty(propertyName, propertyValue, requiredType);
       } else {
         // Remove any existing property with that name
-        node[propertyName] = null;
+        if (node.hasProperty(propertyName)) {
+          node.getProperty(propertyName).remove()
+        }
       }
     }
   }
