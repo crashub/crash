@@ -279,6 +279,7 @@
            <configuration>
              <descriptors>
                <descriptor>src/main/assembly/html.xml</descriptor>
+               <descriptor>src/main/assembly/docbook.xml</descriptor>
              </descriptors>
            </configuration>
          </execution>
