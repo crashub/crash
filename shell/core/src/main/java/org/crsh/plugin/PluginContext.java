@@ -337,8 +337,8 @@ public class PluginContext {
         }, 0, refreshRate, tu);
       }
 
-      // Init services
-      manager.getPlugins(Service.class);
+      // Init plugins
+      manager.getPlugins(Object.class);
 
       //
       started = true;

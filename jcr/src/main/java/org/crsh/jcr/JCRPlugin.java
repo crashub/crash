@@ -22,7 +22,6 @@ package org.crsh.jcr;
 import groovy.lang.GroovySystem;
 import groovy.lang.MetaClassRegistry;
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.plugin.Service;
 
 import javax.jcr.Node;
 import java.beans.IntrospectionException;
@@ -31,8 +30,7 @@ import java.beans.IntrospectionException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class JCRPlugin extends CRaSHPlugin<JCRPlugin> implements Service
-{
+public class JCRPlugin extends CRaSHPlugin<JCRPlugin> {
 
    /** . */
    private static final Object LOCK = new Object();

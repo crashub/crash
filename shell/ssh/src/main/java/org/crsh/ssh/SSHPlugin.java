@@ -22,7 +22,6 @@ package org.crsh.ssh;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.ResourceKind;
-import org.crsh.plugin.Service;
 import org.crsh.ssh.term.SSHLifeCycle;
 import org.crsh.vfs.Resource;
 
@@ -35,7 +34,7 @@ import java.util.Arrays;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SSHPlugin extends CRaSHPlugin<SSHPlugin> implements Service {
+public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   /** . */
   public static final PropertyDescriptor<Integer> SSH_PORT = new PropertyDescriptor<Integer>(Integer.class, "ssh.port", 2000, "The SSH port") {

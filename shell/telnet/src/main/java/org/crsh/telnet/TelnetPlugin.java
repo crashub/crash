@@ -28,7 +28,7 @@ import java.util.Collections;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> implements Service {
+public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
 
   /** . */
   public static final PropertyDescriptor<Integer> TELNET_PORT = new PropertyDescriptor<Integer>(Integer.class, "telnet.port", 5000, "The telnet port") {
