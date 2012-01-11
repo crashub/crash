@@ -42,16 +42,16 @@ public abstract class CRaSHPlugin<P> {
   protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
-  static final int FAILED = -1;
+  public static final int FAILED = -1;
 
   /** . */
-  static final int CONSTRUCTED = 0;
+  public static final int CONSTRUCTED = 0;
 
   /** . */
-  static final int INITIALIZING = 1;
+  public static final int INITIALIZING = 1;
 
   /** . */
-  static final int INITIALIZED = 2;
+  public static final int INITIALIZED = 2;
 
   /** . */
   PluginContext context;
@@ -75,6 +75,20 @@ public abstract class CRaSHPlugin<P> {
     return context;
   }
 
+  /**
+   * Returns the current plugin status.
+   *
+   * @return the plugin status
+   */
+  public int getStatus() {
+    return status;
+  }
+
+  /**
+   * Returns the plugin type.
+   *
+   * @return the plugin type
+   */
   public final Class<P> getType() {
     return type;
   }

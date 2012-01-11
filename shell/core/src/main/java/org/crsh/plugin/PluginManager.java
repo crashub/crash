@@ -49,7 +49,7 @@ public class PluginManager {
     this.discovery = discovery;
   }
 
-  public synchronized <T> Iterable<CRaSHPlugin<?>> getPlugins() {
+  public synchronized Iterable<CRaSHPlugin<?>> getPlugins() {
     if (plugins == null) {
       List<CRaSHPlugin<?>> plugins = Utils.list(discovery.getPlugins());
       for (CRaSHPlugin<?> plugin : plugins) {

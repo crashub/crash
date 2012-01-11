@@ -117,8 +117,22 @@ public class PluginContext {
     this.manager = new PluginManager(this, discovery);
   }
 
+  public Iterable<CRaSHPlugin<?>> getPlugins() {
+    return manager.getPlugins();
+  }
+
   public final String getVersion() {
     return version;
+  }
+
+  /**
+   * Returns the list of properties.
+   *
+   * @return the properties
+   */
+  public final Collection<Property<?>> getFoo()
+  {
+    return properties.values();
   }
 
   /**
