@@ -23,6 +23,8 @@ import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import java.io.InputStream;
 import java.util.Calendar;
 
@@ -92,5 +94,35 @@ public class JCRUtils {
 
   public static String decodeName(String name) {
     throw new UnsupportedOperationException();
+  }
+
+  public static PropertyDefinition getPropertyDefinition(NodeType nodeType, String propertyName) throws RepositoryException {
+    for (PropertyDefinition def : nodeType.getPropertyDefinitions()) {
+      if (def.getName().equals(propertyName)) {
+        return def;
+      }
+    }
+    return null;
+  }
+
+  public static PropertyDefinition findPropertyDefinition(Node node, String propertyName) throws RepositoryException {
+    if (node.hasProperty(propertyName)) {
+      return node.getProperty(propertyName).getDefinition();
+    } else {
+      NodeType primaryNodeType = node.getPrimaryNodeType();
+      PropertyDefinition def = getPropertyDefinition(primaryNodeType, propertyName);
+      if (def == null) {
+        for (NodeType mixinNodeType : node.getMixinNodeTypes()) {
+          def = getPropertyDefinition(mixinNodeType, propertyName);
+          if (def != null) {
+            break;
+          }
+        }
+      }
+      if (def == null && !propertyName.equals("*")) {
+        def = getPropertyDefinition(primaryNodeType, "*");
+      }
+      return def;
+    }
   }
 }

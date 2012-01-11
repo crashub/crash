@@ -27,7 +27,7 @@ import javax.jcr.PropertyType;
  */
 public class SetTestCase extends AbstractJCRCommandTestCase {
 
-  public void testSet() throws Exception {
+  public void testSingleValued() throws Exception {
     assertLogin();
     groovyShell.evaluate("session.rootNode.setProperty('foo_string', 'foo_value');");
     groovyShell.evaluate("session.rootNode.setProperty('foo_long', 3);");
@@ -67,6 +67,14 @@ public class SetTestCase extends AbstractJCRCommandTestCase {
     // Non existing string remove
     assertOk("node set foo_string");
     assertEquals(false, groovyShell.evaluate("return session.rootNode.hasProperty('foo_string');"));
+  }
+
+  public void testMultiValued() throws Exception {
+    assertLogin();
+    groovyShell.evaluate("session.rootNode.setProperty('bar', ['1','2'] as String[])");
+    assertOk("node set bar '3'");
+    assertEquals(1, groovyShell.evaluate("return session.rootNode.getProperty('bar').values.length;"));
+    assertEquals("3", groovyShell.evaluate("return session.rootNode.getProperty('bar').values[0].string;"));
   }
 
   public void testPipe() throws Exception {

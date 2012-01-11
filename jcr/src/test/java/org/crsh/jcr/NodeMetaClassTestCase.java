@@ -315,6 +315,23 @@ public class NodeMetaClassTestCase extends TestCase {
         "assert 0.5D == barBDProperty.getDouble();\n");
   }
 
+  public void testAssignSingleValueToMultiValued() throws Exception {
+    shell.evaluate("" +
+        "import javax.jcr.Node;\n" +
+        "import javax.jcr.Property;\n" +
+        "Node root = session.getRootNode();\n" +
+        "root.setProperty('bar', ['a','b'] as String[]);\n" +
+        "String bar = 'c';\n" +
+        "root.bar = bar;\n" +
+        "assert root.bar instanceof String;\n" +
+        "assert root.bar == 'c';\n" +
+        "Property barProperty = root.getProperty('bar');\n" +
+        "assert barProperty != null;\n" +
+        "assert 1 == barProperty.getValues().length;\n" +
+        "assert 'c' == barProperty.getValues()[0].getString();\n"
+      );
+  }
+
   public void testBilto() throws Exception {
     shell.evaluate("" +
         "import javax.jcr.Node;\n" +

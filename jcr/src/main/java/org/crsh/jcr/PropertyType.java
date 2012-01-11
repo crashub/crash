@@ -18,9 +18,7 @@
  */
 package org.crsh.jcr;
 
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
+import javax.jcr.*;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -34,13 +32,13 @@ public enum PropertyType {
 
   PATH(javax.jcr.PropertyType.PATH){
     @Override
-    public Object getValue(Property property) throws RepositoryException {
-      return property.getString();
+    public Object unwrap(Value value) throws RepositoryException {
+      return value.getString();
     }
     @Override
-    public Property set(Node node, String name, Object value) throws RepositoryException {
+    protected Value wrap(ValueFactory factory, Object value) {
       if (value instanceof String) {
-        return node.setProperty(name, (String)value);
+        return factory.createValue((String)value);
       } else {
         return null;
       }
@@ -53,15 +51,15 @@ public enum PropertyType {
 
   STRING(javax.jcr.PropertyType.STRING){
     @Override
-    public Object getValue(Property property) throws RepositoryException {
-      return property.getString();
+    public Object unwrap(Value value) throws RepositoryException {
+      return value.getString();
     }
     @Override
-    public Property set(Node node, String name, Object value) throws RepositoryException {
+    protected Value wrap(ValueFactory factory, Object value) {
       if (value instanceof String) {
-        return node.setProperty(name, (String)value);
+        return factory.createValue((String) value);
       } else if (value instanceof Character) {
-        return node.setProperty(name, Character.toString((Character)value));
+        return factory.createValue(Character.toString((Character) value));
       } else {
         return null;
       }
@@ -74,20 +72,20 @@ public enum PropertyType {
 
   LONG(javax.jcr.PropertyType.LONG) {
     @Override
-    public Object getValue(Property property) throws RepositoryException {
-      return property.getLong();
+    public Object unwrap(Value value) throws RepositoryException {
+      return value.getLong();
     }
     @Override
-    public Property set(Node node, String name, Object value) throws RepositoryException {
+    protected Value wrap(ValueFactory factory, Object value) {
       if (value instanceof Long) {
-        return node.setProperty(name, (Long)value);
+        return factory.createValue((Long) value);
       } else if (value instanceof Integer) {
-        return node.setProperty(name, (Integer)value);
+        return factory.createValue((Integer) value);
       } else if (value instanceof Byte) {
-        return node.setProperty(name, (Byte)value);
+        return factory.createValue((Byte) value);
       } else if (value instanceof BigInteger) {
         BigInteger biValue = (BigInteger)value;
-        return node.setProperty(name, biValue.longValue());
+        return factory.createValue(biValue.longValue());
       } else {
         return null;
       }
@@ -100,18 +98,18 @@ public enum PropertyType {
 
   DOUBLE(javax.jcr.PropertyType.DOUBLE) {
     @Override
-    public Object getValue(Property property) throws RepositoryException {
-      return property.getDouble();
+    public Object unwrap(Value value) throws RepositoryException {
+      return value.getDouble();
     }
     @Override
-    public Property set(Node node, String name, Object value) throws RepositoryException {
+    protected Value wrap(ValueFactory factory, Object value) {
       if (value instanceof Double) {
-        return node.setProperty(name, (Double)value);
+        return factory.createValue((Double) value);
       }  else if (value instanceof Float) {
-        return node.setProperty(name, (Float)value);
+        return factory.createValue((Float) value);
       } else if (value instanceof BigDecimal) {
         BigDecimal bdValue = (BigDecimal)value;
-        return node.setProperty(name, bdValue.doubleValue());
+        return factory.createValue(bdValue.doubleValue());
       } else {
         return null;
       }
@@ -124,13 +122,13 @@ public enum PropertyType {
 
   BOOLEAN(javax.jcr.PropertyType.BOOLEAN) {
     @Override
-    public Object getValue(Property property) throws RepositoryException {
-      return property.getBoolean();
+    public Object unwrap(Value value) throws RepositoryException {
+      return value.getBoolean();
     }
     @Override
-    public Property set(Node node, String name, Object value) throws RepositoryException {
+    protected Value wrap(ValueFactory factory, Object value) {
       if (value instanceof Boolean) {
-        return node.setProperty(name, (Boolean)value);
+        return factory.createValue((Boolean) value);
       } else {
         return null;
       }
@@ -143,13 +141,13 @@ public enum PropertyType {
 
   DATE(javax.jcr.PropertyType.DATE) {
     @Override
-    public Object getValue(Property property) throws RepositoryException {
-      return property.getDate();
+    public Object unwrap(Value value) throws RepositoryException {
+      return value.getDate();
     }
     @Override
-    public Property set(Node node, String name, Object value) throws RepositoryException {
+    protected Value wrap(ValueFactory factory, Object value) {
       if (value instanceof Calendar) {
-        return node.setProperty(name, (Calendar)value);
+        return factory.createValue((Calendar) value);
       } else {
         return null;
       }
@@ -162,13 +160,13 @@ public enum PropertyType {
 
   BINARY(javax.jcr.PropertyType.BINARY) {
     @Override
-    public Object getValue(Property property) throws RepositoryException {
-      return property.getStream();
+    public Object unwrap(Value value) throws RepositoryException {
+      return value.getStream();
     }
     @Override
-    public Property set(Node node, String name, Object value) throws RepositoryException {
+    protected Value wrap(ValueFactory factory, Object value) {
       if (value instanceof InputStream) {
-        return node.setProperty(name, (InputStream)value);
+        return factory.createValue((InputStream) value);
       } else {
         return null;
       }
@@ -181,13 +179,13 @@ public enum PropertyType {
 
   REFERENCE(javax.jcr.PropertyType.REFERENCE) {
     @Override
-    public Object getValue(Property property) throws RepositoryException {
-      return property.getNode();
+    public Object unwrap(Value value) throws RepositoryException {
+      throw new AssertionError("It should not be called");
     }
     @Override
-    public Property set(Node node, String name, Object value) throws RepositoryException {
+    protected Value wrap(ValueFactory factory, Object value) throws RepositoryException {
       if (value instanceof Node) {
-        return node.setProperty(name, (Node)value);
+        return factory.createValue((Node)value);
       } else {
         return null;
       }
@@ -258,9 +256,36 @@ public enum PropertyType {
     return value;
   }
 
-  public abstract Object getValue(Property property) throws RepositoryException;
+  public Object get(Property property) throws RepositoryException {
+    if (this == REFERENCE) {
+      return property.getNode();
+    } else {
+      Value value;
+      if (property.getDefinition().isMultiple()) {
+        Value[] values = property.getValues();
+        value = values.length > 0 ? values[0] : null;
+      } else {
+        value = property.getValue();
+      }
+      return value != null ? unwrap(value) : null;
+    }
+  }
 
-  public abstract Property set(Node node, String name, Object value) throws RepositoryException;
+  public final Property set(Node node, String name, Object value) throws RepositoryException {
+    Value v = wrap(node.getSession().getValueFactory(), value);
+    if (v != null) {
+      try {
+        return node.setProperty(name, v);
+      } catch (ValueFormatException e) {
+        return node.setProperty(name, new Value[]{v});
+      }
+    }
+    return null;
+  }
+
+  protected abstract Object unwrap(Value value) throws RepositoryException;
+
+  protected abstract Value wrap(ValueFactory factory, Object value) throws RepositoryException;
 
   protected abstract Collection<Class<?>> getCanonicalTypes();
 }

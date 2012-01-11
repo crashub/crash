@@ -167,7 +167,7 @@ public class NodeMetaClass extends MetaClassImpl {
     try {
       Property property = node.getProperty(propertyName);
       PropertyType type = PropertyType.fromValue(property.getType());
-      return type.getValue(property);
+      return type.get(property);
     }
     catch (PathNotFoundException e) {
     }
