@@ -1,11 +1,12 @@
-CRaSH can be configured by tweaking various files of the CRaSH web archive
+= Configuration properties =
 
-* //WEB-INF/crash/crash.properties//
-* //WEB-INF/crash/commands/base/login.groovy//
-* //WEB-INF/crash/commands/jcr/login.groovy//
+CRaSH is configured by a set of properties, those properties are defined in a configuration file. In the war file packaging,
+the configuration file can be found under ///WEB-INF/crash/crash.properties// file of the war. Configuration can be overriden
+by Java Virtual Machine system properties by using the same property name.
 
-{{note}}Configuration happens via the CRaSH war file and can be overriden from the JVM system properties by using the same
-property name.{{/note}}
+{{note}}
+CRaSH properties are always prefixed by the //crash.// value
+{{/note}}
 
 = Change the SSH server key =
 
@@ -38,7 +39,7 @@ crash.telnet.port=5000
 
 = Configure the shell default message =
 
-The //login.groovy// file contains two closures that are evaluated each time a message is required
+The ///WEB-INF/crash/commands/base/login.groovy// file contains two closures that are evaluated each time a message is required
 
 * The ##prompt## closure returns the prompt message
 * The ##welcome## closure returns the welcome message
