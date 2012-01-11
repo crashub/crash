@@ -260,9 +260,6 @@ will be nevertheless invoked.
 == ##system## command ==
 {{include document="system.wiki" /}}
 
-== ##memory## command ==
-{{include document="memory.wiki" /}}
-
 == ##jdbc## command ==
 {{include document="jdbc.wiki" /}}
 
