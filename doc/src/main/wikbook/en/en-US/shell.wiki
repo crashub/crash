@@ -7,11 +7,13 @@ CRaSH provides has various ways to be started, it can even be easilty embedded.
 CRaSH can use a standard web archive to be deployed in a web container. The war file is used for its packaging capabilities
 and triggering the CRaSH life cycle start/stop. In this mode CRaSH has two packaging available:
 
-* A core war file found under //deploy/core/crash.war// provides the base CRaSH functionnalities.
-* A GateIn war file found under //deploy/gatein/crash.war// provides the additional JCR features but deploys only in
- a GateIn server (Tomcat or JBoss)
+* A __core__ war file found under //deploy/core/crash.war// provides the base CRaSH functionnalities.
+* A __gatein__ war file found under //deploy/gatein/crash.war// provides additional Java Content Repository (JCR)
+ features but deploys only in a GateIn server (Tomcat or JBoss). It extends the core packaging and adds
+** JCR browsing and interactions
+** SCP support for JCR import and export
 
-You have to copy the crash.war in the appropriate server, regardless of the packaging you use.
+You have to copy the //crash.war// in the appropriate server, regardless of the packaging used.
 
 == Standalone mode ==
 
