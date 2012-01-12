@@ -29,7 +29,10 @@ import org.crsh.vfs.Resource;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.Security;
 import java.util.Arrays;
+import org.apache.sshd.common.util.SecurityUtils;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -69,6 +72,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> implements Service {
   @Override
   public void init() {
 
+    SecurityUtils.setRegisterBouncyCastle(true);
     //
     Integer port = getContext().getProperty(SSH_PORT);
     if (port == null) {

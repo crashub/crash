@@ -36,7 +36,7 @@ import javax.jcr.Repository;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class JCRPlugin extends CRaSHPlugin<JCRPlugin> implements Service {
+public abstract class JCRPlugin<T extends JCRPlugin> extends CRaSHPlugin<T> implements Service {
 
   private static final Collection<String> NODES = Arrays.asList(
       "org.exoplatform.services.jcr.impl.core.NodeImpl",
@@ -50,11 +50,6 @@ public abstract class JCRPlugin extends CRaSHPlugin<JCRPlugin> implements Servic
    * .
    */
   private static boolean integrated = false;
-
-  @Override
-  public JCRPlugin getImplementation() {
-    return this;
-  }
   
   public Collection<String> getNodeClassNames() {
     return NODES;

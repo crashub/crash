@@ -145,7 +145,7 @@ formatNode = { builder, n, nodeDepth, propertiesDepth ->
       }
       if (nodeDepth > 0) {
         node('children') {
-          n.each { child ->
+          n.nodes.each() { child ->
             formatNode(builder, child, nodeDepth -1, propertiesDepth -1);
           }
         }

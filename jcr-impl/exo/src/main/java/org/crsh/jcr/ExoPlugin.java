@@ -28,8 +28,14 @@ import javax.jcr.Repository;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ExoPlugin extends JCRPlugin implements Service {
+public class ExoPlugin extends JCRPlugin<ExoPlugin> implements Service {
 
+  @Override
+  public ExoPlugin getImplementation() {
+    return this;
+  }
+
+  @Override
   public Repository getRepository(Map<String, String> properties) throws Exception {
     ClassLoader cl = Thread.currentThread().getContextClassLoader();
 

@@ -27,8 +27,13 @@ import org.crsh.plugin.Service;
  * @author <a href="mailto:emmanuel.hugonnet@silverpeas.com">Emmanuel Hugonnet</a>
  * @version $Revision$
  */
-public class JackrabbitPlugin extends JCRPlugin implements Service {
+public class JackrabbitPlugin extends JCRPlugin<JackrabbitPlugin> implements Service {
 
+  @Override
+  public JackrabbitPlugin getImplementation() {
+    return this;
+  }
+  
   @Override
   public Repository getRepository(Map<String, String> properties) throws Exception {
     Repository repository = JcrUtils.getRepository(properties);
