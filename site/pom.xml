@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>crsh.parent</artifactId>
+    <groupId>org.crsh</groupId>
+    <version>1.0.0-beta24-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>CRaSH site</name>
+  <artifactId>crsh.site</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.doc</artifactId>
+      <classifier>html</classifier>
+      <type>zip</type>
+    </dependency>
+  </dependencies>
+
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <id>unpack-documentation</id>
+            <phase>site</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.crsh</includeGroupIds>
+              <includeArtifactIds>crsh.doc</includeArtifactIds>
+              <includeClassifiers>html</includeClassifiers>
+              <excludes>META-INF/**</excludes>
+              <outputDirectory>${project.build.directory}/html</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <configuration>
+          <message>Deploy documentation for ${project.version}</message>
+          <repositoryOwner>${crsh.github.owner}</repositoryOwner>
+          <repositoryName>${crsh.github.repository}</repositoryName>
+          <outputDirectory>${project.build.directory}/html</outputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>site</goal>
+            </goals>
+            <phase>site</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
