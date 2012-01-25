@@ -1,0 +1,13 @@
+/* Several missing style used by wikbook */
+
+span.underline {
+    text-decoration: underline;
+}
+
+span.strikethrough {
+    text-decoration: line-through;
+}
+
+span.italic {
+    font-style: italic;
+}
