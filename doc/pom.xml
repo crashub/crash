@@ -34,7 +34,7 @@
   <description>The CRaSH documentation</description>
 
   <properties>
-    <wikbook.version>0.9.34</wikbook.version>
+    <wikbook.version>0.9.36</wikbook.version>
     <crash.version>${project.version}</crash.version>
     <wikbook.source>${pom.basedir}/src/main/wikbook</wikbook.source>
     <wikbook.target>${project.build.directory}/wikbook</wikbook.target>
@@ -183,7 +183,7 @@
              <targetDirectory>${wikbook.target}/output/html</targetDirectory>
 
              <!-- Stylesheet -->
-             <htmlCustomization>${wikbook.target}/src/resources/xsl/html.xsl</htmlCustomization>
+             <htmlCustomization>${wikbook.target}/src/resources/xsl/bootstrap/html.xsl</htmlCustomization>
 
              <!-- Copy the image -->
              <postProcess>
@@ -195,6 +195,7 @@
                <copy todir="${wikbook.target}/output/html">
                  <fileset dir="${wikbook.target}/src/resources">
                    <include name="**/*.css" />
+                   <include name="**/*.js" />
                    <include name="**/*.png" />
                    <include name="**/*.gif" />
                    <include name="**/*.jpg" />
@@ -216,7 +217,7 @@
              <targetFileExtension>html</targetFileExtension>
 
              <!-- Stylesheet -->
-             <xhtmlCustomization>${wikbook.target}/src/resources/xsl/pdf.xsl</xhtmlCustomization>
+             <xhtmlCustomization>${wikbook.target}/src/resources/xsl/simple/pdf.xsl</xhtmlCustomization>
 
              <!-- Copy the image -->
              <postProcess>
