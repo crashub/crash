@@ -34,7 +34,7 @@
   <description>The CRaSH documentation</description>
 
   <properties>
-    <wikbook.version>0.9.36</wikbook.version>
+    <wikbook.version>0.9.37</wikbook.version>
     <crash.version>${project.version}</crash.version>
     <wikbook.source>${pom.basedir}/src/main/wikbook</wikbook.source>
     <wikbook.target>${project.build.directory}/wikbook</wikbook.target>
