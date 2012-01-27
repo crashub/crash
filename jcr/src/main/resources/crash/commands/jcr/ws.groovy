@@ -22,10 +22,16 @@ When you are connected the shell maintain a JCR session and allows you to intera
 oriented fashion. The repository name must be specified and optionally you can specify a user name and password to
 have more privileges.
 
-% ws login -c portal portal-system
+Before performing a login operation, a repository must be first selected with the repo command, for instance:
+
+% repo use container=portal
+
+Once a repository is obtained the login operation can be done:
+
+% ws login portal-system
 Connected to workspace portal-system
 
-% ws login -c portal -u root -p gtn portal-system
+% ws login -u root -p gtn portal-system
 Connected to workspace portal-system
 
 """)
@@ -46,24 +52,21 @@ Connected to workspace portal-system
     }
 
     //
-    def properties = containerName == null ? [:] : ["exo.container.name":containerName];
-
-    //
-    if(repo == null) {
-      repo = JCR.getRepository(properties);
+    if (containerName != null) {
+      throw new ScriptException("The container name option is legacy, use 'repo use container=" + containerName + "' instead")
     }
 
     //
-    if (repo == null) {
-      return "Could not locate repository";
+    if (repository == null) {
+      throw new ScriptException("No repository selected, use the repo command first");
     }
 
     //
     if (userName != null && password != null) {
       def credentials = new SimpleCredentials(userName, password.toCharArray());
-      session = repo.login(credentials, workspaceName);
+      session = repository.login(credentials, workspaceName);
     } else {
-      session = repo.login(workspaceName);
+      session = repository.login(workspaceName);
     }
     def root = session.getRootNode();
     setCurrentNode(root);

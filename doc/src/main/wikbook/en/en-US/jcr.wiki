@@ -1,56 +1,71 @@
-== JCR commands ==
+The CRaSH JCR extension allow to connect and interract with Java Content Repository implementations.
 
-=== ##ws## command ===
+= JCR implementations =
+
+== eXo JCR ==
+
+todo
+
+== Apache Jackrabbit ==
+
+todo
+
+= JCR commands =
+
+== ##repo## command ==
+{{include document="repo.wiki" /}}
+
+== ##ws## command ==
 {{include document="ws.wiki" /}}
 
-=== ##cd## command ===
+== ##cd## command ==
 {{include document="cd.wiki" /}}
 
-=== ##pwd## command ===
+== ##pwd## command ==
 {{include document="pwd.wiki" /}}
 
-=== ##ls## command ===
+== ##ls## command ==
 {{include document="ls.wiki" /}}
 
-=== ##cp## command ===
+== ##cp## command ==
 {{include document="cp.wiki" /}}
 
-=== ##mv## command ===
+== ##mv## command ==
 {{include document="mv.wiki" /}}
 
-=== ##rm## command ===
+== ##rm## command ==
 {{include document="rm.wiki" /}}
 
-=== ##node## command ===
+== ##node## command ==
 {{include document="node.wiki" /}}
 
-=== ##mixin## command ===
+== ##mixin## command ==
 {{include document="mixin.wiki" /}}
 
-=== ##select## command ===
+== ##select## command ==
 {{include document="select.wiki" /}}
 
-=== ##xpath## command ===
+== ##xpath## command ==
 {{include document="xpath.wiki" /}}
 
-=== ##commit## command ===
+== ##commit## command ==
 {{include document="commit.wiki" /}}
 
-=== ##rollback## command ===
+== ##rollback## command ==
 {{include document="rollback.wiki" /}}
 
-=== ##version## command ===
+== ##version## command ==
 {{include document="version.wiki" /}}
 
-=== ##setperm## command ===
+== ##setperm## command ==
 {{include document="setperm.wiki" /}}
 
-== SCP usage ==
+= SCP usage =
 
 Secure copy can be used to import or export content. The username/password prompted by the SSH server will be used
 for authentication against the repository when the import or the export is performed.
 
-=== Export a JCR node ===
+== Export a JCR node ==
 
 The following command will export the node ///gadgets// in the repository //portal-system//
 of the portal container //portal//:
@@ -63,7 +78,7 @@ The node will be exported as //app_gadgets.xml//.
 
 Note that the portal container name is used for GateIn. If you do omit it, then the root container will be used.
 
-=== Import a JCR node ===
+== Import a JCR node ==
 
 The following command will reimport the node:
 

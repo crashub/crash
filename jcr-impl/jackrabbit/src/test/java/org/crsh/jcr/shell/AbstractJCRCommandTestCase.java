@@ -86,7 +86,7 @@ public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase
   protected final void assertLogin() {
     try {
       File config = new File(Thread.currentThread().getContextClassLoader().getResource("conf/transient/").toURI());
-      assertOk("use org.apache.jackrabbit.repository.conf=repository-in-memory.xml;org.apache.jackrabbit.repository.home=" + config.getAbsolutePath());
+      assertOk("repo use org.apache.jackrabbit.repository.conf=repository-in-memory.xml;org.apache.jackrabbit.repository.home=" + config.getAbsolutePath());
     } catch(URISyntaxException e) {
 
     }

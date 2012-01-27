@@ -31,7 +31,7 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/WEB-INF/lib</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.jcr</include>
+        <include>org.crsh:crsh.jcr-exo</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -39,20 +39,9 @@
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.shell.packaging:war</include>
+        <include>org.crsh:crsh.jcr:war</include>
       </includes>
     </dependencySet>
   </dependencySets>
-
-  <fileSets>
-    <fileSet>
-      <directory>src/main/resources</directory>
-      <outputDirectory>/WEB-INF</outputDirectory>
-      <includes>
-        <include>crash/**</include>
-      </includes>
-    </fileSet>
-  </fileSets>
-
 
 </assembly>

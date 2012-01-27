@@ -14,6 +14,17 @@
   <name>CRaSH jcr Exo Implementation</name>
   <description>The CRaSH JCR module for Exo Plateform</description>
 
+  <!--
+  How to test easily jackrabbit:
+  > mvn test -Pmain
+
+  in another shell:
+  > telnet localhost 5000
+  % bootstrap
+  % repo use
+  % ws login -u root -p exo ws
+  -->
+
   <dependencies>
 
     <dependency>
@@ -28,6 +39,11 @@
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.jcr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr</artifactId>
+      <type>war</type>
     </dependency>
 
     <dependency>

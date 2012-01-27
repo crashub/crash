@@ -19,8 +19,10 @@
 package org.crsh.jcr;
 
 import java.util.Map;
+import java.util.Properties;
 import javax.jcr.Repository;
 import org.apache.jackrabbit.commons.JcrUtils;
+import org.apache.jackrabbit.core.TransientRepository;
 
 /**
  * @author <a href="mailto:emmanuel.hugonnet@silverpeas.com">Emmanuel Hugonnet</a>
@@ -35,10 +37,21 @@ public class JackrabbitPlugin extends JCRPlugin<JackrabbitPlugin> {
   
   @Override
   public Repository getRepository(Map<String, String> properties) throws Exception {
-    Repository repository = JcrUtils.getRepository(properties);
-    if (repository != null) {
-      return repository;
+    if (properties.containsKey(JcrUtils.REPOSITORY_URI) &&
+        "transient".equalsIgnoreCase(properties.get(JcrUtils.REPOSITORY_URI))) {
+      Properties props = new Properties();
+      for(Map.Entry<String, String> entry : properties.entrySet()) {
+        if(!JcrUtils.REPOSITORY_URI.equals(entry.getKey())) {
+          props.setProperty(entry.getKey(), entry.getValue());
+        }
+      }
+      return new TransientRepository(props);
+    } else {
+      Repository repository = JcrUtils.getRepository(properties);
+      if (repository != null) {
+        return repository;
+      }
+      return null;
     }
-    return null;
   }
 }

@@ -6,6 +6,10 @@ with fast development cycle.
 
 {{include document="shell.wiki" /}}
 
+= JCR extension =
+
+{{include document="jcr.wiki" /}}
+
 = Configuring the shell =
 
 {{include document="configuration.wiki" /}}

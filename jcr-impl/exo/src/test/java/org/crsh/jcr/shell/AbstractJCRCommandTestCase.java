@@ -80,6 +80,7 @@ public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase
   }
 
   protected final void assertLogin() {
+    assertOk("repo use");
     assertOk("ws login -u exo -p exo ws");
   }
 
