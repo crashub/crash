@@ -27,6 +27,7 @@
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

@@ -57,9 +57,6 @@ todo
 == ##version## command ==
 {{include document="version.wiki" /}}
 
-== ##setperm## command ==
-{{include document="setperm.wiki" /}}
-
 = SCP usage =
 
 Secure copy can be used to import or export content. The username/password prompted by the SSH server will be used

@@ -95,7 +95,7 @@ public class CRaSH implements Shell {
           clazz = groovyShell.getClassLoader().parseClass(script.getContent(), name);
         }
         catch (CompilationFailedException e) {
-          throw new CreateCommandException(ErrorType.INTERNAL, "Could not compile command script", e);
+          throw new CreateCommandException(ErrorType.INTERNAL, "Could not compile command script " + name, e);
         }
 
         //

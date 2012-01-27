@@ -66,12 +66,13 @@
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
       <artifactId>exo.kernel.container</artifactId>
+      <version>2.1.1</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.exoplatform.jcr</groupId>
       <artifactId>exo.jcr.component.core</artifactId>
+      <version>1.11.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

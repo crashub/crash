@@ -55,14 +55,15 @@
     </dependency>
 
     <dependency>
-      <groupId>org.wikbook</groupId>
-      <artifactId>wikbook.docbkxstyle</artifactId>
-      <version>${wikbook.version}</version>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <version>1.0</version>
     </dependency>
 
     <dependency>
-      <groupId>org.exoplatform.jcr</groupId>
-      <artifactId>exo.jcr.component.core</artifactId>
+      <groupId>org.wikbook</groupId>
+      <artifactId>wikbook.docbkxstyle</artifactId>
+      <version>${wikbook.version}</version>
     </dependency>
 
   </dependencies>
