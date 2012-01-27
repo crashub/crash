@@ -8,7 +8,7 @@
       <author email="alain.defrance@exoplatform.com" name="Alain Defrance"/>
     </authors>
     <url>http://crsh.googlecode.com</url>
-    <uninstaller write="true" path="$INSTALL_PATH/$warfile/"/>
+    <uninstaller write="yes" path="$INSTALL_PATH/$warfile/"/>
     <requiresjdk>no</requiresjdk>
     <writeinstallationinformation>no</writeinstallationinformation>
     <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
@@ -78,6 +78,18 @@
     <pack name="jcr" preselected="yes" required="no">
       <description>Bundle the CRaSH JCR extension.</description>
       <fileset dir="jcr" override="update" targetdir="$INSTALL_PATH/$warfile/WEB-INF/">
+        <include name="**/*"/>
+      </fileset>
+    </pack>
+    <pack name="exo" preselected="yes" required="no">
+      <description>Bundle the CRaSH JCR eXo driver.</description>
+      <fileset dir="exo" override="update" targetdir="$INSTALL_PATH/$warfile/WEB-INF/">
+        <include name="**/*"/>
+      </fileset>
+    </pack>
+    <pack name="jackrabbit" preselected="no" required="no">
+      <description>Bundle the CRaSH JCR Jackrabbit driver.</description>
+      <fileset dir="jackrabbit" override="update" targetdir="$INSTALL_PATH/$warfile/WEB-INF/">
         <include name="**/*"/>
       </fileset>
     </pack>

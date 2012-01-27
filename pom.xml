@@ -244,6 +244,22 @@
         <classifier>standalone</classifier>
       </dependency>
 
+      <!-- Module JCR eXo -->
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.jcr-exo</artifactId>
+        <version>1.0.0-beta24-SNAPSHOT</version>
+        <type>jar</type>
+      </dependency>
+
+      <!-- Module JCR Jackrabbit -->
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.jcr-jackrabbit</artifactId>
+        <version>1.0.0-beta24-SNAPSHOT</version>
+        <type>jar</type>
+      </dependency>
+
       <!-- Module doc -->
       <dependency>
         <groupId>org.crsh</groupId>

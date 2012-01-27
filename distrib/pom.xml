@@ -116,12 +116,20 @@
           </dependency>
           <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15</artifactId>
+            <artifactId>bcprov-jdk16</artifactId>
           </dependency>
 
           <dependency>
             <groupId>org.crsh</groupId>
             <artifactId>crsh.jcr</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.jcr-exo</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>org.crsh</groupId>
+            <artifactId>crsh.jcr-jackrabbit</artifactId>
           </dependency>
 
         </dependencies>
@@ -185,12 +193,30 @@
 
                       <!-- Bouncy -->
                       <property name="bouncy" value="${project.build.directory}/izpack/bouncy" />
-                      <copy file="${org.bouncycastle:bcprov-jdk15:jar}" todir="${bouncy}/lib" />
+                      <copy file="${org.bouncycastle:bcprov-jdk16:jar}" todir="${bouncy}/lib" />
 
                       <!-- JCR -->
                       <property name="jcr" value="${project.build.directory}/izpack/jcr" />
                       <copy file="${org.crsh:crsh.jcr:jar}" todir="${jcr}/lib" />
                       <unzip src="${org.crsh:crsh.jcr:jar}" dest="${jcr}">
+                        <patternset>
+                          <include name="crash/**" />
+                        </patternset>
+                      </unzip>
+
+                      <!-- eXo -->
+                      <property name="exo" value="${project.build.directory}/izpack/exo" />
+                      <copy file="${org.crsh:crsh.jcr-exo:jar}" todir="${exo}/lib" />
+                      <unzip src="${org.crsh:crsh.jcr-exo:jar}" dest="${exo}">
+                        <patternset>
+                          <include name="crash/**" />
+                        </patternset>
+                      </unzip>
+
+                      <!-- Jackrabbit -->
+                      <property name="jackrabbit" value="${project.build.directory}/izpack/jackrabbit" />
+                      <copy file="${org.crsh:crsh.jcr-jackrabbit:jar}" todir="${jackrabbit}/lib" />
+                      <unzip src="${org.crsh:crsh.jcr-jackrabbit:jar}" dest="${jackrabbit}">
                         <patternset>
                           <include name="crash/**" />
                         </patternset>
