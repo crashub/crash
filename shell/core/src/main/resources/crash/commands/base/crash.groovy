@@ -28,6 +28,7 @@ import org.crsh.plugin.PropertyDescriptor;
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
+@Usage("various shell commands")
 class crash extends CRaSHCommand {
 
   static def STATUS_MAP = [

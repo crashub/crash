@@ -26,6 +26,7 @@ import org.crsh.jcr.JCR
 import org.crsh.jcr.command.InitProperties
 import org.crsh.shell.ui.UIBuilder
 
+@Usage("repository interaction commands")
 class repo extends org.crsh.jcr.command.JCRCommand {
 
   @Usage("changes the current repository")
