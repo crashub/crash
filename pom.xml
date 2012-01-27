@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
@@ -77,7 +78,26 @@
       <id>maven2-repository.dev.java.net</id>
       <url>http://download.java.net/maven/2/</url>
     </repository>
+    <repository>
+      <id>repository.exoplatform.org</id>
+      <url>http://repository.exoplatform.org/public</url>
+    </repository>
+    <repository>
+      <id>evgeny-goldin.org</id>
+      <url>http://evgeny-goldin.org/artifactory/repo/</url>
+    </repository>    
   </repositories>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>evgeny-goldin.org</id>
+      <url>http://evgeny-goldin.org/artifactory/repo/</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>repository.exoplatform.org</id>
+      <url>http://repository.exoplatform.org/public</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <properties>
     <!-- Repositories URLs -->
@@ -285,7 +305,7 @@
       <dependency>
         <groupId>javax.jcr</groupId>
         <artifactId>jcr</artifactId>
-        <version>1.0</version>
+        <version>2.0</version>
       </dependency>
       <dependency>
         <groupId>org.exoplatform.kernel</groupId>
@@ -305,7 +325,7 @@
       <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
-        <version>0.4.0</version>
+        <version>0.6.0</version>
         <exclusions>
           <exclusion>
             <groupId>org.slf4j</groupId>
@@ -316,17 +336,17 @@
       <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-pam</artifactId>
-        <version>0.4.0</version>
+        <version>0.6.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.mina</groupId>
         <artifactId>mina-core</artifactId>
-        <version>2.0.0-RC1</version>
+        <version>2.0.4</version>
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcprov-jdk15</artifactId>
-        <version>1.40</version>
+        <artifactId>bcprov-jdk16</artifactId>
+        <version>1.46</version>
       </dependency>
       <dependency>
         <groupId>net.wimpi</groupId>
@@ -395,6 +415,7 @@
     <module>cmdline</module>
     <module>shell</module>
     <module>jcr</module>
+    <module>jcr-impl</module>
     <module>doc</module>
     <module>distrib</module>
     <module>site</module>
@@ -592,7 +613,9 @@
                 <configuration>
                   <tasks>
                     <condition property="deploy.directory.configured">
-                      <not><isset property="crsh.deploy.directory" /></not>
+                      <not>
+                        <isset property="crsh.deploy.directory" />
+                      </not>
                     </condition>
                     <fail if="deploy.directory.configured">Please set crsh.deploy.directory property</fail>
                     <copy tofile="${crsh.deploy.directory}/crsh.war" file="${project.build.directory}/${project.build.finalName}.war" />

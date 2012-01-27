@@ -42,19 +42,6 @@ import java.beans.IntrospectionException;
  */
 public class NodeMetaClass extends MetaClassImpl {
 
-  static {
-    try {
-      MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
-      Class<? extends Node> eXoNode = (Class<Node>)Thread.currentThread().getContextClassLoader().loadClass("org.exoplatform.services.jcr.impl.core.NodeImpl");
-      NodeMetaClass mc2 = new NodeMetaClass(registry, eXoNode);
-      mc2.initialize();
-      registry.setMetaClass(eXoNode, mc2);
-    }
-    catch (Exception e) {
-      throw new Error("Coult not integrate node meta class");
-    }
-  }
-
   public static void setup() {
 
   }

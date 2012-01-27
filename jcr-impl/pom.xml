@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>crsh.parent</artifactId>
+    <groupId>org.crsh</groupId>
+    <version>1.0.0-beta24-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.crsh</groupId>
+  <artifactId>crsh.jcr-impl</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.0-beta24-SNAPSHOT</version>
+
+  <name>CRaSH jcr Implementations</name>
+  <description>The CRaSH JCR implementations</description>
+  
+  <modules>
+    <module>exo</module>
+    <module>jackrabbit</module>
+  </modules>
+
+</project>

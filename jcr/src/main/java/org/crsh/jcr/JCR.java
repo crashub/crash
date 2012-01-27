@@ -18,9 +18,10 @@
  */
 package org.crsh.jcr;
 
+
 import javax.jcr.Repository;
-import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -28,41 +29,15 @@ import java.util.Map;
  */
 public class JCR {
 
+  private static ServiceLoader<JCRPlugin> jcrPluginLoader = ServiceLoader.load(JCRPlugin.class);
+
   public static Repository getRepository(Map<String, String> properties) throws Exception {
-
-    ClassLoader cl = Thread.currentThread().getContextClassLoader();
-
-    // Get top container
-    Class<?> eXoContainerContextClass = cl.loadClass("org.exoplatform.container.ExoContainerContext");
-    Method getTopContainerMethod = eXoContainerContextClass.getMethod("getTopContainer");
-    Object topContainer = getTopContainerMethod.invoke(null);
-
-    //
-    if (topContainer != null) {
-      String containerName = properties.get("exo.container.name");
-      Object container;
-      if (containerName != null) {
-        Method getPortalContainerMethod = topContainer.getClass().getMethod("getPortalContainer", String.class);
-        container = getPortalContainerMethod.invoke(topContainer, containerName);
-      } else {
-        container = topContainer;
-      }
-
-      //
-      if (container != null) {
-        Method getComponentInstanceOfTypeMethod = container.getClass().getMethod("getComponentInstanceOfType", Class.class);
-        Class<?> repositoryServiceClass = Thread.currentThread().getContextClassLoader().loadClass("org.exoplatform.services.jcr.RepositoryService");
-        Object repositoryService = getComponentInstanceOfTypeMethod.invoke(container, repositoryServiceClass);
-
-        //
-        if (repositoryService != null) {
-          Method getCurrentRepositoryMethod = repositoryService.getClass().getMethod("getCurrentRepository");
-          return (Repository)getCurrentRepositoryMethod.invoke(repositoryService);
-        }
+    for (JCRPlugin plugin : jcrPluginLoader) {
+      Repository repository = plugin.getRepository(properties);
+      if (repository != null) {
+        return repository;
       }
     }
-
-    //
     return null;
   }
 }

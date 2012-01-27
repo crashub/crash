@@ -16,7 +16,6 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.jcr;
 
 import groovy.lang.GroovySystem;
@@ -25,48 +24,82 @@ import org.crsh.plugin.CRaSHPlugin;
 
 import javax.jcr.Node;
 import java.beans.IntrospectionException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import javax.jcr.Repository;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class JCRPlugin extends CRaSHPlugin<JCRPlugin> {
+public abstract class JCRPlugin<T extends JCRPlugin> extends CRaSHPlugin<T> {
 
-   /** . */
-   private static final Object LOCK = new Object();
+  /** . */
+  private static final Collection<String> NODES = Arrays.asList(
+      "org.exoplatform.services.jcr.impl.core.NodeImpl",
+      "org.apache.jackrabbit.core.NodeImpl", "org.apache.jackrabbit.rmi.client.ClientNode",
+      "org.apache.jackrabbit.rmi.server.ServerNode");
 
-   /** . */
-   private static boolean integrated = false;
+  /** . */
+  private static final Object LOCK = new Object();
+
+  /** . */
+  private static boolean integrated = false;
+  
+  public Collection<String> getNodeClassNames() {
+    return NODES;
+  }
+  
+  public abstract Repository getRepository(Map<String, String> properties) throws Exception;
 
   @Override
-  public JCRPlugin getImplementation() {
-    return this;
+  public void init() {
+    // Force integration of node meta class
+    NodeMetaClass.setup();
+    synchronized (LOCK) {
+      if (!integrated) {
+        try {
+          MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
+          Collection<Class<? extends Node>> nodes = loadAvailablesNodeImplementations(getNodeClassNames());
+          for (Class<? extends Node> nodeClass : nodes) {
+            registerNodeImplementation(registry, nodeClass);
+          }
+        } catch (IntrospectionException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      integrated = true;
+    }
   }
 
-  @Override
-   public void init()
-   {
-      // Force integration of node meta class
-      NodeMetaClass.setup();
-
-      //
-      synchronized (LOCK) {
-        if (!integrated) {
-          try {
-            MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
-            Class<? extends Node> eXoNode = (Class<Node>)Thread.currentThread().getContextClassLoader().loadClass("org.exoplatform.services.jcr.impl.core.NodeImpl");
-            NodeMetaClass mc2 = new NodeMetaClass(registry, eXoNode);
-            mc2.initialize();
-            registry.setMetaClass(eXoNode, mc2);
-          }
-          catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-          }
-          catch (IntrospectionException e) {
-            throw new RuntimeException(e);
-          }
-        }
-        integrated = true;
+  private Collection<Class<? extends Node>> loadAvailablesNodeImplementations(
+      Collection<String> classNames) {
+    List<Class<? extends Node>> classes = new ArrayList<Class<? extends Node>>(classNames.size());
+    for (String className : classNames) {
+      Class<? extends Node> nodeClass = loadNodeImplementation(className);
+      if (nodeClass != null) {
+        classes.add(nodeClass);
       }
-   }
+    }
+    return classes;
+  }
+
+  private Class<? extends Node> loadNodeImplementation(String className) {
+    try {
+      return (Class<? extends Node>) Thread.currentThread().getContextClassLoader().loadClass(
+          className);
+    } catch (ClassNotFoundException e) {
+      return null;
+    }
+  }
+
+  private void registerNodeImplementation(MetaClassRegistry registry,
+      Class<? extends Node> nodeClass) throws IntrospectionException {
+    NodeMetaClass mc2 = new NodeMetaClass(registry, nodeClass);
+    mc2.initialize();
+    registry.setMetaClass(nodeClass, mc2);
+  }
 }

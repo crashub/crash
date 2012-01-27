@@ -49,7 +49,9 @@ Connected to workspace portal-system
     def properties = containerName == null ? [:] : ["exo.container.name":containerName];
 
     //
-    def repo = JCR.getRepository(properties);
+    if(repo == null) {
+      repo = JCR.getRepository(properties);
+    }
 
     //
     if (repo == null) {
