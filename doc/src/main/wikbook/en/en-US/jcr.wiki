@@ -8,7 +8,8 @@ todo
 
 == Apache Jackrabbit ==
 
-todo
+CRaSH has been tested with Jackrabbit in the following mode : deploiement as a resource accessible via JNDI on JBoss 6.1.0.
+
 
 = JCR commands =
 
