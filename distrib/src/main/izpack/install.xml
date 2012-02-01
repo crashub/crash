@@ -3,10 +3,6 @@
   <info>
     <appname>crash</appname>
     <appversion>@version@</appversion>
-    <authors>
-      <author email="julien.viet@exoplatform.com" name="Julien Viet"/>
-      <author email="alain.defrance@exoplatform.com" name="Alain Defrance"/>
-    </authors>
     <url>http://crsh.googlecode.com</url>
     <uninstaller write="yes" path="$INSTALL_PATH/$warfile/"/>
     <requiresjdk>no</requiresjdk>

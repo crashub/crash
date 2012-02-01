@@ -64,6 +64,14 @@
         <role>Committer</role>
       </roles>
     </developer>
+    <developer>
+      <id>ehugonnet</id>
+      <name>Emmanuel Hugonnet</name>
+      <email>emmanuel.hugonnet@silverpeas.com</email>
+      <roles>
+        <role>Contributor</role>
+      </roles>
+    </developer>
   </developers>
 
   <repositories>
