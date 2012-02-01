@@ -2,13 +2,13 @@
   <parent>
     <artifactId>crsh.parent</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.0.0-beta24-SNAPSHOT</version>
+    <version>1.0.0-beta24</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.distrib</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-beta24-SNAPSHOT</version>
+  <version>1.0.0-beta24</version>
 
   <name>CRaSH distrib</name>
   <description>The CRaSH distribution</description>
@@ -150,7 +150,7 @@
                   <tasks>
 
                     <!-- -->
-                    <property name="target" value="${project.build.directory}/staging"/>
+                    <property name="target" value="${project.build.directory}/staging" />
 
                     <!-- -->
                     <copy todir="${target}">
