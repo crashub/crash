@@ -1,4 +1,5 @@
-- seems intersting for packging http://one-jar.sourceforge.net/index.php?page=introduction&file=background
+- investigate https://code.google.com/p/sshxcute/ an java ssh client for ssh unit testing
+- seems intersting for packaging http://one-jar.sourceforge.net/index.php?page=introduction&file=background
 - write AbstractTerm unit tests
 - write IO tests
 - write pipe consistency
