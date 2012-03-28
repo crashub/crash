@@ -96,39 +96,43 @@ public class SSHIO implements TermIO {
           close();
           return HANDLED;
         }
-        switch (status) {
-          case STATUS_NORMAL:
-            if (r == 27) {
-              status = STATUS_READ_ESC_1;
-            } else {
-              return r;
-            }
-            break;
-          case STATUS_READ_ESC_1:
-            if (r == 91) {
-              status = STATUS_READ_ESC_2;
-            } else {
+        if (r == -1) {
+          return HANDLED;
+        } else {
+          switch (status) {
+            case STATUS_NORMAL:
+              if (r == 27) {
+                status = STATUS_READ_ESC_1;
+              } else {
+                return r;
+              }
+              break;
+            case STATUS_READ_ESC_1:
+              if (r == 91) {
+                status = STATUS_READ_ESC_2;
+              } else {
+                status = STATUS_NORMAL;
+                log.error("Unrecognized stream data " + r + " after reading ESC code");
+              }
+              break;
+            case STATUS_READ_ESC_2:
               status = STATUS_NORMAL;
-              log.error("Unrecognized stream data " + r + " after reading ESC code");
-            }
-            break;
-          case STATUS_READ_ESC_2:
-            status = STATUS_NORMAL;
-            switch (r) {
-              case 65:
-                return UP;
-              case 66:
-                return DOWN;
-              case 67:
-                // Swallow RIGHT
-                break;
-              case 68:
-                // Swallow LEFT
-                break;
-              default:
-                log.error("Unrecognized stream data " + r + " after reading ESC+91 code");
-                break;
-            }
+              switch (r) {
+                case 65:
+                  return UP;
+                case 66:
+                  return DOWN;
+                case 67:
+                  // Swallow RIGHT
+                  break;
+                case 68:
+                  // Swallow LEFT
+                  break;
+                default:
+                  log.error("Unrecognized stream data " + r + " after reading ESC+91 code");
+                  break;
+              }
+          }
         }
       }
     }

@@ -70,7 +70,7 @@ public class SSHTestCase extends Assert {
     this.ctx = ctx;
   }
 
-  //@Test
+  @Test
   public void testServerReadAfterClientClose() throws Exception {
     client.write("a").flush();
     handler.add(IOAction.read());
@@ -85,7 +85,7 @@ public class SSHTestCase extends Assert {
     ctx.stop();
   }
 
-  //@Test
+  @Test
   public void testClientCloseDuringServerRead() throws Exception {
     client.write("a").flush();
     handler.add(IOAction.read());
@@ -100,6 +100,7 @@ public class SSHTestCase extends Assert {
     ctx.stop();
   }
 
+  @Test
   public void testClientWrite() throws Exception {
     client.write("HELLO").flush();
     handler.add(IOAction.read());
