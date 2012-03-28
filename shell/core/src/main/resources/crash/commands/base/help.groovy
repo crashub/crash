@@ -1,4 +1,4 @@
-import org.crsh.command.DescriptionMode
+import org.crsh.command.DescriptionFormat
 import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command;
@@ -15,12 +15,12 @@ class help extends CRaSHCommand
     def names = [];
     def descs = [];
     int len = 0;
-    shellContext.listResourceId(org.crsh.plugin.ResourceKind.SCRIPT).each() {
+    shellContext.listResourceId(org.crsh.plugin.ResourceKind.COMMAND).each() {
       String name ->
       try {
         def cmd = shell.getCommand(name);
         if (cmd != null) {
-          def desc = cmd.describe(name, DescriptionMode.DESCRIBE) ?: "";
+          def desc = cmd.describe(name, DescriptionFormat.DESCRIBE) ?: "";
           names.add(name);
           descs.add(desc);
           len = Math.max(len, name.length());

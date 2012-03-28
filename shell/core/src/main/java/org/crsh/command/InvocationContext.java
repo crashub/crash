@@ -21,8 +21,6 @@ package org.crsh.command;
 
 import org.crsh.shell.io.ShellPrinter;
 
-import java.util.Map;
-
 /**
  * The invocation context provided to a command during the invocation phase. The invocation context provides the
  * various interactions that a command can perform with its context during its invocation.
@@ -39,10 +37,28 @@ public interface InvocationContext<C, P> extends CommandContext {
    */
   int getWidth();
 
+  /**
+   * Returns a generic property.
+   *
+   * @param propertyName the property name
+   * @return the property value
+   */
   String getProperty(String propertyName);
 
+  /**
+   * Display a message and read a line on the console.
+   *
+   * @param msg the message to display before reading a line
+   * @param echo wether or not the line read should be echoed when typing
+   * @return the line read
+   */
   String readLine(String msg, boolean echo);
 
+  /**
+   * Returns the writer for the output.
+   *
+   * @return the writer
+   */
   ShellPrinter getWriter();
 
   /**
@@ -54,11 +70,17 @@ public interface InvocationContext<C, P> extends CommandContext {
 
   /**
    * Returns an iterator over the stream of consumed items.
+   *
    * @return the consumed items
    * @throws IllegalStateException if the command is not involved in a pipe operation
    */
   Iterable<C> consume() throws IllegalStateException;
 
+  /**
+   * Produce an item.
+   *
+   * @param product the item product
+   */
   void produce(P product);
 
 }

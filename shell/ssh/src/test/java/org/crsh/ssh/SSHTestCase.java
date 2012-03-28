@@ -18,8 +18,7 @@
  */
 package org.crsh.ssh;
 
-import org.crsh.TestPluginContext;
-import org.crsh.plugin.SimplePluginDiscovery;
+import org.crsh.TestPluginLifeCycle;
 import org.crsh.term.CodeType;
 import org.crsh.term.IOAction;
 import org.crsh.term.IOEvent;
@@ -43,7 +42,7 @@ public class SSHTestCase extends Assert {
   private SSHClient client;
 
   /** . */
-  private TestPluginContext ctx;
+  private TestPluginLifeCycle lifeCycle;
 
   /** We change the port for every test. */
   private static final AtomicInteger PORTS = new AtomicInteger(2000);
@@ -56,18 +55,15 @@ public class SSHTestCase extends Assert {
 
     //
     IOHandler handler = new IOHandler();
-    SimplePluginDiscovery discovery = new SimplePluginDiscovery();
-    discovery.add(new SSHPlugin());
-    discovery.add(handler);
-    TestPluginContext ctx = new TestPluginContext(discovery);
-    ctx.setProperty(SSHPlugin.SSH_PORT, port);
-    ctx.start();
+    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(new SSHPlugin(), handler);
+    lifeCycle.setProperty(SSHPlugin.SSH_PORT, port);
+    lifeCycle.start();
     SSHClient client = new SSHClient(port).connect();
 
     //
     this.handler = handler;
     this.client = client;
-    this.ctx = ctx;
+    this.lifeCycle = lifeCycle;
   }
 
   @Test
@@ -82,7 +78,7 @@ public class SSHTestCase extends Assert {
     handler.assertEvent(new IOEvent.IO(CodeType.CLOSE));
 
     //
-    ctx.stop();
+    lifeCycle.stop();
   }
 
   @Test
@@ -97,7 +93,7 @@ public class SSHTestCase extends Assert {
     handler.assertEvent(new IOEvent.IO(CodeType.CLOSE));
 
     //
-    ctx.stop();
+    lifeCycle.stop();
   }
 
   @Test
@@ -117,7 +113,7 @@ public class SSHTestCase extends Assert {
 
     //
     client.close();
-    ctx.stop();
+    lifeCycle.stop();
   }
 
   @Test
@@ -138,7 +134,7 @@ public class SSHTestCase extends Assert {
     }
 
     //
-    ctx.stop();
+    lifeCycle.stop();
   }
 
   @Test
@@ -149,7 +145,7 @@ public class SSHTestCase extends Assert {
     assertEquals('O', client.read());
     assertEquals('L', client.read());
     assertEquals('A', client.read());
-    ctx.stop();
+    lifeCycle.stop();
     assertEquals(-1, client.read());
   }
 
@@ -163,7 +159,7 @@ public class SSHTestCase extends Assert {
     handler.add(IOAction.flush());
     assertEquals('\r', client.read());
     assertEquals('\n', client.read());
-    ctx.stop();
+    lifeCycle.stop();
     assertEquals(-1, client.read());
   }
 
@@ -174,7 +170,7 @@ public class SSHTestCase extends Assert {
     assertEquals('\b', client.read());
     assertEquals(' ', client.read());
     assertEquals('\b', client.read());
-    ctx.stop();
+    lifeCycle.stop();
     assertEquals(-1, client.read());
   }
 
@@ -185,7 +181,7 @@ public class SSHTestCase extends Assert {
     assertEquals('\b', client.read());
     assertEquals(' ', client.read());
     assertEquals('\b', client.read());
-    ctx.stop();
+    lifeCycle.stop();
     assertEquals(-1, client.read());
   }
 }

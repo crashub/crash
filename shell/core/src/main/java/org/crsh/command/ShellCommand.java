@@ -19,8 +19,6 @@
 
 package org.crsh.command;
 
-import org.crsh.shell.io.ShellPrinter;
-
 import java.util.Map;
 
 /**
@@ -51,7 +49,7 @@ public interface ShellCommand {
    * @param mode the description mode
    * @return the description
    */
-  String describe(String line, DescriptionMode mode);
+  String describe(String line, DescriptionFormat mode);
 
   /**
    * Provides an invoker for the specified arguments.

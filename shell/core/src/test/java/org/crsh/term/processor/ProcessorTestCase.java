@@ -17,16 +17,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
+package org.crsh.term.processor;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.crsh.BaseProcess;
+import org.crsh.BaseProcessFactory;
+import org.crsh.BaseShell;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.spi.TestTermIO;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -285,17 +289,17 @@ public class ProcessorTestCase extends TestCase {
     }));
 
     //
-    assertEquals(Processor.State.INITIAL, controller.processor.getState());
-    Processor.Result result1 = controller.processor.execute();
-    assertEquals(Processor.State.OPEN, result1.getState());
+    assertEquals(State.INITIAL, controller.processor.getState());
+    Result result1 = controller.processor.execute();
+    assertEquals(State.OPEN, result1.getState());
     controller.connector.append("\r\n");
     result1 = controller.processor.execute();
     assertFalse(controller.processor.isAvailable());
     controller.connector.appendBreak();
-    Processor.Result result2 = controller.processor.execute();
+    Result result2 = controller.processor.execute();
     latch.await();
-    assertEquals(Processor.State.OPEN, result1.getState());
-    assertEquals(Processor.State.OPEN, result2.getState());
+    assertEquals(State.OPEN, result1.getState());
+    assertEquals(State.OPEN, result2.getState());
     assertTrue(controller.processor.isAvailable());
     // controller.connector.assertChars("\r\n");
 
@@ -326,22 +330,22 @@ public class ProcessorTestCase extends TestCase {
 
     //
     final AtomicInteger counter = new AtomicInteger();
-    controller.processor.addListener(new ProcessorListener() {
-      public void closed() {
+    controller.processor.addListener(new Closeable() {
+      public void close() {
         counter.incrementAndGet();
       }
     });
 
     //
-    assertEquals(Processor.State.INITIAL, controller.processor.getState());
-    Processor.Result result = controller.processor.execute();
-    assertEquals(Processor.State.OPEN, result.getState());
+    assertEquals(State.INITIAL, controller.processor.getState());
+    Result result = controller.processor.execute();
+    assertEquals(State.OPEN, result.getState());
     controller.connector.append("\r\n");
     result = controller.processor.execute();
-    assertEquals(Processor.State.WANT_CLOSE, result.getState());
+    assertEquals(State.WANT_CLOSE, result.getState());
     assertEquals(0, counter.get());
     result = controller.processor.execute();
-    assertEquals(Processor.State.CLOSED, result.getState());
+    assertEquals(State.CLOSED, result.getState());
     assertEquals(1, counter.get());
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2010 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -17,35 +17,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
-
-import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.PluginDiscovery;
-import org.crsh.plugin.ServiceLoaderDiscovery;
-import org.crsh.vfs.FS;
-import org.crsh.vfs.Path;
+package org.crsh.command;
 
 /**
+ * The description format.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestPluginContext extends PluginContext {
+public enum DescriptionFormat {
 
-  private TestPluginContext(PluginDiscovery discovery, FS fs, ClassLoader loader) throws Exception {
-    super(discovery, fs, loader);
+  /**
+   * The command descriptiion in one line.
+   */
+  DESCRIBE,
 
-    //
-    refresh();
-  }
+  /**
+   * The command usage.
+   */
+  USAGE,
 
-  public TestPluginContext(PluginDiscovery discovery) throws Exception {
-    this(
-        discovery,
-        new FS().mount(Thread.currentThread().getContextClassLoader(),
-        Path.get("/crash/")), Thread.currentThread().getContextClassLoader());
-  }
+  /**
+   * The command manual.
+   */
+  MAN
 
-  public TestPluginContext() throws Exception {
-    this(new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()));
-  }
 }

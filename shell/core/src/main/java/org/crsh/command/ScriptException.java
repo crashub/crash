@@ -19,6 +19,8 @@
 package org.crsh.command;
 
 /**
+ * An exception that happened during the execution of a script.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */

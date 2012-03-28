@@ -22,7 +22,7 @@ package org.crsh.shell;
 import groovy.lang.GroovyShell;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.crsh.TestPluginContext;
+import org.crsh.TestPluginLifeCycle;
 import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +56,13 @@ public abstract class AbstractCommandTestCase extends TestCase {
     super.setUp();
 
     //
-    ShellFactory builder = new ShellFactory(new TestPluginContext());
+    TestPluginLifeCycle builder = new TestPluginLifeCycle();
 
     //
-    shell = builder.build();
+    builder.start();
+
+    //
+    shell = builder.createShell();
     groovyShell = shell.getGroovyShell();
   }
 

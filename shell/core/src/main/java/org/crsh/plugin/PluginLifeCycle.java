@@ -29,6 +29,8 @@ import java.net.URL;
 import java.util.Properties;
 
 /**
+ * Controls the life cycle of a plugin manager.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
@@ -44,9 +46,11 @@ public abstract class PluginLifeCycle {
     return context;
   }
 
-  public final void start(PluginContext context) {
-    this.context = context;
-
+  protected final void start(PluginContext context) throws IllegalStateException {
+    if (this.context != null) {
+      throw new IllegalStateException("Already started");
+    }
+    
     // Get properties from system properties
     Properties props = new Properties();
 
@@ -83,9 +87,17 @@ public abstract class PluginLifeCycle {
 
     //
     context.start();
+
+    //
+    this.context = context;
   }
 
-  public final void stop() {
+  public final void stop() throws IllegalStateException {
+    if (context == null) {
+      throw new IllegalStateException("Not started");
+    }
+    PluginContext context = this.context;
+    this.context = null;
     context.stop();
   }
 

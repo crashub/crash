@@ -23,12 +23,11 @@ import groovy.lang.Closure;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 import org.crsh.command.CommandContext;
-import org.crsh.command.DescriptionMode;
+import org.crsh.command.DescriptionFormat;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
-import org.crsh.shell.io.ShellPrinter;
 import org.crsh.util.Strings;
 
 import java.util.Collections;
@@ -69,7 +68,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return Collections.emptyMap();
   }
 
-  public String describe(String line, DescriptionMode mode) {
+  public String describe(String line, DescriptionFormat mode) {
     return null;
   }
 

@@ -43,7 +43,7 @@ public class PluginManager {
   /** . */
   private PluginDiscovery discovery;
 
-  public PluginManager(PluginContext context, PluginDiscovery discovery) {
+  PluginManager(PluginContext context, PluginDiscovery discovery) {
     this.context = context;
     this.plugins = null;
     this.discovery = discovery;
@@ -113,7 +113,7 @@ public class PluginManager {
     return tmp;
   }
 
-  public void shutdown() {
+  void shutdown() {
     if (plugins != null) {
       for (CRaSHPlugin<?> plugin : plugins) {
         plugin.destroy();

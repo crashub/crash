@@ -24,6 +24,7 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 
+import java.io.Closeable;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -31,7 +32,7 @@ import java.util.concurrent.ExecutorService;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class AsyncShell implements Shell {
+public class AsyncShell implements Shell, Closeable {
 
   /** . */
   private final Object lock;

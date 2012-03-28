@@ -20,7 +20,7 @@
 package org.crsh.standalone;
 
 import com.sun.tools.attach.VirtualMachine;
-import org.crsh.Processor;
+import org.crsh.term.processor.Processor;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;

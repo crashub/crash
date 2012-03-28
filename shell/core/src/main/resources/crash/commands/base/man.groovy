@@ -1,4 +1,4 @@
-import org.crsh.command.DescriptionMode
+import org.crsh.command.DescriptionFormat
 import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
@@ -10,7 +10,7 @@ class man extends CRaSHCommand {
   Object main(@Usage("the command") @Argument String command) throws ScriptException {
     def cmd = shell.getCommand(command);
     if (cmd != null) {
-      return  cmd.describe(unmatched, DescriptionMode.MAN);
+      return  cmd.describe(unmatched, DescriptionFormat.MAN);
     } else {
       return "Command $command not found";
     }

@@ -145,7 +145,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
   }
 
-  public final String describe(String line, DescriptionMode mode) {
+  public final String describe(String line, DescriptionFormat mode) {
 
     // WTF
     Matcher analyzer = Matcher.createMatcher("main", descriptor);

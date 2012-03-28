@@ -22,16 +22,25 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 
 /**
+ * A simple implemention of {@link PluginDiscovery} where the plugins are explictly provided.
+ * 
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
 public class SimplePluginDiscovery implements PluginDiscovery {
 
+  /** . */
   private final LinkedHashSet<CRaSHPlugin<?>> plugins;
 
   public SimplePluginDiscovery() {
     this.plugins = new LinkedHashSet<CRaSHPlugin<?>>();
   }
 
+  public SimplePluginDiscovery(CRaSHPlugin<?>... plugins) {
+    this();
+    for (CRaSHPlugin<?> plugin : plugins) {
+      add(plugin);
+    }
+  }
   /**
    * Add a plugin.
    *

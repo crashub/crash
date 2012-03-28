@@ -20,6 +20,8 @@
 package org.crsh.plugin;
 
 /**
+ * A kind of resources used by crash from its external context.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
@@ -31,17 +33,17 @@ public enum ResourceKind {
   CONFIG,
 
   /**
-   * Script.
+   * Command script file.
    */
-  SCRIPT,
+  COMMAND,
 
   /**
-   * Lifecycle script.
+   * Lifecycle script file.
    */
   LIFECYCLE,
 
   /**
-   * Security key.
+   * Security key file.
    */
   KEY
 }

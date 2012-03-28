@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class PluginContext {
+public final class PluginContext {
 
   /** . */
   private static final Pattern p = Pattern.compile("(.+)\\.groovy");
@@ -117,22 +117,12 @@ public class PluginContext {
     this.manager = new PluginManager(this, discovery);
   }
 
-  public Iterable<CRaSHPlugin<?>> getPlugins() {
+  public final Iterable<CRaSHPlugin<?>> getPlugins() {
     return manager.getPlugins();
   }
 
   public final String getVersion() {
     return version;
-  }
-
-  /**
-   * Returns the list of properties.
-   *
-   * @return the properties
-   */
-  public final Collection<Property<?>> getFoo()
-  {
-    return properties.values();
   }
 
   /**
@@ -143,7 +133,7 @@ public class PluginContext {
    * @return the property value
    * @throws NullPointerException if the descriptor argument is null
    */
-  public final <T> T getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
+  public <T> T getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
     if (desc == null) {
       throw new NullPointerException();
     }
@@ -160,7 +150,7 @@ public class PluginContext {
    * @return the property value
    * @throws NullPointerException if the descriptor argument is null
    */
-  public final <T> T getProperty(String propertyName, Class<T> type) throws NullPointerException {
+  public <T> T getProperty(String propertyName, Class<T> type) throws NullPointerException {
     if (propertyName == null) {
       throw new NullPointerException("No null property name accepted");
     }
@@ -185,7 +175,7 @@ public class PluginContext {
    * @param <T> the property parameter type
    * @throws NullPointerException if the descriptor argument is null
    */
-  public final <T> void setProperty(PropertyDescriptor<T> desc, T value) throws NullPointerException {
+  public <T> void setProperty(PropertyDescriptor<T> desc, T value) throws NullPointerException {
     if (desc == null) {
       throw new NullPointerException();
     }
@@ -208,7 +198,7 @@ public class PluginContext {
    * @throws NullPointerException if the descriptor argument is null
    * @throws IllegalArgumentException if the string value cannot be converted to the property type
    */
-  public final <T> void setProperty(PropertyDescriptor<T> desc, String value) throws NullPointerException, IllegalArgumentException {
+  public <T> void setProperty(PropertyDescriptor<T> desc, String value) throws NullPointerException, IllegalArgumentException {
     if (desc == null) {
       throw new NullPointerException();
     }
@@ -222,7 +212,14 @@ public class PluginContext {
     }
   }
 
-  public final Resource loadResource(String resourceId, ResourceKind resourceKind) {
+  /**
+   * Load a resource from the context.
+   *
+   * @param resourceId the resource id
+   * @param resourceKind the resource kind
+   * @return the resource or null if it cannot be found
+   */
+  public Resource loadResource(String resourceId, ResourceKind resourceKind) {
     Resource res = null;
     try {
 
@@ -245,7 +242,7 @@ public class PluginContext {
             return new Resource(sb.toString(), timestamp);
           }
           break;
-        case SCRIPT:
+        case COMMAND:
           // Find the resource first, we find for the first found
           for (File path : dirs) {
             File f = path.child(resourceId + ".groovy", false);
@@ -283,9 +280,15 @@ public class PluginContext {
     return res;
   }
 
-  public final List<String> listResourceId(ResourceKind kind) {
+  /**
+   * List the resources id for a specific resource kind.
+   *
+   * @param kind the resource kind
+   * @return the resource ids
+   */
+  public List<String> listResourceId(ResourceKind kind) {
     switch (kind) {
-      case SCRIPT:
+      case COMMAND:
         SortedSet<String> all = new TreeSet<String>();
         try {
           for (File path : dirs) {
@@ -309,15 +312,31 @@ public class PluginContext {
     }
   }
 
-  public final ClassLoader getLoader() {
+  /**
+   * Returns the classloader associated with this context.
+   *
+   * @return the class loader
+   */
+  public ClassLoader getLoader() {
     return loader;
+  }
+
+  /**
+   * Returns the plugins associated with this context.
+   *
+   * @param pluginType the plugin type
+   * @param <T> the plugin generic type
+   * @return the plugins
+   */
+  public <T> Iterable<T> getPlugins(Class<T> pluginType) {
+    return manager.getPlugins(pluginType);
   }
 
   /**
    * Refresh the fs system view. This is normally triggered by the periodic job but it can be manually
    * invoked to trigger explicit refreshes.
    */
-  public final void refresh() {
+  public void refresh() {
     try {
       File commands = vfs.get(Path.get("/commands/"));
       List<File> newDirs = new ArrayList<File>();
@@ -334,7 +353,7 @@ public class PluginContext {
     }
   }
 
-  public final synchronized  void start() {
+  synchronized void start() {
     if (!started) {
 
       // Start refresh
@@ -361,7 +380,7 @@ public class PluginContext {
     }
   }
 
-  public final synchronized void stop() {
+  synchronized void stop() {
 
     //
     if (started) {
@@ -378,9 +397,5 @@ public class PluginContext {
     } else {
       log.warn("Attempt to stop when stopped");
     }
-  }
-
-  public <T> Iterable<T> getPlugins(Class<T> pluginType) {
-    return manager.getPlugins(pluginType);
   }
 }

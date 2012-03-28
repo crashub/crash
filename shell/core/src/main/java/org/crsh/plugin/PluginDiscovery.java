@@ -19,12 +19,17 @@
 package org.crsh.plugin;
 
 /**
+ * Plugin discovery provider.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
 public interface PluginDiscovery {
 
+  /**
+   * Returns the available plugins.
+   *
+   * @return the plugins
+   */
   Iterable<CRaSHPlugin<?>> getPlugins();
-
-
 
 }

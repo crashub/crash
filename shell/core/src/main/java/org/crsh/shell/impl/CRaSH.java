@@ -35,6 +35,7 @@ import org.crsh.vfs.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class CRaSH implements Shell {
+public class CRaSH implements Shell, Closeable {
 
   /** . */
   static final Logger log = LoggerFactory.getLogger(CRaSH.class);
@@ -77,7 +78,7 @@ public class CRaSH implements Shell {
     TimestampedObject<Class<? extends ShellCommand>> providerRef = commands.get(name);
 
     //
-    Resource script = context.loadResource(name, ResourceKind.SCRIPT);
+    Resource script = context.loadResource(name, ResourceKind.COMMAND);
 
     //
     if (script != null) {
@@ -206,7 +207,7 @@ public class CRaSH implements Shell {
     int pos = termPrefix.indexOf(' ');
     if (pos == -1) {
       completions = new HashMap<String, String>();
-      for (String resourceId : context.listResourceId(ResourceKind.SCRIPT)) {
+      for (String resourceId : context.listResourceId(ResourceKind.COMMAND)) {
         if (resourceId.startsWith(termPrefix)) {
           completions.put(resourceId.substring(termPrefix.length()), " ");
         }

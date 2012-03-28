@@ -17,12 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
+package org.crsh.term.processor;
 
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.ShellResponse;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
 import org.crsh.util.FutureListener;
@@ -31,6 +29,7 @@ import org.crsh.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,82 +39,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * <p>The processor is the glue between a term object and a shell object. It mainly read the input from the
+ * term and executes shell commands.</p>
+ * 
+ * <p>The class implements the {@link Runnable} interface to perform its processing.</p>
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Processor implements Runnable {
-
-  public static enum State {
-
-    INITIAL,
-
-    OPEN,
-
-    WANT_CLOSE,
-
-    CLOSED;
-
-    /** . */
-    public final Status available;
-
-    /** . */
-    public final Status busy;
-
-    State() {
-      this.available = new Status(this, true);
-      this.busy = new Status(this, false);
-    }
-  }
-
-  public static class Status {
-
-    /** . */
-    private final State state;
-
-    /** . */
-    private final boolean available;
-
-    private Status(State state, boolean available) {
-      this.state = state;
-      this.available = available;
-    }
-
-    public State getState() {
-      return state;
-    }
-
-    public boolean isAvailable() {
-      return available;
-    }
-
-    public boolean isBusy() {
-      return !available;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (o == this) {
-        return true;
-      } else if (o instanceof Status) {
-        Status that = (Status)o;
-        return state == that.state && available == that.available;
-      } else {
-        return false;
-      }
-    }
-  }
-
-  public interface Result {
-
-    State getState();
-
-  }
+public final class Processor implements Runnable {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(Processor.class);
+  final Logger log = LoggerFactory.getLogger(Processor.class);
 
   /** . */
-  private final Term term;
+  final Term term;
 
   /** . */
   private final AtomicReference<Status> status;
@@ -124,17 +62,17 @@ public class Processor implements Runnable {
   private final Shell shell;
 
   /** The current process being executed. */
-  private volatile ShellProcess process;
+  volatile ShellProcess process;
 
   /** . */
-  private final List<ProcessorListener> listeners;
+  private final List<Closeable> listeners;
 
   public Processor(Term term, Shell shell) {
     this.term = term;
     this.status = new AtomicReference<Status>(State.INITIAL.available);
     this.shell = shell;
     this.process = null;
-    this.listeners = new ArrayList<ProcessorListener>();
+    this.listeners = new ArrayList<Closeable>();
   }
 
   public void run() {
@@ -153,12 +91,6 @@ public class Processor implements Runnable {
 
   public State getState() {
     return status.get().getState();
-  }
-
-  private static abstract class Task {
-
-    protected abstract LatchedFuture<State> execute();
-
   }
 
   public Result execute() {
@@ -217,7 +149,7 @@ public class Processor implements Runnable {
             log.debug("Submitting command " + line);
 
             //
-            ShellInvoker invoker = new ShellInvoker();
+            ShellInvoker invoker = new ShellInvoker(Processor.this);
 
             // Process
             process = shell.createProcess(((TermEvent.ReadLine) event).getLine().toString());
@@ -304,9 +236,9 @@ public class Processor implements Runnable {
           log.debug("Closing processor");
 
           // Make a copy
-          ArrayList<ProcessorListener> listeners;
+          ArrayList<Closeable> listeners;
           synchronized (Processor.this.listeners) {
-            listeners = new ArrayList<ProcessorListener>(Processor.this.listeners);
+            listeners = new ArrayList<Closeable>(Processor.this.listeners);
           }
 
           // Status to closed, we won't process any further request
@@ -316,10 +248,10 @@ public class Processor implements Runnable {
           status.set(State.CLOSED.available);
 
           //
-          for (ProcessorListener listener : listeners) {
+          for (Closeable listener : listeners) {
             try {
               log.debug("Closing " + listener.getClass().getSimpleName());
-              listener.closed();
+              listener.close();
             }
             catch (Exception e) {
               e.printStackTrace();
@@ -368,7 +300,7 @@ public class Processor implements Runnable {
     }
   }
 
-  private void writePrompt() {
+  void writePrompt() {
     String prompt = shell.getPrompt();
     try {
       String p = prompt == null ? "% " : prompt;
@@ -380,80 +312,7 @@ public class Processor implements Runnable {
     }
   }
 
-  private class ShellInvoker implements ShellProcessContext {
-
-    /** . */
-    private final LatchedFuture<State> result = new LatchedFuture<State>();
-
-    public int getWidth() {
-      return term.getWidth();
-    }
-
-    public String getProperty(String name) {
-      return term.getProperty(name);
-    }
-
-    public String readLine(String msg, boolean echo) {
-      try {
-        term.setEcho(echo);
-        term.write(msg);
-        TermEvent action = term.read();
-        CharSequence line = null;
-        if (action instanceof TermEvent.ReadLine) {
-          line = ((TermEvent.ReadLine)action).getLine();
-          log.debug("Read from console");
-        }
-        else {
-          log.debug("Ignoring action " + action + " returning null");
-        }
-        term.write("\r\n");
-        return line.toString();
-      }
-      catch (Exception e) {
-        log.error("Reading from console failed", e);
-        return null;
-      }
-      finally {
-        term.setEcho(true);
-      }
-    }
-
-    public void end(ShellResponse response) {
-      try {
-
-        //
-        if (response instanceof ShellResponse.Close) {
-          System.out.println("received close response");
-          result.set(State.WANT_CLOSE);
-        } else {
-          if (response instanceof ShellResponse.Cancelled) {
-            result.set(State.OPEN);
-          } else {
-            String ret = response.getText();
-            log.debug("Command completed with result " + ret);
-            try {
-              term.write(ret);
-            }
-            catch (IOException e) {
-              log.error("Write to term failure", e);
-            }
-            process = null;
-          }
-
-          //
-          writePrompt();
-
-          //
-          result.set(State.OPEN);
-        }
-      }
-      finally {
-        process = null;
-      }
-    }
-  }
-
-  public void addListener(ProcessorListener listener) {
+  public void addListener(Closeable listener) {
     if (listener == null) {
       throw new NullPointerException();
     }

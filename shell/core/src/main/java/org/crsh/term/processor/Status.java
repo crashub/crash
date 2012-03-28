@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2011 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
+ *
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
  *
@@ -16,30 +17,46 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
 
-import org.crsh.plugin.PluginContext;
-import org.crsh.shell.impl.CRaSH;
+package org.crsh.term.processor;
 
 /**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
-public class ShellFactory {
+* @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+*/
+final class Status {
 
   /** . */
-  private final PluginContext context;
+  private final State state;
 
-  public ShellFactory(PluginContext context) {
-    if (context == null) {
-      throw new NullPointerException();
-    }
+  /** . */
+  private final boolean available;
 
-    //
-    this.context = context;
+  Status(State state, boolean available) {
+    this.state = state;
+    this.available = available;
   }
 
-  public CRaSH build() {
-    return new CRaSH(context);
+  public State getState() {
+    return state;
+  }
+
+  public boolean isAvailable() {
+    return available;
+  }
+
+  public boolean isBusy() {
+    return !available;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    } else if (o instanceof Status) {
+      Status that = (Status)o;
+      return state == that.state && available == that.available;
+    } else {
+      return false;
+    }
   }
 }

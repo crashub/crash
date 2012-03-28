@@ -18,13 +18,13 @@
  */
 package org.crsh.standalone;
 
-import org.crsh.Processor;
-import org.crsh.ProcessorListener;
+import org.crsh.term.processor.Processor;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
 import org.crsh.term.spi.net.TermIOClient;
 
+import java.io.Closeable;
 import java.lang.instrument.Instrumentation;
 
 /**
@@ -54,8 +54,8 @@ public class Agent {
           //
           Term term = new BaseTerm(client);
           Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
-          processor.addListener(new ProcessorListener() {
-            public void closed() {
+          processor.addListener(new Closeable() {
+            public void close() {
               client.close();
             }
           });

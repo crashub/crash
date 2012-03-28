@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2011 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
+ *
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
  *
@@ -17,27 +18,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
+package org.crsh.term.processor;
 
 /**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
-public enum DescriptionMode {
+* @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+*/
+enum State {
 
-  /**
-   * The command descriptiion in one line.
-   */
-  DESCRIBE,
+  INITIAL,
 
-  /**
-   * The command usage.
-   */
-  USAGE,
+  OPEN,
 
-  /**
-   * The command manual.
-   */
-  MAN
+  WANT_CLOSE,
 
+  CLOSED;
+
+  /** . */
+  public final Status available;
+
+  /** . */
+  public final Status busy;
+
+  State() {
+    this.available = new Status(this, true);
+    this.busy = new Status(this, false);
+  }
 }

@@ -22,11 +22,19 @@ package org.crsh.command;
 import java.util.Map;
 
 /**
+ * The context of a command.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public interface CommandContext {
 
+
+  /**
+   * Returns the attributes related to current shell session.
+   *
+   * @return the session attributes
+   */
   Map<String, Object> getAttributes();
 
 }

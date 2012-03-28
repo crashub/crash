@@ -33,6 +33,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Description {
 
+  /**
+   * The description string.
+   *
+   * @return the description
+   */
   String value();
 
 }

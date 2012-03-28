@@ -1,4 +1,4 @@
-package org.crsh;
+package org.crsh.term.processor;
 
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.concurrent.AsyncShell;
@@ -40,27 +40,9 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
     final AsyncShell asyncShell = new AsyncShell(executor, shell);
     BaseTerm term = new BaseTerm(io);
     Processor processor = new Processor(term, asyncShell);
-
-    //
-    processor.addListener(new ProcessorListener() {
-      public void closed() {
-        io.close();
-      }
-    });
-
-    //
-    processor.addListener(new ProcessorListener() {
-      public void closed() {
-        asyncShell.close();
-      }
-    });
-
-    //
-    processor.addListener(new ProcessorListener() {
-      public void closed() {
-        shell.close();
-      }
-    });
+    processor.addListener(io);
+    processor.addListener(asyncShell);
+    processor.addListener(shell);
 
     //
     processor.run();

@@ -21,6 +21,7 @@ package org.crsh.term.spi;
 
 import org.crsh.term.CodeType;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -29,7 +30,7 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface TermIO {
+public interface TermIO extends Closeable {
 
   /**
    * Reads an input value.
@@ -61,11 +62,6 @@ public interface TermIO {
    * @return the input value type
    */
   CodeType decode(int code);
-
-  /**
-   * Close the input/output.
-   */
-  void close();
 
   /**
    * Flush output.

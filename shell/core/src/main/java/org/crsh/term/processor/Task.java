@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2011 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
+ *
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
  *
@@ -16,18 +17,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.util;
+
+package org.crsh.term.processor;
+
+import org.crsh.util.LatchedFuture;
 
 /**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
-public class OutputCode {
+* @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+*/
+abstract class Task {
 
-  /** . */
-  public static final char DELETE_PREV_CHAR = 8;
-
-  /** . */
-//  public static final char DELETE_PREV_CHAR = 8;
+  protected abstract LatchedFuture<State> execute();
 
 }

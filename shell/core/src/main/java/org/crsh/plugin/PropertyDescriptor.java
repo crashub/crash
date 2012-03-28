@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * A descriptor for a configuration property.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
@@ -64,10 +66,26 @@ public abstract class PropertyDescriptor<T> {
   /** . */
   public final String description;
 
-  protected PropertyDescriptor(Class<T> type, String name, T defaultValue, String description) {
-    if (name == null) {
-      throw new AssertionError();
+  /**
+   * Create a new property descriptor.
+   *
+   * @param type the property type
+   * @param name the property name
+   * @param defaultValue the default value
+   * @param description the description
+   * @throws NullPointerException if the type, name or description is null
+   */
+  protected PropertyDescriptor(Class<T> type, String name, T defaultValue, String description) throws NullPointerException {
+    if (type == null) {
+      throw new NullPointerException("No null type accepted");
     }
+    if (name == null) {
+      throw new NullPointerException("No null name accepted");
+    }
+    if (description == null) {
+      throw new NullPointerException("No null description accepted");
+    }
+
     this.type = type;
     this.name = name;
     this.defaultValue = defaultValue;
@@ -93,6 +111,14 @@ public abstract class PropertyDescriptor<T> {
     return defaultValue;
   }
 
+  /**
+   * Parse a string representation of a value and returns the corresponding typed value.
+   *
+   * @param s the string to parse
+   * @return the corresponding value
+   * @throws NullPointerException if the argument is null
+   * @throws IllegalArgumentException if the string value cannot be parsed for some reason
+   */
   public final T parse(String s) throws NullPointerException, IllegalArgumentException {
     if (s == null) {
       throw new NullPointerException("Cannot parse null property values");
@@ -105,10 +131,26 @@ public abstract class PropertyDescriptor<T> {
     }
   }
 
+  /**
+   * Parse a string representation of a value and returns the correspondig property value.
+   *
+   * @param s the string to parse
+   * @return the corresponding property
+   * @throws NullPointerException if the argument is null
+   * @throws IllegalArgumentException if the string value cannot be parsed for some reason
+   */
   public final Property<T> toProperty(String s) throws NullPointerException, IllegalArgumentException {
     T value = parse(s);
     return new Property<T>(this, value);
   }
 
-  protected abstract T doParse(String s);
+  /**
+   * Implements the real parsing, the string argument must nto be null. The returned value must not be null
+   * instead an exception must be thrown.
+   *
+   * @param s the string to parse
+   * @return the related value
+   * @throws Exception any exception that would prevent parsing to hapen
+   */
+  protected abstract T doParse(String s) throws Exception;
 }

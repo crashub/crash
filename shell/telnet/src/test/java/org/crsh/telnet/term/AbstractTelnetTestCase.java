@@ -20,7 +20,7 @@
 package org.crsh.telnet.term;
 
 import org.apache.commons.net.telnet.TelnetClient;
-import org.crsh.TestPluginContext;
+import org.crsh.TestPluginLifeCycle;
 import org.crsh.plugin.SimplePluginDiscovery;
 import org.crsh.telnet.TelnetPlugin;
 import org.crsh.term.IOHandler;
@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class AbstractTelnetTestCase extends Assert {
 
   /** . */
-  protected TestPluginContext ctx;
+  protected TestPluginLifeCycle ctx;
 
   /** . */
   protected TelnetClient client;
@@ -75,7 +75,7 @@ public abstract class AbstractTelnetTestCase extends Assert {
     discovery.add(handler);
 
     //
-    ctx = new TestPluginContext(discovery);
+    ctx = new TestPluginLifeCycle(new TelnetPlugin(), handler);
     ctx.setProperty(TelnetPlugin.TELNET_PORT, port);
 
     //

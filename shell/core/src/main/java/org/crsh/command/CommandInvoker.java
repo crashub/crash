@@ -29,9 +29,10 @@ package org.crsh.command;
 public interface CommandInvoker<C, P> {
 
   /**
+   * Invoke a command
    *
    * @param context the command execution context
-   * @throws ScriptException any script exception
+   * @throws Exception any script exception
    */
   void invoke(InvocationContext<C, P> context) throws Exception;
 

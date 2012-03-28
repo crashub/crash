@@ -21,9 +21,8 @@ package org.crsh.doc;
 
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.command.CRaSHCommand;
-import org.crsh.command.DescriptionMode;
+import org.crsh.command.DescriptionFormat;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
@@ -57,7 +56,7 @@ public class Generator {
     PluginContext ctx = new PluginContext(new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()), fs, Thread.currentThread().getContextClassLoader());
     ctx.refresh();
     CRaSH crash = new CRaSH(ctx);
-    for (String s : ctx.listResourceId(ResourceKind.SCRIPT)) {
+    for (String s : ctx.listResourceId(ResourceKind.COMMAND)) {
       ShellCommand cmd = crash.getCommand(s);
       StringBuilder man = new StringBuilder();
       if (cmd instanceof CRaSHCommand) {
@@ -75,7 +74,7 @@ public class Generator {
           man.append("{{/screen}}");
         }
       } else {
-        man.append(cmd.describe(s, DescriptionMode.MAN));
+        man.append(cmd.describe(s, DescriptionFormat.MAN));
       }
       if (man.length() > 0) {
         File f = new File(root, s + ".wiki");

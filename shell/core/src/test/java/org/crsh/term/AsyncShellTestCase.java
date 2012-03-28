@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.crsh.BaseProcess;
 import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
-import org.crsh.TestPluginContext;
+import org.crsh.TestPluginLifeCycle;
 import org.crsh.shell.*;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.concurrent.Status;
@@ -43,10 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AsyncShellTestCase extends TestCase {
 
   /** . */
-  protected ShellFactory builder;
-
-  /** . */
-  protected TestPluginContext context;
+  protected TestPluginLifeCycle lifeCycle;
 
   /** . */
   protected ExecutorService executor;
@@ -59,10 +56,12 @@ public class AsyncShellTestCase extends TestCase {
     super.setUp();
 
     //
-    executor = Executors.newSingleThreadExecutor();
-    context = new TestPluginContext(
-    );
-    builder = new ShellFactory(context);
+    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle();
+    lifeCycle.start();
+
+    //
+    this.executor = Executors.newSingleThreadExecutor();
+    this.lifeCycle = lifeCycle;
   }
 
   public void testReadLine() throws Exception {
@@ -208,7 +207,7 @@ public class AsyncShellTestCase extends TestCase {
   }
 
   public void testAsyncEvaluation() throws InterruptedException {
-    AsyncShell connector = new AsyncShell(executor, builder.build());
+    AsyncShell connector = new AsyncShell(executor, lifeCycle.createShell());
     status = 0;
     SyncShellResponseContext respCtx = new SyncShellResponseContext();
     connector.createProcess("invoke " + AsyncShellTestCase.class.getName() + " bilto").execute(respCtx);

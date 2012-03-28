@@ -128,9 +128,15 @@ public abstract class CRaSHPlugin<P> {
    */
   public abstract P getImplementation();
 
+  /**
+   * Implement this method to know about init life cycle callback.
+   */
   public void init() {
   }
 
+  /**
+   * Implement this method to know about destroy life cycle callback.
+   */
   public void destroy() {
   }
 

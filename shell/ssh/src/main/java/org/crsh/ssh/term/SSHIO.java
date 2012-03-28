@@ -21,7 +21,6 @@ package org.crsh.ssh.term;
 
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
-import org.crsh.util.OutputCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,10 @@ public class SSHIO implements TermIO {
   private static final Logger log = LoggerFactory.getLogger(SSHIO.class);
 
   /** . */
-  private static final String DEL_SEQ = OutputCode.DELETE_PREV_CHAR + " " + OutputCode.DELETE_PREV_CHAR;
+  private static final char DELETE_PREV_CHAR = 8;
+
+  /** . */
+  private static final String DEL_SEQ = DELETE_PREV_CHAR + " " + DELETE_PREV_CHAR;
 
   /** . */
   private final Reader reader;

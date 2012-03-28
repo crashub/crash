@@ -53,5 +53,4 @@ public enum CodeType {
       return null;
     }
   }
-
 }

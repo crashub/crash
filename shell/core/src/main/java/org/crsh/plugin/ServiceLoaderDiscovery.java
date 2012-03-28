@@ -26,6 +26,8 @@ import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 /**
+ * An implementation of {@link PluginDiscovery} based on {@link ServiceLoader}.
+ * 
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
 public class ServiceLoaderDiscovery implements PluginDiscovery {
