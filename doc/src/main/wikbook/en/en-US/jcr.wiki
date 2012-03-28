@@ -13,49 +13,49 @@ CRaSH has been tested with Jackrabbit in the following mode : deploiement as a r
 
 = JCR commands =
 
-== ##repo## command ==
+== //repo// command ==
 {{include document="repo.wiki" /}}
 
-== ##ws## command ==
+== //ws// command ==
 {{include document="ws.wiki" /}}
 
-== ##cd## command ==
+== //cd// command ==
 {{include document="cd.wiki" /}}
 
-== ##pwd## command ==
+== //pwd// command ==
 {{include document="pwd.wiki" /}}
 
-== ##ls## command ==
+== //ls// command ==
 {{include document="ls.wiki" /}}
 
-== ##cp## command ==
+== //cp// command ==
 {{include document="cp.wiki" /}}
 
-== ##mv## command ==
+== //mv// command ==
 {{include document="mv.wiki" /}}
 
-== ##rm## command ==
+== //rm// command ==
 {{include document="rm.wiki" /}}
 
-== ##node## command ==
+== //node// command ==
 {{include document="node.wiki" /}}
 
-== ##mixin## command ==
+== //mixin// command ==
 {{include document="mixin.wiki" /}}
 
-== ##select## command ==
+== //select// command ==
 {{include document="select.wiki" /}}
 
-== ##xpath## command ==
+== //xpath// command ==
 {{include document="xpath.wiki" /}}
 
-== ##commit## command ==
+== //commit// command ==
 {{include document="commit.wiki" /}}
 
-== ##rollback## command ==
+== //rollback// command ==
 {{include document="rollback.wiki" /}}
 
-== ##version## command ==
+== //version// command ==
 {{include document="version.wiki" /}}
 
 = SCP usage =

@@ -23,23 +23,36 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.1</version>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
         <executions>
           <execution>
-            <id>unpack-documentation</id>
-            <phase>site</phase>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
+            <phase>generate-resources</phase>
             <configuration>
-              <includeGroupIds>org.crsh</includeGroupIds>
-              <includeArtifactIds>crsh.doc</includeArtifactIds>
-              <includeClassifiers>html</includeClassifiers>
-              <excludes>META-INF/**</excludes>
-              <outputDirectory>${project.build.directory}/html</outputDirectory>
+              <target>
+                <property name="doc" value="${project.build.directory}/doc/"/>
+                <property name="site" value="${project.build.directory}/classes/"/>
+
+                <!-- Reference guide -->
+                <unzip src="${org.crsh:crsh.doc:zip:html}" dest="${doc}"/>
+                <copy file="${doc}/index.html" tofile="${site}/doc.html"/>
+                <copy todir="${site}/css">
+                  <fileset dir="${doc}/css">
+                    <include name="wikbook.css"/>
+                    <include name="bootstrap/prettify.css"/>
+                  </fileset>
+                </copy>
+                <copy todir="${site}/js">
+                  <fileset dir="${doc}/js/bootstrap" includes="google-code-prettify/**"/>
+                </copy>
+                <copy todir="${site}/images">
+                  <fileset dir="${doc}/images"/>
+                </copy>
+              </target>
             </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -50,7 +63,7 @@
           <message>Deploy documentation for ${project.version}</message>
           <repositoryOwner>${crsh.github.owner}</repositoryOwner>
           <repositoryName>${crsh.github.repository}</repositoryName>
-          <outputDirectory>${project.build.directory}/html</outputDirectory>
+          <outputDirectory>${project.build.directory}/classes</outputDirectory>
         </configuration>
         <executions>
           <execution>

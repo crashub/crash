@@ -25,7 +25,7 @@
   <scm>
     <connection>scm:git:git://github.com/vietj/crash.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/vietj/crash.git</developerConnection>
-    <url>https://github.com/vietj/crash</url>
+    <url>http://vietj.github.com/crash</url>
   </scm>
 
   <distributionManagement>

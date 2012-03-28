@@ -1,0 +1,28 @@
+@import "cyborg-2.0.2.min.css";
+
+/* Padding for nav bar */
+body {
+  padding-top: 64px;
+}
+
+.center {
+  text-align: center;
+}
+
+/* Give some extra space to chapters */
+div.chapter {
+    padding-top: 120px;
+}
+
+.done {
+    text-decoration: line-through;
+}
+
+.logo {
+    padding-bottom: 32px;
+    color: #33b5e5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family:Menlo,Monaco,'Courier New',monospace;
+    font-size:12px
+}

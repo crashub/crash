@@ -1,0 +1,145 @@
+<!--
+  ~ Copyright (C) 2011 eXo Platform SAS.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>CRaSH a shell to extend the Java Platform</title>
+    <link rel="stylesheet" href="css/site.css">
+    <script src="js/jquery-1.7.1.min.js"></script>
+    <!-- Doc here : http://www.asual.com/jquery/address/docs/ -->
+    <script src="js/jquery.address-1.4.min.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+
+    <!--
+    Does not work at the moment for some reason
+    <script src="js/google-code-prettify/prettify.js"></script>
+    -->
+
+    <script>
+      $(document).ready(function() {
+
+        // The page navigation
+        $.address.change(function(event){
+
+          // Get anchor
+          var anchor = event.value.substring(1);
+          if (anchor == "")
+            anchor = "home";
+
+          //
+          var page = $(".page:has(a[name=" + anchor + "])");
+          if (page.length == 1) {
+            page.filter(function() {
+              return this != window.previous;
+            }).each(function() {
+
+              // Do show/hide
+              $(".page").hide();
+              $(this).show();
+
+              // Reset page to top
+              $(window).scrollTop(0);
+
+              // Update previous
+              window.previous = this;
+            });
+          } else {
+            // Should log something somehow
+          }
+        });
+      });
+    </script>
+    
+</head>
+<body>
+
+  <div>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <ul id="tabs" class="nav">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#doc">Documentation</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="page">
+        <a name="home"></a>
+        <div class="hero-unit center">
+          <div class="logo">
+   ______&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ .~      ~. |`````````,       .'.                   ..'''' |         |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|           |'''|'''''      .''```.              .''       |_________|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|           |    `.       .'       `.         ..'          |         |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ `.______.' |      `.   .'           `. ....''             |         | 1.0-beta24</div>
+          <p>A shell to extend the Java Platform</p>
+          <p>Open source and open minded</p>
+        </div>
+        <div class="row">
+          <div class="span4">
+            <h3>Links</h3>
+            <address>
+            <!--<strong>Users:</strong> <a href="http://groups.google.com/group/juzu">juzu@googlegroups.com</a><br />-->
+            <strong>Development:</strong> <a href="http://github.com/vietj/crash">GitHub</a><br />
+            <strong>Issues:</strong> <a href="https://jira.exoplatform.org/browse/CRASH">JIRA</a><br />
+            <strong>CI:</strong> <a href="https://vietj.ci.cloudbees.com/job/CRaSH/">CloudBees</a><br />
+            </address>
+          </div>
+          <div class="span4">
+            <h3>Download</h3>
+              The latest 1.0 Beta 24 release is available, <a href="http://code.google.com/p/crsh/downloads/detail?name=crsh.1.0.0-beta24.tar.gz">zip</a>
+              or <a href="http://code.google.com/p/crsh/downloads/detail?name=crsh.1.0.0-beta24-installer.jar">installer</a>.
+            </p>
+          </div>
+          <div class="span4">
+            <h3>Featuring</h3>
+            <ul class="unstyled">
+              <li>Scripting: Groovy </li>
+              <li>Remote: SSH & Telnet</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+        
+      <div class="page">
+        <a name="doc"></a>
+        <script type="text/javascript">
+          $(function() {
+            $("<div></div>").load("doc.html", function() {
+              $(this).find(".book").children().appendTo("#doc");
+              /* prettyPrint(); */
+            });
+          })
+        </script>
+        <div id="doc"></div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
