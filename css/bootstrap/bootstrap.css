@@ -1,7 +1,0 @@
-@import "bootstrap-1.4.0.min.css";
-@import "prettify.css";
-@import "../wikbook.css";
-
-.modal-overflow {
-    height:512px;overflow:auto
-}
