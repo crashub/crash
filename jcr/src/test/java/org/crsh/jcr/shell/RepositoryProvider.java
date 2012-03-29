@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2003-2009 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,36 +16,48 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.jcr.shell;
 
+
 import javax.jcr.Repository;
-import org.crsh.jcr.JackrabbitPlugin;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.ServiceLoader;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class GroovyRepositoryBootstrap {
+public abstract class RepositoryProvider
+{
 
   /** . */
-  private static Repository repository;
+  private static RepositoryProvider provider;
 
   /** . */
   private static boolean initialized;
 
-  public static synchronized Repository getRepository() throws Exception {
+  public static synchronized RepositoryProvider getProvider() throws Exception {
     if (!initialized) {
-      RepositoryBootstrap repoBoostrap = new RepositoryBootstrap();
-      repoBoostrap.bootstrap();
-      repository = repoBoostrap.getRepository();
-
-      // Initialize groovy integration by JCR plugin
-      new JackrabbitPlugin().init();
-
-      //
-      initialized = true;
+      Iterator<RepositoryProvider> it = ServiceLoader.load(RepositoryProvider.class).iterator();
+      if (it.hasNext()) {
+        RepositoryProvider repoBoostrap = it.next();
+        repoBoostrap.bootstrap();
+        provider = repoBoostrap;
+        initialized = true;
+      } else {
+        throw new NoSuchElementException("No repository available");
+      }
     }
-    return repository;
+    return provider;
   }
+
+  protected abstract void bootstrap() throws Exception;
+
+  public abstract Repository getRepository();
+
+  public abstract String getLogin() throws Exception;
+
+  public abstract void logout() throws Exception;
+
 }

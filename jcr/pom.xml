@@ -13,6 +13,10 @@
   <name>CRaSH jcr</name>
   <description>The CRaSH JCR module</description>
 
+  <properties>
+    <skipTests>true</skipTests>
+  </properties>
+
   <dependencies>
 
     <dependency>

@@ -60,6 +60,12 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>

@@ -20,7 +20,7 @@ package org.crsh.jcr;
 
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
-import org.crsh.jcr.shell.GroovyRepositoryBootstrap;
+import org.crsh.jcr.shell.RepositoryProvider;
 
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -42,7 +42,7 @@ public class NodeMetaClassTestCase extends TestCase {
     super.setUp();
 
     //
-    session = GroovyRepositoryBootstrap.getRepository().login(new SimpleCredentials("exo", new char[]{'e','x', 'o'}));
+    session = RepositoryProvider.getProvider().getRepository().login(new SimpleCredentials("exo", new char[]{'e','x', 'o'}));
 
     //
     shell = new GroovyShell();

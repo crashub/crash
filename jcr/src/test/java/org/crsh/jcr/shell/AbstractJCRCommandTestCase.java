@@ -19,6 +19,9 @@
 
 package org.crsh.jcr.shell;
 
+import junit.framework.AssertionFailedError;
+import junit.framework.TestSuite;
+import org.crsh.jcr.NodeMetaClassTestCase;
 import org.crsh.shell.AbstractCommandTestCase;
 
 import javax.jcr.Node;
@@ -26,8 +29,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,22 @@ import java.util.List;
  * @version $Revision$
  */
 public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase {
+  
+  public static TestSuite createTestSuite() {
+    TestSuite suite = new TestSuite();
+    suite.addTest(new TestSuite(AddMixinTestCase.class));
+    suite.addTest(new TestSuite(AddNodeTestCase.class));
+    suite.addTest(new TestSuite(CdTestCase.class));
+    suite.addTest(new TestSuite(CopyTestCase.class));
+    suite.addTest(new TestSuite(MoveTestCase.class));
+    suite.addTest(new TestSuite(RemoveTestCase.class));
+    suite.addTest(new TestSuite(SelectTestCase.class));
+    suite.addTest(new TestSuite(SetTestCase.class));
+    suite.addTest(new TestSuite(ShellTestCase.class));
+    suite.addTest(new TestSuite(WorkspaceTestCase.class));
+    suite.addTest(new TestSuite(NodeMetaClassTestCase.class));
+    return suite;
+  }
 
   public AbstractJCRCommandTestCase() {
   }
@@ -48,7 +65,7 @@ public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase
   protected void setUp() throws Exception {
 
     // Ensure everything is fine
-    GroovyRepositoryBootstrap.getRepository();
+    RepositoryProvider.getProvider().getRepository();
 
     //
     super.setUp();
@@ -59,8 +76,10 @@ public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase
   
   @Override
   protected void tearDown() throws Exception {
+    if (shell != null) {
+      RepositoryProvider.getProvider().logout();
+    }
     super.tearDown();
-    
   }
 
   private void cleanRoot() throws Exception {
@@ -80,7 +99,14 @@ public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase
   }
 
   protected final void assertLogin() {
-    assertOk("repo use");
+    try {
+      String login = RepositoryProvider.getProvider().getLogin();
+      assertOk(login);
+    } catch(Exception e) {
+      AssertionFailedError afe = new AssertionFailedError();
+      afe.initCause(e);
+      throw afe;
+    }
     assertOk("ws login -u exo -p exo ws");
   }
 

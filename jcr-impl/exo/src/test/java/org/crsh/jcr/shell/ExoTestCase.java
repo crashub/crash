@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2011 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
+ *
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
  *
@@ -19,34 +20,14 @@
 
 package org.crsh.jcr.shell;
 
-import org.crsh.jcr.ExoPlugin;
-
-import javax.jcr.Repository;
+import junit.framework.TestSuite;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
  */
-public class GroovyRepositoryBootstrap {
+public class ExoTestCase {
 
-  /** . */
-  private static Repository repository;
-
-  /** . */
-  private static boolean initialized;
-
-  public static synchronized Repository getRepository() throws Exception {
-    if (!initialized) {
-      RepositoryBootstrap repoBoostrap = new RepositoryBootstrap();
-      repoBoostrap.bootstrap();
-      repository = repoBoostrap.getRepository();
-
-      // Initialize groovy integration by JCR plugin
-      new ExoPlugin().init();
-
-      //
-      initialized = true;
-    }
-    return repository;
+  public static TestSuite suite() {
+    return AbstractJCRCommandTestCase.createTestSuite();
   }
 }
