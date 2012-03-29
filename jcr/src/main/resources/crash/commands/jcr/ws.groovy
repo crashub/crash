@@ -1,6 +1,5 @@
 import javax.jcr.SimpleCredentials;
 
-import org.crsh.jcr.JCR;
 import org.crsh.jcr.command.ContainerOpt;
 import org.crsh.jcr.command.UserNameOpt;
 import org.crsh.jcr.command.PasswordOpt

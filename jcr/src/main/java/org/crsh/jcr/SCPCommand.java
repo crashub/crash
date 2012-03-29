@@ -194,7 +194,7 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
     }
 
     //
-    Repository repository = JCR.getRepository(properties);
+    Repository repository = JCRPlugin.findRepository(properties);
 
     // Obtain credentials from SSH
     String userName = session.getAttribute(SSHLifeCycle.USERNAME);

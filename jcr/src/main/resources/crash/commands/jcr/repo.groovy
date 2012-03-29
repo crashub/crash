@@ -22,9 +22,10 @@ import org.crsh.cmdline.annotations.Argument
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Usage
-import org.crsh.jcr.JCR
+
 import org.crsh.jcr.command.InitProperties
 import org.crsh.shell.ui.UIBuilder
+import org.crsh.jcr.JCRPlugin
 
 @Usage("repository interaction commands")
 class repo extends org.crsh.jcr.command.JCRCommand {
@@ -48,7 +49,7 @@ class repo extends org.crsh.jcr.command.JCRCommand {
       @Argument
       @Usage("the parameters")
       @Man("The parameters used to instantiate the repository to be used in this session") InitProperties parameters) throws ScriptException {
-    repository = JCR.getRepository(parameters.getProperties());
+    repository = JCRPlugin.findRepository(parameters.getProperties());
     return info();
   }
 

@@ -24,11 +24,7 @@ import org.crsh.plugin.CRaSHPlugin;
 
 import javax.jcr.Node;
 import java.beans.IntrospectionException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.jcr.Repository;
 
 /**
@@ -36,6 +32,16 @@ import javax.jcr.Repository;
  * @version $Revision$
  */
 public abstract class JCRPlugin<T extends JCRPlugin> extends CRaSHPlugin<T> {
+
+  public static Repository findRepository(Map<String, String> properties) throws Exception {
+    for (JCRPlugin plugin : ServiceLoader.load(JCRPlugin.class)) {
+      Repository repository = plugin.getRepository(properties);
+      if (repository != null) {
+        return repository;
+      }
+    }
+    return null;
+  }
 
   /** . */
   private static final Collection<String> NODES = Arrays.asList(
@@ -48,7 +54,7 @@ public abstract class JCRPlugin<T extends JCRPlugin> extends CRaSHPlugin<T> {
 
   /** . */
   private static boolean integrated = false;
-  
+
   public Collection<String> getNodeClassNames() {
     return NODES;
   }
