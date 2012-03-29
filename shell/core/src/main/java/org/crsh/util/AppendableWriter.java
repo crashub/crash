@@ -19,6 +19,7 @@
 
 package org.crsh.util;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -31,12 +32,18 @@ public class AppendableWriter extends Writer {
   /** . */
   private final Appendable out;
 
+  /** . */
+  private boolean closed;
+
   public AppendableWriter(Appendable out) {
     this.out = out;
   }
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
+    if (closed) {
+      throw new IOException("Already closed");
+    }
     int end = off + len;
     while (off < end) {
       out.append(cbuf[off++]);
@@ -45,10 +52,18 @@ public class AppendableWriter extends Writer {
 
   @Override
   public void flush() throws IOException {
-    
+    if (closed) {
+      throw new IOException("Already closed");
+    }
   }
 
   @Override
   public void close() throws IOException {
+    if (!closed) {
+      closed = true;
+      if (out instanceof Closeable) {
+        ((Closeable)out).close();
+      }
+    }
   }
 }
