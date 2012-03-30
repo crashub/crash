@@ -23,10 +23,12 @@ import groovy.lang.GroovyShell;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.TestPluginLifeCycle;
+import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -34,6 +36,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * @version $Revision$
  */
 public abstract class AbstractCommandTestCase extends TestCase {
+
+  /** . */
+  private final CRaSHPlugin[] NO_PLUGINS = new CRaSHPlugin[0];
 
   /** . */
   protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -56,7 +61,7 @@ public abstract class AbstractCommandTestCase extends TestCase {
     super.setUp();
 
     //
-    TestPluginLifeCycle builder = new TestPluginLifeCycle();
+    TestPluginLifeCycle builder = new TestPluginLifeCycle(NO_PLUGINS);
 
     //
     builder.start();
