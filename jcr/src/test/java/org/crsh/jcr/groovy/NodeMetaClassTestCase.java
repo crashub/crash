@@ -16,11 +16,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.jcr;
+package org.crsh.jcr.groovy;
 
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
-import org.crsh.jcr.shell.RepositoryProvider;
+import org.crsh.jcr.RepositoryProvider;
 
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;

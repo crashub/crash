@@ -18,9 +18,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.jcr.shell;
+package org.crsh.jcr;
 
 import junit.framework.TestSuite;
+import org.crsh.jcr.AbstractJCRCommandTestCase;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>

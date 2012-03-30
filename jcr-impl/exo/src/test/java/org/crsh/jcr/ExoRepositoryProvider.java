@@ -16,12 +16,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.jcr.shell;
+package org.crsh.jcr;
 
 
 import javax.jcr.Repository;
 
 import org.crsh.jcr.ExoPlugin;
+import org.crsh.jcr.RepositoryProvider;
 import org.exoplatform.container.StandaloneContainer;
 import org.exoplatform.services.jcr.RepositoryService;
 

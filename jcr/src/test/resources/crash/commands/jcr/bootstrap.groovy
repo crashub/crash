@@ -1,3 +1,3 @@
-import org.crsh.jcr.shell.RepositoryProvider
+import org.crsh.jcr.RepositoryProvider
 
 RepositoryProvider.getProvider().getRepository();

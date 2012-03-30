@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.jcr;
+package org.crsh.jcr.groovy;
 
 import groovy.lang.Closure;
 import groovy.lang.GroovySystem;
@@ -26,6 +26,8 @@ import groovy.lang.MetaMethod;
 import groovy.lang.MetaProperty;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
+import org.crsh.jcr.JCRUtils;
+import org.crsh.jcr.PropertyType;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;

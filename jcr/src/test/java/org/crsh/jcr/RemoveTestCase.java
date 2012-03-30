@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.jcr.shell;
+package org.crsh.jcr;
 
 import org.crsh.command.ScriptException;
 

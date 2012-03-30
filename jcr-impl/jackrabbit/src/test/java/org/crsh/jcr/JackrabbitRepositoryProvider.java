@@ -18,10 +18,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.jcr.shell;
+package org.crsh.jcr;
 
 import org.apache.jackrabbit.core.TransientRepository;
 import org.crsh.jcr.JackrabbitPlugin;
+import org.crsh.jcr.RepositoryProvider;
 
 import javax.jcr.Repository;
 import java.io.File;

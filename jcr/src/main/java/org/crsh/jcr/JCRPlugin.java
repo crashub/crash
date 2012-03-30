@@ -20,6 +20,7 @@ package org.crsh.jcr;
 
 import groovy.lang.GroovySystem;
 import groovy.lang.MetaClassRegistry;
+import org.crsh.jcr.groovy.NodeMetaClass;
 import org.crsh.plugin.CRaSHPlugin;
 
 import javax.jcr.Node;
