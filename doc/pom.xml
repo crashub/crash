@@ -50,7 +50,13 @@
 
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.jcr</artifactId>
+      <artifactId>crsh.jcr.core</artifactId>
+      <classifier>standalone</classifier>
+    </dependency>
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr.core</artifactId>
       <classifier>standalone</classifier>
     </dependency>
 
@@ -349,7 +355,17 @@
                   </dependency>
                   <dependency>
                     <groupId>org.crsh</groupId>
-                    <artifactId>crsh.jcr</artifactId>
+                    <artifactId>crsh.jcr.core</artifactId>
+                    <classifier>sources</classifier>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.crsh</groupId>
+                    <artifactId>crsh.jcr.exo</artifactId>
+                    <classifier>sources</classifier>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.crsh</groupId>
+                    <artifactId>crsh.jcr.jackrabbit</artifactId>
                     <classifier>sources</classifier>
                   </dependency>
                 </dependencies>

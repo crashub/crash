@@ -54,7 +54,7 @@
       <outputDirectory>/deploy/gatein</outputDirectory>
       <outputFileNameMapping>crash.war</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.jcr:war</include>
+        <include>org.crsh:crsh.jcr.exo:war</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -70,7 +70,7 @@
         <include>org.crsh:crsh.shell.core:jar:sources</include>
         <include>org.crsh:crsh.shell.telnet:jar:sources</include>
         <include>org.crsh:crsh.shell.ssh:jar:sources</include>
-        <include>org.crsh:crsh.jcr:jar:sources</include>
+        <include>org.crsh:crsh.jcr.core:jar:sources</include>
       </includes>
     </dependencySet>
     <dependencySet>

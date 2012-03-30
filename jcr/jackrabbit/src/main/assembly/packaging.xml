@@ -31,7 +31,7 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/WEB-INF/lib</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.jcr</include>
+        <include>org.crsh:crsh.jcr.core</include>
       </includes>
     </dependencySet>
     <dependencySet>

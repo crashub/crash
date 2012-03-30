@@ -38,7 +38,7 @@
     </dependency>
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.jcr</artifactId>
+      <artifactId>crsh.jcr.core</artifactId>
       <classifier>sources</classifier>
     </dependency>
 
@@ -121,15 +121,15 @@
 
         <dependency>
           <groupId>org.crsh</groupId>
-          <artifactId>crsh.jcr</artifactId>
+          <artifactId>crsh.jcr.core</artifactId>
         </dependency>
         <dependency>
           <groupId>org.crsh</groupId>
-          <artifactId>crsh.jcr-exo</artifactId>
+          <artifactId>crsh.jcr.exo</artifactId>
         </dependency>
         <dependency>
           <groupId>org.crsh</groupId>
-          <artifactId>crsh.jcr-jackrabbit</artifactId>
+          <artifactId>crsh.jcr.jackrabbit</artifactId>
         </dependency>
 
       </dependencies>
@@ -202,8 +202,8 @@
 
                     <!-- JCR -->
                     <property name="jcr" value="${target}/jcr" />
-                    <copy file="${org.crsh:crsh.jcr:jar}" todir="${jcr}/lib" />
-                    <unzip src="${org.crsh:crsh.jcr:jar}" dest="${jcr}">
+                    <copy file="${org.crsh:crsh.jcr.core:jar}" todir="${jcr}/lib" />
+                    <unzip src="${org.crsh:crsh.jcr.core:jar}" dest="${jcr}">
                       <patternset>
                         <include name="crash/**" />
                       </patternset>
@@ -211,8 +211,8 @@
 
                     <!-- eXo -->
                     <property name="exo" value="${target}/exo" />
-                    <copy file="${org.crsh:crsh.jcr-exo:jar}" todir="${exo}/lib" />
-                    <unzip src="${org.crsh:crsh.jcr-exo:jar}" dest="${exo}">
+                    <copy file="${org.crsh:crsh.jcr.exo:jar}" todir="${exo}/lib" />
+                    <unzip src="${org.crsh:crsh.jcr.exo:jar}" dest="${exo}">
                       <patternset>
                         <include name="crash/**" />
                       </patternset>
@@ -220,8 +220,8 @@
 
                     <!-- Jackrabbit -->
                     <property name="jackrabbit" value="${target}/jackrabbit" />
-                    <copy file="${org.crsh:crsh.jcr-jackrabbit:jar}" todir="${jackrabbit}/lib" />
-                    <unzip src="${org.crsh:crsh.jcr-jackrabbit:jar}" dest="${jackrabbit}">
+                    <copy file="${org.crsh:crsh.jcr.jackrabbit:jar}" todir="${jackrabbit}/lib" />
+                    <unzip src="${org.crsh:crsh.jcr.jackrabbit:jar}" dest="${jackrabbit}">
                       <patternset>
                         <include name="crash/**" />
                       </patternset>
@@ -269,7 +269,7 @@
         </dependency>
         <dependency>
           <groupId>org.crsh</groupId>
-          <artifactId>crsh.jcr</artifactId>
+          <artifactId>crsh.jcr.exo</artifactId>
           <type>war</type>
         </dependency>
       </dependencies>

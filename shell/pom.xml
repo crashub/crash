@@ -11,7 +11,7 @@
   <packaging>pom</packaging>
   <version>1.0.0-beta25-SNAPSHOT</version>
 
-  <name>Shell parent</name>
+  <name>CRaSH shell parent</name>
 
   <modules>
     <module>core</module>

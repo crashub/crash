@@ -1,18 +1,18 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>crsh.jcr-impl</artifactId>
+    <artifactId>crsh.jcr</artifactId>
     <groupId>org.crsh</groupId>
     <version>1.0.0-beta25-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
-  <artifactId>crsh.jcr-exo</artifactId>
+  <artifactId>crsh.jcr.jackrabbit</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0-beta25-SNAPSHOT</version>
 
-  <name>CRaSH jcr Exo Implementation</name>
-  <description>The CRaSH JCR module for Exo Plateform</description>
+  <name>CRaSH jcr Jackrabbit Implementation</name>
+  <description>The CRaSH JCR module for Apache Jackrabbit</description>
 
   <!--
   How to test easily jackrabbit:
@@ -21,8 +21,8 @@
   in another shell:
   > telnet localhost 5000
   % bootstrap
-  % repo use
-  % ws login -u root -p exo ws
+  % repo use org.apache.jackrabbit.repository.uri=transient
+  % ws login -u root default
   -->
 
   <dependencies>
@@ -35,20 +35,17 @@
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.ssh</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.jcr</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.jcr</artifactId>
-      <type>war</type>
+      <artifactId>crsh.jcr.core</artifactId>
     </dependency>
 
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
+      <version>2.0</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -65,21 +62,39 @@
     </dependency>
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.jcr</artifactId>
+      <artifactId>crsh.jcr.core</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
+
     <dependency>
-      <groupId>org.exoplatform.kernel</groupId>
-      <artifactId>exo.kernel.container</artifactId>
-      <version>2.1.1</version>
-      <scope>test</scope>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-jcr-client</artifactId>
+      <version>2.2.10</version>
     </dependency>
     <dependency>
-      <groupId>org.exoplatform.jcr</groupId>
-      <artifactId>exo.jcr.component.core</artifactId>
-      <version>1.11.1</version>
-      <scope>test</scope>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-jcr-commons</artifactId>
+      <version>2.2.10</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-core</artifactId>
+      <version>2.2.10</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-jcr2dav</artifactId>
+      <version>2.2.10</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>2.4.1</version>
     </dependency>
   </dependencies>
 

@@ -217,37 +217,37 @@
       <!-- Module JCR -->
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.jcr</artifactId>
+        <artifactId>crsh.jcr.core</artifactId>
         <version>1.0.0-beta25-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.jcr</artifactId>
+        <artifactId>crsh.jcr.core</artifactId>
         <version>1.0.0-beta25-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.jcr</artifactId>
+        <artifactId>crsh.jcr.core</artifactId>
         <version>1.0.0-beta25-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.jcr</artifactId>
+        <artifactId>crsh.jcr.core</artifactId>
         <version>1.0.0-beta25-SNAPSHOT</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.jcr</artifactId>
+        <artifactId>crsh.jcr.core</artifactId>
         <version>1.0.0-beta25-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.jcr</artifactId>
+        <artifactId>crsh.jcr.core</artifactId>
         <version>1.0.0-beta25-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
@@ -255,17 +255,29 @@
       <!-- Module JCR eXo -->
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.jcr-exo</artifactId>
+        <artifactId>crsh.jcr.exo</artifactId>
         <version>1.0.0-beta25-SNAPSHOT</version>
         <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.jcr.exo</artifactId>
+        <version>1.0.0-beta25-SNAPSHOT</version>
+        <type>war</type>
       </dependency>
 
       <!-- Module JCR Jackrabbit -->
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.jcr-jackrabbit</artifactId>
+        <artifactId>crsh.jcr.jackrabbit</artifactId>
         <version>1.0.0-beta25-SNAPSHOT</version>
         <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.jcr.jackrabbit</artifactId>
+        <version>1.0.0-beta25-SNAPSHOT</version>
+        <type>war</type>
       </dependency>
 
       <!-- Module doc -->
@@ -429,7 +441,6 @@
     <module>cmdline</module>
     <module>shell</module>
     <module>jcr</module>
-    <module>jcr-impl</module>
     <module>doc</module>
     <module>distrib</module>
     <module>site</module>

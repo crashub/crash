@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>crsh.jcr</artifactId>
+    <groupId>org.crsh</groupId>
+    <version>1.0.0-beta25-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.crsh</groupId>
+  <artifactId>crsh.jcr.core</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0.0-beta25-SNAPSHOT</version>
+
+  <name>CRaSH jcr core</name>
+  <description>The CRaSH JCR module</description>
+
+  <properties>
+    <skipTests>true</skipTests>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.ssh</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.packaging</artifactId>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>main</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.crsh</groupId>
+          <artifactId>crsh.shell.telnet</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-packaging</id>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
