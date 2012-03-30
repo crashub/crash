@@ -33,7 +33,7 @@
       <includes>
         <include>org.apache.sshd:sshd-core</include>
         <include>org.apache.sshd:sshd-pam</include>
-        <include>org.bouncycastle:bcprov-jdk15</include>
+        <include>org.bouncycastle:bcprov-jdk16</include>
         <include>org.apache.mina:mina-core</include>
         <include>net.wimpi:telnetd-x</include>
         <include>org.codehaus.groovy:groovy-all</include>
