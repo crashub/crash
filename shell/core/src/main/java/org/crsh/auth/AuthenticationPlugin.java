@@ -18,7 +18,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.ssh;
+package org.crsh.auth;
 
 /**
  * An interface a plugin should implement if it wants to add custom authentication for ssh.
@@ -27,6 +27,13 @@ package org.crsh.ssh;
  * @version $Revision$
  */
 public interface AuthenticationPlugin {
+
+  /**
+   * Returns the authentication plugin name.
+   *
+   * @return the plugin name
+   */
+  String getName();
 
   /**
    * Returns true if the user is authentified by its username and password.

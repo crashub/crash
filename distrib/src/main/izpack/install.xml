@@ -22,6 +22,10 @@
   <variables>
     <variable name="crash.telnet.port" value="5000"/>
     <variable name="crash.ssh.port" value="2000"/>
+    <variable name="crash.auth" value="simple"/>
+    <variable name="crash.auth.simple.username" value="admin"/>
+    <variable name="crash.auth.simple.password" value="admin"/>
+    <variable name="crash.auth.jaas.domain" value="gatein-domain"/>
   </variables>
 
   <locale>
@@ -34,6 +38,7 @@
     <panel classname="UserInputPanel" id="userinputpanel.0"/>
     <panel classname="UserInputPanel" id="userinputpanel.1"/>
     <panel classname="UserInputPanel" id="userinputpanel.2"/>
+    <panel classname="UserInputPanel" id="userinputpanel.3"/>
     <panel classname="TargetPanel"/>
     <panel classname="InstallPanel"/>
     <panel classname="SimpleFinishPanel"/>

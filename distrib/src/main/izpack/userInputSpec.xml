@@ -42,4 +42,36 @@
     <field type="space"/>
   </panel>
 
+  <!-- Authentication -->
+  <panel order="3">
+    <createForPack name="crash"/>
+    <field type="title" txt="Authentication configuration" bold="true" size="1"/>
+    <field type="divider" align="top"/>
+    <field type="radio" align="left" variable="crash.auth">
+      <description align="left" txt="Authentication plugin:"/>
+      <spec>
+        <choice txt="Simple" id="" value="simple" set="true"/>
+        <choice txt="Java Authentication and Authorization Service (JAAS)" value="jaas"/>
+      </spec>
+    </field>
+    <field type="space"/>
+    <field type="space"/>
+    <field type="divider" align="top"/>
+    <field type="staticText" align="left" txt="Simple authentication configuration:"/>
+    <field type="text" align="left" variable="crash.auth.simple.username">
+      <spec txt="Username:" size="16" set="admin"/>
+    </field>
+    <field type="text" align="left" variable="crash.auth.simple.password">
+      <spec txt="Password:" size="16" set="admin"/>
+    </field>
+    <field type="space"/>
+    <field type="space"/>
+    <field type="divider" align="top"/>
+    <field type="staticText" align="left" txt="Java Authentication and Authorization Service configuration:"/>
+    <field type="text" align="left" variable="crash.auth.jaas.domain">
+      <spec txt="Domain:" size="16" set="gatein-domain"/>
+    </field>
+    <field type="space"/>
+  </panel>
+
 </userInput>

@@ -28,10 +28,8 @@ import org.crsh.vfs.Resource;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Security;
 import java.util.Arrays;
 import org.apache.sshd.common.util.SecurityUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -39,21 +37,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  */
 public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
-  /** . */
-  public static final PropertyDescriptor<Integer> SSH_PORT = new PropertyDescriptor<Integer>(Integer.class, "ssh.port", 2000, "The SSH port") {
-    @Override
-    public Integer doParse(String s) {
-      return Integer.parseInt(s);
-    }
-  };
+  /** The SSH port. */
+  public static final PropertyDescriptor<Integer> SSH_PORT = PropertyDescriptor.create("ssh.port", 2000, "The SSH port");
 
-  /** . */
-  public static final PropertyDescriptor<String> SSH_KEYPATH = new PropertyDescriptor<String>(String.class, "ssh.keypath", null, "The path to the key file") {
-    @Override
-    public String doParse(String s) {
-      return s;
-    }
-  };
+  /** The SSH key path. */
+  public static final PropertyDescriptor<String> SSH_KEYPATH = PropertyDescriptor.create("ssh.keypath", (String)null, "The path to the key file");
+
+  /** The authentication plugin to use. */
+  public static final PropertyDescriptor<String> AUTH = PropertyDescriptor.create("auth", (String)null, "The authentication plugin");
 
   /** . */
   private SSHLifeCycle lifeCycle;
@@ -65,7 +56,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   @Override
   protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
-    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_KEYPATH);
+    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_KEYPATH, AUTH);
   }
 
   @Override
@@ -109,11 +100,15 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
       return;
     }
 
+    // Get the authentication
+    String authentication = getContext().getProperty(AUTH);
+
     //
     log.info("Booting SSHD");
     SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext());
     lifeCycle.setPort(port);
     lifeCycle.setKeyURL(keyURL);
+    lifeCycle.setAuthentication(authentication);
     lifeCycle.init();
 
     //

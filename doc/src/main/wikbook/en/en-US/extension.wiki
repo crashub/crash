@@ -23,7 +23,7 @@ as the framework is quite easy to use, the following features are supported:
 
 * Annotation based framework
 * Provide accurate contextual code completion
-* Support sub commands (ˆ la git like "git add") for grouping commands of the same kind inside the same class as methods
+* Support sub commands (ï¿½ la git like "git add") for grouping commands of the same kind inside the same class as methods
 * Advanced support for usage and manual
 
 
@@ -56,3 +56,87 @@ is used again to describe briefly the argument. Again it could be possible to us
 A command is a Groovy object and it can access or use the contextual variables. A few variables are maintained by the shell
 and should be considered with caution. The shell also provides a few functions that can be used, those functions defined in
 //login.groovy//
+
+= Pluggable authentication {{anchor id=pluggable_auth /}} =
+
+Creating a custom is done by implementing a CRaSH plugin that provides an implementation of the ##AuthenticationPlugin##
+interface, let's study the //simple// authentication plugin implementation.
+
+The ##AuthenticationPlugin## is the interface to implement to integrate CRaSH with an authentication mechanism:
+
+{{java}}
+{@include org.crsh.auth.AuthenticationPlugin}
+{{/java}}
+
+The integration as a CRaSH plugin mandates to extend the class ##CRaSHPlugin## with the generic type ##AuthenticationPlugin##:
+
+{{java}}
+public class SimpleAuthenticationPlugin extends
+    CRaSHPlugin<AuthenticationPlugin> implements
+    AuthenticationPlugin {
+
+{@include org.crsh.auth.SimpleAuthenticationPlugin#getName()}
+
+{@include org.crsh.auth.SimpleAuthenticationPlugin#getImplementation()}
+
+  ...
+
+}
+{{/java}}
+
+* The ##getName()## method returns the //simple// value that matchs the //crash.auth// configuration property
+* The ##getImplementation()## method returns the object that implements the ##AuthenticationPlugin## class, this method
+is implemented from the ##CRaSHPlugin## abstract class, in our case it simply returns ##this## as the plugin and the
+implementation of ##AuthentionPlugin## are the same class
+
+Now let's study how the plugin retrieves the configuration properties ##crash.auth.simple.username## and ##crash.auth.simple.password##:
+
+{{java}}
+public class SimpleAuthenticationPlugin extends
+    CRaSHPlugin<AuthenticationPlugin> implements
+    AuthenticationPlugin {
+
+{@include org.crsh.auth.SimpleAuthenticationPlugin#SIMPLE_USERNAME}
+
+{@include org.crsh.auth.SimpleAuthenticationPlugin#SIMPLE_PASSWORD}
+
+{@include org.crsh.auth.SimpleAuthenticationPlugin#createConfigurationCapabilities()}
+
+{@include org.crsh.auth.SimpleAuthenticationPlugin#username}
+
+{@include org.crsh.auth.SimpleAuthenticationPlugin#password}
+
+{@include org.crsh.auth.SimpleAuthenticationPlugin#init()}
+
+  ...
+
+}
+{{/java}}
+
+* The ##createConfigurationCapabilities()## method returns the constants ##SIMPLE_USERNAME## and ##SIMPLE_PASSWORD## that defines
+the configuration properties that the plugin uses
+* The ##init()## method is invoked by CRaSH before the plugin will be used, at this moment, the configuration properties are retrieved
+from the plugin context with the method ##getContext()## available in the ##CRaSHPlugin## base class
+
+Finally the plugin needs to provide the ##authenticate()## method that implement the authentication logic:
+
+{{java}}
+{@include org.crsh.auth.SimpleAuthenticationPlugin#authenticate(java.lang.String,java.lang.String)}
+{{/java}}
+
+The logic is straightforward with an equality check of the username and password.
+
+Last but not least we must declare our plugin to make it recognized by CRaSH, this is achieved thanks to the ##java.util.ServiceLoader##
+class. CRaSH uses the ##ServiceLoader## for loading plugins and the loader needs a file to be present in the jar file containing
+the class under the name ##META-INF/services/org.crsh.plugin.CRaSHPlugin## containing the class name of the plugin:
+
+{{code}}
+org.crsh.auth.SimpleAuthenticationPlugin
+{{/code}}
+
+When all of this is done, the plugin and its service loader descriptor must be package in a jar file and available on the classpath
+of CRaSH.
+
+{{info}}You can learn more about the ##java.util.ServiceLoader## by looking at the online
+[[javadoc>>http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html]]
+{{/info}}

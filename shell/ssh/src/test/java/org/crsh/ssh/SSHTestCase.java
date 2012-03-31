@@ -19,6 +19,7 @@
 package org.crsh.ssh;
 
 import org.crsh.TestPluginLifeCycle;
+import org.crsh.auth.SimpleAuthenticationPlugin;
 import org.crsh.term.CodeType;
 import org.crsh.term.IOAction;
 import org.crsh.term.IOEvent;
@@ -55,8 +56,14 @@ public class SSHTestCase extends Assert {
 
     //
     IOHandler handler = new IOHandler();
-    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(new SSHPlugin(), handler);
+    SimpleAuthenticationPlugin auth = new SimpleAuthenticationPlugin();
+
+    //
+    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(new SSHPlugin(), handler, auth);
     lifeCycle.setProperty(SSHPlugin.SSH_PORT, port);
+    lifeCycle.setProperty(SSHPlugin.AUTH, auth.getName());
+    lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_USERNAME, "root");
+    lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_PASSWORD, "");
     lifeCycle.start();
     SSHClient client = new SSHClient(port).connect();
 

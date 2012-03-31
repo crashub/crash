@@ -38,10 +38,22 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+          <exclude>WEB-INF/crash/crash.properties</exclude>
+        </excludes>
+      </unpackOptions>
       <includes>
         <include>org.crsh:crsh.jcr.core:war</include>
       </includes>
     </dependencySet>
   </dependencySets>
+
+  <files>
+    <file>
+      <source>src/main/webapp/WEB-INF/crash/crash.properties</source>
+      <outputDirectory>WEB-INF/crash</outputDirectory>
+    </file>
+  </files>
 
 </assembly>

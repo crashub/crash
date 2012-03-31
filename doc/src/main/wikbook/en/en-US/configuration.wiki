@@ -1,7 +1,7 @@
 = Configuration properties =
 
-CRaSH is configured by a set of properties, those properties are defined in a configuration file. In the war file packaging,
-the configuration file can be found under ///WEB-INF/crash/crash.properties// file of the war. Configuration can be overriden
+CRaSH is configured by a set of properties, these properties are defined in a configuration file. In the war file packaging,
+the configuration file can be found under ///WEB-INF/crash/crash.properties// file of the archive. Configuration can be overriden
 by Java Virtual Machine system properties by using the same property name.
 
 {{note}}
@@ -45,3 +45,41 @@ The ///WEB-INF/crash/commands/base/login.groovy// file contains two closures tha
 * The ##welcome## closure returns the welcome message
 
 Those closure can be customized to return different messages.
+
+= Configuration the authentication =
+
+Authentication is used by the SSH server when a user authenticates. Authentication interface is pluggable and has default
+implementations. The [[#pluggable_auth]] explains how to write a custom authentication plugin, in this section we cover the
+configuation of the authentication.
+
+The configuration of the authentication plugin is done via property, this is necessary because several plugins can be detected
+by CRaSH, and the plugin is selected via the property //crash.auth// that must match the authentication plugin name:
+
+{{code}}
+crash.auth=simple
+{{/code}}
+
+CRaSH comes out of the box with two authentication plugins.
+
+== Simple authentication ==
+
+Simple authentication provides a simple username/password authentication configured with the //crash.auth.simple.username// and
+//crash.auth.simple.password// properties:
+
+{{code}}
+# Authentication configuration
+crash.auth=simple
+crash.auth.simple.username=admin
+crash.auth.simple.password=admin
+{{/code}}
+
+== Jaas authentation ==
+
+Jaas authentication uses jaas to perform authentication configured with the //crash.auth.jaas.domain// property to define the
+jaas domain to use when performing authentication:
+
+{{code}}
+# Authentication configuration
+crash.auth=jaas
+crash.auth.jaas.domain=gatein-domain
+{{/code}}

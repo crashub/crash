@@ -56,8 +56,19 @@
 
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.jcr.core</artifactId>
-      <classifier>standalone</classifier>
+      <artifactId>crsh.shell.ssh</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.ssh</artifactId>
+      <classifier>sources</classifier>
     </dependency>
 
     <dependency>

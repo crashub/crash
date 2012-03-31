@@ -23,7 +23,7 @@ import org.apache.sshd.common.Session;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
-import org.crsh.ssh.AuthenticationPlugin;
+import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.term.TermLifeCycle;
 import org.crsh.term.spi.TermIOHandler;
@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Iterator;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -57,6 +56,9 @@ public class SSHLifeCycle extends TermLifeCycle {
   /** . */
   private URL keyURL;
 
+  /** . */
+  private String authentication;
+
   public SSHLifeCycle(PluginContext context) {
     super(context);
   }
@@ -77,6 +79,14 @@ public class SSHLifeCycle extends TermLifeCycle {
     this.keyURL = keyURL;
   }
 
+  public String getAuthentication() {
+    return authentication;
+  }
+
+  public void setAuthentication(String authentication) {
+    this.authentication = authentication;
+  }
+
   @Override
   protected void doInit() {
     try {
@@ -91,16 +101,29 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setCommandFactory(new SCPCommandFactory(getContext()));
       server.setKeyPairProvider(new URLKeyPairProvider(keyURL));
 
-      AuthenticationPlugin plugin = null;
-      Iterator<AuthenticationPlugin> plugins = getContext().getPlugins(AuthenticationPlugin.class).iterator();
-      if (plugins.hasNext()) {
-        plugin = plugins.next();
-        if (plugins.hasNext()) {
-          throw new RuntimeException("More then one authentication plugin detected.");
+      // We never authenticate by default
+      AuthenticationPlugin plugin = new AuthenticationPlugin() {
+        public String getName() {
+          return "null";
+        }
+        public boolean authenticate(String username, String password) throws Exception {
+          return false;
+        }
+      };
+
+      // Lookup for an authentication plugin
+      if (authentication != null) {
+        for (AuthenticationPlugin authenticationPlugin : getContext().getPlugins(AuthenticationPlugin.class)) {
+          if (authentication.equals(authenticationPlugin.getName())) {
+            plugin = authenticationPlugin;
+            break;
+          }
         }
       }
 
+      //
       final AuthenticationPlugin authPlugin = plugin;
+
       //
       server.setPasswordAuthenticator(new PasswordAuthenticator() {
         public boolean authenticate(String _username, String _password, ServerSession session) {

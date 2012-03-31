@@ -1,1 +1,3 @@
 org.crsh.term.processor.ProcessorIOHandler
+org.crsh.auth.JaasAuthenticationPlugin
+org.crsh.auth.SimpleAuthenticationPlugin
