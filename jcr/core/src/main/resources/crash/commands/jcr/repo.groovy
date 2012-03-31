@@ -28,21 +28,33 @@ import org.crsh.shell.ui.UIBuilder
 import org.crsh.jcr.JCRPlugin
 
 @Usage("repository interaction commands")
+@Man("""\
+The repo commands allow to select a repository to use, it is the main entry point for using JCR commands.
+
+The set of available repository plugins can be discovered with the ls command:
+
+% repo ls
+Available JCR plugins:
+exo - Exo JCR plugin - You can use a container bound repository: 'repo use container=portal'
+
+A repository can then be selected with the use command.
+
+For the eXo repository you can use a container bound repository:
+% repo use container=portal
+
+For the jackrabbit implementation you can use a JNDI bound repository:
+% repo use org.apache.jackrabbit.repository.uri=rmi://localhost:1099/jackrabbit
+""")
 class repo extends org.crsh.jcr.command.JCRCommand {
 
   @Usage("changes the current repository")
-  @Man("""
-  The use command changes the current repository used by for JCR commands. The command must at least
-  have a URL parameter to be used in connecting to the repository.
+  @Man("""\
+The use command changes the current repository used by for JCR commands. The command accepts a set of properties
+as main command argument that will be used to select a repository:
 
-  For the eXo repository you can use a container bound repository:
-  % repo use container=portal
+% repo use parameterName=parameterValue;nextParameterName=nextParameterValue
 
-  For the jackrabbit implementation you can use a JNDI bound repository:
-  % repo use org.apache.jackrabbit.repository.uri=rmi://localhost:1099/jackrabbit
-
-  More generally:
-  % repo use parameterName=parameterValue;nextParameterName=nextParameterValue
+The parameters is specific to JCR plugin implementations, more details can be found thanks to the ls command.
 """)
   @Command
   public Object use(
@@ -51,6 +63,17 @@ class repo extends org.crsh.jcr.command.JCRCommand {
       @Man("The parameters used to instantiate the repository to be used in this session") InitProperties parameters) throws ScriptException {
     repository = JCRPlugin.findRepository(parameters.getProperties());
     return info();
+  }
+
+  @Usage("list the available repository plugins")
+  @Man("The ls command print the available repository plugins.")
+  @Command
+  public Object ls(){
+    StringBuilder sb = new StringBuilder("Available JCR plugins:\n")
+    JCRPlugin.findRepositories().each() { plugin ->
+      sb.append("$plugin.name - $plugin.displayName - $plugin.usage\n");
+    }
+    return sb.toString();
   }
 
   @Usage("show info about the current repository")

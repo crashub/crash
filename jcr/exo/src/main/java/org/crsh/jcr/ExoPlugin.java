@@ -29,6 +29,21 @@ import javax.jcr.Repository;
 public class ExoPlugin extends JCRPlugin<ExoPlugin> {
 
   @Override
+  public String getName() {
+    return "exo";
+  }
+
+  @Override
+  public String getDisplayName() {
+    return "Exo JCR plugin";
+  }
+
+  @Override
+  public String getUsage() {
+    return "You can use a container bound repository: 'repo use container=portal'";
+  }
+
+  @Override
   public ExoPlugin getImplementation() {
     return this;
   }

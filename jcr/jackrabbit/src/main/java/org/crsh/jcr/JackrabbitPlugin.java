@@ -34,7 +34,23 @@ public class JackrabbitPlugin extends JCRPlugin<JackrabbitPlugin> {
   public JackrabbitPlugin getImplementation() {
     return this;
   }
-  
+
+  @Override
+  public String getName() {
+    return "jackrabbit";
+  }
+
+  @Override
+  public String getDisplayName() {
+    return "Jackrabbit JCR plugin";
+  }
+
+  @Override
+  public String getUsage() {
+    return "The command must at least have a URL parameter to be used in connecting to the repository. " +
+      "You can use a JNDI bound repository: 'repo use org.apache.jackrabbit.repository.uri=rmi://localhost:1099/jackrabbit'";
+  }
+
   @Override
   public Repository getRepository(Map<String, String> properties) throws Exception {
     if (properties.containsKey(JcrUtils.REPOSITORY_URI) &&

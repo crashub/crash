@@ -44,6 +44,10 @@ public abstract class JCRPlugin<T extends JCRPlugin> extends CRaSHPlugin<T> {
     return null;
   }
 
+  public static Iterable<JCRPlugin> findRepositories() throws Exception {
+    return ServiceLoader.load(JCRPlugin.class);
+  }
+
   /** . */
   private static final Collection<String> NODES = Arrays.asList(
       "org.exoplatform.services.jcr.impl.core.NodeImpl",
@@ -61,6 +65,12 @@ public abstract class JCRPlugin<T extends JCRPlugin> extends CRaSHPlugin<T> {
   }
   
   public abstract Repository getRepository(Map<String, String> properties) throws Exception;
+
+  public abstract String getName();
+
+  public abstract String getDisplayName();
+
+  public abstract String getUsage();
 
   @Override
   public void init() {
