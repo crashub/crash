@@ -32,6 +32,24 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class PropertyDescriptor<T> {
 
+  public static PropertyDescriptor<String> create(String name, String defaultValue, String description) {
+    return new PropertyDescriptor<String>(String.class, name, defaultValue, description) {
+      @Override
+      protected String doParse(String s) throws Exception {
+        return s;
+      }
+    };
+  }
+
+  public static PropertyDescriptor<Integer> create(String name, Integer defaultValue, String description) {
+    return new PropertyDescriptor<Integer>(Integer.class, name, defaultValue, description) {
+      @Override
+      protected Integer doParse(String s) throws Exception {
+        return Integer.parseInt(s);
+      }
+    };
+  }
+
   /** . */
   private static final Map<String, PropertyDescriptor<?>> INTERNAL_ALL = new HashMap<String, PropertyDescriptor<?>>();
 
@@ -47,12 +65,7 @@ public abstract class PropertyDescriptor<T> {
   };
 
   /** . */
-  public static final PropertyDescriptor<Integer> VFS_REFRESH_PERIOD = new PropertyDescriptor<Integer>(Integer.class, "vfs.refresh_period", null, "The refresh rate period") {
-    @Override
-    public Integer doParse(String s) {
-      return Integer.parseInt(s);
-    }
-  };
+  public static final PropertyDescriptor<Integer> VFS_REFRESH_PERIOD = PropertyDescriptor.create("vfs.refresh_period", (Integer)null, "The refresh rate period");
 
   /** . */
   public final Class<T> type;

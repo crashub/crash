@@ -363,7 +363,6 @@ public final class PluginContext {
         TimeUnit tu = timeUnit != null ? timeUnit : TimeUnit.SECONDS;
         executor =  new ScheduledThreadPoolExecutor(1);
         executor.scheduleWithFixedDelay(new Runnable() {
-          int count = 0;
           public void run() {
             refresh();
           }

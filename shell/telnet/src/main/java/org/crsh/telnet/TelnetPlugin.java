@@ -31,12 +31,7 @@ import java.util.Collections;
 public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
 
   /** . */
-  public static final PropertyDescriptor<Integer> TELNET_PORT = new PropertyDescriptor<Integer>(Integer.class, "telnet.port", 5000, "The telnet port") {
-    @Override
-    public Integer doParse(String s) {
-      return Integer.parseInt(s);
-    }
-  };
+  public static final PropertyDescriptor<Integer> TELNET_PORT = PropertyDescriptor.create("telnet.port", 5000, "The telnet port");
 
   /** . */
   private TelnetLifeCycle lifeCycle;
