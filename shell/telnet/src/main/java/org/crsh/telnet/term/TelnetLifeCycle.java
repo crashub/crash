@@ -112,6 +112,7 @@ public class TelnetLifeCycle extends TermLifeCycle {
 
   @Override
   protected synchronized void doDestroy() {
+    log.info("Destroying telnet life cycle");
     if (listeners != null) {
       List<PortListener> listeners = this.listeners;
       this.listeners = null;

@@ -18,56 +18,109 @@
  */
 package org.crsh.standalone;
 
+import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cmdline.annotations.Command;
+import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.matcher.CommandMatch;
+import org.crsh.cmdline.matcher.InvocationContext;
+import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.term.processor.Processor;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
 import org.crsh.term.spi.net.TermIOClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
+import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
 public class Agent {
 
-  public static void agentmain(final String agentArgs, Instrumentation inst) throws Exception {
-    System.out.println("agent loaded");
+  /** . */
+  private static Logger log = LoggerFactory.getLogger(Agent.class);
 
+  public static void agentmain(final String agentArgs, Instrumentation inst) throws Exception {
+    log.info("CRaSH agent loaded");
+
+    //
     Thread t = new Thread() {
       @Override
       public void run() {
         try {
-          int port = Integer.parseInt(agentArgs);
-
-          final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
-
-          // Do bootstrap
-          bootstrap.bootstrap();
-
-          //
-          final TermIOClient client = new TermIOClient(port);
-          System.out.println("connecting to server port " + port);
-          client.connect();
-
-          //
-          Term term = new BaseTerm(client);
-          Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
-          processor.addListener(new Closeable() {
-            public void close() {
-              client.close();
-            }
-          });
-          processor.run();
-
-          // End for now
-          bootstrap.shutdown();
+          ClassDescriptor<Agent> c = CommandFactory.create(Agent.class);
+          Matcher<Agent> matcher = Matcher.createMatcher("main", c);
+          CommandMatch<Agent, ?, ?> match = matcher.match(agentArgs);
+          match.invoke(new InvocationContext(), new Agent());
         } catch (Exception e) {
           e.printStackTrace();
         }
       }
     };
+
+    //
     t.start();
+    log.info("Spanned CRaSH thread " + t.getId() + " for further processing");
+  }
+
+  @Command
+  public void main(
+    @Option(names={"j","jar"})
+    List<String> jars,
+    @Option(names={"p","path"})
+    List<String> paths,
+    @Argument(name = "port")
+    Integer port) throws Exception {
+
+    //
+    Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
+
+    //
+    if (paths != null) {
+      for (String path : paths) {
+        File mount = new File(path);
+        bootstrap.addToMounts(mount);
+      }
+    }
+
+    //
+    if (jars != null) {
+      for (String jar : jars) {
+        File jarFile = new File(jar);
+        bootstrap.addToClassPath(jarFile);
+      }
+    }
+
+    // Do bootstrap
+    bootstrap.bootstrap();
+
+    //
+    try {
+      final TermIOClient client = new TermIOClient(port);
+      log.info("Callback back remote on port " + port);
+      client.connect();
+
+      // Do stuff
+      Term term = new BaseTerm(client);
+      Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
+      processor.addListener(new Closeable() {
+        public void close() {
+          client.close();
+        }
+      });
+
+      // Run
+      processor.run();
+    }
+    finally {
+      bootstrap.shutdown();
+    }
   }
 }

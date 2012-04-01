@@ -80,7 +80,7 @@ class ShellInvoker implements ShellProcessContext {
 
       //
       if (response instanceof ShellResponse.Close) {
-        System.out.println("received close response");
+        processor.log.debug("received close response");
         result.set(State.WANT_CLOSE);
       } else {
         if (response instanceof ShellResponse.Cancelled) {

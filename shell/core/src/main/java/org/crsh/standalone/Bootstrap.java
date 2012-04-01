@@ -20,11 +20,18 @@
 package org.crsh.standalone;
 
 import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.PluginDiscovery;
 import org.crsh.plugin.PluginLifeCycle;
 import org.crsh.plugin.ServiceLoaderDiscovery;
+import org.crsh.util.Utils;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -33,45 +40,69 @@ import org.crsh.vfs.Path;
 public class Bootstrap extends PluginLifeCycle {
 
   /** . */
-  private final ClassLoader classLoader;
+  protected final Logger log = LoggerFactory.getLogger(getClass());
 
-  /** . */
-  private PluginDiscovery discovery;
+  /** The mounted path on the file system. */
+  private List<File> mounts = Utils.newArrayList();
 
-  /** . */
-  private FS fileSystem;
+  /** The class path. */
+  private List<File> classPath = Utils.newArrayList();
 
-  public Bootstrap(ClassLoader classLoader) throws Exception {
+  /** The base classloader. */
+  private ClassLoader baseLoader;
 
-    //
-    FS fs = new FS();
-    fs.mount(new java.io.File("crash"));
-    fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
-
-    //
-    this.fileSystem = fs;
-    this.classLoader = classLoader;
-    this.discovery = new ServiceLoaderDiscovery(classLoader);
+  public Bootstrap(ClassLoader baseLoader) throws NullPointerException {
+    if (baseLoader == null) {
+      throw new NullPointerException("No null base loader accepted");
+    }
+    this.baseLoader = baseLoader;
   }
 
-  public PluginDiscovery getDiscovery() {
-    return discovery;
+  public Bootstrap addToMounts(File file) {
+    mounts.add(file);
+    return this;
   }
 
-  public void setDiscovery(PluginDiscovery discovery) {
-    this.discovery = discovery;
-  }
-
-  public FS getFileSystem() {
-    return fileSystem;
-  }
-
-  public void setFileSystem(FS fileSystem) {
-    this.fileSystem = fileSystem;
+  public Bootstrap addToClassPath(File file) {
+    classPath.add(file);
+    return this;
   }
 
   public void bootstrap() throws Exception {
-    PluginContext context = new PluginContext(discovery, fileSystem, classLoader);
+
+    // Compute the url classpath
+    URL[] urls = new URL[classPath.size()];
+    for (int i = 0;i < urls.length;i++) {
+      urls[i] = classPath.get(i).toURI().toURL();
+    }
+
+    // Create the classloader
+    URLClassLoader classLoader = new URLClassLoader(urls, baseLoader);
+
+    // Create the virtual file system
+    FS fs = new FS();
+    for (File file : mounts) {
+      fs.mount(file);
+    }
+    fs.mount(classLoader, Path.get("/crash/"));
+
+    // The service loader discovery
+    ServiceLoaderDiscovery discovery = new ServiceLoaderDiscovery(classLoader);
+
+    //
+    StringBuilder info = new StringBuilder("Booting crash with classpath=");
+    info.append(classPath).append(" and mounts=[");
+    for (int i = 0;i < mounts.size();i++) {
+      if (i > 0) {
+        info.append(',');
+      }
+      info.append(mounts.get(i).getAbsolutePath());
+    }
+    info.append(']');
+    log.info(info.toString());
+
+    //
+    PluginContext context = new PluginContext(discovery, fs, classLoader);
     context.refresh();
     start(context);
   }

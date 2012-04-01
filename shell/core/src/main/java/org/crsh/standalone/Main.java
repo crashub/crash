@@ -20,14 +20,27 @@
 package org.crsh.standalone;
 
 import com.sun.tools.attach.VirtualMachine;
+import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cmdline.annotations.Command;
+import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.annotations.Usage;
+import org.crsh.cmdline.matcher.CommandMatch;
+import org.crsh.cmdline.matcher.InvocationContext;
+import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.term.processor.Processor;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
 import org.crsh.term.spi.jline.JLineIO;
 import org.crsh.term.spi.net.TermIOServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.*;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -35,22 +48,64 @@ import java.net.*;
  */
 public class Main {
 
-  public static void main(String[] args) throws Exception {
+  /** . */
+  private static Logger log = LoggerFactory.getLogger(Main.class);
 
-    if (args.length > 0) {
+  @Command
+  public void main(
+    @Option(names={"j","jar"})
+    @Usage("specify a file system path of a jar added to the class path")
+    List<String> jars,
+    @Option(names={"p","path"})
+    @Usage("specify a file system path of a dir added to the mount path")
+    List<String> paths,
+    @Argument(name = "pid")
+    @Usage("the optional JVM process id to attach to")
+    Integer pid) throws Exception {
+
+    //
+    if (pid != null) {
       // Standalone
-      String id = args[0];
       URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();
       java.io.File f = new java.io.File(url.toURI());
-      VirtualMachine vm = VirtualMachine.attach(id);
-
-      TermIOServer server = new TermIOServer(new JLineIO(), 0);
-      int port = server.bind();
-      System.out.println("Bound on port " + port);
+      log.info("Attaching to remote process " + pid);
+      VirtualMachine vm = VirtualMachine.attach("" + pid);
 
       //
-      System.out.println("Loading agent");
-      vm.loadAgent(f.getCanonicalPath(), "" + port);
+      TermIOServer server = new TermIOServer(new JLineIO(), 0);
+      int port = server.bind();
+      log.info("Callback server set on port " + port);
+
+      // Build the options
+      StringBuilder sb = new StringBuilder();
+
+      // Rewrite absolute path
+      if (paths != null) {
+        for (String path : paths) {
+          File file = new File(path);
+          if (file.exists()) {
+            sb.append("--path ").append(file.getAbsolutePath()).append(' ');
+          }
+        }
+      }
+
+      // Rewrite absolute path
+      if (jars != null) {
+        for (String jar : jars) {
+          File file = new File(jar);
+          if (file.exists()) {
+            sb.append("--jar ").append(file.getAbsolutePath()).append(' ');
+          }
+        }
+      }
+
+      // Append callback port
+      sb.append(port);
+
+      //
+      String options = sb.toString();
+      log.info("Loading agent with command " + options);
+      vm.loadAgent(f.getCanonicalPath(), options);
 
       //
       try {
@@ -64,11 +119,27 @@ public class Main {
     } else {
       final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
+      //
+      if (paths != null) {
+        for (String path : paths) {
+          File mount = new File(path);
+          bootstrap.addToMounts(mount);
+        }
+      }
+
+      //
+      if (jars != null) {
+        for (String jar : jars) {
+          File jarFile = new File(jar);
+          bootstrap.addToClassPath(jarFile);
+        }
+      }
+
       // Register shutdown hook
       Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
-          bootstrap.shutdown();
+          // Should trigger some kind of run interruption
         }
       });
 
@@ -80,7 +151,29 @@ public class Main {
       Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
 
       //
-      processor.run();
+      try {
+        processor.run();
+      }
+      finally {
+        bootstrap.shutdown();
+      }
     }
+  }
+
+  public static void main(String[] args) throws Exception {
+
+    StringBuilder line = new StringBuilder();
+    for (int i = 0;i < args.length;i++) {
+      if (i  > 0) {
+        line.append(' ');
+      }
+      line.append(args[i]);
+    }
+
+    //
+    ClassDescriptor<Main> c = CommandFactory.create(Main.class);
+    Matcher<Main> matcher = Matcher.createMatcher("main", c);
+    CommandMatch<Main, ?, ?> match = matcher.match(line.toString());
+    match.invoke(new InvocationContext(), new Main());
   }
 }
