@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term;
+package org.crsh.shell.concurrent;
 
 import junit.framework.TestCase;
 import org.crsh.BaseProcess;
@@ -25,9 +25,6 @@ import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.shell.*;
-import org.crsh.shell.concurrent.AsyncShell;
-import org.crsh.shell.concurrent.Status;
-import org.crsh.shell.concurrent.SyncShellResponseContext;
 
 import java.util.Collections;
 import java.util.LinkedList;
