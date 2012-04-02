@@ -25,6 +25,14 @@ package org.crsh.shell.concurrent;
  */
 public enum Status {
 
-  INITIAL, AVAILABLE, EVALUATING, CANCELED, CLOSED
+  CONSTRUCTED,
+
+  QUEUED,
+
+  EVALUATING,
+
+  CANCELED,
+
+  TERMINATED
 
 }

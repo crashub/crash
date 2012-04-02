@@ -119,6 +119,18 @@ public abstract class ShellResponse {
     }
 
     @Override
+    public boolean equals(Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (obj instanceof Display) {
+        Display that = (Display)obj;
+        return text.equals(that.text);
+      }
+      return false;
+    }
+
+    @Override
     public String getText() {
       return text;
     }

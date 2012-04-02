@@ -46,8 +46,9 @@ public interface Shell {
    *
    * @param request the request to process
    * @return the process
+   * @throws IllegalStateException if the shell cannot create a process
    */
-  ShellProcess createProcess(String request);
+  ShellProcess createProcess(String request) throws IllegalStateException;
 
   /**
    * Completion.

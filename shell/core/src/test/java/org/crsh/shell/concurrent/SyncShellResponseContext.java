@@ -19,11 +19,14 @@
 
 package org.crsh.shell.concurrent;
 
+import junit.framework.Assert;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 
+import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -32,7 +35,10 @@ import java.util.concurrent.CountDownLatch;
 public class SyncShellResponseContext implements ShellProcessContext {
 
   /** . */
-  private final ShellProcessContext wrapped;
+  private final LinkedList<String> output = new LinkedList<String>();
+
+  /** . */
+  private final LinkedList<String> input = new LinkedList<String>();
 
   /** . */
   private ShellResponse response;
@@ -41,52 +47,60 @@ public class SyncShellResponseContext implements ShellProcessContext {
   private final CountDownLatch latch;
 
   /** . */
-  private ShellProcess process;
+  private int width;
 
   public SyncShellResponseContext() {
-    this(null);
-  }
-
-  public SyncShellResponseContext(ShellProcessContext wrapped) {
-    this.wrapped = wrapped;
     this.latch = new CountDownLatch(1);
     this.response = null;
+    this.width = 32;
   }
 
-/*
-  public void cancel() {
-    throw new UnsupportedOperationException();
+  public SyncShellResponseContext addLineInput(String line) {
+    input.add(line);
+    return this;
   }
 
-*/
+  public SyncShellResponseContext assertLineOutput(String expected) {
+    Assert.assertTrue(output.size() > 0);
+    String test = output.removeFirst();
+    Assert.assertEquals(expected,  test);
+    return this;
+  }
+
+  public SyncShellResponseContext assertNoOutput() {
+    Assert.assertEquals(0, output.size());
+    return this;
+  }
+
+  public SyncShellResponseContext assertNoInput() {
+    Assert.assertEquals(0, input.size());
+    return this;
+  }
+
   public int getWidth() {
-    return wrapped.getWidth();
+    return width;
+  }
+
+  public void setWidth(int width) {
+    this.width = width;
   }
 
   public String getProperty(String name) {
-    return wrapped.getProperty(name);
+    return null;
   }
 
   public String readLine(String msg, boolean echo) {
-    if (wrapped != null) {
-      return wrapped.readLine(msg, echo);
-    } else {
-      return null;
-    }
+    output.addLast(msg);
+    return input.isEmpty() ? null : input.removeLast();
   }
 
   public void end(ShellResponse response) {
     this.response = response;
     this.latch.countDown();
-
-    //
-    if (wrapped != null) {
-      wrapped.end(response);
-    }
   }
 
   public ShellResponse getResponse() throws InterruptedException {
-    latch.await();
+    latch.await(3, TimeUnit.SECONDS);
     return response;
   }
 }

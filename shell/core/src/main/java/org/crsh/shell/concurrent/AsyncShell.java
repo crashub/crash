@@ -21,12 +21,15 @@ package org.crsh.shell.concurrent;
 
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellProcessContext;
 
 import java.io.Closeable;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.Set;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorCompletionService;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -35,132 +38,48 @@ import java.util.concurrent.ExecutorService;
 public class AsyncShell implements Shell, Closeable {
 
   /** . */
-  private final Object lock;
+  final Shell shell;
 
   /** . */
-  private Status status;
+  private AsyncProcess current;
 
   /** . */
-  private Shell shell;
+  final CompletionService<AsyncProcess> executor;
 
   /** . */
-  private Process current;
+  boolean closed;
 
   /** . */
-  private final ExecutorService executor;
+  final Object lock = new Object();
 
-  public AsyncShell(ExecutorService executor, Shell shell) {
-    this.lock = new Object();
-    this.status = Status.AVAILABLE;
+  /** . */
+  final Set<AsyncProcess> processes;
+
+  public AsyncShell(Executor executor, Shell shell) {
     this.shell = shell;
     this.current = null;
-    this.executor = executor;
-  }
-
-  public Status getStatus() {
-    synchronized (lock) {
-      return status;
-    }
+    this.executor = new ExecutorCompletionService<AsyncProcess>(executor);
+    this.closed = false;
+    this.processes = Collections.synchronizedSet(new HashSet<AsyncProcess>());
   }
 
   public void close() {
+
+    AsyncProcess[] toCancel = null;
     synchronized (lock) {
-      switch (status) {
-        case INITIAL:
-        case AVAILABLE:
-          break;
-        case CANCELED:
-        case EVALUATING:
-          throw new UnsupportedOperationException("todo :-) " + status);
-        case CLOSED:
-          break;
-      }
-      status = Status.CLOSED;
-    }
-  }
-
-  private class Process implements ShellProcessContext, Runnable, ShellProcess {
-
-
-    /** . */
-    private final String request;
-
-    /** . */
-    private ShellProcessContext caller;
-
-    /** . */
-    private ShellProcess callee;
-
-    private Process(String request) {
-      this.request = request;
-      this.callee = null;
-    }
-
-    // ShellProcessContext implementation ******************************************************************************
-
-    public int getWidth() {
-      return caller.getWidth();
-    }
-
-    public String getProperty(String name) {
-      return caller.getProperty(name);
-    }
-
-    public String readLine(String msg, boolean echo) {
-      return caller.readLine(msg, echo);
-    }
-
-    public void end(ShellResponse response) {
-
-      synchronized (lock) {
-
-        // Signal response
-        if (status == Status.CANCELED) {
-          caller.end(new ShellResponse.Cancelled());
-        } else {
-          caller.end(response);
-        }
-
-        // Update state
-        current = null;
-        status = Status.AVAILABLE;
+      if (closed) {
+        toCancel = null;
+      } else {
+        closed = true;
+        toCancel = processes.toArray(new AsyncProcess[processes.size()]);
       }
     }
 
-    // ShellProcess implementation *************************************************************************************
-
-    public void execute(ShellProcessContext processContext) {
-      synchronized (lock) {
-
-        if (status != Status.AVAILABLE) {
-          throw new IllegalStateException("State was " + status);
-        }
-
-        //
-        // Update state
-        status = Status.EVALUATING;
-        current = this;
-        callee = shell.createProcess(request);
-        caller = processContext;
+    // Cancel all process
+    if (toCancel != null) {
+      for (AsyncProcess process : toCancel) {
+        process.cancel();
       }
-
-      //
-      executor.submit(current);
-    }
-
-    public void cancel() {
-      synchronized (lock) {
-        if (status == Status.EVALUATING) {
-          status = Status.CANCELED;
-          callee.cancel();
-        }
-      }
-    }
-
-    // Runnable implementation *****************************************************************************************
-
-    public void run() {
-      callee.execute(this);
     }
   }
 
@@ -178,7 +97,12 @@ public class AsyncShell implements Shell, Closeable {
     return shell.complete(prefix);
   }
 
-  public ShellProcess createProcess(String request) {
-    return new Process(request);
+  public AsyncProcess createProcess(String request) {
+    synchronized (lock) {
+      if (closed) {
+        throw new IllegalStateException();
+      }
+    }
+    return new AsyncProcess(this, request);
   }
 }
