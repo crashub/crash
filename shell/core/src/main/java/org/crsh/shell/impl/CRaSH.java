@@ -1,262 +1,31 @@
-/*
- * Copyright (C) 2003-2009 eXo Platform SAS.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
 package org.crsh.shell.impl;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-import org.codehaus.groovy.control.CompilationFailedException;
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.command.impl.BaseCommandContext;
-import org.crsh.command.CommandInvoker;
+import groovy.lang.Script;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
-import org.crsh.shell.ErrorType;
-import org.crsh.shell.Shell;
-import org.crsh.shell.ShellProcess;
-import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.ShellResponse;
-import org.crsh.util.TimestampedObject;
-import org.crsh.util.Utils;
-import org.crsh.vfs.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+/** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
+public class CRaSH {
 
-/**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
-public class CRaSH implements Shell, Closeable {
 
   /** . */
-  static final Logger log = LoggerFactory.getLogger(CRaSH.class);
+  final ClassManager<ShellCommand> commands;
 
   /** . */
-  private final GroovyShell groovyShell;
+  final ClassManager<Script> lifecycles;
 
   /** . */
-  private final PluginContext context;
+  final PluginContext context;
 
-  /** . */
-  private final Map<String, TimestampedObject<Class<? extends ShellCommand>>> commands;
-
-  /** . */
-  final Map<String, Object> attributes;
-
-  /**
-   * Attempt to obtain a command instance. Null is returned when such command does not exist.
-   *
-   * @param name the command name
-   * @return a command instance
-   * @throws CreateCommandException if an error occured preventing the command creation
-   * @throws NullPointerException if the name argument is null
-   */
-  public ShellCommand getCommand(String name) throws CreateCommandException, NullPointerException {
-    if (name == null) {
-      throw new NullPointerException("No null argument allowed");
-    }
-
-    TimestampedObject<Class<? extends ShellCommand>> providerRef = commands.get(name);
-
-    //
-    Resource script = context.loadResource(name, ResourceKind.COMMAND);
-
-    //
-    if (script != null) {
-      if (providerRef != null) {
-        if (script.getTimestamp() != providerRef.getTimestamp()) {
-          providerRef = null;
-        }
-      }
-
-      //
-      if (providerRef == null) {
-
-        Class<?> clazz;
-        try {
-          clazz = groovyShell.getClassLoader().parseClass(script.getContent(), name);
-        }
-        catch (CompilationFailedException e) {
-          throw new CreateCommandException(ErrorType.INTERNAL, "Could not compile command script " + name, e);
-        }
-
-        //
-        if (ShellCommand.class.isAssignableFrom(clazz)) {
-          Class<? extends ShellCommand> providerClass = clazz.asSubclass(ShellCommand.class);
-          providerRef = new TimestampedObject<Class<? extends ShellCommand>>(script.getTimestamp(), providerClass);
-          commands.put(name, providerRef);
-        } else {
-          throw new CreateCommandException(ErrorType.INTERNAL, "Parsed script " + clazz.getName() +
-            " does not implements " + CommandInvoker.class.getName());
-        }
-      }
-    }
-
-    //
-    if (providerRef == null) {
-      return null;
-    }
-
-    //
-    try {
-      return providerRef.getObject().newInstance();
-    }
-    catch (Exception e) {
-      throw new CreateCommandException(ErrorType.INTERNAL, "Could not create command " + providerRef.getObject().getName() + " instance", e);
-    }
-  }
-
-  public GroovyShell getGroovyShell() {
-    return groovyShell;
-  }
-
-  public Object getAttribute(String name) {
-    return attributes.get(name);
-  }
-
-  public void setAttribute(String name, Object value) {
-    attributes.put(name, value);
-  }
-
-  public CRaSH(final PluginContext context) {
-    HashMap<String, Object> attributes = new HashMap<String, Object>();
-
-    // Set variable available to all scripts
-    attributes.put("shellContext", context);
-    attributes.put("shell", this);
-
-    //
-    CompilerConfiguration config = new CompilerConfiguration();
-    config.setRecompileGroovySource(true);
-    config.setScriptBaseClass(GroovyScriptCommand.class.getName());
-    GroovyShell groovyShell = new GroovyShell(context.getLoader(), new Binding(attributes), config);
-
-    // Evaluate login script
-    String script = context.loadResource("login", ResourceKind.LIFECYCLE).getContent();
-    groovyShell.evaluate(script, "login");
-
-    //
-    this.attributes = attributes;
-    this.groovyShell = groovyShell;
-    this.commands = new ConcurrentHashMap<String, TimestampedObject<Class<? extends ShellCommand>>>();
+  public CRaSH(PluginContext context) {
     this.context = context;
+    this.commands = new ClassManager<ShellCommand>(context, ResourceKind.COMMAND, ShellCommand.class, GroovyScriptCommand.class);
+    this.lifecycles = new ClassManager<Script>(context, ResourceKind.LIFECYCLE, Script.class, Script.class);
   }
 
-  public void close() {
-    // Evaluate logout script
-    String script = context.loadResource("logout", ResourceKind.LIFECYCLE).getContent();
-    groovyShell.evaluate(script, "logout");
-  }
-
-  // Shell implementation **********************************************************************************************
-
-  public String getWelcome() {
-    return groovyShell.evaluate("welcome();").toString();
-  }
-
-  public String getPrompt() {
-    return groovyShell.evaluate("prompt();").toString();
-  }
-
-  public ShellProcess createProcess(String request) {
-    log.debug("Invoking request " + request);
-    final ShellResponse response;
-    if ("bye".equals(request) || "exit".equals(request)) {
-      response = new ShellResponse.Close();
-    } else {
-
-      // Create AST
-      Parser parser = new Parser(request);
-      AST ast = parser.parse();
-
-      //
-      if (ast instanceof AST.Expr) {
-        AST.Expr expr = (AST.Expr)ast;
-
-        // Create commands first
-        try {
-          return expr.create(this, request);
-        } catch (CreateCommandException e) {
-          response = e.getResponse();
-        }
-      } else {
-        response = ShellResponse.noCommand();
-      }
-    }
-
-    //
-    return new CRaSHProcess(this, request) {
-      @Override
-      ShellResponse invoke(ShellProcessContext context) throws InterruptedException {
-        return response;
-      }
-    };
-  }
-
-  /**
-   * For now basic implementation
-   */
-  public Map<String, String> complete(final String prefix) {
-    log.debug("Want prefix of " + prefix);
-    AST ast = new Parser(prefix).parse();
-    String termPrefix;
-    if (ast != null) {
-      AST.Term last = ast.lastTerm();
-      termPrefix = Utils.trimLeft(last.getLine());
-    } else {
-      termPrefix = "";
-    }
-
-    //
-    log.debug("Retained term prefix is " + prefix);
-    Map<String, String> completions = Collections.emptyMap();
-    int pos = termPrefix.indexOf(' ');
-    if (pos == -1) {
-      completions = new HashMap<String, String>();
-      for (String resourceId : context.listResourceId(ResourceKind.COMMAND)) {
-        if (resourceId.startsWith(termPrefix)) {
-          completions.put(resourceId.substring(termPrefix.length()), " ");
-        }
-      }
-    } else {
-      String commandName = termPrefix.substring(0, pos);
-      termPrefix = termPrefix.substring(pos);
-      try {
-        ShellCommand command = getCommand(commandName);
-        if (command != null) {
-          completions = command.complete(new BaseCommandContext(attributes), termPrefix);
-        }
-      }
-      catch (CreateCommandException e) {
-        log.debug("Could not create command for completion of " + prefix, e);
-      }
-    }
-
-    //
-    log.debug("Found completions for " + prefix + ": " + completions);
-    return completions;
+  public CRaSHSession createSession() {
+    return new CRaSHSession(this);
   }
 }

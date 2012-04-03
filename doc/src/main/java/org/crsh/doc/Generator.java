@@ -28,6 +28,7 @@ import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.plugin.ServiceLoaderDiscovery;
 import org.crsh.shell.impl.CRaSH;
+import org.crsh.shell.impl.CRaSHSession;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 
@@ -55,7 +56,7 @@ public class Generator {
     fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
     PluginContext ctx = new PluginContext(new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()), fs, Thread.currentThread().getContextClassLoader());
     ctx.refresh();
-    CRaSH crash = new CRaSH(ctx);
+    CRaSHSession crash = new CRaSH(ctx).createSession();
     for (String s : ctx.listResourceId(ResourceKind.COMMAND)) {
       ShellCommand cmd = crash.getCommand(s);
       StringBuilder man = new StringBuilder();

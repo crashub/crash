@@ -22,6 +22,7 @@ package org.crsh;
 
 import org.crsh.plugin.*;
 import org.crsh.shell.impl.CRaSH;
+import org.crsh.shell.impl.CRaSHSession;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 
@@ -32,6 +33,9 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
 
   /** . */
   private final PluginContext context;
+
+  /** . */
+  private CRaSH crash;
 
   public TestPluginLifeCycle() throws Exception {
     this(Thread.currentThread().getContextClassLoader());
@@ -50,6 +54,7 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
         discovery,
         new FS().mount(classLoader,
         Path.get("/crash/")), classLoader);
+    this.crash = new CRaSH(context);
   }
 
   public <T> void setProperty(PropertyDescriptor<T> desc, T value) throws NullPointerException {
@@ -61,8 +66,8 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
     start(context);
   }
 
-  public CRaSH createShell() {
-    return new CRaSH(context);
+  public CRaSHSession createShell() {
+    return crash.createSession();
   }
 }
 

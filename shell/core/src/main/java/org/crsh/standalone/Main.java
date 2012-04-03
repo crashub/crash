@@ -29,8 +29,8 @@ import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
-import org.crsh.term.processor.Processor;
 import org.crsh.shell.impl.CRaSH;
+import org.crsh.term.processor.Processor;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
 import org.crsh.term.spi.jline.JLineIO;
@@ -148,7 +148,8 @@ public class Main {
 
       // Start crash for this command line
       Term term = new BaseTerm(new JLineIO());
-      Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
+      CRaSH crash = new CRaSH(bootstrap.getContext());
+      Processor processor = new Processor(term, crash.createSession());
 
       //
       try {

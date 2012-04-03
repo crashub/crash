@@ -21,7 +21,6 @@ package org.crsh.shell.impl;
 
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
-import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 
@@ -54,7 +53,7 @@ abstract class AST {
       this.next = next;
     }
 
-    final CRaSHProcess create(CRaSH crash, String request) throws CreateCommandException {
+    final CRaSHProcess create(CRaSHSession crash, String request) throws CreateCommandException {
       term.create(crash);
       if (next != null) {
         next.create(crash);
@@ -67,14 +66,14 @@ abstract class AST {
       };
     }
 
-    private void create(CRaSH crash) throws CreateCommandException {
+    private void create(CRaSHSession crash) throws CreateCommandException {
       term.create(crash);
       if (next != null) {
         next.create(crash);
       }
     }
 
-    protected ShellResponse execute(CRaSH crash, ShellProcessContext context, ArrayList consumed) throws InterruptedException {
+    protected ShellResponse execute(CRaSHSession crash, ShellProcessContext context, ArrayList consumed) throws InterruptedException {
 
       // What will be produced by this expression
       ArrayList produced = new ArrayList();
@@ -184,7 +183,7 @@ abstract class AST {
       this.next = next;
     }
 
-    private void create(CRaSH crash) throws CreateCommandException {
+    private void create(CRaSHSession crash) throws CreateCommandException {
       CommandInvoker invoker = null;
       if (name != null) {
         command = crash.getCommand(name);

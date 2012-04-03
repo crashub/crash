@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.shell.impl.CRaSH;
+import org.crsh.shell.impl.CRaSHSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public abstract class AbstractCommandTestCase extends TestCase {
   protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
-  protected CRaSH shell;
+  protected CRaSHSession shell;
 
   /** . */
   protected GroovyShell groovyShell;

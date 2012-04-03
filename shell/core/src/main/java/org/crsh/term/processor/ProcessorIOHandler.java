@@ -3,6 +3,7 @@ package org.crsh.term.processor;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.concurrent.AsyncShell;
 import org.crsh.shell.impl.CRaSH;
+import org.crsh.shell.impl.CRaSHSession;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.spi.TermIO;
 import org.crsh.term.spi.TermIOHandler;
@@ -18,6 +19,9 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
   /** . */
   private ExecutorService executor;
 
+  /** . */
+  private CRaSH crash;
+
   @Override
   public TermIOHandler getImplementation() {
     return this;
@@ -26,6 +30,7 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
   @Override
   public void init() {
     this.executor = Executors.newFixedThreadPool(3);
+    this.crash = new CRaSH(getContext());
   }
 
   @Override
@@ -36,8 +41,8 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
   }
 
   public void handle(final TermIO io) {
-    final CRaSH shell = new CRaSH(getContext());
-    final AsyncShell asyncShell = new AsyncShell(executor, shell);
+    CRaSHSession shell = crash.createSession();
+    AsyncShell asyncShell = new AsyncShell(executor, shell);
     BaseTerm term = new BaseTerm(io);
     Processor processor = new Processor(term, asyncShell);
     processor.addListener(io);

@@ -18,7 +18,6 @@
  */
 package org.crsh.shell.impl;
 
-import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -29,7 +28,7 @@ import org.crsh.shell.ShellResponse;
 abstract class CRaSHProcess implements ShellProcess {
 
   /** . */
-  protected final CRaSH crash;
+  protected final CRaSHSession crash;
 
   /** . */
   protected final String request;
@@ -37,7 +36,7 @@ abstract class CRaSHProcess implements ShellProcess {
   /** . */
   private volatile Thread thread;
 
-  protected CRaSHProcess(CRaSH crash, String request) {
+  protected CRaSHProcess(CRaSHSession crash, String request) {
     this.crash = crash;
     this.request = request;
   }
@@ -66,9 +65,9 @@ abstract class CRaSHProcess implements ShellProcess {
       ShellResponse.Error error = (ShellResponse.Error)resp;
       Throwable t = error.getThrowable();
       if (t != null) {
-        CRaSH.log.error("Error while evaluating request '" + request + "' " + error.getText(), t);
+        CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getText(), t);
       } else {
-        CRaSH.log.error("Error while evaluating request '" + request + "' " + error.getText());
+        CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getText());
       }
     }
   }

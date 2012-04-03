@@ -26,8 +26,9 @@ import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
-import org.crsh.term.processor.Processor;
 import org.crsh.shell.impl.CRaSH;
+import org.crsh.shell.impl.CRaSHSession;
+import org.crsh.term.processor.Processor;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
 import org.crsh.term.spi.net.TermIOClient;
@@ -109,7 +110,8 @@ public class Agent {
 
       // Do stuff
       Term term = new BaseTerm(client);
-      Processor processor = new Processor(term, new CRaSH(bootstrap.getContext()));
+      CRaSH crash = new CRaSH(bootstrap.getContext());
+      Processor processor = new Processor(term, crash.createSession());
       processor.addListener(new Closeable() {
         public void close() {
           client.close();
