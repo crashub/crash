@@ -3,7 +3,7 @@
   <parent>
     <artifactId>crsh.parent</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.0.0-beta25-SNAPSHOT</version>
+    <version>1.0.0-cr1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -30,23 +30,23 @@
             <phase>generate-resources</phase>
             <configuration>
               <target>
-                <property name="doc" value="${project.build.directory}/doc/"/>
-                <property name="site" value="${project.build.directory}/classes/"/>
+                <property name="doc" value="${project.build.directory}/doc/" />
+                <property name="site" value="${project.build.directory}/classes/" />
 
                 <!-- Reference guide -->
-                <unzip src="${org.crsh:crsh.doc:zip:html}" dest="${doc}"/>
-                <copy file="${doc}/index.html" tofile="${site}/doc.html"/>
+                <unzip src="${org.crsh:crsh.doc:zip:html}" dest="${doc}" />
+                <copy file="${doc}/index.html" tofile="${site}/doc.html" />
                 <copy todir="${site}/css">
                   <fileset dir="${doc}/css">
-                    <include name="wikbook.css"/>
-                    <include name="bootstrap/prettify.css"/>
+                    <include name="wikbook.css" />
+                    <include name="bootstrap/prettify.css" />
                   </fileset>
                 </copy>
                 <copy todir="${site}/js">
-                  <fileset dir="${doc}/js/bootstrap" includes="google-code-prettify/**"/>
+                  <fileset dir="${doc}/js/bootstrap" includes="google-code-prettify/**" />
                 </copy>
                 <copy todir="${site}/images">
-                  <fileset dir="${doc}/images"/>
+                  <fileset dir="${doc}/images" />
                 </copy>
               </target>
             </configuration>

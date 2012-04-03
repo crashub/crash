@@ -4,7 +4,7 @@
   <groupId>org.crsh</groupId>
   <artifactId>crsh.parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-beta25-SNAPSHOT</version>
+  <version>1.0.0-cr1</version>
 
   <name>CRaSH parent</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
@@ -140,12 +140,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cmdline</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cmdline</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -153,25 +153,25 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -179,12 +179,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -192,12 +192,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -205,12 +205,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>war</type>
       </dependency>
 
@@ -218,37 +218,37 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -256,13 +256,13 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.exo</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.exo</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>war</type>
       </dependency>
 
@@ -270,13 +270,13 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.jackrabbit</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.jackrabbit</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>war</type>
       </dependency>
 
@@ -284,20 +284,20 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <type>pdf</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.0.0-beta25-SNAPSHOT</version>
+        <version>1.0.0-cr1</version>
         <classifier>javadoc</classifier>
       </dependency>
 
