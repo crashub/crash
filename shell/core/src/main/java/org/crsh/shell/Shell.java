@@ -22,6 +22,8 @@ package org.crsh.shell;
 import java.util.Map;
 
 /**
+ * A shell, it defines the interactions provided by a shell.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
