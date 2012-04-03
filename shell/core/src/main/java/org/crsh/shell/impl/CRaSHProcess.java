@@ -34,6 +34,9 @@ abstract class CRaSHProcess implements ShellProcess {
   /** . */
   protected final String request;
 
+  /** . */
+  private volatile Thread thread;
+
   protected CRaSHProcess(CRaSH crash, String request) {
     this.crash = crash;
     this.request = request;
@@ -41,10 +44,18 @@ abstract class CRaSHProcess implements ShellProcess {
 
   public void execute(ShellProcessContext processContext) {
     ShellResponse resp;
+    thread = Thread.currentThread();
     try {
       resp = invoke(processContext);
+      if (Thread.interrupted()) {
+        throw new InterruptedException("Just a mere goto :-)");
+      }
+    } catch (InterruptedException e) {
+      resp = new ShellResponse.Cancelled();
     } catch (Throwable t) {
       resp = new ShellResponse.Error(ErrorType.INTERNAL, t);
+    } finally {
+      thread = null;
     }
 
     //
@@ -55,16 +66,19 @@ abstract class CRaSHProcess implements ShellProcess {
       ShellResponse.Error error = (ShellResponse.Error)resp;
       Throwable t = error.getThrowable();
       if (t != null) {
-        crash.log.error("Error while evaluating request '" + request + "' " + error.getText(), t);
+        CRaSH.log.error("Error while evaluating request '" + request + "' " + error.getText(), t);
       } else {
-        crash.log.error("Error while evaluating request '" + request + "' " + error.getText());
+        CRaSH.log.error("Error while evaluating request '" + request + "' " + error.getText());
       }
     }
   }
 
-  abstract ShellResponse invoke(ShellProcessContext context);
+  abstract ShellResponse invoke(ShellProcessContext context) throws InterruptedException;
 
   public void cancel() {
-    // No op
+    Thread t = thread;
+    if (t != null) {
+      t.interrupt();
+    }
   }
 }

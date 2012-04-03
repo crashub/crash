@@ -78,8 +78,12 @@ public abstract class AbstractCommandTestCase extends TestCase {
     }
   }
 
+  protected final BaseProcessContext create(String s) {
+    return BaseProcessContext.create(shell, s);
+  }
+
   protected final BaseProcessContext execute(String s) {
-    return BaseProcessContext.create(shell, s).execute();
+    return create(s).execute();
   }
 
   protected final ShellResponse evaluate(String s) {

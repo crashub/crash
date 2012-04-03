@@ -29,6 +29,8 @@ import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
+import org.crsh.shell.ShellProcessContext;
+import org.crsh.shell.ShellResponse;
 import org.crsh.util.TimestampedObject;
 import org.crsh.util.Utils;
 import org.crsh.vfs.Resource;
@@ -181,10 +183,46 @@ public class CRaSH implements Shell, Closeable {
     log.debug("Invoking request " + request);
 
     //
-    CRaSHProcessFactory factory = new CRaSHProcessFactory(this, request);
+    class SimpleProcess extends CRaSHProcess {
+
+      /** . */
+      private final ShellResponse response;
+
+      private SimpleProcess(String request, ShellResponse response) {
+        super(CRaSH.this, request);
+        this.response = response;
+      }
+
+      @Override
+      ShellResponse invoke(ShellProcessContext context) {
+        return response;
+      }
+    }
 
     //
-    return factory.create();
+    //
+    if ("bye".equals(request) || "exit".equals(request)) {
+      return new SimpleProcess(request, new ShellResponse.Close());
+    } else {
+
+      // Create AST
+      Parser parser = new Parser(request);
+      AST ast = parser.parse();
+
+      //
+      if (ast instanceof AST.Expr) {
+        AST.Expr expr = (AST.Expr)ast;
+
+        // Create commands first
+        try {
+          return expr.create(this, request);
+        } catch (CreateCommandException e) {
+          return new SimpleProcess(request, e.getResponse());
+        }
+      } else {
+        return new SimpleProcess(request, new ShellResponse.NoCommand());
+      }
+    }
   }
 
   /**

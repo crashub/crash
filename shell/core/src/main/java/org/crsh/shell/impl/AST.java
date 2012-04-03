@@ -22,12 +22,10 @@ package org.crsh.shell.impl;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
-import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -61,7 +59,12 @@ abstract class AST {
       if (next != null) {
         next.create(crash);
       }
-      return new ShellProcessImpl(crash, request, this);
+      return new CRaSHProcess(crash, request) {
+        @Override
+        ShellResponse invoke(ShellProcessContext context) throws InterruptedException {
+          return Expr.this.execute(crash, context, null);
+        }
+      };
     }
 
     private void create(CRaSH crash) throws CreateCommandException {
@@ -71,79 +74,59 @@ abstract class AST {
       }
     }
 
-    private static class ShellProcessImpl extends CRaSHProcess {
+    protected ShellResponse execute(CRaSH crash, ShellProcessContext context, ArrayList consumed) throws InterruptedException {
 
-      /** . */
-      private final AST.Expr expr;
+      // What will be produced by this expression
+      ArrayList produced = new ArrayList();
 
-      private ShellProcessImpl(CRaSH crash, String request, AST.Expr expr) {
-        super(crash, request);
+      //
+      StringBuilder out = new StringBuilder();
+
+      // Iterate over all terms
+      for (Term current = term;current != null;current = current.next) {
+
+        // Build command context
+        InvocationContextImpl ctx;
+        if (current.invoker.getConsumedType() == Void.class) {
+          ctx = new InvocationContextImpl(context, null, crash.attributes);
+        } else {
+          // For now we assume we have compatible consumed/produced types
+          ctx = new InvocationContextImpl(context, consumed, crash.attributes);
+        }
 
         //
-        this.expr = expr;
+        try {
+          current.invoker.invoke(ctx);
+        } catch (InterruptedException e) {
+          throw e;
+        } catch (Throwable t) {
+          return new ShellResponse.Error(ErrorType.EVALUATION, t);
+        }
+
+        // Append anything that was in the buffer
+        if (ctx.getBuffer() != null) {
+          out.append(ctx.getBuffer().toString());
+        }
+
+        // Append produced if possible
+        if (current.invoker.getProducedType() == Void.class) {
+          // Do nothing
+        } else {
+          produced.addAll(ctx.getProducedItems());
+        }
       }
 
-      @Override
-      ShellResponse invoke(ShellProcessContext context) {
-        return execute(context, expr, null);
-      }
-
-      private ShellResponse execute(ShellProcessContext context, AST.Expr expr, ArrayList consumed) {
-
-          // What will be produced by this expression
-          ArrayList produced = new ArrayList();
-
-          //
-          StringBuilder out = new StringBuilder();
-
-          // Iterate over all terms
-          for (Term current = expr.term;current != null;current = current.next) {
-
-
-
-
-
-            // Build command context
-            InvocationContextImpl ctx;
-            if (current.invoker.getConsumedType() == Void.class) {
-              ctx = new InvocationContextImpl(context, null, crash.attributes);
-            } else {
-              // For now we assume we have compatible consumed/produced types
-              ctx = new InvocationContextImpl(context, consumed, crash.attributes);
-            }
-
-            //
-            try {
-              current.invoker.invoke(ctx);
-            } catch (Throwable t) {
-              return new ShellResponse.Error(ErrorType.EVALUATION, t);
-            }
-
-            // Append anything that was in the buffer
-            if (ctx.getBuffer() != null) {
-              out.append(ctx.getBuffer().toString());
-            }
-
-            // Append produced if possible
-            if (current.invoker.getProducedType() == Void.class) {
-              // Do nothing
-            } else {
-              produced.addAll(ctx.getProducedItems());
-            }
-          }
-
-          //
-          if (expr.next != null) {
-            return execute(context, expr.next, produced);
-          } else {
-            ShellResponse response;
-            if (out.length() > 0) {
-              response = new ShellResponse.Display(produced, out.toString());
-            } else {
-              response = new ShellResponse.Ok(produced);
-            }
-            return response;
-          }
+      //
+      if (next != null) {
+        return next.execute(crash, context, produced);
+      } else {
+        ShellResponse response;
+        if (out.length() > 0) {
+          response = new ShellResponse.Display(produced, out.toString());
+        } else {
+          response = new ShellResponse.Ok(produced);
+        }
+        return response;
       }
     }
 

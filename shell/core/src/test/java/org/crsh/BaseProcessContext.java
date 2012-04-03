@@ -72,6 +72,11 @@ public class BaseProcessContext implements ShellProcessContext {
     this(shell.createProcess(line));
   }
 
+  public BaseProcessContext cancel() {
+    process.cancel();
+    return this;
+  }
+
   public BaseProcessContext execute() {
     process.execute(this);
     return this;
