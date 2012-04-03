@@ -281,7 +281,7 @@ public class ProcessorTestCase extends TestCase {
           }
           @Override
           public void cancel() {
-            context.end(new ShellResponse.Display("cancelled"));
+            context.end(ShellResponse.display("cancelled"));
             latch.countDown();
           }
         };

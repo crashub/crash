@@ -129,10 +129,10 @@ public class AsyncProcess implements ShellProcess {
             // terminate and use a cancel response
             try {
               callee.execute(context);
-              response = new ShellResponse.Ok();
+              response = ShellResponse.ok();
             }
             catch (Throwable t) {
-              response = new ShellResponse.Error(ErrorType.INTERNAL, t);
+              response = ShellResponse.internalError(t);
             }
           }
 

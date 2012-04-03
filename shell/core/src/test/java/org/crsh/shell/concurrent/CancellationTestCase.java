@@ -37,7 +37,7 @@ public class CancellationTestCase extends AbstractTestCase {
             } catch (InterruptedException e) {
               failure.set(e);
             }
-            return new ShellResponse.Ok();
+            return ShellResponse.ok();
           }
           @Override
           public void cancel() {
@@ -99,7 +99,7 @@ public class CancellationTestCase extends AbstractTestCase {
           @Override
           protected ShellResponse execute(String request) {
             failure.set(failure("Was not exepecting request"));
-            return new ShellResponse.Ok();
+            return ShellResponse.ok();
           }
           @Override
           public void cancel() {

@@ -100,7 +100,7 @@ abstract class AST {
         } catch (InterruptedException e) {
           throw e;
         } catch (Throwable t) {
-          return new ShellResponse.Error(ErrorType.EVALUATION, t);
+          return ShellResponse.internalError(t);
         }
 
         // Append anything that was in the buffer
@@ -122,9 +122,9 @@ abstract class AST {
       } else {
         ShellResponse response;
         if (out.length() > 0) {
-          response = new ShellResponse.Display(produced, out.toString());
+          response = ShellResponse.display(produced, out.toString());
         } else {
-          response = new ShellResponse.Ok(produced);
+          response = ShellResponse.ok(produced);
         }
         return response;
       }
@@ -195,7 +195,7 @@ abstract class AST {
 
       //
       if (invoker == null) {
-        throw new CreateCommandException(new ShellResponse.UnknownCommand(name));
+        throw new CreateCommandException(ShellResponse.unknownCommand(name));
       } else {
         this.invoker = invoker;
       }

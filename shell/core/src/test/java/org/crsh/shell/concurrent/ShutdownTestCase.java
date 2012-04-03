@@ -58,7 +58,7 @@ public class ShutdownTestCase extends AbstractTestCase {
             } catch (InterruptedException e) {
               failure.set(e);
             }
-            return new ShellResponse.Ok();
+            return ShellResponse.ok();
           }
           @Override
           public void cancel() {

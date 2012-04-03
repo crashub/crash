@@ -24,30 +24,81 @@ import org.crsh.command.ScriptException;
 import java.util.Collections;
 
 /**
+ * The response of a shell invocation.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public abstract class ShellResponse {
 
-  public abstract String getText();
-
-  public static class SyntaxError extends ShellResponse {
-
-    public SyntaxError() {
-    }
-
-    @Override
-    public String getText() {
-      return "Syntax error";
-    }
+  public static UnknownCommand unknownCommand(String name) {
+    return new UnknownCommand(name);
   }
+
+  public static NoCommand noCommand() {
+    return new NoCommand();
+  }
+
+  public static Ok ok(Iterable<?> produced) {
+    return new Ok(produced);
+  }
+
+  public static Ok ok() {
+    return new Ok();
+  }
+
+  public static Display display(String text) {
+    return new Display(text);
+  }
+
+  public static Display display(Iterable<?> produced, String text) {
+    return new Display(produced, text);
+  }
+
+  public static Error evalError(Throwable throwable) {
+    return new Error(ErrorType.EVALUATION, throwable);
+  }
+
+  public static Error evalError(String msg, Throwable throwable) {
+    return new Error(ErrorType.EVALUATION, msg, throwable);
+  }
+
+  public static Error evalError(String msg) {
+    return new Error(ErrorType.EVALUATION, msg);
+  }
+
+  public static Error internalError(Throwable throwable) {
+    return new Error(ErrorType.INTERNAL, throwable);
+  }
+
+  public static Error internalError(String msg, Throwable throwable) {
+    return new Error(ErrorType.INTERNAL, msg, throwable);
+  }
+
+  public static Error internalError(String msg) {
+    return new Error(ErrorType.INTERNAL, msg);
+  }
+
+  public static Error error(ErrorType type, Throwable throwable) {
+    return new Error(type, throwable);
+  }
+
+  public static Error error(ErrorType type, String msg, Throwable throwable) {
+    return new Error(type, msg, throwable);
+  }
+
+  public static Error error(ErrorType type, String msg) {
+    return new Error(type, msg);
+  }
+
+  public abstract String getText();
 
   public static class UnknownCommand extends ShellResponse {
 
     /** . */
     private final String name;
 
-    public UnknownCommand(String name) {
+    private UnknownCommand(String name) {
       this.name = name;
     }
 
@@ -62,6 +113,10 @@ public abstract class ShellResponse {
   }
 
   public static class NoCommand extends ShellResponse {
+
+    private NoCommand() {
+    }
+
     @Override
     public String getText() {
       return "Please type something";
@@ -84,11 +139,11 @@ public abstract class ShellResponse {
     /** . */
     private final Iterable<?> produced;
 
-    public Ok() {
+    private Ok() {
       this(Collections.<Object>emptyList());
     }
 
-    public Ok(Iterable<?> produced) {
+    private Ok(Iterable<?> produced) {
       this.produced = produced;
     }
 
@@ -107,11 +162,11 @@ public abstract class ShellResponse {
     /** . */
     private final String text;
 
-    public Display(String text) {
+    private Display(String text) {
       this.text = text;
     }
 
-    public Display(Iterable<?> produced, String text) {
+    private Display(Iterable<?> produced, String text) {
       super(produced);
 
       //
@@ -153,19 +208,19 @@ public abstract class ShellResponse {
 
     private final String msg;
 
-    public Error(ErrorType type, Throwable throwable) {
+    private Error(ErrorType type, Throwable throwable) {
       this.type = type;
       this.msg = build(throwable);
       this.throwable = throwable;
     }
 
-    public Error(ErrorType type, String msg) {
+    private Error(ErrorType type, String msg) {
       this.type = type;
       this.msg = msg;
       this.throwable = null;
     }
 
-    public Error(ErrorType type, String msg, Throwable throwable) {
+    private Error(ErrorType type, String msg, Throwable throwable) {
       this.type = type;
       this.msg = msg;
       this.throwable = throwable;

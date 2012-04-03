@@ -38,7 +38,7 @@ public abstract class BaseProcessFactory {
       return new BaseProcess(request) {
         @Override
         protected ShellResponse execute(String request) {
-          return new ShellResponse.Display(request);
+          return ShellResponse.display(request);
         }
       };
     }

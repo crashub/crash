@@ -64,7 +64,7 @@ public class AsyncShellTestCase extends TestCase {
           @Override
           protected ShellResponse execute(String request) {
             String a = readLine("bar", true);
-            return new ShellResponse.Display(a);
+            return ShellResponse.display(a);
           }
         };
       }
@@ -122,6 +122,6 @@ public class AsyncShellTestCase extends TestCase {
     //
     BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "hello").execute();
     assertEquals(Status.TERMINATED, ((AsyncProcess)ctx.getProcess()).getStatus());
-    assertEquals(new ShellResponse.Display("hello"), ctx.getResponse());
+    assertEquals(ShellResponse.display("hello"), ctx.getResponse());
   }
 }

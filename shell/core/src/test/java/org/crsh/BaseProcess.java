@@ -50,7 +50,7 @@ public class BaseProcess implements ShellProcess {
   }
 
   protected ShellResponse execute(String request) {
-    return new ShellResponse.Ok();
+    return ShellResponse.ok();
   }
 
   protected final String readLine(String msg, boolean echo) {

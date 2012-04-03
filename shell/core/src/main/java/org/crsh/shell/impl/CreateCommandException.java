@@ -39,21 +39,21 @@ final class CreateCommandException extends Exception {
     super(message);
 
     //
-    this.response = new ShellResponse.Error(errorType, message);
+    this.response = ShellResponse.error(errorType, message);
   }
 
   CreateCommandException(ErrorType errorType, String message, Throwable cause) {
     super(message);
 
     //
-    this.response = new ShellResponse.Error(errorType, message, cause);
+    this.response = ShellResponse.error(errorType, message, cause);
   }
 
   CreateCommandException(ErrorType errorType, Throwable cause) {
     super(cause);
 
     //
-    this.response = new ShellResponse.Error(errorType, cause);
+    this.response = ShellResponse.internalError(cause);
   }
 
   public ShellResponse getResponse() {

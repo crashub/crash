@@ -203,7 +203,7 @@ public class CRaSH implements Shell, Closeable {
           response = e.getResponse();
         }
       } else {
-        response = new ShellResponse.NoCommand();
+        response = ShellResponse.noCommand();
       }
     }
 
