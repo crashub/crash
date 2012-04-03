@@ -28,6 +28,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Annotates a field or parameter to become an command line option.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
@@ -35,8 +37,19 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Option {
 
+  /**
+   * The option names, when an option name has one letter it will be used as a short switch, when it has
+   * more letter it is considered as a long switch.
+   *
+   * @return the option names
+   */
   String[] names();
 
+  /**
+   * Not yet implemented.
+   *
+   * @return the password value
+   */
   boolean password() default false;
 
   /**
@@ -46,6 +59,11 @@ public @interface Option {
    */
   boolean unquote() default true;
 
+  /**
+   * The completer type to complete this option value.
+   *
+   * @return the completer type
+   */
   Class<? extends Completer> completer() default EmptyCompleter.class;
 
 }

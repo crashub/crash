@@ -28,6 +28,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Annotates a field or parameter to become an command line argument.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
@@ -35,8 +37,18 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Argument {
 
+  /**
+   * The argument name, this value is optional and is only used in the documentation.
+   *
+   * @return the argument name
+   */
   String name() default "";
 
+  /**
+   * Not yet implemented.
+   *
+   * @return the password value
+   */
   boolean password() default false;
 
   /**
@@ -46,5 +58,10 @@ public @interface Argument {
    */
   boolean unquote() default true;
 
+  /**
+   * The completer type to complete this option value.
+   *
+   * @return the completer type
+   */
   Class<? extends Completer> completer() default EmptyCompleter.class;
 }

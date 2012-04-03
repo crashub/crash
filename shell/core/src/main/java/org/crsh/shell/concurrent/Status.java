@@ -20,19 +20,36 @@
 package org.crsh.shell.concurrent;
 
 /**
+ * The status of a process.
+ *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public enum Status {
 
+  /**
+   * The process is instantiated.
+   */
   CONSTRUCTED,
 
+  /**
+   * The process is scheduled for execution.
+   */
   QUEUED,
 
+  /**
+   * The process is being evaluated.
+   */
   EVALUATING,
 
+  /**
+   * The process is cancelled.
+   */
   CANCELED,
 
+  /**
+   * The process is terminated.
+   */
   TERMINATED
 
 }
