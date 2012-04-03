@@ -7,6 +7,12 @@ import junit.framework.TestCase;
 public abstract class AbstractTestCase extends TestCase {
 
 
+  public static AssertionFailedError failure(Throwable t) {
+    AssertionFailedError afe = new AssertionFailedError();
+    afe.initCause(t);
+    return afe;
+  }
+
   public static AssertionFailedError failure(Object message) {
     return new AssertionFailedError("" + message);
   }

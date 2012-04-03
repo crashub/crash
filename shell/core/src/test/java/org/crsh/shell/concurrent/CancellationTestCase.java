@@ -53,10 +53,8 @@ public class CancellationTestCase extends AbstractTestCase {
     AsyncShell  asyncShell = new AsyncShell(commands, shell);
 
     //
-    BaseProcessContext respCtx = new BaseProcessContext();
-    AsyncProcess process = asyncShell.createProcess("foo");
-    process.execute(respCtx);
-    assertEquals(Status.QUEUED, process.getStatus());
+    BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "foo").execute();
+    assertEquals(Status.QUEUED, ((AsyncProcess)ctx.getProcess()).getStatus());
     assertEquals(0, cancelCount.get());
     assertEquals(1, commands.getSize());
 
@@ -64,17 +62,17 @@ public class CancellationTestCase extends AbstractTestCase {
     // And wait until the other thread is waiting
     Future<?> future = commands.executeAsync();
     latch1.await();
-    assertEquals(Status.EVALUATING, process.getStatus());
+    assertEquals(Status.EVALUATING, ((AsyncProcess)ctx.getProcess()).getStatus());
     assertEquals(0, cancelCount.get());
 
     //
-    process.cancel();
-    assertEquals(Status.CANCELED, process.getStatus());
+    ctx.getProcess().cancel();
+    assertEquals(Status.CANCELED, ((AsyncProcess)ctx.getProcess()).getStatus());
     assertEquals(1, cancelCount.get());
 
     //
-    process.cancel();
-    assertEquals(Status.CANCELED, process.getStatus());
+    ctx.getProcess().cancel();
+    assertEquals(Status.CANCELED, ((AsyncProcess)ctx.getProcess()).getStatus());
     assertEquals(1, cancelCount.get());
 
     // Wait until it's done
@@ -82,8 +80,8 @@ public class CancellationTestCase extends AbstractTestCase {
     future.get();
 
     // Test we received a cancelled response even though we provided an OK result
-    assertEquals(ShellResponse.Cancelled.class, respCtx.getResponse().getClass());
-    assertEquals(Status.TERMINATED, process.getStatus());
+    assertEquals(ShellResponse.Cancelled.class, ctx.getResponse().getClass());
+    assertEquals(Status.TERMINATED, ((AsyncProcess)ctx.getProcess()).getStatus());
     assertEquals(1, cancelCount.get());
 
     //
@@ -117,23 +115,21 @@ public class CancellationTestCase extends AbstractTestCase {
     AsyncShell  asyncShell = new AsyncShell(commands, shell);
 
     //
-    BaseProcessContext respCtx = new BaseProcessContext();
-    AsyncProcess process = asyncShell.createProcess("foo");
-    process.execute(respCtx);
-    assertEquals(Status.QUEUED, process.getStatus());
+    BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "foo").execute();
+    assertEquals(Status.QUEUED, ((AsyncProcess)ctx.getProcess()).getStatus());
     assertEquals(1, commands.getSize());
 
     //
-    process.cancel();
-    assertEquals(Status.CANCELED, process.getStatus());
+    ctx.getProcess().cancel();
+    assertEquals(Status.CANCELED, ((AsyncProcess)ctx.getProcess()).getStatus());
 
     // Execute the command
     Future<?> future = commands.executeAsync();
     future.get();
 
     // Test we get terminated status and the callback was done
-    assertEquals(Status.TERMINATED, process.getStatus());
-    assertEquals(ShellResponse.Cancelled.class, respCtx.getResponse().getClass());
+    assertEquals(Status.TERMINATED, ((AsyncProcess)ctx.getProcess()).getStatus());
+    assertEquals(ShellResponse.Cancelled.class, ctx.getResponse().getClass());
     safeFail(failure.get());
   }
 }

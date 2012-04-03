@@ -20,6 +20,8 @@
 package org.crsh;
 
 import junit.framework.Assert;
+import org.crsh.shell.Shell;
+import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 
@@ -32,6 +34,14 @@ import java.util.concurrent.TimeUnit;
  * @version $Revision$
  */
 public class BaseProcessContext implements ShellProcessContext {
+
+  public static BaseProcessContext create(Shell shell, String line) {
+    return new BaseProcessContext(shell, line);
+  }
+
+  public static BaseProcessContext create(ShellProcess process) {
+    return new BaseProcessContext(process);
+  }
 
   /** . */
   private final LinkedList<String> output = new LinkedList<String>();
@@ -48,10 +58,27 @@ public class BaseProcessContext implements ShellProcessContext {
   /** . */
   private int width;
 
-  public BaseProcessContext() {
+  /** . */
+  private ShellProcess process;
+
+  private BaseProcessContext(ShellProcess process) {
+    this.process = process;
     this.latch = new CountDownLatch(1);
     this.response = null;
     this.width = 32;
+  }
+
+  private BaseProcessContext(Shell shell, String line) {
+    this(shell.createProcess(line));
+  }
+
+  public BaseProcessContext execute() {
+    process.execute(this);
+    return this;
+  }
+
+  public ShellProcess getProcess() {
+    return process;
   }
 
   public BaseProcessContext addLineInput(String line) {
@@ -98,8 +125,13 @@ public class BaseProcessContext implements ShellProcessContext {
     this.latch.countDown();
   }
 
-  public ShellResponse getResponse() throws InterruptedException {
-    latch.await(3, TimeUnit.SECONDS);
-    return response;
+  public ShellResponse getResponse() {
+    try {
+      latch.await(3, TimeUnit.SECONDS);
+      return response;
+    }
+    catch (InterruptedException e) {
+      throw AbstractTestCase.failure(e);
+    }
   }
 }

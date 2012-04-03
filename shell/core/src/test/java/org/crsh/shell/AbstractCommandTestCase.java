@@ -22,14 +22,12 @@ package org.crsh.shell;
 import groovy.lang.GroovyShell;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.CRaSH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -80,27 +78,12 @@ public abstract class AbstractCommandTestCase extends TestCase {
     }
   }
 
+  protected final BaseProcessContext execute(String s) {
+    return BaseProcessContext.create(shell, s).execute();
+  }
+
   protected final ShellResponse evaluate(String s) {
-    final AtomicReference<ShellResponse> resp = new AtomicReference<ShellResponse>();
-    ShellProcessContext ctx = new ShellProcessContext() {
-      public int getWidth() {
-        return 32;
-      }
-      public String getProperty(String name) {
-        return null;
-      }
-      public void begin(ShellProcess process) {
-      }
-      public String readLine(String msg, boolean echo) {
-        throw new UnsupportedOperationException("The command does not have access to console line reading");
-      }
-      public void end(ShellResponse response) {
-        resp.set(response);
-      }
-    };
-    ShellProcess process = shell.createProcess(s);
-    process.execute(ctx);
-    return resp.get();
+    return execute(s).getResponse();
   }
 
   protected final void assertUnknownCommand(String s) {

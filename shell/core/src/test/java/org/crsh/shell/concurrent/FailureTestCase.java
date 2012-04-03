@@ -43,10 +43,8 @@ public class FailureTestCase extends AbstractTestCase {
     AsyncShell  asyncShell = new AsyncShell(commands, shell);
 
     //
-    BaseProcessContext respCtx = new BaseProcessContext();
-    AsyncProcess process = asyncShell.createProcess("foo");
-    process.execute(respCtx);
-    assertEquals(Status.QUEUED, process.getStatus());
+    BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "foo").execute();
+    assertEquals(Status.QUEUED, ((AsyncProcess)ctx.getProcess()).getStatus());
     assertEquals(0, cancelCount.get());
     assertEquals(1, commands.getSize());
 
@@ -56,6 +54,6 @@ public class FailureTestCase extends AbstractTestCase {
     future.get();
 
     //
-    assertEquals(ShellResponse.Error.class, respCtx.getResponse().getClass());
+    assertEquals(ShellResponse.Error.class, ctx.getResponse().getClass());
   }
 }

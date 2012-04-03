@@ -32,11 +32,10 @@ public class ShutdownTestCase extends AbstractTestCase {
     Shell shell = new BaseShell();
     CommandQueue commands = new CommandQueue();
     AsyncShell  asyncShell = new AsyncShell(commands, shell);
-    AsyncProcess process = asyncShell.createProcess("foo");
+    BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "foo");
     asyncShell.close();
-    BaseProcessContext ctx = new BaseProcessContext();
-    process.execute(ctx);
-    assertEquals(Status.TERMINATED, process.getStatus());
+    ctx.execute();
+    assertEquals(Status.TERMINATED, ((AsyncProcess)ctx.getProcess()).getStatus());
     assertEquals(ShellResponse.Cancelled.class, ctx.getResponse().getClass());
     assertEquals(0, commands.getSize());
   }
@@ -75,16 +74,14 @@ public class ShutdownTestCase extends AbstractTestCase {
     AsyncShell  asyncShell = new AsyncShell(commands, shell);
 
     //
-    BaseProcessContext respCtx = new BaseProcessContext();
-    AsyncProcess process = asyncShell.createProcess("foo");
-    process.execute(respCtx);
+    BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "foo").execute();
     Future<?> future = commands.executeAsync();
     latch1.await();
-    assertEquals(Status.EVALUATING, process.getStatus());
+    assertEquals(Status.EVALUATING, ((AsyncProcess)ctx.getProcess()).getStatus());
 
     //
     asyncShell.close();
-    assertEquals(Status.CANCELED, process.getStatus());
-    assertEquals(ShellResponse.Cancelled.class, respCtx.getResponse().getClass());
+    assertEquals(Status.CANCELED, ((AsyncProcess)ctx.getProcess()).getStatus());
+    assertEquals(ShellResponse.Cancelled.class, ctx.getResponse().getClass());
   }
 }

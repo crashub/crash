@@ -77,9 +77,9 @@ public class AsyncShellTestCase extends TestCase {
     Shell asyncShell = new AsyncShell(Executors.newSingleThreadExecutor(), shell);
 
     //
-    BaseProcessContext ctx = new BaseProcessContext();
+    BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "foo");
     ctx.addLineInput("juu");
-    asyncShell.createProcess("foo").execute(ctx);
+    ctx.execute();
 
     //
     ShellResponse resp = ctx.getResponse();
@@ -95,12 +95,12 @@ public class AsyncShellTestCase extends TestCase {
   public void testAsyncEvaluation() throws InterruptedException {
     AsyncShell connector = new AsyncShell(Executors.newSingleThreadExecutor(), lifeCycle.createShell());
     status = 0;
-    BaseProcessContext respCtx = new BaseProcessContext();
-    connector.createProcess("invoke " + AsyncShellTestCase.class.getName() + " bilto").execute(respCtx);
-    ShellResponse resp = respCtx.getResponse();
+    BaseProcessContext ctx = BaseProcessContext.create(connector, "invoke " + AsyncShellTestCase.class.getName() + " bilto");
+    ctx.execute();
+    ShellResponse resp = ctx.getResponse();
     assertTrue("Was not expecting response to be " + resp.getText(), resp instanceof ShellResponse.Ok);
     assertEquals(1, status);
-    respCtx.getResponse();
+    ctx.getResponse();
   }
 
   public static void bilto() {
@@ -120,10 +120,8 @@ public class AsyncShellTestCase extends TestCase {
     }, shell);
 
     //
-    AsyncProcess process = asyncShell.createProcess("hello");
-    BaseProcessContext ctx = new BaseProcessContext();
-    process.execute(ctx);
-    assertEquals(Status.TERMINATED, process.getStatus());
+    BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "hello").execute();
+    assertEquals(Status.TERMINATED, ((AsyncProcess)ctx.getProcess()).getStatus());
     assertEquals(new ShellResponse.Display("hello"), ctx.getResponse());
   }
 }
