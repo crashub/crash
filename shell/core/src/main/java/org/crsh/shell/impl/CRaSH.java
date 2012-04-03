@@ -181,28 +181,9 @@ public class CRaSH implements Shell, Closeable {
 
   public ShellProcess createProcess(String request) {
     log.debug("Invoking request " + request);
-
-    //
-    class SimpleProcess extends CRaSHProcess {
-
-      /** . */
-      private final ShellResponse response;
-
-      private SimpleProcess(String request, ShellResponse response) {
-        super(CRaSH.this, request);
-        this.response = response;
-      }
-
-      @Override
-      ShellResponse invoke(ShellProcessContext context) {
-        return response;
-      }
-    }
-
-    //
-    //
+    final ShellResponse response;
     if ("bye".equals(request) || "exit".equals(request)) {
-      return new SimpleProcess(request, new ShellResponse.Close());
+      response = new ShellResponse.Close();
     } else {
 
       // Create AST
@@ -217,12 +198,20 @@ public class CRaSH implements Shell, Closeable {
         try {
           return expr.create(this, request);
         } catch (CreateCommandException e) {
-          return new SimpleProcess(request, e.getResponse());
+          response = e.getResponse();
         }
       } else {
-        return new SimpleProcess(request, new ShellResponse.NoCommand());
+        response = new ShellResponse.NoCommand();
       }
     }
+
+    //
+    return new CRaSHProcess(this, request) {
+      @Override
+      ShellResponse invoke(ShellProcessContext context) throws InterruptedException {
+        return response;
+      }
+    };
   }
 
   /**
