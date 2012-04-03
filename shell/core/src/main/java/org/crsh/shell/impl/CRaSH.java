@@ -22,7 +22,9 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.crsh.command.impl.BaseCommandContext;
 import org.crsh.command.CommandInvoker;
+import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
@@ -245,7 +247,7 @@ public class CRaSH implements Shell, Closeable {
       try {
         ShellCommand command = getCommand(commandName);
         if (command != null) {
-          completions = command.complete(new CommandContextImpl(attributes), termPrefix);
+          completions = command.complete(new BaseCommandContext(attributes), termPrefix);
         }
       }
       catch (CreateCommandException e) {

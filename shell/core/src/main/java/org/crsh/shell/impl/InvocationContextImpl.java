@@ -19,6 +19,8 @@
 
 package org.crsh.shell.impl;
 
+import org.crsh.command.impl.BaseInvocationContext;
+import org.crsh.command.impl.AttributesMap;
 import org.crsh.shell.ShellProcessContext;
 
 import java.util.Map;
@@ -27,13 +29,13 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class InvocationContextImpl<C, P> extends AbstractInvocationContext<C, P> {
+class InvocationContextImpl<C, P> extends BaseInvocationContext<C, P> {
 
   /** . */
   private final ShellProcessContext processContext;
 
 
-  InvocationContextImpl(
+  public InvocationContextImpl(
     ShellProcessContext processContext,
     Iterable<C> consumedItems,
     Map<String, Object> attributes) {

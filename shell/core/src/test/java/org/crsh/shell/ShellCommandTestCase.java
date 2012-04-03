@@ -18,16 +18,13 @@
  */
 package org.crsh.shell;
 
-import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.command.ShellCommand;
-import org.crsh.shell.impl.GroovyScriptCommand;
-
-import java.util.Arrays;
+import org.crsh.command.GroovyScriptCommand;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>

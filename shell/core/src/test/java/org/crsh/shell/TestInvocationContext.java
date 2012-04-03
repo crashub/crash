@@ -19,21 +19,17 @@
 
 package org.crsh.shell;
 
-import org.crsh.command.InvocationContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
-import org.crsh.shell.impl.AbstractInvocationContext;
-import org.crsh.shell.io.ShellPrinter;
-import org.crsh.util.LineFeedWriter;
+import org.crsh.command.impl.BaseInvocationContext;
 
-import java.io.StringWriter;
 import java.util.*;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TestInvocationContext<C, P> extends AbstractInvocationContext<C, P> {
+public class TestInvocationContext<C, P> extends BaseInvocationContext<C, P> {
 
   public TestInvocationContext() {
     super(Collections.<C>emptyList(), new HashMap<String, Object>());

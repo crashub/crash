@@ -18,7 +18,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl;
+package org.crsh.command.impl;
 
 import org.crsh.command.InvocationContext;
 import org.crsh.shell.io.ShellPrinter;
@@ -34,7 +34,7 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class AbstractInvocationContext<C, P> extends CommandContextImpl implements InvocationContext<C, P> {
+public abstract class BaseInvocationContext<C, P> extends BaseCommandContext implements InvocationContext<C, P> {
 
   /** . */
   protected ShellPrinter writer;
@@ -48,9 +48,9 @@ public abstract class AbstractInvocationContext<C, P> extends CommandContextImpl
   /** . */
   protected Iterable<C> consumedItems;
 
-  protected AbstractInvocationContext(
-      Iterable<C> consumedItems,
-      Map<String, Object> attributes) {
+  protected BaseInvocationContext(
+    Iterable<C> consumedItems,
+    Map<String, Object> attributes) {
     super(attributes);
     this.writer = null;
     this.buffer = null;

@@ -18,7 +18,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl;
+package org.crsh.command.impl;
 
 import org.crsh.command.InvocationContext;
 
@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-class AttributesMap extends AbstractMap<String, Object> {
+public class AttributesMap extends AbstractMap<String, Object> {
 
   /** . */
   private InvocationContext<?, ?> context;
@@ -38,7 +38,7 @@ class AttributesMap extends AbstractMap<String, Object> {
   /** . */
   private Set<Entry<String, Object>> entries;
 
-  AttributesMap(InvocationContext<?, ?> context, Map<String, Object> delegate) {
+  public AttributesMap(InvocationContext<?, ?> context, Map<String, Object> delegate) {
     this.context = context;
     this.delegate = delegate;
   }

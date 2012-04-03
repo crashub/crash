@@ -16,18 +16,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.impl;
+package org.crsh.command;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
-import org.crsh.command.CommandContext;
-import org.crsh.command.DescriptionFormat;
-import org.crsh.command.InvocationContext;
-import org.crsh.command.ScriptException;
-import org.crsh.command.CommandInvoker;
-import org.crsh.command.ShellCommand;
 import org.crsh.util.Strings;
 
 import java.util.Collections;

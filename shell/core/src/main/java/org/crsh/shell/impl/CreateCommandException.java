@@ -26,7 +26,7 @@ import org.crsh.shell.ShellResponse;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public final class CreateCommandException extends Exception {
+final class CreateCommandException extends Exception {
 
   /** . */
   private final ShellResponse response;

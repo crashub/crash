@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl;
+package org.crsh.command.impl;
 
 import org.crsh.command.CommandContext;
 
@@ -27,12 +27,12 @@ import java.util.Map;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-class CommandContextImpl implements CommandContext {
+public class BaseCommandContext implements CommandContext {
 
   /** . */
   private final Map<String, Object> attributes;
 
-  CommandContextImpl(Map<String, Object> attributes) {
+  public BaseCommandContext(Map<String, Object> attributes) {
     this.attributes = attributes(attributes);
   }
 
