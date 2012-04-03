@@ -5,12 +5,12 @@ import org.crsh.cmdline.annotations.Argument
 import org.crsh.cmdline.annotations.Command;
 
 @Description("Invoke a static method")
-public class wait extends org.crsh.command.CRaSHCommand {
+public class sleep extends org.crsh.command.CRaSHCommand {
 
 
   @Command
   public Object execute(
-      @Usage("The time to wait in seconds")
+      @Usage("The time to sleep in seconds")
       @Argument
       String time) throws ScriptException {
     if (time == null) {
