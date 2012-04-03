@@ -2,6 +2,7 @@ package org.crsh.shell.concurrent;
 
 import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcess;
+import org.crsh.BaseProcessContext;
 import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
 import org.crsh.CommandQueue;
@@ -42,7 +43,7 @@ public class FailureTestCase extends AbstractTestCase {
     AsyncShell  asyncShell = new AsyncShell(commands, shell);
 
     //
-    SyncShellResponseContext respCtx = new SyncShellResponseContext();
+    BaseProcessContext respCtx = new BaseProcessContext();
     AsyncProcess process = asyncShell.createProcess("foo");
     process.execute(respCtx);
     assertEquals(Status.QUEUED, process.getStatus());

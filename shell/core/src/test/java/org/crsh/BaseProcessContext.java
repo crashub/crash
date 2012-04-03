@@ -17,10 +17,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.concurrent;
+package org.crsh;
 
 import junit.framework.Assert;
-import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 
@@ -32,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class SyncShellResponseContext implements ShellProcessContext {
+public class BaseProcessContext implements ShellProcessContext {
 
   /** . */
   private final LinkedList<String> output = new LinkedList<String>();
@@ -49,30 +48,30 @@ public class SyncShellResponseContext implements ShellProcessContext {
   /** . */
   private int width;
 
-  public SyncShellResponseContext() {
+  public BaseProcessContext() {
     this.latch = new CountDownLatch(1);
     this.response = null;
     this.width = 32;
   }
 
-  public SyncShellResponseContext addLineInput(String line) {
+  public BaseProcessContext addLineInput(String line) {
     input.add(line);
     return this;
   }
 
-  public SyncShellResponseContext assertLineOutput(String expected) {
+  public BaseProcessContext assertLineOutput(String expected) {
     Assert.assertTrue(output.size() > 0);
     String test = output.removeFirst();
     Assert.assertEquals(expected,  test);
     return this;
   }
 
-  public SyncShellResponseContext assertNoOutput() {
+  public BaseProcessContext assertNoOutput() {
     Assert.assertEquals(0, output.size());
     return this;
   }
 
-  public SyncShellResponseContext assertNoInput() {
+  public BaseProcessContext assertNoInput() {
     Assert.assertEquals(0, input.size());
     return this;
   }

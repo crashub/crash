@@ -21,6 +21,7 @@ package org.crsh.shell.concurrent;
 
 import junit.framework.TestCase;
 import org.crsh.BaseProcess;
+import org.crsh.BaseProcessContext;
 import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
 import org.crsh.TestPluginLifeCycle;
@@ -76,7 +77,7 @@ public class AsyncShellTestCase extends TestCase {
     Shell asyncShell = new AsyncShell(Executors.newSingleThreadExecutor(), shell);
 
     //
-    SyncShellResponseContext ctx = new SyncShellResponseContext();
+    BaseProcessContext ctx = new BaseProcessContext();
     ctx.addLineInput("juu");
     asyncShell.createProcess("foo").execute(ctx);
 
@@ -94,7 +95,7 @@ public class AsyncShellTestCase extends TestCase {
   public void testAsyncEvaluation() throws InterruptedException {
     AsyncShell connector = new AsyncShell(Executors.newSingleThreadExecutor(), lifeCycle.createShell());
     status = 0;
-    SyncShellResponseContext respCtx = new SyncShellResponseContext();
+    BaseProcessContext respCtx = new BaseProcessContext();
     connector.createProcess("invoke " + AsyncShellTestCase.class.getName() + " bilto").execute(respCtx);
     ShellResponse resp = respCtx.getResponse();
     assertTrue("Was not expecting response to be " + resp.getText(), resp instanceof ShellResponse.Ok);
@@ -120,7 +121,7 @@ public class AsyncShellTestCase extends TestCase {
 
     //
     AsyncProcess process = asyncShell.createProcess("hello");
-    SyncShellResponseContext ctx = new SyncShellResponseContext();
+    BaseProcessContext ctx = new BaseProcessContext();
     process.execute(ctx);
     assertEquals(Status.TERMINATED, process.getStatus());
     assertEquals(new ShellResponse.Display("hello"), ctx.getResponse());
