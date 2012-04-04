@@ -55,7 +55,7 @@ abstract class CRaSHProcess implements ShellProcess {
         }
       }
       catch (InterruptedException e) {
-        resp = new ShellResponse.Cancelled();
+        resp = ShellResponse.cancelled();
       }
     } catch (Throwable t) {
       resp = ShellResponse.internalError(t);

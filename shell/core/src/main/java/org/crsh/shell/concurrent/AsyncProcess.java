@@ -1,6 +1,5 @@
 package org.crsh.shell.concurrent;
 
-import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -67,7 +66,7 @@ public class AsyncProcess implements ShellProcess {
             throw new AssertionError("Should not happen");
           case CANCELED:
             // We substitute the response
-            response = new ShellResponse.Cancelled();
+            response = ShellResponse.cancelled();
             status = Status.TERMINATED;
             break;
           case EVALUATING:
@@ -108,7 +107,7 @@ public class AsyncProcess implements ShellProcess {
             switch (status) {
               case CANCELED:
                 // Do nothing it was canceled in the mean time
-                response = new ShellResponse.Cancelled();
+                response = ShellResponse.cancelled();
                 break;
               case QUEUED:
                 // Ok we are going to run it
@@ -168,7 +167,7 @@ public class AsyncProcess implements ShellProcess {
           status = Status.TERMINATED;
         }
         if (invokeEnd) {
-          caller.end(new ShellResponse.Cancelled());
+          caller.end(ShellResponse.cancelled());
         }
       }
     }

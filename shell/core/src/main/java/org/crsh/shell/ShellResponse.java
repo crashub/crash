@@ -91,6 +91,10 @@ public abstract class ShellResponse {
     return new Error(type, msg);
   }
 
+  public static Cancelled cancelled() {
+    return new Cancelled();
+  }
+
   public abstract String getText();
 
   public static class UnknownCommand extends ShellResponse {
@@ -192,6 +196,9 @@ public abstract class ShellResponse {
   }
 
   public static class Cancelled extends ShellResponse {
+    private Cancelled() {
+    }
+
     @Override
     public String getText() {
       return "cancelled" ;
