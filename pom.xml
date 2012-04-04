@@ -8,7 +8,7 @@
 
   <name>CRaSH parent</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
-  <url>http://crsh.googlecode.org</url>
+  <url>http://vietj.github.com/crash/</url>
 
   <organization>
     <name>eXo Platform SAS</name>
