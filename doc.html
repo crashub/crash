@@ -91,7 +91,7 @@ Escape character is '^]'.
  .~      ~. |`````````,       .'.                   ..'''' |         |
 |           |'''|'''''      .''```.              .''       |_________|
 |           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr1
+ `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr2-SNAPSHOT
 
 Follow and support the project on http://vietj.github.com/crash
 Welcome to julien.local + !
@@ -105,7 +105,7 @@ It is Fri Dec 03 16:20:40 CET 2010 now</pre>
             </strong></span>:</p>
           <pre class="screen">juliens-macbook-pro:~ julien$ ssh -p 2000 -l root localhost
 root@localhost's password:
-CRaSH 1.0.0-cr1 (http://vietj.github.com/crash)
+CRaSH 1.0.0-cr2-SNAPSHOT (http://vietj.github.com/crash)
 Welcome to juliens-macbook-pro.local!
 It is Fri Jan 08 21:12:53 CET 2010 now.
 %</pre>
@@ -605,19 +605,6 @@ PARAMETERS
        [-h | --help]
            Provides command usage</pre><p>
           </p><pre class="screen">NAME
-       jdbc query - execute SQL query
-
-SYNOPSIS
-       jdbc [-h | --help] query ... sqlQuery
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       ... sqlQuery
-           The query</pre><p>
-          </p><pre class="screen">NAME
        jdbc open - open connection from datasource
 
 SYNOPSIS
@@ -630,6 +617,19 @@ PARAMETERS
 
        datasource
            The datasource</pre><p>
+          </p><pre class="screen">NAME
+       jdbc query - execute SQL query
+
+SYNOPSIS
+       jdbc [-h | --help] query ... sqlQuery
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       ... sqlQuery
+           The query</pre><p>
           </p><pre class="screen">NAME
        jdbc connect - connect to database with JDBC connection string
 
@@ -696,19 +696,6 @@ PARAMETERS
        [-h | --help]
            Provides command usage</pre><p>
           </p><pre class="screen">NAME
-       repo ls - list the available repository plugins
-
-SYNOPSIS
-       repo [-h | --help] ls
-
-DESCRIPTION
-       The ls command print the available repository plugins.
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage</pre><p>
-          </p><pre class="screen">NAME
        repo use - changes the current repository
 
 SYNOPSIS
@@ -730,6 +717,19 @@ PARAMETERS
 
        parameters
            The parameters used to instantiate the repository to be used in this session</pre><p>
+          </p><pre class="screen">NAME
+       repo ls - list the available repository plugins
+
+SYNOPSIS
+       repo [-h | --help] ls
+
+DESCRIPTION
+       The ls command print the available repository plugins.
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage</pre><p>
         </p>
       </div>
       <div class="section" title="ws command"><div class="titlepage"><div><div><h3 class="title"><a name="d5e234"></a>
@@ -1042,29 +1042,6 @@ PARAMETERS
        propertyValue
            The new value of the property</pre><p>
           </p><pre class="screen">NAME
-       node import - imports a node from an nt file
-
-SYNOPSIS
-       node [-h | --help] import source target
-
-DESCRIPTION
-       Imports a node from an nt:file node located in the workspace:
-
-       [/]% importnode /gadgets.xml /
-       Node imported
-
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       source
-           The path of the imported nt:file node
-
-       target
-           The path of the parent imported node</pre><p>
-          </p><pre class="screen">NAME
        node export - export a node to an nt file
 
 SYNOPSIS
@@ -1087,6 +1064,29 @@ PARAMETERS
 
        target
            The path of the exported nt:file node</pre><p>
+          </p><pre class="screen">NAME
+       node import - imports a node from an nt file
+
+SYNOPSIS
+       node [-h | --help] import source target
+
+DESCRIPTION
+       Imports a node from an nt:file node located in the workspace:
+
+       [/]% importnode /gadgets.xml /
+       Node imported
+
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       source
+           The path of the imported nt:file node
+
+       target
+           The path of the parent imported node</pre><p>
         </p>
       </div>
       <div class="section" title="mixin command"><div class="titlepage"><div><div><h3 class="title"><a name="d5e272"></a>
@@ -1280,22 +1280,6 @@ PARAMETERS
         
         <p>
           </p><pre class="screen">NAME
-       version checkin - checkin a node
-
-SYNOPSIS
-       version [-h | --help] checkin path
-
-DESCRIPTION
-       Perform a node checkin
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       path
-           The node path to checkin</pre><p>
-          </p><pre class="screen">NAME
        version checkout - checkout a node
 
 SYNOPSIS
@@ -1311,6 +1295,22 @@ PARAMETERS
 
        path
            The node path to checkout</pre><p>
+          </p><pre class="screen">NAME
+       version checkin - checkin a node
+
+SYNOPSIS
+       version [-h | --help] checkin path
+
+DESCRIPTION
+       Perform a node checkin
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       path
+           The node path to checkin</pre><p>
         </p>
       </div>
     </div>
@@ -1360,9 +1360,9 @@ crash.telnet.port=5000</pre></div>
     <div class="section" title="Remove the telnet or SSH access"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e350"></a>Remove the telnet or SSH access</h2></div></div></div>
       
       <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
-          <p>to remove the telnet access, remove the jar file in the <span class="italic">WEB-INF/lib/crsh.shell.telnet-1.0.0-cr1.jar</span> .</p>
+          <p>to remove the telnet access, remove the jar file in the <span class="italic">WEB-INF/lib/crsh.shell.telnet-1.0.0-cr2-SNAPSHOT.jar</span> .</p>
         </li><li class="listitem">
-          <p>to remove the SSH access, remove the jar file in the <span class="italic">WEB-INF/lib/crsh.shell.ssh-1.0.0-cr1.jar</span> .</p>
+          <p>to remove the SSH access, remove the jar file in the <span class="italic">WEB-INF/lib/crsh.shell.ssh-1.0.0-cr2-SNAPSHOT.jar</span> .</p>
         </li></ul></div>
     </div>
     <div class="section" title="Configure the shell default message"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e359"></a>Configure the shell default message</h2></div></div></div>
@@ -1417,7 +1417,7 @@ crash.auth.jaas.domain=gatein-domain</pre></div>
           </li><li class="listitem">
             <p>Provide accurate contextual code completion</p>
           </li><li class="listitem">
-            <p>Support sub commands (? la git like "git add") for grouping commands of the same kind inside the same class as methods</p>
+            <p>Support sub commands (&#65533; la git like "git add") for grouping commands of the same kind inside the same class as methods</p>
           </li><li class="listitem">
             <p>Advanced support for usage and manual</p>
           </li></ul></div>
