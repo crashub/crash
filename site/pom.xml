@@ -24,64 +24,75 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>site</id>
+      <activation>
+        <property>
+          <name>!nosite</name>
+        </property>
+      </activation>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <phase>generate-resources</phase>
+                <configuration>
+                  <target>
+                    <property name="doc" value="${project.build.directory}/doc/" />
+                    <property name="site" value="${project.build.directory}/classes/" />
+
+                    <!-- Reference guide -->
+                    <unzip src="${org.crsh:crsh.doc:zip:html}" dest="${doc}" />
+                    <copy file="${doc}/index.html" tofile="${site}/doc.html" />
+                    <copy todir="${site}/css">
+                      <fileset dir="${doc}/css">
+                        <include name="wikbook.css" />
+                        <include name="bootstrap/prettify.css" />
+                      </fileset>
+                    </copy>
+                    <copy todir="${site}/js">
+                      <fileset dir="${doc}/js/bootstrap" includes="google-code-prettify/**" />
+                    </copy>
+                    <copy todir="${site}/images">
+                      <fileset dir="${doc}/images" />
+                    </copy>
+
+                    <!-- Javadoc -->
+                    <unzip src="${org.crsh:crsh.doc:jar:javadoc}" dest="${site}/javadoc" />
+
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.github.github</groupId>
+            <artifactId>site-maven-plugin</artifactId>
             <configuration>
-              <target>
-                <property name="doc" value="${project.build.directory}/doc/" />
-                <property name="site" value="${project.build.directory}/classes/" />
-
-                <!-- Reference guide -->
-                <unzip src="${org.crsh:crsh.doc:zip:html}" dest="${doc}" />
-                <copy file="${doc}/index.html" tofile="${site}/doc.html" />
-                <copy todir="${site}/css">
-                  <fileset dir="${doc}/css">
-                    <include name="wikbook.css" />
-                    <include name="bootstrap/prettify.css" />
-                  </fileset>
-                </copy>
-                <copy todir="${site}/js">
-                  <fileset dir="${doc}/js/bootstrap" includes="google-code-prettify/**" />
-                </copy>
-                <copy todir="${site}/images">
-                  <fileset dir="${doc}/images" />
-                </copy>
-
-                <unzip src="${org.crsh:crsh.doc:jar:javadoc}" dest="${site}/javadoc" />
-
-              </target>
+              <message>Deploy documentation for ${project.version}</message>
+              <repositoryOwner>${crsh.github.owner}</repositoryOwner>
+              <repositoryName>${crsh.github.repository}</repositoryName>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
             </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>com.github.github</groupId>
-        <artifactId>site-maven-plugin</artifactId>
-        <configuration>
-          <message>Deploy documentation for ${project.version}</message>
-          <repositoryOwner>${crsh.github.owner}</repositoryOwner>
-          <repositoryName>${crsh.github.repository}</repositoryName>
-          <outputDirectory>${project.build.directory}/classes</outputDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>site</goal>
-            </goals>
-            <phase>site</phase>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>site</goal>
+                </goals>
+                <phase>site</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
