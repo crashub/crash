@@ -60,7 +60,7 @@ abstract class AST {
       }
       return new CRaSHProcess(crash, request) {
         @Override
-        ShellResponse invoke(ShellProcessContext context) throws InterruptedException {
+        ShellResponse doInvoke(ShellProcessContext context) throws InterruptedException {
           return Expr.this.execute(crash, context, null);
         }
       };

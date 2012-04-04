@@ -184,7 +184,7 @@ public class CRaSHSession implements Shell, Closeable {
     //
     return new CRaSHProcess(this, request) {
       @Override
-      ShellResponse invoke(ShellProcessContext context) throws InterruptedException {
+      ShellResponse doInvoke(ShellProcessContext context) throws InterruptedException {
         return response;
       }
     };

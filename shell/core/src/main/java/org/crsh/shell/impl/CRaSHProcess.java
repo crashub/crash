@@ -36,6 +36,9 @@ abstract class CRaSHProcess implements ShellProcess {
   /** . */
   private volatile Thread thread;
 
+  /** . */
+  private volatile boolean cancelled;
+
   protected CRaSHProcess(CRaSHSession crash, String request) {
     this.crash = crash;
     this.request = request;
@@ -45,12 +48,15 @@ abstract class CRaSHProcess implements ShellProcess {
     ShellResponse resp;
     thread = Thread.currentThread();
     try {
-      resp = invoke(processContext);
-      if (Thread.interrupted()) {
-        throw new InterruptedException("Just a mere goto :-)");
+      try {
+        resp = doInvoke(processContext);
+        if (Thread.interrupted() || cancelled) {
+          throw new InterruptedException("like a goto");
+        }
       }
-    } catch (InterruptedException e) {
-      resp = new ShellResponse.Cancelled();
+      catch (InterruptedException e) {
+        resp = new ShellResponse.Cancelled();
+      }
     } catch (Throwable t) {
       resp = ShellResponse.internalError(t);
     } finally {
@@ -72,12 +78,13 @@ abstract class CRaSHProcess implements ShellProcess {
     }
   }
 
-  abstract ShellResponse invoke(ShellProcessContext context) throws InterruptedException;
+  abstract ShellResponse doInvoke(ShellProcessContext context) throws InterruptedException;
 
   public void cancel() {
     Thread t = thread;
     if (t != null) {
       t.interrupt();
     }
+    cancelled = true;
   }
 }

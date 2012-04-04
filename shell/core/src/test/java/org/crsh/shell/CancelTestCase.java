@@ -1,5 +1,6 @@
 package org.crsh.shell;
 
+import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 
 import java.util.concurrent.CountDownLatch;
@@ -7,9 +8,30 @@ import java.util.concurrent.CountDownLatch;
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class CancelTestCase extends AbstractCommandTestCase {
 
+  /** . */
+  private static final Object interrupLock = new Object();
+
+  /** . */
+  private static boolean interruptDoCancel = false;
+
+  /** . */
+  private static boolean interruptInterrupted = false;
+
+  public static void interruptCallback() {
+    synchronized (interrupLock) {
+      interruptDoCancel = true;
+      interrupLock.notifyAll();
+      try {
+        interrupLock.wait(10 * 1000);
+      }
+      catch (InterruptedException e) {
+        interruptInterrupted = true;
+      }
+    }
+  }
 
   public void testInterrupt() {
-    final BaseProcessContext ctx = create("sleep 100");
+    final BaseProcessContext ctx = create("invoke " + CancelTestCase.class.getName() + " interruptCallback");
     Thread t = new Thread() {
       @Override
       public void run() {
@@ -19,17 +41,29 @@ public class CancelTestCase extends AbstractCommandTestCase {
     t.start();
 
     //
-    while (t.getState() == Thread.State.WAITING) {
-      // Waiting
+    synchronized (interrupLock) {
+      if (!interruptDoCancel) {
+        try {
+          interrupLock.wait(10 * 1000);
+        }
+        catch (InterruptedException e) {
+          throw AbstractTestCase.failure(e);
+        }
+      }
     }
 
+    // We should have been interrupted
+    assertTrue(interruptDoCancel);
+
+    //
     ctx.cancel();
     ShellResponse resp = ctx.getResponse();
     assertEquals(ShellResponse.Cancelled.class, resp.getClass());
+    assertTrue(interruptInterrupted);
   }
 
   public void testLoop() throws Exception {
-    final BaseProcessContext ctx = create("invoke " + CancelTestCase.class.getName() + " testLoopCallback");
+    final BaseProcessContext ctx = create("invoke " + CancelTestCase.class.getName() + " loopCallback");
     Thread t = new Thread() {
       @Override
       public void run() {
@@ -38,36 +72,36 @@ public class CancelTestCase extends AbstractCommandTestCase {
     };
 
     //
-    latch1 = new CountDownLatch(1);
-    latch2 = true;
-    interrupted = null;
+    loopLatch1 = new CountDownLatch(1);
+    loopLatch2 = true;
+    loopInterrupted = null;
     t.start();
 
     //
-    latch1.await();
+    loopLatch1.await();
     ctx.cancel();
-    latch2 = false;
+    loopLatch2 = false;
 
     //
     ShellResponse resp = ctx.getResponse();
     assertEquals(ShellResponse.Cancelled.class, resp.getClass());
-    assertEquals(Boolean.TRUE, interrupted);
+    assertEquals(Boolean.TRUE, loopInterrupted);
   }
 
   /** . */
-  private static CountDownLatch latch1;
+  private static CountDownLatch loopLatch1;
 
   /** . */
-  private static volatile boolean latch2;
+  private static volatile boolean loopLatch2;
 
   /** . */
-  private static volatile Boolean interrupted;
+  private static volatile Boolean loopInterrupted;
 
-  public static void testLoopCallback() {
-    latch1.countDown();
-    while (latch2) {
+  public static void loopCallback() {
+    loopLatch1.countDown();
+    while (loopLatch2) {
       //
     }
-    interrupted = Thread.currentThread().isInterrupted();
+    loopInterrupted = Thread.currentThread().isInterrupted();
   }
 }
