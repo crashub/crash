@@ -17,6 +17,11 @@
       <classifier>html</classifier>
       <type>zip</type>
     </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.doc</artifactId>
+      <classifier>javadoc</classifier>
+    </dependency>
   </dependencies>
 
 
@@ -48,6 +53,9 @@
                 <copy todir="${site}/images">
                   <fileset dir="${doc}/images" />
                 </copy>
+
+                <unzip src="${org.crsh:crsh.doc:jar:javadoc}" dest="${site}/javadoc" />
+
               </target>
             </configuration>
             <goals>
