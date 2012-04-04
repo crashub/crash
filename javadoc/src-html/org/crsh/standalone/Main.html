@@ -1,0 +1,246 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright (C) 2010 eXo Platform SAS.<a name="line.2"></a>
+<FONT color="green">003</FONT>     *<a name="line.3"></a>
+<FONT color="green">004</FONT>     * This is free software; you can redistribute it and/or modify it<a name="line.4"></a>
+<FONT color="green">005</FONT>     * under the terms of the GNU Lesser General Public License as<a name="line.5"></a>
+<FONT color="green">006</FONT>     * published by the Free Software Foundation; either version 2.1 of<a name="line.6"></a>
+<FONT color="green">007</FONT>     * the License, or (at your option) any later version.<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     * This software is distributed in the hope that it will be useful,<a name="line.9"></a>
+<FONT color="green">010</FONT>     * but WITHOUT ANY WARRANTY; without even the implied warranty of<a name="line.10"></a>
+<FONT color="green">011</FONT>     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU<a name="line.11"></a>
+<FONT color="green">012</FONT>     * Lesser General Public License for more details.<a name="line.12"></a>
+<FONT color="green">013</FONT>     *<a name="line.13"></a>
+<FONT color="green">014</FONT>     * You should have received a copy of the GNU Lesser General Public<a name="line.14"></a>
+<FONT color="green">015</FONT>     * License along with this software; if not, write to the Free<a name="line.15"></a>
+<FONT color="green">016</FONT>     * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA<a name="line.16"></a>
+<FONT color="green">017</FONT>     * 02110-1301 USA, or see the FSF site: http://www.fsf.org.<a name="line.17"></a>
+<FONT color="green">018</FONT>     */<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    package org.crsh.standalone;<a name="line.20"></a>
+<FONT color="green">021</FONT>    <a name="line.21"></a>
+<FONT color="green">022</FONT>    import com.sun.tools.attach.VirtualMachine;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.crsh.cmdline.ClassDescriptor;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.crsh.cmdline.CommandFactory;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.crsh.cmdline.annotations.Argument;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.crsh.cmdline.annotations.Command;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.crsh.cmdline.annotations.Option;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.crsh.cmdline.annotations.Usage;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.crsh.cmdline.matcher.CommandMatch;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.crsh.cmdline.matcher.InvocationContext;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.crsh.cmdline.matcher.Matcher;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.crsh.shell.impl.CRaSH;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.crsh.term.processor.Processor;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.crsh.term.BaseTerm;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.crsh.term.Term;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.crsh.term.spi.jline.JLineIO;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.crsh.term.spi.net.TermIOServer;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.slf4j.Logger;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.slf4j.LoggerFactory;<a name="line.39"></a>
+<FONT color="green">040</FONT>    <a name="line.40"></a>
+<FONT color="green">041</FONT>    import java.io.File;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import java.net.*;<a name="line.42"></a>
+<FONT color="green">043</FONT>    import java.util.List;<a name="line.43"></a>
+<FONT color="green">044</FONT>    <a name="line.44"></a>
+<FONT color="green">045</FONT>    /**<a name="line.45"></a>
+<FONT color="green">046</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.46"></a>
+<FONT color="green">047</FONT>     * @version $Revision$<a name="line.47"></a>
+<FONT color="green">048</FONT>     */<a name="line.48"></a>
+<FONT color="green">049</FONT>    public class Main {<a name="line.49"></a>
+<FONT color="green">050</FONT>    <a name="line.50"></a>
+<FONT color="green">051</FONT>      /** . */<a name="line.51"></a>
+<FONT color="green">052</FONT>      private static Logger log = LoggerFactory.getLogger(Main.class);<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>      @Command<a name="line.54"></a>
+<FONT color="green">055</FONT>      public void main(<a name="line.55"></a>
+<FONT color="green">056</FONT>        @Option(names={"j","jar"})<a name="line.56"></a>
+<FONT color="green">057</FONT>        @Usage("specify a file system path of a jar added to the class path")<a name="line.57"></a>
+<FONT color="green">058</FONT>        List&lt;String&gt; jars,<a name="line.58"></a>
+<FONT color="green">059</FONT>        @Option(names={"p","path"})<a name="line.59"></a>
+<FONT color="green">060</FONT>        @Usage("specify a file system path of a dir added to the mount path")<a name="line.60"></a>
+<FONT color="green">061</FONT>        List&lt;String&gt; paths,<a name="line.61"></a>
+<FONT color="green">062</FONT>        @Argument(name = "pid")<a name="line.62"></a>
+<FONT color="green">063</FONT>        @Usage("the optional JVM process id to attach to")<a name="line.63"></a>
+<FONT color="green">064</FONT>        Integer pid) throws Exception {<a name="line.64"></a>
+<FONT color="green">065</FONT>    <a name="line.65"></a>
+<FONT color="green">066</FONT>        //<a name="line.66"></a>
+<FONT color="green">067</FONT>        if (pid != null) {<a name="line.67"></a>
+<FONT color="green">068</FONT>          // Standalone<a name="line.68"></a>
+<FONT color="green">069</FONT>          URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();<a name="line.69"></a>
+<FONT color="green">070</FONT>          java.io.File f = new java.io.File(url.toURI());<a name="line.70"></a>
+<FONT color="green">071</FONT>          log.info("Attaching to remote process " + pid);<a name="line.71"></a>
+<FONT color="green">072</FONT>          VirtualMachine vm = VirtualMachine.attach("" + pid);<a name="line.72"></a>
+<FONT color="green">073</FONT>    <a name="line.73"></a>
+<FONT color="green">074</FONT>          //<a name="line.74"></a>
+<FONT color="green">075</FONT>          TermIOServer server = new TermIOServer(new JLineIO(), 0);<a name="line.75"></a>
+<FONT color="green">076</FONT>          int port = server.bind();<a name="line.76"></a>
+<FONT color="green">077</FONT>          log.info("Callback server set on port " + port);<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>          // Build the options<a name="line.79"></a>
+<FONT color="green">080</FONT>          StringBuilder sb = new StringBuilder();<a name="line.80"></a>
+<FONT color="green">081</FONT>    <a name="line.81"></a>
+<FONT color="green">082</FONT>          // Rewrite absolute path<a name="line.82"></a>
+<FONT color="green">083</FONT>          if (paths != null) {<a name="line.83"></a>
+<FONT color="green">084</FONT>            for (String path : paths) {<a name="line.84"></a>
+<FONT color="green">085</FONT>              File file = new File(path);<a name="line.85"></a>
+<FONT color="green">086</FONT>              if (file.exists()) {<a name="line.86"></a>
+<FONT color="green">087</FONT>                sb.append("--path ").append(file.getAbsolutePath()).append(' ');<a name="line.87"></a>
+<FONT color="green">088</FONT>              }<a name="line.88"></a>
+<FONT color="green">089</FONT>            }<a name="line.89"></a>
+<FONT color="green">090</FONT>          }<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>          // Rewrite absolute path<a name="line.92"></a>
+<FONT color="green">093</FONT>          if (jars != null) {<a name="line.93"></a>
+<FONT color="green">094</FONT>            for (String jar : jars) {<a name="line.94"></a>
+<FONT color="green">095</FONT>              File file = new File(jar);<a name="line.95"></a>
+<FONT color="green">096</FONT>              if (file.exists()) {<a name="line.96"></a>
+<FONT color="green">097</FONT>                sb.append("--jar ").append(file.getAbsolutePath()).append(' ');<a name="line.97"></a>
+<FONT color="green">098</FONT>              }<a name="line.98"></a>
+<FONT color="green">099</FONT>            }<a name="line.99"></a>
+<FONT color="green">100</FONT>          }<a name="line.100"></a>
+<FONT color="green">101</FONT>    <a name="line.101"></a>
+<FONT color="green">102</FONT>          // Append callback port<a name="line.102"></a>
+<FONT color="green">103</FONT>          sb.append(port);<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>          //<a name="line.105"></a>
+<FONT color="green">106</FONT>          String options = sb.toString();<a name="line.106"></a>
+<FONT color="green">107</FONT>          log.info("Loading agent with command " + options);<a name="line.107"></a>
+<FONT color="green">108</FONT>          vm.loadAgent(f.getCanonicalPath(), options);<a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>          //<a name="line.110"></a>
+<FONT color="green">111</FONT>          try {<a name="line.111"></a>
+<FONT color="green">112</FONT>            server.accept();<a name="line.112"></a>
+<FONT color="green">113</FONT>            while (server.execute()) {<a name="line.113"></a>
+<FONT color="green">114</FONT>              //<a name="line.114"></a>
+<FONT color="green">115</FONT>            }<a name="line.115"></a>
+<FONT color="green">116</FONT>          } finally {<a name="line.116"></a>
+<FONT color="green">117</FONT>            vm.detach();<a name="line.117"></a>
+<FONT color="green">118</FONT>          }<a name="line.118"></a>
+<FONT color="green">119</FONT>        } else {<a name="line.119"></a>
+<FONT color="green">120</FONT>          final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());<a name="line.120"></a>
+<FONT color="green">121</FONT>    <a name="line.121"></a>
+<FONT color="green">122</FONT>          //<a name="line.122"></a>
+<FONT color="green">123</FONT>          if (paths != null) {<a name="line.123"></a>
+<FONT color="green">124</FONT>            for (String path : paths) {<a name="line.124"></a>
+<FONT color="green">125</FONT>              File mount = new File(path);<a name="line.125"></a>
+<FONT color="green">126</FONT>              bootstrap.addToMounts(mount);<a name="line.126"></a>
+<FONT color="green">127</FONT>            }<a name="line.127"></a>
+<FONT color="green">128</FONT>          }<a name="line.128"></a>
+<FONT color="green">129</FONT>    <a name="line.129"></a>
+<FONT color="green">130</FONT>          //<a name="line.130"></a>
+<FONT color="green">131</FONT>          if (jars != null) {<a name="line.131"></a>
+<FONT color="green">132</FONT>            for (String jar : jars) {<a name="line.132"></a>
+<FONT color="green">133</FONT>              File jarFile = new File(jar);<a name="line.133"></a>
+<FONT color="green">134</FONT>              bootstrap.addToClassPath(jarFile);<a name="line.134"></a>
+<FONT color="green">135</FONT>            }<a name="line.135"></a>
+<FONT color="green">136</FONT>          }<a name="line.136"></a>
+<FONT color="green">137</FONT>    <a name="line.137"></a>
+<FONT color="green">138</FONT>          // Register shutdown hook<a name="line.138"></a>
+<FONT color="green">139</FONT>          Runtime.getRuntime().addShutdownHook(new Thread() {<a name="line.139"></a>
+<FONT color="green">140</FONT>            @Override<a name="line.140"></a>
+<FONT color="green">141</FONT>            public void run() {<a name="line.141"></a>
+<FONT color="green">142</FONT>              // Should trigger some kind of run interruption<a name="line.142"></a>
+<FONT color="green">143</FONT>            }<a name="line.143"></a>
+<FONT color="green">144</FONT>          });<a name="line.144"></a>
+<FONT color="green">145</FONT>    <a name="line.145"></a>
+<FONT color="green">146</FONT>          // Do bootstrap<a name="line.146"></a>
+<FONT color="green">147</FONT>          bootstrap.bootstrap();<a name="line.147"></a>
+<FONT color="green">148</FONT>    <a name="line.148"></a>
+<FONT color="green">149</FONT>          // Start crash for this command line<a name="line.149"></a>
+<FONT color="green">150</FONT>          Term term = new BaseTerm(new JLineIO());<a name="line.150"></a>
+<FONT color="green">151</FONT>          CRaSH crash = new CRaSH(bootstrap.getContext());<a name="line.151"></a>
+<FONT color="green">152</FONT>          Processor processor = new Processor(term, crash.createSession());<a name="line.152"></a>
+<FONT color="green">153</FONT>    <a name="line.153"></a>
+<FONT color="green">154</FONT>          //<a name="line.154"></a>
+<FONT color="green">155</FONT>          try {<a name="line.155"></a>
+<FONT color="green">156</FONT>            processor.run();<a name="line.156"></a>
+<FONT color="green">157</FONT>          }<a name="line.157"></a>
+<FONT color="green">158</FONT>          finally {<a name="line.158"></a>
+<FONT color="green">159</FONT>            bootstrap.shutdown();<a name="line.159"></a>
+<FONT color="green">160</FONT>          }<a name="line.160"></a>
+<FONT color="green">161</FONT>        }<a name="line.161"></a>
+<FONT color="green">162</FONT>      }<a name="line.162"></a>
+<FONT color="green">163</FONT>    <a name="line.163"></a>
+<FONT color="green">164</FONT>      public static void main(String[] args) throws Exception {<a name="line.164"></a>
+<FONT color="green">165</FONT>    <a name="line.165"></a>
+<FONT color="green">166</FONT>        StringBuilder line = new StringBuilder();<a name="line.166"></a>
+<FONT color="green">167</FONT>        for (int i = 0;i &lt; args.length;i++) {<a name="line.167"></a>
+<FONT color="green">168</FONT>          if (i  &gt; 0) {<a name="line.168"></a>
+<FONT color="green">169</FONT>            line.append(' ');<a name="line.169"></a>
+<FONT color="green">170</FONT>          }<a name="line.170"></a>
+<FONT color="green">171</FONT>          line.append(args[i]);<a name="line.171"></a>
+<FONT color="green">172</FONT>        }<a name="line.172"></a>
+<FONT color="green">173</FONT>    <a name="line.173"></a>
+<FONT color="green">174</FONT>        //<a name="line.174"></a>
+<FONT color="green">175</FONT>        ClassDescriptor&lt;Main&gt; c = CommandFactory.create(Main.class);<a name="line.175"></a>
+<FONT color="green">176</FONT>        Matcher&lt;Main&gt; matcher = Matcher.createMatcher("main", c);<a name="line.176"></a>
+<FONT color="green">177</FONT>        CommandMatch&lt;Main, ?, ?&gt; match = matcher.match(line.toString());<a name="line.177"></a>
+<FONT color="green">178</FONT>        match.invoke(new InvocationContext(), new Main());<a name="line.178"></a>
+<FONT color="green">179</FONT>      }<a name="line.179"></a>
+<FONT color="green">180</FONT>    }<a name="line.180"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
