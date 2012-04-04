@@ -132,7 +132,7 @@ public class BaseProcessContext implements ShellProcessContext {
 
   public ShellResponse getResponse() {
     try {
-      latch.await(3, TimeUnit.SECONDS);
+      latch.await(60, TimeUnit.SECONDS);
       return response;
     }
     catch (InterruptedException e) {
