@@ -23,11 +23,11 @@ import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.shell.impl.CRaSH;
-import org.crsh.shell.impl.CRaSHSession;
 import org.crsh.term.processor.Processor;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
@@ -39,6 +39,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -77,6 +78,8 @@ public class Agent {
     List<String> jars,
     @Option(names={"m","mount"})
     List<String> mounts,
+    @Option(names={"c","config"})
+    List<String> configEntries,
     @Argument(name = "port")
     Integer port) throws Exception {
 
@@ -97,6 +100,20 @@ public class Agent {
         File jarFile = new File(jar);
         bootstrap.addToClassPath(jarFile);
       }
+    }
+
+    //
+    if (configEntries != null) {
+      Properties config = new Properties();
+      for (String configEntry : configEntries) {
+        int index = configEntry.indexOf('=');
+        if (index == -1) {
+          config.setProperty(configEntry, "");
+        } else {
+          config.setProperty(configEntry.substring(0, index), configEntry.substring(index + 1));
+        }
+      }
+      bootstrap.setConfig(config);
     }
 
     // Do bootstrap

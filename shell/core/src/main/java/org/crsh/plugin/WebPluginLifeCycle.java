@@ -61,6 +61,9 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
     ServletContext sc = sce.getServletContext();
     String contextPath = sc.getContextPath();
 
+    // Use JVM properties as external config
+    setConfig(System.getProperties());
+
     //
     synchronized (lock) {
       if (!contextMap.containsKey(contextPath)) {

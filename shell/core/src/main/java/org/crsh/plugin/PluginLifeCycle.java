@@ -42,6 +42,17 @@ public abstract class PluginLifeCycle {
   /** . */
   private PluginContext context;
 
+  /** . */
+  private Properties config;
+
+  public Properties getConfig() {
+    return config;
+  }
+
+  public void setConfig(Properties config) {
+    this.config = config;
+  }
+
   public PluginContext getContext() {
     return context;
   }
@@ -52,7 +63,7 @@ public abstract class PluginLifeCycle {
     }
     
     // Get properties from system properties
-    Properties props = new Properties();
+    Properties config = new Properties();
 
     // Load properties from configuration file
     Resource res = context.loadResource("crash.properties", ResourceKind.CONFIG);
@@ -60,8 +71,8 @@ public abstract class PluginLifeCycle {
       try {
         URL url = res.getURL();
         InputStream in = url.openStream();
-        props.load(in);
-        log.debug("Loaded properties from " + url + " " + props);
+        config.load(in);
+        log.debug("Loaded properties from " + url + " " + config);
       } catch (IOException e) {
         log.warn("Could not configure from crash.properties", e);
       }
@@ -69,19 +80,21 @@ public abstract class PluginLifeCycle {
       log.debug("Could not find crash.properties file");
     }
 
-    // Override default properties from System properties
-    props.putAll(System.getProperties());
+    // Override default properties from external config
+    if (this.config != null) {
+      config.putAll(this.config);
+    }
 
     // Override default properties from command line
     for (PropertyDescriptor<?> desc : PropertyDescriptor.ALL.values()) {
-      configureProperty(context, props, desc);
+      configureProperty(context, config, desc);
     }
 
     // Override default properties from plugin defined properties.
     for (final CRaSHPlugin<?> plugin : context.manager.getPlugins())
     {
       for (PropertyDescriptor<?> descriptor : plugin.getConfigurationCapabilities()) {
-        configureProperty(context, props, descriptor);
+        configureProperty(context, config, descriptor);
       }
     }
 

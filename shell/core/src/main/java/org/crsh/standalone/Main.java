@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.*;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -70,6 +71,9 @@ public class Main {
     @Option(names={"m","mount"})
     @Usage("specify a file system path of a dir added to the mount path")
     List<String> mounts,
+    @Option(names={"c","config"})
+    @Usage("specify a config property of the form a=b")
+    List<String> configEntries,
     @Argument(name = "pid")
     @Usage("the optional JVM process id to attach to")
     Integer pid) throws Exception {
@@ -78,6 +82,7 @@ public class Main {
     if (Boolean.TRUE.equals(help)) {
       descriptor.printUsage(System.out);
     } else if (pid != null) {
+
       // Standalone
       URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();
       java.io.File f = new java.io.File(url.toURI());
@@ -97,18 +102,25 @@ public class Main {
         for (String mounth : mounts) {
           File fileMount = new File(mounth);
           if (fileMount.exists()) {
-            sb.append("--mount ").append(fileMount.getAbsolutePath()).append(' ');
+            sb.append("--mount ").append(fileMount.getCanonicalPath()).append(' ');
           }
         }
       }
 
-      // Rewrite absolute path
+      // Rewrite canonical path
       if (jars != null) {
         for (String jar : jars) {
           File file = new File(jar);
           if (file.exists()) {
-            sb.append("--jar ").append(file.getAbsolutePath()).append(' ');
+            sb.append("--jar ").append(file.getCanonicalPath()).append(' ');
           }
+        }
+      }
+
+      // Propagate canonical config
+      if (configEntries != null) {
+        for (String config : configEntries) {
+          sb.append("--config" ).append(config).append(' ');
         }
       }
 
@@ -146,6 +158,20 @@ public class Main {
           File jarFile = new File(jar);
           bootstrap.addToClassPath(jarFile);
         }
+      }
+
+      //
+      if (configEntries != null) {
+        Properties config = new Properties();
+        for (String configEntry : configEntries) {
+          int index = configEntry.indexOf('=');
+          if (index == -1) {
+            config.setProperty(configEntry, "");
+          } else {
+            config.setProperty(configEntry.substring(0, index), configEntry.substring(index + 1));
+          }
+        }
+        bootstrap.setConfig(config);
       }
 
       // Register shutdown hook
