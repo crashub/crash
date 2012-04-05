@@ -22,6 +22,7 @@ package org.crsh.standalone;
 import com.sun.tools.attach.VirtualMachine;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
@@ -51,8 +52,18 @@ public class Main {
   /** . */
   private static Logger log = LoggerFactory.getLogger(Main.class);
 
+  /** . */
+  private final ClassDescriptor<Main> descriptor;
+
+  public Main() throws IntrospectionException {
+    this.descriptor = CommandFactory.create(Main.class);
+  }
+
   @Command
   public void main(
+    @Option(names = {"h","help"})
+    @Usage("display standalone mode help")
+    Boolean help,
     @Option(names={"j","jar"})
     @Usage("specify a file system path of a jar added to the class path")
     List<String> jars,
@@ -64,7 +75,9 @@ public class Main {
     Integer pid) throws Exception {
 
     //
-    if (pid != null) {
+    if (Boolean.TRUE.equals(help)) {
+      descriptor.printUsage(System.out);
+    } else if (pid != null) {
       // Standalone
       URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();
       java.io.File f = new java.io.File(url.toURI());
@@ -172,8 +185,8 @@ public class Main {
     }
 
     //
-    ClassDescriptor<Main> c = CommandFactory.create(Main.class);
-    Matcher<Main> matcher = Matcher.createMatcher("main", c);
+    Main main = new Main();
+    Matcher<Main> matcher = Matcher.createMatcher("main", main.descriptor);
     CommandMatch<Main, ?, ?> match = matcher.match(line.toString());
     match.invoke(new InvocationContext(), new Main());
   }
