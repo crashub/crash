@@ -200,16 +200,49 @@ public final class Processor implements Runnable {
               }
             } else {
               if (completions.size() > 1) {
-                // We propose
-                StringBuilder sb = new StringBuilder("\n");
-                for (Iterator<String> i = completions.keySet().iterator();i.hasNext();) {
-                  String completion = i.next();
-                  sb.append(completion);
-                  if (i.hasNext()) {
-                    sb.append(" ");
-                  }
+
+                // Format stuff
+                int width = term.getWidth();
+
+                // Get the max length
+                int max = 0;
+                for (String completion : completions.keySet()) {
+                  max = Math.max(max, completion.length());
                 }
-                sb.append("\n");
+
+                // Separator
+                max++;
+
+                //
+                StringBuilder sb = new StringBuilder().append('\n');
+                if (max < width) {
+                  int columns = width / max;
+                  int index = 0;
+                  for (String completion : completions.keySet()) {
+                    sb.append(completion);
+                    for (int l = completion.length();l < max;l++) {
+                      sb.append(' ');
+                    }
+                    if (++index >= columns) {
+                      index = 0;
+                      sb.append('\n');
+                    }
+                  }
+                  if (index > 0) {
+                    sb.append('\n');
+                  }
+                } else {
+                  for (Iterator<String> i = completions.keySet().iterator();i.hasNext();) {
+                    String completion = i.next();
+                    sb.append(completion);
+                    if (i.hasNext()) {
+                      sb.append('\n');
+                    }
+                  }
+                  sb.append('\n');
+                }
+
+                // We propose
                 try {
                   term.write(sb.toString());
                 }
