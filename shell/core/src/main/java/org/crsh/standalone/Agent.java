@@ -75,8 +75,8 @@ public class Agent {
   public void main(
     @Option(names={"j","jar"})
     List<String> jars,
-    @Option(names={"p","path"})
-    List<String> paths,
+    @Option(names={"m","mount"})
+    List<String> mounts,
     @Argument(name = "port")
     Integer port) throws Exception {
 
@@ -84,10 +84,10 @@ public class Agent {
     Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
     //
-    if (paths != null) {
-      for (String path : paths) {
-        File mount = new File(path);
-        bootstrap.addToMounts(mount);
+    if (mounts != null) {
+      for (String mount : mounts) {
+        File mountFile = new File(mount);
+        bootstrap.addToMounts(mountFile);
       }
     }
 

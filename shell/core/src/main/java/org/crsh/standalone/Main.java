@@ -67,9 +67,9 @@ public class Main {
     @Option(names={"j","jar"})
     @Usage("specify a file system path of a jar added to the class path")
     List<String> jars,
-    @Option(names={"p","path"})
+    @Option(names={"m","mount"})
     @Usage("specify a file system path of a dir added to the mount path")
-    List<String> paths,
+    List<String> mounts,
     @Argument(name = "pid")
     @Usage("the optional JVM process id to attach to")
     Integer pid) throws Exception {
@@ -93,11 +93,11 @@ public class Main {
       StringBuilder sb = new StringBuilder();
 
       // Rewrite absolute path
-      if (paths != null) {
-        for (String path : paths) {
-          File file = new File(path);
-          if (file.exists()) {
-            sb.append("--path ").append(file.getAbsolutePath()).append(' ');
+      if (mounts != null) {
+        for (String mounth : mounts) {
+          File fileMount = new File(mounth);
+          if (fileMount.exists()) {
+            sb.append("--mount ").append(fileMount.getAbsolutePath()).append(' ');
           }
         }
       }
@@ -133,10 +133,10 @@ public class Main {
       final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
       //
-      if (paths != null) {
-        for (String path : paths) {
-          File mount = new File(path);
-          bootstrap.addToMounts(mount);
+      if (mounts != null) {
+        for (String mount : mounts) {
+          File mountFile = new File(mount);
+          bootstrap.addToMounts(mountFile);
         }
       }
 
