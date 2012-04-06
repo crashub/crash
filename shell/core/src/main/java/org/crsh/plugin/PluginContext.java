@@ -67,7 +67,10 @@ public final class PluginContext {
   private final Map<PropertyDescriptor<?>, Property<?>> properties;
 
   /** . */
-  private final FS vfs;
+  private final FS binFS;
+
+  /** . */
+  private final FS confFS;
 
   /** . */
   private boolean started;
@@ -76,12 +79,13 @@ public final class PluginContext {
    * Create a new plugin context.
    *
    * @param discovery the plugin discovery
-   * @param fs the file system
+   * @param binFS the bin file system
+   * @param confFS the conf file system
    * @param loader the loader
    * @throws NullPointerException if any parameter argument is null
    */
-  public PluginContext(PluginDiscovery discovery, FS fs, ClassLoader loader) throws NullPointerException {
-    if (fs == null) {
+  public PluginContext(PluginDiscovery discovery, FS binFS, FS confFS, ClassLoader loader) throws NullPointerException {
+    if (binFS == null) {
       throw new NullPointerException();
     }
     if (loader == null) {
@@ -111,10 +115,11 @@ public final class PluginContext {
     this.loader = loader;
     this.version = version;
     this.dirs = Collections.emptyList();
-    this.vfs = fs;
+    this.binFS = binFS;
     this.properties = new HashMap<PropertyDescriptor<?>, Property<?>>();
     this.started = false;
     this.manager = new PluginManager(this, discovery);
+    this.confFS = confFS;
   }
 
   public final Iterable<CRaSHPlugin<?>> getPlugins() {
@@ -253,7 +258,7 @@ public final class PluginContext {
           break;
         case CONFIG:
           String path = "/" + resourceId;
-          File file = vfs.get(Path.get(path));
+          File file = confFS.get(Path.get(path));
           if (file != null) {
             res = file.getResource();
           }
@@ -322,7 +327,7 @@ public final class PluginContext {
    */
   public void refresh() {
     try {
-      File commands = vfs.get(Path.get("/commands/"));
+      File commands = binFS.get(Path.get("/"));
       List<File> newDirs = new ArrayList<File>();
       newDirs.add(commands);
       for (File path : commands.children()) {

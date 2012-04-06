@@ -68,12 +68,15 @@ public class Main {
     @Option(names={"j","jar"})
     @Usage("specify a file system path of a jar added to the class path")
     List<String> jars,
-    @Option(names={"m","mount"})
-    @Usage("specify a file system path of a dir added to the mount path")
-    List<String> mounts,
-    @Option(names={"c","config"})
+    @Option(names={"b","bin"})
+    @Usage("specify a file system path of a dir added to the bin path")
+    List<String> bins,
+    @Option(names={"c","conf"})
+    @Usage("specify a file system path of a dir added to the conf path")
+    List<String> confs,
+    @Option(names={"p","property"})
     @Usage("specify a config property of the form a=b")
-    List<String> configEntries,
+    List<String> properties,
     @Argument(name = "pid")
     @Usage("the optional JVM process id to attach to")
     Integer pid) throws Exception {
@@ -97,12 +100,22 @@ public class Main {
       // Build the options
       StringBuilder sb = new StringBuilder();
 
-      // Rewrite absolute path
-      if (mounts != null) {
-        for (String mounth : mounts) {
-          File fileMount = new File(mounth);
-          if (fileMount.exists()) {
-            sb.append("--mount ").append(fileMount.getCanonicalPath()).append(' ');
+      // Rewrite canonical path
+      if (bins != null) {
+        for (String bin : bins) {
+          File binPath = new File(bin);
+          if (binPath.exists()) {
+            sb.append("--bin ").append(binPath.getCanonicalPath()).append(' ');
+          }
+        }
+      }
+
+      // Rewrite canonical path
+      if (confs != null) {
+        for (String conf : confs) {
+          File confPath = new File(conf);
+          if (confPath.exists()) {
+            sb.append("--conf ").append(confPath.getCanonicalPath()).append(' ');
           }
         }
       }
@@ -110,17 +123,17 @@ public class Main {
       // Rewrite canonical path
       if (jars != null) {
         for (String jar : jars) {
-          File file = new File(jar);
-          if (file.exists()) {
-            sb.append("--jar ").append(file.getCanonicalPath()).append(' ');
+          File jarPath = new File(jar);
+          if (jarPath.exists()) {
+            sb.append("--jar ").append(jarPath.getCanonicalPath()).append(' ');
           }
         }
       }
 
       // Propagate canonical config
-      if (configEntries != null) {
-        for (String config : configEntries) {
-          sb.append("--config" ).append(config).append(' ');
+      if (properties != null) {
+        for (String property : properties) {
+          sb.append("--property" ).append(property).append(' ');
         }
       }
 
@@ -145,30 +158,38 @@ public class Main {
       final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
       //
-      if (mounts != null) {
-        for (String mount : mounts) {
-          File mountFile = new File(mount);
-          bootstrap.addToMounts(mountFile);
+      if (bins != null) {
+        for (String bin : bins) {
+          File binPath = new File(bin);
+          bootstrap.addBinPath(binPath);
+        }
+      }
+
+      //
+      if (confs != null) {
+        for (String conf : confs) {
+          File confPath = new File(conf);
+          bootstrap.addBinPath(confPath);
         }
       }
 
       //
       if (jars != null) {
         for (String jar : jars) {
-          File jarFile = new File(jar);
-          bootstrap.addToClassPath(jarFile);
+          File jarPath = new File(jar);
+          bootstrap.addJarPath(jarPath);
         }
       }
 
       //
-      if (configEntries != null) {
+      if (properties != null) {
         Properties config = new Properties();
-        for (String configEntry : configEntries) {
-          int index = configEntry.indexOf('=');
+        for (String property : properties) {
+          int index = property.indexOf('=');
           if (index == -1) {
-            config.setProperty(configEntry, "");
+            config.setProperty(property, "");
           } else {
-            config.setProperty(configEntry.substring(0, index), configEntry.substring(index + 1));
+            config.setProperty(property.substring(0, index), property.substring(index + 1));
           }
         }
         bootstrap.setConfig(config);

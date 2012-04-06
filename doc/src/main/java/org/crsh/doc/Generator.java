@@ -52,9 +52,9 @@ public class Generator {
         throw new IllegalArgumentException("Wrong root directory argument " + root.getCanonicalPath());
       }
     }
-    FS fs = new FS();
-    fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
-    PluginContext ctx = new PluginContext(new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()), fs, Thread.currentThread().getContextClassLoader());
+    FS binFS = new FS().mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/commands/"));
+    FS confFS = new FS().mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
+    PluginContext ctx = new PluginContext(new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()), binFS, confFS, Thread.currentThread().getContextClassLoader());
     ctx.refresh();
     CRaSHSession crash = new CRaSH(ctx).createSession();
     for (String s : ctx.listResourceId(ResourceKind.COMMAND)) {

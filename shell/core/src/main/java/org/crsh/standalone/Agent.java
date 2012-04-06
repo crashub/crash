@@ -23,7 +23,6 @@ import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
-import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
@@ -69,17 +68,19 @@ public class Agent {
 
     //
     t.start();
-    log.info("Spanned CRaSH thread " + t.getId() + " for further processing");
+    log.info("Spawned CRaSH thread " + t.getId() + " for further processing");
   }
 
   @Command
   public void main(
     @Option(names={"j","jar"})
     List<String> jars,
-    @Option(names={"m","mount"})
-    List<String> mounts,
-    @Option(names={"c","config"})
-    List<String> configEntries,
+    @Option(names={"b","bin"})
+    List<String> bins,
+    @Option(names={"c","conf"})
+    List<String> confs,
+    @Option(names={"p","property"})
+    List<String> properties,
     @Argument(name = "port")
     Integer port) throws Exception {
 
@@ -87,10 +88,18 @@ public class Agent {
     Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
     //
-    if (mounts != null) {
-      for (String mount : mounts) {
-        File mountFile = new File(mount);
-        bootstrap.addToMounts(mountFile);
+    if (bins != null) {
+      for (String bin : bins) {
+        File binPath = new File(bin);
+        bootstrap.addBinPath(binPath);
+      }
+    }
+
+    //
+    if (confs != null) {
+      for (String conf : confs) {
+        File confPath = new File(conf);
+        bootstrap.addConfPath(confPath);
       }
     }
 
@@ -98,19 +107,19 @@ public class Agent {
     if (jars != null) {
       for (String jar : jars) {
         File jarFile = new File(jar);
-        bootstrap.addToClassPath(jarFile);
+        bootstrap.addJarPath(jarFile);
       }
     }
 
     //
-    if (configEntries != null) {
+    if (properties != null) {
       Properties config = new Properties();
-      for (String configEntry : configEntries) {
-        int index = configEntry.indexOf('=');
+      for (String property : properties) {
+        int index = property.indexOf('=');
         if (index == -1) {
-          config.setProperty(configEntry, "");
+          config.setProperty(property, "");
         } else {
-          config.setProperty(configEntry.substring(0, index), configEntry.substring(index + 1));
+          config.setProperty(property.substring(0, index), property.substring(index + 1));
         }
       }
       bootstrap.setConfig(config);

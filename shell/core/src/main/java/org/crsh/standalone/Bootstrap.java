@@ -43,10 +43,13 @@ public class Bootstrap extends PluginLifeCycle {
   protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** The mounted path on the file system. */
-  private List<File> mounts = Utils.newArrayList();
+  private List<File> bins = Utils.newArrayList();
+
+  /** The mounted path on the file system. */
+  private List<File> confs = Utils.newArrayList();
 
   /** The class path. */
-  private List<File> classPath = Utils.newArrayList();
+  private List<File> jars = Utils.newArrayList();
 
   /** The base classloader. */
   private ClassLoader baseLoader;
@@ -58,51 +61,63 @@ public class Bootstrap extends PluginLifeCycle {
     this.baseLoader = baseLoader;
   }
 
-  public Bootstrap addToMounts(File file) {
-    mounts.add(file);
+  public Bootstrap addConfPath(File file) {
+    confs.add(file);
     return this;
   }
 
-  public Bootstrap addToClassPath(File file) {
-    classPath.add(file);
+  public Bootstrap addBinPath(File file) {
+    bins.add(file);
+    return this;
+  }
+
+  public Bootstrap addJarPath(File file) {
+    jars.add(file);
     return this;
   }
 
   public void bootstrap() throws Exception {
 
     // Compute the url classpath
-    URL[] urls = new URL[classPath.size()];
+    URL[] urls = new URL[jars.size()];
     for (int i = 0;i < urls.length;i++) {
-      urls[i] = classPath.get(i).toURI().toURL();
+      urls[i] = jars.get(i).toURI().toURL();
     }
 
     // Create the classloader
     URLClassLoader classLoader = new URLClassLoader(urls, baseLoader);
 
-    // Create the virtual file system
-    FS fs = new FS();
-    for (File file : mounts) {
-      fs.mount(file);
+    // Create the bin file system
+    FS binFS = new FS();
+    for (File bin : bins) {
+      binFS.mount(bin);
     }
-    fs.mount(classLoader, Path.get("/crash/"));
+    binFS.mount(classLoader, Path.get("/crash/commands/"));
+
+    // Create the conf file system
+    FS confFS = new FS();
+    for (File conf : confs) {
+      confFS.mount(conf);
+    }
+    confFS.mount(classLoader, Path.get("/crash/"));
 
     // The service loader discovery
     ServiceLoaderDiscovery discovery = new ServiceLoaderDiscovery(classLoader);
 
     //
     StringBuilder info = new StringBuilder("Booting crash with classpath=");
-    info.append(classPath).append(" and mounts=[");
-    for (int i = 0;i < mounts.size();i++) {
+    info.append(jars).append(" and mounts=[");
+    for (int i = 0;i < bins.size();i++) {
       if (i > 0) {
         info.append(',');
       }
-      info.append(mounts.get(i).getAbsolutePath());
+      info.append(bins.get(i).getAbsolutePath());
     }
     info.append(']');
     log.info(info.toString());
 
     //
-    PluginContext context = new PluginContext(discovery, fs, classLoader);
+    PluginContext context = new PluginContext(discovery, binFS, confFS, classLoader);
     context.refresh();
     start(context);
   }

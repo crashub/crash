@@ -52,8 +52,9 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
   private TestPluginLifeCycle(PluginDiscovery discovery, ClassLoader classLoader) throws Exception {
     this.context = new PluginContext(
         discovery,
-        new FS().mount(classLoader,
-        Path.get("/crash/")), classLoader);
+        new FS().mount(classLoader,Path.get("/crash/commands/")),
+        new FS().mount(classLoader,Path.get("/crash/")),
+        classLoader);
     this.crash = new CRaSH(context);
   }
 
