@@ -21,7 +21,9 @@ package org.crsh.telnet;
 
 import org.crsh.plugin.*;
 import org.crsh.telnet.term.TelnetLifeCycle;
+import org.crsh.vfs.Resource;
 
+import java.net.URL;
 import java.util.Collections;
 
 /**
@@ -51,7 +53,27 @@ public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
     PluginContext context = getContext();
 
     //
+    URL configURL = TelnetPlugin.class.getResource("telnet.properties");
+    if (configURL != null) {
+      log.debug("Found embedded telnet config url " + configURL);
+    }
+
+    // Override from config if any
+    Resource res = getContext().loadResource("telnet.properties", ResourceKind.CONFIG);
+    if (res != null) {
+      configURL = res.getURL();
+      log.debug("Found telnet config url " + configURL);
+    }
+
+    //
+    if (configURL == null) {
+      log.info("Could not boot Telnet due to missing config");
+      return;
+    }
+
+    //
     TelnetLifeCycle lifeCycle = new TelnetLifeCycle(context);
+    lifeCycle.setConfigURL(configURL);
     Integer port = context.getProperty(TELNET_PORT);
     if (port != null) {
       lifeCycle.setPort(port);

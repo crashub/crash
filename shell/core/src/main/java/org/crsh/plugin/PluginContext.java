@@ -252,27 +252,11 @@ public final class PluginContext {
           }
           break;
         case CONFIG:
-          if ("telnet.properties".equals(resourceId)) {
-            File telnet = vfs.get(Path.get("/telnet/telnet.properties"));
-            if (telnet != null) {
-              res = telnet.getResource();
-            }
+          String path = "/" + resourceId;
+          File file = vfs.get(Path.get(path));
+          if (file != null) {
+            res = file.getResource();
           }
-          if ("crash.properties".equals(resourceId)) {
-            File props = vfs.get(Path.get("/crash.properties"));
-            if (props != null) {
-              res = props.getResource();
-            }
-          }
-          break;
-        case KEY:
-          if ("hostkey.pem".equals(resourceId)) {
-            File key = vfs.get((Path.get("/ssh/hostkey.pem")));
-            if (key != null) {
-              res = key.getResource();
-            }
-          }
-          break;
       }
     } catch (IOException e) {
       log.warn("Could not obtain resource " + resourceId, e);

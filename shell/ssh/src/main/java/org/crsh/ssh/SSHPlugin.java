@@ -70,12 +70,17 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
       return;
     }
 
-    //
-    Resource res = getContext().loadResource("hostkey.pem", ResourceKind.KEY);
-    URL keyURL = null;
+    // Get embedded default key
+    URL keyURL = SSHPlugin.class.getResource("hostkey.pem");
+    if (keyURL != null) {
+      log.debug("Found embedded key url " + keyURL);
+    }
+
+    // Override from config if any
+    Resource res = getContext().loadResource("hostkey.pem", ResourceKind.CONFIG);
     if (res != null) {
       keyURL = res.getURL();
-      log.debug("Found key url " + keyURL);
+      log.debug("Found ssh key url " + keyURL);
     }
 
     // If we have a key path, we convert is as an URL

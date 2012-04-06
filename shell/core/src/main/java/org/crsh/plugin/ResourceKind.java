@@ -42,8 +42,4 @@ public enum ResourceKind {
    */
   LIFECYCLE,
 
-  /**
-   * Security key file.
-   */
-  KEY
 }

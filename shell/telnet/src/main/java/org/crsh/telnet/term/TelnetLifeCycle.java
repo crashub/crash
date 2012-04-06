@@ -19,7 +19,6 @@
 
 package org.crsh.telnet.term;
 
-import net.wimpi.telnetd.TelnetD;
 import net.wimpi.telnetd.io.terminal.TerminalManager;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionManager;
@@ -27,12 +26,11 @@ import net.wimpi.telnetd.net.PortListener;
 import net.wimpi.telnetd.shell.ShellManager;
 import net.wimpi.telnetd.util.StringUtil;
 import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.ResourceKind;
 import org.crsh.term.TermLifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -56,6 +54,9 @@ public class TelnetLifeCycle extends TermLifeCycle {
   /** . */
   private static final ConcurrentHashMap<ConnectionManager, TelnetLifeCycle> map = new ConcurrentHashMap<ConnectionManager, TelnetLifeCycle>();
 
+  /** . */
+  private URL configURL;
+
   static TelnetLifeCycle getLifeCycle(Connection conn) {
     return map.get(conn.getConnectionData().getManager());
   }
@@ -72,11 +73,18 @@ public class TelnetLifeCycle extends TermLifeCycle {
     this.port = port;
   }
 
+  public URL getConfigURL() {
+    return configURL;
+  }
+
+  public void setConfigURL(URL configURL) {
+    this.configURL = configURL;
+  }
+
   @Override
   protected synchronized void doInit() throws Exception {
-    String s = getContext().loadResource("telnet.properties", ResourceKind.CONFIG).getContent();
     Properties props = new Properties();
-    props.load(new ByteArrayInputStream(s.getBytes("ISO-8859-1")));
+    props.load(configURL.openStream());
 
     //
     if (port != null) {
