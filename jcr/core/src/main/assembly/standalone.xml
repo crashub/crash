@@ -40,23 +40,19 @@
         <include>javax.jcr:jcr</include>
       </includes>
     </dependencySet>
+    <dependencySet>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <outputDirectory>/</outputDirectory>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+          <exclude>META-INF/manifest.mf</exclude>
+        </excludes>
+      </unpackOptions>
+      <includes>
+        <include>org.crsh:crsh.jcr.core</include>
+      </includes>
+    </dependencySet>
   </dependencySets>
-
-  <fileSets>
-    <fileSet>
-      <directory>target/classes</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>**</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>src/main/resources</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>**</include>
-      </includes>
-    </fileSet>
-  </fileSets>
 
 </assembly>

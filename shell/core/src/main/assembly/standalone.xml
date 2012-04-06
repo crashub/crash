@@ -41,26 +41,10 @@
         <include>org.slf4j:slf4j-jdk14</include>
         <include>jline:jline</include>
         <include>org.crsh:crsh.cmdline</include>
+        <include>org.crsh:crsh.shell.core</include>
         <include>org.codehaus.groovy:groovy-all</include>
       </includes>
     </dependencySet>
   </dependencySets>
-
-  <fileSets>
-    <fileSet>
-      <directory>target/classes</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>**</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>src/main/resources</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>**</include>
-      </includes>
-    </fileSet>
-  </fileSets>
 
 </assembly>
