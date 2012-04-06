@@ -133,7 +133,7 @@ public class Main {
       // Propagate canonical config
       if (properties != null) {
         for (String property : properties) {
-          sb.append("--property" ).append(property).append(' ');
+          sb.append("--property ").append(property).append(' ');
         }
       }
 
