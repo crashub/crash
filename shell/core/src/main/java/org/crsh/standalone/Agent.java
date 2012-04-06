@@ -75,9 +75,9 @@ public class Agent {
   public void main(
     @Option(names={"j","jar"})
     List<String> jars,
-    @Option(names={"b","bin"})
-    List<String> bins,
-    @Option(names={"c","conf"})
+    @Option(names={"c","cmd"})
+    List<String> cmds,
+    @Option(names={"conf"})
     List<String> confs,
     @Option(names={"p","property"})
     List<String> properties,
@@ -88,10 +88,10 @@ public class Agent {
     Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
     //
-    if (bins != null) {
-      for (String bin : bins) {
-        File binPath = new File(bin);
-        bootstrap.addBinPath(binPath);
+    if (cmds != null) {
+      for (String cmd : cmds) {
+        File cmdPath = new File(cmd);
+        bootstrap.addCmdPath(cmdPath);
       }
     }
 

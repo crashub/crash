@@ -66,7 +66,7 @@ public class Bootstrap extends PluginLifeCycle {
     return this;
   }
 
-  public Bootstrap addBinPath(File file) {
+  public Bootstrap addCmdPath(File file) {
     bins.add(file);
     return this;
   }

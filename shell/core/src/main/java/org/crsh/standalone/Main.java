@@ -68,14 +68,14 @@ public class Main {
     @Option(names={"j","jar"})
     @Usage("specify a file system path of a jar added to the class path")
     List<String> jars,
-    @Option(names={"b","bin"})
-    @Usage("specify a file system path of a dir added to the bin path")
-    List<String> bins,
-    @Option(names={"c","conf"})
-    @Usage("specify a file system path of a dir added to the conf path")
+    @Option(names={"c","cmd"})
+    @Usage("specify a file system path of a dir added to the command path")
+    List<String> cmds,
+    @Option(names={"conf"})
+    @Usage("specify a file system path of a dir added to the configuration path")
     List<String> confs,
     @Option(names={"p","property"})
-    @Usage("specify a config property of the form a=b")
+    @Usage("specify a configuration property of the form a=b")
     List<String> properties,
     @Argument(name = "pid")
     @Usage("the optional JVM process id to attach to")
@@ -101,11 +101,11 @@ public class Main {
       StringBuilder sb = new StringBuilder();
 
       // Rewrite canonical path
-      if (bins != null) {
-        for (String bin : bins) {
-          File binPath = new File(bin);
-          if (binPath.exists()) {
-            sb.append("--bin ").append(binPath.getCanonicalPath()).append(' ');
+      if (cmds != null) {
+        for (String cmd : cmds) {
+          File cmdPath = new File(cmd);
+          if (cmdPath.exists()) {
+            sb.append("--cmd ").append(cmdPath.getCanonicalPath()).append(' ');
           }
         }
       }
@@ -158,10 +158,10 @@ public class Main {
       final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
       //
-      if (bins != null) {
-        for (String bin : bins) {
-          File binPath = new File(bin);
-          bootstrap.addBinPath(binPath);
+      if (cmds != null) {
+        for (String cmd : cmds) {
+          File cmdPath = new File(cmd);
+          bootstrap.addCmdPath(cmdPath);
         }
       }
 
@@ -169,7 +169,7 @@ public class Main {
       if (confs != null) {
         for (String conf : confs) {
           File confPath = new File(conf);
-          bootstrap.addBinPath(confPath);
+          bootstrap.addCmdPath(confPath);
         }
       }
 
