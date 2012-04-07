@@ -21,9 +21,7 @@ package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
-
-import java.util.Collections;
-import java.util.Map;
+import org.crsh.cmdline.spi.CompletionResult;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -35,41 +33,41 @@ public class CompleterSupport {
   }
 
   public static class RuntimeException implements Completer {
-    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
+    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
       throw new java.lang.RuntimeException();
     }
   }
 
   public static class Exception implements Completer {
-    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
+    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
       throw new java.lang.Exception();
     }
   }
 
   public static class Mirror implements Completer {
-    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
-      return Collections.singletonMap(new StringBuilder(prefix).reverse().toString(), false);
+    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+      return CompletionResult.create(new StringBuilder(prefix).reverse().toString(), false);
     }
   }
 
   public static class Echo implements Completer {
-    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
-      return Collections.singletonMap(prefix, false);
+    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+      return CompletionResult.create(prefix, false);
     }
   }
 
   public static class Foo implements Completer {
-    public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
       if (prefix.equals("foo")) {
-        return Collections.singletonMap("", true);
+        return CompletionResult.create("", true);
       } else if (prefix.equals("fo")) {
-        return Collections.singletonMap("o", true);
+        return CompletionResult.create("o", true);
       } else if (prefix.equals("f")) {
-        return Collections.singletonMap("oo", true);
+        return CompletionResult.create("oo", true);
       } else if (prefix.equals("")) {
-        return Collections.singletonMap("foo", true);
+        return CompletionResult.create("foo", true);
       } else {
-        return Collections.emptyMap();
+        return CompletionResult.create();
       }
     }
   }

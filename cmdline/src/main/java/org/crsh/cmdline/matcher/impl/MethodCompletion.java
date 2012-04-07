@@ -4,9 +4,7 @@ import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.tokenizer.Termination;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.crsh.cmdline.spi.CompletionResult;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -33,8 +31,8 @@ class MethodCompletion<T> extends Completion {
   }
 
   @Override
-  protected Map<String, String> complete() throws CmdCompletionException {
-    Map<String, String> completions = new HashMap<String, String>();
+  protected CompletionResult<String> complete() throws CmdCompletionException {
+    CompletionResult<String> completions = new CompletionResult<String>(prefix);
     for (MethodDescriptor<?> m : descriptor.getMethods()) {
       String name = m.getName();
       if (name.startsWith(prefix)) {

@@ -3,6 +3,7 @@ package org.crsh.cmdline.matcher.impl;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.tokenizer.Token;
+import org.crsh.cmdline.spi.CompletionResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +26,8 @@ class OptionCompletion<T> extends Completion {
   }
 
   @Override
-  protected Map<String, String> complete() throws CmdCompletionException {
-    Map<String, String> completions = new HashMap<String, String>();
+  protected CompletionResult<String> complete() throws CmdCompletionException {
+    CompletionResult<String> completions = new CompletionResult<String>(prefix.getValue());
     Set<String> optionNames = prefix instanceof Token.Literal.Option.Short ? descriptor.getShortOptionNames() : descriptor.getLongOptionNames();
     for (String optionName : optionNames) {
       if (optionName.startsWith(prefix.getValue())) {

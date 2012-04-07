@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import java.util.Map;
+import org.crsh.cmdline.spi.CompletionResult;
 
 /**
  * A shell, it defines the interactions provided by a shell.
@@ -59,6 +59,6 @@ public interface Shell {
    * @param prefix the prefix to complete
    * @return the sorted list of available suffixes
    */
-  Map<String, String> complete(String prefix);
+  CompletionResult<String> complete(String prefix);
 
 }

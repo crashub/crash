@@ -43,7 +43,7 @@ final class CreateCommandException extends Exception {
   }
 
   CreateCommandException(ErrorType errorType, String message, Throwable cause) {
-    super(message);
+    super(message, cause);
 
     //
     this.response = ShellResponse.error(errorType, message, cause);

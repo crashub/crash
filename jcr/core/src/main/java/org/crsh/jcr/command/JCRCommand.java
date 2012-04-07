@@ -21,16 +21,18 @@ package org.crsh.jcr.command;
 
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.ParameterDescriptor;
+import org.crsh.cmdline.completers.AbstractPathCompleter;
 import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.spi.CompletionResult;
 import org.crsh.command.CRaSHCommand;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Session;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -41,61 +43,68 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
   protected JCRCommand() throws IntrospectionException {
   }
 
-  public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+  public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
     if (parameter.getJavaValueType() == Path.class) {
 
-      Path path = (Path)getProperty("currentPath");
-      Session session = (Session)getProperty("session");
+      final Path path = (Path)getProperty("currentPath");
+      final Session session = (Session)getProperty("session");
 
       //
       if (session != null) {
 
-        Node relative = null;
+        AbstractPathCompleter<Node> pc = new AbstractPathCompleter<Node>() {
+          @Override
+          protected String getCurrentPath() throws Exception {
+            return path != null ? path.getString() : "/";
+          }
 
-        if (prefix.length() == 0 || prefix.charAt(0) != '/') {
-          if (path != null) {
-            Item item = session.getItem(path.getString());
-            if (item instanceof Node) {
-              relative = (Node)item;
+          @Override
+          protected Node getPath(String path) throws Exception {
+            try {
+              return (Node)session.getItem(path);
+            }
+            catch (PathNotFoundException e) {
+              return null;
             }
           }
-        } else {
-          relative = session.getRootNode();
-          prefix = prefix.substring(1);
-        }
 
-        // Now navigate using the prefix
-        if (relative != null) {
-          for (int index = prefix.indexOf('/');index != -1;index = prefix.indexOf('/')) {
-            String name = prefix.substring(0, index);
-            if (relative.hasNode(name)) {
-              relative = relative.getNode(name);
-              prefix = prefix.substring(index + 1);
-            } else {
-              return Collections.emptyMap();
+          @Override
+          protected boolean exists(Node path) throws Exception {
+            return path != null;
+          }
+
+          @Override
+          protected boolean isDirectory(Node path) throws Exception {
+            return true;
+          }
+
+          @Override
+          protected boolean isFile(Node path) throws Exception {
+            return false;
+          }
+
+          @Override
+          protected Collection<Node> getChilren(Node path) throws Exception {
+            List<Node> children = new ArrayList<Node>();
+            for (NodeIterator i = path.getNodes();i.hasNext();) {
+              Node child = i.nextNode();
+              children.add(child);
             }
+            return children;
           }
-        }
 
-        // Compute the next possible completions
-        Map<String, Boolean> completions = new HashMap<String, Boolean>();
-        for (NodeIterator i = relative.getNodes(prefix + '*');i.hasNext();) {
-          Node child = i.nextNode();
-          String suffix = child.getName().substring(prefix.length());
-          if (child.hasNodes()) {
-            completions.put(suffix + '/', false);
-
-          } else {
-            completions.put(suffix, true);
+          @Override
+          protected String getName(Node path) throws Exception {
+            return path.getName();
           }
-        }
+        };
 
         //
-        return completions;
+        return pc.complete(parameter, prefix);
       }
     }
 
     //
-    return Collections.emptyMap();
+    return CompletionResult.create();
   }
 }

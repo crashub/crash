@@ -19,13 +19,12 @@
 
 package org.crsh.shell.concurrent;
 
+import org.crsh.cmdline.spi.CompletionResult;
 import org.crsh.shell.Shell;
-import org.crsh.shell.ShellProcess;
 
 import java.io.Closeable;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.Executor;
@@ -97,7 +96,7 @@ public class AsyncShell implements Shell, Closeable {
     return shell.getPrompt();
   }
 
-  public Map<String, String> complete(String prefix) {
+  public CompletionResult<String> complete(String prefix) {
     return shell.complete(prefix);
   }
 

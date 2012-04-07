@@ -18,12 +18,9 @@
  */
 package org.crsh;
 
+import org.crsh.cmdline.spi.CompletionResult;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.shell.ShellProcessContext;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * A base shell.
@@ -79,7 +76,7 @@ public class BaseShell implements Shell {
   /**
    * Returns an empty unmodifiable map.
    */
-  public Map<String, String> complete(String prefix) {
-    return Collections.emptyMap();
+  public CompletionResult<String> complete(String prefix) {
+    return CompletionResult.create();
   }
 }

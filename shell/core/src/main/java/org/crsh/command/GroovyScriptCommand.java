@@ -22,11 +22,10 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
+import org.crsh.cmdline.spi.CompletionResult;
 import org.crsh.util.Strings;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class provides the base class for Groovy scripts. It should not be used directly as it is rather used
@@ -58,8 +57,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public final Map<String, String> complete(CommandContext context, String line) {
-    return Collections.emptyMap();
+  public final CompletionResult<String> complete(CommandContext context, String line) {
+    return CompletionResult.create();
   }
 
   public String describe(String line, DescriptionFormat mode) {

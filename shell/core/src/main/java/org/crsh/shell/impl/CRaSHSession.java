@@ -23,6 +23,7 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.crsh.cmdline.spi.CompletionResult;
 import org.crsh.command.impl.BaseCommandContext;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ShellCommand;
@@ -36,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -193,7 +193,7 @@ public class CRaSHSession implements Shell, Closeable {
   /**
    * For now basic implementation
    */
-  public Map<String, String> complete(final String prefix) {
+  public CompletionResult<String> complete(final String prefix) {
     log.debug("Want prefix of " + prefix);
     AST ast = new Parser(prefix).parse();
     String termPrefix;
@@ -206,10 +206,10 @@ public class CRaSHSession implements Shell, Closeable {
 
     //
     log.debug("Retained term prefix is " + prefix);
-    Map<String, String> completions = Collections.emptyMap();
+    CompletionResult<String> completions = CompletionResult.create();
     int pos = termPrefix.indexOf(' ');
     if (pos == -1) {
-      completions = new HashMap<String, String>();
+      completions = CompletionResult.create();
       for (String resourceId : crash.context.listResourceId(ResourceKind.COMMAND)) {
         if (resourceId.startsWith(termPrefix)) {
           completions.put(resourceId.substring(termPrefix.length()), " ");

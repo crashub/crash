@@ -38,6 +38,7 @@ import org.crsh.cmdline.matcher.tokenizer.Termination;
 import org.crsh.cmdline.matcher.tokenizer.Token;
 import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
 import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.spi.CompletionResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -196,7 +197,7 @@ public class MatcherImpl<T> extends Matcher<T> {
   }
 
   @Override
-  public Map<String, String> complete(Completer completer, String s) throws CmdCompletionException {
+  public CompletionResult<String> complete(Completer completer, String s) throws CmdCompletionException {
     return getCompletion(completer, s).complete();
   }
 

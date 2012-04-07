@@ -23,6 +23,7 @@ import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.EmptyCompleter;
 import org.crsh.cmdline.matcher.impl.MatcherImpl;
 import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.spi.CompletionResult;
 
 import java.util.Map;
 
@@ -40,11 +41,11 @@ public abstract class Matcher<T> {
     return new MatcherImpl<T>(descriptor);
   }
 
-  public final Map<String, String> complete(String s) throws CmdCompletionException {
+  public final CompletionResult<String> complete(String s) throws CmdCompletionException {
     return complete(EmptyCompleter.getInstance(), s);
   }
 
-  public abstract Map<String, String> complete(Completer completer, String s) throws CmdCompletionException;
+  public abstract CompletionResult<String> complete(Completer completer, String s) throws CmdCompletionException;
 
 
   public abstract CommandMatch<T, ?, ?> match(String s);

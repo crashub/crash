@@ -1,6 +1,7 @@
 package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.matcher.CmdCompletionException;
+import org.crsh.cmdline.spi.CompletionResult;
 
 import java.util.Map;
 
@@ -9,6 +10,6 @@ import java.util.Map;
  */
 abstract class Completion {
 
-  abstract Map<String, String> complete() throws CmdCompletionException;
+  abstract CompletionResult<String> complete() throws CmdCompletionException;
 
 }

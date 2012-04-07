@@ -5,9 +5,8 @@ import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.tokenizer.Termination;
 import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.spi.CompletionResult;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -34,7 +33,7 @@ class ParameterCompletion extends Completion {
     this.completer = completer;
   }
 
-  Map<String, String> complete() throws CmdCompletionException {
+  CompletionResult<String> complete() throws CmdCompletionException {
 
     Class<? extends Completer> completerType = parameter.getCompleterType();
     Completer completer = this.completer;
@@ -52,9 +51,9 @@ class ParameterCompletion extends Completion {
     //
     if (completer != null) {
       try {
-        Map<String, Boolean> res = completer.complete(parameter, prefix);
-        Map<String, String> delimiter = new HashMap<String, String>();
-        for (Map.Entry<String, Boolean> entry : res.entrySet()) {
+        CompletionResult<Boolean> res = completer.complete(parameter, prefix);
+        CompletionResult<String> delimiter = new CompletionResult<String>(res.getPrefix());
+        for (Map.Entry<String, Boolean> entry : res) {
           delimiter.put(entry.getKey(), entry.getValue() ? termination.getEnd() : "");
         }
         return delimiter;
@@ -63,7 +62,7 @@ class ParameterCompletion extends Completion {
         throw new CmdCompletionException(e);
       }
     } else {
-      return Collections.emptyMap();
+      return CompletionResult.create();
     }
   }
 }

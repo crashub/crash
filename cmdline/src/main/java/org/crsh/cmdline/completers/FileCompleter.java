@@ -1,13 +1,8 @@
 package org.crsh.cmdline.completers;
 
-import org.crsh.cmdline.ParameterDescriptor;
-import org.crsh.cmdline.spi.Completer;
-
 import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * A completer for the current file system.
@@ -19,94 +14,41 @@ import java.util.Map;
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public class FileCompleter implements Completer {
+public class FileCompleter extends AbstractPathCompleter<File> {
 
-  public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-
-    // Handle empty dir
-    if (!prefix.startsWith("/")) {
-      prefix = new File(".").getCanonicalPath() + "/" + prefix;
-    }
-
-    //
-    File f = new File(prefix);
-
-    //
-    if (f.exists()) {
-      if (f.isDirectory()) {
-        if (prefix.endsWith("/")) {
-          File[] children = f.listFiles();
-          if (children != null) {
-            if (children.length > 0) {
-              return listDir(f, "");
-            } else {
-              return Collections.singletonMap("", true);
-            }
-          } else {
-            return Collections.emptyMap();
-          }
-        } else {
-          File[] children = f.listFiles();
-          if (children == null) {
-            return Collections.emptyMap();
-          } else {
-            return Collections.singletonMap("/", children.length == 0);
-          }
-        }
-      } else if (f.isFile()) {
-        return Collections.singletonMap("", true);
-      }
-      return Collections.emptyMap();
-    } else {
-      int pos = prefix.lastIndexOf('/');
-      if (pos != -1) {
-        String filter;
-        if (pos == 0) {
-          f = new File("/");
-          filter = prefix.substring(1);
-        } else {
-          f = new File(prefix.substring(0, pos));
-          filter = prefix.substring(pos + 1);
-        }
-        if (f.exists()) {
-          if (f.isDirectory()) {
-            return listDir(f, filter);
-          } else {
-            return Collections.emptyMap();
-          }
-        } else {
-          return Collections.emptyMap();
-        }
-      } else {
-        return Collections.emptyMap();
-      }
-    }
+  @Override
+  protected String getCurrentPath() throws Exception {
+    return new File(".").getCanonicalPath();
   }
 
-  private Map<String, Boolean> listDir(File dir, final String filter) {
-    File[] children = dir.listFiles(new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        return name.startsWith(filter);
-      }
-    });
-    if (children != null) {
-      LinkedHashMap<String, Boolean> map = new LinkedHashMap<String, java.lang.Boolean>();
-      for (File child : children) {
-        String name = child.getName().substring(filter.length());
-        if (child.isDirectory()) {
-          File[] grandChildren = child.listFiles();
-          if (grandChildren != null) {
-            map.put(name + "/", grandChildren.length == 0);
-          } else {
-            // Skip it
-          }
-        } else {
-          map.put(name, true);
-        }
-      }
-      return map;
-    } else {
-      return Collections.emptyMap();
-    }
+  @Override
+  protected File getPath(String path) {
+    return new File(path);
+  }
+
+  @Override
+  protected boolean exists(File path) {
+    return path.exists();
+  }
+
+  @Override
+  protected boolean isDirectory(File path) {
+    return path.isDirectory();
+  }
+
+  @Override
+  protected boolean isFile(File path) {
+    return path.isFile();
+  }
+
+  @Override
+  protected Collection<File> getChilren(File path) {
+    File[] files = path.listFiles();
+    return files != null ? Arrays.asList(files) : null;
+  }
+
+  @Override
+  protected String getName(File path) {
+    return path.getName();
   }
 }

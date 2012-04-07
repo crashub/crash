@@ -20,9 +20,7 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.spi.Completer;
-
-import java.util.Collections;
-import java.util.Map;
+import org.crsh.cmdline.spi.CompletionResult;
 
 /**
  * A {@link Completer} implementation that returns no completion results.
@@ -47,7 +45,7 @@ public class EmptyCompleter implements Completer {
   /**
    * Returns the value returned by {@link java.util.Collections#emptyList()}.
    */
-  public Map<String, Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
-    return Collections.emptyMap();
+  public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+    return CompletionResult.create();
   }
 }

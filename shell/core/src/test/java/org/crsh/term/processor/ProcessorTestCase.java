@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.crsh.BaseProcess;
 import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
+import org.crsh.cmdline.spi.CompletionResult;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -32,8 +33,6 @@ import org.crsh.term.spi.TestTermIO;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -239,8 +238,8 @@ public class ProcessorTestCase extends TestCase {
   public void testCompletion1() throws Exception {
     Controller controller = create(new BaseShell(BaseProcessFactory.ECHO) {
       @Override
-      public Map<String, String> complete(String prefix) {
-        return Collections.singletonMap(new StringBuilder(prefix).reverse().toString(), "");
+      public CompletionResult<String> complete(String prefix) {
+        return CompletionResult.create(new StringBuilder(prefix).reverse().toString(), "");
       }
     });
     controller.assertStart();

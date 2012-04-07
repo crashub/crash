@@ -29,6 +29,7 @@ import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.matcher.*;
 import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.spi.CompletionResult;
 import org.crsh.util.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,6 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * A real CRaSH command, the most powerful kind of command.
@@ -122,7 +121,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return context;
   }
 
-  public final Map<String, String> complete(CommandContext context, String line) {
+  public final CompletionResult<String> complete(CommandContext context, String line) {
 
     // WTF
     Matcher analyzer = Matcher.createMatcher("main", descriptor);
@@ -139,7 +138,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
     catch (CmdCompletionException e) {
       log.error("Error during completion of line " + line, e);
-      return Collections.emptyMap();
+      return CompletionResult.create();
     } finally {
       this.context = null;
     }
