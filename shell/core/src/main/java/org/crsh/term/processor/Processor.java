@@ -179,78 +179,67 @@ public final class Processor implements Runnable {
             Map<String, String> completions = shell.complete(prefix);
             log.debug("Completions for " + prefix + " are " + completions);
 
-            // Try to find the greatest prefix among all the results
-            String commonCompletion;
-            if (completions.size() == 0) {
-              commonCompletion = "";
-            } else if (completions.size() == 1) {
-              Map.Entry<String, String> entry = completions.entrySet().iterator().next();
-              commonCompletion = entry.getKey() + entry.getValue();
-            } else {
-              commonCompletion = Strings.findLongestCommonPrefix(completions.keySet());
-            }
+            try {
+              // Try to find the greatest prefix among all the results
+              if (completions.size() == 0) {
+                // Do nothing
+              } else if (completions.size() == 1) {
+                Map.Entry<String, String> entry = completions.entrySet().iterator().next();
+                term.bufferInsert(entry.getKey() + entry.getValue());
+              } else {
+                String commonCompletion = Strings.findLongestCommonPrefix(completions.keySet());
+                if (commonCompletion.length() > 0) {
+                  term.bufferInsert(commonCompletion);
+                } else {
+                  // Format stuff
+                  int width = term.getWidth();
 
-            //
-            if (commonCompletion.length() > 0) {
-              try {
-                term.bufferInsert(commonCompletion);
-              }
-              catch (IOException e) {
-                e.printStackTrace();
-              }
-            } else {
-              if (completions.size() > 1) {
-
-                // Format stuff
-                int width = term.getWidth();
-
-                // Get the max length
-                int max = 0;
-                for (String completion : completions.keySet()) {
-                  max = Math.max(max, completion.length());
-                }
-
-                // Separator
-                max++;
-
-                //
-                StringBuilder sb = new StringBuilder().append('\n');
-                if (max < width) {
-                  int columns = width / max;
-                  int index = 0;
+                  // Get the max length
+                  int max = 0;
                   for (String completion : completions.keySet()) {
-                    sb.append(completion);
-                    for (int l = completion.length();l < max;l++) {
-                      sb.append(' ');
+                    max = Math.max(max, completion.length());
+                  }
+
+                  // Separator
+                  max++;
+
+                  //
+                  StringBuilder sb = new StringBuilder().append('\n');
+                  if (max < width) {
+                    int columns = width / max;
+                    int index = 0;
+                    for (String completion : completions.keySet()) {
+                      sb.append(completion);
+                      for (int l = completion.length();l < max;l++) {
+                        sb.append(' ');
+                      }
+                      if (++index >= columns) {
+                        index = 0;
+                        sb.append('\n');
+                      }
                     }
-                    if (++index >= columns) {
-                      index = 0;
+                    if (index > 0) {
                       sb.append('\n');
                     }
-                  }
-                  if (index > 0) {
+                  } else {
+                    for (Iterator<String> i = completions.keySet().iterator();i.hasNext();) {
+                      String completion = i.next();
+                      sb.append(completion);
+                      if (i.hasNext()) {
+                        sb.append('\n');
+                      }
+                    }
                     sb.append('\n');
                   }
-                } else {
-                  for (Iterator<String> i = completions.keySet().iterator();i.hasNext();) {
-                    String completion = i.next();
-                    sb.append(completion);
-                    if (i.hasNext()) {
-                      sb.append('\n');
-                    }
-                  }
-                  sb.append('\n');
-                }
 
-                // We propose
-                try {
+                  // We propose
                   term.write(sb.toString());
+                  writePrompt();
                 }
-                catch (IOException e) {
-                  e.printStackTrace();
-                }
-                writePrompt();
               }
+            }
+            catch (IOException e) {
+              log.error("Could not write completion", e);
             }
             return new LatchedFuture<State>(State.OPEN);
           } else if (event instanceof TermEvent.Close) {
