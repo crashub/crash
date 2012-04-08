@@ -20,12 +20,10 @@
 package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.EmptyCompleter;
+import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.matcher.impl.MatcherImpl;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.CompletionResult;
-
-import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>

@@ -13,6 +13,7 @@ import org.crsh.cmdline.spi.Completer
 import org.crsh.cmdline.ParameterDescriptor
 import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.spi.CompletionResult
+import org.crsh.cmdline.completers.EnumCompleter
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -153,7 +154,7 @@ enum Unit { B(1, "b"), K(1024, "Kb"), M(1024 * 1024, "Mb"), G(1024 * 1024 * 1024
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the unit of the memory space size")
 @Man("The unit of the memory space size {(B)yte, (O)ctet, (M)egaOctet, (G)igaOctet}")
-@Option(names=["u","unit"],completer=org.crsh.cmdline.EnumCompleter)
+@Option(names=["u","unit"],completer=EnumCompleter)
 @interface UnitOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)

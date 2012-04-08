@@ -16,7 +16,8 @@ import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.spi.Value
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.spi.CompletionResult
+import org.crsh.cmdline.completers.EnumCompleter;
 
 @Usage("logging commands")
 public class log extends CRaSHCommand implements Completer {
@@ -286,7 +287,7 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the logger level")
 @Man("The logger level to assign among {trace, debug, info, warn, error}")
-@Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
+@Option(names=["l","level"],completer=EnumCompleter)
 @interface LevelOpt { }
 
 @Retention(RetentionPolicy.RUNTIME)

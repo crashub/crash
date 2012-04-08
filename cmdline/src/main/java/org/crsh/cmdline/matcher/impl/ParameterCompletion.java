@@ -1,6 +1,6 @@
 package org.crsh.cmdline.matcher.impl;
 
-import org.crsh.cmdline.EmptyCompleter;
+import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.tokenizer.Termination;

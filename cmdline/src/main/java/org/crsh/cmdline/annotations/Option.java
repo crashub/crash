@@ -19,7 +19,7 @@
 
 package org.crsh.cmdline.annotations;
 
-import org.crsh.cmdline.EmptyCompleter;
+import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.spi.Completer;
 
 import java.lang.annotation.ElementType;

@@ -17,50 +17,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline;
+package org.crsh.cmdline.completers;
 
+import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.CompletionResult;
 
-import java.lang.reflect.Method;
-
 /**
- * A completer for enums.
+ * A {@link Completer} implementation that returns no completion results.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class EnumCompleter implements Completer {
+public class EmptyCompleter implements Completer {
 
   /** . */
-  private static final EnumCompleter instance = new EnumCompleter();
+  private static final EmptyCompleter instance = new EmptyCompleter();
 
   /**
    * Returns the empty completer instance.
    *
    * @return the instance
    */
-  public static EnumCompleter getInstance() {
+  public static EmptyCompleter getInstance() {
     return instance;
   }
 
-  public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-    CompletionResult<Boolean> completions = CompletionResult.create();
-    if (parameter.getType() == SimpleValueType.ENUM) {
-      Class<?> vt = parameter.getJavaValueType();
-      Method valuesM = vt.getDeclaredMethod("values");
-      Method nameM = vt.getMethod("name");
-      Enum<?>[] values = (Enum<?>[])valuesM.invoke(null);
-      for (Enum<?> value : values) {
-        String name = (String)nameM.invoke(value);
-        if (name.startsWith(prefix)) {
-          if (completions.isEmpty()) {
-            completions = new CompletionResult<Boolean>();
-          }
-          completions.put(name.substring(prefix.length()), true);
-        }
-      }
-    }
-    return completions;
+  /**
+   * Returns the value returned by {@link java.util.Collections#emptyList()}.
+   */
+  public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+    return CompletionResult.create();
   }
 }

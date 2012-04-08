@@ -20,6 +20,7 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.Value;

@@ -19,6 +19,8 @@
 
 package org.crsh.cmdline;
 
+import org.crsh.cmdline.completers.EmptyCompleter;
+import org.crsh.cmdline.completers.EnumCompleter;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.Value;
 
