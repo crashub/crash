@@ -23,6 +23,7 @@ import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
@@ -35,7 +36,6 @@ import org.crsh.cmdline.matcher.LiteralValue;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
-import org.crsh.cmdline.Termination;
 import org.crsh.cmdline.matcher.tokenizer.Token;
 import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
 import org.crsh.cmdline.spi.Completer;
@@ -191,7 +191,7 @@ public class MatcherImpl<T> extends Matcher<T> {
       return new EmptyCompletion();
     } else {
       ArgumentDescriptor<?> argument = arguments.get(0);
-      return new ParameterCompletion("", Termination.DETERMINED, argument, completer);
+      return new ParameterCompletion("", Delimiter.EMPTY, argument, completer);
     }
   }
 
@@ -243,7 +243,7 @@ public class MatcherImpl<T> extends Matcher<T> {
       if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
           Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;
-          return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), parser.getTermination());
+          return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), parser.getDelimiter());
         } else {
           return new EmptyCompletion();
         }
@@ -263,12 +263,12 @@ public class MatcherImpl<T> extends Matcher<T> {
           method = descriptor.getMethod(mainName);
           List<ArgumentDescriptor<MethodArgumentBinding>> args = method.getArguments();
           if (args.size() > 0) {
-            return new ParameterCompletion("", Termination.DETERMINED, args.get(0), completer);
+            return new ParameterCompletion("", Delimiter.EMPTY, args.get(0), completer);
           } else {
             return new EmptyCompletion();
           }
         } else {
-          return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
+          return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), Delimiter.EMPTY);
         }
       } else {
         return new EmptyCompletion();
@@ -289,16 +289,16 @@ public class MatcherImpl<T> extends Matcher<T> {
           return new SpaceCompletion();
         } else if (values.size() <= option.getArity()) {
           Token.Literal.Word word = optionEvent.peekLast();
-          return new ParameterCompletion(word.getValue(), parser.getTermination(), option, completer);
+          return new ParameterCompletion(word.getValue(), parser.getDelimiter(), option, completer);
         } else {
           return new EmptyCompletion();
         }
       } else {
         if (values.size() < option.getArity()) {
-          return new ParameterCompletion("", Termination.DETERMINED, option, completer);
+          return new ParameterCompletion("", Delimiter.EMPTY, option, completer);
         } else {
           if (method == null) {
-            return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), Termination.DETERMINED);
+            return new MethodCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), Delimiter.EMPTY);
           } else {
             return argument(method, completer);
           }
@@ -318,13 +318,13 @@ public class MatcherImpl<T> extends Matcher<T> {
               return new EmptyCompletion();
             }
           case MULTI:
-            return new ParameterCompletion("", Termination.DETERMINED, argument, completer);
+            return new ParameterCompletion("", Delimiter.EMPTY, argument, completer);
           default:
             throw new AssertionError();
         }
       } else {
         Token.Literal value = eventArgument.peekLast();
-        return new ParameterCompletion(value.getValue(), parser.getTermination(), argument, completer);
+        return new ParameterCompletion(value.getValue(), parser.getDelimiter(), argument, completer);
       }
     } else if (last instanceof Event.Method) {
       if (separator != null) {

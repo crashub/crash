@@ -188,7 +188,7 @@ public final class Processor implements Runnable {
                 // Do nothing
               } else if (completions.getSize() == 1) {
                 Map.Entry<String, Boolean> entry = completions.iterator().next();
-                term.bufferInsert(entry.getKey() + (entry.getValue() ? completion.getTerminationValue() : ""));
+                term.bufferInsert(entry.getKey() + (entry.getValue() ? completion.getDelimiterValue() : ""));
               } else {
                 String commonCompletion = Strings.findLongestCommonPrefix(completions.getSuffixes());
                 if (commonCompletion.length() > 0) {

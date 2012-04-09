@@ -23,22 +23,22 @@ package org.crsh.cmdline;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public enum Termination {
+public enum Delimiter {
 
-  DETERMINED(' '),
+  EMPTY(' '),
 
   SINGLE_QUOTE('\''),
 
   DOUBLE_QUOTE('"');
 
   /** . */
-  private final String end;
+  private final String value;
 
-  Termination(char end) {
-    this.end = "" + end;
+  Delimiter(char value) {
+    this.value = "" + value;
   }
 
-  public String getEnd() {
-    return end;
+  public String getValue() {
+    return value;
   }
 }

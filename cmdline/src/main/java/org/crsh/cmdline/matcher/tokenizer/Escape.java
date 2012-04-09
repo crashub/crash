@@ -1,23 +1,23 @@
 package org.crsh.cmdline.matcher.tokenizer;
 
-import org.crsh.cmdline.Termination;
+import org.crsh.cmdline.Delimiter;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
 enum Escape {
 
-  NONE(Termination.DETERMINED),
+  NONE(Delimiter.EMPTY),
 
-  SINGLE(Termination.SINGLE_QUOTE),
+  SINGLE(Delimiter.SINGLE_QUOTE),
 
-  DOUBLE(Termination.DOUBLE_QUOTE),
+  DOUBLE(Delimiter.DOUBLE_QUOTE),
 
-  BACKSLASH(Termination.DETERMINED);
+  BACKSLASH(Delimiter.EMPTY);
 
-  final Termination termination;
+  final Delimiter delimiter;
 
-  Escape(Termination termination) {
-    this.termination = termination;
+  Escape(Delimiter delimiter) {
+    this.delimiter = delimiter;
   }
 }

@@ -10,30 +10,30 @@ import org.crsh.cmdline.spi.ValueCompletion;
 public final class CommandCompletion {
 
   /** . */
-  private final Termination termination;
+  private final Delimiter delimiter;
 
   /** . */
   private final ValueCompletion value;
 
-  public CommandCompletion(Termination termination, ValueCompletion value) throws NullPointerException {
-    if (termination == null) {
-      throw new NullPointerException("No null termination accepted");
+  public CommandCompletion(Delimiter delimiter, ValueCompletion value) throws NullPointerException {
+    if (delimiter == null) {
+      throw new NullPointerException("No null delimiter accepted");
     }
     if (value == null) {
       throw new NullPointerException("No null value accepted");
     }
 
     //
-    this.termination = termination;
+    this.delimiter = delimiter;
     this.value = value;
   }
 
-  public Termination getTermination() {
-    return termination;
+  public Delimiter getDelimiter() {
+    return delimiter;
   }
 
-  public String getTerminationValue() {
-    return termination.getEnd();
+  public String getDelimiterValue() {
+    return delimiter.getValue();
   }
 
   public ValueCompletion getValue() {
@@ -47,13 +47,13 @@ public final class CommandCompletion {
     }
     if (obj instanceof CommandCompletion) {
       CommandCompletion that = (CommandCompletion)obj;
-      return termination.equals(that.termination) && value.equals(that.value);
+      return delimiter.equals(that.delimiter) && value.equals(that.value);
     }
     return false;
   }
 
   @Override
   public String toString() {
-    return "CommandCompletion[termination=" + termination + ",value=" + value + "]";
+    return "CommandCompletion[delimiter=" + delimiter + ",value=" + value + "]";
   }
 }

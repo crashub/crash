@@ -22,8 +22,8 @@ package org.crsh.command;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.IntrospectionException;
-import org.crsh.cmdline.Termination;
 import org.crsh.cmdline.annotations.Man;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.OptionDescriptor;
@@ -140,7 +140,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
     catch (CmdCompletionException e) {
       log.error("Error during completion of line " + line, e);
-      return new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
+      return new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
     } finally {
       this.context = null;
     }

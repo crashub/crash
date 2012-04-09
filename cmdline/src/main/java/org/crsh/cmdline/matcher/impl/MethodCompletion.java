@@ -2,9 +2,9 @@ package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
-import org.crsh.cmdline.Termination;
 import org.crsh.cmdline.spi.ValueCompletion;
 
 /**
@@ -22,13 +22,13 @@ class MethodCompletion<T> extends Completion {
   private final  String prefix;
 
   /** . */
-  private final Termination termination;
+  private final Delimiter delimiter;
 
-  MethodCompletion(ClassDescriptor<T> descriptor, String mainName, String prefix, Termination termination) {
+  MethodCompletion(ClassDescriptor<T> descriptor, String mainName, String prefix, Delimiter delimiter) {
     this.descriptor = descriptor;
     this.mainName = mainName;
     this.prefix = prefix;
-    this.termination = termination;
+    this.delimiter = delimiter;
   }
 
   @Override
@@ -42,6 +42,6 @@ class MethodCompletion<T> extends Completion {
         }
       }
     }
-    return new CommandCompletion(termination, completions);
+    return new CommandCompletion(delimiter, completions);
   }
 }

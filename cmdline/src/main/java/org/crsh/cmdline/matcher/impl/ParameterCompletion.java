@@ -1,10 +1,10 @@
 package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
-import org.crsh.cmdline.Termination;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.ValueCompletion;
 
@@ -17,7 +17,7 @@ class ParameterCompletion extends Completion {
   private final String prefix;
 
   /** . */
-  private final Termination termination;
+  private final Delimiter delimiter;
 
   /** . */
   private final ParameterDescriptor<?> parameter;
@@ -25,9 +25,9 @@ class ParameterCompletion extends Completion {
   /** . */
   private final Completer completer;
 
-  ParameterCompletion(String prefix, Termination termination, ParameterDescriptor<?> parameter, Completer completer) {
+  ParameterCompletion(String prefix, Delimiter delimiter, ParameterDescriptor<?> parameter, Completer completer) {
     this.prefix = prefix;
-    this.termination = termination;
+    this.delimiter = delimiter;
     this.parameter = parameter;
     this.completer = completer;
   }
@@ -50,13 +50,13 @@ class ParameterCompletion extends Completion {
     //
     if (completer != null) {
       try {
-        return new CommandCompletion(termination, completer.complete(parameter, prefix));
+        return new CommandCompletion(delimiter, completer.complete(parameter, prefix));
       }
       catch (Exception e) {
         throw new CmdCompletionException(e);
       }
     } else {
-      return new CommandCompletion(termination, ValueCompletion.create());
+      return new CommandCompletion(delimiter, ValueCompletion.create());
     }
   }
 }

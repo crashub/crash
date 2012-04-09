@@ -1,6 +1,6 @@
 package org.crsh.cmdline.matcher.tokenizer;
 
-import org.crsh.cmdline.Termination;
+import org.crsh.cmdline.Delimiter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,13 +24,13 @@ public class Tokenizer implements Iterator<Token> {
   private int ptr;
 
   /** . */
-  private Termination termination;
+  private Delimiter delimiter;
 
   public Tokenizer(CharSequence s) {
     this.s = s;
     this.stack = new ArrayList<Token>();
     this.index = 0;
-    this.termination = null;
+    this.delimiter = null;
   }
 
   public boolean hasNext() {
@@ -100,7 +100,7 @@ public class Tokenizer implements Iterator<Token> {
             default:
               throw new AssertionError(state.status);
           }
-          termination = state.escape.termination;
+          delimiter = state.escape.delimiter;
           return token;
         }
       }
@@ -152,7 +152,7 @@ public class Tokenizer implements Iterator<Token> {
     }
   }
 
-  public Termination getTermination() {
-    return termination;
+  public Delimiter getDelimiter() {
+    return delimiter;
   }
 }

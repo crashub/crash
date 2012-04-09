@@ -2,7 +2,7 @@ package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.Termination;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.tokenizer.Token;
 import org.crsh.cmdline.spi.ValueCompletion;
@@ -34,6 +34,6 @@ class OptionCompletion<T> extends Completion {
         completions.put(optionName.substring(prefix.getValue().length()), true);
       }
     }
-    return new CommandCompletion(Termination.DETERMINED, completions);
+    return new CommandCompletion(Delimiter.EMPTY, completions);
   }
 }

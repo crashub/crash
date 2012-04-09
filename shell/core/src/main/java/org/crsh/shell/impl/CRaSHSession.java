@@ -24,7 +24,7 @@ import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cmdline.CommandCompletion;
-import org.crsh.cmdline.Termination;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.command.impl.BaseCommandContext;
 import org.crsh.command.GroovyScriptCommand;
@@ -217,7 +217,7 @@ public class CRaSHSession implements Shell, Closeable {
           completions.put(resourceId.substring(termPrefix.length()), true);
         }
       }
-      completion = new CommandCompletion(Termination.DETERMINED, completions);
+      completion = new CommandCompletion(Delimiter.EMPTY, completions);
     } else {
       String commandName = termPrefix.substring(0, pos);
       termPrefix = termPrefix.substring(pos);
@@ -226,12 +226,12 @@ public class CRaSHSession implements Shell, Closeable {
         if (command != null) {
           completion = command.complete(new BaseCommandContext(attributes), termPrefix);
         } else {
-          completion = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
+          completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
         }
       }
       catch (CreateCommandException e) {
         log.debug("Could not create command for completion of " + prefix, e);
-        completion = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
+        completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
       }
     }
 
