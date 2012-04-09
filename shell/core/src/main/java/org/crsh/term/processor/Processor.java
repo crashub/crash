@@ -188,11 +188,12 @@ public final class Processor implements Runnable {
                 // Do nothing
               } else if (completions.getSize() == 1) {
                 Map.Entry<String, Boolean> entry = completions.iterator().next();
-                term.bufferInsert(entry.getKey() + (entry.getValue() ? completion.getDelimiterValue() : ""));
+                Appendable buffer = term.getInsertBuffer();
+                buffer.append(entry.getKey()).append(entry.getValue() ? completion.getDelimiterValue() : "");
               } else {
                 String commonCompletion = Strings.findLongestCommonPrefix(completions.getSuffixes());
                 if (commonCompletion.length() > 0) {
-                  term.bufferInsert(commonCompletion);
+                  term.getInsertBuffer().append(commonCompletion);
                 } else {
                   // Format stuff
                   int width = term.getWidth();

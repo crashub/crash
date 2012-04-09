@@ -71,13 +71,12 @@ public interface Term {
   void write(CharSequence msg) throws IOException;
 
   /**
-   * Insert a message on the console just after the cursor.
+   * Returns the insert buffer, any char appended in the returned appendable will translate into an
+   * insertion in the buffer.
    *
-   *
-   * @param msg the message to insert
-   * @throws IOException any io exception
+   * @return the insert buffer.
    */
-  void bufferInsert(CharSequence msg) throws IOException;
+  Appendable getInsertBuffer();
 
   /**
    * Returns the current buffer;

@@ -160,7 +160,7 @@ public class BaseTermTestCase extends TestCase {
   public void testBufferInsert() throws Exception {
     io.append("a");
     io.moveLeft();
-    term.bufferInsert("b");
+    term.getInsertBuffer().append('b');
     io.append("\r\n");
     assertLine("ba");
   }

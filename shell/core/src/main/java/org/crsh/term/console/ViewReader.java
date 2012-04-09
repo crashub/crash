@@ -25,7 +25,13 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ViewReader {
+public abstract class ViewReader implements Appendable {
+
+  public abstract ViewReader append(char c) throws IOException;
+
+  public abstract ViewReader append(CharSequence s) throws IOException;
+
+  public abstract ViewReader append(CharSequence csq, int start, int end) throws IOException;
 
   /**
    * Replace all the characters before the cursor by the provided char sequence.
@@ -35,10 +41,6 @@ public abstract class ViewReader {
    * @throws IOException any IOException
    */
   public abstract CharSequence replace(CharSequence s) throws IOException;
-
-  public abstract void write(char c) throws IOException;
-
-  public abstract void write(CharSequence s) throws IOException;
 
   /**
    * Delete the char under the cursor or return -1 if no char was deleted.

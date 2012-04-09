@@ -150,7 +150,7 @@ public class BaseTerm implements Term {
           return new TermEvent.Break();
         case CHAR:
           if (code >= 0 && code < 128) {
-            console.getViewReader().write((char)code);
+            console.getViewReader().append((char)code);
           } else {
             log.debug("Unhandled char " + code);
           }
@@ -170,8 +170,8 @@ public class BaseTerm implements Term {
     }
   }
 
-  public void bufferInsert(CharSequence msg) throws IOException {
-    console.getViewReader().write(msg);
+  public Appendable getInsertBuffer() {
+    return console.getViewReader();
   }
 
   public void addToHistory(CharSequence line) {

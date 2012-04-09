@@ -67,7 +67,7 @@ public final class Console {
         builder.append((char)i);
         flush = true;
       }
-      flush |= appendData(s);
+      flush |= appendData(s, 0, s.length());
       if (flush) {
         viewWriter.flush();
       }
@@ -75,17 +75,24 @@ public final class Console {
     }
 
     @Override
-    public void write(char c) throws IOException {
+    public ViewReader append(char c) throws IOException {
       if (appendData(c)) {
         viewWriter.flush();
       }
+      return this;
     }
 
     @Override
-    public void write(CharSequence s) throws IOException {
-      if (appendData(s.toString())) {
+    public ViewReader append(CharSequence s) throws IOException {
+      return append(s, 0, s.length());
+    }
+
+    @Override
+    public ViewReader append(CharSequence csq, int start, int end) throws IOException {
+      if (appendData(csq, start, end)) {
         viewWriter.flush();
       }
+      return this;
     }
 
     @Override
@@ -214,9 +221,21 @@ public final class Console {
     return writer;
   }
 
-  private boolean appendData(CharSequence s) throws IOException {
+  private boolean appendData(CharSequence s, int start, int end) throws IOException {
+    if (start < 0) {
+      throw new IndexOutOfBoundsException("No negative start");
+    }
+    if (end < 0) {
+      throw new IndexOutOfBoundsException("No negative end");
+    }
+    if (end > s.length()) {
+      throw new IndexOutOfBoundsException("End cannot be greater than sequence length");
+    }
+    if (end < start) {
+      throw new IndexOutOfBoundsException("Start cannot be greater than end");
+    }
     boolean flush = false;
-    for (int i = 0;i < s.length();i++) {
+    for (int i = start;i < end;i++) {
       flush |= appendData(s.charAt(i));
     }
     return flush;
