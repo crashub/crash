@@ -24,4 +24,22 @@ public abstract class AbstractTestCase extends TestCase {
       throw afe;
     }
   }
+
+  public static void assertJoin(Thread thread) {
+    assertJoin(thread, 5000);
+  }
+
+  public static void assertJoin(Thread thread, long timeMillis) {
+    long before = System.currentTimeMillis();
+    try {
+      thread.join(timeMillis);
+    }
+    catch (InterruptedException e) {
+      throw failure(e);
+    }
+    long after = System.currentTimeMillis();
+    if (after - before >= timeMillis) {
+      throw failure("Join failed");
+    }
+  }
 }

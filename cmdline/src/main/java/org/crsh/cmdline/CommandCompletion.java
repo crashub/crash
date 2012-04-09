@@ -32,10 +32,6 @@ public final class CommandCompletion {
     return delimiter;
   }
 
-  public String getDelimiterValue() {
-    return delimiter.getValue();
-  }
-
   public ValueCompletion getValue() {
     return value;
   }

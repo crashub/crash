@@ -1,32 +1,12 @@
-/*
- * Copyright (C) 2010 eXo Platform SAS.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
-
 package org.crsh.term.processor;
 
 import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
-import org.crsh.util.FutureListener;
-import org.crsh.util.LatchedFuture;
 import org.crsh.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,21 +15,39 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * <p>The processor is the glue between a term object and a shell object. It mainly read the input from the
- * term and executes shell commands.</p>
- * 
- * <p>The class implements the {@link Runnable} interface to perform its processing.</p>
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
+/** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public final class Processor implements Runnable {
+
+  /** . */
+  static final Runnable NOOP = new Runnable() {
+    public void run() {
+    }
+  };
+
+  /** . */
+  final Runnable WRITE_PROMPT = new Runnable() {
+    public void run() {
+      writePrompt();
+    }
+  };
+
+  /** . */
+  final Runnable CLOSE = new Runnable() {
+    public void run() {
+      close();
+    }
+  };
+
+  /** . */
+  private final Runnable READ_TERM = new Runnable() {
+    public void run() {
+      readTerm();
+    }
+  };
 
   /** . */
   final Logger log = LoggerFactory.getLogger(Processor.class);
@@ -58,286 +56,231 @@ public final class Processor implements Runnable {
   final Term term;
 
   /** . */
-  private final AtomicReference<Status> status;
+  final Shell shell;
 
   /** . */
-  private final Shell shell;
+  final LinkedList<TermEvent> queue;
 
-  /** The current process being executed. */
-  volatile ShellProcess process;
+  /** . */
+  final Object lock;
+
+  /** . */
+  ProcessContext current;
+
+  /** . */
+  Status status;
+
+  /** A flag useful for unit testing to know when the thread is reading. */
+  volatile boolean waitingEvent;
 
   /** . */
   private final List<Closeable> listeners;
 
   public Processor(Term term, Shell shell) {
     this.term = term;
-    this.status = new AtomicReference<Status>(State.INITIAL.available);
     this.shell = shell;
-    this.process = null;
+    this.queue = new LinkedList<TermEvent>();
+    this.lock = new Object();
+    this.status = Status.AVAILABLE;
     this.listeners = new ArrayList<Closeable>();
+    this.waitingEvent = false;
+  }
+
+  public boolean isWaitingEvent() {
+    return waitingEvent;
   }
 
   public void run() {
+
+
+    // Display initial stuff
+    try {
+      String welcome = shell.getWelcome();
+      log.debug("Writing welcome message to term");
+      term.write(welcome);
+      log.debug("Wrote welcome message to term");
+      writePrompt();
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    //
     while (true) {
-      Result result = execute();
-      State state = result.getState();
-      if (state == State.CLOSED) {
+      try {
+        if (!iterate()) {
+          break;
+        }
+      }
+      catch (IOException e) {
+        e.printStackTrace();
+      }
+      catch (InterruptedException e) {
         break;
       }
     }
   }
 
-  public boolean isAvailable() {
-    return process == null;
-  }
-
-  public State getState() {
-    return status.get().getState();
-  }
-
-  public Result execute() {
+  boolean iterate() throws InterruptedException, IOException {
 
     //
-    final Status _status = status.get();
-
-    Task task = null;
-
-    if (_status == State.INITIAL.available) {
-
-      task = new Task() {
-        @Override
-        protected LatchedFuture<State> execute() {
-          try {
-            String welcome = shell.getWelcome();
-            log.debug("Writing welcome message to term");
-            term.write(welcome);
-            log.debug("Wrote welcome message to term");
-            writePrompt();
+    Runnable runnable;
+    synchronized (lock) {
+      switch (status) {
+        case AVAILABLE:
+          runnable =  peekProcess();
+          if (runnable != null) {
+            break;
           }
-          catch (IOException e) {
-            e.printStackTrace();
-          }
-          return new LatchedFuture<State>(State.OPEN);
-        }
-      };
+        case PROCESSING:
+        case CANCELLING:
+          runnable = READ_TERM;
+          break;
+        case CLOSED:
+          return false;
+        default:
+          throw new AssertionError();
+      }
+    }
 
-    } else if (_status == State.OPEN.available) {
+    //
+    runnable.run();
 
-      task = new Task() {
-        @Override
-        protected LatchedFuture<State> execute() {
-          //
-          TermEvent event = null;
+    //
+    return true;
+  }
 
-          try {
-            log.debug("About to read next term event");
-            event = term.read();
-            log.debug("Read next term event " + event);
-          } catch (IOException e) {
-            if (status.get() == State.OPEN.available) {
-              log.error("Could not read term data", e);
+  // We assume this is called under lock synchronization
+  ProcessContext peekProcess() {
+    while (true) {
+      synchronized (lock) {
+        if (status == Status.AVAILABLE) {
+          if (queue.size() > 0) {
+            TermEvent event = queue.removeFirst();
+            if (event instanceof TermEvent.Complete) {
+              complete(((TermEvent.Complete)event).getLine());
             } else {
-              log.debug("Exception but term is considered as closed", e);
-              // We continue it will lead to getting out of the loop
-            }
-          }
-
-          //
-          if (event == null) {
-            // Do nothing wait until next event
-            return new LatchedFuture<State>(State.OPEN);
-          } else if (event instanceof TermEvent.ReadLine) {
-            String line = ((TermEvent.ReadLine)event).getLine().toString();
-            log.debug("Submitting command " + line);
-
-            //
-            ShellInvoker invoker = new ShellInvoker(Processor.this);
-
-            // Process
-            process = shell.createProcess(((TermEvent.ReadLine) event).getLine().toString());
-
-            //
-            process.execute(invoker);
-
-            //
-            if (line.length() > 0) {
-              term.addToHistory(line);
-            }
-
-            //
-            return invoker.result;
-          } else if (event instanceof TermEvent.Break) {
-            if (process != null) {
-              process.cancel();
-            } else {
-              log.debug("Ignoring action " + event);
-              writePrompt();
-            }
-            return new LatchedFuture<State>(State.OPEN);
-          } else if (event instanceof TermEvent.Complete) {
-            TermEvent.Complete complete = (TermEvent.Complete)event;
-            String prefix = complete.getLine().toString();
-            log.debug("About to get completions for " + prefix);
-            CommandCompletion completion = shell.complete(prefix);
-            ValueCompletion completions = completion.getValue();
-            log.debug("Completions for " + prefix + " are " + completions);
-
-            try {
-              // Try to find the greatest prefix among all the results
-              if (completions.getSize() == 0) {
-                // Do nothing
-              } else if (completions.getSize() == 1) {
-                Map.Entry<String, Boolean> entry = completions.iterator().next();
-                Appendable buffer = term.getInsertBuffer();
-                buffer.append(entry.getKey()).append(entry.getValue() ? completion.getDelimiterValue() : "");
-              } else {
-                String commonCompletion = Strings.findLongestCommonPrefix(completions.getSuffixes());
-                if (commonCompletion.length() > 0) {
-                  term.getInsertBuffer().append(commonCompletion);
-                } else {
-                  // Format stuff
-                  int width = term.getWidth();
-
-                  //
-                  String completionPrefix = completions.getPrefix();
-
-                  // Get the max length
-                  int max = 0;
-                  for (String suffix : completions.getSuffixes()) {
-                    max = Math.max(max, completionPrefix.length() + suffix.length());
-                  }
-
-                  // Separator
-                  max++;
-
-                  //
-                  StringBuilder sb = new StringBuilder().append('\n');
-                  if (max < width) {
-                    int columns = width / max;
-                    int index = 0;
-                    for (String suffix : completions.getSuffixes()) {
-                      sb.append(completionPrefix).append(suffix);
-                      for (int l = completionPrefix.length() + suffix.length();l < max;l++) {
-                        sb.append(' ');
-                      }
-                      if (++index >= columns) {
-                        index = 0;
-                        sb.append('\n');
-                      }
-                    }
-                    if (index > 0) {
-                      sb.append('\n');
-                    }
-                  } else {
-                    for (Iterator<String> i = completions.getSuffixes().iterator();i.hasNext();) {
-                      String suffix = i.next();
-                      sb.append(commonCompletion).append(suffix);
-                      if (i.hasNext()) {
-                        sb.append('\n');
-                      }
-                    }
-                    sb.append('\n');
-                  }
-
-                  // We propose
-                  term.write(sb.toString());
-                  writePrompt();
-                }
+              String line = ((TermEvent.ReadLine)event).getLine().toString();
+              if (line.length() > 0) {
+                term.addToHistory(line);
               }
+              ShellProcess process = shell.createProcess(line);
+              current =  new ProcessContext(this, process);
+              status = Status.PROCESSING;
+              return current;
             }
-            catch (IOException e) {
-              log.error("Could not write completion", e);
-            }
-            return new LatchedFuture<State>(State.OPEN);
-          } else if (event instanceof TermEvent.Close) {
-            return new LatchedFuture<State>(State.WANT_CLOSE);
           } else {
-            return new LatchedFuture<State>(State.OPEN);
+            break;
           }
+        } else {
+          break;
         }
-      };
-    } else if (_status == State.WANT_CLOSE.available) {
+      }
+    }
+    return null;
+  }
 
-      task = new Task() {
-        @Override
-        protected LatchedFuture<State> execute() {
-          //
-          log.debug("Closing processor");
+  /** . */
+  private final Object termLock = new Object();
 
-          // Make a copy
-          ArrayList<Closeable> listeners;
-          synchronized (Processor.this.listeners) {
-            listeners = new ArrayList<Closeable>(Processor.this.listeners);
-          }
+  private boolean reading = false;
 
-          // Status to closed, we won't process any further request
-          // it's important to set the status before closing anything to
-          // avoid a race condition because closing a listener may
-          // cause an interrupted exception
-          status.set(State.CLOSED.available);
+  void readTerm() {
 
-          //
-          for (Closeable listener : listeners) {
-            try {
-              log.debug("Closing " + listener.getClass().getSimpleName());
-              listener.close();
-            }
-            catch (Exception e) {
-              e.printStackTrace();
-            }
-          }
-
-          //
-          return new LatchedFuture<State>(State.CLOSED);
+    //
+    synchronized (termLock) {
+      if (reading) {
+        try {
+          termLock.wait();
+          return;
         }
-      };
-    } else {
-      //
+        catch (InterruptedException e) {
+          throw new AssertionError(e);
+        }
+      } else {
+        reading = true;
+      }
     }
 
     //
-    if (task != null) {
-
-      // Add listener to update our state
-      final LatchedFuture<State> futureState = task.execute();
-
-      // It will update the status
-      futureState.addListener(new FutureListener<State>() {
-        public void completed(State value) {
-          status.set(value.available);
-        }
-      });
+    try {
+      TermEvent event = term.read();
 
       //
-      return new Result() {
-        public State getState() {
-          try {
-            return futureState.get();
-          } catch (InterruptedException e) {
-            return status.get().getState();
-          } catch (ExecutionException e) {
-            return status.get().getState();
+      Runnable runnable;
+      if (event instanceof TermEvent.Break) {
+        synchronized (lock) {
+          queue.clear();
+          if (status == Status.PROCESSING) {
+            status = Status.CANCELLING;
+            runnable = new Runnable() {
+              ProcessContext context = current;
+              public void run() {
+                context.process.cancel();
+              }
+            };
+          }
+          else if (status == Status.AVAILABLE) {
+            runnable = WRITE_PROMPT;
+          } else {
+            runnable = NOOP;
           }
         }
-      };
-    } else {
-      return new Result() {
-        public State getState() {
-          return _status.getState();
+      } else if (event instanceof TermEvent.Close) {
+        synchronized (lock) {
+          queue.clear();
+          if (status == Status.PROCESSING) {
+            runnable = new Runnable() {
+              ProcessContext context = current;
+              public void run() {
+                context.process.cancel();
+                close();
+              }
+            };
+          } else if (status != Status.CLOSED) {
+            runnable = CLOSE;
+          } else {
+            runnable = NOOP;
+          }
+          status = Status.CLOSED;
         }
-      };
+      } else {
+        synchronized (queue) {
+          queue.addLast(event);
+          runnable = NOOP;
+        }
+      }
+
+      //
+      runnable.run();
+    }
+    catch (IOException e) {
+      log.error("Error when reading term", e);
+    }
+    finally {
+      synchronized (termLock) {
+        reading = false;
+        termLock.notifyAll();
+      }
     }
   }
 
-  void writePrompt() {
-    String prompt = shell.getPrompt();
-    try {
-      String p = prompt == null ? "% " : prompt;
-      term.write("\r\n");
-      term.write(p);
-      term.write(term.getBuffer());
-    } catch (IOException e) {
-      e.printStackTrace();
+  void close() {
+    // Make a copy
+    ArrayList<Closeable> listeners;
+    synchronized (Processor.this.listeners) {
+      listeners = new ArrayList<Closeable>(Processor.this.listeners);
+    }
+
+    //
+    for (Closeable listener : listeners) {
+      try {
+        log.debug("Closing " + listener.getClass().getSimpleName());
+        listener.close();
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -350,6 +293,108 @@ public final class Processor implements Runnable {
         throw new IllegalStateException("Already listening");
       }
       listeners.add(listener);
+    }
+  }
+
+  void write(String text) {
+    try {
+      term.write(text);
+    }
+    catch (IOException e) {
+      log.error("Write to term failure", e);
+    }
+  }
+
+  void writePrompt() {
+    String prompt = shell.getPrompt();
+    try {
+      String p = prompt == null ? "% " : prompt;
+      term.write("\r\n");
+      term.write(p);
+//      term.write(term.getBuffer());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void complete(CharSequence prefix) {
+    log.debug("About to get completions for " + prefix);
+    CommandCompletion completion = shell.complete(prefix.toString());
+    ValueCompletion completions = completion.getValue();
+    log.debug("Completions for " + prefix + " are " + completions);
+
+    //
+    Delimiter delimiter = completion.getDelimiter();
+
+    try {
+      // Try to find the greatest prefix among all the results
+      if (completions.getSize() == 0) {
+        // Do nothing
+      } else if (completions.getSize() == 1) {
+        Map.Entry<String, Boolean> entry = completions.iterator().next();
+        Appendable buffer = term.getInsertBuffer();
+        String insert = entry.getKey();
+        delimiter.escape(insert, 0, insert.length(), term.getInsertBuffer());
+        if (entry.getValue()) {
+          buffer.append(completion.getDelimiter().getValue());
+        }
+      } else {
+        String commonCompletion = Strings.findLongestCommonPrefix(completions.getSuffixes());
+        if (commonCompletion.length() > 0) {
+          delimiter.escape(commonCompletion, 0, commonCompletion.length(), term.getInsertBuffer());
+        } else {
+          // Format stuff
+          int width = term.getWidth();
+
+          //
+          String completionPrefix = completions.getPrefix();
+
+          // Get the max length
+          int max = 0;
+          for (String suffix : completions.getSuffixes()) {
+            max = Math.max(max, completionPrefix.length() + suffix.length());
+          }
+
+          // Separator
+          max++;
+
+          //
+          StringBuilder sb = new StringBuilder().append('\n');
+          if (max < width) {
+            int columns = width / max;
+            int index = 0;
+            for (String suffix : completions.getSuffixes()) {
+              sb.append(completionPrefix).append(suffix);
+              for (int l = completionPrefix.length() + suffix.length();l < max;l++) {
+                sb.append(' ');
+              }
+              if (++index >= columns) {
+                index = 0;
+                sb.append('\n');
+              }
+            }
+            if (index > 0) {
+              sb.append('\n');
+            }
+          } else {
+            for (Iterator<String> i = completions.getSuffixes().iterator();i.hasNext();) {
+              String suffix = i.next();
+              sb.append(commonCompletion).append(suffix);
+              if (i.hasNext()) {
+                sb.append('\n');
+              }
+            }
+            sb.append('\n');
+          }
+
+          // We propose
+          term.write(sb.toString());
+          writePrompt();
+        }
+      }
+    }
+    catch (IOException e) {
+      log.error("Could not write completion", e);
     }
   }
 }

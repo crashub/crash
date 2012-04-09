@@ -19,26 +19,75 @@
 
 package org.crsh.cmdline;
 
+import java.io.IOException;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
 public enum Delimiter {
 
-  EMPTY(' '),
+  EMPTY(' ') {
+    @Override
+    public void escape(CharSequence s, int start, int end, Appendable appendable) throws IOException {
+      while (start < end) {
+        char c = s.charAt(start++);
+        switch (c) {
+          case ' ':
+          case '"':
+          case '\'':
+          case '\\':
+            appendable.append('\\');
+        }
+        appendable.append(c);
+      }
+    }
+  },
 
-  SINGLE_QUOTE('\''),
+  SINGLE_QUOTE('\'') {
+    @Override
+    public void escape(CharSequence s, int start, int end, Appendable appendable) throws IOException {
+      while (start < end) {
+        while (start < end) {
+          char c = s.charAt(start++);
+          switch (c) {
+            case '\'':
+            case '\\':
+              appendable.append('\\');
+          }
+          appendable.append(c);
+        }
+      }
+    }
+  },
 
-  DOUBLE_QUOTE('"');
+  DOUBLE_QUOTE('"') {
+    @Override
+    public void escape(CharSequence s, int start, int end, Appendable appendable) throws IOException {
+      while (start < end) {
+        while (start < end) {
+          char c = s.charAt(start++);
+          switch (c) {
+            case '"':
+            case '\\':
+              appendable.append('\\');
+          }
+          appendable.append(c);
+        }
+      }
+    }
+  };
 
   /** . */
-  private final String value;
+  private final char value;
 
   Delimiter(char value) {
-    this.value = "" + value;
+    this.value = value;
   }
 
-  public String getValue() {
+  public char getValue() {
     return value;
   }
+
+  public abstract void escape(CharSequence s, int start, int end, Appendable appendable) throws IOException;
 }

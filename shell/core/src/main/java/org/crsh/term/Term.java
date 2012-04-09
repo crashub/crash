@@ -19,6 +19,7 @@
 
 package org.crsh.term;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -27,7 +28,7 @@ import java.io.IOException;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface Term {
+public interface Term extends Closeable {
 
 
   /**

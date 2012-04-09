@@ -21,23 +21,18 @@ package org.crsh.term.processor;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.crsh.BaseProcess;
 import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
-import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.ShellResponse;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.spi.TestTermIO;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -266,88 +261,6 @@ public class ProcessorTestCase extends TestCase {
 
 //    controller.connector.assertChars("d");
 //    controller.connector.assertMoveLeft();
-  }
-
-  public void testCancel() throws Exception {
-
-    final CountDownLatch latch = new CountDownLatch(1);
-    Controller controller = create(new BaseShell(new BaseProcessFactory() {
-      @Override
-      public BaseProcess create(String request) {
-        return new BaseProcess(request) {
-          ShellProcessContext context;
-          @Override
-          public void process(String request, ShellProcessContext processContext) {
-            this.context = processContext;
-          }
-          @Override
-          public void cancel() {
-            context.end(ShellResponse.display("cancelled"));
-            latch.countDown();
-          }
-        };
-      }
-    }));
-
-    //
-    assertEquals(State.INITIAL, controller.processor.getState());
-    Result result1 = controller.processor.execute();
-    assertEquals(State.OPEN, result1.getState());
-    controller.connector.append("\r\n");
-    result1 = controller.processor.execute();
-    assertFalse(controller.processor.isAvailable());
-    controller.connector.appendBreak();
-    Result result2 = controller.processor.execute();
-    latch.await();
-    assertEquals(State.OPEN, result1.getState());
-    assertEquals(State.OPEN, result2.getState());
-    assertTrue(controller.processor.isAvailable());
-    // controller.connector.assertChars("\r\n");
-
-
-
-/*
-    assertEquals(Processor.State.WANT_CLOSE, result.getState());
-    assertEquals(0, counter.get());
-    result = controller.processor.execute();
-    assertEquals(Processor.State.CLOSED, result.getState());
-    assertEquals(1, counter.get());
-*/
-  }
-
-  public void testCloseFromInside() throws Exception {
-
-    Controller controller = create(new BaseShell(new BaseProcessFactory() {
-      @Override
-      public BaseProcess create(String request) {
-        return new BaseProcess(request) {
-          @Override
-          protected ShellResponse execute(String request) {
-            return new ShellResponse.Close();
-          }
-        };
-      }
-    }));
-
-    //
-    final AtomicInteger counter = new AtomicInteger();
-    controller.processor.addListener(new Closeable() {
-      public void close() {
-        counter.incrementAndGet();
-      }
-    });
-
-    //
-    assertEquals(State.INITIAL, controller.processor.getState());
-    Result result = controller.processor.execute();
-    assertEquals(State.OPEN, result.getState());
-    controller.connector.append("\r\n");
-    result = controller.processor.execute();
-    assertEquals(State.WANT_CLOSE, result.getState());
-    assertEquals(0, counter.get());
-    result = controller.processor.execute();
-    assertEquals(State.CLOSED, result.getState());
-    assertEquals(1, counter.get());
   }
 
   private Controller create(Shell shell) throws IOException {
