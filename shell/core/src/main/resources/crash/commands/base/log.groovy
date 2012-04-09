@@ -16,8 +16,9 @@ import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.spi.Value
-import org.crsh.cmdline.spi.CompletionResult
-import org.crsh.cmdline.completers.EnumCompleter;
+
+import org.crsh.cmdline.completers.EnumCompleter
+import org.crsh.cmdline.spi.ValueCompletion;
 
 @Usage("logging commands")
 public class log extends CRaSHCommand implements Completer {
@@ -213,8 +214,8 @@ The following set the level warn on all the available loggers:
     }
   }
 
-  public CompletionResult<String> complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
-    def c = CompletionResult.create();
+  public ValueCompletion complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
+    def c = ValueCompletion.create(prefix);
     if (parameter.getJavaValueType() == LoggerName.class) {
       loggers.each() {
         if (it.startsWith(prefix)) {

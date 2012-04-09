@@ -22,7 +22,9 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.Termination;
+import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.util.Strings;
 
 import java.util.List;
@@ -57,8 +59,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public final CompletionResult<String> complete(CommandContext context, String line) {
-    return CompletionResult.create();
+  public final CommandCompletion complete(CommandContext context, String line) {
+    return new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
   }
 
   public String describe(String line, DescriptionFormat mode) {

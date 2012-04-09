@@ -1,13 +1,12 @@
 package org.crsh.cmdline.matcher.impl;
 
+import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
-import org.crsh.cmdline.matcher.tokenizer.Termination;
+import org.crsh.cmdline.Termination;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.CompletionResult;
-
-import java.util.Map;
+import org.crsh.cmdline.spi.ValueCompletion;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -33,7 +32,7 @@ class ParameterCompletion extends Completion {
     this.completer = completer;
   }
 
-  CompletionResult<String> complete() throws CmdCompletionException {
+  CommandCompletion complete() throws CmdCompletionException {
 
     Class<? extends Completer> completerType = parameter.getCompleterType();
     Completer completer = this.completer;
@@ -51,18 +50,13 @@ class ParameterCompletion extends Completion {
     //
     if (completer != null) {
       try {
-        CompletionResult<Boolean> res = completer.complete(parameter, prefix);
-        CompletionResult<String> delimiter = new CompletionResult<String>(res.getPrefix());
-        for (Map.Entry<String, Boolean> entry : res) {
-          delimiter.put(entry.getKey(), entry.getValue() ? termination.getEnd() : "");
-        }
-        return delimiter;
+        return new CommandCompletion(termination, completer.complete(parameter, prefix));
       }
       catch (Exception e) {
         throw new CmdCompletionException(e);
       }
     } else {
-      return CompletionResult.create();
+      return new CommandCompletion(termination, ValueCompletion.create());
     }
   }
 }

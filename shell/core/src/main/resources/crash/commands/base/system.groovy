@@ -12,8 +12,9 @@ import org.crsh.cmdline.spi.Value
 import org.crsh.cmdline.spi.Completer
 import org.crsh.cmdline.ParameterDescriptor
 import org.crsh.cmdline.annotations.Option
-import org.crsh.cmdline.spi.CompletionResult
+
 import org.crsh.cmdline.completers.EnumCompleter
+import org.crsh.cmdline.spi.ValueCompletion
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -66,9 +67,9 @@ class system extends CRaSHCommand implements Completer {
     System.clearProperty name.toString()
   }
 
-  CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix)
+  ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix)
   {
-    def c = CompletionResult.create();
+    def c = ValueCompletion.create(prefix);
     if (parameter.getJavaValueType() == PropName.class) {
       System.getProperties().each() {
         if (it.key.startsWith(prefix)) {

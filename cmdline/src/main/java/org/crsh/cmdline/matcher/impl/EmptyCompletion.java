@@ -1,7 +1,9 @@
 package org.crsh.cmdline.matcher.impl;
 
+import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.Termination;
 import org.crsh.cmdline.matcher.CmdCompletionException;
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.spi.ValueCompletion;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -9,7 +11,7 @@ import org.crsh.cmdline.spi.CompletionResult;
 class EmptyCompletion extends Completion {
 
   @Override
-  CompletionResult<String> complete() throws CmdCompletionException {
-    return CompletionResult.create();
+  CommandCompletion complete() throws CmdCompletionException {
+    return new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
   }
 }

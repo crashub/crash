@@ -10,24 +10,24 @@ import java.util.Set;
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public final class CompletionResult<V> implements Iterable<Map.Entry<String, V>> {
+public final class ValueCompletion implements Iterable<Map.Entry<String, Boolean>> {
 
-  public static <V> CompletionResult<V> create() {
-    return new CompletionResult<V>();
+  public static ValueCompletion create() {
+    return new ValueCompletion();
   }
 
-  public static <V> CompletionResult<V> create(String prefix) {
-    return new CompletionResult<V>(prefix);
+  public static ValueCompletion create(String prefix) {
+    return new ValueCompletion(prefix);
   }
 
-  public static <V> CompletionResult<V> create(String prefix, String suffix, V value) {
-    CompletionResult<V> result = new CompletionResult<V>(prefix);
+  public static ValueCompletion create(String prefix, String suffix, boolean value) {
+    ValueCompletion result = new ValueCompletion(prefix);
     result.put(suffix, value);
     return result;
   }
 
-  public static <V> CompletionResult<V> create(String suffix, V value) {
-    CompletionResult<V> result = new CompletionResult<V>();
+  public static ValueCompletion create(String suffix, boolean value) {
+    ValueCompletion result = new ValueCompletion();
     result.put(suffix, value);
     return result;
   }
@@ -36,17 +36,17 @@ public final class CompletionResult<V> implements Iterable<Map.Entry<String, V>>
   private final String prefix;
 
   /** . */
-  private final Map<String, V> entries;
+  private final Map<String, Boolean> entries;
 
-  public CompletionResult() {
+  public ValueCompletion() {
     this("");
   }
 
-  public CompletionResult(String prefix) {
-    this(prefix, new LinkedHashMap<String, V>());
+  public ValueCompletion(String prefix) {
+    this(prefix, new LinkedHashMap<String, Boolean>());
   }
 
-  public CompletionResult(String prefix, Map<String, V> entries) {
+  public ValueCompletion(String prefix, Map<String, Boolean> entries) {
     if (prefix == null) {
       throw new NullPointerException("No null prefix allowed");
     }
@@ -59,7 +59,7 @@ public final class CompletionResult<V> implements Iterable<Map.Entry<String, V>>
     this.entries = entries;
   }
 
-  public Iterator<Map.Entry<String, V>> iterator() {
+  public Iterator<Map.Entry<String, Boolean>> iterator() {
     return entries.entrySet().iterator();
   }
 
@@ -71,7 +71,7 @@ public final class CompletionResult<V> implements Iterable<Map.Entry<String, V>>
     return entries.isEmpty();
   }
 
-  public V get(String key) {
+  public Object get(String key) {
     return entries.get(key);
   }
 
@@ -79,7 +79,7 @@ public final class CompletionResult<V> implements Iterable<Map.Entry<String, V>>
     return entries.size();
   }
 
-  public CompletionResult<V> put(String key, V value) {
+  public ValueCompletion put(String key, boolean value) {
     entries.put(key, value);
     return this;
   }
@@ -98,8 +98,8 @@ public final class CompletionResult<V> implements Iterable<Map.Entry<String, V>>
     if (obj == this) {
       return true;
     }
-    if (obj instanceof CompletionResult) {
-      CompletionResult that = (CompletionResult)obj;
+    if (obj instanceof ValueCompletion) {
+      ValueCompletion that = (ValueCompletion)obj;
       return prefix.equals(that.prefix) && entries.equals(that.entries);
     }
     return false;

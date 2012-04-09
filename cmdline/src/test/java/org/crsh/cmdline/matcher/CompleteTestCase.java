@@ -20,12 +20,14 @@
 package org.crsh.cmdline.matcher;
 
 import junit.framework.TestCase;
+import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.Termination;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Option;
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.spi.ValueCompletion;
 
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
@@ -51,10 +53,10 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    assertEquals(CompletionResult.<String>create(), matcher.complete("m fo"));
-    assertEquals(CompletionResult.create("o", " "), matcher.complete("n fo"));
-    assertEquals(CompletionResult.create("ab", ""), matcher.complete(new CompleterSupport.Echo(), "m ab"));
-    assertEquals(CompletionResult.create("o", " "), matcher.complete(new CompleterSupport.Echo(), "n fo"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("m fo"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("o", true)), matcher.complete("n fo"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("ab", false)), matcher.complete(new CompleterSupport.Echo(), "m ab"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("o", true)), matcher.complete(new CompleterSupport.Echo(), "n fo"));
   }
 
   public void testExplicitCommandSingleArgument() throws Exception
@@ -70,11 +72,11 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    assertEquals(CompletionResult.create("foo", " "), matcher.complete("m "));
-    assertEquals(CompletionResult.create("oo", " "), matcher.complete("m f"));
-    assertEquals(CompletionResult.create("o", " "), matcher.complete("m fo"));
-    assertEquals(CompletionResult.<String>create(), matcher.complete("m a "));
-    assertEquals(CompletionResult.<String>create(), matcher.complete("m a f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("foo", true)), matcher.complete("m "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("oo", true)), matcher.complete("m f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("o", true)), matcher.complete("m fo"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("m a "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("m a f"));
   }
 
   public void testImplicitCommandSingleArgument() throws Exception
@@ -90,11 +92,11 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
-    assertEquals(CompletionResult.create("foo", " "), matcher.complete(""));
-    assertEquals(CompletionResult.create("oo", " "), matcher.complete("f"));
-    assertEquals(CompletionResult.create("o", " "), matcher.complete("fo"));
-    assertEquals(CompletionResult.<String>create(), matcher.complete("a "));
-    assertEquals(CompletionResult.<String>create(), matcher.complete("a f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("foo", true)), matcher.complete(""));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("oo", true)), matcher.complete("f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("o", true)), matcher.complete("fo"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("a "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("a f"));
   }
 
   public void testMultiArgument() throws Exception
@@ -110,12 +112,12 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    assertEquals(CompletionResult.create("foo", " "), matcher.complete("m "));
-    assertEquals(CompletionResult.create("oo", " "), matcher.complete("m f"));
-    assertEquals(CompletionResult.create("o", " "), matcher.complete("m fo"));
-    assertEquals(CompletionResult.create("foo", " "), matcher.complete("m a "));
-    assertEquals(CompletionResult.create("oo", " "), matcher.complete("m a f"));
-    assertEquals(CompletionResult.create("o", " "), matcher.complete("m a fo"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("foo", true)), matcher.complete("m "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("oo", true)), matcher.complete("m f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("o", true)), matcher.complete("m fo"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("foo", true)), matcher.complete("m a "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("oo", true)), matcher.complete("m a f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("o", true)), matcher.complete("m a fo"));
   }
 
   public void testOption() throws Exception
@@ -130,12 +132,12 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    assertEquals(CompletionResult.create("-", "a", " "), matcher.complete("-"));
-    assertEquals(CompletionResult.create("", " "), matcher.complete("-a"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("-", "a", true)), matcher.complete("-"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("", true)), matcher.complete("-a"));
 
-    CompletionResult<String> a = CompletionResult.create("--", "add", " ").put("addition", " ");
-    CompletionResult<String> b = CompletionResult.create("--ad", "d", " ").put("dition", " ");
-    CompletionResult<String> c = CompletionResult.create("--addi", "tion", " ");
+    CommandCompletion a = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("--", "add", true).put("addition", true));
+    CommandCompletion b = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("--ad", "d", true).put("dition", true));
+    CommandCompletion c = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("--addi", "tion", true));
 
     //
     assertEquals(a, matcher.complete("--"));
@@ -155,7 +157,7 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
-    assertEquals(CompletionResult.create("oo", " "), matcher.complete("-- f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("oo", true)), matcher.complete("-- f"));
   }
 
   public void testOptionValue() throws Exception
@@ -168,12 +170,12 @@ public class CompleteTestCase extends TestCase {
     //
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
     Matcher<A> matcher = Matcher.createMatcher(desc);
-    assertEquals(CompletionResult.create("foo", " "), matcher.complete("-a "));
-    assertEquals(CompletionResult.create("oo", " "), matcher.complete("-a f"));
-    assertEquals(CompletionResult.create("o", " "), matcher.complete("-a fo"));
-    assertEquals(CompletionResult.<String>create("-b"), matcher.complete("-a -b"));
-    assertEquals(CompletionResult.<String>create(), matcher.complete("-a b "));
-    assertEquals(CompletionResult.<String>create("c"), matcher.complete("-a b c"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("foo", true)), matcher.complete("-a "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("oo", true)), matcher.complete("-a f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("o", true)), matcher.complete("-a fo"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("-b")), matcher.complete("-a -b"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("-a b "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("c")), matcher.complete("-a b c"));
   }
 
   public void testImplicitCommandOptionName() throws Exception
@@ -188,10 +190,10 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
-    assertEquals(CompletionResult.create("-", "o", " "), matcher.complete("-"));
-    assertEquals(CompletionResult.create("--", "option", " "), matcher.complete("--"));
-    assertEquals(CompletionResult.create("--o", "ption", " "), matcher.complete("--o"));
-    assertEquals(CompletionResult.create("--op", "tion", " "), matcher.complete("--op"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("-", "o", true)), matcher.complete("-"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("--", "option", true)), matcher.complete("--"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("--o", "ption", true)), matcher.complete("--o"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("--op", "tion", true)), matcher.complete("--op"));
   }
 
   public void testOptionArgument() throws Exception
@@ -207,8 +209,8 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
-    assertEquals(CompletionResult.create("foo", " "), matcher.complete("-o bar "));
-    assertEquals(CompletionResult.create("oo", " "), matcher.complete("-o bar f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("foo", true)), matcher.complete("-o bar "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("oo", true)), matcher.complete("-o bar f"));
   }
 
   public void testCommand() throws Exception
@@ -227,10 +229,10 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
-    CompletionResult<String> a = CompletionResult.create("foo", " ").put("faa", " ");
-    CompletionResult<String> b = CompletionResult.create("f", "oo", " ").put("aa", " ");
-    CompletionResult<String> c = CompletionResult.create("", " ");
-    CompletionResult<String> d = CompletionResult.create();
+    CommandCompletion a = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("foo", true).put("faa", true));
+    CommandCompletion b = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("f", "oo", true).put("aa", true));
+    CommandCompletion c = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("", true));
+    CommandCompletion d = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
 
     //
     assertEquals(a, matcher.complete(""));
@@ -258,13 +260,13 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher("main", desc);
 
     //
-    assertEquals(CompletionResult.create("", ""), matcher.complete(""));
-    assertEquals(CompletionResult.create("m", ""), matcher.complete("m"));
-    assertEquals(CompletionResult.create("ma", ""), matcher.complete("ma"));
-    assertEquals(CompletionResult.create("mai", ""), matcher.complete("mai"));
-    assertEquals(CompletionResult.create("main", ""), matcher.complete("main"));
-    assertEquals(CompletionResult.<String>create(), matcher.complete("main "));
-    assertEquals(CompletionResult.<String>create(), matcher.complete("main a"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("", false)), matcher.complete(""));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("m", false)), matcher.complete("m"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("ma", false)), matcher.complete("ma"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("mai", false)), matcher.complete("mai"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("main", false)), matcher.complete("main"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("main "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("main a"));
   }
 
   public void testEnum() throws Exception
@@ -281,14 +283,14 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    CompletionResult<String> a = CompletionResult.create("SOURCE", " ").put("CLASS", " ").put("RUNTIME", " ");
-    CompletionResult<String> b = CompletionResult.create("SOURCE", "\"").put("CLASS", "\"").put("RUNTIME", "\"");
-    CompletionResult<String> c = CompletionResult.create("SOURCE", "'").put("CLASS", "'").put("RUNTIME", "'");
-    CompletionResult<String> d = CompletionResult.create("RCE", " ");
-    CompletionResult<String> e = CompletionResult.create("RCE", "\"");
-    CompletionResult<String> f = CompletionResult.create("RCE", "'");
-    CompletionResult<String> g = CompletionResult.create("", " ");
-    CompletionResult<String> h = CompletionResult.create("", " ");
+    CommandCompletion a = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("SOURCE", true).put("CLASS", true).put("RUNTIME", true));
+    CommandCompletion b = new CommandCompletion(Termination.DOUBLE_QUOTE, ValueCompletion.create("SOURCE", true).put("CLASS", true).put("RUNTIME", true));
+    CommandCompletion c = new CommandCompletion(Termination.SINGLE_QUOTE, ValueCompletion.create("SOURCE", true).put("CLASS", true).put("RUNTIME", true));
+    CommandCompletion d = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("RCE", true));
+    CommandCompletion e = new CommandCompletion(Termination.DOUBLE_QUOTE, ValueCompletion.create("RCE", true));
+    CommandCompletion f = new CommandCompletion(Termination.SINGLE_QUOTE, ValueCompletion.create("RCE", true));
+    CommandCompletion g = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("", true));
+    CommandCompletion h = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("", true));
 
     //
     for (String m : Arrays.asList("foo -a", "bar")) {
@@ -315,15 +317,15 @@ public class CompleteTestCase extends TestCase {
     Matcher<A> matcher = Matcher.createMatcher(desc);
 
     //
-    assertEquals(CompletionResult.create("bar", " "), matcher.complete(""));
-    assertEquals(CompletionResult.create("b", "ar", " "), matcher.complete("b"));
-    assertEquals(CompletionResult.create("", " "), matcher.complete("bar"));
-    assertEquals(CompletionResult.<String>create(), matcher.complete("bar "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("bar", true)), matcher.complete(""));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("b", "ar", true)), matcher.complete("b"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("", true)), matcher.complete("bar"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("bar "));
 
     //
-    assertEquals(CompletionResult.create("foo", " "), matcher.complete("bar -a "));
-    assertEquals(CompletionResult.create("oo", " "), matcher.complete("bar -a f"));
-    assertEquals(CompletionResult.create("o", " "), matcher.complete("bar -a fo"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("foo", true)), matcher.complete("bar -a "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("oo", true)), matcher.complete("bar -a f"));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create("o", true)), matcher.complete("bar -a fo"));
   }
 
   public void testFailure() throws Exception
@@ -381,6 +383,6 @@ public class CompleteTestCase extends TestCase {
 
     //
     Matcher<A> matcher = Matcher.createMatcher(desc);
-    assertEquals(CompletionResult.<String>create(), matcher.complete("foo "));
+    assertEquals(new CommandCompletion(Termination.DETERMINED, ValueCompletion.create()), matcher.complete("foo "));
   }
 }

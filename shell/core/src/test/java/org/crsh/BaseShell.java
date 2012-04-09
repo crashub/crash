@@ -18,7 +18,9 @@
  */
 package org.crsh;
 
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.Termination;
+import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 
@@ -76,7 +78,7 @@ public class BaseShell implements Shell {
   /**
    * Returns an empty unmodifiable map.
    */
-  public CompletionResult<String> complete(String prefix) {
-    return CompletionResult.create();
+  public CommandCompletion complete(String prefix) {
+    return new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
   }
 }

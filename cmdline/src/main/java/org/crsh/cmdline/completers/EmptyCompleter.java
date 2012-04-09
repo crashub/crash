@@ -21,7 +21,7 @@ package org.crsh.cmdline.completers;
 
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.spi.ValueCompletion;
 
 /**
  * A {@link Completer} implementation that returns no completion results.
@@ -46,7 +46,7 @@ public class EmptyCompleter implements Completer {
   /**
    * Returns the value returned by {@link java.util.Collections#emptyList()}.
    */
-  public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
-    return CompletionResult.create();
+  public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) {
+    return ValueCompletion.create();
   }
 }

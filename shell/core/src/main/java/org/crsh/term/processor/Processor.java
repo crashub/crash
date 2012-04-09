@@ -19,7 +19,8 @@
 
 package org.crsh.term.processor;
 
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.term.Term;
@@ -177,7 +178,8 @@ public final class Processor implements Runnable {
             TermEvent.Complete complete = (TermEvent.Complete)event;
             String prefix = complete.getLine().toString();
             log.debug("About to get completions for " + prefix);
-            CompletionResult<String> completions = shell.complete(prefix);
+            CommandCompletion completion = shell.complete(prefix);
+            ValueCompletion completions = completion.getValue();
             log.debug("Completions for " + prefix + " are " + completions);
 
             try {
@@ -185,8 +187,8 @@ public final class Processor implements Runnable {
               if (completions.getSize() == 0) {
                 // Do nothing
               } else if (completions.getSize() == 1) {
-                Map.Entry<String, String> entry = completions.iterator().next();
-                term.bufferInsert(entry.getKey() + entry.getValue());
+                Map.Entry<String, Boolean> entry = completions.iterator().next();
+                term.bufferInsert(entry.getKey() + (entry.getValue() ? completion.getTerminationValue() : ""));
               } else {
                 String commonCompletion = Strings.findLongestCommonPrefix(completions.getSuffixes());
                 if (commonCompletion.length() > 0) {
@@ -200,8 +202,8 @@ public final class Processor implements Runnable {
 
                   // Get the max length
                   int max = 0;
-                  for (String completion : completions.getSuffixes()) {
-                    max = Math.max(max, completionPrefix.length() + completion.length());
+                  for (String suffix : completions.getSuffixes()) {
+                    max = Math.max(max, completionPrefix.length() + suffix.length());
                   }
 
                   // Separator
@@ -212,9 +214,9 @@ public final class Processor implements Runnable {
                   if (max < width) {
                     int columns = width / max;
                     int index = 0;
-                    for (String completion : completions.getSuffixes()) {
-                      sb.append(completionPrefix).append(completion);
-                      for (int l = completion.length();l < max;l++) {
+                    for (String suffix : completions.getSuffixes()) {
+                      sb.append(completionPrefix).append(suffix);
+                      for (int l = completionPrefix.length() + suffix.length();l < max;l++) {
                         sb.append(' ');
                       }
                       if (++index >= columns) {
@@ -227,8 +229,8 @@ public final class Processor implements Runnable {
                     }
                   } else {
                     for (Iterator<String> i = completions.getSuffixes().iterator();i.hasNext();) {
-                      String completion = i.next();
-                      sb.append(commonCompletion).append(completion);
+                      String suffix = i.next();
+                      sb.append(commonCompletion).append(suffix);
                       if (i.hasNext()) {
                         sb.append('\n');
                       }

@@ -19,7 +19,7 @@
 
 package org.crsh.command;
 
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.CommandCompletion;
 
 /**
  * <p>The shell command allows a single source to provide a customized invoker according to the context
@@ -40,7 +40,7 @@ public interface ShellCommand {
    * @param line the original command line arguments
    * @return the completions
    */
-  CompletionResult<String> complete(CommandContext context, String line);
+  CommandCompletion complete(CommandContext context, String line);
 
   /**
    * Returns a description of the command or null if none can be found.

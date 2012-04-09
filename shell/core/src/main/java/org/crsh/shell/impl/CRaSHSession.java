@@ -23,7 +23,9 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.Termination;
+import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.command.impl.BaseCommandContext;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ShellCommand;
@@ -193,7 +195,7 @@ public class CRaSHSession implements Shell, Closeable {
   /**
    * For now basic implementation
    */
-  public CompletionResult<String> complete(final String prefix) {
+  public CommandCompletion complete(final String prefix) {
     log.debug("Want prefix of " + prefix);
     AST ast = new Parser(prefix).parse();
     String termPrefix;
@@ -206,31 +208,35 @@ public class CRaSHSession implements Shell, Closeable {
 
     //
     log.debug("Retained term prefix is " + prefix);
-    CompletionResult<String> completions = CompletionResult.create();
+    CommandCompletion completion;
     int pos = termPrefix.indexOf(' ');
     if (pos == -1) {
-      completions = CompletionResult.create();
+      ValueCompletion completions = ValueCompletion.create();
       for (String resourceId : crash.context.listResourceId(ResourceKind.COMMAND)) {
         if (resourceId.startsWith(termPrefix)) {
-          completions.put(resourceId.substring(termPrefix.length()), " ");
+          completions.put(resourceId.substring(termPrefix.length()), true);
         }
       }
+      completion = new CommandCompletion(Termination.DETERMINED, completions);
     } else {
       String commandName = termPrefix.substring(0, pos);
       termPrefix = termPrefix.substring(pos);
       try {
         ShellCommand command = getCommand(commandName);
         if (command != null) {
-          completions = command.complete(new BaseCommandContext(attributes), termPrefix);
+          completion = command.complete(new BaseCommandContext(attributes), termPrefix);
+        } else {
+          completion = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
         }
       }
       catch (CreateCommandException e) {
         log.debug("Could not create command for completion of " + prefix, e);
+        completion = new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
       }
     }
 
     //
-    log.debug("Found completions for " + prefix + ": " + completions);
-    return completions;
+    log.debug("Found completions for " + prefix + ": " + completion);
+    return completion;
   }
 }

@@ -20,10 +20,10 @@
 package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.matcher.impl.MatcherImpl;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.CompletionResult;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -39,11 +39,11 @@ public abstract class Matcher<T> {
     return new MatcherImpl<T>(descriptor);
   }
 
-  public final CompletionResult<String> complete(String s) throws CmdCompletionException {
+  public final CommandCompletion complete(String s) throws CmdCompletionException {
     return complete(EmptyCompleter.getInstance(), s);
   }
 
-  public abstract CompletionResult<String> complete(Completer completer, String s) throws CmdCompletionException;
+  public abstract CommandCompletion complete(Completer completer, String s) throws CmdCompletionException;
 
 
   public abstract CommandMatch<T, ?, ?> match(String s);

@@ -21,6 +21,7 @@ package org.crsh.cmdline.matcher.impl;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
@@ -34,17 +35,15 @@ import org.crsh.cmdline.matcher.LiteralValue;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
-import org.crsh.cmdline.matcher.tokenizer.Termination;
+import org.crsh.cmdline.Termination;
 import org.crsh.cmdline.matcher.tokenizer.Token;
 import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.CompletionResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -197,7 +196,7 @@ public class MatcherImpl<T> extends Matcher<T> {
   }
 
   @Override
-  public CompletionResult<String> complete(Completer completer, String s) throws CmdCompletionException {
+  public CommandCompletion complete(Completer completer, String s) throws CmdCompletionException {
     return getCompletion(completer, s).complete();
   }
 

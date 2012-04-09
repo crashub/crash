@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.CommandCompletion;
 
 /**
  * A shell, it defines the interactions provided by a shell.
@@ -59,6 +59,6 @@ public interface Shell {
    * @param prefix the prefix to complete
    * @return the sorted list of available suffixes
    */
-  CompletionResult<String> complete(String prefix);
+  CommandCompletion complete(String prefix);
 
 }

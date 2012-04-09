@@ -21,7 +21,7 @@ package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.spi.ValueCompletion;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -33,41 +33,41 @@ public class CompleterSupport {
   }
 
   public static class RuntimeException implements Completer {
-    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
+    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
       throw new java.lang.RuntimeException();
     }
   }
 
   public static class Exception implements Completer {
-    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
+    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
       throw new java.lang.Exception();
     }
   }
 
   public static class Mirror implements Completer {
-    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
-      return CompletionResult.create(new StringBuilder(prefix).reverse().toString(), false);
+    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) {
+      return ValueCompletion.create(new StringBuilder(prefix).reverse().toString(), false);
     }
   }
 
   public static class Echo implements Completer {
-    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
-      return CompletionResult.create(prefix, false);
+    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) {
+      return ValueCompletion.create(prefix, false);
     }
   }
 
   public static class Foo implements Completer {
-    public CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) {
+    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) {
       if (prefix.equals("foo")) {
-        return CompletionResult.create("", true);
+        return ValueCompletion.create("", true);
       } else if (prefix.equals("fo")) {
-        return CompletionResult.create("o", true);
+        return ValueCompletion.create("o", true);
       } else if (prefix.equals("f")) {
-        return CompletionResult.create("oo", true);
+        return ValueCompletion.create("oo", true);
       } else if (prefix.equals("")) {
-        return CompletionResult.create("foo", true);
+        return ValueCompletion.create("foo", true);
       } else {
-        return CompletionResult.create();
+        return ValueCompletion.create();
       }
     }
   }

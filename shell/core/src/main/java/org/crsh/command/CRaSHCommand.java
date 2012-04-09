@@ -20,8 +20,10 @@
 package org.crsh.command;
 
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.IntrospectionException;
+import org.crsh.cmdline.Termination;
 import org.crsh.cmdline.annotations.Man;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.OptionDescriptor;
@@ -29,7 +31,7 @@ import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.matcher.*;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.CompletionResult;
+import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.util.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +123,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return context;
   }
 
-  public final CompletionResult<String> complete(CommandContext context, String line) {
+  public final CommandCompletion complete(CommandContext context, String line) {
 
     // WTF
     Matcher analyzer = Matcher.createMatcher("main", descriptor);
@@ -138,7 +140,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
     catch (CmdCompletionException e) {
       log.error("Error during completion of line " + line, e);
-      return CompletionResult.create();
+      return new CommandCompletion(Termination.DETERMINED, ValueCompletion.create());
     } finally {
       this.context = null;
     }

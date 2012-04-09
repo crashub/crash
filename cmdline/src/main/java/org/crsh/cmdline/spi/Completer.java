@@ -31,7 +31,7 @@ import org.crsh.cmdline.ParameterDescriptor;
 public interface Completer {
 
   /**
-   * <p>Query the completer for a set of completion for the given prefix. The returned {@link CompletionResult} object
+   * <p>Query the completer for a set of completion for the given prefix. The returned {@link ValueCompletion} object
    * provides the possible suffixes matching the prefix argument. Each entry of the result maps to a possible
    * completion: an entry key is the possible completion, its corresponding boolean value indicates wether the value can
    * be further more completed or not.<p>
@@ -70,6 +70,6 @@ public interface Completer {
    * @return the possible suffix map
    * @throws Exception any exception that would prevent completion to perform correctly
    */
-  CompletionResult<Boolean> complete(ParameterDescriptor<?> parameter, String prefix) throws Exception;
+  ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception;
 
 }
