@@ -313,7 +313,8 @@ public class MatcherImpl<T> extends Matcher<T> {
             List<? extends ArgumentDescriptor<?>> arguments = argument.getOwner().getArguments();
             int index = arguments.indexOf(argument) + 1;
             if (index < arguments.size()) {
-              throw new UnsupportedOperationException("Need to find next argument and use it for completion");
+              ArgumentDescriptor<?> nextArg = arguments.get(index);
+              return new ParameterCompletion("", Delimiter.EMPTY, nextArg, completer);
             } else {
               return new EmptyCompletion();
             }

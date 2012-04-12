@@ -99,6 +99,24 @@ public class CompleteTestCase extends TestCase {
     assertEquals(new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create()), matcher.complete("a f"));
   }
 
+  public void testSecondArgument() throws Exception {
+
+    class A {
+      @Command
+      void main(
+        @Argument String arg1,
+        @Argument(completer =  CompleterSupport.Foo.class) String arg2) {}
+    }
+
+    //
+    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    Matcher<A> matcher = Matcher.createMatcher("main", desc);
+
+    //
+    assertEquals(new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create("foo", true)), matcher.complete("foo "));
+    assertEquals(new CommandCompletion(Delimiter.DOUBLE_QUOTE, ValueCompletion.create("foo", true)), matcher.complete("foo \""));
+  }
+
   public void testMultiArgument() throws Exception
   {
 
