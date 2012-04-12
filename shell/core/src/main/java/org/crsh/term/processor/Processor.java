@@ -311,7 +311,7 @@ public final class Processor implements Runnable {
       String p = prompt == null ? "% " : prompt;
       term.write("\r\n");
       term.write(p);
-//      term.write(term.getBuffer());
+      term.write(term.getBuffer());
     } catch (IOException e) {
       e.printStackTrace();
     }
