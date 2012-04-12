@@ -30,7 +30,6 @@ import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
-import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
 import org.crsh.term.processor.Processor;
@@ -48,16 +47,16 @@ import java.util.Properties;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class Main {
+public class CRaSH {
 
   /** . */
-  private static Logger log = LoggerFactory.getLogger(Main.class);
+  private static Logger log = LoggerFactory.getLogger(CRaSH.class);
 
   /** . */
-  private final ClassDescriptor<Main> descriptor;
+  private final ClassDescriptor<CRaSH> descriptor;
 
-  public Main() throws IntrospectionException {
-    this.descriptor = CommandFactory.create(Main.class);
+  public CRaSH() throws IntrospectionException {
+    this.descriptor = CommandFactory.create(CRaSH.class);
   }
 
   @Command
@@ -87,7 +86,7 @@ public class Main {
     } else if (pid != null) {
 
       // Standalone
-      URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();
+      URL url = CRaSH.class.getProtectionDomain().getCodeSource().getLocation();
       java.io.File f = new java.io.File(url.toURI());
       log.info("Attaching to remote process " + pid);
       VirtualMachine vm = VirtualMachine.attach("" + pid);
@@ -208,7 +207,7 @@ public class Main {
 
       // Start crash for this command line
       Term term = new BaseTerm(new JLineIO());
-      CRaSH crash = new CRaSH(bootstrap.getContext());
+      org.crsh.shell.impl.CRaSH crash = new org.crsh.shell.impl.CRaSH(bootstrap.getContext());
       Processor processor = new Processor(term, crash.createSession());
 
       //
@@ -232,9 +231,9 @@ public class Main {
     }
 
     //
-    Main main = new Main();
-    Matcher<Main> matcher = Matcher.createMatcher("main", main.descriptor);
-    CommandMatch<Main, ?, ?> match = matcher.match(line.toString());
-    match.invoke(new InvocationContext(), new Main());
+    CRaSH main = new CRaSH();
+    Matcher<CRaSH> matcher = Matcher.createMatcher("main", main.descriptor);
+    CommandMatch<CRaSH, ?, ?> match = matcher.match(line.toString());
+    match.invoke(new InvocationContext(), new CRaSH());
   }
 }
