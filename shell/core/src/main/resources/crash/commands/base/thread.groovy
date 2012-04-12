@@ -49,16 +49,17 @@ public class thread extends CRaSHCommand {
     }
 
     //    
-    def formatString = "%1\$-3s %2\$-8s %3\$-13s %4\$-20s\r\n";
+    def formatString = "%1\$-3s  %2\$-8s  %3\$-13s  %4\$-11s  %5\$-6s  %6\$-20s\r\n";
     Formatter formatter = new Formatter(context.writer);
-    formatter.format(formatString, "ID", "PRIORITY", "STATE", "NAME");
+    formatter.format(formatString, "ID", "PRIORITY", "STATE", "INTERRUPTED","DAEMON", "NAME");
 
     //
     threads.each() {
       if (it != null) {
         def matcher = it.name =~ pattern;
         if (matcher.matches() && (state == null || it.state == state)) {
-          formatter.format(formatString, it.id, it.priority, "$it.state", it.name);
+          // We use isInterrupted() to not clear the thread status
+          formatter.format(formatString, it.id, it.priority, "$it.state", it.isInterrupted(), it.daemon, it.name);
           context.produce(it);
         }
       }
@@ -72,6 +73,18 @@ public class thread extends CRaSHCommand {
       group = parent;
     }
     return group;
+  }
+
+  @Usage("interrupt vm threads")
+  @Man("Interrup a VM thread, this method cannot be called as is and should be used with a pipe to consume a list of threads.")
+  @Command
+  public void interrupt(InvocationContext<Thread, Void> context) throws ScriptException {
+    if (context.piped) {
+      context.consume().each() {
+        it.interrupt();
+        context.writer.println("Kill thread $it");
+      }
+    }
   }
 
   @Usage("stop vm threads")
