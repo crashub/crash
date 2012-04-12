@@ -25,7 +25,7 @@ class help extends CRaSHCommand
           descs.add(desc);
           len = Math.max(len, name.length());
         }
-      } catch (org.crsh.shell.impl.CreateCommandException ignore) {
+      } catch (Exception ignore) {
         //
       }
     }
