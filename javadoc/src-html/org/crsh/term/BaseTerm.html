@@ -153,7 +153,7 @@
 <FONT color="green">150</FONT>              return new TermEvent.Break();<a name="line.150"></a>
 <FONT color="green">151</FONT>            case CHAR:<a name="line.151"></a>
 <FONT color="green">152</FONT>              if (code &gt;= 0 &amp;&amp; code &lt; 128) {<a name="line.152"></a>
-<FONT color="green">153</FONT>                console.getViewReader().write((char)code);<a name="line.153"></a>
+<FONT color="green">153</FONT>                console.getViewReader().append((char)code);<a name="line.153"></a>
 <FONT color="green">154</FONT>              } else {<a name="line.154"></a>
 <FONT color="green">155</FONT>                log.debug("Unhandled char " + code);<a name="line.155"></a>
 <FONT color="green">156</FONT>              }<a name="line.156"></a>
@@ -173,8 +173,8 @@
 <FONT color="green">170</FONT>        }<a name="line.170"></a>
 <FONT color="green">171</FONT>      }<a name="line.171"></a>
 <FONT color="green">172</FONT>    <a name="line.172"></a>
-<FONT color="green">173</FONT>      public void bufferInsert(CharSequence msg) throws IOException {<a name="line.173"></a>
-<FONT color="green">174</FONT>        console.getViewReader().write(msg);<a name="line.174"></a>
+<FONT color="green">173</FONT>      public Appendable getInsertBuffer() {<a name="line.173"></a>
+<FONT color="green">174</FONT>        return console.getViewReader();<a name="line.174"></a>
 <FONT color="green">175</FONT>      }<a name="line.175"></a>
 <FONT color="green">176</FONT>    <a name="line.176"></a>
 <FONT color="green">177</FONT>      public void addToHistory(CharSequence line) {<a name="line.177"></a>

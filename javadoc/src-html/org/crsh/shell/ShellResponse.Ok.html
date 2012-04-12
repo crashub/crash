@@ -94,179 +94,186 @@
 <FONT color="green">091</FONT>        return new Error(type, msg);<a name="line.91"></a>
 <FONT color="green">092</FONT>      }<a name="line.92"></a>
 <FONT color="green">093</FONT>    <a name="line.93"></a>
-<FONT color="green">094</FONT>      public abstract String getText();<a name="line.94"></a>
-<FONT color="green">095</FONT>    <a name="line.95"></a>
-<FONT color="green">096</FONT>      public static class UnknownCommand extends ShellResponse {<a name="line.96"></a>
+<FONT color="green">094</FONT>      public static Cancelled cancelled() {<a name="line.94"></a>
+<FONT color="green">095</FONT>        return new Cancelled();<a name="line.95"></a>
+<FONT color="green">096</FONT>      }<a name="line.96"></a>
 <FONT color="green">097</FONT>    <a name="line.97"></a>
-<FONT color="green">098</FONT>        /** . */<a name="line.98"></a>
-<FONT color="green">099</FONT>        private final String name;<a name="line.99"></a>
-<FONT color="green">100</FONT>    <a name="line.100"></a>
-<FONT color="green">101</FONT>        private UnknownCommand(String name) {<a name="line.101"></a>
-<FONT color="green">102</FONT>          this.name = name;<a name="line.102"></a>
-<FONT color="green">103</FONT>        }<a name="line.103"></a>
+<FONT color="green">098</FONT>      public abstract String getText();<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>      public static class UnknownCommand extends ShellResponse {<a name="line.100"></a>
+<FONT color="green">101</FONT>    <a name="line.101"></a>
+<FONT color="green">102</FONT>        /** . */<a name="line.102"></a>
+<FONT color="green">103</FONT>        private final String name;<a name="line.103"></a>
 <FONT color="green">104</FONT>    <a name="line.104"></a>
-<FONT color="green">105</FONT>        public String getName() {<a name="line.105"></a>
-<FONT color="green">106</FONT>          return name;<a name="line.106"></a>
+<FONT color="green">105</FONT>        private UnknownCommand(String name) {<a name="line.105"></a>
+<FONT color="green">106</FONT>          this.name = name;<a name="line.106"></a>
 <FONT color="green">107</FONT>        }<a name="line.107"></a>
 <FONT color="green">108</FONT>    <a name="line.108"></a>
-<FONT color="green">109</FONT>        @Override<a name="line.109"></a>
-<FONT color="green">110</FONT>        public String getText() {<a name="line.110"></a>
-<FONT color="green">111</FONT>          return "Unknown command " + name;<a name="line.111"></a>
-<FONT color="green">112</FONT>        }<a name="line.112"></a>
-<FONT color="green">113</FONT>      }<a name="line.113"></a>
-<FONT color="green">114</FONT>    <a name="line.114"></a>
-<FONT color="green">115</FONT>      public static class NoCommand extends ShellResponse {<a name="line.115"></a>
-<FONT color="green">116</FONT>    <a name="line.116"></a>
-<FONT color="green">117</FONT>        private NoCommand() {<a name="line.117"></a>
-<FONT color="green">118</FONT>        }<a name="line.118"></a>
-<FONT color="green">119</FONT>    <a name="line.119"></a>
-<FONT color="green">120</FONT>        @Override<a name="line.120"></a>
-<FONT color="green">121</FONT>        public String getText() {<a name="line.121"></a>
-<FONT color="green">122</FONT>          return "Please type something";<a name="line.122"></a>
-<FONT color="green">123</FONT>        }<a name="line.123"></a>
-<FONT color="green">124</FONT>      }<a name="line.124"></a>
-<FONT color="green">125</FONT>    <a name="line.125"></a>
-<FONT color="green">126</FONT>      public static class Close extends ShellResponse {<a name="line.126"></a>
-<FONT color="green">127</FONT>    <a name="line.127"></a>
-<FONT color="green">128</FONT>        @Override<a name="line.128"></a>
-<FONT color="green">129</FONT>        public String getText() {<a name="line.129"></a>
-<FONT color="green">130</FONT>          return "Have a good day!\r\n";<a name="line.130"></a>
-<FONT color="green">131</FONT>        }<a name="line.131"></a>
-<FONT color="green">132</FONT>      }<a name="line.132"></a>
-<FONT color="green">133</FONT>    <a name="line.133"></a>
-<FONT color="green">134</FONT>      /**<a name="line.134"></a>
-<FONT color="green">135</FONT>       * Command execution is terminated.<a name="line.135"></a>
-<FONT color="green">136</FONT>       */<a name="line.136"></a>
-<FONT color="green">137</FONT>      public static class Ok extends ShellResponse {<a name="line.137"></a>
-<FONT color="green">138</FONT>    <a name="line.138"></a>
-<FONT color="green">139</FONT>        /** . */<a name="line.139"></a>
-<FONT color="green">140</FONT>        private final Iterable&lt;?&gt; produced;<a name="line.140"></a>
-<FONT color="green">141</FONT>    <a name="line.141"></a>
-<FONT color="green">142</FONT>        private Ok() {<a name="line.142"></a>
-<FONT color="green">143</FONT>          this(Collections.&lt;Object&gt;emptyList());<a name="line.143"></a>
-<FONT color="green">144</FONT>        }<a name="line.144"></a>
+<FONT color="green">109</FONT>        public String getName() {<a name="line.109"></a>
+<FONT color="green">110</FONT>          return name;<a name="line.110"></a>
+<FONT color="green">111</FONT>        }<a name="line.111"></a>
+<FONT color="green">112</FONT>    <a name="line.112"></a>
+<FONT color="green">113</FONT>        @Override<a name="line.113"></a>
+<FONT color="green">114</FONT>        public String getText() {<a name="line.114"></a>
+<FONT color="green">115</FONT>          return "Unknown command " + name;<a name="line.115"></a>
+<FONT color="green">116</FONT>        }<a name="line.116"></a>
+<FONT color="green">117</FONT>      }<a name="line.117"></a>
+<FONT color="green">118</FONT>    <a name="line.118"></a>
+<FONT color="green">119</FONT>      public static class NoCommand extends ShellResponse {<a name="line.119"></a>
+<FONT color="green">120</FONT>    <a name="line.120"></a>
+<FONT color="green">121</FONT>        private NoCommand() {<a name="line.121"></a>
+<FONT color="green">122</FONT>        }<a name="line.122"></a>
+<FONT color="green">123</FONT>    <a name="line.123"></a>
+<FONT color="green">124</FONT>        @Override<a name="line.124"></a>
+<FONT color="green">125</FONT>        public String getText() {<a name="line.125"></a>
+<FONT color="green">126</FONT>          return "Please type something";<a name="line.126"></a>
+<FONT color="green">127</FONT>        }<a name="line.127"></a>
+<FONT color="green">128</FONT>      }<a name="line.128"></a>
+<FONT color="green">129</FONT>    <a name="line.129"></a>
+<FONT color="green">130</FONT>      public static class Close extends ShellResponse {<a name="line.130"></a>
+<FONT color="green">131</FONT>    <a name="line.131"></a>
+<FONT color="green">132</FONT>        @Override<a name="line.132"></a>
+<FONT color="green">133</FONT>        public String getText() {<a name="line.133"></a>
+<FONT color="green">134</FONT>          return "Have a good day!\r\n";<a name="line.134"></a>
+<FONT color="green">135</FONT>        }<a name="line.135"></a>
+<FONT color="green">136</FONT>      }<a name="line.136"></a>
+<FONT color="green">137</FONT>    <a name="line.137"></a>
+<FONT color="green">138</FONT>      /**<a name="line.138"></a>
+<FONT color="green">139</FONT>       * Command execution is terminated.<a name="line.139"></a>
+<FONT color="green">140</FONT>       */<a name="line.140"></a>
+<FONT color="green">141</FONT>      public static class Ok extends ShellResponse {<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>        /** . */<a name="line.143"></a>
+<FONT color="green">144</FONT>        private final Iterable&lt;?&gt; produced;<a name="line.144"></a>
 <FONT color="green">145</FONT>    <a name="line.145"></a>
-<FONT color="green">146</FONT>        private Ok(Iterable&lt;?&gt; produced) {<a name="line.146"></a>
-<FONT color="green">147</FONT>          this.produced = produced;<a name="line.147"></a>
+<FONT color="green">146</FONT>        private Ok() {<a name="line.146"></a>
+<FONT color="green">147</FONT>          this(Collections.&lt;Object&gt;emptyList());<a name="line.147"></a>
 <FONT color="green">148</FONT>        }<a name="line.148"></a>
 <FONT color="green">149</FONT>    <a name="line.149"></a>
-<FONT color="green">150</FONT>        public Iterable&lt;?&gt; getProduced() {<a name="line.150"></a>
-<FONT color="green">151</FONT>          return produced;<a name="line.151"></a>
+<FONT color="green">150</FONT>        private Ok(Iterable&lt;?&gt; produced) {<a name="line.150"></a>
+<FONT color="green">151</FONT>          this.produced = produced;<a name="line.151"></a>
 <FONT color="green">152</FONT>        }<a name="line.152"></a>
 <FONT color="green">153</FONT>    <a name="line.153"></a>
-<FONT color="green">154</FONT>        @Override<a name="line.154"></a>
-<FONT color="green">155</FONT>        public String getText() {<a name="line.155"></a>
-<FONT color="green">156</FONT>          return "";<a name="line.156"></a>
-<FONT color="green">157</FONT>        }<a name="line.157"></a>
-<FONT color="green">158</FONT>      }<a name="line.158"></a>
-<FONT color="green">159</FONT>    <a name="line.159"></a>
-<FONT color="green">160</FONT>      public static class Display extends Ok {<a name="line.160"></a>
-<FONT color="green">161</FONT>    <a name="line.161"></a>
-<FONT color="green">162</FONT>        /** . */<a name="line.162"></a>
-<FONT color="green">163</FONT>        private final String text;<a name="line.163"></a>
-<FONT color="green">164</FONT>    <a name="line.164"></a>
-<FONT color="green">165</FONT>        private Display(String text) {<a name="line.165"></a>
-<FONT color="green">166</FONT>          this.text = text;<a name="line.166"></a>
-<FONT color="green">167</FONT>        }<a name="line.167"></a>
+<FONT color="green">154</FONT>        public Iterable&lt;?&gt; getProduced() {<a name="line.154"></a>
+<FONT color="green">155</FONT>          return produced;<a name="line.155"></a>
+<FONT color="green">156</FONT>        }<a name="line.156"></a>
+<FONT color="green">157</FONT>    <a name="line.157"></a>
+<FONT color="green">158</FONT>        @Override<a name="line.158"></a>
+<FONT color="green">159</FONT>        public String getText() {<a name="line.159"></a>
+<FONT color="green">160</FONT>          return "";<a name="line.160"></a>
+<FONT color="green">161</FONT>        }<a name="line.161"></a>
+<FONT color="green">162</FONT>      }<a name="line.162"></a>
+<FONT color="green">163</FONT>    <a name="line.163"></a>
+<FONT color="green">164</FONT>      public static class Display extends Ok {<a name="line.164"></a>
+<FONT color="green">165</FONT>    <a name="line.165"></a>
+<FONT color="green">166</FONT>        /** . */<a name="line.166"></a>
+<FONT color="green">167</FONT>        private final String text;<a name="line.167"></a>
 <FONT color="green">168</FONT>    <a name="line.168"></a>
-<FONT color="green">169</FONT>        private Display(Iterable&lt;?&gt; produced, String text) {<a name="line.169"></a>
-<FONT color="green">170</FONT>          super(produced);<a name="line.170"></a>
-<FONT color="green">171</FONT>    <a name="line.171"></a>
-<FONT color="green">172</FONT>          //<a name="line.172"></a>
-<FONT color="green">173</FONT>          this.text = text;<a name="line.173"></a>
-<FONT color="green">174</FONT>        }<a name="line.174"></a>
+<FONT color="green">169</FONT>        private Display(String text) {<a name="line.169"></a>
+<FONT color="green">170</FONT>          this.text = text;<a name="line.170"></a>
+<FONT color="green">171</FONT>        }<a name="line.171"></a>
+<FONT color="green">172</FONT>    <a name="line.172"></a>
+<FONT color="green">173</FONT>        private Display(Iterable&lt;?&gt; produced, String text) {<a name="line.173"></a>
+<FONT color="green">174</FONT>          super(produced);<a name="line.174"></a>
 <FONT color="green">175</FONT>    <a name="line.175"></a>
-<FONT color="green">176</FONT>        @Override<a name="line.176"></a>
-<FONT color="green">177</FONT>        public boolean equals(Object obj) {<a name="line.177"></a>
-<FONT color="green">178</FONT>          if (obj == this) {<a name="line.178"></a>
-<FONT color="green">179</FONT>            return true;<a name="line.179"></a>
-<FONT color="green">180</FONT>          }<a name="line.180"></a>
-<FONT color="green">181</FONT>          if (obj instanceof Display) {<a name="line.181"></a>
-<FONT color="green">182</FONT>            Display that = (Display)obj;<a name="line.182"></a>
-<FONT color="green">183</FONT>            return text.equals(that.text);<a name="line.183"></a>
+<FONT color="green">176</FONT>          //<a name="line.176"></a>
+<FONT color="green">177</FONT>          this.text = text;<a name="line.177"></a>
+<FONT color="green">178</FONT>        }<a name="line.178"></a>
+<FONT color="green">179</FONT>    <a name="line.179"></a>
+<FONT color="green">180</FONT>        @Override<a name="line.180"></a>
+<FONT color="green">181</FONT>        public boolean equals(Object obj) {<a name="line.181"></a>
+<FONT color="green">182</FONT>          if (obj == this) {<a name="line.182"></a>
+<FONT color="green">183</FONT>            return true;<a name="line.183"></a>
 <FONT color="green">184</FONT>          }<a name="line.184"></a>
-<FONT color="green">185</FONT>          return false;<a name="line.185"></a>
-<FONT color="green">186</FONT>        }<a name="line.186"></a>
-<FONT color="green">187</FONT>    <a name="line.187"></a>
-<FONT color="green">188</FONT>        @Override<a name="line.188"></a>
-<FONT color="green">189</FONT>        public String getText() {<a name="line.189"></a>
-<FONT color="green">190</FONT>          return text;<a name="line.190"></a>
-<FONT color="green">191</FONT>        }<a name="line.191"></a>
-<FONT color="green">192</FONT>      }<a name="line.192"></a>
-<FONT color="green">193</FONT>    <a name="line.193"></a>
-<FONT color="green">194</FONT>      public static class Cancelled extends ShellResponse {<a name="line.194"></a>
-<FONT color="green">195</FONT>        @Override<a name="line.195"></a>
-<FONT color="green">196</FONT>        public String getText() {<a name="line.196"></a>
-<FONT color="green">197</FONT>          return "cancelled" ;<a name="line.197"></a>
-<FONT color="green">198</FONT>        }<a name="line.198"></a>
-<FONT color="green">199</FONT>      }<a name="line.199"></a>
-<FONT color="green">200</FONT>    <a name="line.200"></a>
-<FONT color="green">201</FONT>      public static class Error extends ShellResponse {<a name="line.201"></a>
-<FONT color="green">202</FONT>    <a name="line.202"></a>
-<FONT color="green">203</FONT>        /** . */<a name="line.203"></a>
-<FONT color="green">204</FONT>        private final ErrorType type;<a name="line.204"></a>
-<FONT color="green">205</FONT>    <a name="line.205"></a>
-<FONT color="green">206</FONT>        /** . */<a name="line.206"></a>
-<FONT color="green">207</FONT>        private final Throwable throwable;<a name="line.207"></a>
-<FONT color="green">208</FONT>    <a name="line.208"></a>
-<FONT color="green">209</FONT>        private final String msg;<a name="line.209"></a>
-<FONT color="green">210</FONT>    <a name="line.210"></a>
-<FONT color="green">211</FONT>        private Error(ErrorType type, Throwable throwable) {<a name="line.211"></a>
-<FONT color="green">212</FONT>          this.type = type;<a name="line.212"></a>
-<FONT color="green">213</FONT>          this.msg = build(throwable);<a name="line.213"></a>
-<FONT color="green">214</FONT>          this.throwable = throwable;<a name="line.214"></a>
-<FONT color="green">215</FONT>        }<a name="line.215"></a>
-<FONT color="green">216</FONT>    <a name="line.216"></a>
-<FONT color="green">217</FONT>        private Error(ErrorType type, String msg) {<a name="line.217"></a>
-<FONT color="green">218</FONT>          this.type = type;<a name="line.218"></a>
-<FONT color="green">219</FONT>          this.msg = msg;<a name="line.219"></a>
-<FONT color="green">220</FONT>          this.throwable = null;<a name="line.220"></a>
-<FONT color="green">221</FONT>        }<a name="line.221"></a>
-<FONT color="green">222</FONT>    <a name="line.222"></a>
-<FONT color="green">223</FONT>        private Error(ErrorType type, String msg, Throwable throwable) {<a name="line.223"></a>
-<FONT color="green">224</FONT>          this.type = type;<a name="line.224"></a>
-<FONT color="green">225</FONT>          this.msg = msg;<a name="line.225"></a>
-<FONT color="green">226</FONT>          this.throwable = throwable;<a name="line.226"></a>
-<FONT color="green">227</FONT>        }<a name="line.227"></a>
-<FONT color="green">228</FONT>    <a name="line.228"></a>
-<FONT color="green">229</FONT>        public ErrorType getType() {<a name="line.229"></a>
-<FONT color="green">230</FONT>          return type;<a name="line.230"></a>
-<FONT color="green">231</FONT>        }<a name="line.231"></a>
-<FONT color="green">232</FONT>    <a name="line.232"></a>
-<FONT color="green">233</FONT>        public Throwable getThrowable() {<a name="line.233"></a>
-<FONT color="green">234</FONT>          return throwable;<a name="line.234"></a>
-<FONT color="green">235</FONT>        }<a name="line.235"></a>
-<FONT color="green">236</FONT>    <a name="line.236"></a>
-<FONT color="green">237</FONT>        @Override<a name="line.237"></a>
-<FONT color="green">238</FONT>        public String getText() {<a name="line.238"></a>
-<FONT color="green">239</FONT>          return msg;<a name="line.239"></a>
-<FONT color="green">240</FONT>        }<a name="line.240"></a>
-<FONT color="green">241</FONT>    <a name="line.241"></a>
-<FONT color="green">242</FONT>        private static String build(Throwable throwable) {<a name="line.242"></a>
-<FONT color="green">243</FONT>          String result;<a name="line.243"></a>
-<FONT color="green">244</FONT>          String msg = throwable.getMessage();<a name="line.244"></a>
-<FONT color="green">245</FONT>          if (msg == null) {<a name="line.245"></a>
-<FONT color="green">246</FONT>            msg = throwable.getClass().getSimpleName();<a name="line.246"></a>
-<FONT color="green">247</FONT>          }<a name="line.247"></a>
-<FONT color="green">248</FONT>          if (throwable instanceof ScriptException) {<a name="line.248"></a>
-<FONT color="green">249</FONT>            result = "Error: " + msg;<a name="line.249"></a>
-<FONT color="green">250</FONT>          } else if (throwable instanceof RuntimeException) {<a name="line.250"></a>
-<FONT color="green">251</FONT>            result = "Unexpected exception: " + msg;<a name="line.251"></a>
-<FONT color="green">252</FONT>          } else if (throwable instanceof Exception) {<a name="line.252"></a>
-<FONT color="green">253</FONT>            result = "Unexpected exception: " + msg;<a name="line.253"></a>
-<FONT color="green">254</FONT>          } else if (throwable instanceof java.lang.Error) {<a name="line.254"></a>
-<FONT color="green">255</FONT>            result = "Unexpected error: " + msg;<a name="line.255"></a>
-<FONT color="green">256</FONT>          } else {<a name="line.256"></a>
-<FONT color="green">257</FONT>            result = "Unexpected throwable: " + msg;<a name="line.257"></a>
-<FONT color="green">258</FONT>          }<a name="line.258"></a>
-<FONT color="green">259</FONT>          return result;<a name="line.259"></a>
-<FONT color="green">260</FONT>        }<a name="line.260"></a>
-<FONT color="green">261</FONT>    <a name="line.261"></a>
-<FONT color="green">262</FONT>        public String toString() {<a name="line.262"></a>
-<FONT color="green">263</FONT>          return "ShellResponse.Error[type=" + type + ",msg=" + msg + "]";<a name="line.263"></a>
-<FONT color="green">264</FONT>        }<a name="line.264"></a>
-<FONT color="green">265</FONT>      }<a name="line.265"></a>
-<FONT color="green">266</FONT>    }<a name="line.266"></a>
+<FONT color="green">185</FONT>          if (obj instanceof Display) {<a name="line.185"></a>
+<FONT color="green">186</FONT>            Display that = (Display)obj;<a name="line.186"></a>
+<FONT color="green">187</FONT>            return text.equals(that.text);<a name="line.187"></a>
+<FONT color="green">188</FONT>          }<a name="line.188"></a>
+<FONT color="green">189</FONT>          return false;<a name="line.189"></a>
+<FONT color="green">190</FONT>        }<a name="line.190"></a>
+<FONT color="green">191</FONT>    <a name="line.191"></a>
+<FONT color="green">192</FONT>        @Override<a name="line.192"></a>
+<FONT color="green">193</FONT>        public String getText() {<a name="line.193"></a>
+<FONT color="green">194</FONT>          return text;<a name="line.194"></a>
+<FONT color="green">195</FONT>        }<a name="line.195"></a>
+<FONT color="green">196</FONT>      }<a name="line.196"></a>
+<FONT color="green">197</FONT>    <a name="line.197"></a>
+<FONT color="green">198</FONT>      public static class Cancelled extends ShellResponse {<a name="line.198"></a>
+<FONT color="green">199</FONT>        private Cancelled() {<a name="line.199"></a>
+<FONT color="green">200</FONT>        }<a name="line.200"></a>
+<FONT color="green">201</FONT>    <a name="line.201"></a>
+<FONT color="green">202</FONT>        @Override<a name="line.202"></a>
+<FONT color="green">203</FONT>        public String getText() {<a name="line.203"></a>
+<FONT color="green">204</FONT>          return "cancelled" ;<a name="line.204"></a>
+<FONT color="green">205</FONT>        }<a name="line.205"></a>
+<FONT color="green">206</FONT>      }<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>      public static class Error extends ShellResponse {<a name="line.208"></a>
+<FONT color="green">209</FONT>    <a name="line.209"></a>
+<FONT color="green">210</FONT>        /** . */<a name="line.210"></a>
+<FONT color="green">211</FONT>        private final ErrorType type;<a name="line.211"></a>
+<FONT color="green">212</FONT>    <a name="line.212"></a>
+<FONT color="green">213</FONT>        /** . */<a name="line.213"></a>
+<FONT color="green">214</FONT>        private final Throwable throwable;<a name="line.214"></a>
+<FONT color="green">215</FONT>    <a name="line.215"></a>
+<FONT color="green">216</FONT>        private final String msg;<a name="line.216"></a>
+<FONT color="green">217</FONT>    <a name="line.217"></a>
+<FONT color="green">218</FONT>        private Error(ErrorType type, Throwable throwable) {<a name="line.218"></a>
+<FONT color="green">219</FONT>          this.type = type;<a name="line.219"></a>
+<FONT color="green">220</FONT>          this.msg = build(throwable);<a name="line.220"></a>
+<FONT color="green">221</FONT>          this.throwable = throwable;<a name="line.221"></a>
+<FONT color="green">222</FONT>        }<a name="line.222"></a>
+<FONT color="green">223</FONT>    <a name="line.223"></a>
+<FONT color="green">224</FONT>        private Error(ErrorType type, String msg) {<a name="line.224"></a>
+<FONT color="green">225</FONT>          this.type = type;<a name="line.225"></a>
+<FONT color="green">226</FONT>          this.msg = msg;<a name="line.226"></a>
+<FONT color="green">227</FONT>          this.throwable = null;<a name="line.227"></a>
+<FONT color="green">228</FONT>        }<a name="line.228"></a>
+<FONT color="green">229</FONT>    <a name="line.229"></a>
+<FONT color="green">230</FONT>        private Error(ErrorType type, String msg, Throwable throwable) {<a name="line.230"></a>
+<FONT color="green">231</FONT>          this.type = type;<a name="line.231"></a>
+<FONT color="green">232</FONT>          this.msg = msg;<a name="line.232"></a>
+<FONT color="green">233</FONT>          this.throwable = throwable;<a name="line.233"></a>
+<FONT color="green">234</FONT>        }<a name="line.234"></a>
+<FONT color="green">235</FONT>    <a name="line.235"></a>
+<FONT color="green">236</FONT>        public ErrorType getType() {<a name="line.236"></a>
+<FONT color="green">237</FONT>          return type;<a name="line.237"></a>
+<FONT color="green">238</FONT>        }<a name="line.238"></a>
+<FONT color="green">239</FONT>    <a name="line.239"></a>
+<FONT color="green">240</FONT>        public Throwable getThrowable() {<a name="line.240"></a>
+<FONT color="green">241</FONT>          return throwable;<a name="line.241"></a>
+<FONT color="green">242</FONT>        }<a name="line.242"></a>
+<FONT color="green">243</FONT>    <a name="line.243"></a>
+<FONT color="green">244</FONT>        @Override<a name="line.244"></a>
+<FONT color="green">245</FONT>        public String getText() {<a name="line.245"></a>
+<FONT color="green">246</FONT>          return msg;<a name="line.246"></a>
+<FONT color="green">247</FONT>        }<a name="line.247"></a>
+<FONT color="green">248</FONT>    <a name="line.248"></a>
+<FONT color="green">249</FONT>        private static String build(Throwable throwable) {<a name="line.249"></a>
+<FONT color="green">250</FONT>          String result;<a name="line.250"></a>
+<FONT color="green">251</FONT>          String msg = throwable.getMessage();<a name="line.251"></a>
+<FONT color="green">252</FONT>          if (msg == null) {<a name="line.252"></a>
+<FONT color="green">253</FONT>            msg = throwable.getClass().getSimpleName();<a name="line.253"></a>
+<FONT color="green">254</FONT>          }<a name="line.254"></a>
+<FONT color="green">255</FONT>          if (throwable instanceof ScriptException) {<a name="line.255"></a>
+<FONT color="green">256</FONT>            result = "Error: " + msg;<a name="line.256"></a>
+<FONT color="green">257</FONT>          } else if (throwable instanceof RuntimeException) {<a name="line.257"></a>
+<FONT color="green">258</FONT>            result = "Unexpected exception: " + msg;<a name="line.258"></a>
+<FONT color="green">259</FONT>          } else if (throwable instanceof Exception) {<a name="line.259"></a>
+<FONT color="green">260</FONT>            result = "Unexpected exception: " + msg;<a name="line.260"></a>
+<FONT color="green">261</FONT>          } else if (throwable instanceof java.lang.Error) {<a name="line.261"></a>
+<FONT color="green">262</FONT>            result = "Unexpected error: " + msg;<a name="line.262"></a>
+<FONT color="green">263</FONT>          } else {<a name="line.263"></a>
+<FONT color="green">264</FONT>            result = "Unexpected throwable: " + msg;<a name="line.264"></a>
+<FONT color="green">265</FONT>          }<a name="line.265"></a>
+<FONT color="green">266</FONT>          return result;<a name="line.266"></a>
+<FONT color="green">267</FONT>        }<a name="line.267"></a>
+<FONT color="green">268</FONT>    <a name="line.268"></a>
+<FONT color="green">269</FONT>        public String toString() {<a name="line.269"></a>
+<FONT color="green">270</FONT>          return "ShellResponse.Error[type=" + type + ",msg=" + msg + "]";<a name="line.270"></a>
+<FONT color="green">271</FONT>        }<a name="line.271"></a>
+<FONT color="green">272</FONT>      }<a name="line.272"></a>
+<FONT color="green">273</FONT>    }<a name="line.273"></a>
 
 
 

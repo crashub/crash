@@ -24,29 +24,29 @@
 <FONT color="green">021</FONT>    <a name="line.21"></a>
 <FONT color="green">022</FONT>    import org.crsh.cmdline.ArgumentDescriptor;<a name="line.22"></a>
 <FONT color="green">023</FONT>    import org.crsh.cmdline.ClassDescriptor;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import org.crsh.cmdline.CommandDescriptor;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import org.crsh.cmdline.MethodDescriptor;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import org.crsh.cmdline.OptionDescriptor;<a name="line.26"></a>
-<FONT color="green">027</FONT>    import org.crsh.cmdline.binding.ClassFieldBinding;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import org.crsh.cmdline.binding.MethodArgumentBinding;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import org.crsh.cmdline.matcher.ArgumentMatch;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import org.crsh.cmdline.matcher.ClassMatch;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import org.crsh.cmdline.matcher.CmdCompletionException;<a name="line.31"></a>
-<FONT color="green">032</FONT>    import org.crsh.cmdline.matcher.CommandMatch;<a name="line.32"></a>
-<FONT color="green">033</FONT>    import org.crsh.cmdline.matcher.LiteralValue;<a name="line.33"></a>
-<FONT color="green">034</FONT>    import org.crsh.cmdline.matcher.Matcher;<a name="line.34"></a>
-<FONT color="green">035</FONT>    import org.crsh.cmdline.matcher.MethodMatch;<a name="line.35"></a>
-<FONT color="green">036</FONT>    import org.crsh.cmdline.matcher.OptionMatch;<a name="line.36"></a>
-<FONT color="green">037</FONT>    import org.crsh.cmdline.matcher.tokenizer.Termination;<a name="line.37"></a>
-<FONT color="green">038</FONT>    import org.crsh.cmdline.matcher.tokenizer.Token;<a name="line.38"></a>
-<FONT color="green">039</FONT>    import org.crsh.cmdline.matcher.tokenizer.Tokenizer;<a name="line.39"></a>
-<FONT color="green">040</FONT>    import org.crsh.cmdline.spi.Completer;<a name="line.40"></a>
-<FONT color="green">041</FONT>    <a name="line.41"></a>
-<FONT color="green">042</FONT>    import java.util.ArrayList;<a name="line.42"></a>
-<FONT color="green">043</FONT>    import java.util.Collections;<a name="line.43"></a>
-<FONT color="green">044</FONT>    import java.util.List;<a name="line.44"></a>
-<FONT color="green">045</FONT>    import java.util.ListIterator;<a name="line.45"></a>
-<FONT color="green">046</FONT>    import java.util.Map;<a name="line.46"></a>
+<FONT color="green">024</FONT>    import org.crsh.cmdline.CommandCompletion;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.crsh.cmdline.CommandDescriptor;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.crsh.cmdline.Delimiter;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.crsh.cmdline.MethodDescriptor;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.crsh.cmdline.OptionDescriptor;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.crsh.cmdline.binding.ClassFieldBinding;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.crsh.cmdline.binding.MethodArgumentBinding;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.crsh.cmdline.matcher.ArgumentMatch;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.crsh.cmdline.matcher.ClassMatch;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.crsh.cmdline.matcher.CmdCompletionException;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.crsh.cmdline.matcher.CommandMatch;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.crsh.cmdline.matcher.LiteralValue;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.crsh.cmdline.matcher.Matcher;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.crsh.cmdline.matcher.MethodMatch;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.crsh.cmdline.matcher.OptionMatch;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.crsh.cmdline.matcher.tokenizer.Token;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.crsh.cmdline.matcher.tokenizer.Tokenizer;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.crsh.cmdline.spi.Completer;<a name="line.41"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>    import java.util.ArrayList;<a name="line.43"></a>
+<FONT color="green">044</FONT>    import java.util.Collections;<a name="line.44"></a>
+<FONT color="green">045</FONT>    import java.util.List;<a name="line.45"></a>
+<FONT color="green">046</FONT>    import java.util.ListIterator;<a name="line.46"></a>
 <FONT color="green">047</FONT>    <a name="line.47"></a>
 <FONT color="green">048</FONT>    /**<a name="line.48"></a>
 <FONT color="green">049</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.49"></a>
@@ -194,12 +194,12 @@
 <FONT color="green">191</FONT>          return new EmptyCompletion();<a name="line.191"></a>
 <FONT color="green">192</FONT>        } else {<a name="line.192"></a>
 <FONT color="green">193</FONT>          ArgumentDescriptor&lt;?&gt; argument = arguments.get(0);<a name="line.193"></a>
-<FONT color="green">194</FONT>          return new ParameterCompletion("", Termination.DETERMINED, argument, completer);<a name="line.194"></a>
+<FONT color="green">194</FONT>          return new ParameterCompletion("", Delimiter.EMPTY, argument, completer);<a name="line.194"></a>
 <FONT color="green">195</FONT>        }<a name="line.195"></a>
 <FONT color="green">196</FONT>      }<a name="line.196"></a>
 <FONT color="green">197</FONT>    <a name="line.197"></a>
 <FONT color="green">198</FONT>      @Override<a name="line.198"></a>
-<FONT color="green">199</FONT>      public Map&lt;String, String&gt; complete(Completer completer, String s) throws CmdCompletionException {<a name="line.199"></a>
+<FONT color="green">199</FONT>      public CommandCompletion complete(Completer completer, String s) throws CmdCompletionException {<a name="line.199"></a>
 <FONT color="green">200</FONT>        return getCompletion(completer, s).complete();<a name="line.200"></a>
 <FONT color="green">201</FONT>      }<a name="line.201"></a>
 <FONT color="green">202</FONT>    <a name="line.202"></a>
@@ -246,7 +246,7 @@
 <FONT color="green">243</FONT>          if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {<a name="line.243"></a>
 <FONT color="green">244</FONT>            if (method == null) {<a name="line.244"></a>
 <FONT color="green">245</FONT>              Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;<a name="line.245"></a>
-<FONT color="green">246</FONT>              return new MethodCompletion&lt;T&gt;(descriptor, mainName, s.substring(stop.getIndex()), parser.getTermination());<a name="line.246"></a>
+<FONT color="green">246</FONT>              return new MethodCompletion&lt;T&gt;(descriptor, mainName, s.substring(stop.getIndex()), parser.getDelimiter());<a name="line.246"></a>
 <FONT color="green">247</FONT>            } else {<a name="line.247"></a>
 <FONT color="green">248</FONT>              return new EmptyCompletion();<a name="line.248"></a>
 <FONT color="green">249</FONT>            }<a name="line.249"></a>
@@ -266,12 +266,12 @@
 <FONT color="green">263</FONT>              method = descriptor.getMethod(mainName);<a name="line.263"></a>
 <FONT color="green">264</FONT>              List&lt;ArgumentDescriptor&lt;MethodArgumentBinding&gt;&gt; args = method.getArguments();<a name="line.264"></a>
 <FONT color="green">265</FONT>              if (args.size() &gt; 0) {<a name="line.265"></a>
-<FONT color="green">266</FONT>                return new ParameterCompletion("", Termination.DETERMINED, args.get(0), completer);<a name="line.266"></a>
+<FONT color="green">266</FONT>                return new ParameterCompletion("", Delimiter.EMPTY, args.get(0), completer);<a name="line.266"></a>
 <FONT color="green">267</FONT>              } else {<a name="line.267"></a>
 <FONT color="green">268</FONT>                return new EmptyCompletion();<a name="line.268"></a>
 <FONT color="green">269</FONT>              }<a name="line.269"></a>
 <FONT color="green">270</FONT>            } else {<a name="line.270"></a>
-<FONT color="green">271</FONT>              return new MethodCompletion&lt;T&gt;(descriptor, mainName, s.substring(stop.getIndex()), Termination.DETERMINED);<a name="line.271"></a>
+<FONT color="green">271</FONT>              return new MethodCompletion&lt;T&gt;(descriptor, mainName, s.substring(stop.getIndex()), Delimiter.EMPTY);<a name="line.271"></a>
 <FONT color="green">272</FONT>            }<a name="line.272"></a>
 <FONT color="green">273</FONT>          } else {<a name="line.273"></a>
 <FONT color="green">274</FONT>            return new EmptyCompletion();<a name="line.274"></a>
@@ -292,16 +292,16 @@
 <FONT color="green">289</FONT>              return new SpaceCompletion();<a name="line.289"></a>
 <FONT color="green">290</FONT>            } else if (values.size() &lt;= option.getArity()) {<a name="line.290"></a>
 <FONT color="green">291</FONT>              Token.Literal.Word word = optionEvent.peekLast();<a name="line.291"></a>
-<FONT color="green">292</FONT>              return new ParameterCompletion(word.getValue(), parser.getTermination(), option, completer);<a name="line.292"></a>
+<FONT color="green">292</FONT>              return new ParameterCompletion(word.getValue(), parser.getDelimiter(), option, completer);<a name="line.292"></a>
 <FONT color="green">293</FONT>            } else {<a name="line.293"></a>
 <FONT color="green">294</FONT>              return new EmptyCompletion();<a name="line.294"></a>
 <FONT color="green">295</FONT>            }<a name="line.295"></a>
 <FONT color="green">296</FONT>          } else {<a name="line.296"></a>
 <FONT color="green">297</FONT>            if (values.size() &lt; option.getArity()) {<a name="line.297"></a>
-<FONT color="green">298</FONT>              return new ParameterCompletion("", Termination.DETERMINED, option, completer);<a name="line.298"></a>
+<FONT color="green">298</FONT>              return new ParameterCompletion("", Delimiter.EMPTY, option, completer);<a name="line.298"></a>
 <FONT color="green">299</FONT>            } else {<a name="line.299"></a>
 <FONT color="green">300</FONT>              if (method == null) {<a name="line.300"></a>
-<FONT color="green">301</FONT>                return new MethodCompletion&lt;T&gt;(descriptor, mainName, s.substring(stop.getIndex()), Termination.DETERMINED);<a name="line.301"></a>
+<FONT color="green">301</FONT>                return new MethodCompletion&lt;T&gt;(descriptor, mainName, s.substring(stop.getIndex()), Delimiter.EMPTY);<a name="line.301"></a>
 <FONT color="green">302</FONT>              } else {<a name="line.302"></a>
 <FONT color="green">303</FONT>                return argument(method, completer);<a name="line.303"></a>
 <FONT color="green">304</FONT>              }<a name="line.304"></a>
@@ -316,30 +316,31 @@
 <FONT color="green">313</FONT>                List&lt;? extends ArgumentDescriptor&lt;?&gt;&gt; arguments = argument.getOwner().getArguments();<a name="line.313"></a>
 <FONT color="green">314</FONT>                int index = arguments.indexOf(argument) + 1;<a name="line.314"></a>
 <FONT color="green">315</FONT>                if (index &lt; arguments.size()) {<a name="line.315"></a>
-<FONT color="green">316</FONT>                  throw new UnsupportedOperationException("Need to find next argument and use it for completion");<a name="line.316"></a>
-<FONT color="green">317</FONT>                } else {<a name="line.317"></a>
-<FONT color="green">318</FONT>                  return new EmptyCompletion();<a name="line.318"></a>
-<FONT color="green">319</FONT>                }<a name="line.319"></a>
-<FONT color="green">320</FONT>              case MULTI:<a name="line.320"></a>
-<FONT color="green">321</FONT>                return new ParameterCompletion("", Termination.DETERMINED, argument, completer);<a name="line.321"></a>
-<FONT color="green">322</FONT>              default:<a name="line.322"></a>
-<FONT color="green">323</FONT>                throw new AssertionError();<a name="line.323"></a>
-<FONT color="green">324</FONT>            }<a name="line.324"></a>
-<FONT color="green">325</FONT>          } else {<a name="line.325"></a>
-<FONT color="green">326</FONT>            Token.Literal value = eventArgument.peekLast();<a name="line.326"></a>
-<FONT color="green">327</FONT>            return new ParameterCompletion(value.getValue(), parser.getTermination(), argument, completer);<a name="line.327"></a>
-<FONT color="green">328</FONT>          }<a name="line.328"></a>
-<FONT color="green">329</FONT>        } else if (last instanceof Event.Method) {<a name="line.329"></a>
-<FONT color="green">330</FONT>          if (separator != null) {<a name="line.330"></a>
-<FONT color="green">331</FONT>            return argument(method, completer);<a name="line.331"></a>
-<FONT color="green">332</FONT>          } else {<a name="line.332"></a>
-<FONT color="green">333</FONT>            return new SpaceCompletion();<a name="line.333"></a>
-<FONT color="green">334</FONT>          }<a name="line.334"></a>
-<FONT color="green">335</FONT>        } else {<a name="line.335"></a>
-<FONT color="green">336</FONT>          throw new AssertionError();<a name="line.336"></a>
-<FONT color="green">337</FONT>        }<a name="line.337"></a>
-<FONT color="green">338</FONT>      }<a name="line.338"></a>
-<FONT color="green">339</FONT>    }<a name="line.339"></a>
+<FONT color="green">316</FONT>                  ArgumentDescriptor&lt;?&gt; nextArg = arguments.get(index);<a name="line.316"></a>
+<FONT color="green">317</FONT>                  return new ParameterCompletion("", Delimiter.EMPTY, nextArg, completer);<a name="line.317"></a>
+<FONT color="green">318</FONT>                } else {<a name="line.318"></a>
+<FONT color="green">319</FONT>                  return new EmptyCompletion();<a name="line.319"></a>
+<FONT color="green">320</FONT>                }<a name="line.320"></a>
+<FONT color="green">321</FONT>              case MULTI:<a name="line.321"></a>
+<FONT color="green">322</FONT>                return new ParameterCompletion("", Delimiter.EMPTY, argument, completer);<a name="line.322"></a>
+<FONT color="green">323</FONT>              default:<a name="line.323"></a>
+<FONT color="green">324</FONT>                throw new AssertionError();<a name="line.324"></a>
+<FONT color="green">325</FONT>            }<a name="line.325"></a>
+<FONT color="green">326</FONT>          } else {<a name="line.326"></a>
+<FONT color="green">327</FONT>            Token.Literal value = eventArgument.peekLast();<a name="line.327"></a>
+<FONT color="green">328</FONT>            return new ParameterCompletion(value.getValue(), parser.getDelimiter(), argument, completer);<a name="line.328"></a>
+<FONT color="green">329</FONT>          }<a name="line.329"></a>
+<FONT color="green">330</FONT>        } else if (last instanceof Event.Method) {<a name="line.330"></a>
+<FONT color="green">331</FONT>          if (separator != null) {<a name="line.331"></a>
+<FONT color="green">332</FONT>            return argument(method, completer);<a name="line.332"></a>
+<FONT color="green">333</FONT>          } else {<a name="line.333"></a>
+<FONT color="green">334</FONT>            return new SpaceCompletion();<a name="line.334"></a>
+<FONT color="green">335</FONT>          }<a name="line.335"></a>
+<FONT color="green">336</FONT>        } else {<a name="line.336"></a>
+<FONT color="green">337</FONT>          throw new AssertionError();<a name="line.337"></a>
+<FONT color="green">338</FONT>        }<a name="line.338"></a>
+<FONT color="green">339</FONT>      }<a name="line.339"></a>
+<FONT color="green">340</FONT>    }<a name="line.340"></a>
 
 
 

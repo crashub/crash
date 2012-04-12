@@ -28,33 +28,35 @@
 <FONT color="green">025</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.25"></a>
 <FONT color="green">026</FONT>     * @version $Revision$<a name="line.26"></a>
 <FONT color="green">027</FONT>     */<a name="line.27"></a>
-<FONT color="green">028</FONT>    public abstract class ViewReader {<a name="line.28"></a>
+<FONT color="green">028</FONT>    public abstract class ViewReader implements Appendable {<a name="line.28"></a>
 <FONT color="green">029</FONT>    <a name="line.29"></a>
-<FONT color="green">030</FONT>      /**<a name="line.30"></a>
-<FONT color="green">031</FONT>       * Replace all the characters before the cursor by the provided char sequence.<a name="line.31"></a>
-<FONT color="green">032</FONT>       *<a name="line.32"></a>
-<FONT color="green">033</FONT>       * @param s the new char sequence<a name="line.33"></a>
-<FONT color="green">034</FONT>       * @return the l<a name="line.34"></a>
-<FONT color="green">035</FONT>       * @throws IOException any IOException<a name="line.35"></a>
-<FONT color="green">036</FONT>       */<a name="line.36"></a>
-<FONT color="green">037</FONT>      public abstract CharSequence replace(CharSequence s) throws IOException;<a name="line.37"></a>
-<FONT color="green">038</FONT>    <a name="line.38"></a>
-<FONT color="green">039</FONT>      public abstract void write(char c) throws IOException;<a name="line.39"></a>
-<FONT color="green">040</FONT>    <a name="line.40"></a>
-<FONT color="green">041</FONT>      public abstract void write(CharSequence s) throws IOException;<a name="line.41"></a>
-<FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>      /**<a name="line.43"></a>
-<FONT color="green">044</FONT>       * Delete the char under the cursor or return -1 if no char was deleted.<a name="line.44"></a>
-<FONT color="green">045</FONT>       *<a name="line.45"></a>
-<FONT color="green">046</FONT>       * @return the deleted char<a name="line.46"></a>
-<FONT color="green">047</FONT>       * @throws IOException any IOException<a name="line.47"></a>
-<FONT color="green">048</FONT>       */<a name="line.48"></a>
-<FONT color="green">049</FONT>      public abstract int del() throws IOException;<a name="line.49"></a>
-<FONT color="green">050</FONT>    <a name="line.50"></a>
-<FONT color="green">051</FONT>      public abstract boolean moveRight() throws IOException;<a name="line.51"></a>
+<FONT color="green">030</FONT>      public abstract ViewReader append(char c) throws IOException;<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>      public abstract ViewReader append(CharSequence s) throws IOException;<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>      public abstract ViewReader append(CharSequence csq, int start, int end) throws IOException;<a name="line.34"></a>
+<FONT color="green">035</FONT>    <a name="line.35"></a>
+<FONT color="green">036</FONT>      /**<a name="line.36"></a>
+<FONT color="green">037</FONT>       * Replace all the characters before the cursor by the provided char sequence.<a name="line.37"></a>
+<FONT color="green">038</FONT>       *<a name="line.38"></a>
+<FONT color="green">039</FONT>       * @param s the new char sequence<a name="line.39"></a>
+<FONT color="green">040</FONT>       * @return the l<a name="line.40"></a>
+<FONT color="green">041</FONT>       * @throws IOException any IOException<a name="line.41"></a>
+<FONT color="green">042</FONT>       */<a name="line.42"></a>
+<FONT color="green">043</FONT>      public abstract CharSequence replace(CharSequence s) throws IOException;<a name="line.43"></a>
+<FONT color="green">044</FONT>    <a name="line.44"></a>
+<FONT color="green">045</FONT>      /**<a name="line.45"></a>
+<FONT color="green">046</FONT>       * Delete the char under the cursor or return -1 if no char was deleted.<a name="line.46"></a>
+<FONT color="green">047</FONT>       *<a name="line.47"></a>
+<FONT color="green">048</FONT>       * @return the deleted char<a name="line.48"></a>
+<FONT color="green">049</FONT>       * @throws IOException any IOException<a name="line.49"></a>
+<FONT color="green">050</FONT>       */<a name="line.50"></a>
+<FONT color="green">051</FONT>      public abstract int del() throws IOException;<a name="line.51"></a>
 <FONT color="green">052</FONT>    <a name="line.52"></a>
-<FONT color="green">053</FONT>      public abstract boolean moveLeft() throws IOException;<a name="line.53"></a>
-<FONT color="green">054</FONT>    }<a name="line.54"></a>
+<FONT color="green">053</FONT>      public abstract boolean moveRight() throws IOException;<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>      public abstract boolean moveLeft() throws IOException;<a name="line.55"></a>
+<FONT color="green">056</FONT>    }<a name="line.56"></a>
 
 
 

@@ -3,10 +3,10 @@
 <PRE>
 <FONT color="green">001</FONT>    package org.crsh.cmdline.matcher.impl;<a name="line.1"></a>
 <FONT color="green">002</FONT>    <a name="line.2"></a>
-<FONT color="green">003</FONT>    import org.crsh.cmdline.matcher.CmdCompletionException;<a name="line.3"></a>
-<FONT color="green">004</FONT>    <a name="line.4"></a>
-<FONT color="green">005</FONT>    import java.util.Collections;<a name="line.5"></a>
-<FONT color="green">006</FONT>    import java.util.Map;<a name="line.6"></a>
+<FONT color="green">003</FONT>    import org.crsh.cmdline.CommandCompletion;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import org.crsh.cmdline.Delimiter;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import org.crsh.cmdline.matcher.CmdCompletionException;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import org.crsh.cmdline.spi.ValueCompletion;<a name="line.6"></a>
 <FONT color="green">007</FONT>    <a name="line.7"></a>
 <FONT color="green">008</FONT>    /**<a name="line.8"></a>
 <FONT color="green">009</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.9"></a>
@@ -14,8 +14,8 @@
 <FONT color="green">011</FONT>    class SpaceCompletion extends Completion {<a name="line.11"></a>
 <FONT color="green">012</FONT>    <a name="line.12"></a>
 <FONT color="green">013</FONT>      @Override<a name="line.13"></a>
-<FONT color="green">014</FONT>      Map&lt;String, String&gt; complete() throws CmdCompletionException {<a name="line.14"></a>
-<FONT color="green">015</FONT>        return Collections.singletonMap("", " ");<a name="line.15"></a>
+<FONT color="green">014</FONT>      CommandCompletion complete() throws CmdCompletionException {<a name="line.14"></a>
+<FONT color="green">015</FONT>        return new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create("", true));<a name="line.15"></a>
 <FONT color="green">016</FONT>      }<a name="line.16"></a>
 <FONT color="green">017</FONT>    }<a name="line.17"></a>
 

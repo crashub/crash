@@ -2,6 +2,7 @@ org.crsh.auth
 org.crsh.cmdline
 org.crsh.cmdline.annotations
 org.crsh.cmdline.binding
+org.crsh.cmdline.completers
 org.crsh.cmdline.matcher
 org.crsh.cmdline.matcher.impl
 org.crsh.cmdline.matcher.tokenizer

@@ -22,7 +22,7 @@
 <FONT color="green">019</FONT>    <a name="line.19"></a>
 <FONT color="green">020</FONT>    package org.crsh.shell;<a name="line.20"></a>
 <FONT color="green">021</FONT>    <a name="line.21"></a>
-<FONT color="green">022</FONT>    import java.util.Map;<a name="line.22"></a>
+<FONT color="green">022</FONT>    import org.crsh.cmdline.CommandCompletion;<a name="line.22"></a>
 <FONT color="green">023</FONT>    <a name="line.23"></a>
 <FONT color="green">024</FONT>    /**<a name="line.24"></a>
 <FONT color="green">025</FONT>     * A shell, it defines the interactions provided by a shell.<a name="line.25"></a>
@@ -62,7 +62,7 @@
 <FONT color="green">059</FONT>       * @param prefix the prefix to complete<a name="line.59"></a>
 <FONT color="green">060</FONT>       * @return the sorted list of available suffixes<a name="line.60"></a>
 <FONT color="green">061</FONT>       */<a name="line.61"></a>
-<FONT color="green">062</FONT>      Map&lt;String, String&gt; complete(String prefix);<a name="line.62"></a>
+<FONT color="green">062</FONT>      CommandCompletion complete(String prefix);<a name="line.62"></a>
 <FONT color="green">063</FONT>    <a name="line.63"></a>
 <FONT color="green">064</FONT>    }<a name="line.64"></a>
 
