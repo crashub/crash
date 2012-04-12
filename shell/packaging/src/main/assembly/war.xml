@@ -20,49 +20,54 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
-  <id>packaging</id>
+  <id>war</id>
   <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
-    <format>tar.gz</format>
+    <format>war</format>
   </formats>
 
   <dependencySets>
     <dependencySet>
       <useTransitiveDependencies>false</useTransitiveDependencies>
-      <outputDirectory>/bin</outputDirectory>
+      <outputDirectory>/WEB-INF/lib</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.shell.core:jar:standalone</include>
+        <include>org.apache.sshd:sshd-core</include>
+        <include>org.apache.sshd:sshd-pam</include>
+        <include>org.bouncycastle:bcprov-jdk16</include>
+        <include>org.apache.mina:mina-core</include>
+        <include>net.wimpi:telnetd-x</include>
+        <include>org.codehaus.groovy:groovy-all</include>
+        <include>org.crsh:crsh.cmdline</include>
+        <include>org.crsh:crsh.shell.core</include>
+        <include>org.crsh:crsh.shell.telnet</include>
+        <include>org.crsh:crsh.shell.ssh</include>
       </includes>
     </dependencySet>
     <dependencySet>
       <useTransitiveDependencies>false</useTransitiveDependencies>
-      <outputDirectory>/lib</outputDirectory>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <includes>
+          <include>crash/**</include>
+        </includes>
+      </unpackOptions>
+      <outputDirectory>/WEB-INF</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.shell.telnet:jar:standalone</include>
+        <include>org.crsh:crsh.shell.core</include>
+        <include>org.crsh:crsh.shell.telnet</include>
+        <include>org.crsh:crsh.shell.ssh</include>
       </includes>
     </dependencySet>
   </dependencySets>
 
   <fileSets>
     <fileSet>
+      <directory>src/main/webapp</directory>
       <outputDirectory>/</outputDirectory>
-      <directory>src/main/packaging</directory>
       <includes>
         <include>**/*</include>
       </includes>
-      <excludes>
-        <exclude>bin/crash.sh</exclude>
-      </excludes>
     </fileSet>
   </fileSets>
-
-  <files>
-    <file>
-      <source>src/main/packaging/bin/crash.sh</source>
-      <outputDirectory>/bin</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>755</fileMode>
-    </file>
-  </files>
 
 </assembly>

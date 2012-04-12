@@ -187,6 +187,12 @@
         <version>1.0.0-cr2-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.telnet</artifactId>
+        <version>1.0.0-cr2-SNAPSHOT</version>
+        <classifier>standalone</classifier>
+      </dependency>
 
       <!-- Module shell ssh -->
       <dependency>
@@ -212,6 +218,12 @@
         <artifactId>crsh.shell.packaging</artifactId>
         <version>1.0.0-cr2-SNAPSHOT</version>
         <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.packaging</artifactId>
+        <version>1.0.0-cr2-SNAPSHOT</version>
+        <type>tar.gz</type>
       </dependency>
 
       <!-- Module JCR -->
@@ -557,6 +569,20 @@
                 <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
                 <descriptors>
                   <descriptor>src/main/assembly/packaging.xml</descriptor>
+                </descriptors>
+              </configuration>
+            </execution>
+            <execution>
+              <id>make-war</id>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <appendAssemblyId>false</appendAssemblyId>
+                <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
+                <descriptors>
+                  <descriptor>src/main/assembly/war.xml</descriptor>
                 </descriptors>
               </configuration>
             </execution>

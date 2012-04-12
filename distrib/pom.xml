@@ -269,6 +269,11 @@
         </dependency>
         <dependency>
           <groupId>org.crsh</groupId>
+          <artifactId>crsh.shell.packaging</artifactId>
+          <type>tar.gz</type>
+        </dependency>
+        <dependency>
+          <groupId>org.crsh</groupId>
           <artifactId>crsh.jcr.exo</artifactId>
           <type>war</type>
         </dependency>

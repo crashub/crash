@@ -1,6 +1,6 @@
 = Running CRaSH =
 
-CRaSH provides has various ways to be started, it can even be easilty embedded.
+CRaSH provides has various ways to be started, it can even be easily embedded.
 
 == Web archive deployment ==
 
@@ -17,18 +17,61 @@ You have to copy the //crash.war// in the appropriate server, regardless of the 
 
 == Standalone mode ==
 
-The standalone mode allows you to run CRaSH from the command line. For this matter a few special jars are made available
-to you. Each jar adds a functionnality when it is added on the classpath, also each jar embeds its dependencies in order
-to save you the burden of having a long classpath.
+The standalone mode allows you to run CRaSH from the command line directly. It provides the same functionality as the
+war deployment but does not require a web container as it runs its own virtual machine. The directory __crash__ directory
+in the application contains the standalone distribution.
 
-{{note}}Not finished.{{/note}}
+The bin directory ///crash/bin// can be added to the system path, it contains the //crash.sh// script that will start
+the standalone mode, for instance you can set it up this way:
+
+{{screen}}
+> export PATH=/.../crash/bin:$PATH
+> crash.sh
+   ______
+ .~      ~. |`````````,       .'.                   ..'''' |         |
+|           |'''|'''''      .''```.              .''       |_________|
+|           |    `.       .'       `.         ..'          |         |
+ `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr2-SNAPSHOT
+
+Follow and support the project on http://vietj.github.com/crash
+Welcome to jerry + !
+It is Thu Apr 12 21:19:35 CEST 2012 now
+{{/screen}}
+
+Let's review quickly what you can find in standalone crash:
+
+* The //bin// directory contains the //crash.sh// script and the standalone crash jar file
+* The //conf// directory contains the JVM logging configuration //logging.properties//
+* The //cmd// directory contains the commands that will be available in crash by default it contains a few example commands
+* The //lib// directory contains the various libraries used by crash, you should place additional jar files there
 
 == Attach mode ==
 
 The attach mode allows you to attach CRaSH to a JVM located on the same host with the attach API provided by the Hotspot
-JVM.
+JVM. It works thanks to the standalone mode, the main difference is when you run the command line you can specify a
+process id of a JVM and CRaSH will hook into the targetted JVM, let's see quickly an example of how to use it
 
-{{note}}Not finished.{{/note}}
+{{screen}}
+> jps
+3165 RemoteMavenServer
+20650 Test
+20651 Jps
+
+> crash.sh 20650
+   ______
+ .~      ~. |`````````,       .'.                   ..'''' |         |
+|           |'''|'''''      .''```.              .''       |_________|
+|           |    `.       .'       `.         ..'          |         |
+ `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr2-SNAPSHOT
+
+Follow and support the project on http://vietj.github.com/crash
+Welcome to jerry + !
+It is Thu Apr 12 22:09:23 CEST 2012 now
+%
+{{/screen}}
+
+In this example we will attach crash to the Test JVM. We obtained the Test JVM PID thanks to the //jps// command that belongs
+to the Java Platform. During this mode the commands are executed in the target JVM.
 
 = Shell usage =
 

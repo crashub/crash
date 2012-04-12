@@ -58,6 +58,13 @@
       </includes>
     </dependencySet>
     <dependencySet>
+      <outputDirectory>/crash</outputDirectory>
+      <unpack>true</unpack>
+      <includes>
+        <include>org.crsh:crsh.shell.packaging:tar.gz</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
       <outputDirectory>/src</outputDirectory>
       <unpack>true</unpack>
       <unpackOptions>

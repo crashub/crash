@@ -80,13 +80,19 @@
         <executions>
           <execution>
             <id>make-standalone</id>
+            <configuration>
+              <archive>
+                <manifestEntries>
+                  <Main-Class>org.crsh.standalone.CRaSH</Main-Class>
+                  <Agent-Class>org.crsh.standalone.Agent</Agent-Class>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-packaging</id>
           </execution>
         </executions>
-        <configuration>
-          <archive>
-            <manifestFile>src/main/packaging/MANIFEST.MF</manifestFile>
-          </archive>
-        </configuration>
       </plugin>
     </plugins>
   </build>
