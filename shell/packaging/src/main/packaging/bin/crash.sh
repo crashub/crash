@@ -27,7 +27,7 @@ done
 # Create tmp dir if it does not exist
 mkdir -p $CRASH_HOME/tmp
 
-# Java 7 and 8 require tools.jar in CLASSPATH
+# Hotspot and OpenJDK requires tools.jar in CLASSPATH for VirtualMachine
 [ -z "$JAVA_HOME] && CLASSPATH=$JAVA_HOME/lib/tools.jar
 
 export CLASSPATH=$CLASSPATH:$CRASH_HOME/bin/crsh.shell.core-1.0.0-cr2-standalone.jar
