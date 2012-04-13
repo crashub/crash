@@ -27,4 +27,9 @@ done
 # Create tmp dir if it does not exist
 mkdir -p $CRASH_HOME/tmp
 
-java -Djava.util.logging.config.file=$CRASH_HOME/conf/logging.properties -jar $CRASH_HOME/bin/crsh.shell.core-${project.version}-standalone.jar $EXT_JARS --cmd $CRASH_HOME/cmd --property crash.vfs.refresh_period=1 $@
+# Java 7 and 8 require tools.jar in CLASSPATH
+[ -z "$JAVA_HOME] && CLASSPATH=$JAVA_HOME/lib/tools.jar
+
+export CLASSPATH=$CLASSPATH:$CRASH_HOME/bin/crsh.shell.core-1.0.0-cr2-standalone.jar
+
+java -Djava.util.logging.config.file=$CRASH_HOME/conf/logging.properties org.crsh.standalone.CRaSH $EXT_JARS --cmd $CRASH_HOME/cmd --property crash.vfs.refresh_period=1 $@
