@@ -35,7 +35,6 @@ class ProcessContext implements ShellProcessContext, Runnable {
 
   public String readLine(String msg, boolean echo) {
     try {
-      processor.term.setEcho(echo);
       processor.term.write(msg);
     }
     catch (IOException e) {
@@ -66,10 +65,16 @@ class ProcessContext implements ShellProcessContext, Runnable {
         done = true;
         processor.waitingEvent = true;
         try {
+          processor.term.setEcho(echo);
           processor.readTerm();
+          processor.term.write("\r\n");
+        }
+        catch (IOException e) {
+          processor.log.error("Error when readline line");
         }
         finally {
           processor.waitingEvent = false;
+          processor.term.setEcho(true);
         }
       }
     }
