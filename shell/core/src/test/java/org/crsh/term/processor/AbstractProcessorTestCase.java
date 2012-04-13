@@ -127,7 +127,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     term.publish(new TermEvent.ReadLine("foo"));
     shell.publish(new Callable<ShellResponse>() {
       public ShellResponse call() throws Exception {
-        return new ShellResponse.Close();
+        return ShellResponse.close();
       }
     });
     assertJoin(thread);
@@ -199,7 +199,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        processContext.end(new ShellResponse.Close());
+        processContext.end(ShellResponse.close());
       }
 
       public void cancel() {
