@@ -28,7 +28,7 @@ done
 mkdir -p $CRASH_HOME/tmp
 
 # Hotspot and OpenJDK requires tools.jar in CLASSPATH for VirtualMachine
-[ -z "$JAVA_HOME] && CLASSPATH=$JAVA_HOME/lib/tools.jar
+[ -n "$JAVA_HOME" ] && CLASSPATH=$JAVA_HOME/lib/tools.jar
 
 export CLASSPATH=$CLASSPATH:$CRASH_HOME/bin/crsh.shell.core-1.0.0-cr2-standalone.jar
 
