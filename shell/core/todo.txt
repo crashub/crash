@@ -1,19 +1,18 @@
+- thread ls : use thread group to display hierachical
+- propagate gatein identity to JCR with jaas domain
+- ctrl e / ctrl d
+- @Option(password = true)
+- perform more on too high completion results
 - investigate https://code.google.com/p/sshxcute/ an java ssh client for ssh unit testing
 - seems intersting for packaging http://one-jar.sourceforge.net/index.php?page=introduction&file=background
 - write AbstractTerm unit tests
 - write IO tests
 - write pipe consistency
 - more Conversion, for instance String -> JCR node from current session
+- support "\ " (read http://www.tuteurs.ens.fr/unix/shell/commande.html)
 - ability to describe a meta argument like, maybe just a convention with "description" is fine
 @Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
 @interface LevelOpt {
   String description() default "";
 }
 
-- standalone ?
-- documentation generation from commands would be just great, like a servlet :-)
-- make port configurable
-- make an installer
-
-
-- support "\ " (read http://www.tuteurs.ens.fr/unix/shell/commande.html)

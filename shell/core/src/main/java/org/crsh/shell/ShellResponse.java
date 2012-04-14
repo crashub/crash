@@ -36,7 +36,7 @@ public abstract class ShellResponse {
   }
 
   public static NoCommand noCommand() {
-    return new NoCommand();
+    return NoCommand.INSTANCE;
   }
 
   public static Ok ok(Iterable<?> produced) {
@@ -92,7 +92,11 @@ public abstract class ShellResponse {
   }
 
   public static Cancelled cancelled() {
-    return new Cancelled();
+    return Cancelled.INSTANCE;
+  }
+
+  public static Close close() {
+    return Close.INSTANCE;
   }
 
   public abstract String getText();
@@ -118,6 +122,9 @@ public abstract class ShellResponse {
 
   public static class NoCommand extends ShellResponse {
 
+    /** . */
+    private static final NoCommand INSTANCE = new NoCommand();
+
     private NoCommand() {
     }
 
@@ -128,6 +135,12 @@ public abstract class ShellResponse {
   }
 
   public static class Close extends ShellResponse {
+
+    /** . */
+    private static final Close INSTANCE = new Close();
+
+    private Close() {
+    }
 
     @Override
     public String getText() {
@@ -196,6 +209,10 @@ public abstract class ShellResponse {
   }
 
   public static class Cancelled extends ShellResponse {
+
+    /** . */
+    private static final Cancelled INSTANCE = new Cancelled();
+
     private Cancelled() {
     }
 
@@ -213,6 +230,7 @@ public abstract class ShellResponse {
     /** . */
     private final Throwable throwable;
 
+    /** . */
     private final String msg;
 
     private Error(ErrorType type, Throwable throwable) {

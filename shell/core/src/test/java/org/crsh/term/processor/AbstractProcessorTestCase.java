@@ -57,7 +57,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         closed.set(true);
       }
     });
-    term.publish(new TermEvent.Close());
+    term.publish(TermEvent.close());
     assertJoin(thread);
     assertTrue(closed.get());
   }
@@ -65,7 +65,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
   public void testBufferEvent() throws Exception {
     final CyclicBarrier syncA = new CyclicBarrier(2);
     final CountDownLatch syncB = new CountDownLatch(1);
-    term.publish(new TermEvent.ReadLine("foo"));
+    term.publish(TermEvent.readLine("foo"));
     shell.publish(new Callable<ShellResponse>() {
       public ShellResponse call() throws Exception {
         syncA.await();
@@ -74,14 +74,14 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
       }
     });
     syncA.await();
-    term.publish(new TermEvent.ReadLine("bar"));
+    term.publish(TermEvent.readLine("bar"));
     syncB.countDown();
     shell.publish(new Callable<ShellResponse>() {
       public ShellResponse call() throws Exception {
         return ShellResponse.display("bar");
       }
     });
-    term.publish(new TermEvent.Close());
+    term.publish(TermEvent.close());
     assertJoin(thread);
   }
 
@@ -90,7 +90,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
   public void testCancellation() throws Exception {
     final CyclicBarrier syncA = new CyclicBarrier(2);
     final CyclicBarrier syncB = new CyclicBarrier(getBarrierSize());
-    term.publish(new TermEvent.ReadLine("foo"));
+    term.publish(TermEvent.readLine("foo"));
     shell.publish(new ShellProcess() {
       public void execute(ShellProcessContext processContext) {
         try {
@@ -111,23 +111,23 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
       }
     });
     syncA.await();
-    term.publish(new TermEvent.Break());
-    term.publish(new TermEvent.ReadLine("bar"));
+    term.publish(TermEvent.brk());
+    term.publish(TermEvent.readLine("bar"));
     shell.publish(new Callable<ShellResponse>() {
       public ShellResponse call() throws Exception {
         return ShellResponse.display("bar");
       }
     });
-    term.publish(new TermEvent.Close());
+    term.publish(TermEvent.close());
     assertJoin(thread);
   }
 
   public void testProcessClose() throws Exception {
     processor.addListener(term);
-    term.publish(new TermEvent.ReadLine("foo"));
+    term.publish(TermEvent.readLine("foo"));
     shell.publish(new Callable<ShellResponse>() {
       public ShellResponse call() throws Exception {
-        return new ShellResponse.Close();
+        return ShellResponse.close();
       }
     });
     assertJoin(thread);
@@ -139,7 +139,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final CyclicBarrier syncC = new CyclicBarrier(2);
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
-    term.publish(new TermEvent.ReadLine("foo"));
+    term.publish(TermEvent.readLine("foo"));
     shell.publish(new ShellProcess() {
       public void execute(ShellProcessContext processContext) {
         try {
@@ -167,11 +167,11 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
       }
     });
     syncA.await();
-    term.publish(new TermEvent.Break());
+    term.publish(TermEvent.brk());
     syncB.await();
     syncC.await();
     assertEquals("cancelled", line.get());
-    term.publish(new TermEvent.Close());
+    term.publish(TermEvent.close());
     assertJoin(thread);
   }
 
@@ -181,7 +181,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final CyclicBarrier syncC = new CyclicBarrier(2);
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
-    term.publish(new TermEvent.ReadLine("foo"));
+    term.publish(TermEvent.readLine("foo"));
     shell.publish(new ShellProcess() {
       public void execute(ShellProcessContext processContext) {
         try {
@@ -199,14 +199,14 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        processContext.end(new ShellResponse.Close());
+        processContext.end(ShellResponse.close());
       }
 
       public void cancel() {
       }
     });
     syncA.await();
-    term.publish(new TermEvent.ReadLine("bar"));
+    term.publish(TermEvent.readLine("bar"));
     syncB.await();
     syncC.await();
     assertEquals("bar", line.get());
@@ -218,7 +218,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final CyclicBarrier syncB = new CyclicBarrier(2);
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
-    term.publish(new TermEvent.ReadLine("foo"));
+    term.publish(TermEvent.readLine("foo"));
     shell.publish(new ShellProcess() {
       public void execute(ShellProcessContext processContext) {
         try {
@@ -254,7 +254,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     });
     syncB.await();
     assertEquals("cancelled", line.get());
-    term.publish(new TermEvent.Close());
+    term.publish(TermEvent.close());
     assertJoin(thread);
   }
 
@@ -263,7 +263,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final CyclicBarrier syncB = new CyclicBarrier(2);
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
-    term.publish(new TermEvent.ReadLine("foo"));
+    term.publish(TermEvent.readLine("foo"));
     shell.publish(new ShellProcess() {
       public void execute(ShellProcessContext processContext) {
         try {
@@ -292,10 +292,10 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     while (!processor.isWaitingEvent()) {
       // Wait until it's true
     }
-    term.publish(new TermEvent.Break());
+    term.publish(TermEvent.brk());
     syncB.await();
     assertEquals("cancelled", line.get());
-    term.publish(new TermEvent.Close());
+    term.publish(TermEvent.close());
     assertJoin(thread);
   }
 }

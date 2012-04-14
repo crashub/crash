@@ -116,7 +116,7 @@ public class BaseTerm implements Term {
       CodeType type = io.decode(code);
       switch (type) {
         case CLOSE:
-          return new TermEvent.Close();
+          return TermEvent.close();
         case BACKSPACE:
           console.getViewReader().del();
           break;
@@ -147,7 +147,7 @@ public class BaseTerm implements Term {
         case BREAK:
           log.debug("Want to cancel evaluation");
           console.clearBuffer();
-          return new TermEvent.Break();
+          return TermEvent.brk();
         case CHAR:
           if (code >= 0 && code < 128) {
             console.getViewReader().append((char)code);
@@ -157,7 +157,7 @@ public class BaseTerm implements Term {
           break;
         case TAB:
           log.debug("Tab");
-          return new TermEvent.Complete(console.getBufferToCursor());
+          return TermEvent.complete(console.getBufferToCursor());
       }
 
       //
@@ -165,7 +165,7 @@ public class BaseTerm implements Term {
         historyCursor = -1;
         historyBuffer = null;
         CharSequence input = console.getReader().next();
-        return new TermEvent.ReadLine(input);
+        return TermEvent.readLine(input);
       }
     }
   }

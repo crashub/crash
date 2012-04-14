@@ -355,8 +355,8 @@ public final class Processor implements Runnable {
             max = Math.max(max, completionPrefix.length() + suffix.length());
           }
 
-          // Separator
-          max++;
+          // Separator : use two whitespace like in BASH
+          max += 2;
 
           //
           StringBuilder sb = new StringBuilder().append('\n');

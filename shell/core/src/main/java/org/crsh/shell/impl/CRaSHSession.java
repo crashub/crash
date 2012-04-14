@@ -161,7 +161,7 @@ public class CRaSHSession implements Shell, Closeable {
     log.debug("Invoking request " + request);
     final ShellResponse response;
     if ("bye".equals(request) || "exit".equals(request)) {
-      response = new ShellResponse.Close();
+      response = ShellResponse.close();
     } else {
 
       // Create AST

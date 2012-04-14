@@ -239,7 +239,7 @@ public final class PluginContext {
               if (f != null) {
                 Resource sub = f.getResource();
                 if (sub != null) {
-                  sb.append(sub.getContent() + "\n");
+                  sb.append(sub.getContent()).append('\n');
                   timestamp = Math.max(timestamp, sub.getTimestamp());
                 }
               }

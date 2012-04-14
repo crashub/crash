@@ -25,7 +25,26 @@ package org.crsh.term;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class TermEvent {
+public abstract class TermEvent {
+
+  public static Complete complete(CharSequence line) {
+    return new Complete(line);
+  }
+
+  public static Close close() {
+    return Close.INSTANCE;
+  }
+
+  public static ReadLine readLine(CharSequence line) {
+    return new ReadLine(line);
+  }
+
+  public static Break brk() {
+    return Break.INSTANCE;
+  }
+
+  private TermEvent() {
+  }
 
   @Override
   public String toString() {
@@ -36,12 +55,24 @@ public class TermEvent {
    * Signals a control-break.
    */
   public static class Close extends TermEvent {
+
+    /** . */
+    private static final Close INSTANCE = new Close();
+
+    private Close() {
+    }
   }
 
   /**
    * Signals a control-break.
    */
   public static class Break extends TermEvent {
+
+    /** . */
+    private static final Break INSTANCE = new Break();
+
+    private Break() {
+    }
   }
 
   /**
@@ -52,7 +83,7 @@ public class TermEvent {
     /** The line to be completed. */
     private CharSequence line;
 
-    public Complete(CharSequence line) {
+    private Complete(CharSequence line) {
       this.line = line;
     }
 
@@ -74,7 +105,7 @@ public class TermEvent {
     /** . */
     private final CharSequence line;
 
-    public ReadLine(CharSequence line) {
+    private ReadLine(CharSequence line) {
       this.line = line;
     }
 

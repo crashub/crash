@@ -66,7 +66,7 @@ public class SyncTerm implements Term {
     synchronized (lock) {
       while (true) {
         if (closed) {
-          return new TermEvent.Close();
+          return TermEvent.close();
         } else if (queue.size() > 0) {
           try {
             Callable<TermEvent> callable = queue.removeFirst();

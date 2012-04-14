@@ -36,7 +36,7 @@ public class AsyncProcessorTestCase extends AbstractProcessorTestCase {
     final CyclicBarrier syncA = new CyclicBarrier(2);
     final CyclicBarrier syncB = new CyclicBarrier(2);
     final CyclicBarrier syncC = new CyclicBarrier(2);
-    term.publish(new TermEvent.ReadLine("foo"));
+    term.publish(TermEvent.readLine("foo"));
     shell.publish(new ShellProcess() {
       public void execute(ShellProcessContext processContext) {
         try {
@@ -58,9 +58,9 @@ public class AsyncProcessorTestCase extends AbstractProcessorTestCase {
       }
     });
     syncA.await();
-    term.publish(new TermEvent.Break());
+    term.publish(TermEvent.brk());
     syncC.await();
-    term.publish(new TermEvent.Close());
+    term.publish(TermEvent.close());
     assertJoin(thread);
     syncB.await();
   }
@@ -68,7 +68,7 @@ public class AsyncProcessorTestCase extends AbstractProcessorTestCase {
   public void testBreak() throws Exception {
     final CyclicBarrier syncA = new CyclicBarrier(2);
     final CyclicBarrier syncB = new CyclicBarrier(3);
-    term.publish(new TermEvent.ReadLine("foo"));
+    term.publish(TermEvent.readLine("foo"));
     shell.publish(new ShellProcess() {
       public void execute(ShellProcessContext processContext) {
         try {
@@ -90,9 +90,9 @@ public class AsyncProcessorTestCase extends AbstractProcessorTestCase {
       }
     });
     syncA.await();
-    term.publish(new TermEvent.Break());
+    term.publish(TermEvent.brk());
     syncB.await();
-    term.publish(new TermEvent.Close());
+    term.publish(TermEvent.close());
     assertJoin(thread);
   }
 }

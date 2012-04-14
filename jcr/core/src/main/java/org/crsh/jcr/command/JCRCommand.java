@@ -29,6 +29,7 @@ import org.crsh.command.CRaSHCommand;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +64,7 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
             try {
               return (Node)session.getItem(path);
             }
-            catch (PathNotFoundException e) {
+            catch (RepositoryException e) {
               return null;
             }
           }
