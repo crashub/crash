@@ -52,11 +52,18 @@
       </includes>
       <excludes>
         <exclude>bin/crash.sh</exclude>
+        <exclude>bin/crash.bat</exclude>
       </excludes>
     </fileSet>
   </fileSets>
 
   <files>
+    <file>
+      <source>src/main/packaging/bin/crash.bat</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>755</fileMode>
+    </file>
     <file>
       <source>src/main/packaging/bin/crash.sh</source>
       <outputDirectory>/bin</outputDirectory>
