@@ -19,6 +19,8 @@
 
 package org.crsh.cmdline.spi;
 
+import java.util.StringTokenizer;
+
 /**
  * A typed string, this class should be extended to provide meta information about a string and provide type safety.
  * This class is immutable and so should be its subclasses.
@@ -27,6 +29,27 @@ package org.crsh.cmdline.spi;
  * @version $Revision$
  */
 public abstract class Value {
+
+  public static class Properties extends Value {
+
+    public Properties(String string) throws NullPointerException {
+      super(string);
+    }
+
+    public java.util.Properties getProperties() {
+      java.util.Properties props = new java.util.Properties();
+      StringTokenizer tokenizer = new StringTokenizer(getString(), ";", false);
+      while(tokenizer.hasMoreTokens()){
+        String token = tokenizer.nextToken();
+        if(token.contains("=")) {
+          String key = token.substring(0, token.indexOf('='));
+          String value = token.substring(token.indexOf('=') + 1, token.length());
+          props.put(key, value);
+        }
+      }
+      return props;
+    }
+  }
 
   /** . */
   private final String string;

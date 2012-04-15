@@ -2,23 +2,24 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.crsh.jcr.command;
+package org.crsh.cmdline;
 
 import java.util.Properties;
 import junit.framework.TestCase;
+import org.crsh.cmdline.spi.Value;
 
 
 /**
  *
  * @author ehugonnet
  */
-public class InitPropertiesTest extends TestCase {
+public class ValueTestCase extends TestCase {
   
-  public InitPropertiesTest() {
+  public ValueTestCase() {
   }
 
-  public void testGetProperties() {
-    InitProperties init = new InitProperties("org.apache.jackrabbit.repository.conf=repository" +
+  public void testProperties() {
+    Value.Properties init = new Value.Properties("org.apache.jackrabbit.repository.conf=repository" +
         "-in-memory.xml;org.apache.jackrabbit.repository.home=/home/ehugonnet/tmp/crash/jcr/target" +
         "/test-classes/conf/transient");
     Properties props = init.getProperties();
