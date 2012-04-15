@@ -28,4 +28,25 @@ public class CRaSH {
   public CRaSHSession createSession() {
     return new CRaSHSession(this);
   }
+
+  /**
+   * Returns the plugin context.
+   *
+   * @return the plugin context
+   */
+  public PluginContext getContext() {
+    return context;
+  }
+
+  /**
+   * Attempt to obtain a command instance. Null is returned when such command does not exist.
+   *
+   * @param name the command name
+   * @return a command instance
+   * @throws CreateCommandException if an error occured preventing the command creation
+   * @throws NullPointerException if the name argument is null
+   */
+  public ShellCommand getCommand(String name) throws CreateCommandException, NullPointerException {
+    return commands.getInstance(name);
+  }
 }

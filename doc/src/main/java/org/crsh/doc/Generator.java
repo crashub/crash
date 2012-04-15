@@ -34,6 +34,7 @@ import org.crsh.vfs.Path;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -54,9 +55,15 @@ public class Generator {
     }
     FS cmdFS = new FS().mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/commands/"));
     FS confFS = new FS().mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
-    PluginContext ctx = new PluginContext(new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()), cmdFS, confFS, Thread.currentThread().getContextClassLoader());
+    PluginContext ctx = new PluginContext(
+      new ServiceLoaderDiscovery(Thread.currentThread().getContextClassLoader()),
+      Collections.<String, Object>emptyMap(),
+      cmdFS,
+      confFS,
+      Thread.currentThread().getContextClassLoader());
     ctx.refresh();
-    CRaSHSession crash = new CRaSH(ctx).createSession();
+    CRaSH crash = new CRaSH(ctx);
+    CRaSHSession session = crash.createSession();
     for (String s : ctx.listResourceId(ResourceKind.COMMAND)) {
       ShellCommand cmd = crash.getCommand(s);
       StringBuilder man = new StringBuilder();

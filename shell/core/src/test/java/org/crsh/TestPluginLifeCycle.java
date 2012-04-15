@@ -26,6 +26,8 @@ import org.crsh.shell.impl.CRaSHSession;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 
+import java.util.HashMap;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
@@ -36,6 +38,9 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
 
   /** . */
   private CRaSH crash;
+
+  /** . */
+  private HashMap<String, Object> attributes;
 
   public TestPluginLifeCycle() throws Exception {
     this(Thread.currentThread().getContextClassLoader());
@@ -50,12 +55,26 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
   }
 
   private TestPluginLifeCycle(PluginDiscovery discovery, ClassLoader classLoader) throws Exception {
+    this.attributes = new HashMap<String, Object>();
     this.context = new PluginContext(
-        discovery,
-        new FS().mount(classLoader,Path.get("/crash/commands/")),
-        new FS().mount(classLoader,Path.get("/crash/")),
-        classLoader);
+      discovery,
+      attributes,
+      new FS().mount(classLoader,Path.get("/crash/commands/")),
+      new FS().mount(classLoader,Path.get("/crash/")),
+      classLoader);
     this.crash = new CRaSH(context);
+  }
+
+  public Object getAttribute(String name) {
+    return attributes.get(name);
+  }
+
+  public void setAttribute(String name, Object value) {
+    if (value != null) {
+      attributes.put(name, value);
+    } else {
+      attributes.remove(name);
+    }
   }
 
   public <T> void setProperty(PropertyDescriptor<T> desc, T value) throws NullPointerException {

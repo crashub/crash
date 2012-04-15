@@ -19,12 +19,15 @@
 
 package org.crsh.plugin;
 
+import org.crsh.util.ServletContextMap;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.spi.servlet.ServletContextDriver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,10 +78,11 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
 
         //
         PluginContext context = new PluginContext(
-            new ServiceLoaderDiscovery(webAppLoader),
-            cmdFS,
-            confFS,
-            webAppLoader);
+          new ServiceLoaderDiscovery(webAppLoader),
+          new ServletContextMap(sc),
+          cmdFS,
+          confFS,
+          webAppLoader);
 
         //
         contextMap.put(contextPath, context);

@@ -28,4 +28,12 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
   public void testUnknownCommand() throws Exception {
     assertUnknownCommand("bilto");
   }
+
+  public void testAttributes() throws Exception {
+    assertOk("null", "attribute foo");
+    lifeCycle.setAttribute("foo", "bar");
+    assertOk("bar", "attribute foo");
+    lifeCycle.setAttribute("foo", null);
+    assertOk("null", "attribute foo");
+  }
 }

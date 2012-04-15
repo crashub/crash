@@ -183,10 +183,10 @@ abstract class AST {
       this.next = next;
     }
 
-    private void create(CRaSHSession crash) throws CreateCommandException {
+    private void create(CRaSHSession session) throws CreateCommandException {
       CommandInvoker invoker = null;
       if (name != null) {
-        command = crash.getCommand(name);
+        command = session.crash.getCommand(name);
         if (command != null) {
           invoker = command.createInvoker(rest);
         }
@@ -201,7 +201,7 @@ abstract class AST {
 
       //
       if (next != null) {
-        next.create(crash);
+        next.create(session);
       }
     }
 

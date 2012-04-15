@@ -8,7 +8,7 @@ class man extends CRaSHCommand {
   @Usage("format and display the on-line manual pages")
   @Command
   Object main(@Usage("the command") @Argument String command) throws ScriptException {
-    def cmd = shell.getCommand(command);
+    def cmd = crash.getCommand(command);
     if (cmd != null) {
       return  cmd.describe(unmatched, DescriptionFormat.MAN);
     } else {

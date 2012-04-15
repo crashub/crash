@@ -42,7 +42,7 @@ class crash extends CRaSHCommand {
   @Command
   public Object plugins() {
     def builder = new UIBuilder();
-    shellContext.plugins.each() { plugin ->
+    crash.context.plugins.each() { plugin ->
       builder.node("plugin") {
         label("type: $plugin.type")
         label("implementation: ${plugin.type}")
@@ -67,7 +67,7 @@ class crash extends CRaSHCommand {
     def builder = new UIBuilder();
     PropertyDescriptor.ALL.values().each() { desc ->
       builder.node(desc.name) {
-        def prop = shellContext.getProperty(desc);
+        def prop = crash.context.getProperty(desc);
         label("value: ${prop ?: desc.defaultValue}")
         label("description: $desc.description")
         node("type $desc.type")

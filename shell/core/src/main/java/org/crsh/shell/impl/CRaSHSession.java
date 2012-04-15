@@ -55,7 +55,7 @@ public class CRaSHSession implements Shell, Closeable {
   private GroovyShell groovyShell;
 
   /** . */
-  private final CRaSH crash;
+  final CRaSH crash;
 
   /** . */
   final Map<String, Object> attributes;
@@ -73,18 +73,6 @@ public class CRaSHSession implements Shell, Closeable {
       groovyShell = new GroovyShell(crash.context.getLoader(), new Binding(attributes), config);
     }
     return groovyShell;
-  }
-
-  /**
-   * Attempt to obtain a command instance. Null is returned when such command does not exist.
-   *
-   * @param name the command name
-   * @return a command instance
-   * @throws CreateCommandException if an error occured preventing the command creation
-   * @throws NullPointerException if the name argument is null
-   */
-  public ShellCommand getCommand(String name) throws CreateCommandException, NullPointerException {
-    return crash.commands.getInstance(name);
   }
 
   public Script getLifeCycle(String name) throws CreateCommandException, NullPointerException {
@@ -110,8 +98,7 @@ public class CRaSHSession implements Shell, Closeable {
     HashMap<String, Object> attributes = new HashMap<String, Object>();
 
     // Set variable available to all scripts
-    attributes.put("shellContext", crash.context);
-    attributes.put("shell", this);
+    attributes.put("crash", crash);
 
     //
     this.attributes = attributes;
@@ -240,7 +227,7 @@ public class CRaSHSession implements Shell, Closeable {
         String commandName = termPrefix.substring(0, pos);
         termPrefix = termPrefix.substring(pos);
         try {
-          ShellCommand command = getCommand(commandName);
+          ShellCommand command = crash.getCommand(commandName);
           if (command != null) {
             completion = command.complete(new BaseCommandContext(attributes), termPrefix);
           } else {

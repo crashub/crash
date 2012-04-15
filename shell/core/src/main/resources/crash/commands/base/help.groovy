@@ -15,10 +15,10 @@ class help extends CRaSHCommand
     def names = [];
     def descs = [];
     int len = 0;
-    shellContext.listResourceId(org.crsh.plugin.ResourceKind.COMMAND).each() {
+    crash.context.listResourceId(org.crsh.plugin.ResourceKind.COMMAND).each() {
       String name ->
       try {
-        def cmd = shell.getCommand(name);
+        def cmd = crash.getCommand(name);
         if (cmd != null) {
           def desc = cmd.describe(name, DescriptionFormat.DESCRIBE) ?: "";
           names.add(name);

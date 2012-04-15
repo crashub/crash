@@ -47,6 +47,9 @@ public abstract class AbstractCommandTestCase extends TestCase {
   /** . */
   protected GroovyShell groovyShell;
 
+  /** . */
+  protected TestPluginLifeCycle lifeCycle;
+
   protected AbstractCommandTestCase() {
   }
 
@@ -59,14 +62,15 @@ public abstract class AbstractCommandTestCase extends TestCase {
     super.setUp();
 
     //
-    TestPluginLifeCycle builder = new TestPluginLifeCycle(NO_PLUGINS);
+    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(NO_PLUGINS);
 
     //
-    builder.start();
+    lifeCycle.start();
 
     //
-    shell = builder.createShell();
-    groovyShell = shell.getGroovyShell();
+    this.shell = lifeCycle.createShell();
+    this.groovyShell = shell.getGroovyShell();
+    this.lifeCycle = lifeCycle;
   }
 
   @Override

@@ -70,6 +70,9 @@ public final class PluginContext {
   private final FS cmdFS;
 
   /** . */
+  private final Map<String, ?> attributes;
+
+  /** . */
   private final FS confFS;
 
   /** . */
@@ -80,15 +83,30 @@ public final class PluginContext {
    *
    * @param discovery the plugin discovery
    * @param cmdFS the command file system
+   * @param attributes the attributes
    * @param confFS the conf file system
    * @param loader the loader
    * @throws NullPointerException if any parameter argument is null
    */
-  public PluginContext(PluginDiscovery discovery, FS cmdFS, FS confFS, ClassLoader loader) throws NullPointerException {
+  public PluginContext(
+    PluginDiscovery discovery,
+    Map<String, ?> attributes,
+    FS cmdFS,
+    FS confFS,
+    ClassLoader loader) throws NullPointerException {
+    if (discovery == null) {
+      throw new NullPointerException("No null plugin disocovery accepted");
+    }
+    if (confFS == null) {
+      throw new NullPointerException("No null configuration file system accepted");
+    }
     if (cmdFS == null) {
-      throw new NullPointerException();
+      throw new NullPointerException("No null command file system accepted");
     }
     if (loader == null) {
+      throw new NullPointerException();
+    }
+    if (attributes == null) {
       throw new NullPointerException();
     }
 
@@ -113,6 +131,7 @@ public final class PluginContext {
 
     //
     this.loader = loader;
+    this.attributes = attributes;
     this.version = version;
     this.dirs = Collections.emptyList();
     this.cmdFS = cmdFS;
@@ -122,12 +141,16 @@ public final class PluginContext {
     this.confFS = confFS;
   }
 
-  public final Iterable<CRaSHPlugin<?>> getPlugins() {
+  public Iterable<CRaSHPlugin<?>> getPlugins() {
     return manager.getPlugins();
   }
 
-  public final String getVersion() {
+  public String getVersion() {
     return version;
+  }
+
+  public Map<String, ?> getAttributes() {
+    return attributes;
   }
 
   /**

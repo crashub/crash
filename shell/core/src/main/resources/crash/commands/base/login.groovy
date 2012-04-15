@@ -10,7 +10,7 @@ welcome = { ->
  .~      ~. |`````````,       .'.                   ..'''' |         |
 |           |'''|'''''      .''```.              .''       |_________|
 |           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         | ${shellContext.version}
+ `.______.' |      `.   .'           `. ....''             |         | ${crash.context.version}
 
 Follow and support the project on http://vietj.github.com/crash
 Welcome to $hostName + !

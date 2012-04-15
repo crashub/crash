@@ -31,7 +31,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -54,11 +56,19 @@ public class Bootstrap extends PluginLifeCycle {
   /** The base classloader. */
   private ClassLoader baseLoader;
 
+  /** The attributes. */
+  private Map<String, ?> attributes;
+
   public Bootstrap(ClassLoader baseLoader) throws NullPointerException {
     if (baseLoader == null) {
       throw new NullPointerException("No null base loader accepted");
     }
     this.baseLoader = baseLoader;
+    this.attributes = Collections.emptyMap();
+  }
+
+  public void setAttributes(Map<String, ?> attributes) {
+    this.attributes = attributes;
   }
 
   public Bootstrap addConfPath(File file) {
@@ -119,8 +129,17 @@ public class Bootstrap extends PluginLifeCycle {
     log.info(info.toString());
 
     //
-    PluginContext context = new PluginContext(discovery, cmdFS, confFS, classLoader);
+    PluginContext context = new PluginContext(
+      discovery,
+      attributes,
+      cmdFS,
+      confFS,
+      classLoader);
+
+    //
     context.refresh();
+
+    //
     start(context);
   }
 
