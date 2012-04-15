@@ -63,17 +63,29 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
 
   @Override
   public final Object getProperty(String property) {
-    try {
-      return super.getProperty(property);
-    }
-    catch (MissingPropertyException e) {
+    if ("out".equals(property)) {
       CommandContext context = getContext();
-      return context.getAttributes().get(property);
+      if (context instanceof InvocationContext<?, ?>) {
+        return ((InvocationContext<?, ?>)context).getWriter();
+      } else {
+        return null;
+      }
+    } else {
+      try {
+        return super.getProperty(property);
+      }
+      catch (MissingPropertyException e) {
+        CommandContext context = getContext();
+        return context.getAttributes().get(property);
+      }
     }
   }
 
   @Override
   public final void setProperty(String property, Object newValue) {
+    if ("out".equals(property)) {
+      throw new IllegalArgumentException("Cannot write out");
+    }
     try {
       super.setProperty(property, newValue);
     }

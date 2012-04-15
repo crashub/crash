@@ -20,7 +20,6 @@
 package org.crsh.shell.impl;
 
 import org.crsh.command.impl.BaseInvocationContext;
-import org.crsh.command.impl.AttributesMap;
 import org.crsh.shell.ShellProcessContext;
 
 import java.util.Map;
@@ -41,11 +40,6 @@ class InvocationContextImpl<C, P> extends BaseInvocationContext<C, P> {
     Map<String, Object> attributes) {
     super(consumedItems, attributes);
     this.processContext = processContext;
-  }
-
-  @Override
-  protected Map<String, Object> attributes(Map<String, Object> attributes) {
-    return new AttributesMap(this, attributes);
   }
 
   public int getWidth() {

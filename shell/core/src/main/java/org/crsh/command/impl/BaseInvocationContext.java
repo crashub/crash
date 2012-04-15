@@ -52,15 +52,12 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
     Iterable<C> consumedItems,
     Map<String, Object> attributes) {
     super(attributes);
+
+    //
     this.writer = null;
     this.buffer = null;
     this.consumedItems = consumedItems;
     this.producedItems = Collections.emptyList();
-  }
-
-  @Override
-  protected Map<String, Object> attributes(Map<String, Object> attributes) {
-    return new AttributesMap(this, attributes);
   }
 
   public List<P> getProducedItems() {
