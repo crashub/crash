@@ -719,7 +719,7 @@
               </execution>
             </executions>
             <configuration>
-              <mainClass>org.crsh.standalone.Main</mainClass>
+              <mainClass>org.crsh.standalone.CRaSH</mainClass>
               <classpathScope>test</classpathScope>
             </configuration>
           </plugin>
