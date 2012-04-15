@@ -69,14 +69,14 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
       if (!contextMap.containsKey(contextPath)) {
 
         //
-        FS binFS = new FS().mount(new ServletContextDriver(sc), "/WEB-INF/crash/commands/");
+        FS cmdFS = new FS().mount(new ServletContextDriver(sc), "/WEB-INF/crash/commands/");
         FS confFS = new FS().mount(new ServletContextDriver(sc), "/WEB-INF/crash/");
         ClassLoader webAppLoader = Thread.currentThread().getContextClassLoader();
 
         //
         PluginContext context = new PluginContext(
             new ServiceLoaderDiscovery(webAppLoader),
-            binFS,
+            cmdFS,
             confFS,
             webAppLoader);
 

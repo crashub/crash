@@ -43,7 +43,7 @@ public class Bootstrap extends PluginLifeCycle {
   protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** The mounted path on the file system. */
-  private List<File> bins = Utils.newArrayList();
+  private List<File> cmds = Utils.newArrayList();
 
   /** The mounted path on the file system. */
   private List<File> confs = Utils.newArrayList();
@@ -67,7 +67,7 @@ public class Bootstrap extends PluginLifeCycle {
   }
 
   public Bootstrap addCmdPath(File file) {
-    bins.add(file);
+    cmds.add(file);
     return this;
   }
 
@@ -87,12 +87,14 @@ public class Bootstrap extends PluginLifeCycle {
     // Create the classloader
     URLClassLoader classLoader = new URLClassLoader(urls, baseLoader);
 
-    // Create the bin file system
-    FS binFS = new FS();
-    for (File bin : bins) {
-      binFS.mount(bin);
+    // Create the cmd file system
+    FS cmdFS = new FS();
+    for (File cmd : cmds) {
+      cmdFS.mount(cmd);
     }
-    binFS.mount(classLoader, Path.get("/crash/commands/"));
+
+    // Add the classloader
+    cmdFS.mount(classLoader, Path.get("/crash/commands/"));
 
     // Create the conf file system
     FS confFS = new FS();
@@ -107,17 +109,17 @@ public class Bootstrap extends PluginLifeCycle {
     //
     StringBuilder info = new StringBuilder("Booting crash with classpath=");
     info.append(jars).append(" and mounts=[");
-    for (int i = 0;i < bins.size();i++) {
+    for (int i = 0;i < cmds.size();i++) {
       if (i > 0) {
         info.append(',');
       }
-      info.append(bins.get(i).getAbsolutePath());
+      info.append(cmds.get(i).getAbsolutePath());
     }
     info.append(']');
     log.info(info.toString());
 
     //
-    PluginContext context = new PluginContext(discovery, binFS, confFS, classLoader);
+    PluginContext context = new PluginContext(discovery, cmdFS, confFS, classLoader);
     context.refresh();
     start(context);
   }
