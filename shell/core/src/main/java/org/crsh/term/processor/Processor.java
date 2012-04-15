@@ -334,14 +334,14 @@ public final class Processor implements Runnable {
         Map.Entry<String, Boolean> entry = completions.iterator().next();
         Appendable buffer = term.getInsertBuffer();
         String insert = entry.getKey();
-        delimiter.escape(insert, 0, insert.length(), term.getInsertBuffer());
+        delimiter.escape(insert, term.getInsertBuffer());
         if (entry.getValue()) {
           buffer.append(completion.getDelimiter().getValue());
         }
       } else {
         String commonCompletion = Strings.findLongestCommonPrefix(completions.getSuffixes());
         if (commonCompletion.length() > 0) {
-          delimiter.escape(commonCompletion, 0, commonCompletion.length(), term.getInsertBuffer());
+          delimiter.escape(commonCompletion, term.getInsertBuffer());
         } else {
           // Format stuff
           int width = term.getWidth();

@@ -89,5 +89,9 @@ public enum Delimiter {
     return value;
   }
 
+  public final void escape(CharSequence s, Appendable appendable) throws IOException {
+    escape(s, 0, s.length(), appendable);
+  }
+
   public abstract void escape(CharSequence s, int start, int end, Appendable appendable) throws IOException;
 }

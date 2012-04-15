@@ -22,6 +22,7 @@ package org.crsh.standalone;
 import com.sun.tools.attach.VirtualMachine;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
@@ -104,7 +105,9 @@ public class CRaSH {
         for (String cmd : cmds) {
           File cmdPath = new File(cmd);
           if (cmdPath.exists()) {
-            sb.append("--cmd ").append(cmdPath.getCanonicalPath()).append(' ');
+            sb.append("--cmd ");
+            Delimiter.EMPTY.escape(cmdPath.getCanonicalPath(), sb);
+            sb.append(' ');
           }
         }
       }
@@ -114,7 +117,9 @@ public class CRaSH {
         for (String conf : confs) {
           File confPath = new File(conf);
           if (confPath.exists()) {
-            sb.append("--conf ").append(confPath.getCanonicalPath()).append(' ');
+            sb.append("--conf ");
+            Delimiter.EMPTY.escape(confPath.getCanonicalPath(), sb);
+            sb.append(' ');
           }
         }
       }
@@ -124,7 +129,9 @@ public class CRaSH {
         for (String jar : jars) {
           File jarPath = new File(jar);
           if (jarPath.exists()) {
-            sb.append("--jar ").append(jarPath.getCanonicalPath()).append(' ');
+            sb.append("--jar ");
+            Delimiter.EMPTY.escape(jarPath.getCanonicalPath(), sb);
+            sb.append(' ');
           }
         }
       }
@@ -132,7 +139,9 @@ public class CRaSH {
       // Propagate canonical config
       if (properties != null) {
         for (String property : properties) {
-          sb.append("--property ").append(property).append(' ');
+          sb.append("--property ");
+          Delimiter.EMPTY.escape(property, sb);
+          sb.append(' ');
         }
       }
 
@@ -227,7 +236,7 @@ public class CRaSH {
       if (i  > 0) {
         line.append(' ');
       }
-      line.append(args[i]);
+      Delimiter.EMPTY.escape(args[i], line);
     }
 
     //
