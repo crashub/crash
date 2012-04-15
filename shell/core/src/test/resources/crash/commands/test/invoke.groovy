@@ -1,13 +1,12 @@
-import org.crsh.command.Description;
 import org.crsh.command.ScriptException;
 import java.lang.reflect.Method
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Argument
 import org.crsh.cmdline.annotations.Command;
 
-@Description("Invoke a static method")
 public class invoke extends org.crsh.command.CRaSHCommand {
 
+  @Usage("invoke a static method")
   @Command
   public Object main(
       @Usage("The fqn of the class to resolve")

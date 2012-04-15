@@ -1,6 +1,5 @@
 import javax.jcr.query.Query;
 import org.crsh.shell.ui.UIBuilder;
-import org.crsh.command.Description
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Man
@@ -8,7 +7,6 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.annotations.Argument;
 
-@Description("Executes a query with the XPATH dialect, by default results are limited to 5 ")
 public class xpath extends org.crsh.command.CRaSHCommand {
 
   @Usage("execute a JCR xpath query")
