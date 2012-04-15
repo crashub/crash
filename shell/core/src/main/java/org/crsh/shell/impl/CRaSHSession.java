@@ -132,6 +132,7 @@ public class CRaSHSession implements Shell, Closeable {
   }
 
   public void close() {
+    ClassLoader previous = setCRaSHLoader();
     try {
       Script login = getLifeCycle("logout");
       if (login != null) {
@@ -141,20 +142,35 @@ public class CRaSHSession implements Shell, Closeable {
     catch (CreateCommandException e) {
       e.printStackTrace();
     }
+    finally {
+      setPreviousLoader(previous);
+    }
   }
 
   // Shell implementation **********************************************************************************************
 
   public String getWelcome() {
-    GroovyShell shell = getGroovyShell();
-    Object ret = shell.evaluate("welcome();");
-    return String.valueOf(ret);
+    ClassLoader previous = setCRaSHLoader();
+    try {
+      GroovyShell shell = getGroovyShell();
+      Object ret = shell.evaluate("welcome();");
+      return String.valueOf(ret);
+    }
+    finally {
+      setPreviousLoader(previous);
+    }
   }
 
   public String getPrompt() {
-    GroovyShell shell = getGroovyShell();
-    Object ret = shell.evaluate("prompt();");
-    return String.valueOf(ret);
+    ClassLoader previous = setCRaSHLoader();
+    try {
+      GroovyShell shell = getGroovyShell();
+      Object ret = shell.evaluate("prompt();");
+      return String.valueOf(ret);
+    }
+    finally {
+      setPreviousLoader(previous);
+    }
   }
 
   public ShellProcess createProcess(String request) {
@@ -196,47 +212,64 @@ public class CRaSHSession implements Shell, Closeable {
    * For now basic implementation
    */
   public CommandCompletion complete(final String prefix) {
-    log.debug("Want prefix of " + prefix);
-    AST ast = new Parser(prefix).parse();
-    String termPrefix;
-    if (ast != null) {
-      AST.Term last = ast.lastTerm();
-      termPrefix = Utils.trimLeft(last.getLine());
-    } else {
-      termPrefix = "";
-    }
-
-    //
-    log.debug("Retained term prefix is " + prefix);
-    CommandCompletion completion;
-    int pos = termPrefix.indexOf(' ');
-    if (pos == -1) {
-      ValueCompletion completions = ValueCompletion.create();
-      for (String resourceId : crash.context.listResourceId(ResourceKind.COMMAND)) {
-        if (resourceId.startsWith(termPrefix)) {
-          completions.put(resourceId.substring(termPrefix.length()), true);
-        }
+    ClassLoader previous = setCRaSHLoader();
+    try {
+      log.debug("Want prefix of " + prefix);
+      AST ast = new Parser(prefix).parse();
+      String termPrefix;
+      if (ast != null) {
+        AST.Term last = ast.lastTerm();
+        termPrefix = Utils.trimLeft(last.getLine());
+      } else {
+        termPrefix = "";
       }
-      completion = new CommandCompletion(Delimiter.EMPTY, completions);
-    } else {
-      String commandName = termPrefix.substring(0, pos);
-      termPrefix = termPrefix.substring(pos);
-      try {
-        ShellCommand command = getCommand(commandName);
-        if (command != null) {
-          completion = command.complete(new BaseCommandContext(attributes), termPrefix);
-        } else {
+
+      //
+      log.debug("Retained term prefix is " + prefix);
+      CommandCompletion completion;
+      int pos = termPrefix.indexOf(' ');
+      if (pos == -1) {
+        ValueCompletion completions = ValueCompletion.create();
+        for (String resourceId : crash.context.listResourceId(ResourceKind.COMMAND)) {
+          if (resourceId.startsWith(termPrefix)) {
+            completions.put(resourceId.substring(termPrefix.length()), true);
+          }
+        }
+        completion = new CommandCompletion(Delimiter.EMPTY, completions);
+      } else {
+        String commandName = termPrefix.substring(0, pos);
+        termPrefix = termPrefix.substring(pos);
+        try {
+          ShellCommand command = getCommand(commandName);
+          if (command != null) {
+            completion = command.complete(new BaseCommandContext(attributes), termPrefix);
+          } else {
+            completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
+          }
+        }
+        catch (CreateCommandException e) {
+          log.debug("Could not create command for completion of " + prefix, e);
           completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
         }
       }
-      catch (CreateCommandException e) {
-        log.debug("Could not create command for completion of " + prefix, e);
-        completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
-      }
-    }
 
-    //
-    log.debug("Found completions for " + prefix + ": " + completion);
-    return completion;
+      //
+      log.debug("Found completions for " + prefix + ": " + completion);
+      return completion;
+    }
+    finally {
+      setPreviousLoader(previous);
+    }
+  }
+
+  ClassLoader setCRaSHLoader() {
+    Thread thread = Thread.currentThread();
+    ClassLoader previous = thread.getContextClassLoader();
+    thread.setContextClassLoader(crash.context.getLoader());
+    return previous;
+  }
+
+  void setPreviousLoader(ClassLoader previous) {
+    Thread.currentThread().setContextClassLoader(previous);
   }
 }

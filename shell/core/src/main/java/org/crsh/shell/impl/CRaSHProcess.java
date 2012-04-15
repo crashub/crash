@@ -45,46 +45,58 @@ abstract class CRaSHProcess implements ShellProcess {
   }
 
   public void execute(ShellProcessContext processContext) {
-    ShellResponse resp;
-    thread = Thread.currentThread();
+    ClassLoader previous = crash.setCRaSHLoader();
     try {
+      ShellResponse resp;
+      thread = Thread.currentThread();
       try {
-        resp = doInvoke(processContext);
-        if (Thread.interrupted() || cancelled) {
-          throw new InterruptedException("like a goto");
+        try {
+          resp = doInvoke(processContext);
+          if (Thread.interrupted() || cancelled) {
+            throw new InterruptedException("like a goto");
+          }
+        }
+        catch (InterruptedException e) {
+          resp = ShellResponse.cancelled();
+        }
+      } catch (Throwable t) {
+        resp = ShellResponse.internalError(t);
+      } finally {
+        thread = null;
+      }
+
+      //
+      processContext.end(resp);
+
+      //
+      if (resp instanceof ShellResponse.Error) {
+        ShellResponse.Error error = (ShellResponse.Error)resp;
+        Throwable t = error.getThrowable();
+        if (t != null) {
+          CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getText(), t);
+        } else {
+          CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getText());
         }
       }
-      catch (InterruptedException e) {
-        resp = ShellResponse.cancelled();
-      }
-    } catch (Throwable t) {
-      resp = ShellResponse.internalError(t);
-    } finally {
-      thread = null;
     }
-
-    //
-    processContext.end(resp);
-
-    //
-    if (resp instanceof ShellResponse.Error) {
-      ShellResponse.Error error = (ShellResponse.Error)resp;
-      Throwable t = error.getThrowable();
-      if (t != null) {
-        CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getText(), t);
-      } else {
-        CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getText());
-      }
+    finally {
+      crash.setPreviousLoader(previous);
     }
   }
 
   abstract ShellResponse doInvoke(ShellProcessContext context) throws InterruptedException;
 
   public void cancel() {
-    Thread t = thread;
-    if (t != null) {
-      t.interrupt();
+    ClassLoader previous = crash.setCRaSHLoader();
+    try {
+      Thread t = thread;
+      if (t != null) {
+        t.interrupt();
+      }
+      cancelled = true;
     }
-    cancelled = true;
+    finally {
+      crash.setPreviousLoader(previous);
+    }
   }
 }

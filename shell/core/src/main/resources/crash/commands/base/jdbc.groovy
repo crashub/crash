@@ -2,16 +2,18 @@ package crash.commands.base
 
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
-import org.crsh.command.InvocationContext
 import org.crsh.command.CRaSHCommand
 import java.sql.Statement
 import org.crsh.cmdline.annotations.Argument
-import java.sql.SQLException
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import javax.naming.InitialContext
 import javax.naming.NoInitialContextException
 import java.sql.DriverManager
+import org.crsh.command.ScriptException
+import org.crsh.cmdline.annotations.Option
+import java.lang.reflect.InvocationTargetException
+import org.crsh.cmdline.spi.Value
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -20,120 +22,128 @@ import java.sql.DriverManager
 @Usage("JDBC connection")
 class jdbc extends CRaSHCommand {
   
-  @Usage("connect to database with JDBC connection string")
+  @Usage("connect to database with a JDBC connection string")
   @Command
-  public void connect(
-    InvocationContext<Void, Void> context,
-    @Usage("The connection string") @Argument String connectionString) {
-
-    //
+  public String connect(
+          @Usage("The username") @Option(names=["u","username"]) String user,
+          @Usage("The password") @Option(names=["p","password"]) String password,
+          @Usage("The extra properties") @Option(names=["properties"]) Value.Properties properties,
+          @Usage("The connection string") @Argument String connectionString) {
     if (connection != null) {
-      context.writer.println("Already connected")
-      return;
+      throw new ScriptException("Already connected");
+    }
+    if (connectionString == null) {
+      return "Connection string is mandatory"
     }
 
-    //
-    if (connectionString == null) {
-      if (isInTestMode) {
-        connectionString = "jdbc:derby:EmbeddedDB;create=true"
-      } else {
-        context.writer.println("Connection string is mandatory")
-        return;
+    // Build connection properties
+    Properties props = new Properties()
+    if (user != null)
+      props["user"] = user
+    if (password != null)
+      props["password"] = password
+    if (properties != null) {
+      properties.each {
+        props[it.key] = it.value
       }
     }
 
-    //
-    connection = DriverManager.getConnection(connectionString)
-    context.writer.println("Connected to data base : $connectionString")
-  }
-
-  @Usage("open connection from datasource")
-  @Command
-  public void open(
-    InvocationContext<Void, Void> context,
-    @Usage("The datasource") @Argument String datasource) {
+    // We use this trick to work around the fact that the DriverManager#getConnection will not
+    // use the thread context classloader because of the nasty DriverManager#getCallerClassLoader method
+    def getConnection = DriverManager.class.getDeclaredMethod("getConnection", String.class, Properties.class, ClassLoader.class)
+    if (!getConnection.accessible)
+      getConnection.accessible = true
 
     //
-    if (connection != null) {
-      context.writer.println("Already connected")
-      return
+    try {
+      connection = getConnection.invoke(null, connectionString, props, Thread.currentThread().getContextClassLoader());
+    }
+    catch (InvocationTargetException ite) {
+      throw ite.cause;
     }
 
-    if (datasource == null) {
-      context.writer.println("Datasource is mandatory")
-      return
+    //
+    return "Connected to data base : $connectionString"
+  }
+
+  @Usage("open a connection from JNDI bound datasource")
+  @Command
+  public String open(@Usage("The datasource global JNDI name") @Argument String globalName) {
+    if (connection != null) {
+      throw new ScriptException("Already connected");
+    }
+
+    if (globalName == null) {
+      throw new ScriptException("Datasource is mandatory");
     }
 
     //
     try {
       def ic = new InitialContext()
       def ctx = ic.lookup("java:")
-      def ds = ctx.lookup(datasource)
+      def ds = ctx.lookup(globalName)
       if (ds == null) {
-        context.writer.println("Datasource $datasource not found in JNDI")
-        return
+        return "Datasource $globalName not found in JNDI"
       }
       connection = ds.connection
-      context.writer.println "Connected to $datasource datasource"
+      return "Connected to $globalName datasource"
     } catch (NoInitialContextException e) {
-      context.writer.println "No initial context found"
+      throw new ScriptException("No initial context found", e)
     }
   }
 
-  @Usage("execute SQL query")
+  @Usage("execute SQL statement")
   @Command
-  public void query(
-    InvocationContext<Void, Void> context,
-    @Usage("The query") @Argument(unquote = false) List<String> sqlQuery) {
+  public String execute(@Usage("The statement") @Argument(unquote = false) List<String> statement) {
     if (connection == null) {
-      context.writer.println("You are not connected to database, please call jdbc open [JNDI DS]")
+      throw new ScriptException("You are not connected to database, please call jdbc open [JNDI DS]");
     } else {
-      Statement statement = connection.createStatement();
+      Statement stmt = connection.createStatement();
       String sql = "";
-      sqlQuery.each { sql += " " + it };
-      try {
-        statement.execute(sql)
-        ResultSet resultSet = statement.getResultSet();
-        if (resultSet == null) {
-          context.writer.println("Query executed successfully")
-        } else {
+      statement.each { sql += " " + it };
+      stmt.execute(sql)
+      ResultSet resultSet = stmt.getResultSet();
+      if (resultSet == null) {
+        return "Query executed successfully";
+      } else {
 
-          // Construct format
-          def formatString = "";
-          Formatter formatter = new Formatter(context.writer);
-          ResultSetMetaData metaData = resultSet.getMetaData();
-          int columnCount = resultSet.getMetaData().getColumnCount()
-          (1..columnCount).each{ formatString += "%$it\$-20s " }
-          formatString += "\r\n"
+        StringBuilder res = new StringBuilder()
 
-          // print header
-          String[] header = new String[metaData.getColumnCount()];
-          (1..columnCount).each{ header[it-1] = metaData.getColumnName(it) }
-          formatter.format(formatString, header);
+        // Construct format
+        def formatString = "";
+        Formatter formatter = new Formatter(res);
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = resultSet.getMetaData().getColumnCount()
+        (1..columnCount).each{ formatString += "%$it\$-20s " }
+        formatString += "\r\n"
 
-          // print conent
-          String[] content = new String[metaData.getColumnCount()];
-          while (resultSet.next()) {
-            (1..columnCount).each{ content[it-1] = resultSet.getString(it) }
-            formatter.format(formatString, content);
-          }
+        // Print header
+        String[] header = new String[metaData.getColumnCount()];
+        (1..columnCount).each{ header[it-1] = metaData.getColumnName(it) }
+        formatter.format(formatString, header);
+
+        // Print conent
+        String[] content = new String[metaData.getColumnCount()];
+        while (resultSet.next()) {
+          (1..columnCount).each{ content[it-1] = resultSet.getString(it) }
+          formatter.format(formatString, content);
         }
-      } catch (SQLException e) {
-        context.writer.println(e.getMessage())
+
+        //
+        return res;
       }
     }
   }
 
   @Usage("close the current connection")
   @Command
-  public void close(
-    InvocationContext<Void, Void> context) {
+  public String close() {
     if (connection == null) {
-      context.writer.println("Not connected")
+      throw new ScriptException("Not connected");
     } else {
       connection.close();
       connection = null;
-      context.writer.println("Connection closed")
+      return "Connection closed"
     }
   }
 }
