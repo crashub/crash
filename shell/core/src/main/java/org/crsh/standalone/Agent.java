@@ -37,7 +37,9 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -48,7 +50,7 @@ public class Agent {
   /** . */
   private static Logger log = LoggerFactory.getLogger(Agent.class);
 
-  public static void agentmain(final String agentArgs, Instrumentation inst) throws Exception {
+  public static void agentmain(final String agentArgs, final Instrumentation inst) throws Exception {
     log.info("CRaSH agent loaded");
 
     //
@@ -59,7 +61,7 @@ public class Agent {
           ClassDescriptor<Agent> c = CommandFactory.create(Agent.class);
           Matcher<Agent> matcher = Matcher.createMatcher("main", c);
           CommandMatch<Agent, ?, ?> match = matcher.match(agentArgs);
-          match.invoke(new InvocationContext(), new Agent());
+          match.invoke(new InvocationContext(), new Agent(inst));
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -69,6 +71,13 @@ public class Agent {
     //
     t.start();
     log.info("Spawned CRaSH thread " + t.getId() + " for further processing");
+  }
+
+  /** . */
+  private final Instrumentation instrumentation;
+
+  public Agent(Instrumentation instrumentation) {
+    this.instrumentation = instrumentation;
   }
 
   @Command
@@ -124,6 +133,10 @@ public class Agent {
       }
       bootstrap.setConfig(config);
     }
+
+    // Set the instrumentation available as an attribute
+    Map<String, Object> attributes = Collections.<String, Object>singletonMap("instrumentation", instrumentation);
+    bootstrap.setAttributes(attributes);
 
     // Do bootstrap
     bootstrap.bootstrap();
