@@ -136,6 +136,21 @@ public final class Path implements Iterable<String> {
     return names.length > 0 ? names[names.length - 1] : "";
   }
 
+  public boolean isChildOf(Path parent) {
+    if (parent.dir) {
+      int length = parent.names.length;
+      if (names.length == length + 1) {
+        for (int i = 0;i < length;i++) {
+          if (names[i].equals(parent.names[i])) {
+            return false;
+          }
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == this) {
@@ -143,9 +158,26 @@ public final class Path implements Iterable<String> {
     }
     if (o instanceof Path) {
       Path that = (Path)o;
-      return dir == that.dir && super.equals(that);
+      int length = that.names.length;
+      if (names.length == length) {
+        for (int i = 0;i < length;i++) {
+          if (!names[i].equals(that.names[i])) {
+            return false;
+          }
+        }
+        return true;
+      }
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    int hashCode = dir ? 1 : 0;
+    for (int i = names.length - 1;i >= 0;i--) {
+      hashCode = hashCode * 41 + names[i].hashCode();
+    }
+    return hashCode;
   }
 
   public String getValue() {
@@ -160,11 +192,6 @@ public final class Path implements Iterable<String> {
       value = sb.toString();
     }
     return value;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode() ^ (dir ? 1 : 0);
   }
 
   public String toString() {

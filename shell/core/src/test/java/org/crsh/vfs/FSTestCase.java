@@ -22,6 +22,7 @@ package org.crsh.vfs;
 import junit.framework.TestCase;
 import org.crsh.util.IO;
 import org.crsh.vfs.spi.jarurl.*;
+import org.crsh.vfs.spi.ram.RAMDriver;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -118,5 +119,17 @@ public class FSTestCase extends TestCase {
     URL clazzURL = driver.toURL(clazz);
     InputStream in = clazzURL.openStream();
     in.close();
+  }
+
+  public void testRAM() throws Exception {
+    RAMDriver driver = new RAMDriver();
+    driver.add("/foo", "bar");
+    Path root = driver.root();
+    assertEquals(Path.get("/"), root);
+    Path foo = driver.child(root, "foo");
+    assertNotNull(foo);
+    URL url = driver.toURL(foo);
+    String file = IO.readAsUTF8(url.openStream());
+    assertEquals("bar", file);
   }
 }
