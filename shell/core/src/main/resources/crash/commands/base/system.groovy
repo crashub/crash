@@ -15,6 +15,7 @@ import org.crsh.cmdline.annotations.Option
 
 import org.crsh.cmdline.completers.EnumCompleter
 import org.crsh.cmdline.spi.ValueCompletion
+import java.util.regex.Pattern
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -28,42 +29,36 @@ class system extends CRaSHCommand implements Completer {
   @Usage("list the vm system properties")
   @Command
   public void propls(
-    InvocationContext<Void, Map.Entry> context) {
-
-    def formatString = "%1\$-35s %2\$-20s\r\n";
-    Formatter formatter = new Formatter(context.writer);
+    @Usage("filter the property with a regular expression on their name")
+    @Option(names=["f","filter"])
+    String filter) {
+    def pattern = Pattern.compile(filter?:".*");
+    def formatString = "%1\$-35s %2\$-20s\r\n"
+    Formatter formatter = new Formatter(out)
     formatter.format(formatString, "NAME", "VALUE");
-
     System.getProperties().each {
-      if (it != null) {
+      def matcher = it.key =~ pattern;
+      if (matcher.matches()) {
         formatter.format formatString, it.key, it.value
-        context.produce it
       }
     }
   }
 
   @Usage("set a system property")
   @Command
-  public void propset(
-    InvocationContext<Void, Void> context,
-    @PropertyName PropName name,
-    @PropertyValue String value) {
+  public void propset(@PropertyName PropName name, @PropertyValue String value) {
     System.setProperty name.toString(), value
   }
 
   @Usage("get a system property")
   @Command
-  public void propget(
-    InvocationContext<Void, Void> context,
-    @PropertyName PropName name) {
-    context.writer.print System.getProperty(name.toString())
+  public String propget(@PropertyName PropName name) {
+    return System.getProperty(name.toString()) ?: ""
   }
 
   @Usage("remove a system property")
   @Command
-  public void proprm(
-    InvocationContext<Void, Void> context,
-    @PropertyName PropName name) {
+  public void proprm(@PropertyName PropName name) {
     System.clearProperty name.toString()
   }
 
@@ -73,44 +68,37 @@ class system extends CRaSHCommand implements Completer {
     if (parameter.getJavaValueType() == PropName.class) {
       System.getProperties().each() {
         if (it.key.startsWith(prefix)) {
-          c.put(it.key.substring(prefix.length()), true);
+          c.put(it.key.substring(prefix.length()), true)
         }
       }
     }
-    return c;
+    return c
   }
 
   // Memory commands
 
   @Usage("call garbage collector")
   @Command
-  public void gc(
-      InvocationContext<Void, Map.Entry> context) {
+  public void gc() {
     System.gc()
   }
 
   @Usage("show free memory")
   @Command
-  public void freemem(
-      InvocationContext<Void, Map.Entry> context,
-      @UnitOpt Unit unit,
-      @DecimalOpt Integer decimal) {
+  public String freemem(@UnitOpt Unit unit, @DecimalOpt Integer decimal) {
     if (unit == null) {
-      unit = Unit.B;
+      unit = Unit.B
     }
-    context.writer.println(unit.compute(Runtime.getRuntime().freeMemory(), decimal) + unit.human)
+    return unit.compute(Runtime.getRuntime().freeMemory(), decimal) + unit.human
   }
 
   @Usage("show total memory")
   @Command
-  public void totalmem(
-      InvocationContext<Void, Map.Entry> context,
-      @UnitOpt Unit unit,
-      @DecimalOpt Integer decimal) {
+  public String totalmem(@UnitOpt Unit unit, @DecimalOpt Integer decimal) {
     if (unit == null) {
       unit = Unit.B;
     }
-    context.writer.println(unit.compute(Runtime.getRuntime().totalMemory(), decimal) + unit.human)
+    return unit.compute(Runtime.getRuntime().totalMemory(), decimal) + unit.human
   }
 }
 
@@ -132,23 +120,24 @@ class PropName extends Value {
 @interface PropertyValue { }
 
 enum Unit { B(1, "b"), K(1024, "Kb"), M(1024 * 1024, "Mb"), G(1024 * 1024 * 1024, "Gb")
-  final long unit;
-  final String human;
+
+  final long unit
+  final String human
 
   Unit(long unit, String human) {
-    this.unit = unit;
-    this.human = human;
+    this.unit = unit
+    this.human = human
   }
 
   public String compute(long space, Integer decimal) {
     if (decimal == null) {
       decimal = 0
     }
-    return new BigDecimal(space / unit).setScale(decimal, BigDecimal.ROUND_HALF_UP).toPlainString();
+    return new BigDecimal(space / unit).setScale(decimal, BigDecimal.ROUND_HALF_UP).toPlainString()
   }
 
   public String getHuman() {
-    return this.human;
+    return this.human
   }
 }
 
