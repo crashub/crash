@@ -28,8 +28,8 @@ import org.crsh.plugin.PropertyDescriptor;
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-@Usage("various shell commands")
-class crash extends CRaSHCommand {
+@Usage("shell related command")
+class shell extends CRaSHCommand {
 
   static def STATUS_MAP = [
       (CRaSHPlugin.CONSTRUCTED):"constructed",
@@ -38,7 +38,7 @@ class crash extends CRaSHCommand {
       (CRaSHPlugin.INITIALIZING):"initializing"
   ];
 
-  @Usage("list plugins")
+  @Usage("list the loaded plugins and their configuration")
   @Command
   public Object plugins() {
     def builder = new UIBuilder();
@@ -61,7 +61,7 @@ class crash extends CRaSHCommand {
     return builder;
   }
 
-  @Usage("list properties")
+  @Usage("list the configuration properties and their description")
   @Command
   public Object properties() {
     def builder = new UIBuilder();

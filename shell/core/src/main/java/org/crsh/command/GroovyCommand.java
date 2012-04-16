@@ -97,17 +97,15 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       }
     } else {
       if (context instanceof InvocationContext<?, ?>) {
-        if (!"crash".equals(property)) {
-          CRaSH crash = (CRaSH)context.getAttributes().get("crash");
-          if (crash != null) {
-            try {
-              ShellCommand cmd = crash.getCommand(property);
-              if (cmd != null) {
-                return new CommandDispatcher(cmd, (InvocationContext<?, ?>)context);
-              }
-            } catch (NoSuchCommandException e) {
-              throw new InvokerInvocationException(e);
+        CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+        if (crash != null) {
+          try {
+            ShellCommand cmd = crash.getCommand(property);
+            if (cmd != null) {
+              return new CommandDispatcher(cmd, (InvocationContext<?, ?>)context);
             }
+          } catch (NoSuchCommandException e) {
+            throw new InvokerInvocationException(e);
           }
         }
       }
