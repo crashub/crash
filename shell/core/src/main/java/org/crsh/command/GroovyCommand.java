@@ -60,7 +60,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
             throw new InvokerInvocationException(ce);
           }
           if (cmd != null) {
-            CommandDispatcher dispatcher = new CommandDispatcher(cmd, new InnerInvocationContext(ic));
+            CommandDispatcher dispatcher = new CommandDispatcher(cmd, ic);
             return dispatcher.invokeMethod("", args);
           }
         }
@@ -96,8 +96,6 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
         return null;
       }
     } else {
-
-      //
       if (context instanceof InvocationContext<?, ?>) {
         if (!"crash".equals(property)) {
           CRaSH crash = (CRaSH)context.getAttributes().get("crash");
@@ -105,7 +103,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
             try {
               ShellCommand cmd = crash.getCommand(property);
               if (cmd != null) {
-                return new CommandDispatcher(cmd, new InnerInvocationContext((InvocationContext<?, ?>)context));
+                return new CommandDispatcher(cmd, (InvocationContext<?, ?>)context);
               }
             } catch (NoSuchCommandException e) {
               throw new InvokerInvocationException(e);

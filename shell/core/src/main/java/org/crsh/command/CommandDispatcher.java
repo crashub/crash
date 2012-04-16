@@ -1,5 +1,6 @@
 package org.crsh.command;
 
+import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
 import groovy.lang.Tuple;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
@@ -13,12 +14,12 @@ import java.util.Map;
 final class CommandDispatcher extends GroovyObjectSupport {
 
   /** . */
-  final InnerInvocationContext ic;
+  final InvocationContext ic;
 
   /** . */
   final ShellCommand command;
 
-  CommandDispatcher(ShellCommand command, InnerInvocationContext ic) {
+  CommandDispatcher(ShellCommand command, InvocationContext ic) {
     this.command = command;
     this.ic = ic;
   }
@@ -42,12 +43,23 @@ final class CommandDispatcher extends GroovyObjectSupport {
     if (methodName.length() > 0) {
       line.append(methodName).append(" ");
     }
-    if (arguments.length > 0) {
+
+    //
+    Closure closure;
+    int to = arguments.length;
+    if (to > 0 && arguments[to - 1] instanceof Closure) {
+      closure = (Closure)arguments[--to];
+    } else {
+      closure = null;
+    }
+
+    //
+    if (to > 0) {
       Object first = arguments[0];
-      int index;
+      int from;
       try {
         if (first instanceof Map<?, ?>) {
-          index = 1;
+          from = 1;
           Map<?, ?> options = (Map<?, ?>)first;
           for (Map.Entry<?, ?> option : options.entrySet()) {
             String optionName = option.getKey().toString();
@@ -77,10 +89,10 @@ final class CommandDispatcher extends GroovyObjectSupport {
             }
           }
         } else {
-          index = 0;
+          from = 0;
         }
-        while (index < arguments.length) {
-          Object o = arguments[index++];
+        while (from < to) {
+          Object o = arguments[from++];
           line.append(" ");
           line.append("\"");
           Delimiter.DOUBLE_QUOTE.escape(o.toString(), line);
@@ -95,7 +107,19 @@ final class CommandDispatcher extends GroovyObjectSupport {
     //
     try {
       CommandInvoker<Void, Void> invoker = (CommandInvoker<Void, Void>)command.createInvoker(line.toString());
-      invoker.invoke(ic);
+      Class producedType = invoker.getProducedType();
+      InnerInvocationContext inc = new InnerInvocationContext(ic, producedType);
+      invoker.invoke(inc);
+
+      //
+      if (closure != null) {
+        for (Object o : inc.products) {
+          closure.call(o);
+        }
+      }
+
+      //
+      return null;
     }
     catch (Exception e) {
       if (e instanceof RuntimeException) {
@@ -105,8 +129,5 @@ final class CommandDispatcher extends GroovyObjectSupport {
         throw new InvokerInvocationException(e);
       }
     }
-
-    //
-    return null;
   }
 }

@@ -1,16 +1,29 @@
 package org.crsh.command;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-class InnerInvocationContext implements InvocationContext<Void, Void> {
+class InnerInvocationContext<P> implements InvocationContext<Void, P> {
 
   /** . */
   final InvocationContext<?, ?> outter;
 
-  InnerInvocationContext(InvocationContext<?, ?> outter) {
+  /** . */
+  final Class<? extends P> producedType;
+
+  /** . */
+  List<P> products;
+
+  InnerInvocationContext(
+    InvocationContext<?, ?> outter,
+    Class<? extends P> producedType) {
     this.outter = outter;
+    this.products = Collections.emptyList();
+    this.producedType = producedType;
   }
 
   public int getWidth() {
@@ -37,8 +50,11 @@ class InnerInvocationContext implements InvocationContext<Void, Void> {
     throw new IllegalStateException();
   }
 
-  public void produce(Void product) {
-    throw new IllegalStateException();
+  public void produce(P product) {
+    if (products.isEmpty()) {
+      products = new ArrayList<P>();
+    }
+    products.add(product);
   }
 
   public Map<String, Object> getAttributes() {

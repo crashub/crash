@@ -75,7 +75,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
             throw new InvokerInvocationException(ce);
           }
           if (cmd != null) {
-            CommandDispatcher dispatcher = new CommandDispatcher(cmd, new InnerInvocationContext(ic));
+            CommandDispatcher dispatcher = new CommandDispatcher(cmd, ic);
             return dispatcher.invokeMethod("", args);
           }
         }
@@ -88,28 +88,36 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
 
   @Override
   public final Object getProperty(String property) {
-    if (context instanceof InvocationContext<?, ?>) {
-      if (!"crash".equals(property)) {
-        CRaSH crash = (CRaSH)context.getAttributes().get("crash");
-        if (crash != null) {
-          try {
-            ShellCommand cmd = crash.getCommand(property);
-            if (cmd != null) {
-              return new CommandDispatcher(cmd, new InnerInvocationContext((InvocationContext<?, ?>)context));
+    if ("out".equals(property)) {
+      if (context instanceof InvocationContext<?, ?>) {
+        return ((InvocationContext<?, ?>)context).getWriter();
+      } else {
+        return null;
+      }
+    } else {
+      if (context instanceof InvocationContext<?, ?>) {
+        if (!"crash".equals(property)) {
+          CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+          if (crash != null) {
+            try {
+              ShellCommand cmd = crash.getCommand(property);
+              if (cmd != null) {
+                return new CommandDispatcher(cmd, (InvocationContext<?, ?>)context);
+              }
+            } catch (NoSuchCommandException e) {
+              throw new InvokerInvocationException(e);
             }
-          } catch (NoSuchCommandException e) {
-            throw new InvokerInvocationException(e);
           }
         }
       }
-    }
 
-    //
-    try {
-      return super.getProperty(property);
-    }
-    catch (MissingPropertyException e) {
-      return null;
+      //
+      try {
+        return super.getProperty(property);
+      }
+      catch (MissingPropertyException e) {
+        return null;
+      }
     }
   }
 

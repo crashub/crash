@@ -329,4 +329,35 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     //
     assertOk("bar", "foo");
   }
+
+  /** . */
+  private final String produce_command = "class produce_command extends org.crsh.command.CRaSHCommand {\n" +
+    "@Command\n" +
+    "public void main(org.crsh.command.InvocationContext<Void, String> context) {\n" +
+    "['foo','bar'].each { context.produce(it) }" +
+    "}\n" +
+    "}";
+
+  public void testProduce() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() {\n" +
+      "produce_command { out << it }\n" +
+      "}\n" +
+      "}";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("produce_command", produce_command);
+
+    //
+    assertOk("foobar", "foo");
+  }
+
+  public void testProduceInScript() {
+    String foo = "produce_command { out << it }\n";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("produce_command", produce_command);
+
+    //
+    assertOk("foobar", "foo");
+  }
 }
