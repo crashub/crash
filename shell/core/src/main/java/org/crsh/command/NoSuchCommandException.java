@@ -17,46 +17,38 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl;
+package org.crsh.command;
 
 import org.crsh.shell.ErrorType;
-import org.crsh.shell.ShellResponse;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-final class CreateCommandException extends Exception {
+public final class NoSuchCommandException extends Exception {
 
   /** . */
-  private final ShellResponse response;
+  private final String commandName;
 
-  CreateCommandException(ShellResponse response) {
-    this.response = response;
+  public NoSuchCommandException(String commandName) {
+    this.commandName = commandName;
   }
 
-  CreateCommandException(ErrorType errorType, String message) {
+  public NoSuchCommandException(String commandName, ErrorType errorType, String message) {
     super(message);
 
     //
-    this.response = ShellResponse.error(errorType, message);
+    this.commandName = commandName;
   }
 
-  CreateCommandException(ErrorType errorType, String message, Throwable cause) {
+  public NoSuchCommandException(String commandName, ErrorType errorType, String message, Throwable cause) {
     super(message, cause);
 
     //
-    this.response = ShellResponse.error(errorType, message, cause);
+    this.commandName = commandName;
   }
 
-  CreateCommandException(ErrorType errorType, Throwable cause) {
-    super(cause);
-
-    //
-    this.response = ShellResponse.internalError(cause);
-  }
-
-  public ShellResponse getResponse() {
-    return response;
+  public String getCommandName() {
+    return commandName;
   }
 }

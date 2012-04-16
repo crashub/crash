@@ -2,6 +2,7 @@ package org.crsh.shell.impl;
 
 import groovy.lang.Script;
 import org.crsh.command.GroovyScriptCommand;
+import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
@@ -43,10 +44,10 @@ public class CRaSH {
    *
    * @param name the command name
    * @return a command instance
-   * @throws CreateCommandException if an error occured preventing the command creation
+   * @throws org.crsh.command.NoSuchCommandException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  public ShellCommand getCommand(String name) throws CreateCommandException, NullPointerException {
+  public ShellCommand getCommand(String name) throws NoSuchCommandException, NullPointerException {
     return commands.getInstance(name);
   }
 }

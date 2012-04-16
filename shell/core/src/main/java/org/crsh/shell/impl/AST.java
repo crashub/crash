@@ -20,6 +20,7 @@
 package org.crsh.shell.impl;
 
 import org.crsh.command.CommandInvoker;
+import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
@@ -53,7 +54,7 @@ abstract class AST {
       this.next = next;
     }
 
-    final CRaSHProcess create(CRaSHSession crash, String request) throws CreateCommandException {
+    final CRaSHProcess create(CRaSHSession crash, String request) throws NoSuchCommandException {
       term.create(crash);
       if (next != null) {
         next.create(crash);
@@ -66,7 +67,7 @@ abstract class AST {
       };
     }
 
-    private void create(CRaSHSession crash) throws CreateCommandException {
+    private void create(CRaSHSession crash) throws NoSuchCommandException {
       term.create(crash);
       if (next != null) {
         next.create(crash);
@@ -183,7 +184,7 @@ abstract class AST {
       this.next = next;
     }
 
-    private void create(CRaSHSession session) throws CreateCommandException {
+    private void create(CRaSHSession session) throws NoSuchCommandException {
       CommandInvoker invoker = null;
       if (name != null) {
         command = session.crash.getCommand(name);
@@ -194,7 +195,7 @@ abstract class AST {
 
       //
       if (invoker == null) {
-        throw new CreateCommandException(ShellResponse.unknownCommand(name));
+        throw new NoSuchCommandException(name);
       } else {
         this.invoker = invoker;
       }

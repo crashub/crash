@@ -33,7 +33,7 @@ public class CommandExecutionTestCase extends AbstractCommandTestCase {
   }
 
   public void testInvalid() throws Exception {
-    Throwable t = assertError("invalid");
-    assertEquals(MultipleCompilationErrorsException.class, t.getClass());
+    assertUnknownCommand("invalid");
+//    assertEquals(MultipleCompilationErrorsException.class, t.getClass());
   }
 }

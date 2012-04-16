@@ -23,6 +23,8 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
+import org.codehaus.groovy.runtime.InvokerInvocationException;
+import org.crsh.shell.impl.CRaSH;
 
 /**
  * A base command that should be subclasses by Groovy commands. For this matter it inherits the
@@ -41,7 +43,30 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       return super.invokeMethod(name, args);
     }
     catch (MissingMethodException e) {
+
+      //
       CommandContext context = getContext();
+
+      //
+      if (context instanceof InvocationContext) {
+        InvocationContext ic = (InvocationContext)context;
+        CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+        if (crash != null) {
+          ShellCommand cmd;
+          try {
+            cmd = crash.getCommand(name);
+          }
+          catch (NoSuchCommandException ce) {
+            throw new InvokerInvocationException(ce);
+          }
+          if (cmd != null) {
+            CommandDispatcher dispatcher = new CommandDispatcher(cmd, new InnerInvocationContext(ic));
+            return dispatcher.invokeMethod("", args);
+          }
+        }
+      }
+
+      //
       Object o = context.getAttributes().get(name);
       if (o instanceof Closure) {
         Closure closure = (Closure)o;
@@ -63,19 +88,37 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
 
   @Override
   public final Object getProperty(String property) {
+    CommandContext context = getContext();
     if ("out".equals(property)) {
-      CommandContext context = getContext();
       if (context instanceof InvocationContext<?, ?>) {
         return ((InvocationContext<?, ?>)context).getWriter();
       } else {
         return null;
       }
     } else {
+
+      //
+      if (context instanceof InvocationContext<?, ?>) {
+        if (!"crash".equals(property)) {
+          CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+          if (crash != null) {
+            try {
+              ShellCommand cmd = crash.getCommand(property);
+              if (cmd != null) {
+                return new CommandDispatcher(cmd, new InnerInvocationContext((InvocationContext<?, ?>)context));
+              }
+            } catch (NoSuchCommandException e) {
+              throw new InvokerInvocationException(e);
+            }
+          }
+        }
+      }
+
+      //
       try {
         return super.getProperty(property);
       }
       catch (MissingPropertyException e) {
-        CommandContext context = getContext();
         return context.getAttributes().get(property);
       }
     }

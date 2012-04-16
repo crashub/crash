@@ -20,11 +20,14 @@ package org.crsh.command;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
+import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
+import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.shell.impl.CRaSH;
 import org.crsh.util.Strings;
 
 import java.util.List;
@@ -39,6 +42,9 @@ import java.util.List;
 public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker<Void, Void> {
 
   /** . */
+  private CommandContext context;
+
+  /** . */
   private String[] args;
 
   public final Class<Void> getProducedType() {
@@ -50,7 +56,55 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   }
 
   @Override
+  public Object invokeMethod(String name, Object args) {
+
+    //
+    try {
+      return super.invokeMethod(name, args);
+    }
+    catch (MissingMethodException e) {
+      if (context instanceof InvocationContext) {
+        InvocationContext ic = (InvocationContext)context;
+        CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+        if (crash != null) {
+          ShellCommand cmd;
+          try {
+            cmd = crash.getCommand(name);
+          }
+          catch (NoSuchCommandException ce) {
+            throw new InvokerInvocationException(ce);
+          }
+          if (cmd != null) {
+            CommandDispatcher dispatcher = new CommandDispatcher(cmd, new InnerInvocationContext(ic));
+            return dispatcher.invokeMethod("", args);
+          }
+        }
+      }
+
+      //
+      throw e;
+    }
+  }
+
+  @Override
   public final Object getProperty(String property) {
+    if (context instanceof InvocationContext<?, ?>) {
+      if (!"crash".equals(property)) {
+        CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+        if (crash != null) {
+          try {
+            ShellCommand cmd = crash.getCommand(property);
+            if (cmd != null) {
+              return new CommandDispatcher(cmd, new InnerInvocationContext((InvocationContext<?, ?>)context));
+            }
+          } catch (NoSuchCommandException e) {
+            throw new InvokerInvocationException(e);
+          }
+        }
+      }
+    }
+
+    //
     try {
       return super.getProperty(property);
     }
@@ -79,17 +133,24 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     setBinding(binding);
 
     //
-    Object res = run();
+    this.context = context;
+    try {
+      //
+      Object res = run();
 
-    // Evaluate the closure
-    if (res instanceof Closure) {
-      Closure closure = (Closure)res;
-      res = closure.call(args);
+      // Evaluate the closure
+      if (res instanceof Closure) {
+        Closure closure = (Closure)res;
+        res = closure.call(args);
+      }
+
+      //
+      if (res != null) {
+        context.getWriter().print(res);
+      }
     }
-
-    //
-    if (res != null) {
-      context.getWriter().print(res);
+    finally {
+      context = null;
     }
   }
 

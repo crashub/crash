@@ -26,6 +26,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.impl.BaseCommandContext;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ShellCommand;
@@ -75,7 +76,7 @@ public class CRaSHSession implements Shell, Closeable {
     return groovyShell;
   }
 
-  public Script getLifeCycle(String name) throws CreateCommandException, NullPointerException {
+  public Script getLifeCycle(String name) throws NoSuchCommandException, NullPointerException {
     Class<? extends Script> scriptClass = crash.lifecycles.getClass(name);
     if (scriptClass != null) {
       Script script = InvokerHelper.createScript(scriptClass, new Binding(attributes));
@@ -112,7 +113,7 @@ public class CRaSHSession implements Shell, Closeable {
         login.run();
       }
     }
-    catch (CreateCommandException e) {
+    catch (NoSuchCommandException e) {
       e.printStackTrace();
     }
 
@@ -126,7 +127,7 @@ public class CRaSHSession implements Shell, Closeable {
         login.run();
       }
     }
-    catch (CreateCommandException e) {
+    catch (NoSuchCommandException e) {
       e.printStackTrace();
     }
     finally {
@@ -178,8 +179,9 @@ public class CRaSHSession implements Shell, Closeable {
         // Create commands first
         try {
           return expr.create(this, request);
-        } catch (CreateCommandException e) {
-          response = e.getResponse();
+        } catch (NoSuchCommandException e) {
+          log.error("Could not create shell process", e);
+          response = ShellResponse.unknownCommand(e.getCommandName());
         }
       } else {
         response = ShellResponse.noCommand();
@@ -234,7 +236,7 @@ public class CRaSHSession implements Shell, Closeable {
             completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
           }
         }
-        catch (CreateCommandException e) {
+        catch (NoSuchCommandException e) {
           log.debug("Could not create command for completion of " + prefix, e);
           completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
         }

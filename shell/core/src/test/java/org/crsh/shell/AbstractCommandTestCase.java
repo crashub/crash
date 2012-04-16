@@ -109,16 +109,21 @@ public abstract class AbstractCommandTestCase extends TestCase {
 
   protected final Throwable assertError(String s) {
     ShellResponse resp = evaluate(s);
-    assertTrue("Was expecting an ok response instead of " + resp, resp instanceof ShellResponse.Error);
+    assertTrue("Was expecting an error response instead of " + resp, resp instanceof ShellResponse.Error);
     return ((ShellResponse.Error)resp).getThrowable();
   }
 
-  protected final ShellResponse.Display assertOk(String expected, String s) {
+  protected final ShellResponse.Display assertDisplay(String expected, String s) {
     ShellResponse.Ok ok = assertOk(s);
     assertTrue("Was not expecting response to be " + ok, ok instanceof ShellResponse.Display);
-    ShellResponse.Display display = (ShellResponse.Display)ok;
-    assertEquals(expected, display.getText());
-    return display;
+    assertEquals(expected, ok.getText());
+    return (ShellResponse.Display)ok;
+  }
+
+  protected final ShellResponse.Ok assertOk(String expected, String s) {
+    ShellResponse.Ok ok = assertOk(s);
+    assertEquals(expected, ok.getText());
+    return ok;
   }
 
   protected final ShellResponse.Ok assertOk(String s) {

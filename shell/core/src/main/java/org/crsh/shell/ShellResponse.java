@@ -118,6 +118,11 @@ public abstract class ShellResponse {
     public String getText() {
       return "Unknown command " + name;
     }
+
+    @Override
+    public String toString() {
+      return "UnknownCommand[" + name + "]";
+    }
   }
 
   public static class NoCommand extends ShellResponse {

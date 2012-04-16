@@ -7,6 +7,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.GroovyScriptCommand;
+import org.crsh.command.NoSuchCommandException;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
@@ -50,7 +51,7 @@ class ClassManager<T> {
     this.kind = kind;
   }
 
-  Class<? extends T> getClass(String name) throws CreateCommandException, NullPointerException {
+  Class<? extends T> getClass(String name) throws NoSuchCommandException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null argument allowed");
     }
@@ -78,7 +79,7 @@ class ClassManager<T> {
           clazz = gcl.parseClass(gcs, false);
         }
         catch (CompilationFailedException e) {
-          throw new CreateCommandException(ErrorType.INTERNAL, "Could not compile command script " + name, e);
+          throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
         }
 
         //
@@ -87,7 +88,7 @@ class ClassManager<T> {
           providerRef = new TimestampedObject<Class<? extends T>>(script.getTimestamp(), providerClass);
           classes.put(name, providerRef);
         } else {
-          throw new CreateCommandException(ErrorType.INTERNAL, "Parsed script " + clazz.getName() +
+          throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Parsed script " + clazz.getName() +
             " does not implements " + CommandInvoker.class.getName());
         }
       }
@@ -102,7 +103,7 @@ class ClassManager<T> {
     return providerRef.getObject();
   }
 
-  T getInstance(String name) throws CreateCommandException, NullPointerException {
+  T getInstance(String name) throws NoSuchCommandException, NullPointerException {
     Class<? extends T> clazz = getClass(name);
     if (clazz == null) {
       return null;
@@ -113,7 +114,7 @@ class ClassManager<T> {
       return clazz.newInstance();
     }
     catch (Exception e) {
-      throw new CreateCommandException(ErrorType.INTERNAL, "Could not create command " + name + " instance", e);
+      throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance", e);
     }
   }
 }

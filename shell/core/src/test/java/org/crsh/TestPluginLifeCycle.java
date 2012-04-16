@@ -25,6 +25,7 @@ import org.crsh.shell.impl.CRaSH;
 import org.crsh.shell.impl.CRaSHSession;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
+import org.crsh.vfs.spi.ram.RAMDriver;
 
 import java.util.HashMap;
 
@@ -42,6 +43,9 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
   /** . */
   private HashMap<String, Object> attributes;
 
+  /** . */
+  private final RAMDriver commands;
+
   public TestPluginLifeCycle() throws Exception {
     this(Thread.currentThread().getContextClassLoader());
   }
@@ -56,13 +60,25 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
 
   private TestPluginLifeCycle(PluginDiscovery discovery, ClassLoader classLoader) throws Exception {
     this.attributes = new HashMap<String, Object>();
+    this.commands = new RAMDriver();
     this.context = new PluginContext(
       discovery,
       attributes,
-      new FS().mount(classLoader,Path.get("/crash/commands/")),
+      new FS().mount(classLoader,Path.get("/crash/commands/")).mount(commands, "/"),
       new FS().mount(classLoader,Path.get("/crash/")),
       classLoader);
     this.crash = new CRaSH(context);
+  }
+
+  public void setCommand(String name, String command) {
+    if (name.contains("/")) {
+      throw new IllegalArgumentException("Command name must not contain /");
+    }
+    if (name.contains(".")) {
+      throw new IllegalArgumentException("Command name must not contain .");
+    }
+    commands.add(Path.get("/" + name + ".groovy"), command);
+    context.refresh();
   }
 
   public Object getAttribute(String name) {
