@@ -21,6 +21,7 @@ package org.crsh.util;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -47,6 +48,16 @@ public class Safe {
         closeable.close();
       }
       catch (IOException ignore) {
+      }
+    }
+  }
+
+  public static void close(Connection connection) {
+    if (connection != null) {
+      try {
+        connection.close();
+      }
+      catch (SQLException ignore) {
       }
     }
   }

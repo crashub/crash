@@ -1,4 +1,4 @@
 if (connection != null) {
-  connection.close();
+  org.crsh.util.Safe.close((java.sql.Connection)connection);
   connection = null;
 }
