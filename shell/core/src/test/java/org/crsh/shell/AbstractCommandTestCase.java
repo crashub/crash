@@ -21,7 +21,7 @@ package org.crsh.shell;
 
 import groovy.lang.GroovyShell;
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.plugin.CRaSHPlugin;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class AbstractCommandTestCase extends TestCase {
+public abstract class AbstractCommandTestCase extends AbstractTestCase {
 
   /** . */
   private final CRaSHPlugin[] NO_PLUGINS = new CRaSHPlugin[0];
@@ -100,17 +100,34 @@ public abstract class AbstractCommandTestCase extends TestCase {
     assertEquals(s, ((ShellResponse.UnknownCommand)resp).getName());
   }
 
-  protected final void assertError(String s, Class<? extends Throwable> expectedErrorType) {
-    Throwable error = assertError(s);
-    if (!expectedErrorType.isInstance(error)) {
-      fail("Expected error " + error + " to be of type " + expectedErrorType.getName());
-    }
+  protected final void assertEvalError(String s, Class<? extends Throwable> expectedThrowableType) {
+    Throwable error = assertEvalError(s);
+    assertType(expectedThrowableType, error);
   }
 
-  protected final Throwable assertError(String s) {
+  protected final Throwable assertEvalError(String s) {
+    return assertError(s, ErrorType.EVALUATION);
+  }
+
+  protected final void assertInternalError(String s, Class<? extends Throwable> expectedThrowableType) {
+    Throwable error = assertInternalError(s);
+    assertType(expectedThrowableType, error);
+  }
+
+  protected final Throwable assertInternalError(String s) {
+    return assertError(s, ErrorType.INTERNAL);
+  }
+
+  protected final void assertError(String s, ErrorType expectedErrorType, Class<? extends Throwable> expectedThrowableType) {
+    Throwable error = assertError(s, expectedErrorType);
+    assertType(expectedThrowableType, error);
+  }
+
+  protected final Throwable assertError(String s, ErrorType expectedErrorType) {
     ShellResponse resp = evaluate(s);
-    assertTrue("Was expecting an error response instead of " + resp, resp instanceof ShellResponse.Error);
-    return ((ShellResponse.Error)resp).getThrowable();
+    ShellResponse.Error error = assertInstance(ShellResponse.Error.class, resp);
+    assertEquals(expectedErrorType, error.getType());
+    return error.getThrowable();
   }
 
   protected final ShellResponse.Display assertDisplay(String expected, String s) {

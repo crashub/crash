@@ -19,7 +19,9 @@
 
 package org.crsh.cmdline.matcher;
 
+import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.ParameterDescriptor;
 
@@ -83,14 +85,20 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
   }
 
   @Override
-  protected Object doInvoke(InvocationContext context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdLineException {
+  protected Object doInvoke(InvocationContext context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdInvocationException, CmdSyntaxException {
     for (ParameterDescriptor<ClassFieldBinding> parameter : descriptor.getParameters()) {
       Object value = values.get(parameter);
 
       //
       if (value == null) {
         if (parameter.isRequired()) {
-          throw new CmdSyntaxException("Non satisfied parameter " + parameter);
+          if (parameter instanceof ArgumentDescriptor) {
+            ArgumentDescriptor<?> argument = (ArgumentDescriptor<?>)parameter;
+            throw new CmdSyntaxException("Missing argument " + argument.getName());
+          } else {
+            OptionDescriptor<?> option = (OptionDescriptor<?>)parameter;
+            throw new CmdSyntaxException("Missing option " + option.getNames());
+          }
         }
       } else {
         Field f = parameter.getBinding().getField();

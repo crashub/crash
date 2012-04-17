@@ -55,10 +55,6 @@ public abstract class ShellResponse {
     return new Display(produced, text);
   }
 
-  public static Error evalError(Throwable throwable) {
-    return new Error(ErrorType.EVALUATION, throwable);
-  }
-
   public static Error evalError(String msg, Throwable throwable) {
     return new Error(ErrorType.EVALUATION, msg, throwable);
   }
@@ -67,20 +63,12 @@ public abstract class ShellResponse {
     return new Error(ErrorType.EVALUATION, msg);
   }
 
-  public static Error internalError(Throwable throwable) {
-    return new Error(ErrorType.INTERNAL, throwable);
-  }
-
   public static Error internalError(String msg, Throwable throwable) {
     return new Error(ErrorType.INTERNAL, msg, throwable);
   }
 
   public static Error internalError(String msg) {
     return new Error(ErrorType.INTERNAL, msg);
-  }
-
-  public static Error error(ErrorType type, Throwable throwable) {
-    return new Error(type, throwable);
   }
 
   public static Error error(ErrorType type, String msg, Throwable throwable) {
@@ -116,7 +104,7 @@ public abstract class ShellResponse {
 
     @Override
     public String getText() {
-      return "Unknown command " + name;
+      return name + ": command not found";
     }
 
     @Override
@@ -238,12 +226,6 @@ public abstract class ShellResponse {
     /** . */
     private final String msg;
 
-    private Error(ErrorType type, Throwable throwable) {
-      this.type = type;
-      this.msg = build(throwable);
-      this.throwable = throwable;
-    }
-
     private Error(ErrorType type, String msg) {
       this.type = type;
       this.msg = msg;
@@ -267,26 +249,6 @@ public abstract class ShellResponse {
     @Override
     public String getText() {
       return msg;
-    }
-
-    private static String build(Throwable throwable) {
-      String result;
-      String msg = throwable.getMessage();
-      if (msg == null) {
-        msg = throwable.getClass().getSimpleName();
-      }
-      if (throwable instanceof ScriptException) {
-        result = "Error: " + msg;
-      } else if (throwable instanceof RuntimeException) {
-        result = "Unexpected exception: " + msg;
-      } else if (throwable instanceof Exception) {
-        result = "Unexpected exception: " + msg;
-      } else if (throwable instanceof java.lang.Error) {
-        result = "Unexpected error: " + msg;
-      } else {
-        result = "Unexpected throwable: " + msg;
-      }
-      return result;
     }
 
     public String toString() {

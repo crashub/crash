@@ -36,4 +36,8 @@ public class ScriptException extends RuntimeException {
   public ScriptException(String message, Throwable cause) {
     super(message, cause);
   }
+
+  public ScriptException(Throwable cause) {
+    super(cause);
+  }
 }

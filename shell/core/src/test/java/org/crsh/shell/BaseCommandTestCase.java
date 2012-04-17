@@ -19,6 +19,12 @@
 
 package org.crsh.shell;
 
+import org.crsh.command.ScriptException;
+
+import javax.management.JMException;
+import java.awt.*;
+import java.util.EmptyStackException;
+
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -27,6 +33,131 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
 
   public void testUnknownCommand() throws Exception {
     assertUnknownCommand("bilto");
+  }
+
+  public void testThrowScript() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() throws org.crsh.command.ScriptException {\n" +
+      "throw new org.crsh.command.ScriptException()" +
+      "}\n" +
+      "}\n");
+    assertEvalError("a", ScriptException.class);
+  }
+
+  public void testThrowGroovyScript() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() throws groovy.util.ScriptException {\n" +
+      "throw new groovy.util.ScriptException()" +
+      "}\n" +
+      "}\n");
+    assertEvalError("a", ScriptException.class);
+  }
+
+  public void testThrowCheckedException() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() throws javax.management.JMException {\n" +
+      "throw new javax.management.JMException()" +
+      "}\n" +
+      "}\n");
+    assertEvalError("a", JMException.class);
+  }
+
+  public void testThrowRuntimeException() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() throws java.util.EmptyStackException {\n" +
+      "throw new java.util.EmptyStackException()" +
+      "}\n" +
+      "}\n");
+    assertEvalError("a", EmptyStackException.class);
+  }
+
+  public void testThrowError() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() throws java.awt.AWTError {\n" +
+      "throw new java.awt.AWTError()" +
+      "}\n" +
+      "}\n");
+    assertInternalError("a", AWTError.class);
+  }
+
+  public void testUndeclaredThrowScript() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() {\n" +
+      "throw new org.crsh.command.ScriptException()" +
+      "}\n" +
+      "}\n");
+    assertEvalError("a", ScriptException.class);
+  }
+
+  public void testUndeclaredThrowGroovyScript() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() {\n" +
+      "throw new groovy.util.ScriptException()" +
+      "}\n" +
+      "}\n");
+    assertEvalError("a", ScriptException.class);
+  }
+
+  public void testUndeclaredThrowCheckedException() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() {\n" +
+      "throw new javax.management.JMException()" +
+      "}\n" +
+      "}\n");
+    assertEvalError("a", JMException.class);
+  }
+
+  public void testUndeclaredThrowRuntimeException() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() {\n" +
+      "throw new java.util.EmptyStackException()" +
+      "}\n" +
+      "}\n");
+    assertEvalError("a", EmptyStackException.class);
+  }
+
+  public void testUndeclaredThrowError() throws Exception {
+    lifeCycle.setCommand("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() {\n" +
+      "throw new java.awt.AWTError()" +
+      "}\n" +
+      "}\n");
+    assertInternalError("a", AWTError.class);
+  }
+
+  public void testScriptThrowScript() throws Exception {
+    lifeCycle.setCommand("a", "throw new org.crsh.command.ScriptException()");
+    assertEvalError("a", ScriptException.class);
+  }
+
+  public void testScriptThrowGroovyScript() throws Exception {
+    lifeCycle.setCommand("a", "throw new groovy.util.ScriptException()");
+    assertEvalError("a", ScriptException.class);
+  }
+
+  public void testScriptThrowCheckedException() throws Exception {
+    lifeCycle.setCommand("a", "throw new javax.management.JMException()");
+    assertEvalError("a", JMException.class);
+  }
+
+  public void testScriptThrowRuntimeException() throws Exception {
+    lifeCycle.setCommand("a", "throw new java.util.EmptyStackException()");
+    assertEvalError("a", EmptyStackException.class);
+  }
+
+  public void testScriptThrowError() throws Exception {
+    lifeCycle.setCommand("a", "throw new java.awt.AWTError()");
+    assertInternalError("a", AWTError.class);
   }
 
   public void testAttributes() throws Exception {
@@ -181,7 +312,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     "}\n" +
     "}";
 
-  public void testException() {
+  public void testCheckedException() {
     String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
       "@Command\n" +
       "public String main() {\n" +
@@ -199,7 +330,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     assertOk("bar", "foo");
   }
 
-  public void testExceptionInScript() {
+  public void testCheckedExceptionInScript() {
     String foo = "try {" +
       "checked_exception_command()" +
       "} catch(javax.naming.NamingException e) {\n" +
@@ -207,6 +338,84 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
       "}\n";
     lifeCycle.setCommand("foo", foo);
     lifeCycle.setCommand("checked_exception_command", checked_exception_command);
+
+    //
+    assertOk("bar", "foo");
+  }
+
+  /** . */
+  private final String script_exception_command = "class script_exception_command extends org.crsh.command.CRaSHCommand {\n" +
+    "@Command\n" +
+    "public String main() {\n" +
+    "throw new org.crsh.command.ScriptException();" +
+    "}\n" +
+    "}";
+
+  public void testScriptException() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public String main() {\n" +
+      "try {" +
+      "script_exception_command()" +
+      "} catch(org.crsh.command.ScriptException e) {\n" +
+      "return 'bar'\n" +
+      "}\n" +
+      "}\n" +
+      "}";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("script_exception_command", script_exception_command);
+
+    //
+    assertOk("bar", "foo");
+  }
+
+  public void testScriptExceptionInScript() {
+    String foo = "try {" +
+      "script_exception_command()" +
+      "} catch(org.crsh.command.ScriptException e) {\n" +
+      "return 'bar'\n" +
+      "}\n";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("script_exception_command", script_exception_command);
+
+    //
+    assertOk("bar", "foo");
+  }
+
+  /** . */
+  private final String groovy_script_exception_command = "class groovy_script_exception_command extends org.crsh.command.CRaSHCommand {\n" +
+    "@Command\n" +
+    "public String main() {\n" +
+    "throw new groovy.util.ScriptException();" +
+    "}\n" +
+    "}";
+
+  public void testGroovyScriptException() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public String main() {\n" +
+      "try {" +
+      "groovy_script_exception_command()" +
+      "} catch(org.crsh.command.ScriptException e) {\n" +
+      "return 'bar'\n" +
+      "}\n" +
+      "}\n" +
+      "}";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("groovy_script_exception_command", groovy_script_exception_command);
+
+    //
+    assertOk("bar", "foo");
+  }
+
+  public void testGroovyScriptExceptionInScript() {
+    String foo = "try {" +
+      "groovy_script_exception_command()" +
+      "} catch(org.crsh.command.ScriptException e) {\n" +
+      "return 'bar'\n" +
+      "}\n";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("groovy_script_exception_command", groovy_script_exception_command);
 
     //
     assertOk("bar", "foo");

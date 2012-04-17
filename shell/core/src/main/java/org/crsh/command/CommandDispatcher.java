@@ -153,12 +153,12 @@ final class CommandDispatcher extends Closure {
       //
       return null;
     }
-    catch (Exception e) {
-      if (e instanceof RuntimeException) {
-        throw (RuntimeException)e;
+    catch (ScriptException e) {
+      Throwable cause = e.getCause();
+      if (cause != null) {
+        throw new InvokerInvocationException(cause);
       } else {
-        // ?
-        throw new InvokerInvocationException(e);
+        throw e;
       }
     }
   }

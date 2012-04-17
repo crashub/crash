@@ -19,6 +19,8 @@
 
 package org.crsh.cmdline.matcher;
 
+import org.crsh.cmdline.ArgumentDescriptor;
+import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
@@ -112,7 +114,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
   }
 
   @Override
-  protected Object doInvoke(InvocationContext context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdLineException {
+  protected Object doInvoke(InvocationContext context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdInvocationException, CmdSyntaxException {
 
     // Prepare invocation
     MethodDescriptor<T> descriptor = getDescriptor();
@@ -137,7 +139,13 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
       //
       if (v == null) {
         if (parameterType.isPrimitive() || parameter.isRequired()) {
-          throw new CmdSyntaxException("Non satisfied parameter " + parameter);
+          if (parameter instanceof ArgumentDescriptor) {
+            ArgumentDescriptor<?> argument = (ArgumentDescriptor<?>)parameter;
+            throw new CmdSyntaxException("Missing argument " + argument.getName());
+          } else {
+            OptionDescriptor<?> option = (OptionDescriptor<?>)parameter;
+            throw new CmdSyntaxException("Missing option " + option.getNames());
+          }
         }
       }
 

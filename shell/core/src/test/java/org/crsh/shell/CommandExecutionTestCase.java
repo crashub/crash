@@ -19,8 +19,6 @@
 
 package org.crsh.shell;
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException;
-
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -28,7 +26,7 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 public class CommandExecutionTestCase extends AbstractCommandTestCase {
 
   public void testFailure() throws Exception {
-    Throwable t = assertError("fail");
+    Throwable t = assertEvalError("fail");
 //    assertEquals(Exception.class, t.getClass());
   }
 

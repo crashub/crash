@@ -41,7 +41,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * A real CRaSH command, the most powerful kind of command.
@@ -179,6 +178,27 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return null;
   }
 
+  static ScriptException toScript(Throwable cause) {
+    if (cause instanceof ScriptException) {
+      return (ScriptException)cause;
+    } if (cause instanceof groovy.util.ScriptException) {
+      // Special handling for groovy.util.ScriptException
+      // which may be thrown by scripts because it is imported by default
+      // by groovy imports
+      String msg = cause.getMessage();
+      ScriptException translated;
+      if (msg != null) {
+        translated = new ScriptException(msg);
+      } else {
+        translated = new ScriptException();
+      }
+      translated.setStackTrace(cause.getStackTrace());
+      return translated;
+    } else {
+      return new ScriptException(cause);
+    }
+  }
+
   public final CommandInvoker<?, ?> createInvoker(final String line) {
 
     // Remove surrounding quotes if there are
@@ -233,7 +253,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           }
         }
 
-        public void invoke(InvocationContext context) throws Exception {
+        public void invoke(InvocationContext context) throws ScriptException {
 
           if (doHelp) {
             try {
@@ -252,20 +272,15 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               if (o != null) {
                 context.getWriter().print(o);
               }
+            } catch (CmdSyntaxException e) {
+              throw new SyntaxException(e.getMessage());
             } catch (CmdInvocationException e) {
-              Throwable cause = e.getCause();
-              if (cause instanceof Exception) {
-                throw (Exception)cause;
-              } else {
-                throw new UndeclaredThrowableException(cause);
-              }
+              throw toScript(e.getCause());
             } finally {
               CRaSHCommand.this.context = null;
               CRaSHCommand.this.unmatched = null;
             }
           }
-
-          //
         }
 
         public Class getProducedType() {

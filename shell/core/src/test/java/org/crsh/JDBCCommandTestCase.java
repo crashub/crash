@@ -9,11 +9,11 @@ import java.sql.SQLException;
 public class JDBCCommandTestCase extends AbstractCommandTestCase {
 
   public void testCannotConnect() {
-    assertError("jdbc connect jdbc:foo", SQLException.class);
+    assertEvalError("jdbc connect jdbc:foo", SQLException.class);
   }
 
   public void testNotConnected() {
-    assertError("jdbc execute create table derbyDB(num int, addr varchar(40))", ScriptException.class);
+    assertEvalError("jdbc execute create table derbyDB(num int, addr varchar(40))", ScriptException.class);
   }
 
   public void testExecute() {
@@ -31,6 +31,6 @@ public class JDBCCommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testClose() {
-    assertError("jdbc close", ScriptException.class);
+    assertEvalError("jdbc close", ScriptException.class);
   }
 }

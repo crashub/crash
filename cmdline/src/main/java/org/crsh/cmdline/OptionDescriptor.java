@@ -104,20 +104,20 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
   public Object parse(List<String> values) throws CmdSyntaxException {
     if (arity == 0) {
       if (values.size() > 0) {
-        throw new CmdSyntaxException("Too many option values " + values);
+        throw new CmdSyntaxException("Too many option values: " + values);
       }
       // It's a boolean and it is true
       return Boolean.TRUE;
     } else {
       if (getMultiplicity() == Multiplicity.SINGLE) {
         if (values.size() > 1) {
-          throw new CmdSyntaxException("Too many option values " + values);
+          throw new CmdSyntaxException("Too many option values: " + values);
         }
         String value = values.get(0);
         try {
           return parse(value);
         } catch (Exception e) {
-          throw new CmdSyntaxException("Could not parse " + value);
+          throw new CmdSyntaxException("Could not parse value: <" + value + ">");
         }
       } else {
         List<Object> v = new ArrayList<Object>(values.size());
@@ -125,7 +125,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
           try {
             v.add(parse(value));
           } catch (Exception e) {
-            throw new CmdSyntaxException("Could not parse " + value);
+            throw new CmdSyntaxException("Could not parse value: <" + value + ">");
           }
         }
         return v;

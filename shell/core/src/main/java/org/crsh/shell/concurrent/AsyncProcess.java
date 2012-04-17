@@ -131,7 +131,7 @@ public class AsyncProcess implements ShellProcess {
               response = ShellResponse.ok();
             }
             catch (Throwable t) {
-              response = ShellResponse.internalError(t);
+              response = ShellResponse.internalError("Unexpected throwable when executing process", t);
             }
           }
 

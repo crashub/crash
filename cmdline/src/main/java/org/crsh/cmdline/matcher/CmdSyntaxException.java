@@ -25,18 +25,7 @@ package org.crsh.cmdline.matcher;
  */
 public class CmdSyntaxException extends CmdLineException {
 
-  public CmdSyntaxException() {
-  }
-
   public CmdSyntaxException(String message) {
     super(message);
-  }
-
-  public CmdSyntaxException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public CmdSyntaxException(Throwable cause) {
-    super(cause);
   }
 }

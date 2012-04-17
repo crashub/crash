@@ -50,7 +50,7 @@ public class RemoveTestCase extends AbstractJCRCommandTestCase {
     assertEquals(false, groovyShell.evaluate("return session.rootNode.hasNode('bar')"));
 
     // Delete a non existing node
-    assertError("rm foo", ScriptException.class);
+    assertEvalError("rm foo", ScriptException.class);
   }
 
   public void testConsume() throws Exception {

@@ -21,7 +21,9 @@ package org.crsh.shell.impl;
 
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.NoSuchCommandException;
+import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
+import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 
@@ -97,10 +99,13 @@ abstract class AST {
         //
         try {
           current.invoker.invoke(ctx);
-        } catch (InterruptedException e) {
-          throw e;
+        } catch (ScriptException e) {
+
+          // Should we handle InterruptedException here ?
+
+          return current.build(e);
         } catch (Throwable t) {
-          return ShellResponse.internalError(t);
+          return current.build(t);
         }
 
         // Append anything that was in the buffer
@@ -216,6 +221,43 @@ abstract class AST {
         return next.lastTerm();
       } else {
         return this;
+      }
+    }
+
+    private ShellResponse.Error build(Throwable throwable) {
+      ErrorType errorType;
+      if (throwable instanceof ScriptException) {
+        errorType = ErrorType.EVALUATION;
+        Throwable cause = throwable.getCause();
+        if (cause != null) {
+          throwable = cause;
+        }
+      } else {
+        errorType = ErrorType.INTERNAL;
+      }
+      String result;
+      String msg = throwable.getMessage();
+      if (throwable instanceof ScriptException) {
+        if (msg == null) {
+          result = name + ": failed";
+        } else {
+          result = name + ": " + msg;
+        }
+        return ShellResponse.error(errorType, result, throwable);
+      } else {
+        if (msg == null) {
+          msg = throwable.getClass().getSimpleName();
+        }
+        if (throwable instanceof RuntimeException) {
+          result = name + ": exception: " + msg;
+        } else if (throwable instanceof Exception) {
+          result = name + ": exception: " + msg;
+        } else if (throwable instanceof java.lang.Error) {
+          result = name + ": error: " + msg;
+        } else {
+          result = name + ": unexpected throwable: " + msg;
+        }
+        return ShellResponse.error(errorType, result, throwable);
       }
     }
   }

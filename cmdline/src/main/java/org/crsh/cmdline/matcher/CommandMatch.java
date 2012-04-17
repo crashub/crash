@@ -19,8 +19,10 @@
 
 package org.crsh.cmdline.matcher;
 
+import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Multiplicity;
+import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
 
@@ -54,7 +56,7 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
 
   public abstract D getDescriptor();
 
-  public final Object invoke(InvocationContext context, C command) throws CmdLineException {
+  public final Object invoke(InvocationContext context, C command) throws CmdInvocationException, CmdSyntaxException {
 
     //
     Set<ParameterDescriptor<?>> unused = getParameters();
@@ -64,7 +66,13 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
     for (ParameterMatch<?, ?> parameterMatch : getParameterMatches()) {
       ParameterDescriptor<?> parameter = parameterMatch.getParameter();
       if (!unused.remove(parameter)) {
-        throw new CmdSyntaxException("Could not find parameter " + parameter);
+        if (parameter instanceof ArgumentDescriptor) {
+          ArgumentDescriptor<?> argument = (ArgumentDescriptor<?>)parameter;
+          throw new CmdSyntaxException("Missing argument " + argument.getName());
+        } else {
+          OptionDescriptor<?> option = (OptionDescriptor<?>)parameter;
+          throw new CmdSyntaxException("Missing option " + option.getNames());
+        }
       }
       Object v = parameterMatch.computeValue();
       if (v != null) {
@@ -76,7 +84,7 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
     return doInvoke(context, command, parameterValues);
   }
 
-  protected abstract Object doInvoke(InvocationContext context, C command, Map<ParameterDescriptor<?>, Object> values) throws CmdLineException;
+  protected abstract Object doInvoke(InvocationContext context, C command, Map<ParameterDescriptor<?>, Object> values) throws CmdInvocationException, CmdSyntaxException;
 
   public abstract Set<ParameterDescriptor<?>> getParameters();
 

@@ -60,7 +60,7 @@ abstract class CRaSHProcess implements ShellProcess {
           resp = ShellResponse.cancelled();
         }
       } catch (Throwable t) {
-        resp = ShellResponse.internalError(t);
+        resp = ShellResponse.internalError("Unexpected error when executing process", t);
       } finally {
         thread = null;
       }

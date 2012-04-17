@@ -155,8 +155,11 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
         context.getWriter().print(res);
       }
     }
+    catch (Exception t) {
+      throw CRaSHCommand.toScript(t);
+    }
     finally {
-      context = null;
+      this.context = null;
     }
   }
 
