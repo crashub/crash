@@ -21,6 +21,9 @@ package org.crsh.util;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -44,6 +47,26 @@ public class Safe {
         closeable.close();
       }
       catch (IOException ignore) {
+      }
+    }
+  }
+
+  public static void close(Statement statement) {
+    if (statement != null) {
+      try {
+        statement.close();
+      }
+      catch (SQLException ignore) {
+      }
+    }
+  }
+
+  public static void close(ResultSet rs) {
+    if (rs != null) {
+      try {
+        rs.close();
+      }
+      catch (SQLException ignore) {
       }
     }
   }
