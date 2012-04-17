@@ -360,4 +360,84 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     //
     assertOk("foobar", "foo");
   }
+
+  /** . */
+  private final String compound_produce_command = "class compound_produce_command extends org.crsh.command.CRaSHCommand {\n" +
+    "@Command\n" +
+    "public void compound(org.crsh.command.InvocationContext<Void, String> context) {\n" +
+    "['foo','bar'].each { context.produce(it) }" +
+    "}\n" +
+    "}";
+
+  public void testCompoundProduce() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() {\n" +
+      "compound_produce_command.compound { out << it }\n" +
+      "}\n" +
+      "}";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+
+    //
+    assertOk("foobar", "foo");
+  }
+
+  public void testCompoundProduceInScript() {
+    String foo = "compound_produce_command.compound { out << it }\n";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+
+    //
+    assertOk("foobar", "foo");
+  }
+
+  public void testClosure() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() {\n" +
+      "def closure = echo\n" +
+      "closure 'bar'\n" +
+      "}\n" +
+      "}";
+    lifeCycle.setCommand("foo", foo);
+
+    //
+    assertOk("bar", "foo");
+  }
+
+  public void testClosureInScript() {
+    String foo = "def closure = echo\n" +
+      "closure 'bar'\n";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("compound_command", compound_command);
+
+    //
+    assertOk("bar", "foo");
+  }
+
+  public void testCompoundClosure() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main() {\n" +
+      "def closure = compound_command.compound\n" +
+      "closure()\n" +
+      "}\n" +
+      "}";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("compound_command", compound_command);
+
+    //
+    assertOk("bar", "foo");
+  }
+
+  public void testCompoundClosureInScript() {
+    String foo = "def closure = compound_command.compound\n" +
+      "closure()\n";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("compound_command", compound_command);
+
+    //
+    assertOk("bar", "foo");
+  }
 }

@@ -61,7 +61,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
           }
           if (cmd != null) {
             CommandDispatcher dispatcher = new CommandDispatcher(cmd, ic);
-            return dispatcher.invokeMethod("", args);
+            return dispatcher.dispatch("", args);
           }
         }
       }

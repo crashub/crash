@@ -43,7 +43,7 @@ class InnerInvocationContext<P> implements InvocationContext<Void, P> {
   }
 
   public boolean isPiped() {
-    return false;
+    return producedType != Void.class;
   }
 
   public Iterable<Void> consume() throws IllegalStateException {

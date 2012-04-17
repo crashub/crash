@@ -29,17 +29,27 @@ class system extends CRaSHCommand implements Completer {
   @Usage("list the vm system properties")
   @Command
   public void propls(
+    InvocationContext<String, Map.Entry> context,
     @Usage("filter the property with a regular expression on their name")
     @Option(names=["f","filter"])
     String filter) {
     def pattern = Pattern.compile(filter?:".*");
-    def formatString = "%1\$-35s %2\$-20s\r\n"
-    Formatter formatter = new Formatter(out)
-    formatter.format(formatString, "NAME", "VALUE");
-    System.getProperties().each {
-      def matcher = it.key =~ pattern;
-      if (matcher.matches()) {
-        formatter.format formatString, it.key, it.value
+    if (context.piped) {
+      System.getProperties().each {
+        def matcher = it.key =~ pattern;
+        if (matcher.matches()) {
+          context.produce(it);
+        }
+      }
+    } else {
+      def formatString = "%1\$-35s %2\$-20s\r\n"
+      Formatter formatter = new Formatter(out)
+      formatter.format(formatString, "NAME", "VALUE");
+      System.getProperties().each {
+        def matcher = it.key =~ pattern;
+        if (matcher.matches()) {
+          formatter.format formatString, it.key, it.value
+        }
       }
     }
   }

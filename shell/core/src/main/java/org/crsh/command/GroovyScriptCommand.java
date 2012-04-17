@@ -76,7 +76,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
           }
           if (cmd != null) {
             CommandDispatcher dispatcher = new CommandDispatcher(cmd, ic);
-            return dispatcher.invokeMethod("", args);
+            return dispatcher.dispatch("", args);
           }
         }
       }
