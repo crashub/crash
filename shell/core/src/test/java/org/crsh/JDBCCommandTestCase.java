@@ -25,6 +25,8 @@ public class JDBCCommandTestCase extends AbstractCommandTestCase {
     assertOk("jdbc execute insert into derbyDB values (1956,'Webster St.')");
     String res = assertOk("jdbc execute select * from derbyDb").getText();
     assertTrue(res.contains("Webster"));
+    lifeCycle.setCommand("foo", "jdbc.execute 'select * from derbyDb', { out << it['NUM'] }");
+    assertOk("1956", "foo");
     assertOk("jdbc close");
   }
 

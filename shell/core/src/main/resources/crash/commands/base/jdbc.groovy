@@ -14,6 +14,7 @@ import org.crsh.command.ScriptException
 import org.crsh.cmdline.annotations.Option
 import java.lang.reflect.InvocationTargetException
 import org.crsh.cmdline.spi.Value
+import org.crsh.command.InvocationContext
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -94,43 +95,64 @@ class jdbc extends CRaSHCommand {
 
   @Usage("execute SQL statement")
   @Command
-  public String execute(@Usage("The statement") @Argument(unquote = false) List<String> statement) {
+  public String execute(
+    InvocationContext<Void, Map> context,
+    @Usage("The statement")
+    @Argument(unquote = false)
+    List<String> statement) {
     if (connection == null) {
       throw new ScriptException("You are not connected to database, please call jdbc open [JNDI DS]");
     } else {
       Statement stmt = connection.createStatement();
-      String sql = "";
-      statement.each { sql += " " + it };
+      StringBuilder sb = new StringBuilder();
+      statement.each { sb << " " << it };
+      String sql = sb.toString().trim();
+      if (sql.startsWith('"') && sql.endsWith('"') || sql.startsWith("'") && sql.endsWith("'"))
+        sql = sql.substring(1, sql.length() - 1)
       stmt.execute(sql)
       ResultSet resultSet = stmt.getResultSet();
       if (resultSet == null) {
-        return "Query executed successfully";
-      } else {
-
-        StringBuilder res = new StringBuilder()
-
-        // Construct format
-        def formatString = "";
-        Formatter formatter = new Formatter(res);
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int columnCount = resultSet.getMetaData().getColumnCount()
-        (1..columnCount).each{ formatString += "%$it\$-20s " }
-        formatString += "\r\n"
-
-        // Print header
-        String[] header = new String[metaData.getColumnCount()];
-        (1..columnCount).each{ header[it-1] = metaData.getColumnName(it) }
-        formatter.format(formatString, header);
-
-        // Print conent
-        String[] content = new String[metaData.getColumnCount()];
-        while (resultSet.next()) {
-          (1..columnCount).each{ content[it-1] = resultSet.getString(it) }
-          formatter.format(formatString, content);
+        if (context.piped) {
+          return null;
+        } else {
+          return "Query executed successfully";
         }
+      } else {
+        if (context.piped) {
+          ResultSetMetaData metaData = resultSet.getMetaData();
+          int columnCount = resultSet.getMetaData().getColumnCount()
+          while (resultSet.next()) {
+            LinkedHashMap row = new LinkedHashMap();
+            (1..columnCount).each{ row[metaData.getColumnName(it)] = resultSet.getObject(it) }
+            context.produce(row)
+          }
+          return null;
+        } else {
+          StringBuilder res = new StringBuilder()
 
-        //
-        return res;
+          // Construct format
+          def formatString = "";
+          Formatter formatter = new Formatter(res);
+          ResultSetMetaData metaData = resultSet.getMetaData();
+          int columnCount = resultSet.getMetaData().getColumnCount()
+          (1..columnCount).each{ formatString += "%$it\$-20s " }
+          formatString += "\r\n"
+
+          // Print header
+          String[] header = new String[metaData.getColumnCount()];
+          (1..columnCount).each{ header[it-1] = metaData.getColumnName(it) }
+          formatter.format(formatString, header);
+
+          // Print conent
+          String[] content = new String[metaData.getColumnCount()];
+          while (resultSet.next()) {
+            (1..columnCount).each{ content[it-1] = resultSet.getString(it) }
+            formatter.format(formatString, content);
+          }
+
+          //
+          return res;
+        }
       }
     }
   }
