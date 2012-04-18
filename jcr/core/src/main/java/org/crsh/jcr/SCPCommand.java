@@ -177,8 +177,8 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
     if (pos1 != -1) {
       int pos2 = target.indexOf(':', pos1 + 1);
       if (pos2 != -1) {
-        // container_name:workspace_name:path
-        properties.put("exo.container.name", target.substring(0, pos1));
+        // container:workspace_name:path
+        properties.put("container", target.substring(0, pos1));
         workspaceName = target.substring(pos1 + 1, pos2);
         path = target.substring(pos2 + 1);
       }
