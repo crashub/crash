@@ -15,7 +15,7 @@ setCurrentNode = { node ->
 
 assertConnected = { ->
   if (session == null)
-    throw new ScriptException("Not connect to a repository");
+    throw new ScriptException("Not connected to a repository");
 };
 
 /**
