@@ -26,6 +26,12 @@
     <format>jar</format>
   </formats>
 
+  <containerDescriptorHandlers>
+    <containerDescriptorHandler>
+      <handlerName>metaInf-services</handlerName>
+    </containerDescriptorHandler>
+  </containerDescriptorHandlers>
+
   <dependencySets>
     <dependencySet>
       <useTransitiveDependencies>false</useTransitiveDependencies>
