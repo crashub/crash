@@ -6,7 +6,7 @@ public class echo extends org.crsh.command.CRaSHCommand {
 
   @Command
   @Usage("echo text")
-  public void main(@Usage("the content") @Argument List<String> arguments) throws ScriptException {
+  public void main(@Usage("the content") @Argument List<String> arguments) {
     arguments.each { out << it }
   }
 }

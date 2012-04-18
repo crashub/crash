@@ -60,7 +60,7 @@ The parameters is specific to JCR plugin implementations, more details can be fo
   public Object use(
       @Argument
       @Usage("the parameters")
-      @Man("The parameters used to instantiate the repository to be used in this session") Value.Properties parameters) throws ScriptException {
+      @Man("The parameters used to instantiate the repository to be used in this session") Value.Properties parameters) {
     repository = JCRPlugin.findRepository(parameters.getProperties());
     return info();
   }

@@ -25,7 +25,7 @@ Node /foo /bar removed
 rm is a <Node,Void> command removing all the consumed nodes.""")
   public void main(
     InvocationContext<Node, Void> context,
-    @Argument @Usage("the paths to remove") @Man("The paths of the node to remove") List<Path> paths) throws ScriptException {
+    @Argument @Usage("the paths to remove") @Man("The paths of the node to remove") List<Path> paths) {
     assertConnected();
 
     //

@@ -12,7 +12,7 @@ public class rollback extends org.crsh.jcr.command.JCRCommand {
   @Command
   @Man("""Rollbacks the changes of the current session. A node can be provided to rollback the state of the
 this nodes and its descendants only.""")
-  public void main(@Argument @Man("the path to rollback") @Usage("The path of the node to rollback") Path path) throws ScriptException {
+  public void main(@Argument @Man("the path to rollback") @Usage("The path of the node to rollback") Path path) {
     assertConnected();
     def node = findNodeByPath(path);
     node.refresh(false);

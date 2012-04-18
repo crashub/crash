@@ -1,4 +1,3 @@
-import org.crsh.command.ScriptException;
 import java.lang.reflect.Method
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Argument
@@ -14,7 +13,7 @@ public class invoke extends org.crsh.command.CRaSHCommand {
       String className,
       @Usage("The method to invoke")
       @Argument
-      String methodName) throws ScriptException {
+      String methodName) {
     Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
     Method m = clazz.getMethod(methodName);
     m.invoke(null);

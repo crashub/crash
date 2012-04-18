@@ -6,7 +6,7 @@ import org.crsh.cmdline.annotations.Argument
 class sleep extends CRaSHCommand {
   @Usage("sleep for some time")
   @Command
-  Object main(@Usage("sleep time in seconds") @Argument int time) throws ScriptException {
+  Object main(@Usage("sleep time in seconds") @Argument int time) {
     if (time < 0)
       throw new ScriptException("Cannot provide negative time value $time");
     Thread.sleep(time * 1000);

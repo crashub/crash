@@ -30,8 +30,7 @@ All results matched by the query are produced by this command.""")
     @Argument
     @Usage("the query")
     @Man("The query")
-    String query) throws ScriptException {
-    assertConnected();
+    String query) {
     assertConnected();
 
     //

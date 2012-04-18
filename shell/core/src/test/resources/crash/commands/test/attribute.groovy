@@ -7,7 +7,7 @@ import org.crsh.cmdline.annotations.Usage
 public class attribute extends org.crsh.command.CRaSHCommand {
 
   @Command
-  public Object main(@Usage("attribute name") @Argument String argument) throws ScriptException {
+  public Object main(@Usage("attribute name") @Argument String argument) {
     return String.valueOf(crash.context.attributes[argument]);
   }
 }

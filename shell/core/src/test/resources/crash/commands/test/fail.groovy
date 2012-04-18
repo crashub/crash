@@ -4,7 +4,6 @@ import org.crsh.cmdline.annotations.Command
 
 import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.annotations.Argument
-import org.crsh.command.ScriptException;
 
 public class fail extends CRaSHCommand {
 
@@ -12,7 +11,7 @@ public class fail extends CRaSHCommand {
   @Command
   Object main(
     @Option(names=["t","type"]) @Usage("the error kind") Type type,
-    @Argument @Usage("the error message") String msg) throws ScriptException {
+    @Argument @Usage("the error message") String msg) {
 
     switch (type ?: Type.CHECKED) {
       case Type.CHECKED:
@@ -29,9 +28,9 @@ public class fail extends CRaSHCommand {
         }
       case Type.SCRIPT:
         if (msg != null) {
-          throw new ScriptException(msg);
+          throw new org.crsh.command.ScriptException(msg);
         } else {
-          throw new ScriptException();
+          throw new org.crsh.command.ScriptException();
         }
       case Type.ERROR:
         if (msg != null) {

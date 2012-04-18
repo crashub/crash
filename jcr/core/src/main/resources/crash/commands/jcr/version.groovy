@@ -11,7 +11,7 @@ public class version extends org.crsh.jcr.command.JCRCommand {
   @Usage("checkin a node")
   @Man("Perform a node checkin")
   @Command
-  public void checkin(@Argument @Usage("the path to checkin") @Man("The node path to checkin") Path path) throws ScriptException {
+  public void checkin(@Argument @Usage("the path to checkin") @Man("The node path to checkin") Path path) {
     assertConnected();
     def node = findNodeByPath(path);
     node.checkin();
@@ -21,7 +21,7 @@ public class version extends org.crsh.jcr.command.JCRCommand {
   @Usage("checkout a node")
   @Man("Perform a node checkout")
   @Command
-  public void checkout(@Argument @Usage("the path to checkout") @Man("The node path to checkout") Path path) throws ScriptException {
+  public void checkout(@Argument @Usage("the path to checkout") @Man("The node path to checkout") Path path) {
     assertConnected();
     def node = findNodeByPath(path);
     node.checkout();

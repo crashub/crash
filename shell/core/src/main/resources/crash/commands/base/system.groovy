@@ -16,6 +16,7 @@ import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.completers.EnumCompleter
 import org.crsh.cmdline.spi.ValueCompletion
 import java.util.regex.Pattern
+import org.crsh.cmdline.annotations.Required
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -56,19 +57,19 @@ class system extends CRaSHCommand implements Completer {
 
   @Usage("set a system property")
   @Command
-  public void propset(@PropertyName PropName name, @PropertyValue String value) {
+  public void propset(@PropertyName @Required PropName name, @PropertyValue @Required String value) {
     System.setProperty name.toString(), value
   }
 
   @Usage("get a system property")
   @Command
-  public String propget(@PropertyName PropName name) {
+  public String propget(@PropertyName @Required PropName name) {
     return System.getProperty(name.toString()) ?: ""
   }
 
   @Usage("remove a system property")
   @Command
-  public void proprm(@PropertyName PropName name) {
+  public void proprm(@PropertyName @Required PropName name) {
     System.clearProperty name.toString()
   }
 

@@ -1,4 +1,3 @@
-import org.crsh.command.ScriptException;
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Usage
@@ -16,7 +15,7 @@ The cp command copies a node to a target location in the JCR tree.
 [/registry]% cp foo bar""")
   public void main(
     @Required @Usage("the source path") @Man("The path of the source node to copy") @Argument Path source,
-    @Required @Usage("the target path") @Man("The path of the target node to be copied") @Argument Path target) throws ScriptException {
+    @Required @Usage("the target path") @Man("The path of the target node to be copied") @Argument Path target) {
     assertConnected();
 
     //

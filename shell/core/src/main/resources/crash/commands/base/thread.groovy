@@ -21,7 +21,7 @@ public class thread extends CRaSHCommand {
     String nameFilter,
     @Usage("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
     @Option(names=["s","state"])
-    String stateFilter) throws ScriptException {
+    String stateFilter) {
 
     // Regex filter
     if (name != null) {
@@ -78,7 +78,7 @@ public class thread extends CRaSHCommand {
   @Usage("interrupt vm threads")
   @Man("Interrup a VM thread, this method cannot be called as is and should be used with a pipe to consume a list of threads.")
   @Command
-  public void interrupt(InvocationContext<Thread, Void> context) throws ScriptException {
+  public void interrupt(InvocationContext<Thread, Void> context) {
     if (context.piped) {
       context.consume().each() {
         it.interrupt();
@@ -90,7 +90,7 @@ public class thread extends CRaSHCommand {
   @Usage("stop vm threads")
   @Man("Stop a VM thread, this method cannot be called as is and should be used with a pipe to consume a list of threads.")
   @Command
-  public void stop(InvocationContext<Thread, Void> context) throws ScriptException {
+  public void stop(InvocationContext<Thread, Void> context) {
     if (context.piped) {
       context.consume().each() {
         it.stop();

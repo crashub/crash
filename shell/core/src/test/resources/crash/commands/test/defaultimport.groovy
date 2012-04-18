@@ -2,7 +2,7 @@ public class defaultimport extends CRaSHCommand {
 
   @Usage("do nothing")
   @Command
-  Object main() throws ScriptException {
+  Object main() {
     return "just checked default import work"
   }
 }

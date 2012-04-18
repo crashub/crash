@@ -1,4 +1,3 @@
-import org.crsh.command.ScriptException;
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Usage
@@ -14,7 +13,7 @@ this nodes and its descendants only.""")
   public void main(
     @Argument
     @Usage("the path to commit")
-    @Man("The path of the node to commit") Path path) throws ScriptException {
+    @Man("The path of the node to commit") Path path) {
     assertConnected();
     def node = findNodeByPath(path);
     node.save();

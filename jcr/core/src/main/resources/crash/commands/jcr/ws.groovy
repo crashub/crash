@@ -43,7 +43,7 @@ Connected to workspace portal-system
     @Required
     @Usage("the workspace name")
     @Man("The name of the workspace to connect to")
-    String workspaceName) throws ScriptException {
+    String workspaceName) {
 
     //
     if (userName != null && password == null) {
@@ -75,7 +75,7 @@ Connected to workspace portal-system
   @Usage("logout from a workspace")
   @Man("""This command logout from the currently connected JCR workspace""")
   @Command
-  public Object logout() throws ScriptException {
+  public Object logout() {
     assertConnected();
     session.logout();
     session = null;

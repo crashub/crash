@@ -29,7 +29,7 @@ accepts a path argument that can be absolute or relative.
   @Command
   public Object main(
   @Usage("the path to list") @Man("The path of the node content to list") @Argument Path path,
-  @Usage("the tree depth") @Man("The depth of the printed tree") @Option(names=["d","depth"]) Integer depth) throws ScriptException {
+  @Usage("the tree depth") @Man("The depth of the printed tree") @Option(names=["d","depth"]) Integer depth) {
     assertConnected();
 
     //

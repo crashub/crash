@@ -7,7 +7,7 @@ class env extends CRaSHCommand
 {
   @Usage("display the term env")
   @Command
-  Object main(InvocationContext<Void, Void> context) throws ScriptException {
+  Object main(InvocationContext<Void, Void> context) {
     StringBuilder sb = new StringBuilder();
     sb.append("width: $context.width");
     return sb;

@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException
 import org.crsh.cmdline.spi.Value
 import org.crsh.command.InvocationContext
 import org.crsh.util.Safe
-import java.sql.Connection
 import java.sql.DatabaseMetaData
 import org.crsh.shell.ui.UIBuilder
 

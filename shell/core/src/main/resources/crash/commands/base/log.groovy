@@ -34,7 +34,7 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
 
 % log ls | log send -m hello -l warn""")
   @Command
-  public void send(InvocationContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg LoggerName name, @LevelOpt Level level) throws ScriptException {
+  public void send(InvocationContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg LoggerName name, @LevelOpt Level level) {
     level = level ?: Level.info;
     if (context.piped) {
       context.consume().each() {
@@ -111,7 +111,7 @@ javax.management.modelmbean
 
 The logls command is a <Void,Logger> command, therefore any logger produced can be consumed.""")
   @Command
-  public void ls(InvocationContext<Void, Logger> context, @FilterOpt String filter) throws ScriptException {
+  public void ls(InvocationContext<Void, Logger> context, @FilterOpt String filter) {
 
     // Regex filter
     def pattern = Pattern.compile(filter ?: ".*");
@@ -129,7 +129,7 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
 
   @Usage("create one or several loggers")
   @Command
-  public void add(InvocationContext<Void, Logger> context, @LoggerArg List<LoggerName> names) throws ScriptException {
+  public void add(InvocationContext<Void, Logger> context, @LoggerArg List<LoggerName> names) {
     names.each {
       if (it.length() > 0) {
         Logger logger = LoggerFactory.getLogger(it.string);
@@ -152,7 +152,7 @@ javax.management.mbeanserver<INFO>
 javax.management.modelmbean<INFO>""")
   @Usage("display info about a logger")
   @Command
-  public void info(InvocationContext<Logger, Void> context, @LoggerArg List<LoggerName> names) throws ScriptException {
+  public void info(InvocationContext<Logger, Void> context, @LoggerArg List<LoggerName> names) {
     if (context.piped) {
       context.consume().each() {
         info(context.writer, it);
@@ -194,7 +194,7 @@ The following set the level warn on all the available loggers:
     InvocationContext<Logger, Void> context,
     @LoggerArg List<LoggerName> names,
     @LevelOpt Level level,
-    @PluginOpt Plugin plugin) throws ScriptException {
+    @PluginOpt Plugin plugin) {
 
     //
     plugin = plugin ?: Plugin.autoDetect();

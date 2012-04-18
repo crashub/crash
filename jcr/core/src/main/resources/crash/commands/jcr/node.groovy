@@ -34,8 +34,7 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
     @Argument List<Path> paths,
     @Usage("the node type name")
     @Man("The name of the primary node type to create.")
-    @Option(names=["t","type"]) String primaryNodeTypeName)
-    throws ScriptException {
+    @Option(names=["t","type"]) String primaryNodeTypeName) {
     assertConnected();
 
     //
@@ -155,7 +154,7 @@ The node has been exported
   @Usage("export a node to an nt file")
   public Object export(
     @Required @Argument @Usage("the source path") @Man("The path of the exported node") Path source,
-    @Required @Argument @Usage("the target path") @Man("The path of the exported nt:file node") Path target) throws ScriptException {
+    @Required @Argument @Usage("the target path") @Man("The path of the exported nt:file node") Path target) {
 
     //
     assertConnected();
@@ -212,7 +211,7 @@ Node imported
 """)
   public Object IMPORT(
     @Required @Argument @Usage("the source path") @Man("The path of the imported nt:file node") Path source,
-    @Required @Argument @Usage("the target path")  @Man("The path of the parent imported node") Path target) throws ScriptException {
+    @Required @Argument @Usage("the target path")  @Man("The path of the parent imported node") Path target) {
 
     //
     assertConnected();

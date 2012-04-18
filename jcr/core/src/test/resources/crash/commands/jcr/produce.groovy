@@ -11,7 +11,7 @@ public class produce extends org.crsh.command.CRaSHCommand  {
   @Usage("produce a set of nodes")
   public void main(
     InvocationContext<Void, Node> context,
-    @Argument @Usage("the paths") List<Path> paths) throws ScriptException {
+    @Argument @Usage("the paths") List<Path> paths) {
     assertConnected();
     paths.each {
       try {

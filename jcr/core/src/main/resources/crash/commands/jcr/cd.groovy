@@ -19,7 +19,7 @@ node. A relative or absolute path argument can be provided to specify a new curr
   public Object main(
     @Argument
     @Usage("the new path")
-    @Man("The new path that will change the current node navigation") Path path) throws ScriptException {
+    @Man("The new path that will change the current node navigation") Path path) {
     assertConnected();
     def node = findNodeByPath(path);
     setCurrentNode(node);

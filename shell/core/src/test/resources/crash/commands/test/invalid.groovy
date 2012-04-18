@@ -1,6 +1,6 @@
 public class invalid extends org.crsh.command.ClassCommand {
 
-  public invalid Object execute() throws ScriptException {
+  public invalid Object execute() {
      throw new Exception();
   }
 }

@@ -62,7 +62,7 @@ select is a <Void,Node> command producing all the matched nodes.""")
     @Argument(unquote = false)
     @Usage("the query")
     @Man("The query, as is")
-    List<String> query) throws ScriptException {
+    List<String> query) {
     assertConnected();
 
     //
