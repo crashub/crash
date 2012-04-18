@@ -21,6 +21,7 @@ package org.crsh.ssh.term;
 import org.apache.sshd.server.Environment;
 
 import java.io.IOException;
+import java.security.Principal;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -66,7 +67,13 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
 
   public void run() {
     try {
-      factory.handler.handle(io);
+      final String userName = session.getAttribute(SSHLifeCycle.USERNAME);
+      Principal user = new Principal() {
+        public String getName() {
+          return userName;
+        }
+      };
+      factory.handler.handle(io, user);
     } finally {
       callback.onExit(0);
     }

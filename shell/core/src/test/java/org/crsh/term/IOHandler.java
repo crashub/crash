@@ -24,6 +24,7 @@ import org.crsh.term.spi.TermIO;
 import org.crsh.term.spi.TermIOHandler;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +45,7 @@ public class IOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandl
     return this;
   }
 
-  public void handle(TermIO io) {
+  public void handle(TermIO io, Principal user) {
     while (true) {
       IOAction action = null;
       while (action == null) {

@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,6 +54,9 @@ public class CRaSHSession implements Shell, Closeable {
   static final Logger log = LoggerFactory.getLogger(CRaSHSession.class);
 
   /** . */
+  static final Logger accessLog = LoggerFactory.getLogger("org.crsh.shell.access");
+
+  /** . */
   private GroovyShell groovyShell;
 
   /** . */
@@ -60,6 +64,9 @@ public class CRaSHSession implements Shell, Closeable {
 
   /** . */
   final Map<String, Object> attributes;
+
+  /** . */
+  final Principal user;
 
   /**
    * Used for testing purposes.
@@ -95,7 +102,7 @@ public class CRaSHSession implements Shell, Closeable {
     attributes.put(name, value);
   }
 
-  CRaSHSession(final CRaSH crash) {
+  CRaSHSession(final CRaSH crash, Principal user) {
     HashMap<String, Object> attributes = new HashMap<String, Object>();
 
     // Set variable available to all scripts
@@ -105,6 +112,7 @@ public class CRaSHSession implements Shell, Closeable {
     this.attributes = attributes;
     this.groovyShell = null;
     this.crash = crash;
+    this.user = user;
 
     //
     try {

@@ -103,7 +103,7 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
   }
 
   public CRaSHSession createShell() {
-    return crash.createSession();
+    return crash.createSession(null);
   }
 }
 

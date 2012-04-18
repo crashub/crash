@@ -63,7 +63,7 @@ public class Generator {
       Thread.currentThread().getContextClassLoader());
     ctx.refresh();
     CRaSH crash = new CRaSH(ctx);
-    CRaSHSession session = crash.createSession();
+    CRaSHSession session = crash.createSession(null);
     for (String s : ctx.listResourceId(ResourceKind.COMMAND)) {
       ShellCommand cmd = crash.getCommand(s);
       StringBuilder man = new StringBuilder();

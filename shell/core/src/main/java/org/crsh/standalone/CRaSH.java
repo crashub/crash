@@ -217,7 +217,7 @@ public class CRaSH {
       // Start crash for this command line
       Term term = new BaseTerm(new JLineIO());
       org.crsh.shell.impl.CRaSH crash = new org.crsh.shell.impl.CRaSH(bootstrap.getContext());
-      Processor processor = new Processor(term, crash.createSession());
+      Processor processor = new Processor(term, crash.createSession(null));
 
       //
       try {

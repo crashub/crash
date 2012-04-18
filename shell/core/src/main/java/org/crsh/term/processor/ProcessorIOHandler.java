@@ -8,6 +8,7 @@ import org.crsh.term.BaseTerm;
 import org.crsh.term.spi.TermIO;
 import org.crsh.term.spi.TermIOHandler;
 
+import java.security.Principal;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,8 +41,8 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
     }
   }
 
-  public void handle(final TermIO io) {
-    CRaSHSession shell = crash.createSession();
+  public void handle(final TermIO io, Principal user) {
+    CRaSHSession shell = crash.createSession(user);
     AsyncShell asyncShell = new AsyncShell(executor, shell);
     BaseTerm term = new BaseTerm(io);
     Processor processor = new Processor(term, asyncShell);

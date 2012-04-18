@@ -49,6 +49,14 @@ abstract class CRaSHProcess implements ShellProcess {
     try {
       ShellResponse resp;
       thread = Thread.currentThread();
+
+      //
+      if (crash.user != null) {
+        String userName = crash.user != null ? crash.user.getName() : "unauthenticated";
+        CRaSHSession.accessLog.debug("User " + userName + " executes " + request);
+      }
+
+      //
       try {
         try {
           resp = doInvoke(processContext);

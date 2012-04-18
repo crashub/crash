@@ -150,7 +150,7 @@ public class Agent {
       // Do stuff
       Term term = new BaseTerm(client);
       CRaSH crash = new CRaSH(bootstrap.getContext());
-      Processor processor = new Processor(term, crash.createSession());
+      Processor processor = new Processor(term, crash.createSession(null));
       processor.addListener(new Closeable() {
         public void close() {
           client.close();

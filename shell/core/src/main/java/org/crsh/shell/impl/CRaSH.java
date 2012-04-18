@@ -7,6 +7,8 @@ import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 
+import java.security.Principal;
+
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class CRaSH {
 
@@ -26,8 +28,8 @@ public class CRaSH {
     this.lifecycles = new ClassManager<Script>(context, ResourceKind.LIFECYCLE, Script.class, Script.class);
   }
 
-  public CRaSHSession createSession() {
-    return new CRaSHSession(this);
+  public CRaSHSession createSession(Principal user) {
+    return new CRaSHSession(this, user);
   }
 
   /**
