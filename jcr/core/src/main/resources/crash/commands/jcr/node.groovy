@@ -175,12 +175,12 @@ The node has been exported
       dstParentNode = findNodeByPath(Path.ROOT);
       dstName = target.string.substring(1);
     } else {
-      dstParentNode = findNodeByPath(target.string.substring(0, pos));
+      dstParentNode = findNodeByPath(new Path(target.string.substring(0, pos)));
       dstName = target.string.substring(pos + 1);
     }
 
     //
-    if (dstParentNode[dstName] != null) {
+    if (dstParentNode.hasNode(dstName)) {
       throw new ScriptException("Destination path already exist");
     }
 
@@ -224,7 +224,12 @@ Node imported
       throw new ScriptException("Can only import file");
 
     // Get content
-    def data = srcNode["jcr:content"]["jcr:data"];
+    def data;
+    if(srcNode.hasNode("jcr:content") && srcNode.getNode("jcr:content").hasProperty("jcr:data")){
+      data = srcNode.getNode("jcr:content").getProperty("jcr:data").getStream();
+    } else {
+      throw new ScriptException("The source file " + source + " is broken");
+    }
 
     //
     def dstNode = findNodeByPath(target);
