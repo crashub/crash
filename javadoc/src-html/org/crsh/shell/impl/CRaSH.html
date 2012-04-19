@@ -5,33 +5,57 @@
 <FONT color="green">002</FONT>    <a name="line.2"></a>
 <FONT color="green">003</FONT>    import groovy.lang.Script;<a name="line.3"></a>
 <FONT color="green">004</FONT>    import org.crsh.command.GroovyScriptCommand;<a name="line.4"></a>
-<FONT color="green">005</FONT>    import org.crsh.command.ShellCommand;<a name="line.5"></a>
-<FONT color="green">006</FONT>    import org.crsh.plugin.PluginContext;<a name="line.6"></a>
-<FONT color="green">007</FONT>    import org.crsh.plugin.ResourceKind;<a name="line.7"></a>
-<FONT color="green">008</FONT>    <a name="line.8"></a>
-<FONT color="green">009</FONT>    /** @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt; */<a name="line.9"></a>
-<FONT color="green">010</FONT>    public class CRaSH {<a name="line.10"></a>
+<FONT color="green">005</FONT>    import org.crsh.command.NoSuchCommandException;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import org.crsh.command.ShellCommand;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import org.crsh.plugin.PluginContext;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.crsh.plugin.ResourceKind;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    import java.security.Principal;<a name="line.10"></a>
 <FONT color="green">011</FONT>    <a name="line.11"></a>
-<FONT color="green">012</FONT>    <a name="line.12"></a>
-<FONT color="green">013</FONT>      /** . */<a name="line.13"></a>
-<FONT color="green">014</FONT>      final ClassManager&lt;ShellCommand&gt; commands;<a name="line.14"></a>
+<FONT color="green">012</FONT>    /** @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt; */<a name="line.12"></a>
+<FONT color="green">013</FONT>    public class CRaSH {<a name="line.13"></a>
+<FONT color="green">014</FONT>    <a name="line.14"></a>
 <FONT color="green">015</FONT>    <a name="line.15"></a>
 <FONT color="green">016</FONT>      /** . */<a name="line.16"></a>
-<FONT color="green">017</FONT>      final ClassManager&lt;Script&gt; lifecycles;<a name="line.17"></a>
+<FONT color="green">017</FONT>      final ClassManager&lt;ShellCommand&gt; commands;<a name="line.17"></a>
 <FONT color="green">018</FONT>    <a name="line.18"></a>
 <FONT color="green">019</FONT>      /** . */<a name="line.19"></a>
-<FONT color="green">020</FONT>      final PluginContext context;<a name="line.20"></a>
+<FONT color="green">020</FONT>      final ClassManager&lt;Script&gt; lifecycles;<a name="line.20"></a>
 <FONT color="green">021</FONT>    <a name="line.21"></a>
-<FONT color="green">022</FONT>      public CRaSH(PluginContext context) {<a name="line.22"></a>
-<FONT color="green">023</FONT>        this.context = context;<a name="line.23"></a>
-<FONT color="green">024</FONT>        this.commands = new ClassManager&lt;ShellCommand&gt;(context, ResourceKind.COMMAND, ShellCommand.class, GroovyScriptCommand.class);<a name="line.24"></a>
-<FONT color="green">025</FONT>        this.lifecycles = new ClassManager&lt;Script&gt;(context, ResourceKind.LIFECYCLE, Script.class, Script.class);<a name="line.25"></a>
-<FONT color="green">026</FONT>      }<a name="line.26"></a>
-<FONT color="green">027</FONT>    <a name="line.27"></a>
-<FONT color="green">028</FONT>      public CRaSHSession createSession() {<a name="line.28"></a>
-<FONT color="green">029</FONT>        return new CRaSHSession(this);<a name="line.29"></a>
-<FONT color="green">030</FONT>      }<a name="line.30"></a>
-<FONT color="green">031</FONT>    }<a name="line.31"></a>
+<FONT color="green">022</FONT>      /** . */<a name="line.22"></a>
+<FONT color="green">023</FONT>      final PluginContext context;<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>      public CRaSH(PluginContext context) {<a name="line.25"></a>
+<FONT color="green">026</FONT>        this.context = context;<a name="line.26"></a>
+<FONT color="green">027</FONT>        this.commands = new ClassManager&lt;ShellCommand&gt;(context, ResourceKind.COMMAND, ShellCommand.class, GroovyScriptCommand.class);<a name="line.27"></a>
+<FONT color="green">028</FONT>        this.lifecycles = new ClassManager&lt;Script&gt;(context, ResourceKind.LIFECYCLE, Script.class, Script.class);<a name="line.28"></a>
+<FONT color="green">029</FONT>      }<a name="line.29"></a>
+<FONT color="green">030</FONT>    <a name="line.30"></a>
+<FONT color="green">031</FONT>      public CRaSHSession createSession(Principal user) {<a name="line.31"></a>
+<FONT color="green">032</FONT>        return new CRaSHSession(this, user);<a name="line.32"></a>
+<FONT color="green">033</FONT>      }<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>      /**<a name="line.35"></a>
+<FONT color="green">036</FONT>       * Returns the plugin context.<a name="line.36"></a>
+<FONT color="green">037</FONT>       *<a name="line.37"></a>
+<FONT color="green">038</FONT>       * @return the plugin context<a name="line.38"></a>
+<FONT color="green">039</FONT>       */<a name="line.39"></a>
+<FONT color="green">040</FONT>      public PluginContext getContext() {<a name="line.40"></a>
+<FONT color="green">041</FONT>        return context;<a name="line.41"></a>
+<FONT color="green">042</FONT>      }<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>      /**<a name="line.44"></a>
+<FONT color="green">045</FONT>       * Attempt to obtain a command instance. Null is returned when such command does not exist.<a name="line.45"></a>
+<FONT color="green">046</FONT>       *<a name="line.46"></a>
+<FONT color="green">047</FONT>       * @param name the command name<a name="line.47"></a>
+<FONT color="green">048</FONT>       * @return a command instance<a name="line.48"></a>
+<FONT color="green">049</FONT>       * @throws org.crsh.command.NoSuchCommandException if an error occured preventing the command creation<a name="line.49"></a>
+<FONT color="green">050</FONT>       * @throws NullPointerException if the name argument is null<a name="line.50"></a>
+<FONT color="green">051</FONT>       */<a name="line.51"></a>
+<FONT color="green">052</FONT>      public ShellCommand getCommand(String name) throws NoSuchCommandException, NullPointerException {<a name="line.52"></a>
+<FONT color="green">053</FONT>        return commands.getInstance(name);<a name="line.53"></a>
+<FONT color="green">054</FONT>      }<a name="line.54"></a>
+<FONT color="green">055</FONT>    }<a name="line.55"></a>
 
 
 

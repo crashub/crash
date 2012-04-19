@@ -337,14 +337,14 @@
 <FONT color="green">334</FONT>            Map.Entry&lt;String, Boolean&gt; entry = completions.iterator().next();<a name="line.334"></a>
 <FONT color="green">335</FONT>            Appendable buffer = term.getInsertBuffer();<a name="line.335"></a>
 <FONT color="green">336</FONT>            String insert = entry.getKey();<a name="line.336"></a>
-<FONT color="green">337</FONT>            delimiter.escape(insert, 0, insert.length(), term.getInsertBuffer());<a name="line.337"></a>
+<FONT color="green">337</FONT>            delimiter.escape(insert, term.getInsertBuffer());<a name="line.337"></a>
 <FONT color="green">338</FONT>            if (entry.getValue()) {<a name="line.338"></a>
 <FONT color="green">339</FONT>              buffer.append(completion.getDelimiter().getValue());<a name="line.339"></a>
 <FONT color="green">340</FONT>            }<a name="line.340"></a>
 <FONT color="green">341</FONT>          } else {<a name="line.341"></a>
 <FONT color="green">342</FONT>            String commonCompletion = Strings.findLongestCommonPrefix(completions.getSuffixes());<a name="line.342"></a>
 <FONT color="green">343</FONT>            if (commonCompletion.length() &gt; 0) {<a name="line.343"></a>
-<FONT color="green">344</FONT>              delimiter.escape(commonCompletion, 0, commonCompletion.length(), term.getInsertBuffer());<a name="line.344"></a>
+<FONT color="green">344</FONT>              delimiter.escape(commonCompletion, term.getInsertBuffer());<a name="line.344"></a>
 <FONT color="green">345</FONT>            } else {<a name="line.345"></a>
 <FONT color="green">346</FONT>              // Format stuff<a name="line.346"></a>
 <FONT color="green">347</FONT>              int width = term.getWidth();<a name="line.347"></a>
@@ -358,8 +358,8 @@
 <FONT color="green">355</FONT>                max = Math.max(max, completionPrefix.length() + suffix.length());<a name="line.355"></a>
 <FONT color="green">356</FONT>              }<a name="line.356"></a>
 <FONT color="green">357</FONT>    <a name="line.357"></a>
-<FONT color="green">358</FONT>              // Separator<a name="line.358"></a>
-<FONT color="green">359</FONT>              max++;<a name="line.359"></a>
+<FONT color="green">358</FONT>              // Separator : use two whitespace like in BASH<a name="line.358"></a>
+<FONT color="green">359</FONT>              max += 2;<a name="line.359"></a>
 <FONT color="green">360</FONT>    <a name="line.360"></a>
 <FONT color="green">361</FONT>              //<a name="line.361"></a>
 <FONT color="green">362</FONT>              StringBuilder sb = new StringBuilder().append('\n');<a name="line.362"></a>

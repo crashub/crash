@@ -37,7 +37,7 @@
 <FONT color="green">034</FONT>        TelnetIO io = new TelnetIO(conn);<a name="line.34"></a>
 <FONT color="green">035</FONT>        TelnetLifeCycle lifeCycle = TelnetLifeCycle.getLifeCycle(conn);<a name="line.35"></a>
 <FONT color="green">036</FONT>        TermIOHandler handler = lifeCycle.getHandler();<a name="line.36"></a>
-<FONT color="green">037</FONT>        handler.handle(io);<a name="line.37"></a>
+<FONT color="green">037</FONT>        handler.handle(io, null);<a name="line.37"></a>
 <FONT color="green">038</FONT>      }<a name="line.38"></a>
 <FONT color="green">039</FONT>    <a name="line.39"></a>
 <FONT color="green">040</FONT>      public void connectionIdle(ConnectionEvent connectionEvent) {<a name="line.40"></a>

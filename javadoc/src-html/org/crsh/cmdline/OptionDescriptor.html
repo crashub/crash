@@ -107,20 +107,20 @@
 <FONT color="green">104</FONT>      public Object parse(List&lt;String&gt; values) throws CmdSyntaxException {<a name="line.104"></a>
 <FONT color="green">105</FONT>        if (arity == 0) {<a name="line.105"></a>
 <FONT color="green">106</FONT>          if (values.size() &gt; 0) {<a name="line.106"></a>
-<FONT color="green">107</FONT>            throw new CmdSyntaxException("Too many option values " + values);<a name="line.107"></a>
+<FONT color="green">107</FONT>            throw new CmdSyntaxException("Too many option values: " + values);<a name="line.107"></a>
 <FONT color="green">108</FONT>          }<a name="line.108"></a>
 <FONT color="green">109</FONT>          // It's a boolean and it is true<a name="line.109"></a>
 <FONT color="green">110</FONT>          return Boolean.TRUE;<a name="line.110"></a>
 <FONT color="green">111</FONT>        } else {<a name="line.111"></a>
 <FONT color="green">112</FONT>          if (getMultiplicity() == Multiplicity.SINGLE) {<a name="line.112"></a>
 <FONT color="green">113</FONT>            if (values.size() &gt; 1) {<a name="line.113"></a>
-<FONT color="green">114</FONT>              throw new CmdSyntaxException("Too many option values " + values);<a name="line.114"></a>
+<FONT color="green">114</FONT>              throw new CmdSyntaxException("Too many option values: " + values);<a name="line.114"></a>
 <FONT color="green">115</FONT>            }<a name="line.115"></a>
 <FONT color="green">116</FONT>            String value = values.get(0);<a name="line.116"></a>
 <FONT color="green">117</FONT>            try {<a name="line.117"></a>
 <FONT color="green">118</FONT>              return parse(value);<a name="line.118"></a>
 <FONT color="green">119</FONT>            } catch (Exception e) {<a name="line.119"></a>
-<FONT color="green">120</FONT>              throw new CmdSyntaxException("Could not parse " + value);<a name="line.120"></a>
+<FONT color="green">120</FONT>              throw new CmdSyntaxException("Could not parse value: &lt;" + value + "&gt;");<a name="line.120"></a>
 <FONT color="green">121</FONT>            }<a name="line.121"></a>
 <FONT color="green">122</FONT>          } else {<a name="line.122"></a>
 <FONT color="green">123</FONT>            List&lt;Object&gt; v = new ArrayList&lt;Object&gt;(values.size());<a name="line.123"></a>
@@ -128,7 +128,7 @@
 <FONT color="green">125</FONT>              try {<a name="line.125"></a>
 <FONT color="green">126</FONT>                v.add(parse(value));<a name="line.126"></a>
 <FONT color="green">127</FONT>              } catch (Exception e) {<a name="line.127"></a>
-<FONT color="green">128</FONT>                throw new CmdSyntaxException("Could not parse " + value);<a name="line.128"></a>
+<FONT color="green">128</FONT>                throw new CmdSyntaxException("Could not parse value: &lt;" + value + "&gt;");<a name="line.128"></a>
 <FONT color="green">129</FONT>              }<a name="line.129"></a>
 <FONT color="green">130</FONT>            }<a name="line.130"></a>
 <FONT color="green">131</FONT>            return v;<a name="line.131"></a>

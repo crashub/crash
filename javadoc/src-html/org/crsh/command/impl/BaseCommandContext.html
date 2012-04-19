@@ -36,24 +36,13 @@
 <FONT color="green">033</FONT>      private final Map&lt;String, Object&gt; attributes;<a name="line.33"></a>
 <FONT color="green">034</FONT>    <a name="line.34"></a>
 <FONT color="green">035</FONT>      public BaseCommandContext(Map&lt;String, Object&gt; attributes) {<a name="line.35"></a>
-<FONT color="green">036</FONT>        this.attributes = attributes(attributes);<a name="line.36"></a>
+<FONT color="green">036</FONT>        this.attributes = attributes;<a name="line.36"></a>
 <FONT color="green">037</FONT>      }<a name="line.37"></a>
 <FONT color="green">038</FONT>    <a name="line.38"></a>
-<FONT color="green">039</FONT>      /**<a name="line.39"></a>
-<FONT color="green">040</FONT>       * Provide an opportunity to subclass to change the attribute map. This implementation returns the same<a name="line.40"></a>
-<FONT color="green">041</FONT>       * object by default.<a name="line.41"></a>
-<FONT color="green">042</FONT>       *<a name="line.42"></a>
-<FONT color="green">043</FONT>       * @param attributes the original attributes<a name="line.43"></a>
-<FONT color="green">044</FONT>       * @return the replaced attributes<a name="line.44"></a>
-<FONT color="green">045</FONT>       */<a name="line.45"></a>
-<FONT color="green">046</FONT>      protected Map&lt;String, Object&gt; attributes(Map&lt;String, Object&gt; attributes) {<a name="line.46"></a>
-<FONT color="green">047</FONT>        return attributes;<a name="line.47"></a>
-<FONT color="green">048</FONT>      }<a name="line.48"></a>
-<FONT color="green">049</FONT>    <a name="line.49"></a>
-<FONT color="green">050</FONT>      public final Map&lt;String, Object&gt; getAttributes() {<a name="line.50"></a>
-<FONT color="green">051</FONT>        return attributes;<a name="line.51"></a>
-<FONT color="green">052</FONT>      }<a name="line.52"></a>
-<FONT color="green">053</FONT>    }<a name="line.53"></a>
+<FONT color="green">039</FONT>      public final Map&lt;String, Object&gt; getAttributes() {<a name="line.39"></a>
+<FONT color="green">040</FONT>        return attributes;<a name="line.40"></a>
+<FONT color="green">041</FONT>      }<a name="line.41"></a>
+<FONT color="green">042</FONT>    }<a name="line.42"></a>
 
 
 

@@ -134,7 +134,7 @@
 <FONT color="green">131</FONT>                  response = ShellResponse.ok();<a name="line.131"></a>
 <FONT color="green">132</FONT>                }<a name="line.132"></a>
 <FONT color="green">133</FONT>                catch (Throwable t) {<a name="line.133"></a>
-<FONT color="green">134</FONT>                  response = ShellResponse.internalError(t);<a name="line.134"></a>
+<FONT color="green">134</FONT>                  response = ShellResponse.internalError("Unexpected throwable when executing process", t);<a name="line.134"></a>
 <FONT color="green">135</FONT>                }<a name="line.135"></a>
 <FONT color="green">136</FONT>              }<a name="line.136"></a>
 <FONT color="green">137</FONT>    <a name="line.137"></a>

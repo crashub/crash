@@ -180,8 +180,8 @@
 <FONT color="green">177</FONT>        if (pos1 != -1) {<a name="line.177"></a>
 <FONT color="green">178</FONT>          int pos2 = target.indexOf(':', pos1 + 1);<a name="line.178"></a>
 <FONT color="green">179</FONT>          if (pos2 != -1) {<a name="line.179"></a>
-<FONT color="green">180</FONT>            // container_name:workspace_name:path<a name="line.180"></a>
-<FONT color="green">181</FONT>            properties.put("exo.container.name", target.substring(0, pos1));<a name="line.181"></a>
+<FONT color="green">180</FONT>            // container:workspace_name:path<a name="line.180"></a>
+<FONT color="green">181</FONT>            properties.put("container", target.substring(0, pos1));<a name="line.181"></a>
 <FONT color="green">182</FONT>            workspaceName = target.substring(pos1 + 1, pos2);<a name="line.182"></a>
 <FONT color="green">183</FONT>            path = target.substring(pos2 + 1);<a name="line.183"></a>
 <FONT color="green">184</FONT>          }<a name="line.184"></a>

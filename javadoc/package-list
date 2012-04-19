@@ -37,4 +37,5 @@ org.crsh.vfs.spi
 org.crsh.vfs.spi.file
 org.crsh.vfs.spi.jarurl
 org.crsh.vfs.spi.mount
+org.crsh.vfs.spi.ram
 org.crsh.vfs.spi.servlet

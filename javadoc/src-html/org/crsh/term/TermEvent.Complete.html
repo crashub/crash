@@ -28,69 +28,100 @@
 <FONT color="green">025</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.25"></a>
 <FONT color="green">026</FONT>     * @version $Revision$<a name="line.26"></a>
 <FONT color="green">027</FONT>     */<a name="line.27"></a>
-<FONT color="green">028</FONT>    public class TermEvent {<a name="line.28"></a>
+<FONT color="green">028</FONT>    public abstract class TermEvent {<a name="line.28"></a>
 <FONT color="green">029</FONT>    <a name="line.29"></a>
-<FONT color="green">030</FONT>      @Override<a name="line.30"></a>
-<FONT color="green">031</FONT>      public String toString() {<a name="line.31"></a>
-<FONT color="green">032</FONT>        return getClass().getSimpleName() + "[]";<a name="line.32"></a>
-<FONT color="green">033</FONT>      }<a name="line.33"></a>
-<FONT color="green">034</FONT>    <a name="line.34"></a>
-<FONT color="green">035</FONT>      /**<a name="line.35"></a>
-<FONT color="green">036</FONT>       * Signals a control-break.<a name="line.36"></a>
-<FONT color="green">037</FONT>       */<a name="line.37"></a>
-<FONT color="green">038</FONT>      public static class Close extends TermEvent {<a name="line.38"></a>
-<FONT color="green">039</FONT>      }<a name="line.39"></a>
-<FONT color="green">040</FONT>    <a name="line.40"></a>
-<FONT color="green">041</FONT>      /**<a name="line.41"></a>
-<FONT color="green">042</FONT>       * Signals a control-break.<a name="line.42"></a>
-<FONT color="green">043</FONT>       */<a name="line.43"></a>
-<FONT color="green">044</FONT>      public static class Break extends TermEvent {<a name="line.44"></a>
-<FONT color="green">045</FONT>      }<a name="line.45"></a>
-<FONT color="green">046</FONT>    <a name="line.46"></a>
-<FONT color="green">047</FONT>      /**<a name="line.47"></a>
-<FONT color="green">048</FONT>       * Signals the completion of a text line.<a name="line.48"></a>
-<FONT color="green">049</FONT>       */<a name="line.49"></a>
-<FONT color="green">050</FONT>      public static class Complete extends TermEvent {<a name="line.50"></a>
-<FONT color="green">051</FONT>    <a name="line.51"></a>
-<FONT color="green">052</FONT>        /** The line to be completed. */<a name="line.52"></a>
-<FONT color="green">053</FONT>        private CharSequence line;<a name="line.53"></a>
-<FONT color="green">054</FONT>    <a name="line.54"></a>
-<FONT color="green">055</FONT>        public Complete(CharSequence line) {<a name="line.55"></a>
-<FONT color="green">056</FONT>          this.line = line;<a name="line.56"></a>
-<FONT color="green">057</FONT>        }<a name="line.57"></a>
+<FONT color="green">030</FONT>      public static Complete complete(CharSequence line) {<a name="line.30"></a>
+<FONT color="green">031</FONT>        return new Complete(line);<a name="line.31"></a>
+<FONT color="green">032</FONT>      }<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>      public static Close close() {<a name="line.34"></a>
+<FONT color="green">035</FONT>        return Close.INSTANCE;<a name="line.35"></a>
+<FONT color="green">036</FONT>      }<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>      public static ReadLine readLine(CharSequence line) {<a name="line.38"></a>
+<FONT color="green">039</FONT>        return new ReadLine(line);<a name="line.39"></a>
+<FONT color="green">040</FONT>      }<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>      public static Break brk() {<a name="line.42"></a>
+<FONT color="green">043</FONT>        return Break.INSTANCE;<a name="line.43"></a>
+<FONT color="green">044</FONT>      }<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>      private TermEvent() {<a name="line.46"></a>
+<FONT color="green">047</FONT>      }<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>      @Override<a name="line.49"></a>
+<FONT color="green">050</FONT>      public String toString() {<a name="line.50"></a>
+<FONT color="green">051</FONT>        return getClass().getSimpleName() + "[]";<a name="line.51"></a>
+<FONT color="green">052</FONT>      }<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>      /**<a name="line.54"></a>
+<FONT color="green">055</FONT>       * Signals a control-break.<a name="line.55"></a>
+<FONT color="green">056</FONT>       */<a name="line.56"></a>
+<FONT color="green">057</FONT>      public static class Close extends TermEvent {<a name="line.57"></a>
 <FONT color="green">058</FONT>    <a name="line.58"></a>
-<FONT color="green">059</FONT>        public CharSequence getLine() {<a name="line.59"></a>
-<FONT color="green">060</FONT>          return line;<a name="line.60"></a>
-<FONT color="green">061</FONT>        }<a name="line.61"></a>
-<FONT color="green">062</FONT>    <a name="line.62"></a>
-<FONT color="green">063</FONT>        @Override<a name="line.63"></a>
-<FONT color="green">064</FONT>        public String toString() {<a name="line.64"></a>
-<FONT color="green">065</FONT>          return "Complete[line=" + line + "]";<a name="line.65"></a>
-<FONT color="green">066</FONT>        }<a name="line.66"></a>
-<FONT color="green">067</FONT>      }<a name="line.67"></a>
-<FONT color="green">068</FONT>    <a name="line.68"></a>
-<FONT color="green">069</FONT>      /**<a name="line.69"></a>
-<FONT color="green">070</FONT>       * Signals a line was submitted for processing.<a name="line.70"></a>
-<FONT color="green">071</FONT>       */<a name="line.71"></a>
-<FONT color="green">072</FONT>      public static class ReadLine extends TermEvent {<a name="line.72"></a>
+<FONT color="green">059</FONT>        /** . */<a name="line.59"></a>
+<FONT color="green">060</FONT>        private static final Close INSTANCE = new Close();<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>        private Close() {<a name="line.62"></a>
+<FONT color="green">063</FONT>        }<a name="line.63"></a>
+<FONT color="green">064</FONT>      }<a name="line.64"></a>
+<FONT color="green">065</FONT>    <a name="line.65"></a>
+<FONT color="green">066</FONT>      /**<a name="line.66"></a>
+<FONT color="green">067</FONT>       * Signals a control-break.<a name="line.67"></a>
+<FONT color="green">068</FONT>       */<a name="line.68"></a>
+<FONT color="green">069</FONT>      public static class Break extends TermEvent {<a name="line.69"></a>
+<FONT color="green">070</FONT>    <a name="line.70"></a>
+<FONT color="green">071</FONT>        /** . */<a name="line.71"></a>
+<FONT color="green">072</FONT>        private static final Break INSTANCE = new Break();<a name="line.72"></a>
 <FONT color="green">073</FONT>    <a name="line.73"></a>
-<FONT color="green">074</FONT>        /** . */<a name="line.74"></a>
-<FONT color="green">075</FONT>        private final CharSequence line;<a name="line.75"></a>
-<FONT color="green">076</FONT>    <a name="line.76"></a>
-<FONT color="green">077</FONT>        public ReadLine(CharSequence line) {<a name="line.77"></a>
-<FONT color="green">078</FONT>          this.line = line;<a name="line.78"></a>
-<FONT color="green">079</FONT>        }<a name="line.79"></a>
-<FONT color="green">080</FONT>    <a name="line.80"></a>
-<FONT color="green">081</FONT>        public CharSequence getLine() {<a name="line.81"></a>
-<FONT color="green">082</FONT>          return line;<a name="line.82"></a>
-<FONT color="green">083</FONT>        }<a name="line.83"></a>
-<FONT color="green">084</FONT>    <a name="line.84"></a>
-<FONT color="green">085</FONT>        @Override<a name="line.85"></a>
-<FONT color="green">086</FONT>        public String toString() {<a name="line.86"></a>
-<FONT color="green">087</FONT>          return "ReadLine[line=" + line + "]";<a name="line.87"></a>
+<FONT color="green">074</FONT>        private Break() {<a name="line.74"></a>
+<FONT color="green">075</FONT>        }<a name="line.75"></a>
+<FONT color="green">076</FONT>      }<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>      /**<a name="line.78"></a>
+<FONT color="green">079</FONT>       * Signals the completion of a text line.<a name="line.79"></a>
+<FONT color="green">080</FONT>       */<a name="line.80"></a>
+<FONT color="green">081</FONT>      public static class Complete extends TermEvent {<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>        /** The line to be completed. */<a name="line.83"></a>
+<FONT color="green">084</FONT>        private CharSequence line;<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>        private Complete(CharSequence line) {<a name="line.86"></a>
+<FONT color="green">087</FONT>          this.line = line;<a name="line.87"></a>
 <FONT color="green">088</FONT>        }<a name="line.88"></a>
-<FONT color="green">089</FONT>      }<a name="line.89"></a>
-<FONT color="green">090</FONT>    }<a name="line.90"></a>
+<FONT color="green">089</FONT>    <a name="line.89"></a>
+<FONT color="green">090</FONT>        public CharSequence getLine() {<a name="line.90"></a>
+<FONT color="green">091</FONT>          return line;<a name="line.91"></a>
+<FONT color="green">092</FONT>        }<a name="line.92"></a>
+<FONT color="green">093</FONT>    <a name="line.93"></a>
+<FONT color="green">094</FONT>        @Override<a name="line.94"></a>
+<FONT color="green">095</FONT>        public String toString() {<a name="line.95"></a>
+<FONT color="green">096</FONT>          return "Complete[line=" + line + "]";<a name="line.96"></a>
+<FONT color="green">097</FONT>        }<a name="line.97"></a>
+<FONT color="green">098</FONT>      }<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>      /**<a name="line.100"></a>
+<FONT color="green">101</FONT>       * Signals a line was submitted for processing.<a name="line.101"></a>
+<FONT color="green">102</FONT>       */<a name="line.102"></a>
+<FONT color="green">103</FONT>      public static class ReadLine extends TermEvent {<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>        /** . */<a name="line.105"></a>
+<FONT color="green">106</FONT>        private final CharSequence line;<a name="line.106"></a>
+<FONT color="green">107</FONT>    <a name="line.107"></a>
+<FONT color="green">108</FONT>        private ReadLine(CharSequence line) {<a name="line.108"></a>
+<FONT color="green">109</FONT>          this.line = line;<a name="line.109"></a>
+<FONT color="green">110</FONT>        }<a name="line.110"></a>
+<FONT color="green">111</FONT>    <a name="line.111"></a>
+<FONT color="green">112</FONT>        public CharSequence getLine() {<a name="line.112"></a>
+<FONT color="green">113</FONT>          return line;<a name="line.113"></a>
+<FONT color="green">114</FONT>        }<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>        @Override<a name="line.116"></a>
+<FONT color="green">117</FONT>        public String toString() {<a name="line.117"></a>
+<FONT color="green">118</FONT>          return "ReadLine[line=" + line + "]";<a name="line.118"></a>
+<FONT color="green">119</FONT>        }<a name="line.119"></a>
+<FONT color="green">120</FONT>      }<a name="line.120"></a>
+<FONT color="green">121</FONT>    }<a name="line.121"></a>
 
 
 

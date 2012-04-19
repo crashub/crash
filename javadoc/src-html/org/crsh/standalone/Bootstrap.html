@@ -34,101 +34,122 @@
 <FONT color="green">031</FONT>    import java.io.File;<a name="line.31"></a>
 <FONT color="green">032</FONT>    import java.net.URL;<a name="line.32"></a>
 <FONT color="green">033</FONT>    import java.net.URLClassLoader;<a name="line.33"></a>
-<FONT color="green">034</FONT>    import java.util.List;<a name="line.34"></a>
-<FONT color="green">035</FONT>    <a name="line.35"></a>
-<FONT color="green">036</FONT>    /**<a name="line.36"></a>
-<FONT color="green">037</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.37"></a>
-<FONT color="green">038</FONT>     * @version $Revision$<a name="line.38"></a>
-<FONT color="green">039</FONT>     */<a name="line.39"></a>
-<FONT color="green">040</FONT>    public class Bootstrap extends PluginLifeCycle {<a name="line.40"></a>
-<FONT color="green">041</FONT>    <a name="line.41"></a>
-<FONT color="green">042</FONT>      /** . */<a name="line.42"></a>
-<FONT color="green">043</FONT>      protected final Logger log = LoggerFactory.getLogger(getClass());<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>      /** The mounted path on the file system. */<a name="line.45"></a>
-<FONT color="green">046</FONT>      private List&lt;File&gt; bins = Utils.newArrayList();<a name="line.46"></a>
-<FONT color="green">047</FONT>    <a name="line.47"></a>
-<FONT color="green">048</FONT>      /** The mounted path on the file system. */<a name="line.48"></a>
-<FONT color="green">049</FONT>      private List&lt;File&gt; confs = Utils.newArrayList();<a name="line.49"></a>
-<FONT color="green">050</FONT>    <a name="line.50"></a>
-<FONT color="green">051</FONT>      /** The class path. */<a name="line.51"></a>
-<FONT color="green">052</FONT>      private List&lt;File&gt; jars = Utils.newArrayList();<a name="line.52"></a>
-<FONT color="green">053</FONT>    <a name="line.53"></a>
-<FONT color="green">054</FONT>      /** The base classloader. */<a name="line.54"></a>
-<FONT color="green">055</FONT>      private ClassLoader baseLoader;<a name="line.55"></a>
-<FONT color="green">056</FONT>    <a name="line.56"></a>
-<FONT color="green">057</FONT>      public Bootstrap(ClassLoader baseLoader) throws NullPointerException {<a name="line.57"></a>
-<FONT color="green">058</FONT>        if (baseLoader == null) {<a name="line.58"></a>
-<FONT color="green">059</FONT>          throw new NullPointerException("No null base loader accepted");<a name="line.59"></a>
-<FONT color="green">060</FONT>        }<a name="line.60"></a>
-<FONT color="green">061</FONT>        this.baseLoader = baseLoader;<a name="line.61"></a>
-<FONT color="green">062</FONT>      }<a name="line.62"></a>
-<FONT color="green">063</FONT>    <a name="line.63"></a>
-<FONT color="green">064</FONT>      public Bootstrap addConfPath(File file) {<a name="line.64"></a>
-<FONT color="green">065</FONT>        confs.add(file);<a name="line.65"></a>
-<FONT color="green">066</FONT>        return this;<a name="line.66"></a>
-<FONT color="green">067</FONT>      }<a name="line.67"></a>
-<FONT color="green">068</FONT>    <a name="line.68"></a>
-<FONT color="green">069</FONT>      public Bootstrap addCmdPath(File file) {<a name="line.69"></a>
-<FONT color="green">070</FONT>        bins.add(file);<a name="line.70"></a>
-<FONT color="green">071</FONT>        return this;<a name="line.71"></a>
+<FONT color="green">034</FONT>    import java.util.Collections;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import java.util.List;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import java.util.Map;<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>    /**<a name="line.38"></a>
+<FONT color="green">039</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.39"></a>
+<FONT color="green">040</FONT>     * @version $Revision$<a name="line.40"></a>
+<FONT color="green">041</FONT>     */<a name="line.41"></a>
+<FONT color="green">042</FONT>    public class Bootstrap extends PluginLifeCycle {<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>      /** . */<a name="line.44"></a>
+<FONT color="green">045</FONT>      protected final Logger log = LoggerFactory.getLogger(getClass());<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>      /** The mounted path on the file system. */<a name="line.47"></a>
+<FONT color="green">048</FONT>      private List&lt;File&gt; cmds = Utils.newArrayList();<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>      /** The mounted path on the file system. */<a name="line.50"></a>
+<FONT color="green">051</FONT>      private List&lt;File&gt; confs = Utils.newArrayList();<a name="line.51"></a>
+<FONT color="green">052</FONT>    <a name="line.52"></a>
+<FONT color="green">053</FONT>      /** The class path. */<a name="line.53"></a>
+<FONT color="green">054</FONT>      private List&lt;File&gt; jars = Utils.newArrayList();<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>      /** The base classloader. */<a name="line.56"></a>
+<FONT color="green">057</FONT>      private ClassLoader baseLoader;<a name="line.57"></a>
+<FONT color="green">058</FONT>    <a name="line.58"></a>
+<FONT color="green">059</FONT>      /** The attributes. */<a name="line.59"></a>
+<FONT color="green">060</FONT>      private Map&lt;String, ?&gt; attributes;<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>      public Bootstrap(ClassLoader baseLoader) throws NullPointerException {<a name="line.62"></a>
+<FONT color="green">063</FONT>        if (baseLoader == null) {<a name="line.63"></a>
+<FONT color="green">064</FONT>          throw new NullPointerException("No null base loader accepted");<a name="line.64"></a>
+<FONT color="green">065</FONT>        }<a name="line.65"></a>
+<FONT color="green">066</FONT>        this.baseLoader = baseLoader;<a name="line.66"></a>
+<FONT color="green">067</FONT>        this.attributes = Collections.emptyMap();<a name="line.67"></a>
+<FONT color="green">068</FONT>      }<a name="line.68"></a>
+<FONT color="green">069</FONT>    <a name="line.69"></a>
+<FONT color="green">070</FONT>      public void setAttributes(Map&lt;String, ?&gt; attributes) {<a name="line.70"></a>
+<FONT color="green">071</FONT>        this.attributes = attributes;<a name="line.71"></a>
 <FONT color="green">072</FONT>      }<a name="line.72"></a>
 <FONT color="green">073</FONT>    <a name="line.73"></a>
-<FONT color="green">074</FONT>      public Bootstrap addJarPath(File file) {<a name="line.74"></a>
-<FONT color="green">075</FONT>        jars.add(file);<a name="line.75"></a>
+<FONT color="green">074</FONT>      public Bootstrap addConfPath(File file) {<a name="line.74"></a>
+<FONT color="green">075</FONT>        confs.add(file);<a name="line.75"></a>
 <FONT color="green">076</FONT>        return this;<a name="line.76"></a>
 <FONT color="green">077</FONT>      }<a name="line.77"></a>
 <FONT color="green">078</FONT>    <a name="line.78"></a>
-<FONT color="green">079</FONT>      public void bootstrap() throws Exception {<a name="line.79"></a>
-<FONT color="green">080</FONT>    <a name="line.80"></a>
-<FONT color="green">081</FONT>        // Compute the url classpath<a name="line.81"></a>
-<FONT color="green">082</FONT>        URL[] urls = new URL[jars.size()];<a name="line.82"></a>
-<FONT color="green">083</FONT>        for (int i = 0;i &lt; urls.length;i++) {<a name="line.83"></a>
-<FONT color="green">084</FONT>          urls[i] = jars.get(i).toURI().toURL();<a name="line.84"></a>
-<FONT color="green">085</FONT>        }<a name="line.85"></a>
-<FONT color="green">086</FONT>    <a name="line.86"></a>
-<FONT color="green">087</FONT>        // Create the classloader<a name="line.87"></a>
-<FONT color="green">088</FONT>        URLClassLoader classLoader = new URLClassLoader(urls, baseLoader);<a name="line.88"></a>
-<FONT color="green">089</FONT>    <a name="line.89"></a>
-<FONT color="green">090</FONT>        // Create the bin file system<a name="line.90"></a>
-<FONT color="green">091</FONT>        FS binFS = new FS();<a name="line.91"></a>
-<FONT color="green">092</FONT>        for (File bin : bins) {<a name="line.92"></a>
-<FONT color="green">093</FONT>          binFS.mount(bin);<a name="line.93"></a>
-<FONT color="green">094</FONT>        }<a name="line.94"></a>
-<FONT color="green">095</FONT>        binFS.mount(classLoader, Path.get("/crash/commands/"));<a name="line.95"></a>
+<FONT color="green">079</FONT>      public Bootstrap addCmdPath(File file) {<a name="line.79"></a>
+<FONT color="green">080</FONT>        cmds.add(file);<a name="line.80"></a>
+<FONT color="green">081</FONT>        return this;<a name="line.81"></a>
+<FONT color="green">082</FONT>      }<a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>      public Bootstrap addJarPath(File file) {<a name="line.84"></a>
+<FONT color="green">085</FONT>        jars.add(file);<a name="line.85"></a>
+<FONT color="green">086</FONT>        return this;<a name="line.86"></a>
+<FONT color="green">087</FONT>      }<a name="line.87"></a>
+<FONT color="green">088</FONT>    <a name="line.88"></a>
+<FONT color="green">089</FONT>      public void bootstrap() throws Exception {<a name="line.89"></a>
+<FONT color="green">090</FONT>    <a name="line.90"></a>
+<FONT color="green">091</FONT>        // Compute the url classpath<a name="line.91"></a>
+<FONT color="green">092</FONT>        URL[] urls = new URL[jars.size()];<a name="line.92"></a>
+<FONT color="green">093</FONT>        for (int i = 0;i &lt; urls.length;i++) {<a name="line.93"></a>
+<FONT color="green">094</FONT>          urls[i] = jars.get(i).toURI().toURL();<a name="line.94"></a>
+<FONT color="green">095</FONT>        }<a name="line.95"></a>
 <FONT color="green">096</FONT>    <a name="line.96"></a>
-<FONT color="green">097</FONT>        // Create the conf file system<a name="line.97"></a>
-<FONT color="green">098</FONT>        FS confFS = new FS();<a name="line.98"></a>
-<FONT color="green">099</FONT>        for (File conf : confs) {<a name="line.99"></a>
-<FONT color="green">100</FONT>          confFS.mount(conf);<a name="line.100"></a>
-<FONT color="green">101</FONT>        }<a name="line.101"></a>
-<FONT color="green">102</FONT>        confFS.mount(classLoader, Path.get("/crash/"));<a name="line.102"></a>
-<FONT color="green">103</FONT>    <a name="line.103"></a>
-<FONT color="green">104</FONT>        // The service loader discovery<a name="line.104"></a>
-<FONT color="green">105</FONT>        ServiceLoaderDiscovery discovery = new ServiceLoaderDiscovery(classLoader);<a name="line.105"></a>
-<FONT color="green">106</FONT>    <a name="line.106"></a>
-<FONT color="green">107</FONT>        //<a name="line.107"></a>
-<FONT color="green">108</FONT>        StringBuilder info = new StringBuilder("Booting crash with classpath=");<a name="line.108"></a>
-<FONT color="green">109</FONT>        info.append(jars).append(" and mounts=[");<a name="line.109"></a>
-<FONT color="green">110</FONT>        for (int i = 0;i &lt; bins.size();i++) {<a name="line.110"></a>
-<FONT color="green">111</FONT>          if (i &gt; 0) {<a name="line.111"></a>
-<FONT color="green">112</FONT>            info.append(',');<a name="line.112"></a>
-<FONT color="green">113</FONT>          }<a name="line.113"></a>
-<FONT color="green">114</FONT>          info.append(bins.get(i).getAbsolutePath());<a name="line.114"></a>
-<FONT color="green">115</FONT>        }<a name="line.115"></a>
-<FONT color="green">116</FONT>        info.append(']');<a name="line.116"></a>
-<FONT color="green">117</FONT>        log.info(info.toString());<a name="line.117"></a>
+<FONT color="green">097</FONT>        // Create the classloader<a name="line.97"></a>
+<FONT color="green">098</FONT>        URLClassLoader classLoader = new URLClassLoader(urls, baseLoader);<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>        // Create the cmd file system<a name="line.100"></a>
+<FONT color="green">101</FONT>        FS cmdFS = new FS();<a name="line.101"></a>
+<FONT color="green">102</FONT>        for (File cmd : cmds) {<a name="line.102"></a>
+<FONT color="green">103</FONT>          cmdFS.mount(cmd);<a name="line.103"></a>
+<FONT color="green">104</FONT>        }<a name="line.104"></a>
+<FONT color="green">105</FONT>    <a name="line.105"></a>
+<FONT color="green">106</FONT>        // Add the classloader<a name="line.106"></a>
+<FONT color="green">107</FONT>        cmdFS.mount(classLoader, Path.get("/crash/commands/"));<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>        // Create the conf file system<a name="line.109"></a>
+<FONT color="green">110</FONT>        FS confFS = new FS();<a name="line.110"></a>
+<FONT color="green">111</FONT>        for (File conf : confs) {<a name="line.111"></a>
+<FONT color="green">112</FONT>          confFS.mount(conf);<a name="line.112"></a>
+<FONT color="green">113</FONT>        }<a name="line.113"></a>
+<FONT color="green">114</FONT>        confFS.mount(classLoader, Path.get("/crash/"));<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>        // The service loader discovery<a name="line.116"></a>
+<FONT color="green">117</FONT>        ServiceLoaderDiscovery discovery = new ServiceLoaderDiscovery(classLoader);<a name="line.117"></a>
 <FONT color="green">118</FONT>    <a name="line.118"></a>
 <FONT color="green">119</FONT>        //<a name="line.119"></a>
-<FONT color="green">120</FONT>        PluginContext context = new PluginContext(discovery, binFS, confFS, classLoader);<a name="line.120"></a>
-<FONT color="green">121</FONT>        context.refresh();<a name="line.121"></a>
-<FONT color="green">122</FONT>        start(context);<a name="line.122"></a>
-<FONT color="green">123</FONT>      }<a name="line.123"></a>
-<FONT color="green">124</FONT>    <a name="line.124"></a>
-<FONT color="green">125</FONT>      public void shutdown() {<a name="line.125"></a>
-<FONT color="green">126</FONT>        stop();<a name="line.126"></a>
-<FONT color="green">127</FONT>      }<a name="line.127"></a>
-<FONT color="green">128</FONT>    }<a name="line.128"></a>
+<FONT color="green">120</FONT>        StringBuilder info = new StringBuilder("Booting crash with classpath=");<a name="line.120"></a>
+<FONT color="green">121</FONT>        info.append(jars).append(" and mounts=[");<a name="line.121"></a>
+<FONT color="green">122</FONT>        for (int i = 0;i &lt; cmds.size();i++) {<a name="line.122"></a>
+<FONT color="green">123</FONT>          if (i &gt; 0) {<a name="line.123"></a>
+<FONT color="green">124</FONT>            info.append(',');<a name="line.124"></a>
+<FONT color="green">125</FONT>          }<a name="line.125"></a>
+<FONT color="green">126</FONT>          info.append(cmds.get(i).getAbsolutePath());<a name="line.126"></a>
+<FONT color="green">127</FONT>        }<a name="line.127"></a>
+<FONT color="green">128</FONT>        info.append(']');<a name="line.128"></a>
+<FONT color="green">129</FONT>        log.info(info.toString());<a name="line.129"></a>
+<FONT color="green">130</FONT>    <a name="line.130"></a>
+<FONT color="green">131</FONT>        //<a name="line.131"></a>
+<FONT color="green">132</FONT>        PluginContext context = new PluginContext(<a name="line.132"></a>
+<FONT color="green">133</FONT>          discovery,<a name="line.133"></a>
+<FONT color="green">134</FONT>          attributes,<a name="line.134"></a>
+<FONT color="green">135</FONT>          cmdFS,<a name="line.135"></a>
+<FONT color="green">136</FONT>          confFS,<a name="line.136"></a>
+<FONT color="green">137</FONT>          classLoader);<a name="line.137"></a>
+<FONT color="green">138</FONT>    <a name="line.138"></a>
+<FONT color="green">139</FONT>        //<a name="line.139"></a>
+<FONT color="green">140</FONT>        context.refresh();<a name="line.140"></a>
+<FONT color="green">141</FONT>    <a name="line.141"></a>
+<FONT color="green">142</FONT>        //<a name="line.142"></a>
+<FONT color="green">143</FONT>        start(context);<a name="line.143"></a>
+<FONT color="green">144</FONT>      }<a name="line.144"></a>
+<FONT color="green">145</FONT>    <a name="line.145"></a>
+<FONT color="green">146</FONT>      public void shutdown() {<a name="line.146"></a>
+<FONT color="green">147</FONT>        stop();<a name="line.147"></a>
+<FONT color="green">148</FONT>      }<a name="line.148"></a>
+<FONT color="green">149</FONT>    }<a name="line.149"></a>
 
 
 
