@@ -28,7 +28,7 @@
           <span class="italic">xpath</span> command</a></span></dt><dt><span class="section"><a href="#d5e308">
           <span class="italic">commit</span> command</a></span></dt><dt><span class="section"><a href="#d5e312">
           <span class="italic">rollback</span> command</a></span></dt><dt><span class="section"><a href="#d5e316">
-          <span class="italic">version</span> command</a></span></dt></dl></dd><dt><span class="section"><a href="#d5e322">SCP usage</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e325">Export a JCR node</a></span></dt><dt><span class="section"><a href="#d5e335">Import a JCR node</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#d5e342">3. Configuring the shell</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e344">Configuration properties</a></span></dt><dt><span class="section"><a href="#d5e351">Change the SSH server key</a></span></dt><dt><span class="section"><a href="#d5e360">Change the ports of the telnet or SSH server</a></span></dt><dt><span class="section"><a href="#d5e372">Remove the telnet or SSH access</a></span></dt><dt><span class="section"><a href="#d5e381">Configure the shell default message</a></span></dt><dt><span class="section"><a href="#d5e393">Configuration the authentication</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e403">Simple authentication</a></span></dt><dt><span class="section"><a href="#d5e411">Jaas authentation</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#d5e418">4. Extending the shell</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e420">Groovy command system</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e424">Groovy file</a></span></dt><dt><span class="section"><a href="#d5e432">Groovy execution</a></span></dt><dt><span class="section"><a href="#d5e462">Shell context</a></span></dt></dl></dd><dt><span class="section"><a href="#pluggable_auth">Pluggable authentication </a></span></dt></dl></dd><dt><span class="chapter"><a href="#d5e530">5. Developers</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e532">settings.xml (maven)</a></span></dt></dl></dd><dt><span class="chapter"><a href="#d5e538">6. Hey, I want to contribute!</a></span></dt></dl></div><div class="list-of-examples"><p><b>List of Examples</b></p><dl><dt>1.1. <a href="#d5e167">Remove all nt:unstructed nodes</a></dt><dt>1.2. <a href="#d5e175">Update the security of all nt:unstructed nodes</a></dt><dt>1.3. <a href="#d5e183">Add the mixin mix:referenceable to any node of type nt:file or nt:folder</a></dt></dl></div>
+          <span class="italic">version</span> command</a></span></dt></dl></dd><dt><span class="section"><a href="#d5e322">SCP usage</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e325">Export a JCR node</a></span></dt><dt><span class="section"><a href="#d5e335">Import a JCR node</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#d5e342">3. Configuring the shell</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e344">Configuration properties</a></span></dt><dt><span class="section"><a href="#d5e351">Change the SSH server key</a></span></dt><dt><span class="section"><a href="#d5e360">Change the ports of the telnet or SSH server</a></span></dt><dt><span class="section"><a href="#d5e372">Remove the telnet or SSH access</a></span></dt><dt><span class="section"><a href="#d5e381">Configure the shell default message</a></span></dt><dt><span class="section"><a href="#d5e393">Configuration the authentication</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e403">Simple authentication</a></span></dt><dt><span class="section"><a href="#d5e411">Jaas authentation</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#d5e418">4. Extending the shell</a></span></dt><dd><dl><dt><span class="section"><a href="#pluggable_auth">Pluggable authentication </a></span></dt></dl></dd><dt><span class="chapter"><a href="#d5e484">5. Developers</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e486">Developping commands</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e509">Commands as a script</a></span></dt><dt><span class="section"><a href="#d5e520">Commands as a class</a></span></dt><dt><span class="section"><a href="#d5e551">Multi commands</a></span></dt></dl></dd><dt><span class="section"><a href="#d5e561">Inter command API</a></span></dt></dl></dd><dt><span class="chapter"><a href="#d5e595">6. Hey, I want to contribute!</a></span></dt></dl></div><div class="list-of-examples"><p><b>List of Examples</b></p><dl><dt>1.1. <a href="#d5e167">Remove all nt:unstructed nodes</a></dt><dt>1.2. <a href="#d5e175">Update the security of all nt:unstructed nodes</a></dt><dt>1.3. <a href="#d5e183">Add the mixin mix:referenceable to any node of type nt:file or nt:folder</a></dt><dt>5.1. <a href="#d5e565">dbscript.groovy</a></dt></dl></div>
   
   <div class="preface" title="Preface"><div class="titlepage"><div><div><div xmlns:d="http://docbook.org/ns/docbook" class="page-header"><h1><a name="d5e23"></a>Preface</h1></div></div></div></div>
     
@@ -125,7 +125,7 @@ Escape character is '^]'.
  .~      ~. |`````````,       .'.                   ..'''' |         |
 |           |'''|'''''      .''```.              .''       |_________|
 |           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr3-SNAPSHOT
+ `.______.' |      `.   .'           `. ....''             |         | 1.0.1-SNAPSHOT
 
 Follow and support the project on http://vietj.github.com/crash
 Welcome to julien.local + !
@@ -139,7 +139,7 @@ It is Fri Dec 03 16:20:40 CET 2010 now</pre>
             </strong></span>:</p>
           <pre class="screen">juliens-macbook-pro:~ julien$ ssh -p 2000 -l root localhost
 root@localhost's password:
-CRaSH 1.0.0-cr3-SNAPSHOT (http://vietj.github.com/crash)
+CRaSH 1.0.1-SNAPSHOT (http://vietj.github.com/crash)
 Welcome to juliens-macbook-pro.local!
 It is Fri Jan 08 21:12:53 CET 2010 now.
 %</pre>
@@ -491,19 +491,6 @@ PARAMETERS
         
         <p>
           </p><pre class="screen">NAME
-       thread stop - stop vm threads
-
-SYNOPSIS
-       thread [-h | --help] stop
-
-DESCRIPTION
-       Stop a VM thread, this method cannot be called as is and should be used with a pipe to consume a list of threads.
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage</pre><p>
-          </p><pre class="screen">NAME
        thread interrupt - interrupt vm threads
 
 SYNOPSIS
@@ -511,6 +498,19 @@ SYNOPSIS
 
 DESCRIPTION
        Interrup a VM thread, this method cannot be called as is and should be used with a pipe to consume a list of threads.
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage</pre><p>
+          </p><pre class="screen">NAME
+       thread stop - stop vm threads
+
+SYNOPSIS
+       thread [-h | --help] stop
+
+DESCRIPTION
+       Stop a VM thread, this method cannot be called as is and should be used with a pipe to consume a list of threads.
 
 
 PARAMETERS
@@ -690,19 +690,6 @@ PARAMETERS
        connectionString
            The connection string</pre><p>
           </p><pre class="screen">NAME
-       jdbc info - describe the database
-
-SYNOPSIS
-       jdbc [-h | --help] info ... tableNames
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       ... tableNames
-           the table names</pre><p>
-          </p><pre class="screen">NAME
        jdbc execute - execute SQL statement
 
 SYNOPSIS
@@ -715,6 +702,19 @@ PARAMETERS
 
        ... statement
            The statement</pre><p>
+          </p><pre class="screen">NAME
+       jdbc info - describe the database
+
+SYNOPSIS
+       jdbc [-h | --help] info ... tableNames
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       ... tableNames
+           the table names</pre><p>
         </p>
       </div>
     </div>
@@ -768,19 +768,6 @@ PARAMETERS
        [-h | --help]
            Provides command usage</pre><p>
           </p><pre class="screen">NAME
-       repo ls - list the available repository plugins
-
-SYNOPSIS
-       repo [-h | --help] ls
-
-DESCRIPTION
-       The ls command print the available repository plugins.
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage</pre><p>
-          </p><pre class="screen">NAME
        repo use - changes the current repository
 
 SYNOPSIS
@@ -802,6 +789,19 @@ PARAMETERS
 
        parameters
            The parameters used to instantiate the repository to be used in this session</pre><p>
+          </p><pre class="screen">NAME
+       repo ls - list the available repository plugins
+
+SYNOPSIS
+       repo [-h | --help] ls
+
+DESCRIPTION
+       The ls command print the available repository plugins.
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage</pre><p>
         </p>
       </div>
       <div class="section" title="ws command"><div class="titlepage"><div><div><h3 class="title"><a name="d5e256"></a>
@@ -1114,29 +1114,6 @@ PARAMETERS
        propertyValue
            The new value of the property</pre><p>
           </p><pre class="screen">NAME
-       node import - imports a node from an nt file
-
-SYNOPSIS
-       node [-h | --help] import source target
-
-DESCRIPTION
-       Imports a node from an nt:file node located in the workspace:
-
-       [/]% importnode /gadgets.xml /
-       Node imported
-
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       source
-           The path of the imported nt:file node
-
-       target
-           The path of the parent imported node</pre><p>
-          </p><pre class="screen">NAME
        node export - export a node to an nt file
 
 SYNOPSIS
@@ -1159,6 +1136,29 @@ PARAMETERS
 
        target
            The path of the exported nt:file node</pre><p>
+          </p><pre class="screen">NAME
+       node import - imports a node from an nt file
+
+SYNOPSIS
+       node [-h | --help] import source target
+
+DESCRIPTION
+       Imports a node from an nt:file node located in the workspace:
+
+       [/]% importnode /gadgets.xml /
+       Node imported
+
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       source
+           The path of the imported nt:file node
+
+       target
+           The path of the parent imported node</pre><p>
         </p>
       </div>
       <div class="section" title="mixin command"><div class="titlepage"><div><div><h3 class="title"><a name="d5e294"></a>
@@ -1352,22 +1352,6 @@ PARAMETERS
         
         <p>
           </p><pre class="screen">NAME
-       version checkin - checkin a node
-
-SYNOPSIS
-       version [-h | --help] checkin path
-
-DESCRIPTION
-       Perform a node checkin
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       path
-           The node path to checkin</pre><p>
-          </p><pre class="screen">NAME
        version checkout - checkout a node
 
 SYNOPSIS
@@ -1383,6 +1367,22 @@ PARAMETERS
 
        path
            The node path to checkout</pre><p>
+          </p><pre class="screen">NAME
+       version checkin - checkin a node
+
+SYNOPSIS
+       version [-h | --help] checkin path
+
+DESCRIPTION
+       Perform a node checkin
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       path
+           The node path to checkin</pre><p>
         </p>
       </div>
     </div>
@@ -1432,9 +1432,9 @@ crash.telnet.port=5000</pre></div>
     <div class="section" title="Remove the telnet or SSH access"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e372"></a>Remove the telnet or SSH access</h2></div></div></div>
       
       <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
-          <p>to remove the telnet access, remove the jar file in the <span class="italic">WEB-INF/lib/crsh.shell.telnet-1.0.0-cr3-SNAPSHOT.jar</span> .</p>
+          <p>to remove the telnet access, remove the jar file in the <span class="italic">WEB-INF/lib/crsh.shell.telnet-1.0.1-SNAPSHOT.jar</span> .</p>
         </li><li class="listitem">
-          <p>to remove the SSH access, remove the jar file in the <span class="italic">WEB-INF/lib/crsh.shell.ssh-1.0.0-cr3-SNAPSHOT.jar</span> .</p>
+          <p>to remove the SSH access, remove the jar file in the <span class="italic">WEB-INF/lib/crsh.shell.ssh-1.0.1-SNAPSHOT.jar</span> .</p>
         </li></ul></div>
     </div>
     <div class="section" title="Configure the shell default message"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e381"></a>Configure the shell default message</h2></div></div></div>
@@ -1470,50 +1470,8 @@ crash.auth.jaas.domain=gatein-domain</pre></div>
       </div>
     </div>
   </div>
-  <div class="chapter" title="Chapter&nbsp;4.&nbsp;Extending the shell"><div class="titlepage"><div><div><div xmlns:d="http://docbook.org/ns/docbook" class="page-header"><h1><a name="d5e418"></a>Chapter&nbsp;4.&nbsp;Extending the shell</h1></div></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d5e420">Groovy command system</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e424">Groovy file</a></span></dt><dt><span class="section"><a href="#d5e432">Groovy execution</a></span></dt><dt><span class="section"><a href="#d5e462">Shell context</a></span></dt></dl></dd><dt><span class="section"><a href="#pluggable_auth">Pluggable authentication </a></span></dt></dl></div>
+  <div class="chapter" title="Chapter&nbsp;4.&nbsp;Extending the shell"><div class="titlepage"><div><div><div xmlns:d="http://docbook.org/ns/docbook" class="page-header"><h1><a name="d5e418"></a>Chapter&nbsp;4.&nbsp;Extending the shell</h1></div></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#pluggable_auth">Pluggable authentication </a></span></dt></dl></div>
     
-    <div class="section" title="Groovy command system"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e420"></a>Groovy command system</h2></div></div></div>
-      
-      <p>The shell command system is based on the <a class="ulink" href="http://groovy.codehaus.org/" target="_top">Groovy</a> language and can easily be extended.</p>
-      <div class="section" title="Groovy file"><div class="titlepage"><div><div><h3 class="title"><a name="d5e424"></a>Groovy file</h3></div></div></div>
-        
-        <p>Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell. The files are located in the <span class="italic">/WEB-INF/crash/commands</span> directory and new files can be added here.</p>
-        <p>New commands can directly be placed in the commands dirctory however they can also be placed in a sub directory of the command directory, which is useful to group commands of the same kind.</p>
-        <p>In addition of that there are two special files called <span class="italic">login.groovy</span> and <span class="italic">logout.groovy</span> that are executed upon login and logout of a user. They are useful to setup and cleanup things related to the current user session.</p>
-      </div>
-      <div class="section" title="Groovy execution"><div class="titlepage"><div><div><h3 class="title"><a name="d5e432"></a>Groovy execution</h3></div></div></div>
-        
-        <p>When the user types a command in the sell, the command line is parsed by the <span class="italic">cmdline</span> framework and injected in the command class. Previously the <span class="italic">args4j</span> framework was used but this framework does not support natively code completion and could not be extended to support it. The support of command line completion is the main motivation of the development of such a framework. To learn more, the best is to study the existing commands as the framework is quite easy to use, the following features are supported:</p>
-        <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
-            <p>Annotation based framework</p>
-          </li><li class="listitem">
-            <p>Provide accurate contextual code completion</p>
-          </li><li class="listitem">
-            <p>Support sub commands (? la git like "git add") for grouping commands of the same kind inside the same class as methods</p>
-          </li><li class="listitem">
-            <p>Advanced support for usage and manual</p>
-          </li></ul></div>
-        <p>A simple example, the <code class="code">sleep 1</code> command pauses the shell for one second, let's briefly study its code:</p>
-        <div class="programlistingco"><pre class="prettyprint language-java">class sleep extends CRaSHCommand {
-  @Usage("sleep for some time")
-  @Command
-  Object main(@Usage("Sleep time in seconds") @Argument int time) throws ScriptException {
-    if (time &lt; 0)
-      throw new ScriptException("Cannot provide negative time value $time");
-    Thread.sleep(time * 1000);
-    return null;
-  }
-}</pre></div>
-        <p>The <code class="code">@Usage</code> annotation gives short information about the command itself, another annotation is available for documenting more formally the command: <code class="code">@Man</code> but it is not used in this example.</p>
-        <p>The <code class="code">@Command</code> tags the <code class="code">main(...)</code> method as a command method. Any number of method can be tagged as such, providing a convenient way to pack commands of the same kind. By default the <span class="italic">main</span> is a special convention indicating that executing the command should not require to explicitely use the main.</p>
-        <p>The <code class="code">@Argument</code> annotation describes the command unique argument that is the time to sleep. The same <code class="code">@Usage</code> annotation is used again to describe briefly the argument. Again it could be possible to use the <code class="code">@Man</code> annotation.</p>
-      </div>
-      <div class="section" title="Shell context"><div class="titlepage"><div><div><h3 class="title"><a name="d5e462"></a>Shell context</h3></div></div></div>
-        
-        <p>A command is a Groovy object and it can access or use the contextual variables. A few variables are maintained by the shell and should be considered with caution. The shell also provides a few functions that can be used, those functions defined in <span class="italic">login.groovy</span>
-        </p>
-      </div>
-    </div>
     <div class="section" title="Pluggable authentication"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="pluggable_auth"></a>Pluggable authentication </h2></div></div></div>
       
       <p>Creating a custom is done by implementing a CRaSH plugin that provides an implementation of the <code class="code">AuthenticationPlugin</code> interface, let's study the <span class="italic">simple</span> authentication plugin implementation.</p>
@@ -1620,18 +1578,141 @@ crash.auth.jaas.domain=gatein-domain</pre></div>
       </div>
     </div>
   </div>
-  <div class="chapter" title="Chapter&nbsp;5.&nbsp;Developers"><div class="titlepage"><div><div><div xmlns:d="http://docbook.org/ns/docbook" class="page-header"><h1><a name="d5e530"></a>Chapter&nbsp;5.&nbsp;Developers</h1></div></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d5e532">settings.xml (maven)</a></span></dt></dl></div>
+  <div class="chapter" title="Chapter&nbsp;5.&nbsp;Developers"><div class="titlepage"><div><div><div xmlns:d="http://docbook.org/ns/docbook" class="page-header"><h1><a name="d5e484"></a>Chapter&nbsp;5.&nbsp;Developers</h1></div></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d5e486">Developping commands</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e509">Commands as a script</a></span></dt><dt><span class="section"><a href="#d5e520">Commands as a class</a></span></dt><dt><span class="section"><a href="#d5e551">Multi commands</a></span></dt></dl></dd><dt><span class="section"><a href="#d5e561">Inter command API</a></span></dt></dl></div>
     
-    <div class="section" title="settings.xml (maven)"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e532"></a>settings.xml (maven)</h2></div></div></div>
+    <div class="section" title="Developping commands"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e486"></a>Developping commands</h2></div></div></div>
       
-      <p>Crash system properties :</p>
-      <div class="programlistingco"><pre class="prettyprint language-xml">&lt;properties&gt;
-  &lt;crsh.deploy.directory&gt;/path/to/webapp/directory&lt;/crsh.deploy.directory&gt;
-  &lt;crsh.appengine.sdk&gt;/path/to/appengine/sdk&lt;/crsh.appengine.sdk&gt;
-&lt;/properties&gt;</pre></div>
+      <p>A CRaSH command is written in the <a class="ulink" href="http://groovy.codehaus.org/" target="_top">Groovy</a> language. The Groovy language provides several signifiant advantages:</p>
+      <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+          <p>Commands can be bare scripts or can be a class</p>
+        </li><li class="listitem">
+          <p>Java developers can write Groovy commands without learning it</p>
+        </li><li class="listitem">
+          <p>Groovy is dynamic and expressive</p>
+        </li></ul></div>
+      <p>Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell. The files are located in</p>
+      <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+          <p>In the standalone distribution the <span class="italic">cmd</span> directory</p>
+        </li><li class="listitem">
+          <p>In a web archive deployment the <span class="italic">/WEB-INF/crash/commands</span> directory</p>
+        </li></ul></div>
+      <p>New commands can directly be placed in the commands directory however they can also be placed in a sub directory of the command directory, which is useful to group commands of the same kind.</p>
+      <p>In addition of that there are two special files called <span class="italic">login.groovy</span> and <span class="italic">logout.groovy</span> that are executed upon login and logout of a user. They are useful to setup and cleanup things related to the current user session.</p>
+      <div class="section" title="Commands as a script"><div class="titlepage"><div><div><h3 class="title"><a name="d5e509"></a>Commands as a script</h3></div></div></div>
+        
+        <p>The simplest command can be a simple script that returns a string</p>
+        <div class="programlistingco"><pre class="prettyprint">return "Hello World";</pre></div>
+        <p>It is possible to use also the <code class="code">out</code> implicit variable to send a message to the console:</p>
+        <div class="programlistingco"><pre class="prettyprint">out.println("Hello World");</pre></div>
+      </div>
+      <div class="section" title="Commands as a class"><div class="titlepage"><div><div><h3 class="title"><a name="d5e520"></a>Commands as a class</h3></div></div></div>
+        
+        <p>Class can also be used to defined a command, it provides significant advantages over scripts:</p>
+        <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+            <p>Commands can declare options and arguments for the command</p>
+          </li><li class="listitem">
+            <p>Commands can use annotations to describe the command behavior and parameters</p>
+          </li></ul></div>
+        <p>When the user types a command in the sell, the command line is parsed by the <span class="italic">cmdline</span> framework and injected in the command class. Previously the <span class="italic">args4j</span> framework was used but this framework does not support natively code completion and could not be extended to support it. The support of command line completion is the main motivation of the development of such a framework.</p>
+        <p>Let's study a simple class command example:</p>
+        <div class="programlistingco"><pre class="prettyprint">class date extends CRaSHCommand {
+  @Usage("show the current time")
+  @Command
+  Object main(@Usage("the time format") @Option(names=["f","format"]) String format) {
+    if (format == null)
+      format = "EEE MMM d HH:mm:ss z yyyy";
+    def date = new Date();
+    return date.format(format);
+  }
+}</pre></div>
+        <p>The command is pretty straightforward to undertand:</p>
+        <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+            <p>The <code class="code">@Command</code> annotation declares the <code class="code">main</code> method as a command</p>
+          </li><li class="listitem">
+            <p>The command takes one optional <code class="code">format</code> option</p>
+          </li><li class="listitem">
+            <p>The <code class="code">@Usage</code> annotation describes the usage of the command and its parameters</p>
+          </li></ul></div>
+        <pre class="screen">% date
+Thu Apr 19 15:44:05 CEST 2012</pre>
+        <p>The <code class="code">@Usage</code> annotation is important because it will give a decent humand description of the command</p>
+        <pre class="screen">% date -h
+usage: date [-h | --help] [-f | --format]
+
+   [-h | --help]   command usage
+   [-f | --format] the time format</pre>
+      </div>
+      <div class="section" title="Multi commands"><div class="titlepage"><div><div><h3 class="title"><a name="d5e551"></a>Multi commands</h3></div></div></div>
+        
+        <p>A class can hold several commands allowing a single file to group several commands, let's study the JDBC command structure:</p>
+        <div class="programlistingco"><pre class="prettyprint">@Usage("JDBC connection")
+class jdbc extends CRaSHCommand {
+
+  @Usage("connect to database with a JDBC connection string")
+  @Command
+  public String connect(
+          @Usage("The username") @Option(names=["u","username"]) String user,
+          @Usage("The password") @Option(names=["p","password"]) String password,
+          @Usage("The extra properties") @Option(names=["properties"]) Value.Properties properties,
+          @Usage("The connection string") @Argument String connectionString) {
+     ...
+  }
+
+  @Usage("close the current connection")
+  @Command
+  public String close() {
+     ...
+  }
+}</pre></div>
+        <p>We can see that the class declares two commands <code class="code">connect</code> and <code class="code">close</code>, they are invoked this way:</p>
+        <pre class="screen">% jdbc connect jdbc:derby:memory:EmbeddedDB;create=true
+Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
+% jdbc close
+Connection closed</pre>
+      </div>
+    </div>
+    <div class="section" title="Inter command API"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e561"></a>Inter command API</h2></div></div></div>
+      
+      <p>In this section we study how a command can reuse existing commands, here is an example</p>
+      <p>
+        </p><div class="example"><a name="d5e565"></a><p class="title"><b>Example&nbsp;5.1.&nbsp;dbscript.groovy</b></p><div class="example-contents">
+          
+          <div class="programlistingco"><pre class="prettyprint">jdbc.connect username:root, password:crash, "jdbc:derby:memory:EmbeddedDB;create=true"
+jdbc.execute "create table derbyDB(num int, addr varchar(40))"
+jdbc.execute "insert into derbyDB values (1956,'Webster St.')"
+jdbc.execute "insert into derbyDB values (1910,'Union St.')"
+jdbc.execute "select * from derbyDb"
+jdbc.close</pre></div>
+        </div></div><p><br class="example-break">
+      </p>
+      <p>This script is written in Groovy and use Groovy DSL capabilities, let's study the first statement:</p>
+      <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+          <p>the <code class="code">jdbc.connect</code> statement can be decomposed into two steps</p>
+          <div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
+              <p>the <code class="code">jdbc</code> is resolved as the command itself</p>
+            </li><li class="listitem">
+              <p>the <code class="code">connect</code> invokes the connect command</p>
+            </li></ul></div>
+        </li><li class="listitem">
+          <p>the <code class="code">username</code> and <code class="code">password</code> are considered as command options</p>
+        </li><li class="listitem">
+          <p>the SQL statement <code class="code">"jdbc:derby:memory:EmbeddedDB;create=true"</code> is the main argument of the command</p>
+        </li></ul></div>
+      <p>It is equivalent to the shell command:</p>
+      <div class="programlistingco"><pre class="prettyprint">% jdbc connect --username root --password crash jdbc:derby:memory:EmbeddedDB;create=true</pre></div>
+      <p>The rest of the script is fairly easy to understand, here is the output of the script execution:</p>
+      <pre class="screen">% dbscript
+Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
+Query executed successfully
+Query executed successfully
+Query executed successfully
+NUM                  ADDR
+1956                 Webster St.
+1910                 Union St.
+Connection closed</pre>
     </div>
   </div>
-  <div class="chapter" title="Chapter&nbsp;6.&nbsp;Hey, I want to contribute!"><div class="titlepage"><div><div><div xmlns:d="http://docbook.org/ns/docbook" class="page-header"><h1><a name="d5e538"></a>Chapter&nbsp;6.&nbsp;Hey, I want to contribute!</h1></div></div></div></div>
+  <div class="chapter" title="Chapter&nbsp;6.&nbsp;Hey, I want to contribute!"><div class="titlepage"><div><div><div xmlns:d="http://docbook.org/ns/docbook" class="page-header"><h1><a name="d5e595"></a>Chapter&nbsp;6.&nbsp;Hey, I want to contribute!</h1></div></div></div></div>
     
     <p>Drop me an email (see my @ on www.julienviet.com), any kind of help is welcome.</p>
   </div>

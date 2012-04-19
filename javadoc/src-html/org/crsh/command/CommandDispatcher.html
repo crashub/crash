@@ -143,7 +143,7 @@
 <FONT color="green">140</FONT>        try {<a name="line.140"></a>
 <FONT color="green">141</FONT>          CommandInvoker&lt;Void, Void&gt; invoker = (CommandInvoker&lt;Void, Void&gt;)command.createInvoker(line.toString());<a name="line.141"></a>
 <FONT color="green">142</FONT>          Class producedType = invoker.getProducedType();<a name="line.142"></a>
-<FONT color="green">143</FONT>          InnerInvocationContext inc = new InnerInvocationContext(ic, producedType);<a name="line.143"></a>
+<FONT color="green">143</FONT>          InnerInvocationContext inc = new InnerInvocationContext(ic, producedType, closure != null);<a name="line.143"></a>
 <FONT color="green">144</FONT>          invoker.invoke(inc);<a name="line.144"></a>
 <FONT color="green">145</FONT>    <a name="line.145"></a>
 <FONT color="green">146</FONT>          //<a name="line.146"></a>
