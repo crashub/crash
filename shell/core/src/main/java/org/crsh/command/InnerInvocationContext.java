@@ -18,12 +18,17 @@ class InnerInvocationContext<P> implements InvocationContext<Void, P> {
   /** . */
   List<P> products;
 
+  /** . */
+  final boolean piped;
+
   InnerInvocationContext(
     InvocationContext<?, ?> outter,
-    Class<? extends P> producedType) {
+    Class<? extends P> producedType,
+    boolean piped) {
     this.outter = outter;
     this.products = Collections.emptyList();
     this.producedType = producedType;
+    this.piped = piped;
   }
 
   public int getWidth() {
@@ -43,7 +48,7 @@ class InnerInvocationContext<P> implements InvocationContext<Void, P> {
   }
 
   public boolean isPiped() {
-    return producedType != Void.class;
+    return piped;
   }
 
   public Iterable<Void> consume() throws IllegalStateException {

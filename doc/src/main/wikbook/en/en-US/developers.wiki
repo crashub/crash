@@ -1,10 +1,159 @@
-= settings.xml (maven) =
+= Developping commands =
 
-Crash system properties :
+A CRaSH command is written in the [[Groovy>>http://groovy.codehaus.org/]] language. The Groovy language provides
+several signifiant advantages:
 
-{{xml}}
-<properties>
-  <crsh.deploy.directory>/path/to/webapp/directory</crsh.deploy.directory>
-  <crsh.appengine.sdk>/path/to/appengine/sdk</crsh.appengine.sdk>
-</properties>
-{{/xml}}
+* Commands can be bare scripts or can be a class
+* Java developers can write Groovy commands without learning it
+* Groovy is dynamic and expressive
+
+Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell.
+The files are located in
+* In the standalone distribution the //cmd// directory
+* In a web archive deployment the ///WEB-INF/crash/commands// directory
+
+New commands can directly be placed in the commands directory however they can also be placed in a sub directory of the
+command directory, which is useful to group commands of the same kind.
+
+In addition of that there are two special files called //login.groovy// and //logout.groovy// that are executed upon login
+and logout of a user. They are useful to setup and cleanup things related to the current user session.
+
+== Commands as a script ==
+
+The simplest command can be a simple script that returns a string
+
+{{code}}
+return "Hello World";
+{{/code}}
+
+It is possible to use also the ##out## implicit variable to send a message to the console:
+
+{{code}}
+out.println("Hello World");
+{{/code}}
+
+== Commands as a class ==
+
+Class can also be used to defined a command, it provides significant advantages over scripts:
+
+* Commands can declare options and arguments for the command
+* Commands can use annotations to describe the command behavior and parameters
+
+When the user types a command in the sell, the command line is parsed by the //cmdline// framework
+and injected in the command class. Previously the //args4j// framework was used but this framework does not support
+natively code completion and could not be extended to support it. The support of command line completion is the
+main motivation of the development of such a framework.
+
+Let's study a simple class command example:
+
+{{code}}
+class date extends CRaSHCommand {
+  @Usage("show the current time")
+  @Command
+  Object main(@Usage("the time format") @Option(names=["f","format"]) String format) {
+    if (format == null)
+      format = "EEE MMM d HH:mm:ss z yyyy";
+    def date = new Date();
+    return date.format(format);
+  }
+}{{/code}}
+
+The command is pretty straightforward to undertand:
+
+* The ##@Command## annotation declares the ##main## method as a command
+* The command takes one optional ##format## option
+* The ##@Usage## annotation describes the usage of the command and its parameters
+
+{{screen}}
+% date
+Thu Apr 19 15:44:05 CEST 2012
+{{/screen}}
+
+The ##@Usage## annotation is important because it will give a decent humand description of the command
+
+{{screen}}
+% date -h
+usage: date [-h | --help] [-f | --format]
+
+   [-h | --help]   command usage
+   [-f | --format] the time format
+{{/screen}}
+
+== Multi commands ==
+
+A class can hold several commands allowing a single file to group several commands, let's study the JDBC command
+structure:
+
+{{code}}
+@Usage("JDBC connection")
+class jdbc extends CRaSHCommand {
+
+  @Usage("connect to database with a JDBC connection string")
+  @Command
+  public String connect(
+          @Usage("The username") @Option(names=["u","username"]) String user,
+          @Usage("The password") @Option(names=["p","password"]) String password,
+          @Usage("The extra properties") @Option(names=["properties"]) Value.Properties properties,
+          @Usage("The connection string") @Argument String connectionString) {
+     ...
+  }
+
+  @Usage("close the current connection")
+  @Command
+  public String close() {
+     ...
+  }
+}
+{{/code}}
+
+We can see that the class declares two commands ##connect## and ##close##, they are invoked this way:
+
+{{screen}}
+% jdbc connect jdbc:derby:memory:EmbeddedDB;create=true
+Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
+% jdbc close
+Connection closed
+{{/screen}}
+
+= Inter command API =
+
+In this section we study how a command can reuse existing commands, here is an example
+
+{{example title="dbscript.groovy"}}
+{{code}}
+jdbc.connect username:root, password:crash, "jdbc:derby:memory:EmbeddedDB;create=true"
+jdbc.execute "create table derbyDB(num int, addr varchar(40))"
+jdbc.execute "insert into derbyDB values (1956,'Webster St.')"
+jdbc.execute "insert into derbyDB values (1910,'Union St.')"
+jdbc.execute "select * from derbyDb"
+jdbc.close
+{{/code}}
+{{/example}}
+
+This script is written in Groovy and use Groovy DSL capabilities, let's study the first statement:
+
+* the ##jdbc.connect## statement can be decomposed into two steps
+** the ##jdbc## is resolved as the command itself
+** the ##connect## invokes the connect command
+* the ##username## and ##password## are considered as command options
+* the SQL statement ##"jdbc:derby:memory:EmbeddedDB;create=true"## is the main argument of the command
+
+It is equivalent to the shell command:
+
+{{code}}
+% jdbc connect --username root --password crash jdbc:derby:memory:EmbeddedDB;create=true
+{{/code}}
+
+The rest of the script is fairly easy to understand, here is the output of the script execution:
+
+{{screen}}
+% dbscript
+Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
+Query executed successfully
+Query executed successfully
+Query executed successfully
+NUM                  ADDR
+1956                 Webster St.
+1910                 Union St.
+Connection closed
+{{/screen}}

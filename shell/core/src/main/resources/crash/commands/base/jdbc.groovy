@@ -67,7 +67,7 @@ class jdbc extends CRaSHCommand {
     }
 
     //
-    return "Connected to data base : $connectionString"
+    return "Connected to data base : $connectionString\n"
   }
 
   @Usage("open a connection from JNDI bound datasource")
@@ -90,7 +90,7 @@ class jdbc extends CRaSHCommand {
         return "Datasource $globalName not found in JNDI"
       }
       connection = ds.connection
-      return "Connected to $globalName datasource"
+      return "Connected to $globalName datasource\n"
     } catch (NoInitialContextException e) {
       throw new ScriptException("No initial context found", e)
     }
@@ -120,7 +120,7 @@ class jdbc extends CRaSHCommand {
             if (context.piped) {
               return null;
             } else {
-              return "Query executed successfully";
+              return "Query executed successfully\n";
             }
           } else {
             if (context.piped) {
@@ -247,7 +247,7 @@ class jdbc extends CRaSHCommand {
     } else {
       connection.close();
       connection = null;
-      return "Connection closed"
+      return "Connection closed\n"
     }
   }
 }

@@ -140,7 +140,7 @@ final class CommandDispatcher extends Closure {
     try {
       CommandInvoker<Void, Void> invoker = (CommandInvoker<Void, Void>)command.createInvoker(line.toString());
       Class producedType = invoker.getProducedType();
-      InnerInvocationContext inc = new InnerInvocationContext(ic, producedType);
+      InnerInvocationContext inc = new InnerInvocationContext(ic, producedType, closure != null);
       invoker.invoke(inc);
 
       //
