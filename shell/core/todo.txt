@@ -1,3 +1,7 @@
+- try to have ShellProcess#cancel():void -> ShellProcess#cancel():ShellResponse to give an opportunity to return something
+- have a write/flush method similar to readLine() and retrofit ShellResponse.Display -> write/flush
+- propagage cancel() to the groovy command to give an opportunity to close a resource
+- remove java: prefix in jdbc open
 - thread ls : use thread group to display hierachical
 - propagate gatein identity to JCR with jaas domain
 - ctrl e / ctrl d
