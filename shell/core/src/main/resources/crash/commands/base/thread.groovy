@@ -4,9 +4,43 @@ import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option
-import org.crsh.cmdline.annotations.Man;
+import org.crsh.cmdline.annotations.Man
+import org.crsh.cmdline.annotations.Argument;
 
-@Usage("vm thread commands")
+@Usage("JVM thread commands")
+@Man("""\
+The thread command provides introspection and control over JVM threads:
+
+% thread ls
+ID   PRIORITY  STATE          INTERRUPTED  DAEMON  NAME
+2    10        WAITING        false        true    Reference Handler
+3    8         WAITING        false        true    Finalizer
+6    9         RUNNABLE       false        true    Signal Dispatcher
+1    5         WAITING        false        false   main
+13   1         TIMED_WAITING  false        true    Poller SunPKCS11-Darwin
+14   5         WAITING        false        false   pool-1-thread-1
+15   5         WAITING        false        false   pool-1-thread-2
+16   5         WAITING        false        false   pool-1-thread-3
+17   5         WAITING        false        false   pool-1-thread-4
+27   5         WAITING        false        false   pool-1-thread-6
+19   5         RUNNABLE       false        false   org.crsh.standalone.CRaSH.main()
+
+% thread stop 14
+Stopped thread Thread[pool-1-thread-1,5,main]
+
+% thread interrupt 17
+Interrupted thread Thread[pool-1-thread-1,5,main]
+
+In addition of the classical usage, the various commands (ls, stop, interrupt) can be combined
+with a pipe, the most common operation is to combine the ls command with the stop or interrupt command,
+for instance the following command will interrupt all the thread having a name starting with the 'pool' prefix:
+
+% thread ls --filter pool.* | thread interrupt
+Interrupted thread Thread[pool-1-thread-1,5,main]
+Interrupted thread Thread[pool-1-thread-2,5,main]
+Interrupted thread Thread[pool-1-thread-3,5,main]
+Interrupted thread Thread[pool-1-thread-4,5,main]
+Interrupted thread Thread[pool-1-thread-5,5,main]""")
 public class thread extends CRaSHCommand {
 
   @Usage("list the vm threads")
@@ -42,11 +76,7 @@ public class thread extends CRaSHCommand {
     }
 
     //
-    ThreadGroup root = getRoot();
-    Thread[] threads = new Thread[root.activeCount()];
-    while (root.enumerate(threads, true) == threads.length ) {
-      threads = new Thread[threads.length * 2];
-    }
+    Map<String, Thread> threads = getThreads();
 
     //    
     def formatString = "%1\$-3s  %2\$-8s  %3\$-13s  %4\$-11s  %5\$-6s  %6\$-20s\r\n";
@@ -54,18 +84,58 @@ public class thread extends CRaSHCommand {
     formatter.format(formatString, "ID", "PRIORITY", "STATE", "INTERRUPTED","DAEMON", "NAME");
 
     //
-    threads.each() {
-      if (it != null) {
-        def matcher = it.name =~ pattern;
-        if (matcher.matches() && (state == null || it.state == state)) {
-          // We use isInterrupted() to not clear the thread status
-          formatter.format(formatString, it.id, it.priority, "$it.state", it.isInterrupted(), it.daemon, it.name);
-          context.produce(it);
-        }
+    threads.each { id, thread ->
+      def matcher = thread.name =~ pattern;
+      if (matcher.matches() && (state == null || thread.state == state)) {
+        // We use isInterrupted() to not clear the thread status
+        formatter.format(formatString, id, thread.priority, "$thread.state", thread.isInterrupted(), thread.daemon, thread.name);
+        context.produce(thread);
       }
     }
   }
-  
+
+  @Usage("interrupt vm threads")
+  @Man("Interrup a VM thread.")
+  @Command
+  public void interrupt(
+    InvocationContext<Thread, Void> context,
+    @Argument @Usage("the thread ids to interrupt") List<String> ids) {
+    apply(context, ids, {
+      it.interrupt();
+      context.writer.println("Interrupted thread $it");
+    })
+  }
+
+  @Usage("stop vm threads")
+  @Man("Stop a VM thread.")
+  @Command
+  public void stop(
+    InvocationContext<Thread, Void> context,
+    @Argument @Usage("the thread ids to stop") List<String> ids) {
+    apply(context, ids, {
+      it.stop();
+      context.writer.println("Stopped thread $it");
+    })
+  }
+
+  public void apply(InvocationContext<Thread, Void> context, List<String> ids, Closure closure) {
+    if (context.piped) {
+      context.consume().each(closure)
+    } else {
+      Map<String, Thread> threadMap = getThreads();
+      List<String> threads = [];
+      for (String id : ids) {
+        Thread thread = threadMap[id];
+        if (thread != null) {
+          threads << thread;
+        } else {
+          throw new ScriptException("Thread $id does not exist");
+        }
+      }
+      threads.each(closure);
+    }
+  }
+
   private ThreadGroup getRoot() {
     ThreadGroup group = Thread.currentThread().threadGroup;
     ThreadGroup parent;
@@ -75,28 +145,18 @@ public class thread extends CRaSHCommand {
     return group;
   }
 
-  @Usage("interrupt vm threads")
-  @Man("Interrup a VM thread, this method cannot be called as is and should be used with a pipe to consume a list of threads.")
-  @Command
-  public void interrupt(InvocationContext<Thread, Void> context) {
-    if (context.piped) {
-      context.consume().each() {
-        it.interrupt();
-        context.writer.println("Kill thread $it");
-      }
+  private Map<String, Thread> getThreads() {
+    ThreadGroup root = getRoot();
+    Thread[] threads = new Thread[root.activeCount()];
+    while (root.enumerate(threads, true) == threads.length ) {
+      threads = new Thread[threads.length * 2];
     }
-  }
-
-  @Usage("stop vm threads")
-  @Man("Stop a VM thread, this method cannot be called as is and should be used with a pipe to consume a list of threads.")
-  @Command
-  public void stop(InvocationContext<Thread, Void> context) {
-    if (context.piped) {
-      context.consume().each() {
-        it.stop();
-        context.writer.println("Kill thread $it");
-      }
+    def map = [:];
+    threads.each { thread ->
+      if (thread != null)
+        map["${thread.id}"] = thread
     }
+    return map;
   }
 }
 
