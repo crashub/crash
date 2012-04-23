@@ -32,7 +32,7 @@ Stopped thread Thread[pool-1-thread-1,5,main]
 Interrupted thread Thread[pool-1-thread-1,5,main]
 
 In addition of the classical usage, the various commands (ls, stop, interrupt) can be combined
-with a pipe, the most common operation is to combine the ls command with the stop or interrupt command,
+with a pipe, the most common operation is to combine the ls command with the stop, interrupt or dump command,
 for instance the following command will interrupt all the thread having a name starting with the 'pool' prefix:
 
 % thread ls --filter pool.* | thread interrupt
@@ -95,7 +95,7 @@ public class thread extends CRaSHCommand {
   }
 
   @Usage("interrupt vm threads")
-  @Man("Interrup a VM thread.")
+  @Man("Interrup VM threads.")
   @Command
   public void interrupt(
     InvocationContext<Thread, Void> context,
@@ -107,7 +107,7 @@ public class thread extends CRaSHCommand {
   }
 
   @Usage("stop vm threads")
-  @Man("Stop a VM thread.")
+  @Man("Stop VM threads.")
   @Command
   public void stop(
     InvocationContext<Thread, Void> context,
@@ -115,6 +115,19 @@ public class thread extends CRaSHCommand {
     apply(context, ids, {
       it.stop();
       context.writer.println("Stopped thread $it");
+    })
+  }
+
+  @Usage("dump vm threads")
+  @Man("Dump VM threads.")
+  @Command
+  public void dump(
+          InvocationContext<Thread, Void> context,
+          @Argument @Usage("the thread ids to dump") List<String> ids) {
+    apply(context, ids, {
+      Exception e = new Exception("Thread ${it.id} stack trace")
+      e.setStackTrace(it.stackTrace)
+      e.printStackTrace(context.writer)
     })
   }
 
