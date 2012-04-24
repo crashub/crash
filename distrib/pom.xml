@@ -155,7 +155,7 @@
                     <!-- -->
                     <copy todir="${target}">
                       <filterset>
-                        <filter token="version" value="${version}" />
+                        <filter token="version" value="${project.version}" />
                       </filterset>
                       <fileset dir="${basedir}/src/main/izpack" />
                     </copy>
