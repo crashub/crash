@@ -1,7 +1,9 @@
+- look about remote attaching : http://code.alibabatech.com/blog/dev_related_986/jvm-attach-api-introducation-and-practice.html
 - try to have ShellProcess#cancel():void -> ShellProcess#cancel():ShellResponse to give an opportunity to return something
 - have a write/flush method similar to readLine() and retrofit ShellResponse.Display -> write/flush
 - propagage cancel() to the groovy command to give an opportunity to close a resource
-- remove java: prefix in jdbc open
+- JDBC command: remove java: prefix in jdbc open
+- JDBC command : provide completion for JNDI names when possible
 - thread ls : use thread group to display hierachical
 - propagate gatein identity to JCR with jaas domain
 - ctrl e / ctrl d
