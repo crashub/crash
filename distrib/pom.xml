@@ -250,6 +250,7 @@
                 </goals>
                 <configuration>
                   <installFile>${project.build.directory}/staging/install.xml</installFile>
+                  <attach>true</attach>
                 </configuration>
               </execution>
             </executions>
