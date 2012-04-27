@@ -1,4 +1,4 @@
-package org.crsh.term.processor;
+package org.crsh.processor.term;
 
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.concurrent.AsyncShell;

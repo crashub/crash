@@ -29,7 +29,7 @@ import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.shell.impl.CRaSH;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
-import org.crsh.term.processor.Processor;
+import org.crsh.processor.term.Processor;
 import org.crsh.term.spi.net.TermIOClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

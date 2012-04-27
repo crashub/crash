@@ -1,4 +1,4 @@
-package org.crsh.term.processor;
+package org.crsh.processor.term;
 
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;

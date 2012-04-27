@@ -33,7 +33,7 @@ import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.Term;
-import org.crsh.term.processor.Processor;
+import org.crsh.processor.term.Processor;
 import org.crsh.term.spi.jline.JLineIO;
 import org.crsh.term.spi.net.TermIOServer;
 import org.slf4j.Logger;

@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.processor;
+package org.crsh.processor.term;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -26,6 +26,7 @@ import org.crsh.BaseShell;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.processor.term.Processor;
 import org.crsh.shell.Shell;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.spi.TestTermIO;
