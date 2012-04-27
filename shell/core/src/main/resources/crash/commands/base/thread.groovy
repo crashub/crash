@@ -5,7 +5,11 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.annotations.Man
-import org.crsh.cmdline.annotations.Argument;
+import org.crsh.shell.ui.UIBuilder
+import org.crsh.shell.ui.Style
+import org.crsh.shell.ui.Color
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.shell.ui.Decoration;
 
 @Usage("JVM thread commands")
 @Man("""\
@@ -78,22 +82,51 @@ public class thread extends CRaSHCommand {
     //
     Map<String, Thread> threads = getThreads();
 
-    //    
-    def formatString = "%1\$-3s  %2\$-8s  %3\$-13s  %4\$-11s  %5\$-6s  %6\$-20s\r\n";
-    Formatter formatter = new Formatter(context.writer);
-    formatter.format(formatString, "ID", "PRIORITY", "STATE", "INTERRUPTED","DAEMON", "NAME");
-
     //
-    threads.each { id, thread ->
-      def matcher = thread.name =~ pattern;
-      if (matcher.matches() && (state == null || thread.state == state)) {
-        // We use isInterrupted() to not clear the thread status
-        formatter.format(formatString, id, thread.priority, "$thread.state", thread.isInterrupted(), thread.daemon, thread.name);
-        context.produce(thread);
+    new UIBuilder().table() {
+      row([
+        values:["ID", "PRIORITY", "STATE", "INTERRUPTED","DAEMON", "NAME"],
+        styles:[new Style(Decoration.BOLD, Color.BLACK, Color.WHITE)]
+      ])
+      threads.each() {
+        if (it != null) {
+          def matcher = it.name =~ pattern;
+          if (matcher.matches() && (state == null || it.state == state)) {
+            Color c = null;
+            switch (it.state) {
+              case Thread.State.NEW:
+                c = Color.CYAN
+                break;
+              case Thread.State.RUNNABLE:
+                c = Color.GREEN
+                break;
+              case Thread.State.BLOCKED:
+                c = Color.RED
+                break;
+              case Thread.State.WAITING:
+                c = Color.YELLOW
+                break;
+              case Thread.State.TIMED_WAITING:
+                c = Color.MAGENTA
+                break;
+              case Thread.State.TERMINATED:
+                c = Color.BLUE
+                break;
+            }
+            row([
+              // We use isInterrupted() to not clear the thread status
+              values:[it.id, it.priority, "$it.state", it.isInterrupted(), it.daemon, it.name],
+              styles:[new Style(null, Color.BLACK, c)]
+            ])
+            context.produce(it);
+          }
+        }
       }
+      threads.each(closure);
     }
-  }
 
+  }
+    
   @Usage("interrupt vm threads")
   @Man("Interrup VM threads.")
   @Command

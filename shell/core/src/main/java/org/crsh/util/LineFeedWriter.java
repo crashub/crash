@@ -21,6 +21,8 @@ package org.crsh.util;
 
 import org.crsh.shell.io.ShellWriter;
 import org.crsh.shell.io.ShellWriterContext;
+import org.crsh.term.Data;
+import org.crsh.term.DataFragment;
 
 import java.io.IOException;
 
@@ -40,7 +42,7 @@ public class LineFeedWriter implements ShellWriter {
   private static final int PADDED = 2;
 
   /** . */
-  private final Appendable out;
+  private final Data data;
 
   /** . */
   private final String lineFeed;
@@ -48,12 +50,12 @@ public class LineFeedWriter implements ShellWriter {
   /** . */
   private int status;
 
-  public LineFeedWriter(Appendable out) {
-    this(out, "\r\n");
+  public LineFeedWriter(Data data) {
+    this(data, "\r\n");
   }
 
-  public LineFeedWriter(Appendable out, String lineFeed) {
-    this.out = out;
+  public LineFeedWriter(Data data, String lineFeed) {
+    this.data = data;
     this.lineFeed = lineFeed;
     this.status = NOT_PADDED;
   }
@@ -64,6 +66,11 @@ public class LineFeedWriter implements ShellWriter {
 
   public ShellWriter append(ShellWriterContext ctx, final char c) throws IOException {
     return append(ctx, Character.toString(c));
+  }
+
+  public ShellWriter append(ShellWriterContext ctx, final DataFragment d) throws IOException {
+    data.add(d);
+    return this;
   }
 
   public Appendable append(CharSequence csq, int start, int end) throws IOException {
@@ -124,7 +131,7 @@ public class LineFeedWriter implements ShellWriter {
       }
 
       //
-      out.append(csq, off, end);
+      data.add(new DataFragment(csq.toString().substring(off, end)));
 
       //
       switch (status) {
@@ -149,7 +156,7 @@ public class LineFeedWriter implements ShellWriter {
       case PADDED:
         status = NOT_PADDED;
       case NOT_PADDED:
-        out.append(lineFeed);
+        data.add(new DataFragment(lineFeed));
         if (ctx != null) {
           ctx.lineFeed();
         }

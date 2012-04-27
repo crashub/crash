@@ -47,6 +47,10 @@ public class UIBuilder extends BuilderSupport {
     return createNode(name, (Object)null);
   }
 
+  protected Object createNode(Object name, String... values) {
+    return createNode(name, (Object) values);
+  }
+
   @Override
   protected Object createNode(Object name, Object value) {
     if ("node".equals(name)) {
@@ -57,6 +61,8 @@ public class UIBuilder extends BuilderSupport {
       }
     } else if ("label".equals(name)) {
       return new LabelElement(value);
+    } else if ("table".equals(name)) {
+      return new TableElement();
     } else {
       throw new UnsupportedOperationException("Cannot build object with name " + name + " and value " + value);
     }
@@ -69,7 +75,13 @@ public class UIBuilder extends BuilderSupport {
 
   @Override
   protected Object createNode(Object name, Map attributes) {
-    throw new UnsupportedOperationException();
+    if ("row".equals(name)) {
+      Object values = attributes.get("values");
+      Object styles = attributes.get("styles");
+      return new RowElement((List<Object>) values, (List<Style>) styles);
+    } else {
+      throw new UnsupportedOperationException();
+    }
   }
 
   @Override
@@ -78,6 +90,10 @@ public class UIBuilder extends BuilderSupport {
       TreeElement parentElement = (TreeElement)parent;
       Element childElement = (Element)child;
       parentElement.addNode(childElement);
+    } else if (parent instanceof TableElement) {
+      TableElement parentElement = (TableElement)parent;
+      RowElement childElement = (RowElement)child;
+      parentElement.addRow(childElement);
     } else {
       throw new UnsupportedOperationException();
     }

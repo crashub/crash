@@ -20,6 +20,7 @@
 package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
+import org.crsh.term.Data;
 import org.crsh.util.LineFeedWriter;
 
 import java.io.IOException;
@@ -34,34 +35,34 @@ public class TreeElementTestCase extends TestCase {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
     elt.addNode(new LabelElement("2\n"));
-    StringBuilder sb = new StringBuilder();
-    LineFeedWriter writer = new LineFeedWriter(sb, "_");
+    Data data = new Data();
+    LineFeedWriter writer = new LineFeedWriter(data, "_");
     elt.print(writer);
     assertEquals(
       "+-1_" +
       "| 1_" +
       "+-2_"
-      , sb.toString());
+      , data.toString());
   }
 
   public void testFoo() throws Exception {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
-    StringBuilder sb = new StringBuilder();
-    LineFeedWriter writer = new LineFeedWriter(sb, "_");
+    Data data = new Data();
+    LineFeedWriter writer = new LineFeedWriter(data, "_");
     elt.print(writer);
     assertEquals(
       "+-1_" +
       "  1_"
-      , sb.toString());
+      , data.toString());
   }
 
   public void testNested() throws Exception {
     TreeElement elt = new TreeElement(new LabelElement("foo"));
     elt.addNode(new TreeElement(new LabelElement("bar")).addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
     elt.addNode(new TreeElement().addNode(new LabelElement("3")).addNode(new LabelElement("4")));
-    StringBuilder sb = new StringBuilder();
-    LineFeedWriter writer = new LineFeedWriter(sb, "_");
+    Data data = new Data();
+    LineFeedWriter writer = new LineFeedWriter(data, "_");
     elt.print(writer);
     assertEquals(
       "foo_" +
@@ -72,6 +73,6 @@ public class TreeElementTestCase extends TestCase {
       "|   2_" +
       "+-+-3_" +
       "  +-4_"
-      , sb.toString());
+      , data.toString());
   }
 }

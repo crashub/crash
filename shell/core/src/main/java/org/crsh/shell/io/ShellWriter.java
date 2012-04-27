@@ -19,6 +19,8 @@
 
 package org.crsh.shell.io;
 
+import org.crsh.term.DataFragment;
+
 import java.io.IOException;
 
 /**
@@ -33,5 +35,7 @@ public interface ShellWriter extends Appendable {
   ShellWriter append(ShellWriterContext ctx, CharSequence csq, int start, int end) throws IOException;
 
   ShellWriter append(ShellWriterContext ctx, char c) throws IOException;
+
+  ShellWriter append(ShellWriterContext ctx, DataFragment dataFragment) throws IOException;
 
 }

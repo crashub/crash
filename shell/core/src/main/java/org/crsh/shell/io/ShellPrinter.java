@@ -20,6 +20,8 @@
 package org.crsh.shell.io;
 
 import org.crsh.shell.ui.Element;
+import org.crsh.shell.ui.FormattingElement;
+import org.crsh.shell.ui.Style;
 import org.crsh.shell.ui.UIBuilder;
 import org.crsh.util.AppendableWriter;
 
@@ -51,6 +53,18 @@ public class ShellPrinter extends PrintWriter {
     println();
   }
 
+  public void print(Object obj, Style style) {
+    print(new FormattingElement(style));
+    print(obj);
+    print(new FormattingElement(null));
+
+  }
+
+  public void println(Object obj, Style style) {
+    print(obj);
+    println();
+  }
+
   @Override
   public void print(Object obj) {
     if (obj instanceof UIBuilder) {
@@ -67,4 +81,5 @@ public class ShellPrinter extends PrintWriter {
       super.print(obj);
     }
   }
+
 }

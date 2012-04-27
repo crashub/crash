@@ -17,6 +17,10 @@ import org.crsh.cmdline.completers.EnumCompleter
 import org.crsh.cmdline.spi.ValueCompletion
 import java.util.regex.Pattern
 import org.crsh.cmdline.annotations.Required
+import org.crsh.shell.ui.UIBuilder
+import org.crsh.shell.ui.Style
+import org.crsh.shell.ui.Color
+import org.crsh.shell.ui.Decoration
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -43,15 +47,24 @@ class system extends CRaSHCommand implements Completer {
         }
       }
     } else {
-      def formatString = "%1\$-35s %2\$-20s\r\n"
-      Formatter formatter = new Formatter(out)
-      formatter.format(formatString, "NAME", "VALUE");
-      System.getProperties().each {
-        def matcher = it.key =~ pattern;
-        if (matcher.matches()) {
-          formatter.format formatString, it.key, it.value
+
+      UIBuilder ui = new UIBuilder()
+      ui.table() {
+        row([
+          values:["NAME", "VALUE"],
+          styles:[new Style(Decoration.BOLD, Color.BLACK, Color.WHITE)]
+        ])
+        System.getProperties().each {
+          def matcher = it.key =~ pattern;
+          if (matcher.matches()) {
+            row([
+              values:[it.key, it.value],
+              styles:[new Style(null, Color.RED, null), null]
+            ])
+          }
         }
       }
+      context.writer.print(ui);
     }
   }
 

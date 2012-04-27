@@ -21,7 +21,7 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
-  public void write(CharSequence msg) throws IOException {
+  public void write(Data data) throws IOException {
     throw new UnsupportedOperationException();
   }
 
