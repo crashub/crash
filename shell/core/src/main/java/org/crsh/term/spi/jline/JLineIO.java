@@ -19,7 +19,7 @@
 
 package org.crsh.term.spi.jline;
 
-import jline.ConsoleReader;
+import jline.console.ConsoleReader;
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
 
@@ -59,12 +59,14 @@ public class JLineIO implements TermIO {
   }
 
   public int read() throws IOException {
-    int i = reader.readVirtualKey();
-    return i;
+    // int i = reader.readVirtualKey();
+    // return i;
+    throw new UnsupportedOperationException();
   }
 
   public int getWidth() {
-    return reader.getTermwidth();
+    // return reader.getTermwidth();
+    throw new UnsupportedOperationException();
   }
 
   public String getProperty(String name) {
@@ -72,6 +74,7 @@ public class JLineIO implements TermIO {
   }
 
   public CodeType decode(int code) {
+/*
     short action = keyBindings[code];
     switch (action) {
       case ConsoleReader.COMPLETE:
@@ -91,6 +94,8 @@ public class JLineIO implements TermIO {
       default:
         return CodeType.CHAR;
     }
+*/
+    throw new UnsupportedOperationException();
   }
 
   public void close() {

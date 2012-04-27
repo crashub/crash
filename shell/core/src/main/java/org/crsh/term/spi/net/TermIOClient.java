@@ -2,12 +2,11 @@ package org.crsh.term.spi.net;
 
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
+import org.crsh.util.AbstractSocketClient;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
@@ -15,22 +14,10 @@ import java.nio.charset.Charset;
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public class TermIOClient implements TermIO {
+public class TermIOClient extends AbstractSocketClient implements TermIO {
 
   /** . */
   private static final Charset UTF_8 = Charset.forName("UTF-8");
-
-  /** . */
-  private int port;
-
-  /** . */
-  private Socket socket;
-
-  /** . */
-  private InputStream in;
-
-  /** . */
-  private OutputStream out;
 
   /** . */
   private byte[] bytes = new byte[2000];
@@ -38,18 +25,18 @@ public class TermIOClient implements TermIO {
   /** . */
   private ByteBuffer buffer = ByteBuffer.wrap(bytes);
 
+  /** . */
+  private InputStream in;
+
+  /** . */
+  private OutputStream out;
+
   public TermIOClient(int port) {
-    this.port = port;
+    super(port);
   }
 
-  public void connect() throws IOException {
-    Socket socket = new Socket();
-    socket.connect(new InetSocketAddress(port));
-    InputStream in = socket.getInputStream();
-    OutputStream out = socket.getOutputStream();
-
-    //
-    this.socket = socket;
+  @Override
+  protected void handle(InputStream in, OutputStream out) throws IOException {
     this.in = in;
     this.out = out;
   }
@@ -151,14 +138,6 @@ public class TermIOClient implements TermIO {
     } else {
       code >>= 16;
       return CodeType.valueOf(code);
-    }
-  }
-
-  public void close() {
-    try {
-      this.socket.close();
-    } catch (IOException e) {
-      e.printStackTrace();
     }
   }
 

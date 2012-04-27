@@ -21,6 +21,7 @@ package org.crsh.shell;
 
 import org.crsh.command.ScriptException;
 
+import java.io.Serializable;
 import java.util.Collections;
 
 /**
@@ -29,7 +30,7 @@ import java.util.Collections;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public abstract class ShellResponse {
+public abstract class ShellResponse implements Serializable {
 
   public static UnknownCommand unknownCommand(String name) {
     return new UnknownCommand(name);
@@ -147,7 +148,7 @@ public abstract class ShellResponse {
   public static class Ok extends ShellResponse {
 
     /** . */
-    private final Iterable<?> produced;
+    private final transient Iterable<?> produced;
 
     private Ok() {
       this(Collections.<Object>emptyList());

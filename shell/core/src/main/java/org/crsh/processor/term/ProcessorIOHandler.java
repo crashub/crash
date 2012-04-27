@@ -18,9 +18,6 @@ import java.util.concurrent.Executors;
 public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandler {
 
   /** . */
-  private ExecutorService executor;
-
-  /** . */
   private CRaSH crash;
 
   @Override
@@ -30,27 +27,21 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
 
   @Override
   public void init() {
-    this.executor = Executors.newFixedThreadPool(3);
     this.crash = new CRaSH(getContext());
   }
 
   @Override
   public void destroy() {
-    if (executor != null) {
-      executor.shutdown();
-    }
   }
 
   public void handle(final TermIO io, Principal user) {
     CRaSHSession shell = crash.createSession(user);
-    AsyncShell asyncShell = new AsyncShell(executor, shell);
+    AsyncShell asyncShell = new AsyncShell(getContext().getExecutor(), shell);
     BaseTerm term = new BaseTerm(io);
     Processor processor = new Processor(term, asyncShell);
     processor.addListener(io);
     processor.addListener(asyncShell);
     processor.addListener(shell);
-
-    //
     processor.run();
   }
 }

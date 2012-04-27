@@ -7,16 +7,15 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
+import org.crsh.util.CloseableList;
 import org.crsh.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
@@ -74,7 +73,7 @@ public final class Processor implements Runnable {
   volatile boolean waitingEvent;
 
   /** . */
-  private final List<Closeable> listeners;
+  private final CloseableList listeners;
 
   public Processor(Term term, Shell shell) {
     this.term = term;
@@ -82,7 +81,7 @@ public final class Processor implements Runnable {
     this.queue = new LinkedList<TermEvent>();
     this.lock = new Object();
     this.status = Status.AVAILABLE;
-    this.listeners = new ArrayList<Closeable>();
+    this.listeners = new CloseableList();
     this.waitingEvent = false;
   }
 
@@ -266,34 +265,11 @@ public final class Processor implements Runnable {
   }
 
   void close() {
-    // Make a copy
-    ArrayList<Closeable> listeners;
-    synchronized (Processor.this.listeners) {
-      listeners = new ArrayList<Closeable>(Processor.this.listeners);
-    }
-
-    //
-    for (Closeable listener : listeners) {
-      try {
-        log.debug("Closing " + listener.getClass().getSimpleName());
-        listener.close();
-      }
-      catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
+    listeners.close();
   }
 
   public void addListener(Closeable listener) {
-    if (listener == null) {
-      throw new NullPointerException();
-    }
-    synchronized (listeners) {
-      if (listeners.contains(listener)) {
-        throw new IllegalStateException("Already listening");
-      }
-      listeners.add(listener);
-    }
+    listeners.add(listener);
   }
 
   void write(String text) {

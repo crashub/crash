@@ -1,5 +1,6 @@
 package org.crsh.cmdline.spi;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.Set;
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public final class ValueCompletion implements Iterable<Map.Entry<String, Boolean>> {
+public final class ValueCompletion implements Iterable<Map.Entry<String, Boolean>>, Serializable {
 
   public static ValueCompletion create() {
     return new ValueCompletion();

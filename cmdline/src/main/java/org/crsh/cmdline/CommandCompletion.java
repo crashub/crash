@@ -2,12 +2,14 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.spi.ValueCompletion;
 
+import java.io.Serializable;
+
 /**
  * A completion result.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public final class CommandCompletion {
+public final class CommandCompletion implements Serializable {
 
   /** . */
   private final Delimiter delimiter;

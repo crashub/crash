@@ -2,6 +2,7 @@ package org.crsh.term.spi.net;
 
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
+import org.crsh.util.AbstractSocketServer;
 import org.crsh.util.Safe;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.nio.charset.Charset;
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public class TermIOServer {
+public class TermIOServer extends AbstractSocketServer {
 
   /** . */
   private static final Charset UTF_8 = Charset.forName("UTF-8");
@@ -24,58 +25,22 @@ public class TermIOServer {
   private final TermIO delegate;
 
   /** . */
-  private final int bindingPort;
-
-  /** . */
-  private ServerSocket socketServer;
-
-  /** . */
-  private Socket socket;
-
-  /** . */
   private InputStream in;
 
   /** . */
   private OutputStream out;
 
-  /** . */
-  private int port;
-
   public TermIOServer(TermIO delegate, int bindingPort) {
+    super(bindingPort);
+
+    //
     this.delegate = delegate;
-    this.bindingPort = bindingPort;
   }
 
-  public int getBindingPort() {
-    return socketServer.getLocalPort();
-  }
-
-  public int getPort() {
-    return port;
-  }
-
-  public int bind() throws IOException {
-    ServerSocket socketServer = new ServerSocket();
-    socketServer.bind(new InetSocketAddress(bindingPort));
-    int port = socketServer.getLocalPort();
-
-    //
-    this.socketServer = socketServer;
-    this.port = port;
-
-    //
-    return port;
-  }
-
-  public void accept() throws IOException {
-    if  (socketServer == null) {
-      throw new IllegalStateException();
-    }
-
-    //
-    this.socket = socketServer.accept();
-    this.in = socket.getInputStream();
-    this.out = socket.getOutputStream();
+  @Override
+  protected void handle(InputStream in, OutputStream out) throws IOException {
+    this.in = in;
+    this.out = out;
   }
 
   private byte read() throws IOException, Done {
@@ -107,19 +72,16 @@ public class TermIOServer {
   }
 
   public boolean execute() throws IOException, IllegalStateException {
-    if (socket == null) {
+    if (in == null) {
       throw new IllegalStateException("No connection");
     }
     try {
       iterate();
       return true;
     } catch (Done ignore) {
-      Safe.close(in);
-      Safe.close(out);
-      Safe.close(socket);
       in = null;
       out = null;
-      socket = null;
+      close();
       return false;
     }
   }

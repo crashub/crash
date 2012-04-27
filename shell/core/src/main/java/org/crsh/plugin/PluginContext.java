@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -58,7 +60,7 @@ public final class PluginContext {
   private final String version;
 
   /** . */
-  private ScheduledExecutorService executor;
+  private ScheduledExecutorService scanner;
 
   /** . */
   private volatile List<File> dirs;
@@ -77,6 +79,10 @@ public final class PluginContext {
 
   /** . */
   private boolean started;
+
+  /** The shared executor. */
+  private ExecutorService executor;
+
 
   /**
    * Create a new plugin context.
@@ -139,6 +145,7 @@ public final class PluginContext {
     this.started = false;
     this.manager = new PluginManager(this, discovery);
     this.confFS = confFS;
+    this.executor = Executors.newFixedThreadPool(20);
   }
 
   public Iterable<CRaSHPlugin<?>> getPlugins() {
@@ -151,6 +158,10 @@ public final class PluginContext {
 
   public Map<String, ?> getAttributes() {
     return attributes;
+  }
+
+  public ExecutorService getExecutor() {
+    return executor;
   }
 
   /**
@@ -373,8 +384,8 @@ public final class PluginContext {
       TimeUnit timeUnit = getProperty(PropertyDescriptor.VFS_REFRESH_UNIT);
       if (refreshRate != null && refreshRate > 0) {
         TimeUnit tu = timeUnit != null ? timeUnit : TimeUnit.SECONDS;
-        executor =  new ScheduledThreadPoolExecutor(1);
-        executor.scheduleWithFixedDelay(new Runnable() {
+        scanner =  new ScheduledThreadPoolExecutor(1);
+        scanner.scheduleWithFixedDelay(new Runnable() {
           public void run() {
             refresh();
           }
@@ -399,12 +410,15 @@ public final class PluginContext {
       // Shutdown manager
       manager.shutdown();
 
-      //
-      if (executor != null) {
-        ScheduledExecutorService tmp = executor;
-        executor = null;
-        tmp.shutdown();
+      // Shutdown scanner
+      if (scanner != null) {
+        ScheduledExecutorService tmp = scanner;
+        scanner = null;
+        tmp.shutdownNow();
       }
+
+      // Shutdown executor
+      executor.shutdownNow();
     } else {
       log.warn("Attempt to stop when stopped");
     }

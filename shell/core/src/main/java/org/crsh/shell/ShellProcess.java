@@ -28,14 +28,17 @@ package org.crsh.shell;
 public interface ShellProcess {
 
   /**
-   * Begin the process.
+   * Begin the process. The client of this method should make no assumption whether the process is executed
+   * in a synchronous or asynchronous manner. The process will be termined when the process signals it
+   * with an invocation of the {@link ShellProcessContext#end(ShellResponse)} method.
    *
    * @param processContext the process context
+   * @throws IllegalStateException if the process cannot be executed for some reason
    */
-  void execute(ShellProcessContext processContext);
+  void execute(ShellProcessContext processContext) throws IllegalStateException;
 
   /**
-   * Attempt to cancel the shell process.
+   * Signals the process it should be cancelled.
    */
   void cancel();
 

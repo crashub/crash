@@ -20,6 +20,9 @@
 package org.crsh.standalone;
 
 import com.sun.tools.attach.VirtualMachine;
+import jline.Terminal;
+import jline.TerminalFactory;
+import jline.console.ConsoleReader;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.Delimiter;
@@ -31,15 +34,22 @@ import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
-import org.crsh.term.BaseTerm;
-import org.crsh.term.Term;
-import org.crsh.processor.term.Processor;
-import org.crsh.term.spi.jline.JLineIO;
-import org.crsh.term.spi.net.TermIOServer;
+import org.crsh.processor.jline.JLineProcessor;
+import org.crsh.shell.Shell;
+import org.crsh.shell.remoting.RemoteServer;
+import org.crsh.util.CloseableList;
+import org.crsh.util.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
+import java.io.Closeable;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.*;
 import java.util.List;
 import java.util.Properties;
@@ -84,147 +94,198 @@ public class CRaSH {
     //
     if (Boolean.TRUE.equals(help)) {
       descriptor.printUsage(System.out);
-    } else if (pid != null) {
-
-      // Standalone
-      URL url = CRaSH.class.getProtectionDomain().getCodeSource().getLocation();
-      java.io.File f = new java.io.File(url.toURI());
-      log.info("Attaching to remote process " + pid);
-      VirtualMachine vm = VirtualMachine.attach("" + pid);
-
-      //
-      TermIOServer server = new TermIOServer(new JLineIO(), 0);
-      int port = server.bind();
-      log.info("Callback server set on port " + port);
-
-      // Build the options
-      StringBuilder sb = new StringBuilder();
-
-      // Rewrite canonical path
-      if (cmds != null) {
-        for (String cmd : cmds) {
-          File cmdPath = new File(cmd);
-          if (cmdPath.exists()) {
-            sb.append("--cmd ");
-            Delimiter.EMPTY.escape(cmdPath.getCanonicalPath(), sb);
-            sb.append(' ');
-          }
-        }
-      }
-
-      // Rewrite canonical path
-      if (confs != null) {
-        for (String conf : confs) {
-          File confPath = new File(conf);
-          if (confPath.exists()) {
-            sb.append("--conf ");
-            Delimiter.EMPTY.escape(confPath.getCanonicalPath(), sb);
-            sb.append(' ');
-          }
-        }
-      }
-
-      // Rewrite canonical path
-      if (jars != null) {
-        for (String jar : jars) {
-          File jarPath = new File(jar);
-          if (jarPath.exists()) {
-            sb.append("--jar ");
-            Delimiter.EMPTY.escape(jarPath.getCanonicalPath(), sb);
-            sb.append(' ');
-          }
-        }
-      }
-
-      // Propagate canonical config
-      if (properties != null) {
-        for (String property : properties) {
-          sb.append("--property ");
-          Delimiter.EMPTY.escape(property, sb);
-          sb.append(' ');
-        }
-      }
-
-      // Append callback port
-      sb.append(port);
-
-      //
-      String options = sb.toString();
-      log.info("Loading agent with command " + options);
-      vm.loadAgent(f.getCanonicalPath(), options);
-
-      //
-      try {
-        server.accept();
-        while (server.execute()) {
-          //
-        }
-      } finally {
-        vm.detach();
-      }
     } else {
-      final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
-      //
-      if (cmds != null) {
-        for (String cmd : cmds) {
-          File cmdPath = new File(cmd);
-          bootstrap.addCmdPath(cmdPath);
-        }
-      }
+      CloseableList closeable = new CloseableList();
+      Shell shell;
+      if (pid != null) {
 
-      //
-      if (confs != null) {
-        for (String conf : confs) {
-          File confPath = new File(conf);
-          bootstrap.addCmdPath(confPath);
-        }
-      }
+        // Standalone
+        URL url = CRaSH.class.getProtectionDomain().getCodeSource().getLocation();
+        java.io.File f = new java.io.File(url.toURI());
+        log.info("Attaching to remote process " + pid);
+        final VirtualMachine vm = VirtualMachine.attach("" + pid);
 
-      //
-      if (jars != null) {
-        for (String jar : jars) {
-          File jarPath = new File(jar);
-          bootstrap.addJarPath(jarPath);
-        }
-      }
+        //
+        RemoteServer server = new RemoteServer(0);
+        int port = server.bind();
+        log.info("Callback server set on port " + port);
 
-      //
-      if (properties != null) {
-        Properties config = new Properties();
-        for (String property : properties) {
-          int index = property.indexOf('=');
-          if (index == -1) {
-            config.setProperty(property, "");
-          } else {
-            config.setProperty(property.substring(0, index), property.substring(index + 1));
+        // Build the options
+        StringBuilder sb = new StringBuilder();
+
+        // Rewrite canonical path
+        if (cmds != null) {
+          for (String cmd : cmds) {
+            File cmdPath = new File(cmd);
+            if (cmdPath.exists()) {
+              sb.append("--cmd ");
+              Delimiter.EMPTY.escape(cmdPath.getCanonicalPath(), sb);
+              sb.append(' ');
+            }
           }
         }
-        bootstrap.setConfig(config);
+
+        // Rewrite canonical path
+        if (confs != null) {
+          for (String conf : confs) {
+            File confPath = new File(conf);
+            if (confPath.exists()) {
+              sb.append("--conf ");
+              Delimiter.EMPTY.escape(confPath.getCanonicalPath(), sb);
+              sb.append(' ');
+            }
+          }
+        }
+
+        // Rewrite canonical path
+        if (jars != null) {
+          for (String jar : jars) {
+            File jarPath = new File(jar);
+            if (jarPath.exists()) {
+              sb.append("--jar ");
+              Delimiter.EMPTY.escape(jarPath.getCanonicalPath(), sb);
+              sb.append(' ');
+            }
+          }
+        }
+
+        // Propagate canonical config
+        if (properties != null) {
+          for (String property : properties) {
+            sb.append("--property ");
+            Delimiter.EMPTY.escape(property, sb);
+            sb.append(' ');
+          }
+        }
+
+        // Append callback port
+        sb.append(port);
+
+        //
+        String options = sb.toString();
+        log.info("Loading agent with command " + options);
+        vm.loadAgent(f.getCanonicalPath(), options);
+
+        //
+        server.accept();
+
+        //
+        shell = server.getShell();
+        closeable.add(new Closeable() {
+          public void close() throws IOException {
+            vm.detach();
+          }
+        });
+      } else {
+        final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
+
+        //
+        if (cmds != null) {
+          for (String cmd : cmds) {
+            File cmdPath = new File(cmd);
+            bootstrap.addCmdPath(cmdPath);
+          }
+        }
+
+        //
+        if (confs != null) {
+          for (String conf : confs) {
+            File confPath = new File(conf);
+            bootstrap.addCmdPath(confPath);
+          }
+        }
+
+        //
+        if (jars != null) {
+          for (String jar : jars) {
+            File jarPath = new File(jar);
+            bootstrap.addJarPath(jarPath);
+          }
+        }
+
+        //
+        if (properties != null) {
+          Properties config = new Properties();
+          for (String property : properties) {
+            int index = property.indexOf('=');
+            if (index == -1) {
+              config.setProperty(property, "");
+            } else {
+              config.setProperty(property.substring(0, index), property.substring(index + 1));
+            }
+          }
+          bootstrap.setConfig(config);
+        }
+
+        // Register shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+          @Override
+          public void run() {
+            // Should trigger some kind of run interruption
+          }
+        });
+
+        // Do bootstrap
+        bootstrap.bootstrap();
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+          @Override
+          public void run() {
+            bootstrap.shutdown();
+          }
+        });
+
+        //
+        org.crsh.shell.impl.CRaSH crash = new org.crsh.shell.impl.CRaSH(bootstrap.getContext());
+        shell = crash.createSession(null);
+        closeable = null;
       }
 
-      // Register shutdown hook
-      Runtime.getRuntime().addShutdownHook(new Thread() {
+      // Start crash for this command line
+      final Terminal term = TerminalFactory.create();
+      term.init();
+      ConsoleReader reader = new ConsoleReader(null, new FileInputStream(FileDescriptor.in), System.out, term);
+      Runtime.getRuntime().addShutdownHook(new Thread(){
         @Override
         public void run() {
-          // Should trigger some kind of run interruption
+          try {
+            term.restore();
+          }
+          catch (Exception ignore) {
+          }
         }
       });
 
-      // Do bootstrap
-      bootstrap.bootstrap();
+      //
+      final PrintWriter out = new PrintWriter(System.out);
+      final JLineProcessor processor = new JLineProcessor(
+        shell,
+        reader,
+        out
+      );
+      reader.addCompleter(processor);
 
-      // Start crash for this command line
-      Term term = new BaseTerm(new JLineIO());
-      org.crsh.shell.impl.CRaSH crash = new org.crsh.shell.impl.CRaSH(bootstrap.getContext());
-      Processor processor = new Processor(term, crash.createSession(null));
+      // Install signal handler
+      SignalHandler handler = new SignalHandler() {
+        public void handle(Signal signal) {
+          processor.cancel();
+        }
+      };
+      Signal.handle(new Signal("INT"), handler);
 
       //
       try {
         processor.run();
       }
       finally {
-        bootstrap.shutdown();
+
+        //
+        if (closeable != null) {
+          Safe.close(closeable);
+        }
+
+        // Force exit
+        System.exit(0);
       }
     }
   }
