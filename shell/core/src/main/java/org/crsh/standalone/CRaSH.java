@@ -38,11 +38,10 @@ import org.crsh.processor.jline.JLineProcessor;
 import org.crsh.shell.Shell;
 import org.crsh.shell.remoting.RemoteServer;
 import org.crsh.util.CloseableList;
+import org.crsh.util.InterruptHandler;
 import org.crsh.util.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 import java.io.Closeable;
 import java.io.File;
@@ -266,12 +265,12 @@ public class CRaSH {
       reader.addCompleter(processor);
 
       // Install signal handler
-      SignalHandler handler = new SignalHandler() {
-        public void handle(Signal signal) {
+      InterruptHandler ih = new InterruptHandler(new Runnable() {
+        public void run() {
           processor.cancel();
         }
-      };
-      Signal.handle(new Signal("INT"), handler);
+      });
+      ih.install();
 
       //
       try {
