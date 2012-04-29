@@ -20,6 +20,7 @@
 package org.crsh.util;
 
 import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -54,6 +55,9 @@ public class AppendableWriter extends Writer {
   public void flush() throws IOException {
     if (closed) {
       throw new IOException("Already closed");
+    }
+    if (out instanceof Flushable) {
+      ((Flushable)out).flush();
     }
   }
 
