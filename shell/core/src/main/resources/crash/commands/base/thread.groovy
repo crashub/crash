@@ -83,17 +83,19 @@ public class thread extends CRaSHCommand {
     Map<String, Thread> threads = getThreads();
 
     //
-    new UIBuilder().table() {
+    UIBuilder ui = new UIBuilder();
+
+    ui.table() {
       row([
         values:["ID", "PRIORITY", "STATE", "INTERRUPTED","DAEMON", "NAME"],
         styles:[new Style(Decoration.BOLD, Color.BLACK, Color.WHITE)]
       ])
       threads.each() {
         if (it != null) {
-          def matcher = it.name =~ pattern;
-          if (matcher.matches() && (state == null || it.state == state)) {
+          def matcher = it.value.name =~ pattern;
+          if (matcher.matches() && (state == null || it.value.state == state)) {
             Color c = null;
-            switch (it.state) {
+            switch (it.value.state) {
               case Thread.State.NEW:
                 c = Color.CYAN
                 break;
@@ -115,15 +117,16 @@ public class thread extends CRaSHCommand {
             }
             row([
               // We use isInterrupted() to not clear the thread status
-              values:[it.id, it.priority, "$it.state", it.isInterrupted(), it.daemon, it.name],
+              values:[it.value.id, it.value.priority, "$it.value.state", it.value.isInterrupted(), it.value.daemon, it.value.name],
               styles:[new Style(null, Color.BLACK, c)]
             ])
             context.produce(it);
           }
         }
       }
-      threads.each(closure);
     }
+
+    context.writer.print(ui);
 
   }
     
