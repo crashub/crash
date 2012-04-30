@@ -23,16 +23,15 @@ import junit.framework.TestCase;
 import org.crsh.util.IO;
 import org.crsh.vfs.spi.jarurl.*;
 import org.crsh.vfs.spi.ram.RAMDriver;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Iterator;
-import java.util.jar.JarEntry;
-import java.util.jar.JarOutputStream;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -53,30 +52,13 @@ public class FSTestCase extends TestCase {
   }
 
   public void testJar() throws Exception {
-
     // Generate test jar
     java.io.File file = java.io.File.createTempFile("test", ".jar");
     file.deleteOnExit();
-    OutputStream out = new FileOutputStream(file);
-    JarOutputStream jos = new JarOutputStream(out);
-    String name = FSTestCase.class.getName().replace('.', '/') + ".class";
-    JarEntry entry = new JarEntry(name);
-    int prev = 0;
-    while (true) {
-      int pos = name.indexOf('/', prev);
-      if (pos == -1) {
-        break;
-      } else {
-        prev = pos + 1;
-        jos.putNextEntry(new JarEntry(name.substring(0, prev)));
-        jos.closeEntry();
-      }
-    }
-    jos.putNextEntry(entry);
-    InputStream classStream = FSTestCase.class.getClassLoader().getResourceAsStream(name);
-    IO.copy(classStream, jos);
-    jos.closeEntry();
-    jos.close();
+    JavaArchive archive = ShrinkWrap.create(JavaArchive.class);
+    archive.addClass(FSTestCase.class);
+    ZipExporter exporter = archive.as(ZipExporter.class);
+    exporter.exportTo(file, true);
 
     //
     URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()});
