@@ -24,7 +24,7 @@ import org.crsh.vfs.spi.AbstractFSDriver;
 import org.crsh.vfs.spi.FSDriver;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 
 /**
  * The mount driver mounts path of a driver.
@@ -79,7 +79,11 @@ public class MountDriver<H> extends AbstractFSDriver<H> {
     return driver.children(handle);
   }
 
-  public URL toURL(H handle) throws IOException {
-    return driver.toURL(handle);
+  public long getLastModified(H handle) throws IOException {
+    return driver.getLastModified(handle);
+  }
+
+  public InputStream open(H handle) throws IOException {
+    return driver.open(handle);
   }
 }

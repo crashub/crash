@@ -66,7 +66,7 @@ public class FSTestCase extends TestCase {
     JarURLConnection conn = (JarURLConnection)classURL.openConnection();
 
     //
-    JarURLDriver driver = new JarURLDriver(conn);
+    JarURLDriver driver = new JarURLDriver(cl, conn);
     org.crsh.vfs.spi.jarurl.Handle root = driver.root();
     assertEquals("", driver.name(root));
     assertTrue(driver.isDir(root));
@@ -98,8 +98,7 @@ public class FSTestCase extends TestCase {
     assertFalse(clazzChildren.hasNext());
     assertEquals(FSTestCase.class.getSimpleName() + ".class", driver.name(clazz));
     assertFalse(driver.isDir(clazz));
-    URL clazzURL = driver.toURL(clazz);
-    InputStream in = clazzURL.openStream();
+    InputStream in = driver.open(clazz);
     in.close();
   }
 
@@ -110,8 +109,8 @@ public class FSTestCase extends TestCase {
     assertEquals(Path.get("/"), root);
     Path foo = driver.child(root, "foo");
     assertNotNull(foo);
-    URL url = driver.toURL(foo);
-    String file = IO.readAsUTF8(url.openStream());
+    InputStream in = driver.open(foo);
+    String file = IO.readAsUTF8(in);
     assertEquals("bar", file);
   }
 }

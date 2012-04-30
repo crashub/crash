@@ -19,7 +19,11 @@
 
 package org.crsh.vfs;
 
+import org.crsh.util.IO;
+
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -28,35 +32,27 @@ import java.net.URL;
 public class Resource {
 
   /** . */
-  private final String content;
+  private final byte[] content;
 
   /** . */
   private long timestamp;
 
-  /** URL is optional, when it has one it indicates the URL of the resource. */
-  private final URL url;
-
-  public Resource(String content, long timestamp) {
+  public Resource(byte[] content, long timestamp) {
     this.content = content;
     this.timestamp = timestamp;
-    this.url = null;
   }
 
-  public Resource(String content, long timestamp, URL url) {
-    this.content = content;
-    this.timestamp = timestamp;
-    this.url = url;
+  public Resource(URL url) throws IOException {
+    URLConnection conn = url.openConnection();
+    this.timestamp = conn.getLastModified();
+    this.content = IO.readAsBytes(conn.getInputStream());
   }
 
-  public String getContent() {
+  public byte[] getContent() {
     return content;
   }
 
   public long getTimestamp() {
     return timestamp;
-  }
-
-  public URL getURL() {
-    return url;
   }
 }

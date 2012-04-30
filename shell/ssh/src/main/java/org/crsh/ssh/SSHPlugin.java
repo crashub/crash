@@ -26,6 +26,7 @@ import org.crsh.ssh.term.SSHLifeCycle;
 import org.crsh.vfs.Resource;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -70,17 +71,26 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
       return;
     }
 
+    //
+    Resource key = null;
+
     // Get embedded default key
     URL keyURL = SSHPlugin.class.getResource("hostkey.pem");
     if (keyURL != null) {
-      log.debug("Found embedded key url " + keyURL);
+      try {
+        log.debug("Found embedded key url " + keyURL);
+        key = new Resource(keyURL);
+      }
+      catch (IOException e) {
+        log.debug("Could not load ssh key from url " + keyURL, e);
+      }
     }
 
     // Override from config if any
     Resource res = getContext().loadResource("hostkey.pem", ResourceKind.CONFIG);
     if (res != null) {
-      keyURL = res.getURL();
-      log.debug("Found ssh key url " + keyURL);
+      key = res;
+      log.debug("Found ssh key url");
     }
 
     // If we have a key path, we convert is as an URL
@@ -112,7 +122,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     log.info("Booting SSHD");
     SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext());
     lifeCycle.setPort(port);
-    lifeCycle.setKeyURL(keyURL);
+    lifeCycle.setKey(key);
     lifeCycle.setAuthentication(authentication);
     lifeCycle.init();
 

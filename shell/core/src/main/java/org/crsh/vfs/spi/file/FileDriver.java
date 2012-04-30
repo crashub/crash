@@ -22,8 +22,9 @@ package org.crsh.vfs.spi.file;
 import org.crsh.vfs.spi.AbstractFSDriver;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -68,7 +69,11 @@ public class FileDriver extends AbstractFSDriver<File> {
     return files != null ? Arrays.asList(files) : Collections.<File>emptyList();
   }
 
-  public URL toURL(File handle) throws IOException {
-    return handle.toURI().toURL();
+  public long getLastModified(File handle) throws IOException {
+    return handle.lastModified();
+  }
+
+  public InputStream open(File handle) throws IOException {
+    return new FileInputStream(handle);
   }
 }

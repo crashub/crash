@@ -23,9 +23,8 @@ import org.crsh.vfs.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
 /**
@@ -69,10 +68,8 @@ public abstract class PluginLifeCycle {
     Resource res = context.loadResource("crash.properties", ResourceKind.CONFIG);
     if (res != null) {
       try {
-        URL url = res.getURL();
-        InputStream in = url.openStream();
-        config.load(in);
-        log.debug("Loaded properties from " + url + " " + config);
+        config.load(new ByteArrayInputStream(res.getContent()));
+        log.debug("Loaded properties from " + config);
       } catch (IOException e) {
         log.warn("Could not configure from crash.properties", e);
       }

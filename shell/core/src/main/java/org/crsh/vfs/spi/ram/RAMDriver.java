@@ -3,7 +3,9 @@ package org.crsh.vfs.spi.ram;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.spi.AbstractFSDriver;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -68,7 +70,11 @@ public class RAMDriver extends AbstractFSDriver<Path> {
     return children;
   }
 
-  public URL toURL(Path handle) throws IOException {
-    return new URL(baseURL, handle.getValue());
+  public long getLastModified(Path handle) throws IOException {
+    return 0;
+  }
+
+  public InputStream open(Path handle) throws IOException {
+    return new ByteArrayInputStream(entries.get(handle).getBytes("UTF-8"));
   }
 }

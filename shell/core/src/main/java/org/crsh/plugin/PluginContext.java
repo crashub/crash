@@ -25,6 +25,7 @@ import org.crsh.vfs.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -266,19 +267,20 @@ public final class PluginContext {
       switch (resourceKind) {
         case LIFECYCLE:
           if ("login".equals(resourceId) || "logout".equals(resourceId)) {
-            StringBuilder sb = new StringBuilder();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             long timestamp = Long.MIN_VALUE;
             for (File path : dirs) {
               File f = path.child(resourceId + ".groovy", false);
               if (f != null) {
                 Resource sub = f.getResource();
                 if (sub != null) {
-                  sb.append(sub.getContent()).append('\n');
+                  buffer.write(sub.getContent());
+                  buffer.write('\n');
                   timestamp = Math.max(timestamp, sub.getTimestamp());
                 }
               }
             }
-            return new Resource(sb.toString(), timestamp);
+            return new Resource(buffer.toByteArray(), timestamp);
           }
           break;
         case COMMAND:

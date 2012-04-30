@@ -22,6 +22,7 @@ package org.crsh.vfs.spi.jarurl;
 import org.crsh.vfs.spi.AbstractFSDriver;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -35,6 +36,9 @@ import java.util.jar.JarFile;
  * @version $Revision$
  */
 public class JarURLDriver extends AbstractFSDriver<Handle> {
+
+  /** . */
+  final ClassLoader loader;
 
   /** . */
   final Handle root;
@@ -72,7 +76,7 @@ public class JarURLDriver extends AbstractFSDriver<Handle> {
     return handle;
   }
 
-  public JarURLDriver(JarURLConnection conn) throws IOException {
+  public JarURLDriver(ClassLoader loader, JarURLConnection conn) throws IOException {
     JarFile file = conn.getJarFile();
     Map<String, Handle> handles = new HashMap<String, Handle>();
     handles.put("", root = new Handle(this, ""));
@@ -83,6 +87,7 @@ public class JarURLDriver extends AbstractFSDriver<Handle> {
 
     //
     this.jarURL = conn.getJarFileURL();
+    this.loader = loader;
   }
 
   public Handle root() throws IOException {
@@ -101,7 +106,11 @@ public class JarURLDriver extends AbstractFSDriver<Handle> {
     return handle.children.values();
   }
 
-  public URL toURL(Handle handle) throws IOException {
-    return handle.toURL();
+  public long getLastModified(Handle handle) throws IOException {
+    return 0;
+  }
+
+  public InputStream open(Handle handle) throws IOException {
+    return loader.getResourceAsStream(handle.entry.getName());
   }
 }

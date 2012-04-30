@@ -19,14 +19,10 @@
 
 package org.crsh.vfs;
 
-import org.crsh.util.IO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -73,44 +69,25 @@ public final class File {
   }
 
   public Resource getResource() throws IOException {
-    try {
-      URL url = getURL();
-      if (url == null) {
-        log.warn("Could not obtain resource " + path);
-      } else {
-        URLConnection conn = url.openConnection();
-        long timestamp = conn.getLastModified();
-        InputStream in = url.openStream();
-        String content = IO.readAsUTF8(in);
-        return new Resource(content, timestamp, url);
-      }
-    }
-    catch (IOException e) {
-      log.warn("Could not retrieve resource " + path, e);
-    }
-    return null;
-  }
-
-  public URL getURL() throws IOException {
     if (path.isDir()) {
       throw new IllegalStateException("Cannot get url of a dir");
     }
     Handle handle = getHandles().peekFirst();
-    return handle != null ? handle.url() : null;
+    return handle != null ? handle.getResource() : null;
 
   }
 
-  public Iterable<URL> getURLs() throws IOException {
+  public Iterable<Resource> getResources() throws IOException {
     if (path.isDir()) {
       throw new IllegalStateException("Cannot get url of a dir");
     }
-    List<URL> urls = Collections.emptyList();
+    List<Resource> urls = Collections.emptyList();
     for (Handle handle : getHandles()) {
       if (urls.isEmpty()) {
-        urls = new ArrayList<URL>();
+        urls = new ArrayList<Resource>();
       }
-      URL url = handle.url();
-      urls.add(url);
+      Resource resource = handle.getResource();
+      urls.add(resource);
     }
     return urls;
   }

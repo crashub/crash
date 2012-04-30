@@ -14,6 +14,7 @@ import org.crsh.shell.ErrorType;
 import org.crsh.util.TimestampedObject;
 import org.crsh.vfs.Resource;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -74,9 +75,12 @@ class ClassManager<T> {
 
         Class<?> clazz;
         try {
-          GroovyCodeSource gcs = new GroovyCodeSource(script.getContent(), name, "/groovy/shell");
+          GroovyCodeSource gcs = new GroovyCodeSource(new String(script.getContent(), "UTF-8"), name, "/groovy/shell");
           GroovyClassLoader gcl = new GroovyClassLoader(context.getLoader(), config);
           clazz = gcl.parseClass(gcs, false);
+        }
+        catch (UnsupportedEncodingException e) {
+          throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
         }
         catch (CompilationFailedException e) {
           throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);

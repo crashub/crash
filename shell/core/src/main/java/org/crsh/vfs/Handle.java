@@ -19,10 +19,11 @@
 
 package org.crsh.vfs;
 
+import org.crsh.util.IO;
 import org.crsh.vfs.spi.FSDriver;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,18 @@ class Handle<H> {
     return children;
   }
 
-  URL url() throws IOException {
-    return driver.toURL(handle);
+  Resource getResource() throws IOException {
+    InputStream in = open();
+    byte[] bytes = IO.readAsBytes(in);
+    long lastModified = getLastModified();
+    return new Resource(bytes, lastModified);
+  }
+
+  InputStream open() throws IOException {
+    return driver.open(handle);
+  }
+
+  long getLastModified() throws IOException {
+    return driver.getLastModified(handle);
   }
 }

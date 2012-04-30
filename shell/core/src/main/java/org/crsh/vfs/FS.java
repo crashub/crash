@@ -94,7 +94,7 @@ public class FS {
         mount(root);
       } else if ("jar".equals(protocol)) {
         JarURLConnection conn = (JarURLConnection)url.openConnection();
-        JarURLDriver jarDriver = new JarURLDriver(conn);
+        JarURLDriver jarDriver = new JarURLDriver(cl, conn);
         mount(jarDriver, path);
       }
     }
@@ -112,7 +112,7 @@ public class FS {
       driver = new FileDriver(new java.io.File(url.toURI()));
     } else if (protocol.equals("jar")) {
       JarURLConnection conn = (JarURLConnection)url.openConnection();
-      driver = new JarURLDriver(conn);
+      driver = new JarURLDriver(clazz.getClassLoader(), conn);
     } else {
       throw new IllegalArgumentException("Protocol " + protocol + " not supported");
     }

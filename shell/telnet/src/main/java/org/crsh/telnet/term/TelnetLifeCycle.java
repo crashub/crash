@@ -27,10 +27,11 @@ import net.wimpi.telnetd.shell.ShellManager;
 import net.wimpi.telnetd.util.StringUtil;
 import org.crsh.plugin.PluginContext;
 import org.crsh.term.TermLifeCycle;
+import org.crsh.vfs.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -55,7 +56,7 @@ public class TelnetLifeCycle extends TermLifeCycle {
   private static final ConcurrentHashMap<ConnectionManager, TelnetLifeCycle> map = new ConcurrentHashMap<ConnectionManager, TelnetLifeCycle>();
 
   /** . */
-  private URL configURL;
+  private Resource config;
 
   static TelnetLifeCycle getLifeCycle(Connection conn) {
     return map.get(conn.getConnectionData().getManager());
@@ -73,18 +74,18 @@ public class TelnetLifeCycle extends TermLifeCycle {
     this.port = port;
   }
 
-  public URL getConfigURL() {
-    return configURL;
+  public Resource getConfig() {
+    return config;
   }
 
-  public void setConfigURL(URL configURL) {
-    this.configURL = configURL;
+  public void setConfig(Resource config) {
+    this.config = config;
   }
 
   @Override
   protected synchronized void doInit() throws Exception {
     Properties props = new Properties();
-    props.load(configURL.openStream());
+    props.load(new ByteArrayInputStream(config.getContent()));
 
     //
     if (port != null) {

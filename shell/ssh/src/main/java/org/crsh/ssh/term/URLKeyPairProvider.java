@@ -21,12 +21,12 @@ package org.crsh.ssh.term;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.util.SecurityUtils;
 import org.bouncycastle.openssl.PEMReader;
+import org.crsh.vfs.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +40,10 @@ public class URLKeyPairProvider extends AbstractKeyPairProvider {
   private static final Logger LOG = LoggerFactory.getLogger(URLKeyPairProvider.class);
 
   /** . */
-  private final URL url;
+  private final Resource key;
 
-  public URLKeyPairProvider(URL url) {
-    this.url = url;
+  public URLKeyPairProvider(Resource key) {
+    this.key = key;
   }
 
   @Override
@@ -52,10 +52,9 @@ public class URLKeyPairProvider extends AbstractKeyPairProvider {
       throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
     }
     List<KeyPair> keys = new ArrayList<KeyPair>();
-    if (url != null) {
+    if (key != null) {
       try {
-        InputStream in = url.openStream();
-        PEMReader r = new PEMReader(new InputStreamReader(in));
+        PEMReader r = new PEMReader(new InputStreamReader(new ByteArrayInputStream(key.getContent())));
         try {
           Object o = r.readObject();
           if (o instanceof KeyPair) {
@@ -65,7 +64,7 @@ public class URLKeyPairProvider extends AbstractKeyPairProvider {
           r.close();
         }
       } catch (Exception e) {
-        LOG.info("Unable to read key {}: {}", url, e);
+        LOG.info("Unable to read key {}: {}", key, e);
       }
     }
     return keys.toArray(new KeyPair[keys.size()]);

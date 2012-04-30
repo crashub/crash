@@ -27,10 +27,9 @@ import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.term.TermLifeCycle;
 import org.crsh.term.spi.TermIOHandler;
+import org.crsh.vfs.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URL;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -54,7 +53,7 @@ public class SSHLifeCycle extends TermLifeCycle {
   private int port;
 
   /** . */
-  private URL keyURL;
+  private Resource key;
 
   /** . */
   private String authentication;
@@ -71,12 +70,12 @@ public class SSHLifeCycle extends TermLifeCycle {
     this.port = port;
   }
 
-  public URL getKeyURL() {
-    return keyURL;
+  public Resource getKey() {
+    return key;
   }
 
-  public void setKeyURL(URL keyURL) {
-    this.keyURL = keyURL;
+  public void setKey(Resource key) {
+    this.key = key;
   }
 
   public String getAuthentication() {
@@ -99,7 +98,7 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setPort(port);
       server.setShellFactory(new CRaSHCommandFactory(handler));
       server.setCommandFactory(new SCPCommandFactory(getContext()));
-      server.setKeyPairProvider(new URLKeyPairProvider(keyURL));
+      server.setKeyPairProvider(new URLKeyPairProvider(key));
 
       // We never authenticate by default
       AuthenticationPlugin plugin = new AuthenticationPlugin() {
