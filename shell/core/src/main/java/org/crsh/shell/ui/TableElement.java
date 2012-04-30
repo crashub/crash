@@ -31,7 +31,7 @@ import java.util.List;
 public class TableElement extends Element {
 
   /** . */
-  private final int MARGIN = 5;
+  public final int MARGIN = 5;
 
   /** . */
   private List<Integer> colsSize = new ArrayList<Integer>();
@@ -45,14 +45,14 @@ public class TableElement extends Element {
     int remainingSpace = 235;
     row.setTable(this);
     int i = 0;
-    for (String value : row.getValues()) {
+    for (LabelElement e : row.getValues()) {
       if (colsSize.size() <= i) {
-        int usedSpace = Math.min(remainingSpace - MARGIN, value.length());
+        int usedSpace = Math.min(remainingSpace - MARGIN, e.width());
         remainingSpace -= usedSpace + MARGIN;
         colsSize.add(usedSpace);
       }
       else {
-        int max = Math.max(value.length(), colsSize.get(i));
+        int max = Math.max(e.width(), colsSize.get(i));
         int usedSpace = Math.min(max, remainingSpace - MARGIN);
         remainingSpace -= usedSpace + MARGIN;
         colsSize.set(i, usedSpace);
@@ -66,7 +66,7 @@ public class TableElement extends Element {
   }
   
   @Override
-  void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
 
     if (ctx == null) {
       ctx = new UIWriterContext();
@@ -77,8 +77,20 @@ public class TableElement extends Element {
     }
   }
 
+  public List<RowElement> getRows() {
+    return rows;
+  }
+
   public List<Integer> getColsSize() {
     return colsSize;
   }
-  
+
+  @Override
+  int width() {
+    int width = 0;
+    for (int size : colsSize) {
+      width += size;
+    }
+    return width;
+  }
 }

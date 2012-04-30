@@ -29,10 +29,37 @@ import java.io.IOException;
  */
 public abstract class Element {
 
-  public void print(ShellWriter writer) throws IOException {
+  /** . */
+  private Style style;
+
+  public void setStyle(Style style) {
+    this.style = style;
+  }
+
+  public Style getStyle() {
+    return style;
+  }
+
+  final public void print(ShellWriter writer) throws IOException {
     print(null, writer);
   }
 
-  abstract void print(UIWriterContext ctx, ShellWriter writer) throws IOException;
+  final public void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
 
+    if (style != null) {
+      new FormattingElement(style).print(ctx, writer);
+    }
+
+    doPrint(ctx, writer);
+
+    if (style != null) {
+      new FormattingElement(null).print(ctx, writer);
+    }
+    
+  }
+
+  abstract void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException;
+  
+  abstract int width();
+  
 }

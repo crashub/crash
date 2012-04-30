@@ -18,7 +18,13 @@ public class FormattingElement extends Element {
   }
   
   @Override
-  void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
     writer.append(ctx, new FormattingData(style));
   }
+
+  @Override
+  int width() {
+    return 0;
+  }
+  
 }

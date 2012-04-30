@@ -45,12 +45,23 @@ public class LabelElement extends Element {
   }
 
   @Override
-  void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
-    writer.append(ctx, value);
+  void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
+    if (ctx != null && ctx.rightPad != null) {
+      writer.append(ctx, value + ctx.rightPad);
+    }
+    else {
+      writer.append(ctx, value);
+    }
   }
 
   @Override
   public String toString() {
     return "Label[" + value + "]";
   }
+
+  @Override
+  int width() {
+    return value.length();
+  }
+
 }

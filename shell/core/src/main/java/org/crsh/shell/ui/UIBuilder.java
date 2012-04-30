@@ -21,6 +21,7 @@ package org.crsh.shell.ui;
 
 import groovy.util.BuilderSupport;
 
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,8 @@ public class UIBuilder extends BuilderSupport {
       return new LabelElement(value);
     } else if ("table".equals(name)) {
       return new TableElement();
+    } else if ("row".equals(name)) {
+      return new RowElement(Collections.<LabelElement>emptyList());
     } else {
       throw new UnsupportedOperationException("Cannot build object with name " + name + " and value " + value);
     }
@@ -76,9 +79,23 @@ public class UIBuilder extends BuilderSupport {
   @Override
   protected Object createNode(Object name, Map attributes) {
     if ("row".equals(name)) {
-      Object values = attributes.get("values");
-      Object styles = attributes.get("styles");
-      return new RowElement((List<Object>) values, (List<Style>) styles);
+      List<LabelElement> labels = new ArrayList<LabelElement>();
+      List<Object> values = (List<Object>) attributes.get("values");
+      List<Style> styles = (List<Style>) attributes.get("styles");
+
+      for (int i = 0; i < values.size(); ++i) {
+        LabelElement label = new LabelElement(values.get(i));
+        if (styles != null && styles.size() > 0) {
+          if (styles.size() > i) {
+            label.setStyle(styles.get(i));
+          }
+          else {
+            label.setStyle(styles.get(styles.size() - 1));
+          }
+        }
+        labels.add(label);
+      }
+      return new RowElement(labels);
     } else {
       throw new UnsupportedOperationException();
     }

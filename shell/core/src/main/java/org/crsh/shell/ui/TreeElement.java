@@ -63,7 +63,7 @@ public class TreeElement extends Element {
   }
 
   @Override
-  void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
     if (ctx == null) {
       ctx = new UIWriterContext();
     }
@@ -89,5 +89,10 @@ public class TreeElement extends Element {
       }
       ctx.stack.remove(ctx.stack.size() - 1);
     }
+  }
+
+  @Override
+  int width() {
+    return 0;
   }
 }

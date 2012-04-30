@@ -35,6 +35,9 @@ class UIWriterContext implements ShellWriterContext {
   final ArrayList<Pad> stack;
 
   /** . */
+  String rightPad;
+
+  /** . */
   boolean needLF;
 
   UIWriterContext() {

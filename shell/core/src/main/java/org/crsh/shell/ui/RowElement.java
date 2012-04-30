@@ -34,17 +34,10 @@ public class RowElement extends Element {
   private TableElement table = new TableElement();
 
   /** . */
-  private List<String> values = new ArrayList<String>();
+  private List<LabelElement> cols;
 
-  /** . */
-  private List<Style> styles = new ArrayList<Style>();
-
-  public RowElement(List<Object> values, List<Style> styles) {
-    this.styles = styles;
-    this.values = new ArrayList<String>();
-    for (Object o : values) {
-      this.values.add(o.toString());
-    }
+  public RowElement(List<LabelElement> cols) {
+    this.cols = cols;
   }
 
   public void setTable(TableElement table) {
@@ -52,38 +45,39 @@ public class RowElement extends Element {
   }
 
   @Override
-  void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
 
     int i = 0;
-    for (String value : values) {
+    for (LabelElement e : cols) {
 
-      if (styles != null && styles.size() > 0) {
-        if (styles.size() <= i) {
-          new FormattingElement(styles.get(styles.size() - 1)).print(writer);
-        } else {
-          new FormattingElement(styles.get(i)).print(writer);
-        }
-      }
-
-      int padSize = table.getColsSize().get(i) - value.length();
-      StringBuilder sb = new StringBuilder(value);
-      for (int _ = 0; _ < padSize + 5; ++_) {
+      // Right padding
+      int padSize = table.getColsSize().get(i) - e.width();
+      StringBuilder sb = new StringBuilder();
+      for (int _ = 0; _ < padSize + table.MARGIN; ++_) {
         sb.append(" ");
       }
-      writer.append(ctx, sb.toString());
+      ctx.rightPad = sb.toString();
       ++i;
-
-      if (styles != null && styles.size() > 0) {
-        new FormattingElement(null).print(writer);
-      }
+      
+      //
+      e.print(ctx, writer);
     }
     writer.append(ctx, '\n');
 
+    ctx.rightPad = null;
   }
 
+  @Override
+  int width() {
+    int width = 0;
+    for (LabelElement e : cols) {
+      width += e.width();
+    }
+    return width + (cols.size() * table.MARGIN);
+  }
 
-  public List<String> getValues() {
-    return values;
+  public List<LabelElement> getValues() {
+    return cols;
   }
   
 }
