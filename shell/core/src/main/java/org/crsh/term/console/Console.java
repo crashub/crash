@@ -20,6 +20,7 @@
 package org.crsh.term.console;
 
 import org.crsh.term.Data;
+import org.crsh.term.DataFragment;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -161,8 +162,9 @@ public final class Console {
 
     @Override
     public void write(Data d) throws IOException {
-      viewWriter.write(d);
-      viewWriter.flush();
+      for (DataFragment f : d) {
+        write(f.toString());
+      }
     }
 
     private void writeNoFlush(char c) throws IOException {
