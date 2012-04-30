@@ -39,6 +39,8 @@
       <outputDirectory>/lib</outputDirectory>
       <includes>
         <include>org.crsh:crsh.shell.telnet:jar:standalone</include>
+        <include>org.crsh:crsh.shell.ssh:jar:standalone</include>
+        <include>org.bouncycastle:bcprov-jdk16</include>
       </includes>
     </dependencySet>
   </dependencySets>

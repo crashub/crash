@@ -206,6 +206,12 @@
         <version>1.0.1-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.ssh</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+        <classifier>standalone</classifier>
+      </dependency>
 
       <!-- Module shell packaging -->
       <dependency>
