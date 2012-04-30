@@ -18,5 +18,10 @@ public class FormattingData extends DataFragment {
   public Style getStyle() {
     return style;
   }
+
+  @Override
+  public String toString() {
+    return "";
+  }
   
 }

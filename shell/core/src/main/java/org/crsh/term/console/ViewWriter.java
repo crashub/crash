@@ -19,6 +19,8 @@
 
 package org.crsh.term.console;
 
+import org.crsh.term.Data;
+
 import java.io.IOException;
 
 /**
@@ -36,6 +38,8 @@ public abstract class ViewWriter {
   protected abstract void write(CharSequence s) throws IOException;
 
   protected abstract void write(char c) throws IOException;
+
+  protected abstract void write(Data d) throws IOException;
 
   protected abstract void writeDel() throws IOException;
 

@@ -23,7 +23,14 @@ import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionData;
+import org.crsh.shell.ui.Color;
+import org.crsh.shell.ui.Decoration;
+import org.crsh.shell.ui.Style;
+import org.crsh.term.ANSIFontBuilder;
 import org.crsh.term.CodeType;
+import org.crsh.term.Data;
+import org.crsh.term.FormattingData;
+import org.crsh.term.DataFragment;
 import org.crsh.term.spi.TermIO;
 
 import java.io.EOFException;
@@ -113,6 +120,50 @@ public class TelnetIO implements TermIO {
 
   public void write(String s) throws IOException {
     termIO.write(s);
+  }
+
+  public void write(Data d) throws IOException {
+
+    for (DataFragment f : d) {
+      if (f instanceof FormattingData) {
+        Style style = ((FormattingData) f).getStyle();
+        if (style != null) {
+
+          //
+          Decoration decoration = style.getDecoration();
+          termIO.setBlink(Decoration.BLINK.equals(decoration));
+          termIO.setBold(Decoration.BOLD.equals(decoration));
+          termIO.setUnderlined(Decoration.UNDERLINE.equals(decoration));
+
+          //
+          Color fg = style.getForeground();
+          if (fg != null) {
+            termIO.setForegroundColor(fg.ordinal() + 30);
+          }
+          else {
+            termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
+          }
+
+          //
+          Color bg = style.getBackground();
+          if (bg != null) {
+            termIO.setBackgroundColor(bg.ordinal() + 30);
+          }
+          else {
+            termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
+          }
+
+        }
+        else {
+          termIO.setBold(false);
+          termIO.setBlink(false);
+          termIO.setUnderlined(false);
+        }
+      } else {
+        termIO.write(f.toString());
+      }
+    }
+
   }
 
   public void write(char c) throws IOException {

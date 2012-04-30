@@ -52,15 +52,11 @@ public class BaseTerm implements Term {
   /** . */
   private final Console console;
 
-  /** . */
-  private final ANSIFontBuilder ansiBuilder;
-
   public BaseTerm(final TermIO io) {
     this.history = new LinkedList<CharSequence>();
     this.historyBuffer = null;
     this.historyCursor = -1;
     this.io = io;
-    this.ansiBuilder = new ANSIFontBuilder();
     this.console = new Console(new ViewWriter() {
 
       @Override
@@ -81,6 +77,11 @@ public class BaseTerm implements Term {
       @Override
       protected void write(char c) throws IOException {
         io.write(c);
+      }
+
+      @Override
+      protected void write(Data d) throws IOException {
+        io.write(d);
       }
 
       @Override
@@ -197,13 +198,6 @@ public class BaseTerm implements Term {
   }
 
   public void write(Data data) throws IOException {
-    for (DataFragment d : data) {
-      if (d instanceof FormattingData) {
-        console.getWriter().write(ansiBuilder.build((FormattingData) d));
-      }
-      else {
-        console.getWriter().write(d.get());
-      }
-    }
+    console.getWriter().write(data);
   }
 }

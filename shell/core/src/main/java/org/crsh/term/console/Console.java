@@ -19,6 +19,8 @@
 
 package org.crsh.term.console;
 
+import org.crsh.term.Data;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -154,6 +156,12 @@ public final class Console {
 
     public void write(char c) throws IOException {
       writeNoFlush(c);
+      viewWriter.flush();
+    }
+
+    @Override
+    public void write(Data d) throws IOException {
+      viewWriter.write(d);
       viewWriter.flush();
     }
 

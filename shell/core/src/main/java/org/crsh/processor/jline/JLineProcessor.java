@@ -95,7 +95,7 @@ public class JLineProcessor implements Runnable, Completer {
           if (f instanceof FormattingData) {
             writer.print(ansiBuilder.build((FormattingData) f));
           } else {
-            writer.print(f.get());
+            writer.print(f.toString());
           }
         }
         writer.flush();

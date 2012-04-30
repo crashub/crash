@@ -41,7 +41,7 @@ public class Data extends LinkedList<DataFragment> {
     StringBuffer sb = new StringBuffer();
 
     for (DataFragment fragment : this) {
-      sb.append(fragment.get());
+      sb.append(fragment.toString());
     }
 
     return sb.toString();

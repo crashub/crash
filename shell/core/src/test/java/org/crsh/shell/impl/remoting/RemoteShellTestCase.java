@@ -138,7 +138,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
     BaseProcessContext context = BaseProcessContext.create(process);
     context.execute();
     ShellResponse response = context.getResponse();
-    assertEquals("juu", response.getText());
+    assertEquals("juu", response.getData().toString());
 
     //
     t.interrupt();
