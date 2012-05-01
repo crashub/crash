@@ -191,7 +191,7 @@ public class CRaSH {
         if (confs != null) {
           for (String conf : confs) {
             File confPath = new File(conf);
-            bootstrap.addCmdPath(confPath);
+            bootstrap.addConfPath(confPath);
           }
         }
 
