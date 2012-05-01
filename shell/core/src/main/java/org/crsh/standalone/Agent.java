@@ -27,9 +27,9 @@ import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.shell.Shell;
-import org.crsh.shell.concurrent.AsyncShell;
-import org.crsh.shell.impl.CRaSH;
-import org.crsh.shell.remoting.RemoteClient;
+import org.crsh.shell.impl.async.AsyncShell;
+import org.crsh.shell.impl.command.CRaSH;
+import org.crsh.shell.impl.remoting.RemoteClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Executors;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>

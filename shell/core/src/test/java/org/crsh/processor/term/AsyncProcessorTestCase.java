@@ -2,7 +2,7 @@ package org.crsh.processor.term;
 
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.concurrent.AsyncShell;
+import org.crsh.shell.impl.async.AsyncShell;
 import org.crsh.term.TermEvent;
 
 import java.util.concurrent.CyclicBarrier;

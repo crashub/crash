@@ -21,8 +21,8 @@
 package org.crsh;
 
 import org.crsh.plugin.*;
-import org.crsh.shell.impl.CRaSH;
-import org.crsh.shell.impl.CRaSHSession;
+import org.crsh.shell.impl.command.CRaSH;
+import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.spi.ram.RAMDriver;

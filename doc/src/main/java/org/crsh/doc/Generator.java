@@ -27,8 +27,8 @@ import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.plugin.ServiceLoaderDiscovery;
-import org.crsh.shell.impl.CRaSH;
-import org.crsh.shell.impl.CRaSHSession;
+import org.crsh.shell.impl.command.CRaSH;
+import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 

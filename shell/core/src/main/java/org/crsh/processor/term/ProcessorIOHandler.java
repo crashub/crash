@@ -1,16 +1,14 @@
 package org.crsh.processor.term;
 
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.shell.concurrent.AsyncShell;
-import org.crsh.shell.impl.CRaSH;
-import org.crsh.shell.impl.CRaSHSession;
+import org.crsh.shell.impl.async.AsyncShell;
+import org.crsh.shell.impl.command.CRaSH;
+import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.term.BaseTerm;
 import org.crsh.term.spi.TermIO;
 import org.crsh.term.spi.TermIOHandler;
 
 import java.security.Principal;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>

@@ -25,7 +25,7 @@ import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.shell.impl.CRaSHSession;
+import org.crsh.shell.impl.command.CRaSHSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

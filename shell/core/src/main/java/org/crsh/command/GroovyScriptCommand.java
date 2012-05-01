@@ -27,7 +27,7 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
-import org.crsh.shell.impl.CRaSH;
+import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.util.Strings;
 
 import java.util.List;

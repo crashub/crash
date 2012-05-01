@@ -24,7 +24,7 @@ import groovy.lang.GroovyObjectSupport;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.shell.impl.CRaSH;
+import org.crsh.shell.impl.command.CRaSH;
 
 /**
  * A base command that should be subclasses by Groovy commands. For this matter it inherits the
