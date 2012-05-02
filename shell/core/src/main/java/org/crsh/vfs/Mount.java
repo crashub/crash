@@ -36,7 +36,16 @@ class Mount<H> {
   /** . */
   private final FSDriver<H> driver;
 
-  Mount(FSDriver<H> driver) {
+  /**
+   * Create a new mount
+   *
+   * @param driver the driver
+   * @throws NullPointerException if the driver is null
+   */
+  Mount(FSDriver<H> driver) throws NullPointerException {
+    if (driver == null) {
+      throw new NullPointerException("No null driver accepted");
+    }
     this.driver = driver;
   }
 

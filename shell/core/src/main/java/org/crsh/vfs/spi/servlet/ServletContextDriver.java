@@ -27,6 +27,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,7 +68,9 @@ public class ServletContextDriver extends AbstractFSDriver<String> {
   }
 
   public Iterable<String> children(String parent) throws IOException {
-    return ctx.getResourcePaths(parent);
+    @SuppressWarnings("unchecked")
+    Set<String> resourcePaths = (Set<String>)ctx.getResourcePaths(parent);
+    return resourcePaths != null ? resourcePaths : Collections.<String>emptyList();
   }
 
   /**
