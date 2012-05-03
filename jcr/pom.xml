@@ -3,13 +3,13 @@
   <parent>
     <artifactId>crsh.parent</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.1.0-beta1</version>
+    <version>1.1.0-cr1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.jcr</artifactId>
   <packaging>pom</packaging>
-  <version>1.1.0-beta1</version>
+  <version>1.1.0-cr1-SNAPSHOT</version>
 
   <name>CRaSH JCR parent</name>
 
