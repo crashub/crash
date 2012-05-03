@@ -22,13 +22,13 @@
   <parent>
     <artifactId>crsh.parent</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.0-beta1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.doc</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.1.0-beta1</version>
 
   <name>CRaSH doc</name>
   <description>The CRaSH documentation</description>
