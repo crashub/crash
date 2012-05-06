@@ -1,0 +1,111 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.crsh.processor.term;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import org.crsh.plugin.CRaSHPlugin;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import org.crsh.shell.impl.async.AsyncShell;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import org.crsh.shell.impl.command.CRaSH;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import org.crsh.shell.impl.command.CRaSHSession;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import org.crsh.term.BaseTerm;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.crsh.term.spi.TermIO;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import org.crsh.term.spi.TermIOHandler;<a name="line.9"></a>
+<FONT color="green">010</FONT>    <a name="line.10"></a>
+<FONT color="green">011</FONT>    import java.security.Principal;<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>    /**<a name="line.13"></a>
+<FONT color="green">014</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    public class ProcessorIOHandler extends CRaSHPlugin&lt;TermIOHandler&gt; implements TermIOHandler {<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>      /** . */<a name="line.18"></a>
+<FONT color="green">019</FONT>      private CRaSH crash;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>      @Override<a name="line.21"></a>
+<FONT color="green">022</FONT>      public TermIOHandler getImplementation() {<a name="line.22"></a>
+<FONT color="green">023</FONT>        return this;<a name="line.23"></a>
+<FONT color="green">024</FONT>      }<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>      @Override<a name="line.26"></a>
+<FONT color="green">027</FONT>      public void init() {<a name="line.27"></a>
+<FONT color="green">028</FONT>        this.crash = new CRaSH(getContext());<a name="line.28"></a>
+<FONT color="green">029</FONT>      }<a name="line.29"></a>
+<FONT color="green">030</FONT>    <a name="line.30"></a>
+<FONT color="green">031</FONT>      @Override<a name="line.31"></a>
+<FONT color="green">032</FONT>      public void destroy() {<a name="line.32"></a>
+<FONT color="green">033</FONT>      }<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>      public void handle(final TermIO io, Principal user) {<a name="line.35"></a>
+<FONT color="green">036</FONT>        CRaSHSession shell = crash.createSession(user);<a name="line.36"></a>
+<FONT color="green">037</FONT>        AsyncShell asyncShell = new AsyncShell(getContext().getExecutor(), shell);<a name="line.37"></a>
+<FONT color="green">038</FONT>        BaseTerm term = new BaseTerm(io);<a name="line.38"></a>
+<FONT color="green">039</FONT>        Processor processor = new Processor(term, asyncShell);<a name="line.39"></a>
+<FONT color="green">040</FONT>        processor.addListener(io);<a name="line.40"></a>
+<FONT color="green">041</FONT>        processor.addListener(asyncShell);<a name="line.41"></a>
+<FONT color="green">042</FONT>        processor.addListener(shell);<a name="line.42"></a>
+<FONT color="green">043</FONT>        processor.run();<a name="line.43"></a>
+<FONT color="green">044</FONT>      }<a name="line.44"></a>
+<FONT color="green">045</FONT>    }<a name="line.45"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

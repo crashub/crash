@@ -39,34 +39,43 @@
 <FONT color="green">036</FONT>      /** . */<a name="line.36"></a>
 <FONT color="green">037</FONT>      private final FSDriver&lt;H&gt; driver;<a name="line.37"></a>
 <FONT color="green">038</FONT>    <a name="line.38"></a>
-<FONT color="green">039</FONT>      Mount(FSDriver&lt;H&gt; driver) {<a name="line.39"></a>
-<FONT color="green">040</FONT>        this.driver = driver;<a name="line.40"></a>
-<FONT color="green">041</FONT>      }<a name="line.41"></a>
-<FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>      Handle&lt;H&gt; getHandle(Path path) throws IOException {<a name="line.43"></a>
-<FONT color="green">044</FONT>        H current = driver.root();<a name="line.44"></a>
-<FONT color="green">045</FONT>        for (String name : path) {<a name="line.45"></a>
-<FONT color="green">046</FONT>          H next = null;<a name="line.46"></a>
-<FONT color="green">047</FONT>          for (H child : driver.children(current)) {<a name="line.47"></a>
-<FONT color="green">048</FONT>            String childName = driver.name(child);<a name="line.48"></a>
-<FONT color="green">049</FONT>            if (childName.equals(name)) {<a name="line.49"></a>
-<FONT color="green">050</FONT>              next = child;<a name="line.50"></a>
-<FONT color="green">051</FONT>              break;<a name="line.51"></a>
-<FONT color="green">052</FONT>            }<a name="line.52"></a>
-<FONT color="green">053</FONT>          }<a name="line.53"></a>
-<FONT color="green">054</FONT>          if (next == null) {<a name="line.54"></a>
-<FONT color="green">055</FONT>            return null;<a name="line.55"></a>
-<FONT color="green">056</FONT>          } else {<a name="line.56"></a>
-<FONT color="green">057</FONT>            current = next;<a name="line.57"></a>
-<FONT color="green">058</FONT>          }<a name="line.58"></a>
-<FONT color="green">059</FONT>        }<a name="line.59"></a>
-<FONT color="green">060</FONT>        if (path.isDir() == driver.isDir(current)) {<a name="line.60"></a>
-<FONT color="green">061</FONT>          return new Handle&lt;H&gt;(driver, current);<a name="line.61"></a>
-<FONT color="green">062</FONT>        } else {<a name="line.62"></a>
-<FONT color="green">063</FONT>          return null;<a name="line.63"></a>
-<FONT color="green">064</FONT>        }<a name="line.64"></a>
-<FONT color="green">065</FONT>      }<a name="line.65"></a>
-<FONT color="green">066</FONT>    }<a name="line.66"></a>
+<FONT color="green">039</FONT>      /**<a name="line.39"></a>
+<FONT color="green">040</FONT>       * Create a new mount<a name="line.40"></a>
+<FONT color="green">041</FONT>       *<a name="line.41"></a>
+<FONT color="green">042</FONT>       * @param driver the driver<a name="line.42"></a>
+<FONT color="green">043</FONT>       * @throws NullPointerException if the driver is null<a name="line.43"></a>
+<FONT color="green">044</FONT>       */<a name="line.44"></a>
+<FONT color="green">045</FONT>      Mount(FSDriver&lt;H&gt; driver) throws NullPointerException {<a name="line.45"></a>
+<FONT color="green">046</FONT>        if (driver == null) {<a name="line.46"></a>
+<FONT color="green">047</FONT>          throw new NullPointerException("No null driver accepted");<a name="line.47"></a>
+<FONT color="green">048</FONT>        }<a name="line.48"></a>
+<FONT color="green">049</FONT>        this.driver = driver;<a name="line.49"></a>
+<FONT color="green">050</FONT>      }<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>      Handle&lt;H&gt; getHandle(Path path) throws IOException {<a name="line.52"></a>
+<FONT color="green">053</FONT>        H current = driver.root();<a name="line.53"></a>
+<FONT color="green">054</FONT>        for (String name : path) {<a name="line.54"></a>
+<FONT color="green">055</FONT>          H next = null;<a name="line.55"></a>
+<FONT color="green">056</FONT>          for (H child : driver.children(current)) {<a name="line.56"></a>
+<FONT color="green">057</FONT>            String childName = driver.name(child);<a name="line.57"></a>
+<FONT color="green">058</FONT>            if (childName.equals(name)) {<a name="line.58"></a>
+<FONT color="green">059</FONT>              next = child;<a name="line.59"></a>
+<FONT color="green">060</FONT>              break;<a name="line.60"></a>
+<FONT color="green">061</FONT>            }<a name="line.61"></a>
+<FONT color="green">062</FONT>          }<a name="line.62"></a>
+<FONT color="green">063</FONT>          if (next == null) {<a name="line.63"></a>
+<FONT color="green">064</FONT>            return null;<a name="line.64"></a>
+<FONT color="green">065</FONT>          } else {<a name="line.65"></a>
+<FONT color="green">066</FONT>            current = next;<a name="line.66"></a>
+<FONT color="green">067</FONT>          }<a name="line.67"></a>
+<FONT color="green">068</FONT>        }<a name="line.68"></a>
+<FONT color="green">069</FONT>        if (path.isDir() == driver.isDir(current)) {<a name="line.69"></a>
+<FONT color="green">070</FONT>          return new Handle&lt;H&gt;(driver, current);<a name="line.70"></a>
+<FONT color="green">071</FONT>        } else {<a name="line.71"></a>
+<FONT color="green">072</FONT>          return null;<a name="line.72"></a>
+<FONT color="green">073</FONT>        }<a name="line.73"></a>
+<FONT color="green">074</FONT>      }<a name="line.74"></a>
+<FONT color="green">075</FONT>    }<a name="line.75"></a>
 
 
 

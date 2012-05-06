@@ -25,89 +25,98 @@
 <FONT color="green">022</FONT>    import org.crsh.vfs.spi.AbstractFSDriver;<a name="line.22"></a>
 <FONT color="green">023</FONT>    <a name="line.23"></a>
 <FONT color="green">024</FONT>    import java.io.IOException;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import java.net.JarURLConnection;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import java.net.URL;<a name="line.26"></a>
-<FONT color="green">027</FONT>    import java.util.Collections;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import java.util.HashMap;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import java.util.Map;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import java.util.jar.JarEntry;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import java.util.jar.JarFile;<a name="line.31"></a>
-<FONT color="green">032</FONT>    <a name="line.32"></a>
-<FONT color="green">033</FONT>    /**<a name="line.33"></a>
-<FONT color="green">034</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.34"></a>
-<FONT color="green">035</FONT>     * @version $Revision$<a name="line.35"></a>
-<FONT color="green">036</FONT>     */<a name="line.36"></a>
-<FONT color="green">037</FONT>    public class JarURLDriver extends AbstractFSDriver&lt;Handle&gt; {<a name="line.37"></a>
-<FONT color="green">038</FONT>    <a name="line.38"></a>
-<FONT color="green">039</FONT>      /** . */<a name="line.39"></a>
-<FONT color="green">040</FONT>      final Handle root;<a name="line.40"></a>
-<FONT color="green">041</FONT>    <a name="line.41"></a>
-<FONT color="green">042</FONT>      /** . */<a name="line.42"></a>
-<FONT color="green">043</FONT>      final URL jarURL;<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>      private static Handle get(JarURLDriver driver, Map&lt;String, Handle&gt; handles, String path) {<a name="line.45"></a>
-<FONT color="green">046</FONT>        Handle handle = handles.get(path);<a name="line.46"></a>
-<FONT color="green">047</FONT>        if (handle == null) {<a name="line.47"></a>
-<FONT color="green">048</FONT>          handle = new Handle(driver, path);<a name="line.48"></a>
-<FONT color="green">049</FONT>          int to = path.length();<a name="line.49"></a>
-<FONT color="green">050</FONT>          if (path.charAt(to - 1) == '/') {<a name="line.50"></a>
-<FONT color="green">051</FONT>            to--;<a name="line.51"></a>
-<FONT color="green">052</FONT>          }<a name="line.52"></a>
-<FONT color="green">053</FONT>          int from = -1;<a name="line.53"></a>
-<FONT color="green">054</FONT>          for (int i = to - 1;i &gt;= 0;i--) {<a name="line.54"></a>
-<FONT color="green">055</FONT>            if (path.charAt(i) == '/') {<a name="line.55"></a>
-<FONT color="green">056</FONT>              from = i;<a name="line.56"></a>
-<FONT color="green">057</FONT>              break;<a name="line.57"></a>
-<FONT color="green">058</FONT>            }<a name="line.58"></a>
-<FONT color="green">059</FONT>          }<a name="line.59"></a>
-<FONT color="green">060</FONT>          String name;<a name="line.60"></a>
-<FONT color="green">061</FONT>          Handle parent;<a name="line.61"></a>
-<FONT color="green">062</FONT>          if (from == -1) {<a name="line.62"></a>
-<FONT color="green">063</FONT>            parent = handles.get("");<a name="line.63"></a>
-<FONT color="green">064</FONT>            name = path.substring(0, to);<a name="line.64"></a>
-<FONT color="green">065</FONT>          } else {<a name="line.65"></a>
-<FONT color="green">066</FONT>            parent = get(driver, handles, path.substring(0, from));<a name="line.66"></a>
-<FONT color="green">067</FONT>            name = path.substring(from + 1, to);<a name="line.67"></a>
-<FONT color="green">068</FONT>          }<a name="line.68"></a>
-<FONT color="green">069</FONT>          parent.children.put(name, handle);<a name="line.69"></a>
-<FONT color="green">070</FONT>          handles.put(path.substring(0, to), handle);<a name="line.70"></a>
-<FONT color="green">071</FONT>        }<a name="line.71"></a>
-<FONT color="green">072</FONT>        return handle;<a name="line.72"></a>
-<FONT color="green">073</FONT>      }<a name="line.73"></a>
-<FONT color="green">074</FONT>    <a name="line.74"></a>
-<FONT color="green">075</FONT>      public JarURLDriver(JarURLConnection conn) throws IOException {<a name="line.75"></a>
-<FONT color="green">076</FONT>        JarFile file = conn.getJarFile();<a name="line.76"></a>
-<FONT color="green">077</FONT>        Map&lt;String, Handle&gt; handles = new HashMap&lt;String, Handle&gt;();<a name="line.77"></a>
-<FONT color="green">078</FONT>        handles.put("", root = new Handle(this, ""));<a name="line.78"></a>
-<FONT color="green">079</FONT>        for (JarEntry entry : Collections.list(file.entries())) {<a name="line.79"></a>
-<FONT color="green">080</FONT>          Handle handle = get(this, handles, entry.getName());<a name="line.80"></a>
-<FONT color="green">081</FONT>          handle.entry = entry;<a name="line.81"></a>
-<FONT color="green">082</FONT>        }<a name="line.82"></a>
-<FONT color="green">083</FONT>    <a name="line.83"></a>
-<FONT color="green">084</FONT>        //<a name="line.84"></a>
-<FONT color="green">085</FONT>        this.jarURL = conn.getJarFileURL();<a name="line.85"></a>
-<FONT color="green">086</FONT>      }<a name="line.86"></a>
+<FONT color="green">025</FONT>    import java.io.InputStream;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.net.JarURLConnection;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import java.net.URL;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import java.util.Collections;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import java.util.HashMap;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import java.util.Map;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import java.util.jar.JarEntry;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import java.util.jar.JarFile;<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>    /**<a name="line.34"></a>
+<FONT color="green">035</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.35"></a>
+<FONT color="green">036</FONT>     * @version $Revision$<a name="line.36"></a>
+<FONT color="green">037</FONT>     */<a name="line.37"></a>
+<FONT color="green">038</FONT>    public class JarURLDriver extends AbstractFSDriver&lt;Handle&gt; {<a name="line.38"></a>
+<FONT color="green">039</FONT>    <a name="line.39"></a>
+<FONT color="green">040</FONT>      /** . */<a name="line.40"></a>
+<FONT color="green">041</FONT>      final ClassLoader loader;<a name="line.41"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>      /** . */<a name="line.43"></a>
+<FONT color="green">044</FONT>      final Handle root;<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>      /** . */<a name="line.46"></a>
+<FONT color="green">047</FONT>      final URL jarURL;<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>      private static Handle get(JarURLDriver driver, Map&lt;String, Handle&gt; handles, String path) {<a name="line.49"></a>
+<FONT color="green">050</FONT>        Handle handle = handles.get(path);<a name="line.50"></a>
+<FONT color="green">051</FONT>        if (handle == null) {<a name="line.51"></a>
+<FONT color="green">052</FONT>          handle = new Handle(driver, path);<a name="line.52"></a>
+<FONT color="green">053</FONT>          int to = path.length();<a name="line.53"></a>
+<FONT color="green">054</FONT>          if (path.charAt(to - 1) == '/') {<a name="line.54"></a>
+<FONT color="green">055</FONT>            to--;<a name="line.55"></a>
+<FONT color="green">056</FONT>          }<a name="line.56"></a>
+<FONT color="green">057</FONT>          int from = -1;<a name="line.57"></a>
+<FONT color="green">058</FONT>          for (int i = to - 1;i &gt;= 0;i--) {<a name="line.58"></a>
+<FONT color="green">059</FONT>            if (path.charAt(i) == '/') {<a name="line.59"></a>
+<FONT color="green">060</FONT>              from = i;<a name="line.60"></a>
+<FONT color="green">061</FONT>              break;<a name="line.61"></a>
+<FONT color="green">062</FONT>            }<a name="line.62"></a>
+<FONT color="green">063</FONT>          }<a name="line.63"></a>
+<FONT color="green">064</FONT>          String name;<a name="line.64"></a>
+<FONT color="green">065</FONT>          Handle parent;<a name="line.65"></a>
+<FONT color="green">066</FONT>          if (from == -1) {<a name="line.66"></a>
+<FONT color="green">067</FONT>            parent = handles.get("");<a name="line.67"></a>
+<FONT color="green">068</FONT>            name = path.substring(0, to);<a name="line.68"></a>
+<FONT color="green">069</FONT>          } else {<a name="line.69"></a>
+<FONT color="green">070</FONT>            parent = get(driver, handles, path.substring(0, from));<a name="line.70"></a>
+<FONT color="green">071</FONT>            name = path.substring(from + 1, to);<a name="line.71"></a>
+<FONT color="green">072</FONT>          }<a name="line.72"></a>
+<FONT color="green">073</FONT>          parent.children.put(name, handle);<a name="line.73"></a>
+<FONT color="green">074</FONT>          handles.put(path.substring(0, to), handle);<a name="line.74"></a>
+<FONT color="green">075</FONT>        }<a name="line.75"></a>
+<FONT color="green">076</FONT>        return handle;<a name="line.76"></a>
+<FONT color="green">077</FONT>      }<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>      public JarURLDriver(ClassLoader loader, JarURLConnection conn) throws IOException {<a name="line.79"></a>
+<FONT color="green">080</FONT>        JarFile file = conn.getJarFile();<a name="line.80"></a>
+<FONT color="green">081</FONT>        Map&lt;String, Handle&gt; handles = new HashMap&lt;String, Handle&gt;();<a name="line.81"></a>
+<FONT color="green">082</FONT>        handles.put("", root = new Handle(this, ""));<a name="line.82"></a>
+<FONT color="green">083</FONT>        for (JarEntry entry : Collections.list(file.entries())) {<a name="line.83"></a>
+<FONT color="green">084</FONT>          Handle handle = get(this, handles, entry.getName());<a name="line.84"></a>
+<FONT color="green">085</FONT>          handle.entry = entry;<a name="line.85"></a>
+<FONT color="green">086</FONT>        }<a name="line.86"></a>
 <FONT color="green">087</FONT>    <a name="line.87"></a>
-<FONT color="green">088</FONT>      public Handle root() throws IOException {<a name="line.88"></a>
-<FONT color="green">089</FONT>        return root;<a name="line.89"></a>
-<FONT color="green">090</FONT>      }<a name="line.90"></a>
-<FONT color="green">091</FONT>    <a name="line.91"></a>
-<FONT color="green">092</FONT>      public String name(Handle handle) throws IOException {<a name="line.92"></a>
-<FONT color="green">093</FONT>        return handle.path.getName();<a name="line.93"></a>
-<FONT color="green">094</FONT>      }<a name="line.94"></a>
-<FONT color="green">095</FONT>    <a name="line.95"></a>
-<FONT color="green">096</FONT>      public boolean isDir(Handle handle) throws IOException {<a name="line.96"></a>
-<FONT color="green">097</FONT>        return handle.path.isDir();<a name="line.97"></a>
-<FONT color="green">098</FONT>      }<a name="line.98"></a>
-<FONT color="green">099</FONT>    <a name="line.99"></a>
-<FONT color="green">100</FONT>      public Iterable&lt;Handle&gt; children(Handle handle) throws IOException {<a name="line.100"></a>
-<FONT color="green">101</FONT>        return handle.children.values();<a name="line.101"></a>
-<FONT color="green">102</FONT>      }<a name="line.102"></a>
-<FONT color="green">103</FONT>    <a name="line.103"></a>
-<FONT color="green">104</FONT>      public URL toURL(Handle handle) throws IOException {<a name="line.104"></a>
-<FONT color="green">105</FONT>        return handle.toURL();<a name="line.105"></a>
-<FONT color="green">106</FONT>      }<a name="line.106"></a>
-<FONT color="green">107</FONT>    }<a name="line.107"></a>
+<FONT color="green">088</FONT>        //<a name="line.88"></a>
+<FONT color="green">089</FONT>        this.jarURL = conn.getJarFileURL();<a name="line.89"></a>
+<FONT color="green">090</FONT>        this.loader = loader;<a name="line.90"></a>
+<FONT color="green">091</FONT>      }<a name="line.91"></a>
+<FONT color="green">092</FONT>    <a name="line.92"></a>
+<FONT color="green">093</FONT>      public Handle root() throws IOException {<a name="line.93"></a>
+<FONT color="green">094</FONT>        return root;<a name="line.94"></a>
+<FONT color="green">095</FONT>      }<a name="line.95"></a>
+<FONT color="green">096</FONT>    <a name="line.96"></a>
+<FONT color="green">097</FONT>      public String name(Handle handle) throws IOException {<a name="line.97"></a>
+<FONT color="green">098</FONT>        return handle.path.getName();<a name="line.98"></a>
+<FONT color="green">099</FONT>      }<a name="line.99"></a>
+<FONT color="green">100</FONT>    <a name="line.100"></a>
+<FONT color="green">101</FONT>      public boolean isDir(Handle handle) throws IOException {<a name="line.101"></a>
+<FONT color="green">102</FONT>        return handle.path.isDir();<a name="line.102"></a>
+<FONT color="green">103</FONT>      }<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>      public Iterable&lt;Handle&gt; children(Handle handle) throws IOException {<a name="line.105"></a>
+<FONT color="green">106</FONT>        return handle.children.values();<a name="line.106"></a>
+<FONT color="green">107</FONT>      }<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>      public long getLastModified(Handle handle) throws IOException {<a name="line.109"></a>
+<FONT color="green">110</FONT>        return 0;<a name="line.110"></a>
+<FONT color="green">111</FONT>      }<a name="line.111"></a>
+<FONT color="green">112</FONT>    <a name="line.112"></a>
+<FONT color="green">113</FONT>      public InputStream open(Handle handle) throws IOException {<a name="line.113"></a>
+<FONT color="green">114</FONT>        return loader.getResourceAsStream(handle.entry.getName());<a name="line.114"></a>
+<FONT color="green">115</FONT>      }<a name="line.115"></a>
+<FONT color="green">116</FONT>    }<a name="line.116"></a>
 
 
 

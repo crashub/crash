@@ -14,9 +14,12 @@ org.crsh.jcr
 org.crsh.jcr.command
 org.crsh.jcr.groovy
 org.crsh.plugin
+org.crsh.processor.jline
+org.crsh.processor.term
 org.crsh.shell
-org.crsh.shell.concurrent
-org.crsh.shell.impl
+org.crsh.shell.impl.async
+org.crsh.shell.impl.command
+org.crsh.shell.impl.remoting
 org.crsh.shell.io
 org.crsh.shell.ui
 org.crsh.ssh
@@ -27,7 +30,6 @@ org.crsh.telnet
 org.crsh.telnet.term
 org.crsh.term
 org.crsh.term.console
-org.crsh.term.processor
 org.crsh.term.spi
 org.crsh.term.spi.jline
 org.crsh.term.spi.net

@@ -29,109 +29,119 @@
 <FONT color="green">026</FONT>    import org.crsh.vfs.Resource;<a name="line.26"></a>
 <FONT color="green">027</FONT>    <a name="line.27"></a>
 <FONT color="green">028</FONT>    import java.io.File;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import java.net.MalformedURLException;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import java.net.URL;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import java.util.Arrays;<a name="line.31"></a>
-<FONT color="green">032</FONT>    import org.apache.sshd.common.util.SecurityUtils;<a name="line.32"></a>
-<FONT color="green">033</FONT>    <a name="line.33"></a>
-<FONT color="green">034</FONT>    /**<a name="line.34"></a>
-<FONT color="green">035</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.35"></a>
-<FONT color="green">036</FONT>     * @version $Revision$<a name="line.36"></a>
-<FONT color="green">037</FONT>     */<a name="line.37"></a>
-<FONT color="green">038</FONT>    public class SSHPlugin extends CRaSHPlugin&lt;SSHPlugin&gt; {<a name="line.38"></a>
-<FONT color="green">039</FONT>    <a name="line.39"></a>
-<FONT color="green">040</FONT>      /** The SSH port. */<a name="line.40"></a>
-<FONT color="green">041</FONT>      public static final PropertyDescriptor&lt;Integer&gt; SSH_PORT = PropertyDescriptor.create("ssh.port", 2000, "The SSH port");<a name="line.41"></a>
-<FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>      /** The SSH key path. */<a name="line.43"></a>
-<FONT color="green">044</FONT>      public static final PropertyDescriptor&lt;String&gt; SSH_KEYPATH = PropertyDescriptor.create("ssh.keypath", (String)null, "The path to the key file");<a name="line.44"></a>
-<FONT color="green">045</FONT>    <a name="line.45"></a>
-<FONT color="green">046</FONT>      /** The authentication plugin to use. */<a name="line.46"></a>
-<FONT color="green">047</FONT>      public static final PropertyDescriptor&lt;String&gt; AUTH = PropertyDescriptor.create("auth", (String)null, "The authentication plugin");<a name="line.47"></a>
-<FONT color="green">048</FONT>    <a name="line.48"></a>
-<FONT color="green">049</FONT>      /** . */<a name="line.49"></a>
-<FONT color="green">050</FONT>      private SSHLifeCycle lifeCycle;<a name="line.50"></a>
-<FONT color="green">051</FONT>    <a name="line.51"></a>
-<FONT color="green">052</FONT>      @Override<a name="line.52"></a>
-<FONT color="green">053</FONT>      public SSHPlugin getImplementation() {<a name="line.53"></a>
-<FONT color="green">054</FONT>        return this;<a name="line.54"></a>
-<FONT color="green">055</FONT>      }<a name="line.55"></a>
-<FONT color="green">056</FONT>    <a name="line.56"></a>
-<FONT color="green">057</FONT>      @Override<a name="line.57"></a>
-<FONT color="green">058</FONT>      protected Iterable&lt;PropertyDescriptor&lt;?&gt;&gt; createConfigurationCapabilities() {<a name="line.58"></a>
-<FONT color="green">059</FONT>        return Arrays.&lt;PropertyDescriptor&lt;?&gt;&gt;asList(SSH_PORT, SSH_KEYPATH, AUTH);<a name="line.59"></a>
-<FONT color="green">060</FONT>      }<a name="line.60"></a>
-<FONT color="green">061</FONT>    <a name="line.61"></a>
-<FONT color="green">062</FONT>      @Override<a name="line.62"></a>
-<FONT color="green">063</FONT>      public void init() {<a name="line.63"></a>
-<FONT color="green">064</FONT>    <a name="line.64"></a>
-<FONT color="green">065</FONT>        SecurityUtils.setRegisterBouncyCastle(true);<a name="line.65"></a>
-<FONT color="green">066</FONT>        //<a name="line.66"></a>
-<FONT color="green">067</FONT>        Integer port = getContext().getProperty(SSH_PORT);<a name="line.67"></a>
-<FONT color="green">068</FONT>        if (port == null) {<a name="line.68"></a>
-<FONT color="green">069</FONT>          log.info("Could not boot SSHD due to missing due to missing port configuration");<a name="line.69"></a>
-<FONT color="green">070</FONT>          return;<a name="line.70"></a>
-<FONT color="green">071</FONT>        }<a name="line.71"></a>
-<FONT color="green">072</FONT>    <a name="line.72"></a>
-<FONT color="green">073</FONT>        // Get embedded default key<a name="line.73"></a>
-<FONT color="green">074</FONT>        URL keyURL = SSHPlugin.class.getResource("hostkey.pem");<a name="line.74"></a>
-<FONT color="green">075</FONT>        if (keyURL != null) {<a name="line.75"></a>
-<FONT color="green">076</FONT>          log.debug("Found embedded key url " + keyURL);<a name="line.76"></a>
-<FONT color="green">077</FONT>        }<a name="line.77"></a>
-<FONT color="green">078</FONT>    <a name="line.78"></a>
-<FONT color="green">079</FONT>        // Override from config if any<a name="line.79"></a>
-<FONT color="green">080</FONT>        Resource res = getContext().loadResource("hostkey.pem", ResourceKind.CONFIG);<a name="line.80"></a>
-<FONT color="green">081</FONT>        if (res != null) {<a name="line.81"></a>
-<FONT color="green">082</FONT>          keyURL = res.getURL();<a name="line.82"></a>
-<FONT color="green">083</FONT>          log.debug("Found ssh key url " + keyURL);<a name="line.83"></a>
-<FONT color="green">084</FONT>        }<a name="line.84"></a>
-<FONT color="green">085</FONT>    <a name="line.85"></a>
-<FONT color="green">086</FONT>        // If we have a key path, we convert is as an URL<a name="line.86"></a>
-<FONT color="green">087</FONT>        String keyPath = getContext().getProperty(SSH_KEYPATH);<a name="line.87"></a>
-<FONT color="green">088</FONT>        if (keyPath != null) {<a name="line.88"></a>
-<FONT color="green">089</FONT>          log.debug("Found key path " + keyPath);<a name="line.89"></a>
-<FONT color="green">090</FONT>          File f = new File(keyPath);<a name="line.90"></a>
-<FONT color="green">091</FONT>          if (f.exists() &amp;&amp; f.isFile()) {<a name="line.91"></a>
-<FONT color="green">092</FONT>            try {<a name="line.92"></a>
-<FONT color="green">093</FONT>              keyURL = f.toURI().toURL();<a name="line.93"></a>
-<FONT color="green">094</FONT>            } catch (MalformedURLException e) {<a name="line.94"></a>
-<FONT color="green">095</FONT>              log.debug("Ignoring invalid key " + keyPath, e);<a name="line.95"></a>
-<FONT color="green">096</FONT>            }<a name="line.96"></a>
-<FONT color="green">097</FONT>          } else {<a name="line.97"></a>
-<FONT color="green">098</FONT>            log.debug("Ignoring invalid key path " + keyPath);<a name="line.98"></a>
-<FONT color="green">099</FONT>          }<a name="line.99"></a>
-<FONT color="green">100</FONT>        }<a name="line.100"></a>
-<FONT color="green">101</FONT>    <a name="line.101"></a>
-<FONT color="green">102</FONT>        //<a name="line.102"></a>
-<FONT color="green">103</FONT>        if (keyURL == null) {<a name="line.103"></a>
-<FONT color="green">104</FONT>          log.info("Could not boot SSHD due to missing key");<a name="line.104"></a>
-<FONT color="green">105</FONT>          return;<a name="line.105"></a>
-<FONT color="green">106</FONT>        }<a name="line.106"></a>
-<FONT color="green">107</FONT>    <a name="line.107"></a>
-<FONT color="green">108</FONT>        // Get the authentication<a name="line.108"></a>
-<FONT color="green">109</FONT>        String authentication = getContext().getProperty(AUTH);<a name="line.109"></a>
-<FONT color="green">110</FONT>    <a name="line.110"></a>
-<FONT color="green">111</FONT>        //<a name="line.111"></a>
-<FONT color="green">112</FONT>        log.info("Booting SSHD");<a name="line.112"></a>
-<FONT color="green">113</FONT>        SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext());<a name="line.113"></a>
-<FONT color="green">114</FONT>        lifeCycle.setPort(port);<a name="line.114"></a>
-<FONT color="green">115</FONT>        lifeCycle.setKeyURL(keyURL);<a name="line.115"></a>
-<FONT color="green">116</FONT>        lifeCycle.setAuthentication(authentication);<a name="line.116"></a>
-<FONT color="green">117</FONT>        lifeCycle.init();<a name="line.117"></a>
-<FONT color="green">118</FONT>    <a name="line.118"></a>
-<FONT color="green">119</FONT>        //<a name="line.119"></a>
-<FONT color="green">120</FONT>        this.lifeCycle = lifeCycle;<a name="line.120"></a>
-<FONT color="green">121</FONT>      }<a name="line.121"></a>
-<FONT color="green">122</FONT>    <a name="line.122"></a>
-<FONT color="green">123</FONT>      @Override<a name="line.123"></a>
-<FONT color="green">124</FONT>      public void destroy() {<a name="line.124"></a>
-<FONT color="green">125</FONT>        if (lifeCycle != null) {<a name="line.125"></a>
-<FONT color="green">126</FONT>          log.info("Shutting down SSHD");<a name="line.126"></a>
-<FONT color="green">127</FONT>          lifeCycle.destroy();<a name="line.127"></a>
-<FONT color="green">128</FONT>          lifeCycle = null;<a name="line.128"></a>
-<FONT color="green">129</FONT>        }<a name="line.129"></a>
-<FONT color="green">130</FONT>      }<a name="line.130"></a>
-<FONT color="green">131</FONT>    }<a name="line.131"></a>
+<FONT color="green">029</FONT>    import java.io.IOException;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import java.net.MalformedURLException;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import java.net.URL;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import java.util.Arrays;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.apache.sshd.common.util.SecurityUtils;<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>    /**<a name="line.35"></a>
+<FONT color="green">036</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.36"></a>
+<FONT color="green">037</FONT>     * @version $Revision$<a name="line.37"></a>
+<FONT color="green">038</FONT>     */<a name="line.38"></a>
+<FONT color="green">039</FONT>    public class SSHPlugin extends CRaSHPlugin&lt;SSHPlugin&gt; {<a name="line.39"></a>
+<FONT color="green">040</FONT>    <a name="line.40"></a>
+<FONT color="green">041</FONT>      /** The SSH port. */<a name="line.41"></a>
+<FONT color="green">042</FONT>      public static final PropertyDescriptor&lt;Integer&gt; SSH_PORT = PropertyDescriptor.create("ssh.port", 2000, "The SSH port");<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>      /** The SSH key path. */<a name="line.44"></a>
+<FONT color="green">045</FONT>      public static final PropertyDescriptor&lt;String&gt; SSH_KEYPATH = PropertyDescriptor.create("ssh.keypath", (String)null, "The path to the key file");<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>      /** The authentication plugin to use. */<a name="line.47"></a>
+<FONT color="green">048</FONT>      public static final PropertyDescriptor&lt;String&gt; AUTH = PropertyDescriptor.create("auth", (String)null, "The authentication plugin");<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>      /** . */<a name="line.50"></a>
+<FONT color="green">051</FONT>      private SSHLifeCycle lifeCycle;<a name="line.51"></a>
+<FONT color="green">052</FONT>    <a name="line.52"></a>
+<FONT color="green">053</FONT>      @Override<a name="line.53"></a>
+<FONT color="green">054</FONT>      public SSHPlugin getImplementation() {<a name="line.54"></a>
+<FONT color="green">055</FONT>        return this;<a name="line.55"></a>
+<FONT color="green">056</FONT>      }<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>      @Override<a name="line.58"></a>
+<FONT color="green">059</FONT>      protected Iterable&lt;PropertyDescriptor&lt;?&gt;&gt; createConfigurationCapabilities() {<a name="line.59"></a>
+<FONT color="green">060</FONT>        return Arrays.&lt;PropertyDescriptor&lt;?&gt;&gt;asList(SSH_PORT, SSH_KEYPATH, AUTH);<a name="line.60"></a>
+<FONT color="green">061</FONT>      }<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>      @Override<a name="line.63"></a>
+<FONT color="green">064</FONT>      public void init() {<a name="line.64"></a>
+<FONT color="green">065</FONT>    <a name="line.65"></a>
+<FONT color="green">066</FONT>        SecurityUtils.setRegisterBouncyCastle(true);<a name="line.66"></a>
+<FONT color="green">067</FONT>        //<a name="line.67"></a>
+<FONT color="green">068</FONT>        Integer port = getContext().getProperty(SSH_PORT);<a name="line.68"></a>
+<FONT color="green">069</FONT>        if (port == null) {<a name="line.69"></a>
+<FONT color="green">070</FONT>          log.info("Could not boot SSHD due to missing due to missing port configuration");<a name="line.70"></a>
+<FONT color="green">071</FONT>          return;<a name="line.71"></a>
+<FONT color="green">072</FONT>        }<a name="line.72"></a>
+<FONT color="green">073</FONT>    <a name="line.73"></a>
+<FONT color="green">074</FONT>        //<a name="line.74"></a>
+<FONT color="green">075</FONT>        Resource key = null;<a name="line.75"></a>
+<FONT color="green">076</FONT>    <a name="line.76"></a>
+<FONT color="green">077</FONT>        // Get embedded default key<a name="line.77"></a>
+<FONT color="green">078</FONT>        URL keyURL = SSHPlugin.class.getResource("hostkey.pem");<a name="line.78"></a>
+<FONT color="green">079</FONT>        if (keyURL != null) {<a name="line.79"></a>
+<FONT color="green">080</FONT>          try {<a name="line.80"></a>
+<FONT color="green">081</FONT>            log.debug("Found embedded key url " + keyURL);<a name="line.81"></a>
+<FONT color="green">082</FONT>            key = new Resource(keyURL);<a name="line.82"></a>
+<FONT color="green">083</FONT>          }<a name="line.83"></a>
+<FONT color="green">084</FONT>          catch (IOException e) {<a name="line.84"></a>
+<FONT color="green">085</FONT>            log.debug("Could not load ssh key from url " + keyURL, e);<a name="line.85"></a>
+<FONT color="green">086</FONT>          }<a name="line.86"></a>
+<FONT color="green">087</FONT>        }<a name="line.87"></a>
+<FONT color="green">088</FONT>    <a name="line.88"></a>
+<FONT color="green">089</FONT>        // Override from config if any<a name="line.89"></a>
+<FONT color="green">090</FONT>        Resource res = getContext().loadResource("hostkey.pem", ResourceKind.CONFIG);<a name="line.90"></a>
+<FONT color="green">091</FONT>        if (res != null) {<a name="line.91"></a>
+<FONT color="green">092</FONT>          key = res;<a name="line.92"></a>
+<FONT color="green">093</FONT>          log.debug("Found ssh key url");<a name="line.93"></a>
+<FONT color="green">094</FONT>        }<a name="line.94"></a>
+<FONT color="green">095</FONT>    <a name="line.95"></a>
+<FONT color="green">096</FONT>        // If we have a key path, we convert is as an URL<a name="line.96"></a>
+<FONT color="green">097</FONT>        String keyPath = getContext().getProperty(SSH_KEYPATH);<a name="line.97"></a>
+<FONT color="green">098</FONT>        if (keyPath != null) {<a name="line.98"></a>
+<FONT color="green">099</FONT>          log.debug("Found key path " + keyPath);<a name="line.99"></a>
+<FONT color="green">100</FONT>          File f = new File(keyPath);<a name="line.100"></a>
+<FONT color="green">101</FONT>          if (f.exists() &amp;&amp; f.isFile()) {<a name="line.101"></a>
+<FONT color="green">102</FONT>            try {<a name="line.102"></a>
+<FONT color="green">103</FONT>              keyURL = f.toURI().toURL();<a name="line.103"></a>
+<FONT color="green">104</FONT>            } catch (MalformedURLException e) {<a name="line.104"></a>
+<FONT color="green">105</FONT>              log.debug("Ignoring invalid key " + keyPath, e);<a name="line.105"></a>
+<FONT color="green">106</FONT>            }<a name="line.106"></a>
+<FONT color="green">107</FONT>          } else {<a name="line.107"></a>
+<FONT color="green">108</FONT>            log.debug("Ignoring invalid key path " + keyPath);<a name="line.108"></a>
+<FONT color="green">109</FONT>          }<a name="line.109"></a>
+<FONT color="green">110</FONT>        }<a name="line.110"></a>
+<FONT color="green">111</FONT>    <a name="line.111"></a>
+<FONT color="green">112</FONT>        //<a name="line.112"></a>
+<FONT color="green">113</FONT>        if (keyURL == null) {<a name="line.113"></a>
+<FONT color="green">114</FONT>          log.info("Could not boot SSHD due to missing key");<a name="line.114"></a>
+<FONT color="green">115</FONT>          return;<a name="line.115"></a>
+<FONT color="green">116</FONT>        }<a name="line.116"></a>
+<FONT color="green">117</FONT>    <a name="line.117"></a>
+<FONT color="green">118</FONT>        // Get the authentication<a name="line.118"></a>
+<FONT color="green">119</FONT>        String authentication = getContext().getProperty(AUTH);<a name="line.119"></a>
+<FONT color="green">120</FONT>    <a name="line.120"></a>
+<FONT color="green">121</FONT>        //<a name="line.121"></a>
+<FONT color="green">122</FONT>        log.info("Booting SSHD");<a name="line.122"></a>
+<FONT color="green">123</FONT>        SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext());<a name="line.123"></a>
+<FONT color="green">124</FONT>        lifeCycle.setPort(port);<a name="line.124"></a>
+<FONT color="green">125</FONT>        lifeCycle.setKey(key);<a name="line.125"></a>
+<FONT color="green">126</FONT>        lifeCycle.setAuthentication(authentication);<a name="line.126"></a>
+<FONT color="green">127</FONT>        lifeCycle.init();<a name="line.127"></a>
+<FONT color="green">128</FONT>    <a name="line.128"></a>
+<FONT color="green">129</FONT>        //<a name="line.129"></a>
+<FONT color="green">130</FONT>        this.lifeCycle = lifeCycle;<a name="line.130"></a>
+<FONT color="green">131</FONT>      }<a name="line.131"></a>
+<FONT color="green">132</FONT>    <a name="line.132"></a>
+<FONT color="green">133</FONT>      @Override<a name="line.133"></a>
+<FONT color="green">134</FONT>      public void destroy() {<a name="line.134"></a>
+<FONT color="green">135</FONT>        if (lifeCycle != null) {<a name="line.135"></a>
+<FONT color="green">136</FONT>          log.info("Shutting down SSHD");<a name="line.136"></a>
+<FONT color="green">137</FONT>          lifeCycle.destroy();<a name="line.137"></a>
+<FONT color="green">138</FONT>          lifeCycle = null;<a name="line.138"></a>
+<FONT color="green">139</FONT>        }<a name="line.139"></a>
+<FONT color="green">140</FONT>      }<a name="line.140"></a>
+<FONT color="green">141</FONT>    }<a name="line.141"></a>
 
 
 

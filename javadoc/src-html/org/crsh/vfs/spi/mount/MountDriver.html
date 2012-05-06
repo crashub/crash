@@ -27,7 +27,7 @@
 <FONT color="green">024</FONT>    import org.crsh.vfs.spi.FSDriver;<a name="line.24"></a>
 <FONT color="green">025</FONT>    <a name="line.25"></a>
 <FONT color="green">026</FONT>    import java.io.IOException;<a name="line.26"></a>
-<FONT color="green">027</FONT>    import java.net.URL;<a name="line.27"></a>
+<FONT color="green">027</FONT>    import java.io.InputStream;<a name="line.27"></a>
 <FONT color="green">028</FONT>    <a name="line.28"></a>
 <FONT color="green">029</FONT>    /**<a name="line.29"></a>
 <FONT color="green">030</FONT>     * The mount driver mounts path of a driver.<a name="line.30"></a>
@@ -82,10 +82,14 @@
 <FONT color="green">079</FONT>        return driver.children(handle);<a name="line.79"></a>
 <FONT color="green">080</FONT>      }<a name="line.80"></a>
 <FONT color="green">081</FONT>    <a name="line.81"></a>
-<FONT color="green">082</FONT>      public URL toURL(H handle) throws IOException {<a name="line.82"></a>
-<FONT color="green">083</FONT>        return driver.toURL(handle);<a name="line.83"></a>
+<FONT color="green">082</FONT>      public long getLastModified(H handle) throws IOException {<a name="line.82"></a>
+<FONT color="green">083</FONT>        return driver.getLastModified(handle);<a name="line.83"></a>
 <FONT color="green">084</FONT>      }<a name="line.84"></a>
-<FONT color="green">085</FONT>    }<a name="line.85"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>      public InputStream open(H handle) throws IOException {<a name="line.86"></a>
+<FONT color="green">087</FONT>        return driver.open(handle);<a name="line.87"></a>
+<FONT color="green">088</FONT>      }<a name="line.88"></a>
+<FONT color="green">089</FONT>    }<a name="line.89"></a>
 
 
 

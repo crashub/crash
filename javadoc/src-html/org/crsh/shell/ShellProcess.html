@@ -31,18 +31,21 @@
 <FONT color="green">028</FONT>    public interface ShellProcess {<a name="line.28"></a>
 <FONT color="green">029</FONT>    <a name="line.29"></a>
 <FONT color="green">030</FONT>      /**<a name="line.30"></a>
-<FONT color="green">031</FONT>       * Begin the process.<a name="line.31"></a>
-<FONT color="green">032</FONT>       *<a name="line.32"></a>
-<FONT color="green">033</FONT>       * @param processContext the process context<a name="line.33"></a>
-<FONT color="green">034</FONT>       */<a name="line.34"></a>
-<FONT color="green">035</FONT>      void execute(ShellProcessContext processContext);<a name="line.35"></a>
-<FONT color="green">036</FONT>    <a name="line.36"></a>
-<FONT color="green">037</FONT>      /**<a name="line.37"></a>
-<FONT color="green">038</FONT>       * Attempt to cancel the shell process.<a name="line.38"></a>
-<FONT color="green">039</FONT>       */<a name="line.39"></a>
-<FONT color="green">040</FONT>      void cancel();<a name="line.40"></a>
-<FONT color="green">041</FONT>    <a name="line.41"></a>
-<FONT color="green">042</FONT>    }<a name="line.42"></a>
+<FONT color="green">031</FONT>       * Begin the process. The client of this method should make no assumption whether the process is executed<a name="line.31"></a>
+<FONT color="green">032</FONT>       * in a synchronous or asynchronous manner. The process will be termined when the process signals it<a name="line.32"></a>
+<FONT color="green">033</FONT>       * with an invocation of the {@link ShellProcessContext#end(ShellResponse)} method.<a name="line.33"></a>
+<FONT color="green">034</FONT>       *<a name="line.34"></a>
+<FONT color="green">035</FONT>       * @param processContext the process context<a name="line.35"></a>
+<FONT color="green">036</FONT>       * @throws IllegalStateException if the process cannot be executed for some reason<a name="line.36"></a>
+<FONT color="green">037</FONT>       */<a name="line.37"></a>
+<FONT color="green">038</FONT>      void execute(ShellProcessContext processContext) throws IllegalStateException;<a name="line.38"></a>
+<FONT color="green">039</FONT>    <a name="line.39"></a>
+<FONT color="green">040</FONT>      /**<a name="line.40"></a>
+<FONT color="green">041</FONT>       * Signals the process it should be cancelled.<a name="line.41"></a>
+<FONT color="green">042</FONT>       */<a name="line.42"></a>
+<FONT color="green">043</FONT>      void cancel();<a name="line.43"></a>
+<FONT color="green">044</FONT>    <a name="line.44"></a>
+<FONT color="green">045</FONT>    }<a name="line.45"></a>
 
 
 
