@@ -149,10 +149,6 @@ public final class PluginContext {
     this.executor = Executors.newFixedThreadPool(20);
   }
 
-  public Iterable<CRaSHPlugin<?>> getPlugins() {
-    return manager.getPlugins();
-  }
-
   public String getVersion() {
     return version;
   }
@@ -346,6 +342,10 @@ public final class PluginContext {
     return loader;
   }
 
+  public Iterable<CRaSHPlugin<?>> getPlugins() {
+    return manager.getPlugins();
+  }
+
   /**
    * Returns the plugins associated with this context.
    *
@@ -355,6 +355,18 @@ public final class PluginContext {
    */
   public <T> Iterable<T> getPlugins(Class<T> pluginType) {
     return manager.getPlugins(pluginType);
+  }
+
+  /**
+   * Returns the first plugin associated with this context implementing the specified type.
+   *
+   * @param pluginType the plugin type
+   * @param <T> the plugin generic type
+   * @return the plugins
+   */
+  public <T> T getPlugin(Class<T> pluginType) {
+    Iterator<T> plugins = manager.getPlugins(pluginType).iterator();
+    return plugins.hasNext() ? plugins.next() : null;
   }
 
   /**

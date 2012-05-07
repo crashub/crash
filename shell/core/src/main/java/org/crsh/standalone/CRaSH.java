@@ -36,6 +36,7 @@ import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.processor.jline.JLineProcessor;
 import org.crsh.shell.Shell;
+import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.remoting.RemoteServer;
 import org.crsh.util.CloseableList;
 import org.crsh.util.InterruptHandler;
@@ -235,8 +236,8 @@ public class CRaSH {
         });
 
         //
-        org.crsh.shell.impl.command.CRaSH crash = new org.crsh.shell.impl.command.CRaSH(bootstrap.getContext());
-        shell = crash.createSession(null);
+        ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
+        shell = factory.create(null);
         closeable = null;
       }
 

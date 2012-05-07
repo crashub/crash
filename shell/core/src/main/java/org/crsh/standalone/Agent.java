@@ -27,8 +27,8 @@ import org.crsh.cmdline.matcher.CommandMatch;
 import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.shell.Shell;
+import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.async.AsyncShell;
-import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.shell.impl.remoting.RemoteClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,8 +141,8 @@ public class Agent {
 
     //
     try {
-      CRaSH crash = new CRaSH(bootstrap.getContext());
-      Shell shell = crash.createSession(null);
+      ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
+      Shell shell = factory.create(null);
       AsyncShell async = new AsyncShell(bootstrap.getContext().getExecutor(), shell);
       RemoteClient client = new RemoteClient(port, async);
       log.info("Callback back remote on port " + port);

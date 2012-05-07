@@ -22,7 +22,13 @@ public class CRaSH {
   /** . */
   final PluginContext context;
 
-  public CRaSH(PluginContext context) {
+  /**
+   * Create a new CRaSH.
+   *
+   * @param context the plugin context
+   * @throws NullPointerException if the context argument is null
+   */
+  public CRaSH(PluginContext context) throws NullPointerException {
     this.context = context;
     this.commands = new ClassManager<ShellCommand>(context, ResourceKind.COMMAND, ShellCommand.class, GroovyScriptCommand.class);
     this.lifecycles = new ClassManager<Script>(context, ResourceKind.LIFECYCLE, Script.class, Script.class);
