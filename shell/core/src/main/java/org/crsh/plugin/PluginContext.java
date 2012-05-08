@@ -173,6 +173,7 @@ public final class PluginContext {
     if (desc == null) {
       throw new NullPointerException();
     }
+    @SuppressWarnings("unchecked")
     Property<T> property = (Property<T>)properties.get(desc);
     return property != null ? property.getValue() : desc.defaultValue;
   }
