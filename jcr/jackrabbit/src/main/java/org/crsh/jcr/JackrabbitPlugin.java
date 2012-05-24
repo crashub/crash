@@ -18,11 +18,14 @@
  */
 package org.crsh.jcr;
 
-import java.util.Map;
-import java.util.Properties;
-import javax.jcr.Repository;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.TransientRepository;
+
+import javax.jcr.Repository;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:emmanuel.hugonnet@silverpeas.com">Emmanuel Hugonnet</a>
@@ -30,7 +33,9 @@ import org.apache.jackrabbit.core.TransientRepository;
  */
 public class JackrabbitPlugin extends JCRPlugin<JackrabbitPlugin> {
 
-  @Override
+    public static final String JNDI = "jndi";
+
+    @Override
   public JackrabbitPlugin getImplementation() {
     return this;
   }
@@ -62,6 +67,15 @@ public class JackrabbitPlugin extends JCRPlugin<JackrabbitPlugin> {
         }
       }
       return new TransientRepository(props);
+    } else if (properties.containsKey(JNDI)) {
+        InitialContext initCtx = new InitialContext();
+        Context jndiEnv = (Context) initCtx.lookup("java:comp/env");
+        Repository repository = (Repository) jndiEnv.lookup(properties.get
+                (JNDI));
+        if(repository != null) {
+            return repository;
+        }
+        return null;
     } else {
       Repository repository = JcrUtils.getRepository(properties);
       if (repository != null) {
