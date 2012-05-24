@@ -72,7 +72,7 @@ class jdbc extends CRaSHCommand {
 
   @Usage("open a connection from JNDI bound datasource")
   @Command
-  public String open(@Usage("The datasource global JNDI name") @Argument String globalName) {
+  public String open(@Usage("The datasource JNDI name") @Argument String globalName) {
     if (connection != null) {
       throw new ScriptException("Already connected");
     }
@@ -82,9 +82,8 @@ class jdbc extends CRaSHCommand {
     }
 
     //
+    def ctx = new InitialContext()
     try {
-      def ic = new InitialContext()
-      def ctx = ic.lookup("java:")
       def ds = ctx.lookup(globalName)
       if (ds == null) {
         return "Datasource $globalName not found in JNDI"
@@ -93,6 +92,8 @@ class jdbc extends CRaSHCommand {
       return "Connected to $globalName datasource\n"
     } catch (NoInitialContextException e) {
       throw new ScriptException("No initial context found", e)
+    } finally {
+      Safe.close(ctx);
     }
   }
 

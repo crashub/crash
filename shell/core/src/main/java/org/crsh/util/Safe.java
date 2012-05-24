@@ -18,6 +18,8 @@
  */
 package org.crsh.util;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.Socket;
@@ -82,7 +84,17 @@ public class Safe {
     }
   }
 
-  public static <T extends Throwable> void rethrow(Class<T> throwableClass, Throwable cause) throws T {
+   public static void close(Context rs) {
+      if (rs != null) {
+         try {
+            rs.close();
+         }
+         catch (NamingException ignore) {
+         }
+      }
+   }
+
+   public static <T extends Throwable> void rethrow(Class<T> throwableClass, Throwable cause) throws T {
     T throwable;
 
     //
