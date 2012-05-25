@@ -48,7 +48,8 @@ import java.util.Map;
  */
 public abstract class SCPCommand extends AbstractCommand implements Runnable {
 
-  /** . */
+    public static final String JNDI = "jndi=";
+    /** . */
   protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
@@ -178,6 +179,14 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
       int pos2 = target.indexOf(':', pos1 + 1);
       if (pos2 != -1) {
         // container:workspace_name:path
+        String container = target.substring(0, pos1);
+        // jndi=jndi_entry:worksapce_name:path
+        //  e.g. scp -P 2000 admin@localhost:jndi=jcr/repository:default
+        // :/projects
+        // /test1 test1.xml
+        if(container.startsWith(JNDI)) {
+            properties.put("jndi", container.substring(JNDI.length()));
+        }
         properties.put("container", target.substring(0, pos1));
         workspaceName = target.substring(pos1 + 1, pos2);
         path = target.substring(pos2 + 1);
