@@ -53,7 +53,12 @@ public class JackrabbitPlugin extends JCRPlugin<JackrabbitPlugin> {
   @Override
   public String getUsage() {
     return "The command must at least have a URL parameter to be used in connecting to the repository. " +
-      "You can use a JNDI bound repository: 'repo use org.apache.jackrabbit.repository.uri=rmi://localhost:1099/jackrabbit'";
+      "You can use a JNDI bound repository via RMI: 'repo use org.apache" +
+            ".jackrabbit" +
+            ".repository.uri=rmi://localhost:1099/jackrabbit'" +
+      " or access local repository deployed as a resource via JNDI if crash " +
+            "is deployed as a war: (Presumed the repository is deployed as " +
+            "java:comp/env/jcr/repository) 'repo use jndi=jcr/resource'";
   }
 
   @Override
