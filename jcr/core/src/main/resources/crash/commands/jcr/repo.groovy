@@ -42,8 +42,21 @@ A repository can then be selected with the use command.
 For the eXo repository you can use a container bound repository:
 % repo use container=portal
 
-For the jackrabbit implementation you can use a JNDI bound repository:
+
+jackrabbit - Jackrabbit JCR Plugin.
+
+JackRabbit must be properly configured to provide any of the following access
+ methods. For the details, see the following resources.
+ * http://jackrabbit.apache.org/deployment-models.html
+ * http://wiki.apache.org/jackrabbit/RemoteAccess
+ * http://jackrabbit.apache.org/shared-j2ee-resource-howto.html
+
+Connect via RMI:
 % repo use org.apache.jackrabbit.repository.uri=rmi://localhost:1099/jackrabbit
+Connect via JNDI:
+% repo use org.apache.jackrabbit.repository.uri=jndi:java:comp/env/jcr/jackrabbit
+Connect via WebDAV:
+% repo use org.apache.jackrabbit.repository.uri=http://localhost:8080/jackrabbit-webapp/repository/
 """)
 class repo extends org.crsh.jcr.command.JCRCommand {
 

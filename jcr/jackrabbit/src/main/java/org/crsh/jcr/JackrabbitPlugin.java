@@ -18,11 +18,12 @@
  */
 package org.crsh.jcr;
 
-import java.util.Map;
-import java.util.Properties;
-import javax.jcr.Repository;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.TransientRepository;
+
+import javax.jcr.Repository;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:emmanuel.hugonnet@silverpeas.com">Emmanuel Hugonnet</a>
@@ -48,7 +49,13 @@ public class JackrabbitPlugin extends JCRPlugin<JackrabbitPlugin> {
   @Override
   public String getUsage() {
     return "The command must at least have a URL parameter to be used in connecting to the repository. " +
-      "You can use a JNDI bound repository: 'repo use org.apache.jackrabbit.repository.uri=rmi://localhost:1099/jackrabbit'";
+      "To access a repository via RMI: 'repo use org.apache.jackrabbit" +
+            ".repository" +
+            ".uri=rmi://localhost:1099/jackrabbit'\n" +
+      "To access a repository via JNDI: 'repo use org.apache.jackrabbit" +
+            ".repository.uri=jndi:java:comp/env/jcr/jackrabbit'\n" +
+      "To access a repository via WebDAV: 'repo use org.apache.jackrabbit" +
+              ".repository.uri=http://localhost:8080/jackrabbit/repository/'";
   }
 
   @Override
