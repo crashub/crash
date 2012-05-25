@@ -30,8 +30,8 @@
 <FONT color="green">027</FONT>    import org.crsh.cmdline.matcher.InvocationContext;<a name="line.27"></a>
 <FONT color="green">028</FONT>    import org.crsh.cmdline.matcher.Matcher;<a name="line.28"></a>
 <FONT color="green">029</FONT>    import org.crsh.shell.Shell;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import org.crsh.shell.impl.async.AsyncShell;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import org.crsh.shell.impl.command.CRaSH;<a name="line.31"></a>
+<FONT color="green">030</FONT>    import org.crsh.shell.ShellFactory;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.crsh.shell.impl.async.AsyncShell;<a name="line.31"></a>
 <FONT color="green">032</FONT>    import org.crsh.shell.impl.remoting.RemoteClient;<a name="line.32"></a>
 <FONT color="green">033</FONT>    import org.slf4j.Logger;<a name="line.33"></a>
 <FONT color="green">034</FONT>    import org.slf4j.LoggerFactory;<a name="line.34"></a>
@@ -144,8 +144,8 @@
 <FONT color="green">141</FONT>    <a name="line.141"></a>
 <FONT color="green">142</FONT>        //<a name="line.142"></a>
 <FONT color="green">143</FONT>        try {<a name="line.143"></a>
-<FONT color="green">144</FONT>          CRaSH crash = new CRaSH(bootstrap.getContext());<a name="line.144"></a>
-<FONT color="green">145</FONT>          Shell shell = crash.createSession(null);<a name="line.145"></a>
+<FONT color="green">144</FONT>          ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);<a name="line.144"></a>
+<FONT color="green">145</FONT>          Shell shell = factory.create(null);<a name="line.145"></a>
 <FONT color="green">146</FONT>          AsyncShell async = new AsyncShell(bootstrap.getContext().getExecutor(), shell);<a name="line.146"></a>
 <FONT color="green">147</FONT>          RemoteClient client = new RemoteClient(port, async);<a name="line.147"></a>
 <FONT color="green">148</FONT>          log.info("Callback back remote on port " + port);<a name="line.148"></a>

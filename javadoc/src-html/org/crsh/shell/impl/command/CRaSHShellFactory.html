@@ -1,0 +1,99 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.crsh.shell.impl.command;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import org.crsh.plugin.CRaSHPlugin;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import org.crsh.plugin.PluginContext;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import org.crsh.shell.Shell;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import org.crsh.shell.ShellFactory;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    import java.security.Principal;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    /** @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt; */<a name="line.10"></a>
+<FONT color="green">011</FONT>    public class CRaSHShellFactory extends CRaSHPlugin&lt;ShellFactory&gt; implements ShellFactory {<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>      /** . */<a name="line.13"></a>
+<FONT color="green">014</FONT>      private CRaSH crash;<a name="line.14"></a>
+<FONT color="green">015</FONT>    <a name="line.15"></a>
+<FONT color="green">016</FONT>      public CRaSHShellFactory() {<a name="line.16"></a>
+<FONT color="green">017</FONT>      }<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>      @Override<a name="line.19"></a>
+<FONT color="green">020</FONT>      public void init() {<a name="line.20"></a>
+<FONT color="green">021</FONT>        PluginContext context = getContext();<a name="line.21"></a>
+<FONT color="green">022</FONT>        crash = new CRaSH(context);<a name="line.22"></a>
+<FONT color="green">023</FONT>      }<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>      @Override<a name="line.25"></a>
+<FONT color="green">026</FONT>      public ShellFactory getImplementation() {<a name="line.26"></a>
+<FONT color="green">027</FONT>        return this;<a name="line.27"></a>
+<FONT color="green">028</FONT>      }<a name="line.28"></a>
+<FONT color="green">029</FONT>    <a name="line.29"></a>
+<FONT color="green">030</FONT>      public Shell create(Principal principal) {<a name="line.30"></a>
+<FONT color="green">031</FONT>        return crash.createSession(principal);<a name="line.31"></a>
+<FONT color="green">032</FONT>      }<a name="line.32"></a>
+<FONT color="green">033</FONT>    }<a name="line.33"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

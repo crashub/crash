@@ -152,283 +152,296 @@
 <FONT color="green">149</FONT>        this.executor = Executors.newFixedThreadPool(20);<a name="line.149"></a>
 <FONT color="green">150</FONT>      }<a name="line.150"></a>
 <FONT color="green">151</FONT>    <a name="line.151"></a>
-<FONT color="green">152</FONT>      public Iterable&lt;CRaSHPlugin&lt;?&gt;&gt; getPlugins() {<a name="line.152"></a>
-<FONT color="green">153</FONT>        return manager.getPlugins();<a name="line.153"></a>
+<FONT color="green">152</FONT>      public String getVersion() {<a name="line.152"></a>
+<FONT color="green">153</FONT>        return version;<a name="line.153"></a>
 <FONT color="green">154</FONT>      }<a name="line.154"></a>
 <FONT color="green">155</FONT>    <a name="line.155"></a>
-<FONT color="green">156</FONT>      public String getVersion() {<a name="line.156"></a>
-<FONT color="green">157</FONT>        return version;<a name="line.157"></a>
+<FONT color="green">156</FONT>      public Map&lt;String, ?&gt; getAttributes() {<a name="line.156"></a>
+<FONT color="green">157</FONT>        return attributes;<a name="line.157"></a>
 <FONT color="green">158</FONT>      }<a name="line.158"></a>
 <FONT color="green">159</FONT>    <a name="line.159"></a>
-<FONT color="green">160</FONT>      public Map&lt;String, ?&gt; getAttributes() {<a name="line.160"></a>
-<FONT color="green">161</FONT>        return attributes;<a name="line.161"></a>
+<FONT color="green">160</FONT>      public ExecutorService getExecutor() {<a name="line.160"></a>
+<FONT color="green">161</FONT>        return executor;<a name="line.161"></a>
 <FONT color="green">162</FONT>      }<a name="line.162"></a>
 <FONT color="green">163</FONT>    <a name="line.163"></a>
-<FONT color="green">164</FONT>      public ExecutorService getExecutor() {<a name="line.164"></a>
-<FONT color="green">165</FONT>        return executor;<a name="line.165"></a>
-<FONT color="green">166</FONT>      }<a name="line.166"></a>
-<FONT color="green">167</FONT>    <a name="line.167"></a>
-<FONT color="green">168</FONT>      /**<a name="line.168"></a>
-<FONT color="green">169</FONT>       * Returns a context property or null if it cannot be found.<a name="line.169"></a>
-<FONT color="green">170</FONT>       *<a name="line.170"></a>
-<FONT color="green">171</FONT>       * @param desc the property descriptor<a name="line.171"></a>
-<FONT color="green">172</FONT>       * @param &lt;T&gt; the property parameter type<a name="line.172"></a>
-<FONT color="green">173</FONT>       * @return the property value<a name="line.173"></a>
-<FONT color="green">174</FONT>       * @throws NullPointerException if the descriptor argument is null<a name="line.174"></a>
-<FONT color="green">175</FONT>       */<a name="line.175"></a>
-<FONT color="green">176</FONT>      public &lt;T&gt; T getProperty(PropertyDescriptor&lt;T&gt; desc) throws NullPointerException {<a name="line.176"></a>
-<FONT color="green">177</FONT>        if (desc == null) {<a name="line.177"></a>
-<FONT color="green">178</FONT>          throw new NullPointerException();<a name="line.178"></a>
-<FONT color="green">179</FONT>        }<a name="line.179"></a>
-<FONT color="green">180</FONT>        Property&lt;T&gt; property = (Property&lt;T&gt;)properties.get(desc);<a name="line.180"></a>
-<FONT color="green">181</FONT>        return property != null ? property.getValue() : desc.defaultValue;<a name="line.181"></a>
-<FONT color="green">182</FONT>      }<a name="line.182"></a>
-<FONT color="green">183</FONT>    <a name="line.183"></a>
-<FONT color="green">184</FONT>      /**<a name="line.184"></a>
-<FONT color="green">185</FONT>       * Returns a context property or null if it cannot be found.<a name="line.185"></a>
-<FONT color="green">186</FONT>       *<a name="line.186"></a>
-<FONT color="green">187</FONT>       * @param propertyName the name of the property<a name="line.187"></a>
-<FONT color="green">188</FONT>       * @param type the property type<a name="line.188"></a>
-<FONT color="green">189</FONT>       * @param &lt;T&gt; the property parameter type<a name="line.189"></a>
-<FONT color="green">190</FONT>       * @return the property value<a name="line.190"></a>
-<FONT color="green">191</FONT>       * @throws NullPointerException if the descriptor argument is null<a name="line.191"></a>
-<FONT color="green">192</FONT>       */<a name="line.192"></a>
-<FONT color="green">193</FONT>      public &lt;T&gt; T getProperty(String propertyName, Class&lt;T&gt; type) throws NullPointerException {<a name="line.193"></a>
-<FONT color="green">194</FONT>        if (propertyName == null) {<a name="line.194"></a>
-<FONT color="green">195</FONT>          throw new NullPointerException("No null property name accepted");<a name="line.195"></a>
+<FONT color="green">164</FONT>      /**<a name="line.164"></a>
+<FONT color="green">165</FONT>       * Returns a context property or null if it cannot be found.<a name="line.165"></a>
+<FONT color="green">166</FONT>       *<a name="line.166"></a>
+<FONT color="green">167</FONT>       * @param desc the property descriptor<a name="line.167"></a>
+<FONT color="green">168</FONT>       * @param &lt;T&gt; the property parameter type<a name="line.168"></a>
+<FONT color="green">169</FONT>       * @return the property value<a name="line.169"></a>
+<FONT color="green">170</FONT>       * @throws NullPointerException if the descriptor argument is null<a name="line.170"></a>
+<FONT color="green">171</FONT>       */<a name="line.171"></a>
+<FONT color="green">172</FONT>      public &lt;T&gt; T getProperty(PropertyDescriptor&lt;T&gt; desc) throws NullPointerException {<a name="line.172"></a>
+<FONT color="green">173</FONT>        if (desc == null) {<a name="line.173"></a>
+<FONT color="green">174</FONT>          throw new NullPointerException();<a name="line.174"></a>
+<FONT color="green">175</FONT>        }<a name="line.175"></a>
+<FONT color="green">176</FONT>        @SuppressWarnings("unchecked")<a name="line.176"></a>
+<FONT color="green">177</FONT>        Property&lt;T&gt; property = (Property&lt;T&gt;)properties.get(desc);<a name="line.177"></a>
+<FONT color="green">178</FONT>        return property != null ? property.getValue() : desc.defaultValue;<a name="line.178"></a>
+<FONT color="green">179</FONT>      }<a name="line.179"></a>
+<FONT color="green">180</FONT>    <a name="line.180"></a>
+<FONT color="green">181</FONT>      /**<a name="line.181"></a>
+<FONT color="green">182</FONT>       * Returns a context property or null if it cannot be found.<a name="line.182"></a>
+<FONT color="green">183</FONT>       *<a name="line.183"></a>
+<FONT color="green">184</FONT>       * @param propertyName the name of the property<a name="line.184"></a>
+<FONT color="green">185</FONT>       * @param type the property type<a name="line.185"></a>
+<FONT color="green">186</FONT>       * @param &lt;T&gt; the property parameter type<a name="line.186"></a>
+<FONT color="green">187</FONT>       * @return the property value<a name="line.187"></a>
+<FONT color="green">188</FONT>       * @throws NullPointerException if the descriptor argument is null<a name="line.188"></a>
+<FONT color="green">189</FONT>       */<a name="line.189"></a>
+<FONT color="green">190</FONT>      public &lt;T&gt; T getProperty(String propertyName, Class&lt;T&gt; type) throws NullPointerException {<a name="line.190"></a>
+<FONT color="green">191</FONT>        if (propertyName == null) {<a name="line.191"></a>
+<FONT color="green">192</FONT>          throw new NullPointerException("No null property name accepted");<a name="line.192"></a>
+<FONT color="green">193</FONT>        }<a name="line.193"></a>
+<FONT color="green">194</FONT>        if (type == null) {<a name="line.194"></a>
+<FONT color="green">195</FONT>          throw new NullPointerException("No null property type accepted");<a name="line.195"></a>
 <FONT color="green">196</FONT>        }<a name="line.196"></a>
-<FONT color="green">197</FONT>        if (type == null) {<a name="line.197"></a>
-<FONT color="green">198</FONT>          throw new NullPointerException("No null property type accepted");<a name="line.198"></a>
-<FONT color="green">199</FONT>        }<a name="line.199"></a>
-<FONT color="green">200</FONT>        for (PropertyDescriptor&lt;?&gt; pd : properties.keySet())<a name="line.200"></a>
-<FONT color="green">201</FONT>        {<a name="line.201"></a>
-<FONT color="green">202</FONT>          if (pd.name.equals(propertyName) &amp;&amp; type.isAssignableFrom(pd.type))<a name="line.202"></a>
-<FONT color="green">203</FONT>          {<a name="line.203"></a>
-<FONT color="green">204</FONT>            return type.cast(getProperty(pd));<a name="line.204"></a>
-<FONT color="green">205</FONT>          }<a name="line.205"></a>
-<FONT color="green">206</FONT>        }<a name="line.206"></a>
-<FONT color="green">207</FONT>        return null;<a name="line.207"></a>
-<FONT color="green">208</FONT>      }<a name="line.208"></a>
-<FONT color="green">209</FONT>    <a name="line.209"></a>
-<FONT color="green">210</FONT>      /**<a name="line.210"></a>
-<FONT color="green">211</FONT>       * Set a context property to a new value. If the provided value is null, then the property is removed.<a name="line.211"></a>
-<FONT color="green">212</FONT>       *<a name="line.212"></a>
-<FONT color="green">213</FONT>       * @param desc the property descriptor<a name="line.213"></a>
-<FONT color="green">214</FONT>       * @param value the property value<a name="line.214"></a>
-<FONT color="green">215</FONT>       * @param &lt;T&gt; the property parameter type<a name="line.215"></a>
-<FONT color="green">216</FONT>       * @throws NullPointerException if the descriptor argument is null<a name="line.216"></a>
-<FONT color="green">217</FONT>       */<a name="line.217"></a>
-<FONT color="green">218</FONT>      public &lt;T&gt; void setProperty(PropertyDescriptor&lt;T&gt; desc, T value) throws NullPointerException {<a name="line.218"></a>
-<FONT color="green">219</FONT>        if (desc == null) {<a name="line.219"></a>
-<FONT color="green">220</FONT>          throw new NullPointerException();<a name="line.220"></a>
-<FONT color="green">221</FONT>        }<a name="line.221"></a>
-<FONT color="green">222</FONT>        if (value == null) {<a name="line.222"></a>
-<FONT color="green">223</FONT>          log.debug("Removing property " + desc.name);<a name="line.223"></a>
-<FONT color="green">224</FONT>          properties.remove(desc);<a name="line.224"></a>
-<FONT color="green">225</FONT>        } else {<a name="line.225"></a>
-<FONT color="green">226</FONT>          Property&lt;T&gt; property = new Property&lt;T&gt;(desc, value);<a name="line.226"></a>
-<FONT color="green">227</FONT>          log.debug("Setting property " + desc.name + " to value " + property.getValue());<a name="line.227"></a>
-<FONT color="green">228</FONT>          properties.put(desc, property);<a name="line.228"></a>
-<FONT color="green">229</FONT>        }<a name="line.229"></a>
-<FONT color="green">230</FONT>      }<a name="line.230"></a>
-<FONT color="green">231</FONT>    <a name="line.231"></a>
-<FONT color="green">232</FONT>      /**<a name="line.232"></a>
-<FONT color="green">233</FONT>       * Set a context property to a new value. If the provided value is null, then the property is removed.<a name="line.233"></a>
-<FONT color="green">234</FONT>       *<a name="line.234"></a>
-<FONT color="green">235</FONT>       * @param desc the property descriptor<a name="line.235"></a>
-<FONT color="green">236</FONT>       * @param value the property value<a name="line.236"></a>
-<FONT color="green">237</FONT>       * @param &lt;T&gt; the property parameter type<a name="line.237"></a>
-<FONT color="green">238</FONT>       * @throws NullPointerException if the descriptor argument is null<a name="line.238"></a>
-<FONT color="green">239</FONT>       * @throws IllegalArgumentException if the string value cannot be converted to the property type<a name="line.239"></a>
-<FONT color="green">240</FONT>       */<a name="line.240"></a>
-<FONT color="green">241</FONT>      public &lt;T&gt; void setProperty(PropertyDescriptor&lt;T&gt; desc, String value) throws NullPointerException, IllegalArgumentException {<a name="line.241"></a>
-<FONT color="green">242</FONT>        if (desc == null) {<a name="line.242"></a>
-<FONT color="green">243</FONT>          throw new NullPointerException();<a name="line.243"></a>
-<FONT color="green">244</FONT>        }<a name="line.244"></a>
-<FONT color="green">245</FONT>        if (value == null) {<a name="line.245"></a>
-<FONT color="green">246</FONT>          log.debug("Removing property " + desc.name);<a name="line.246"></a>
-<FONT color="green">247</FONT>          properties.remove(desc);<a name="line.247"></a>
-<FONT color="green">248</FONT>        } else {<a name="line.248"></a>
-<FONT color="green">249</FONT>          Property&lt;T&gt; property = desc.toProperty(value);<a name="line.249"></a>
-<FONT color="green">250</FONT>          log.debug("Setting property " + desc.name + " to value " + property.getValue());<a name="line.250"></a>
-<FONT color="green">251</FONT>          properties.put(desc, property);<a name="line.251"></a>
-<FONT color="green">252</FONT>        }<a name="line.252"></a>
-<FONT color="green">253</FONT>      }<a name="line.253"></a>
-<FONT color="green">254</FONT>    <a name="line.254"></a>
-<FONT color="green">255</FONT>      /**<a name="line.255"></a>
-<FONT color="green">256</FONT>       * Load a resource from the context.<a name="line.256"></a>
-<FONT color="green">257</FONT>       *<a name="line.257"></a>
-<FONT color="green">258</FONT>       * @param resourceId the resource id<a name="line.258"></a>
-<FONT color="green">259</FONT>       * @param resourceKind the resource kind<a name="line.259"></a>
-<FONT color="green">260</FONT>       * @return the resource or null if it cannot be found<a name="line.260"></a>
-<FONT color="green">261</FONT>       */<a name="line.261"></a>
-<FONT color="green">262</FONT>      public Resource loadResource(String resourceId, ResourceKind resourceKind) {<a name="line.262"></a>
-<FONT color="green">263</FONT>        Resource res = null;<a name="line.263"></a>
-<FONT color="green">264</FONT>        try {<a name="line.264"></a>
-<FONT color="green">265</FONT>    <a name="line.265"></a>
-<FONT color="green">266</FONT>          //<a name="line.266"></a>
-<FONT color="green">267</FONT>          switch (resourceKind) {<a name="line.267"></a>
-<FONT color="green">268</FONT>            case LIFECYCLE:<a name="line.268"></a>
-<FONT color="green">269</FONT>              if ("login".equals(resourceId) || "logout".equals(resourceId)) {<a name="line.269"></a>
-<FONT color="green">270</FONT>                ByteArrayOutputStream buffer = new ByteArrayOutputStream();<a name="line.270"></a>
-<FONT color="green">271</FONT>                long timestamp = Long.MIN_VALUE;<a name="line.271"></a>
-<FONT color="green">272</FONT>                for (File path : dirs) {<a name="line.272"></a>
-<FONT color="green">273</FONT>                  File f = path.child(resourceId + ".groovy", false);<a name="line.273"></a>
-<FONT color="green">274</FONT>                  if (f != null) {<a name="line.274"></a>
-<FONT color="green">275</FONT>                    Resource sub = f.getResource();<a name="line.275"></a>
-<FONT color="green">276</FONT>                    if (sub != null) {<a name="line.276"></a>
-<FONT color="green">277</FONT>                      buffer.write(sub.getContent());<a name="line.277"></a>
-<FONT color="green">278</FONT>                      buffer.write('\n');<a name="line.278"></a>
-<FONT color="green">279</FONT>                      timestamp = Math.max(timestamp, sub.getTimestamp());<a name="line.279"></a>
-<FONT color="green">280</FONT>                    }<a name="line.280"></a>
-<FONT color="green">281</FONT>                  }<a name="line.281"></a>
-<FONT color="green">282</FONT>                }<a name="line.282"></a>
-<FONT color="green">283</FONT>                return new Resource(buffer.toByteArray(), timestamp);<a name="line.283"></a>
-<FONT color="green">284</FONT>              }<a name="line.284"></a>
-<FONT color="green">285</FONT>              break;<a name="line.285"></a>
-<FONT color="green">286</FONT>            case COMMAND:<a name="line.286"></a>
-<FONT color="green">287</FONT>              // Find the resource first, we find for the first found<a name="line.287"></a>
-<FONT color="green">288</FONT>              for (File path : dirs) {<a name="line.288"></a>
-<FONT color="green">289</FONT>                File f = path.child(resourceId + ".groovy", false);<a name="line.289"></a>
-<FONT color="green">290</FONT>                if (f != null) {<a name="line.290"></a>
-<FONT color="green">291</FONT>                  res = f.getResource();<a name="line.291"></a>
-<FONT color="green">292</FONT>                }<a name="line.292"></a>
-<FONT color="green">293</FONT>              }<a name="line.293"></a>
-<FONT color="green">294</FONT>              break;<a name="line.294"></a>
-<FONT color="green">295</FONT>            case CONFIG:<a name="line.295"></a>
-<FONT color="green">296</FONT>              String path = "/" + resourceId;<a name="line.296"></a>
-<FONT color="green">297</FONT>              File file = confFS.get(Path.get(path));<a name="line.297"></a>
-<FONT color="green">298</FONT>              if (file != null) {<a name="line.298"></a>
-<FONT color="green">299</FONT>                res = file.getResource();<a name="line.299"></a>
-<FONT color="green">300</FONT>              }<a name="line.300"></a>
-<FONT color="green">301</FONT>          }<a name="line.301"></a>
-<FONT color="green">302</FONT>        } catch (IOException e) {<a name="line.302"></a>
-<FONT color="green">303</FONT>          log.warn("Could not obtain resource " + resourceId, e);<a name="line.303"></a>
-<FONT color="green">304</FONT>        }<a name="line.304"></a>
-<FONT color="green">305</FONT>        return res;<a name="line.305"></a>
-<FONT color="green">306</FONT>      }<a name="line.306"></a>
-<FONT color="green">307</FONT>    <a name="line.307"></a>
-<FONT color="green">308</FONT>      /**<a name="line.308"></a>
-<FONT color="green">309</FONT>       * List the resources id for a specific resource kind.<a name="line.309"></a>
-<FONT color="green">310</FONT>       *<a name="line.310"></a>
-<FONT color="green">311</FONT>       * @param kind the resource kind<a name="line.311"></a>
-<FONT color="green">312</FONT>       * @return the resource ids<a name="line.312"></a>
-<FONT color="green">313</FONT>       */<a name="line.313"></a>
-<FONT color="green">314</FONT>      public List&lt;String&gt; listResourceId(ResourceKind kind) {<a name="line.314"></a>
-<FONT color="green">315</FONT>        switch (kind) {<a name="line.315"></a>
-<FONT color="green">316</FONT>          case COMMAND:<a name="line.316"></a>
-<FONT color="green">317</FONT>            SortedSet&lt;String&gt; all = new TreeSet&lt;String&gt;();<a name="line.317"></a>
-<FONT color="green">318</FONT>            try {<a name="line.318"></a>
-<FONT color="green">319</FONT>              for (File path : dirs) {<a name="line.319"></a>
-<FONT color="green">320</FONT>                for (File file : path.children()) {<a name="line.320"></a>
-<FONT color="green">321</FONT>                  String name = file.getName();<a name="line.321"></a>
-<FONT color="green">322</FONT>                  Matcher matcher = p.matcher(name);<a name="line.322"></a>
-<FONT color="green">323</FONT>                  if (matcher.matches()) {<a name="line.323"></a>
-<FONT color="green">324</FONT>                    all.add(matcher.group(1));<a name="line.324"></a>
-<FONT color="green">325</FONT>                  }<a name="line.325"></a>
-<FONT color="green">326</FONT>                }<a name="line.326"></a>
-<FONT color="green">327</FONT>              }<a name="line.327"></a>
+<FONT color="green">197</FONT>        for (PropertyDescriptor&lt;?&gt; pd : properties.keySet())<a name="line.197"></a>
+<FONT color="green">198</FONT>        {<a name="line.198"></a>
+<FONT color="green">199</FONT>          if (pd.name.equals(propertyName) &amp;&amp; type.isAssignableFrom(pd.type))<a name="line.199"></a>
+<FONT color="green">200</FONT>          {<a name="line.200"></a>
+<FONT color="green">201</FONT>            return type.cast(getProperty(pd));<a name="line.201"></a>
+<FONT color="green">202</FONT>          }<a name="line.202"></a>
+<FONT color="green">203</FONT>        }<a name="line.203"></a>
+<FONT color="green">204</FONT>        return null;<a name="line.204"></a>
+<FONT color="green">205</FONT>      }<a name="line.205"></a>
+<FONT color="green">206</FONT>    <a name="line.206"></a>
+<FONT color="green">207</FONT>      /**<a name="line.207"></a>
+<FONT color="green">208</FONT>       * Set a context property to a new value. If the provided value is null, then the property is removed.<a name="line.208"></a>
+<FONT color="green">209</FONT>       *<a name="line.209"></a>
+<FONT color="green">210</FONT>       * @param desc the property descriptor<a name="line.210"></a>
+<FONT color="green">211</FONT>       * @param value the property value<a name="line.211"></a>
+<FONT color="green">212</FONT>       * @param &lt;T&gt; the property parameter type<a name="line.212"></a>
+<FONT color="green">213</FONT>       * @throws NullPointerException if the descriptor argument is null<a name="line.213"></a>
+<FONT color="green">214</FONT>       */<a name="line.214"></a>
+<FONT color="green">215</FONT>      public &lt;T&gt; void setProperty(PropertyDescriptor&lt;T&gt; desc, T value) throws NullPointerException {<a name="line.215"></a>
+<FONT color="green">216</FONT>        if (desc == null) {<a name="line.216"></a>
+<FONT color="green">217</FONT>          throw new NullPointerException();<a name="line.217"></a>
+<FONT color="green">218</FONT>        }<a name="line.218"></a>
+<FONT color="green">219</FONT>        if (value == null) {<a name="line.219"></a>
+<FONT color="green">220</FONT>          log.debug("Removing property " + desc.name);<a name="line.220"></a>
+<FONT color="green">221</FONT>          properties.remove(desc);<a name="line.221"></a>
+<FONT color="green">222</FONT>        } else {<a name="line.222"></a>
+<FONT color="green">223</FONT>          Property&lt;T&gt; property = new Property&lt;T&gt;(desc, value);<a name="line.223"></a>
+<FONT color="green">224</FONT>          log.debug("Setting property " + desc.name + " to value " + property.getValue());<a name="line.224"></a>
+<FONT color="green">225</FONT>          properties.put(desc, property);<a name="line.225"></a>
+<FONT color="green">226</FONT>        }<a name="line.226"></a>
+<FONT color="green">227</FONT>      }<a name="line.227"></a>
+<FONT color="green">228</FONT>    <a name="line.228"></a>
+<FONT color="green">229</FONT>      /**<a name="line.229"></a>
+<FONT color="green">230</FONT>       * Set a context property to a new value. If the provided value is null, then the property is removed.<a name="line.230"></a>
+<FONT color="green">231</FONT>       *<a name="line.231"></a>
+<FONT color="green">232</FONT>       * @param desc the property descriptor<a name="line.232"></a>
+<FONT color="green">233</FONT>       * @param value the property value<a name="line.233"></a>
+<FONT color="green">234</FONT>       * @param &lt;T&gt; the property parameter type<a name="line.234"></a>
+<FONT color="green">235</FONT>       * @throws NullPointerException if the descriptor argument is null<a name="line.235"></a>
+<FONT color="green">236</FONT>       * @throws IllegalArgumentException if the string value cannot be converted to the property type<a name="line.236"></a>
+<FONT color="green">237</FONT>       */<a name="line.237"></a>
+<FONT color="green">238</FONT>      public &lt;T&gt; void setProperty(PropertyDescriptor&lt;T&gt; desc, String value) throws NullPointerException, IllegalArgumentException {<a name="line.238"></a>
+<FONT color="green">239</FONT>        if (desc == null) {<a name="line.239"></a>
+<FONT color="green">240</FONT>          throw new NullPointerException();<a name="line.240"></a>
+<FONT color="green">241</FONT>        }<a name="line.241"></a>
+<FONT color="green">242</FONT>        if (value == null) {<a name="line.242"></a>
+<FONT color="green">243</FONT>          log.debug("Removing property " + desc.name);<a name="line.243"></a>
+<FONT color="green">244</FONT>          properties.remove(desc);<a name="line.244"></a>
+<FONT color="green">245</FONT>        } else {<a name="line.245"></a>
+<FONT color="green">246</FONT>          Property&lt;T&gt; property = desc.toProperty(value);<a name="line.246"></a>
+<FONT color="green">247</FONT>          log.debug("Setting property " + desc.name + " to value " + property.getValue());<a name="line.247"></a>
+<FONT color="green">248</FONT>          properties.put(desc, property);<a name="line.248"></a>
+<FONT color="green">249</FONT>        }<a name="line.249"></a>
+<FONT color="green">250</FONT>      }<a name="line.250"></a>
+<FONT color="green">251</FONT>    <a name="line.251"></a>
+<FONT color="green">252</FONT>      /**<a name="line.252"></a>
+<FONT color="green">253</FONT>       * Load a resource from the context.<a name="line.253"></a>
+<FONT color="green">254</FONT>       *<a name="line.254"></a>
+<FONT color="green">255</FONT>       * @param resourceId the resource id<a name="line.255"></a>
+<FONT color="green">256</FONT>       * @param resourceKind the resource kind<a name="line.256"></a>
+<FONT color="green">257</FONT>       * @return the resource or null if it cannot be found<a name="line.257"></a>
+<FONT color="green">258</FONT>       */<a name="line.258"></a>
+<FONT color="green">259</FONT>      public Resource loadResource(String resourceId, ResourceKind resourceKind) {<a name="line.259"></a>
+<FONT color="green">260</FONT>        Resource res = null;<a name="line.260"></a>
+<FONT color="green">261</FONT>        try {<a name="line.261"></a>
+<FONT color="green">262</FONT>    <a name="line.262"></a>
+<FONT color="green">263</FONT>          //<a name="line.263"></a>
+<FONT color="green">264</FONT>          switch (resourceKind) {<a name="line.264"></a>
+<FONT color="green">265</FONT>            case LIFECYCLE:<a name="line.265"></a>
+<FONT color="green">266</FONT>              if ("login".equals(resourceId) || "logout".equals(resourceId)) {<a name="line.266"></a>
+<FONT color="green">267</FONT>                ByteArrayOutputStream buffer = new ByteArrayOutputStream();<a name="line.267"></a>
+<FONT color="green">268</FONT>                long timestamp = Long.MIN_VALUE;<a name="line.268"></a>
+<FONT color="green">269</FONT>                for (File path : dirs) {<a name="line.269"></a>
+<FONT color="green">270</FONT>                  File f = path.child(resourceId + ".groovy", false);<a name="line.270"></a>
+<FONT color="green">271</FONT>                  if (f != null) {<a name="line.271"></a>
+<FONT color="green">272</FONT>                    Resource sub = f.getResource();<a name="line.272"></a>
+<FONT color="green">273</FONT>                    if (sub != null) {<a name="line.273"></a>
+<FONT color="green">274</FONT>                      buffer.write(sub.getContent());<a name="line.274"></a>
+<FONT color="green">275</FONT>                      buffer.write('\n');<a name="line.275"></a>
+<FONT color="green">276</FONT>                      timestamp = Math.max(timestamp, sub.getTimestamp());<a name="line.276"></a>
+<FONT color="green">277</FONT>                    }<a name="line.277"></a>
+<FONT color="green">278</FONT>                  }<a name="line.278"></a>
+<FONT color="green">279</FONT>                }<a name="line.279"></a>
+<FONT color="green">280</FONT>                return new Resource(buffer.toByteArray(), timestamp);<a name="line.280"></a>
+<FONT color="green">281</FONT>              }<a name="line.281"></a>
+<FONT color="green">282</FONT>              break;<a name="line.282"></a>
+<FONT color="green">283</FONT>            case COMMAND:<a name="line.283"></a>
+<FONT color="green">284</FONT>              // Find the resource first, we find for the first found<a name="line.284"></a>
+<FONT color="green">285</FONT>              for (File path : dirs) {<a name="line.285"></a>
+<FONT color="green">286</FONT>                File f = path.child(resourceId + ".groovy", false);<a name="line.286"></a>
+<FONT color="green">287</FONT>                if (f != null) {<a name="line.287"></a>
+<FONT color="green">288</FONT>                  res = f.getResource();<a name="line.288"></a>
+<FONT color="green">289</FONT>                }<a name="line.289"></a>
+<FONT color="green">290</FONT>              }<a name="line.290"></a>
+<FONT color="green">291</FONT>              break;<a name="line.291"></a>
+<FONT color="green">292</FONT>            case CONFIG:<a name="line.292"></a>
+<FONT color="green">293</FONT>              String path = "/" + resourceId;<a name="line.293"></a>
+<FONT color="green">294</FONT>              File file = confFS.get(Path.get(path));<a name="line.294"></a>
+<FONT color="green">295</FONT>              if (file != null) {<a name="line.295"></a>
+<FONT color="green">296</FONT>                res = file.getResource();<a name="line.296"></a>
+<FONT color="green">297</FONT>              }<a name="line.297"></a>
+<FONT color="green">298</FONT>          }<a name="line.298"></a>
+<FONT color="green">299</FONT>        } catch (IOException e) {<a name="line.299"></a>
+<FONT color="green">300</FONT>          log.warn("Could not obtain resource " + resourceId, e);<a name="line.300"></a>
+<FONT color="green">301</FONT>        }<a name="line.301"></a>
+<FONT color="green">302</FONT>        return res;<a name="line.302"></a>
+<FONT color="green">303</FONT>      }<a name="line.303"></a>
+<FONT color="green">304</FONT>    <a name="line.304"></a>
+<FONT color="green">305</FONT>      /**<a name="line.305"></a>
+<FONT color="green">306</FONT>       * List the resources id for a specific resource kind.<a name="line.306"></a>
+<FONT color="green">307</FONT>       *<a name="line.307"></a>
+<FONT color="green">308</FONT>       * @param kind the resource kind<a name="line.308"></a>
+<FONT color="green">309</FONT>       * @return the resource ids<a name="line.309"></a>
+<FONT color="green">310</FONT>       */<a name="line.310"></a>
+<FONT color="green">311</FONT>      public List&lt;String&gt; listResourceId(ResourceKind kind) {<a name="line.311"></a>
+<FONT color="green">312</FONT>        switch (kind) {<a name="line.312"></a>
+<FONT color="green">313</FONT>          case COMMAND:<a name="line.313"></a>
+<FONT color="green">314</FONT>            SortedSet&lt;String&gt; all = new TreeSet&lt;String&gt;();<a name="line.314"></a>
+<FONT color="green">315</FONT>            try {<a name="line.315"></a>
+<FONT color="green">316</FONT>              for (File path : dirs) {<a name="line.316"></a>
+<FONT color="green">317</FONT>                for (File file : path.children()) {<a name="line.317"></a>
+<FONT color="green">318</FONT>                  String name = file.getName();<a name="line.318"></a>
+<FONT color="green">319</FONT>                  Matcher matcher = p.matcher(name);<a name="line.319"></a>
+<FONT color="green">320</FONT>                  if (matcher.matches()) {<a name="line.320"></a>
+<FONT color="green">321</FONT>                    all.add(matcher.group(1));<a name="line.321"></a>
+<FONT color="green">322</FONT>                  }<a name="line.322"></a>
+<FONT color="green">323</FONT>                }<a name="line.323"></a>
+<FONT color="green">324</FONT>              }<a name="line.324"></a>
+<FONT color="green">325</FONT>            }<a name="line.325"></a>
+<FONT color="green">326</FONT>            catch (IOException e) {<a name="line.326"></a>
+<FONT color="green">327</FONT>              e.printStackTrace();<a name="line.327"></a>
 <FONT color="green">328</FONT>            }<a name="line.328"></a>
-<FONT color="green">329</FONT>            catch (IOException e) {<a name="line.329"></a>
-<FONT color="green">330</FONT>              e.printStackTrace();<a name="line.330"></a>
-<FONT color="green">331</FONT>            }<a name="line.331"></a>
-<FONT color="green">332</FONT>            all.remove("login");<a name="line.332"></a>
-<FONT color="green">333</FONT>            all.remove("logout");<a name="line.333"></a>
-<FONT color="green">334</FONT>            return new ArrayList&lt;String&gt;(all);<a name="line.334"></a>
-<FONT color="green">335</FONT>          default:<a name="line.335"></a>
-<FONT color="green">336</FONT>            return Collections.emptyList();<a name="line.336"></a>
-<FONT color="green">337</FONT>        }<a name="line.337"></a>
-<FONT color="green">338</FONT>      }<a name="line.338"></a>
-<FONT color="green">339</FONT>    <a name="line.339"></a>
-<FONT color="green">340</FONT>      /**<a name="line.340"></a>
-<FONT color="green">341</FONT>       * Returns the classloader associated with this context.<a name="line.341"></a>
-<FONT color="green">342</FONT>       *<a name="line.342"></a>
-<FONT color="green">343</FONT>       * @return the class loader<a name="line.343"></a>
-<FONT color="green">344</FONT>       */<a name="line.344"></a>
-<FONT color="green">345</FONT>      public ClassLoader getLoader() {<a name="line.345"></a>
-<FONT color="green">346</FONT>        return loader;<a name="line.346"></a>
-<FONT color="green">347</FONT>      }<a name="line.347"></a>
-<FONT color="green">348</FONT>    <a name="line.348"></a>
-<FONT color="green">349</FONT>      /**<a name="line.349"></a>
-<FONT color="green">350</FONT>       * Returns the plugins associated with this context.<a name="line.350"></a>
-<FONT color="green">351</FONT>       *<a name="line.351"></a>
-<FONT color="green">352</FONT>       * @param pluginType the plugin type<a name="line.352"></a>
-<FONT color="green">353</FONT>       * @param &lt;T&gt; the plugin generic type<a name="line.353"></a>
-<FONT color="green">354</FONT>       * @return the plugins<a name="line.354"></a>
-<FONT color="green">355</FONT>       */<a name="line.355"></a>
-<FONT color="green">356</FONT>      public &lt;T&gt; Iterable&lt;T&gt; getPlugins(Class&lt;T&gt; pluginType) {<a name="line.356"></a>
-<FONT color="green">357</FONT>        return manager.getPlugins(pluginType);<a name="line.357"></a>
-<FONT color="green">358</FONT>      }<a name="line.358"></a>
-<FONT color="green">359</FONT>    <a name="line.359"></a>
-<FONT color="green">360</FONT>      /**<a name="line.360"></a>
-<FONT color="green">361</FONT>       * Refresh the fs system view. This is normally triggered by the periodic job but it can be manually<a name="line.361"></a>
-<FONT color="green">362</FONT>       * invoked to trigger explicit refreshes.<a name="line.362"></a>
-<FONT color="green">363</FONT>       */<a name="line.363"></a>
-<FONT color="green">364</FONT>      public void refresh() {<a name="line.364"></a>
-<FONT color="green">365</FONT>        try {<a name="line.365"></a>
-<FONT color="green">366</FONT>          File commands = cmdFS.get(Path.get("/"));<a name="line.366"></a>
-<FONT color="green">367</FONT>          List&lt;File&gt; newDirs = new ArrayList&lt;File&gt;();<a name="line.367"></a>
-<FONT color="green">368</FONT>          newDirs.add(commands);<a name="line.368"></a>
-<FONT color="green">369</FONT>          for (File path : commands.children()) {<a name="line.369"></a>
-<FONT color="green">370</FONT>            if (path.isDir()) {<a name="line.370"></a>
-<FONT color="green">371</FONT>              newDirs.add(path);<a name="line.371"></a>
-<FONT color="green">372</FONT>            }<a name="line.372"></a>
-<FONT color="green">373</FONT>          }<a name="line.373"></a>
-<FONT color="green">374</FONT>          dirs = newDirs;<a name="line.374"></a>
-<FONT color="green">375</FONT>        }<a name="line.375"></a>
-<FONT color="green">376</FONT>        catch (IOException e) {<a name="line.376"></a>
-<FONT color="green">377</FONT>          e.printStackTrace();<a name="line.377"></a>
-<FONT color="green">378</FONT>        }<a name="line.378"></a>
-<FONT color="green">379</FONT>      }<a name="line.379"></a>
-<FONT color="green">380</FONT>    <a name="line.380"></a>
-<FONT color="green">381</FONT>      synchronized void start() {<a name="line.381"></a>
-<FONT color="green">382</FONT>        if (!started) {<a name="line.382"></a>
-<FONT color="green">383</FONT>    <a name="line.383"></a>
-<FONT color="green">384</FONT>          // Start refresh<a name="line.384"></a>
-<FONT color="green">385</FONT>          Integer refreshRate = getProperty(PropertyDescriptor.VFS_REFRESH_PERIOD);<a name="line.385"></a>
-<FONT color="green">386</FONT>          TimeUnit timeUnit = getProperty(PropertyDescriptor.VFS_REFRESH_UNIT);<a name="line.386"></a>
-<FONT color="green">387</FONT>          if (refreshRate != null &amp;&amp; refreshRate &gt; 0) {<a name="line.387"></a>
-<FONT color="green">388</FONT>            TimeUnit tu = timeUnit != null ? timeUnit : TimeUnit.SECONDS;<a name="line.388"></a>
-<FONT color="green">389</FONT>            scanner =  new ScheduledThreadPoolExecutor(1);<a name="line.389"></a>
-<FONT color="green">390</FONT>            scanner.scheduleWithFixedDelay(new Runnable() {<a name="line.390"></a>
-<FONT color="green">391</FONT>              public void run() {<a name="line.391"></a>
-<FONT color="green">392</FONT>                refresh();<a name="line.392"></a>
-<FONT color="green">393</FONT>              }<a name="line.393"></a>
-<FONT color="green">394</FONT>            }, 0, refreshRate, tu);<a name="line.394"></a>
-<FONT color="green">395</FONT>          }<a name="line.395"></a>
+<FONT color="green">329</FONT>            all.remove("login");<a name="line.329"></a>
+<FONT color="green">330</FONT>            all.remove("logout");<a name="line.330"></a>
+<FONT color="green">331</FONT>            return new ArrayList&lt;String&gt;(all);<a name="line.331"></a>
+<FONT color="green">332</FONT>          default:<a name="line.332"></a>
+<FONT color="green">333</FONT>            return Collections.emptyList();<a name="line.333"></a>
+<FONT color="green">334</FONT>        }<a name="line.334"></a>
+<FONT color="green">335</FONT>      }<a name="line.335"></a>
+<FONT color="green">336</FONT>    <a name="line.336"></a>
+<FONT color="green">337</FONT>      /**<a name="line.337"></a>
+<FONT color="green">338</FONT>       * Returns the classloader associated with this context.<a name="line.338"></a>
+<FONT color="green">339</FONT>       *<a name="line.339"></a>
+<FONT color="green">340</FONT>       * @return the class loader<a name="line.340"></a>
+<FONT color="green">341</FONT>       */<a name="line.341"></a>
+<FONT color="green">342</FONT>      public ClassLoader getLoader() {<a name="line.342"></a>
+<FONT color="green">343</FONT>        return loader;<a name="line.343"></a>
+<FONT color="green">344</FONT>      }<a name="line.344"></a>
+<FONT color="green">345</FONT>    <a name="line.345"></a>
+<FONT color="green">346</FONT>      public Iterable&lt;CRaSHPlugin&lt;?&gt;&gt; getPlugins() {<a name="line.346"></a>
+<FONT color="green">347</FONT>        return manager.getPlugins();<a name="line.347"></a>
+<FONT color="green">348</FONT>      }<a name="line.348"></a>
+<FONT color="green">349</FONT>    <a name="line.349"></a>
+<FONT color="green">350</FONT>      /**<a name="line.350"></a>
+<FONT color="green">351</FONT>       * Returns the plugins associated with this context.<a name="line.351"></a>
+<FONT color="green">352</FONT>       *<a name="line.352"></a>
+<FONT color="green">353</FONT>       * @param pluginType the plugin type<a name="line.353"></a>
+<FONT color="green">354</FONT>       * @param &lt;T&gt; the plugin generic type<a name="line.354"></a>
+<FONT color="green">355</FONT>       * @return the plugins<a name="line.355"></a>
+<FONT color="green">356</FONT>       */<a name="line.356"></a>
+<FONT color="green">357</FONT>      public &lt;T&gt; Iterable&lt;T&gt; getPlugins(Class&lt;T&gt; pluginType) {<a name="line.357"></a>
+<FONT color="green">358</FONT>        return manager.getPlugins(pluginType);<a name="line.358"></a>
+<FONT color="green">359</FONT>      }<a name="line.359"></a>
+<FONT color="green">360</FONT>    <a name="line.360"></a>
+<FONT color="green">361</FONT>      /**<a name="line.361"></a>
+<FONT color="green">362</FONT>       * Returns the first plugin associated with this context implementing the specified type.<a name="line.362"></a>
+<FONT color="green">363</FONT>       *<a name="line.363"></a>
+<FONT color="green">364</FONT>       * @param pluginType the plugin type<a name="line.364"></a>
+<FONT color="green">365</FONT>       * @param &lt;T&gt; the plugin generic type<a name="line.365"></a>
+<FONT color="green">366</FONT>       * @return the plugins<a name="line.366"></a>
+<FONT color="green">367</FONT>       */<a name="line.367"></a>
+<FONT color="green">368</FONT>      public &lt;T&gt; T getPlugin(Class&lt;T&gt; pluginType) {<a name="line.368"></a>
+<FONT color="green">369</FONT>        Iterator&lt;T&gt; plugins = manager.getPlugins(pluginType).iterator();<a name="line.369"></a>
+<FONT color="green">370</FONT>        return plugins.hasNext() ? plugins.next() : null;<a name="line.370"></a>
+<FONT color="green">371</FONT>      }<a name="line.371"></a>
+<FONT color="green">372</FONT>    <a name="line.372"></a>
+<FONT color="green">373</FONT>      /**<a name="line.373"></a>
+<FONT color="green">374</FONT>       * Refresh the fs system view. This is normally triggered by the periodic job but it can be manually<a name="line.374"></a>
+<FONT color="green">375</FONT>       * invoked to trigger explicit refreshes.<a name="line.375"></a>
+<FONT color="green">376</FONT>       */<a name="line.376"></a>
+<FONT color="green">377</FONT>      public void refresh() {<a name="line.377"></a>
+<FONT color="green">378</FONT>        try {<a name="line.378"></a>
+<FONT color="green">379</FONT>          File commands = cmdFS.get(Path.get("/"));<a name="line.379"></a>
+<FONT color="green">380</FONT>          List&lt;File&gt; newDirs = new ArrayList&lt;File&gt;();<a name="line.380"></a>
+<FONT color="green">381</FONT>          newDirs.add(commands);<a name="line.381"></a>
+<FONT color="green">382</FONT>          for (File path : commands.children()) {<a name="line.382"></a>
+<FONT color="green">383</FONT>            if (path.isDir()) {<a name="line.383"></a>
+<FONT color="green">384</FONT>              newDirs.add(path);<a name="line.384"></a>
+<FONT color="green">385</FONT>            }<a name="line.385"></a>
+<FONT color="green">386</FONT>          }<a name="line.386"></a>
+<FONT color="green">387</FONT>          dirs = newDirs;<a name="line.387"></a>
+<FONT color="green">388</FONT>        }<a name="line.388"></a>
+<FONT color="green">389</FONT>        catch (IOException e) {<a name="line.389"></a>
+<FONT color="green">390</FONT>          e.printStackTrace();<a name="line.390"></a>
+<FONT color="green">391</FONT>        }<a name="line.391"></a>
+<FONT color="green">392</FONT>      }<a name="line.392"></a>
+<FONT color="green">393</FONT>    <a name="line.393"></a>
+<FONT color="green">394</FONT>      synchronized void start() {<a name="line.394"></a>
+<FONT color="green">395</FONT>        if (!started) {<a name="line.395"></a>
 <FONT color="green">396</FONT>    <a name="line.396"></a>
-<FONT color="green">397</FONT>          // Init plugins<a name="line.397"></a>
-<FONT color="green">398</FONT>          manager.getPlugins(Object.class);<a name="line.398"></a>
-<FONT color="green">399</FONT>    <a name="line.399"></a>
-<FONT color="green">400</FONT>          //<a name="line.400"></a>
-<FONT color="green">401</FONT>          started = true;<a name="line.401"></a>
-<FONT color="green">402</FONT>        } else {<a name="line.402"></a>
-<FONT color="green">403</FONT>          log.warn("Attempt to double start");<a name="line.403"></a>
-<FONT color="green">404</FONT>        }<a name="line.404"></a>
-<FONT color="green">405</FONT>      }<a name="line.405"></a>
-<FONT color="green">406</FONT>    <a name="line.406"></a>
-<FONT color="green">407</FONT>      synchronized void stop() {<a name="line.407"></a>
-<FONT color="green">408</FONT>    <a name="line.408"></a>
-<FONT color="green">409</FONT>        //<a name="line.409"></a>
-<FONT color="green">410</FONT>        if (started) {<a name="line.410"></a>
-<FONT color="green">411</FONT>    <a name="line.411"></a>
-<FONT color="green">412</FONT>          // Shutdown manager<a name="line.412"></a>
-<FONT color="green">413</FONT>          manager.shutdown();<a name="line.413"></a>
-<FONT color="green">414</FONT>    <a name="line.414"></a>
-<FONT color="green">415</FONT>          // Shutdown scanner<a name="line.415"></a>
-<FONT color="green">416</FONT>          if (scanner != null) {<a name="line.416"></a>
-<FONT color="green">417</FONT>            ScheduledExecutorService tmp = scanner;<a name="line.417"></a>
-<FONT color="green">418</FONT>            scanner = null;<a name="line.418"></a>
-<FONT color="green">419</FONT>            tmp.shutdownNow();<a name="line.419"></a>
-<FONT color="green">420</FONT>          }<a name="line.420"></a>
+<FONT color="green">397</FONT>          // Start refresh<a name="line.397"></a>
+<FONT color="green">398</FONT>          Integer refreshRate = getProperty(PropertyDescriptor.VFS_REFRESH_PERIOD);<a name="line.398"></a>
+<FONT color="green">399</FONT>          TimeUnit timeUnit = getProperty(PropertyDescriptor.VFS_REFRESH_UNIT);<a name="line.399"></a>
+<FONT color="green">400</FONT>          if (refreshRate != null &amp;&amp; refreshRate &gt; 0) {<a name="line.400"></a>
+<FONT color="green">401</FONT>            TimeUnit tu = timeUnit != null ? timeUnit : TimeUnit.SECONDS;<a name="line.401"></a>
+<FONT color="green">402</FONT>            scanner =  new ScheduledThreadPoolExecutor(1);<a name="line.402"></a>
+<FONT color="green">403</FONT>            scanner.scheduleWithFixedDelay(new Runnable() {<a name="line.403"></a>
+<FONT color="green">404</FONT>              public void run() {<a name="line.404"></a>
+<FONT color="green">405</FONT>                refresh();<a name="line.405"></a>
+<FONT color="green">406</FONT>              }<a name="line.406"></a>
+<FONT color="green">407</FONT>            }, 0, refreshRate, tu);<a name="line.407"></a>
+<FONT color="green">408</FONT>          }<a name="line.408"></a>
+<FONT color="green">409</FONT>    <a name="line.409"></a>
+<FONT color="green">410</FONT>          // Init plugins<a name="line.410"></a>
+<FONT color="green">411</FONT>          manager.getPlugins(Object.class);<a name="line.411"></a>
+<FONT color="green">412</FONT>    <a name="line.412"></a>
+<FONT color="green">413</FONT>          //<a name="line.413"></a>
+<FONT color="green">414</FONT>          started = true;<a name="line.414"></a>
+<FONT color="green">415</FONT>        } else {<a name="line.415"></a>
+<FONT color="green">416</FONT>          log.warn("Attempt to double start");<a name="line.416"></a>
+<FONT color="green">417</FONT>        }<a name="line.417"></a>
+<FONT color="green">418</FONT>      }<a name="line.418"></a>
+<FONT color="green">419</FONT>    <a name="line.419"></a>
+<FONT color="green">420</FONT>      synchronized void stop() {<a name="line.420"></a>
 <FONT color="green">421</FONT>    <a name="line.421"></a>
-<FONT color="green">422</FONT>          // Shutdown executor<a name="line.422"></a>
-<FONT color="green">423</FONT>          executor.shutdownNow();<a name="line.423"></a>
-<FONT color="green">424</FONT>        } else {<a name="line.424"></a>
-<FONT color="green">425</FONT>          log.warn("Attempt to stop when stopped");<a name="line.425"></a>
-<FONT color="green">426</FONT>        }<a name="line.426"></a>
-<FONT color="green">427</FONT>      }<a name="line.427"></a>
-<FONT color="green">428</FONT>    }<a name="line.428"></a>
+<FONT color="green">422</FONT>        //<a name="line.422"></a>
+<FONT color="green">423</FONT>        if (started) {<a name="line.423"></a>
+<FONT color="green">424</FONT>    <a name="line.424"></a>
+<FONT color="green">425</FONT>          // Shutdown manager<a name="line.425"></a>
+<FONT color="green">426</FONT>          manager.shutdown();<a name="line.426"></a>
+<FONT color="green">427</FONT>    <a name="line.427"></a>
+<FONT color="green">428</FONT>          // Shutdown scanner<a name="line.428"></a>
+<FONT color="green">429</FONT>          if (scanner != null) {<a name="line.429"></a>
+<FONT color="green">430</FONT>            ScheduledExecutorService tmp = scanner;<a name="line.430"></a>
+<FONT color="green">431</FONT>            scanner = null;<a name="line.431"></a>
+<FONT color="green">432</FONT>            tmp.shutdownNow();<a name="line.432"></a>
+<FONT color="green">433</FONT>          }<a name="line.433"></a>
+<FONT color="green">434</FONT>    <a name="line.434"></a>
+<FONT color="green">435</FONT>          // Shutdown executor<a name="line.435"></a>
+<FONT color="green">436</FONT>          executor.shutdownNow();<a name="line.436"></a>
+<FONT color="green">437</FONT>        } else {<a name="line.437"></a>
+<FONT color="green">438</FONT>          log.warn("Attempt to stop when stopped");<a name="line.438"></a>
+<FONT color="green">439</FONT>        }<a name="line.439"></a>
+<FONT color="green">440</FONT>      }<a name="line.440"></a>
+<FONT color="green">441</FONT>    }<a name="line.441"></a>
 
 
 
