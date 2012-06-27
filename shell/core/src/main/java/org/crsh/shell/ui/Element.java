@@ -19,6 +19,7 @@
 
 package org.crsh.shell.ui;
 
+import org.crsh.command.InvocationContext;
 import org.crsh.shell.io.ShellWriter;
 
 import java.io.IOException;
@@ -30,29 +31,34 @@ import java.io.IOException;
 public abstract class Element {
 
   /** . */
-  private Style style;
+  private Decoration decoration;
 
-  public void setStyle(Style style) {
-    this.style = style;
+  /** . */
+  private Color foreground;
+
+  /** . */
+  private Color background;
+  
+  /** . */
+  private Element parent;
+
+  public void print(ShellWriter writer, InvocationContext context) throws IOException {
+    print(new UIWriterContext(context), writer);
   }
 
-  public Style getStyle() {
-    return style;
-  }
+  public void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
 
-  final public void print(ShellWriter writer) throws IOException {
-    print(null, writer);
-  }
+    if (ctx == null) {
+      throw new NullPointerException();
+    }
 
-  final public void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
-
-    if (style != null) {
-      new FormattingElement(style).print(ctx, writer);
+    if (haveStyle()) {
+      new FormattingElement(new Style(getDecoration(), getForeground(), getBackground())).print(ctx, writer);
     }
 
     doPrint(ctx, writer);
 
-    if (style != null) {
+    if (haveStyle()) {
       new FormattingElement(null).print(ctx, writer);
     }
     
@@ -61,5 +67,64 @@ public abstract class Element {
   abstract void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException;
   
   abstract int width();
+
+  private boolean haveStyle() {
+    return (getDecoration() != null) || (getForeground() != null) || (getBackground() != null);
+  }
   
+  public Decoration getDecoration() {
+
+    if (decoration != null) {
+      return decoration;
+    } else if (parent != null) {
+      return parent.getDecoration();
+    } else {
+      return null;
+    }
+    
+  }
+
+  public Color getForeground() {
+
+    if (foreground != null) {
+      return foreground;
+    } else if (parent != null) {
+      return parent.getForeground();
+    } else {
+      return null;
+    }
+
+  }
+
+  public Color getBackground() {
+
+    if (background != null) {
+      return background;
+    } else if (parent != null) {
+      return parent.getBackground();
+    } else {
+      return null;
+    }
+        
+  }
+
+  public void setDecoration(Decoration decoration) {
+    this.decoration = decoration;
+  }
+
+  public void setForeground(Color foreground) {
+    this.foreground = foreground;
+  }
+
+  public void setBackground(Color background) {
+    this.background = background;
+  }
+
+  public Element getParent() {
+    return parent;
+  }
+
+  public void setParent(Element parent) {
+    this.parent = parent;
+  }
 }

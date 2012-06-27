@@ -64,9 +64,6 @@ public class TreeElement extends Element {
 
   @Override
   void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
-    if (ctx == null) {
-      ctx = new UIWriterContext();
-    }
 
     //
     if (value != null) {

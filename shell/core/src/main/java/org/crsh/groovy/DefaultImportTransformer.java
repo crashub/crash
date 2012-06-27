@@ -34,6 +34,8 @@ import org.crsh.cmdline.annotations.Option;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
+import org.crsh.shell.ui.Color;
+import org.crsh.shell.ui.Decoration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,12 +64,24 @@ public class DefaultImportTransformer implements ASTTransformation {
     CRaSHCommand.class,
   };
 
+  /** . */
+  private static final Class<?>[] defaultStaticImports = {
+    Color.class,
+    Decoration.class
+  };
+
   public void visit(ASTNode[] nodes, final SourceUnit source) {
     log.debug("Transforming source to add default import package");
     for (Class<?> defaultImport : defaultImports) {
       log.debug("Adding default import for class " + defaultImport.getName());
       if (source.getAST().getImport(defaultImport.getSimpleName()) == null) {
         source.getAST().addImport(defaultImport.getSimpleName(), ClassHelper.make(defaultImport));
+      }
+    }
+    for (Class<?> defaultStaticImport : defaultStaticImports) {
+      log.debug("Adding default static import for class " + defaultStaticImport.getName());
+      if (!source.getAST().getStaticStarImports().containsKey(defaultStaticImport.getSimpleName())) {
+        source.getAST().addStaticStarImport(defaultStaticImport.getSimpleName(), ClassHelper.make(defaultStaticImport));
       }
     }
   }

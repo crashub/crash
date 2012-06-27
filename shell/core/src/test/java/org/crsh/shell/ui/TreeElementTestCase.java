@@ -20,6 +20,8 @@
 package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
+import org.crsh.command.InvocationContext;
+import org.crsh.shell.TestInvocationContext;
 import org.crsh.term.Data;
 import org.crsh.util.LineFeedWriter;
 
@@ -37,7 +39,7 @@ public class TreeElementTestCase extends TestCase {
     elt.addNode(new LabelElement("2\n"));
     Data data = new Data();
     LineFeedWriter writer = new LineFeedWriter(data, "_");
-    elt.print(writer);
+    elt.print(writer, new TestInvocationContext());
     assertEquals(
       "+-1_" +
       "| 1_" +
@@ -50,7 +52,7 @@ public class TreeElementTestCase extends TestCase {
     elt.addNode(new LabelElement("1\n1"));
     Data data = new Data();
     LineFeedWriter writer = new LineFeedWriter(data, "_");
-    elt.print(writer);
+    elt.print(writer, new TestInvocationContext());
     assertEquals(
       "+-1_" +
       "  1_"
@@ -63,7 +65,7 @@ public class TreeElementTestCase extends TestCase {
     elt.addNode(new TreeElement().addNode(new LabelElement("3")).addNode(new LabelElement("4")));
     Data data = new Data();
     LineFeedWriter writer = new LineFeedWriter(data, "_");
-    elt.print(writer);
+    elt.print(writer, new TestInvocationContext());
     assertEquals(
       "foo_" +
       "+-bar_" +

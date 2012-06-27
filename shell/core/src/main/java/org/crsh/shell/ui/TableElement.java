@@ -23,6 +23,7 @@ import org.crsh.shell.io.ShellWriter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,33 +35,12 @@ public class TableElement extends Element {
   public final int MARGIN = 5;
 
   /** . */
-  private List<Integer> colsSize = new ArrayList<Integer>();
-
-  /** . */
   private List<RowElement> rows = new ArrayList<RowElement>();
 
+  /** . */
+  private List<Integer> colsSize = new ArrayList<Integer>();
+
   public TableElement addRow(RowElement row) {
-
-    //
-    int remainingSpace = 235;
-    row.setTable(this);
-    int i = 0;
-    for (LabelElement e : row.getValues()) {
-      if (colsSize.size() <= i) {
-        int usedSpace = Math.min(remainingSpace - MARGIN, e.width());
-        remainingSpace -= usedSpace + MARGIN;
-        colsSize.add(usedSpace);
-      }
-      else {
-        int max = Math.max(e.width(), colsSize.get(i));
-        int usedSpace = Math.min(max, remainingSpace - MARGIN);
-        remainingSpace -= usedSpace + MARGIN;
-        colsSize.set(i, usedSpace);
-      }
-      ++i;
-    }
-
-    //
     rows.add(row);
     return this;
   }
@@ -68,13 +48,17 @@ public class TableElement extends Element {
   @Override
   void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
 
-    if (ctx == null) {
-      ctx = new UIWriterContext();
-    }
+    ctx = new UIWriterContext(ctx);
 
+    colsSize = computeColSize(ctx.getConsoleWidth());
+    ctx.parentUIContext.pad(writer);
     for (RowElement e : rows) {
       e.print(ctx, writer);
     }
+
+    ctx.pad(writer);
+    writer.append("\n");
+    
   }
 
   public List<RowElement> getRows() {
@@ -82,15 +66,45 @@ public class TableElement extends Element {
   }
 
   public List<Integer> getColsSize() {
+    return Collections.unmodifiableList(colsSize);
+  }
+
+  private List<Integer> computeColSize(int consoleWidth) {
+
+    List<Integer> colsSize = new ArrayList<Integer>();
+
+    int colSum = 0;
+    for (int i = 0; i < columnNumber(); ++i) {
+      int colSize = 0;
+      for (RowElement row : rows) {
+        colSize = Math.max(colSize, row.getValues().get(i).width() + MARGIN);
+        int missingSpace = (colSum + colSize) - consoleWidth;
+        if (missingSpace > 0) {
+          colSize -= missingSpace;
+        }
+      }
+      colsSize.add(colSize);
+      colSum += colSize;
+    }
+
     return colsSize;
+    
+  }
+
+  private int columnNumber() {
+
+    int n = 0;
+
+    for (RowElement row : rows) {
+      n = Math.max(n, row.getValues().size());
+    }
+
+    return n;
+
   }
 
   @Override
   int width() {
-    int width = 0;
-    for (int size : colsSize) {
-      width += size;
-    }
-    return width;
+    return 0;
   }
 }

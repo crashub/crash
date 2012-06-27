@@ -180,11 +180,7 @@ public class TermIOClient extends AbstractSocketClient implements TermIO {
 
   public void write(Data d) throws IOException {
     for (DataFragment f : d) {
-      if (f instanceof FormattingData) {
-        write(ansiBuilder.build((FormattingData) f).toString());
-      } else {
-        write(f.toString());
-      }
+      write(f.toString());
     }
   }
 

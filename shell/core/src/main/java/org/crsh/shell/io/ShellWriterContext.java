@@ -27,7 +27,7 @@ import java.io.IOException;
  */
 public interface ShellWriterContext {
 
-  void pad(Appendable appendable) throws IOException;
+  void pad(ShellWriter writer) throws IOException;
 
   void text(CharSequence csq, int off, int end);
 

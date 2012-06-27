@@ -21,6 +21,7 @@ package org.crsh.term.console;
 
 import org.crsh.term.Data;
 import org.crsh.term.DataFragment;
+import org.crsh.term.FormattingData;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -162,8 +163,12 @@ public final class Console {
 
     @Override
     public void write(Data d) throws IOException {
-      for (DataFragment f : d) {
-        write(f.toString());
+      for (DataFragment fragment : d) {
+        if (fragment instanceof FormattingData) {
+          viewWriter.write(new Data(fragment));
+        } else {
+          write(fragment.toString());
+        }
       }
     }
 

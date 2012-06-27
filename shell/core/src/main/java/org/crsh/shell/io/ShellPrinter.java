@@ -19,6 +19,7 @@
 
 package org.crsh.shell.io;
 
+import org.crsh.command.InvocationContext;
 import org.crsh.shell.ui.Element;
 import org.crsh.shell.ui.FormattingElement;
 import org.crsh.shell.ui.Style;
@@ -40,11 +41,14 @@ public class ShellPrinter extends PrintWriter {
   /** . */
   private final ShellWriter out;
 
-  public ShellPrinter(ShellWriter out) {
+  private final InvocationContext context;
+
+  public ShellPrinter(ShellWriter out, InvocationContext context) {
     super(new AppendableWriter(out));
 
     //
     this.out = out;
+    this.context = context;
   }
 
   @Override
@@ -73,7 +77,7 @@ public class ShellPrinter extends PrintWriter {
       }
     } else if (obj instanceof Element) {
       try {
-        ((Element)obj).print(out);
+        ((Element)obj).print(out, context);
       } catch (IOException e) {
         setError();
       }

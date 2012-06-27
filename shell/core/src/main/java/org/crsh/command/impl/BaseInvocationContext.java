@@ -89,7 +89,7 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
   public ShellPrinter getWriter() {
     if (writer == null) {
       data = new Data();
-      writer = new ShellPrinter(new LineFeedWriter(data, "\r\n"));
+      writer = new ShellPrinter(new LineFeedWriter(data, "\r\n"), this);
     }
     return writer;
   }

@@ -6,10 +6,7 @@ import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.annotations.Man
 import org.crsh.shell.ui.UIBuilder
-import org.crsh.shell.ui.Style
-import org.crsh.shell.ui.Color
 import org.crsh.cmdline.annotations.Argument
-import org.crsh.shell.ui.Decoration;
 
 @Usage("JVM thread commands")
 @Man("""\
@@ -86,40 +83,37 @@ public class thread extends CRaSHCommand {
     UIBuilder ui = new UIBuilder();
 
     ui.table() {
-      row([
-        values:["ID", "PRIORITY", "STATE", "INTERRUPTED","DAEMON", "NAME"],
-        styles:[new Style(Decoration.BOLD, Color.BLACK, Color.WHITE)]
-      ])
+      row(decoration: bold, foreground: black, background: white) {
+        label("ID"); label("PRIORITY"); label("STATE"); label("INTERRUPTED"); label("DAEMON"); label("NAME")
+      }
       threads.each() {
         if (it != null) {
           def matcher = it.value.name =~ pattern;
+          def thread = it.value;
           if (matcher.matches() && (state == null || it.value.state == state)) {
-            Color c = null;
             switch (it.value.state) {
               case Thread.State.NEW:
-                c = Color.CYAN
+                c = cyan
                 break;
               case Thread.State.RUNNABLE:
-                c = Color.GREEN
+                c = green
                 break;
               case Thread.State.BLOCKED:
-                c = Color.RED
+                c = red
                 break;
               case Thread.State.WAITING:
-                c = Color.YELLOW
+                c = yellow
                 break;
               case Thread.State.TIMED_WAITING:
-                c = Color.MAGENTA
+                c = magenta
                 break;
               case Thread.State.TERMINATED:
-                c = Color.BLUE
+                c = blue
                 break;
             }
-            row([
-              // We use isInterrupted() to not clear the thread status
-              values:[it.value.id, it.value.priority, "$it.value.state", it.value.isInterrupted(), it.value.daemon, it.value.name],
-              styles:[new Style(null, Color.BLACK, c)]
-            ])
+            row(background: c, foreground: black) {
+              label(thread.id); label(thread.priority); label(thread.state); label(thread.isInterrupted()); label(thread.daemon); label(thread.name)
+            }
             context.produce(it);
           }
         }

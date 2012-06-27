@@ -63,9 +63,9 @@ public class ANSIFontBuilder {
 
     switch (decoration) {
 
-      case BOLD: return 1;
-      case UNDERLINE: return 4;
-      case BLINK: return 5;
+      case bold: return 1;
+      case underline: return 4;
+      case blink: return 5;
 
       default: return -1;
 
@@ -93,14 +93,14 @@ public class ANSIFontBuilder {
 
     switch (color) {
 
-      case BLACK: return 0;
-      case RED: return 1;
-      case GREEN: return 2;
-      case YELLOW: return 3;
-      case BLUE: return 4;
-      case MAGENTA: return 5;
-      case CYAN: return 6;
-      case WHITE: return 7;
+      case black: return 0;
+      case red: return 1;
+      case green: return 2;
+      case yellow: return 3;
+      case blue: return 4;
+      case magenta: return 5;
+      case cyan: return 6;
+      case white: return 7;
 
       default: return -1;
       

@@ -14,6 +14,10 @@ public class Data extends LinkedList<DataFragment> {
     super.add(new DataFragment(data));
   }
 
+  public Data(DataFragment fragment) {
+    super.add(fragment);
+  }
+
   @Override
   public boolean contains(Object o) {
     return toString().contains(o.toString());

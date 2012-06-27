@@ -48,12 +48,29 @@ public class UIBuilder extends BuilderSupport {
     return createNode(name, (Object)null);
   }
 
-  protected Object createNode(Object name, String... values) {
-    return createNode(name, (Object) values);
+  @Override
+  protected Object createNode(Object name, Object value) {
+
+    return initElement(name, value);
+
   }
 
   @Override
-  protected Object createNode(Object name, Object value) {
+  protected Object createNode(Object name, Map attributes, Object value) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  protected Object createNode(Object name, Map attributes) {
+
+    Element e = initElement(name, attributes.get("value"));
+    setStyles(e, attributes);
+    return e;
+    
+  }
+
+  private Element initElement(Object name, Object value) {
+
     if ("node".equals(name)) {
       if (value == null) {
         return new TreeElement();
@@ -65,40 +82,17 @@ public class UIBuilder extends BuilderSupport {
     } else if ("table".equals(name)) {
       return new TableElement();
     } else if ("row".equals(name)) {
-      return new RowElement(Collections.<LabelElement>emptyList());
+      return new RowElement();
     } else {
       throw new UnsupportedOperationException("Cannot build object with name " + name + " and value " + value);
     }
+
   }
-
-  @Override
-  protected Object createNode(Object name, Map attributes, Object value) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  protected Object createNode(Object name, Map attributes) {
-    if ("row".equals(name)) {
-      List<LabelElement> labels = new ArrayList<LabelElement>();
-      List<Object> values = (List<Object>) attributes.get("values");
-      List<Style> styles = (List<Style>) attributes.get("styles");
-
-      for (int i = 0; i < values.size(); ++i) {
-        LabelElement label = new LabelElement(values.get(i));
-        if (styles != null && styles.size() > 0) {
-          if (styles.size() > i) {
-            label.setStyle(styles.get(i));
-          }
-          else {
-            label.setStyle(styles.get(styles.size() - 1));
-          }
-        }
-        labels.add(label);
-      }
-      return new RowElement(labels);
-    } else {
-      throw new UnsupportedOperationException();
-    }
+  
+  private void setStyles(Element e, Map attributes) {
+    e.setDecoration((Decoration) attributes.get("decoration"));
+    e.setForeground((Color) attributes.get("foreground"));
+    e.setBackground((Color) attributes.get("background"));
   }
 
   @Override
@@ -107,10 +101,20 @@ public class UIBuilder extends BuilderSupport {
       TreeElement parentElement = (TreeElement)parent;
       Element childElement = (Element)child;
       parentElement.addNode(childElement);
+      childElement.setParent(parentElement);
     } else if (parent instanceof TableElement) {
       TableElement parentElement = (TableElement)parent;
       RowElement childElement = (RowElement)child;
       parentElement.addRow(childElement);
+      childElement.setParent(parentElement);
+    } else if (parent instanceof RowElement) {
+      RowElement parentElement = (RowElement)parent;
+      Element childElement = (Element)child;
+      if (child instanceof TreeElement) {
+        throw new IllegalArgumentException("A table cannot contain node element");
+      }
+      parentElement.addValue(childElement);
+      childElement.setParent(parentElement);
     } else {
       throw new UnsupportedOperationException();
     }

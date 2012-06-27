@@ -3,9 +3,6 @@ import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.shell.ui.UIBuilder
-import org.crsh.shell.ui.Style
-import org.crsh.shell.ui.Decoration
-import org.crsh.shell.ui.Color;
 
 class help extends CRaSHCommand
 {
@@ -40,15 +37,13 @@ class help extends CRaSHCommand
     builder.label("Try one of these commands with the -h or --help switch:\n\n");
 
     builder.table() {
-      row([
-          values:["NAME","DESCRIPTION"],
-          styles:[new Style(Decoration.BOLD, Color.BLACK, Color.WHITE)]
-      ])
+      row(decoration: bold, foreground: black, background: white) {
+        label("NAME"); label("DESCRIPTION")
+      }
       for (int i = 0;i < names.size();i++) {
-        row([
-          values:[names[i], descs[i]],
-          styles:[new Style(null, Color.RED, null), null]
-        ])
+        row() {
+            label(value: names[i], foreground: red); label(descs[i])
+        }
       }
     }
     

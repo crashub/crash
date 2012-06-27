@@ -20,6 +20,7 @@
 package org.crsh.util;
 
 import junit.framework.TestCase;
+import org.crsh.shell.io.ShellWriter;
 import org.crsh.shell.io.ShellWriterContext;
 import org.crsh.term.Data;
 
@@ -38,9 +39,9 @@ public class LineFeedWriterTestCase extends TestCase {
     Data buffer = new Data();
     LineFeedWriter writer = new LineFeedWriter(buffer, "_");
     ShellWriterContext ctx = new ShellWriterContext() {
-      public void pad(Appendable appendable) throws IOException {
+      public void pad(ShellWriter writer) throws IOException {
         if (padding != null) {
-          appendable.append(padding);
+          writer.append(padding);
         }
       }
       public void text(CharSequence csq, int off, int end) {

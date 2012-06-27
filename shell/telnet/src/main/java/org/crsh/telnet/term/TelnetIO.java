@@ -21,16 +21,13 @@ package org.crsh.telnet.term;
 
 import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
+import net.wimpi.telnetd.io.terminal.ColorHelper;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionData;
 import org.crsh.shell.ui.Color;
 import org.crsh.shell.ui.Decoration;
 import org.crsh.shell.ui.Style;
-import org.crsh.term.ANSIFontBuilder;
-import org.crsh.term.CodeType;
-import org.crsh.term.Data;
-import org.crsh.term.FormattingData;
-import org.crsh.term.DataFragment;
+import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;
 
 import java.io.EOFException;
@@ -50,9 +47,13 @@ public class TelnetIO implements TermIO {
   /** . */
   private final BasicTerminalIO termIO;
 
+  /** . */
+  private final ANSIFontBuilder ansiBuilder;
+
   public TelnetIO(Connection conn) {
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
+    this.ansiBuilder = new ANSIFontBuilder();
   }
 
   public int read() throws IOException {
@@ -131,9 +132,9 @@ public class TelnetIO implements TermIO {
 
           //
           Decoration decoration = style.getDecoration();
-          termIO.setBlink(Decoration.BLINK.equals(decoration));
-          termIO.setBold(Decoration.BOLD.equals(decoration));
-          termIO.setUnderlined(Decoration.UNDERLINE.equals(decoration));
+          termIO.setBlink(Decoration.blink.equals(decoration));
+          termIO.setBold(Decoration.bold.equals(decoration));
+          termIO.setUnderlined(Decoration.underline.equals(decoration));
 
           //
           Color fg = style.getForeground();
@@ -150,14 +151,13 @@ public class TelnetIO implements TermIO {
             termIO.setBackgroundColor(bg.ordinal() + 30);
           }
           else {
-            termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
+            termIO.setBackgroundColor(BasicTerminalIO.COLORINIT);
           }
 
         }
         else {
-          termIO.setBold(false);
-          termIO.setBlink(false);
-          termIO.setUnderlined(false);
+          termIO.resetAttributes();
+          termIO.write("");
         }
       } else {
         termIO.write(f.toString());

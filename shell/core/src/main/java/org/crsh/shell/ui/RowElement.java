@@ -31,52 +31,64 @@ import java.util.List;
 public class RowElement extends Element {
 
   /** . */
-  private TableElement table = new TableElement();
+  private List<Element> cols;
 
-  /** . */
-  private List<LabelElement> cols;
-
-  public RowElement(List<LabelElement> cols) {
-    this.cols = cols;
+  public RowElement() {
+    this.cols = new ArrayList<Element>();
   }
 
-  public void setTable(TableElement table) {
-    this.table = table;
+  @Override
+  public void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
+    doPrint(ctx, writer);
   }
 
   @Override
   void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
 
     int i = 0;
-    for (LabelElement e : cols) {
+    TableElement table = (TableElement) getParent();
+    List<Integer> colsSize = table.getColsSize();
 
-      // Right padding
-      int padSize = table.getColsSize().get(i) - e.width();
-      StringBuilder sb = new StringBuilder();
-      for (int _ = 0; _ < padSize + table.MARGIN; ++_) {
-        sb.append(" ");
+    for (Element e : cols) {
+
+      //
+      ctx.pad(writer);
+      if (ctx.needLF) {
+        writer.append("\n");
+        ctx.parentUIContext.pad(writer);
       }
-      ctx.rightPad = sb.toString();
-      ++i;
-      
+      ctx.stack.clear();
+      ctx.padStyle = null;
+
       //
       e.print(ctx, writer);
-    }
-    writer.append(ctx, '\n');
 
-    ctx.rightPad = null;
+      //
+      ctx.padStyle = new Style(e.getDecoration(), e.getForeground(), e.getBackground());
+      for (int j = 0; j < colsSize.get(i) - e.width(); ++j) {
+        ctx.stack.add(Pad.SPACE);
+      }
+
+      //
+      ++i;
+      ctx.needLF = false;
+
+    }
+
+    ctx.needLF = true;
+
   }
 
   @Override
   int width() {
-    int width = 0;
-    for (LabelElement e : cols) {
-      width += e.width();
-    }
-    return width + (cols.size() * table.MARGIN);
+    return 0;
   }
 
-  public List<LabelElement> getValues() {
+  public void addValue(Element element) {
+    this.cols.add(element);
+  }
+
+  public List<Element> getValues() {
     return cols;
   }
   
