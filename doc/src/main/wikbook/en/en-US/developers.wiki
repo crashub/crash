@@ -79,6 +79,101 @@ usage: date [-h | --help] [-f | --format]
    [-f | --format] the time format
 {{/screen}}
 
+== UI Builder ==
+
+You can use an UI builder to display complex element like tree or table. Just create an UIBuilder instance in the command body like this :
+{{code}}
+def builder = new UIBuilder()
+{{/code}}
+
+Once the builder is finished, you just need to return it as method's value.
+
+=== Write a tree ===
+
+You have two kind of element in a tree, node and label. You are free to compose your tree structure as you need using both methods :
+{{code}}
+builder.node("a") {
+    node("b") {
+        label("c")
+        label("d")
+    }
+    label("e")
+}
+
+return builder;
+{{/code}}
+
+See the output :
+{{code}}
++-b
+| +-c
+| +-d
++-e
+{{/code}}
+
+=== Write a table ===
+
+A table is composed of rows and label :
+{{code}}
+builder.table() {
+    row() {
+        label("HEADER A"); label("HEADER B"); label("HEADER C");
+    }
+    row() {
+        label("a"); label("b"); label("c");
+    }
+}
+
+return builder;
+{{/code}}
+
+See the output :
+{{code}}
+HEADER A     HEADER B     HEADER C
+a            b            c
+{{/code}}
+
+
+=== Have style ===
+
+Each element in UIBuilder can have style (foreground color, background color and decoration.
+
+Available decorations :
+* bold
+* underline
+* blink
+
+Available colors :
+* black
+* red
+* green
+* yellow
+* blue
+* magenta
+* cyan
+* white
+
+To apply a color, just use these parameters : foreground, background or decoration. If a value is already passed to the ui element (label value), you need to use "value" parameter name.
+
+See an example :
+{{code}}
+builder.table() {
+    row(decoration: bold, foreground: black, background: white) {
+        label("HEADER A"); label("HEADER B"); label("HEADER C");
+    }
+    row() {
+        label("a"); label(value: "b", foreground: red); label("c");
+    }
+}
+
+return builder;
+{{/code}}
+
+See the output (with green as default term color) :
+
+[[image:images/ColoredTable.png]]
+
+
 == Multi commands ==
 
 A class can hold several commands allowing a single file to group several commands, let's study the JDBC command
