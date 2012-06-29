@@ -98,6 +98,7 @@ public class JLineProcessor implements Runnable, Completer {
             writer.print(f.toString());
           }
         }
+        writer.flush();
       }
     }
   }

@@ -21,14 +21,7 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   public int getWidth() {
-    try {
-      client.out.writeObject(ServerMessage.GET_WIDTH);
-      client.out.flush();
-      return (Integer)client.in.readObject();
-    }
-    catch (Exception e) {
-      return 80;
-    }
+    return client.getWidth();
   }
 
   public String getProperty(String name) {

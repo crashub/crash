@@ -188,6 +188,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
 
     //
     serverOOS.writeObject(ClientMessage.EXECUTE);
+    serverOOS.writeObject(42);
     serverOOS.writeObject("");
     serverOOS.flush();
     ServerMessage proto = (ServerMessage)serverOIS.readObject();
