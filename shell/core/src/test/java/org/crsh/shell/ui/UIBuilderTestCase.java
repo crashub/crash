@@ -263,4 +263,27 @@ public class UIBuilderTestCase extends TestCase {
     assertEquals(Color.red, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).getForeground());
     assertEquals(Color.green, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).getBackground());
   }
+
+  public void testForbiddenChild() throws Exception {
+    GroovyShell shell = new GroovyShell();
+
+    try {
+      UIBuilder res = (UIBuilder)shell.evaluate(
+        "import org.crsh.shell.ui.UIBuilder;\n" +
+        "import org.crsh.shell.ui.Color;\n" +
+        "import org.crsh.shell.ui.Decoration;\n" +
+        "import org.crsh.shell.ui.Style;\n" +
+          "def builder = new UIBuilder();\n" +
+          "builder.table {\n" +
+            "row() {\n" +
+              "node()\n" +
+            "}\n" +
+          "};\n" +
+          "return builder;\n"
+      );
+      fail();
+    } catch (IllegalArgumentException iae) {
+      assertEquals("A table cannot contain node element", iae.getMessage());
+    }
+  }
 }
