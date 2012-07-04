@@ -1,6 +1,7 @@
 package org.crsh.term.spi.net;
 
-import org.crsh.term.CodeType;
+import com.sun.xml.internal.bind.v2.TODO;
+import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;
 import org.crsh.util.AbstractSocketClient;
 
@@ -31,8 +32,12 @@ public class TermIOClient extends AbstractSocketClient implements TermIO {
   /** . */
   private OutputStream out;
 
+  /** . */
+  private final ANSIFontBuilder ansiBuilder;
+
   public TermIOClient(int port) {
     super(port);
+    this.ansiBuilder = new ANSIFontBuilder();
   }
 
   @Override
@@ -170,6 +175,12 @@ public class TermIOClient extends AbstractSocketClient implements TermIO {
           put((byte)(c & 0xFF));
         }
       }
+    }
+  }
+
+  public void write(Data d) throws IOException {
+    for (DataFragment f : d) {
+      write(f.toString());
     }
   }
 

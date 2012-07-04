@@ -1,7 +1,8 @@
 import org.crsh.command.DescriptionFormat
 import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Usage
-import org.crsh.cmdline.annotations.Command;
+import org.crsh.cmdline.annotations.Command
+import org.crsh.shell.ui.UIBuilder
 
 class help extends CRaSHCommand
 {
@@ -29,17 +30,23 @@ class help extends CRaSHCommand
         //
       }
     }
+    
+    def builder = new UIBuilder()
 
     //
-    def ret = "Try one of these commands with the -h or --help switch:\n\n";
-    for (int i = 0;i < names.size();i++) {
-      def name = names[i];
-      char[] chars = new char[TAB.length() + len - name.length()];
-      Arrays.fill(chars, (char)' ');
-      def space = new String(chars);
-      ret += "$TAB$name$space${descs[i]}\n";
+    builder.label("Try one of these commands with the -h or --help switch:\n\n");
+
+    builder.table() {
+      row(decoration: bold, foreground: black, background: white) {
+        label("NAME"); label("DESCRIPTION")
+      }
+      for (int i = 0;i < names.size();i++) {
+        row() {
+            label(value: names[i], foreground: red); label(descs[i])
+        }
+      }
     }
-    ret += "\n";
-    return ret;
+    
+    return builder;
   }
 }

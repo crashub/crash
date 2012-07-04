@@ -19,6 +19,10 @@
 
 package org.crsh.term.console;
 
+import org.crsh.term.Data;
+import org.crsh.term.DataFragment;
+import org.crsh.term.FormattingData;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -155,6 +159,17 @@ public final class Console {
     public void write(char c) throws IOException {
       writeNoFlush(c);
       viewWriter.flush();
+    }
+
+    @Override
+    public void write(Data d) throws IOException {
+      for (DataFragment fragment : d) {
+        if (fragment instanceof FormattingData) {
+          viewWriter.write(new Data(fragment));
+        } else {
+          write(fragment.toString());
+        }
+      }
     }
 
     private void writeNoFlush(char c) throws IOException {

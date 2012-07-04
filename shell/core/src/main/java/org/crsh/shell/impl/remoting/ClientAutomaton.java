@@ -11,6 +11,9 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class ClientAutomaton implements Runnable {
@@ -29,6 +32,9 @@ public class ClientAutomaton implements Runnable {
 
   /** . */
   final CloseableList listeners;
+
+  /** . */
+  Integer width;
 
   public ClientAutomaton(ObjectOutputStream out, ObjectInputStream in, Shell shell) {
     CloseableList listeners = new CloseableList();
@@ -73,6 +79,7 @@ public class ClientAutomaton implements Runnable {
             out.flush();
             break;
           case EXECUTE:
+            width = (Integer) in.readObject();
             String line = (String)in.readObject();
             ShellProcess process = shell.createProcess(line);
             current = new ClientProcessContext(this, process);
@@ -98,4 +105,9 @@ public class ClientAutomaton implements Runnable {
   void close() {
     listeners.close();
   }
+
+  public int getWidth() {
+    return width;
+  }
+  
 }

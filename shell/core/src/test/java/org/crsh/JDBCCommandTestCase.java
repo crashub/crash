@@ -2,8 +2,11 @@ package org.crsh;
 
 import org.crsh.command.ScriptException;
 import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.term.Data;
+import org.crsh.term.DataFragment;
 
 import java.sql.SQLException;
+import java.util.Queue;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class JDBCCommandTestCase extends AbstractCommandTestCase {
@@ -23,7 +26,7 @@ public class JDBCCommandTestCase extends AbstractCommandTestCase {
     assertOk("jdbc connect -u my_user -p my_password jdbc:derby:memory:EmbeddedDB;create=true");
     assertOk("jdbc execute create table derbyDB(num int, addr varchar(40))");
     assertOk("jdbc execute insert into derbyDB values (1956,'Webster St.')");
-    String res = assertOk("jdbc execute select * from derbyDb").getText();
+    Data res = assertOk("jdbc execute select * from derbyDb").getData();
     assertTrue(res.contains("Webster"));
     lifeCycle.setCommand("foo", "jdbc.execute 'select * from derbyDb', { out << it['NUM'] }");
     assertOk("1956", "foo");

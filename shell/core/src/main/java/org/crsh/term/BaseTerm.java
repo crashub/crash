@@ -80,6 +80,11 @@ public class BaseTerm implements Term {
       }
 
       @Override
+      protected void write(Data d) throws IOException {
+        io.write(d);
+      }
+
+      @Override
       protected void writeDel() throws IOException {
         io.writeDel();
       }
@@ -192,7 +197,7 @@ public class BaseTerm implements Term {
     }
   }
 
-  public void write(CharSequence msg) throws IOException {
-    console.getWriter().write(msg);
+  public void write(Data data) throws IOException {
+    console.getWriter().write(data);
   }
 }

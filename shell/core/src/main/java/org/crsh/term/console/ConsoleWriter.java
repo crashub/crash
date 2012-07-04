@@ -19,6 +19,8 @@
 
 package org.crsh.term.console;
 
+import org.crsh.term.Data;
+
 import java.io.IOException;
 
 /**
@@ -45,5 +47,13 @@ public abstract class ConsoleWriter {
    * @throws IOException any io exception
    */
   public abstract void write(char c) throws IOException;
+
+  /**
+   * Write some data to the output.
+   *
+   * @param d the data to write
+   * @throws IOException any io exception
+   */
+  public abstract void write(Data d) throws IOException;
 
 }

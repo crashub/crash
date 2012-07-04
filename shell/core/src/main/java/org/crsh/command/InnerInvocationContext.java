@@ -1,6 +1,7 @@
 package org.crsh.command;
 
-import java.io.PrintWriter;
+import org.crsh.shell.io.ShellPrinter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +44,7 @@ class InnerInvocationContext<P> implements InvocationContext<Void, P> {
     return outter.readLine(msg, echo);
   }
 
-  public PrintWriter getWriter() {
+  public ShellPrinter getWriter() {
     return outter.getWriter();
   }
 

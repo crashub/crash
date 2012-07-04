@@ -20,10 +20,11 @@
 package org.crsh.util;
 
 import junit.framework.TestCase;
+import org.crsh.shell.io.ShellWriter;
 import org.crsh.shell.io.ShellWriterContext;
+import org.crsh.term.Data;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -35,12 +36,12 @@ public class LineFeedWriterTestCase extends TestCase {
   private String padding;
 
   private void assertWriter(String expected, String... texts) throws Exception {
-    StringWriter buffer = new StringWriter();
+    Data buffer = new Data();
     LineFeedWriter writer = new LineFeedWriter(buffer, "_");
     ShellWriterContext ctx = new ShellWriterContext() {
-      public void pad(Appendable appendable) throws IOException {
+      public void pad(ShellWriter writer) throws IOException {
         if (padding != null) {
-          appendable.append(padding);
+          writer.append(padding);
         }
       }
       public void text(CharSequence csq, int off, int end) {

@@ -21,9 +21,13 @@ package org.crsh.telnet.term;
 
 import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
+import net.wimpi.telnetd.io.terminal.ColorHelper;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionData;
-import org.crsh.term.CodeType;
+import org.crsh.shell.ui.Color;
+import org.crsh.shell.ui.Decoration;
+import org.crsh.shell.ui.Style;
+import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;
 
 import java.io.EOFException;
@@ -43,9 +47,13 @@ public class TelnetIO implements TermIO {
   /** . */
   private final BasicTerminalIO termIO;
 
+  /** . */
+  private final ANSIFontBuilder ansiBuilder;
+
   public TelnetIO(Connection conn) {
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
+    this.ansiBuilder = new ANSIFontBuilder();
   }
 
   public int read() throws IOException {
@@ -113,6 +121,49 @@ public class TelnetIO implements TermIO {
 
   public void write(String s) throws IOException {
     termIO.write(s);
+  }
+
+  public void write(Data d) throws IOException {
+
+    for (DataFragment f : d) {
+      if (f instanceof FormattingData) {
+        Style style = ((FormattingData) f).getStyle();
+        if (style != null) {
+
+          //
+          Decoration decoration = style.getDecoration();
+          termIO.setBlink(Decoration.blink.equals(decoration));
+          termIO.setBold(Decoration.bold.equals(decoration));
+          termIO.setUnderlined(Decoration.underline.equals(decoration));
+
+          //
+          Color fg = style.getForeground();
+          if (fg != null) {
+            termIO.setForegroundColor(fg.ordinal() + 30);
+          }
+          else {
+            termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
+          }
+
+          //
+          Color bg = style.getBackground();
+          if (bg != null) {
+            termIO.setBackgroundColor(bg.ordinal() + 30);
+          }
+          else {
+            termIO.setBackgroundColor(BasicTerminalIO.COLORINIT);
+          }
+
+        }
+        else {
+          termIO.resetAttributes();
+          termIO.write("");
+        }
+      } else {
+        termIO.write(f.toString());
+      }
+    }
+
   }
 
   public void write(char c) throws IOException {

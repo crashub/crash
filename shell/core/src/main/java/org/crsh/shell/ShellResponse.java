@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.command.ScriptException;
+import org.crsh.term.Data;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -49,11 +49,15 @@ public abstract class ShellResponse implements Serializable {
   }
 
   public static Display display(String text) {
-    return new Display(text);
+    return new Display(new Data(text));
   }
 
-  public static Display display(Iterable<?> produced, String text) {
-    return new Display(produced, text);
+  public static Display display(Data data) {
+    return new Display(data);
+  }
+
+  public static Display display(Iterable<?> produced, Data data) {
+    return new Display(produced, data);
   }
 
   public static Error evalError(String msg, Throwable throwable) {
@@ -88,7 +92,7 @@ public abstract class ShellResponse implements Serializable {
     return Close.INSTANCE;
   }
 
-  public abstract String getText();
+  public abstract Data getData();
 
   public static class UnknownCommand extends ShellResponse {
 
@@ -104,8 +108,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return name + ": command not found";
+    public Data getData() {
+      return new Data(name + ": command not found");
     }
 
     @Override
@@ -123,8 +127,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return "Please type something";
+    public Data getData() {
+      return new Data("Please type something");
     }
   }
 
@@ -137,8 +141,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return "Have a good day!\r\n";
+    public Data getData() {
+      return new Data("Have a good day!\r\n");
     }
   }
 
@@ -163,25 +167,25 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return "";
+    public Data getData() {
+      return new Data("");
     }
   }
 
   public static class Display extends Ok {
 
     /** . */
-    private final String text;
+    private final Data data;
 
-    private Display(String text) {
-      this.text = text;
+    private Display(Data data) {
+      this.data = data;
     }
 
-    private Display(Iterable<?> produced, String text) {
+    private Display(Iterable<?> produced, Data data) {
       super(produced);
 
       //
-      this.text = text;
+      this.data = data;
     }
 
     @Override
@@ -191,14 +195,14 @@ public abstract class ShellResponse implements Serializable {
       }
       if (obj instanceof Display) {
         Display that = (Display)obj;
-        return text.equals(that.text);
+        return data.equals(that.data);
       }
       return false;
     }
 
     @Override
-    public String getText() {
-      return text;
+    public Data getData() {
+      return data;
     }
   }
 
@@ -211,8 +215,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return "cancelled" ;
+    public Data getData() {
+      return new Data("cancelled");
     }
   }
 
@@ -248,8 +252,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return msg;
+    public Data getData() {
+      return new Data(msg);
     }
 
     public String toString() {

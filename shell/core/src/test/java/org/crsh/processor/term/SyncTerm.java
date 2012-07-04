@@ -1,6 +1,7 @@
 package org.crsh.processor.term;
 
 import org.crsh.AbstractTestCase;
+import org.crsh.term.Data;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
 
@@ -91,7 +92,7 @@ public class SyncTerm implements Term {
     }
   }
 
-  public void write(CharSequence msg) throws IOException {
+  public void write(Data data) throws IOException {
   
   }
 

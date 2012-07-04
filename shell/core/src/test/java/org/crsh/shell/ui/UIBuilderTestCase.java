@@ -190,4 +190,100 @@ public class UIBuilderTestCase extends TestCase {
       assertEquals("b", ((MessageElement)elements.get(1)).getData());
    }
 */
+
+  public void testTable() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+      "import org.crsh.shell.ui.UIBuilder;\n" +
+        "def builder = new UIBuilder();\n" +
+        "builder.table { };\n" +
+        "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertEquals(0, ((TableElement)res.getElements().get(0)).getRows().size());
+  }
+
+  public void testEmptyRow() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+      "import org.crsh.shell.ui.UIBuilder;\n" +
+        "def builder = new UIBuilder();\n" +
+        "builder.table {\n" +
+          "row { }\n" +
+        "};\n" +
+        "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertEquals(1, ((TableElement)res.getElements().get(0)).getRows().size());
+    assertEquals(0, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().size());
+  }
+
+  public void testRow() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+      "import org.crsh.shell.ui.UIBuilder;\n" +
+        "def builder = new UIBuilder();\n" +
+        "builder.table {\n" +
+          "row () {\n" +
+            "label(\"col1\"); label(\"col2\")\n" +
+          "}\n" +
+        "};\n" +
+        "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertEquals(1, ((TableElement)res.getElements().get(0)).getRows().size());
+    assertEquals(2, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().size());
+    assertEquals("Label[col1]", ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).toString());
+    assertEquals("Label[col2]", ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(1).toString());
+  }
+
+  public void testRowStyleWithEnd() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+      "import org.crsh.shell.ui.UIBuilder;\n" +
+      "import org.crsh.shell.ui.Color;\n" +
+      "import org.crsh.shell.ui.Decoration;\n" +
+      "import org.crsh.shell.ui.Style;\n" +
+        "def builder = new UIBuilder();\n" +
+        "builder.table {\n" +
+          "row (decoration: bold, foreground: red, background: green) {\n" +
+            "label(\"col1\"); label(\"col2\")\n" +
+          "}\n" +
+        "};\n" +
+        "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertEquals(1, ((TableElement)res.getElements().get(0)).getRows().size());
+    assertEquals(2, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().size());
+    assertEquals(Decoration.bold, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).getDecoration());
+    assertEquals(Color.red, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).getForeground());
+    assertEquals(Color.green, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).getBackground());
+  }
+
+  public void testForbiddenChild() throws Exception {
+    GroovyShell shell = new GroovyShell();
+
+    try {
+      UIBuilder res = (UIBuilder)shell.evaluate(
+        "import org.crsh.shell.ui.UIBuilder;\n" +
+        "import org.crsh.shell.ui.Color;\n" +
+        "import org.crsh.shell.ui.Decoration;\n" +
+        "import org.crsh.shell.ui.Style;\n" +
+          "def builder = new UIBuilder();\n" +
+          "builder.table {\n" +
+            "row() {\n" +
+              "node()\n" +
+            "}\n" +
+          "};\n" +
+          "return builder;\n"
+      );
+      fail();
+    } catch (IllegalArgumentException iae) {
+      assertEquals("A table cannot contain node element", iae.getMessage());
+    }
+  }
 }

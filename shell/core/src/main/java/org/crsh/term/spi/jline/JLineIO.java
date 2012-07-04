@@ -21,6 +21,9 @@ package org.crsh.term.spi.jline;
 
 import jline.console.ConsoleReader;
 import org.crsh.term.CodeType;
+import org.crsh.term.Data;
+import org.crsh.term.DataFragment;
+import org.crsh.term.FormattingData;
 import org.crsh.term.spi.TermIO;
 
 import java.io.IOException;
@@ -113,6 +116,16 @@ public class JLineIO implements TermIO {
 
   public void write(char c) throws IOException {
     buffer.append(c);
+  }
+
+  public void write(Data d) throws IOException {
+    for (DataFragment f : d) {
+      if (f instanceof FormattingData) {
+        continue;
+      } else {
+        buffer.append(f.toString());
+      }
+    }
   }
 
   public void writeDel() throws IOException {
