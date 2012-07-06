@@ -491,6 +491,22 @@ PARAMETERS
         
         <p>
           </p><pre class="screen">NAME
+       thread interrupt - interrupt vm threads
+
+SYNOPSIS
+       thread [-h | --help] interrupt ... ids
+
+DESCRIPTION
+       Interrup VM threads.
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       ... ids
+           the thread ids to interrupt</pre><p>
+          </p><pre class="screen">NAME
        thread stop - stop vm threads
 
 SYNOPSIS
@@ -507,13 +523,13 @@ PARAMETERS
        ... ids
            the thread ids to stop</pre><p>
           </p><pre class="screen">NAME
-       thread interrupt - interrupt vm threads
+       thread dump - dump vm threads
 
 SYNOPSIS
-       thread [-h | --help] interrupt ... ids
+       thread [-h | --help] dump ... ids
 
 DESCRIPTION
-       Interrup VM threads.
+       Dump VM threads.
 
 
 PARAMETERS
@@ -521,7 +537,7 @@ PARAMETERS
            Provides command usage
 
        ... ids
-           the thread ids to interrupt</pre><p>
+           the thread ids to dump</pre><p>
           </p><pre class="screen">NAME
        thread ls - list the vm threads
 
@@ -541,22 +557,6 @@ PARAMETERS
 
        [-s | --state]
            Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)</pre><p>
-          </p><pre class="screen">NAME
-       thread dump - dump vm threads
-
-SYNOPSIS
-       thread [-h | --help] dump ... ids
-
-DESCRIPTION
-       Dump VM threads.
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       ... ids
-           the thread ids to dump</pre><p>
         </p>
       </div>
       <div class="section" title="system command"><div class="titlepage"><div><div><h3 class="title"><a name="d5e217"></a>
@@ -712,19 +712,6 @@ PARAMETERS
        connectionString
            The connection string</pre><p>
           </p><pre class="screen">NAME
-       jdbc info - describe the database
-
-SYNOPSIS
-       jdbc [-h | --help] info ... tableNames
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       ... tableNames
-           the table names</pre><p>
-          </p><pre class="screen">NAME
        jdbc execute - execute SQL statement
 
 SYNOPSIS
@@ -737,6 +724,19 @@ PARAMETERS
 
        ... statement
            The statement</pre><p>
+          </p><pre class="screen">NAME
+       jdbc info - describe the database
+
+SYNOPSIS
+       jdbc [-h | --help] info ... tableNames
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       ... tableNames
+           the table names</pre><p>
         </p>
       </div>
     </div>
@@ -790,19 +790,6 @@ PARAMETERS
        [-h | --help]
            Provides command usage</pre><p>
           </p><pre class="screen">NAME
-       repo ls - list the available repository plugins
-
-SYNOPSIS
-       repo [-h | --help] ls
-
-DESCRIPTION
-       The ls command print the available repository plugins.
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage</pre><p>
-          </p><pre class="screen">NAME
        repo use - changes the current repository
 
 SYNOPSIS
@@ -824,6 +811,19 @@ PARAMETERS
 
        parameters
            The parameters used to instantiate the repository to be used in this session</pre><p>
+          </p><pre class="screen">NAME
+       repo ls - list the available repository plugins
+
+SYNOPSIS
+       repo [-h | --help] ls
+
+DESCRIPTION
+       The ls command print the available repository plugins.
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage</pre><p>
         </p>
       </div>
       <div class="section" title="ws command"><div class="titlepage"><div><div><h3 class="title"><a name="d5e257"></a>
@@ -1136,29 +1136,6 @@ PARAMETERS
        propertyValue
            The new value of the property</pre><p>
           </p><pre class="screen">NAME
-       node import - imports a node from an nt file
-
-SYNOPSIS
-       node [-h | --help] import source target
-
-DESCRIPTION
-       Imports a node from an nt:file node located in the workspace:
-
-       [/]% importnode /gadgets.xml /
-       Node imported
-
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       source
-           The path of the imported nt:file node
-
-       target
-           The path of the parent imported node</pre><p>
-          </p><pre class="screen">NAME
        node export - export a node to an nt file
 
 SYNOPSIS
@@ -1181,6 +1158,29 @@ PARAMETERS
 
        target
            The path of the exported nt:file node</pre><p>
+          </p><pre class="screen">NAME
+       node import - imports a node from an nt file
+
+SYNOPSIS
+       node [-h | --help] import source target
+
+DESCRIPTION
+       Imports a node from an nt:file node located in the workspace:
+
+       [/]% importnode /gadgets.xml /
+       Node imported
+
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       source
+           The path of the imported nt:file node
+
+       target
+           The path of the parent imported node</pre><p>
         </p>
       </div>
       <div class="section" title="mixin command"><div class="titlepage"><div><div><h3 class="title"><a name="d5e295"></a>
@@ -1374,22 +1374,6 @@ PARAMETERS
         
         <p>
           </p><pre class="screen">NAME
-       version checkin - checkin a node
-
-SYNOPSIS
-       version [-h | --help] checkin path
-
-DESCRIPTION
-       Perform a node checkin
-
-
-PARAMETERS
-       [-h | --help]
-           Provides command usage
-
-       path
-           The node path to checkin</pre><p>
-          </p><pre class="screen">NAME
        version checkout - checkout a node
 
 SYNOPSIS
@@ -1405,6 +1389,22 @@ PARAMETERS
 
        path
            The node path to checkout</pre><p>
+          </p><pre class="screen">NAME
+       version checkin - checkin a node
+
+SYNOPSIS
+       version [-h | --help] checkin path
+
+DESCRIPTION
+       Perform a node checkin
+
+
+PARAMETERS
+       [-h | --help]
+           Provides command usage
+
+       path
+           The node path to checkin</pre><p>
         </p>
       </div>
     </div>
