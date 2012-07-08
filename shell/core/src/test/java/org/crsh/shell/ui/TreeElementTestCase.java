@@ -21,7 +21,7 @@ package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 import org.crsh.util.LineFeedWriter;
 
 import java.io.IOException;
@@ -36,44 +36,44 @@ public class TreeElementTestCase extends TestCase {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
     elt.addNode(new LabelElement("2\n"));
-    Data data = new Data();
-    LineFeedWriter writer = new LineFeedWriter(data, "_");
+    CharReader reader = new CharReader();
+    LineFeedWriter writer = new LineFeedWriter(reader, "_");
     elt.print(writer, new TestInvocationContext());
     assertEquals(
-      "+-1_" +
-      "| 1_" +
-      "+-2_"
-      , data.toString());
+        "+-1_" +
+            "| 1_" +
+            "+-2_"
+        , reader.toString());
   }
 
   public void testFoo() throws Exception {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
-    Data data = new Data();
-    LineFeedWriter writer = new LineFeedWriter(data, "_");
+    CharReader reader = new CharReader();
+    LineFeedWriter writer = new LineFeedWriter(reader, "_");
     elt.print(writer, new TestInvocationContext());
     assertEquals(
-      "+-1_" +
-      "  1_"
-      , data.toString());
+        "+-1_" +
+            "  1_"
+        , reader.toString());
   }
 
   public void testNested() throws Exception {
     TreeElement elt = new TreeElement(new LabelElement("foo"));
     elt.addNode(new TreeElement(new LabelElement("bar")).addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
     elt.addNode(new TreeElement().addNode(new LabelElement("3")).addNode(new LabelElement("4")));
-    Data data = new Data();
-    LineFeedWriter writer = new LineFeedWriter(data, "_");
+    CharReader reader = new CharReader();
+    LineFeedWriter writer = new LineFeedWriter(reader, "_");
     elt.print(writer, new TestInvocationContext());
     assertEquals(
-      "foo_" +
-      "+-bar_" +
-      "| +-1_" +
-      "| | 1_" +
-      "| +-2_" +
-      "|   2_" +
-      "+-+-3_" +
-      "  +-4_"
-      , data.toString());
+        "foo_" +
+            "+-bar_" +
+            "| +-1_" +
+            "| | 1_" +
+            "| +-2_" +
+            "|   2_" +
+            "+-+-3_" +
+            "  +-4_"
+        , reader.toString());
   }
 }

@@ -1,6 +1,6 @@
 package org.crsh.term;
 
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
-  public void write(Data data) throws IOException {
+  public void write(CharReader reader) throws IOException {
     throw new UnsupportedOperationException();
   }
 

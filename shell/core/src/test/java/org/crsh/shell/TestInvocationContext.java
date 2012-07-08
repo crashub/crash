@@ -48,8 +48,8 @@ public class TestInvocationContext<C, P> extends BaseInvocationContext<C, P> {
   }
 
   public String execute(ShellCommand command, String... args) throws Exception {
-    if (data != null) {
-      data.clear();
+    if (reader != null) {
+      reader.clear();
     }
     StringBuilder sb = new StringBuilder();
     for (String arg : args) {
@@ -60,6 +60,6 @@ public class TestInvocationContext<C, P> extends BaseInvocationContext<C, P> {
     }
     CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.createInvoker(sb.toString());
     invoker.invoke(this);
-    return data != null ? data.toString() : null;
+    return reader != null ? reader.toString() : null;
   }
 }

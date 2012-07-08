@@ -84,7 +84,7 @@ public class JLineProcessor implements Runnable, Completer {
       } else if (response instanceof ShellResponse.Close) {
         break;
       } else {
-        response.getData().writeAnsi(writer);
+        response.getReader().writeAnsi(writer);
         writer.flush();
       }
     }

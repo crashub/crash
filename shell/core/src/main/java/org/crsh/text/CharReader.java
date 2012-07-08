@@ -9,28 +9,28 @@ import java.util.LinkedList;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class Data implements Iterable<Object>, Serializable {
+public class CharReader implements Iterable<Object>, Serializable {
 
   /** . */
-  private final LinkedList<Object> fragments;
+  private final LinkedList<Object> stream;
 
-  public Data() {
-    this.fragments = new LinkedList<Object>();
+  public CharReader() {
+    this.stream = new LinkedList<Object>();
   }
 
-  public Data(CharSequence data) {
+  public CharReader(CharSequence s) {
     this();
 
     //
-    fragments.add(data);
+    this.stream.add(s);
   }
 
   public Iterator<Object> iterator() {
-    return fragments.iterator();
+    return stream.iterator();
   }
 
   public void writeAnsi(PrintWriter writer) {
-    for (Object f : fragments) {
+    for (Object f : stream) {
       if (f instanceof Style) {
         try {
           ((Style)f).writeAnsiTo(writer);
@@ -44,7 +44,7 @@ public class Data implements Iterable<Object>, Serializable {
   }
 
   public void writeAnsi(Appendable appendable) throws IOException {
-    for (Object f : fragments) {
+    for (Object f : stream) {
       if (f instanceof Style) {
         ((Style)f).writeAnsiTo(appendable);
       } else {
@@ -53,11 +53,11 @@ public class Data implements Iterable<Object>, Serializable {
     }
   }
 
-  public void append(Object fragment) {
-    if (fragment instanceof Data) {
-      fragments.addAll(((Data)fragment).fragments);
+  public void append(Object data) {
+    if (data instanceof CharReader) {
+      this.stream.addAll(((CharReader)data).stream);
     } else {
-      fragments.add(fragment);
+      this.stream.add(data);
     }
   }
 
@@ -66,11 +66,11 @@ public class Data implements Iterable<Object>, Serializable {
   }
 
   public boolean isEmpty() {
-    return fragments.isEmpty();
+    return stream.isEmpty();
   }
 
   public void clear() {
-    fragments.clear();
+    stream.clear();
   }
 
   @Override
@@ -83,8 +83,8 @@ public class Data implements Iterable<Object>, Serializable {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof Data) {
-      Data that = (Data)obj;
+    if (obj instanceof CharReader) {
+      CharReader that = (CharReader)obj;
       return toString().equals(that.toString());
     }
     return false;
@@ -93,7 +93,7 @@ public class Data implements Iterable<Object>, Serializable {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    for (Object fragment : fragments) {
+    for (Object fragment : stream) {
       if (fragment instanceof Style) {
         //
       } else {

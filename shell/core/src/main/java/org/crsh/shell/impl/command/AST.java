@@ -26,7 +26,7 @@ import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -83,7 +83,7 @@ abstract class AST {
       ArrayList produced = new ArrayList();
 
       //
-      Data data = new Data();
+      CharReader reader = new CharReader();
 
       // Iterate over all terms
       for (Term current = term;current != null;current = current.next) {
@@ -110,8 +110,8 @@ abstract class AST {
         }
 
         // Append anything that was in the buffer
-        if (ctx.getData() != null && !ctx.getData().isEmpty()) {
-          data.append(ctx.getData());
+        if (ctx.getReader() != null && !ctx.getReader().isEmpty()) {
+          reader.append(ctx.getReader());
         }
 
         // Append produced if possible
@@ -127,8 +127,8 @@ abstract class AST {
         return next.execute(crash, context, produced);
       } else {
         ShellResponse response;
-        if (!data.isEmpty()) {
-          response = ShellResponse.display(produced, data);
+        if (!reader.isEmpty()) {
+          response = ShellResponse.display(produced, reader);
         } else {
           response = ShellResponse.ok(produced);
         }

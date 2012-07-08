@@ -23,7 +23,7 @@ import org.crsh.term.console.Console;
 import org.crsh.term.console.ConsoleWriter;
 import org.crsh.term.console.ViewWriter;
 import org.crsh.term.spi.TermIO;
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 import org.crsh.text.Style;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,9 +200,9 @@ public class BaseTerm implements Term {
     }
   }
 
-  public void write(Data data) throws IOException {
+  public void write(CharReader reader) throws IOException {
     ConsoleWriter writer = console.getWriter();
-    for (Object f : data) {
+    for (Object f : reader) {
       if (f instanceof Style) {
         writer.write((Style)f);
       } else {

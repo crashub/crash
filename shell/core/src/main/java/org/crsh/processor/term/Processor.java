@@ -5,7 +5,7 @@ import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
 import org.crsh.util.CloseableList;
@@ -97,7 +97,7 @@ public final class Processor implements Runnable {
     try {
       String welcome = shell.getWelcome();
       log.debug("Writing welcome message to term");
-      term.write(new Data(welcome));
+      term.write(new CharReader(welcome));
       log.debug("Wrote welcome message to term");
       writePrompt();
     }
@@ -273,9 +273,9 @@ public final class Processor implements Runnable {
     listeners.add(listener);
   }
 
-  void write(Data data) {
+  void write(CharReader reader) {
     try {
-      term.write(data);
+      term.write(reader);
     }
     catch (IOException e) {
       log.error("Write to term failure", e);
@@ -286,9 +286,9 @@ public final class Processor implements Runnable {
     String prompt = shell.getPrompt();
     try {
       String p = prompt == null ? "% " : prompt;
-      term.write(new Data("\r\n"));
-      term.write(new Data(p));
-      term.write(new Data(term.getBuffer()));
+      term.write(new CharReader("\r\n"));
+      term.write(new CharReader(p));
+      term.write(new CharReader(term.getBuffer()));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -365,7 +365,7 @@ public final class Processor implements Runnable {
           }
 
           // We propose
-          term.write(new Data(sb.toString()));
+          term.write(new CharReader(sb.toString()));
           writePrompt();
         }
       }

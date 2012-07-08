@@ -2,8 +2,8 @@ package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
+import org.crsh.text.CharReader;
 import org.crsh.text.Color;
-import org.crsh.text.Data;
 import org.crsh.text.Style;
 import org.crsh.util.LineFeedWriter;
 
@@ -29,14 +29,14 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    Data data = new Data();
-    LineFeedWriter writer = new LineFeedWriter(data, "_");
+    CharReader reader = new CharReader();
+    LineFeedWriter writer = new LineFeedWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
     assertEquals(
-      "a     b     _c     d     _"
-      , data.toString());
+        "a     b     _c     d     _"
+        , reader.toString());
 
   }
 
@@ -69,8 +69,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    Data data = new Data();
-    LineFeedWriter writer = new LineFeedWriter(data, "_");
+    CharReader reader = new CharReader();
+    LineFeedWriter writer = new LineFeedWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -78,7 +78,7 @@ public class TableElementTestCase extends TestCase {
 
     assertEquals(
       ansi
-      , toAnsi(data));
+      , toAnsi(reader));
 
   }
 
@@ -104,14 +104,14 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    Data data = new Data();
-    LineFeedWriter writer = new LineFeedWriter(data, "_");
+    CharReader reader = new CharReader();
+    LineFeedWriter writer = new LineFeedWriter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
 
     assertEquals(
-      "+-foo_+-a     b     _| c     d     _+-bar_"
-      , data.toString());
+        "+-foo_+-a     b     _| c     d     _+-bar_"
+        , reader.toString());
 
   }
 
@@ -131,17 +131,17 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    Data data = new Data();
-    LineFeedWriter writer = new LineFeedWriter(data, "_");
+    CharReader reader = new CharReader();
+    LineFeedWriter writer = new LineFeedWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
     assertEquals(
-      "a     This text is very ver very too large to be displayed in a cell of 32_c     d                         _"
-      , data.toString());
+        "a     This text is very ver very too large to be displayed in a cell of 32_c     d                         _"
+        , reader.toString());
   }
 
-  public String toAnsi(Data data) {
+  public String toAnsi(CharReader data) {
     StringBuilder sb = new StringBuilder();
     for (Object fragment : data) {
       if (fragment instanceof Style) {

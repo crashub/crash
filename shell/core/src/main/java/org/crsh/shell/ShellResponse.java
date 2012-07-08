@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -49,15 +49,15 @@ public abstract class ShellResponse implements Serializable {
   }
 
   public static Display display(String text) {
-    return new Display(new Data(text));
+    return new Display(new CharReader(text));
   }
 
-  public static Display display(Data data) {
-    return new Display(data);
+  public static Display display(CharReader reader) {
+    return new Display(reader);
   }
 
-  public static Display display(Iterable<?> produced, Data data) {
-    return new Display(produced, data);
+  public static Display display(Iterable<?> produced, CharReader reader) {
+    return new Display(produced, reader);
   }
 
   public static Error evalError(String msg, Throwable throwable) {
@@ -92,7 +92,7 @@ public abstract class ShellResponse implements Serializable {
     return Close.INSTANCE;
   }
 
-  public abstract Data getData();
+  public abstract CharReader getReader();
 
   public static class UnknownCommand extends ShellResponse {
 
@@ -108,8 +108,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public Data getData() {
-      return new Data(name + ": command not found");
+    public CharReader getReader() {
+      return new CharReader(name + ": command not found");
     }
 
     @Override
@@ -127,8 +127,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public Data getData() {
-      return new Data("Please type something");
+    public CharReader getReader() {
+      return new CharReader("Please type something");
     }
   }
 
@@ -141,8 +141,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public Data getData() {
-      return new Data("Have a good day!\r\n");
+    public CharReader getReader() {
+      return new CharReader("Have a good day!\r\n");
     }
   }
 
@@ -167,25 +167,25 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public Data getData() {
-      return new Data("");
+    public CharReader getReader() {
+      return new CharReader("");
     }
   }
 
   public static class Display extends Ok {
 
     /** . */
-    private final Data data;
+    private final CharReader reader;
 
-    private Display(Data data) {
-      this.data = data;
+    private Display(CharReader reader) {
+      this.reader = reader;
     }
 
-    private Display(Iterable<?> produced, Data data) {
+    private Display(Iterable<?> produced, CharReader reader) {
       super(produced);
 
       //
-      this.data = data;
+      this.reader = reader;
     }
 
     @Override
@@ -195,14 +195,14 @@ public abstract class ShellResponse implements Serializable {
       }
       if (obj instanceof Display) {
         Display that = (Display)obj;
-        return data.equals(that.data);
+        return reader.equals(that.reader);
       }
       return false;
     }
 
     @Override
-    public Data getData() {
-      return data;
+    public CharReader getReader() {
+      return reader;
     }
   }
 
@@ -215,8 +215,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public Data getData() {
-      return new Data("cancelled");
+    public CharReader getReader() {
+      return new CharReader("cancelled");
     }
   }
 
@@ -252,8 +252,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public Data getData() {
-      return new Data(msg);
+    public CharReader getReader() {
+      return new CharReader(msg);
     }
 
     public String toString() {

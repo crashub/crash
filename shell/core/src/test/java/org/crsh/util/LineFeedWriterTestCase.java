@@ -22,7 +22,7 @@ package org.crsh.util;
 import junit.framework.TestCase;
 import org.crsh.shell.io.ShellWriter;
 import org.crsh.shell.io.ShellWriterContext;
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 
 import java.io.IOException;
 
@@ -36,8 +36,8 @@ public class LineFeedWriterTestCase extends TestCase {
   private String padding;
 
   private void assertWriter(String expected, String... texts) throws Exception {
-    Data buffer = new Data();
-    LineFeedWriter writer = new LineFeedWriter(buffer, "_");
+    CharReader reader = new CharReader();
+    LineFeedWriter writer = new LineFeedWriter(reader, "_");
     ShellWriterContext ctx = new ShellWriterContext() {
       public void pad(ShellWriter writer) throws IOException {
         if (padding != null) {
@@ -54,7 +54,7 @@ public class LineFeedWriterTestCase extends TestCase {
     for (String text : texts) {
       writer.append(ctx, text);
     }
-    assertEquals(expected, buffer.toString());
+    assertEquals(expected, reader.toString());
   }
 
   public void testFoo1() throws Exception {

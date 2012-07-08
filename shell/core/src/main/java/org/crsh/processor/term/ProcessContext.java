@@ -3,7 +3,7 @@ package org.crsh.processor.term;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 import org.crsh.term.TermEvent;
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
 
   public String readLine(String msg, boolean echo) {
     try {
-      processor.term.write(new Data(msg));
+      processor.term.write(new CharReader(msg));
     }
     catch (IOException e) {
       return null;
@@ -68,7 +68,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
         try {
           processor.term.setEcho(echo);
           processor.readTerm();
-          processor.term.write(new Data("\r\n"));
+          processor.term.write(new CharReader("\r\n"));
         }
         catch (IOException e) {
           processor.log.error("Error when readline line");
@@ -98,10 +98,10 @@ class ProcessContext implements ShellProcessContext, Runnable {
             runnable = Processor.NOOP;
             processor.status = Status.AVAILABLE;
           } else {
-            final Data data = response.getData();
+            final CharReader reader = response.getReader();
             runnable = new Runnable() {
               public void run() {
-                processor.write(data);
+                processor.write(reader);
               }
             };
             processor.status = Status.AVAILABLE;

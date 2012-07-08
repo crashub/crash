@@ -81,9 +81,9 @@ abstract class CRaSHProcess implements ShellProcess {
         ShellResponse.Error error = (ShellResponse.Error)resp;
         Throwable t = error.getThrowable();
         if (t != null) {
-          CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getData(), t);
+          CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getReader(), t);
         } else {
-          CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getData());
+          CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getReader());
         }
       }
     }

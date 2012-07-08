@@ -21,7 +21,7 @@ package org.crsh.util;
 
 import org.crsh.shell.io.ShellWriter;
 import org.crsh.shell.io.ShellWriterContext;
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 import org.crsh.text.Style;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class LineFeedWriter implements ShellWriter {
   private static final int PADDED = 2;
 
   /** . */
-  private final Data data;
+  private final CharReader reader;
 
   /** . */
   private final String lineFeed;
@@ -50,12 +50,12 @@ public class LineFeedWriter implements ShellWriter {
   /** . */
   private int status;
 
-  public LineFeedWriter(Data data) {
-    this(data, "\r\n");
+  public LineFeedWriter(CharReader reader) {
+    this(reader, "\r\n");
   }
 
-  public LineFeedWriter(Data data, String lineFeed) {
-    this.data = data;
+  public LineFeedWriter(CharReader reader, String lineFeed) {
+    this.reader = reader;
     this.lineFeed = lineFeed;
     this.status = NOT_PADDED;
   }
@@ -69,7 +69,7 @@ public class LineFeedWriter implements ShellWriter {
   }
 
   public ShellWriter append(ShellWriterContext ctx, final Style d) throws IOException {
-    data.append(d);
+    reader.append(d);
     return this;
   }
 
@@ -131,7 +131,7 @@ public class LineFeedWriter implements ShellWriter {
       }
 
       //
-      data.append(csq.subSequence(off, end).toString());
+      reader.append(csq.subSequence(off, end).toString());
 
       //
       switch (status) {
@@ -156,7 +156,7 @@ public class LineFeedWriter implements ShellWriter {
       case PADDED:
         status = NOT_PADDED;
       case NOT_PADDED:
-        data.append(lineFeed);
+        reader.append(lineFeed);
         if (ctx != null) {
           ctx.lineFeed();
         }

@@ -22,7 +22,7 @@ package org.crsh.command.impl;
 
 import org.crsh.command.InvocationContext;
 import org.crsh.shell.io.ShellPrinter;
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 import org.crsh.util.LineFeedWriter;
 
 import java.util.Collections;
@@ -40,7 +40,7 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
   protected ShellPrinter writer;
 
   /** . */
-  protected Data data;
+  protected CharReader reader;
 
   /** . */
   protected List<P> producedItems;
@@ -55,7 +55,7 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
 
     //
     this.writer = null;
-    this.data = null;
+    this.reader = null;
     this.consumedItems = consumedItems;
     this.producedItems = Collections.emptyList();
   }
@@ -64,8 +64,8 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
     return producedItems;
   }
 
-  public Data getData() {
-    return data;
+  public CharReader getReader() {
+    return reader;
   }
 
   public boolean isPiped() {
@@ -88,8 +88,8 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
 
   public ShellPrinter getWriter() {
     if (writer == null) {
-      data = new Data();
-      writer = new ShellPrinter(new LineFeedWriter(data, "\r\n"), this);
+      reader = new CharReader();
+      writer = new ShellPrinter(new LineFeedWriter(reader, "\r\n"), this);
     }
     return writer;
   }

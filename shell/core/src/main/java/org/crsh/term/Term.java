@@ -19,7 +19,7 @@
 
 package org.crsh.term;
 
-import org.crsh.text.Data;
+import org.crsh.text.CharReader;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -68,10 +68,10 @@ public interface Term extends Closeable {
    * Write a message on the console, the text will be appended.
    *
    *
-   * @param data the message to write
+   * @param reader the message to write
    * @throws IOException any io exception
    */
-  void write(Data data) throws IOException;
+  void write(CharReader reader) throws IOException;
 
   /**
    * Returns the insert buffer, any char appended in the returned appendable will translate into an
