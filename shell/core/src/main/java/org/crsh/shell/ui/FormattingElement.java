@@ -14,7 +14,12 @@ public class FormattingElement extends Element {
   /** . */
   private Style style;
 
-  public FormattingElement(Style style) {
+  public FormattingElement(Style style) throws NullPointerException {
+    if (style == null) {
+      throw new NullPointerException();
+    }
+
+    //
     this.style = style;
   }
   

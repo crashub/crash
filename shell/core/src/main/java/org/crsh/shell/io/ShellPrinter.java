@@ -60,7 +60,7 @@ public class ShellPrinter extends PrintWriter {
   public void print(Object obj, Style style) {
     print(new FormattingElement(style));
     print(obj);
-    print(new FormattingElement(null));
+    print(new FormattingElement(Style.RESET));
 
   }
 

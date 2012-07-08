@@ -89,7 +89,7 @@ class UIWriterContext implements ShellWriterContext {
 
       //
       if (padStyle != null) {
-        new FormattingElement(null).print(this, writer);
+        new FormattingElement(Style.RESET).print(this, writer);
       }
 
       Pad next = nextMap.get(abc);

@@ -55,13 +55,13 @@ public abstract class Element {
     }
 
     if (haveStyle()) {
-      new FormattingElement(new Style(getDecoration(), getForeground(), getBackground())).print(ctx, writer);
+      new FormattingElement(Style.create(getDecoration(), getForeground(), getBackground())).print(ctx, writer);
     }
 
     doPrint(ctx, writer);
 
     if (haveStyle()) {
-      new FormattingElement(null).print(ctx, writer);
+      new FormattingElement(Style.RESET).print(ctx, writer);
     }
     
   }

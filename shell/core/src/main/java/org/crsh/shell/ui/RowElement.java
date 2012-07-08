@@ -65,7 +65,7 @@ public class RowElement extends Element {
       e.print(ctx, writer);
 
       //
-      ctx.padStyle = new Style(e.getDecoration(), e.getForeground(), e.getBackground());
+      ctx.padStyle = Style.create(e.getDecoration(), e.getForeground(), e.getBackground());
       for (int j = 0; j < colsSize.get(i) - e.width(); ++j) {
         ctx.stack.add(Pad.SPACE);
       }
