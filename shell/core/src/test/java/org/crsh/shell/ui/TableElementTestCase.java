@@ -4,8 +4,7 @@ import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
 import org.crsh.text.Color;
 import org.crsh.text.Data;
-import org.crsh.text.DataFragment;
-import org.crsh.text.FormattingData;
+import org.crsh.text.Style;
 import org.crsh.util.LineFeedWriter;
 
 /**
@@ -145,8 +144,8 @@ public class TableElementTestCase extends TestCase {
   public String toAnsi(Data data) {
     StringBuilder sb = new StringBuilder();
     for (Object fragment : data) {
-      if (fragment instanceof FormattingData) {
-        sb.append(((FormattingData)fragment).asAnsiSequence());
+      if (fragment instanceof Style) {
+        sb.append(((Style)fragment).asAnsiSequence());
       } else {
         sb.append(fragment.toString());
       }

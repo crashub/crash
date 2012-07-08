@@ -8,8 +8,6 @@ import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.DataFragment;
-import org.crsh.text.FormattingData;
 
 import java.io.IOException;
 import java.io.PrintWriter;

@@ -2,8 +2,6 @@ package org.crsh.term.spi.net;
 
 import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;
-import org.crsh.text.Data;
-import org.crsh.text.DataFragment;
 import org.crsh.text.Style;
 import org.crsh.util.AbstractSocketClient;
 

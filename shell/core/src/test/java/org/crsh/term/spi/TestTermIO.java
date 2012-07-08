@@ -23,8 +23,6 @@ import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;
-import org.crsh.text.Data;
-import org.crsh.text.DataFragment;
 import org.crsh.text.Style;
 
 import java.io.IOException;

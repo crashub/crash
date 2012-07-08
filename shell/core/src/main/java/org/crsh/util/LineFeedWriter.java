@@ -22,7 +22,7 @@ package org.crsh.util;
 import org.crsh.shell.io.ShellWriter;
 import org.crsh.shell.io.ShellWriterContext;
 import org.crsh.text.Data;
-import org.crsh.text.DataFragment;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 
@@ -68,7 +68,7 @@ public class LineFeedWriter implements ShellWriter {
     return append(ctx, Character.toString(c));
   }
 
-  public ShellWriter append(ShellWriterContext ctx, final DataFragment d) throws IOException {
+  public ShellWriter append(ShellWriterContext ctx, final Style d) throws IOException {
     data.append(d);
     return this;
   }
@@ -131,7 +131,7 @@ public class LineFeedWriter implements ShellWriter {
       }
 
       //
-      data.append(new DataFragment(csq.toString().substring(off, end)));
+      data.append(csq.subSequence(off, end).toString());
 
       //
       switch (status) {
@@ -156,7 +156,7 @@ public class LineFeedWriter implements ShellWriter {
       case PADDED:
         status = NOT_PADDED;
       case NOT_PADDED:
-        data.append(new DataFragment(lineFeed));
+        data.append(lineFeed);
         if (ctx != null) {
           ctx.lineFeed();
         }

@@ -19,12 +19,10 @@ public class Data implements Iterable<Object>, Serializable {
   }
 
   public Data(CharSequence data) {
-    this(new DataFragment(data));
-  }
-
-  public Data(DataFragment fragment) {
     this();
-    fragments.add(fragment);
+
+    //
+    fragments.add(data);
   }
 
   public Iterator<Object> iterator() {
@@ -33,8 +31,12 @@ public class Data implements Iterable<Object>, Serializable {
 
   public void writeAnsi(PrintWriter writer) {
     for (Object f : fragments) {
-      if (f instanceof FormattingData) {
-        ((FormattingData)f).writeAnsi(writer);
+      if (f instanceof Style) {
+        try {
+          ((Style)f).writeAnsiTo(writer);
+        }
+        catch (IOException ignore) {
+        }
       } else {
         writer.append(f.toString());
       }
@@ -43,20 +45,20 @@ public class Data implements Iterable<Object>, Serializable {
 
   public void writeAnsi(Appendable appendable) throws IOException {
     for (Object f : fragments) {
-      if (f instanceof FormattingData) {
-        ((FormattingData)f).writeAnsi(appendable);
+      if (f instanceof Style) {
+        ((Style)f).writeAnsiTo(appendable);
       } else {
         appendable.append(f.toString());
       }
     }
   }
 
-  public void append(Data data) {
-    fragments.addAll(data.fragments);
-  }
-
-  public void append(DataFragment fragment) {
-    fragments.add(fragment);
+  public void append(Object fragment) {
+    if (fragment instanceof Data) {
+      fragments.addAll(((Data)fragment).fragments);
+    } else {
+      fragments.add(fragment);
+    }
   }
 
   public boolean contains(Object o) {
@@ -92,7 +94,11 @@ public class Data implements Iterable<Object>, Serializable {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     for (Object fragment : fragments) {
-      sb.append(fragment.toString());
+      if (fragment instanceof Style) {
+        //
+      } else {
+        sb.append(fragment.toString());
+      }
     }
     return sb.toString();
   }

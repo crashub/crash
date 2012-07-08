@@ -1,7 +1,6 @@
 package org.crsh.shell.ui;
 
 import org.crsh.shell.io.ShellWriter;
-import org.crsh.text.FormattingData;
 import org.crsh.text.Style;
 
 import java.io.IOException;
@@ -25,12 +24,11 @@ public class FormattingElement extends Element {
   
   @Override
   void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
-    writer.append(ctx, new FormattingData(style));
+    writer.append(ctx, style);
   }
 
   @Override
   int width() {
     return 0;
   }
-  
 }

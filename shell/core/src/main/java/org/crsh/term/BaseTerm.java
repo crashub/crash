@@ -24,8 +24,6 @@ import org.crsh.term.console.ConsoleWriter;
 import org.crsh.term.console.ViewWriter;
 import org.crsh.term.spi.TermIO;
 import org.crsh.text.Data;
-import org.crsh.text.DataFragment;
-import org.crsh.text.FormattingData;
 import org.crsh.text.Style;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -205,8 +203,8 @@ public class BaseTerm implements Term {
   public void write(Data data) throws IOException {
     ConsoleWriter writer = console.getWriter();
     for (Object f : data) {
-      if (f instanceof FormattingData) {
-        writer.write(((FormattingData)f).getStyle());
+      if (f instanceof Style) {
+        writer.write((Style)f);
       } else {
         writer.write(f.toString());
       }
