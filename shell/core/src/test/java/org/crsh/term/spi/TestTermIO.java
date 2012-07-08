@@ -25,6 +25,7 @@ import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;
 import org.crsh.text.Data;
 import org.crsh.text.DataFragment;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -231,10 +232,7 @@ public class TestTermIO implements TermIO {
     outter.add("[" + c + "]");
   }
 
-  public void write(Data d) throws IOException {
-    for (DataFragment f : d) {
-      write(f.toString());
-    }
+  public void write(Style d) throws IOException {
   }
 
   public void writeDel() throws IOException {

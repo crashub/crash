@@ -28,9 +28,6 @@ import org.crsh.shell.ui.Decoration;
 import org.crsh.text.Style;
 import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;
-import org.crsh.text.Data;
-import org.crsh.text.DataFragment;
-import org.crsh.text.FormattingData;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -121,45 +118,34 @@ public class TelnetIO implements TermIO {
     termIO.write(s);
   }
 
-  public void write(Data d) throws IOException {
+  public void write(Style style) throws IOException {
+    if (style == Style.RESET) {
+      termIO.resetAttributes();
+      termIO.write("");
+    } else {
+      //
+      Decoration decoration = style.getDecoration();
+      termIO.setBlink(Decoration.blink == decoration);
+      termIO.setBold(Decoration.bold == decoration);
+      termIO.setUnderlined(Decoration.underline == decoration);
 
-    for (DataFragment f : d) {
-      if (f instanceof FormattingData) {
-        Style style = ((FormattingData) f).getStyle();
-        if (style != null) {
-
-          //
-          Decoration decoration = style.getDecoration();
-          termIO.setBlink(Decoration.blink == decoration);
-          termIO.setBold(Decoration.bold == decoration);
-          termIO.setUnderlined(Decoration.underline == decoration);
-
-          //
-          Color fg = style.getForeground();
-          if (fg != null) {
-            termIO.setForegroundColor(fg.code(30));
-          } else {
-            termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
-          }
-
-          //
-          Color bg = style.getBackground();
-          if (bg != null) {
-            termIO.setBackgroundColor(bg.code(30));
-          }
-          else {
-            termIO.setBackgroundColor(BasicTerminalIO.COLORINIT);
-          }
-        }
-        else {
-          termIO.resetAttributes();
-          termIO.write("");
-        }
+      //
+      Color fg = style.getForeground();
+      if (fg != null) {
+        termIO.setForegroundColor(fg.code(30));
       } else {
-        termIO.write(f.toString());
+        termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
+      }
+
+      //
+      Color bg = style.getBackground();
+      if (bg != null) {
+        termIO.setBackgroundColor(bg.code(30));
+      }
+      else {
+        termIO.setBackgroundColor(BasicTerminalIO.COLORINIT);
       }
     }
-
   }
 
   public void write(char c) throws IOException {

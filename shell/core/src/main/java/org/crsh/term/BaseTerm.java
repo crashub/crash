@@ -23,6 +23,8 @@ import org.crsh.term.console.Console;
 import org.crsh.term.console.ViewWriter;
 import org.crsh.term.spi.TermIO;
 import org.crsh.text.Data;
+import org.crsh.text.DataFragment;
+import org.crsh.text.FormattingData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +84,13 @@ public class BaseTerm implements Term {
 
       @Override
       protected void write(Data d) throws IOException {
-        io.write(d);
+        for (DataFragment f : d) {
+          if (f instanceof FormattingData) {
+            io.write(((FormattingData)f).getStyle());
+          } else {
+            io.write(f.toString());
+          }
+        }
       }
 
       @Override

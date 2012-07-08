@@ -21,10 +21,8 @@ package org.crsh.term.spi.jline;
 
 import jline.console.ConsoleReader;
 import org.crsh.term.CodeType;
-import org.crsh.text.Data;
-import org.crsh.text.DataFragment;
-import org.crsh.text.FormattingData;
 import org.crsh.term.spi.TermIO;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -118,14 +116,7 @@ public class JLineIO implements TermIO {
     buffer.append(c);
   }
 
-  public void write(Data d) throws IOException {
-    for (DataFragment f : d) {
-      if (f instanceof FormattingData) {
-        continue;
-      } else {
-        buffer.append(f.toString());
-      }
-    }
+  public void write(Style d) throws IOException {
   }
 
   public void writeDel() throws IOException {

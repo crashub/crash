@@ -4,6 +4,7 @@ import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;
 import org.crsh.text.Data;
 import org.crsh.text.DataFragment;
+import org.crsh.text.Style;
 import org.crsh.util.AbstractSocketClient;
 
 import java.io.IOException;
@@ -175,10 +176,7 @@ public class TermIOClient extends AbstractSocketClient implements TermIO {
     }
   }
 
-  public void write(Data d) throws IOException {
-    for (DataFragment f : d) {
-      write(f.toString());
-    }
+  public void write(Style d) throws IOException {
   }
 
   public void writeDel() throws IOException {
