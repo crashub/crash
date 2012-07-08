@@ -29,7 +29,7 @@ public class CharReader implements Iterable<Object>, Serializable {
     return stream.iterator();
   }
 
-  public void writeAnsi(PrintWriter writer) {
+  public void writeAnsiTo(PrintWriter writer) {
     for (Object f : stream) {
       if (f instanceof Style) {
         try {
@@ -43,7 +43,7 @@ public class CharReader implements Iterable<Object>, Serializable {
     }
   }
 
-  public void writeAnsi(Appendable appendable) throws IOException {
+  public void writeAnsiTo(Appendable appendable) throws IOException {
     for (Object f : stream) {
       if (f instanceof Style) {
         ((Style)f).writeAnsiTo(appendable);
