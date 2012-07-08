@@ -74,11 +74,16 @@ public class TableElementTestCase extends TestCase {
 
     tableElement.print(writer, new TestInvocationContext());
 
-    String ansi = "\u001B[1;34;42ma\u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42mb\u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m_\u001B[1;34;42mc\u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0m\u001B[1;34;42m \u001B[0md \u001B[0m \u001B[0m \u001B[0m \u001B[0m \u001B[0m_";
+    String expected = "\u001B[1;34;42ma     b     \u001B[0m_\u001B[1;34;42mc     \u001B[0md     \u001B[0m_";
 
+    StringBuilder sb = new StringBuilder();
+    reader.writeAnsiTo(sb);
+    String ansi = sb.toString();
+
+    //
     assertEquals(
-      ansi
-      , toAnsi(reader));
+      expected
+      , ansi);
 
   }
 
@@ -139,17 +144,5 @@ public class TableElementTestCase extends TestCase {
     assertEquals(
         "a     This text is very ver very too large to be displayed in a cell of 32_c     d                         _"
         , reader.toString());
-  }
-
-  public String toAnsi(CharReader data) {
-    StringBuilder sb = new StringBuilder();
-    for (Object fragment : data) {
-      if (fragment instanceof Style) {
-        sb.append(((Style)fragment).asAnsiSequence());
-      } else {
-        sb.append(fragment.toString());
-      }
-    }
-    return sb.toString();
   }
 }
