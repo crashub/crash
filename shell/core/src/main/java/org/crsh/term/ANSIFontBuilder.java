@@ -1,8 +1,9 @@
 package org.crsh.term;
 
-import org.crsh.shell.ui.Color;
+import org.crsh.text.Color;
 import org.crsh.shell.ui.Decoration;
-import org.crsh.shell.ui.Style;
+import org.crsh.text.Style;
+import org.crsh.text.FormattingData;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>

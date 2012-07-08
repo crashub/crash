@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.term.Data;
+import org.crsh.text.Data;
 
 import java.io.Serializable;
 import java.util.Collections;

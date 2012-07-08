@@ -22,7 +22,7 @@ package org.crsh.command.impl;
 
 import org.crsh.command.InvocationContext;
 import org.crsh.shell.io.ShellPrinter;
-import org.crsh.term.Data;
+import org.crsh.text.Data;
 import org.crsh.util.LineFeedWriter;
 
 import java.util.Collections;

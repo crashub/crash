@@ -21,8 +21,8 @@ package org.crsh.term.console;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
-import org.crsh.term.Data;
-import org.crsh.term.DataFragment;
+import org.crsh.text.Data;
+import org.crsh.text.DataFragment;
 
 import java.io.IOException;
 

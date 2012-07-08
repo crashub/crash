@@ -20,8 +20,8 @@
 package org.crsh.shell.ui;
 
 import groovy.util.BuilderSupport;
+import org.crsh.text.Color;
 
-import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

@@ -1,5 +1,7 @@
 package org.crsh.term;
 
+import org.crsh.text.Data;
+
 import java.io.IOException;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */

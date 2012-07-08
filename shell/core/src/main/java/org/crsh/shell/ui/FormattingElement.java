@@ -1,7 +1,8 @@
 package org.crsh.shell.ui;
 
 import org.crsh.shell.io.ShellWriter;
-import org.crsh.term.FormattingData;
+import org.crsh.text.FormattingData;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 

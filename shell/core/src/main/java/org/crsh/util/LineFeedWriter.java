@@ -21,8 +21,8 @@ package org.crsh.util;
 
 import org.crsh.shell.io.ShellWriter;
 import org.crsh.shell.io.ShellWriterContext;
-import org.crsh.term.Data;
-import org.crsh.term.DataFragment;
+import org.crsh.text.Data;
+import org.crsh.text.DataFragment;
 
 import java.io.IOException;
 

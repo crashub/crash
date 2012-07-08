@@ -1,4 +1,4 @@
-package org.crsh.term;
+package org.crsh.text;
 
 import java.util.LinkedList;
 

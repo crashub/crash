@@ -21,6 +21,7 @@ package org.crsh.shell.ui;
 
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
+import org.crsh.text.Color;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -244,9 +245,9 @@ public class UIBuilderTestCase extends TestCase {
     GroovyShell shell = new GroovyShell();
     UIBuilder res = (UIBuilder)shell.evaluate(
       "import org.crsh.shell.ui.UIBuilder;\n" +
-      "import org.crsh.shell.ui.Color;\n" +
+      "import org.crsh.text.Color;\n" +
       "import org.crsh.shell.ui.Decoration;\n" +
-      "import org.crsh.shell.ui.Style;\n" +
+      "import org.crsh.text.Style;\n" +
         "def builder = new UIBuilder();\n" +
         "builder.table {\n" +
           "row (decoration: bold, foreground: red, background: green) {\n" +
@@ -270,9 +271,9 @@ public class UIBuilderTestCase extends TestCase {
     try {
       UIBuilder res = (UIBuilder)shell.evaluate(
         "import org.crsh.shell.ui.UIBuilder;\n" +
-        "import org.crsh.shell.ui.Color;\n" +
+        "import org.crsh.text.Color;\n" +
         "import org.crsh.shell.ui.Decoration;\n" +
-        "import org.crsh.shell.ui.Style;\n" +
+        "import org.crsh.text.Style;\n" +
           "def builder = new UIBuilder();\n" +
           "builder.table {\n" +
             "row() {\n" +

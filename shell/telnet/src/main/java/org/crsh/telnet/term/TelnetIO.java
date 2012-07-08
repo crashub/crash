@@ -21,14 +21,16 @@ package org.crsh.telnet.term;
 
 import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
-import net.wimpi.telnetd.io.terminal.ColorHelper;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionData;
-import org.crsh.shell.ui.Color;
+import org.crsh.text.Color;
 import org.crsh.shell.ui.Decoration;
-import org.crsh.shell.ui.Style;
+import org.crsh.text.Style;
 import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;
+import org.crsh.text.Data;
+import org.crsh.text.DataFragment;
+import org.crsh.text.FormattingData;
 
 import java.io.EOFException;
 import java.io.IOException;

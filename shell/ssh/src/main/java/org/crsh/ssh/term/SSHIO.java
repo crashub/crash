@@ -21,9 +21,9 @@ package org.crsh.ssh.term;
 
 import org.crsh.term.ANSIFontBuilder;
 import org.crsh.term.CodeType;
-import org.crsh.term.Data;
-import org.crsh.term.FormattingData;
-import org.crsh.term.DataFragment;
+import org.crsh.text.Data;
+import org.crsh.text.FormattingData;
+import org.crsh.text.DataFragment;
 import org.crsh.term.spi.TermIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

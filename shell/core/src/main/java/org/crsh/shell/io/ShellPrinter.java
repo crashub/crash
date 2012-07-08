@@ -22,7 +22,7 @@ package org.crsh.shell.io;
 import org.crsh.command.InvocationContext;
 import org.crsh.shell.ui.Element;
 import org.crsh.shell.ui.FormattingElement;
-import org.crsh.shell.ui.Style;
+import org.crsh.text.Style;
 import org.crsh.shell.ui.UIBuilder;
 import org.crsh.util.AppendableWriter;
 

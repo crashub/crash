@@ -1,6 +1,4 @@
-package org.crsh.term;
-
-import org.crsh.shell.ui.Style;
+package org.crsh.text;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>

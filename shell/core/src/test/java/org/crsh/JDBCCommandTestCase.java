@@ -2,11 +2,9 @@ package org.crsh;
 
 import org.crsh.command.ScriptException;
 import org.crsh.shell.AbstractCommandTestCase;
-import org.crsh.term.Data;
-import org.crsh.term.DataFragment;
+import org.crsh.text.Data;
 
 import java.sql.SQLException;
-import java.util.Queue;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class JDBCCommandTestCase extends AbstractCommandTestCase {

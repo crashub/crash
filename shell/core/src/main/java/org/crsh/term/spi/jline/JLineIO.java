@@ -21,9 +21,9 @@ package org.crsh.term.spi.jline;
 
 import jline.console.ConsoleReader;
 import org.crsh.term.CodeType;
-import org.crsh.term.Data;
-import org.crsh.term.DataFragment;
-import org.crsh.term.FormattingData;
+import org.crsh.text.Data;
+import org.crsh.text.DataFragment;
+import org.crsh.text.FormattingData;
 import org.crsh.term.spi.TermIO;
 
 import java.io.IOException;

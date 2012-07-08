@@ -3,7 +3,7 @@ package org.crsh.processor.term;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.term.Data;
+import org.crsh.text.Data;
 import org.crsh.term.TermEvent;
 
 import java.io.IOException;

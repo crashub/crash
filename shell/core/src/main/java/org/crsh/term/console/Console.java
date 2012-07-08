@@ -19,9 +19,9 @@
 
 package org.crsh.term.console;
 
-import org.crsh.term.Data;
-import org.crsh.term.DataFragment;
-import org.crsh.term.FormattingData;
+import org.crsh.text.Data;
+import org.crsh.text.DataFragment;
+import org.crsh.text.FormattingData;
 
 import java.io.IOException;
 import java.util.LinkedList;

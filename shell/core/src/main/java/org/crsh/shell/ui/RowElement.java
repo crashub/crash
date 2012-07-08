@@ -20,6 +20,7 @@
 package org.crsh.shell.ui;
 
 import org.crsh.shell.io.ShellWriter;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.ArrayList;

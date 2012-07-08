@@ -20,7 +20,7 @@
 package org.crsh.term.spi;
 
 import org.crsh.term.CodeType;
-import org.crsh.term.Data;
+import org.crsh.text.Data;
 
 import java.io.Closeable;
 import java.io.IOException;

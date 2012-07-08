@@ -2,7 +2,9 @@ package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
 import org.crsh.term.ANSIFontBuilder;
-import org.crsh.term.FormattingData;
+import org.crsh.text.Color;
+import org.crsh.text.FormattingData;
+import org.crsh.text.Style;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>

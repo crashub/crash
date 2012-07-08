@@ -19,7 +19,7 @@
 
 package org.crsh.shell.io;
 
-import org.crsh.term.DataFragment;
+import org.crsh.text.DataFragment;
 
 import java.io.IOException;
 

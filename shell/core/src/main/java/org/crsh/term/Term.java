@@ -19,6 +19,8 @@
 
 package org.crsh.term;
 
+import org.crsh.text.Data;
+
 import java.io.Closeable;
 import java.io.IOException;
 

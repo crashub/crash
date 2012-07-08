@@ -20,9 +20,8 @@
 package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
-import org.crsh.command.InvocationContext;
 import org.crsh.shell.TestInvocationContext;
-import org.crsh.term.Data;
+import org.crsh.text.Data;
 import org.crsh.util.LineFeedWriter;
 
 import java.io.IOException;

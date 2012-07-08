@@ -3,9 +3,10 @@ package org.crsh.shell.ui;
 import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
 import org.crsh.term.ANSIFontBuilder;
-import org.crsh.term.Data;
-import org.crsh.term.DataFragment;
-import org.crsh.term.FormattingData;
+import org.crsh.text.Color;
+import org.crsh.text.Data;
+import org.crsh.text.DataFragment;
+import org.crsh.text.FormattingData;
 import org.crsh.util.LineFeedWriter;
 
 /**

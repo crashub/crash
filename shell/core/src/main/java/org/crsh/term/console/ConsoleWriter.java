@@ -19,7 +19,7 @@
 
 package org.crsh.term.console;
 
-import org.crsh.term.Data;
+import org.crsh.text.Data;
 
 import java.io.IOException;
 

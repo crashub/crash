@@ -1,4 +1,6 @@
-package org.crsh.shell.ui;
+package org.crsh.text;
+
+import org.crsh.shell.ui.Decoration;
 
 import java.io.Serializable;
 

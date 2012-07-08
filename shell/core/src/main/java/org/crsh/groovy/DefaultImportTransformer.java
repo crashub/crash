@@ -34,7 +34,7 @@ import org.crsh.cmdline.annotations.Option;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.shell.ui.Color;
+import org.crsh.text.Color;
 import org.crsh.shell.ui.Decoration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

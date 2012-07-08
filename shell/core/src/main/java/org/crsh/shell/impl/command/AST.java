@@ -26,7 +26,7 @@ import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.term.Data;
+import org.crsh.text.Data;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;

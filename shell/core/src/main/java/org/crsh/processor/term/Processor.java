@@ -5,7 +5,7 @@ import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.term.Data;
+import org.crsh.text.Data;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
 import org.crsh.util.CloseableList;
