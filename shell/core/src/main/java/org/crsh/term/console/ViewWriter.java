@@ -19,7 +19,7 @@
 
 package org.crsh.term.console;
 
-import org.crsh.text.Data;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 
@@ -39,7 +39,7 @@ public abstract class ViewWriter {
 
   protected abstract void write(char c) throws IOException;
 
-  protected abstract void write(Data d) throws IOException;
+  protected abstract void write(Style style) throws IOException;
 
   protected abstract void writeDel() throws IOException;
 

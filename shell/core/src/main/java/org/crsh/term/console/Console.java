@@ -19,9 +19,7 @@
 
 package org.crsh.term.console;
 
-import org.crsh.text.Data;
-import org.crsh.text.DataFragment;
-import org.crsh.text.FormattingData;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -162,14 +160,8 @@ public final class Console {
     }
 
     @Override
-    public void write(Data d) throws IOException {
-      for (DataFragment fragment : d) {
-        if (fragment instanceof FormattingData) {
-          viewWriter.write(new Data(fragment));
-        } else {
-          write(fragment.toString());
-        }
-      }
+    public void write(Style style) throws IOException {
+      viewWriter.write(style);
     }
 
     private void writeNoFlush(char c) throws IOException {

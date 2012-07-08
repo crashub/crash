@@ -19,7 +19,7 @@
 
 package org.crsh.term.console;
 
-import org.crsh.text.Data;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 
@@ -49,11 +49,11 @@ public abstract class ConsoleWriter {
   public abstract void write(char c) throws IOException;
 
   /**
-   * Write some data to the output.
+   * Write some style to the output.
    *
-   * @param d the data to write
+   * @param style the data to write
    * @throws IOException any io exception
    */
-  public abstract void write(Data d) throws IOException;
+  public abstract void write(Style style) throws IOException;
 
 }

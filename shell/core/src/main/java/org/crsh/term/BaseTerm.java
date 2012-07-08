@@ -20,11 +20,13 @@
 package org.crsh.term;
 
 import org.crsh.term.console.Console;
+import org.crsh.term.console.ConsoleWriter;
 import org.crsh.term.console.ViewWriter;
 import org.crsh.term.spi.TermIO;
 import org.crsh.text.Data;
 import org.crsh.text.DataFragment;
 import org.crsh.text.FormattingData;
+import org.crsh.text.Style;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,14 +85,8 @@ public class BaseTerm implements Term {
       }
 
       @Override
-      protected void write(Data d) throws IOException {
-        for (DataFragment f : d) {
-          if (f instanceof FormattingData) {
-            io.write(((FormattingData)f).getStyle());
-          } else {
-            io.write(f.toString());
-          }
-        }
+      protected void write(Style style) throws IOException {
+        io.write(style);
       }
 
       @Override
@@ -207,6 +203,13 @@ public class BaseTerm implements Term {
   }
 
   public void write(Data data) throws IOException {
-    console.getWriter().write(data);
+    ConsoleWriter writer = console.getWriter();
+    for (DataFragment f : data) {
+      if (f instanceof FormattingData) {
+        writer.write(((FormattingData)f).getStyle());
+      } else {
+        writer.write(f.toString());
+      }
+    }
   }
 }

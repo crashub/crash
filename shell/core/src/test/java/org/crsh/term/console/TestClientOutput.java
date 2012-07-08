@@ -23,6 +23,7 @@ import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import org.crsh.text.Data;
 import org.crsh.text.DataFragment;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 
@@ -86,10 +87,7 @@ public class TestClientOutput extends ViewWriter {
   }
 
   @Override
-  protected void write(Data d) throws IOException {
-    for (DataFragment f : d) {
-      write(f.toString());
-    }
+  protected void write(Style style) throws IOException {
   }
 
   @Override
