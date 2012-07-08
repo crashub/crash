@@ -69,7 +69,7 @@ public class LineFeedWriter implements ShellWriter {
   }
 
   public ShellWriter append(ShellWriterContext ctx, final DataFragment d) throws IOException {
-    data.add(d);
+    data.append(d);
     return this;
   }
 
@@ -131,7 +131,7 @@ public class LineFeedWriter implements ShellWriter {
       }
 
       //
-      data.add(new DataFragment(csq.toString().substring(off, end)));
+      data.append(new DataFragment(csq.toString().substring(off, end)));
 
       //
       switch (status) {
@@ -156,7 +156,7 @@ public class LineFeedWriter implements ShellWriter {
       case PADDED:
         status = NOT_PADDED;
       case NOT_PADDED:
-        data.add(new DataFragment(lineFeed));
+        data.append(new DataFragment(lineFeed));
         if (ctx != null) {
           ctx.lineFeed();
         }

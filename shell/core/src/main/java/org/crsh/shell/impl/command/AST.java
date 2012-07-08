@@ -110,8 +110,8 @@ abstract class AST {
         }
 
         // Append anything that was in the buffer
-        if (ctx.getData() != null && ctx.getData().size() > 0) {
-          data.addAll(ctx.getData());
+        if (ctx.getData() != null && !ctx.getData().isEmpty()) {
+          data.append(ctx.getData());
         }
 
         // Append produced if possible
@@ -127,7 +127,7 @@ abstract class AST {
         return next.execute(crash, context, produced);
       } else {
         ShellResponse response;
-        if (data.size() > 0) {
+        if (!data.isEmpty()) {
           response = ShellResponse.display(produced, data);
         } else {
           response = ShellResponse.ok(produced);

@@ -2,39 +2,65 @@ package org.crsh.text;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class Data extends LinkedList<DataFragment> {
+public class Data implements Iterable<DataFragment>, Serializable {
+
+  /** . */
+  private final LinkedList<DataFragment> fragments;
 
   public Data() {
+    this.fragments = new LinkedList<DataFragment>();
   }
 
   public Data(CharSequence data) {
-    super.add(new DataFragment(data));
+    this(new DataFragment(data));
   }
 
   public Data(DataFragment fragment) {
-    super.add(fragment);
+    this();
+    fragments.add(fragment);
+  }
+
+  public Iterator<DataFragment> iterator() {
+    return fragments.iterator();
   }
 
   public void writeAnsi(PrintWriter writer) {
-    for (DataFragment f : this) {
+    for (DataFragment f : fragments) {
       f.writeAnsi(writer);
     }
   }
 
   public void writeAnsi(Appendable appendable) throws IOException {
-    for (DataFragment f : this) {
+    for (DataFragment f : fragments) {
       f.writeAnsi(appendable);
     }
   }
 
-  @Override
+  public void append(Data data) {
+    fragments.addAll(data.fragments);
+  }
+
+  public void append(DataFragment fragment) {
+    fragments.add(fragment);
+  }
+
   public boolean contains(Object o) {
     return toString().contains(o.toString());
+  }
+
+  public boolean isEmpty() {
+    return fragments.isEmpty();
+  }
+
+  public void clear() {
+    fragments.clear();
   }
 
   @Override
@@ -58,7 +84,7 @@ public class Data extends LinkedList<DataFragment> {
   public String toString() {
     StringBuffer sb = new StringBuffer();
 
-    for (DataFragment fragment : this) {
+    for (DataFragment fragment : fragments) {
       sb.append(fragment.toString());
     }
 
