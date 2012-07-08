@@ -204,7 +204,7 @@ public class BaseTerm implements Term {
 
   public void write(Data data) throws IOException {
     ConsoleWriter writer = console.getWriter();
-    for (DataFragment f : data) {
+    for (Object f : data) {
       if (f instanceof FormattingData) {
         writer.write(((FormattingData)f).getStyle());
       } else {

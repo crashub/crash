@@ -143,17 +143,14 @@ public class TableElementTestCase extends TestCase {
   }
 
   public String toAnsi(Data data) {
-    StringBuffer sb = new StringBuffer();
-
-    for (DataFragment fragment : data) {
+    StringBuilder sb = new StringBuilder();
+    for (Object fragment : data) {
       if (fragment instanceof FormattingData) {
-        sb.append(((FormattingData) fragment).asAnsiSequence());
+        sb.append(((FormattingData)fragment).asAnsiSequence());
       } else {
         sb.append(fragment.toString());
       }
     }
-
     return sb.toString();
   }
-
 }

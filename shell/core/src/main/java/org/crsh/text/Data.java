@@ -9,13 +9,13 @@ import java.util.LinkedList;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class Data implements Iterable<DataFragment>, Serializable {
+public class Data implements Iterable<Object>, Serializable {
 
   /** . */
-  private final LinkedList<DataFragment> fragments;
+  private final LinkedList<Object> fragments;
 
   public Data() {
-    this.fragments = new LinkedList<DataFragment>();
+    this.fragments = new LinkedList<Object>();
   }
 
   public Data(CharSequence data) {
@@ -27,19 +27,27 @@ public class Data implements Iterable<DataFragment>, Serializable {
     fragments.add(fragment);
   }
 
-  public Iterator<DataFragment> iterator() {
+  public Iterator<Object> iterator() {
     return fragments.iterator();
   }
 
   public void writeAnsi(PrintWriter writer) {
-    for (DataFragment f : fragments) {
-      f.writeAnsi(writer);
+    for (Object f : fragments) {
+      if (f instanceof FormattingData) {
+        ((FormattingData)f).writeAnsi(writer);
+      } else {
+        writer.append(f.toString());
+      }
     }
   }
 
   public void writeAnsi(Appendable appendable) throws IOException {
-    for (DataFragment f : fragments) {
-      f.writeAnsi(appendable);
+    for (Object f : fragments) {
+      if (f instanceof FormattingData) {
+        ((FormattingData)f).writeAnsi(appendable);
+      } else {
+        appendable.append(f.toString());
+      }
     }
   }
 
@@ -82,12 +90,10 @@ public class Data implements Iterable<DataFragment>, Serializable {
 
   @Override
   public String toString() {
-    StringBuffer sb = new StringBuffer();
-
-    for (DataFragment fragment : fragments) {
+    StringBuilder sb = new StringBuilder();
+    for (Object fragment : fragments) {
       sb.append(fragment.toString());
     }
-
     return sb.toString();
   }
 }
