@@ -49,13 +49,9 @@ public class TelnetIO implements TermIO {
   /** . */
   private final BasicTerminalIO termIO;
 
-  /** . */
-  private final ANSIFontBuilder ansiBuilder;
-
   public TelnetIO(Connection conn) {
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
-    this.ansiBuilder = new ANSIFontBuilder();
   }
 
   public int read() throws IOException {
@@ -134,28 +130,26 @@ public class TelnetIO implements TermIO {
 
           //
           Decoration decoration = style.getDecoration();
-          termIO.setBlink(Decoration.blink.equals(decoration));
-          termIO.setBold(Decoration.bold.equals(decoration));
-          termIO.setUnderlined(Decoration.underline.equals(decoration));
+          termIO.setBlink(Decoration.blink == decoration);
+          termIO.setBold(Decoration.bold == decoration);
+          termIO.setUnderlined(Decoration.underline == decoration);
 
           //
           Color fg = style.getForeground();
           if (fg != null) {
-            termIO.setForegroundColor(fg.ordinal() + 30);
-          }
-          else {
+            termIO.setForegroundColor(fg.code(30));
+          } else {
             termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
           }
 
           //
           Color bg = style.getBackground();
           if (bg != null) {
-            termIO.setBackgroundColor(bg.ordinal() + 30);
+            termIO.setBackgroundColor(bg.code(30));
           }
           else {
             termIO.setBackgroundColor(BasicTerminalIO.COLORINIT);
           }
-
         }
         else {
           termIO.resetAttributes();

@@ -37,5 +37,4 @@ public class Style implements Serializable {
   public Color getBackground() {
     return background;
   }
-
 }

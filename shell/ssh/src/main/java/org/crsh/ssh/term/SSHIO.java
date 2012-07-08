@@ -19,7 +19,6 @@
 
 package org.crsh.ssh.term;
 
-import org.crsh.term.ANSIFontBuilder;
 import org.crsh.term.CodeType;
 import org.crsh.text.Data;
 import org.crsh.text.FormattingData;
@@ -79,16 +78,12 @@ public class SSHIO implements TermIO {
   /** . */
   final AtomicBoolean closed;
 
-  /** . */
-  private final ANSIFontBuilder ansiBuilder;
-
   public SSHIO(CRaSHCommand command) {
     this.command = command;
     this.writer = new OutputStreamWriter(command.out);
     this.reader = new InputStreamReader(command.in);
     this.status = STATUS_NORMAL;
     this.closed = new AtomicBoolean(false);
-    this.ansiBuilder = new ANSIFontBuilder();
   }
 
   public int read() throws IOException {
@@ -199,13 +194,7 @@ public class SSHIO implements TermIO {
   }
 
   public void write(Data d) throws IOException {
-    for (DataFragment f : d) {
-      if (f instanceof FormattingData) {
-        writer.write(ansiBuilder.build((FormattingData) f).toString());
-      } else {
-        writer.write(f.toString());
-      }
-    }
+    d.writeAnsi(writer);
   }
 
   public void writeDel() throws IOException {

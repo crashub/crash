@@ -1,5 +1,7 @@
 package org.crsh.text;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 
 /**
@@ -16,6 +18,18 @@ public class Data extends LinkedList<DataFragment> {
 
   public Data(DataFragment fragment) {
     super.add(fragment);
+  }
+
+  public void writeAnsi(PrintWriter writer) {
+    for (DataFragment f : this) {
+      f.writeAnsi(writer);
+    }
+  }
+
+  public void writeAnsi(Appendable appendable) throws IOException {
+    for (DataFragment f : this) {
+      f.writeAnsi(appendable);
+    }
   }
 
   @Override

@@ -2,7 +2,6 @@ package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
-import org.crsh.term.ANSIFontBuilder;
 import org.crsh.text.Color;
 import org.crsh.text.Data;
 import org.crsh.text.DataFragment;
@@ -144,14 +143,11 @@ public class TableElementTestCase extends TestCase {
   }
 
   public String toAnsi(Data data) {
-
-    ANSIFontBuilder ansiFontBuilder = new ANSIFontBuilder();
-
     StringBuffer sb = new StringBuffer();
 
     for (DataFragment fragment : data) {
       if (fragment instanceof FormattingData) {
-        sb.append(ansiFontBuilder.build((FormattingData) fragment));
+        sb.append(((FormattingData) fragment).asAnsiSequence());
       } else {
         sb.append(fragment.toString());
       }

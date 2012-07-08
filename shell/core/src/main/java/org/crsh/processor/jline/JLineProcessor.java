@@ -8,7 +8,6 @@ import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
-import org.crsh.term.ANSIFontBuilder;
 import org.crsh.text.DataFragment;
 import org.crsh.text.FormattingData;
 
@@ -33,15 +32,11 @@ public class JLineProcessor implements Runnable, Completer {
   /** . */
   final AtomicReference<ShellProcess> current;
 
-  /** . */
-  private final ANSIFontBuilder ansiBuilder;
-
   public JLineProcessor(Shell shell, ConsoleReader reader, PrintWriter writer) {
     this.shell = shell;
     this.reader = reader;
     this.writer = writer;
     this.current = new AtomicReference<ShellProcess>();
-    this.ansiBuilder = new ANSIFontBuilder();
   }
 
   public void run() {
@@ -91,13 +86,7 @@ public class JLineProcessor implements Runnable, Completer {
       } else if (response instanceof ShellResponse.Close) {
         break;
       } else {
-        for (DataFragment f : response.getData()) {
-          if (f instanceof FormattingData) {
-            writer.print(ansiBuilder.build((FormattingData) f));
-          } else {
-            writer.print(f.toString());
-          }
-        }
+        response.getData().writeAnsi(writer);
         writer.flush();
       }
     }

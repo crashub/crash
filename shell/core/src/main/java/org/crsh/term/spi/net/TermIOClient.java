@@ -33,12 +33,8 @@ public class TermIOClient extends AbstractSocketClient implements TermIO {
   /** . */
   private OutputStream out;
 
-  /** . */
-  private final ANSIFontBuilder ansiBuilder;
-
   public TermIOClient(int port) {
     super(port);
-    this.ansiBuilder = new ANSIFontBuilder();
   }
 
   @Override
