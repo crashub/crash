@@ -46,18 +46,29 @@ public class CharReader implements Iterable<Object>, Serializable {
   }
 
   public Iterator<Object> iterator() {
-    final Iterator<Chunk> i = chunks.iterator();
     return new Iterator<Object>() {
-      Style style;
-      StringBuilder buffer;
+      Iterator<Chunk> i = chunks.iterator();
+      Style nextStyle;
+      StringBuilder nextBuffer;
       public boolean hasNext() {
-        if (style != null || buffer != null) {
+        if (nextStyle != null || nextBuffer != null) {
           return true;
-        } else if (i.hasNext()) {
-          Chunk next = i.next();
-          style = next.style;
-          buffer = next.buffer;
-          return true;
+        } else if (i != null) {
+          if (i.hasNext()) {
+            Chunk next = i.next();
+            nextStyle = next.style;
+            nextBuffer = next.buffer;
+            return true;
+          } else {
+            i = null;
+            Style last = chunks.size() > 0 ? chunks.peekLast().style : null;
+            if (Safe.notEquals(style, last)) {
+              nextStyle = style;
+              return true;
+            } else {
+              return false;
+            }
+          }
         } else {
           return false;
         }
@@ -65,12 +76,12 @@ public class CharReader implements Iterable<Object>, Serializable {
       public Object next() {
         if (hasNext()) {
           Object next;
-          if (style != null) {
-            next = style;
-            style = null;
+          if (nextStyle != null) {
+            next = nextStyle;
+            nextStyle = null;
           } else {
-            next = buffer;
-            buffer = null;
+            next = nextBuffer;
+            nextBuffer = null;
           }
           return next;
         } else {
@@ -103,6 +114,13 @@ public class CharReader implements Iterable<Object>, Serializable {
       }
       appendable.append(f.buffer);
     }
+  }
+
+  public CharReader append(Object... data) throws NullPointerException {
+    for (Object o : data) {
+      append(o);
+    }
+    return this;
   }
 
   public CharReader append(Object data) throws NullPointerException {

@@ -113,4 +113,8 @@ public abstract class Style implements Serializable {
 
   public abstract void writeAnsiTo(Appendable appendable) throws IOException;
 
+  @Override
+  public String toString() {
+    return "Style[decoration=" + decoration + ",background=" + background + ",foreground=" + foreground + "]";
+  }
 }
