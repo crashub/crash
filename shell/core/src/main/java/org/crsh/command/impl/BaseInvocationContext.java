@@ -22,8 +22,8 @@ package org.crsh.command.impl;
 
 import org.crsh.command.InvocationContext;
 import org.crsh.shell.io.ShellPrinter;
+import org.crsh.shell.io.ShellWriter;
 import org.crsh.text.CharReader;
-import org.crsh.shell.io.LineFeedWriter;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -89,7 +89,7 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
   public ShellPrinter getWriter() {
     if (writer == null) {
       reader = new CharReader();
-      writer = new ShellPrinter(new LineFeedWriter(reader, "\r\n"), this);
+      writer = new ShellPrinter(new ShellWriter(reader, "\r\n"), this);
     }
     return writer;
   }

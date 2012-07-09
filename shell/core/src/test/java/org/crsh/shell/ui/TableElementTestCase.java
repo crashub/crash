@@ -5,7 +5,7 @@ import org.crsh.shell.TestInvocationContext;
 import org.crsh.text.CharReader;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
-import org.crsh.shell.io.LineFeedWriter;
+import org.crsh.shell.io.ShellWriter;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -30,7 +30,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row2);
 
     CharReader reader = new CharReader();
-    LineFeedWriter writer = new LineFeedWriter(reader, "_");
+    ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -70,7 +70,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row2);
 
     CharReader reader = new CharReader();
-    LineFeedWriter writer = new LineFeedWriter(reader, "_");
+    ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -110,7 +110,7 @@ public class TableElementTestCase extends TestCase {
     node.addNode(new LabelElement("bar"));
 
     CharReader reader = new CharReader();
-    LineFeedWriter writer = new LineFeedWriter(reader, "_");
+    ShellWriter writer = new ShellWriter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
 
@@ -137,7 +137,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row2);
 
     CharReader reader = new CharReader();
-    LineFeedWriter writer = new LineFeedWriter(reader, "_");
+    ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 

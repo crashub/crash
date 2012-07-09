@@ -19,7 +19,7 @@
 
 package org.crsh.command;
 
-import org.crsh.shell.io.ShellPrinter;
+import org.crsh.text.ShellPrintWriter;
 
 /**
  * The invocation context provided to a command during the invocation phase. The invocation context provides the
@@ -59,7 +59,7 @@ public interface InvocationContext<C, P> extends CommandContext {
    *
    * @return the writer
    */
-  ShellPrinter getWriter();
+  ShellPrintWriter getWriter();
 
   /**
    * Returns true if the command is involved in a pipe operation and receives a stream.
