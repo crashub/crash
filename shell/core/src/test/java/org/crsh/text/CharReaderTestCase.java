@@ -3,6 +3,7 @@ package org.crsh.text;
 import org.crsh.AbstractTestCase;
 import org.crsh.util.Utils;
 
+import java.io.IOException;
 import java.util.List;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
@@ -40,7 +41,8 @@ public class CharReaderTestCase extends AbstractTestCase {
   }
 
   public void testConcatenation() {
-    assertReader(new CharReader().append(new CharReader().append(RED)).append("abc"), RED, "abc");
+    assertReader(new CharReader().append(RED).append(new CharReader().append("a")), RED, "a");
+    assertReader(new CharReader().append(new CharReader().append(RED)).append("a"), RED, "a");
   }
 
   private void assertReader(CharReader reader, Object... expected) {

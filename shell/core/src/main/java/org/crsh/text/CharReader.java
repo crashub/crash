@@ -62,10 +62,14 @@ public class CharReader implements Iterable<Object>, Serializable {
             return true;
           } else {
             i = null;
-            Style last = chunks.size() > 0 ? chunks.peekLast().style : null;
-            if (Safe.notEquals(style, last)) {
-              nextStyle = style;
-              return true;
+            if (style != null) {
+              Style last = chunks.size() > 0 ? chunks.peekLast().style : null;
+              if (style.equals(last)) {
+                return false;
+              } else {
+                nextStyle = style;
+                return true;
+              }
             } else {
               return false;
             }
@@ -104,7 +108,9 @@ public class CharReader implements Iterable<Object>, Serializable {
   }
 
   public void writeAnsiTo(Appendable appendable) throws IOException {
-    for (Object o : this) {
+    Iterator<Object> iterator = iterator();
+    while (iterator.hasNext()) {
+      Object o = iterator.next();
       if (o instanceof Style) {
         try {
           ((Style)o).writeAnsiTo(appendable);
@@ -132,7 +138,6 @@ public class CharReader implements Iterable<Object>, Serializable {
     }
     if (data instanceof CharReader) {
       CharReader reader = (CharReader)data;
-      append(Style.reset);
       for (Chunk chunk : reader.chunks) {
         if (chunk.style != null) {
           append(chunk.style);
