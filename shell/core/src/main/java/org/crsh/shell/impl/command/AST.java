@@ -27,6 +27,7 @@ import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.CharReader;
+import org.crsh.text.Style;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -110,8 +111,9 @@ abstract class AST {
         }
 
         // Append anything that was in the buffer
-        if (ctx.getReader() != null && !ctx.getReader().isEmpty()) {
-          reader.append(ctx.getReader());
+        CharReader ctxReader = ctx.getReader();
+        if (ctxReader != null && !ctxReader.isEmpty()) {
+          reader.append(ctxReader).append(Style.reset);
         }
 
         // Append produced if possible
