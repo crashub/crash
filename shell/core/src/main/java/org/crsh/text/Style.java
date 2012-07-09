@@ -114,7 +114,7 @@ public abstract class Style implements Serializable {
     return background;
   }
 
-  public CharSequence asAnsiSequence() {
+  public CharSequence toAnsiSequence() {
     StringBuilder sb = new StringBuilder();
     try {
       writeAnsiTo(sb);

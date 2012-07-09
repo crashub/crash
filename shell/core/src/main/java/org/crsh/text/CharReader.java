@@ -17,13 +17,14 @@ public class CharReader implements Iterable<Object>, Serializable {
   private static class Chunk implements Serializable {
 
     /** . */
-    Style style;
+    final Style style;
 
     /** . */
-    StringBuilder buffer = new StringBuilder();
+    final StringBuilder buffer;
 
     private Chunk(Style style) {
       this.style = style;
+      this.buffer = new StringBuilder();
     }
   }
 
@@ -95,24 +96,26 @@ public class CharReader implements Iterable<Object>, Serializable {
   }
 
   public void writeAnsiTo(PrintWriter writer) {
-    for (Chunk f : chunks) {
-      if (f.style != null) {
-        try {
-          f.style.writeAnsiTo(writer);
-        }
-        catch (IOException ignore) {
-        }
-      }
-      writer.append(f.buffer);
+    try {
+      writeAnsiTo((Appendable)writer);
+    }
+    catch (IOException ignore) {
     }
   }
 
   public void writeAnsiTo(Appendable appendable) throws IOException {
-    for (Chunk f : chunks) {
-      if (f.style != null) {
-        f.style.writeAnsiTo(appendable);
+    for (Object o : this) {
+      if (o instanceof Style) {
+        try {
+          ((Style)o).writeAnsiTo(appendable);
+        }
+        catch (IOException ignore) {
+        }
+      } else if (o instanceof CharSequence) {
+        appendable.append((CharSequence)o);
+      } else {
+        appendable.append(o.toString());
       }
-      appendable.append(f.buffer);
     }
   }
 
@@ -128,13 +131,15 @@ public class CharReader implements Iterable<Object>, Serializable {
       throw new NullPointerException("No null accepted");
     }
     if (data instanceof CharReader) {
+      CharReader reader = (CharReader)data;
       append(Style.reset);
-      for (Chunk chunk : ((CharReader)data).chunks) {
+      for (Chunk chunk : reader.chunks) {
         if (chunk.style != null) {
           append(chunk.style);
         }
         append(chunk.buffer);
       }
+      style = reader.style;
     } else {
       if (data instanceof Style) {
         style = (Style)data;

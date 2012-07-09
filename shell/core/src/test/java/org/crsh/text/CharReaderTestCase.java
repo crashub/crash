@@ -39,6 +39,10 @@ public class CharReaderTestCase extends AbstractTestCase {
     assertReader(new CharReader().append(RED, "a", BLUE), RED, "a", BLUE);
   }
 
+  public void testConcatenation() {
+    assertReader(new CharReader().append(new CharReader().append(RED)).append("abc"), RED, "abc");
+  }
+
   private void assertReader(CharReader reader, Object... expected) {
     List<?> res = Utils.list(reader);
     assertEquals(expected.length, res.size());
