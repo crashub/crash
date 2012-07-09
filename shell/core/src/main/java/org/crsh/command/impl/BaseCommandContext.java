@@ -36,7 +36,7 @@ public class BaseCommandContext implements CommandContext {
     this.attributes = attributes;
   }
 
-  public final Map<String, Object> getAttributes() {
+  public final Map<String, Object> getSession() {
     return attributes;
   }
 }

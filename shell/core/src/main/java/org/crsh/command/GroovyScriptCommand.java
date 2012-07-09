@@ -65,7 +65,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     catch (MissingMethodException e) {
       if (context instanceof InvocationContext) {
         InvocationContext ic = (InvocationContext)context;
-        CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+        CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
           ShellCommand cmd;
           try {
@@ -98,7 +98,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
       return context;
     } else {
       if (context instanceof InvocationContext<?, ?>) {
-        CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+        CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
           try {
             ShellCommand cmd = crash.getCommand(property);
@@ -132,7 +132,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   public final void invoke(InvocationContext<Void, Void> context) throws ScriptException {
 
     // Set up current binding
-    Binding binding = new Binding(context.getAttributes());
+    Binding binding = new Binding(context.getSession());
 
     // Set the args on the script
     binding.setProperty("args", args);

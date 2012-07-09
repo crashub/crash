@@ -62,7 +62,7 @@ class InnerInvocationContext<P> implements InvocationContext<Void, P> {
     products.add(product);
   }
 
-  public Map<String, Object> getAttributes() {
-    return outter.getAttributes();
+  public Map<String, Object> getSession() {
+    return outter.getSession();
   }
 }

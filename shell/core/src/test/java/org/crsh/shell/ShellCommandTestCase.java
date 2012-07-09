@@ -96,7 +96,7 @@ public class ShellCommandTestCase extends TestCase {
     //
     ShellCommand cmd = (ShellCommand)clazz.newInstance();
     TestInvocationContext<Void, Void> ctx = new TestInvocationContext();
-    ctx.getAttributes().put("juu", "daa");
+    ctx.getSession().put("juu", "daa");
     assertEquals("daa", ctx.execute(cmd));
   }
 
@@ -136,7 +136,7 @@ public class ShellCommandTestCase extends TestCase {
 
     //
     TestInvocationContext ctx = new TestInvocationContext();
-    ctx.getAttributes().put("bar", "bar_value");
+    ctx.getSession().put("bar", "bar_value");
 
     // Execute directly
     ShellCommand cmd = (ShellCommand)clazz.newInstance();
@@ -154,7 +154,7 @@ public class ShellCommandTestCase extends TestCase {
     //
     TestInvocationContext ctx = new TestInvocationContext();
     Closure closure = (Closure)shell.evaluate("{ -> return 'from_closure'; }");
-    ctx.getAttributes().put("bar", closure);
+    ctx.getSession().put("bar", closure);
 
     // Execute directly
     ShellCommand cmd = (ShellCommand)clazz.newInstance();
@@ -191,7 +191,7 @@ public class ShellCommandTestCase extends TestCase {
     Class clazz = loader.parseClass("System.out.println('bar:' + bar) ; return bar;");
     ShellCommand script = (ShellCommand)clazz.newInstance();
     TestInvocationContext ctx = new TestInvocationContext();
-    ctx.getAttributes().put("bar", "bar_value");
+    ctx.getSession().put("bar", "bar_value");
     assertEquals("bar_value", ctx.execute(script));
   }
 

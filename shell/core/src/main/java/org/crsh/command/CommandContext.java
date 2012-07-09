@@ -35,6 +35,6 @@ public interface CommandContext {
    *
    * @return the session attributes
    */
-  Map<String, Object> getAttributes();
+  Map<String, Object> getSession();
 
 }

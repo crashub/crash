@@ -160,7 +160,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     assertInternalError("a", AWTError.class);
   }
 
-  public void testAttributes() throws Exception {
+  public void testSession() throws Exception {
     assertOk("null", "attribute foo");
     lifeCycle.setAttribute("foo", "bar");
     assertOk("bar", "attribute foo");

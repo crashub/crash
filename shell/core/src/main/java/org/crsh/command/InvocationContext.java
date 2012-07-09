@@ -22,8 +22,9 @@ package org.crsh.command;
 import java.io.PrintWriter;
 
 /**
- * The invocation context provided to a command during the invocation phase. The invocation context provides the
- * various interactions that a command can perform with its context during its invocation.
+ * The invocation context provided to a command during the invocation phase.
+ * It provides the various interactions that a command can perform with
+ * its context during its invocation.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
@@ -31,14 +32,16 @@ import java.io.PrintWriter;
 public interface InvocationContext<C, P> extends CommandContext {
 
   /**
-   * Returns the term width in chars. When the value is not positive it means the value could not be determined.
+   * Returns the term width in chars. When the value is not positive it means
+   * the value could not be determined.
    *
    * @return the term width
    */
   int getWidth();
 
   /**
-   * Returns a generic property.
+   * Returns a generic property, usually this property is resolved by the
+   * shell client.
    *
    * @param propertyName the property name
    * @return the property value
@@ -46,7 +49,8 @@ public interface InvocationContext<C, P> extends CommandContext {
   String getProperty(String propertyName);
 
   /**
-   * Display a message and read a line on the console.
+   * Display a message and read a line on the console. If no line can be read
+   * then null is returned.
    *
    * @param msg the message to display before reading a line
    * @param echo wether or not the line read should be echoed when typing
@@ -62,7 +66,8 @@ public interface InvocationContext<C, P> extends CommandContext {
   PrintWriter getWriter();
 
   /**
-   * Returns true if the command is involved in a pipe operation and receives a stream.
+   * Returns true if the command is involved in a pipe operation and receives
+   * a stream.
    *
    * @return true if the command is involved in a pipe
    */
@@ -72,7 +77,8 @@ public interface InvocationContext<C, P> extends CommandContext {
    * Returns an iterator over the stream of consumed items.
    *
    * @return the consumed items
-   * @throws IllegalStateException if the command is not involved in a pipe operation
+   * @throws IllegalStateException if the command is not involved in a
+   *                               pipe operation
    */
   Iterable<C> consume() throws IllegalStateException;
 

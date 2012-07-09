@@ -50,7 +50,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       //
       if (context instanceof InvocationContext) {
         InvocationContext ic = (InvocationContext)context;
-        CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+        CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
           ShellCommand cmd;
           try {
@@ -67,7 +67,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       }
 
       //
-      Object o = context.getAttributes().get(name);
+      Object o = context.getSession().get(name);
       if (o instanceof Closure) {
         Closure closure = (Closure)o;
         if (args instanceof Object[]) {
@@ -99,7 +99,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       return context;
     } else {
       if (context instanceof InvocationContext<?, ?>) {
-        CRaSH crash = (CRaSH)context.getAttributes().get("crash");
+        CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
           try {
             ShellCommand cmd = crash.getCommand(property);
@@ -117,7 +117,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
         return super.getProperty(property);
       }
       catch (MissingPropertyException e) {
-        return context.getAttributes().get(property);
+        return context.getSession().get(property);
       }
     }
   }
@@ -132,7 +132,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
     }
     catch (MissingPropertyException e) {
       CommandContext context = getContext();
-      context.getAttributes().put(property, newValue);
+      context.getSession().put(property, newValue);
     }
   }
 }
