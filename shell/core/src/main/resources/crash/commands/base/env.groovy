@@ -6,9 +6,9 @@ class env extends CRaSHCommand
 {
   @Usage("display the term env")
   @Command
-  Object main() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("width: $context.width");
-    return sb;
-  }
+  void main() {
+    out << "width: $context.width\n"
+    out << "session: $context.session\n"
+    out << "attributes: $context.attributes\n"
+ }
 }

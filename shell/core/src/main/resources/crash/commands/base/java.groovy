@@ -7,12 +7,12 @@ import org.crsh.shell.ui.UIBuilder
 
 @Usage("various java language commands")
 class java extends CRaSHCommand {
-  @Usage("print information about a java class")
+  @Usage("print information about a java type")
   @Command
-  void clazz(@Usage("The full qualified class name") @Required @Argument String name) {
+  void type(@Usage("The full qualified type name") @Required @Argument String name) {
     try {
       Class clazz = Thread.currentThread().getContextClassLoader().loadClass(name)
-      out << "Class $name:\n"
+      out << "$name:\n"
 
       // Interface hierarchy
       def hierarchy = new UIBuilder()
