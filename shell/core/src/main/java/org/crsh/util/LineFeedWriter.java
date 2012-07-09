@@ -68,7 +68,7 @@ public class LineFeedWriter implements ShellWriter {
     return append(ctx, Character.toString(c));
   }
 
-  public ShellWriter append(ShellWriterContext ctx, final Style d) throws IOException {
+  public ShellWriter append(final Style d) {
     reader.append(d);
     return this;
   }

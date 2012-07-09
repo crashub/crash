@@ -20,8 +20,10 @@
 package org.crsh.shell.io;
 
 import org.crsh.command.InvocationContext;
+import org.crsh.shell.ui.Decoration;
 import org.crsh.shell.ui.Element;
 import org.crsh.shell.ui.FormattingElement;
+import org.crsh.text.Color;
 import org.crsh.text.Style;
 import org.crsh.shell.ui.UIBuilder;
 import org.crsh.util.AppendableWriter;
@@ -41,6 +43,7 @@ public class ShellPrinter extends PrintWriter {
   /** . */
   private final ShellWriter out;
 
+  /** . */
   private final InvocationContext context;
 
   public ShellPrinter(ShellWriter out, InvocationContext context) {
@@ -57,16 +60,64 @@ public class ShellPrinter extends PrintWriter {
     println();
   }
 
-  public void print(Object obj, Style style) {
-    print(new FormattingElement(style));
+  public void print(Object obj, Color foreground) {
+    out.append(foreground.style);
     print(obj);
-    print(new FormattingElement(Style.RESET));
+  }
 
+  public void println(Object obj, Color foreground) {
+    out.append(foreground.style);
+    println(obj);
+  }
+
+  public void print(Object obj, Color background, Color foreground) {
+    out.append(Style.create(background, foreground));
+    print(obj);
+  }
+
+  public void println(Object obj, Color background, Color foreground) {
+    out.append(Style.create(background, foreground));
+    println(obj);
+  }
+
+  public void print(Object obj, Decoration decoration) {
+    out.append(decoration.style);
+    print(obj);
+  }
+
+  public void println(Object obj, Decoration decoration) {
+    out.append(decoration.style);
+    println(obj);
+  }
+
+  public void print(Object obj, Decoration decoration, Color foreground) {
+    out.append(Style.create(decoration, foreground));
+    print(obj);
+  }
+
+  public void println(Object obj, Decoration decoration, Color foreground) {
+    out.append(Style.create(decoration, null, foreground));
+    println(obj);
+  }
+
+  public void print(Object obj, Decoration decoration, Color background, Color foreground) {
+    out.append(Style.create(decoration, background, foreground));
+    print(obj);
+  }
+
+  public void println(Object obj, Decoration decoration, Color background, Color foreground) {
+    out.append(Style.create(decoration, background, foreground));
+    println(obj);
+  }
+
+  public void print(Object obj, Style style) {
+    out.append(style);
+    print(obj);
   }
 
   public void println(Object obj, Style style) {
-    print(obj);
-    println();
+    out.append(style);
+    println(obj);
   }
 
   @Override
@@ -86,4 +137,22 @@ public class ShellPrinter extends PrintWriter {
     }
   }
 
+  /**
+   * Groovy left shift operator.
+   *
+   * @param o the appended
+   * @return this object
+   */
+  public ShellPrinter leftShift(Object o) {
+    if (o instanceof Style) {
+      out.append((Style)o);
+    } else if (o instanceof Decoration) {
+      out.append(((Decoration)o).style);
+    } else if (o instanceof Color) {
+      out.append(((Color)o).style);
+    } else {
+      print(o);
+    }
+    return this;
+  }
 }

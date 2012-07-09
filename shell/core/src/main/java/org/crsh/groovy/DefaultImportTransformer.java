@@ -36,6 +36,7 @@ import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.text.Color;
 import org.crsh.shell.ui.Decoration;
+import org.crsh.text.Style;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,8 @@ public class DefaultImportTransformer implements ASTTransformation {
   /** . */
   private static final Class<?>[] defaultStaticImports = {
     Color.class,
-    Decoration.class
+    Decoration.class,
+    Style.class
   };
 
   public void visit(ASTNode[] nodes, final SourceUnit source) {

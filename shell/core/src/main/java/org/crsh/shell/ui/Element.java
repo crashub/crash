@@ -55,7 +55,7 @@ public abstract class Element {
     }
 
     if (haveStyle()) {
-      new FormattingElement(Style.create(getDecoration(), getForeground(), getBackground())).print(ctx, writer);
+      new FormattingElement(Style.create(getDecoration(), getBackground(), getForeground())).print(ctx, writer);
     }
 
     doPrint(ctx, writer);

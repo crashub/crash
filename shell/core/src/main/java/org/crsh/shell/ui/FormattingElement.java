@@ -24,7 +24,7 @@ public class FormattingElement extends Element {
   
   @Override
   void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
-    writer.append(ctx, style);
+    writer.append(style);
   }
 
   @Override

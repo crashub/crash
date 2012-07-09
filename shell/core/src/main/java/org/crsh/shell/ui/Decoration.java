@@ -1,5 +1,7 @@
 package org.crsh.shell.ui;
 
+import org.crsh.text.Style;
+
 import java.io.Serializable;
 
 /**
@@ -11,9 +13,14 @@ public enum Decoration implements Serializable {
   underline(4),
   blink(5);
 
+  /** . */
   public final int code;
+
+  /** . */
+  public final Style style;
 
   private Decoration(int code) {
     this.code = code;
+    this.style = Style.create(this);
   }
 }

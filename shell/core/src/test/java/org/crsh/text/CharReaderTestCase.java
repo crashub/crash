@@ -9,10 +9,10 @@ import java.util.List;
 public class CharReaderTestCase extends AbstractTestCase {
 
   /** . */
-  private static final Style RED = Style.create(null, null, Color.red);
+  private static final Style RED = Style.create(null, Color.red, null);
 
   /** . */
-  private static final Style BLUE = Style.create(null, null, Color.blue);
+  private static final Style BLUE = Style.create(null, Color.blue, null);
 
   public void testSimple() {
     assertReader(new CharReader().append("a"), "a");

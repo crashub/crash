@@ -19,8 +19,12 @@ public enum Color implements Serializable {
   /** . */
   public final int code;
 
+  /** . */
+  public final Style style;
+
   private Color(int code) {
     this.code = code;
+    this.style = Style.create(this);
   }
 
   public int code(int base) {

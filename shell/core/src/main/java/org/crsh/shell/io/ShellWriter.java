@@ -29,13 +29,12 @@ import java.io.IOException;
  */
 public interface ShellWriter extends Appendable {
 
+  ShellWriter append(Style style);
 
   ShellWriter append(ShellWriterContext ctx, CharSequence csq) throws IOException;
 
   ShellWriter append(ShellWriterContext ctx, CharSequence csq, int start, int end) throws IOException;
 
   ShellWriter append(ShellWriterContext ctx, char c) throws IOException;
-
-  ShellWriter append(ShellWriterContext ctx, Style style) throws IOException;
 
 }
