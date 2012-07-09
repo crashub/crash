@@ -166,4 +166,9 @@ public abstract class PropertyDescriptor<T> {
    * @throws Exception any exception that would prevent parsing to hapen
    */
   protected abstract T doParse(String s) throws Exception;
+
+  @Override
+  public final String toString() {
+    return "PropertyDescriptor[name=" + name + ",type=" + type.getName() + ",description=" + description + "]";
+  }
 }
