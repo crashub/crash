@@ -44,61 +44,65 @@ public class ShellPrintWriter extends PrintWriter {
   public final void print(Object obj, Color foreground) {
     out.append(foreground.style);
     print(obj);
+    out.append(Style.reset);
   }
 
   public final void println(Object obj, Color foreground) {
-    out.append(foreground.style);
-    println(obj);
+    print(obj, foreground.style);
+    println();
   }
 
-  public final void print(Object obj, Color background, Color foreground) {
-    out.append(Style.create(background, foreground));
+  public final void print(Object obj, Color foreground, Color background) {
+    out.append(Style.style(foreground, background));
     print(obj);
+    out.append(Style.reset);
   }
 
-  public final void println(Object obj, Color background, Color foreground) {
-    out.append(Style.create(background, foreground));
-    println(obj);
+  public final void println(Object obj, Color foreground, Color background) {
+    print(obj, Style.style(foreground, background));
+    println();
   }
 
   public final void print(Object obj, Decoration decoration) {
     out.append(decoration.style);
     print(obj);
+    out.append(Style.reset);
   }
 
   public final void println(Object obj, Decoration decoration) {
-    out.append(decoration.style);
-    println(obj);
+    print(obj, decoration.style);
+    println();
   }
 
   public final void print(Object obj, Decoration decoration, Color foreground) {
-    out.append(Style.create(decoration, foreground));
-    print(obj);
+    print(obj, Style.style(decoration, foreground));
+    println();
   }
 
   public final void println(Object obj, Decoration decoration, Color foreground) {
-    out.append(Style.create(decoration, null, foreground));
-    println(obj);
+    print(obj, Style.style(decoration, foreground, null));
+    println();
   }
 
-  public final void print(Object obj, Decoration decoration, Color background, Color foreground) {
-    out.append(Style.create(decoration, background, foreground));
-    print(obj);
+  public final void print(Object obj, Decoration decoration, Color foreground, Color background) {
+    print(obj, Style.style(decoration, foreground, background));
+    println();
   }
 
-  public final void println(Object obj, Decoration decoration, Color background, Color foreground) {
-    out.append(Style.create(decoration, background, foreground));
-    println(obj);
+  public final void println(Object obj, Decoration decoration, Color foreground, Color background) {
+    print(obj, Style.style(decoration, foreground, background));
+    println();
   }
 
   public final void print(Object obj, Style style) {
     out.append(style);
     print(obj);
+    out.append(Style.reset);
   }
 
   public final void println(Object obj, Style style) {
-    out.append(style);
-    println(obj);
+    print(obj, style);
+    println();
   }
 
   /**

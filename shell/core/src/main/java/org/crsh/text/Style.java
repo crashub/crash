@@ -19,7 +19,7 @@ public abstract class Style implements Serializable {
   };
 
   static class Regular extends Style {
-    Regular(Decoration decoration, Color background, Color foreground) {
+    Regular(Decoration decoration, Color foreground, Color background) {
       super(decoration, foreground, background);
     }
 
@@ -67,24 +67,24 @@ public abstract class Style implements Serializable {
     }
   }
 
-  public static Style create(Color foreground) {
-    return new Regular(null, null, foreground);
+  public static Style style(Color foreground) {
+    return new Regular(null, foreground, null);
   }
 
-  public static Style create(Color background, Color foreground) {
-    return new Regular(null, background, foreground);
+  public static Style style(Color foreground, Color background) {
+    return new Regular(null, foreground, background);
   }
 
-  public static Style create(Decoration decoration, Color background, Color foreground) {
-    return new Regular(decoration, background, foreground);
+  public static Style style(Decoration decoration, Color foreground, Color background) {
+    return new Regular(decoration, foreground, background);
   }
 
-  public static Style create(Decoration decoration) {
+  public static Style style(Decoration decoration) {
     return new Regular(decoration, null, null);
   }
 
-  public static Style create(Decoration decoration, Color foreground) {
-    return new Regular(decoration, null, foreground);
+  public static Style style(Decoration decoration, Color foreground) {
+    return new Regular(decoration, foreground, null);
   }
 
   /** . */
@@ -124,7 +124,7 @@ public abstract class Style implements Serializable {
       Decoration dec = Utils.notNull(s.decoration, decoration);
       Color fg = Utils.notNull(s.foreground, foreground);
       Color bg = Utils.notNull(s.background, background);
-      return new Regular(dec, bg, fg);
+      return new Regular(dec, fg, bg);
     }
   }
 

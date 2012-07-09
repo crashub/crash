@@ -1,7 +1,5 @@
 package org.crsh.text;
 
-import org.crsh.text.Style;
-
 import java.io.Serializable;
 
 /**
@@ -21,6 +19,6 @@ public enum Decoration implements Serializable {
 
   private Decoration(int code) {
     this.code = code;
-    this.style = Style.create(this);
+    this.style = Style.style(this);
   }
 }

@@ -3,23 +3,22 @@ package org.crsh.text;
 import org.crsh.AbstractTestCase;
 import org.crsh.util.Utils;
 
-import java.io.IOException;
 import java.util.List;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class CharReaderTestCase extends AbstractTestCase {
 
   /** . */
-  private static final Style RED = Style.create(null, Color.red, null);
+  private static final Style RED = Style.style(null, null, Color.red);
 
   /** . */
-  private static final Style BLUE = Style.create(null, Color.blue, null);
+  private static final Style BLUE = Style.style(null, null, Color.blue);
 
   /** . */
-  private static final Style UNDERLINE = Style.create(Decoration.underline, null, null);
+  private static final Style UNDERLINE = Style.style(Decoration.underline, null, null);
 
   /** . */
-  private static final Style RED_UNDERLINE = Style.create(Decoration.underline, Color.red, null);
+  private static final Style RED_UNDERLINE = Style.style(Decoration.underline, null, Color.red);
 
   public void testSimple() {
     assertReader(new CharReader().append("a"), "a");
