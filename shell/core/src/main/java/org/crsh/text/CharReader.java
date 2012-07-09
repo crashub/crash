@@ -128,7 +128,7 @@ public class CharReader implements Iterable<Object>, Serializable {
       throw new NullPointerException("No null accepted");
     }
     if (data instanceof CharReader) {
-      append(Style.RESET);
+      append(Style.reset);
       for (Chunk chunk : ((CharReader)data).chunks) {
         if (chunk.style != null) {
           append(chunk.style);

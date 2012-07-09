@@ -61,7 +61,7 @@ public abstract class Element {
     doPrint(ctx, writer);
 
     if (haveStyle()) {
-      new FormattingElement(Style.RESET).print(ctx, writer);
+      new FormattingElement(Style.reset).print(ctx, writer);
     }
     
   }

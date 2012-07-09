@@ -10,7 +10,7 @@ import org.crsh.text.Style;
 public class AnsiBuilderTestCase extends TestCase {
 
   public void testReset() throws Exception {
-    assertEquals("\u001B[0m", Style.RESET.asAnsiSequence());
+    assertEquals("\u001B[0m", Style.reset.asAnsiSequence());
   }
 
   public void testDecoration() throws Exception {

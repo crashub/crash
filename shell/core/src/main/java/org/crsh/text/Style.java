@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public abstract class Style implements Serializable {
 
-  public static final Style RESET = new Style(null, null, null) {
+  public static final Style reset = new Style(null, null, null) {
     @Override
     public void writeAnsiTo(Appendable appendable) throws IOException {
       appendable.append("\033[0m");
