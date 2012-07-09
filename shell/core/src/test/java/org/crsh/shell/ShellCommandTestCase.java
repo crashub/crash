@@ -18,6 +18,7 @@
  */
 package org.crsh.shell;
 
+import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
@@ -25,6 +26,8 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.SyntaxException;
+
+import java.util.Arrays;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -123,10 +126,10 @@ public class ShellCommandTestCase extends TestCase {
     assertEquals("foo", new TestInvocationContext().execute(cmd));
   }
 
-/*
   public void testContextAccessInCommandClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
-      "public Object execute() {" +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+      "@Command\n" +
+      "public Object main() {" +
       "return bar;" +
       "}" +
       "}");
@@ -136,13 +139,14 @@ public class ShellCommandTestCase extends TestCase {
     ctx.getAttributes().put("bar", "bar_value");
 
     // Execute directly
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    ShellCommand cmd = (ShellCommand)clazz.newInstance();
     assertEquals("bar_value", ctx.execute(cmd));
   }
 
   public void testClosureInvocationInClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand { " +
-      "public Object execute() {" +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+      "@Command\n" +
+      "public Object main() {" +
       "return bar();" +
       "}" +
       "}");
@@ -153,41 +157,35 @@ public class ShellCommandTestCase extends TestCase {
     ctx.getAttributes().put("bar", closure);
 
     // Execute directly
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    ShellCommand cmd = (ShellCommand)clazz.newInstance();
     assertEquals("from_closure", ctx.execute(cmd));
   }
 
   public void testArgumentQuoteInClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand {\n" +
-      "@org.kohsuke.args4j.Argument\n" +
-      "def List<String> arguments;\n" +
-      "public Object execute() {\n" +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public Object main(@org.crsh.cmdline.annotations.Argument List<String> arguments) {\n" +
       "return arguments;\n" +
       "}\n" +
       "}\n");
 
     // Execute directly
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    ShellCommand cmd = (ShellCommand)clazz.newInstance();
     assertEquals("" + Arrays.asList("foo"), new TestInvocationContext().execute(cmd, "'foo'"));
   }
 
   public void testArgumentQuoteInClass2() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.ClassCommand {\n" +
-      "@org.kohsuke.args4j.Argument\n" +
-      "def List<String> arguments;\n" +
-      "{ unquoteArguments = false; }\n" +
-      "public Object execute() {\n" +
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public Object main(@org.crsh.cmdline.annotations.Argument(unquote = false) List<String> arguments) {\n" +
       "return arguments;\n" +
       "}\n" +
       "}\n");
 
     // Execute directly
-    ClassCommand cmd = (ClassCommand)clazz.newInstance();
+    ShellCommand cmd = (ShellCommand)clazz.newInstance();
     assertEquals("" + Arrays.asList("'foo'"), new TestInvocationContext().execute(cmd, "'foo'"));
   }
-*/
-
-
 
   public void testContextAccessInScript() throws Exception {
     Class clazz = loader.parseClass("System.out.println('bar:' + bar) ; return bar;");
