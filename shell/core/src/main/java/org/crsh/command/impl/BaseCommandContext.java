@@ -30,13 +30,21 @@ import java.util.Map;
 public class BaseCommandContext implements CommandContext {
 
   /** . */
+  private final Map<String, Object> session;
+
+  /** . */
   private final Map<String, Object> attributes;
 
-  public BaseCommandContext(Map<String, Object> attributes) {
+  public BaseCommandContext(Map<String, Object> session, Map<String, Object> attributes) {
+    this.session = session;
     this.attributes = attributes;
   }
 
   public final Map<String, Object> getSession() {
+    return session;
+  }
+
+  public Map<String, Object> getAttributes() {
     return attributes;
   }
 }

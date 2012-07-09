@@ -31,10 +31,17 @@ public interface CommandContext {
 
 
   /**
-   * Returns the attributes related to current shell session.
+   * Returns the current shell session.
    *
-   * @return the session attributes
+   * @return the session map
    */
   Map<String, Object> getSession();
+
+  /**
+   * Returns the current shell attributes.
+   *
+   * @return the attributes map
+   */
+  Map<String, Object> getAttributes();
 
 }

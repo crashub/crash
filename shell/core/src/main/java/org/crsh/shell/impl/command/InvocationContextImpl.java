@@ -37,8 +37,9 @@ class InvocationContextImpl<C, P> extends BaseInvocationContext<C, P> {
   public InvocationContextImpl(
     ShellProcessContext processContext,
     Iterable<C> consumedItems,
+    Map<String, Object> session,
     Map<String, Object> attributes) {
-    super(consumedItems, attributes);
+    super(consumedItems, session, attributes);
     this.processContext = processContext;
   }
 

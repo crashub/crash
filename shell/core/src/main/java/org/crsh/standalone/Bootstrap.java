@@ -57,7 +57,7 @@ public class Bootstrap extends PluginLifeCycle {
   private ClassLoader baseLoader;
 
   /** The attributes. */
-  private Map<String, ?> attributes;
+  private Map<String, Object> attributes;
 
   public Bootstrap(ClassLoader baseLoader) throws NullPointerException {
     if (baseLoader == null) {
@@ -67,7 +67,7 @@ public class Bootstrap extends PluginLifeCycle {
     this.attributes = Collections.emptyMap();
   }
 
-  public void setAttributes(Map<String, ?> attributes) {
+  public void setAttributes(Map<String, Object> attributes) {
     this.attributes = attributes;
   }
 

@@ -128,7 +128,7 @@ the invocation context class extends the ##org.crsh.command.CommandContext##, le
 {{/java}}
 {{/example}}
 
-The only feature at the moment is to provide access to the shell session as a ##Map<String, Object>##. Session attributes
+The ##CommandContext## provides access to the shell session as a ##Map<String, Object>##. Session attributes
 can be accessed using this map, but they are also accessible as Groovy script properties. It means that writing such
 code will be equivalent:
 
@@ -138,6 +138,13 @@ context.session["foo"] = "bar"; // <1> Bind the session attribute foo with the v
 out.println(bar); // <2> The bar is resolved as an session attribute by Groovy
 {{/java}}
 {{/example}}
+
+The ##CommandContext## provides also access to the shell attributes as a ##Map<String, Object>##. Context attributes
+are useful to interact with object shared globally by the CRaSH environment:
+
+* When CRaSH is embedded within a web application context attributes resolves to servlet context attributes.
+* When CRaSH is attached to a virtual machine, the context attributes has only a single ##instrumentation## entry
+ that is the ##java.lang.instrument.Instrumentation## instance obtained when attaching to a virtual machine.
 
 Now let's examine the ##InvocationContext## that extends the ##CommandContext##:
 

@@ -73,7 +73,7 @@ public final class PluginContext {
   private final FS cmdFS;
 
   /** . */
-  private final Map<String, ?> attributes;
+  private final Map<String, Object> attributes;
 
   /** . */
   private final FS confFS;
@@ -97,7 +97,7 @@ public final class PluginContext {
    */
   public PluginContext(
     PluginDiscovery discovery,
-    Map<String, ?> attributes,
+    Map<String, Object> attributes,
     FS cmdFS,
     FS confFS,
     ClassLoader loader) throws NullPointerException {
@@ -153,7 +153,7 @@ public final class PluginContext {
     return version;
   }
 
-  public Map<String, ?> getAttributes() {
+  public Map<String, Object> getAttributes() {
     return attributes;
   }
 

@@ -239,7 +239,7 @@ public class CRaSHSession implements Shell, Closeable {
         try {
           ShellCommand command = crash.getCommand(commandName);
           if (command != null) {
-            completion = command.complete(new BaseCommandContext(attributes), termPrefix);
+            completion = command.complete(new BaseCommandContext(attributes, crash.context.getAttributes()), termPrefix);
           } else {
             completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
           }

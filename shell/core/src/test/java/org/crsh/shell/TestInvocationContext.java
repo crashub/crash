@@ -32,7 +32,7 @@ import java.util.*;
 public class TestInvocationContext<C, P> extends BaseInvocationContext<C, P> {
 
   public TestInvocationContext() {
-    super(Collections.<C>emptyList(), new HashMap<String, Object>());
+    super(Collections.<C>emptyList(), new HashMap<String, Object>(), new HashMap<String, Object>());
   }
 
   public int getWidth() {

@@ -65,4 +65,8 @@ class InnerInvocationContext<P> implements InvocationContext<Void, P> {
   public Map<String, Object> getSession() {
     return outter.getSession();
   }
+
+  public Map<String, Object> getAttributes() {
+    return outter.getAttributes();
+  }
 }

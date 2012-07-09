@@ -50,8 +50,9 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
 
   protected BaseInvocationContext(
     Iterable<C> consumedItems,
+    Map<String, Object> session,
     Map<String, Object> attributes) {
-    super(attributes);
+    super(session, attributes);
 
     //
     this.writer = null;
