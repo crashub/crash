@@ -95,6 +95,8 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       } else {
         return null;
       }
+    } else if ("context".equals(property)) {
+      return context;
     } else {
       if (context instanceof InvocationContext<?, ?>) {
         CRaSH crash = (CRaSH)context.getAttributes().get("crash");

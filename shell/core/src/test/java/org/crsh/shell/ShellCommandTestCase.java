@@ -206,4 +206,25 @@ public class ShellCommandTestCase extends TestCase {
     ShellCommand script = (ShellCommand)clazz.newInstance();
     assertEquals("arg_value", new TestInvocationContext().execute(script, "arg_value"));
   }
+
+  public void testResolveContext() throws Exception {
+    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public Object main() {\n" +
+      "return context.class.name;\n" +
+      "}\n" +
+      "}\n");
+
+    // Execute directly
+    ShellCommand cmd = (ShellCommand)clazz.newInstance();
+    TestInvocationContext context = new TestInvocationContext();
+    assertEquals(context.getClass().getName(), context.execute(cmd));
+  }
+
+  public void testResolveContextInScript() throws Exception {
+    Class clazz = loader.parseClass("return context.class.name");
+    ShellCommand cmd = (ShellCommand)clazz.newInstance();
+    TestInvocationContext context = new TestInvocationContext();
+    assertEquals(context.getClass().getName(), context.execute(cmd));
+  }
 }

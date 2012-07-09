@@ -94,6 +94,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
       } else {
         return null;
       }
+    } else if ("context".equals(property)) {
+      return context;
     } else {
       if (context instanceof InvocationContext<?, ?>) {
         CRaSH crash = (CRaSH)context.getAttributes().get("crash");
