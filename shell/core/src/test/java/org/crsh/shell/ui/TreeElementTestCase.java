@@ -22,7 +22,7 @@ package org.crsh.shell.ui;
 import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
 import org.crsh.text.CharReader;
-import org.crsh.util.LineFeedWriter;
+import org.crsh.shell.io.LineFeedWriter;
 
 import java.io.IOException;
 

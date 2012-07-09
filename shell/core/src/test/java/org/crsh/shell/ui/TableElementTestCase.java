@@ -5,7 +5,7 @@ import org.crsh.shell.TestInvocationContext;
 import org.crsh.text.CharReader;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
-import org.crsh.util.LineFeedWriter;
+import org.crsh.shell.io.LineFeedWriter;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>

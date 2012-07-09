@@ -17,10 +17,8 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.util;
+package org.crsh.shell.io;
 
-import org.crsh.shell.io.ShellWriter;
-import org.crsh.shell.io.ShellWriterContext;
 import org.crsh.text.CharReader;
 import org.crsh.text.Style;
 
