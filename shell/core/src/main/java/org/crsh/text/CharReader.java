@@ -147,7 +147,15 @@ public class CharReader implements Iterable<Object>, Serializable {
       style = reader.style;
     } else {
       if (data instanceof Style) {
-        style = (Style)data;
+        if (data == Style.reset) {
+          style = Style.reset;
+        } else {
+          if (style != null) {
+            style = style.merge((Style)data);
+          } else {
+            style = (Style)data;
+          }
+        }
       } else {
         CharSequence s;
         if (data instanceof CharSequence) {

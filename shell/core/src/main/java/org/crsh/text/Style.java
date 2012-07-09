@@ -1,6 +1,7 @@
 package org.crsh.text;
 
 import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -111,6 +112,20 @@ public abstract class Style implements Serializable {
 
   public Color getBackground() {
     return background;
+  }
+
+  public Style merge(Style s) throws NullPointerException {
+    if (s == null) {
+      throw new NullPointerException();
+    }
+    if (s == reset) {
+      return reset;
+    } else {
+      Decoration dec = Utils.notNull(s.decoration, decoration);
+      Color fg = Utils.notNull(s.foreground, foreground);
+      Color bg = Utils.notNull(s.background, background);
+      return new Regular(dec, bg, fg);
+    }
   }
 
   public CharSequence toAnsiSequence() {

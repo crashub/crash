@@ -15,6 +15,12 @@ public class CharReaderTestCase extends AbstractTestCase {
   /** . */
   private static final Style BLUE = Style.create(null, Color.blue, null);
 
+  /** . */
+  private static final Style UNDERLINE = Style.create(Decoration.underline, null, null);
+
+  /** . */
+  private static final Style RED_UNDERLINE = Style.create(Decoration.underline, Color.red, null);
+
   public void testSimple() {
     assertReader(new CharReader().append("a"), "a");
     assertReader(new CharReader().append(RED, "a"), RED, "a");
@@ -38,6 +44,10 @@ public class CharReaderTestCase extends AbstractTestCase {
 
   public void testLastColor() {
     assertReader(new CharReader().append(RED, "a", BLUE), RED, "a", BLUE);
+  }
+
+  public void testBlendStyle() {
+    assertReader(new CharReader().append(RED, UNDERLINE, "a"), RED_UNDERLINE, "a");
   }
 
   public void testConcatenation() {
