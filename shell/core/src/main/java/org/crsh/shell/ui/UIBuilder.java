@@ -21,6 +21,7 @@ package org.crsh.shell.ui;
 
 import groovy.util.BuilderSupport;
 import org.crsh.text.Color;
+import org.crsh.text.Decoration;
 
 import java.util.ArrayList;
 import java.util.List;

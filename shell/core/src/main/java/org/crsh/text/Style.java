@@ -1,6 +1,5 @@
 package org.crsh.text;
 
-import org.crsh.shell.ui.Decoration;
 import org.crsh.util.Safe;
 
 import java.io.IOException;

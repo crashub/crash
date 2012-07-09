@@ -24,7 +24,7 @@ import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionData;
 import org.crsh.text.Color;
-import org.crsh.shell.ui.Decoration;
+import org.crsh.text.Decoration;
 import org.crsh.text.Style;
 import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;

@@ -22,6 +22,7 @@ package org.crsh.shell.ui;
 import org.crsh.command.InvocationContext;
 import org.crsh.shell.io.ShellWriter;
 import org.crsh.text.Color;
+import org.crsh.text.Decoration;
 import org.crsh.text.Style;
 
 import java.io.IOException;

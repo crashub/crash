@@ -22,6 +22,7 @@ package org.crsh.shell.ui;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.crsh.text.Color;
+import org.crsh.text.Decoration;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -246,7 +247,7 @@ public class UIBuilderTestCase extends TestCase {
     UIBuilder res = (UIBuilder)shell.evaluate(
       "import org.crsh.shell.ui.UIBuilder;\n" +
       "import org.crsh.text.Color;\n" +
-      "import org.crsh.shell.ui.Decoration;\n" +
+      "import org.crsh.text.Decoration;\n" +
       "import org.crsh.text.Style;\n" +
         "def builder = new UIBuilder();\n" +
         "builder.table {\n" +
@@ -272,7 +273,7 @@ public class UIBuilderTestCase extends TestCase {
       UIBuilder res = (UIBuilder)shell.evaluate(
         "import org.crsh.shell.ui.UIBuilder;\n" +
         "import org.crsh.text.Color;\n" +
-        "import org.crsh.shell.ui.Decoration;\n" +
+        "import org.crsh.text.Decoration;\n" +
         "import org.crsh.text.Style;\n" +
           "def builder = new UIBuilder();\n" +
           "builder.table {\n" +

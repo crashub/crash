@@ -2,6 +2,7 @@ package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
 import org.crsh.text.Color;
+import org.crsh.text.Decoration;
 import org.crsh.text.Style;
 
 /**

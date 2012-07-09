@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
 import org.crsh.text.CharReader;
 import org.crsh.text.Color;
-import org.crsh.text.Style;
+import org.crsh.text.Decoration;
 import org.crsh.util.LineFeedWriter;
 
 /**
