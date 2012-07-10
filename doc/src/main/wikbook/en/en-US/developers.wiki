@@ -142,9 +142,16 @@ out.println(bar); // <2> The bar is resolved as an session attribute by Groovy
 The ##CommandContext## provides also access to the shell attributes as a ##Map<String, Object>##. Context attributes
 are useful to interact with object shared globally by the CRaSH environment:
 
-* When CRaSH is embedded within a web application context attributes resolves to servlet context attributes.
-* When CRaSH is attached to a virtual machine, the context attributes has only a single ##instrumentation## entry
+* When embedded in a web application: context attributes resolves to servlet context attributes.
+* When embedded in Spring: attributes resolve to Spring beans.
+* When attached to a virtual machine, the context attributes has only a single ##instrumentation## entry
  that is the ##java.lang.instrument.Instrumentation## instance obtained when attaching to a virtual machine.
+
+{{example title="Obtaining a Spring bean"}}
+{{java}}
+def bean = context.attributes["TheBean"];
+{{/java}}
+{{/example}}
 
 Now let's examine the ##InvocationContext## that extends the ##CommandContext##:
 
