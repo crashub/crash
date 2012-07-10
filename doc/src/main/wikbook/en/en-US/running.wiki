@@ -1,0 +1,121 @@
+There are several ways to run CRaSH.
+
+CRaSH provides has various ways to be started, it can also be easily embedded.
+
+= Standalone =
+
+== Standalone mode ==
+
+The standalone mode allows you to run CRaSH from the command line directly. It provides the same functionality as the
+war deployment but does not require a web container as it runs its own virtual machine. The directory __crash__ directory
+in the application contains the standalone distribution.
+
+The bin directory ///crash/bin// can be added to the system path, it contains the //crash.sh// script that will start
+the standalone mode, for instance you can set it up this way:
+
+{{screen}}
+> export PATH=/.../crash/bin:$PATH
+> crash.sh
+   ______
+ .~      ~. |`````````,       .'.                   ..'''' |         |
+|           |'''|'''''      .''```.              .''       |_________|
+|           |    `.       .'       `.         ..'          |         |
+ `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr2-SNAPSHOT
+
+Follow and support the project on http://vietj.github.com/crash
+Welcome to jerry + !
+It is Thu Apr 12 21:19:35 CEST 2012 now
+{{/screen}}
+
+Let's review quickly what you can find in standalone crash:
+
+* The //bin// directory contains the //crash.sh// script and the standalone crash jar file
+* The //conf// directory contains the JVM logging configuration //logging.properties//
+* The //cmd// directory contains the commands that will be available in crash by default it contains a few example commands
+* The //lib// directory contains the various libraries used by crash, you should place additional jar files there
+
+== Attach mode ==
+
+The attach mode allows you to attach CRaSH to a JVM located on the same host with the attach API provided by the Hotspot
+JVM. It works thanks to the standalone mode, the main difference is when you run the command line you can specify a
+process id of a JVM and CRaSH will hook into the targetted JVM, let's see quickly an example of how to use it
+
+{{screen}}
+> jps
+3165 RemoteMavenServer
+20650 Test
+20651 Jps
+
+> crash.sh 20650
+   ______
+ .~      ~. |`````````,       .'.                   ..'''' |         |
+|           |'''|'''''      .''```.              .''       |_________|
+|           |    `.       .'       `.         ..'          |         |
+ `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr2-SNAPSHOT
+
+Follow and support the project on http://vietj.github.com/crash
+Welcome to jerry + !
+It is Thu Apr 12 22:09:23 CEST 2012 now
+%
+{{/screen}}
+
+In this example we will attach crash to the Test JVM. We obtained the Test JVM PID thanks to the //jps// command that belongs
+to the Java Platform. During this mode the commands are executed in the target JVM.
+
+= Embedded mode =
+
+== Embedding as a web archive ==
+
+CRaSH can use a standard web archive to be deployed in a web container. The war file is used for its packaging capabilities
+and triggering the CRaSH life cycle start/stop. In this mode CRaSH has two packaging available:
+
+* A __core__ war file found under //deploy/core/crash.war// provides the base CRaSH functionnalities.
+* A __gatein__ war file found under //deploy/gatein/crash.war// provides additional Java Content Repository (JCR)
+ features but deploys only in a GateIn server (Tomcat or JBoss). It extends the core packaging and adds
+** JCR browsing and interactions
+** SCP support for JCR import and export
+
+You have to copy the //crash.war// in the appropriate server, regardless of the packaging used.
+
+If you want you can embed CRaSH in your own //web.xml// configuration:
+
+{{example title="Embedding CRaSH in a web application"}}
+{{xml}}
+<web-app>
+  <listener>
+    <listener-class>org.crsh.plugin.WebPluginLifeCycle</listener-class>
+  </listener>
+</web-app>
+{{/xml}}
+{{/example}}
+
+== Embedding with Spring ==
+
+CRaSH can be easily embedded and configured in a Spring configuration, here is an example of embedding crash:
+
+{{example title="Embedding CRaSH in SPring with the Telnet plugin"}}
+{{xml}}
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean class="org.crsh.spring.SpringBootstrap">
+    <property name="config">
+      <props>
+        <prop key="crash.telnet.port">4000</prop>
+      </props>
+    </property>
+	</bean>
+
+  <bean class="org.crsh.telnet.TelnetPlugin">
+  </bean>
+
+</beans>
+{{/xml}}
+{{/example}}
+
+In this mode, the plugins are not discovered using the classpath, instead each plugin must be declared as a Spring bean.
+
+The configuration properties can be also set as properties with the //config// property of the ##SpringBootstrap## bean.

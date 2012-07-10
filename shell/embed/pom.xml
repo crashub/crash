@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>crsh.parent</artifactId>
+    <artifactId>crsh.shell</artifactId>
     <groupId>org.crsh</groupId>
     <version>1.1.0-cr1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
-  <artifactId>crsh.shell</artifactId>
+  <artifactId>crsh.shell.embed</artifactId>
   <packaging>pom</packaging>
   <version>1.1.0-cr1-SNAPSHOT</version>
 
-  <name>CRaSH shell parent</name>
+  <name>CRaSH shell embed parent</name>
 
   <modules>
-    <module>core</module>
-    <module>telnet</module>
-    <module>ssh</module>
-    <module>embed</module>
-    <module>packaging</module>
+    <module>spring</module>
   </modules>
 
 </project>
