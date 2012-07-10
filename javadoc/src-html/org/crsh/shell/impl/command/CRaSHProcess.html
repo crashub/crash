@@ -84,9 +84,9 @@
 <FONT color="green">081</FONT>            ShellResponse.Error error = (ShellResponse.Error)resp;<a name="line.81"></a>
 <FONT color="green">082</FONT>            Throwable t = error.getThrowable();<a name="line.82"></a>
 <FONT color="green">083</FONT>            if (t != null) {<a name="line.83"></a>
-<FONT color="green">084</FONT>              CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getText(), t);<a name="line.84"></a>
+<FONT color="green">084</FONT>              CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getReader(), t);<a name="line.84"></a>
 <FONT color="green">085</FONT>            } else {<a name="line.85"></a>
-<FONT color="green">086</FONT>              CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getText());<a name="line.86"></a>
+<FONT color="green">086</FONT>              CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getReader());<a name="line.86"></a>
 <FONT color="green">087</FONT>            }<a name="line.87"></a>
 <FONT color="green">088</FONT>          }<a name="line.88"></a>
 <FONT color="green">089</FONT>        }<a name="line.89"></a>

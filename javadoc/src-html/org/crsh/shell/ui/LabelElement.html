@@ -48,7 +48,7 @@
 <FONT color="green">045</FONT>      }<a name="line.45"></a>
 <FONT color="green">046</FONT>    <a name="line.46"></a>
 <FONT color="green">047</FONT>      @Override<a name="line.47"></a>
-<FONT color="green">048</FONT>      void print(UIWriterContext ctx, ShellWriter writer) throws IOException {<a name="line.48"></a>
+<FONT color="green">048</FONT>      void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {<a name="line.48"></a>
 <FONT color="green">049</FONT>        writer.append(ctx, value);<a name="line.49"></a>
 <FONT color="green">050</FONT>      }<a name="line.50"></a>
 <FONT color="green">051</FONT>    <a name="line.51"></a>
@@ -56,7 +56,13 @@
 <FONT color="green">053</FONT>      public String toString() {<a name="line.53"></a>
 <FONT color="green">054</FONT>        return "Label[" + value + "]";<a name="line.54"></a>
 <FONT color="green">055</FONT>      }<a name="line.55"></a>
-<FONT color="green">056</FONT>    }<a name="line.56"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>      @Override<a name="line.57"></a>
+<FONT color="green">058</FONT>      int width() {<a name="line.58"></a>
+<FONT color="green">059</FONT>        return value.length();<a name="line.59"></a>
+<FONT color="green">060</FONT>      }<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>    }<a name="line.62"></a>
 
 
 

@@ -31,147 +31,153 @@
 <FONT color="green">028</FONT>    import org.crsh.cmdline.Delimiter;<a name="line.28"></a>
 <FONT color="green">029</FONT>    import org.crsh.cmdline.spi.ValueCompletion;<a name="line.29"></a>
 <FONT color="green">030</FONT>    import org.crsh.shell.impl.command.CRaSH;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import org.crsh.util.Strings;<a name="line.31"></a>
-<FONT color="green">032</FONT>    <a name="line.32"></a>
-<FONT color="green">033</FONT>    import java.util.List;<a name="line.33"></a>
-<FONT color="green">034</FONT>    <a name="line.34"></a>
-<FONT color="green">035</FONT>    /**<a name="line.35"></a>
-<FONT color="green">036</FONT>     * This class provides the base class for Groovy scripts. It should not be used directly as it is rather used<a name="line.36"></a>
-<FONT color="green">037</FONT>     * for configuring a Groovy {@link org.codehaus.groovy.control.CompilerConfiguration#setScriptBaseClass(String)} class.<a name="line.37"></a>
-<FONT color="green">038</FONT>     *<a name="line.38"></a>
-<FONT color="green">039</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.39"></a>
-<FONT color="green">040</FONT>     * @version $Revision$<a name="line.40"></a>
-<FONT color="green">041</FONT>     */<a name="line.41"></a>
-<FONT color="green">042</FONT>    public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker&lt;Void, Void&gt; {<a name="line.42"></a>
-<FONT color="green">043</FONT>    <a name="line.43"></a>
-<FONT color="green">044</FONT>      /** . */<a name="line.44"></a>
-<FONT color="green">045</FONT>      private CommandContext context;<a name="line.45"></a>
-<FONT color="green">046</FONT>    <a name="line.46"></a>
-<FONT color="green">047</FONT>      /** . */<a name="line.47"></a>
-<FONT color="green">048</FONT>      private String[] args;<a name="line.48"></a>
-<FONT color="green">049</FONT>    <a name="line.49"></a>
-<FONT color="green">050</FONT>      public final Class&lt;Void&gt; getProducedType() {<a name="line.50"></a>
-<FONT color="green">051</FONT>        return Void.class;<a name="line.51"></a>
-<FONT color="green">052</FONT>      }<a name="line.52"></a>
-<FONT color="green">053</FONT>    <a name="line.53"></a>
-<FONT color="green">054</FONT>      public final Class&lt;Void&gt; getConsumedType() {<a name="line.54"></a>
-<FONT color="green">055</FONT>        return Void.class;<a name="line.55"></a>
-<FONT color="green">056</FONT>      }<a name="line.56"></a>
-<FONT color="green">057</FONT>    <a name="line.57"></a>
-<FONT color="green">058</FONT>      @Override<a name="line.58"></a>
-<FONT color="green">059</FONT>      public Object invokeMethod(String name, Object args) {<a name="line.59"></a>
-<FONT color="green">060</FONT>    <a name="line.60"></a>
-<FONT color="green">061</FONT>        //<a name="line.61"></a>
-<FONT color="green">062</FONT>        try {<a name="line.62"></a>
-<FONT color="green">063</FONT>          return super.invokeMethod(name, args);<a name="line.63"></a>
-<FONT color="green">064</FONT>        }<a name="line.64"></a>
-<FONT color="green">065</FONT>        catch (MissingMethodException e) {<a name="line.65"></a>
-<FONT color="green">066</FONT>          if (context instanceof InvocationContext) {<a name="line.66"></a>
-<FONT color="green">067</FONT>            InvocationContext ic = (InvocationContext)context;<a name="line.67"></a>
-<FONT color="green">068</FONT>            CRaSH crash = (CRaSH)context.getAttributes().get("crash");<a name="line.68"></a>
-<FONT color="green">069</FONT>            if (crash != null) {<a name="line.69"></a>
-<FONT color="green">070</FONT>              ShellCommand cmd;<a name="line.70"></a>
-<FONT color="green">071</FONT>              try {<a name="line.71"></a>
-<FONT color="green">072</FONT>                cmd = crash.getCommand(name);<a name="line.72"></a>
-<FONT color="green">073</FONT>              }<a name="line.73"></a>
-<FONT color="green">074</FONT>              catch (NoSuchCommandException ce) {<a name="line.74"></a>
-<FONT color="green">075</FONT>                throw new InvokerInvocationException(ce);<a name="line.75"></a>
-<FONT color="green">076</FONT>              }<a name="line.76"></a>
-<FONT color="green">077</FONT>              if (cmd != null) {<a name="line.77"></a>
-<FONT color="green">078</FONT>                CommandDispatcher dispatcher = new CommandDispatcher(cmd, ic);<a name="line.78"></a>
-<FONT color="green">079</FONT>                return dispatcher.dispatch("", args);<a name="line.79"></a>
-<FONT color="green">080</FONT>              }<a name="line.80"></a>
-<FONT color="green">081</FONT>            }<a name="line.81"></a>
-<FONT color="green">082</FONT>          }<a name="line.82"></a>
-<FONT color="green">083</FONT>    <a name="line.83"></a>
-<FONT color="green">084</FONT>          //<a name="line.84"></a>
-<FONT color="green">085</FONT>          throw e;<a name="line.85"></a>
-<FONT color="green">086</FONT>        }<a name="line.86"></a>
-<FONT color="green">087</FONT>      }<a name="line.87"></a>
-<FONT color="green">088</FONT>    <a name="line.88"></a>
-<FONT color="green">089</FONT>      @Override<a name="line.89"></a>
-<FONT color="green">090</FONT>      public final Object getProperty(String property) {<a name="line.90"></a>
-<FONT color="green">091</FONT>        if ("out".equals(property)) {<a name="line.91"></a>
-<FONT color="green">092</FONT>          if (context instanceof InvocationContext&lt;?, ?&gt;) {<a name="line.92"></a>
-<FONT color="green">093</FONT>            return ((InvocationContext&lt;?, ?&gt;)context).getWriter();<a name="line.93"></a>
-<FONT color="green">094</FONT>          } else {<a name="line.94"></a>
-<FONT color="green">095</FONT>            return null;<a name="line.95"></a>
-<FONT color="green">096</FONT>          }<a name="line.96"></a>
-<FONT color="green">097</FONT>        } else {<a name="line.97"></a>
-<FONT color="green">098</FONT>          if (context instanceof InvocationContext&lt;?, ?&gt;) {<a name="line.98"></a>
-<FONT color="green">099</FONT>            CRaSH crash = (CRaSH)context.getAttributes().get("crash");<a name="line.99"></a>
-<FONT color="green">100</FONT>            if (crash != null) {<a name="line.100"></a>
-<FONT color="green">101</FONT>              try {<a name="line.101"></a>
-<FONT color="green">102</FONT>                ShellCommand cmd = crash.getCommand(property);<a name="line.102"></a>
-<FONT color="green">103</FONT>                if (cmd != null) {<a name="line.103"></a>
-<FONT color="green">104</FONT>                  return new CommandDispatcher(cmd, (InvocationContext&lt;?, ?&gt;)context);<a name="line.104"></a>
-<FONT color="green">105</FONT>                }<a name="line.105"></a>
-<FONT color="green">106</FONT>              } catch (NoSuchCommandException e) {<a name="line.106"></a>
-<FONT color="green">107</FONT>                throw new InvokerInvocationException(e);<a name="line.107"></a>
-<FONT color="green">108</FONT>              }<a name="line.108"></a>
-<FONT color="green">109</FONT>            }<a name="line.109"></a>
-<FONT color="green">110</FONT>          }<a name="line.110"></a>
-<FONT color="green">111</FONT>    <a name="line.111"></a>
-<FONT color="green">112</FONT>          //<a name="line.112"></a>
-<FONT color="green">113</FONT>          try {<a name="line.113"></a>
-<FONT color="green">114</FONT>            return super.getProperty(property);<a name="line.114"></a>
-<FONT color="green">115</FONT>          }<a name="line.115"></a>
-<FONT color="green">116</FONT>          catch (MissingPropertyException e) {<a name="line.116"></a>
-<FONT color="green">117</FONT>            return null;<a name="line.117"></a>
+<FONT color="green">031</FONT>    import org.crsh.text.ShellPrintWriter;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.crsh.util.Strings;<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>    import java.util.List;<a name="line.34"></a>
+<FONT color="green">035</FONT>    <a name="line.35"></a>
+<FONT color="green">036</FONT>    /**<a name="line.36"></a>
+<FONT color="green">037</FONT>     * This class provides the base class for Groovy scripts. It should not be used directly as it is rather used<a name="line.37"></a>
+<FONT color="green">038</FONT>     * for configuring a Groovy {@link org.codehaus.groovy.control.CompilerConfiguration#setScriptBaseClass(String)} class.<a name="line.38"></a>
+<FONT color="green">039</FONT>     *<a name="line.39"></a>
+<FONT color="green">040</FONT>     * @author &lt;a href="mailto:julien.viet@exoplatform.com"&gt;Julien Viet&lt;/a&gt;<a name="line.40"></a>
+<FONT color="green">041</FONT>     * @version $Revision$<a name="line.41"></a>
+<FONT color="green">042</FONT>     */<a name="line.42"></a>
+<FONT color="green">043</FONT>    public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker&lt;Void, Void&gt; {<a name="line.43"></a>
+<FONT color="green">044</FONT>    <a name="line.44"></a>
+<FONT color="green">045</FONT>      /** . */<a name="line.45"></a>
+<FONT color="green">046</FONT>      private CommandContext context;<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>      /** . */<a name="line.48"></a>
+<FONT color="green">049</FONT>      private String[] args;<a name="line.49"></a>
+<FONT color="green">050</FONT>    <a name="line.50"></a>
+<FONT color="green">051</FONT>      public final Class&lt;Void&gt; getProducedType() {<a name="line.51"></a>
+<FONT color="green">052</FONT>        return Void.class;<a name="line.52"></a>
+<FONT color="green">053</FONT>      }<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>      public final Class&lt;Void&gt; getConsumedType() {<a name="line.55"></a>
+<FONT color="green">056</FONT>        return Void.class;<a name="line.56"></a>
+<FONT color="green">057</FONT>      }<a name="line.57"></a>
+<FONT color="green">058</FONT>    <a name="line.58"></a>
+<FONT color="green">059</FONT>      @Override<a name="line.59"></a>
+<FONT color="green">060</FONT>      public Object invokeMethod(String name, Object args) {<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>        //<a name="line.62"></a>
+<FONT color="green">063</FONT>        try {<a name="line.63"></a>
+<FONT color="green">064</FONT>          return super.invokeMethod(name, args);<a name="line.64"></a>
+<FONT color="green">065</FONT>        }<a name="line.65"></a>
+<FONT color="green">066</FONT>        catch (MissingMethodException e) {<a name="line.66"></a>
+<FONT color="green">067</FONT>          if (context instanceof InvocationContext) {<a name="line.67"></a>
+<FONT color="green">068</FONT>            InvocationContext ic = (InvocationContext)context;<a name="line.68"></a>
+<FONT color="green">069</FONT>            CRaSH crash = (CRaSH)context.getSession().get("crash");<a name="line.69"></a>
+<FONT color="green">070</FONT>            if (crash != null) {<a name="line.70"></a>
+<FONT color="green">071</FONT>              ShellCommand cmd;<a name="line.71"></a>
+<FONT color="green">072</FONT>              try {<a name="line.72"></a>
+<FONT color="green">073</FONT>                cmd = crash.getCommand(name);<a name="line.73"></a>
+<FONT color="green">074</FONT>              }<a name="line.74"></a>
+<FONT color="green">075</FONT>              catch (NoSuchCommandException ce) {<a name="line.75"></a>
+<FONT color="green">076</FONT>                throw new InvokerInvocationException(ce);<a name="line.76"></a>
+<FONT color="green">077</FONT>              }<a name="line.77"></a>
+<FONT color="green">078</FONT>              if (cmd != null) {<a name="line.78"></a>
+<FONT color="green">079</FONT>                CommandDispatcher dispatcher = new CommandDispatcher(cmd, ic);<a name="line.79"></a>
+<FONT color="green">080</FONT>                return dispatcher.dispatch("", args);<a name="line.80"></a>
+<FONT color="green">081</FONT>              }<a name="line.81"></a>
+<FONT color="green">082</FONT>            }<a name="line.82"></a>
+<FONT color="green">083</FONT>          }<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>          //<a name="line.85"></a>
+<FONT color="green">086</FONT>          throw e;<a name="line.86"></a>
+<FONT color="green">087</FONT>        }<a name="line.87"></a>
+<FONT color="green">088</FONT>      }<a name="line.88"></a>
+<FONT color="green">089</FONT>    <a name="line.89"></a>
+<FONT color="green">090</FONT>      @Override<a name="line.90"></a>
+<FONT color="green">091</FONT>      public final Object getProperty(String property) {<a name="line.91"></a>
+<FONT color="green">092</FONT>        if ("out".equals(property)) {<a name="line.92"></a>
+<FONT color="green">093</FONT>          if (context instanceof InvocationContext&lt;?, ?&gt;) {<a name="line.93"></a>
+<FONT color="green">094</FONT>            return ((InvocationContext&lt;?, ?&gt;)context).getWriter();<a name="line.94"></a>
+<FONT color="green">095</FONT>          } else {<a name="line.95"></a>
+<FONT color="green">096</FONT>            return null;<a name="line.96"></a>
+<FONT color="green">097</FONT>          }<a name="line.97"></a>
+<FONT color="green">098</FONT>        } else if ("context".equals(property)) {<a name="line.98"></a>
+<FONT color="green">099</FONT>          return context;<a name="line.99"></a>
+<FONT color="green">100</FONT>        } else {<a name="line.100"></a>
+<FONT color="green">101</FONT>          if (context instanceof InvocationContext&lt;?, ?&gt;) {<a name="line.101"></a>
+<FONT color="green">102</FONT>            CRaSH crash = (CRaSH)context.getSession().get("crash");<a name="line.102"></a>
+<FONT color="green">103</FONT>            if (crash != null) {<a name="line.103"></a>
+<FONT color="green">104</FONT>              try {<a name="line.104"></a>
+<FONT color="green">105</FONT>                ShellCommand cmd = crash.getCommand(property);<a name="line.105"></a>
+<FONT color="green">106</FONT>                if (cmd != null) {<a name="line.106"></a>
+<FONT color="green">107</FONT>                  return new CommandDispatcher(cmd, (InvocationContext&lt;?, ?&gt;)context);<a name="line.107"></a>
+<FONT color="green">108</FONT>                }<a name="line.108"></a>
+<FONT color="green">109</FONT>              } catch (NoSuchCommandException e) {<a name="line.109"></a>
+<FONT color="green">110</FONT>                throw new InvokerInvocationException(e);<a name="line.110"></a>
+<FONT color="green">111</FONT>              }<a name="line.111"></a>
+<FONT color="green">112</FONT>            }<a name="line.112"></a>
+<FONT color="green">113</FONT>          }<a name="line.113"></a>
+<FONT color="green">114</FONT>    <a name="line.114"></a>
+<FONT color="green">115</FONT>          //<a name="line.115"></a>
+<FONT color="green">116</FONT>          try {<a name="line.116"></a>
+<FONT color="green">117</FONT>            return super.getProperty(property);<a name="line.117"></a>
 <FONT color="green">118</FONT>          }<a name="line.118"></a>
-<FONT color="green">119</FONT>        }<a name="line.119"></a>
-<FONT color="green">120</FONT>      }<a name="line.120"></a>
-<FONT color="green">121</FONT>    <a name="line.121"></a>
-<FONT color="green">122</FONT>      public final CommandCompletion complete(CommandContext context, String line) {<a name="line.122"></a>
-<FONT color="green">123</FONT>        return new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());<a name="line.123"></a>
-<FONT color="green">124</FONT>      }<a name="line.124"></a>
-<FONT color="green">125</FONT>    <a name="line.125"></a>
-<FONT color="green">126</FONT>      public String describe(String line, DescriptionFormat mode) {<a name="line.126"></a>
-<FONT color="green">127</FONT>        return null;<a name="line.127"></a>
-<FONT color="green">128</FONT>      }<a name="line.128"></a>
-<FONT color="green">129</FONT>    <a name="line.129"></a>
-<FONT color="green">130</FONT>      public final void invoke(InvocationContext&lt;Void, Void&gt; context) throws ScriptException {<a name="line.130"></a>
-<FONT color="green">131</FONT>    <a name="line.131"></a>
-<FONT color="green">132</FONT>        // Set up current binding<a name="line.132"></a>
-<FONT color="green">133</FONT>        Binding binding = new Binding(context.getAttributes());<a name="line.133"></a>
+<FONT color="green">119</FONT>          catch (MissingPropertyException e) {<a name="line.119"></a>
+<FONT color="green">120</FONT>            return null;<a name="line.120"></a>
+<FONT color="green">121</FONT>          }<a name="line.121"></a>
+<FONT color="green">122</FONT>        }<a name="line.122"></a>
+<FONT color="green">123</FONT>      }<a name="line.123"></a>
+<FONT color="green">124</FONT>    <a name="line.124"></a>
+<FONT color="green">125</FONT>      public final CommandCompletion complete(CommandContext context, String line) {<a name="line.125"></a>
+<FONT color="green">126</FONT>        return new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());<a name="line.126"></a>
+<FONT color="green">127</FONT>      }<a name="line.127"></a>
+<FONT color="green">128</FONT>    <a name="line.128"></a>
+<FONT color="green">129</FONT>      public String describe(String line, DescriptionFormat mode) {<a name="line.129"></a>
+<FONT color="green">130</FONT>        return null;<a name="line.130"></a>
+<FONT color="green">131</FONT>      }<a name="line.131"></a>
+<FONT color="green">132</FONT>    <a name="line.132"></a>
+<FONT color="green">133</FONT>      public final void invoke(InvocationContext&lt;Void, Void&gt; context) throws ScriptException {<a name="line.133"></a>
 <FONT color="green">134</FONT>    <a name="line.134"></a>
-<FONT color="green">135</FONT>        // Set the args on the script<a name="line.135"></a>
-<FONT color="green">136</FONT>        binding.setProperty("args", args);<a name="line.136"></a>
+<FONT color="green">135</FONT>        // Set up current binding<a name="line.135"></a>
+<FONT color="green">136</FONT>        Binding binding = new Binding(context.getSession());<a name="line.136"></a>
 <FONT color="green">137</FONT>    <a name="line.137"></a>
-<FONT color="green">138</FONT>        //<a name="line.138"></a>
-<FONT color="green">139</FONT>        setBinding(binding);<a name="line.139"></a>
+<FONT color="green">138</FONT>        // Set the args on the script<a name="line.138"></a>
+<FONT color="green">139</FONT>        binding.setProperty("args", args);<a name="line.139"></a>
 <FONT color="green">140</FONT>    <a name="line.140"></a>
 <FONT color="green">141</FONT>        //<a name="line.141"></a>
-<FONT color="green">142</FONT>        this.context = context;<a name="line.142"></a>
-<FONT color="green">143</FONT>        try {<a name="line.143"></a>
-<FONT color="green">144</FONT>          //<a name="line.144"></a>
-<FONT color="green">145</FONT>          Object res = run();<a name="line.145"></a>
-<FONT color="green">146</FONT>    <a name="line.146"></a>
-<FONT color="green">147</FONT>          // Evaluate the closure<a name="line.147"></a>
-<FONT color="green">148</FONT>          if (res instanceof Closure) {<a name="line.148"></a>
-<FONT color="green">149</FONT>            Closure closure = (Closure)res;<a name="line.149"></a>
-<FONT color="green">150</FONT>            res = closure.call(args);<a name="line.150"></a>
-<FONT color="green">151</FONT>          }<a name="line.151"></a>
-<FONT color="green">152</FONT>    <a name="line.152"></a>
-<FONT color="green">153</FONT>          //<a name="line.153"></a>
-<FONT color="green">154</FONT>          if (res != null) {<a name="line.154"></a>
-<FONT color="green">155</FONT>            context.getWriter().print(res);<a name="line.155"></a>
-<FONT color="green">156</FONT>          }<a name="line.156"></a>
-<FONT color="green">157</FONT>        }<a name="line.157"></a>
-<FONT color="green">158</FONT>        catch (Exception t) {<a name="line.158"></a>
-<FONT color="green">159</FONT>          throw CRaSHCommand.toScript(t);<a name="line.159"></a>
-<FONT color="green">160</FONT>        }<a name="line.160"></a>
-<FONT color="green">161</FONT>        finally {<a name="line.161"></a>
-<FONT color="green">162</FONT>          this.context = null;<a name="line.162"></a>
+<FONT color="green">142</FONT>        setBinding(binding);<a name="line.142"></a>
+<FONT color="green">143</FONT>    <a name="line.143"></a>
+<FONT color="green">144</FONT>        //<a name="line.144"></a>
+<FONT color="green">145</FONT>        this.context = context;<a name="line.145"></a>
+<FONT color="green">146</FONT>        try {<a name="line.146"></a>
+<FONT color="green">147</FONT>          //<a name="line.147"></a>
+<FONT color="green">148</FONT>          Object res = run();<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>          // Evaluate the closure<a name="line.150"></a>
+<FONT color="green">151</FONT>          if (res instanceof Closure) {<a name="line.151"></a>
+<FONT color="green">152</FONT>            Closure closure = (Closure)res;<a name="line.152"></a>
+<FONT color="green">153</FONT>            res = closure.call(args);<a name="line.153"></a>
+<FONT color="green">154</FONT>          }<a name="line.154"></a>
+<FONT color="green">155</FONT>    <a name="line.155"></a>
+<FONT color="green">156</FONT>          //<a name="line.156"></a>
+<FONT color="green">157</FONT>          if (res != null) {<a name="line.157"></a>
+<FONT color="green">158</FONT>            ShellPrintWriter writer = context.getWriter();<a name="line.158"></a>
+<FONT color="green">159</FONT>            if (writer.isEmpty()) {<a name="line.159"></a>
+<FONT color="green">160</FONT>              writer.print(res);<a name="line.160"></a>
+<FONT color="green">161</FONT>            }<a name="line.161"></a>
+<FONT color="green">162</FONT>          }<a name="line.162"></a>
 <FONT color="green">163</FONT>        }<a name="line.163"></a>
-<FONT color="green">164</FONT>      }<a name="line.164"></a>
-<FONT color="green">165</FONT>    <a name="line.165"></a>
-<FONT color="green">166</FONT>      public final CommandInvoker&lt;?, ?&gt; createInvoker(String line) {<a name="line.166"></a>
-<FONT color="green">167</FONT>        List&lt;String&gt; chunks = Strings.chunks(line);<a name="line.167"></a>
-<FONT color="green">168</FONT>        this.args = chunks.toArray(new String[chunks.size()]);<a name="line.168"></a>
-<FONT color="green">169</FONT>        return this;<a name="line.169"></a>
+<FONT color="green">164</FONT>        catch (Exception t) {<a name="line.164"></a>
+<FONT color="green">165</FONT>          throw CRaSHCommand.toScript(t);<a name="line.165"></a>
+<FONT color="green">166</FONT>        }<a name="line.166"></a>
+<FONT color="green">167</FONT>        finally {<a name="line.167"></a>
+<FONT color="green">168</FONT>          this.context = null;<a name="line.168"></a>
+<FONT color="green">169</FONT>        }<a name="line.169"></a>
 <FONT color="green">170</FONT>      }<a name="line.170"></a>
-<FONT color="green">171</FONT>    }<a name="line.171"></a>
+<FONT color="green">171</FONT>    <a name="line.171"></a>
+<FONT color="green">172</FONT>      public final CommandInvoker&lt;?, ?&gt; createInvoker(String line) {<a name="line.172"></a>
+<FONT color="green">173</FONT>        List&lt;String&gt; chunks = Strings.chunks(line);<a name="line.173"></a>
+<FONT color="green">174</FONT>        this.args = chunks.toArray(new String[chunks.size()]);<a name="line.174"></a>
+<FONT color="green">175</FONT>        return this;<a name="line.175"></a>
+<FONT color="green">176</FONT>      }<a name="line.176"></a>
+<FONT color="green">177</FONT>    }<a name="line.177"></a>
 
 
 

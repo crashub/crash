@@ -242,7 +242,7 @@
 <FONT color="green">239</FONT>            try {<a name="line.239"></a>
 <FONT color="green">240</FONT>              ShellCommand command = crash.getCommand(commandName);<a name="line.240"></a>
 <FONT color="green">241</FONT>              if (command != null) {<a name="line.241"></a>
-<FONT color="green">242</FONT>                completion = command.complete(new BaseCommandContext(attributes), termPrefix);<a name="line.242"></a>
+<FONT color="green">242</FONT>                completion = command.complete(new BaseCommandContext(attributes, crash.context.getAttributes()), termPrefix);<a name="line.242"></a>
 <FONT color="green">243</FONT>              } else {<a name="line.243"></a>
 <FONT color="green">244</FONT>                completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());<a name="line.244"></a>
 <FONT color="green">245</FONT>              }<a name="line.245"></a>

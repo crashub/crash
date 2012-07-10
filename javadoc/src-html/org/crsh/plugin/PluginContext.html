@@ -76,7 +76,7 @@
 <FONT color="green">073</FONT>      private final FS cmdFS;<a name="line.73"></a>
 <FONT color="green">074</FONT>    <a name="line.74"></a>
 <FONT color="green">075</FONT>      /** . */<a name="line.75"></a>
-<FONT color="green">076</FONT>      private final Map&lt;String, ?&gt; attributes;<a name="line.76"></a>
+<FONT color="green">076</FONT>      private final Map&lt;String, Object&gt; attributes;<a name="line.76"></a>
 <FONT color="green">077</FONT>    <a name="line.77"></a>
 <FONT color="green">078</FONT>      /** . */<a name="line.78"></a>
 <FONT color="green">079</FONT>      private final FS confFS;<a name="line.79"></a>
@@ -100,7 +100,7 @@
 <FONT color="green">097</FONT>       */<a name="line.97"></a>
 <FONT color="green">098</FONT>      public PluginContext(<a name="line.98"></a>
 <FONT color="green">099</FONT>        PluginDiscovery discovery,<a name="line.99"></a>
-<FONT color="green">100</FONT>        Map&lt;String, ?&gt; attributes,<a name="line.100"></a>
+<FONT color="green">100</FONT>        Map&lt;String, Object&gt; attributes,<a name="line.100"></a>
 <FONT color="green">101</FONT>        FS cmdFS,<a name="line.101"></a>
 <FONT color="green">102</FONT>        FS confFS,<a name="line.102"></a>
 <FONT color="green">103</FONT>        ClassLoader loader) throws NullPointerException {<a name="line.103"></a>
@@ -156,7 +156,7 @@
 <FONT color="green">153</FONT>        return version;<a name="line.153"></a>
 <FONT color="green">154</FONT>      }<a name="line.154"></a>
 <FONT color="green">155</FONT>    <a name="line.155"></a>
-<FONT color="green">156</FONT>      public Map&lt;String, ?&gt; getAttributes() {<a name="line.156"></a>
+<FONT color="green">156</FONT>      public Map&lt;String, Object&gt; getAttributes() {<a name="line.156"></a>
 <FONT color="green">157</FONT>        return attributes;<a name="line.157"></a>
 <FONT color="green">158</FONT>      }<a name="line.158"></a>
 <FONT color="green">159</FONT>    <a name="line.159"></a>

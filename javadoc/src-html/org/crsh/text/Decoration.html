@@ -1,0 +1,90 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.crsh.text;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.io.Serializable;<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    /**<a name="line.5"></a>
+<FONT color="green">006</FONT>     * @author &lt;a href="mailto:alain.defrance@exoplatform.com"&gt;Alain Defrance&lt;/a&gt;<a name="line.6"></a>
+<FONT color="green">007</FONT>     */<a name="line.7"></a>
+<FONT color="green">008</FONT>    public enum Decoration implements Serializable {<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>      bold(1),<a name="line.10"></a>
+<FONT color="green">011</FONT>      underline(4),<a name="line.11"></a>
+<FONT color="green">012</FONT>      blink(5);<a name="line.12"></a>
+<FONT color="green">013</FONT>    <a name="line.13"></a>
+<FONT color="green">014</FONT>      /** . */<a name="line.14"></a>
+<FONT color="green">015</FONT>      public final int code;<a name="line.15"></a>
+<FONT color="green">016</FONT>    <a name="line.16"></a>
+<FONT color="green">017</FONT>      /** . */<a name="line.17"></a>
+<FONT color="green">018</FONT>      public final Style style;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>      private Decoration(int code) {<a name="line.20"></a>
+<FONT color="green">021</FONT>        this.code = code;<a name="line.21"></a>
+<FONT color="green">022</FONT>        this.style = Style.style(this);<a name="line.22"></a>
+<FONT color="green">023</FONT>      }<a name="line.23"></a>
+<FONT color="green">024</FONT>    }<a name="line.24"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

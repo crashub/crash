@@ -169,7 +169,12 @@
 <FONT color="green">166</FONT>       * @throws Exception any exception that would prevent parsing to hapen<a name="line.166"></a>
 <FONT color="green">167</FONT>       */<a name="line.167"></a>
 <FONT color="green">168</FONT>      protected abstract T doParse(String s) throws Exception;<a name="line.168"></a>
-<FONT color="green">169</FONT>    }<a name="line.169"></a>
+<FONT color="green">169</FONT>    <a name="line.169"></a>
+<FONT color="green">170</FONT>      @Override<a name="line.170"></a>
+<FONT color="green">171</FONT>      public final String toString() {<a name="line.171"></a>
+<FONT color="green">172</FONT>        return "PropertyDescriptor[name=" + name + ",type=" + type.getName() + ",description=" + description + "]";<a name="line.172"></a>
+<FONT color="green">173</FONT>      }<a name="line.173"></a>
+<FONT color="green">174</FONT>    }<a name="line.174"></a>
 
 
 

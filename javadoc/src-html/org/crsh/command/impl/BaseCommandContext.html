@@ -33,16 +33,24 @@
 <FONT color="green">030</FONT>    public class BaseCommandContext implements CommandContext {<a name="line.30"></a>
 <FONT color="green">031</FONT>    <a name="line.31"></a>
 <FONT color="green">032</FONT>      /** . */<a name="line.32"></a>
-<FONT color="green">033</FONT>      private final Map&lt;String, Object&gt; attributes;<a name="line.33"></a>
+<FONT color="green">033</FONT>      private final Map&lt;String, Object&gt; session;<a name="line.33"></a>
 <FONT color="green">034</FONT>    <a name="line.34"></a>
-<FONT color="green">035</FONT>      public BaseCommandContext(Map&lt;String, Object&gt; attributes) {<a name="line.35"></a>
-<FONT color="green">036</FONT>        this.attributes = attributes;<a name="line.36"></a>
-<FONT color="green">037</FONT>      }<a name="line.37"></a>
-<FONT color="green">038</FONT>    <a name="line.38"></a>
-<FONT color="green">039</FONT>      public final Map&lt;String, Object&gt; getAttributes() {<a name="line.39"></a>
-<FONT color="green">040</FONT>        return attributes;<a name="line.40"></a>
+<FONT color="green">035</FONT>      /** . */<a name="line.35"></a>
+<FONT color="green">036</FONT>      private final Map&lt;String, Object&gt; attributes;<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>      public BaseCommandContext(Map&lt;String, Object&gt; session, Map&lt;String, Object&gt; attributes) {<a name="line.38"></a>
+<FONT color="green">039</FONT>        this.session = session;<a name="line.39"></a>
+<FONT color="green">040</FONT>        this.attributes = attributes;<a name="line.40"></a>
 <FONT color="green">041</FONT>      }<a name="line.41"></a>
-<FONT color="green">042</FONT>    }<a name="line.42"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>      public final Map&lt;String, Object&gt; getSession() {<a name="line.43"></a>
+<FONT color="green">044</FONT>        return session;<a name="line.44"></a>
+<FONT color="green">045</FONT>      }<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>      public Map&lt;String, Object&gt; getAttributes() {<a name="line.47"></a>
+<FONT color="green">048</FONT>        return attributes;<a name="line.48"></a>
+<FONT color="green">049</FONT>      }<a name="line.49"></a>
+<FONT color="green">050</FONT>    }<a name="line.50"></a>
 
 
 

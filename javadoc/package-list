@@ -33,6 +33,7 @@ org.crsh.term.console
 org.crsh.term.spi
 org.crsh.term.spi.jline
 org.crsh.term.spi.net
+org.crsh.text
 org.crsh.util
 org.crsh.vfs
 org.crsh.vfs.spi
