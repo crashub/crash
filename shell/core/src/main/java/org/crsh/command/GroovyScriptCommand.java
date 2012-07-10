@@ -28,6 +28,7 @@ import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.impl.command.CRaSH;
+import org.crsh.text.ShellPrintWriter;
 import org.crsh.util.Strings;
 
 import java.util.List;
@@ -154,7 +155,10 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
 
       //
       if (res != null) {
-        context.getWriter().print(res);
+        ShellPrintWriter writer = context.getWriter();
+        if (writer.isEmpty()) {
+          writer.print(res);
+        }
       }
     }
     catch (Exception t) {

@@ -7,4 +7,6 @@ public interface ShellAppendable extends Appendable {
 
   ShellWriter append(Style style);
 
+  boolean isEmpty();
+
 }

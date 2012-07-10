@@ -164,4 +164,8 @@ public class ShellWriter implements ShellAppendable {
         throw new AssertionError();
     }
   }
+
+  public boolean isEmpty() {
+    return reader.isEmpty();
+  }
 }

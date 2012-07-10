@@ -1,3 +1,4 @@
+- Interesting db shell : http://ewaters.github.com/altsql-shell/
 - decouple connectors from instantiating CRaSH and instead use a shell factory
 - make CRaSH a plugin that provides a shell factory interface
 - look about remote attaching : http://code.alibabatech.com/blog/dev_related_986/jvm-attach-api-introducation-and-practice.html

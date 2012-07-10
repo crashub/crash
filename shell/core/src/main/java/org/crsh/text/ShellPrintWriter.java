@@ -41,6 +41,10 @@ public class ShellPrintWriter extends PrintWriter {
     this.out = out;
   }
 
+  public final boolean isEmpty() {
+    return out.isEmpty();
+  }
+
   public final void print(Object obj, Color foreground) {
     out.append(foreground.style);
     print(obj);

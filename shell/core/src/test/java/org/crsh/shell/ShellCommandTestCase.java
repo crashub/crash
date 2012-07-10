@@ -227,4 +227,16 @@ public class ShellCommandTestCase extends TestCase {
     TestInvocationContext context = new TestInvocationContext();
     assertEquals(context.getClass().getName(), context.execute(cmd));
   }
+
+  public void testScriptUseReturnValue() throws Exception {
+    Class clazz = loader.parseClass("return 'def'");
+    ShellCommand script = (ShellCommand)clazz.newInstance();
+    assertEquals("def", new TestInvocationContext().execute(script));
+  }
+
+  public void testScriptDiscardReturnValue() throws Exception {
+    Class clazz = loader.parseClass("out << 'abc'\nreturn 'def'");
+    ShellCommand script = (ShellCommand)clazz.newInstance();
+    assertEquals("abc", new TestInvocationContext().execute(script));
+  }
 }
