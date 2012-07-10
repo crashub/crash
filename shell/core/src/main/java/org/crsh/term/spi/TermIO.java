@@ -20,6 +20,7 @@
 package org.crsh.term.spi;
 
 import org.crsh.term.CodeType;
+import org.crsh.text.Style;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -85,6 +86,14 @@ public interface TermIO extends Closeable {
    * @throws IOException any io exception
    */
   void write(char c) throws IOException;
+
+  /**
+   * Write a style.
+   *
+   * @param d the data to write
+   * @throws IOException any io exception
+   */
+  void write(Style d) throws IOException;
 
   /**
    * Delete the char under the cursor.

@@ -19,7 +19,10 @@
 
 package org.crsh.shell.ui;
 
+import org.crsh.command.InvocationContext;
+import org.crsh.shell.io.ShellWriter;
 import org.crsh.shell.io.ShellWriterContext;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,11 +38,26 @@ class UIWriterContext implements ShellWriterContext {
   final ArrayList<Pad> stack;
 
   /** . */
+  Style padStyle;
+
+  /** . */
   boolean needLF;
 
-  UIWriterContext() {
+  /** . */
+  private final InvocationContext context;
+
+  /** . */
+  UIWriterContext parentUIContext;
+
+  UIWriterContext(InvocationContext context) {
+    this.context = context;
     this.stack = new ArrayList<Pad>();
     this.needLF = false;
+  }
+
+  UIWriterContext(UIWriterContext parentUIContext) {
+    this(parentUIContext.getInvocationContext());
+    this.parentUIContext = parentUIContext;
   }
 
   private static EnumMap<Pad, String> charMap = new EnumMap<Pad, String>(Pad.class);
@@ -50,16 +68,30 @@ class UIWriterContext implements ShellWriterContext {
     charMap.put(Pad.LAST_BRANCH, "+-");
     charMap.put(Pad.CONTINUE_BRANCH, "| ");
     charMap.put(Pad.STOP_BRANCH, "  ");
+    charMap.put(Pad.SPACE, " ");
     nextMap.put(Pad.BRANCH, Pad.CONTINUE_BRANCH);
     nextMap.put(Pad.CONTINUE_BRANCH, Pad.CONTINUE_BRANCH);
     nextMap.put(Pad.LAST_BRANCH, Pad.STOP_BRANCH);
     nextMap.put(Pad.STOP_BRANCH, Pad.STOP_BRANCH);
   }
 
-  public void pad(Appendable appendable) throws IOException {
+  public void pad(ShellWriter writer) throws IOException {
     for (int i = 0;i < stack.size();i++) {
       Pad abc = stack.get(i);
-      appendable.append(charMap.get(abc));
+      
+      //
+      if (padStyle != null) {
+        new FormattingElement(padStyle).print(this, writer);
+      }
+
+      //
+      writer.append(charMap.get(abc));
+
+      //
+      if (padStyle != null) {
+        new FormattingElement(Style.reset).print(this, writer);
+      }
+
       Pad next = nextMap.get(abc);
       stack.set(i, next);
     }
@@ -72,4 +104,13 @@ class UIWriterContext implements ShellWriterContext {
   public void lineFeed() {
     needLF = false;
   }
+
+  public int getConsoleWidth() {
+    return context.getWidth();
+  }
+
+  public InvocationContext getInvocationContext() {
+    return context;
+  }
+  
 }

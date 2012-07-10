@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.command.ScriptException;
+import org.crsh.text.CharReader;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -49,11 +49,15 @@ public abstract class ShellResponse implements Serializable {
   }
 
   public static Display display(String text) {
-    return new Display(text);
+    return new Display(new CharReader(text));
   }
 
-  public static Display display(Iterable<?> produced, String text) {
-    return new Display(produced, text);
+  public static Display display(CharReader reader) {
+    return new Display(reader);
+  }
+
+  public static Display display(Iterable<?> produced, CharReader reader) {
+    return new Display(produced, reader);
   }
 
   public static Error evalError(String msg, Throwable throwable) {
@@ -88,7 +92,7 @@ public abstract class ShellResponse implements Serializable {
     return Close.INSTANCE;
   }
 
-  public abstract String getText();
+  public abstract CharReader getReader();
 
   public static class UnknownCommand extends ShellResponse {
 
@@ -104,8 +108,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return name + ": command not found";
+    public CharReader getReader() {
+      return new CharReader(name + ": command not found");
     }
 
     @Override
@@ -123,8 +127,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return "Please type something";
+    public CharReader getReader() {
+      return new CharReader("Please type something");
     }
   }
 
@@ -137,8 +141,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return "Have a good day!\r\n";
+    public CharReader getReader() {
+      return new CharReader("Have a good day!\r\n");
     }
   }
 
@@ -163,25 +167,25 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return "";
+    public CharReader getReader() {
+      return new CharReader("");
     }
   }
 
   public static class Display extends Ok {
 
     /** . */
-    private final String text;
+    private final CharReader reader;
 
-    private Display(String text) {
-      this.text = text;
+    private Display(CharReader reader) {
+      this.reader = reader;
     }
 
-    private Display(Iterable<?> produced, String text) {
+    private Display(Iterable<?> produced, CharReader reader) {
       super(produced);
 
       //
-      this.text = text;
+      this.reader = reader;
     }
 
     @Override
@@ -191,14 +195,14 @@ public abstract class ShellResponse implements Serializable {
       }
       if (obj instanceof Display) {
         Display that = (Display)obj;
-        return text.equals(that.text);
+        return reader.equals(that.reader);
       }
       return false;
     }
 
     @Override
-    public String getText() {
-      return text;
+    public CharReader getReader() {
+      return reader;
     }
   }
 
@@ -211,8 +215,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return "cancelled" ;
+    public CharReader getReader() {
+      return new CharReader("cancelled");
     }
   }
 
@@ -248,8 +252,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public String getText() {
-      return msg;
+    public CharReader getReader() {
+      return new CharReader(msg);
     }
 
     public String toString() {

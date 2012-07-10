@@ -19,30 +19,33 @@
 
 package org.crsh.shell.io;
 
+import org.crsh.command.InvocationContext;
 import org.crsh.shell.ui.Element;
+import org.crsh.text.ShellPrintWriter;
 import org.crsh.shell.ui.UIBuilder;
-import org.crsh.util.AppendableWriter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
- * The shell printer extends the {@link PrintWriter} and prints some objects in a special
- * manner.
+ * Extends the {@link org.crsh.text.ShellPrintWriter} to provides support for easy padding.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public class ShellPrinter extends PrintWriter {
+public class ShellPrinter extends ShellPrintWriter {
 
   /** . */
   private final ShellWriter out;
 
-  public ShellPrinter(ShellWriter out) {
-    super(new AppendableWriter(out));
+  /** . */
+  private final InvocationContext context;
+
+  public ShellPrinter(ShellWriter out, InvocationContext context) {
+    super(out);
 
     //
     this.out = out;
+    this.context = context;
   }
 
   @Override
@@ -59,7 +62,7 @@ public class ShellPrinter extends PrintWriter {
       }
     } else if (obj instanceof Element) {
       try {
-        ((Element)obj).print(out);
+        ((Element)obj).print(out, context);
       } catch (IOException e) {
         setError();
       }

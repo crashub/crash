@@ -74,4 +74,12 @@ public class Utils {
       return s;
     }
   }
+
+  public static <E> E notNull(E e1, E e2) {
+    if (e1 != null) {
+      return e1;
+    } else {
+      return e2;
+    }
+  }
 }

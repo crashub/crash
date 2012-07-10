@@ -115,7 +115,7 @@ Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
 Connection closed
 {{/screen}}
 
-= Command context =
+= Command context {{anchor id=command_context/}} =
 
 During the execution of a command, CRaSH provides a //context// for interacting with the context of execution
  of the current command: the property //context// is resolve to an instance of ##org.crsh.command.InvocationContext##,
@@ -174,6 +174,70 @@ def age = context.readLine("How old are you?", false);
 
 Finally the ##isPiped##, ##consume## and ##produce## methods are used when writing commands that exchange objects via
 the pipe mechanism.
+
+= Adding style =
+
+CRaSH adds since version 1.1 the support for colored text and text decoration. Each portion of text printed
+ has three style attributes:
+
+* //Decoration// : bold, underline or blink, as the ##org.crsh.text.Decoration## enum.
+* //Foreground// color.
+* //Background// color.
+
+Available colors are grouped as the ##org.crsh.text.Color## enum: black, red, green, yellow, blue, magenta, cyan, white.
+
+Decoration and colors can be applied with overloaded ##print## and ##println## methods provided by the ##ShellPrinterWriter##.
+This printer is available as the implicit //out// attribute or thanks to the ##[[context>>#command_context]].getWriter()##
+method.
+
+{{example title="Decorating and coloring text"}}
+{{java}}
+out.println("hello", red); // <1> Print hello in red color
+out.println("hello", red, blue); // <2> Print hello in red with a red blue
+out.println("hello", underline, red, blue); // <3> Print hello in red underlined with a red blue
+{{/java}}
+{{/example}}
+
+The combination of the decoration, background and foreground colors is a //style// represented by the ##org.crsh.text.Style##
+object. Styles can be used like decoration and colors:
+
+{{example title="Printing styled text"}}
+{{java}}
+out.println("hello", style(red)); // <1> Print hello in red color
+out.println("hello", style(red, blue)); // <2> Print hello in red with a red blue
+out.println("hello", style(underline, red, blue)); // <3> Print hello in red underlined with a red blue
+{{/java}}
+{{/example}}
+
+When using the print methods, the style will be used for the currently printed object. It is possible to change the
+style permanently (until it is reset) using Groovy //leftshift// operator : ##<<##
+
+By default the ##<<## operator prints output on the console. The ##ShellPrintWriter## overrides the operator to work
+with color, decoration and styles:
+
+{{example title="Styling with the leftshift operator"}}
+{{java}}
+out << red // <1> Set red foreground color
+out << underline // <2> Set underline
+out << "hello" // <3> Print hello in underlined red
+out << reset; // <4> Reset style
+{{/java}}
+{{/example}}
+
+Operators can also be combined on the same line providing a more compact syntax:
+
+{{java}}
+out << red << underline << "hello" << reset
+{{/java}}
+
+{{java}}
+out << style(underline, red, blue) << "hello" << reset
+{{/java}}
+
+{{note}}
+Throughout the examples we have used decoration, color and styles. CRaSH automatically imports those classes so
+they can be used out of the box in any CRaSH command without requiring prior import.
+{{/note}}
 
 = Inter command API =
 

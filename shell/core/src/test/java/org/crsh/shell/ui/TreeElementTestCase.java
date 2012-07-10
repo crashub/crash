@@ -20,7 +20,9 @@
 package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
-import org.crsh.util.LineFeedWriter;
+import org.crsh.shell.TestInvocationContext;
+import org.crsh.text.CharReader;
+import org.crsh.shell.io.ShellWriter;
 
 import java.io.IOException;
 
@@ -34,44 +36,44 @@ public class TreeElementTestCase extends TestCase {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
     elt.addNode(new LabelElement("2\n"));
-    StringBuilder sb = new StringBuilder();
-    LineFeedWriter writer = new LineFeedWriter(sb, "_");
-    elt.print(writer);
+    CharReader reader = new CharReader();
+    ShellWriter writer = new ShellWriter(reader, "_");
+    elt.print(writer, new TestInvocationContext());
     assertEquals(
-      "+-1_" +
-      "| 1_" +
-      "+-2_"
-      , sb.toString());
+        "+-1_" +
+            "| 1_" +
+            "+-2_"
+        , reader.toString());
   }
 
   public void testFoo() throws Exception {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
-    StringBuilder sb = new StringBuilder();
-    LineFeedWriter writer = new LineFeedWriter(sb, "_");
-    elt.print(writer);
+    CharReader reader = new CharReader();
+    ShellWriter writer = new ShellWriter(reader, "_");
+    elt.print(writer, new TestInvocationContext());
     assertEquals(
-      "+-1_" +
-      "  1_"
-      , sb.toString());
+        "+-1_" +
+            "  1_"
+        , reader.toString());
   }
 
   public void testNested() throws Exception {
     TreeElement elt = new TreeElement(new LabelElement("foo"));
     elt.addNode(new TreeElement(new LabelElement("bar")).addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
     elt.addNode(new TreeElement().addNode(new LabelElement("3")).addNode(new LabelElement("4")));
-    StringBuilder sb = new StringBuilder();
-    LineFeedWriter writer = new LineFeedWriter(sb, "_");
-    elt.print(writer);
+    CharReader reader = new CharReader();
+    ShellWriter writer = new ShellWriter(reader, "_");
+    elt.print(writer, new TestInvocationContext());
     assertEquals(
-      "foo_" +
-      "+-bar_" +
-      "| +-1_" +
-      "| | 1_" +
-      "| +-2_" +
-      "|   2_" +
-      "+-+-3_" +
-      "  +-4_"
-      , sb.toString());
+        "foo_" +
+            "+-bar_" +
+            "| +-1_" +
+            "| | 1_" +
+            "| +-2_" +
+            "|   2_" +
+            "+-+-3_" +
+            "  +-4_"
+        , reader.toString());
   }
 }

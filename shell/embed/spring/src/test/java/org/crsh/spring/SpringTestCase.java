@@ -33,7 +33,7 @@ public class SpringTestCase extends TestCase {
     ShellProcess process = shell.createProcess("telnet");
     assertNotNull(process);
     BaseProcessContext pc = BaseProcessContext.create(process);
-    String r = pc.execute().getResponse().getText();
+    String r = pc.execute().getResponse().getReader().toString();
     assertEquals("2", r);
   }
 }

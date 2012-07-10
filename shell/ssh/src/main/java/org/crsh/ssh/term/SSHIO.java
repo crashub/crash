@@ -21,6 +21,7 @@ package org.crsh.ssh.term;
 
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
+import org.crsh.text.Style;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,6 +189,10 @@ public class SSHIO implements TermIO {
 
   public void write(char c) throws IOException {
     writer.write(c);
+  }
+
+  public void write(Style d) throws IOException {
+    d.writeAnsiTo(writer);
   }
 
   public void writeDel() throws IOException {

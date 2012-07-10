@@ -1,5 +1,7 @@
 package org.crsh.term;
 
+import org.crsh.text.CharReader;
+
 import java.io.IOException;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
@@ -21,7 +23,7 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
-  public void write(CharSequence msg) throws IOException {
+  public void write(CharReader reader) throws IOException {
     throw new UnsupportedOperationException();
   }
 

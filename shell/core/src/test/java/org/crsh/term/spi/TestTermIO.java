@@ -23,6 +23,7 @@ import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -227,6 +228,9 @@ public class TestTermIO implements TermIO {
   public void write(char c) throws IOException {
     System.out.print("[" + c + "]");
     outter.add("[" + c + "]");
+  }
+
+  public void write(Style d) throws IOException {
   }
 
   public void writeDel() throws IOException {

@@ -1,7 +1,8 @@
 package org.crsh.term.spi.net;
 
-import org.crsh.term.CodeType;
+import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;
+import org.crsh.text.Style;
 import org.crsh.util.AbstractSocketClient;
 
 import java.io.IOException;
@@ -171,6 +172,9 @@ public class TermIOClient extends AbstractSocketClient implements TermIO {
         }
       }
     }
+  }
+
+  public void write(Style d) throws IOException {
   }
 
   public void writeDel() throws IOException {

@@ -86,7 +86,7 @@ public class AsyncShellTestCase extends TestCase {
 
     //
     assertTrue(resp instanceof ShellResponse.Display);
-    assertEquals("juu", resp.getText());
+    assertEquals("juu", resp.getReader().toString());
     ctx.assertLineOutput("bar");
     ctx.assertNoOutput();
     ctx.assertNoInput();
@@ -98,7 +98,7 @@ public class AsyncShellTestCase extends TestCase {
     BaseProcessContext ctx = BaseProcessContext.create(connector, "invoke " + AsyncShellTestCase.class.getName() + " bilto");
     ctx.execute();
     ShellResponse resp = ctx.getResponse();
-    assertTrue("Was not expecting response to be " + resp.getText(), resp instanceof ShellResponse.Ok);
+    assertTrue("Was not expecting response to be " + resp.getReader(), resp instanceof ShellResponse.Ok);
     assertEquals(1, status);
     ctx.getResponse();
   }

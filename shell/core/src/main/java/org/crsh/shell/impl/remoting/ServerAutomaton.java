@@ -109,6 +109,7 @@ public class ServerAutomaton implements Shell {
     ShellResponse response = null;
     try {
       out.writeObject(ClientMessage.EXECUTE);
+      out.writeObject(processContext.getWidth());
       out.writeObject(process.line);
       out.flush();
 

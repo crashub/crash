@@ -22,6 +22,7 @@ package org.crsh.term.spi.jline;
 import jline.console.ConsoleReader;
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -113,6 +114,9 @@ public class JLineIO implements TermIO {
 
   public void write(char c) throws IOException {
     buffer.append(c);
+  }
+
+  public void write(Style d) throws IOException {
   }
 
   public void writeDel() throws IOException {

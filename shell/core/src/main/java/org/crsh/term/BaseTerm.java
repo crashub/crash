@@ -20,8 +20,11 @@
 package org.crsh.term;
 
 import org.crsh.term.console.Console;
+import org.crsh.term.console.ConsoleWriter;
 import org.crsh.term.console.ViewWriter;
 import org.crsh.term.spi.TermIO;
+import org.crsh.text.CharReader;
+import org.crsh.text.Style;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +80,11 @@ public class BaseTerm implements Term {
       @Override
       protected void write(char c) throws IOException {
         io.write(c);
+      }
+
+      @Override
+      protected void write(Style style) throws IOException {
+        io.write(style);
       }
 
       @Override
@@ -192,7 +200,14 @@ public class BaseTerm implements Term {
     }
   }
 
-  public void write(CharSequence msg) throws IOException {
-    console.getWriter().write(msg);
+  public void write(CharReader reader) throws IOException {
+    ConsoleWriter writer = console.getWriter();
+    for (Object f : reader) {
+      if (f instanceof Style) {
+        writer.write((Style)f);
+      } else {
+        writer.write(f.toString());
+      }
+    }
   }
 }

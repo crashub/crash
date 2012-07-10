@@ -20,6 +20,8 @@
 package org.crsh.shell.ui;
 
 import groovy.util.BuilderSupport;
+import org.crsh.text.Color;
+import org.crsh.text.Decoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,17 +51,9 @@ public class UIBuilder extends BuilderSupport {
 
   @Override
   protected Object createNode(Object name, Object value) {
-    if ("node".equals(name)) {
-      if (value == null) {
-        return new TreeElement();
-      } else {
-        return new TreeElement(new LabelElement(value));
-      }
-    } else if ("label".equals(name)) {
-      return new LabelElement(value);
-    } else {
-      throw new UnsupportedOperationException("Cannot build object with name " + name + " and value " + value);
-    }
+
+    return initElement(name, value);
+
   }
 
   @Override
@@ -69,7 +63,37 @@ public class UIBuilder extends BuilderSupport {
 
   @Override
   protected Object createNode(Object name, Map attributes) {
-    throw new UnsupportedOperationException();
+
+    Element e = initElement(name, attributes.get("value"));
+    setStyles(e, attributes);
+    return e;
+    
+  }
+
+  private Element initElement(Object name, Object value) {
+
+    if ("node".equals(name)) {
+      if (value == null) {
+        return new TreeElement();
+      } else {
+        return new TreeElement(new LabelElement(value));
+      }
+    } else if ("label".equals(name)) {
+      return new LabelElement(value);
+    } else if ("table".equals(name)) {
+      return new TableElement();
+    } else if ("row".equals(name)) {
+      return new RowElement();
+    } else {
+      throw new UnsupportedOperationException("Cannot build object with name " + name + " and value " + value);
+    }
+
+  }
+  
+  private void setStyles(Element e, Map attributes) {
+    e.setDecoration((Decoration) attributes.get("decoration"));
+    e.setForeground((Color) attributes.get("foreground"));
+    e.setBackground((Color) attributes.get("background"));
   }
 
   @Override
@@ -78,6 +102,20 @@ public class UIBuilder extends BuilderSupport {
       TreeElement parentElement = (TreeElement)parent;
       Element childElement = (Element)child;
       parentElement.addNode(childElement);
+      childElement.setParent(parentElement);
+    } else if (parent instanceof TableElement) {
+      TableElement parentElement = (TableElement)parent;
+      RowElement childElement = (RowElement)child;
+      parentElement.addRow(childElement);
+      childElement.setParent(parentElement);
+    } else if (parent instanceof RowElement) {
+      RowElement parentElement = (RowElement)parent;
+      Element childElement = (Element)child;
+      if (child instanceof TreeElement) {
+        throw new IllegalArgumentException("A table cannot contain node element");
+      }
+      parentElement.addValue(childElement);
+      childElement.setParent(parentElement);
     } else {
       throw new UnsupportedOperationException();
     }

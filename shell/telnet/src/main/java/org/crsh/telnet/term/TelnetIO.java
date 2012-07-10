@@ -23,7 +23,10 @@ import net.wimpi.telnetd.io.BasicTerminalIO;
 import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionData;
-import org.crsh.term.CodeType;
+import org.crsh.text.Color;
+import org.crsh.text.Decoration;
+import org.crsh.text.Style;
+import org.crsh.term.*;
 import org.crsh.term.spi.TermIO;
 
 import java.io.EOFException;
@@ -113,6 +116,36 @@ public class TelnetIO implements TermIO {
 
   public void write(String s) throws IOException {
     termIO.write(s);
+  }
+
+  public void write(Style style) throws IOException {
+    if (style == Style.reset) {
+      termIO.resetAttributes();
+      termIO.write("");
+    } else {
+      //
+      Decoration decoration = style.getDecoration();
+      termIO.setBlink(Decoration.blink == decoration);
+      termIO.setBold(Decoration.bold == decoration);
+      termIO.setUnderlined(Decoration.underline == decoration);
+
+      //
+      Color fg = style.getForeground();
+      if (fg != null) {
+        termIO.setForegroundColor(fg.code(30));
+      } else {
+        termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
+      }
+
+      //
+      Color bg = style.getBackground();
+      if (bg != null) {
+        termIO.setBackgroundColor(bg.code(30));
+      }
+      else {
+        termIO.setBackgroundColor(BasicTerminalIO.COLORINIT);
+      }
+    }
   }
 
   public void write(char c) throws IOException {

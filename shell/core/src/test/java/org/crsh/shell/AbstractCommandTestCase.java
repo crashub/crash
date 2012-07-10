@@ -133,13 +133,13 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
   protected final ShellResponse.Display assertDisplay(String expected, String s) {
     ShellResponse.Ok ok = assertOk(s);
     assertTrue("Was not expecting response to be " + ok, ok instanceof ShellResponse.Display);
-    assertEquals(expected, ok.getText());
+    assertEquals(expected, ok.getReader().toString());
     return (ShellResponse.Display)ok;
   }
 
   protected final ShellResponse.Ok assertOk(String expected, String s) {
     ShellResponse.Ok ok = assertOk(s);
-    assertEquals(expected, ok.getText());
+    assertEquals(expected, ok.getReader().toString());
     return ok;
   }
 

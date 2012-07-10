@@ -138,7 +138,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
     BaseProcessContext context = BaseProcessContext.create(process);
     context.execute();
     ShellResponse response = context.getResponse();
-    assertEquals("juu", response.getText());
+    assertEquals("juu", response.getReader().toString());
 
     //
     t.interrupt();
@@ -188,6 +188,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
 
     //
     serverOOS.writeObject(ClientMessage.EXECUTE);
+    serverOOS.writeObject(42);
     serverOOS.writeObject("");
     serverOOS.flush();
     ServerMessage proto = (ServerMessage)serverOIS.readObject();

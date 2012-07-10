@@ -19,19 +19,149 @@
 
 package org.crsh.shell.io;
 
+import org.crsh.text.CharReader;
+import org.crsh.text.ShellAppendable;
+import org.crsh.text.Style;
+
 import java.io.IOException;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  * @version $Revision$
  */
-public interface ShellWriter extends Appendable {
+public class ShellWriter implements ShellAppendable {
 
+  /** . */
+  private static final int NOT_PADDED = 0;
 
-  ShellWriter append(ShellWriterContext ctx, CharSequence csq) throws IOException;
+  /** . */
+  private static final int PADDING = 1;
 
-  ShellWriter append(ShellWriterContext ctx, CharSequence csq, int start, int end) throws IOException;
+  /** . */
+  private static final int PADDED = 2;
 
-  ShellWriter append(ShellWriterContext ctx, char c) throws IOException;
+  /** . */
+  private final CharReader reader;
 
+  /** . */
+  private final String lineFeed;
+
+  /** . */
+  private int status;
+
+  public ShellWriter(CharReader reader) {
+    this(reader, "\r\n");
+  }
+
+  public ShellWriter(CharReader reader, String lineFeed) {
+    this.reader = reader;
+    this.lineFeed = lineFeed;
+    this.status = NOT_PADDED;
+  }
+
+  public Appendable append(char c) throws IOException {
+    return append(null, c);
+  }
+
+  public ShellWriter append(ShellWriterContext ctx, final char c) throws IOException {
+    return append(ctx, Character.toString(c));
+  }
+
+  public ShellWriter append(final Style d) {
+    reader.append(d);
+    return this;
+  }
+
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    return append(null, csq, start, end);
+  }
+
+  public Appendable append(CharSequence csq) throws IOException {
+    return append(null, csq);
+  }
+
+  public ShellWriter append(ShellWriterContext ctx, CharSequence csq) throws IOException {
+    return append(ctx, csq, 0, csq.length());
+  }
+
+  public ShellWriter append(ShellWriterContext ctx, CharSequence csq, int start, int end) throws IOException {
+    int previous = start;
+    int to = start + end;
+    for (int i = start;i < to;i++) {
+      char c = csq.charAt(i);
+      if (c == '\r') {
+        if (i > previous) {
+          realAppend(ctx, csq, previous, i);
+        }
+        previous = i + 1;
+      } else if (c == '\n') {
+        if (i > previous) {
+          realAppend(ctx, csq, previous, i);
+        }
+        writeLF(ctx);
+        previous = i + 1;
+        i++;
+      }
+    }
+    if (to != previous) {
+      realAppend(ctx, csq, previous, to);
+    }
+    return this;
+  }
+
+  private void realAppend(ShellWriterContext ctx, CharSequence csq, int off, int end) throws IOException {
+    if (end > off) {
+
+      //
+      switch (status) {
+        case NOT_PADDED:
+          if (ctx != null) {
+            status = PADDING;
+            ctx.pad(this);
+          }
+          status = PADDED;
+          break;
+        case PADDING:
+        case PADDED:
+          // Do nothing
+          break;
+        default:
+          throw new AssertionError();
+      }
+
+      //
+      reader.append(csq.subSequence(off, end).toString());
+
+      //
+      switch (status) {
+        case PADDING:
+          // Do nothing
+          break;
+        case PADDED:
+          if (ctx != null) {
+            ctx.text(csq, off, end);
+          }
+          break;
+        default:
+          throw new AssertionError();
+      }
+    }
+  }
+
+  private void writeLF(ShellWriterContext ctx) throws IOException {
+    switch (status) {
+      case PADDING:
+        throw new IllegalStateException();
+      case PADDED:
+        status = NOT_PADDED;
+      case NOT_PADDED:
+        reader.append(lineFeed);
+        if (ctx != null) {
+          ctx.lineFeed();
+        }
+        break;
+      default:
+        throw new AssertionError();
+    }
+  }
 }

@@ -21,6 +21,7 @@ package org.crsh.term.console;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 
@@ -81,6 +82,10 @@ public class TestClientOutput extends ViewWriter {
       line.append(c);
       position++;
     }
+  }
+
+  @Override
+  protected void write(Style style) throws IOException {
   }
 
   @Override
