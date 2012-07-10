@@ -1,14 +1,11 @@
 - Interesting db shell : http://ewaters.github.com/altsql-shell/
 - decouple connectors from instantiating CRaSH and instead use a shell factory
-- make CRaSH a plugin that provides a shell factory interface
 - look about remote attaching : http://code.alibabatech.com/blog/dev_related_986/jvm-attach-api-introducation-and-practice.html
 - try to have ShellProcess#cancel():void -> ShellProcess#cancel():ShellResponse to give an opportunity to return something
 - have a write/flush method similar to readLine() and retrofit ShellResponse.Display -> write/flush
 - propagage cancel() to the groovy command to give an opportunity to close a resource
-- JDBC command: remove java: prefix in jdbc open
 - JDBC command : provide completion for JNDI names when possible
 - thread ls : use thread group to display hierachical
-- propagate gatein identity to JCR with jaas domain
 - ctrl e / ctrl d
 - @Option(password = true)
 - perform more on too high completion results
@@ -18,7 +15,6 @@
 - write IO tests
 - write pipe consistency
 - more Conversion, for instance String -> JCR node from current session
-- support "\ " (read http://www.tuteurs.ens.fr/unix/shell/commande.html)
 - ability to describe a meta argument like, maybe just a convention with "description" is fine
 @Option(names=["l","level"],completer=org.crsh.cmdline.EnumCompleter)
 @interface LevelOpt {
