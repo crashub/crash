@@ -30,7 +30,7 @@ It is Thu Apr 12 21:19:35 CEST 2012 now
 Let's review quickly what you can find in standalone crash:
 
 * The //bin// directory contains the //crash.sh// script and the standalone crash jar file
-* The //conf// directory contains the configuration proerties //crash.properties// and JVM logging configuration //logging.properties//
+* The //conf// directory contains the configuration properties //crash.properties// and JVM logging configuration //logging.properties//
 * The //cmd// directory contains the commands that will be available in crash by default it contains a few example commands
 * The //lib// directory contains the various libraries used by crash, you should place additional jar files there
 
