@@ -51,10 +51,6 @@
       <artifactId>crsh.shell.ssh</artifactId>
       <classifier>standalone</classifier>
     </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk16</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>javax.servlet</groupId>
