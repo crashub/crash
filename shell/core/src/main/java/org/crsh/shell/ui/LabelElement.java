@@ -46,7 +46,59 @@ public class LabelElement extends Element {
 
   @Override
   void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
+
+    //
+    int availableWidth = (ctx.getConsoleWidth() - ctx.padWidth());
+    
+    if (availableWidth < value.length()) {
+
+      String remainingText = value;
+      boolean first = true;
+
+      while (availableWidth < remainingText.length()) {
+
+        //
+        String currentValue = remainingText.substring(0, availableWidth).trim();
+        remainingText = remainingText.substring(availableWidth).trim();
+
+        //
+        printLine(ctx, writer, currentValue, availableWidth, !first);
+        writer.append(ctx, "\n");
+
+        //
+        first = false;
+        
+      }
+
+      //
+      ctx.rightLinePadding = "";
+      printLine(ctx, writer, remainingText, availableWidth, !first);
+
+    } else {
+      writer.append(ctx, value);
+    }
+  }
+
+  private void printLine(UIWriterContext ctx, ShellWriter writer, String value, int available, boolean needed) throws IOException {
+
+    //
+    if (needed) {
+      if (ctx.parentUIContext != null) {
+        ctx.parentUIContext.pad(writer);
+      }
+      ctx.pad(writer);
+      writer.append(ctx, ctx.leftLinePadding);
+    }
+
+    //
     writer.append(ctx, value);
+
+    //
+    for (int pos = value.length(); pos < available; ++pos) {
+      writer.append(" ");
+    }
+    writer.append(ctx, ctx.rightLinePadding);
+
   }
 
   @Override

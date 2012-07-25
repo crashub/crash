@@ -266,11 +266,44 @@ public class UIBuilderTestCase extends TestCase {
     assertEquals(Color.green, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).getBackground());
   }
 
+  public void testTableBorder() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+      "import org.crsh.shell.ui.UIBuilder;\n" +
+        "def builder = new UIBuilder();\n" +
+        "builder.table(border: true) {\n" +
+          "row {\n" +
+          "}\n" +
+        "};\n" +
+        "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertTrue(((TableElement)res.getElements().get(0)).border);
+  }
+
+  public void testTableHeader() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+      "import org.crsh.shell.ui.UIBuilder;\n" +
+        "def builder = new UIBuilder();\n" +
+        "builder.table {\n" +
+          "header () {\n" +
+          "}\n" +
+        "};\n" +
+        "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertEquals(1, ((TableElement)res.getElements().get(0)).getRows().size());
+    assertEquals(true, ((TableElement)res.getElements().get(0)).getRows().get(0).header);
+  }
+
   public void testForbiddenChild() throws Exception {
     GroovyShell shell = new GroovyShell();
 
     try {
-      UIBuilder res = (UIBuilder)shell.evaluate(
+      shell.evaluate(
         "import org.crsh.shell.ui.UIBuilder;\n" +
         "import org.crsh.text.Color;\n" +
         "import org.crsh.text.Decoration;\n" +

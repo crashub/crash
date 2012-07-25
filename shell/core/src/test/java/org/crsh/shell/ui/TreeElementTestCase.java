@@ -76,4 +76,19 @@ public class TreeElementTestCase extends TestCase {
             "  +-4_"
         , reader.toString());
   }
+
+  public void testTooLarge() throws IOException {
+    TreeElement elt = new TreeElement();
+    elt.addNode(new LabelElement("foo value is very very very too large for the console"));
+    elt.addNode(new LabelElement("bar\n"));
+    CharReader reader = new CharReader();
+    ShellWriter writer = new ShellWriter(reader, "_");
+    elt.print(writer, new TestInvocationContext());
+
+    assertEquals(
+        "+-foo value is very very very to_" +
+        "| o large for the console       _" +
+        "+-bar_"
+        , reader.toString());
+  }
 }
