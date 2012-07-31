@@ -40,6 +40,9 @@ public class TableElement extends Element {
   /** . */
   private List<Integer> colsSize = new ArrayList<Integer>();
 
+  /** . */
+  protected boolean border;
+
   public TableElement addRow(RowElement row) {
     rows.add(row);
     return this;
@@ -48,17 +51,35 @@ public class TableElement extends Element {
   @Override
   void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
 
+    //
     ctx = new UIWriterContext(ctx);
-
     colsSize = computeColSize(ctx.getConsoleWidth());
+
+    // Print top line
+    if (border) {
+      ctx.parentUIContext.pad(writer);
+      ctx.printLine(width() - 2, writer);
+    }
+
+    //
     ctx.parentUIContext.pad(writer);
     for (RowElement e : rows) {
       e.print(ctx, writer);
     }
-
     ctx.pad(writer);
+
+    //
+    if (border) {
+      writer.append("|");
+    }
     writer.append("\n");
-    
+
+    // Print bottom line
+    if (border) {
+      ctx.parentUIContext.pad(writer);
+      ctx.printLine(width() - 2, writer);
+    }
+
   }
 
   public List<RowElement> getRows() {
@@ -74,6 +95,9 @@ public class TableElement extends Element {
     List<Integer> colsSize = new ArrayList<Integer>();
 
     int colSum = 0;
+    if (border) {
+        colSum += 3;
+      }
     for (int i = 0; i < columnNumber(); ++i) {
       int colSize = 0;
       for (RowElement row : rows) {
@@ -85,10 +109,17 @@ public class TableElement extends Element {
       }
       colsSize.add(colSize);
       colSum += colSize;
+      if (border) {
+        colSum += 2;
+      }
     }
 
     return colsSize;
     
+  }
+
+  public void setBorder(boolean border) {
+    this.border = border;
   }
 
   private int columnNumber() {
@@ -105,6 +136,16 @@ public class TableElement extends Element {
 
   @Override
   int width() {
-    return 0;
+
+    //
+    int sum = 0;
+    for (int colSize : colsSize) sum += colSize;
+    if (border) {
+      sum += (colsSize.size() * 2) + 1;
+    }
+
+    //
+    return sum;
+
   }
 }

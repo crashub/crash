@@ -66,6 +66,10 @@ public class UIBuilder extends BuilderSupport {
 
     Element e = initElement(name, attributes.get("value"));
     setStyles(e, attributes);
+    Boolean border = (Boolean) attributes.get("border");
+    if (e instanceof TableElement) {
+      ((TableElement) e).setBorder(border == null ? false : border);
+    }
     return e;
     
   }
@@ -84,6 +88,8 @@ public class UIBuilder extends BuilderSupport {
       return new TableElement();
     } else if ("row".equals(name)) {
       return new RowElement();
+    } else if ("header".equals(name)) {
+      return new RowElement(true);
     } else {
       throw new UnsupportedOperationException("Cannot build object with name " + name + " and value " + value);
     }

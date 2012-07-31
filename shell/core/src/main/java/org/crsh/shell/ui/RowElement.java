@@ -34,8 +34,16 @@ public class RowElement extends Element {
   /** . */
   private List<Element> cols;
 
+  /** . */
+  boolean header;
+
   public RowElement() {
     this.cols = new ArrayList<Element>();
+  }
+
+  public RowElement(boolean header) {
+    this();
+    this.header = header;
   }
 
   @Override
@@ -50,19 +58,56 @@ public class RowElement extends Element {
     TableElement table = (TableElement) getParent();
     List<Integer> colsSize = table.getColsSize();
 
+    // Request bottom header line
+    if (table.border && header) {
+      ctx.needLine = header;
+    }
+
+    // Init line padding
+    if (table.border) {
+      ctx.leftLinePadding += "| ";
+      ctx.rightLinePadding += "|";
+    }
+
     for (Element e : cols) {
+
+      //
+      int availableWidth = (ctx.getConsoleWidth() - ctx.leftLinePadding.length() - ctx.rightLinePadding.length());
+      if (availableWidth <= 0) {
+        break;
+      }
 
       //
       ctx.pad(writer);
       if (ctx.needLF) {
+
+        //
+        if (table.border) {
+          writer.append("|");
+        }
         writer.append("\n");
+
+        //
         ctx.parentUIContext.pad(writer);
+        if (table.border && ctx.needLine) {
+          ctx.printLine(table.width() - 2, writer);
+          ctx.parentUIContext.pad(writer);
+        }
+
       }
-      ctx.stack.clear();
       ctx.padStyle = null;
 
       //
+      if (table.border) {
+        writer.append("|");
+        ctx.stack.add(Pad.SPACE);
+        ctx.padStyle = Style.style(e.getDecoration(), e.getForeground(), e.getBackground());
+        ctx.pad(writer);
+      }
+
+      //
       e.print(ctx, writer);
+      ctx.stack.clear();
 
       //
       ctx.padStyle = Style.style(e.getDecoration(), e.getForeground(), e.getBackground());
@@ -71,12 +116,25 @@ public class RowElement extends Element {
       }
 
       //
+      for (int index = 0; index < table.getColsSize().get(i); ++index) {
+        ctx.leftLinePadding += " ";
+      }
+      if (table.border) {
+        ctx.leftLinePadding += "| ";
+      }
+
+      //
       ++i;
       ctx.needLF = false;
+      ctx.needLine = false;
 
     }
 
+    //
     ctx.needLF = true;
+    ctx.needLine = header;
+    ctx.leftLinePadding = "";
+    ctx.rightLinePadding = "";
 
   }
 
