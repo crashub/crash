@@ -26,6 +26,7 @@ import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 
 /**
@@ -44,7 +45,16 @@ class UIWriterContext implements ShellWriterContext {
   boolean needLF;
 
   /** . */
+  boolean needLine;
+
+  /** . */
   private final InvocationContext context;
+
+  /** . */
+  String leftLinePadding = "";
+
+  /** . */
+  String rightLinePadding = "";
 
   /** . */
   UIWriterContext parentUIContext;
@@ -95,6 +105,19 @@ class UIWriterContext implements ShellWriterContext {
       Pad next = nextMap.get(abc);
       stack.set(i, next);
     }
+
+    stack.removeAll(Collections.singleton(null));
+
+  }
+
+  public void printLine(int length, ShellWriter writer) throws IOException {
+
+    writer.append(" ");
+    for (int i = 0; i < length; ++i ) {
+      writer.append("-");
+    }
+    writer.append("\n");
+    
   }
 
   public void text(CharSequence csq, int off, int end) {
@@ -111,6 +134,20 @@ class UIWriterContext implements ShellWriterContext {
 
   public InvocationContext getInvocationContext() {
     return context;
+  }
+
+  public int padWidth() {
+
+    int width = leftLinePadding.length() + rightLinePadding.length();
+    for (Pad pad : stack) {
+      String p = charMap.get(pad);
+      if (p != null) {
+        width += p.length();
+      }
+    }
+
+    return width;
+
   }
   
 }
