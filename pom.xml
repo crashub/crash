@@ -212,6 +212,19 @@
         <classifier>standalone</classifier>
       </dependency>
 
+      <!-- Module shell embed spring -->
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.embed.spring</artifactId>
+        <version>1.1.0-cr2-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.embed.spring</artifactId>
+        <version>1.1.0-cr2-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
+
       <!-- Module shell packaging -->
       <dependency>
         <groupId>org.crsh</groupId>
@@ -223,6 +236,13 @@
         <artifactId>crsh.shell.packaging</artifactId>
         <version>1.1.0-cr2-SNAPSHOT</version>
         <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.packaging</artifactId>
+        <version>1.1.0-cr2-SNAPSHOT</version>
+        <type>war</type>
+        <classifier>spring</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
@@ -396,6 +416,36 @@
         <artifactId>telnetd-x</artifactId>
         <version>2.1.1</version>
       </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-asm</artifactId>
+        <version>3.1.1.RELEASE</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>3.1.1.RELEASE</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-expression</artifactId>
+        <version>3.1.1.RELEASE</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>3.1.1.RELEASE</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>3.1.1.RELEASE</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>3.1.1.RELEASE</version>
+      </dependency>
 
       <!-- For testing purposes -->
       <dependency>
@@ -432,18 +482,18 @@
         <version>1.5.1</version>
         <scope>test</scope>
       </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-api</artifactId>
-      <version>1.0.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-impl-base</artifactId>
-      <version>1.0.0</version>
-      <scope>test</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-api</artifactId>
+        <version>1.0.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-impl-base</artifactId>
+        <version>1.0.0</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
 
   </dependencyManagement>

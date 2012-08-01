@@ -6,7 +6,7 @@ import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginDiscovery;
 import org.crsh.plugin.PluginLifeCycle;
-import org.crsh.plugin.SimplePluginDiscovery;
+import org.crsh.plugin.ServiceLoaderDiscovery;
 import org.crsh.processor.term.ProcessorIOHandler;
 import org.crsh.shell.impl.command.CRaSHShellFactory;
 import org.crsh.vfs.FS;
@@ -19,8 +19,11 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -58,30 +61,27 @@ public class SpringBootstrap extends PluginLifeCycle implements
     plugins.add(new SimpleAuthenticationPlugin());
 
     // List beans
-    Map<String,Object> attributes;
+    Map<String,Object> attributes = new HashMap<String, Object>();
+    attributes.put("factory", factory);
     if (factory instanceof ListableBeanFactory) {
       ListableBeanFactory listable = (ListableBeanFactory)factory;
       plugins.addAll(listable.getBeansOfType(CRaSHPlugin.class).values());
-      attributes = new BeanMap(listable);
-    } else {
-      attributes = Collections.emptyMap();
+      attributes.put("beans", new SpringMap(listable));
     }
 
     //
-    PluginDiscovery discovery = new SimplePluginDiscovery(plugins.toArray(new CRaSHPlugin<?>[plugins.size()]));
+    PluginDiscovery discovery = new ServiceLoaderDiscovery(loader);
 
     //
-    FS cmdFS = new FS();
-    cmdFS.mount(loader, Path.get("/crash/commands/"));
+    FS cmdFS = createCommandFS();
 
     //
-    FS confFS = new FS();
-    confFS.mount(loader, Path.get("/crash/"));
+    FS confFS = createConfFS();
 
     //
     PluginContext context = new PluginContext(
         discovery,
-        attributes,
+        Collections.unmodifiableMap(attributes),
         cmdFS,
         confFS,
         loader);
@@ -91,6 +91,18 @@ public class SpringBootstrap extends PluginLifeCycle implements
 
     //
     start(context);
+  }
+
+  protected FS createCommandFS() throws IOException, URISyntaxException {
+    FS cmdFS = new FS();
+    cmdFS.mount(loader, Path.get("/crash/commands/"));
+    return cmdFS;
+  }
+
+  protected FS createConfFS() throws IOException, URISyntaxException {
+    FS confFS = new FS();
+    confFS.mount(loader, Path.get("/crash/"));
+    return confFS;
   }
 
   public void destroy() throws Exception {

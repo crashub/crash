@@ -1,1 +1,0 @@
-return context.attributes["telnet"].status;

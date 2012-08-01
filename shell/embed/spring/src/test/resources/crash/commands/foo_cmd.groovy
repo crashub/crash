@@ -1,0 +1,1 @@
+return context.attributes.beans["foo"].value;

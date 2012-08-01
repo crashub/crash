@@ -51,6 +51,13 @@
       </includes>
     </dependencySet>
     <dependencySet>
+      <outputDirectory>/deploy/spring</outputDirectory>
+      <outputFileNameMapping>crash.war</outputFileNameMapping>
+      <includes>
+        <include>org.crsh:crsh.shell.packaging:war:spring</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
       <outputDirectory>/deploy/gatein</outputDirectory>
       <outputFileNameMapping>crash.war</outputFileNameMapping>
       <includes>

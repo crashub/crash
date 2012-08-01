@@ -262,11 +262,17 @@
     <profile>
       <id>release</id>
       <dependencies>
-        <!-- Wars -->
+        <!-- Packagings -->
         <dependency>
           <groupId>org.crsh</groupId>
           <artifactId>crsh.shell.packaging</artifactId>
           <type>war</type>
+        </dependency>
+        <dependency>
+          <groupId>org.crsh</groupId>
+          <artifactId>crsh.shell.packaging</artifactId>
+          <type>war</type>
+          <classifier>spring</classifier>
         </dependency>
         <dependency>
           <groupId>org.crsh</groupId>

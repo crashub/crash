@@ -69,7 +69,7 @@ to the Java Platform. During this mode the commands are executed in the target J
 CRaSH can use a standard web archive to be deployed in a web container. The war file is used for its packaging capabilities
 and triggering the CRaSH life cycle start/stop. In this mode CRaSH has two packaging available:
 
-* A __core__ war file found under //deploy/core/crash.war// provides the base CRaSH functionnalities.
+* A __core__ war file found under //deploy/core/crash.war// provides the base CRaSH functionnalities
 * A __gatein__ war file found under //deploy/gatein/crash.war// provides additional Java Content Repository (JCR)
  features but deploys only in a GateIn server (Tomcat or JBoss). It extends the core packaging and adds
 ** JCR browsing and interactions
@@ -89,11 +89,11 @@ If you want you can embed CRaSH in your own //web.xml// configuration:
 {{/xml}}
 {{/example}}
 
-== Embedding with Spring ==
+== Embedding in Spring ==
 
 CRaSH can be easily embedded and configured in a Spring configuration, here is an example of embedding crash:
 
-{{example title="Embedding CRaSH in SPring with the Telnet plugin"}}
+{{example title="Embedding CRaSH in Spring"}}
 {{xml}}
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -104,18 +104,38 @@ CRaSH can be easily embedded and configured in a Spring configuration, here is a
 	<bean class="org.crsh.spring.SpringBootstrap">
     <property name="config">
       <props>
-        <prop key="crash.telnet.port">4000</prop>
+        <!-- VFS configuration -->
+        <prop key="crash.vfs.refresh_period">1</prop>
+
+        <!-- SSH configuration -->
+       <prop key="crash.ssh.port">2000</prop>
+
+        <!-- Telnet configuration -->
+        <prop key="crash.telnet.port">5000</prop>
+
+        <!-- Authentication configuration -->
+        <prop key="crash.auth">simple</prop>
+        <prop key="crash.auth.simple.username">admin</prop>
+        <prop key="crash.auth.simple.password">admin</prop>
       </props>
     </property>
 	</bean>
-
-  <bean class="org.crsh.telnet.TelnetPlugin">
-  </bean>
 
 </beans>
 {{/xml}}
 {{/example}}
 
-In this mode, the plugins are not discovered using the classpath, instead each plugin must be declared as a Spring bean.
+The configuration properties are set as properties with the //config// property of the ##SpringBootstrap## bean.
 
-The configuration properties can be also set as properties with the //config// property of the ##SpringBootstrap## bean.
+== Embedding in Spring within a web application ==
+
+In case you are embedding CRaSH in a Spring application running with a servlet container, the bean
+ ##org.crsh.spring.SpringBootstrap## can be used instead of ##org.crsh.spring.SpringBootstrap##. The ##SpringWebBootstrap##
+ extends the ##SpringBootstrap## class and adds the //WEB-INF/crash// directory to the command path.
+
+An example packaging comes with the CRaSH distribution, a __spring__ war file found under //deploy/spring/crash.war// provides
+the base CRaSH functionnalities bootstrapped by the Spring Framework. It can be used as an example for embedding CRaSH
+ in Spring.
+
+This example is bundled with a //spring// command that shows how the Spring factory or beans can be accessed within
+a CRaSH command.

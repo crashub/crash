@@ -30,10 +30,10 @@ public class SpringTestCase extends TestCase {
     ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
     Shell shell = factory.create(null);
     assertNotNull(shell);
-    ShellProcess process = shell.createProcess("telnet");
+    ShellProcess process = shell.createProcess("foo_cmd");
     assertNotNull(process);
     BaseProcessContext pc = BaseProcessContext.create(process);
     String r = pc.execute().getResponse().getReader().toString();
-    assertEquals("2", r);
+    assertEquals("bar", r);
   }
 }

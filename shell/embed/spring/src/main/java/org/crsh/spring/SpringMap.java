@@ -3,16 +3,18 @@ package org.crsh.spring;
 import org.crsh.util.SimpleMap;
 import org.springframework.beans.factory.ListableBeanFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-class BeanMap extends SimpleMap<String, Object> {
+class SpringMap extends SimpleMap<String, Object> {
 
   /** . */
   private final ListableBeanFactory factory;
 
-  BeanMap(ListableBeanFactory factory) {
+  SpringMap(ListableBeanFactory factory) {
     this.factory = factory;
   }
 
@@ -24,9 +26,8 @@ class BeanMap extends SimpleMap<String, Object> {
   @Override
   public Object get(Object key) {
     if (key instanceof String) {
-      return factory.getBean((String)key);
-    } else {
-      return null;
+      return factory.getBean(((String)key));
     }
+    return null;
   }
 }

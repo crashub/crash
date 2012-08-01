@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean class="org.crsh.spring.SpringWebBootstrap">
+    <property name="config">
+      <props>
+        <!-- VFS configuration -->
+        <prop key="crash.vfs.refresh_period">1</prop>
+
+        <!-- SSH configuration -->
+       <prop key="crash.ssh.port">2000</prop>
+
+        <!-- Telnet configuration -->
+        <prop key="crash.telnet.port">5000</prop>
+
+        <!-- Authentication configuration -->
+        <prop key="crash.auth">simple</prop>
+        <prop key="crash.auth.simple.username">admin</prop>
+        <prop key="crash.auth.simple.password">admin</prop>
+      </props>
+    </property>
+	</bean>
+
+</beans>

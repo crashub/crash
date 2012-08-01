@@ -11,7 +11,7 @@
     </property>
 	</bean>
 
-  <bean id="telnet" class="org.crsh.telnet.TelnetPlugin">
+  <bean id="foo" class="org.crsh.spring.Foo">
   </bean>
 
 </beans>
