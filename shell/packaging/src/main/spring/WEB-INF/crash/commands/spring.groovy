@@ -21,7 +21,7 @@ class spring extends CRaSHCommand {
       }
       context.attributes.beans.each { key, value ->
         row() {
-          label(value: key, foreground: red); label(value.class.name); label(value)
+          label(value: key, foreground: red); label(value?.getClass().name); label("" + value)
         }
       }
     }
