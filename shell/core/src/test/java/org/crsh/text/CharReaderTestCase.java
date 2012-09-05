@@ -21,44 +21,44 @@ public class CharReaderTestCase extends AbstractTestCase {
   private static final Style RED_UNDERLINE = Style.style(Decoration.underline, null, Color.red);
 
   public void testSimple() {
-    assertReader(new CharReader().append("a"), "a");
-    assertReader(new CharReader().append(RED, "a"), RED, "a");
+    assertReader(new ChunkSequence().append("a"), new TextChunk("a"));
+    assertReader(new ChunkSequence().append(RED, "a"), RED, new TextChunk("a"));
   }
 
   public void testMergeCharSequence() {
-    assertReader(new CharReader().append("a").append("b"), "ab");
+    assertReader(new ChunkSequence().append("a").append("b"), new TextChunk("ab"));
   }
 
   public void testMergeColor() {
-    assertReader(new CharReader().append(RED, "a", RED, "b"), RED, "ab");
+    assertReader(new ChunkSequence().append(RED, "a", RED, "b"), RED, new TextChunk("ab"));
   }
 
   public void testOverwriteColor() {
-    assertReader(new CharReader().append(BLUE, RED, "a"), RED, "a");
+    assertReader(new ChunkSequence().append(BLUE, RED, "a"), RED, new TextChunk("a"));
   }
 
   public void testOverwriteMergeColor() {
-    assertReader(new CharReader().append(RED, "a", BLUE, RED, "b"), RED, "ab");
+    assertReader(new ChunkSequence().append(RED, "a", BLUE, RED, "b"), RED, new TextChunk("ab"));
   }
 
   public void testLastColor() {
-    assertReader(new CharReader().append(RED, "a", BLUE), RED, "a", BLUE);
+    assertReader(new ChunkSequence().append(RED, "a", BLUE), RED, new TextChunk("a"));
   }
 
   public void testBlendStyle() {
-    assertReader(new CharReader().append(RED, UNDERLINE, "a"), RED_UNDERLINE, "a");
+    assertReader(new ChunkSequence().append(RED, UNDERLINE, "a"), RED_UNDERLINE, new TextChunk("a"));
   }
 
   public void testConcatenation() {
-    assertReader(new CharReader().append(RED).append(new CharReader().append("a")), RED, "a");
-    assertReader(new CharReader().append(new CharReader().append(RED)).append("a"), RED, "a");
+    assertReader(new ChunkSequence().append(RED).append(new ChunkSequence().append("a")), RED, new TextChunk("a"));
+    assertReader(new ChunkSequence().append(new ChunkSequence().append(RED)).append("a"), RED, new TextChunk("a"));
   }
 
-  private void assertReader(CharReader reader, Object... expected) {
-    List<?> res = Utils.list(reader);
+  private void assertReader(ChunkSequence reader, Chunk... expected) {
+    List<Chunk> res = Utils.list(reader);
     assertEquals(expected.length, res.size());
     for (int i = 0;i < expected.length;i++) {
-      assertEquals(expected[i].toString(), res.get(i).toString());
+      assertEquals(expected[i], res.get(i));
     }
   }
 }

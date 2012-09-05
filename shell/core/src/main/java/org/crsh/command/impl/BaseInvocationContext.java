@@ -23,7 +23,7 @@ package org.crsh.command.impl;
 import org.crsh.command.InvocationContext;
 import org.crsh.shell.io.ShellPrinter;
 import org.crsh.shell.io.ShellWriter;
-import org.crsh.text.CharReader;
+import org.crsh.text.ChunkSequence;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -40,7 +40,7 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
   protected ShellPrinter writer;
 
   /** . */
-  protected CharReader reader;
+  protected ChunkSequence reader;
 
   /** . */
   protected List<P> producedItems;
@@ -65,7 +65,7 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
     return producedItems;
   }
 
-  public CharReader getReader() {
+  public ChunkSequence getReader() {
     return reader;
   }
 
@@ -89,7 +89,7 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
 
   public ShellPrinter getWriter() {
     if (writer == null) {
-      reader = new CharReader();
+      reader = new ChunkSequence();
       writer = new ShellPrinter(new ShellWriter(reader, "\r\n"), this);
     }
     return writer;

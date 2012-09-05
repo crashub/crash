@@ -2,15 +2,10 @@ package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
-import org.crsh.text.CharReader;
+import org.crsh.text.ChunkSequence;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
 import org.crsh.shell.io.ShellWriter;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -34,7 +29,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -75,7 +70,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -115,7 +110,7 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
@@ -152,7 +147,7 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
@@ -192,7 +187,7 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
@@ -232,7 +227,7 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
@@ -292,7 +287,7 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
@@ -329,7 +324,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -361,7 +356,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -406,7 +401,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row3);
     tableElement.addRow(row4);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -449,7 +444,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row2);
     tableElement.addRow(row3);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -499,7 +494,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row4);
     tableElement.addRow(row5);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -561,7 +556,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row5);
     tableElement.addRow(row6);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -599,7 +594,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -632,7 +627,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -679,7 +674,7 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
@@ -709,7 +704,7 @@ public class TableElementTestCase extends TestCase {
 
     tableElement.addRow(row1);
 
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());

@@ -127,4 +127,9 @@ public class ShellPrintWriter extends PrintWriter {
     }
     return this;
   }
+
+  public final ShellPrintWriter cls() {
+    out.cls();
+    return this;
+  }
 }

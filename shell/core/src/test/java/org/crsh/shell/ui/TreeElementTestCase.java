@@ -21,7 +21,7 @@ package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
-import org.crsh.text.CharReader;
+import org.crsh.text.ChunkSequence;
 import org.crsh.shell.io.ShellWriter;
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class TreeElementTestCase extends TestCase {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
     elt.addNode(new LabelElement("2\n"));
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
     elt.print(writer, new TestInvocationContext());
     assertEquals(
@@ -49,7 +49,7 @@ public class TreeElementTestCase extends TestCase {
   public void testFoo() throws Exception {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
     elt.print(writer, new TestInvocationContext());
     assertEquals(
@@ -62,7 +62,7 @@ public class TreeElementTestCase extends TestCase {
     TreeElement elt = new TreeElement(new LabelElement("foo"));
     elt.addNode(new TreeElement(new LabelElement("bar")).addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
     elt.addNode(new TreeElement().addNode(new LabelElement("3")).addNode(new LabelElement("4")));
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
     elt.print(writer, new TestInvocationContext());
     assertEquals(
@@ -81,7 +81,7 @@ public class TreeElementTestCase extends TestCase {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("foo value is very very very too large for the console"));
     elt.addNode(new LabelElement("bar\n"));
-    CharReader reader = new CharReader();
+    ChunkSequence reader = new ChunkSequence();
     ShellWriter writer = new ShellWriter(reader, "_");
     elt.print(writer, new TestInvocationContext());
 

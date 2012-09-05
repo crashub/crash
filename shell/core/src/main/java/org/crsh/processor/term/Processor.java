@@ -5,7 +5,7 @@ import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.text.CharReader;
+import org.crsh.text.ChunkSequence;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
 import org.crsh.util.CloseableList;
@@ -97,7 +97,7 @@ public final class Processor implements Runnable {
     try {
       String welcome = shell.getWelcome();
       log.debug("Writing welcome message to term");
-      term.write(new CharReader(welcome));
+      term.write(new ChunkSequence(welcome));
       log.debug("Wrote welcome message to term");
       writePrompt();
     }
@@ -273,7 +273,7 @@ public final class Processor implements Runnable {
     listeners.add(listener);
   }
 
-  void write(CharReader reader) {
+  void write(ChunkSequence reader) {
     try {
       term.write(reader);
     }
@@ -286,7 +286,7 @@ public final class Processor implements Runnable {
     String prompt = shell.getPrompt();
     try {
       String p = prompt == null ? "% " : prompt;
-      CharReader cr = new CharReader().append("\r\n").append(p);
+      ChunkSequence cr = new ChunkSequence().append("\r\n").append(p);
       CharSequence buffer = term.getBuffer();
       if (buffer != null) {
         cr.append(buffer);
@@ -368,7 +368,7 @@ public final class Processor implements Runnable {
           }
 
           // We propose
-          term.write(new CharReader(sb.toString()));
+          term.write(new ChunkSequence(sb.toString()));
           writePrompt();
         }
       }

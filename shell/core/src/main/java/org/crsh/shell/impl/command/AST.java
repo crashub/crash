@@ -26,7 +26,7 @@ import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.text.CharReader;
+import org.crsh.text.ChunkSequence;
 import org.crsh.text.Style;
 
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ abstract class AST {
       ArrayList produced = new ArrayList();
 
       //
-      CharReader reader = new CharReader();
+      ChunkSequence reader = new ChunkSequence();
 
       // Iterate over all terms
       for (Term current = term;current != null;current = current.next) {
@@ -111,7 +111,7 @@ abstract class AST {
         }
 
         // Append anything that was in the buffer
-        CharReader ctxReader = ctx.getReader();
+        ChunkSequence ctxReader = ctx.getReader();
         if (ctxReader != null && !ctxReader.isEmpty()) {
           reader.append(ctxReader).append(Style.reset);
         }

@@ -19,7 +19,7 @@
 
 package org.crsh.shell.io;
 
-import org.crsh.text.CharReader;
+import org.crsh.text.ChunkSequence;
 import org.crsh.text.ShellAppendable;
 import org.crsh.text.Style;
 
@@ -41,7 +41,7 @@ public class ShellWriter implements ShellAppendable {
   private static final int PADDED = 2;
 
   /** . */
-  private final CharReader reader;
+  private final ChunkSequence reader;
 
   /** . */
   private final String lineFeed;
@@ -49,11 +49,11 @@ public class ShellWriter implements ShellAppendable {
   /** . */
   private int status;
 
-  public ShellWriter(CharReader reader) {
+  public ShellWriter(ChunkSequence reader) {
     this(reader, "\r\n");
   }
 
-  public ShellWriter(CharReader reader, String lineFeed) {
+  public ShellWriter(ChunkSequence reader, String lineFeed) {
     this.reader = reader;
     this.lineFeed = lineFeed;
     this.status = NOT_PADDED;
@@ -167,5 +167,10 @@ public class ShellWriter implements ShellAppendable {
 
   public boolean isEmpty() {
     return reader.isEmpty();
+  }
+
+  public ShellWriter cls() {
+    reader.cls();
+    return this;
   }
 }

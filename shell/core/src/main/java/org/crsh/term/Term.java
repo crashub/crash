@@ -19,7 +19,7 @@
 
 package org.crsh.term;
 
-import org.crsh.text.CharReader;
+import org.crsh.text.ChunkSequence;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -71,7 +71,7 @@ public interface Term extends Closeable {
    * @param reader the message to write
    * @throws IOException any io exception
    */
-  void write(CharReader reader) throws IOException;
+  void write(ChunkSequence reader) throws IOException;
 
   /**
    * Returns the insert buffer, any char appended in the returned appendable will translate into an

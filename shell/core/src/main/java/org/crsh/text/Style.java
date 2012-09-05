@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public abstract class Style implements Serializable {
+public abstract class Style extends Chunk implements Serializable {
 
   public static final Style reset = new Style(null, null, null) {
     @Override

@@ -8,6 +8,9 @@ import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
+import org.crsh.text.Chunk;
+import org.crsh.text.Style;
+import org.crsh.text.TextChunk;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -84,7 +87,27 @@ public class JLineProcessor implements Runnable, Completer {
       } else if (response instanceof ShellResponse.Close) {
         break;
       } else {
-        response.getReader().writeAnsiTo(writer);
+
+        for (Chunk chunk : response.getReader()) {
+          if (chunk instanceof TextChunk) {
+            TextChunk textChunk = (TextChunk)chunk;
+            if (textChunk.getText() != null) {
+              writer.append(textChunk.getText());
+            }
+          } else if (chunk instanceof Style) {
+            try {
+              ((Style)chunk).writeAnsiTo(writer);
+            }
+            catch (IOException ignore) {
+            }
+          } else {
+            try {
+              reader.clearScreen();
+            }
+            catch (IOException ignore) {
+            }
+          }
+        }
         writer.flush();
       }
     }

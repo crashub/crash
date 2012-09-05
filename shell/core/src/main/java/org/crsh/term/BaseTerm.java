@@ -23,8 +23,10 @@ import org.crsh.term.console.Console;
 import org.crsh.term.console.ConsoleWriter;
 import org.crsh.term.console.ViewWriter;
 import org.crsh.term.spi.TermIO;
-import org.crsh.text.CharReader;
+import org.crsh.text.Chunk;
+import org.crsh.text.ChunkSequence;
 import org.crsh.text.Style;
+import org.crsh.text.TextChunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,13 +202,16 @@ public class BaseTerm implements Term {
     }
   }
 
-  public void write(CharReader reader) throws IOException {
+  public void write(ChunkSequence reader) throws IOException {
     ConsoleWriter writer = console.getWriter();
-    for (Object f : reader) {
-      if (f instanceof Style) {
-        writer.write((Style)f);
+    for (Chunk chunk : reader) {
+      if (chunk instanceof TextChunk) {
+        TextChunk textChunk = (TextChunk)chunk;
+        writer.write(textChunk.getText());
+      } else if (chunk instanceof Style) {
+        writer.write(((Style)chunk));
       } else {
-        writer.write(f.toString());
+        throw new UnsupportedOperationException("todo");
       }
     }
   }

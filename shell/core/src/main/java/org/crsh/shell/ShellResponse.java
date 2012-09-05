@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.text.CharReader;
+import org.crsh.text.ChunkSequence;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -49,14 +49,14 @@ public abstract class ShellResponse implements Serializable {
   }
 
   public static Display display(String text) {
-    return new Display(new CharReader(text));
+    return new Display(new ChunkSequence(text));
   }
 
-  public static Display display(CharReader reader) {
+  public static Display display(ChunkSequence reader) {
     return new Display(reader);
   }
 
-  public static Display display(Iterable<?> produced, CharReader reader) {
+  public static Display display(Iterable<?> produced, ChunkSequence reader) {
     return new Display(produced, reader);
   }
 
@@ -92,7 +92,7 @@ public abstract class ShellResponse implements Serializable {
     return Close.INSTANCE;
   }
 
-  public abstract CharReader getReader();
+  public abstract ChunkSequence getReader();
 
   public static class UnknownCommand extends ShellResponse {
 
@@ -108,8 +108,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public CharReader getReader() {
-      return new CharReader(name + ": command not found");
+    public ChunkSequence getReader() {
+      return new ChunkSequence(name + ": command not found");
     }
 
     @Override
@@ -127,8 +127,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public CharReader getReader() {
-      return new CharReader("Please type something");
+    public ChunkSequence getReader() {
+      return new ChunkSequence("Please type something");
     }
   }
 
@@ -141,8 +141,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public CharReader getReader() {
-      return new CharReader("Have a good day!\r\n");
+    public ChunkSequence getReader() {
+      return new ChunkSequence("Have a good day!\r\n");
     }
   }
 
@@ -167,21 +167,21 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public CharReader getReader() {
-      return new CharReader("");
+    public ChunkSequence getReader() {
+      return new ChunkSequence("");
     }
   }
 
   public static class Display extends Ok {
 
     /** . */
-    private final CharReader reader;
+    private final ChunkSequence reader;
 
-    private Display(CharReader reader) {
+    private Display(ChunkSequence reader) {
       this.reader = reader;
     }
 
-    private Display(Iterable<?> produced, CharReader reader) {
+    private Display(Iterable<?> produced, ChunkSequence reader) {
       super(produced);
 
       //
@@ -201,7 +201,7 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public CharReader getReader() {
+    public ChunkSequence getReader() {
       return reader;
     }
   }
@@ -215,8 +215,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public CharReader getReader() {
-      return new CharReader("cancelled");
+    public ChunkSequence getReader() {
+      return new ChunkSequence("cancelled");
     }
   }
 
@@ -252,8 +252,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public CharReader getReader() {
-      return new CharReader(msg);
+    public ChunkSequence getReader() {
+      return new ChunkSequence(msg);
     }
 
     public String toString() {
