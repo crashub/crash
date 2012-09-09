@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -26,13 +26,6 @@ import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.shell.impl.command.CRaSH;
 
-/**
- * A base command that should be subclasses by Groovy commands. For this matter it inherits the
- * {@link GroovyObjectSupport} class.
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
 public abstract class GroovyCommand extends GroovyObjectSupport {
 
   protected abstract CommandContext getContext();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -26,12 +26,6 @@ import org.crsh.cmdline.spi.ValueCompletion;
 
 import java.lang.reflect.Method;
 
-/**
- * A completer for enums.
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
 public class EnumCompleter implements Completer {
 
   /** . */

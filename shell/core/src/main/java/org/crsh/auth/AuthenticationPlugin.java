@@ -1,9 +1,8 @@
 /*
- * Copyright (C) 2011 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
- *
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
  *
@@ -20,12 +19,6 @@
 
 package org.crsh.auth;
 
-/**
- * An interface a plugin should implement if it wants to add custom authentication for ssh.
- *
- * @author <a href="mailto:nscavell@redhat.com">Nick Scavelli</a>
- * @version $Revision$
- */
 public interface AuthenticationPlugin {
 
   /**

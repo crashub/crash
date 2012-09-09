@@ -1,9 +1,8 @@
 /*
- * Copyright (C) 2011 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
- *
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
  *
@@ -23,9 +22,6 @@ package org.crsh.jcr;
 import junit.framework.TestSuite;
 import org.crsh.jcr.AbstractJCRCommandTestCase;
 
-/**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- */
 public class ExoTestCase {
 
   public static TestSuite suite() {

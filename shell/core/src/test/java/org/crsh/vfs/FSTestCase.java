@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -33,10 +33,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Iterator;
 
-/**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
 public class FSTestCase extends TestCase {
   public void testFoo() throws Exception {
     FS fs = new FS().mount(FSTestCase.class);

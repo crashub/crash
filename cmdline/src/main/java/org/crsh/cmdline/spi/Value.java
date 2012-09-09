@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -21,13 +21,6 @@ package org.crsh.cmdline.spi;
 
 import java.util.StringTokenizer;
 
-/**
- * A typed string, this class should be extended to provide meta information about a string and provide type safety.
- * This class is immutable and so should be its subclasses.
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
 public abstract class Value {
 
   public static class Properties extends Value {

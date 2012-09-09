@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -34,18 +34,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * Three internal options in SCP:
- * <ul>
- * <li><code>-f</code> (from) indicates source mode</li>
- * <li><code>-t</code> (to) indicates sink mode</li>
- * <li><code>-d</code> indicates that the target is expected to be a directory</li>
- * </ul>
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
 public abstract class SCPCommand extends AbstractCommand implements Runnable {
 
   /** . */

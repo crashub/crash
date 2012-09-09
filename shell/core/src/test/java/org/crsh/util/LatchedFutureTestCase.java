@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,6 @@ import junit.framework.TestCase;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * Should contain more test later.
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- */
 public class LatchedFutureTestCase extends TestCase {
 
   public void testBasic() throws Exception {

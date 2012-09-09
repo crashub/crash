@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -25,16 +25,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-/**
- * <p>This class provides an abstraction for a console. This implementation wraps the input and output of a terminal
- * based on a bidirectional io.</p>
- *
- * <p>Interactions between terminal and console are done though the {@link ViewReader} and {@link ViewWriter}
- * classes.</p>
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
 public final class Console {
 
   /** . */

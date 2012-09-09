@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -30,14 +30,6 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorCompletionService;
 
-/**
- * <p>The async shell wraps a shell and provides command cancellation. The shell executes the command in a separate thread
- * allowing using the wrapped shell to which it delegates the business command execution. This implementation allows the
- * execution of several process in parallel</p>
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
 public class AsyncShell implements Shell, Closeable {
 
   /** . */

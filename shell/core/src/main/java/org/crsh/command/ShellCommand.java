@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -21,16 +21,6 @@ package org.crsh.command;
 
 import org.crsh.cmdline.CommandCompletion;
 
-/**
- * <p>The shell command allows a single source to provide a customized invoker according to the context
- * of the arguments. More importantly it allows to decouple the obtention of a command related to its
- * arguments from the actual execution of the command. This somewhat matters because the command execution
- * pipeline has notion of consumed and produced types, thanks to this, the consumed and produced
- * types can vary according to the arguments.</p>
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
 public interface ShellCommand {
 
   /**

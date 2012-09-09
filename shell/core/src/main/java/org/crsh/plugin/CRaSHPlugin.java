@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -27,15 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * <p>Base class for a plugin, that consist of a subclass of this class and the implementation
- * of the business interface of the plugin. The business interface of the plugin is simply
- * represented by the P generic parameter and its associated class <code>Class&lt;P&gt;></code>.</p>
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- * @param <P> the plugin type
- */
 public abstract class CRaSHPlugin<P> {
 
   /** . */

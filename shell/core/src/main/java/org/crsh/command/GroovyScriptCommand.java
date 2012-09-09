@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2009 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -33,13 +33,6 @@ import org.crsh.util.Strings;
 
 import java.util.List;
 
-/**
- * This class provides the base class for Groovy scripts. It should not be used directly as it is rather used
- * for configuring a Groovy {@link org.codehaus.groovy.control.CompilerConfiguration#setScriptBaseClass(String)} class.
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
 public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker<Void, Void> {
 
   /** . */

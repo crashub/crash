@@ -1,9 +1,8 @@
 /*
- * Copyright (C) 2011 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
- *
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
  *
@@ -27,9 +26,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- */
 public class AppendableWriterTestCase extends TestCase {
   
   public void testWrite() throws IOException {
