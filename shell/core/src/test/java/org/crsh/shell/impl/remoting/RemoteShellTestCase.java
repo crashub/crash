@@ -29,8 +29,10 @@ import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
+import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.impl.async.AsyncShell;
+import org.crsh.text.Text;
 import org.crsh.util.PipedChannel;
 
 import java.io.IOException;
@@ -141,8 +143,9 @@ public class RemoteShellTestCase extends AbstractTestCase {
       public BaseProcess create(String request) {
         return new BaseProcess(request) {
           @Override
-          protected ShellResponse execute(String request) {
-            return ShellResponse.display("juu");
+          public void process(String request, ShellProcessContext processContext) throws IOException {
+            processContext.write(new Text("juu"));
+            processContext.end(ShellResponse.ok());
           }
         };
       }
@@ -155,8 +158,8 @@ public class RemoteShellTestCase extends AbstractTestCase {
     ShellProcess process = server.createProcess("hello");
     BaseProcessContext context = BaseProcessContext.create(process);
     context.execute();
-    ShellResponse response = context.getResponse();
-    assertEquals("juu", response.getReader().toString());
+    assertInstance(ShellResponse.Ok.class, context.getResponse());
+    assertEquals("juu", context.getOutput());
 
     //
     t.interrupt();
@@ -238,7 +241,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
       public BaseProcess create(String request) {
         return new BaseProcess(request) {
           @Override
-          protected ShellResponse execute(String request) {
+          public void process(String request, ShellProcessContext processContext) throws IOException {
             synchronized (lock) {
               if (waiting.get()) {
                 lock.notifyAll();
@@ -252,7 +255,8 @@ public class RemoteShellTestCase extends AbstractTestCase {
                 e.printStackTrace();
               }
             }
-            return ShellResponse.display("juu");
+            processContext.write(new Text("juu"));
+            processContext.end(ShellResponse.ok());
           }
           @Override
           public void cancel() {

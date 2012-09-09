@@ -19,11 +19,18 @@
 
 package org.crsh.text;
 
+/**
+ * Extends the {@link Appendable} interface to provide shell display specific methods.
+ */
 public interface ShellAppendable extends Appendable {
 
-  ShellAppendable append(Style style);
+  ShellAppendable append(CharSequence csq);
 
-  boolean isEmpty();
+  ShellAppendable append(CharSequence csq, int start, int end);
+
+  ShellAppendable append(char c);
+
+  ShellAppendable append(Style style);
 
   ShellAppendable cls();
 

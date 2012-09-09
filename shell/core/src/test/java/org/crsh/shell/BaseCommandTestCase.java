@@ -157,11 +157,11 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testSession() throws Exception {
-    assertOk("null", "attribute foo");
+    assertEquals("null", assertOk("attribute foo"));
     lifeCycle.setAttribute("foo", "bar");
-    assertOk("bar", "attribute foo");
+    assertEquals("bar", assertOk("attribute foo"));
     lifeCycle.setAttribute("foo", null);
-    assertOk("null", "attribute foo");
+    assertEquals("null", assertOk("attribute foo"));
   }
 
   /** . */
@@ -182,7 +182,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("no_ret", no_ret);
 
     //
-    assertOk("", "foo");
+    assertEquals("", assertOk("foo"));
   }
 
   public void testInvokeNoRetInScript() throws Exception {
@@ -191,7 +191,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("no_ret", no_ret);
 
     //
-    assertOk("", "foo");
+    assertEquals("", assertOk("foo"));
   }
 
   public void testInvoke() throws Exception {
@@ -204,7 +204,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("foo", foo);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testInvokeInScript() throws Exception {
@@ -212,7 +212,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("foo", foo);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   /** . */
@@ -234,7 +234,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("foo", foo);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testInvokeCompoundInScript() throws Exception {
@@ -243,7 +243,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("foo", foo);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   /** . */
@@ -265,7 +265,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("option_command", option_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testShortOptionInScript() throws Exception {
@@ -274,7 +274,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("option_command", option_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testLongOption() throws Exception {
@@ -288,7 +288,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("option_command", option_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testLongOptionInScript() throws Exception {
@@ -297,7 +297,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("option_command", option_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   /** . */
@@ -323,7 +323,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("checked_exception_command", checked_exception_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testCheckedExceptionInScript() {
@@ -336,7 +336,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("checked_exception_command", checked_exception_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   /** . */
@@ -362,7 +362,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("script_exception_command", script_exception_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testScriptExceptionInScript() {
@@ -375,7 +375,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("script_exception_command", script_exception_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   /** . */
@@ -401,7 +401,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("groovy_script_exception_command", groovy_script_exception_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testGroovyScriptExceptionInScript() {
@@ -414,7 +414,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("groovy_script_exception_command", groovy_script_exception_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   /** . */
@@ -440,7 +440,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("runtime_exception_command", runtime_exception_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testRuntimeExceptionInScript() {
@@ -453,7 +453,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("runtime_exception_command", runtime_exception_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   /** . */
@@ -479,7 +479,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("error_command", error_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testErrorInScript() {
@@ -492,7 +492,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("error_command", error_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   /** . */
@@ -519,7 +519,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("cannot_create_command", cannot_create_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testCannotCreateCommandInScript() {
@@ -532,7 +532,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("cannot_create_command", cannot_create_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   /** . */
@@ -554,7 +554,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("produce_command", produce_command);
 
     //
-    assertOk("foobar", "foo");
+    assertEquals("foobar", assertOk("foo"));
   }
 
   public void testProduceInScript() {
@@ -563,7 +563,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("produce_command", produce_command);
 
     //
-    assertOk("foobar", "foo");
+    assertEquals("foobar", assertOk("foo"));
   }
 
   /** . */
@@ -585,7 +585,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("compound_produce_command", compound_produce_command);
 
     //
-    assertOk("foobar", "foo");
+    assertEquals("foobar", assertOk("foo"));
   }
 
   public void testCompoundProduceInScript() {
@@ -594,7 +594,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("compound_produce_command", compound_produce_command);
 
     //
-    assertOk("foobar", "foo");
+    assertEquals("foobar", assertOk("foo"));
   }
 
   public void testClosure() {
@@ -608,7 +608,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("foo", foo);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testClosureInScript() {
@@ -618,7 +618,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("compound_command", compound_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testCompoundClosure() {
@@ -633,7 +633,7 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("compound_command", compound_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testCompoundClosureInScript() {
@@ -643,6 +643,15 @@ public class BaseCommandTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("compound_command", compound_command);
 
     //
-    assertOk("bar", "foo");
+    assertEquals("bar", assertOk("foo"));
+  }
+
+  public void testFlush() {
+    String foo = "out << 'bar';\n" +
+        "out.flush();\n";
+    lifeCycle.setCommand("foo", foo);
+
+    //
+    assertEquals("bar", assertOk("foo"));
   }
 }

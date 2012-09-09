@@ -17,15 +17,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term;
+package org.crsh.term.console;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.crsh.term.Term;
+import org.crsh.term.TermEvent;
+import org.crsh.term.console.ConsoleTerm;
 import org.crsh.term.spi.TestTermIO;
 
 import java.io.IOException;
 
-public class BaseTermTestCase extends TestCase {
+public class ConsoleTermTestCase extends TestCase {
 
   /** . */
   private Term term;
@@ -36,7 +39,7 @@ public class BaseTermTestCase extends TestCase {
   @Override
   protected void setUp() throws Exception {
     this.io = new TestTermIO();
-    this.term = new BaseTerm(io);
+    this.term = new ConsoleTerm(io);
   }
 
   private TermEvent assertEvent() {

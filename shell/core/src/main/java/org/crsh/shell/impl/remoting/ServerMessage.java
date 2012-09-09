@@ -25,6 +25,10 @@ public enum ServerMessage {
 
   READLINE,
 
+  CHUNK,
+
+  FLUSH,
+
   END
 
 }

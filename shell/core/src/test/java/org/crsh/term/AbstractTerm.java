@@ -19,7 +19,7 @@
 
 package org.crsh.term;
 
-import org.crsh.text.ChunkSequence;
+import org.crsh.text.Chunk;
 
 import java.io.IOException;
 
@@ -41,7 +41,7 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
-  public void write(ChunkSequence reader) throws IOException {
+  public void write(Chunk chunk) throws NullPointerException, IOException {
     throw new UnsupportedOperationException();
   }
 
@@ -54,6 +54,10 @@ public class AbstractTerm implements Term {
   }
 
   public void addToHistory(CharSequence line) {
+    throw new UnsupportedOperationException();
+  }
+
+  public void flush() {
     throw new UnsupportedOperationException();
   }
 

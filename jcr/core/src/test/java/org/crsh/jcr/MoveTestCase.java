@@ -18,6 +18,8 @@
  */
 package org.crsh.jcr;
 
+import org.crsh.shell.ShellResponse;
+
 import javax.jcr.Node;
 import java.util.Iterator;
 
@@ -76,7 +78,7 @@ public class MoveTestCase extends AbstractJCRCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('foo');");
     groovyShell.evaluate("session.rootNode.getNode('foo').addNode('bar');");
     groovyShell.evaluate("session.save();");
-    Iterator<?> produced = assertOk("mv /foo/bar /zed").getProduced().iterator();
+    Iterator<?> produced = assertResponse(ShellResponse.Ok.class, "mv /foo/bar /zed").getProduced().iterator();
     groovyShell.evaluate("session.refresh(true);");
     assertTrue(produced.hasNext());
     assertEquals("/zed", ((Node)produced.next()).getPath());
@@ -153,7 +155,7 @@ public class MoveTestCase extends AbstractJCRCommandTestCase {
     groovyShell.evaluate("session.rootNode.addNode('bar');");
     groovyShell.evaluate("session.rootNode.addNode('juu');");
     groovyShell.evaluate("session.save();");
-    Iterator<?> produced = assertOk("produce foo bar | mv juu").getProduced().iterator();
+    Iterator<?> produced = assertResponse(ShellResponse.Ok.class, "produce foo bar | mv juu").getProduced().iterator();
     groovyShell.evaluate("session.refresh(true);");
     assertTrue(produced.hasNext());
     assertEquals("/juu/foo", ((Node)produced.next()).getPath());

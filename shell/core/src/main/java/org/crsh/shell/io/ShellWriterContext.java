@@ -19,11 +19,9 @@
 
 package org.crsh.shell.io;
 
-import java.io.IOException;
-
 public interface ShellWriterContext {
 
-  void pad(ShellWriter writer) throws IOException;
+  void pad(ShellFormatter writer);
 
   void text(CharSequence csq, int off, int end);
 

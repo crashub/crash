@@ -19,9 +19,7 @@
 
 package org.crsh.shell.ui;
 
-import org.crsh.shell.io.ShellWriter;
-
-import java.io.IOException;
+import org.crsh.shell.io.ShellFormatter;
 
 public class LabelElement extends Element {
 
@@ -41,7 +39,7 @@ public class LabelElement extends Element {
   }
 
   @Override
-  void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  void doPrint(UIWriterContext ctx, ShellFormatter writer) {
 
     //
     int availableWidth = (ctx.getConsoleWidth() - ctx.padWidth());
@@ -75,7 +73,7 @@ public class LabelElement extends Element {
     }
   }
 
-  private void printLine(UIWriterContext ctx, ShellWriter writer, String value, int available, boolean needed) throws IOException {
+  private void printLine(UIWriterContext ctx, ShellFormatter writer, String value, int available, boolean needed) {
 
     //
     if (needed) {

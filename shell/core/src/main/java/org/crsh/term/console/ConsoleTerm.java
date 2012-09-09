@@ -17,26 +17,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term;
+package org.crsh.term.console;
 
-import org.crsh.term.console.Console;
-import org.crsh.term.console.ConsoleWriter;
-import org.crsh.term.console.ViewWriter;
+import org.crsh.term.CodeType;
+import org.crsh.term.Term;
+import org.crsh.term.TermEvent;
 import org.crsh.term.spi.TermIO;
+import org.crsh.text.CLS;
 import org.crsh.text.Chunk;
-import org.crsh.text.ChunkSequence;
 import org.crsh.text.Style;
-import org.crsh.text.TextChunk;
+import org.crsh.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class BaseTerm implements Term {
+/**
+ * Implements the {@link Term interface}.
+ */
+public class ConsoleTerm implements Term {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(BaseTerm.class);
+  private final Logger log = LoggerFactory.getLogger(ConsoleTerm.class);
 
   /** . */
   private final LinkedList<CharSequence> history;
@@ -51,55 +54,18 @@ public class BaseTerm implements Term {
   private final TermIO io;
 
   /** . */
-  private final Console console;
+  private final TermIOBuffer buffer;
 
-  public BaseTerm(final TermIO io) {
+  /** . */
+  private final TermIOWriter writer;
+
+  public ConsoleTerm(final TermIO io) {
     this.history = new LinkedList<CharSequence>();
     this.historyBuffer = null;
     this.historyCursor = -1;
     this.io = io;
-    this.console = new Console(new ViewWriter() {
-
-      @Override
-      protected void flush() throws IOException {
-        io.flush();
-      }
-
-      @Override
-      protected void writeCRLF() throws IOException {
-        io.writeCRLF();
-      }
-
-      @Override
-      protected void write(CharSequence s) throws IOException {
-        io.write(s.toString());
-      }
-
-      @Override
-      protected void write(char c) throws IOException {
-        io.write(c);
-      }
-
-      @Override
-      protected void write(Style style) throws IOException {
-        io.write(style);
-      }
-
-      @Override
-      protected void writeDel() throws IOException {
-        io.writeDel();
-      }
-
-      @Override
-      protected boolean writeMoveLeft() throws IOException {
-        return io.moveLeft();
-      }
-
-      @Override
-      protected boolean writeMoveRight(char c) throws IOException {
-        return io.moveRight(c);
-      }
-    });
+    this.buffer = new TermIOBuffer(io);
+    this.writer = new TermIOWriter(io);
   }
 
   public int getWidth() {
@@ -111,7 +77,7 @@ public class BaseTerm implements Term {
   }
 
   public void setEcho(boolean echo) {
-    console.setEchoing(echo);
+    buffer.setEchoing(echo);
   }
 
   public TermEvent read() throws IOException {
@@ -124,17 +90,17 @@ public class BaseTerm implements Term {
         case CLOSE:
           return TermEvent.close();
         case BACKSPACE:
-          console.getViewReader().del();
+          buffer.del();
           break;
         case UP:
         case DOWN:
           int nextHistoryCursor = historyCursor +  (type == CodeType.UP ? + 1 : -1);
           if (nextHistoryCursor >= -1 && nextHistoryCursor < history.size()) {
             CharSequence s = nextHistoryCursor == -1 ? historyBuffer : history.get(nextHistoryCursor);
-            while (console.getViewReader().moveRight()) {
+            while (buffer.moveRight()) {
               // Do nothing
             }
-            CharSequence t = console.getViewReader().replace(s);
+            CharSequence t = buffer.replace(s);
             if (historyCursor == -1) {
               historyBuffer = t;
             }
@@ -145,39 +111,39 @@ public class BaseTerm implements Term {
           }
           break;
         case RIGHT:
-          console.getViewReader().moveRight();
+          buffer.moveRight();
           break;
         case LEFT:
-          console.getViewReader().moveLeft();
+          buffer.moveLeft();
           break;
         case BREAK:
           log.debug("Want to cancel evaluation");
-          console.clearBuffer();
+          buffer.clear();
           return TermEvent.brk();
         case CHAR:
           if (code >= 0 && code < 128) {
-            console.getViewReader().append((char)code);
+            buffer.append((char)code);
           } else {
             log.debug("Unhandled char " + code);
           }
           break;
         case TAB:
           log.debug("Tab");
-          return TermEvent.complete(console.getBufferToCursor());
+          return TermEvent.complete(buffer.getBufferToCursor());
       }
 
       //
-      if (console.getReader().hasNext()) {
+      if (buffer.hasNext()) {
         historyCursor = -1;
         historyBuffer = null;
-        CharSequence input = console.getReader().next();
+        CharSequence input = buffer.next();
         return TermEvent.readLine(input);
       }
     }
   }
 
   public Appendable getInsertBuffer() {
-    return console.getViewReader();
+    return buffer;
   }
 
   public void addToHistory(CharSequence line) {
@@ -185,7 +151,16 @@ public class BaseTerm implements Term {
   }
 
   public CharSequence getBuffer() {
-    return console.getBufferToCursor();
+    return buffer.getBufferToCursor();
+  }
+
+  public void flush() {
+    try {
+      io.flush();
+    }
+    catch (IOException e) {
+      log.debug("Exception thrown during term flush()", e);
+    }
   }
 
   public void close() {
@@ -198,17 +173,19 @@ public class BaseTerm implements Term {
     }
   }
 
-  public void write(ChunkSequence reader) throws IOException {
-    ConsoleWriter writer = console.getWriter();
-    for (Chunk chunk : reader) {
-      if (chunk instanceof TextChunk) {
-        TextChunk textChunk = (TextChunk)chunk;
-        writer.write(textChunk.getText());
-      } else if (chunk instanceof Style) {
-        writer.write(((Style)chunk));
-      } else {
-        throw new UnsupportedOperationException("todo");
-      }
+  public void write(Chunk chunk) throws NullPointerException, IOException {
+    if (chunk == null) {
+      throw new NullPointerException("No null chunk accepted");
+    }
+    if (chunk instanceof Text) {
+      Text textChunk = (Text)chunk;
+      writer.write(textChunk.getText());
+    } else if (chunk instanceof Style) {
+      io.write(((Style)chunk));
+    } else if (chunk instanceof CLS) {
+      io.cls();
+    } else {
+      throw new UnsupportedOperationException("todo");
     }
   }
 }

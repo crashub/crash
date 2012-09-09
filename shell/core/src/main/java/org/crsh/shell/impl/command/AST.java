@@ -26,9 +26,12 @@ import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.text.ChunkSequence;
+import org.crsh.text.Chunk;
+import org.crsh.text.ChunkBuffer;
 import org.crsh.text.Style;
 
+import java.io.Flushable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -62,7 +65,7 @@ abstract class AST {
       return new CRaSHProcess(crash, request) {
         @Override
         ShellResponse doInvoke(ShellProcessContext context) throws InterruptedException {
-          return Expr.this.execute(crash, context, null);
+          return Expr.this.execute(crash, context, null, new ChunkBuffer(), false);
         }
       };
     }
@@ -74,43 +77,56 @@ abstract class AST {
       }
     }
 
-    protected ShellResponse execute(CRaSHSession crash, ShellProcessContext context, ArrayList consumed) throws InterruptedException {
+    protected ShellResponse execute(
+        CRaSHSession crash,
+        final ShellProcessContext context,
+        ArrayList consumed,
+        final ChunkBuffer buffer,
+        boolean needReset) throws InterruptedException {
 
       // What will be produced by this expression
       ArrayList produced = new ArrayList();
 
-      //
-      ChunkSequence reader = new ChunkSequence();
-
       // Iterate over all terms
       for (Term current = term;current != null;current = current.next) {
+
+        //
+        if (needReset) {
+          buffer.append(Style.reset);
+        }
+
+        //
+        Flushable flushable = new Flushable() {
+          public void flush() throws IOException {
+            if (!buffer.isEmpty()) {
+              buffer.writeTo(context);
+            }
+            buffer.clear();
+            context.flush();
+          }
+        };
 
         // Build command context
         InvocationContextImpl ctx;
         if (current.invoker.getConsumedType() == Void.class) {
-          ctx = new InvocationContextImpl(context, null, crash.attributes, crash.crash.getContext().getAttributes());
+          ctx = new InvocationContextImpl(context, buffer, flushable, null, crash.attributes, crash.crash.getContext().getAttributes());
         } else {
           // For now we assume we have compatible consumed/produced types
-          ctx = new InvocationContextImpl(context, consumed, crash.attributes, crash.crash.getContext().getAttributes());
+          ctx = new InvocationContextImpl(context, buffer, flushable, consumed, crash.attributes, crash.crash.getContext().getAttributes());
         }
 
         //
         try {
           current.invoker.invoke(ctx);
         } catch (ScriptException e) {
-
           // Should we handle InterruptedException here ?
-
           return current.build(e);
         } catch (Throwable t) {
           return current.build(t);
         }
 
-        // Append anything that was in the buffer
-        ChunkSequence ctxReader = ctx.getReader();
-        if (ctxReader != null && !ctxReader.isEmpty()) {
-          reader.append(ctxReader).append(Style.reset);
-        }
+        //
+        needReset = true;
 
         // Append produced if possible
         if (current.invoker.getProducedType() == Void.class) {
@@ -122,15 +138,22 @@ abstract class AST {
 
       //
       if (next != null) {
-        return next.execute(crash, context, produced);
+        return next.execute(crash, context, produced, buffer, needReset);
       } else {
-        ShellResponse response;
-        if (!reader.isEmpty()) {
-          response = ShellResponse.display(produced, reader);
-        } else {
-          response = ShellResponse.ok(produced);
+        if (!buffer.isEmpty()) {
+          try {
+            for (Chunk chunk : buffer) {
+              context.write(chunk);
+            }
+          }
+          catch (IOException e) {
+            // Should we handle that better ?
+            return ShellResponse.error(ErrorType.INTERNAL, "Could not write to client", e);
+          }
+          buffer.clear();
+          context.flush();
         }
-        return response;
+        return ShellResponse.ok(produced);
       }
     }
 

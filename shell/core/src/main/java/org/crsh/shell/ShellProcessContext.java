@@ -19,7 +19,12 @@
 
 package org.crsh.shell;
 
-public interface ShellProcessContext {
+import org.crsh.text.Chunk;
+import org.crsh.text.ChunkWriter;
+
+import java.io.IOException;
+
+public interface ShellProcessContext extends ChunkWriter {
 
   /**
    * Returns the term width in chars. When the value is not positive it means the value could not be determined.
@@ -44,6 +49,20 @@ public interface ShellProcessContext {
    * @return the line read or null if no line was possible to be read
    */
   String readLine(String msg, boolean echo);
+
+  /**
+   * Write a chunk on the process output.
+   *
+   * @param chunk the chunk to write
+   * @throws NullPointerException if the chunk object is null
+   * @throws IOException any io exception
+   */
+  void write(Chunk chunk) throws NullPointerException, IOException;
+
+  /**
+   * Flush the text buffer to the context.
+   */
+  void flush();
 
   /**
    * This method is invoked when the process ends.

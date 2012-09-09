@@ -17,28 +17,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term.console;
-
-import org.crsh.text.Style;
+package org.crsh.text;
 
 import java.io.IOException;
 
-public abstract class ViewWriter {
+/**
+ * Writer for chunks.
+ */
+public interface ChunkWriter {
 
-  protected abstract void flush() throws IOException;
-
-  protected abstract void writeCRLF() throws IOException;
-
-  protected abstract void write(CharSequence s) throws IOException;
-
-  protected abstract void write(char c) throws IOException;
-
-  protected abstract void write(Style style) throws IOException;
-
-  protected abstract void writeDel() throws IOException;
-
-  protected abstract boolean writeMoveLeft() throws IOException;
-
-  protected abstract boolean writeMoveRight(char c) throws IOException;
+  /**
+   * Write a single chunk.
+   *
+   * @param chunk the chunk to write
+   */
+  void write(Chunk chunk) throws NullPointerException, IOException;
 
 }

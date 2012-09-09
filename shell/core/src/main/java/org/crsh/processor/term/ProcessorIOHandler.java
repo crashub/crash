@@ -23,7 +23,7 @@ import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.async.AsyncShell;
-import org.crsh.term.BaseTerm;
+import org.crsh.term.console.ConsoleTerm;
 import org.crsh.term.spi.TermIO;
 import org.crsh.term.spi.TermIOHandler;
 
@@ -52,7 +52,7 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
   public void handle(final TermIO io, Principal user) {
     Shell shell = factory.create(user);
     AsyncShell asyncShell = new AsyncShell(getContext().getExecutor(), shell);
-    BaseTerm term = new BaseTerm(io);
+    ConsoleTerm term = new ConsoleTerm(io);
     Processor processor = new Processor(term, asyncShell);
     processor.addListener(io);
     processor.addListener(asyncShell);

@@ -19,6 +19,8 @@
 
 package org.crsh.jcr;
 
+import org.crsh.shell.ShellResponse;
+
 import javax.jcr.Node;
 import java.util.Iterator;
 
@@ -28,7 +30,7 @@ public class SelectTestCase extends AbstractJCRCommandTestCase {
     assertLogin();
     groovyShell.evaluate("session.rootNode.addNode('foo').setProperty('bar','juu');");
     groovyShell.evaluate("session.save();");
-    Iterator<?> produced = assertOk("select * from nt:base where bar = 'juu'").getProduced().iterator();
+    Iterator<?> produced = assertResponse(ShellResponse.Ok.class, "select * from nt:base where bar = 'juu'").getProduced().iterator();
     assertTrue(produced.hasNext());
     assertEquals("/foo", ((Node) produced.next()).getPath());
     assertFalse(produced.hasNext());

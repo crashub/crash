@@ -21,6 +21,7 @@ package org.crsh.util;
 
 import junit.framework.TestCase;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -83,7 +84,7 @@ public class AppendableWriterTestCase extends TestCase {
         super.close();
       }
     };
-    AppendableWriter writer = new AppendableWriter(buffer);
+    AppendableWriter writer = new AppendableWriter(buffer, (Closeable)buffer);
     assertEquals(0, closed.get());
     writer.close();
     assertEquals(1, closed.get());
@@ -105,7 +106,7 @@ public class AppendableWriterTestCase extends TestCase {
       public void close() throws IOException {
       }
     };
-    AppendableWriter writer = new AppendableWriter(buffer);
+    AppendableWriter writer = new AppendableWriter(buffer, (Closeable)buffer);
     try {
       writer.write("foo");
       fail();
@@ -131,7 +132,7 @@ public class AppendableWriterTestCase extends TestCase {
         }
       }
     };
-    writer = new AppendableWriter(buffer);
+    writer = new AppendableWriter(buffer, (Closeable)buffer);
     assertEquals(0, count.get());
     try {
       writer.close();

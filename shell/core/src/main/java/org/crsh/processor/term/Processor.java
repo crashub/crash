@@ -24,9 +24,11 @@ import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.text.ChunkSequence;
+import org.crsh.text.Chunk;
+import org.crsh.text.ChunkWriter;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
+import org.crsh.text.Text;
 import org.crsh.util.CloseableList;
 import org.crsh.util.Strings;
 import org.slf4j.Logger;
@@ -38,7 +40,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-public final class Processor implements Runnable {
+public final class Processor implements Runnable, ChunkWriter {
 
   /** . */
   static final Runnable NOOP = new Runnable() {
@@ -49,7 +51,7 @@ public final class Processor implements Runnable {
   /** . */
   final Runnable WRITE_PROMPT = new Runnable() {
     public void run() {
-      writePrompt();
+      writePromptFlush();
     }
   };
 
@@ -115,9 +117,9 @@ public final class Processor implements Runnable {
     try {
       String welcome = shell.getWelcome();
       log.debug("Writing welcome message to term");
-      term.write(new ChunkSequence(welcome));
+      term.write(new Text(welcome));
       log.debug("Wrote welcome message to term");
-      writePrompt();
+      writePromptFlush();
     }
     catch (IOException e) {
       e.printStackTrace();
@@ -291,26 +293,23 @@ public final class Processor implements Runnable {
     listeners.add(listener);
   }
 
-  void write(ChunkSequence reader) {
-    try {
-      term.write(reader);
-    }
-    catch (IOException e) {
-      log.error("Write to term failure", e);
-    }
+  public void write(Chunk chunk) throws NullPointerException, IOException {
+    term.write(chunk);
   }
 
-  void writePrompt() {
+  void writePromptFlush() {
     String prompt = shell.getPrompt();
     try {
       String p = prompt == null ? "% " : prompt;
-      ChunkSequence cr = new ChunkSequence().append("\r\n").append(p);
+      StringBuilder sb = new StringBuilder("\r\n").append(p);
       CharSequence buffer = term.getBuffer();
       if (buffer != null) {
-        cr.append(buffer);
+        sb.append(buffer);
       }
-      term.write(cr);
+      term.write(new Text(sb));
+      term.flush();
     } catch (IOException e) {
+      // Todo : improve that
       e.printStackTrace();
     }
   }
@@ -332,14 +331,14 @@ public final class Processor implements Runnable {
         Map.Entry<String, Boolean> entry = completions.iterator().next();
         Appendable buffer = term.getInsertBuffer();
         String insert = entry.getKey();
-        delimiter.escape(insert, term.getInsertBuffer());
+        term.getInsertBuffer().append(delimiter.escape(insert));
         if (entry.getValue()) {
           buffer.append(completion.getDelimiter().getValue());
         }
       } else {
         String commonCompletion = Strings.findLongestCommonPrefix(completions.getSuffixes());
         if (commonCompletion.length() > 0) {
-          delimiter.escape(commonCompletion, term.getInsertBuffer());
+          term.getInsertBuffer().append(delimiter.escape(commonCompletion));
         } else {
           // Format stuff
           int width = term.getWidth();
@@ -386,8 +385,8 @@ public final class Processor implements Runnable {
           }
 
           // We propose
-          term.write(new ChunkSequence(sb.toString()));
-          writePrompt();
+          term.write(new Text(sb.toString()));
+          writePromptFlush();
         }
       }
     }

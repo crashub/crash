@@ -19,18 +19,20 @@
 
 package org.crsh.shell.impl.async;
 
-import junit.framework.TestCase;
+import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcess;
 import org.crsh.BaseProcessContext;
 import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.shell.*;
+import org.crsh.text.Text;
 
+import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class AsyncShellTestCase extends TestCase {
+public class AsyncShellTestCase extends AbstractTestCase {
 
   /** . */
   protected TestPluginLifeCycle lifeCycle;
@@ -58,9 +60,10 @@ public class AsyncShellTestCase extends TestCase {
       public BaseProcess create(String request) {
         return new BaseProcess(request) {
           @Override
-          protected ShellResponse execute(String request) {
+          public void process(String request, ShellProcessContext processContext) throws IOException {
             String a = readLine("bar", true);
-            return ShellResponse.display(a);
+            processContext.write(new Text(a));
+            processContext.end(ShellResponse.ok());
           }
         };
       }
@@ -81,10 +84,8 @@ public class AsyncShellTestCase extends TestCase {
     ShellResponse resp = ctx.getResponse();
 
     //
-    assertTrue(resp instanceof ShellResponse.Display);
-    assertEquals("juu", resp.getReader().toString());
-    ctx.assertLineOutput("bar");
-    ctx.assertNoOutput();
+    assertInstance(ShellResponse.Ok.class, resp);
+    assertEquals("barjuu", ctx.getOutput());
     ctx.assertNoInput();
   }
 
@@ -94,7 +95,7 @@ public class AsyncShellTestCase extends TestCase {
     BaseProcessContext ctx = BaseProcessContext.create(connector, "invoke " + AsyncShellTestCase.class.getName() + " bilto");
     ctx.execute();
     ShellResponse resp = ctx.getResponse();
-    assertTrue("Was not expecting response to be " + resp.getReader(), resp instanceof ShellResponse.Ok);
+    assertTrue("Was not expecting response to be " + resp.getMessage(), resp instanceof ShellResponse.Ok);
     assertEquals(1, status);
     ctx.getResponse();
   }
@@ -118,6 +119,7 @@ public class AsyncShellTestCase extends TestCase {
     //
     BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "hello").execute();
     assertEquals(Status.TERMINATED, ((AsyncProcess)ctx.getProcess()).getStatus());
-    assertEquals(ShellResponse.display("hello"), ctx.getResponse());
+    assertInstance(ShellResponse.Ok.class, ctx.getResponse());
+    assertEquals("hello", ctx.getOutput());
   }
 }

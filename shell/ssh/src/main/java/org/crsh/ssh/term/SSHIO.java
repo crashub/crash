@@ -37,6 +37,12 @@ public class SSHIO implements TermIO {
   private static final int DOWN = 1002;
 
   /** Copied from net.wimpi.telnetd.io.TerminalIO. */
+  private static final int RIGHT = 1003;
+
+  /** Copied from net.wimpi.telnetd.io.TerminalIO. */
+  private static final int LEFT = 1004;
+
+  /** Copied from net.wimpi.telnetd.io.TerminalIO. */
   private static final int HANDLED = 1305;
 
   /** . */
@@ -122,11 +128,9 @@ public class SSHIO implements TermIO {
                 case 66:
                   return DOWN;
                 case 67:
-                  // Swallow RIGHT
-                  break;
+                  return RIGHT;
                 case 68:
-                  // Swallow LEFT
-                  break;
+                  return LEFT;
                 default:
                   log.error("Unrecognized stream data " + r + " after reading ESC+91 code");
                   break;
@@ -160,6 +164,10 @@ public class SSHIO implements TermIO {
           return CodeType.UP;
         case DOWN:
           return CodeType.DOWN;
+        case LEFT:
+          return CodeType.LEFT;
+        case RIGHT:
+          return CodeType.RIGHT;
         default:
           return CodeType.CHAR;
       }
@@ -179,8 +187,8 @@ public class SSHIO implements TermIO {
     writer.flush();
   }
 
-  public void write(String s) throws IOException {
-    writer.write(s);
+  public void write(CharSequence s) throws IOException {
+    writer.write(s.toString());
   }
 
   public void write(char c) throws IOException {
@@ -200,10 +208,20 @@ public class SSHIO implements TermIO {
   }
 
   public boolean moveRight(char c) throws IOException {
-    return false;
+    writer.write(c);
+    return true;
   }
 
   public boolean moveLeft() throws IOException {
-    return false;
+    writer.write("\033[");
+    writer.write("1D");
+    return true;
+  }
+
+  public void cls() throws IOException {
+    writer.write("\033[");
+    writer.write("2J");
+    writer.write("\033[");
+    writer.write("1;1H");
   }
 }

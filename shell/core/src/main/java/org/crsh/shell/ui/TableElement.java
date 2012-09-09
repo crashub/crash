@@ -19,9 +19,8 @@
 
 package org.crsh.shell.ui;
 
-import org.crsh.shell.io.ShellWriter;
+import org.crsh.shell.io.ShellFormatter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +45,7 @@ public class TableElement extends Element {
   }
   
   @Override
-  void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  void doPrint(UIWriterContext ctx, ShellFormatter writer) {
 
     //
     ctx = new UIWriterContext(ctx);

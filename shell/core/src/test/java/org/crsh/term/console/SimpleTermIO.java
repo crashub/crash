@@ -21,11 +21,13 @@ package org.crsh.term.console;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
+import org.crsh.term.CodeType;
+import org.crsh.term.spi.TermIO;
 import org.crsh.text.Style;
 
 import java.io.IOException;
 
-public class TestClientOutput extends ViewWriter {
+public class SimpleTermIO implements TermIO {
 
   /** . */
   private final StringBuilder line = new StringBuilder();
@@ -39,7 +41,7 @@ public class TestClientOutput extends ViewWriter {
   /** . */
   private final boolean supportsCursorMove;
 
-  public TestClientOutput(boolean supportsCursorMove) {
+  public SimpleTermIO(boolean supportsCursorMove) {
     this.supportsCursorMove = supportsCursorMove;
   }
 
@@ -53,21 +55,43 @@ public class TestClientOutput extends ViewWriter {
     Assert.assertEquals("Was expecting empty line instead of '" + line + "'", 0, line.length());
   }
 
-  @Override
-  protected void flush() throws IOException {
+  public int read() throws IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  public int getWidth() {
+    throw new UnsupportedOperationException();
+  }
+
+  public String getProperty(String name) {
+    throw new UnsupportedOperationException();
+  }
+
+  public CodeType decode(int code) {
+    throw new UnsupportedOperationException();
+  }
+
+  public void close() throws IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  public void flush() throws IOException {
     // Noop until we test it
   }
 
-  @Override
-  protected void write(CharSequence s) throws IOException {
+  public void cls() throws IOException {
+    line.setLength(0);
+    position = 0;
+  }
+
+  public void write(CharSequence s) throws IOException {
     for (int i = 0;i < s.length();i++) {
       char c = s.charAt(i);
       write(c);
     }
   }
 
-  @Override
-  protected void write(char c) throws IOException {
+  public void write(char c) throws IOException {
     if (c == '\r' || c == '\n') {
       throw new AssertionFailedError();
     }
@@ -80,12 +104,10 @@ public class TestClientOutput extends ViewWriter {
     }
   }
 
-  @Override
-  protected void write(Style style) throws IOException {
+  public void write(Style style) throws IOException {
   }
 
-  @Override
-  protected void writeDel() throws IOException {
+  public void writeDel() throws IOException {
     if (position > lastPosition) {
       line.deleteCharAt(--position);
     } else {
@@ -93,8 +115,7 @@ public class TestClientOutput extends ViewWriter {
     }
   }
 
-  @Override
-  protected boolean writeMoveRight(char c) {
+  public boolean moveRight(char c) {
     if (supportsCursorMove) {
       position++;
       return true;
@@ -103,15 +124,13 @@ public class TestClientOutput extends ViewWriter {
     }
   }
 
-  @Override
-  protected void writeCRLF() throws IOException {
+  public void writeCRLF() throws IOException {
     line.append("\r\n");
     position += 2;
     lastPosition = position;
   }
 
-  @Override
-  protected boolean writeMoveLeft() {
+  public boolean moveLeft() {
     if (supportsCursorMove) {
       if (position > lastPosition) {
         position--;

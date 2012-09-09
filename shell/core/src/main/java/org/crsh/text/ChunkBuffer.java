@@ -22,12 +22,11 @@ package org.crsh.text;
 import org.crsh.util.Safe;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class ChunkSequence implements Iterable<Chunk>, Serializable {
+public class ChunkBuffer implements Iterable<Chunk>, Serializable, ShellAppendable, ChunkWriter {
 
   /** . */
   private final LinkedList<Chunk> chunks;
@@ -38,17 +37,10 @@ public class ChunkSequence implements Iterable<Chunk>, Serializable {
   /** . */
   private Style currentStyle;
 
-  public ChunkSequence() {
+  public ChunkBuffer() {
     this.chunks = new LinkedList<Chunk>();
     this.previousStyle = null;
     this.currentStyle = null;
-  }
-
-  public ChunkSequence(CharSequence s) {
-    this();
-
-    //
-    append(s);
   }
 
   public Iterator<Chunk> iterator() {
@@ -56,21 +48,12 @@ public class ChunkSequence implements Iterable<Chunk>, Serializable {
   }
 
   @Deprecated
-  public void writeAnsiTo(PrintWriter writer) {
-    try {
-      writeAnsiTo((Appendable)writer);
-    }
-    catch (IOException ignore) {
-    }
-  }
-
-  @Deprecated
   public void writeAnsiTo(Appendable appendable) throws IOException {
     Iterator<Chunk> iterator = iterator();
     while (iterator.hasNext()) {
       Chunk chunk = iterator.next();
-      if (chunk instanceof TextChunk) {
-        TextChunk text = (TextChunk)chunk;
+      if (chunk instanceof Text) {
+        Text text = (Text)chunk;
         if (text.buffer.length() > 0) {
           appendable.append(text.buffer);
         }
@@ -80,18 +63,19 @@ public class ChunkSequence implements Iterable<Chunk>, Serializable {
     }
   }
 
-  public ChunkSequence append(Object... data) throws NullPointerException {
+  public ChunkBuffer append(Object... data) throws NullPointerException {
     for (Object o : data) {
       append(o);
     }
     return this;
   }
 
-  public void cls() {
-    chunks.addLast(new CLS());
+  public ChunkBuffer cls() {
+    chunks.addLast(CLS.INSTANCE);
+    return this;
   }
 
-  public ChunkSequence append(Style nextStyle) throws NullPointerException {
+  public ChunkBuffer append(Style nextStyle) throws NullPointerException {
     if (currentStyle != null) {
       if (currentStyle.equals(nextStyle)) {
         // Do nothing
@@ -104,37 +88,49 @@ public class ChunkSequence implements Iterable<Chunk>, Serializable {
     return this;
   }
 
-  public ChunkSequence append(CharSequence s) throws NullPointerException {
-    if (s.length() > 0) {
-      TextChunk chunk;
-
-      // See if we can merge it in the last chunk
-      if (chunks.size() > 0 && chunks.peekLast() instanceof TextChunk) {
-        if (Safe.equals(previousStyle, currentStyle)) {
-          chunk = (TextChunk)chunks.peekLast();
-        } else {
-          chunks.addLast(currentStyle);
-          chunks.addLast(chunk = new TextChunk());
-          previousStyle = currentStyle;
-        }
+  private Text getTextChunk() {
+    Text chunk;
+    // See if we can merge it in the last chunk
+    if (chunks.size() > 0 && chunks.peekLast() instanceof Text) {
+      if (Safe.equals(previousStyle, currentStyle)) {
+        chunk = (Text)chunks.peekLast();
       } else {
-        if (currentStyle != null) {
-          previousStyle = currentStyle;
-          chunks.addLast(currentStyle);
-          chunks.addLast(chunk = new TextChunk());
-        } else {
-          chunks.addLast(chunk = new TextChunk());
-        }
+        chunks.addLast(currentStyle);
+        chunks.addLast(chunk = new Text());
+        previousStyle = currentStyle;
       }
-      chunk.buffer.append(s);
+    } else {
+      if (currentStyle != null) {
+        previousStyle = currentStyle;
+        chunks.addLast(currentStyle);
+        chunks.addLast(chunk = new Text());
+      } else {
+        chunks.addLast(chunk = new Text());
+      }
+    }
+    return chunk;
+  }
+
+  public ChunkBuffer append(char c) {
+    getTextChunk().buffer.append(c);
+    return this;
+  }
+
+  public ChunkBuffer append(CharSequence s) {
+    return append(s, 0, s.length());
+  }
+
+  public ChunkBuffer append(CharSequence s, int start, int end) {
+    if (end > 0) {
+      getTextChunk().buffer.append(s, start, end);
     }
     return this;
   }
 
-  public ChunkSequence append(ChunkSequence s) throws NullPointerException {
+  public ChunkBuffer append(ChunkBuffer s) throws NullPointerException {
     for (Chunk chunk : s.chunks) {
-      if (chunk instanceof TextChunk) {
-        append(((TextChunk)chunk).buffer);
+      if (chunk instanceof Text) {
+        append(((Text)chunk).buffer);
       } else if (chunk instanceof Style) {
         append(((Style)chunk));
       } else {
@@ -145,24 +141,32 @@ public class ChunkSequence implements Iterable<Chunk>, Serializable {
     return this;
   }
 
-  public ChunkSequence append(Object o) throws NullPointerException {
+  public void write(Chunk chunk) throws NullPointerException {
+    if (chunk instanceof Style) {
+      append((Style)chunk);
+    } else if (chunk instanceof Text){
+      append(((Text)chunk).buffer);
+    } else {
+      cls();
+    }
+  }
+
+  public ChunkBuffer append(Object o) throws NullPointerException {
     if (o == null) {
       throw new NullPointerException("No null accepted");
     }
-    if (o instanceof ChunkSequence) {
-      append((ChunkSequence)o);
+    if (o instanceof ChunkBuffer) {
+      append((ChunkBuffer)o);
+    } else if (o instanceof Chunk) {
+      write((Chunk)o);
     } else {
-      if (o instanceof Style) {
-        append((Style)o);
+      CharSequence s;
+      if (o instanceof CharSequence) {
+        s = (CharSequence)o;
       } else {
-        CharSequence s;
-        if (o instanceof CharSequence) {
-          s = (CharSequence)o;
-        } else {
-          s = o.toString();
-        }
-        append(s);
+        s = o.toString();
       }
+      append(s);
     }
     return this;
   }
@@ -189,8 +193,8 @@ public class ChunkSequence implements Iterable<Chunk>, Serializable {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof ChunkSequence) {
-      ChunkSequence that = (ChunkSequence)obj;
+    if (obj instanceof ChunkBuffer) {
+      ChunkBuffer that = (ChunkBuffer)obj;
       return toString().equals(that.toString());
     }
     return false;
@@ -200,10 +204,16 @@ public class ChunkSequence implements Iterable<Chunk>, Serializable {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     for (Chunk chunk : chunks) {
-      if (chunk instanceof TextChunk) {
-        sb.append(((TextChunk)chunk).buffer);
+      if (chunk instanceof Text) {
+        sb.append(((Text)chunk).buffer);
       }
     }
     return sb.toString();
+  }
+
+  public void writeTo(ChunkWriter writer) throws IOException {
+    for (Chunk chunk : chunks) {
+      writer.write(chunk);
+    }
   }
 }

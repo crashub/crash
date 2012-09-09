@@ -21,10 +21,10 @@ package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
-import org.crsh.text.ChunkSequence;
+import org.crsh.shell.io.ShellFormatter;
+import org.crsh.text.ChunkBuffer;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
-import org.crsh.shell.io.ShellWriter;
 
 public class TableElementTestCase extends TestCase {
 
@@ -45,8 +45,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -86,8 +86,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -126,8 +126,8 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
 
@@ -163,8 +163,8 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
 
@@ -203,8 +203,8 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
 
@@ -243,8 +243,8 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
 
@@ -303,8 +303,8 @@ public class TableElementTestCase extends TestCase {
     node.addNode(tableElement);
     node.addNode(new LabelElement("bar"));
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     node.print(writer, new TestInvocationContext());
 
@@ -340,8 +340,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -372,8 +372,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -417,8 +417,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row3);
     tableElement.addRow(row4);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -460,8 +460,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row2);
     tableElement.addRow(row3);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -510,8 +510,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row4);
     tableElement.addRow(row5);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -572,8 +572,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row5);
     tableElement.addRow(row6);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -610,8 +610,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -643,8 +643,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -690,8 +690,8 @@ public class TableElementTestCase extends TestCase {
     tableElement.addRow(row1);
     tableElement.addRow(row2);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
 
@@ -720,8 +720,8 @@ public class TableElementTestCase extends TestCase {
 
     tableElement.addRow(row1);
 
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
 
     tableElement.print(writer, new TestInvocationContext());
     assertEquals(

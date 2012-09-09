@@ -16,42 +16,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.term.console;
 
-public class ConsoleTestCase extends AbstractConsoleTestCase {
+package org.crsh.processor.term;
 
-  @Override
-  protected boolean getSupportsCursorMove() {
-    return true;
-  }
+import org.crsh.shell.ShellProcessContext;
 
-  @Override
-  protected String getExpectedMoveLeftInsert() {
-    return "ba";
-  }
+public interface ShellRunnable {
 
-  @Override
-  protected String getExpectedMoveLeftDel() {
-    return "b";
-  }
+  void run(ShellProcessContext context) throws Exception;
 
-  @Override
-  protected String getExpectedMoveRightInsert() {
-    return "abdc";
-  }
-
-  @Override
-  protected String getExpectedMoveRightDel() {
-    return "ac";
-  }
-
-  @Override
-  protected String getExpectedMoveRightAtEndOfLine() {
-    return "ab";
-  }
-
-  @Override
-  protected String getExpectedMoveLeftAtBeginningOfLine() {
-    return "ba";
-  }
 }

@@ -22,7 +22,9 @@ package org.crsh.shell.impl.async;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.text.Chunk;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
 public class AsyncProcess implements ShellProcess {
@@ -70,6 +72,14 @@ public class AsyncProcess implements ShellProcess {
 
     public String readLine(String msg, boolean echo) {
       return caller.readLine(msg, echo);
+    }
+
+    public void write(Chunk chunk) throws NullPointerException, IOException {
+      caller.write(chunk);
+    }
+
+    public void flush() {
+      caller.flush();
     }
 
     public void end(ShellResponse response) {

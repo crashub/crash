@@ -130,4 +130,9 @@ public class UIBuilder extends BuilderSupport {
     }
     super.nodeCompleted(parent, child);
   }
+
+  @Override
+  public String toString() {
+    throw new UnsupportedOperationException();
+  }
 }

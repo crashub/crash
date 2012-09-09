@@ -26,6 +26,8 @@ import org.crsh.term.CodeType;
 import org.crsh.text.Style;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -153,10 +155,6 @@ public class TestTermIO implements TermIO {
     }
   }
 
-  public void close() {
-    
-  }
-
   public TestTermIO assertChar(char c) {
     return assertRead(String.valueOf(c));
   }
@@ -185,6 +183,14 @@ public class TestTermIO implements TermIO {
     return assertRead("crlf");
   }
 
+  public TestTermIO assertCLS() {
+    return assertRead("cls");
+  }
+
+  public TestTermIO assertFlush() {
+    return assertRead("flush");
+  }
+
   private TestTermIO assertRead(String expected) {
     if (expected.length() == 0) {
       Assert.fail();
@@ -208,11 +214,13 @@ public class TestTermIO implements TermIO {
     return this;
   }
 
-  public void flush() throws IOException {
-    // For now not tested
+
+  public TestTermIO assertEmpty() {
+    Assert.assertEquals(Collections.emptyList(), new ArrayList<String>(outter));
+    return this;
   }
 
-  public void write(String s) throws IOException {
+  public void write(CharSequence s) throws IOException {
     for (int i = 0;i < s.length();i++) {
       char c = s.charAt(i);
       write(c);
@@ -220,31 +228,39 @@ public class TestTermIO implements TermIO {
   }
 
   public void write(char c) throws IOException {
-    System.out.print("[" + c + "]");
     outter.add("[" + c + "]");
   }
 
+  public void flush() throws IOException {
+    outter.add("[flush]");
+  }
+
+  public void close() {
+    throw new UnsupportedOperationException();
+  }
+
   public void write(Style d) throws IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  public void cls() throws IOException {
+    outter.add("[cls]");
   }
 
   public void writeDel() throws IOException {
-    System.out.print("[del]");
     outter.add("[del]");
   }
 
   public void writeCRLF() throws IOException {
-    System.out.print("[crlf]");
     outter.add("[crlf]");
   }
 
   public boolean moveRight(char c) throws IOException {
-    System.out.print("[right]");
     outter.add("[right]");
     return true;
   }
 
   public boolean moveLeft() throws IOException {
-    System.out.print("[left]");
     outter.add("[left]");
     return true;
   }

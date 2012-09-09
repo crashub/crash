@@ -20,12 +20,10 @@
 package org.crsh.shell.ui;
 
 import org.crsh.command.InvocationContext;
-import org.crsh.shell.io.ShellWriter;
+import org.crsh.shell.io.ShellFormatter;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
 import org.crsh.text.Style;
-
-import java.io.IOException;
 
 public abstract class Element {
 
@@ -41,11 +39,11 @@ public abstract class Element {
   /** . */
   private Element parent;
 
-  public void print(ShellWriter writer, InvocationContext context) throws IOException {
+  public void print(ShellFormatter writer, InvocationContext context) {
     print(new UIWriterContext(context), writer);
   }
 
-  public void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  public void print(UIWriterContext ctx, ShellFormatter writer) {
 
     if (ctx == null) {
       throw new NullPointerException();
@@ -63,7 +61,7 @@ public abstract class Element {
     
   }
 
-  abstract void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException;
+  abstract void doPrint(UIWriterContext ctx, ShellFormatter writer);
   
   abstract int width();
 

@@ -20,7 +20,7 @@
 package org.crsh.processor.term;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.text.ChunkSequence;
+import org.crsh.text.Chunk;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
 
@@ -110,8 +110,7 @@ public class SyncTerm implements Term {
     }
   }
 
-  public void write(ChunkSequence reader) throws IOException {
-  
+  public void write(Chunk chunk) throws NullPointerException, IOException {
   }
 
   public Appendable getInsertBuffer() {
@@ -123,7 +122,9 @@ public class SyncTerm implements Term {
   }
 
   public void addToHistory(CharSequence line) {
-  
+  }
+
+  public void flush() {
   }
 
   public void close() {

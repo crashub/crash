@@ -18,6 +18,8 @@
  */
 package org.crsh.jcr;
 
+import org.crsh.shell.ShellResponse;
+
 import javax.jcr.Node;
 import javax.jcr.Session;
 import java.util.Iterator;
@@ -96,19 +98,11 @@ public class ShellTestCase extends AbstractJCRCommandTestCase {
 
   public void testDistribution() throws Exception {
     assertLogin();
-    Iterator<?> produced = assertOk("produce / | node set foo foo_value + node set bar bar_value + consume").getProduced().iterator();
+    Iterator<?> produced = assertResponse(ShellResponse.Ok.class, "produce / | node set foo foo_value + node set bar bar_value + consume").getProduced().iterator();
     assertTrue(produced.hasNext());
     assertEquals("/", ((Node)produced.next()).getPath());
     assertFalse(produced.hasNext());
     assertEquals("foo_value", groovyShell.evaluate("return session.rootNode.getProperty('foo').string;"));
     assertEquals("bar_value", groovyShell.evaluate("return session.rootNode.getProperty('bar').string;"));
-  }
-
-  public void testAggregateContent() throws Exception {
-    assertOk("foobar", "echo foo + echo bar");
-  }
-
-  public void testKeepLastPipeContent() throws Exception {
-    assertOk("bar", "echo foo | echo bar");
   }
 }

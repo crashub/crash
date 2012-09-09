@@ -30,4 +30,13 @@ public class CommandExecutionTestCase extends AbstractCommandTestCase {
     assertUnknownCommand("invalid");
 //    assertEquals(MultipleCompilationErrorsException.class, t.getClass());
   }
+
+  public void testAggregateContent() throws Exception {
+    assertEquals("foobar", assertOk("echo foo + echo bar"));
+  }
+
+  public void testKeepLastPipeContent() throws Exception {
+    // Should it be bar instance of foobar ???
+    assertEquals("foobar", assertOk("echo foo | echo bar"));
+  }
 }

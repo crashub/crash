@@ -18,9 +18,12 @@
  */
 package org.crsh;
 
+import junit.framework.AssertionFailedError;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+
+import java.io.IOException;
 
 public class BaseProcess implements ShellProcess {
 
@@ -34,7 +37,7 @@ public class BaseProcess implements ShellProcess {
     this.request = request;
   }
 
-  public void process(String request, ShellProcessContext processContext) {
+  public void process(String request, ShellProcessContext processContext) throws IOException {
     this.processContext = processContext;
     try {
       ShellResponse resp = execute(request);
@@ -54,7 +57,14 @@ public class BaseProcess implements ShellProcess {
 
   public final void execute(ShellProcessContext processContext) {
     this.processContext = processContext;
-    this.process(request, processContext);
+    try {
+      process(request, processContext);
+    }
+    catch (IOException e) {
+      AssertionFailedError afe = new AssertionFailedError();
+      afe.initCause(e);
+      throw afe;
+    }
   }
 
   public void cancel() {

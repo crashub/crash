@@ -21,8 +21,8 @@ package org.crsh.shell.ui;
 
 import junit.framework.TestCase;
 import org.crsh.shell.TestInvocationContext;
-import org.crsh.text.ChunkSequence;
-import org.crsh.shell.io.ShellWriter;
+import org.crsh.shell.io.ShellFormatter;
+import org.crsh.text.ChunkBuffer;
 
 import java.io.IOException;
 
@@ -32,8 +32,8 @@ public class TreeElementTestCase extends TestCase {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
     elt.addNode(new LabelElement("2\n"));
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
     elt.print(writer, new TestInvocationContext());
     assertEquals(
         "+-1_" +
@@ -45,8 +45,8 @@ public class TreeElementTestCase extends TestCase {
   public void testFoo() throws Exception {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("1\n1"));
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
     elt.print(writer, new TestInvocationContext());
     assertEquals(
         "+-1_" +
@@ -58,8 +58,8 @@ public class TreeElementTestCase extends TestCase {
     TreeElement elt = new TreeElement(new LabelElement("foo"));
     elt.addNode(new TreeElement(new LabelElement("bar")).addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
     elt.addNode(new TreeElement().addNode(new LabelElement("3")).addNode(new LabelElement("4")));
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
     elt.print(writer, new TestInvocationContext());
     assertEquals(
         "foo_" +
@@ -77,8 +77,8 @@ public class TreeElementTestCase extends TestCase {
     TreeElement elt = new TreeElement();
     elt.addNode(new LabelElement("foo value is very very very too large for the console"));
     elt.addNode(new LabelElement("bar\n"));
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
     elt.print(writer, new TestInvocationContext());
 
     assertEquals(

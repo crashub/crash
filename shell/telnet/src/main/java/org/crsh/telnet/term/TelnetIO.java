@@ -110,8 +110,8 @@ public class TelnetIO implements TermIO {
     termIO.flush();
   }
 
-  public void write(String s) throws IOException {
-    termIO.write(s);
+  public void write(CharSequence s) throws IOException {
+    termIO.write(s.toString());
   }
 
   public void write(Style style) throws IOException {
@@ -167,5 +167,10 @@ public class TelnetIO implements TermIO {
   public boolean moveLeft() throws IOException {
     termIO.moveLeft(1);
     return true;
+  }
+
+  public void cls() throws IOException {
+    termIO.eraseScreen();
+    termIO.setCursor(0, 0);
   }
 }

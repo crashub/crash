@@ -19,14 +19,28 @@
 
 package org.crsh.term.console;
 
-import java.util.NoSuchElementException;
+import junit.framework.TestCase;
 
-public abstract class ConsoleReader {
+import java.io.IOException;
 
-  public abstract int getSize();
+public class TermIOWriterTestCase extends TestCase {
 
-  public abstract boolean hasNext();
+  public void testCRLF() throws IOException {
 
-  public abstract CharSequence next() throws NoSuchElementException;
+    for (String test : new String[]{"a\n","a\r","a\r\n"}) {
+      SimpleTermIO output = new SimpleTermIO(false);
+      TermIOWriter writer = new TermIOWriter(output);
+      writer.write(test);
+      output.assertChars("a\r\n");
+      output.assertEmpty();
+    }
 
+    for (String test : new String[]{"a\n\n","a\n\r","a\r\r"}) {
+      SimpleTermIO output = new SimpleTermIO(false);
+      TermIOWriter writer = new TermIOWriter(output);
+      writer.write(test);
+      output.assertChars("a\r\n\r\n");
+      output.assertEmpty();
+    }
+  }
 }

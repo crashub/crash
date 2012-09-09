@@ -30,10 +30,43 @@ public class AppendableWriter extends Writer {
   private final Appendable out;
 
   /** . */
+  private final Flushable flushable;
+
+  /** . */
+  private final Closeable closeable;
+
+  /** . */
   private boolean closed;
 
-  public AppendableWriter(Appendable out) {
+  /** . */
+  private boolean empty;
+
+  public AppendableWriter(Appendable out) throws NullPointerException {
+    this(out, null, null);
+  }
+
+  public AppendableWriter(Appendable out, Flushable flushable) throws NullPointerException {
+    this(out, flushable, null);
+  }
+
+  public AppendableWriter(Appendable out, Closeable closeable) throws NullPointerException {
+    this(out, null, closeable);
+  }
+
+  public AppendableWriter(Appendable out, Flushable flushable, Closeable closeable) throws NullPointerException {
+    if (out == null) {
+      throw new NullPointerException("No null appendable expected");
+    }
+
+    //
     this.out = out;
+    this.empty = true;
+    this.flushable = flushable;
+    this.closeable = closeable;
+  }
+
+  public boolean isEmpty() {
+    return empty;
   }
 
   @Override
@@ -41,9 +74,12 @@ public class AppendableWriter extends Writer {
     if (closed) {
       throw new IOException("Already closed");
     }
-    int end = off + len;
-    while (off < end) {
-      out.append(cbuf[off++]);
+    if (len > 0) {
+      empty = false;
+      int end = off + len;
+      while (off < end) {
+        out.append(cbuf[off++]);
+      }
     }
   }
 
@@ -52,8 +88,8 @@ public class AppendableWriter extends Writer {
     if (closed) {
       throw new IOException("Already closed");
     }
-    if (out instanceof Flushable) {
-      ((Flushable)out).flush();
+    if (flushable != null) {
+      flushable.flush();
     }
   }
 
@@ -61,8 +97,8 @@ public class AppendableWriter extends Writer {
   public void close() throws IOException {
     if (!closed) {
       closed = true;
-      if (out instanceof Closeable) {
-        ((Closeable)out).close();
+      if (closeable != null) {
+        closeable.close();
       }
     }
   }

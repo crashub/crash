@@ -19,16 +19,16 @@
 
 package org.crsh.text;
 
-public class TextChunk extends Chunk {
+public class Text extends Chunk {
 
   /** . */
   final StringBuilder buffer;
 
-  public TextChunk() {
+  public Text() {
     this.buffer = new StringBuilder();
   }
 
-  public TextChunk(CharSequence s) {
+  public Text(CharSequence s) {
     this.buffer = new StringBuilder().append(s);
   }
 
@@ -38,11 +38,11 @@ public class TextChunk extends Chunk {
 
   @Override
   public boolean equals(Object obj) {
-    return obj == this || obj instanceof TextChunk && buffer.toString().equals(((TextChunk)obj).buffer.toString());
+    return obj == this || obj instanceof Text && buffer.toString().equals(((Text)obj).buffer.toString());
   }
 
   @Override
   public String toString() {
-    return "TextChunk[" + buffer + "]";
+    return "Text[" + buffer + "]";
   }
 }

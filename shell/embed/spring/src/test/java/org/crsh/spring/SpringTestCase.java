@@ -25,6 +25,7 @@ import org.crsh.BaseProcessContext;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.ShellProcess;
+import org.crsh.shell.ShellResponse;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.io.UrlResource;
 
@@ -50,8 +51,9 @@ public class SpringTestCase extends TestCase {
     assertNotNull(shell);
     ShellProcess process = shell.createProcess("foo_cmd");
     assertNotNull(process);
-    BaseProcessContext pc = BaseProcessContext.create(process);
-    String r = pc.execute().getResponse().getReader().toString();
+    BaseProcessContext pc = BaseProcessContext.create(process).execute();
+    assertTrue(pc.getResponse() instanceof ShellResponse.Ok);
+    String r = pc.getOutput();
     assertEquals("bar", r);
   }
 }

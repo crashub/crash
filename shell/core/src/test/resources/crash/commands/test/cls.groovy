@@ -10,6 +10,5 @@ public class cls extends org.crsh.command.CRaSHCommand {
   @Usage("clear screen")
   public void main() {
     out.cls();
-    out << "foo"
   }
 }

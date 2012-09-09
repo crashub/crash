@@ -19,10 +19,8 @@
 
 package org.crsh.shell.ui;
 
-import org.crsh.shell.io.ShellWriter;
+import org.crsh.shell.io.ShellFormatter;
 import org.crsh.text.Style;
-
-import java.io.IOException;
 
 public class FormattingElement extends Element {
 
@@ -39,7 +37,7 @@ public class FormattingElement extends Element {
   }
   
   @Override
-  void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  void doPrint(UIWriterContext ctx, ShellFormatter writer) {
     writer.append(style);
   }
 

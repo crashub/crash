@@ -24,6 +24,7 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.term.TermEvent;
+import org.crsh.text.Text;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -84,19 +85,21 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final CyclicBarrier syncA = new CyclicBarrier(2);
     final CountDownLatch syncB = new CountDownLatch(1);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new Callable<ShellResponse>() {
-      public ShellResponse call() throws Exception {
+    shell.publish(new ShellRunnable() {
+      public void run(ShellProcessContext context) throws Exception {
         syncA.await();
         syncB.await();
-        return ShellResponse.display("foo");
+        context.write(new Text("foo"));
+        context.end(ShellResponse.ok());
       }
     });
     syncA.await();
     term.publish(TermEvent.readLine("bar"));
     syncB.countDown();
-    shell.publish(new Callable<ShellResponse>() {
-      public ShellResponse call() throws Exception {
-        return ShellResponse.display("bar");
+    shell.publish(new ShellRunnable() {
+      public void run(ShellProcessContext context) throws Exception {
+        context.write(new Text("bar"));
+        context.end(ShellResponse.ok());
       }
     });
     term.publish(TermEvent.close());
@@ -131,9 +134,10 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     syncA.await();
     term.publish(TermEvent.brk());
     term.publish(TermEvent.readLine("bar"));
-    shell.publish(new Callable<ShellResponse>() {
-      public ShellResponse call() throws Exception {
-        return ShellResponse.display("bar");
+    shell.publish(new ShellRunnable() {
+      public void run(ShellProcessContext context) throws Exception {
+        context.write(new Text("bar"));
+        context.end(ShellResponse.ok());
       }
     });
     term.publish(TermEvent.close());
@@ -143,9 +147,9 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
   public void testProcessClose() throws Exception {
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new Callable<ShellResponse>() {
-      public ShellResponse call() throws Exception {
-        return ShellResponse.close();
+    shell.publish(new ShellRunnable() {
+      public void run(ShellProcessContext context) throws Exception {
+        context.end(ShellResponse.close());
       }
     });
     assertJoin(thread);
@@ -158,8 +162,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellProcess() {
-      public void execute(ShellProcessContext processContext) {
+    shell.publish(new ShellRunnable() {
+      public void run(ShellProcessContext context) throws Exception {
         try {
           syncA.await();
           syncB.await();
@@ -167,7 +171,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        String s = processContext.readLine("hello", true);
+        String s = context.readLine("hello", true);
         if (s == null) {
           s = "cancelled";
         }
@@ -178,10 +182,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        processContext.end(ShellResponse.display("foo"));
-      }
-
-      public void cancel() {
+        context.write(new Text("foo"));
+        context.end(ShellResponse.ok());
       }
     });
     syncA.await();
@@ -200,8 +202,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellProcess() {
-      public void execute(ShellProcessContext processContext) {
+    shell.publish(new ShellRunnable() {
+      public void run(ShellProcessContext context) throws Exception {
         try {
           syncA.await();
           syncB.await();
@@ -209,7 +211,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        String s = processContext.readLine("hello", true);
+        String s = context.readLine("hello", true);
         line.set(s);
         try {
           syncC.await();
@@ -217,10 +219,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        processContext.end(ShellResponse.close());
-      }
-
-      public void cancel() {
+        context.end(ShellResponse.close());
       }
     });
     syncA.await();
@@ -237,15 +236,15 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellProcess() {
-      public void execute(ShellProcessContext processContext) {
+    shell.publish(new ShellRunnable() {
+      public void run(ShellProcessContext context) throws Exception {
         try {
           syncA.await();
         }
         catch (Exception e) {
           e.printStackTrace();
         }
-        String s = processContext.readLine("hello", true);
+        String s = context.readLine("hello", true);
         if (s == null) {
           s = "cancelled";
         }
@@ -256,9 +255,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        processContext.end(ShellResponse.display("foo"));
-      }
-      public void cancel() {
+        context.write(new Text("foo"));
+        context.end(ShellResponse.ok());
       }
     });
     syncA.await();
@@ -282,15 +280,15 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellProcess() {
-      public void execute(ShellProcessContext processContext) {
+    shell.publish(new ShellRunnable() {
+      public void run(ShellProcessContext context) throws Exception {
         try {
           syncA.await();
         }
         catch (Exception e) {
           e.printStackTrace();
         }
-        String s = processContext.readLine("hello", true);
+        String s = context.readLine("hello", true);
         if (s == null) {
           s = "cancelled";
         }
@@ -301,9 +299,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        processContext.end(ShellResponse.display("foo"));
-      }
-      public void cancel() {
+        context.write(new Text("foo"));
+        context.end(ShellResponse.ok());
       }
     });
     syncA.await();

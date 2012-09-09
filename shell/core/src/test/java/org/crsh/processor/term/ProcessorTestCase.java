@@ -21,15 +21,18 @@ package org.crsh.processor.term;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.crsh.BaseProcess;
 import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
-import org.crsh.processor.term.Processor;
 import org.crsh.shell.Shell;
-import org.crsh.term.BaseTerm;
+import org.crsh.shell.ShellProcessContext;
+import org.crsh.shell.ShellResponse;
+import org.crsh.term.console.ConsoleTerm;
 import org.crsh.term.spi.TestTermIO;
+import org.crsh.text.CLS;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -43,11 +46,12 @@ public class ProcessorTestCase extends TestCase {
 
     //
     controller.connector.append("abc\r\n");
-    controller.connector.assertChars("abc");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("abc");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertChars("b").assertFlush();
+    controller.connector.assertChars("c").assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("abc").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -61,12 +65,13 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.append("abc");
     controller.connector.appendDel();
     controller.connector.append("\r\n");
-    controller.connector.assertChars("abc");
-    controller.connector.assertDel();
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("ab");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertChars("b").assertFlush();
+    controller.connector.assertChars("c").assertFlush();
+    controller.connector.assertDel().assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("ab").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -79,17 +84,19 @@ public class ProcessorTestCase extends TestCase {
     //
     controller.connector.append("abc");
     controller.connector.appendBreak();
-    controller.connector.assertChars("abc");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertChars("b").assertFlush();
+    controller.connector.assertChars("c").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.connector.append("def\r\n");
-    controller.connector.assertChars("def");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("def");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("d").assertFlush();
+    controller.connector.assertChars("e").assertFlush();
+    controller.connector.assertChars("f").assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("def").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -103,14 +110,13 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.append("ab");
     controller.connector.appendMoveLeft();
     controller.connector.append("c\r\n");
-    controller.connector.assertChars("ab");
-    controller.connector.assertMoveLeft();
-    controller.connector.assertChars("cb");
-    controller.connector.assertMoveLeft();
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("acb");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertChars("b").assertFlush();
+    controller.connector.assertMoveLeft().assertFlush();
+    controller.connector.assertChars("cb").assertMoveLeft().assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("acb").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -124,11 +130,10 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.append("a");
     controller.connector.appendMoveRight();
     controller.connector.append("\r\n");
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -142,37 +147,40 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.appendMoveLeft();
     controller.connector.append("a");
     controller.connector.append("\r\n");
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
   }
 
-  public void testMoveUp() throws Exception {
+  public void testMove() throws Exception {
     Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
     controller.assertStart();
 
     //
     controller.connector.append("a");
     controller.connector.append("\r\n");
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.connector.appendMoveUp();
-    controller.connector.assertChars("a");
+    controller.connector.assertChars("a").assertFlush();
     controller.connector.append("\r\n");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
+
+    //
+    controller.connector.appendMoveUp();
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.appendMoveDown();
+    controller.connector.assertDel().assertFlush();
 
     //
     controller.assertStop();
@@ -185,21 +193,19 @@ public class ProcessorTestCase extends TestCase {
     //
     controller.connector.append("a");
     controller.connector.append("\r\n");
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.connector.appendMoveUp();
     controller.connector.appendMoveUp();
-    controller.connector.assertChars("a");
+    controller.connector.assertChars("a").assertFlush();
     controller.connector.append("\r\n");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -212,18 +218,17 @@ public class ProcessorTestCase extends TestCase {
     //
     controller.connector.append("a");
     controller.connector.append("\r\n");
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("a");
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.connector.appendMoveDown();
     controller.connector.append("\r\n");
-    controller.connector.assertCRLF();
-    controller.connector.assertCRLF();
-    controller.connector.assertChars("% ");
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -241,23 +246,68 @@ public class ProcessorTestCase extends TestCase {
     //
     controller.connector.append("ab");
     controller.connector.appendTab();
-    controller.connector.assertChars("abba");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertChars("b").assertFlush();
+    controller.connector.assertChars("ba").assertFlush();
   }
 
-  public void testCompletion2() throws Exception {
-    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO));
-    controller.assertStart();
+  public void testCLS() throws Exception {
+    Controller controller = create(new BaseShell(new BaseProcessFactory() {
+      @Override
+      public BaseProcess create(String request) {
+        return new BaseProcess(request) {
+          @Override
+          public void process(String request, ShellProcessContext processContext) throws IOException {
+            if ("bye".equals(request)) {
+              processContext.end(ShellResponse.close());
+            } else {
+              processContext.write(CLS.INSTANCE);
+              processContext.end(ShellResponse.ok());
+            }
+          }
+        };
+      }
+    }));
 
     //
-//    controller.connector.append("ab");
-//    controller.connector.moveLeft();
-//    controller.connector.appendTab();
-//    controller.connector.assertChars("ab");
-//    controller.connector.assertMoveLeft();
-//    controller.connector.assertMoveLeft();
+    controller.assertStart();
+    controller.connector.append("\r\n");
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertCLS().assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
-//    controller.connector.assertChars("d");
-//    controller.connector.assertMoveLeft();
+    //
+    controller.assertStop();
+  }
+
+  public void testFlush() throws Exception {
+    Controller controller = create(new BaseShell(new BaseProcessFactory() {
+      @Override
+      public BaseProcess create(String request) {
+        return new BaseProcess(request) {
+          @Override
+          public void process(String request, ShellProcessContext processContext) throws IOException {
+            if ("bye".equals(request)) {
+              processContext.end(ShellResponse.close());
+            } else {
+              processContext.flush();
+              processContext.end(ShellResponse.ok());
+            }
+          }
+        };
+      }
+    }));
+
+    //
+    controller.assertStart();
+    controller.connector.append("\r\n");
+    controller.connector.assertCRLF().assertFlush();
+    controller.connector.assertFlush(); // The good one
+    controller.connector.assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
+
+    //
+    controller.assertStop();
   }
 
   private Controller create(Shell shell) throws IOException {
@@ -290,7 +340,7 @@ public class ProcessorTestCase extends TestCase {
       this.stopSync = new CountDownLatch(1);
       this.thread = new Thread(this);
       this.connector = connector;
-      this.processor = new Processor(new BaseTerm(connector), shell);
+      this.processor = new Processor(new ConsoleTerm(connector), shell);
     }
 
     public void assertStart() {
@@ -312,6 +362,7 @@ public class ProcessorTestCase extends TestCase {
       //
       connector.assertCRLF();
       connector.assertChars("% ");
+      connector.assertFlush();
     }
 
     public void run() {
@@ -331,11 +382,12 @@ public class ProcessorTestCase extends TestCase {
 
       //
       connector.append("bye\r\n");
-      connector.assertChars("bye");
-      connector.assertCRLF();
+      connector.assertChars("b").assertFlush();
+      connector.assertChars("y").assertFlush();
+      connector.assertChars("e").assertFlush();
+      connector.assertCRLF().assertFlush();
 
-      // julien : to put back later
-/*
+      //
       try {
         assertTrue(stopSync.await(4, TimeUnit.SECONDS));
       }
@@ -346,8 +398,10 @@ public class ProcessorTestCase extends TestCase {
       }
 
       //
+      connector.assertEmpty();
+
+      //
       assertFalse(running);
-*/
     }
   }
 }

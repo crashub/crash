@@ -71,7 +71,7 @@ public interface TermIO extends Closeable {
    * @param s the string to write
    * @throws IOException any io exception
    */
-  void write(String s) throws IOException;
+  void write(CharSequence s) throws IOException;
 
   /**
    * Write a char.
@@ -102,6 +102,13 @@ public interface TermIO extends Closeable {
    * @throws IOException any io exception
    */
   void writeCRLF() throws IOException;
+
+  /**
+   * Clear screen.
+   *
+   * @throws IOException any io exception
+   */
+  void cls() throws IOException;
 
   /**
    * Move the cursor right.

@@ -24,18 +24,19 @@ import org.crsh.shell.ui.Element;
 import org.crsh.text.ShellPrintWriter;
 import org.crsh.shell.ui.UIBuilder;
 
-import java.io.IOException;
+import java.io.Closeable;
+import java.io.Flushable;
 
 public class ShellPrinter extends ShellPrintWriter {
 
   /** . */
-  private final ShellWriter out;
+  private final ShellFormatter out;
 
   /** . */
   private final InvocationContext context;
 
-  public ShellPrinter(ShellWriter out, InvocationContext context) {
-    super(out);
+  public ShellPrinter(ShellFormatter out, Flushable flushable, Closeable closeable, InvocationContext context) {
+    super(out, flushable, closeable);
 
     //
     this.out = out;
@@ -55,11 +56,7 @@ public class ShellPrinter extends ShellPrintWriter {
         print(element);
       }
     } else if (obj instanceof Element) {
-      try {
-        ((Element)obj).print(out, context);
-      } catch (IOException e) {
-        setError();
-      }
+      ((Element)obj).print(out, context);
     } else {
       super.print(obj);
     }

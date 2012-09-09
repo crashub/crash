@@ -19,13 +19,16 @@
 
 package org.crsh.shell.io;
 
-import org.crsh.text.ChunkSequence;
+import org.crsh.text.Chunk;
 import org.crsh.text.ShellAppendable;
 import org.crsh.text.Style;
 
 import java.io.IOException;
 
-public class ShellWriter implements ShellAppendable {
+/**
+ * Format shell output.
+ */
+public class ShellFormatter implements ShellAppendable {
 
   /** . */
   private static final int NOT_PADDED = 0;
@@ -37,7 +40,7 @@ public class ShellWriter implements ShellAppendable {
   private static final int PADDED = 2;
 
   /** . */
-  private final ChunkSequence reader;
+  private final ShellAppendable reader;
 
   /** . */
   private final String lineFeed;
@@ -45,42 +48,42 @@ public class ShellWriter implements ShellAppendable {
   /** . */
   private int status;
 
-  public ShellWriter(ChunkSequence reader) {
+  public ShellFormatter(ShellAppendable reader) {
     this(reader, "\r\n");
   }
 
-  public ShellWriter(ChunkSequence reader, String lineFeed) {
+  public ShellFormatter(ShellAppendable reader, String lineFeed) {
     this.reader = reader;
     this.lineFeed = lineFeed;
     this.status = NOT_PADDED;
   }
 
-  public Appendable append(char c) throws IOException {
+  public ShellFormatter append(char c) {
     return append(null, c);
   }
 
-  public ShellWriter append(ShellWriterContext ctx, final char c) throws IOException {
+  public ShellFormatter append(ShellWriterContext ctx, final char c) {
     return append(ctx, Character.toString(c));
   }
 
-  public ShellWriter append(final Style d) {
-    reader.append(d);
+  public ShellFormatter append(final Style style) {
+    reader.append(style);
     return this;
   }
 
-  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+  public ShellFormatter append(CharSequence csq, int start, int end) {
     return append(null, csq, start, end);
   }
 
-  public Appendable append(CharSequence csq) throws IOException {
+  public ShellFormatter append(CharSequence csq) {
     return append(null, csq);
   }
 
-  public ShellWriter append(ShellWriterContext ctx, CharSequence csq) throws IOException {
+  public ShellFormatter append(ShellWriterContext ctx, CharSequence csq) {
     return append(ctx, csq, 0, csq.length());
   }
 
-  public ShellWriter append(ShellWriterContext ctx, CharSequence csq, int start, int end) throws IOException {
+  public ShellFormatter append(ShellWriterContext ctx, CharSequence csq, int start, int end) {
     int previous = start;
     int to = start + end;
     for (int i = start;i < to;i++) {
@@ -105,7 +108,7 @@ public class ShellWriter implements ShellAppendable {
     return this;
   }
 
-  private void realAppend(ShellWriterContext ctx, CharSequence csq, int off, int end) throws IOException {
+  private void realAppend(ShellWriterContext ctx, CharSequence csq, int off, int end) {
     if (end > off) {
 
       //
@@ -144,7 +147,7 @@ public class ShellWriter implements ShellAppendable {
     }
   }
 
-  private void writeLF(ShellWriterContext ctx) throws IOException {
+  private void writeLF(ShellWriterContext ctx) {
     switch (status) {
       case PADDING:
         throw new IllegalStateException();
@@ -161,11 +164,7 @@ public class ShellWriter implements ShellAppendable {
     }
   }
 
-  public boolean isEmpty() {
-    return reader.isEmpty();
-  }
-
-  public ShellWriter cls() {
+  public ShellFormatter cls() {
     reader.cls();
     return this;
   }

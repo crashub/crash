@@ -126,23 +126,11 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
     return error.getThrowable();
   }
 
-  protected final ShellResponse.Display assertDisplay(String expected, String s) {
-    ShellResponse.Ok ok = assertOk(s);
-    assertTrue("Was not expecting response to be " + ok, ok instanceof ShellResponse.Display);
-    assertEquals(expected, ok.getReader().toString());
-    return (ShellResponse.Display)ok;
-  }
-
-  protected final ShellResponse.Ok assertOk(String expected, String s) {
-    ShellResponse.Ok ok = assertOk(s);
-    assertEquals(expected, ok.getReader().toString());
-    return ok;
-  }
-
-  protected final ShellResponse.Ok assertOk(String s) {
-    ShellResponse resp = evaluate(s);
+  protected final String assertOk(String s) {
+    BaseProcessContext ctx = execute(s);
+    ShellResponse resp = ctx.getResponse();
     if (resp instanceof ShellResponse.Ok) {
-      return (ShellResponse.Ok)resp;
+      return ctx.getOutput();
     }
     else if (resp instanceof ShellResponse.Error) {
       ShellResponse.Error err = (ShellResponse.Error)resp;
@@ -152,6 +140,23 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
     }
     else {
       throw new AssertionFailedError("Was expecting an ok response instead of " + resp);
+    }
+  }
+
+  protected final <R extends ShellResponse> R assertResponse(Class<R> expectedResponse, String s) {
+    BaseProcessContext ctx = execute(s);
+    ShellResponse resp = ctx.getResponse();
+    if (expectedResponse.isInstance(resp)) {
+      return expectedResponse.cast(resp);
+    }
+    else if (resp instanceof ShellResponse.Error) {
+      ShellResponse.Error err = (ShellResponse.Error)resp;
+      AssertionFailedError afe = new AssertionFailedError();
+      afe.initCause(err.getThrowable());
+      throw afe;
+    }
+    else {
+      throw new AssertionFailedError("Was expecting an " + expectedResponse.getSimpleName() + " response instead of " + resp);
     }
   }
 }

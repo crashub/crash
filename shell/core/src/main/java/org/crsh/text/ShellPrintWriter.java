@@ -21,6 +21,8 @@ package org.crsh.text;
 
 import org.crsh.util.AppendableWriter;
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.io.PrintWriter;
 
 public class ShellPrintWriter extends PrintWriter {
@@ -35,8 +37,15 @@ public class ShellPrintWriter extends PrintWriter {
     this.out = out;
   }
 
+  public ShellPrintWriter(ShellAppendable out, Flushable flushable, Closeable closeable) {
+    super(new AppendableWriter(out, flushable, closeable));
+
+    //
+    this.out = out;
+  }
+
   public final boolean isEmpty() {
-    return out.isEmpty();
+    return ((AppendableWriter)super.out).isEmpty();
   }
 
   public final void print(Object obj, Color foreground) {

@@ -19,7 +19,7 @@
 
 package org.crsh.shell.ui;
 
-import org.crsh.shell.io.ShellWriter;
+import org.crsh.shell.io.ShellFormatter;
 import org.crsh.text.Style;
 
 import java.io.IOException;
@@ -44,12 +44,12 @@ public class RowElement extends Element {
   }
 
   @Override
-  public void print(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  public void print(UIWriterContext ctx, ShellFormatter writer) {
     doPrint(ctx, writer);
   }
 
   @Override
-  void doPrint(UIWriterContext ctx, ShellWriter writer) throws IOException {
+  void doPrint(UIWriterContext ctx, ShellFormatter writer) {
 
     int i = 0;
     TableElement table = (TableElement) getParent();

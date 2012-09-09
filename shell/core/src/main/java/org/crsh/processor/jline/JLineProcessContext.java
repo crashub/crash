@@ -21,6 +21,9 @@ package org.crsh.processor.jline;
 
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.text.Chunk;
+import org.crsh.text.Style;
+import org.crsh.text.Text;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -63,6 +66,31 @@ class JLineProcessContext implements ShellProcessContext {
     catch (IOException e) {
       return null;
     }
+  }
+
+  public void write(Chunk chunk) throws NullPointerException {
+    if (chunk instanceof Text) {
+      Text textChunk = (Text)chunk;
+      processor.writer.append(textChunk.getText());
+    } else if (chunk instanceof Style) {
+      try {
+        ((Style)chunk).writeAnsiTo(processor.writer);
+      }
+      catch (IOException ignore) {
+      }
+    } else {
+      // Should do only if ANSI is supported ?
+      processor.writer.print("\033[");
+      processor.writer.print("2J");
+      processor.writer.flush();
+      processor.writer.print("\033[");
+      processor.writer.print("1;1H");
+      processor.writer.flush();
+    }
+  }
+
+  public void flush() {
+    processor.writer.flush();
   }
 
   public void end(ShellResponse response) {

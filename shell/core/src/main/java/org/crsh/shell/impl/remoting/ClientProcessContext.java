@@ -22,6 +22,7 @@ package org.crsh.shell.impl.remoting;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.text.Chunk;
 
 import java.io.IOException;
 
@@ -56,6 +57,27 @@ class ClientProcessContext implements ShellProcessContext {
     }
     catch (Exception e) {
       return null;
+    }
+  }
+
+  public void write(Chunk chunk) throws NullPointerException {
+    try {
+      client.out.writeObject(ServerMessage.CHUNK);
+      client.out.writeObject(chunk);
+      client.out.flush();
+    }
+    catch (IOException ignore) {
+      //
+    }
+  }
+
+  public void flush() {
+    try {
+      client.out.writeObject(ServerMessage.FLUSH);
+      client.out.flush();
+    }
+    catch (IOException ignore) {
+      //
     }
   }
 

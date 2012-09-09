@@ -18,7 +18,11 @@
  */
 package org.crsh;
 
+import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.text.Text;
+
+import java.io.IOException;
 
 public abstract class BaseProcessFactory {
 
@@ -34,8 +38,13 @@ public abstract class BaseProcessFactory {
     public BaseProcess create(String request) {
       return new BaseProcess(request) {
         @Override
-        protected ShellResponse execute(String request) {
-          return ShellResponse.display(request);
+        public void process(String request, ShellProcessContext processContext) throws IOException {
+          if ("bye".equals(request)) {
+            processContext.end(ShellResponse.close());
+          } else {
+            processContext.write(new Text(request));
+            processContext.end(ShellResponse.ok());
+          }
         }
       };
     }

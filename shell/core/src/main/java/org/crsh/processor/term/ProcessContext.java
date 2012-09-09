@@ -22,8 +22,9 @@ package org.crsh.processor.term;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.ChunkSequence;
+import org.crsh.text.Chunk;
 import org.crsh.term.TermEvent;
+import org.crsh.text.Text;
 
 import java.io.IOException;
 
@@ -54,7 +55,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
 
   public String readLine(String msg, boolean echo) {
     try {
-      processor.term.write(new ChunkSequence(msg));
+      processor.term.write(new Text(msg));
     }
     catch (IOException e) {
       return null;
@@ -86,7 +87,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
         try {
           processor.term.setEcho(echo);
           processor.readTerm();
-          processor.term.write(new ChunkSequence("\r\n"));
+          processor.term.write(new Text("\r\n"));
         }
         catch (IOException e) {
           processor.log.error("Error when readline line");
@@ -97,6 +98,14 @@ class ProcessContext implements ShellProcessContext, Runnable {
         }
       }
     }
+  }
+
+  public void write(Chunk chunk) throws NullPointerException, IOException {
+    processor.term.write(chunk);
+  }
+
+  public void flush() {
+    processor.term.flush();
   }
 
   public void end(ShellResponse response) {
@@ -116,10 +125,20 @@ class ProcessContext implements ShellProcessContext, Runnable {
             runnable = Processor.NOOP;
             processor.status = Status.AVAILABLE;
           } else {
-            final ChunkSequence reader = response.getReader();
+            final String message = response.getMessage();
             runnable = new Runnable() {
               public void run() {
-                processor.write(reader);
+                try {
+                  processor.write(new Text(message));
+                }
+                catch (IOException e) {
+                  // todo ???
+                  e.printStackTrace();
+                }
+                finally {
+                  // Be sure to flush
+                  processor.term.flush();
+                }
               }
             };
             processor.status = Status.AVAILABLE;
@@ -145,7 +164,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
     if (context != null) {
       context.run();
     } else if (status == Status.AVAILABLE) {
-      processor.writePrompt();
+      processor.writePromptFlush();
     }
   }
 }

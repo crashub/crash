@@ -20,11 +20,10 @@
 package org.crsh.shell.ui;
 
 import org.crsh.command.InvocationContext;
-import org.crsh.shell.io.ShellWriter;
+import org.crsh.shell.io.ShellFormatter;
 import org.crsh.shell.io.ShellWriterContext;
 import org.crsh.text.Style;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -81,7 +80,7 @@ class UIWriterContext implements ShellWriterContext {
     nextMap.put(Pad.STOP_BRANCH, Pad.STOP_BRANCH);
   }
 
-  public void pad(ShellWriter writer) throws IOException {
+  public void pad(ShellFormatter writer) {
     for (int i = 0;i < stack.size();i++) {
       Pad abc = stack.get(i);
       
@@ -106,7 +105,7 @@ class UIWriterContext implements ShellWriterContext {
 
   }
 
-  public void printLine(int length, ShellWriter writer) throws IOException {
+  public void printLine(int length, ShellFormatter writer) {
 
     writer.append(" ");
     for (int i = 0; i < length; ++i ) {

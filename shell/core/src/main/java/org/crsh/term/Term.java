@@ -19,13 +19,13 @@
 
 package org.crsh.term;
 
-import org.crsh.text.ChunkSequence;
+import org.crsh.text.Chunk;
+import org.crsh.text.ChunkWriter;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-public interface Term extends Closeable {
-
+public interface Term extends Closeable, ChunkWriter {
 
   /**
    * Returns the term width in chars. When the value is not positive it means the value could not be determined.
@@ -61,11 +61,10 @@ public interface Term extends Closeable {
   /**
    * Write a message on the console, the text will be appended.
    *
-   *
-   * @param reader the message to write
+   * @param chunk the chunk to write
    * @throws IOException any io exception
    */
-  void write(ChunkSequence reader) throws IOException;
+  void write(Chunk chunk) throws NullPointerException, IOException;
 
   /**
    * Returns the insert buffer, any char appended in the returned appendable will translate into an
@@ -76,7 +75,7 @@ public interface Term extends Closeable {
   Appendable getInsertBuffer();
 
   /**
-   * Returns the current buffer;
+   * Returns the current buffer content to the cursor;
    *
    * @return the buffer
    */
@@ -88,6 +87,11 @@ public interface Term extends Closeable {
    * @param line the history line to append
    */
   void addToHistory(CharSequence line);
+
+  /**
+   * Flush the term buffer.
+   */
+  void flush();
 
   /**
    * Close the term. If threads are blocked in the {@link #read()} operation, those thread should be unblocked.

@@ -16,8 +16,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.term.console;
 
-package org.crsh.term.spi.net;
+public class TermBufferNoMoveTestCase extends AbstractTermBufferTestCase {
 
-class Done extends Throwable {
+  @Override
+  protected boolean getSupportsCursorMove() {
+    return false;
+  }
+
+  @Override
+  protected String getExpectedMoveLeftInsert() {
+    return "ab";
+  }
+
+  @Override
+  protected String getExpectedMoveLeftDel() {
+    return "a";
+  }
+
+  @Override
+  protected String getExpectedMoveRightInsert() {
+    return "abcd";
+  }
+
+  @Override
+  protected String getExpectedMoveRightDel() {
+    return "ab";
+  }
+
+  @Override
+  protected String getExpectedMoveRightAtEndOfLine() {
+    return "ab";
+  }
+
+  @Override
+  protected String getExpectedMoveLeftAtBeginningOfLine() {
+    return "ab";
+  }
 }

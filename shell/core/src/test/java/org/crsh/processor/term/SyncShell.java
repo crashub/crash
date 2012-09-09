@@ -24,10 +24,8 @@ import org.crsh.cmdline.CommandCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.ShellResponse;
 
 import java.util.LinkedList;
-import java.util.concurrent.Callable;
 
 public class SyncShell implements Shell {
 
@@ -46,12 +44,11 @@ public class SyncShell implements Shell {
     this.failures = new LinkedList<Throwable>();
   }
 
-  public <R extends ShellResponse> void publish(final Callable<R> callable) {
+  public void publish(final ShellRunnable callable) {
     publish(new ShellProcess() {
       public void execute(ShellProcessContext processContext) {
         try {
-          R response = callable.call();
-          processContext.end(response);
+          callable.run(processContext);
         }
         catch (Exception e) {
           throw AbstractTestCase.failure(e);

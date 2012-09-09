@@ -19,8 +19,6 @@
 
 package org.crsh.shell;
 
-import org.crsh.text.ChunkSequence;
-
 import java.io.Serializable;
 import java.util.Collections;
 
@@ -40,18 +38,6 @@ public abstract class ShellResponse implements Serializable {
 
   public static Ok ok() {
     return new Ok();
-  }
-
-  public static Display display(String text) {
-    return new Display(new ChunkSequence(text));
-  }
-
-  public static Display display(ChunkSequence reader) {
-    return new Display(reader);
-  }
-
-  public static Display display(Iterable<?> produced, ChunkSequence reader) {
-    return new Display(produced, reader);
   }
 
   public static Error evalError(String msg, Throwable throwable) {
@@ -86,7 +72,7 @@ public abstract class ShellResponse implements Serializable {
     return Close.INSTANCE;
   }
 
-  public abstract ChunkSequence getReader();
+  public abstract String getMessage();
 
   public static class UnknownCommand extends ShellResponse {
 
@@ -102,8 +88,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public ChunkSequence getReader() {
-      return new ChunkSequence(name + ": command not found");
+    public String getMessage() {
+      return name + ": command not found";
     }
 
     @Override
@@ -121,8 +107,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public ChunkSequence getReader() {
-      return new ChunkSequence("Please type something");
+    public String getMessage() {
+      return "Please type something";
     }
   }
 
@@ -135,8 +121,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public ChunkSequence getReader() {
-      return new ChunkSequence("Have a good day!\r\n");
+    public String getMessage() {
+      return "Have a good day!\r\n";
     }
   }
 
@@ -161,42 +147,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public ChunkSequence getReader() {
-      return new ChunkSequence("");
-    }
-  }
-
-  public static class Display extends Ok {
-
-    /** . */
-    private final ChunkSequence reader;
-
-    private Display(ChunkSequence reader) {
-      this.reader = reader;
-    }
-
-    private Display(Iterable<?> produced, ChunkSequence reader) {
-      super(produced);
-
-      //
-      this.reader = reader;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (obj == this) {
-        return true;
-      }
-      if (obj instanceof Display) {
-        Display that = (Display)obj;
-        return reader.equals(that.reader);
-      }
-      return false;
-    }
-
-    @Override
-    public ChunkSequence getReader() {
-      return reader;
+    public String getMessage() {
+      return "";
     }
   }
 
@@ -209,8 +161,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public ChunkSequence getReader() {
-      return new ChunkSequence("cancelled");
+    public String getMessage() {
+      return "cancelled";
     }
   }
 
@@ -246,8 +198,8 @@ public abstract class ShellResponse implements Serializable {
     }
 
     @Override
-    public ChunkSequence getReader() {
-      return new ChunkSequence(msg);
+    public String getMessage() {
+      return msg;
     }
 
     public String toString() {

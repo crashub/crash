@@ -18,31 +18,31 @@
  */
 package org.crsh.term.console;
 
-public class ConsoleNoMoveTestCase extends AbstractConsoleTestCase {
+public class TermBufferTestCase extends AbstractTermBufferTestCase {
 
   @Override
   protected boolean getSupportsCursorMove() {
-    return false;
+    return true;
   }
 
   @Override
   protected String getExpectedMoveLeftInsert() {
-    return "ab";
+    return "ba";
   }
 
   @Override
   protected String getExpectedMoveLeftDel() {
-    return "a";
+    return "b";
   }
 
   @Override
   protected String getExpectedMoveRightInsert() {
-    return "abcd";
+    return "abdc";
   }
 
   @Override
   protected String getExpectedMoveRightDel() {
-    return "ab";
+    return "ac";
   }
 
   @Override
@@ -52,6 +52,6 @@ public class ConsoleNoMoveTestCase extends AbstractConsoleTestCase {
 
   @Override
   protected String getExpectedMoveLeftAtBeginningOfLine() {
-    return "ab";
+    return "ba";
   }
 }

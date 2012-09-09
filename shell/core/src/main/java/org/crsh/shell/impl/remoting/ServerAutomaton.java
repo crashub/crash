@@ -24,6 +24,7 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.text.Chunk;
 import org.crsh.util.CloseableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,6 +150,13 @@ public class ServerAutomaton implements Shell {
             break;
           case END:
             response = (ShellResponse)in.readObject();
+            break;
+          case CHUNK:
+            Chunk chunk = (Chunk)in.readObject();
+            processContext.write(chunk);
+            break;
+          case FLUSH:
+            processContext.flush();
             break;
           default:
             response = ShellResponse.internalError("Unexpected");

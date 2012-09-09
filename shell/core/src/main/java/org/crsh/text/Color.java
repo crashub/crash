@@ -21,6 +21,9 @@ package org.crsh.text;
 
 import java.io.Serializable;
 
+/**
+ * A color chunk.
+ */
 public enum Color implements Serializable {
 
   black(0),

@@ -20,9 +20,6 @@
 package org.crsh.command.impl;
 
 import org.crsh.command.InvocationContext;
-import org.crsh.shell.io.ShellPrinter;
-import org.crsh.shell.io.ShellWriter;
-import org.crsh.text.ChunkSequence;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -30,12 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaseInvocationContext<C, P> extends BaseCommandContext implements InvocationContext<C, P> {
-
-  /** . */
-  protected ShellPrinter writer;
-
-  /** . */
-  protected ChunkSequence reader;
 
   /** . */
   protected List<P> producedItems;
@@ -50,18 +41,12 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
     super(session, attributes);
 
     //
-    this.writer = null;
-    this.reader = null;
     this.consumedItems = consumedItems;
     this.producedItems = Collections.emptyList();
   }
 
   public List<P> getProducedItems() {
     return producedItems;
-  }
-
-  public ChunkSequence getReader() {
-    return reader;
   }
 
   public boolean isPiped() {
@@ -80,13 +65,5 @@ public abstract class BaseInvocationContext<C, P> extends BaseCommandContext imp
       producedItems = new LinkedList<P>();
     }
     producedItems.add(product);
-  }
-
-  public ShellPrinter getWriter() {
-    if (writer == null) {
-      reader = new ChunkSequence();
-      writer = new ShellPrinter(new ShellWriter(reader, "\r\n"), this);
-    }
-    return writer;
   }
 }

@@ -19,6 +19,8 @@
 
 package org.crsh.jcr;
 
+import org.crsh.shell.ShellResponse;
+
 import javax.jcr.Node;
 import java.util.Iterator;
 
@@ -58,7 +60,7 @@ public class AddNodeTestCase extends AbstractJCRCommandTestCase {
 
   public void testProduce() throws Exception {
     assertLogin();
-    Iterator<?> produced = assertOk("node add foo").getProduced().iterator();
+    Iterator<?> produced = assertResponse(ShellResponse.Ok.class, "node add foo").getProduced().iterator();
     assertTrue(produced.hasNext());
     assertEquals("/foo", ((Node)produced.next()).getPath());
     assertFalse(produced.hasNext());

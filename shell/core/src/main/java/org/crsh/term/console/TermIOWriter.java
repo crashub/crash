@@ -19,11 +19,25 @@
 
 package org.crsh.term.console;
 
+import org.crsh.term.spi.TermIO;
 import org.crsh.text.Style;
 
 import java.io.IOException;
 
-public abstract class ConsoleWriter {
+/**
+ * Wraps {@link TermIO} and care about CRLF.
+ */
+class TermIOWriter {
+
+  /** . */
+  private boolean previousCR;
+
+  /** . */
+  private final TermIO io;
+
+  protected TermIOWriter(TermIO io) {
+    this.io = io;
+  }
 
   /**
    * Write a char sequence to the output.
@@ -31,7 +45,15 @@ public abstract class ConsoleWriter {
    * @param s the char sequence
    * @throws IOException any io exception
    */
-  public abstract void write(CharSequence s) throws IOException;
+  void write(CharSequence s) throws IOException {
+    int len = s.length();
+    if (len > 0) {
+      for (int i = 0;i < len;i++) {
+        char c = s.charAt(i);
+        writeNoFlush(c);
+      }
+    }
+  }
 
   /**
    * Write a single char to the output.
@@ -39,14 +61,18 @@ public abstract class ConsoleWriter {
    * @param c the char to write
    * @throws IOException any io exception
    */
-  public abstract void write(char c) throws IOException;
+  void write(char c) throws IOException {
+    writeNoFlush(c);
+  }
 
-  /**
-   * Write some style to the output.
-   *
-   * @param style the data to write
-   * @throws IOException any io exception
-   */
-  public abstract void write(Style style) throws IOException;
-
+  private void writeNoFlush(char c) throws IOException {
+    if (previousCR && c == '\n') {
+      previousCR = false;
+    } else if (c == '\r' || c == '\n') {
+      previousCR = c == '\r';
+      io.writeCRLF();
+    } else {
+      io.write(c);
+    }
+  }
 }

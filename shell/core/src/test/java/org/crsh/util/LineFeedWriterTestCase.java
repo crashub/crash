@@ -20,11 +20,9 @@
 package org.crsh.util;
 
 import junit.framework.TestCase;
-import org.crsh.shell.io.ShellWriter;
+import org.crsh.shell.io.ShellFormatter;
 import org.crsh.shell.io.ShellWriterContext;
-import org.crsh.text.ChunkSequence;
-
-import java.io.IOException;
+import org.crsh.text.ChunkBuffer;
 
 public class LineFeedWriterTestCase extends TestCase {
 
@@ -32,10 +30,10 @@ public class LineFeedWriterTestCase extends TestCase {
   private String padding;
 
   private void assertWriter(String expected, String... texts) throws Exception {
-    ChunkSequence reader = new ChunkSequence();
-    ShellWriter writer = new ShellWriter(reader, "_");
+    ChunkBuffer reader = new ChunkBuffer();
+    ShellFormatter writer = new ShellFormatter(reader, "_");
     ShellWriterContext ctx = new ShellWriterContext() {
-      public void pad(ShellWriter writer) throws IOException {
+      public void pad(ShellFormatter writer) {
         if (padding != null) {
           writer.append(padding);
         }

@@ -20,6 +20,7 @@
 package org.crsh.cmdline;
 
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 public enum Delimiter {
 
@@ -83,6 +84,17 @@ public enum Delimiter {
 
   public char getValue() {
     return value;
+  }
+
+  public final String escape(CharSequence s) {
+    try {
+      StringBuilder buffer = new StringBuilder();
+      escape(s, buffer);
+      return buffer.toString();
+    }
+    catch (IOException e) {
+      throw new UndeclaredThrowableException(e);
+    }
   }
 
   public final void escape(CharSequence s, Appendable appendable) throws IOException {

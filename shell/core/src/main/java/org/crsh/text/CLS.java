@@ -20,4 +20,10 @@
 package org.crsh.text;
 
 public class CLS extends Chunk {
+
+  /** . */
+  public static final CLS INSTANCE = new CLS();
+
+  private CLS() {
+  }
 }

@@ -19,13 +19,14 @@
 
 package org.crsh.term.console;
 
-import org.crsh.text.Style;
+import org.crsh.term.spi.TermIO;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-public final class Console {
+final class TermIOBuffer implements Appendable, Iterator<CharSequence> {
 
   /** . */
   private char[] buffer;
@@ -46,176 +47,140 @@ public final class Console {
   private boolean echoing;
 
   /** . */
-  private final ViewWriter viewWriter;
+  private final TermIO io;
 
-  /** . */
-  private final ViewReader viewReader = new ViewReader() {
-
-    @Override
-    public CharSequence replace(CharSequence s) throws IOException {
-      StringBuilder builder = new StringBuilder();
-      boolean flush = false;
-      for (int i = appendDel();i != -1;i = appendDel()) {
-        builder.append((char)i);
-        flush = true;
-      }
-      flush |= appendData(s, 0, s.length());
-      if (flush) {
-        viewWriter.flush();
-      }
-      return builder.reverse().toString();
-    }
-
-    @Override
-    public ViewReader append(char c) throws IOException {
-      if (appendData(c)) {
-        viewWriter.flush();
-      }
-      return this;
-    }
-
-    @Override
-    public ViewReader append(CharSequence s) throws IOException {
-      return append(s, 0, s.length());
-    }
-
-    @Override
-    public ViewReader append(CharSequence csq, int start, int end) throws IOException {
-      if (appendData(csq, start, end)) {
-        viewWriter.flush();
-      }
-      return this;
-    }
-
-    @Override
-    public int del() throws IOException {
-      int ret = appendDel();
-      if (ret != -1) {
-        viewWriter.flush();
-      }
-      return ret;
-    }
-
-    @Override
-    public boolean moveRight() throws IOException {
-      return Console.this.moveRight();
-    }
-
-    @Override
-    public boolean moveLeft() throws IOException {
-      return Console.this.moveLeft();
-    }
-  };
-
-  /** . */
-  private final ConsoleReader reader = new ConsoleReader() {
-    @Override
-    public int getSize() {
-      return size;
-    }
-
-    @Override
-    public boolean hasNext() {
-      return lines.size() > 0;
-    }
-
-    @Override
-    public CharSequence next() {
-      if (lines.size() > 0) {
-        return lines.removeFirst();
-      } else {
-        throw new NoSuchElementException();
-      }
-    }
-  };
-
-  /** . */
-  private final ConsoleWriter writer = new ConsoleWriter() {
-
-    //
-    private boolean previousCR;
-
-    @Override
-    public void write(CharSequence s) throws IOException {
-      for (int i = 0;i < s.length();i++) {
-        char c = s.charAt(i);
-        writeNoFlush(c);
-      }
-      viewWriter.flush();
-    }
-
-    public void write(char c) throws IOException {
-      writeNoFlush(c);
-      viewWriter.flush();
-    }
-
-    @Override
-    public void write(Style style) throws IOException {
-      viewWriter.write(style);
-    }
-
-    private void writeNoFlush(char c) throws IOException {
-      if (previousCR && c == '\n') {
-        previousCR = false;
-      } else if (c == '\r' || c == '\n') {
-        previousCR = c == '\r';
-        viewWriter.writeCRLF();
-      } else {
-        viewWriter.write(c);
-      }
-    }
-  };
-
-  public Console(ViewWriter viewWriter) {
+  TermIOBuffer(TermIO io) {
     this.buffer = new char[128];
     this.size = 0;
     this.curAt = 0;
     this.lines = new LinkedList<CharSequence>();
     this.previousCR = false;
     this.echoing = true;
-    this.viewWriter = viewWriter;
+    this.io = io;
   }
 
   /**
    * Clears the buffer without doing any echoing.
    */
-  public void clearBuffer() {
+  void clear() {
     this.previousCR = false;
     this.curAt = 0;
     this.size = 0;
   }
 
-  public CharSequence getBuffer() {
-    return new String(buffer, 0, size);
+  /**
+   * Returns the total number of chars in the buffer, independently of the cursor position.
+   *
+   * @return the number of chars
+   */
+  int getSize() {
+    return size;
   }
 
-  public CharSequence getBufferToCursor() {
+  CharSequence getBufferToCursor() {
     return new String(buffer, 0, curAt);
   }
 
-  public boolean isEchoing() {
+  boolean isEchoing() {
     return echoing;
   }
 
-  public void setEchoing(boolean echoing) {
-    Console.this.echoing = echoing;
+  void setEchoing(boolean echoing) {
+    this.echoing = echoing;
+  }
+
+  // Iterator<CharSequence> implementation *****************************************************************************
+
+  public boolean hasNext() {
+    return lines.size() > 0;
+  }
+
+  public CharSequence next() {
+    if (lines.size() > 0) {
+      return lines.removeFirst();
+    } else {
+      throw new NoSuchElementException();
+    }
+  }
+
+  public void remove() {
+    throw new UnsupportedOperationException();
+  }
+
+  // Appendable implementation *****************************************************************************************
+
+  public TermIOBuffer append(char c) throws IOException {
+    if (appendData(c)) {
+      io.flush();
+    }
+    return this;
+  }
+
+  public TermIOBuffer append(CharSequence s) throws IOException {
+    return append(s, 0, s.length());
+  }
+
+  public TermIOBuffer append(CharSequence csq, int start, int end) throws IOException {
+    if (appendData(csq, start, end)) {
+      io.flush();
+    }
+    return this;
+  }
+
+  // Protected methods *************************************************************************************************
+
+  /**
+   * Replace all the characters before the cursor by the provided char sequence.
+   *
+   * @param s the new char sequence
+   * @return the l
+   * @throws IOException any IOException
+   */
+  CharSequence replace(CharSequence s) throws IOException {
+    StringBuilder builder = new StringBuilder();
+    boolean flush = false;
+    for (int i = appendDel();i != -1;i = appendDel()) {
+      builder.append((char)i);
+      flush = true;
+    }
+    flush |= appendData(s, 0, s.length());
+    if (flush) {
+      io.flush();
+    }
+    return builder.reverse().toString();
+  }
+
+  boolean moveRight() throws IOException {
+    if (curAt < size && io.moveRight(buffer[curAt])) {
+      io.flush();
+      curAt++;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  boolean moveLeft() throws IOException {
+    boolean moved = curAt > 0 && io.moveLeft();
+    if (moved) {
+      io.flush();
+      curAt--;
+    }
+    return moved;
   }
 
   /**
-   * Returns the console reader.
+   * Delete the char under the cursor or return -1 if no char was deleted.
    *
-   * @return the console reader
+   * @return the deleted char
+   * @throws IOException any IOException
    */
-  public ConsoleReader getReader() {
-    return reader;
-  }
-
-  public ViewReader getViewReader() {
-    return viewReader;
-  }
-
-  public ConsoleWriter getWriter() {
-    return writer;
+  int del() throws IOException {
+    int ret = appendDel();
+    if (ret != -1) {
+      io.flush();
+    }
+    return ret;
   }
 
   private boolean appendData(CharSequence s, int start, int end) throws IOException {
@@ -261,11 +226,11 @@ public final class Console {
         return echo(c);
       } else {
         String disp = new String(buffer, curAt, size - curAt);
-        viewWriter.write(disp);
+        io.write(disp);
         int amount = size - curAt - 1;
         curAt++;
         while (amount > 0) {
-          viewWriter.writeMoveLeft();
+          io.moveLeft();
           amount--;
         }
         return true;
@@ -307,14 +272,14 @@ public final class Console {
       if (popped != -1) {
 
         // We move the cursor to left
-        if (viewWriter.writeMoveLeft()) {
+        if (io.moveLeft()) {
           StringBuilder disp = new StringBuilder();
           disp.append(buffer, curAt, size - curAt);
           disp.append(' ');
-          viewWriter.write(disp);
+          io.write(disp);
           int amount = size - curAt + 1;
           while (amount > 0) {
-            viewWriter.writeMoveLeft();
+            io.moveLeft();
             amount--;
           }
         } else {
@@ -327,28 +292,9 @@ public final class Console {
     }
   }
 
-  private boolean moveRight() throws IOException {
-    if (curAt < size && viewWriter.writeMoveRight(buffer[curAt])) {
-      viewWriter.flush();
-      curAt++;
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  private boolean moveLeft() throws IOException {
-    boolean moved = curAt > 0 && viewWriter.writeMoveLeft();
-    if (moved) {
-      viewWriter.flush();
-      curAt--;
-    }
-    return moved;
-  }
-
   private boolean echo(char c) throws IOException {
     if (echoing) {
-      viewWriter.write(c);
+      io.write(c);
       return true;
     } else {
       return false;
@@ -357,14 +303,14 @@ public final class Console {
 
   private void echo(String s) throws IOException {
     if (echoing) {
-      viewWriter.write(s);
-      viewWriter.flush();
+      io.write(s);
+      io.flush();
     }
   }
 
   private boolean echoDel() throws IOException {
     if (echoing) {
-      viewWriter.writeDel();
+      io.writeDel();
       return true;
     } else {
       return false;
@@ -373,7 +319,7 @@ public final class Console {
 
   private boolean echoCRLF() throws IOException {
     if (echoing) {
-      viewWriter.writeCRLF();
+      io.writeCRLF();
       return true;
     } else {
       return false;
@@ -417,7 +363,7 @@ public final class Console {
     if (size >= buffer.length) {
       char[] tmp = new char[buffer.length * 2 + 1];
       System.arraycopy(buffer, 0, tmp, 0, buffer.length);
-      Console.this.buffer = tmp;
+      TermIOBuffer.this.buffer = tmp;
     }
     if (curAt == size) {
       buffer[size++] = c;
