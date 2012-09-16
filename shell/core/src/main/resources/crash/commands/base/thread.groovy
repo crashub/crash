@@ -7,24 +7,20 @@ import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.annotations.Man
 import org.crsh.text.ui.UIBuilder
 import org.crsh.cmdline.annotations.Argument
+import java.lang.management.ThreadMXBean
+import sun.management.ManagementFactory
 
 @Usage("JVM thread commands")
 @Man("""\
 The thread command provides introspection and control over JVM threads:
 
 % thread ls
-ID   PRIORITY  STATE          INTERRUPTED  DAEMON  NAME
-2    10        WAITING        false        true    Reference Handler
-3    8         WAITING        false        true    Finalizer
-6    9         RUNNABLE       false        true    Signal Dispatcher
-1    5         WAITING        false        false   main
-13   1         TIMED_WAITING  false        true    Poller SunPKCS11-Darwin
-14   5         WAITING        false        false   pool-1-thread-1
-15   5         WAITING        false        false   pool-1-thread-2
-16   5         WAITING        false        false   pool-1-thread-3
-17   5         WAITING        false        false   pool-1-thread-4
-27   5         WAITING        false        false   pool-1-thread-6
-19   5         RUNNABLE       false        false   org.crsh.standalone.CRaSH.main()
+ID     PRIORITY     STATE        %CPU     TIME     INTERRUPTED     DAEMON     GROUP    NAME
+2      10           WAITING      0        0:0      false           true       system   Reference Handler
+3      8            WAITING      0        0:0      false           true       system   Finalizer
+6      9            RUNNABLE     0        0:0      false           true       system   Signal Dispatcher
+1      5            WAITING      0        0:2      false           false      main     main
+13     5            WAITING      0        0:0      false           false      main     pool-1-thread-1
 
 % thread stop 14
 Stopped thread Thread[pool-1-thread-1,5,main]
@@ -66,6 +62,9 @@ public class thread extends CRaSHCommand {
     }
     def pattern = Pattern.compile(nameFilter);
 
+    //
+    ThreadMXBean threadMXBean = ManagementFactory.threadMXBean;
+
     // State filter
     Thread.State state = null;
     if (stateFilter != null) {
@@ -82,9 +81,51 @@ public class thread extends CRaSHCommand {
     //
     UIBuilder ui = new UIBuilder();
 
-    ui.table(weights:[1,1,1,1,1,5]) {
-      row(bold: true, fg: black, bg: white) {
-        label("ID"); label("PRIORITY"); label("STATE"); label("INTERRUPTED"); label("DAEMON"); label("NAME")
+    // Sample CPU
+    Map<Long, Long> times1 = new HashMap<Long, Long>(threads.size())
+    threads.values().each { thread ->
+      long cpu = threadMXBean.getThreadCpuTime(thread.id);
+      times1[thread.id] = cpu;
+    }
+
+    // Sleep 100ms
+    Thread.sleep(100);
+
+    // Resample
+    Map<Long, Long> times2 = new HashMap<Long, Long>(threads.size())
+    threads.values().each { thread ->
+      long cpu = threadMXBean.getThreadCpuTime(thread.id);
+      times2[thread.id] = cpu;
+    }
+
+    // Compute delta map and total time
+    long total = 0;
+    Map<Long, Long> deltas = new HashMap<Long, Long>(threads.size())
+    times2.keySet().each { id ->
+      long time1 = times2[id];
+      long time2 = times1[id];
+      if (time1 == -1) {
+        time1 = time2;
+      } else if (time2 == -1) {
+        time2 = time1;
+      }
+      def delta = time2 - time1
+      deltas[id] = delta;
+      total += delta;
+    }
+
+    //
+    ui.table(weights:[1,1,1,1,1,1,1,2,5]) {
+      row(decoration: bold, foreground: black, background: white) {
+        label("ID")
+        label("PRIORITY")
+        label("STATE")
+        label("%CPU")
+        label("TIME")
+        label("INTERRUPTED")
+        label("DAEMON")
+        label("GROUP")
+        label("NAME")
       }
       threads.each() {
         if (it != null) {
@@ -111,17 +152,38 @@ public class thread extends CRaSHCommand {
                 c = blue
                 break;
             }
+
+            // Compute time
+            int seconds = times2[it.value.id] / 1000000000;
+            int min = seconds / 60
+            def time = "${min}:${seconds % 60}";
+            def cpu = Math.round((deltas[it.value.id] * 100) / total);
+
+            //
+            def group = thread.threadGroup?.name?:"";
+
+            //
             row(background: c, foreground: black) {
-              label(thread.id); label(thread.priority); label(thread.state); label(thread.isInterrupted()); label(thread.daemon); label(thread.name)
+              label(thread.id);
+              label(thread.priority);
+              label(thread.state);
+              label(cpu);
+              label(time);
+              label(thread.isInterrupted());
+              label(thread.daemon);
+              label(group);
+              label(thread.name)
             }
-            context.produce(it);
+
+            //
+            context.produce(it.getValue());
           }
         }
       }
     }
 
-    context.writer.print(ui);
-
+    //
+    out.print(ui);
   }
     
   @Usage("interrupt vm threads")
