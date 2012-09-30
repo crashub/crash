@@ -103,21 +103,18 @@ public class UIBuilder extends BuilderSupport {
     if (parent instanceof TreeElement) {
       TreeElement parentElement = (TreeElement)parent;
       Element childElement = (Element)child;
-      parentElement.addNode(childElement);
-      childElement.setParent(parentElement);
+      parentElement.addChild(childElement);
     } else if (parent instanceof TableElement) {
       TableElement parentElement = (TableElement)parent;
       RowElement childElement = (RowElement)child;
-      parentElement.addRow(childElement);
-      childElement.setParent(parentElement);
+      parentElement.add(childElement);
     } else if (parent instanceof RowElement) {
       RowElement parentElement = (RowElement)parent;
       Element childElement = (Element)child;
       if (child instanceof TreeElement) {
-        throw new IllegalArgumentException("A table cannot contain node element");
+        throw new IllegalArgumentException("A table cannot contain a tree element");
       }
-      parentElement.addValue(childElement);
-      childElement.setParent(parentElement);
+      parentElement.add(childElement);
     } else {
       throw new UnsupportedOperationException();
     }

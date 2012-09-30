@@ -37,7 +37,15 @@ public abstract class Element {
   private Color background;
   
   /** . */
-  private Element parent;
+  Element parent;
+
+  protected Element() {
+    this(null);
+  }
+
+  protected Element(Element parent) {
+    this.parent = parent;
+  }
 
   public void print(ShellFormatter writer, InvocationContext context) {
     print(new UIWriterContext(context), writer);
@@ -105,6 +113,21 @@ public abstract class Element {
         
   }
 
+  public Element decoration(Decoration decoration) {
+    this.decoration = decoration;
+    return this;
+  }
+
+  public Element foreground(Color foreground) {
+    this.foreground = foreground;
+    return this;
+  }
+
+  public Element background(Color background) {
+    this.background = background;
+    return this;
+  }
+
   public void setDecoration(Decoration decoration) {
     this.decoration = decoration;
   }
@@ -117,11 +140,11 @@ public abstract class Element {
     this.background = background;
   }
 
-  public Element getParent() {
-    return parent;
+  public static RowElement row() {
+    return new RowElement();
   }
 
-  public void setParent(Element parent) {
-    this.parent = parent;
+  public static LabelElement label(String value) {
+    return new LabelElement(value);
   }
 }

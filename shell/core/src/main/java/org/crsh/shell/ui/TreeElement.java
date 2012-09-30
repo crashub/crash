@@ -30,7 +30,7 @@ public class TreeElement extends Element {
   private Element value;
 
   /** . */
-  private List<Element> nodes = new ArrayList<Element>();
+  private List<Element> children = new ArrayList<Element>();
 
   public TreeElement() {
     this(null);
@@ -40,13 +40,17 @@ public class TreeElement extends Element {
     this.value = value;
   }
 
-  public TreeElement addNode(Element node) {
-    nodes.add(node);
+  public TreeElement addChild(Element child) {
+    if (child.parent != null) {
+      throw new IllegalArgumentException("Child has already a parent");
+    }
+    children.add(child);
+    child.parent =  this;
     return this;
   }
 
   public int getSize() {
-    return nodes.size();
+    return children.size();
   }
 
   public Element getValue() {
@@ -54,7 +58,7 @@ public class TreeElement extends Element {
   }
 
   public Element getNode(int index) {
-    return nodes.get(index);
+    return children.get(index);
   }
 
   @Override
@@ -67,14 +71,14 @@ public class TreeElement extends Element {
     }
 
     //
-    for (int i = 0;i < nodes.size();i++) {
+    for (int i = 0;i < children.size();i++) {
 
       // Add the padding ?
-      ctx.stack.add(i == nodes.size() - 1 ? Pad.LAST_BRANCH : Pad.BRANCH);
+      ctx.stack.add(i == children.size() - 1 ? Pad.LAST_BRANCH : Pad.BRANCH);
 //      ctx.stack.add(Foo.TRUE);
 
       //
-      Element node = nodes.get(i);
+      Element node = children.get(i);
       node.print(ctx, writer);
       if (ctx.needLF) {
         writer.append(ctx, '\n');

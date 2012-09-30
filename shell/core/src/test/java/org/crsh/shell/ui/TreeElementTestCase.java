@@ -30,8 +30,8 @@ public class TreeElementTestCase extends TestCase {
 
   public void testSimple() throws IOException {
     TreeElement elt = new TreeElement();
-    elt.addNode(new LabelElement("1\n1"));
-    elt.addNode(new LabelElement("2\n"));
+    elt.addChild(new LabelElement("1\n1"));
+    elt.addChild(new LabelElement("2\n"));
     ChunkBuffer reader = new ChunkBuffer();
     ShellFormatter writer = new ShellFormatter(reader, "_");
     elt.print(writer, new TestInvocationContext());
@@ -44,7 +44,7 @@ public class TreeElementTestCase extends TestCase {
 
   public void testFoo() throws Exception {
     TreeElement elt = new TreeElement();
-    elt.addNode(new LabelElement("1\n1"));
+    elt.addChild(new LabelElement("1\n1"));
     ChunkBuffer reader = new ChunkBuffer();
     ShellFormatter writer = new ShellFormatter(reader, "_");
     elt.print(writer, new TestInvocationContext());
@@ -56,8 +56,8 @@ public class TreeElementTestCase extends TestCase {
 
   public void testNested() throws Exception {
     TreeElement elt = new TreeElement(new LabelElement("foo"));
-    elt.addNode(new TreeElement(new LabelElement("bar")).addNode(new LabelElement("1\n1")).addNode(new LabelElement("2\n2")));
-    elt.addNode(new TreeElement().addNode(new LabelElement("3")).addNode(new LabelElement("4")));
+    elt.addChild(new TreeElement(new LabelElement("bar")).addChild(new LabelElement("1\n1")).addChild(new LabelElement("2\n2")));
+    elt.addChild(new TreeElement().addChild(new LabelElement("3")).addChild(new LabelElement("4")));
     ChunkBuffer reader = new ChunkBuffer();
     ShellFormatter writer = new ShellFormatter(reader, "_");
     elt.print(writer, new TestInvocationContext());
@@ -75,8 +75,8 @@ public class TreeElementTestCase extends TestCase {
 
   public void testTooLarge() throws IOException {
     TreeElement elt = new TreeElement();
-    elt.addNode(new LabelElement("foo value is very very very too large for the console"));
-    elt.addNode(new LabelElement("bar\n"));
+    elt.addChild(new LabelElement("foo value is very very very too large for the console"));
+    elt.addChild(new LabelElement("bar\n"));
     ChunkBuffer reader = new ChunkBuffer();
     ShellFormatter writer = new ShellFormatter(reader, "_");
     elt.print(writer, new TestInvocationContext());

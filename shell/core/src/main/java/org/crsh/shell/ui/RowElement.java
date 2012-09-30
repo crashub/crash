@@ -20,9 +20,10 @@
 package org.crsh.shell.ui;
 
 import org.crsh.shell.io.ShellFormatter;
+import org.crsh.text.Color;
+import org.crsh.text.Decoration;
 import org.crsh.text.Style;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,15 +33,15 @@ public class RowElement extends Element {
   private List<Element> cols;
 
   /** . */
-  boolean header;
+  final boolean header;
 
   public RowElement() {
-    this.cols = new ArrayList<Element>();
+    this(false);
   }
 
   public RowElement(boolean header) {
-    this();
     this.header = header;
+    this.cols = new ArrayList<Element>();
   }
 
   @Override
@@ -52,7 +53,7 @@ public class RowElement extends Element {
   void doPrint(UIWriterContext ctx, ShellFormatter writer) {
 
     int i = 0;
-    TableElement table = (TableElement) getParent();
+    TableElement table = (TableElement)parent;
     List<Integer> colsSize = table.getColsSize();
 
     // Request bottom header line
@@ -140,12 +141,31 @@ public class RowElement extends Element {
     return 0;
   }
 
-  public void addValue(Element element) {
-    this.cols.add(element);
+  public RowElement add(Element col) {
+    if (col.parent != null) {
+      throw new IllegalArgumentException("Column has already a parent");
+    }
+    this.cols.add(col);
+    col.parent = this;
+    return this;
   }
 
-  public List<Element> getValues() {
+  public List<Element> getCols() {
     return cols;
   }
-  
+
+  @Override
+  public RowElement decoration(Decoration decoration) {
+    return (RowElement)super.decoration(decoration);
+  }
+
+  @Override
+  public RowElement foreground(Color foreground) {
+    return (RowElement)super.foreground(foreground);
+  }
+
+  @Override
+  public RowElement background(Color background) {
+    return (RowElement)super.background(background);
+  }
 }

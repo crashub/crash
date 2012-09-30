@@ -215,7 +215,7 @@ public class UIBuilderTestCase extends TestCase {
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
     assertEquals(1, ((TableElement)res.getElements().get(0)).getRows().size());
-    assertEquals(0, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().size());
+    assertEquals(0, ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().size());
   }
 
   public void testRow() {
@@ -233,9 +233,9 @@ public class UIBuilderTestCase extends TestCase {
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
     assertEquals(1, ((TableElement)res.getElements().get(0)).getRows().size());
-    assertEquals(2, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().size());
-    assertEquals("Label[col1]", ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).toString());
-    assertEquals("Label[col2]", ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(1).toString());
+    assertEquals(2, ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().size());
+    assertEquals("Label[col1]", ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().get(0).toString());
+    assertEquals("Label[col2]", ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().get(1).toString());
   }
 
   public void testRowStyleWithEnd() {
@@ -256,10 +256,10 @@ public class UIBuilderTestCase extends TestCase {
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
     assertEquals(1, ((TableElement)res.getElements().get(0)).getRows().size());
-    assertEquals(2, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().size());
-    assertEquals(Decoration.bold, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).getDecoration());
-    assertEquals(Color.red, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).getForeground());
-    assertEquals(Color.green, ((TableElement)res.getElements().get(0)).getRows().get(0).getValues().get(0).getBackground());
+    assertEquals(2, ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().size());
+    assertEquals(Decoration.bold, ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().get(0).getDecoration());
+    assertEquals(Color.red, ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().get(0).getForeground());
+    assertEquals(Color.green, ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().get(0).getBackground());
   }
 
   public void testTableBorder() {
@@ -314,7 +314,7 @@ public class UIBuilderTestCase extends TestCase {
       );
       fail();
     } catch (IllegalArgumentException iae) {
-      assertEquals("A table cannot contain node element", iae.getMessage());
+      assertEquals("A table cannot contain a tree element", iae.getMessage());
     }
   }
 }

@@ -39,8 +39,12 @@ public class TableElement extends Element {
   /** . */
   protected boolean border;
 
-  public TableElement addRow(RowElement row) {
+  public TableElement add(RowElement row) {
+    if (row.parent != null) {
+      throw new IllegalArgumentException("Row has already a parent");
+    }
     rows.add(row);
+    row.parent = this;
     return this;
   }
   
@@ -97,7 +101,7 @@ public class TableElement extends Element {
     for (int i = 0; i < columnNumber(); ++i) {
       int colSize = 0;
       for (RowElement row : rows) {
-        colSize = Math.max(colSize, row.getValues().get(i).width() + MARGIN);
+        colSize = Math.max(colSize, row.getCols().get(i).width() + MARGIN);
         int missingSpace = (colSum + colSize) - consoleWidth;
         if (missingSpace > 0) {
           colSize -= missingSpace;
@@ -114,8 +118,9 @@ public class TableElement extends Element {
     
   }
 
-  public void setBorder(boolean border) {
+  public TableElement setBorder(boolean border) {
     this.border = border;
+    return this;
   }
 
   private int columnNumber() {
@@ -123,7 +128,7 @@ public class TableElement extends Element {
     int n = 0;
 
     for (RowElement row : rows) {
-      n = Math.max(n, row.getValues().size());
+      n = Math.max(n, row.getCols().size());
     }
 
     return n;
