@@ -21,6 +21,46 @@ package org.crsh.shell.ui;
 
 enum Pad {
 
-  BRANCH, CONTINUE_BRANCH, LAST_BRANCH, STOP_BRANCH, SPACE
+  BRANCH("+-") {
+    @Override
+    Pad next() {
+      return CONTINUE_BRANCH;
+    }
+  },
 
+  CONTINUE_BRANCH("| ") {
+    @Override
+    Pad next() {
+      return CONTINUE_BRANCH;
+    }
+  },
+
+  LAST_BRANCH("+-") {
+    @Override
+    Pad next() {
+      return STOP_BRANCH;
+    }
+  },
+
+  STOP_BRANCH("  ") {
+    @Override
+    Pad next() {
+      return STOP_BRANCH;
+    }
+  },
+
+  SPACE(" ") {
+    @Override
+    Pad next() {
+      return null;
+    }
+  };
+
+  final String chars;
+
+  Pad(String chars) {
+    this.chars = chars;
+  }
+
+  abstract Pad next();
 }

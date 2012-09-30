@@ -65,21 +65,6 @@ class UIWriterContext implements ShellWriterContext {
     this.parentUIContext = parentUIContext;
   }
 
-  private static EnumMap<Pad, String> charMap = new EnumMap<Pad, String>(Pad.class);
-  private static EnumMap<Pad, Pad> nextMap = new EnumMap<Pad, Pad>(Pad.class);
-
-  static {
-    charMap.put(Pad.BRANCH, "+-");
-    charMap.put(Pad.LAST_BRANCH, "+-");
-    charMap.put(Pad.CONTINUE_BRANCH, "| ");
-    charMap.put(Pad.STOP_BRANCH, "  ");
-    charMap.put(Pad.SPACE, " ");
-    nextMap.put(Pad.BRANCH, Pad.CONTINUE_BRANCH);
-    nextMap.put(Pad.CONTINUE_BRANCH, Pad.CONTINUE_BRANCH);
-    nextMap.put(Pad.LAST_BRANCH, Pad.STOP_BRANCH);
-    nextMap.put(Pad.STOP_BRANCH, Pad.STOP_BRANCH);
-  }
-
   public void pad(ShellFormatter writer) {
     for (int i = 0;i < stack.size();i++) {
       Pad abc = stack.get(i);
@@ -90,29 +75,25 @@ class UIWriterContext implements ShellWriterContext {
       }
 
       //
-      writer.append(charMap.get(abc));
+      writer.append(abc.chars);
 
       //
       if (padStyle != null) {
         new FormattingElement(Style.reset).print(this, writer);
       }
 
-      Pad next = nextMap.get(abc);
+      Pad next = abc.next();
       stack.set(i, next);
     }
-
     stack.removeAll(Collections.singleton(null));
-
   }
 
   public void printLine(int length, ShellFormatter writer) {
-
     writer.append(" ");
     for (int i = 0; i < length; ++i ) {
       writer.append("-");
     }
     writer.append("\n");
-    
   }
 
   public void text(CharSequence csq, int off, int end) {
@@ -132,17 +113,13 @@ class UIWriterContext implements ShellWriterContext {
   }
 
   public int padWidth() {
-
     int width = leftLinePadding.length() + rightLinePadding.length();
     for (Pad pad : stack) {
-      String p = charMap.get(pad);
+      String p = pad.chars;
       if (p != null) {
         width += p.length();
       }
     }
-
     return width;
-
   }
-  
 }
