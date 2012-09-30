@@ -62,9 +62,17 @@ public class UIBuilder extends BuilderSupport {
 
     Element e = initElement(name, attributes.get("value"));
     setStyles(e, attributes);
-    Boolean border = (Boolean) attributes.get("border");
     if (e instanceof TableElement) {
-      ((TableElement) e).setBorder(border == null ? false : border);
+      Object border = attributes.get("border");
+      Border borderChar;
+      if (border instanceof Boolean && (Boolean)border) {
+        borderChar = Border.dash;
+      } else if (border instanceof Border) {
+        borderChar = (Border)border;
+      } else {
+        borderChar = null;
+      }
+      ((TableElement) e).setBorder(borderChar);
     }
     return e;
     

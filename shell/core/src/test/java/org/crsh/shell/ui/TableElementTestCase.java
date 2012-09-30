@@ -44,14 +44,12 @@ public class TableElementTestCase extends TestCase {
 
     ChunkBuffer reader = new ChunkBuffer();
     ShellFormatter writer = new ShellFormatter(reader, "_");
-
     tableElement.print(writer, new TestInvocationContext());
 
     assertEquals(
         "a     b     _" +
         "c     d     _"
         , reader.toString());
-
   }
 
   public void testStyle() throws Exception {
@@ -124,7 +122,7 @@ public class TableElementTestCase extends TestCase {
   public void testInNodeBorder() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(true);
+    tableElement.setBorder(Border.dash);
 
     tableElement.
         add(row().
@@ -146,10 +144,10 @@ public class TableElementTestCase extends TestCase {
 
     assertEquals(
         "+-foo_" +
-        "+- ---------------_" +
+        "+- --------------- _" +
         "| | a     | b     |_" +
         "| | c     | d     |_" +
-        "|  ---------------_" +
+        "|  --------------- _" +
         "+-bar_"
         , reader.toString());
 
@@ -192,7 +190,7 @@ public class TableElementTestCase extends TestCase {
   public void testInNodeTooLargeBorder() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(true);
+    tableElement.setBorder(Border.dash);
 
     tableElement.
         add(row().
@@ -216,12 +214,12 @@ public class TableElementTestCase extends TestCase {
 
     assertEquals(
         "+-foo_" +
-        "+- ------------------------------_" +
+        "+- ------------------------------ _" +
         "| | a     | b     | c is a very v|_" +
         "| |       |       | ery very too |_" +
         "| |       |       | long value   |_" +
         "| | d     | e     | f            |_" +
-        "|  ------------------------------_" +
+        "|  ------------------------------ _" +
         "+-bar_"
         , reader.toString());
 
@@ -229,7 +227,7 @@ public class TableElementTestCase extends TestCase {
 
   public void testInNodeHeader() throws Exception {
 
-    TableElement tableElement = new TableElement().setBorder(true);
+    TableElement tableElement = new TableElement().setBorder(Border.dash);
 
     tableElement.
         add(row().
@@ -260,15 +258,15 @@ public class TableElementTestCase extends TestCase {
 
     assertEquals(
         "+-foo_" +
-        "+- ---------------_" +
+        "+- --------------- _" +
         "| | a     | b     |_" +
         "| | c     | d     |_" +
-        "|  ---------------_" +
+        "|  --------------- _" +
         "| | e     | f     |_" +
-        "|  ---------------_" +
+        "|  --------------- _" +
         "| | g     | h     |_" +
         "| | i     | j     |_" +
-        "|  ---------------_" +
+        "|  --------------- _" +
         "+-bar_"
         , reader.toString());
 
@@ -297,13 +295,10 @@ public class TableElementTestCase extends TestCase {
         "c     d                         _"
         , reader.toString());
   }
-  
+
   public void testSimpleBorder() throws Exception {
 
     TableElement tableElement = new TableElement();
-
-    tableElement.setBorder(true);
-
     tableElement.
         add(row().
             add(label("a")).
@@ -312,25 +307,36 @@ public class TableElementTestCase extends TestCase {
             add(label("c")).
             add(label("d")));
 
+    //
     ChunkBuffer reader = new ChunkBuffer();
     ShellFormatter writer = new ShellFormatter(reader, "_");
-
+    tableElement.setBorder(Border.dash);
     tableElement.print(writer, new TestInvocationContext());
-
     assertEquals(
-        " ---------------_" +
+        " --------------- _" +
         "| a     | b     |_" +
         "| c     | d     |_" +
-        " ---------------_"
+        " --------------- _"
         , reader.toString());
 
+    //
+    reader = new ChunkBuffer();
+    writer = new ShellFormatter(reader, "_");
+    tableElement.setBorder(Border.star);
+    tableElement.print(writer, new TestInvocationContext());
+    assertEquals(
+        "*****************_" +
+        "* a     * b     *_" +
+        "* c     * d     *_" +
+        "*****************_"
+        , reader.toString());
   }
 
   public void testBorderHeaderTopBottom() throws Exception {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.setBorder(true);
+    tableElement.setBorder(Border.dash);
 
     tableElement.
         add(new RowElement(true).
@@ -352,14 +358,14 @@ public class TableElementTestCase extends TestCase {
     tableElement.print(writer, new TestInvocationContext());
 
     assertEquals(
-        " ---------------_" +
+        " --------------- _" +
         "| a     | b     |_" +
-        " ---------------_" +
+        " --------------- _" +
         "| c     | d     |_" +
         "| e     | f     |_" +
-        " ---------------_" +
+        " --------------- _" +
         "| g     | h     |_" +
-        " ---------------_"
+        " --------------- _"
         , reader.toString());
 
   }
@@ -368,7 +374,7 @@ public class TableElementTestCase extends TestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.setBorder(false);
+    tableElement.setBorder(null);
 
     tableElement.
         add(new RowElement(true).
@@ -398,7 +404,7 @@ public class TableElementTestCase extends TestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.setBorder(true);
+    tableElement.setBorder(Border.dash);
 
     tableElement.
         add(row().
@@ -424,15 +430,15 @@ public class TableElementTestCase extends TestCase {
     tableElement.print(writer, new TestInvocationContext());
 
     assertEquals(
-        " ---------------_" +
+        " --------------- _" +
         "| a     | b     |_" +
         "| c     | d     |_" +
-        " ---------------_" +
+        " --------------- _" +
         "| e     | f     |_" +
-        " ---------------_" +
+        " --------------- _" +
         "| g     | h     |_" +
         "| i     | j     |_" +
-        " ---------------_"
+        " --------------- _"
         , reader.toString());
 
   }
@@ -441,7 +447,7 @@ public class TableElementTestCase extends TestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.setBorder(true);
+    tableElement.setBorder(Border.dash);
 
     tableElement.
         add(row().
@@ -469,24 +475,24 @@ public class TableElementTestCase extends TestCase {
     tableElement.print(writer, new TestInvocationContext());
 
     assertEquals(
-        " ---------------_" +
+        " --------------- _" +
         "| a     | b     |_" +
         "| c     | d     |_" +
-        " ---------------_" +
+        " --------------- _" +
         "| e     | f     |_" +
-        " ---------------_" +
+        " --------------- _" +
         "| g     | h     |_" +
-        " ---------------_" +
+        " --------------- _" +
         "| i     | j     |_" +
         "| k     | l     |_" +
-        " ---------------_"
+        " --------------- _"
         , reader.toString());
 
   }
 
   public void testTooLargeBorder() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(true);
+    tableElement.setBorder(Border.dash);
 
     tableElement.
         add(row().
@@ -502,19 +508,19 @@ public class TableElementTestCase extends TestCase {
     tableElement.print(writer, new TestInvocationContext());
 
     assertEquals(
-        " ------------------------------_" +
+        " ------------------------------ _" +
         "| a     | This text is very ver|_" +
         "|       | very too large to be |_" +
         "|       | displayed in a cell o|_" +
         "|       | f 32                 |_" +
         "| c     | d                    |_" +
-        " ------------------------------_"
+        " ------------------------------ _"
         , reader.toString());
   }
 
   public void testTooLargeBorderHeader() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(true);
+    tableElement.setBorder(Border.dash);
 
     tableElement.
         add(new RowElement(true).
@@ -530,21 +536,21 @@ public class TableElementTestCase extends TestCase {
     tableElement.print(writer, new TestInvocationContext());
 
     assertEquals(
-        " ------------------------------_" +
+        " ------------------------------ _" +
         "| a     | This text is very ver|_" +
         "|       | very too large to be |_" +
         "|       | displayed in a cell o|_" +
         "|       | f 32                 |_" +
-        " ------------------------------_" +
+        " ------------------------------ _" +
         "| c     | d                    |_" +
-        " ------------------------------_"
+        " ------------------------------ _"
         , reader.toString());
   }
 
   public void testBorderStyle() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(true);
+    tableElement.setBorder(Border.dash);
 
     tableElement.
         add(row().
@@ -566,10 +572,10 @@ public class TableElementTestCase extends TestCase {
     tableElement.print(writer, new TestInvocationContext());
 
     String expected =
-      " ---------------_|" +
+      " --------------- _|" +
       "\u001B[1;34;42m a     \u001B[0m|\u001B[1;34;42m b     \u001B[0m|_" +
       "|\u001B[1;34;42m c     \u001B[0m| \u001B[0md     \u001B[0m|_" +
-      " ---------------_";
+      " --------------- _";
 
     StringBuilder sb = new StringBuilder();
     reader.writeAnsiTo(sb);
@@ -584,7 +590,7 @@ public class TableElementTestCase extends TestCase {
 
   public void testTooManyColumns() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(true);
+    tableElement.setBorder(Border.dash);
 
     tableElement.
         add(row().
@@ -597,12 +603,12 @@ public class TableElementTestCase extends TestCase {
 
     tableElement.print(writer, new TestInvocationContext());
     assertEquals(
-        " ------------------------------_" +
+        " ------------------------------ _" +
         "| a     | This text is very ver|_" +
         "|       | very too large to be |_" +
         "|       | displayed in a cell o|_" +
         "|       | f 32                 |_" +
-        " ------------------------------_"
+        " ------------------------------ _"
         , reader.toString());
   }
 

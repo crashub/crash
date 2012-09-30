@@ -57,14 +57,14 @@ public class RowElement extends Element {
     List<Integer> colsSize = table.getColsSize();
 
     // Request bottom header line
-    if (table.border && header) {
+    if (table.border != null && header) {
       ctx.needLine = header;
     }
 
     // Init line padding
-    if (table.border) {
-      ctx.leftLinePadding += "| ";
-      ctx.rightLinePadding += "|";
+    if (table.border != null) {
+      ctx.leftLinePadding += table.border.vertical + " ";
+      ctx.rightLinePadding += table.border.vertical;
     }
 
     for (Element e : cols) {
@@ -80,15 +80,15 @@ public class RowElement extends Element {
       if (ctx.needLF) {
 
         //
-        if (table.border) {
-          writer.append("|");
+        if (table.border != null) {
+          writer.append(table.border.vertical);
         }
         writer.append("\n");
 
         //
         ctx.parentUIContext.pad(writer);
-        if (table.border && ctx.needLine) {
-          ctx.printLine(table.width() - 2, writer);
+        if (table.border != null && ctx.needLine) {
+          table.printLine(table.width() - 2, writer);
           ctx.parentUIContext.pad(writer);
         }
 
@@ -96,8 +96,8 @@ public class RowElement extends Element {
       ctx.padStyle = null;
 
       //
-      if (table.border) {
-        writer.append("|");
+      if (table.border != null) {
+        writer.append(table.border.vertical);
         ctx.stack.add(Pad.SPACE);
         ctx.padStyle = Style.style(e.getDecoration(), e.getForeground(), e.getBackground());
         ctx.pad(writer);
@@ -117,8 +117,8 @@ public class RowElement extends Element {
       for (int index = 0; index < table.getColsSize().get(i); ++index) {
         ctx.leftLinePadding += " ";
       }
-      if (table.border) {
-        ctx.leftLinePadding += "| ";
+      if (table.border != null) {
+        ctx.leftLinePadding += table.border.vertical + " ";
       }
 
       //

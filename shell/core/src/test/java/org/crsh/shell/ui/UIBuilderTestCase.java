@@ -262,7 +262,7 @@ public class UIBuilderTestCase extends TestCase {
     assertEquals(Color.green, ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().get(0).getBackground());
   }
 
-  public void testTableBorder() {
+  public void testTableBorderTrue() {
     GroovyShell shell = new GroovyShell();
     UIBuilder res = (UIBuilder)shell.evaluate(
       "import org.crsh.shell.ui.UIBuilder;\n" +
@@ -275,7 +275,71 @@ public class UIBuilderTestCase extends TestCase {
     );
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
-    assertTrue(((TableElement)res.getElements().get(0)).border);
+    assertSame(Border.dash, ((TableElement)res.getElements().get(0)).border);
+  }
+
+  public void testTableBorderFalse() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+        "import org.crsh.shell.ui.UIBuilder;\n" +
+            "def builder = new UIBuilder();\n" +
+            "builder.table(border: false) {\n" +
+            "row {\n" +
+            "}\n" +
+            "};\n" +
+            "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertSame(null, ((TableElement)res.getElements().get(0)).border);
+  }
+
+  public void testTableBorderNull() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+        "import org.crsh.shell.ui.UIBuilder;\n" +
+            "def builder = new UIBuilder();\n" +
+            "builder.table(border: null) {\n" +
+            "row {\n" +
+            "}\n" +
+            "};\n" +
+            "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertSame(null, ((TableElement)res.getElements().get(0)).border);
+  }
+
+  public void testTableBorderDash() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+        "import org.crsh.shell.ui.UIBuilder;\n" +
+            "def builder = new UIBuilder();\n" +
+            "builder.table(border: org.crsh.shell.ui.Border.dash) {\n" +
+            "row {\n" +
+            "}\n" +
+            "};\n" +
+            "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertSame(Border.dash, ((TableElement)res.getElements().get(0)).border);
+  }
+
+  public void testTableBorderStar() {
+    GroovyShell shell = new GroovyShell();
+    UIBuilder res = (UIBuilder)shell.evaluate(
+        "import org.crsh.shell.ui.UIBuilder;\n" +
+            "def builder = new UIBuilder();\n" +
+            "builder.table(border: org.crsh.shell.ui.Border.star) {\n" +
+            "row {\n" +
+            "}\n" +
+            "};\n" +
+            "return builder;\n"
+    );
+    assertEquals(1, res.getElements().size());
+    assertTrue(res.getElements().get(0) instanceof TableElement);
+    assertSame(Border.star, ((TableElement)res.getElements().get(0)).border);
   }
 
   public void testTableHeader() {

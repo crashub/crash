@@ -37,7 +37,7 @@ public class TableElement extends Element {
   private List<Integer> colsSize = new ArrayList<Integer>();
 
   /** . */
-  protected boolean border;
+  protected Border border;
 
   public TableElement add(RowElement row) {
     if (row.parent != null) {
@@ -47,7 +47,17 @@ public class TableElement extends Element {
     row.parent = this;
     return this;
   }
-  
+
+  public void printLine(int length, ShellFormatter writer) {
+    writer.append(border.corner);
+    for (int i = 0; i < length; ++i ) {
+      writer.append(border.horizontal);
+    }
+    writer.append(border.corner);
+    writer.append('\n');
+  }
+
+
   @Override
   void doPrint(UIWriterContext ctx, ShellFormatter writer) {
 
@@ -56,9 +66,9 @@ public class TableElement extends Element {
     colsSize = computeColSize(ctx.getConsoleWidth());
 
     // Print top line
-    if (border) {
+    if (border != null) {
       ctx.parentUIContext.pad(writer);
-      ctx.printLine(width() - 2, writer);
+      printLine(width() - 2, writer);
     }
 
     //
@@ -69,15 +79,15 @@ public class TableElement extends Element {
     ctx.pad(writer);
 
     //
-    if (border) {
-      writer.append("|");
+    if (border != null) {
+      writer.append(border.vertical);
     }
     writer.append("\n");
 
     // Print bottom line
-    if (border) {
+    if (border != null) {
       ctx.parentUIContext.pad(writer);
-      ctx.printLine(width() - 2, writer);
+      printLine(width() - 2, writer);
     }
 
   }
@@ -95,7 +105,7 @@ public class TableElement extends Element {
     List<Integer> colsSize = new ArrayList<Integer>();
 
     int colSum = 0;
-    if (border) {
+    if (border != null) {
         colSum += 3;
       }
     for (int i = 0; i < columnNumber(); ++i) {
@@ -109,7 +119,7 @@ public class TableElement extends Element {
       }
       colsSize.add(colSize);
       colSum += colSize;
-      if (border) {
+      if (border != null) {
         colSum += 2;
       }
     }
@@ -118,7 +128,7 @@ public class TableElement extends Element {
     
   }
 
-  public TableElement setBorder(boolean border) {
+  public TableElement setBorder(Border border) {
     this.border = border;
     return this;
   }
@@ -141,7 +151,7 @@ public class TableElement extends Element {
     //
     int sum = 0;
     for (int colSize : colsSize) sum += colSize;
-    if (border) {
+    if (border != null) {
       sum += (colsSize.size() * 2) + 1;
     }
 

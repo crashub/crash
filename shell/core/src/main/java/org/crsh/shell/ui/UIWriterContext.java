@@ -26,7 +26,6 @@ import org.crsh.text.Style;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
 
 class UIWriterContext implements ShellWriterContext {
 
@@ -86,14 +85,6 @@ class UIWriterContext implements ShellWriterContext {
       stack.set(i, next);
     }
     stack.removeAll(Collections.singleton(null));
-  }
-
-  public void printLine(int length, ShellFormatter writer) {
-    writer.append(" ");
-    for (int i = 0; i < length; ++i ) {
-      writer.append("-");
-    }
-    writer.append("\n");
   }
 
   public void text(CharSequence csq, int off, int end) {
