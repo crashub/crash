@@ -19,34 +19,85 @@
 
 package org.crsh.text;
 
-import java.io.Serializable;
-
 /**
  * A color chunk.
  */
-public enum Color implements Serializable {
+public enum Color {
 
+  /** . */
   black(0),
+
+  /** . */
   red(1),
+
+  /** . */
   green(2),
+
+  /** . */
   yellow(3),
+
+  /** . */
   blue(4),
+
+  /** . */
   magenta(5),
+
+  /** . */
   cyan(6),
-  white(7);
+
+  /** . */
+  white(7),
+
+  /** . */
+  def(9);
 
   /** . */
   public final int code;
 
-  /** . */
-  public final Style style;
+  public final char c;
 
   private Color(int code) {
     this.code = code;
-    this.style = Style.style(this);
+    this.c = Character.forDigit(code, 10);
   }
 
-  public int code(int base) {
-    return base + code;
+  public Style.Composite fg() {
+    return Style.style(null, this, null);
+  }
+
+  public Style.Composite foreground() {
+    return Style.style(null, this, null);
+  }
+
+  public Style.Composite bg() {
+    return Style.style(null, null, this);
+  }
+
+  public Style.Composite background() {
+    return Style.style(null, null, this);
+  }
+
+  public Style.Composite bold() {
+    return bold(true);
+  }
+
+  public Style.Composite underline() {
+    return underline(true);
+  }
+
+  public Style.Composite blink() {
+    return blink(true);
+  }
+
+  public Style.Composite bold(Boolean value) {
+    return Style.style(this).bold(value);
+  }
+
+  public Style.Composite underline(Boolean value) {
+    return Style.style(this).underline(value);
+  }
+
+  public Style.Composite blink(Boolean value) {
+    return Style.style(this).blink(value);
   }
 }

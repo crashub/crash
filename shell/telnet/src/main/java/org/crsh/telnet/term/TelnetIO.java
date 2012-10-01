@@ -120,26 +120,35 @@ public class TelnetIO implements TermIO {
       termIO.write("");
     } else {
       //
-      Decoration decoration = style.getDecoration();
-      termIO.setBlink(Decoration.blink == decoration);
-      termIO.setBold(Decoration.bold == decoration);
-      termIO.setUnderlined(Decoration.underline == decoration);
-
-      //
-      Color fg = style.getForeground();
-      if (fg != null) {
-        termIO.setForegroundColor(fg.code(30));
+      if (style instanceof Style.Composite) {
+        Style.Composite composite = (Style.Composite)style;
+        if (composite.getBold() != null) {
+          termIO.setBold(composite.getBold());
+        }
+        if (composite.getUnderline() != null) {
+          termIO.setUnderlined(composite.getUnderline());
+        }
+        if (composite.getBlink() != null) {
+          termIO.setBlink(composite.getBlink());
+        }
+        Color fg = composite.getForeground();
+        if (fg != null) {
+          if (fg == Color.def) {
+            termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
+          } else {
+            termIO.setForegroundColor(30 + fg.code);
+          }
+        }
+        Color bg = composite.getBackground();
+        if (bg != null) {
+          if (bg == Color.def) {
+            termIO.setBackgroundColor(BasicTerminalIO.COLORINIT);
+          } else {
+            termIO.setBackgroundColor(30 + bg.code);
+          }
+        }
       } else {
-        termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
-      }
-
-      //
-      Color bg = style.getBackground();
-      if (bg != null) {
-        termIO.setBackgroundColor(bg.code(30));
-      }
-      else {
-        termIO.setBackgroundColor(BasicTerminalIO.COLORINIT);
+        termIO.resetAttributes();
       }
     }
   }

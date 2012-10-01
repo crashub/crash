@@ -17,7 +17,7 @@ import org.crsh.cmdline.spi.Value
 import org.crsh.command.InvocationContext
 import org.crsh.util.Safe
 import java.sql.DatabaseMetaData
-import org.crsh.shell.ui.UIBuilder
+import org.crsh.text.ui.UIBuilder
 import org.crsh.cmdline.completers.JNDICompleter;
 
 /**
@@ -172,73 +172,130 @@ class jdbc extends CRaSHCommand {
     }
   }
 
-  @Usage("describe the database")
+  @Usage("show the database properties")
   @Command
-  public Object info(
-    @Argument
-    @Usage("the table names")
-    List<String> tableNames) {
+  public Object props() {
     if (connection == null) {
       throw new ScriptException("Not connected");
-    } else {
-      DatabaseMetaData md = connection.getMetaData();
-      if (tableNames != null && tableNames.size() > 0) {
-        def ui = new UIBuilder();
-        ui.node("") {
-          tableNames.each {
-            ResultSet rs = md.getColumns(null, null, it, null);
-            try {
-              node(it) {
-                while (rs.next()) {
-                  node(rs.getString("COLUMN_NAME")) {
-                    label("type name: ${rs.getString('TYPE_NAME')}")
-                    label("data type: ${rs.getString('DATA_TYPE')}")
-                    label("size: ${rs.getString('COLUMN_SIZE')}")
-                    label("nullable: ${rs.getString('IS_NULLABLE')}")
-                  }
-                }
-              }
-            } finally {
-              Safe.close(rs)
-            }
-          }
+    }
+    DatabaseMetaData md = connection.getMetaData();
+    def ui = new UIBuilder();
+    ui.table(weights: [1,4]) {
+      header(bold: true, fg: black, bg: white) {
+        label("NAME")
+        label("VALUE")
+      }
+      md.properties.each { key, value ->
+        row {
+          label(foreground: red, key)
+          label(value)
         }
-        return ui;
-      } else {
-        def ui = new UIBuilder();
-        ui.node("") {
-          node("database") {
-            label("name: ${md.databaseProductName}")
-            label("version: ${md.databaseProductVersion}")
-            label("major: ${md.databaseMajorVersion}")
-            label("minor: ${md.databaseMinorVersion}")
-          }
-          node("driver") {
-            label("name: ${md.driverName}")
-            label("version: ${md.driverVersion}")
-            label("major: ${md.driverMajorVersion}")
-            label("minor: ${md.driverMinorVersion}")
-          }
-          ResultSet rs = md.getTables(null, null, "%", null);
-          try {
-            node("tables") {
-              while (rs.next()) {
-                label(rs.getString(3))
-              }
-            }
-          }
-          finally {
-            Safe.close(rs)
-          }
-          ui.node("properties") {
-            md.properties.each { key, value ->
-              label("$key: $value")
-            }
-          }
-        }
-        return ui
       }
     }
+    return ui;
+  }
+
+  @Usage("describe the tables")
+  @Command
+  public Object tables() {
+    if (connection == null) {
+      throw new ScriptException("Not connected");
+    }
+    DatabaseMetaData md = connection.getMetaData();
+    ResultSet rs = md.getTables(null, null, "%", null);
+    def ui = new UIBuilder();
+    try {
+      ui.table(weights: [1,1,1]) {
+        header(bold: true, fg: black, bg: white) {
+          label("NAME");
+          label("CAT");
+          label("TYPE");
+        }
+        while (rs.next()) {
+          row {
+            label(rs.getString("TABLE_NAME"))
+            label(rs.getString("TABLE_SCHEM"))
+            label(rs.getString("TABLE_TYPE"))
+          }
+        }
+      }
+    }
+    finally {
+      Safe.close(rs)
+    }
+    return ui;
+  }
+
+  @Usage("describe the tables")
+  @Command
+  public Object table(@Argument @Usage("the table names") List<String> tableNames) {
+    if (connection == null) {
+      throw new ScriptException("Not connected");
+    }
+    DatabaseMetaData md = connection.getMetaData();
+    def ui = new UIBuilder();
+    ui.table(weights: [2,2,1,1], border: dashed) {
+      header(bold: true, fg: black, bg: white) {
+        label("COLUMN")
+        label("TYPE")
+        label("SIZE")
+        label("NULLABLE")
+      }
+      tableNames.each {
+        // Save it here because it seems to go away for some scoping reason in the header
+        def res = "" + it;
+        ResultSet rs = md.getColumns(null, null, it, null);
+        header(fg: black, bg: white) {
+          label(res)
+        }
+        try {
+          while (rs.next()) {
+            row {
+              label(rs.getString("COLUMN_NAME"))
+              label("${rs.getString('TYPE_NAME')} (${rs.getString('DATA_TYPE')})")
+              label(rs.getString("COLUMN_SIZE"))
+              label(rs.getString("IS_NULLABLE"))
+            }
+          }
+        } finally {
+          Safe.close(rs)
+        }
+      }
+    }
+    return ui;
+  }
+
+  @Usage("describe the database")
+  @Command
+  public Object info() {
+    if (connection == null) {
+      throw new ScriptException("Not connected");
+    }
+    DatabaseMetaData md = connection.getMetaData();
+    def ui = new UIBuilder();
+    ui.table(weights: [1,2,2,1,1]) {
+      header(bold: true, fg: black, bg: white) {
+        label("TYPE");
+        label("NAME");
+        label("VERSION");
+        label("MAJOR");
+        label("MINOR") }
+      row {
+        label("Product")
+        label("${md.databaseProductName}")
+        label("${md.databaseProductVersion}")
+        label("${md.databaseMajorVersion}")
+        label("${md.databaseMinorVersion}")
+      }
+      row {
+        label("Driver")
+        label("${md.driverName}")
+        label("${md.driverVersion}")
+        label("${md.driverMajorVersion}")
+        label("${md.driverMinorVersion}")
+      }
+    }
+    return ui
   }
 
   @Usage("close the current connection")

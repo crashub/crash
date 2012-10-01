@@ -2,7 +2,7 @@ import org.crsh.command.DescriptionFormat
 import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
-import org.crsh.shell.ui.UIBuilder
+import org.crsh.text.ui.UIBuilder
 
 class help extends CRaSHCommand
 {

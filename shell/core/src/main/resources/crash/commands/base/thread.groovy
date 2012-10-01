@@ -5,7 +5,7 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.annotations.Man
-import org.crsh.shell.ui.UIBuilder
+import org.crsh.text.ui.UIBuilder
 import org.crsh.cmdline.annotations.Argument
 
 @Usage("JVM thread commands")
@@ -82,8 +82,8 @@ public class thread extends CRaSHCommand {
     //
     UIBuilder ui = new UIBuilder();
 
-    ui.table() {
-      row(decoration: bold, foreground: black, background: white) {
+    ui.table(weights:[1,1,1,1,1,5]) {
+      row(bold: true, fg: black, bg: white) {
         label("ID"); label("PRIORITY"); label("STATE"); label("INTERRUPTED"); label("DAEMON"); label("NAME")
       }
       threads.each() {

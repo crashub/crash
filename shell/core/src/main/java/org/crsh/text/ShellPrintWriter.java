@@ -49,13 +49,13 @@ public class ShellPrintWriter extends PrintWriter {
   }
 
   public final void print(Object obj, Color foreground) {
-    out.append(foreground.style);
+    out.append(Style.style(foreground));
     print(obj);
     out.append(Style.reset);
   }
 
   public final void println(Object obj, Color foreground) {
-    print(obj, foreground.style);
+    print(obj, Style.style(foreground));
     println();
   }
 
@@ -71,13 +71,13 @@ public class ShellPrintWriter extends PrintWriter {
   }
 
   public final void print(Object obj, Decoration decoration) {
-    out.append(decoration.style);
+    out.append(Style.style(decoration));
     print(obj);
     out.append(Style.reset);
   }
 
   public final void println(Object obj, Decoration decoration) {
-    print(obj, decoration.style);
+    print(obj, Style.style(decoration));
     println();
   }
 
@@ -122,9 +122,9 @@ public class ShellPrintWriter extends PrintWriter {
     if (o instanceof Style) {
       out.append((Style)o);
     } else if (o instanceof Decoration) {
-      out.append(((Decoration)o).style);
+      out.append((Style.style((Decoration)o)));
     } else if (o instanceof Color) {
-      out.append(((Color)o).style);
+      out.append(Style.style((Color)o));
     } else {
       print(o);
     }

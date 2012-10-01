@@ -17,50 +17,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.ui;
+package org.crsh.text.ui;
 
-enum Pad {
+public enum Border {
 
-  BRANCH("+-") {
-    @Override
-    Pad next() {
-      return CONTINUE_BRANCH;
-    }
-  },
+  dashed('-', '|', ' '),
 
-  CONTINUE_BRANCH("| ") {
-    @Override
-    Pad next() {
-      return CONTINUE_BRANCH;
-    }
-  },
+  star('*', '*', '*');
 
-  LAST_BRANCH("+-") {
-    @Override
-    Pad next() {
-      return STOP_BRANCH;
-    }
-  },
+  /** . */
+  final char horizontal;
 
-  STOP_BRANCH("  ") {
-    @Override
-    Pad next() {
-      return STOP_BRANCH;
-    }
-  },
+  /** . */
+  final char vertical;
 
-  SPACE(" ") {
-    @Override
-    Pad next() {
-      return null;
-    }
-  };
+  /** . */
+  final char corner;
 
-  final String chars;
-
-  Pad(String chars) {
-    this.chars = chars;
+  private Border(char horizontal, char vertical, char corner) {
+    this.horizontal = horizontal;
+    this.vertical = vertical;
+    this.corner = corner;
   }
-
-  abstract Pad next();
 }

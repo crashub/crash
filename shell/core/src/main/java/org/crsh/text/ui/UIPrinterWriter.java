@@ -17,25 +17,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.io;
+package org.crsh.text.ui;
 
 import org.crsh.command.InvocationContext;
-import org.crsh.shell.ui.Element;
+import org.crsh.text.ShellAppendable;
 import org.crsh.text.ShellPrintWriter;
-import org.crsh.shell.ui.UIBuilder;
 
 import java.io.Closeable;
 import java.io.Flushable;
 
-public class ShellPrinter extends ShellPrintWriter {
+public class UIPrinterWriter extends ShellPrintWriter {
 
   /** . */
-  private final ShellFormatter out;
+  private final ShellAppendable out;
 
   /** . */
   private final InvocationContext context;
 
-  public ShellPrinter(ShellFormatter out, Flushable flushable, Closeable closeable, InvocationContext context) {
+  public UIPrinterWriter(ShellAppendable out, Flushable flushable, Closeable closeable, InvocationContext context) {
     super(out, flushable, closeable);
 
     //
@@ -56,7 +55,14 @@ public class ShellPrinter extends ShellPrintWriter {
         print(element);
       }
     } else if (obj instanceof Element) {
-      ((Element)obj).print(out, context);
+      int width = context.getWidth();
+      Renderer renderer = ((Element)obj).renderer(width);
+      if (renderer != null) {
+        while (renderer.hasLine()) {
+          renderer.renderLine(new RendererAppendable(out));
+          out.append('\n');
+        }
+      }
     } else {
       super.print(obj);
     }

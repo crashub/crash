@@ -17,28 +17,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.ui;
+package org.crsh.text.ui;
 
-public enum Border {
+/**
+ * An element renderer.
+ */
+public interface Renderer {
 
-  dash('-', '|', ' '),
+  /**
+   * Returns true if the renderer has a next line to render.
+   *
+   * @return when there is at least a next line to read
+   */
+  boolean hasLine();
 
-  star('*', '*', '*');
+  /**
+   * Renders the element.
+   *
+   * @param to the buffer for rendering
+   * @throws IllegalStateException when there is no line to render
+   */
+  void renderLine(RendererAppendable to) throws IllegalStateException;
 
-
-
-  /** . */
-  final char horizontal;
-
-  /** . */
-  final char vertical;
-
-  /** . */
-  final char corner;
-
-  private Border(char horizontal, char vertical, char corner) {
-    this.horizontal = horizontal;
-    this.vertical = vertical;
-    this.corner = corner;
-  }
 }

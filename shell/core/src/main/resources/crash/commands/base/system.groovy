@@ -17,7 +17,7 @@ import org.crsh.cmdline.completers.EnumCompleter
 import org.crsh.cmdline.spi.ValueCompletion
 import java.util.regex.Pattern
 import org.crsh.cmdline.annotations.Required
-import org.crsh.shell.ui.UIBuilder
+import org.crsh.text.ui.UIBuilder
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -46,8 +46,8 @@ class system extends CRaSHCommand implements Completer {
     } else {
 
       UIBuilder ui = new UIBuilder()
-      ui.table() {
-        row(decoration: bold, foreground: black, background: white) {
+      ui.table(weights: [1,4]) {
+        row(bold: true, fg: black, bg: white) {
           label("NAME"); label("VALUE")
         }
         System.getProperties().each {
@@ -56,7 +56,7 @@ class system extends CRaSHCommand implements Completer {
           def value = it.value;
           if (matcher.matches()) {
             row() {
-                label(value: name, foreground: red); label(value)
+                label(foreground: red, name); label(value)
             }
           }
         }

@@ -21,14 +21,11 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.command.impl.BaseInvocationContext;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.io.ShellFormatter;
-import org.crsh.shell.io.ShellPrinter;
+import org.crsh.text.ui.UIPrinterWriter;
 import org.crsh.text.ShellAppendable;
 import org.crsh.text.ShellPrintWriter;
-import org.crsh.text.Style;
 
 import java.io.Flushable;
-import java.io.IOException;
 import java.util.Map;
 
 class InvocationContextImpl<C, P> extends BaseInvocationContext<C, P> {
@@ -75,7 +72,7 @@ class InvocationContextImpl<C, P> extends BaseInvocationContext<C, P> {
 
   public ShellPrintWriter getWriter() {
     if (writer == null) {
-      writer = new ShellPrinter(new ShellFormatter(appendable), flushable, null, this);
+      writer = new UIPrinterWriter(appendable, flushable, null, this);
     }
     return writer;
   }
