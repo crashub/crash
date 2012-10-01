@@ -128,9 +128,13 @@ public class TableElement extends Element {
     
   }
 
-  public TableElement setBorder(Border border) {
-    this.border = border;
+  public TableElement border(Border border) {
+    setBorder(border);
     return this;
+  }
+
+  public void setBorder(Border border) {
+    this.border = border;
   }
 
   private int columnNumber() {

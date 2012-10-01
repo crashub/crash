@@ -72,7 +72,7 @@ public class UIBuilder extends BuilderSupport {
       } else {
         borderChar = null;
       }
-      ((TableElement) e).setBorder(borderChar);
+      ((TableElement) e).border(borderChar);
     }
     return e;
     

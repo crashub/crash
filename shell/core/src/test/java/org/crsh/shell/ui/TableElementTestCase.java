@@ -122,7 +122,7 @@ public class TableElementTestCase extends TestCase {
   public void testInNodeBorder() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
 
     tableElement.
         add(row().
@@ -190,7 +190,7 @@ public class TableElementTestCase extends TestCase {
   public void testInNodeTooLargeBorder() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
 
     tableElement.
         add(row().
@@ -227,7 +227,7 @@ public class TableElementTestCase extends TestCase {
 
   public void testInNodeHeader() throws Exception {
 
-    TableElement tableElement = new TableElement().setBorder(Border.dash);
+    TableElement tableElement = new TableElement().border(Border.dash);
 
     tableElement.
         add(row().
@@ -310,7 +310,7 @@ public class TableElementTestCase extends TestCase {
     //
     ChunkBuffer reader = new ChunkBuffer();
     ShellFormatter writer = new ShellFormatter(reader, "_");
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
     tableElement.print(writer, new TestInvocationContext());
     assertEquals(
         " --------------- _" +
@@ -322,7 +322,7 @@ public class TableElementTestCase extends TestCase {
     //
     reader = new ChunkBuffer();
     writer = new ShellFormatter(reader, "_");
-    tableElement.setBorder(Border.star);
+    tableElement.border(Border.star);
     tableElement.print(writer, new TestInvocationContext());
     assertEquals(
         "*****************_" +
@@ -336,7 +336,7 @@ public class TableElementTestCase extends TestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
 
     tableElement.
         add(new RowElement(true).
@@ -374,7 +374,7 @@ public class TableElementTestCase extends TestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.setBorder(null);
+    tableElement.border(null);
 
     tableElement.
         add(new RowElement(true).
@@ -404,7 +404,7 @@ public class TableElementTestCase extends TestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
 
     tableElement.
         add(row().
@@ -447,7 +447,7 @@ public class TableElementTestCase extends TestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
 
     tableElement.
         add(row().
@@ -492,7 +492,7 @@ public class TableElementTestCase extends TestCase {
 
   public void testTooLargeBorder() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
 
     tableElement.
         add(row().
@@ -520,7 +520,7 @@ public class TableElementTestCase extends TestCase {
 
   public void testTooLargeBorderHeader() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
 
     tableElement.
         add(new RowElement(true).
@@ -550,7 +550,7 @@ public class TableElementTestCase extends TestCase {
   public void testBorderStyle() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
 
     tableElement.
         add(row().
@@ -590,7 +590,7 @@ public class TableElementTestCase extends TestCase {
 
   public void testTooManyColumns() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.setBorder(Border.dash);
+    tableElement.border(Border.dash);
 
     tableElement.
         add(row().
