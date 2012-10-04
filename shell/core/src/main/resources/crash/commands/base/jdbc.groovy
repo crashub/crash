@@ -18,6 +18,7 @@ import org.crsh.command.InvocationContext
 import org.crsh.util.Safe
 import java.sql.DatabaseMetaData
 import org.crsh.shell.ui.UIBuilder
+import org.crsh.cmdline.completers.JNDICompleter;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -72,7 +73,7 @@ class jdbc extends CRaSHCommand {
 
   @Usage("open a connection from JNDI bound datasource")
   @Command
-  public String open(@Usage("The datasource JNDI name") @Argument String globalName) {
+  public String open(@Usage("The datasource JNDI name") @Argument(completer = JNDICompleter.class) String globalName) {
     if (connection != null) {
       throw new ScriptException("Already connected");
     }
@@ -99,7 +100,7 @@ class jdbc extends CRaSHCommand {
 
   @Usage("execute SQL statement")
   @Command
-  public Object execute(
+  public String execute(
     InvocationContext<Void, Map> context,
     @Usage("The statement")
     @Argument(unquote = false)
@@ -143,22 +144,21 @@ class jdbc extends CRaSHCommand {
               int columnCount = resultSet.getMetaData().getColumnCount()
               (1..columnCount).each{ formatString += "%$it\$-20s " }
               formatString += "\r\n"
-              
-              UIBuilder builder = new UIBuilder();
 
-              builder.table(border: true) {
-              	header() {
-                  (1..columnCount).each{ label(metaData.getColumnName(it)) }
-              	}
-              	while (resultSet.next()) {
-              	  row() {
-              	    (1..columnCount).each{ label(resultSet.getString(it)) }
-              	  }
-              	}
+              // Print header
+              String[] header = new String[metaData.getColumnCount()];
+              (1..columnCount).each{ header[it-1] = metaData.getColumnName(it) }
+              formatter.format(formatString, header);
+
+              // Print conent
+              String[] content = new String[metaData.getColumnCount()];
+              while (resultSet.next()) {
+                (1..columnCount).each{ content[it-1] = resultSet.getString(it) }
+                formatter.format(formatString, content);
               }
 
               //
-              return builder;
+              return res;
             }
           }
         }
