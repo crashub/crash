@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8" />
+<title>CRaSH a shell to extend the Java Platform</title>
+<link rel="stylesheet" href="css/site.css">
+<script src="js/jquery-1.7.1.min.js"></script>
+<!-- Doc here : http://www.asual.com/jquery/address/docs/ -->
+<script src="js/jquery.address-1.4.min.js"></script>
+<script src="js/bootstrap-dropdown.js"></script>
+
+<!--
+    Does not work at the moment for some reason
+    <script src="js/google-code-prettify/prettify.js"></script>
+    -->
+
+<script>
+	$(document).ready(function() {
+
+		// The page navigation
+		$.address.change(function(event) {
+
+			// Get anchor
+			var anchor = event.value.substring(1);
+			if (anchor == "")
+				anchor = "home";
+
+			//
+			var page = $(".page:has(a[name=" + anchor + "])");
+			if (page.length == 1) {
+				page.filter(function() {
+					return this != window.previous;
+				}).each(function() {
+
+					// Do show/hide
+					$(".page").hide();
+					$(this).show();
+
+					// Reset page to top
+					$(window).scrollTop(0);
+
+					// Update previous
+					window.previous = this;
+				});
+			} else {
+				// Should log something somehow
+			}
+		});
+	});
+	$(function() {
+		$("<div></div>$tag_").load("doc.html", function() {
+			$(this).find(".book").children().appendTo("#doc");
+			/* prettyPrint(); */
+		});
+	})	
+</script>
+
+</head>
+<body>
+	<div>
+
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<ul id="tabs" class="nav">
+						<li><a href="index.html">Home</a></li>
+						<li><a href="learn.html">Learn</a></li>
+						<li><a href="javadoc/index.html" target="_blank">Javadoc</a></li>
+						<li><a href="http://crash.vietj.cloudbees.net">Demo</a></li>
+						<li><a href="link.html">Links</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+      	  <div class="page">
+				<div class="span4">
+						<h3>Learn</h3>				
+						<address>
+							<a href="faq.html">FAQ</a>
+							<br/>
+							<a href="documentation.html">Documentation</a>
+						</address>						
+						<h3>Tutorial</h3>
+						<address>
+							<a href="firstCmd.html">Create your first command.</a><br />
+						</address>
+						<h3>Contribs</h3>
+						<address>
+							<blockquote>
+								<strong><a href="#scp">Script.groovy</a>  by Crash </strong>: super script !
+							</blockquote>
+						</address>						
+				</div>
+			</div>
+
+		</div>
+	</div>
+</body>

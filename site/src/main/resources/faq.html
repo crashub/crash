@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8" />
+<title>CRaSH a shell to extend the Java Platform</title>
+<link rel="stylesheet" href="css/site.css">
+<script src="js/jquery-1.7.1.min.js"></script>
+<!-- Doc here : http://www.asual.com/jquery/address/docs/ -->
+<script src="js/jquery.address-1.4.min.js"></script>
+<script src="js/bootstrap-dropdown.js"></script>
+
+<!--
+    Does not work at the moment for some reason
+    <script src="js/google-code-prettify/prettify.js"></script>
+    -->
+
+<script>
+	$(document).ready(function() {
+
+		// The page navigation
+		$.address.change(function(event) {
+
+			// Get anchor
+			var anchor = event.value.substring(1);
+			if (anchor == "")
+				anchor = "home";
+
+			//
+			var page = $(".page:has(a[name=" + anchor + "])");
+			if (page.length == 1) {
+				page.filter(function() {
+					return this != window.previous;
+				}).each(function() {
+
+					// Do show/hide
+					$(".page").hide();
+					$(this).show();
+
+					// Reset page to top
+					$(window).scrollTop(0);
+
+					// Update previous
+					window.previous = this;
+				});
+			} else {
+				// Should log something somehow
+			}
+		});
+	});
+</script>
+
+</head>
+<body>
+	<div>
+
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<ul id="tabs" class="nav">
+						<li><a href="index.html">Home</a></li>
+						<li><a href="learn.html">Learn</a></li>
+						<li><a href="javadoc/index.html" target="_blank">Javadoc</a></li>
+						<li><a href="http://crash.vietj.cloudbees.net">Demo</a></li>
+						<li><a href="link.html">Links</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+      	  <div class="page">
+					<h3>FAQ</h3>
+					<h4>Basic</h4>
+					<address>
+						<a href="#whatIsCrash">What is Crash ?</a><br />
+						<a href="#howConnect">How can I connect Crash to a JVM ?</a><br />
+						<a href="#app">How can I connect Crash to a JVM on an application server ?</a><br />
+						<a href="#makeOwn">Can I make my own command ?</a><br />
+						<a href="#embded">Can I embded Crash on Spring application ?</a><br />
+					</address>
+					<h4>Common errors</h4>
+					<address>
+						<a href="#bcprov">Could not start CRaSSHD Failed to register BouncyCastle as the defaut JCE provider</a><br />
+					</address>
+
+
+				<h4>What is Crash ?</h4>
+				<a name="whatIsCrash"></a>
+					</br>
+					<strong> " The Common Reusable SHell (CRaSH) deploys in a
+						Java runtime and provides interactions with the JVM. Commands are
+						written in Groovy and can be developped at runtime making the
+						extension of the shell very easy with fast development cycle." 
+					</strong>
+					</br>
+					</br>  
+					<strong>
+						In short, you will be able to connect to a JVM with a shell.So you
+						will be directly in the heart of JVM and it will be possible to
+						execute commands directly on JVM. 
+					</strong>
+					</br>
+					</br>
+
+				<h4>How can I connect Crash to a JVM ?</h4>
+				<a name="howConnect"></a>				
+					</br>
+					<strong>You can connect to a JVM by severeal ways : </strong>
+					<blockquote>
+					<small>Remote connection with SSH : <strong>ssh -p 2000 -l admin localhost</strong></small>  
+					<small>Remote connection with TELNET : <strong>telnet localhost 5000</strong> </small>
+					<small>With Attach mode.</small>
+					</blockquote>
+					<strong>For the Attach mode, you need to do the following :</strong>
+					<blockquote>
+						<small>Get the id : <strong>%$JAVA_HOME/bin/jps</strong></small>
+						<small><strong>%cd $CRASH_HOME/bin</strong></small>
+						<small><strong>%./crash.sh ID</strong></small>
+					</blockquote>
+				</br>			
+				<h4>How can I connect Crash to a JVM on an application server ?</h4>
+				<a name="app"></a>					
+					</br>
+					<strong> You can copy the crash war file on your deploy directory and then connect to it (cf <a href="#howConnect">How can I connect Crash to a JVM ?</a>)</strong>
+					<strong> You can embded Crash with an Spring application and deploy file in your application server and then connect to it (cf <a href="#howConnect">How can I connect Crash to a JVM ?</a>) </strong>
+					</br>
+					</br>					
+				<h4>Can I make my own command ?</h4>
+				<a name="makeOwn"></a>				
+				</br>
+					<strong> Of course and its recommended.You just have to make
+						a Groovy script. (It's easy because Groovy can use the same syntax as Java).
+						Don't worry, we will provide example and don't be shy : ask to the forum ! </strong>
+				</br>
+				</br>
+
+				<h4>Can I embded Crash on Spring application ?</h4>
+				<a name="embded"></a>
+				</br>
+					<strong>Yes.You only have to add few maven dependencies and
+						configurations.See documentation for more details.</strong>
+				</br>						
+				</br>
+				<h3>Commons errors</h3>
+
+				</br>
+				<a name="bcprov"></a>
+				<h4>Could not start CRaSSHD Failed to register BouncyCastle as the defaut JCE provider</h4>
+					</br>
+					<strong>In many cases, it's happen when you make a connection with SSH on your application server.The problem is that you haven't BouncyCastle security library in your JRE.
+					Here is the most common way to solve this issue :</strong>
+					
+					<blockquote>
+						<small> Retreive security file for your JVM on <a href="http://www.bouncycastle.org/latest_releases.html">www.bouncycastle.org</a> (e.g : bcprov-jdk15on-147.jar et bcprov-ext-jdk15on-147.jar)</small>
+						<small> Copy these files in $JDK_HOME/jre/lib/ext</small>
+						<small> vi $JDK_HOME/jre/lib/security/java.security and add the line security.provider.9=org.bouncycastle.jce.provider.BouncyCastleProvider</small>
+					</blockquote>
+					<strong>Example of $JDK_HOME/jre/lib/security/java.security :</strong>
+					<blockquote>
+					<small>security.provider.1=sun.security.provider.Sun</small>
+					<small>security.provider.2=sun.security.rsa.SunRsaSign</small>
+					<small>security.provider.3=com.sun.net.ssl.internal.ssl.Provider</small>
+					<small>security.provider.4=com.sun.crypto.provider.SunJCE</small>
+					<small>security.provider.5=sun.security.jgss.SunProvider</small>
+					<small>security.provider.6=com.sun.security.sasl.Provider</small>
+					<small>security.provider.7=org.jcp.xml.dsig.internal.dom.XMLDSigRI</small>
+					<small>security.provider.8=sun.security.smartcardio.SunPCSC</small>
+					<small>security.provider.9=org.bouncycastle.jce.provider.BouncyCastleProvider</small>
+					</blockquote>
+					<blockquote>
+					<strong>Restart your application server.</strong>
+					</blockquote>
+					</br>
+			</div>
+	</div>
+	
+</body>	
