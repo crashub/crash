@@ -1,0 +1,174 @@
+<!--
+  ~ Copyright (C) 2011 eXo Platform SAS.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>CRaSH a shell to extend the Java Platform</title>
+    <link rel="stylesheet" href="css/site.css">
+    <script src="js/jquery-1.7.1.min.js"></script>
+    <!-- Doc here : http://www.asual.com/jquery/address/docs/ -->
+    <script src="js/jquery.address-1.4.min.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+
+    <!--
+    Does not work at the moment for some reason
+    <script src="js/google-code-prettify/prettify.js"></script>
+    -->
+
+    <script>
+      $(document).ready(function() {
+
+        // The page navigation
+        $.address.change(function(event){
+
+          // Get anchor
+          var anchor = event.value.substring(1);
+          if (anchor == "")
+            anchor = "home";
+
+          //
+          var page = $(".page:has(a[name=" + anchor + "])");
+          if (page.length == 1) {
+            page.filter(function() {
+              return this != window.previous;
+            }).each(function() {
+
+              // Do show/hide
+              $(".page").hide();
+              $(this).show();
+
+              // Reset page to top
+              $(window).scrollTop(0);
+
+              // Update previous
+              window.previous = this;
+            });
+          } else {
+            // Should log something somehow
+          }
+        });
+      });
+    </script>
+
+</head>
+<body>
+
+  <div>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <ul id="tabs" class="nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="learn.html">Learn</a></li>
+            <li><a href="javadoc/index.html" target="_blank">Javadoc</a></li>
+            <li><a href="http://crash.vietj.cloudbees.net">Demo</a></li>
+            <li><a href="#links">Links</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+       <div class="page">
+        <a name="doc"></a>
+        <script type="text/javascript">
+          $(function() {
+            $("<div></div>").load("doc.html", function() {
+              $(this).find(".book").children().appendTo("#doc");
+              /* prettyPrint(); */
+            });
+          })
+        </script>
+        <div id="doc"></div>
+      </div>
+
+      <div class="page">
+        <a name="links"></a>
+        <div id="links">
+          <h3>They talk about CRaSH</h3>
+          <blockquote>
+
+            <p>JUGSummerCamp 2012 quickie feedback / 14th of September 2012</p>
+            <small><a href="http://www.kanithael.net/2012/09/24/jugsummercamp-le-compte-rendu/">Le coup de coeur de Ludovic Borie</a></small>
+            <small><a href="http://blog.zenika.com/index.php?post/2012/09/18/JUG-Summer-Camp-2012%2C-nous-y-&eacute;tions-%21">Zenika's feedback</a></small>
+            <small><a href="http://javaonemorething.wordpress.com/2012/09/23/jug-summer-camp-2012/">Beno&#238;t's feedback</a></small>
+
+            <p>Interesting Stack Exchange Q&amp;A about CRaSH / 4th of July 2012</p>
+            <small><a href="http://programmers.stackexchange.com/questions/155578/why-would-i-want-to-use-crash">Why would I want to use CRaSH?</a></small>
+
+            <p>CRaSH - Common Reusable Shell for Monitoring a Running JVM / 30th of June 2012</p>
+            <small><a href="http://blog.amt.in/crash-common-reusable-shell">AMT Blog</a></small>
+
+            <p>CRaSH: An Extensible Command Line Shell For Monitoring A Running JVM / 27th of June 2012</p>
+            <small><a href="http://www.infoq.com/news/2012/06/crash-shell-1">InfoQ article</a></small>
+
+            <p>CRaSH - A JVM shell / 7th of May 2012</p>
+            <small><a href="http://beautifulbytes.wordpress.com/2012/05/07/crash-a-jvm-shell/">Beautiful Bytes blog</a></small>
+
+            <p>CRaSH 1.0: Eine neue Shell f&#252;r die JVM / 23rd of April 2012</p>
+            <small><a href="http://it-republik.de/jaxenter/news/CRaSH-1.0-Eine-neue-Shell-fuer-die-JVM-062665.html">German article about CRaSH 1.0 release</a></small>
+
+            <p>Devoxx France 2012 quickie feedback / 20th of April 2012</p>
+            <small><a href="http://www.duminy.fr/blog/?p=1655">CRaSH un shell pour &eacute;tendre la plateforme Java</a></small>
+            <small><a href="http://blog.proxiad.com/2012/05/15/devoxxfr-2012-autour-de-java/">Proxiad blog about Devoxx Quickie</a></small>
+            <small><a href="http://linsolas.free.fr/wordpress/index.php/2012/04/devoxx-france-dernier-jour/">Romain Linsolas about Devoxx Quickie</a></small>
+
+            <p>CRaSH 1.0 released - a shell to extend the JVM's capabilities</p>
+            <small><a href="http://jaxenter.com/crash-1-0-released-a-shell-to-extend-the-jvm-s-capabilities-42120.html">Jaxenter article</a></small>
+          </blockquote>
+
+          <h3>They use CRaSH</h3>
+          <blockquote>
+
+            <p><a href="http://extensions.xwiki.org/xwiki/bin/view/Extension/CRaSH+Console">XWiki CRaSH Console extension</a></p>
+
+            <p><a href="https://community.jboss.org/en/gatein/blog/2012/02/14/gatein-management--cli">GateIn management command line interface</a></p>
+          </blockquote>
+
+          <h3>Various</h3>
+          <blockquote>
+
+            <p>CRaSH, un shell extensible pour g&eacute;rer la JVM et vos applications</p>
+            <small><a href="hhttp://www.slideshare.net/aheritier/crash-jugsummercamp-2012-quickie">JugSummerCamp Quickie slides by Arnaud H&eacute;ritier</a></small>
+
+            <p>CRaSH un shell pour &eacute;tendre la JVM</p>
+            <small><a href="http://www.slideshare.net/jviet/crash-12638600">Devoxx Quickie slides by Julien Viet</a></small>
+
+            <p>Introduction to CRaSH</p>
+            <small><a href="http://www.exoplatform.com/company/en/resource-viewer/Tutorial/Introduction-to-Crash">The first article introducing CRaSH!</a></small>
+          </blockquote>
+        </div>
+      </div>
+
+      <hr>
+      <footer>
+        <p>Sponsored by <a href="http://www.exoplatform.com">eXo Platform</a></p>
+      </footer>
+
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,7 +1,7 @@
 = Developping commands =
 
 A CRaSH command is written in the [[Groovy>>http://groovy.codehaus.org/]] language. The Groovy language provides
-several signifiant advantages:
+several significant advantages:
 
 * Commands can be bare scripts or can be a class
 * Java developers can write Groovy commands without learning it
@@ -38,11 +38,27 @@ Class can also be used to defined a command, it provides significant advantages 
 
 * Commands can declare options and arguments for the command
 * Commands can use annotations to describe the command behavior and parameters
+* Commands provide a simple way to define help.
+* Commands provide completion automatically .
 
-When the user types a command in the sell, the command line is parsed by the //cmdline// framework
+=== Under the hood ===
+
+When the user types a command in the shell, the command line is parsed by the //cmdline// framework
 and injected in the command class. Previously the //args4j// framework was used but this framework does not support
 natively code completion and could not be extended to support it. The support of command line completion is the
 main motivation of the development of such a framework.
+
+=== Completion is yet implemented ===
+
+Commands have the completion yet implemented.
+For example, if you type ## jdbc [TABULATION] ##, you will obtain parameter(s) you can use :
+
+{{screen}}
+% jdbc 
+close      open       info       connect    execute  
+{{/screen}}
+
+=== @Command : Define method as a command. ===
 
 Let's study a simple class command example:
 
@@ -58,18 +74,67 @@ class date extends CRaSHCommand {
   }
 }{{/code}}
 
-The command is pretty straightforward to undertand:
+The command is pretty straightforward to understand :
 
 * The ##@Command## annotation declares the ##main## method as a command
 * The command takes one optional ##format## option
 * The ##@Usage## annotation describes the usage of the command and its parameters
 
+=== @Usage : A simple way to define help  ===
+
+You don't have to manage option ##-h## or ##-\-help## in your code.You only have to use ##@Usage## annotation before your command or option.
+
+* Use of ##@Usage## before class
+
+It will permit to give a short description of your command in the main help of crash (just type ##help## in the prompt).
+For example, here is a part of code of the ##jdbc## command :
+
+{{code}}
+@Usage("JDBC connection")
+class jdbc extends CRaSHCommand {
+
+  @Usage("connect to database with a JDBC connection string")
+  @Command
+  public String connect(
+	...
+{{/code}}
+
+Then you can see the result of ##@Usage("JDBC connection")## by typing ##help## in the prompt :
+
 {{screen}}
-% date
-Thu Apr 19 15:44:05 CEST 2012
+%help
+Try one of these commands with the -h or --help switch:
+
+NAME       DESCRIPTION                                     
+..                         
+env        display the term env                            
+hello                                                      
+help       provides basic help                             
+...                
+##jdbc       JDBC connection## 
 {{/screen}}
 
-The ##@Usage## annotation is important because it will give a decent humand description of the command
+* Use of ##@Usage## before class
+
+The ##@Usage## annotation will give a decent human description of the command.
+In the following example, you can see that we define ##-f## or ##-\-format## option
+and we describe this option with ##@Usage("the time format")## :
+
+{{code}}
+class date extends CRaSHCommand {
+
+  @Command
+  Object main(@Usage("the time format") @Option(names=["f","format"]) String format) {
+    if (format == null)
+      format = "EEE MMM d HH:mm:ss z yyyy";
+    def date = new Date();
+    return date.format(format);
+  }
+}
+{{/code}}
+
+If we print the help by using ##-h## or ##-\-help## option, you
+will see our description :
 
 {{screen}}
 % date -h
@@ -79,23 +144,78 @@ usage: date [-h | --help] [-f | --format]
    [-f | --format] the time format
 {{/screen}}
 
+=== ##@Argument## : Annotates a field or parameter to become an command line argument. ===
+
+In the following example, we define an argument for the command ##sleep##.
+So if we write ##sleep 100##, the ##time## variable will contain the value ##100##.
+
+{{code}}
+class sleep extends CRaSHCommand {
+  @Usage("sleep for some time")
+  @Command
+  Object main(@Usage("sleep time in seconds") @Argument int time) {
+    if (time < 0)
+      throw new ScriptException("Cannot provide negative time value $time");
+    Thread.sleep(time * 1000);
+    return null;
+  }
+}
+{{/code}}
+
+=== ##@Required## : Defines whether an argument or option is required or not  ===
+
+For example, when we use ##type## in ##java## command, the argument name is mandatory because of ##@Required##.
+If we don't type something, we will have the following message :
+
+{{screen}}
+% java type
+java: Missing argument name
+{{/screen}}
+
+To define an argument as required, we only need to add ##@Required## :
+
+{{code}}
+void type(@Usage("The full qualified type name") @Required @Argument String name) {
+{{/code}}
+
+=== ##@Man## : Add more details in the manual ===
+
+Crash provides a manual command and generate manual automatically.(Just type ##man## in the shell)
+If you want to add details in the manual, you just have to use ##@Man##.
+Here is an example of the log command manual :
+ 
+{{code}} 
+  @Man("""\
+The set command sets the level of a logger. One or several logger names can be specified as arguments
+and the -l option specify the level among the trace, debug, info, warn and error levels. When no level is
+specified, the level is cleared and the level will be inherited from its ancestors.
+
+% logset -l trace foo
+% logset foo
+
+The logger name can be omitted and instead stream of logger can be consumed as it is a <Logger,Void> command.
+The following set the level warn on all the available loggers:
+
+% log ls | log set -l warn""")
+{{/code}}
+
 == Multi commands ==
 
 A class can hold several commands allowing a single file to group several commands, let's study the JDBC command
 structure:
 
-{{code}}
+{{screen}}
 @Usage("JDBC connection")
 class jdbc extends CRaSHCommand {
 
   @Usage("connect to database with a JDBC connection string")
   @Command
   public String connect(
-          @Usage("The username") @Option(names=["u","username"]) String user,
-          @Usage("The password") @Option(names=["p","password"]) String password,
-          @Usage("The extra properties") @Option(names=["properties"]) Value.Properties properties,
-          @Usage("The connection string") @Argument String connectionString) {
-     ...
+    @Usage("The username") @Option(names=["u","username"]) String user,
+    @Usage("The password") @Option(names=["p","password"]) String password,
+    @Usage("The extra properties") @Option(names=["properties"]) Value.Properties properties,
+    @Usage("The connection string") @Argument String connectionString) {
+    ...
   }
 
   @Usage("close the current connection")
@@ -104,7 +224,7 @@ class jdbc extends CRaSHCommand {
      ...
   }
 }
-{{/code}}
+{{/screen}}
 
 We can see that the class declares two commands ##connect## and ##close##, they are invoked this way:
 
@@ -142,7 +262,7 @@ out.println(bar); // <2> The bar is resolved as an session attribute by Groovy
 The ##CommandContext## provides also access to the shell attributes as a ##Map<String, Object>##. Context attributes
 are useful to interact with object shared globally by the CRaSH environment:
 
-* When embedded in a web application context attributes resolves to servlet context attributes.
+* When embedded in a web application: context attributes resolves to servlet context attributes.
 * When embedded in Spring context attributes resolve to Spring objects:
 ** //attributes.factory// returns the Spring factory
 ** //attributes.beans// returns Spring beans, for example //attribute.beans.telnet// returns the //telnet// bean
@@ -151,7 +271,7 @@ are useful to interact with object shared globally by the CRaSH environment:
 
 {{example title="Obtaining a Spring bean"}}
 {{java}}
-def bean = context.attributes.beans.["TheBean"];
+def bean = context.attributes.beans["TheBean"];
 {{/java}}
 {{/example}}
 
