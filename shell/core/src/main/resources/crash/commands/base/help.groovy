@@ -37,12 +37,12 @@ class help extends CRaSHCommand
     builder.label("Try one of these commands with the -h or --help switch:\n\n");
 
     builder.table() {
-      row(decoration: bold, foreground: black, background: white) {
+      row(bold: true, fg: black, bg: white) {
         label("NAME"); label("DESCRIPTION")
       }
       for (int i = 0;i < names.size();i++) {
         row() {
-            label(value: names[i], foreground: red); label(descs[i])
+            label(foreground: red, names[i]); label(descs[i])
         }
       }
     }
