@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package crash.commands.base
+package crash.command.base
 
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Usage
@@ -37,28 +37,155 @@ class jmx extends CRaSHCommand {
 
   @Usage("todo")
   @Command
-  void ls(InvocationContext<Void, ObjectName> context) {
+  void ls(
+      InvocationContext<Void, ObjectName> context,
+      @Usage("classname e.g:java.util.logging.Logging ") @Option(names=["c","classname"]) String classNameParam,      
+      @Usage("ObjectName e.g:java.util.logging:type=Logging") @Option(names=["o","objectname"]) String objectNameParam,
+	  @Usage("desc") @Option(names=["desc"]) String desc,
+	  @Usage("attr") @Option(names=["attr"]) String attr,
+	  @Usage("op") @Option(names=["op"]) String op
+    ) {
+	out.println("classname:" + classNameParam + " objectname:" + objectNameParam)
     MBeanServer server = ManagementFactory.getPlatformMBeanServer();
     Set<ObjectInstance> instances = server.queryMBeans(null, null);
     if (context.piped) {
       instances.each { instance ->
         context.produce(instance.objectName)
       }
+	  //TODO : voir
+	  out << ui;
     } else {
       UIBuilder ui = new UIBuilder()
-      ui.table() {
-        row(decoration: bold, foreground: black, background: white) {
-          label("CLASS NAME"); label("OBJECT NAME")
-        }
-        instances.each { instance ->
-          row() {
-            label(value: instance.className, foreground: red); label(instance.objectName)
-          }
-        }
-      }
-      out << ui;
+	  // No args
+	  if ((classNameParam == null) && (objectNameParam == null)) {
+		  out.println("No args !")
+	      ui.table() {
+	        row(decoration: bold, foreground: black, background: white) {
+	          label("CLASS NAME"); label("OBJECT NAME")
+	        }
+	        instances.each { instance ->
+		          row() {
+		            label(value: instance.className, foreground: red); label(instance.objectName)
+		          }
+	        }
+	      }
+		  out << ui;
+	  }
+	  // One arg : className 
+	  if ((classNameParam != null) && (objectNameParam == null)) {
+		  ui.table() {
+			row(decoration: bold, foreground: black, background: white) {
+			  label("OBJECT NAME")
+			}
+			instances.each { instance ->
+				if (classNameParam == instance.className) {
+				  row() {
+					label(instance.objectName)
+				  }
+				}
+			}
+		  }
+		  out << ui;
+	  }
+	  // Two Args
+	  if ((classNameParam != null) && (objectNameParam != null)) {
+		  instances.each { instance ->
+			  if ((classNameParam != null) && (objectNameParam != null)) {
+				  showManagedBeanDetails(server, instance.objectName)
+			  }
+		  }
+		  
+	  }
+
     }
   }
+	
+	void showManagedBeanDetails(MBeanServer server, ObjectName instance) {
+		UIBuilder ui = new UIBuilder()
+		
+		// Show description table
+//		ui.table() {
+//			MBeanInfo info = server.getMBeanInfo(instance);
+//			row() {
+//				label(value: "DOMAIN", foreground: red); label(info.description)
+//			}
+//		}
+//		out << ui;
+		
+		
+		// Show attributes table
+//		ui.table() {
+//			row(decoration: bold, foreground: black, background: white) {
+//			  label("ATTRIBUTE NAME"); label("ACCESS"); label("TYPE"); label("DESCRIPTION")
+//			}
+			MBeanInfo info = server.getMBeanInfo(instance);
+			
+
+//			info.attributes.each { attribute ->
+//				row() {
+//					String attr = "";
+//					if (attribute.readable) {
+//						attr += "R";
+//					}
+//					if (attribute.writable) {
+//						attr += "W";
+//					}
+//					label(value: attribute.name, foreground: red); label(attr); label(attribute.type); label(attribute.description)
+//				  }
+//			  }
+//		}
+//		out << ui;
+			
+//-----------------------------------------	
+//			ui.table() {
+//				header {
+//				  label("ATTRIBUTE NAME"); label("ACCESS"); label("TYPE"); label("DESCRIPTION")
+//				}
+//				info.attributes.each { attribute ->
+//					row() {
+//						String attr = "";
+//						if (attribute.readable) {
+//							attr += "R";
+//						}
+//						if (attribute.writable) {
+//							attr += "W";
+//						}
+//						label(value: attribute.name, foreground: red); label(attr); label(attribute.type); label(attribute.description)
+//					  }
+//				  }
+//
+//			}
+//			out << ui;
+//---------------------------------------------------			
+			info.attributes.each { attribute ->
+				String attr = "";
+				if (attribute.readable) {
+					attr += "R";
+				}
+				if (attribute.writable) {
+					attr += "W";
+				}
+				out.println(attribute.name + " " + attr + " " + attribute.type + " " + attribute.description)
+			}
+			out << ui;
+		// Show operations table
+//		ui.table() {
+//			row(decoration: bold, foreground: black, background: white) {
+//			  label("OPERATIONS"); label("RETURN TYPE"); label("DESCRIPTION"); label("PARAMETERS")
+//			}
+//			MBeanInfo info = server.getMBeanInfo(instance);
+//		   
+//			info.operations.each { operation ->
+//				row() {
+//					label(value: operation.name, foreground: red); label(attr); operation.returnType; operation.description
+//				  }
+//			  }
+//		}
+
+		
+	}
+	
+//void showResult(Set<ObjectInstance> instances)
 
   @Usage("todo")
   @Command
