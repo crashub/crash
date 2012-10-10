@@ -1,5 +1,5 @@
 import javax.jcr.query.Query;
-import org.crsh.shell.ui.UIBuilder;
+import org.crsh.text.ui.UIBuilder;
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Man

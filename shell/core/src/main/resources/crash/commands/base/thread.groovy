@@ -5,7 +5,7 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.annotations.Man
-import org.crsh.shell.ui.UIBuilder
+import org.crsh.text.ui.UIBuilder
 import org.crsh.cmdline.annotations.Argument
 import java.lang.management.ThreadMXBean
 import sun.management.ManagementFactory
@@ -115,9 +115,17 @@ public class thread extends CRaSHCommand {
     }
 
     //
-    ui.table() {
+    ui.table(weights:[1,1,1,1,1,1,1,2,5]) {
       row(decoration: bold, foreground: black, background: white) {
-        label("ID"); label("PRIORITY"); label("STATE"); label("%CPU"); label("TIME"); label("INTERRUPTED"); label("DAEMON"); label("GROUP"); label("NAME")
+        label("ID")
+        label("PRIORITY")
+        label("STATE")
+        label("%CPU")
+        label("TIME")
+        label("INTERRUPTED")
+        label("DAEMON")
+        label("GROUP")
+        label("NAME")
       }
       threads.each() {
         if (it != null) {

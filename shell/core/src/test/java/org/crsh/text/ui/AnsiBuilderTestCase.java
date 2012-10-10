@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.ui;
+package org.crsh.text.ui;
 
 import junit.framework.TestCase;
 import org.crsh.text.Color;
@@ -32,8 +32,11 @@ public class AnsiBuilderTestCase extends TestCase {
 
   public void testDecoration() throws Exception {
     assertEquals("\u001B[5m", Style.style(Decoration.blink, null, null).toAnsiSequence());
+    assertEquals("\u001B[25m", Style.style(Decoration.blink_off, null, null).toAnsiSequence());
     assertEquals("\u001B[1m", Style.style(Decoration.bold, null, null).toAnsiSequence());
+    assertEquals("\u001B[22m", Style.style(Decoration.bold_off, null, null).toAnsiSequence());
     assertEquals("\u001B[4m", Style.style(Decoration.underline, null, null).toAnsiSequence());
+    assertEquals("\u001B[24m", Style.style(Decoration.underline_off, null, null).toAnsiSequence());
   }
 
   public void testForeground() throws Exception {
@@ -63,5 +66,14 @@ public class AnsiBuilderTestCase extends TestCase {
     assertEquals("\u001B[4;40m", Style.style(Decoration.underline, null, Color.black).toAnsiSequence());
     assertEquals("\u001B[4;34m", Style.style(Decoration.underline, Color.blue, null).toAnsiSequence());
     assertEquals("\u001B[4;34;40m", Style.style(Decoration.underline, Color.blue, Color.black).toAnsiSequence());
+  }
+
+  public void testFluent() throws Exception {
+    Style.Composite style = Color.red.bg().bold().underline().fg(Color.blue);
+    assertEquals("\u001B[1;4;34;41m", style.toAnsiSequence());
+    style = style.bold(false);
+    assertEquals("\u001B[22;4;34;41m", style.toAnsiSequence());
+    style = style.bold(null);
+    assertEquals("\u001B[4;34;41m", style.toAnsiSequence());
   }
 }

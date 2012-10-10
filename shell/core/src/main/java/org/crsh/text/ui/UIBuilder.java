@@ -17,13 +17,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.ui;
+package org.crsh.text.ui;
 
 import groovy.util.BuilderSupport;
 import org.crsh.text.Color;
-import org.crsh.text.Decoration;
+import org.crsh.text.Style;
+import org.crsh.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -46,56 +48,81 @@ public class UIBuilder extends BuilderSupport {
   }
 
   @Override
-  protected Object createNode(Object name, Object value) {
-
-    return initElement(name, value);
-
-  }
-
-  @Override
   protected Object createNode(Object name, Map attributes, Object value) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  protected Object createNode(Object name, Map attributes) {
-
-    Element e = initElement(name, attributes.get("value"));
-    setStyles(e, attributes);
-    Boolean border = (Boolean) attributes.get("border");
-    if (e instanceof TableElement) {
-      ((TableElement) e).setBorder(border == null ? false : border);
-    }
-    return e;
-    
-  }
-
-  private Element initElement(Object name, Object value) {
-
+    Element element;
     if ("node".equals(name)) {
       if (value == null) {
-        return new TreeElement();
+        element = new TreeElement();
       } else {
-        return new TreeElement(new LabelElement(value));
+        element = new TreeElement(new LabelElement(value));
       }
     } else if ("label".equals(name)) {
-      return new LabelElement(value);
+      element = new LabelElement(value);
     } else if ("table".equals(name)) {
-      return new TableElement();
+      element = new TableElement();
     } else if ("row".equals(name)) {
-      return new RowElement();
+      element = new RowElement();
     } else if ("header".equals(name)) {
-      return new RowElement(true);
+      element = new RowElement(true);
     } else {
       throw new UnsupportedOperationException("Cannot build object with name " + name + " and value " + value);
     }
 
+    //
+    Style.Composite style = element.getStyle();
+    if (style == null) {
+      style = Style.style();
+    }
+    style = style.
+        foreground((Color)attributes.get("fg")).
+        foreground((Color)attributes.get("foreground")).
+        background((Color)attributes.get("bg")).
+        background((Color)attributes.get("background")).
+        bold((Boolean)attributes.get("bold")).
+        underline((Boolean)attributes.get("underline")).
+        blink((Boolean)attributes.get("blink"));
+    element.setStyle(style);
+
+    //
+    if (element instanceof TableElement) {
+      TableElement table = (TableElement)element;
+
+      // Weights
+      Object weightsAttr = attributes.get("weights");
+      if (weightsAttr instanceof Iterable) {
+        List<Integer> list = Utils.list((Iterable<Integer>)weightsAttr);
+        int[] weights = new int[list.size()];
+        for (int i = 0;i < weights.length;i++) {
+          weights[i] = list.get(i);
+        }
+        table.layout(ColumnLayout.weighted(weights));
+      }
+
+      // Border
+      Object border = attributes.get("border");
+      Border borderChar;
+      if (border instanceof Boolean && (Boolean)border) {
+        borderChar = Border.dashed;
+      } else if (border instanceof Border) {
+        borderChar = (Border)border;
+      } else {
+        borderChar = null;
+      }
+      table.border(borderChar);
+    }
+
+    //
+    return element;
   }
-  
-  private void setStyles(Element e, Map attributes) {
-    e.setDecoration((Decoration) attributes.get("decoration"));
-    e.setForeground((Color) attributes.get("foreground"));
-    e.setBackground((Color) attributes.get("background"));
+
+  @Override
+  protected Object createNode(Object name, Object value) {
+    return createNode(name, Collections.emptyMap(), value);
+  }
+
+  @Override
+  protected Object createNode(Object name, Map attributes) {
+    return createNode(name, attributes, null);
   }
 
   @Override

@@ -19,22 +19,78 @@
 
 package org.crsh.text;
 
-import java.io.Serializable;
-
-public enum Decoration implements Serializable {
-
-  bold(1),
-  underline(4),
-  blink(5);
+public enum Decoration {
 
   /** . */
-  public final int code;
+  bold(0, true, "1"),
 
   /** . */
-  public final Style style;
+  bold_off(0, false, "22"),
 
-  private Decoration(int code) {
+  /** . */
+  underline(1, true, "4"),
+
+  /** . */
+  underline_off(1, false, "24"),
+
+  /** . */
+  blink(2, true, "5"),
+
+  /** . */
+  blink_off(2, false, "25");
+
+  /** . */
+  final int index;
+
+  /** . */
+  final boolean on;
+
+  /** . */
+  public final String code;
+
+  private Decoration(int index, boolean on, String code) {
+    this.index = index;
+    this.on = on;
     this.code = code;
-    this.style = Style.style(this);
+  }
+
+  public Style.Composite fg(Color value) {
+    return foreground(value);
+  }
+
+  public Style.Composite foreground(Color value) {
+    return Style.style(this).foreground(value);
+  }
+
+  public Style.Composite bg(Color value) {
+    return background(value);
+  }
+
+  public Style.Composite background(Color value) {
+    return Style.style(this).background(value);
+  }
+
+  public Style.Composite bold() {
+    return bold(true);
+  }
+
+  public Style.Composite underline() {
+    return underline(true);
+  }
+
+  public Style.Composite blink() {
+    return blink(true);
+  }
+
+  public Style.Composite bold(Boolean value) {
+    return Style.style(this).bold(value);
+  }
+
+  public Style.Composite underline(Boolean value) {
+    return Style.style(this).underline(value);
+  }
+
+  public Style.Composite blink(Boolean value) {
+    return Style.style(this).blink(value);
   }
 }

@@ -19,8 +19,6 @@
 
 package org.crsh.text;
 
-import org.crsh.util.Safe;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Iterator;
@@ -32,15 +30,15 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, ShellAppendab
   private final LinkedList<Chunk> chunks;
 
   /** . */
-  private Style previousStyle;
+  private Style current;
 
   /** . */
-  private Style currentStyle;
+  private Style next;
 
   public ChunkBuffer() {
     this.chunks = new LinkedList<Chunk>();
-    this.previousStyle = null;
-    this.currentStyle = null;
+    this.current = Style.style();
+    this.next = Style.style();
   }
 
   public Iterator<Chunk> iterator() {
@@ -75,44 +73,13 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, ShellAppendab
     return this;
   }
 
-  public ChunkBuffer append(Style nextStyle) throws NullPointerException {
-    if (currentStyle != null) {
-      if (currentStyle.equals(nextStyle)) {
-        // Do nothing
-      } else {
-        currentStyle = currentStyle.merge(nextStyle);
-      }
-    } else {
-      currentStyle = nextStyle;
-    }
+  public ChunkBuffer append(Style style) throws NullPointerException {
+    next = next.merge(style);
     return this;
   }
 
-  private Text getTextChunk() {
-    Text chunk;
-    // See if we can merge it in the last chunk
-    if (chunks.size() > 0 && chunks.peekLast() instanceof Text) {
-      if (Safe.equals(previousStyle, currentStyle)) {
-        chunk = (Text)chunks.peekLast();
-      } else {
-        chunks.addLast(currentStyle);
-        chunks.addLast(chunk = new Text());
-        previousStyle = currentStyle;
-      }
-    } else {
-      if (currentStyle != null) {
-        previousStyle = currentStyle;
-        chunks.addLast(currentStyle);
-        chunks.addLast(chunk = new Text());
-      } else {
-        chunks.addLast(chunk = new Text());
-      }
-    }
-    return chunk;
-  }
-
   public ChunkBuffer append(char c) {
-    getTextChunk().buffer.append(c);
+    last().buffer.append(c);
     return this;
   }
 
@@ -121,23 +88,37 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, ShellAppendab
   }
 
   public ChunkBuffer append(CharSequence s, int start, int end) {
-    if (end > 0) {
-      getTextChunk().buffer.append(s, start, end);
+    if (end > start) {
+      last().buffer.append(s, start, end);
     }
     return this;
   }
 
+  private Text last() {
+    if (!next.equals(current)) {
+      if (!Style.style().equals(next)) {
+        chunks.addLast(next);
+      }
+      current = next;
+      next = Style.style();
+    }
+    Chunk last = chunks.peekLast();
+    if (last instanceof Text) {
+      return (Text)last;
+    } else {
+      Text text = new Text();
+      chunks.addLast(text);
+      return text;
+    }
+  }
+
   public ChunkBuffer append(ChunkBuffer s) throws NullPointerException {
     for (Chunk chunk : s.chunks) {
-      if (chunk instanceof Text) {
-        append(((Text)chunk).buffer);
-      } else if (chunk instanceof Style) {
-        append(((Style)chunk));
-      } else {
-        cls();
-      }
+      write(chunk);
     }
-    currentStyle = s.currentStyle;
+    if (s.next != null && !s.next.equals(Style.style())) {
+      write(s.next);
+    }
     return this;
   }
 

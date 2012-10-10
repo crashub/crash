@@ -21,6 +21,7 @@ package org.crsh.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,6 +38,26 @@ public class Strings {
       chunks.add(m.group());
     }
     return chunks;
+  }
+
+  public static String join(Iterable<String> strings, String separator) {
+    Iterator<String> i = strings.iterator();
+    if (i.hasNext()) {
+      String first = i.next();
+      if (i.hasNext()) {
+        StringBuilder buf = new StringBuilder();
+        buf.append(first);
+        while (i.hasNext()) {
+          buf.append(separator);
+          buf.append(i.next());
+        }
+        return buf.toString();
+      } else {
+        return first;
+      }
+    } else {
+      return "";
+    }
   }
 
   /**

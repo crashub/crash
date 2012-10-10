@@ -17,14 +17,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.io;
+package org.crsh.text.ui;
 
-public interface ShellWriterContext {
+public enum Border {
 
-  void pad(ShellFormatter writer);
+  dashed('-', '|', ' '),
 
-  void text(CharSequence csq, int off, int end);
+  star('*', '*', '*');
 
-  void lineFeed();
+  /** . */
+  final char horizontal;
 
+  /** . */
+  final char vertical;
+
+  /** . */
+  final char corner;
+
+  private Border(char horizontal, char vertical, char corner) {
+    this.horizontal = horizontal;
+    this.vertical = vertical;
+    this.corner = corner;
+  }
 }

@@ -19,130 +19,309 @@
 
 package org.crsh.text;
 
-import org.crsh.util.Safe;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.Arrays;
 
 public abstract class Style extends Chunk implements Serializable {
 
-  public static final Style reset = new Style(null, null, null) {
+  public static final Style reset = new Style() {
+
+    @Override
+    public Style merge(Style s) throws NullPointerException {
+      if (s == null) {
+        throw new NullPointerException();
+      }
+      return s;
+    }
+
+    @Override
+    public String toString() {
+      return "Style.Reset[]";
+    }
+
     @Override
     public void writeAnsiTo(Appendable appendable) throws IOException {
       appendable.append("\033[0m");
     }
   };
 
-  static class Regular extends Style {
-    Regular(Decoration decoration, Color foreground, Color background) {
-      super(decoration, foreground, background);
+  public static final class Composite extends Style {
+
+    /** . */
+    protected final Boolean bold;
+
+    /** . */
+    protected final Boolean underline;
+
+    /** . */
+    protected final Boolean blink;
+
+    /** . */
+    protected final Color foreground;
+
+    /** . */
+    protected final Color background;
+
+    private Composite(Boolean bold, Boolean underline, Boolean blink, Color foreground, Color background) {
+      this.bold = bold;
+      this.underline = underline;
+      this.blink = blink;
+      this.foreground = foreground;
+      this.background = background;
+    }
+
+    public Composite fg(Color color) {
+      return foreground(color);
+    }
+
+    public Composite foreground(Color color) {
+      return style(bold, underline, blink, color, background);
+    }
+
+    public Composite bg(Color value) {
+      return background(value);
+    }
+
+    public Composite background(Color value) {
+      return style(bold, underline, blink, foreground, value);
+    }
+
+    public Composite bold() {
+      return bold(true);
+    }
+
+    public Composite underline() {
+      return underline(true);
+    }
+
+    public Composite blink() {
+      return blink(true);
+    }
+
+    public Composite bold(Boolean value) {
+      return style(value, underline, blink, foreground, background);
+    }
+
+    public Composite underline(Boolean value) {
+      return style(bold, value, blink, foreground, background);
+    }
+
+    public Composite blink(Boolean value) {
+      return style(bold, underline, value, foreground, background);
+    }
+
+    public Composite decoration(Decoration decoration) {
+      if (decoration != null) {
+        switch (decoration) {
+          case bold:
+            return bold(true);
+          case bold_off:
+            return bold(false);
+          case underline:
+            return underline(true);
+          case underline_off:
+            return underline(false);
+          case blink:
+            return blink(true);
+          case blink_off:
+            return blink(false);
+        }
+      }
+      return this;
+    }
+
+    public Boolean getBold() {
+      return bold;
+    }
+
+    public Boolean getUnderline() {
+      return underline;
+    }
+
+    public Boolean getBlink() {
+      return blink;
+    }
+
+    public Color getForeground() {
+      return foreground;
+    }
+
+    public Color getBackground() {
+      return background;
+    }
+
+    public Style merge(Style s) throws NullPointerException {
+      if (s == null) {
+        throw new NullPointerException();
+      }
+      if (s == reset) {
+        return reset;
+      } else {
+        Style.Composite that = (Composite)s;
+        Boolean bold = Utils.notNull(that.getBold(), getBold());
+        Boolean underline = Utils.notNull(that.getUnderline(), getUnderline());
+        Boolean blink = Utils.notNull(that.getBlink(), getBlink());
+        Color foreground = Utils.notNull(that.getForeground(), getForeground());
+        Color background = Utils.notNull(that.getBackground(), getBackground());
+        return style(bold, underline, blink, foreground, background);
+      }
+    }
+
+    @Override
+    public String toString() {
+      return "Style.Composite[bold=" + bold + ",underline=" + underline + ",blink=" + blink +
+          ",background=" + background + ",foreground=" + foreground + "]";
+    }
+
+    private static boolean decoration(
+        Appendable appendable,
+        String on,
+        String off,
+        Boolean value,
+        boolean append) throws IOException {
+      if (value != null) {
+        if (append) {
+          appendable.append(';');
+        } else {
+          appendable.append("\033[");
+        }
+        if (value) {
+          appendable.append(on);
+        } else {
+          appendable.append(off);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    private static boolean color(
+        Appendable appendable,
+        Color color,
+        char base,
+        boolean append) throws IOException {
+      if (color != null) {
+        if (append) {
+          appendable.append(';');
+        } else {
+          appendable.append("\033[");
+        }
+        appendable.append(base);
+        appendable.append(color.c);
+        return true;
+      }
+      return false;
     }
 
     @Override
     public void writeAnsiTo(Appendable appendable) throws IOException {
-      if (decoration != null|| foreground != null || background != null) {
-        appendable.append("\033[");
-        boolean appended = false;
-        if (decoration != null) {
-          appendable.append(Integer.toString(decoration.code));
-          appended = true;
-        }
-        if (foreground != null) {
-          if (appended) {
-            appendable.append(";");
-          }
-          appendable.append(Integer.toString(foreground.code(30)));
-          appended = true;
-        }
-        if (background != null) {
-          if (appended) {
-            appendable.append(";");
-          }
-          appendable.append(Integer.toString(background.code(40)));
-        }
+      boolean appended = decoration(appendable, Decoration.bold.code, Decoration.bold_off.code, bold, false);
+      appended |= decoration(appendable, Decoration.underline.code, Decoration.underline_off.code, underline, appended);
+      appended |= decoration(appendable, Decoration.blink.code, Decoration.blink_off.code, blink, appended);
+      appended |= color(appendable, foreground, '3', appended);
+      appended |= color(appendable, background, '4', appended);
+      if (appended) {
         appendable.append("m");
       }
-      else {
-        //
-      }
     }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (obj == this) {
-        return true;
-      }
-      if (obj instanceof Regular) {
-        Regular that = (Regular)obj;
-        return Safe.equals(decoration, that.decoration) &&
-            Safe.equals(foreground, that.foreground) &&
-            Safe.equals(background, that.background);
-      }
-      return false;
-    }
-  }
-
-  public static Style style(Color foreground) {
-    return new Regular(null, foreground, null);
-  }
-
-  public static Style style(Color foreground, Color background) {
-    return new Regular(null, foreground, background);
-  }
-
-  public static Style style(Decoration decoration, Color foreground, Color background) {
-    return new Regular(decoration, foreground, background);
-  }
-
-  public static Style style(Decoration decoration) {
-    return new Regular(decoration, null, null);
-  }
-
-  public static Style style(Decoration decoration, Color foreground) {
-    return new Regular(decoration, foreground, null);
   }
 
   /** . */
-  protected final Decoration decoration;
+  private static final Boolean[] BOOLEANS = {true,false,null};
 
   /** . */
-  protected final Color foreground;
+  private static final Color[] COLORS = Arrays.copyOf(Color.values(), Color.values().length + 1);
 
-  /** . */
-  protected final Color background;
+  /** [bold][underline][blink][foreground][background]. */
+  private static final Composite[][][][][] ALL;
 
-  private Style(Decoration decoration, Color foreground, Color background) {
-    this.decoration = decoration;
-    this.foreground = foreground;
-    this.background = background;
-  }
-
-  public Decoration getDecoration() {
-    return decoration;
-  }
-
-  public Color getForeground() {
-    return foreground;
-  }
-
-  public Color getBackground() {
-    return background;
-  }
-
-  public Style merge(Style s) throws NullPointerException {
-    if (s == null) {
-      throw new NullPointerException();
-    }
-    if (s == reset) {
-      return reset;
-    } else {
-      Decoration dec = Utils.notNull(s.decoration, decoration);
-      Color fg = Utils.notNull(s.foreground, foreground);
-      Color bg = Utils.notNull(s.background, background);
-      return new Regular(dec, fg, bg);
+  static {
+    ALL = new Composite[BOOLEANS.length][][][][];
+    for (int bold = 0;bold < BOOLEANS.length;bold++) {
+      ALL[bold] = new Composite[BOOLEANS.length][][][];
+      for (int underline = 0;underline < BOOLEANS.length;underline++) {
+        ALL[bold][underline] = new Composite[BOOLEANS.length][][];
+        for (int blink = 0;blink < BOOLEANS.length;blink++) {
+          ALL[bold][underline][blink] = new Composite[COLORS.length][];
+          for (int foreground = 0;foreground < COLORS.length;foreground++) {
+            ALL[bold][underline][blink][foreground] = new Composite[COLORS.length];
+            for (int background = 0;background < COLORS.length;background++) {
+              ALL[bold][underline][blink][foreground][background] = new Composite(
+                  BOOLEANS[bold],
+                  BOOLEANS[underline],
+                  BOOLEANS[blink],
+                  COLORS[foreground],
+                  COLORS[background]);
+            }
+          }
+        }
+      }
     }
   }
+
+  public static Composite style(Color foreground) {
+    return style(null, foreground, null);
+  }
+
+  public static Composite style(Color foreground, Color background) {
+    return style(null, foreground, background);
+  }
+
+  public static Composite style(Decoration decoration, Color foreground, Color background) {
+    Boolean bold = null;
+    Boolean underline = null;
+    Boolean blink = null;
+    if (decoration != null) {
+      switch (decoration) {
+        case bold:
+          bold = true;
+          break;
+        case bold_off:
+          bold = false;
+          break;
+        case underline:
+          underline = true;
+          break;
+        case underline_off:
+          underline = false;
+          break;
+        case blink:
+          blink = true;
+          break;
+        case blink_off:
+          blink = false;
+          break;
+      }
+    }
+    return style(bold, underline, blink, foreground, background);
+  }
+
+  public static Composite style(Boolean bold, Boolean underline, Boolean blink, Color foreground, Color background) {
+    int bo = bold != null ? bold ? 0 : 1: 2;
+    int un = underline != null ? underline ? 0 : 1: 2;
+    int bl = blink != null ? blink ? 0 : 1: 2;
+    int fg = foreground != null ? foreground.ordinal() : COLORS.length - 1;
+    int bg = background != null ? background.ordinal() : COLORS.length - 1;
+    return ALL[bo][un][bl][fg][bg];
+  }
+
+  public static Composite style() {
+    return style(null, null, null);
+  }
+
+  public static Composite style(Decoration decoration) {
+    return style(decoration, null, null);
+  }
+
+  public static Composite style(Decoration decoration, Color foreground) {
+    return style(decoration, foreground, null);
+  }
+
+  public abstract Style merge(Style s) throws NullPointerException;
 
   public CharSequence toAnsiSequence() {
     StringBuilder sb = new StringBuilder();
@@ -151,7 +330,7 @@ public abstract class Style extends Chunk implements Serializable {
     }
     catch (IOException e) {
       // Should not happen
-      throw new AssertionError(e);
+      throw new UndeclaredThrowableException(e);
     }
     return sb.toString();
   }
@@ -159,7 +338,5 @@ public abstract class Style extends Chunk implements Serializable {
   public abstract void writeAnsiTo(Appendable appendable) throws IOException;
 
   @Override
-  public String toString() {
-    return "Style[decoration=" + decoration + ",background=" + background + ",foreground=" + foreground + "]";
-  }
+  public abstract String toString();
 }

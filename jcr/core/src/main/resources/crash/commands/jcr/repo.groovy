@@ -23,7 +23,7 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Usage
 
-import org.crsh.shell.ui.UIBuilder
+import org.crsh.text.ui.UIBuilder
 import org.crsh.jcr.JCRPlugin
 import org.crsh.cmdline.spi.Value
 

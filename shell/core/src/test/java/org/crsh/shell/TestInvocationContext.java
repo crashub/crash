@@ -22,8 +22,7 @@ package org.crsh.shell;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.impl.BaseInvocationContext;
-import org.crsh.shell.io.ShellFormatter;
-import org.crsh.shell.io.ShellPrinter;
+import org.crsh.text.ui.UIPrinterWriter;
 import org.crsh.text.ChunkBuffer;
 
 import java.util.*;
@@ -34,7 +33,7 @@ public class TestInvocationContext<C, P> extends BaseInvocationContext<C, P> {
   protected ChunkBuffer reader;
 
   /** . */
-  protected ShellPrinter writer;
+  protected UIPrinterWriter writer;
 
   public TestInvocationContext() {
     super(Collections.<C>emptyList(), new HashMap<String, Object>(), new HashMap<String, Object>());
@@ -76,10 +75,10 @@ public class TestInvocationContext<C, P> extends BaseInvocationContext<C, P> {
     return reader != null ? reader.toString() : null;
   }
 
-  public ShellPrinter getWriter() {
+  public UIPrinterWriter getWriter() {
     if (writer == null) {
       reader = new ChunkBuffer();
-      writer = new ShellPrinter(new ShellFormatter(reader, "\r\n"), null, null, this);
+      writer = new UIPrinterWriter(reader, null, null, this);
     }
     return writer;
   }

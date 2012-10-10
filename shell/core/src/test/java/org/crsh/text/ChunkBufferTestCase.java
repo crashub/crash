@@ -22,9 +22,10 @@ package org.crsh.text;
 import org.crsh.AbstractTestCase;
 import org.crsh.util.Utils;
 
+import java.io.IOException;
 import java.util.List;
 
-public class CharReaderTestCase extends AbstractTestCase {
+public class ChunkBufferTestCase extends AbstractTestCase {
 
   /** . */
   private static final Style RED = Style.style(null, null, Color.red);
@@ -70,6 +71,10 @@ public class CharReaderTestCase extends AbstractTestCase {
   public void testConcatenation() {
     assertReader(new ChunkBuffer().append(RED).append(new ChunkBuffer().append("a")), RED, new Text("a"));
     assertReader(new ChunkBuffer().append(new ChunkBuffer().append(RED)).append("a"), RED, new Text("a"));
+  }
+
+  public void testBlend() throws IOException {
+    assertReader(new ChunkBuffer().append(Color.red.fg(),"foo", Color.red.fg(), "bar"), Color.red.fg(), new Text("foobar"));
   }
 
   private void assertReader(ChunkBuffer reader, Chunk... expected) {

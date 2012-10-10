@@ -1,5 +1,5 @@
 import javax.jcr.query.Query;
-import org.crsh.shell.ui.UIBuilder;
+import org.crsh.text.ui.UIBuilder;
 
 
 import javax.jcr.Node;

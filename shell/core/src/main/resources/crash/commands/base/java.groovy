@@ -3,7 +3,7 @@ import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Argument
 import org.crsh.cmdline.annotations.Required
-import org.crsh.shell.ui.UIBuilder
+import org.crsh.text.ui.UIBuilder
 
 @Usage("various java language commands")
 class java extends CRaSHCommand {
