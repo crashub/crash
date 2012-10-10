@@ -24,18 +24,152 @@ import org.crsh.cmdline.annotations.Usage
 import org.crsh.command.CRaSHCommand
 import org.crsh.shell.ui.UIBuilder
 import java.lang.management.ManagementFactory
+import javax.management.Descriptor
+import javax.management.MBeanAttributeInfo
+import javax.management.MBeanOperationInfo
 import javax.management.MBeanServer
 import javax.management.ObjectInstance
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option
 import javax.management.MBeanInfo
+import javax.management.MBeanParameterInfo
 import org.crsh.cmdline.annotations.Argument
 import javax.management.ObjectName
+import javax.management.openmbean.ArrayType
+import javax.management.openmbean.CompositeData
+import javax.management.openmbean.CompositeType
+import javax.management.openmbean.OpenType
+import javax.management.openmbean.SimpleType
 
 @Usage("Java Management Extensions")
 class jmx extends CRaSHCommand {
 
-  @Usage("todo")
+	@Usage("Show JMX info about JVM ")
+	@Command
+	void info(
+		@Usage("Show JMX informations about os") @Option(names=["os"]) String osParam,
+		@Usage("Show JMX informations about Runtime") @Option(names=["rt"]) String rtParam,
+		@Usage("Show JMX informations about Class Loading System") @Option(names=["cl"]) String clParam,
+		@Usage("Show JMX informations about Compilation") @Option(names=["comp"]) String compParam,
+		@Usage("Show JMX informations about Memory") @Option(names=["mem"]) String memParam,
+		@Usage("Show JMX informations about Thread") @Option(names=["td"]) String tdParam
+		) {
+		if (null != osParam) {
+			showOsInfo();
+		}
+		if (null != rtParam) {
+			showRtInfo();
+		}
+		if (null != clParam) {
+			showClInfo();
+		}
+		if (null != compParam) {
+			showCompInfo();
+		}
+		if (null != memParam) {
+			showMemInfo();
+		}
+		if (null != tdParam) {
+			showTdInfo();
+		}
+		if ((null == osParam) && (null == rtParam) && (null == clParam) && (null == compParam) && (null == memParam) && (null == tdParam) ) {
+			showOsInfo();
+			showRtInfo();
+			showClInfo();
+			showCompInfo();
+			showMemInfo();
+			showTdInfo();
+		}
+		
+	}
+		
+  void showOsInfo() {
+	  def os = ManagementFactory.operatingSystemMXBean;
+	  out.println """OPERATING SYSTEM:
+			\tarchitecture = $os.arch
+			\tname = $os.name
+			\tversion = $os.version
+			\tprocessors = $os.availableProcessors
+			"""
+  }
+  
+  void showRtInfo() {
+	  def os = ManagementFactory.operatingSystemMXBean;
+	  out.println """OPERATING SYSTEM:
+			\tarchitecture = $os.arch
+			\tname = $os.name
+			\tversion = $os.version
+			\tprocessors = $os.availableProcessors
+			"""
+  }
+	
+  void showClInfo() {
+	  def cl = ManagementFactory.classLoadingMXBean
+	  out.println """CLASS LOADING SYSTEM:
+			\tisVerbose = ${cl.isVerbose()}
+			\tloadedClassCount = $cl.loadedClassCount
+			\ttotalLoadedClassCount = $cl.totalLoadedClassCount
+			\tunloadedClassCount = $cl.unloadedClassCount
+			"""
+  }
+  
+  void showCompInfo() {
+	  def comp = ManagementFactory.compilationMXBean
+	  out.println """COMPILATION:
+			\ttotalCompilationTime = $comp.totalCompilationTime
+			"""
+  }
+  
+  void showMemInfo() {
+	  def mem = ManagementFactory.memoryMXBean
+	  def heapUsage = mem.heapMemoryUsage
+	  def nonHeapUsage = mem.nonHeapMemoryUsage
+	  out.println """MEMORY:
+			HEAP STORAGE:
+			\tcommitted = $heapUsage.committed
+			\tinit = $heapUsage.init
+			\tmax = $heapUsage.max
+			\tused = $heapUsage.used
+			NON-HEAP STORAGE:
+			\tcommitted = $nonHeapUsage.committed
+			\tinit = $nonHeapUsage.init
+			\tmax = $nonHeapUsage.max
+			\tused = $nonHeapUsage.used
+			"""
+  
+	  ManagementFactory.memoryPoolMXBeans.each{ mp ->
+		  out.println "\tname: " + mp.name
+		  String[] mmnames = mp.memoryManagerNames
+		  mmnames.each{ mmname ->
+			  out.println "\t\tManager Name: $mmname"
+		  }
+		  out.println "\t\tmtype = $mp.type"
+		  out.println "\t\tUsage threshold supported = " + mp.isUsageThresholdSupported()
+	  }
+	  out.println()
+  }
+  
+  void showTdInfo() {
+	  def td = ManagementFactory.threadMXBean
+	  out.println "THREADS:"
+	  td.allThreadIds.each { tid ->
+		  out.println "\tThread name = ${td.getThreadInfo(tid).threadName}"
+	  }
+	  out.println()
+	  
+	  out.println "GARBAGE COLLECTION:"
+	  ManagementFactory.garbageCollectorMXBeans.each { gc ->
+		  out.println "\tname = $gc.name"
+		  out.println "\t\tcollection count = $gc.collectionCount"
+		  out.println "\t\tcollection time = $gc.collectionTime"
+		  String[] mpoolNames = gc.memoryPoolNames
+		  mpoolNames.each { mpoolName ->
+			  out.println "\t\tmpool name = $mpoolName"
+		  }
+	  }
+  }
+	
+  @Usage("Show informations on JMX MBean ")
   @Command
   void ls(
       InvocationContext<Void, ObjectName> context,
@@ -45,40 +179,95 @@ class jmx extends CRaSHCommand {
 	  @Usage("attr") @Option(names=["attr"]) String attr,
 	  @Usage("op") @Option(names=["op"]) String op
     ) {
-	out.println("classname:" + classNameParam + " objectname:" + objectNameParam)
+
+	UIBuilder ui = new UIBuilder();
     MBeanServer server = ManagementFactory.getPlatformMBeanServer();
     Set<ObjectInstance> instances = server.queryMBeans(null, null);
     if (context.piped) {
       instances.each { instance ->
         context.produce(instance.objectName)
       }
-	  //TODO : voir
 	  out << ui;
     } else {
-      UIBuilder ui = new UIBuilder()
+
 	  // No args
 	  if ((classNameParam == null) && (objectNameParam == null)) {
-		  out.println("No args !")
-	      ui.table() {
-	        row(decoration: bold, foreground: black, background: white) {
-	          label("CLASS NAME"); label("OBJECT NAME")
-	        }
-	        instances.each { instance ->
-		          row() {
-		            label(value: instance.className, foreground: red); label(instance.objectName)
-		          }
-	        }
-	      }
-		  out << ui;
+		  showClassNamesObjectNames(instances);
 	  }
+
 	  // One arg : className 
 	  if ((classNameParam != null) && (objectNameParam == null)) {
-		  ui.table() {
+		  showObjectNames(instances, classNameParam);
+	  }
+
+	  // Two Args
+	  if ((classNameParam != null) && (objectNameParam != null)) {
+		  instances.each { instance ->
+				  if ((classNameParam == instance.className ) && (objectNameParam == instance.objectName.toString())) {
+					  MBeanInfo info = server.getMBeanInfo(instance.objectName);
+					  if (null != desc) {
+						  out.println("");
+						  showDescriptions(info, instance.objectName);
+					  }
+					  if (null != attr) {
+						  out.println("");
+						  showAttributes(info, server.getAttribute(instance.objectName,attribute.getName()),instance.objectName);
+					  }
+					  if (null != op) {
+						  out.println("");
+						  showOperations(info);
+					  }
+					  if ((null == attr) && (null == op) && (null == desc)) {
+						  out.println("");
+						  showDescriptions(info, instance.objectName);
+						  out.println("");
+						  showAttributes(info, server, instance.objectName);
+						  out.println("");
+						  showOperations(info);
+					  }
+				  }
+		  }
+		  
+	  }
+
+    }
+  }
+	/**
+	 * Show all classNames and ObjectNames.
+	 * eg : jmx ls
+	 * @param instances Set<ObjectInstance>.
+	 */
+	void showClassNamesObjectNames(Set<ObjectInstance> instances) {
+		UIBuilder ui = new UIBuilder();
+		ui.table() {
+		  row(decoration: bold, foreground: black, background: white) {
+			label("CLASS NAME"); label("OBJECT NAME")
+		  }
+		  instances?.each { instance ->
+			  if (null != instance) {
+				row() {
+				  label(value: instance.className, foreground: red); label(instance.objectName)
+				}
+			  }
+		  }
+		}
+		out << ui;
+	}
+	
+	/**
+	 * Show ObjectName of a className.
+	 * e.g : jmx ls -c java.util.logging.Logging.
+	 * @param instances Set<ObjectInstance>
+	 * @param classNameParam String
+	 */
+	void showObjectNames(Set<ObjectInstance> instances, String classNameParam) {
+		UIBuilder ui = new UIBuilder();
+		ui.table() {
 			row(decoration: bold, foreground: black, background: white) {
 			  label("OBJECT NAME")
 			}
-			instances.each { instance ->
-				if (classNameParam == instance.className) {
+			instances?.each { instance ->
+				if ((null != instance) && (classNameParam == instance.className)) {
 				  row() {
 					label(instance.objectName)
 				  }
@@ -86,78 +275,102 @@ class jmx extends CRaSHCommand {
 			}
 		  }
 		  out << ui;
-	  }
-	  // Two Args
-	  if ((classNameParam != null) && (objectNameParam != null)) {
-		  instances.each { instance ->
-			  if ((classNameParam != null) && (objectNameParam != null)) {
-				  showManagedBeanDetails(server, instance.objectName)
-			  }
-		  }
-		  
-	  }
-
-    }
-  }
+	}
 	
-	void showManagedBeanDetails(MBeanServer server, ObjectName instance) {
-		UIBuilder ui = new UIBuilder()
+	/**
+	 * Show description.
+	 * @param info MBeanInfo
+	 * @param objectName ObjectName
+	 */
+	void showDescriptions(MBeanInfo info, ObjectName objectName) {
+		UIBuilder ui = new UIBuilder();
 		
-		// Show description table
-//		ui.table() {
-//			MBeanInfo info = server.getMBeanInfo(instance);
-//			row() {
-//				label(value: "DOMAIN", foreground: red); label(info.description)
-//			}
-//		}
-//		out << ui;
-		
-		
-		// Show attributes table
-//		ui.table() {
-//			row(decoration: bold, foreground: black, background: white) {
-//			  label("ATTRIBUTE NAME"); label("ACCESS"); label("TYPE"); label("DESCRIPTION")
-//			}
-			MBeanInfo info = server.getMBeanInfo(instance);
-			
+		ui.table() {
+			header(decoration: bold, foreground: black, background: white) {
+				label("Description");label("Value")
+			  }
+			if ((null == objectName) && (null == info)) {
+				row() {
+					label(value: "", foreground: red); label("")
+				  }
+			}
+			if (null != objectName) {
+				row() {
+					label(value: "Domain", foreground: red); label(objectName.getDomain())
+				  }
+				row() {
+					label(value: "Type", foreground: red); label(objectName.getKeyPropertyListString())
+				  }
+			}
+			if (null != info) {
+				row() {
+					label(value: "Java Class", foreground: red); label(info.className)
+				  }
+				row() {
+					label(value: "Description", foreground: red); label(info.description)
+				  }
+			}
+		}
+		out << ui;
+	}
+	
+	/**
+	 * Show all operations of MBeanInfo.
+	 * @param info MBeanInfo
+	 */
+	void showOperations(MBeanInfo info) {
+		UIBuilder ui = new UIBuilder();
+		ui.table() {
+			row(decoration: bold, foreground: black, background: white) {
+			  label("OPERATIONS"); label("RETURN TYPE"); label("DESCRIPTION"); label("PARAMETERS")
+			}
 
-//			info.attributes.each { attribute ->
-//				row() {
-//					String attr = "";
-//					if (attribute.readable) {
-//						attr += "R";
-//					}
-//					if (attribute.writable) {
-//						attr += "W";
-//					}
-//					label(value: attribute.name, foreground: red); label(attr); label(attribute.type); label(attribute.description)
-//				  }
-//			  }
-//		}
-//		out << ui;
-			
-//-----------------------------------------	
-//			ui.table() {
-//				header {
-//				  label("ATTRIBUTE NAME"); label("ACCESS"); label("TYPE"); label("DESCRIPTION")
-//				}
-//				info.attributes.each { attribute ->
-//					row() {
-//						String attr = "";
-//						if (attribute.readable) {
-//							attr += "R";
-//						}
-//						if (attribute.writable) {
-//							attr += "W";
-//						}
-//						label(value: attribute.name, foreground: red); label(attr); label(attribute.type); label(attribute.description)
-//					  }
-//				  }
-//
-//			}
-//			out << ui;
-//---------------------------------------------------			
-			info.attributes.each { attribute ->
+			info?.operations?.each { operation ->
+				if (null != operation) {
+					row() {
+						label(value: operation.name, foreground: red); label(operation.returnType); label(operation.description);
+						 label(retreiveMethodParameters(operation))
+					  }
+				}
+			}
+		}
+		out << ui;
+	}
+		
+	/**
+	 * Retreive all method parameters.
+	 * @param operation MBeanOperationInfo
+	 * @return String (p0:java.lang.String p1:java.lang.String)
+	 */
+	String retreiveMethodParameters(MBeanOperationInfo operation) {
+		String result = "";
+		if (null != operation) {
+			MBeanParameterInfo[] params = operation.getSignature();
+			for(int p = 0; p < params.length; p++)  {
+				MBeanParameterInfo paramInfo = params[p];
+				if (null != paramInfo) {
+					String pname = paramInfo.getName();
+					String type  = paramInfo.getType();
+					result += pname + ":" + type + " ";
+				}
+			}
+		}
+		return result;
+	}	
+		
+	
+	/**
+	 * Retreive attributes name,type,description and values.
+	 * @param info MBeanInfo.
+	 * @param server MBeanServer.
+	 * @param objectName ObjectName.
+	 * @return Set<Attr>.
+	 */
+	Set<Attr> retreiveAttributes(MBeanInfo info, MBeanServer server, ObjectName objectName) {
+		Set<Attr> lst = new TreeSet<Attr>();
+		info?.attributes?.each { attribute ->
+			if (null != attribute) {
+				Object attrs = server?.getAttribute(objectName,attribute.name);
 				String attr = "";
 				if (attribute.readable) {
 					attr += "R";
@@ -165,33 +378,89 @@ class jmx extends CRaSHCommand {
 				if (attribute.writable) {
 					attr += "W";
 				}
-				out.println(attribute.name + " " + attr + " " + attribute.type + " " + attribute.description)
+				lst.add(new Attr(attribute.name, attribute.type, attribute.description, attr, attrs));
 			}
-			out << ui;
-		// Show operations table
-//		ui.table() {
-//			row(decoration: bold, foreground: black, background: white) {
-//			  label("OPERATIONS"); label("RETURN TYPE"); label("DESCRIPTION"); label("PARAMETERS")
-//			}
-//			MBeanInfo info = server.getMBeanInfo(instance);
-//		   
-//			info.operations.each { operation ->
-//				row() {
-//					label(value: operation.name, foreground: red); label(attr); operation.returnType; operation.description
-//				  }
-//			  }
-//		}
-
-		
+		}
+		return lst;
 	}
 	
-//void showResult(Set<ObjectInstance> instances)
+	/**
+	 * Show attributes list on screen.
+	 * @param server MBeanServer
+	 * @param info MBeanInfo
+	 * @param objectName ObjectName 
+	 */
+	void showAttributes(MBeanInfo info, MBeanServer server, ObjectName objectName) {
+		Set<Attr> lst = retreiveAttributes(info, server, objectName);
+		UIBuilder ui = new UIBuilder();
 
-  @Usage("todo")
+		ui.table() {
+			header(decoration: bold, foreground: black, background: white) {
+			  label("ATTRIBUTE NAME"); label("ACCESS"); label("TYPE"); label("DESCRIPTION"); label("ATTRIBUTE VALUE")
+			}
+			
+			for(Attr tmpAttr : lst) {
+				if (null != tmpAttr) {
+					row() {
+						label(value: tmpAttr.name, foreground: red);
+						label(tmpAttr.access); 
+						label(tmpAttr.type); 
+						label(tmpAttr.desc);
+						label(tmpAttr.attrs.toString());
+					}
+				}
+			}
+		}
+		out << ui;
+	}
+	
+	/**
+	 * Store attribute information temporary.
+	 * @author drieu
+	 *
+	 */
+	class Attr implements Comparable {
+		def name,type,desc,access,attrs
+		
+		Attr(String n, String t, String d, String a, Object attrs) {
+			this.name = n;
+			this.type = t;
+			this.desc = d;
+			this.access = a;
+			this.attrs = attrs;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			boolean bCmp = false;
+			if ((obj instanceof Attr)) {
+				Attr attr = (Attr)obj;
+				if ((this.name == attr.name) && (this.type == attr.type) && (this.desc == attr.desc)) {
+					bCmp = true;
+				}
+			}
+			return bCmp;
+		}
+		
+		@Override
+		public int compareTo(Object obj) {
+			int cmp = 1;
+			if ((obj instanceof Attr)) {
+				Attr attr = (Attr)obj;
+				if ((this.name == attr.name) && (this.type == attr.type) && (this.desc == attr.desc)) {
+					cmp = 0;
+				}
+			}
+			return cmp;
+		}
+	}
+	
+
+  @Usage("Retreive attribute value (jmx get -a Name java.lang:type=Compilation)")
   @Command
   void get(
-      @Option(names=['a','attributes']) List<String> attributes,
-      @Argument List<String> names) {
+      @Usage("Attribute name e.g:Name") @Option(names=['a','attributes']) List<String> attributes,
+      @Usage("Name list e.g:java.lang:type=Compilation") @Argument List<String> names) {
 
     MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
