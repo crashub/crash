@@ -36,7 +36,10 @@ public class CommandExecutionTestCase extends AbstractCommandTestCase {
   }
 
   public void testKeepLastPipeContent() throws Exception {
-    // Should it be bar instance of foobar ???
-    assertEquals("foobar", assertOk("echo foo | echo bar"));
+    assertEquals("bar", assertOk("echo foo | echo bar"));
+  }
+
+  public void testFlushInPipe() throws Exception {
+    assertEquals("foojuu", assertOk("echo -f 1 foo bar | echo juu"));
   }
 }

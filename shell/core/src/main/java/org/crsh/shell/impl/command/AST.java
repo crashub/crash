@@ -138,6 +138,11 @@ abstract class AST {
 
       //
       if (next != null) {
+
+        // Clear buffer we have a next command
+        buffer.clear();
+
+        //
         return next.execute(crash, context, produced, buffer, needReset);
       } else {
         if (!buffer.isEmpty()) {
