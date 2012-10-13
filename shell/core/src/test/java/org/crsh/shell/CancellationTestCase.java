@@ -24,7 +24,7 @@ import org.crsh.BaseProcessContext;
 
 import java.util.concurrent.CountDownLatch;
 
-public class CancelTestCase extends AbstractCommandTestCase {
+public class CancellationTestCase extends AbstractCommandTestCase {
 
   /** . */
   private static final Object interrupLock = new Object();
@@ -49,7 +49,7 @@ public class CancelTestCase extends AbstractCommandTestCase {
   }
 
   public void testInterrupt() {
-    final BaseProcessContext ctx = create("invoke " + CancelTestCase.class.getName() + " interruptCallback");
+    final BaseProcessContext ctx = create("invoke " + CancellationTestCase.class.getName() + " interruptCallback");
     Thread t = new Thread() {
       @Override
       public void run() {
@@ -81,7 +81,7 @@ public class CancelTestCase extends AbstractCommandTestCase {
   }
 
   public void testLoop() throws Exception {
-    final BaseProcessContext ctx = create("invoke " + CancelTestCase.class.getName() + " loopCallback");
+    final BaseProcessContext ctx = create("invoke " + CancellationTestCase.class.getName() + " loopCallback");
     Thread t = new Thread() {
       @Override
       public void run() {

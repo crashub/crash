@@ -19,16 +19,37 @@
 
 package org.crsh.shell;
 
-public class CommandExecutionTestCase extends AbstractCommandTestCase {
+public class PipeTestCase extends AbstractCommandTestCase {
 
-  public void testFailure() throws Exception {
-    Throwable t = assertEvalError("fail");
-//    assertEquals(Exception.class, t.getClass());
+  /** . */
+  private final String produce_command = "class produce_command extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public void main(org.crsh.command.InvocationContext<Void, String> context) {\n" +
+      "['foo','bar'].each { context.produce(it) }" +
+      "}\n" +
+      "}";
+
+  public void testProduce() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "produce_command { out << it }\n" +
+        "}\n" +
+        "}";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("produce_command", produce_command);
+
+    //
+    assertEquals("foobar", assertOk("foo"));
   }
 
-  public void testInvalid() throws Exception {
-    assertUnknownCommand("invalid");
-//    assertEquals(MultipleCompilationErrorsException.class, t.getClass());
+  public void testProduceInScript() {
+    String foo = "produce_command { out << it }\n";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("produce_command", produce_command);
+
+    //
+    assertEquals("foobar", assertOk("foo"));
   }
 
   public void testAggregateContent() throws Exception {

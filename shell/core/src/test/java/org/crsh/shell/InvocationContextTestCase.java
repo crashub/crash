@@ -29,7 +29,7 @@ import org.crsh.command.SyntaxException;
 
 import java.util.Arrays;
 
-public class ShellCommandTestCase extends TestCase {
+public class InvocationContextTestCase extends TestCase {
 
 
   /** . */

@@ -126,6 +126,10 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
     return error.getThrowable();
   }
 
+  protected final String evalOk(String s) {
+    return assertOk("eval \"" + s.replaceAll("\"", "\\\"") + "\"");
+  }
+
   protected final String assertOk(String s) {
     BaseProcessContext ctx = execute(s);
     ShellResponse resp = ctx.getResponse();
