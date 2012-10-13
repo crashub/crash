@@ -149,9 +149,7 @@ public class JLineProcessor implements Runnable, Completer {
     if (process != null) {
       process.cancel();
     } else {
-      writer.println();
-      writer.print(getPrompt());
-      writer.flush();
+      // Do nothing
     }
   }
 
