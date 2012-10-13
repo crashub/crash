@@ -44,7 +44,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CRaSHSession implements Shell, Closeable {
+public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable {
 
   /** . */
   static final Logger log = LoggerFactory.getLogger(CRaSHSession.class);
@@ -59,9 +59,6 @@ public class CRaSHSession implements Shell, Closeable {
   final CRaSH crash;
 
   /** . */
-  final Map<String, Object> attributes;
-
-  /** . */
   final Principal user;
 
   /**
@@ -74,7 +71,7 @@ public class CRaSHSession implements Shell, Closeable {
       CompilerConfiguration config = new CompilerConfiguration();
       config.setRecompileGroovySource(true);
       config.setScriptBaseClass(GroovyScriptCommand.class.getName());
-      groovyShell = new GroovyShell(crash.context.getLoader(), new Binding(attributes), config);
+      groovyShell = new GroovyShell(crash.context.getLoader(), new Binding(this), config);
     }
     return groovyShell;
   }
@@ -82,30 +79,19 @@ public class CRaSHSession implements Shell, Closeable {
   public Script getLifeCycle(String name) throws NoSuchCommandException, NullPointerException {
     Class<? extends Script> scriptClass = crash.lifecycles.getClass(name);
     if (scriptClass != null) {
-      Script script = InvokerHelper.createScript(scriptClass, new Binding(attributes));
-      script.setBinding(new Binding(attributes));
+      Script script = InvokerHelper.createScript(scriptClass, new Binding(this));
+      script.setBinding(new Binding(this));
       return script;
     } else {
       return null;
     }
   }
 
-  public Object getAttribute(String name) {
-    return attributes.get(name);
-  }
-
-  public void setAttribute(String name, Object value) {
-    attributes.put(name, value);
-  }
-
   CRaSHSession(final CRaSH crash, Principal user) {
-    HashMap<String, Object> attributes = new HashMap<String, Object>();
-
     // Set variable available to all scripts
-    attributes.put("crash", crash);
+    put("crash", crash);
 
     //
-    this.attributes = attributes;
     this.groovyShell = null;
     this.crash = crash;
     this.user = user;
@@ -235,7 +221,7 @@ public class CRaSHSession implements Shell, Closeable {
         try {
           ShellCommand command = crash.getCommand(commandName);
           if (command != null) {
-            completion = command.complete(new BaseCommandContext(attributes, crash.context.getAttributes()), termPrefix);
+            completion = command.complete(new BaseCommandContext(this, crash.context.getAttributes()), termPrefix);
           } else {
             completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
           }

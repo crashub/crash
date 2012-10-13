@@ -109,10 +109,10 @@ abstract class AST {
         // Build command context
         InvocationContextImpl ctx;
         if (current.invoker.getConsumedType() == Void.class) {
-          ctx = new InvocationContextImpl(context, buffer, flushable, null, crash.attributes, crash.crash.getContext().getAttributes());
+          ctx = new InvocationContextImpl(context, buffer, flushable, null, crash, crash.crash.getContext().getAttributes());
         } else {
           // For now we assume we have compatible consumed/produced types
-          ctx = new InvocationContextImpl(context, buffer, flushable, consumed, crash.attributes, crash.crash.getContext().getAttributes());
+          ctx = new InvocationContextImpl(context, buffer, flushable, consumed, crash, crash.crash.getContext().getAttributes());
         }
 
         //
