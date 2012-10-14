@@ -64,9 +64,6 @@ class Tokenizer {
       return Token.EOF;
     } else {
       switch (c) {
-        case '+':
-          next();
-          return Token.PLUS;
         case '|':
           next();
           return Token.PIPE;

@@ -32,8 +32,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
   /** . */
   private final String compound_produce_command = "class compound_produce_command extends org.crsh.command.CRaSHCommand {\n" +
       "@Command\n" +
-      "public void compound(org.crsh.command.InvocationContext<Void, String> context) {\n" +
-      "['foo','bar'].each { context.produce(it) }" +
+      "public void compound(org.crsh.command.InvocationContext<String> context) {\n" +
+      "['foo','bar'].each { context.provide(it) }" +
       "}\n" +
       "}";
 
@@ -144,7 +144,7 @@ public class CompositionTestCase extends AbstractCommandTestCase {
     assertEquals("bar", assertOk("foo"));
   }
 
-  public void testCompoundProduce() {
+  public void testCompoundProduceToClosure() {
     String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
         "@Command\n" +
         "public void main() {\n" +
@@ -153,18 +153,31 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "}";
     lifeCycle.setCommand("foo", foo);
     lifeCycle.setCommand("compound_produce_command", compound_produce_command);
-
-    //
     assertEquals("foobar", assertOk("foo"));
+
+    // Test with wrong type
+    String bar = "class bar extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "compound_produce_command.compound { boolean it -> out << it }\n" +
+        "}\n" +
+        "}";
+    lifeCycle.setCommand("bar", bar);
+    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+    assertEquals("", assertOk("bar"));
   }
 
-  public void testCompoundProduceInScript() {
+  public void testCompoundProduceToClosureInScript() {
     String foo = "compound_produce_command.compound { out << it }\n";
     lifeCycle.setCommand("foo", foo);
     lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+    assertEquals("foobar", assertOk("foo"));
 
     //
-    assertEquals("foobar", assertOk("foo"));
+    String bar = "compound_produce_command.compound { boolean it -> out << it }\n";
+    lifeCycle.setCommand("bar", bar);
+    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+    assertEquals("", assertOk("bar"));
   }
 
   public void testCheckedException() {

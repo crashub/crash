@@ -21,6 +21,9 @@ package org.crsh.text.ui;
 
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
+import org.crsh.text.LineReader;
+import org.crsh.text.RenderAppendable;
+import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 
 import static org.crsh.text.ui.Element.label;
@@ -62,33 +65,36 @@ public class RendererTestCase extends AbstractRendererTestCase {
       LabelElement juu = new LabelElement("juu");
 
       @Override
-      int getWidth() {
-        return 9;
-      }
-
-      @Override
-      int getMinWidth() {
-        return 1;
-      }
-
-      @Override
-      public Renderer renderer(int width) {
+      public Renderer renderer() {
         return new Renderer() {
-
-          boolean done = false;
-
-          public boolean hasLine() {
-            return !done;
+          @Override
+          public int getActualWidth() {
+            return 9;
           }
+          @Override
+          public int getMinWidth() {
+            return 1;
+          }
+          @Override
+          public LineReader renderer(final int width) {
+            return new LineReader() {
 
-          public void renderLine(RendererAppendable to) throws IllegalStateException {
-            if (done) {
-              throw new IllegalStateException();
-            }
-            foo.renderer(3).renderLine(to);
-            bar.renderer(3).renderLine(to);
-            juu.renderer(3).renderLine(to);
-            done = true;
+              boolean done = false;
+
+              public boolean hasLine() {
+                return !done;
+              }
+
+              public void renderLine(RenderAppendable to) throws IllegalStateException {
+                if (done) {
+                  throw new IllegalStateException();
+                }
+                foo.renderer().renderer(3).renderLine(to);
+                bar.renderer().renderer(3).renderLine(to);
+                juu.renderer().renderer(3).renderLine(to);
+                done = true;
+              }
+            };
           }
         };
       }

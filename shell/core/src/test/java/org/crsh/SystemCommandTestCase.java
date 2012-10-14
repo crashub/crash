@@ -25,7 +25,7 @@ public class SystemCommandTestCase extends AbstractCommandTestCase {
 
   public void testFoo() throws Exception {
     System.setProperty("foo", "bar");
-    lifeCycle.setCommand("ls", "system.propls filter:'foo', { out << it.value }");
+    lifeCycle.setCommand("ls", "system.propls filter:'foo', { out << it['VALUE'] }");
     assertEquals("bar", assertOk("ls"));
   }
 }

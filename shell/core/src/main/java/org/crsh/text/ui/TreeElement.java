@@ -19,18 +19,18 @@
 
 package org.crsh.text.ui;
 
+import org.crsh.text.Renderer;
+
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 public class TreeElement extends Element {
 
   /** An optional value element. */
-  private Element value;
+  Element value;
 
   /** . */
-  private List<Element> children = new ArrayList<Element>();
+  final List<Element> children = new ArrayList<Element>();
 
   public TreeElement() {
     this(null);
@@ -61,88 +61,8 @@ public class TreeElement extends Element {
     return children.get(index);
   }
 
-
   @Override
-  public Renderer renderer(final int width) {
-
-
-    final LinkedList<Renderer> renderers  = new LinkedList<Renderer>();
-    for (Element child : children) {
-      renderers.addLast(child.renderer(width - 2));
-    }
-
-
-    return new Renderer() {
-
-      /** . */
-      Renderer value = TreeElement.this.value != null ? TreeElement.this.value.renderer(width) : null;
-
-      /** . */
-      boolean node = true;
-
-      public boolean hasLine() {
-        if (value != null) {
-          if (value.hasLine()) {
-            return true;
-          } else {
-            value = null;
-          }
-        }
-        while (renderers.size() > 0) {
-          if (renderers.peekFirst().hasLine()) {
-            return true;
-          } else {
-            renderers.removeFirst();
-            node = true;
-          }
-        }
-        return false;
-      }
-
-      public void renderLine(RendererAppendable to) {
-        if (value != null) {
-          if (value.hasLine()) {
-            value.renderLine(to);
-          } else {
-            value = null;
-          }
-        }
-        if (value == null) {
-          while (renderers.size() > 0) {
-            Renderer first = renderers.peekFirst();
-            if (first.hasLine()) {
-              if (node) {
-                to.append("+-");
-                node = false;
-              } else {
-                Iterator<Renderer> i = renderers.descendingIterator();
-                boolean rest = false;
-                while (i.hasNext()) {
-                  Renderer renderer = i.next();
-                  if (i.hasNext()) {
-                    if (renderer.hasLine()) {
-                      rest = true;
-                      break;
-                    }
-                  }
-                }
-                if (rest) {
-                  to.append("| ");
-                } else {
-                  to.append("  ");
-                }
-              }
-              first.renderLine(to);
-              break;
-            }
-          }
-        }
-      }
-    };
-  }
-
-  @Override
-  int getWidth() {
-    return 0;
+  public Renderer renderer() {
+    return new TreeRenderer(this);
   }
 }

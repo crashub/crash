@@ -30,45 +30,22 @@ public class ParserTestCase extends TestCase {
 
   public void testCommand() {
     Parser p = new Parser("a");
-    AST.Expr e = (AST.Expr)p.parse();
-    assertEquals("a", e.term.line);
-    assertNull(e.term.next);
-    assertNull(e.next);
-  }
-
-  public void testPlus() {
-    Parser p = new Parser("a+b");
-    AST.Expr e = (AST.Expr)p.parse();
-    assertEquals("a", e.term.line);
-    assertEquals("b", e.term.next.line);
-    assertNull(e.term.next.next);
+    PipeLine e = p.parse();
+    assertEquals("a", e.line);
     assertNull(e.next);
   }
 
   public void testPipe() {
     Parser p = new Parser("a|b");
-    AST.Expr e = (AST.Expr)p.parse();
-    assertEquals("a", e.term.line);
-    assertNull(e.term.next);
-    assertEquals("b", e.next.term.line);
-    assertNull(e.next.next);
-  }
-
-  public void testComplex() {
-    Parser p = new Parser("a+b|c");
-    AST.Expr e = (AST.Expr)p.parse();
-    assertEquals("a", e.term.line);
-    assertEquals("b", e.term.next.line);
-    assertNull(e.term.next.next);
-    assertEquals("c", e.next.term.line);
+    PipeLine e = p.parse();
+    assertEquals("a", e.line);
+    assertEquals("b", e.next.line);
     assertNull(e.next.next);
   }
 
   public void testSyntaxException() {
     assertSyntaxException("|");
-    assertSyntaxException("+");
     assertSyntaxException("a|");
-    assertSyntaxException("a+");
   }
 
   private void assertSyntaxException(String s) {

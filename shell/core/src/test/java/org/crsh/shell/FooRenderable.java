@@ -17,30 +17,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl.command;
+package org.crsh.shell;
 
-import org.crsh.command.CommandContext;
+import org.crsh.text.Renderable;
+import org.crsh.text.Renderer;
+import org.crsh.text.ui.LabelElement;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-public class BaseCommandContext implements CommandContext {
+public class FooRenderable extends Renderable<Foo> {
 
-  /** . */
-  private final Map<String, Object> session;
-
-  /** . */
-  private final Map<String, Object> attributes;
-
-  public BaseCommandContext(Map<String, Object> session, Map<String, Object> attributes) {
-    this.session = session;
-    this.attributes = attributes;
+  @Override
+  public Class<Foo> getType() {
+    return Foo.class;
   }
 
-  public final Map<String, Object> getSession() {
-    return session;
-  }
-
-  public Map<String, Object> getAttributes() {
-    return attributes;
+  @Override
+  public Renderer renderer(Iterator<Foo> stream) {
+    ArrayList<Renderer> renderers = new ArrayList<Renderer>();
+    while (stream.hasNext()) {
+      Foo foo = stream.next();
+      renderers.add(new LabelElement("<foo>" + foo.getValue() + "</foo>").renderer());
+    }
+    return Renderer.compose(renderers);
   }
 }

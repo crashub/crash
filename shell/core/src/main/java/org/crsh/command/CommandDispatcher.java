@@ -25,6 +25,7 @@ import groovy.lang.MissingPropertyException;
 import groovy.lang.Tuple;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.codehaus.groovy.runtime.MetaClassHelper;
+import org.crsh.Pipe;
 import org.crsh.cmdline.Delimiter;
 
 import java.io.IOException;
@@ -33,17 +34,17 @@ import java.util.Map;
 final class CommandDispatcher extends Closure {
 
   /** . */
-  final InvocationContext ic;
+  final InvocationContext outter;
 
   /** . */
   final ShellCommand command;
 
-  CommandDispatcher(ShellCommand command, InvocationContext ic) {
+  CommandDispatcher(ShellCommand command, InvocationContext outter) {
     super(new Object());
 
     //
     this.command = command;
-    this.ic = ic;
+    this.outter = outter;
   }
 
   @Override
@@ -95,7 +96,7 @@ final class CommandDispatcher extends Closure {
     }
 
     //
-    Closure closure;
+    final Closure closure;
     int to = args.length;
     if (to > 0 && args[to - 1] instanceof Closure) {
       closure = (Closure)args[--to];
@@ -157,16 +158,35 @@ final class CommandDispatcher extends Closure {
     //
     try {
       CommandInvoker<Void, Void> invoker = (CommandInvoker<Void, Void>)command.createInvoker(line.toString());
-      Class producedType = invoker.getProducedType();
-      InnerInvocationContext inc = new InnerInvocationContext(ic, producedType, closure != null);
-      invoker.invoke(inc);
 
       //
+      Pipe producer;
       if (closure != null) {
-        for (Object o : inc.products) {
-          closure.call(o);
-        }
+        producer = new AbstractPipeCommand() {
+          @Override
+          public void provide(Object element) throws ScriptException, IOException {
+            Class[] parameterTypes = closure.getParameterTypes();
+            if (parameterTypes.length > 0 && parameterTypes[0].isInstance(element)) {
+              closure.call(element);
+            }
+          }
+        };
+      } else {
+        producer = outter;
       }
+
+      //
+      InnerInvocationContext inner = new InnerInvocationContext(outter, producer);
+
+      //
+      PipeCommand command = invoker.invoke(inner);
+
+      //
+      command.open();
+
+      // Should pipe stuff I think
+      // but we don't do it for now
+      command.close();
 
       //
       return null;

@@ -17,21 +17,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.text;
+package org.crsh;
+
+import java.io.Flushable;
+import java.io.IOException;
 
 /**
- * Extends the {@link Appendable} interface to provide shell display specific methods.
+ * Defines the interface for a pipe.
+ *
+ * @param <E> the element generic type
  */
-public interface ShellAppendable extends Appendable {
+public interface Pipe<E> extends Flushable {
 
-  ShellAppendable append(CharSequence csq);
-
-  ShellAppendable append(CharSequence csq, int start, int end);
-
-  ShellAppendable append(char c);
-
-  ShellAppendable append(Style style);
-
-  ShellAppendable cls();
+  /**
+   * Provide an element.
+   *
+   * @param element the provided element
+   */
+  void provide(E element) throws IOException;
 
 }

@@ -28,12 +28,13 @@ import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.impl.command.CRaSH;
-import org.crsh.text.ShellPrintWriter;
+import org.crsh.text.RenderPrintWriter;
 import org.crsh.util.Strings;
 
+import java.io.IOException;
 import java.util.List;
 
-public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker<Void, Void> {
+public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker<Void, Object> {
 
   /** . */
   private CommandContext context;
@@ -41,8 +42,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   /** . */
   private String[] args;
 
-  public final Class<Void> getProducedType() {
-    return Void.class;
+  public final Class<Object> getProducedType() {
+    return Object.class;
   }
 
   public final Class<Void> getConsumedType() {
@@ -83,21 +84,21 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   @Override
   public final Object getProperty(String property) {
     if ("out".equals(property)) {
-      if (context instanceof InvocationContext<?, ?>) {
-        return ((InvocationContext<?, ?>)context).getWriter();
+      if (context instanceof InvocationContext<?>) {
+        return ((InvocationContext<?>)context).getWriter();
       } else {
         return null;
       }
     } else if ("context".equals(property)) {
       return context;
     } else {
-      if (context instanceof InvocationContext<?, ?>) {
+      if (context instanceof InvocationContext<?>) {
         CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
           try {
             ShellCommand cmd = crash.getCommand(property);
             if (cmd != null) {
-              return new CommandDispatcher(cmd, (InvocationContext<?, ?>)context);
+              return new CommandDispatcher(cmd, (InvocationContext<?>)context);
             }
           } catch (NoSuchCommandException e) {
             throw new InvokerInvocationException(e);
@@ -123,43 +124,58 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return null;
   }
 
-  public final void invoke(InvocationContext<Void, Void> context) throws ScriptException {
+  public final PipeCommand<Void> invoke(final InvocationContext<Object> context) throws ScriptException {
+    return new AbstractPipeCommand<Void>() {
 
-    // Set up current binding
-    Binding binding = new Binding(context.getSession());
+      @Override
+      public void open() throws ScriptException {
+        // Set up current binding
+        Binding binding = new Binding(context.getSession());
 
-    // Set the args on the script
-    binding.setProperty("args", args);
+        // Set the args on the script
+        binding.setProperty("args", args);
 
-    //
-    setBinding(binding);
+        //
+        setBinding(binding);
 
-    //
-    this.context = context;
-    try {
-      //
-      Object res = run();
+        //
+        GroovyScriptCommand.this.context = context;
+        try {
+          //
+          Object res = run();
 
-      // Evaluate the closure
-      if (res instanceof Closure) {
-        Closure closure = (Closure)res;
-        res = closure.call(args);
-      }
+          // Evaluate the closure
+          if (res instanceof Closure) {
+            Closure closure = (Closure)res;
+            res = closure.call(args);
+          }
 
-      //
-      if (res != null) {
-        ShellPrintWriter writer = context.getWriter();
-        if (writer.isEmpty()) {
-          writer.print(res);
+          //
+          if (res != null) {
+            RenderPrintWriter writer = context.getWriter();
+            if (writer.isEmpty()) {
+              writer.print(res);
+            }
+          }
+        }
+        catch (Exception t) {
+          throw CRaSHCommand.toScript(t);
+        }
+        finally {
+          GroovyScriptCommand.this.context = null;
         }
       }
-    }
-    catch (Exception t) {
-      throw CRaSHCommand.toScript(t);
-    }
-    finally {
-      this.context = null;
-    }
+
+      @Override
+      public void provide(Void element) throws IOException {
+        // Should never be called
+      }
+
+      @Override
+      public void flush() throws IOException {
+        context.flush();
+      }
+    };
   }
 
   public final CommandInvoker<?, ?> createInvoker(String line) {

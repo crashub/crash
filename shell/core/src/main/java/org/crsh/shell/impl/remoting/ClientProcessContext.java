@@ -60,10 +60,10 @@ class ClientProcessContext implements ShellProcessContext {
     }
   }
 
-  public void write(Chunk chunk) throws NullPointerException {
+  public void provide(Chunk element) throws IOException {
     try {
       client.out.writeObject(ServerMessage.CHUNK);
-      client.out.writeObject(chunk);
+      client.out.writeObject(element);
       client.out.flush();
     }
     catch (IOException ignore) {

@@ -19,13 +19,13 @@
 
 package org.crsh.processor.term;
 
+import org.crsh.Pipe;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.text.Chunk;
-import org.crsh.text.ChunkWriter;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
 import org.crsh.text.Text;
@@ -40,7 +40,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-public final class Processor implements Runnable, ChunkWriter {
+public final class Processor implements Runnable, Pipe<Chunk> {
 
   /** . */
   static final Runnable NOOP = new Runnable() {
@@ -117,7 +117,7 @@ public final class Processor implements Runnable, ChunkWriter {
     try {
       String welcome = shell.getWelcome();
       log.debug("Writing welcome message to term");
-      term.write(new Text(welcome));
+      term.provide(new Text(welcome));
       log.debug("Wrote welcome message to term");
       writePromptFlush();
     }
@@ -293,8 +293,12 @@ public final class Processor implements Runnable, ChunkWriter {
     listeners.add(listener);
   }
 
-  public void write(Chunk chunk) throws NullPointerException, IOException {
-    term.write(chunk);
+  public void provide(Chunk element) throws IOException {
+    term.provide(element);
+  }
+
+  public void flush() throws IOException {
+    throw new UnsupportedOperationException("what does it mean?");
   }
 
   void writePromptFlush() {
@@ -306,7 +310,7 @@ public final class Processor implements Runnable, ChunkWriter {
       if (buffer != null) {
         sb.append(buffer);
       }
-      term.write(new Text(sb));
+      term.provide(new Text(sb));
       term.flush();
     } catch (IOException e) {
       // Todo : improve that
@@ -385,7 +389,7 @@ public final class Processor implements Runnable, ChunkWriter {
           }
 
           // We propose
-          term.write(new Text(sb.toString()));
+          term.provide(new Text(sb.toString()));
           writePromptFlush();
         }
       }

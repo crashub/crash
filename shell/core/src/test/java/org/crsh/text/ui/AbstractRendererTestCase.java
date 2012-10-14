@@ -20,10 +20,11 @@
 package org.crsh.text.ui;
 
 import org.crsh.AbstractTestCase;
+import org.crsh.text.Chunk;
 import org.crsh.text.ChunkBuffer;
-import org.crsh.text.ui.Element;
-import org.crsh.text.ui.Renderer;
-import org.crsh.text.ui.RendererAppendable;
+import org.crsh.text.LineReader;
+import org.crsh.text.RenderAppendable;
+import org.crsh.text.RenderContext;
 import org.crsh.util.Strings;
 
 import java.io.IOException;
@@ -33,11 +34,21 @@ import java.util.List;
 
 public abstract class AbstractRendererTestCase extends AbstractTestCase {
 
-  public List<String> render(Renderer renderer) {
+  public List<String> render(final LineReader renderer, final int width) {
     ArrayList<String> result = new ArrayList<String>();
     while (renderer.hasLine()) {
-      ChunkBuffer buffer = new ChunkBuffer();
-      renderer.renderLine(new RendererAppendable(buffer));
+      final ChunkBuffer buffer = new ChunkBuffer();
+      renderer.renderLine(new RenderAppendable(new RenderContext() {
+        public int getWidth() {
+          return width;
+        }
+        public void provide(Chunk element) throws IOException {
+          buffer.provide(element);
+        }
+        public void flush() throws IOException {
+          buffer.flush();
+        }
+      }));
       StringBuilder sb = new StringBuilder();
       try {
         buffer.writeAnsiTo(sb);
@@ -51,17 +62,17 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
   }
 
   public List<String> render(Element element, int width) {
-    Renderer renderer = element.renderer(width);
-    return render(renderer);
+    LineReader renderer = element.renderer().renderer(width);
+    return render(renderer, width);
   }
 
   public void assertRender(Element element, int width, String... expected) {
-    Renderer renderer = element.renderer(width);
-    assertRender(renderer, expected);
+    LineReader renderer = element.renderer().renderer(width);
+    assertRender(renderer, width, expected);
   }
 
-  public void assertRender(Renderer renderer, String... expected) {
-    List<String> result = render(renderer);
+  public void assertRender(LineReader renderer, int width, String... expected) {
+    List<String> result = render(renderer, width);
     if (result.size() != expected.length) {
       throw failure("Was expecting the same number of lines got:" + Strings.join(result, "/") + " expected:" +
           Strings.join(Arrays.asList(expected), "/"));

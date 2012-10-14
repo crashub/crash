@@ -19,18 +19,24 @@
 
 package org.crsh.text;
 
-import java.io.IOException;
-
 /**
- * Writer for chunks.
+ * The line reader is a kind of iterator over a number of lines having a fixed width.
  */
-public interface ChunkWriter {
+public interface LineReader {
 
   /**
-   * Write a single chunk.
+   * Returns true if the renderer has a next line to render.
    *
-   * @param chunk the chunk to write
+   * @return when there is at least a next line to read
    */
-  void write(Chunk chunk) throws NullPointerException, IOException;
+  boolean hasLine();
+
+  /**
+   * Renders the element.
+   *
+   * @param to the buffer for rendering
+   * @throws IllegalStateException when there is no line to render
+   */
+  void renderLine(RenderAppendable to) throws IllegalStateException;
 
 }

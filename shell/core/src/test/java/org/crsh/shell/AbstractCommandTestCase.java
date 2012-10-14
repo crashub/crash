@@ -127,7 +127,7 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
   }
 
   protected final String evalOk(String s) {
-    return assertOk("eval \"" + s.replaceAll("\"", "\\\"") + "\"");
+    return assertOk("evaluate \"" + s.replaceAll("\"", "\\\"") + "\"");
   }
 
   protected final String assertOk(String s) {

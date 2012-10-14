@@ -110,7 +110,7 @@ public class SyncTerm implements Term {
     }
   }
 
-  public void write(Chunk chunk) throws NullPointerException, IOException {
+  public void provide(Chunk element) throws IOException {
   }
 
   public Appendable getInsertBuffer() {

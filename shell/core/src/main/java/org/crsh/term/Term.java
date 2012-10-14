@@ -19,13 +19,13 @@
 
 package org.crsh.term;
 
+import org.crsh.Pipe;
 import org.crsh.text.Chunk;
-import org.crsh.text.ChunkWriter;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-public interface Term extends Closeable, ChunkWriter {
+public interface Term extends Closeable, Pipe<Chunk> {
 
   /**
    * Returns the term width in chars. When the value is not positive it means the value could not be determined.
@@ -57,14 +57,6 @@ public interface Term extends Closeable, ChunkWriter {
    * @throws IOException any io exception
    */
   TermEvent read() throws IOException;
-
-  /**
-   * Write a message on the console, the text will be appended.
-   *
-   * @param chunk the chunk to write
-   * @throws IOException any io exception
-   */
-  void write(Chunk chunk) throws NullPointerException, IOException;
 
   /**
    * Returns the insert buffer, any char appended in the returned appendable will translate into an

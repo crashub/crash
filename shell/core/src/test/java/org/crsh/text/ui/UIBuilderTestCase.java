@@ -25,6 +25,7 @@ import org.crsh.text.Color;
 import org.crsh.text.Decoration;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class UIBuilderTestCase extends AbstractTestCase {
 
@@ -383,17 +384,47 @@ public class UIBuilderTestCase extends AbstractTestCase {
         "import org.crsh.text.ui.UIBuilder;\n" +
         "import org.crsh.text.Color;\n" +
         "import org.crsh.text.Style;\n" +
-          "def builder = new UIBuilder();\n" +
-          "builder.table {\n" +
-            "row() {\n" +
-              "node()\n" +
-            "}\n" +
-          "};\n" +
-          "return builder;\n"
+        "def builder = new UIBuilder();\n" +
+        "builder.table {\n" +
+          "row() {\n" +
+            "node()\n" +
+          "}\n" +
+        "};\n" +
+        "return builder;\n"
       );
       fail();
     } catch (IllegalArgumentException iae) {
       assertEquals("A table cannot contain a tree element", iae.getMessage());
     }
+  }
+
+  public void testEval() {
+    GroovyShell shell = new GroovyShell();
+
+    UIBuilder builder = (UIBuilder)shell.evaluate(
+        "import org.crsh.text.ui.UIBuilder;\n" +
+        "import org.crsh.text.Color;\n" +
+        "import org.crsh.text.Style;\n" +
+        "def builder = new UIBuilder();\n" +
+        "builder.table {\n" +
+          "row {\n" +
+            "eval {" +
+            " return 'HELLO';" +
+            "}\n" +
+          "}\n" +
+        "};\n" +
+        "return builder;\n"
+    );
+
+    //
+    List<Element> elements = builder.getElements();
+    assertEquals(1, elements.size());
+    TableElement table = assertInstance(TableElement.class, elements.get(0));
+    assertEquals(1, table.getRows().size());
+    RowElement row = table.getRows().get(0);
+    assertEquals(1, row.getCols().size());
+    EvalElement eval = assertInstance(EvalElement.class, row.getCols().get(0));
+    assertNotNull(eval.closure);
+    assertEquals("HELLO", eval.closure.call());
   }
 }

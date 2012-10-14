@@ -42,7 +42,7 @@ public abstract class BaseProcessFactory {
           if ("bye".equals(request)) {
             processContext.end(ShellResponse.close());
           } else {
-            processContext.write(new Text(request));
+            processContext.provide(new Text(request));
             processContext.end(ShellResponse.ok());
           }
         }

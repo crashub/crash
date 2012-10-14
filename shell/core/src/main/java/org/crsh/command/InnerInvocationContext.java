@@ -19,35 +19,32 @@
 
 package org.crsh.command;
 
-import org.crsh.text.ShellPrintWriter;
+import org.crsh.Pipe;
+import org.crsh.text.Chunk;
+import org.crsh.text.RenderContext;
+import org.crsh.text.RenderPrintWriter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
 import java.util.Map;
 
-class InnerInvocationContext<P> implements InvocationContext<Void, P> {
+class InnerInvocationContext<P> implements InvocationContext<P> {
 
   /** . */
-  final InvocationContext<?, ?> outter;
+  final InvocationContext<?> outter;
 
   /** . */
-  final Class<? extends P> producedType;
+  final Pipe<Object> producer;
 
   /** . */
-  List<P> products;
-
-  /** . */
-  final boolean piped;
+  private RenderPrintWriter writer;
 
   InnerInvocationContext(
-    InvocationContext<?, ?> outter,
-    Class<? extends P> producedType,
-    boolean piped) {
+    InvocationContext<?> outter,
+    Pipe<Object> producer) {
+
+    //
     this.outter = outter;
-    this.products = Collections.emptyList();
-    this.producedType = producedType;
-    this.piped = piped;
+    this.producer = producer;
   }
 
   public int getWidth() {
@@ -62,23 +59,29 @@ class InnerInvocationContext<P> implements InvocationContext<Void, P> {
     return outter.readLine(msg, echo);
   }
 
-  public ShellPrintWriter getWriter() {
-    return outter.getWriter();
-  }
-
-  public boolean isPiped() {
-    return piped;
-  }
-
-  public Iterable<Void> consume() throws IllegalStateException {
-    throw new IllegalStateException();
-  }
-
-  public void produce(P product) {
-    if (products.isEmpty()) {
-      products = new ArrayList<P>();
+  public RenderPrintWriter getWriter() {
+    if (writer == null) {
+      writer = new RenderPrintWriter(new RenderContext() {
+        public int getWidth() {
+          return outter.getWidth();
+        }
+        public void provide(Chunk element) throws IOException {
+          producer.provide(element);
+        }
+        public void flush() throws IOException {
+          producer.flush();
+        }
+      });
     }
-    products.add(product);
+    return writer;
+  }
+
+  public void provide(P element) throws IOException {
+    producer.provide(element);
+  }
+
+  public void flush() throws IOException {
+    producer.flush();
   }
 
   public Map<String, Object> getSession() {

@@ -17,7 +17,6 @@ import org.crsh.cmdline.completers.EnumCompleter
 import org.crsh.cmdline.spi.ValueCompletion
 import java.util.regex.Pattern
 import org.crsh.cmdline.annotations.Required
-import org.crsh.text.ui.UIBuilder
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -31,37 +30,21 @@ class system extends CRaSHCommand implements Completer {
   @Usage("list the vm system properties")
   @Command
   public void propls(
-    InvocationContext<String, Map.Entry> context,
+    InvocationContext<Map> context,
     @Usage("filter the property with a regular expression on their name")
     @Option(names=["f","filter"])
     String filter) {
     def pattern = Pattern.compile(filter?:".*");
-    if (context.piped) {
-      System.getProperties().each {
-        def matcher = it.key =~ pattern;
-        if (matcher.matches()) {
-          context.produce(it);
+    System.getProperties().each { key, value ->
+      def matcher = key =~ pattern;
+      if (matcher.matches()) {
+        try {
+          context.provide([NAME: key, VALUE: value] as LinkedHashMap)
         }
+        catch (IOException e) {
+          e.printStackTrace()
+        };
       }
-    } else {
-
-      UIBuilder ui = new UIBuilder()
-      ui.table(weights: [1,4]) {
-        row(bold: true, fg: black, bg: white) {
-          label("NAME"); label("VALUE")
-        }
-        System.getProperties().each {
-          def matcher = it.key =~ pattern;
-          def name = it.key;
-          def value = it.value;
-          if (matcher.matches()) {
-            row() {
-                label(foreground: red, name); label(value)
-            }
-          }
-        }
-      }
-      context.writer.print(ui);
     }
   }
 

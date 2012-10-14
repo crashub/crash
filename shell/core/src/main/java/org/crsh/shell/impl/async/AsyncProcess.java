@@ -74,11 +74,11 @@ public class AsyncProcess implements ShellProcess {
       return caller.readLine(msg, echo);
     }
 
-    public void write(Chunk chunk) throws NullPointerException, IOException {
-      caller.write(chunk);
+    public void provide(Chunk element) throws IOException {
+      caller.provide(element);
     }
 
-    public void flush() {
+    public void flush() throws IOException {
       caller.flush();
     }
 

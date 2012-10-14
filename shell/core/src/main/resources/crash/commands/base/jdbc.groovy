@@ -98,10 +98,9 @@ class jdbc extends CRaSHCommand {
     }
   }
 
-  @Usage("execute SQL statement")
+  @Usage("execute a SQL statement")
   @Command
   public String execute(
-    InvocationContext<Void, Map> context,
     @Usage("The statement")
     @Argument(unquote = false)
     List<String> statement) {
@@ -117,50 +116,66 @@ class jdbc extends CRaSHCommand {
       try {
         stmt.execute(sql)
         ResultSet resultSet = stmt.getResultSet();
-        try {
-          if (resultSet == null) {
-            if (context.piped) {
-              return null;
-            } else {
-              return "Query executed successfully\n";
-            }
-          } else {
-            if (context.piped) {
-              ResultSetMetaData metaData = resultSet.getMetaData();
-              int columnCount = resultSet.getMetaData().getColumnCount()
-              while (resultSet.next()) {
-                LinkedHashMap row = new LinkedHashMap();
-                (1..columnCount).each{ row[metaData.getColumnName(it)] = resultSet.getObject(it) }
-                context.produce(row)
-              }
-              return null;
-            } else {
-              StringBuilder res = new StringBuilder()
+        if (resultSet != null) {
+          resultSet.close();
+        }
+        return "Statement executed successfully\n";
+      }
+      finally {
+        Safe.close(stmt);
+      }
+    }
+  }
 
-              // Construct format
-              def formatString = "";
-              Formatter formatter = new Formatter(res);
-              ResultSetMetaData metaData = resultSet.getMetaData();
-              int columnCount = resultSet.getMetaData().getColumnCount()
-              (1..columnCount).each{ formatString += "%$it\$-20s " }
-              formatString += "\r\n"
+  @Usage("select SQL statement")
+  @Command
+  public void select(
+      InvocationContext<Map> context,
+      @Usage("The statement")
+      @Argument(unquote = false)
+      List<String> statement) {
+    if (connection == null) {
+      throw new ScriptException("You are not connected to database, please call jdbc open [JNDI DS]");
+    } else {
 
-              // Print header
-              String[] header = new String[metaData.getColumnCount()];
-              (1..columnCount).each{ header[it-1] = metaData.getColumnName(it) }
-              formatter.format(formatString, header);
-
-              // Print conent
-              String[] content = new String[metaData.getColumnCount()];
-              while (resultSet.next()) {
-                (1..columnCount).each{ content[it-1] = resultSet.getString(it) }
-                formatter.format(formatString, content);
-              }
-
-              //
-              return res;
-            }
+      // TEMPORARY HACK BECAUSE THE COMMAND DISPATCHER WILL QUOTE ARGUMENTS
+      // WE NEED TO BUILD A KIND OF INVOKER WITHOUT REBUILDING AND PARSING
+      // AN WHOLE COMMAND  LINE AS WE CANNOT ADAPT SOME STUFF
+      // for instance : jdbc.select "* from derbyDb"
+      if (statement.size() == 1) {
+        String s = statement.get(0);
+        def len = s.length()
+        if (s != null & len > 0) {
+          if (s.charAt(0) && s.charAt(len - 1)) {
+            statement.set(0, s.substring(1, len - 1));
           }
+        }
+      }
+
+      //
+      StringBuilder sb = new StringBuilder("select ");
+      statement.each { sb << " " << it };
+      String sql = sb.toString().trim();
+      if (sql.startsWith('"') && sql.endsWith('"') || sql.startsWith("'") && sql.endsWith("'"))
+        sql = sql.substring(1, sql.length() - 1)
+      Statement stmt = connection.createStatement();
+      try {
+        stmt.execute(sql)
+        ResultSet resultSet = stmt.getResultSet();
+        try {
+          if (resultSet != null) {
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = resultSet.getMetaData().getColumnCount()
+            while (resultSet.next()) {
+              LinkedHashMap row = new LinkedHashMap();
+              (1..columnCount).each{ row[metaData.getColumnName(it)] = resultSet.getString(it) }
+              context.provide(row)
+            }
+            out << "Query executed successfully\n";
+          }
+        }
+        catch (IOException e) {
+          e.printStackTrace()
         }
         finally {
           Safe.close(resultSet)
@@ -174,25 +189,19 @@ class jdbc extends CRaSHCommand {
 
   @Usage("show the database properties")
   @Command
-  public Object props() {
+  public void props(InvocationContext<Map> context) {
     if (connection == null) {
       throw new ScriptException("Not connected");
     }
     DatabaseMetaData md = connection.getMetaData();
-    def ui = new UIBuilder();
-    ui.table(weights: [1,4]) {
-      header(bold: true, fg: black, bg: white) {
-        label("NAME")
-        label("VALUE")
+    md.properties.each { key, value ->
+      try {
+        context.provide([NAME: key, VALUE: value] as LinkedHashMap)
       }
-      md.properties.each { key, value ->
-        row {
-          label(foreground: red, key)
-          label(value)
-        }
-      }
+      catch (IOException e) {
+        e.printStackTrace()
+      };
     }
-    return ui;
   }
 
   @Usage("describe the tables")
@@ -267,35 +276,40 @@ class jdbc extends CRaSHCommand {
 
   @Usage("describe the database")
   @Command
-  public Object info() {
+  public void info(InvocationContext<Map> context) {
     if (connection == null) {
       throw new ScriptException("Not connected");
     }
+    // weights : 1,2,2,1,1
     DatabaseMetaData md = connection.getMetaData();
-    def ui = new UIBuilder();
-    ui.table(weights: [1,2,2,1,1]) {
-      header(bold: true, fg: black, bg: white) {
-        label("TYPE");
-        label("NAME");
-        label("VERSION");
-        label("MAJOR");
-        label("MINOR") }
-      row {
-        label("Product")
-        label("${md.databaseProductName}")
-        label("${md.databaseProductVersion}")
-        label("${md.databaseMajorVersion}")
-        label("${md.databaseMinorVersion}")
-      }
-      row {
-        label("Driver")
-        label("${md.driverName}")
-        label("${md.driverVersion}")
-        label("${md.driverMajorVersion}")
-        label("${md.driverMinorVersion}")
-      }
+
+    //
+    try {
+      context.provide([
+          TYPE: "Product",
+          NAME: "${md.databaseProductName}",
+          VERSION: "${md.databaseProductVersion}",
+          MAJOR: "${md.databaseMajorVersion}",
+          MINOR: "${md.databaseMinorVersion}"
+      ] as LinkedHashMap)
     }
-    return ui
+    catch (IOException e1) {
+      e1.printStackTrace()
+    };
+
+    //
+    try {
+      context.provide([
+          TYPE: "Product",
+          NAME: "${md.driverName}",
+          VERSION: "${md.driverVersion}",
+          MAJOR: "${md.driverMajorVersion}",
+          MINOR: "${md.driverMinorVersion}"
+      ] as LinkedHashMap)
+    }
+    catch (IOException e) {
+      e.printStackTrace()
+    };
   }
 
   @Usage("close the current connection")

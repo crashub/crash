@@ -34,17 +34,7 @@ class Parser {
     this.token = tokenizer.nextToken();
   }
 
-
-  /*
-
-  grammar
-
-  expr -> term | term "|" expr
-  term -> cmd | cmd "+" term
-
-   */
-
-  public AST parse() {
+  public PipeLine parse() {
     if (token == Token.EOF) {
       return null;
     } else {
@@ -52,30 +42,20 @@ class Parser {
     }
   }
 
-  private AST.Expr parseExpr() {
-    AST.Term term = parseTerm();
-    if (token == Token.EOF) {
-      return new AST.Expr(term);
-    } else if (token == Token.PIPE) {
-      token = tokenizer.nextToken();
-      AST.Expr next = parseExpr();
-      return new AST.Expr(term, next);
-    } else {
-      throw new SyntaxException("Syntax error");
-    }
-  }
-
-  private AST.Term parseTerm() {
+  private PipeLine parseExpr() {
     if (token instanceof Token.Command) {
       Token.Command command = (Token.Command)token;
       token = tokenizer.nextToken();
-      if (token == Token.PLUS) {
+      PipeLine next;
+      if (token == Token.EOF) {
+        next = null;
+      } else if (token == Token.PIPE) {
         token = tokenizer.nextToken();
-        AST.Term next = parseTerm();
-        return new AST.Term(command.line, next);
+        next = parseExpr();
       } else {
-        return new AST.Term(command.line);
+        throw new SyntaxException("Syntax error");
       }
+      return new PipeLine(command.line, next);
     } else {
       throw new SyntaxException("Syntax error");
     }

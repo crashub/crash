@@ -43,6 +43,10 @@ public class CommandTestCase extends AbstractCommandTestCase {
 //    assertEquals(MultipleCompilationErrorsException.class, t.getClass());
   }
 
+  public void testSimple() throws Exception {
+    assertEquals("foo", assertOk("echo foo"));
+  }
+
   public void testSession() throws Exception {
     assertEquals("null", assertOk("attribute foo"));
     lifeCycle.setAttribute("foo", "bar");
@@ -110,6 +114,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testFlush() {
+    assertEquals("foobar", assertOk("echo -f 1 foo bar"));
     assertEquals("bar", evalOk("out << 'bar'; out.flush();"));
   }
 }

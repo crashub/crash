@@ -41,9 +41,9 @@ public class JDBCCommandTestCase extends AbstractCommandTestCase {
     assertOk("jdbc connect -u my_user -p my_password jdbc:derby:memory:EmbeddedDB;create=true");
     assertOk("jdbc execute create table derbyDB(num int, addr varchar(40))");
     assertOk("jdbc execute insert into derbyDB values (1956,'Webster St.')");
-    String res = assertOk("jdbc execute select * from derbyDb");
+    String res = assertOk("jdbc select * from derbyDb");
     assertTrue("Was expecting " + res + " to contain 'Webster'", res.contains("Webster"));
-    lifeCycle.setCommand("foo", "jdbc.execute 'select * from derbyDb', { out << it['NUM'] }");
+    lifeCycle.setCommand("foo", "jdbc.select '* from derbyDb', { Map it -> out << it['NUM'] }");
     assertEquals("1956", assertOk("foo"));
     assertOk("jdbc close");
   }

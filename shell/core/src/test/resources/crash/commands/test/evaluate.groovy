@@ -17,26 +17,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.text.ui;
+package crash.commands.test
 
-/**
- * An element renderer.
- */
-public interface Renderer {
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.cmdline.annotations.Command
+import org.crsh.cmdline.annotations.Option
+import org.crsh.cmdline.annotations.Usage
+import org.crsh.shell.impl.command.CRaSHSession
+import org.crsh.command.GroovyScriptCommand
+import org.crsh.command.InvocationContext
+import org.crsh.command.PipeCommand
 
-  /**
-   * Returns true if the renderer has a next line to render.
-   *
-   * @return when there is at least a next line to read
-   */
-  boolean hasLine();
+public class evaluate extends org.crsh.command.CRaSHCommand {
 
-  /**
-   * Renders the element.
-   *
-   * @param to the buffer for rendering
-   * @throws IllegalStateException when there is no line to render
-   */
-  void renderLine(RendererAppendable to) throws IllegalStateException;
-
+  @Command
+  @Usage("evaluate groovy script")
+  public void main(@Usage("the code") @Argument String scriptText) {
+    CRaSHSession session = (CRaSHSession)context.session;
+    GroovyShell shell = session.getGroovyShell();
+    GroovyScriptCommand script = shell.parse(scriptText);
+    PipeCommand command = script.invoke(context);
+    command.open();
+    command.close();
+  }
 }

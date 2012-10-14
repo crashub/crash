@@ -89,7 +89,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
       public void run(ShellProcessContext context) throws Exception {
         syncA.await();
         syncB.await();
-        context.write(new Text("foo"));
+        context.provide(new Text("foo"));
         context.end(ShellResponse.ok());
       }
     });
@@ -98,7 +98,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     syncB.countDown();
     shell.publish(new ShellRunnable() {
       public void run(ShellProcessContext context) throws Exception {
-        context.write(new Text("bar"));
+        context.provide(new Text("bar"));
         context.end(ShellResponse.ok());
       }
     });
@@ -136,7 +136,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     term.publish(TermEvent.readLine("bar"));
     shell.publish(new ShellRunnable() {
       public void run(ShellProcessContext context) throws Exception {
-        context.write(new Text("bar"));
+        context.provide(new Text("bar"));
         context.end(ShellResponse.ok());
       }
     });
@@ -182,7 +182,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        context.write(new Text("foo"));
+        context.provide(new Text("foo"));
         context.end(ShellResponse.ok());
       }
     });
@@ -255,7 +255,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        context.write(new Text("foo"));
+        context.provide(new Text("foo"));
         context.end(ShellResponse.ok());
       }
     });
@@ -299,7 +299,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        context.write(new Text("foo"));
+        context.provide(new Text("foo"));
         context.end(ShellResponse.ok());
       }
     });

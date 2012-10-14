@@ -30,13 +30,6 @@ abstract class Token {
     }
   };
 
-  public static Token PLUS = new Token(){
-    @Override
-    public String toString() {
-      return "PLUS";
-    }
-  };
-
   public static Token PIPE = new Token(){
     @Override
     public String toString() {

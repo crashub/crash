@@ -5,8 +5,10 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Option
 import org.crsh.cmdline.annotations.Man
-import org.crsh.text.ui.UIBuilder
 import org.crsh.cmdline.annotations.Argument
+
+import org.crsh.command.PipeCommand
+import org.crsh.command.AbstractPipeCommand
 
 @Usage("JVM thread commands")
 @Man("""\
@@ -47,7 +49,7 @@ public class thread extends CRaSHCommand {
   @Usage("list the vm threads")
   @Command
   public void ls(
-    InvocationContext<Void, Thread> context,
+    InvocationContext<Thread> context,
     @Usage("Retain the thread with the specified name")
     @Option(names=["n","name"])
     String name,
@@ -78,92 +80,86 @@ public class thread extends CRaSHCommand {
 
     //
     Map<String, Thread> threads = getThreads();
-
-    //
-    UIBuilder ui = new UIBuilder();
-
-    ui.table(weights:[1,1,1,1,1,5]) {
-      row(bold: true, fg: black, bg: white) {
-        label("ID"); label("PRIORITY"); label("STATE"); label("INTERRUPTED"); label("DAEMON"); label("NAME")
-      }
-      threads.each() {
-        if (it != null) {
-          def matcher = it.value.name =~ pattern;
-          def thread = it.value;
-          if (matcher.matches() && (state == null || it.value.state == state)) {
-            switch (it.value.state) {
-              case Thread.State.NEW:
-                c = cyan
-                break;
-              case Thread.State.RUNNABLE:
-                c = green
-                break;
-              case Thread.State.BLOCKED:
-                c = red
-                break;
-              case Thread.State.WAITING:
-                c = yellow
-                break;
-              case Thread.State.TIMED_WAITING:
-                c = magenta
-                break;
-              case Thread.State.TERMINATED:
-                c = blue
-                break;
-            }
-            row(background: c, foreground: black) {
-              label(thread.id); label(thread.priority); label(thread.state); label(thread.isInterrupted()); label(thread.daemon); label(thread.name)
-            }
-            context.produce(it);
+    threads.each() {
+      if (it != null) {
+        def matcher = it.value.name =~ pattern;
+        def thread = it.value;
+        if (matcher.matches() && (state == null || it.value.state == state)) {
+          try {
+            context.provide(thread)
           }
+          catch (IOException e) {
+            e.printStackTrace()
+          };
         }
       }
     }
-
-    context.writer.print(ui);
-
   }
     
   @Usage("interrupt vm threads")
   @Man("Interrup VM threads.")
   @Command
-  public void interrupt(
-    InvocationContext<Thread, Void> context,
+  public PipeCommand<Thread> interrupt(
+    InvocationContext<Void> context,
     @Argument @Usage("the thread ids to interrupt") List<String> ids) {
+/*
     apply(context, ids, {
       it.interrupt();
       context.writer.println("Interrupted thread $it");
     })
+*/
+    return new AbstractPipeCommand<Thread>() {
+      void provide(Thread element) throws IOException {
+        element.interrupt();
+      }
+    }
   }
 
   @Usage("stop vm threads")
   @Man("Stop VM threads.")
   @Command
-  public void stop(
-    InvocationContext<Thread, Void> context,
+  public PipeCommand<Thread> stop(
+    InvocationContext<Void> context,
     @Argument @Usage("the thread ids to stop") List<String> ids) {
+/*
     apply(context, ids, {
       it.stop();
       context.writer.println("Stopped thread $it");
     })
+*/
+    return new AbstractPipeCommand<Thread>() {
+      void provide(Thread element) throws IOException {
+        element.stop();
+      }
+    }
   }
 
   @Usage("dump vm threads")
   @Man("Dump VM threads.")
   @Command
-  public void dump(
-          InvocationContext<Thread, Void> context,
+  public PipeCommand<Thread> dump(
+          InvocationContext<Void> context,
           @Argument @Usage("the thread ids to dump") List<String> ids) {
+/*
     apply(context, ids, {
       Exception e = new Exception("Thread ${it.id} stack trace")
       e.setStackTrace(it.stackTrace)
       e.printStackTrace(context.writer)
     })
+*/
+    return new AbstractPipeCommand<Thread>() {
+      void provide(Thread element) throws IOException {
+        Exception e = new Exception("Thread ${element.id} stack trace")
+        e.setStackTrace(element.stackTrace)
+        e.printStackTrace(context.writer)
+      }
+    }
   }
 
+/*
   public void apply(InvocationContext<Thread, Void> context, List<String> ids, Closure closure) {
     if (context.piped) {
-      context.consume().each(closure)
+      context.consumer().each(closure)
     } else {
       Map<String, Thread> threadMap = getThreads();
       List<String> threads = [];
@@ -178,6 +174,7 @@ public class thread extends CRaSHCommand {
       threads.each(closure);
     }
   }
+*/
 
   private ThreadGroup getRoot() {
     ThreadGroup group = Thread.currentThread().threadGroup;

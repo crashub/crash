@@ -53,21 +53,15 @@ public class TokenizerTestCase extends TestCase {
     new TestTokenizer("a b").assertCommand("a b").assertEOF();
   }
 
-  public void testPlus() {
-    new TestTokenizer("+").assertPlus().assertEOF();
-  }
-
   public void testPipe() {
     new TestTokenizer("|").assertPipe().assertEOF();
   }
 
   public void testComposite() {
-    TestTokenizer tokenizer = new TestTokenizer("a | b c + d");
+    TestTokenizer tokenizer = new TestTokenizer("a | b c");
     tokenizer.assertCommand("a ");
     tokenizer.assertPipe();
-    tokenizer.assertCommand(" b c ");
-    tokenizer.assertPlus();
-    tokenizer.assertCommand(" d");
+    tokenizer.assertCommand(" b c");
     tokenizer.assertEOF();
   }
 
@@ -79,11 +73,6 @@ public class TokenizerTestCase extends TestCase {
 
     public TestTokenizer assertPipe() {
       assertEquals(Token.PIPE, nextToken());
-      return this;
-    }
-
-    public TestTokenizer assertPlus() {
-      assertEquals(Token.PLUS, nextToken());
       return this;
     }
 

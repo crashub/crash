@@ -27,6 +27,7 @@ import org.crsh.shell.ShellResponse;
 import org.crsh.text.Chunk;
 import org.crsh.text.Text;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -123,9 +124,9 @@ public class BaseProcessContext implements ShellProcessContext {
     return input.isEmpty() ? null : input.removeLast();
   }
 
-  public void write(Chunk chunk) throws NullPointerException {
-    if (chunk instanceof Text) {
-      CharSequence seq = ((Text)chunk).getText();
+  public void provide(Chunk element) throws IOException {
+    if (element instanceof Text) {
+      CharSequence seq = ((Text)element).getText();
       if (seq.length() > 0) {
         output.add(seq.toString());
       }

@@ -173,16 +173,16 @@ public class ConsoleTerm implements Term {
     }
   }
 
-  public void write(Chunk chunk) throws NullPointerException, IOException {
-    if (chunk == null) {
+  public void provide(Chunk element) throws IOException {
+    if (element == null) {
       throw new NullPointerException("No null chunk accepted");
     }
-    if (chunk instanceof Text) {
-      Text textChunk = (Text)chunk;
+    if (element instanceof Text) {
+      Text textChunk = (Text)element;
       writer.write(textChunk.getText());
-    } else if (chunk instanceof Style) {
-      io.write(((Style)chunk));
-    } else if (chunk instanceof CLS) {
+    } else if (element instanceof Style) {
+      io.write(((Style)element));
+    } else if (element instanceof CLS) {
       io.cls();
     } else {
       throw new UnsupportedOperationException("todo");

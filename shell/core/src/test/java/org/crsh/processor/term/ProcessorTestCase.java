@@ -261,7 +261,7 @@ public class ProcessorTestCase extends TestCase {
             if ("bye".equals(request)) {
               processContext.end(ShellResponse.close());
             } else {
-              processContext.write(CLS.INSTANCE);
+              processContext.provide(CLS.INSTANCE);
               processContext.end(ShellResponse.ok());
             }
           }

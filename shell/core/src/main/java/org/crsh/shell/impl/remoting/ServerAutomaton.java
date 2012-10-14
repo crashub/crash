@@ -153,7 +153,7 @@ public class ServerAutomaton implements Shell {
             break;
           case CHUNK:
             Chunk chunk = (Chunk)in.readObject();
-            processContext.write(chunk);
+            processContext.provide(chunk);
             break;
           case FLUSH:
             processContext.flush();

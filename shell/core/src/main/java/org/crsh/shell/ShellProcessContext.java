@@ -19,50 +19,11 @@
 
 package org.crsh.shell;
 
+import org.crsh.InteractionContext;
 import org.crsh.text.Chunk;
-import org.crsh.text.ChunkWriter;
 
-import java.io.IOException;
+public interface ShellProcessContext extends InteractionContext<Chunk> {
 
-public interface ShellProcessContext extends ChunkWriter {
-
-  /**
-   * Returns the term width in chars. When the value is not positive it means the value could not be determined.
-   *
-   * @return the term width
-   */
-  int getWidth();
-
-  /**
-   * Returns the property defined within this context.
-   *
-   * @param name the name of the property
-   * @return the value of the property
-   */
-  String getProperty(String name);
-
-  /**
-   * A callback made by the process when it needs to read a line of text on the term.
-   *
-   * @param msg the message to display prior reading the term
-   * @param echo whether the input line should be echoed or not
-   * @return the line read or null if no line was possible to be read
-   */
-  String readLine(String msg, boolean echo);
-
-  /**
-   * Write a chunk on the process output.
-   *
-   * @param chunk the chunk to write
-   * @throws NullPointerException if the chunk object is null
-   * @throws IOException any io exception
-   */
-  void write(Chunk chunk) throws NullPointerException, IOException;
-
-  /**
-   * Flush the text buffer to the context.
-   */
-  void flush();
 
   /**
    * This method is invoked when the process ends.
@@ -70,4 +31,5 @@ public interface ShellProcessContext extends ChunkWriter {
    * @param response the shell response
    */
   void end(ShellResponse response);
+
 }

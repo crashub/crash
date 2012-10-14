@@ -19,42 +19,38 @@
 
 package org.crsh.shell.impl.command;
 
+import org.crsh.Pipe;
+import org.crsh.command.BaseCommandContext;
+import org.crsh.command.InvocationContext;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.text.ui.UIPrinterWriter;
-import org.crsh.text.ShellAppendable;
-import org.crsh.text.ShellPrintWriter;
+import org.crsh.text.Chunk;
+import org.crsh.text.RenderContext;
+import org.crsh.text.RenderPrintWriter;
 
-import java.io.Flushable;
+import java.io.IOException;
 import java.util.Map;
 
-class InvocationContextImpl<C, P> extends BaseInvocationContext<C, P> {
+public class CRaSHInvocationContext<P> extends BaseCommandContext implements InvocationContext<P> {
 
   /** . */
   private final ShellProcessContext processContext;
 
   /** . */
-  private ShellPrintWriter writer;
+  private RenderPrintWriter writer;
 
   /** . */
-  private ShellAppendable appendable;
+  protected Pipe<Object> producer;
 
-  /** . */
-  private final Flushable flushable;
-
-  public InvocationContextImpl(
-    ShellProcessContext processContext,
-    ShellAppendable appendable,
-    Flushable flushable,
-    Iterable<C> consumedItems,
-    Map<String, Object> session,
-    Map<String, Object> attributes) {
-    super(consumedItems, session, attributes);
+  protected CRaSHInvocationContext(
+      ShellProcessContext processContext,
+      Map<String, Object> session,
+      Map<String, Object> attributes,
+      Pipe<Object> producer) {
+    super(session, attributes);
 
     //
-    this.writer = null;
-    this.appendable = appendable;
-    this.flushable = flushable;
     this.processContext = processContext;
+    this.producer = producer;
   }
 
   public int getWidth() {
@@ -69,9 +65,27 @@ class InvocationContextImpl<C, P> extends BaseInvocationContext<C, P> {
     return processContext.readLine(msg, echo);
   }
 
-  public ShellPrintWriter getWriter() {
+  public void provide(P element) throws IOException {
+    producer.provide(element);
+  }
+
+  public void flush() throws IOException {
+    producer.flush();
+  }
+
+  public RenderPrintWriter getWriter() {
     if (writer == null) {
-      writer = new UIPrinterWriter(appendable, flushable, null, this);
+      writer = new RenderPrintWriter(new RenderContext() {
+        public int getWidth() {
+          return processContext.getWidth();
+        }
+        public void provide(Chunk element) throws IOException {
+          producer.provide(element);
+        }
+        public void flush() throws IOException {
+          producer.flush();
+        }
+      });
     }
     return writer;
   }

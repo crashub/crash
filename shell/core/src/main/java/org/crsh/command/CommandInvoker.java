@@ -18,15 +18,13 @@
  */
 package org.crsh.command;
 
+/**
+ * A command invoker.
+ *
+ * @param <C> the consumed generic type
+ * @param <P> the produced generic type
+ */
 public interface CommandInvoker<C, P> {
-
-  /**
-   * Invoke a command
-   *
-   * @param context the command execution context
-   * @throws ScriptException any script exception
-   */
-  void invoke(InvocationContext<C, P> context) throws ScriptException;
 
   /**
    * Returns the class of the produced type.
@@ -41,5 +39,14 @@ public interface CommandInvoker<C, P> {
    * @return the consumed type
    */
   Class<C> getConsumedType();
+
+  /**
+   * Invoke a command
+   *
+   * @param context the command execution context
+   * @throws ScriptException any script exception
+   * @return the related pipe
+   */
+  PipeCommand<C> invoke(InvocationContext<P> context) throws ScriptException;
 
 }

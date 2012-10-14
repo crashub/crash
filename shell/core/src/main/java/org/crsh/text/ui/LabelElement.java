@@ -19,18 +19,19 @@
 
 package org.crsh.text.ui;
 
+import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 
 public class LabelElement extends Element {
 
   /** . */
-  private final String value;
+  final String value;
 
   /** . */
-  private final int minWidth;
+  final int minWidth;
 
   /** . */
-  private final int width;
+  final int width;
 
   private static int width(String s, int index) {
     if (index < s.length()) {
@@ -75,82 +76,13 @@ public class LabelElement extends Element {
     return value;
   }
 
-  @Override
-  public Renderer renderer(final int width) {
-
-    if (width == 0) {
-      return new Renderer() {
-        boolean done = false;
-        public boolean hasLine() {
-          return !done;
-        }
-        public void renderLine(RendererAppendable to) throws IllegalStateException {
-          if (done) {
-            throw new IllegalStateException();
-          } else {
-            done = true;
-          }
-        }
-      };
-    } else {
-      return new Renderer() {
-
-        /** . */
-        boolean done = false;
-
-        /** . */
-        int index = 0;
-
-        public boolean hasLine() {
-          return !done;
-        }
-
-        public void renderLine(RendererAppendable to) {
-          if (done) {
-            throw new IllegalStateException();
-          } else {
-            Style.Composite style = getStyle();
-            if (style != null) {
-              to.enterStyle(style);
-            }
-            int pos = value.indexOf('\n', index);
-            int next;
-            if (pos == -1) {
-              pos = Math.min(index + width, value.length());
-              next = pos;
-            } else {
-              next = pos + 1;
-            }
-            to.append(value, index, pos);
-            int missing = pos - index;
-            while (missing < width) {
-              to.append(' ');
-              missing++;
-            }
-            index = next;
-            done = index >= value.length();
-            if (style != null) {
-              to.leaveStyle();
-            }
-          }
-        }
-      };
-    }
+  public Renderer renderer() {
+    return new LabelRenderer(this);
   }
 
   @Override
   public String toString() {
     return "Label[" + value + "]";
-  }
-
-  @Override
-  int getMinWidth() {
-    return minWidth;
-  }
-
-  @Override
-  int getWidth() {
-    return width;
   }
 
   @Override

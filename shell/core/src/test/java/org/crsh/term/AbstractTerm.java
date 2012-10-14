@@ -41,7 +41,7 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
-  public void write(Chunk chunk) throws NullPointerException, IOException {
+  public void provide(Chunk element) throws IOException {
     throw new UnsupportedOperationException();
   }
 

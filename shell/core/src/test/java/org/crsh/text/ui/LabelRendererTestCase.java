@@ -43,17 +43,8 @@ public class LabelRendererTestCase extends AbstractRendererTestCase {
     assertRender(new LabelElement("a\nb"), 2, "a ", "b ");
     assertRender(new LabelElement("a\nb"), 1, "a", "b");
 
-    LabelElement label = new LabelElement("NAME");
-//    Renderer r = label.renderer(1);
-//    assertTrue(r.hasLine());
-//    r.renderLine(new ChunkBuffer());
-//    assertTrue(r.hasLine());
-//    r.renderLine(new ChunkBuffer());
-//    assertTrue(r.hasLine());
-//    r.renderLine(new ChunkBuffer());
-//    assertTrue(r.hasLine());
-//    r.renderLine(new ChunkBuffer());
-//    assertFa(r.hasLine());
-
+    //
+    assertRender(new LabelElement("ABCDEF\n"), 5, "ABCDE", "F    ");
+    assertRender(new LabelElement("ABCDEF\nG"), 5, "ABCDE", "F    ", "G    ");
   }
 }

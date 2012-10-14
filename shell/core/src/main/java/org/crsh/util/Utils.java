@@ -22,6 +22,7 @@ package org.crsh.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,11 +45,24 @@ public class Utils {
   }
 
   public static <E>List<E> list(Iterable<E> iterable) {
+    return list(iterable.iterator());
+  }
+
+  public static <E>List<E> list(Iterator<E> iterator) {
     ArrayList<E> list = new ArrayList<E>();
-    for (E t : iterable) {
-      list.add(t);
+    while (iterator.hasNext()) {
+      list.add(iterator.next());
     }
     return list;
+  }
+
+  public static int indexOf(CharSequence s, int off, char c) {
+    for (int len = s.length();off < len;off++) {
+      if (s.charAt(off) == c) {
+        return off;
+      }
+    }
+    return -1;
   }
 
   public static String trimLeft(String s) {

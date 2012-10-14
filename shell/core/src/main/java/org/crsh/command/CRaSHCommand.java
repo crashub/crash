@@ -229,7 +229,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       return new CommandInvoker() {
 
         Class consumedType = Void.class;
-        Class producedType = Void.class;
+        Class producedType = Object.class;
 
         {
           // Try to find a command context argument
@@ -241,38 +241,85 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             Class<?> parameterType = parameterTypes[i];
             if (InvocationContext.class.isAssignableFrom(parameterType)) {
               Type contextGenericParameterType = m.getGenericParameterTypes()[i];
-              consumedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
-              producedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 1);
+              producedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
+              break;
             }
+          }
+
+          //
+          if (PipeCommand.class.isAssignableFrom(m.getReturnType())) {
+            Type ret = m.getGenericReturnType();
+            consumedType = TypeResolver.resolveToClass(ret, PipeCommand.class, 0);
           }
         }
 
-        public void invoke(InvocationContext context) throws ScriptException {
-
+        public PipeCommand invoke(final InvocationContext context) throws ScriptException {
           if (doHelp) {
             try {
               match.printUsage(context.getWriter());
+              return new AbstractPipeCommand() {
+                public void provide(Object element) throws IOException {
+                }
+              };
             }
             catch (IOException e) {
               throw new AssertionError(e);
             }
           } else {
+
+            //
             CRaSHCommand.this.context = context;
             CRaSHCommand.this.unmatched = methodMatch.getRest();
-            try {
-              org.crsh.cmdline.matcher.InvocationContext invocationContext = new org.crsh.cmdline.matcher.InvocationContext();
-              invocationContext.setAttribute(InvocationContext.class, context);
-              Object o = methodMatch.invoke(invocationContext, CRaSHCommand.this);
-              if (o != null) {
-                context.getWriter().print(o);
+            final org.crsh.cmdline.matcher.InvocationContext invocationContext = new org.crsh.cmdline.matcher.InvocationContext();
+            invocationContext.setAttribute(InvocationContext.class, context);
+
+            //
+            if (consumedType == Void.class) {
+              return new AbstractPipeCommand() {
+
+                @Override
+                public void open() throws ScriptException {
+                  Object o;
+                  try {
+                    o = methodMatch.invoke(invocationContext, CRaSHCommand.this);
+                  } catch (CmdSyntaxException e) {
+                    throw new SyntaxException(e.getMessage());
+                  } catch (CmdInvocationException e) {
+                    throw toScript(e.getCause());
+                  } finally {
+                    CRaSHCommand.this.context = null;
+                    CRaSHCommand.this.unmatched = null;
+                  }
+                  if (o != null) {
+                    context.getWriter().print(o);
+                  }
+                }
+
+                @Override
+                public void provide(Object element) throws ScriptException, IOException {
+                  // We just drop the elements
+                }
+
+                @Override
+                public void flush() throws IOException {
+                  context.flush();
+                }
+
+                @Override
+                public void close() throws ScriptException {
+                }
+              };
+            } else {
+
+              // JULIEN : WE SHOULD SOMEHOW HONNOR THE FINALLY CLAUSE LIKE IN THE IF BLOCK
+
+              try {
+                return (PipeCommand)methodMatch.invoke(invocationContext, CRaSHCommand.this);
+              } catch (CmdSyntaxException e) {
+                throw new SyntaxException(e.getMessage());
+              } catch (CmdInvocationException e) {
+                throw toScript(e.getCause());
               }
-            } catch (CmdSyntaxException e) {
-              throw new SyntaxException(e.getMessage());
-            } catch (CmdInvocationException e) {
-              throw toScript(e.getCause());
-            } finally {
-              CRaSHCommand.this.context = null;
-              CRaSHCommand.this.unmatched = null;
             }
           }
         }
@@ -304,22 +351,30 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       final boolean doHelp = help;
 
       //
-      return new CommandInvoker<Void, Void>() {
-        public void invoke(InvocationContext<Void, Void> context) throws ScriptException {
+      return new CommandInvoker<Void, Object>() {
+        public PipeCommand<Void> invoke(final InvocationContext<Object> context) throws ScriptException {
           try {
             if (doHelp) {
               match.printUsage(context.getWriter());
             } else {
               classMatch.printUsage(context.getWriter());
             }
+            return new AbstractPipeCommand<Void>() {
+              public void provide(Void element) throws IOException {
+              }
+              @Override
+              public void flush() throws IOException {
+                context.flush();
+              }
+            };
           }
           catch (IOException e) {
             throw new AssertionError(e);
           }
         }
 
-        public Class<Void> getProducedType() {
-          return Void.class;
+        public Class<Object> getProducedType() {
+          return Object.class;
         }
 
         public Class<Void> getConsumedType() {

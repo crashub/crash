@@ -62,7 +62,7 @@ public class AsyncShellTestCase extends AbstractTestCase {
           @Override
           public void process(String request, ShellProcessContext processContext) throws IOException {
             String a = readLine("bar", true);
-            processContext.write(new Text(a));
+            processContext.provide(new Text(a));
             processContext.end(ShellResponse.ok());
           }
         };

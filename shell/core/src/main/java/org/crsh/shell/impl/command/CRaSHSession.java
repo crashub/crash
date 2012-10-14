@@ -26,6 +26,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.command.BaseCommandContext;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ShellCommand;
@@ -155,18 +156,13 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     if ("bye".equals(request) || "exit".equals(request)) {
       response = ShellResponse.close();
     } else {
-
-      // Create AST
+      // Create pipeline from request
       Parser parser = new Parser(request);
-      AST ast = parser.parse();
-
-      //
-      if (ast instanceof AST.Expr) {
-        AST.Expr expr = (AST.Expr)ast;
-
+      PipeLine pipeline = parser.parse();
+      if (pipeline != null) {
         // Create commands first
         try {
-          return expr.create(this, request);
+          return pipeline.create(this, request);
         } catch (NoSuchCommandException e) {
           log.error("Could not create shell process", e);
           response = ShellResponse.unknownCommand(e.getCommandName());
@@ -192,10 +188,10 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     ClassLoader previous = setCRaSHLoader();
     try {
       log.debug("Want prefix of " + prefix);
-      AST ast = new Parser(prefix).parse();
+      PipeLine ast = new Parser(prefix).parse();
       String termPrefix;
       if (ast != null) {
-        AST.Term last = ast.lastTerm();
+        PipeLine last = ast.getLast();
         termPrefix = Utils.trimLeft(last.getLine());
       } else {
         termPrefix = "";

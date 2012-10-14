@@ -19,6 +19,7 @@
 
 package org.crsh.text.ui;
 
+import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 
 public abstract class Element {
@@ -37,31 +38,7 @@ public abstract class Element {
     this.parent = parent;
   }
 
-  /**
-   * Create a renderer for the specified width or return null if the element does not provide any output.
-   *
-   * @param width the width the width
-   * @return the renderer
-   */
-  public Renderer renderer(int width) {
-    throw new UnsupportedOperationException();
-  }
-
-  /**
-   * Returns the element minimum width.
-   *
-   * @return the minimum width
-   */
-  int getMinWidth() {
-    throw new UnsupportedOperationException("todo");
-  }
-
-  /**
-   * Returns the current element width.
-   *
-   * @return the width
-   */
-  abstract int getWidth();
+  public abstract Renderer renderer();
 
   public final Style.Composite getStyle() {
     return style;

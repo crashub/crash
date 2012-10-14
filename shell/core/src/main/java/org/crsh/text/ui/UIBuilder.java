@@ -19,17 +19,21 @@
 
 package org.crsh.text.ui;
 
+import groovy.lang.Closure;
 import groovy.util.BuilderSupport;
+import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.text.Color;
+import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 import org.crsh.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class UIBuilder extends BuilderSupport {
+public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
 
   /** . */
   private final List<Element> elements;
@@ -40,6 +44,22 @@ public class UIBuilder extends BuilderSupport {
 
   public List<Element> getElements() {
     return elements;
+  }
+
+  @Override
+  protected Object doInvokeMethod(String methodName, Object name, Object args) {
+    if ("eval".equals(name)) {
+      List list = InvokerHelper.asList(args);
+      if (list.size() == 1 && list.get(0) instanceof Closure) {
+        EvalElement element = (EvalElement)super.doInvokeMethod(methodName, name, null);
+        element.closure = (Closure)list.get(0);
+        return element;
+      } else {
+        return super.doInvokeMethod(methodName, name, args);
+      }
+    } else {
+      return super.doInvokeMethod(methodName, name, args);
+    }
   }
 
   @Override
@@ -64,6 +84,8 @@ public class UIBuilder extends BuilderSupport {
       element = new RowElement();
     } else if ("header".equals(name)) {
       element = new RowElement(true);
+    } else if ("eval".equals(name)) {
+      element = new EvalElement();
     } else {
       throw new UnsupportedOperationException("Cannot build object with name " + name + " and value " + value);
     }
@@ -155,8 +177,18 @@ public class UIBuilder extends BuilderSupport {
     super.nodeCompleted(parent, child);
   }
 
-  @Override
-  public String toString() {
-    throw new UnsupportedOperationException();
+  public Iterator<Renderer> iterator() {
+    return new Iterator<Renderer>() {
+      Iterator<Element> i = elements.iterator();
+      public boolean hasNext() {
+        return i.hasNext();
+      }
+      public Renderer next() {
+        return i.next().renderer();
+      }
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
   }
 }

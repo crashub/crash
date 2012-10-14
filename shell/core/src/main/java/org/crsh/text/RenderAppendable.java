@@ -17,28 +17,48 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.text.ui;
+package org.crsh.text;
 
-import org.crsh.text.Color;
-import org.crsh.text.ShellAppendable;
-import org.crsh.text.Style;
+import org.crsh.Pipe;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
-public class RendererAppendable implements Appendable {
+public class RenderAppendable implements Appendable, Pipe<Chunk> {
 
   /** . */
-  private final ShellAppendable delegate;
+  private final RenderContext context;
 
   /** . */
   private LinkedList<Style.Composite> stack;
 
-  public RendererAppendable(ShellAppendable delegate) {
-    this.delegate = delegate;
+  public RenderAppendable(RenderContext context) {
+    this.context = context;
+  }
+  
+  private void safeAppend(Chunk chunk) {
+    try {
+      context.provide(chunk);
+    }
+    catch (java.io.IOException e) {
+//      e.printStackTrace();
+    }
   }
 
-  public RendererAppendable append(CharSequence csq) {
-    delegate.append(csq);
+  public int getWidth() {
+    return context.getWidth();
+  }
+
+  public void provide(Chunk element) throws IOException {
+    context.provide(element);
+  }
+
+  public void flush() throws IOException {
+    context.flush();
+  }
+
+  public RenderAppendable append(CharSequence csq) {
+    safeAppend(new Text(csq));
     return this;
   }
 
@@ -46,7 +66,7 @@ public class RendererAppendable implements Appendable {
     if (stack == null) {
       stack = new LinkedList<Style.Composite>();
     }
-    delegate.append(style);
+    safeAppend(style);
     stack.addLast(style);
   }
 
@@ -73,10 +93,10 @@ public class RendererAppendable implements Appendable {
       //
       Style.Composite bilto = Style.style(bold, underline, blink, fg, bg);
 
-      //
-      delegate.append(bilto);
+      //   
+      safeAppend(bilto);
     } else {
-      delegate.append(Style.reset);
+      safeAppend(Style.reset);
     }
     return last;
   }
@@ -120,23 +140,23 @@ public class RendererAppendable implements Appendable {
 
   public void styleOff() {
     if (stack != null && stack.size() > 0) {
-      delegate.append(Style.reset);
+      safeAppend(Style.reset);
     }
   }
 
   public void styleOn() {
     if (stack != null && stack.size() > 0) {
-      delegate.append(getMerged());
+      safeAppend(getMerged());
     }
   }
 
-  public RendererAppendable append(CharSequence csq, int start, int end) {
-    delegate.append(csq, start, end);
+  public RenderAppendable append(CharSequence csq, int start, int end) {
+    safeAppend(new Text(csq.subSequence(start, end)));
     return this;
   }
 
-  public RendererAppendable append(char c) {
-    delegate.append(c);
+  public RenderAppendable append(char c) {
+    safeAppend(new Text(Character.toString(c)));
     return this;
   }
 }

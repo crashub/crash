@@ -19,28 +19,53 @@
 
 package org.crsh.shell;
 
+import org.crsh.Pipe;
+import org.crsh.command.AbstractPipeCommand;
 import org.crsh.command.CommandInvoker;
+import org.crsh.command.InvocationContext;
+import org.crsh.command.PipeCommand;
 import org.crsh.command.ShellCommand;
-import org.crsh.shell.impl.command.BaseInvocationContext;
-import org.crsh.text.ui.UIPrinterWriter;
+import org.crsh.command.BaseCommandContext;
+import org.crsh.text.Chunk;
+import org.crsh.text.RenderContext;
+import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.ChunkBuffer;
 
+import java.io.IOException;
 import java.util.*;
 
-public class TestInvocationContext<C, P> extends BaseInvocationContext<C, P> {
+public class TestInvocationContext<C, P> extends BaseCommandContext implements InvocationContext<P> {
+
+  /** . */
+  protected List<P> producedItems;
 
   /** . */
   protected ChunkBuffer reader;
 
   /** . */
-  protected UIPrinterWriter writer;
+  protected RenderPrintWriter writer;
+
+  /** . */
+  private final Pipe<P> producer = new AbstractPipeCommand<P>() {
+    public void provide(P element) throws IOException {
+      if (producedItems.isEmpty()) {
+        producedItems = new LinkedList<P>();
+      }
+      producedItems.add(element);
+    }
+  };
 
   public TestInvocationContext() {
-    super(Collections.<C>emptyList(), new HashMap<String, Object>(), new HashMap<String, Object>());
+    super(new HashMap<String, Object>(), new HashMap<String, Object>());
 
     //
     this.reader = null;
     this.writer = null;
+    this.producedItems = Collections.emptyList();
+  }
+
+  public List<P> getProducedItems() {
+    return producedItems;
   }
 
   public ChunkBuffer getReader() {
@@ -71,14 +96,34 @@ public class TestInvocationContext<C, P> extends BaseInvocationContext<C, P> {
       sb.append(arg);
     }
     CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.createInvoker(sb.toString());
-    invoker.invoke(this);
+    PipeCommand<C> pc = invoker.invoke(this);
+    pc.open();
+    pc.close();
     return reader != null ? reader.toString() : null;
   }
 
-  public UIPrinterWriter getWriter() {
+  public void provide(P element) throws IOException {
+    producer.provide(element);
+  }
+
+  public void flush() throws IOException {
+    producer.flush();
+  }
+
+  public RenderPrintWriter getWriter() {
     if (writer == null) {
       reader = new ChunkBuffer();
-      writer = new UIPrinterWriter(reader, null, null, this);
+      writer = new RenderPrintWriter(new RenderContext() {
+        public int getWidth() {
+          return TestInvocationContext.this.getWidth();
+        }
+        public void provide(Chunk element) throws IOException {
+          reader.provide(element);
+        }
+        public void flush() throws IOException {
+          reader.flush();
+        }
+      });
     }
     return writer;
   }

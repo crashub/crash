@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 eXo Platform SAS.
- *
+ *  
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,26 +17,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package crash.commands.test
+package org.crsh.text.ui;
 
-import org.crsh.cmdline.annotations.Argument
-import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Option
-import org.crsh.cmdline.annotations.Usage
-import org.crsh.shell.impl.command.CRaSHSession
-import org.crsh.command.GroovyScriptCommand
-import org.crsh.command.InvocationContext
+import org.crsh.text.Renderable;
+import org.crsh.text.Renderer;
 
-public class eval extends org.crsh.command.CRaSHCommand {
+import java.util.Iterator;
+import java.util.LinkedList;
 
-  @Command
-  @Usage("evaluate groovy script")
-  public void main(
-      InvocationContext<Void, Void> context,
-      @Usage("the code") @Argument String scriptText) {
-    CRaSHSession session = (CRaSHSession)context.session;
-    GroovyShell shell = session.getGroovyShell();
-    GroovyScriptCommand script = shell.parse(scriptText);
-    script.invoke(context);
+public class UIBuilderRenderable extends Renderable<UIBuilder> {
+
+  @Override
+  public Class<UIBuilder> getType() {
+    return UIBuilder.class;
+  }
+
+  @Override
+  public Renderer renderer(Iterator<UIBuilder> stream) {
+    LinkedList<Renderer> renderers = new LinkedList<Renderer>();
+    while (stream.hasNext()) {
+      for (Element element : stream.next().getElements()) {
+        renderers.add(element.renderer());
+      }
+    }
+    return Renderer.compose(renderers);
   }
 }

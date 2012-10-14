@@ -68,24 +68,39 @@ class JLineProcessContext implements ShellProcessContext {
     }
   }
 
-  public void write(Chunk chunk) throws NullPointerException {
-    if (chunk instanceof Text) {
-      Text textChunk = (Text)chunk;
+  public void provide(Chunk element) throws IOException {
+    if (element instanceof Text) {
+      Text textChunk = (Text)element;
       processor.writer.append(textChunk.getText());
-    } else if (chunk instanceof Style) {
+    } else if (element instanceof Style) {
       try {
-        ((Style)chunk).writeAnsiTo(processor.writer);
+        ((Style)element).writeAnsiTo(processor.writer);
       }
       catch (IOException ignore) {
       }
     } else {
-      // Should do only if ANSI is supported ?
-      processor.writer.print("\033[");
-      processor.writer.print("2J");
-      processor.writer.flush();
+
+
+      // Clear screen : this method has drawback to modifying history
+//      processor.writer.print("\033[");
+//      processor.writer.print("2J");
+//      processor.writer.flush();
+
+      // Clear all lines without touching the history
+      int height = processor.reader.getTerminal().getHeight();
+      for (int i = 1;i < height;i++) {
+        processor.writer.print("\033[");
+        processor.writer.print(i + ";1H");
+        processor.writer.print("\033[");
+        processor.writer.print("K");
+      }
+
+      // Move cursor to top
       processor.writer.print("\033[");
       processor.writer.print("1;1H");
-      processor.writer.flush();
+
+      // Flush all the changes
+//      processor.writer.flush();
     }
   }
 

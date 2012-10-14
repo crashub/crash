@@ -19,12 +19,14 @@
 
 package org.crsh.text;
 
+import org.crsh.Pipe;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class ChunkBuffer implements Iterable<Chunk>, Serializable, ShellAppendable, ChunkWriter {
+public class ChunkBuffer implements Iterable<Chunk>, Serializable, Pipe<Chunk> {
 
   /** . */
   private final LinkedList<Chunk> chunks;
@@ -59,6 +61,13 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, ShellAppendab
         ((Style)chunk).writeAnsiTo(appendable);
       }
     }
+  }
+
+  public ChunkBuffer append(Iterable<?> data) throws NullPointerException {
+    for (Object o : data) {
+      append(o);
+    }
+    return this;
   }
 
   public ChunkBuffer append(Object... data) throws NullPointerException {
@@ -110,6 +119,13 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, ShellAppendab
       chunks.addLast(text);
       return text;
     }
+  }
+
+  public void provide(Chunk element) throws IOException {
+    append(element);
+  }
+
+  public void flush() {
   }
 
   public ChunkBuffer append(ChunkBuffer s) throws NullPointerException {
@@ -192,9 +208,9 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, ShellAppendab
     return sb.toString();
   }
 
-  public void writeTo(ChunkWriter writer) throws IOException {
+  public void writeTo(Pipe<Chunk> writer) throws IOException {
     for (Chunk chunk : chunks) {
-      writer.write(chunk);
+      writer.provide(chunk);
     }
   }
 }

@@ -26,9 +26,32 @@ import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.shell.impl.command.CRaSH;
 
+import java.util.LinkedList;
+
 public abstract class GroovyCommand extends GroovyObjectSupport {
 
+  /** . */
+  private LinkedList<InvocationContext<?>> stack;
+
   protected abstract CommandContext getContext();
+
+  public final void pushContext(InvocationContext<?> context) {
+    if (stack == null) {
+      stack = new LinkedList<InvocationContext<?>>();
+    }
+    stack.addLast(context);
+  }
+
+  public final InvocationContext<?> popContext() {
+    if (stack == null || stack.isEmpty()) {
+      throw new IllegalStateException("Cannot pop a context anymore from the stack");
+    }
+    return stack.removeLast();
+  }
+
+  public final InvocationContext<?> peekContext() {
+    return stack == null || stack.isEmpty() ? (InvocationContext<?>)getContext() : stack.getLast();
+  }
 
   @Override
   public final Object invokeMethod(String name, Object args) {
@@ -42,7 +65,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
 
       //
       if (context instanceof InvocationContext) {
-        InvocationContext ic = (InvocationContext)context;
+        InvocationContext invocationContext = (InvocationContext)context;
         CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
           ShellCommand cmd;
@@ -53,8 +76,13 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
             throw new InvokerInvocationException(ce);
           }
           if (cmd != null) {
-            CommandDispatcher dispatcher = new CommandDispatcher(cmd, ic);
-            return dispatcher.dispatch("", args);
+            InvocationContext outter;
+            if (stack != null && stack.size() > 0) {
+              outter = stack.getLast();
+            } else {
+              outter = invocationContext;
+            }
+            return new CommandDispatcher(cmd, outter).dispatch("", args);
           }
         }
       }
@@ -83,21 +111,27 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
   public final Object getProperty(String property) {
     CommandContext context = getContext();
     if ("out".equals(property)) {
-      if (context instanceof InvocationContext<?, ?>) {
-        return ((InvocationContext<?, ?>)context).getWriter();
+      if (context instanceof InvocationContext<?>) {
+        return ((InvocationContext<?>)context).getWriter();
       } else {
         return null;
       }
     } else if ("context".equals(property)) {
       return context;
     } else {
-      if (context instanceof InvocationContext<?, ?>) {
+      if (context instanceof InvocationContext<?>) {
         CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
           try {
             ShellCommand cmd = crash.getCommand(property);
             if (cmd != null) {
-              return new CommandDispatcher(cmd, (InvocationContext<?, ?>)context);
+              InvocationContext outter;
+              if (stack != null && stack.size() > 0) {
+                outter = stack.getLast();
+              } else {
+                outter = (InvocationContext)context;
+              }
+              return new CommandDispatcher(cmd, outter);
             }
           } catch (NoSuchCommandException e) {
             throw new InvokerInvocationException(e);

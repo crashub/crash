@@ -19,17 +19,23 @@
 
 package org.crsh.shell;
 
+import org.crsh.command.ScriptException;
+import org.crsh.text.ChunkBuffer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class PipeTestCase extends AbstractCommandTestCase {
 
   /** . */
   private final String produce_command = "class produce_command extends org.crsh.command.CRaSHCommand {\n" +
       "@Command\n" +
-      "public void main(org.crsh.command.InvocationContext<Void, String> context) {\n" +
-      "['foo','bar'].each { context.produce(it) }" +
+      "public void main(org.crsh.command.InvocationContext<String> context) {\n" +
+      "['foo','bar'].each { context.provide(it) }" +
       "}\n" +
       "}";
 
-  public void testProduce() {
+  public void testProduceToClosure() {
     String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
         "@Command\n" +
         "public void main() {\n" +
@@ -43,17 +49,12 @@ public class PipeTestCase extends AbstractCommandTestCase {
     assertEquals("foobar", assertOk("foo"));
   }
 
-  public void testProduceInScript() {
-    String foo = "produce_command { out << it }\n";
-    lifeCycle.setCommand("foo", foo);
+  public void testProduceToClosureInScript() {
+    lifeCycle.setCommand("foo", "produce_command { out << it }\n");
     lifeCycle.setCommand("produce_command", produce_command);
 
     //
     assertEquals("foobar", assertOk("foo"));
-  }
-
-  public void testAggregateContent() throws Exception {
-    assertEquals("foobar", assertOk("echo foo + echo bar"));
   }
 
   public void testKeepLastPipeContent() throws Exception {
@@ -62,5 +63,134 @@ public class PipeTestCase extends AbstractCommandTestCase {
 
   public void testFlushInPipe() throws Exception {
     assertEquals("juu", assertOk("echo -f 1 foo bar | echo juu"));
+  }
+
+  public void testProducerCannotUseWriter() throws Exception {
+    String cmd = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main(org.crsh.command.InvocationContext<Integer> context) {\n" +
+        "context.getWriter().print('foo');\n" +
+        "}\n" +
+        "}";
+    lifeCycle.setCommand("cmd", cmd);
+
+    //
+    assertEquals("foo", assertOk("cmd"));
+  }
+
+  public void testProducerWithFormatter() throws Exception {
+    String cmd = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main(org.crsh.command.InvocationContext<org.crsh.shell.Foo> context) {\n" +
+        "context.provide(new org.crsh.shell.Foo('abc'));\n" +
+        "}\n" +
+        "}";
+    lifeCycle.setCommand("cmd", cmd);
+
+    //
+    assertEquals("<foo>abc</foo>                  \n", assertOk("cmd"));
+  }
+
+  public void testAdaptToChunk() {
+    String producer = "class producer extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main(org.crsh.command.InvocationContext<org.crsh.shell.Foo> context) {\n" +
+        "context.provide(new org.crsh.shell.Foo('abc'));\n" +
+        "}\n" +
+        "}";
+    String consumer =
+        "class consumer extends org.crsh.command.CRaSHCommand {\n" +
+        "  @Command\n" +
+        "  public org.crsh.command.PipeCommand<org.crsh.text.Chunk> main() {\n" +
+        "    return new org.crsh.command.AbstractPipeCommand<org.crsh.text.Chunk>() {\n" +
+        "      public void provide(org.crsh.text.Chunk element) {\n" +
+        "        org.crsh.shell.PipeTestCase.list.add(element);\n" +
+        "      }\n" +
+        "    };\n" +
+        "  }\n" +
+        "}";
+    lifeCycle.setCommand("producer", producer);
+    lifeCycle.setCommand("consumer", consumer);
+    list.clear();
+    assertOk("producer | consumer");
+    ChunkBuffer buffer = new ChunkBuffer().append(list);
+    assertEquals("<foo>abc</foo>                  \n", buffer.toString());
+  }
+
+  public void testIncompatibleType() throws Exception {
+    String producer = "class producer extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main(org.crsh.command.InvocationContext<Integer> context) {\n" +
+        "context.provide(3);\n" +
+        "}\n" +
+        "}";
+    String consumer = "class producer extends org.crsh.command.CRaSHCommand {\n" +
+        "  @Command\n" +
+        "  public org.crsh.command.PipeCommand<Boolean> main() {\n" +
+        "    return new org.crsh.command.AbstractPipeCommand<Boolean>() {\n" +
+        "      public void provide(Boolean element) {\n" +
+        "        throw new RuntimeException('Was not expecting invocation to work');\n" +
+        "      }\n" +
+        "    }\n" +
+        "  }\n" +
+        "}";
+    lifeCycle.setCommand("producer", producer);
+    lifeCycle.setCommand("consumer", consumer);
+    assertOk("producer | consumer");
+  }
+
+  /** . */
+  public static final ArrayList<?> list = new ArrayList<Object>();
+
+  public void testProducerConsumer() throws Exception {
+    String producer = "class producer extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main(org.crsh.command.InvocationContext<Integer> context) {\n" +
+        "context.provide(3);\n" +
+        "}\n" +
+        "}";
+    String consumer =
+        "class producer extends org.crsh.command.CRaSHCommand {\n" +
+        "  @Command\n" +
+        "  public org.crsh.command.PipeCommand<Integer> main() {\n" +
+        "    return new org.crsh.command.AbstractPipeCommand<Integer>() {\n" +
+        "      int count = 0;\n" +
+        "      public void provide(Integer element) {\n" +
+        "        org.crsh.shell.PipeTestCase.list.add(element);\n" +
+        "      }\n" +
+        "    };\n" +
+        "  }\n" +
+        "}\n";
+    lifeCycle.setCommand("producer", producer);
+    lifeCycle.setCommand("consumer", consumer);
+    list.clear();
+    assertOk("producer | consumer");
+    assertEquals(Arrays.<Object>asList(3), list);
+  }
+
+  public void testProducerThrowsScriptExceptionInProvide() throws Exception {
+    String producer = "class producer extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main(org.crsh.command.InvocationContext<Integer> context) {\n" +
+        "context.provide(3);\n" +
+        "}\n" +
+        "}";
+    String consumer =
+        "class producer extends org.crsh.command.CRaSHCommand {\n" +
+            "  @Command\n" +
+            "  public org.crsh.command.PipeCommand<Integer> main() {\n" +
+            "    return new org.crsh.command.AbstractPipeCommand<Integer>() {\n" +
+            "      public void provide(Integer element) {\n" +
+            "        throw new org.crsh.command.ScriptException('foo')\n" +
+            "      }\n" +
+            "    };\n" +
+            "  }\n" +
+            "}\n";
+    lifeCycle.setCommand("producer", producer);
+    lifeCycle.setCommand("consumer", consumer);
+    list.clear();
+    Throwable t = assertError("producer | consumer", ErrorType.EVALUATION);
+    ScriptException ex = assertInstance(ScriptException.class, t);
+    assertEquals("foo", ex.getMessage());
   }
 }

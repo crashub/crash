@@ -37,7 +37,7 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
   public void send(InvocationContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg LoggerName name, @LevelOpt Level level) {
     level = level ?: Level.info;
     if (context.piped) {
-      context.consume().each() {
+      context.consumer().each() {
         level.log(it, msg);
       }
     } else {
@@ -110,6 +110,7 @@ javax.management.mbeanserver
 javax.management.modelmbean
 
 The logls command is a <Void,Logger> command, therefore any logger produced can be consumed.""")
+
   @Command
   public void ls(InvocationContext<Void, Logger> context, @FilterOpt String filter) {
 
@@ -121,8 +122,7 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
        def matcher = it =~ pattern;
        if (matcher.matches()) {
          def logger = LoggerFactory.getLogger(it);
-         context.produce(logger);
-         context.writer.println(it);
+         context.provide(logger);
        }
     }
   }
@@ -131,46 +131,10 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
   @Command
   public void add(InvocationContext<Void, Logger> context, @LoggerArg List<LoggerName> names) {
     names.each {
-      if (it.length() > 0) {
+      if (it.string.length() > 0) {
         Logger logger = LoggerFactory.getLogger(it.string);
-        context.produce(logger);
-        context.writer.println(it);
-      }
-    }
-  }
-
-  @Man("""\
-The loginfo command displays information about one or several loggers.
-
-% loginfo javax.management.modelmbean
-javax.management.modelmbean<INFO>
-
-The loginfo command is a <Logger,Void> command and it can consumed logger produced by the logls command:
-
-% logls -f javax.* | loginfo
-javax.management.mbeanserver<INFO>
-javax.management.modelmbean<INFO>""")
-  @Usage("display info about a logger")
-  @Command
-  public void info(InvocationContext<Logger, Void> context, @LoggerArg List<LoggerName> names) {
-    if (context.piped) {
-      context.consume().each() {
-        info(context.writer, it);
-      }
-    } else {
-      names.each() {
-        def logger = LoggerFactory.getLogger(it.string);
-        info(context.writer, logger);
-      }
-    }
-  }
-
-  private void info(PrintWriter writer, Logger logger) {
-    if (logger != null) {
-      for (Level level : Level.values()) {
-        if (logger[level.name() + "Enabled"]) {
-          writer.println(logger.name + "<" + level.name().toUpperCase() + ">");
-          break;
+        if (logger != null) {
+          context.provide(logger);
         }
       }
     }
@@ -203,7 +167,7 @@ The following set the level warn on all the available loggers:
 
     //
     if (context.piped) {
-      context.consume().each() {
+      context.consumer().each() {
         plugin.setLevel(it, level);
       }
     } else {

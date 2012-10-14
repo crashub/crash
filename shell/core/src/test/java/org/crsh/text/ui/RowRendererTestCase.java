@@ -38,7 +38,7 @@ public class RowRendererTestCase extends AbstractRendererTestCase {
   }
 
   private void assertRenderWithBorder(RowElement row, int width, String... expected) {
-    assertRender(row.renderer(width, Border.dashed), expected);
+    assertRender(row.renderer().renderer(width, Border.dashed), width, expected);
   }
 
   public void testRenderWithBorder() throws Exception {
