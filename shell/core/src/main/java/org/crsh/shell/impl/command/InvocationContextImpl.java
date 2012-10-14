@@ -19,7 +19,6 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.command.impl.BaseInvocationContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.ui.UIPrinterWriter;
 import org.crsh.text.ShellAppendable;

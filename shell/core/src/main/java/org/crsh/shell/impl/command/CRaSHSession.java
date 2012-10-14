@@ -27,7 +27,6 @@ import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.command.NoSuchCommandException;
-import org.crsh.command.impl.BaseCommandContext;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.ResourceKind;
@@ -42,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.Map;
 
 public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable {
 

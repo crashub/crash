@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.impl;
+package org.crsh.shell.impl.command;
 
 import org.crsh.command.InvocationContext;
 

@@ -21,7 +21,7 @@ package org.crsh.shell;
 
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
-import org.crsh.command.impl.BaseInvocationContext;
+import org.crsh.shell.impl.command.BaseInvocationContext;
 import org.crsh.text.ui.UIPrinterWriter;
 import org.crsh.text.ChunkBuffer;
 
