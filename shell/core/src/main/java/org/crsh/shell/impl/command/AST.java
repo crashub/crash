@@ -96,19 +96,24 @@ abstract class AST {
         }
 
         //
+        final boolean piped = current.invoker.getConsumedType() == Void.class;
+
+        //
         Flushable flushable = new Flushable() {
           public void flush() throws IOException {
-            if (!buffer.isEmpty()) {
-              buffer.writeTo(context);
+            if (!piped) {
+              if (!buffer.isEmpty()) {
+                buffer.writeTo(context);
+              }
+              buffer.clear();
+              context.flush();
             }
-            buffer.clear();
-            context.flush();
           }
         };
 
         // Build command context
         InvocationContextImpl ctx;
-        if (current.invoker.getConsumedType() == Void.class) {
+        if (piped) {
           ctx = new InvocationContextImpl(context, buffer, flushable, null, crash, crash.crash.getContext().getAttributes());
         } else {
           // For now we assume we have compatible consumed/produced types

@@ -61,6 +61,6 @@ public class PipeTestCase extends AbstractCommandTestCase {
   }
 
   public void testFlushInPipe() throws Exception {
-    assertEquals("foojuu", assertOk("echo -f 1 foo bar | echo juu"));
+    assertEquals("juu", assertOk("echo -f 1 foo bar | echo juu"));
   }
 }
