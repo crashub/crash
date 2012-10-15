@@ -17,12 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package crash.command.base
+package crash.commands.base
 
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.command.CRaSHCommand
-import org.crsh.shell.ui.UIBuilder
+import org.crsh.text.ui.UIBuilder
 import java.lang.management.ManagementFactory
 import javax.management.Descriptor
 import javax.management.MBeanAttributeInfo
@@ -44,158 +44,34 @@ import javax.management.openmbean.SimpleType
 @Usage("Java Management Extensions")
 class jmx extends CRaSHCommand {
 
-	@Usage("Show JMX info about JVM ")
-	@Command
-	void info(
-		@Usage("Show JMX informations about os") @Option(names=["os"]) String osParam,
-		@Usage("Show JMX informations about Runtime") @Option(names=["rt"]) String rtParam,
-		@Usage("Show JMX informations about Class Loading System") @Option(names=["cl"]) String clParam,
-		@Usage("Show JMX informations about Compilation") @Option(names=["comp"]) String compParam,
-		@Usage("Show JMX informations about Memory") @Option(names=["mem"]) String memParam,
-		@Usage("Show JMX informations about Thread") @Option(names=["td"]) String tdParam
-		) {
-		if (null != osParam) {
-			showOsInfo();
-		}
-		if (null != rtParam) {
-			showRtInfo();
-		}
-		if (null != clParam) {
-			showClInfo();
-		}
-		if (null != compParam) {
-			showCompInfo();
-		}
-		if (null != memParam) {
-			showMemInfo();
-		}
-		if (null != tdParam) {
-			showTdInfo();
-		}
-		if ((null == osParam) && (null == rtParam) && (null == clParam) && (null == compParam) && (null == memParam) && (null == tdParam) ) {
-			showOsInfo();
-			showRtInfo();
-			showClInfo();
-			showCompInfo();
-			showMemInfo();
-			showTdInfo();
-		}
-		
-	}
-		
-  void showOsInfo() {
-	  def os = ManagementFactory.operatingSystemMXBean;
-	  out.println """OPERATING SYSTEM:
-			\tarchitecture = $os.arch
-			\tname = $os.name
-			\tversion = $os.version
-			\tprocessors = $os.availableProcessors
-			"""
-  }
-  
-  void showRtInfo() {
-	  def os = ManagementFactory.operatingSystemMXBean;
-	  out.println """OPERATING SYSTEM:
-			\tarchitecture = $os.arch
-			\tname = $os.name
-			\tversion = $os.version
-			\tprocessors = $os.availableProcessors
-			"""
-  }
-	
-  void showClInfo() {
-	  def cl = ManagementFactory.classLoadingMXBean
-	  out.println """CLASS LOADING SYSTEM:
-			\tisVerbose = ${cl.isVerbose()}
-			\tloadedClassCount = $cl.loadedClassCount
-			\ttotalLoadedClassCount = $cl.totalLoadedClassCount
-			\tunloadedClassCount = $cl.unloadedClassCount
-			"""
-  }
-  
-  void showCompInfo() {
-	  def comp = ManagementFactory.compilationMXBean
-	  out.println """COMPILATION:
-			\ttotalCompilationTime = $comp.totalCompilationTime
-			"""
-  }
-  
-  void showMemInfo() {
-	  def mem = ManagementFactory.memoryMXBean
-	  def heapUsage = mem.heapMemoryUsage
-	  def nonHeapUsage = mem.nonHeapMemoryUsage
-	  out.println """MEMORY:
-			HEAP STORAGE:
-			\tcommitted = $heapUsage.committed
-			\tinit = $heapUsage.init
-			\tmax = $heapUsage.max
-			\tused = $heapUsage.used
-			NON-HEAP STORAGE:
-			\tcommitted = $nonHeapUsage.committed
-			\tinit = $nonHeapUsage.init
-			\tmax = $nonHeapUsage.max
-			\tused = $nonHeapUsage.used
-			"""
-  
-	  ManagementFactory.memoryPoolMXBeans.each{ mp ->
-		  out.println "\tname: " + mp.name
-		  String[] mmnames = mp.memoryManagerNames
-		  mmnames.each{ mmname ->
-			  out.println "\t\tManager Name: $mmname"
-		  }
-		  out.println "\t\tmtype = $mp.type"
-		  out.println "\t\tUsage threshold supported = " + mp.isUsageThresholdSupported()
-	  }
-	  out.println()
-  }
-  
-  void showTdInfo() {
-	  def td = ManagementFactory.threadMXBean
-	  out.println "THREADS:"
-	  td.allThreadIds.each { tid ->
-		  out.println "\tThread name = ${td.getThreadInfo(tid).threadName}"
-	  }
-	  out.println()
-	  
-	  out.println "GARBAGE COLLECTION:"
-	  ManagementFactory.garbageCollectorMXBeans.each { gc ->
-		  out.println "\tname = $gc.name"
-		  out.println "\t\tcollection count = $gc.collectionCount"
-		  out.println "\t\tcollection time = $gc.collectionTime"
-		  String[] mpoolNames = gc.memoryPoolNames
-		  mpoolNames.each { mpoolName ->
-			  out.println "\t\tmpool name = $mpoolName"
-		  }
-	  }
-  }
 	
   @Usage("Show informations on JMX MBean ")
   @Command
   void ls(
-      InvocationContext<Void, ObjectName> context,
-      @Usage("classname e.g:java.util.logging.Logging ") @Option(names=["c","classname"]) String classNameParam,      
-      @Usage("ObjectName e.g:java.util.logging:type=Logging") @Option(names=["o","objectname"]) String objectNameParam,
+	  InvocationContext<Void, ObjectName> context,
+	  @Usage("classname e.g:java.util.logging.Logging ") @Option(names=["c","classname"]) String classNameParam,
+	  @Usage("ObjectName e.g:java.util.logging:type=Logging") @Option(names=["o","objectname"]) String objectNameParam,
 	  @Usage("desc") @Option(names=["desc"]) String desc,
 	  @Usage("attr") @Option(names=["attr"]) String attr,
 	  @Usage("op") @Option(names=["op"]) String op
-    ) {
+	) {
 
 	UIBuilder ui = new UIBuilder();
-    MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-    Set<ObjectInstance> instances = server.queryMBeans(null, null);
-    if (context.piped) {
-      instances.each { instance ->
-        context.produce(instance.objectName)
-      }
+	MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+	Set<ObjectInstance> instances = server.queryMBeans(null, null);
+	if (context.piped) {
+	  instances.each { instance ->
+		context.produce(instance.objectName)
+	  }
 	  out << ui;
-    } else {
+	} else {
 
 	  // No args
 	  if ((classNameParam == null) && (objectNameParam == null)) {
 		  showClassNamesObjectNames(instances);
 	  }
 
-	  // One arg : className 
+	  // One arg : className
 	  if ((classNameParam != null) && (objectNameParam == null)) {
 		  showObjectNames(instances, classNameParam);
 	  }
@@ -230,7 +106,7 @@ class jmx extends CRaSHCommand {
 		  
 	  }
 
-    }
+	}
   }
 	/**
 	 * Show all classNames and ObjectNames.
@@ -356,7 +232,7 @@ class jmx extends CRaSHCommand {
 			}
 		}
 		return result;
-	}	
+	}
 		
 	
 	/**
@@ -388,7 +264,7 @@ class jmx extends CRaSHCommand {
 	 * Show attributes list on screen.
 	 * @param server MBeanServer
 	 * @param info MBeanInfo
-	 * @param objectName ObjectName 
+	 * @param objectName ObjectName
 	 */
 	void showAttributes(MBeanInfo info, MBeanServer server, ObjectName objectName) {
 		Set<Attr> lst = retreiveAttributes(info, server, objectName);
@@ -403,8 +279,8 @@ class jmx extends CRaSHCommand {
 				if (null != tmpAttr) {
 					row() {
 						label(value: tmpAttr.name, foreground: red);
-						label(tmpAttr.access); 
-						label(tmpAttr.type); 
+						label(tmpAttr.access);
+						label(tmpAttr.type);
 						label(tmpAttr.desc);
 						label(tmpAttr.attrs.toString());
 					}
@@ -459,44 +335,44 @@ class jmx extends CRaSHCommand {
   @Usage("Retreive attribute value (jmx get -a Name java.lang:type=Compilation)")
   @Command
   void get(
-      @Usage("Attribute name e.g:Name") @Option(names=['a','attributes']) List<String> attributes,
-      @Usage("Name list e.g:java.lang:type=Compilation") @Argument List<String> names) {
+	  @Usage("Attribute name e.g:Name") @Option(names=['a','attributes']) List<String> attributes,
+	  @Usage("Name list e.g:java.lang:type=Compilation") @Argument List<String> names) {
 
-    MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+	MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
 
-    // Determine attributes from names
-    if (attributes == null) {
-      HashSet<String> tmp = [] as HashSet;
-      names.each { name ->
-        ObjectName on = ObjectName.getInstance(name);
-        MBeanInfo info = server.getMBeanInfo(on);
-        info.attributes.each { attribute ->
-          tmp.add(attribute.name);
-        }
-      }
-      attributes = new ArrayList<String>(tmp);
-    }
+	// Determine attributes from names
+	if (attributes == null) {
+	  HashSet<String> tmp = [] as HashSet;
+	  names.each { name ->
+		ObjectName on = ObjectName.getInstance(name);
+		MBeanInfo info = server.getMBeanInfo(on);
+		info.attributes.each { attribute ->
+		  tmp.add(attribute.name);
+		}
+	  }
+	  attributes = new ArrayList<String>(tmp);
+	}
 
-    UIBuilder ui = new UIBuilder()
-    ui.table() {
-      row(decoration: bold, foreground: black, background: white) {
-        label("OBJECT NAME");
-        attributes.each { attribute ->
-          label(attribute)
-        }
-      }
-      names.each { name ->
-        ObjectName on = ObjectName.getInstance(name);
-        row() {
-          label(value: on.getCanonicalName(), foreground: red)
-          attributes.each { attribute ->
-            label(String.valueOf(server.getAttribute(on, attribute)))
-          }
-        }
-      }
-    }
-    out << ui;
+	UIBuilder ui = new UIBuilder()
+	ui.table() {
+	  row(decoration: bold, foreground: black, background: white) {
+		label("OBJECT NAME");
+		attributes.each { attribute ->
+		  label(attribute)
+		}
+	  }
+	  names.each { name ->
+		ObjectName on = ObjectName.getInstance(name);
+		row() {
+		  label(value: on.getCanonicalName(), foreground: red)
+		  attributes.each { attribute ->
+			label(String.valueOf(server.getAttribute(on, attribute)))
+		  }
+		}
+	  }
+	}
+	out << ui;
   }
 
 }
