@@ -109,7 +109,10 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
         if (values.size() > 1) {
           throw new CmdSyntaxException("Too many option values: " + values);
         }
-        String value = values.get(0);
+        String value = "";
+        if (values.size() > 0) {
+            value = values.get(0);
+        }
         try {
           return parse(value);
         } catch (Exception e) {
