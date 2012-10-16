@@ -42,7 +42,7 @@ class help extends CRaSHCommand
       }
       for (int i = 0;i < names.size();i++) {
         row() {
-            label(value: names[i], foreground: red); label(descs[i])
+            label(names[i], foreground: red); label(descs[i])
         }
       }
     }
