@@ -122,7 +122,7 @@ class jmx extends CRaSHCommand {
 		  instances?.each { instance ->
 			  if (null != instance) {
 				row() {
-				  label(value: instance.className, foreground: red); label(instance.objectName)
+				  label(instance.className, foreground: red); label(instance.objectName)
 				}
 			  }
 		  }
@@ -167,23 +167,23 @@ class jmx extends CRaSHCommand {
 			  }
 			if ((null == objectName) && (null == info)) {
 				row() {
-					label(value: "", foreground: red); label("")
+					label("", foreground: red); label("")
 				  }
 			}
 			if (null != objectName) {
 				row() {
-					label(value: "Domain", foreground: red); label(objectName.getDomain())
+					label("Domain", foreground: red); label(objectName.getDomain())
 				  }
 				row() {
-					label(value: "Type", foreground: red); label(objectName.getKeyPropertyListString())
+					label("Type", foreground: red); label(objectName.getKeyPropertyListString())
 				  }
 			}
 			if (null != info) {
 				row() {
-					label(value: "Java Class", foreground: red); label(info.className)
+					label("Java Class", foreground: red); label(info.className)
 				  }
 				row() {
-					label(value: "Description", foreground: red); label(info.description)
+					label("Description", foreground: red); label(info.description)
 				  }
 			}
 		}
@@ -204,7 +204,7 @@ class jmx extends CRaSHCommand {
 			info?.operations?.each { operation ->
 				if (null != operation) {
 					row() {
-						label(value: operation.name, foreground: red); label(operation.returnType); label(operation.description);
+						label(operation.name, foreground: red); label(operation.returnType); label(operation.description);
 						 label(retreiveMethodParameters(operation))
 					  }
 				}
@@ -278,7 +278,7 @@ class jmx extends CRaSHCommand {
 			for(Attr tmpAttr : lst) {
 				if (null != tmpAttr) {
 					row() {
-						label(value: tmpAttr.name, foreground: red);
+						label(tmpAttr.name, foreground: red);
 						label(tmpAttr.access);
 						label(tmpAttr.type);
 						label(tmpAttr.desc);
@@ -365,7 +365,7 @@ class jmx extends CRaSHCommand {
 	  names.each { name ->
 		ObjectName on = ObjectName.getInstance(name);
 		row() {
-		  label(value: on.getCanonicalName(), foreground: red)
+		  label(on.getCanonicalName(), foreground: red)
 		  attributes.each { attribute ->
 			label(String.valueOf(server.getAttribute(on, attribute)))
 		  }
