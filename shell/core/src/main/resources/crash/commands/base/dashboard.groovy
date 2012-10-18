@@ -2,13 +2,13 @@ import org.crsh.text.ui.UIBuilder
 
 while (!Thread.interrupted()) {
   out.cls()
-
   UIBuilder ui = new UIBuilder()
-  ui.table(weights: [3,1,1], border: dashed) {
+  ui.table(weights: [3,1,1,1], border: dashed) {
     header(bold: true, fg: black, bg: white) {
       label("top");
-      label("vm");
+      label("props");
       label("env");
+      label("jvm");
     }
     row {
       eval {
@@ -19,6 +19,9 @@ while (!Thread.interrupted()) {
       }
       eval {
         context.provide(Thread.currentThread())
+      }
+      eval {
+        jvm.system();
       }
     }
   }
