@@ -1,0 +1,176 @@
+/*
+ * Copyright (C) 2012 eXo Platform SAS.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+package org.crsh.command;
+
+import groovy.lang.Closure;
+import groovy.lang.MissingMethodException;
+import groovy.lang.MissingPropertyException;
+import org.codehaus.groovy.runtime.InvokerInvocationException;
+import org.crsh.Pipe;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+final class ClassDispatcher extends CommandClosure {
+
+  /** . */
+  final InvocationContext outter;
+
+  /** . */
+  final ShellCommand command;
+
+  ClassDispatcher(ShellCommand command, InvocationContext outter) {
+    super(new Object());
+
+    //
+    this.command = command;
+    this.outter = outter;
+  }
+
+  @Override
+  public Object getProperty(String property) {
+    try {
+      return super.getProperty(property);
+    }
+    catch (MissingPropertyException e) {
+      return new MethodDispatcher(this, property);
+    }
+  }
+
+  @Override
+  public Object invokeMethod(String name, Object args) {
+    try {
+      return super.invokeMethod(name, args);
+    }
+    catch (MissingMethodException e) {
+      return dispatch(name, unwrapArgs(args));
+    }
+  }
+
+  /**
+   * Closure invocation.
+   *
+   * @param arguments the closure arguments
+   */
+  public Object call(Object[] arguments) {
+    return dispatch("", arguments);
+  }
+
+  Object dispatch(String methodName, Object[] arguments) {
+    PipeCommand pipe = resolvePipe(methodName, arguments);
+    try {
+      pipe.open();
+      pipe.close();
+      return null;
+    }
+    catch (ScriptException e) {
+      Throwable cause = e.getCause();
+      if (cause != null) {
+        throw new InvokerInvocationException(cause);
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  private PipeCommand<?> resolvePipe(String name, Object[] args) {
+    final Closure closure;
+    int to = args.length;
+    if (to > 0 && args[to - 1] instanceof Closure) {
+      closure = (Closure)args[--to];
+    } else {
+      closure = null;
+    }
+
+    //
+    Map<String, Object> invokerOptions = this.options != null ? this.options : Collections.<String, Object>emptyMap();
+    List<Object> invokerArgs = this.args != null ? this.args : Collections.emptyList();
+
+    //
+    if (to > 0) {
+      Object first = args[0];
+      int from;
+      if (first instanceof Map<?, ?>) {
+        from = 1;
+        Map<?, ?> options = (Map<?, ?>)first;
+        if (options.size() > 0) {
+          invokerOptions = new HashMap<String, Object>(invokerOptions);
+          for (Map.Entry<?, ?> option : options.entrySet()) {
+            String optionName = option.getKey().toString();
+            Object optionValue = option.getValue();
+            invokerOptions.put(optionName, optionValue);
+          }
+        }
+      } else {
+        from = 0;
+      }
+
+      if (from < to) {
+        invokerArgs = new ArrayList<Object>(invokerArgs);
+        while (from < to) {
+          Object o = args[from++];
+          if (o != null) {
+            invokerArgs.add(o);
+          }
+        }
+      }
+    }
+
+    //
+    CommandInvoker<Void, Void> invoker = (CommandInvoker<Void, Void>)command.resolveInvoker(name, invokerOptions, invokerArgs);
+
+    //
+    Pipe producer;
+    if (closure != null) {
+      PipeCommand producerPipe;
+      if (closure instanceof MethodDispatcher) {
+        MethodDispatcher commandClosure = (MethodDispatcher)closure;
+        producerPipe = commandClosure.dispatcher.resolvePipe(commandClosure.name, new Object[0]);
+      } else if (closure instanceof ClassDispatcher) {
+        ClassDispatcher dispatcherClosure = (ClassDispatcher)closure;
+        producerPipe = dispatcherClosure.resolvePipe(name, new Object[0]);
+      } else {
+        producerPipe = new PipeCommand() {
+          @Override
+          public void provide(Object element) throws ScriptException, IOException {
+            Class[] parameterTypes = closure.getParameterTypes();
+            if (parameterTypes != null && parameterTypes.length > 0 && parameterTypes[0].isInstance(element)) {
+              closure.call(element);
+            }
+          }
+        };
+      }
+      producerPipe.setPiped(true);
+      producer = producerPipe;
+    } else {
+      producer = outter;
+    }
+
+    //
+    InnerInvocationContext inner = new InnerInvocationContext(outter, producer);
+    PipeCommand<Void> abc = invoker.invoke(inner);
+    return new PipeCommandProxy(abc, producer);
+  }
+}

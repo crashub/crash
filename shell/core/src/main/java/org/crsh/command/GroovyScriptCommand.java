@@ -33,6 +33,7 @@ import org.crsh.util.Strings;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker<Void, Object> {
 
@@ -70,8 +71,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
             throw new InvokerInvocationException(ce);
           }
           if (cmd != null) {
-            CommandDispatcher dispatcher = new CommandDispatcher(cmd, ic);
-            return dispatcher.dispatch("", args);
+            ClassDispatcher dispatcher = new ClassDispatcher(cmd, ic);
+            return dispatcher.dispatch("", CommandClosure.unwrapArgs(args));
           }
         }
       }
@@ -98,7 +99,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
           try {
             ShellCommand cmd = crash.getCommand(property);
             if (cmd != null) {
-              return new CommandDispatcher(cmd, (InvocationContext<?>)context);
+              return new ClassDispatcher(cmd, (InvocationContext<?>)context);
             }
           } catch (NoSuchCommandException e) {
             throw new InvokerInvocationException(e);
@@ -125,7 +126,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   }
 
   public final PipeCommand<Void> invoke(final InvocationContext<Object> context) throws ScriptException {
-    return new AbstractPipeCommand<Void>() {
+    return new PipeCommand<Void>() {
 
       @Override
       public void open() throws ScriptException {
@@ -178,9 +179,18 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     };
   }
 
-  public final CommandInvoker<?, ?> createInvoker(String line) {
+  public final CommandInvoker<?, ?> resolveInvoker(String line) {
     List<String> chunks = Strings.chunks(line);
     this.args = chunks.toArray(new String[chunks.size()]);
+    return this;
+  }
+
+  public CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) {
+    String[] tmp = new String[args.size()];
+    for (int i = 0;i < tmp.length;i++) {
+      tmp[i] = args.get(i).toString();
+    }
+    this.args = tmp;
     return this;
   }
 }

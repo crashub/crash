@@ -27,6 +27,7 @@ import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Required;
 import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
+import org.crsh.cmdline.matcher.tokenizer.TokenizerImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +52,7 @@ public class ParserTestCase extends TestCase {
 
     private Tester(ClassDescriptor<T> command, String s, Mode mode) {
       this.command = command;
-      this.parser = new Parser<T>(new Tokenizer(s), command, "main", mode);
+      this.parser = new Parser<T>(new TokenizerImpl(s), command, "main", mode);
     }
 
     public void assertSeparator() {

@@ -28,12 +28,24 @@ import java.io.IOException;
  *
  * @param <E> the element generic type
  */
-public interface PipeCommand<E> extends Pipe<E> {
+public abstract class PipeCommand<E> implements Pipe<E> {
+
+  /** . */
+  private boolean piped;
+
+  public final boolean isPiped() {
+    return piped;
+  }
+
+  public final void setPiped(boolean piped) {
+    this.piped = piped;
+  }
 
   /**
    * Open pipe.
    */
-  void open() throws ScriptException;
+  public void open() throws ScriptException {
+  }
 
   /**
    * Extends the throw clause of the {@link Pipe#provide(Object)} method.
@@ -42,7 +54,8 @@ public interface PipeCommand<E> extends Pipe<E> {
    * @throws ScriptException any script exception
    * @throws IOException any io exception
    */
-  void provide(E element) throws ScriptException, IOException;
+  public void provide(E element) throws ScriptException, IOException {
+  }
 
   /**
    * Flush pipe.
@@ -50,13 +63,14 @@ public interface PipeCommand<E> extends Pipe<E> {
    * @throws ScriptException any script exception
    * @throws IOException any io exception
    */
-  void flush() throws ScriptException, IOException;
+  public void flush() throws ScriptException, IOException {
+  }
 
   /**
    * Close pipe.
    *
    * @throws ScriptException any script exception
    */
-  void close() throws ScriptException;
-
+  public void close() throws ScriptException {
+  }
 }

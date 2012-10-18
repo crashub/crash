@@ -19,25 +19,21 @@
 
 package org.crsh.cmdline.matcher;
 
-import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.CommandCompletion;
-import org.crsh.cmdline.completers.EmptyCompleter;
-import org.crsh.cmdline.matcher.impl.MatcherImpl;
-import org.crsh.cmdline.spi.Completer;
+public interface Resolver {
 
-import java.util.List;
-import java.util.Map;
+  Resolver EMPTY = new Resolver() {
+    public <T> T resolve(Class<T> type) {
+      return null;
+    }
+  };
 
-public abstract class Matcher<T> {
-
-  public final CommandCompletion complete(String s) throws CmdCompletionException {
-    return complete(EmptyCompleter.getInstance(), s);
-  }
-
-  public abstract CommandCompletion complete(Completer completer, String s) throws CmdCompletionException;
-
-  public abstract CommandMatch<T, ?, ?> match(String s);
-
-  public abstract CommandMatch<T, ?, ?> match(String name, Map<String, ?> options, List<?> arguments);
+  /**
+   * Resolve the specified type to an instance.
+   *
+   * @param type the type to resolve
+   * @param <T> the generic type parameter
+   * @return the resolved instance
+   */
+  <T> T resolve(Class<T> type);
 
 }

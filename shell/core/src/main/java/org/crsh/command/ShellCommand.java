@@ -21,6 +21,9 @@ package org.crsh.command;
 
 import org.crsh.cmdline.CommandCompletion;
 
+import java.util.List;
+import java.util.Map;
+
 public interface ShellCommand {
 
   /**
@@ -47,6 +50,8 @@ public interface ShellCommand {
    * @param line the command line arguments
    * @return the command to provide
    */
-  CommandInvoker<?, ?> createInvoker(String line);
+  CommandInvoker<?, ?> resolveInvoker(String line);
+
+  CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args);
 
 }

@@ -19,7 +19,13 @@
 
 package org.crsh.shell;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class CompositionTestCase extends AbstractCommandTestCase {
+
+  /** . */
+  public static final ArrayList<?> list = new ArrayList<Object>();
 
   /** . */
   private final String compound_command = "class compound_command extends org.crsh.command.CRaSHCommand {\n" +
@@ -34,6 +40,18 @@ public class CompositionTestCase extends AbstractCommandTestCase {
       "@Command\n" +
       "public void compound(org.crsh.command.InvocationContext<String> context) {\n" +
       "['foo','bar'].each { context.provide(it) }" +
+      "}\n" +
+      "}";
+
+  /** . */
+  private final String compound_consume_command = "class compound_consume_command extends org.crsh.command.CRaSHCommand {\n" +
+      "@Command\n" +
+      "public org.crsh.command.PipeCommand<String> compound() {\n" +
+      "return new org.crsh.command.PipeCommand<String>() {\n" +
+      "public void provide(String element) {\n" +
+      "org.crsh.shell.CompositionTestCase.list.add(element);\n" +
+      "}\n" +
+      "}\n" +
       "}\n" +
       "}";
 
@@ -178,6 +196,18 @@ public class CompositionTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("bar", bar);
     lifeCycle.setCommand("compound_produce_command", compound_produce_command);
     assertEquals("", assertOk("bar"));
+  }
+
+  public void testCompoundCommandAsClosure() {
+    String foo =
+        "def closure = compound_consume_command.compound\n" +
+        "compound_produce_command.compound closure\n";
+    lifeCycle.setCommand("foo", foo);
+    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+    lifeCycle.setCommand("compound_consume_command", compound_consume_command);
+    list.clear();
+    assertEquals("", assertOk("foo"));
+    assertEquals(Arrays.asList("foo", "bar"), list);
   }
 
   public void testCheckedException() {

@@ -21,13 +21,11 @@ package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.Multiplicity;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.binding.TypeBinding;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +50,11 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
 
   public abstract D getDescriptor();
 
-  public final Object invoke(InvocationContext context, C command) throws CmdInvocationException, CmdSyntaxException {
+  public final Object invoke(C command) throws CmdInvocationException, CmdSyntaxException {
+    return invoke(Resolver.EMPTY, command);
+  }
+
+  public final Object invoke(Resolver context, C command) throws CmdInvocationException, CmdSyntaxException {
 
     //
     Set<ParameterDescriptor<?>> unused = getParameters();
@@ -80,7 +82,7 @@ public abstract class CommandMatch<C, D extends CommandDescriptor<C, B>, B exten
     return doInvoke(context, command, parameterValues);
   }
 
-  protected abstract Object doInvoke(InvocationContext context, C command, Map<ParameterDescriptor<?>, Object> values) throws CmdInvocationException, CmdSyntaxException;
+  protected abstract Object doInvoke(Resolver context, C command, Map<ParameterDescriptor<?>, Object> values) throws CmdInvocationException, CmdSyntaxException;
 
   public abstract Set<ParameterDescriptor<?>> getParameters();
 

@@ -77,7 +77,7 @@ class PipeLine {
     this.next = next;
   }
 
-  private static class PipeProxy implements PipeCommand {
+  private static class PipeProxy extends PipeCommand {
 
     /** . */
     private final CRaSHSession session;
@@ -107,6 +107,7 @@ class PipeLine {
         if (pipeLine.invoker.getProducedType() == Chunk.class) {
           if (pipeLine.next.invoker.getConsumedType() == Chunk.class) {
             PipeProxy proxy = new PipeProxy(session, context, pipeLine.next);
+            proxy.setPiped(true);
             next = proxy;
             proxy.open();
           } else {
@@ -115,10 +116,12 @@ class PipeLine {
         } else {
           if (pipeLine.invoker.getProducedType().isAssignableFrom(pipeLine.next.invoker.getConsumedType())) {
             PipeProxy proxy = new PipeProxy(session, context, pipeLine.next);
+            proxy.setPiped(true);
             next = proxy;
             proxy.open();
           } else {
             final PipeProxy proxy = new PipeProxy(session, context, pipeLine.next);
+            proxy.setPiped(true);
             proxy.open();
             next = new ChunkAdapter(new RenderContext() {
               public int getWidth() {
@@ -156,6 +159,7 @@ class PipeLine {
 
       //
       command = pipeLine.invoker.invoke(invocationContext);
+      command.setPiped(isPiped());
       command.open();
     }
 
@@ -188,7 +192,7 @@ class PipeLine {
      if (name != null) {
        command = session.crash.getCommand(name);
        if (command != null) {
-         invoker = command.createInvoker(rest);
+         invoker = command.resolveInvoker(rest);
        }
      }
 

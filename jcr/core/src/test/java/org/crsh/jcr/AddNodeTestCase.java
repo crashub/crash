@@ -60,9 +60,6 @@ public class AddNodeTestCase extends AbstractJCRCommandTestCase {
 
   public void testProduce() throws Exception {
     assertLogin();
-    Iterator<?> produced = assertResponse(ShellResponse.Ok.class, "node add foo").getProduced().iterator();
-    assertTrue(produced.hasNext());
-    assertEquals("/foo", ((Node)produced.next()).getPath());
-    assertFalse(produced.hasNext());
+    assertEquals("/foo\n", assertOk("node add foo | consume"));
   }
 }

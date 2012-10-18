@@ -25,13 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class Tokenizer implements Iterator<Token> {
-
-  /** . */
-  private final CharSequence s;
-
-  /** . */
-  private int index;
+public abstract class Tokenizer implements Iterator<Token> {
 
   /** . */
   private ArrayList<Token> stack;
@@ -40,16 +34,14 @@ public class Tokenizer implements Iterator<Token> {
   private int ptr;
 
   /** . */
-  private Delimiter delimiter;
+  private int index = 0;
 
-  public Tokenizer(CharSequence s) {
-    this.s = s;
+  protected Tokenizer() {
     this.stack = new ArrayList<Token>();
-    this.index = 0;
-    this.delimiter = null;
+    this.ptr = 0;
   }
 
-  public boolean hasNext() {
+  public final boolean hasNext() {
     if (ptr < stack.size()) {
       return true;
     } else {
@@ -61,106 +53,21 @@ public class Tokenizer implements Iterator<Token> {
     }
   }
 
-  private Token parse() {
-    Token token = null;
-    if (index < s.length()) {
-      char c = s.charAt(index);
-      int from = index;
-      while (true) {
-        if (Character.isWhitespace(c)) {
-          index++;
-          if (index < s.length()) {
-            c = s.charAt(index);
-          } else {
-            break;
-          }
-        } else {
-          break;
-        }
-      }
-      if (index > from) {
-        token = new Token.Whitespace(from, s.subSequence(from, index).toString());
-      } else {
-        State state = new State();
-        while (true) {
-          if (Character.isWhitespace(c) && state.escape == Escape.NONE) {
-            break;
-          } else {
-            index++;
-            state.push(c);
-            if (index < s.length()) {
-              c = s.charAt(index);
-            } else {
-              break;
-            }
-          }
-        }
-        if (index > from) {
-          switch (state.status) {
-            case INIT: {
-              token = new Token.Literal.Word(from, s.subSequence(from, index).toString(), state.buffer.toString());
-              break;
-            }
-            case WORD: {
-              token = new Token.Literal.Word(from, s.subSequence(from, index).toString(), state.buffer.toString());
-              break;
-            }
-            case SHORT_OPTION: {
-              token = new Token.Literal.Option.Short(from, s.subSequence(from, index).toString(), state.buffer.toString());
-              break;
-            }
-            case LONG_OPTION: {
-              token = new Token.Literal.Option.Long(from, s.subSequence(from, index).toString(), state.buffer.toString());
-              break;
-            }
-            default:
-              throw new AssertionError(state.status);
-          }
-          delimiter = state.escape.delimiter;
-          return token;
-        }
-      }
-    }
-    return token;
-  }
-
-  public Token next() {
-    if (hasNext()) {
-      return stack.get(ptr++);
-    } else {
-      throw new NoSuchElementException();
-    }
-  }
-
-  public void remove() {
-    throw new UnsupportedOperationException();
-  }
-
-  public int getIndex() {
-    Token peek = peek();
-    if (peek != null) {
-      return peek.getFrom();
-    } else {
-      return index;
-    }
-  }
-
-  public void pushBack() {
-    pushBack(1);
-  }
-
-  public void pushBack(int count) {
+  public final void pushBack(int count) {
     if (count < 0) {
       throw new IllegalArgumentException();
     }
     if (ptr - count < 0) {
       throw new IllegalStateException("Trying to push back too many tokens");
     } else {
-      ptr -= count;
+      while (count > 0) {
+        index -= stack.get(--ptr).raw.length();
+        count--;
+      }
     }
   }
 
-  public Token peek() {
+  public final Token peek() {
     if (hasNext()) {
       return stack.get(ptr);
     } else {
@@ -168,7 +75,29 @@ public class Tokenizer implements Iterator<Token> {
     }
   }
 
-  public Delimiter getDelimiter() {
-    return delimiter;
+  public final Token next() {
+    if (hasNext()) {
+      Token token = stack.get(ptr++);
+      index += token.raw.length();
+      return token;
+    } else {
+      throw new NoSuchElementException();
+    }
   }
+
+  public final void remove() {
+    throw new UnsupportedOperationException();
+  }
+
+  public final void pushBack() {
+    pushBack(1);
+  }
+
+  protected abstract Token parse();
+
+  public final int getIndex() {
+    return index;
+  }
+
+  public abstract Delimiter getDelimiter();
 }

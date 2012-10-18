@@ -11,8 +11,8 @@ public class pwd extends org.crsh.command.CRaSHCommand {
 
 [/gadgets]% pwd
 /gadgets""")
-  public void main(InvocationContext<Node, Void> context) {
-    context.produce(getCurrentNode());
-    context.writer <<= currentPath.string;
+  public void main(InvocationContext<Node> context) {
+    context.provide(getCurrentNode());
+    out << currentPath.string;
   }
 }

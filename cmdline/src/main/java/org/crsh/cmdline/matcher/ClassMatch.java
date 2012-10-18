@@ -81,7 +81,7 @@ public class ClassMatch<T> extends CommandMatch<T, ClassDescriptor<T>, ClassFiel
   }
 
   @Override
-  protected Object doInvoke(InvocationContext context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdInvocationException, CmdSyntaxException {
+  protected Object doInvoke(Resolver context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdInvocationException, CmdSyntaxException {
     for (ParameterDescriptor<ClassFieldBinding> parameter : descriptor.getParameters()) {
       Object value = values.get(parameter);
 

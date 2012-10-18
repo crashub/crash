@@ -17,33 +17,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cmdline.matcher;
+package org.crsh.command;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class InvocationContext {
+class MethodDispatcher extends CommandClosure {
 
   /** . */
-  private final Map<Class<?>, Object> attributes;
+  final ClassDispatcher dispatcher;
 
-  public InvocationContext() {
-    this.attributes = new HashMap<Class<?>, Object>();
+  /** . */
+  final String name;
+
+  MethodDispatcher(ClassDispatcher dispatcher, String name) {
+    super(dispatcher);
+
+    //
+    this.dispatcher = dispatcher;
+    this.name = name;
   }
 
-  public <T> void setAttribute(Class<T> key, T value) {
-    if (key == null) {
-      throw new NullPointerException();
-    }
-    if (value == null) {
-      attributes.remove(key);
-    } else {
-      attributes.put(key, value);
-    }
-  }
-
-  public <T> T getAttribute(Class<T> key) {
-    Object value = attributes.get(key);
-    return value != null ? key.cast(value) : null;
+  @Override
+  public Object call(Object[] args) {
+    return dispatcher.dispatch(name, args);
   }
 }
+
+
+

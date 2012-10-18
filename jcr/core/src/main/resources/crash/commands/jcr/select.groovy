@@ -45,8 +45,8 @@ The query matched 1114 nodes
 ...
 
 select is a <Void,Node> command producing all the matched nodes.""")
-  public void main(
-    InvocationContext<Void, Node> context,
+  public Object main(
+    InvocationContext<Node> context,
     @Option(names=["o","offset"])
     @Usage("the result offset")
     @Man("The offset of the first node to display")
@@ -88,17 +88,12 @@ select is a <Void,Node> command producing all the matched nodes.""")
     //
     def queryMgr = session.workspace.queryManager;
 
-    //
     def statement = "select";
     query.each { statement += " " + it };
 
     //
     def select = queryMgr.createQuery(statement, Query.SQL);
-
-    //
     def result = select.execute();
-
-    //
     def nodes = result.nodes;
     def total = nodes.size;
     if (offset > 0) {
@@ -107,29 +102,20 @@ select is a <Void,Node> command producing all the matched nodes.""")
 
     //
     def builder = new UIBuilder();
-
-    //
     builder.node("The query matched " + total + " nodes") {
       def index = 0;
       while (nodes.hasNext()) {
         def n = nodes.next();
-
-        //
-        if (limit != null && index >= limit)
+        if (limit != null && index >= limit) {
           break;
-
-        //
+        }
         formatNode(builder, n, 0, 1);
-
-        //
-        context.produce(n);
-
-        //
+        context.provide(n);
         index++;
       }
     }
 
     //
-    context.writer.print(builder);
+    return builder;
   }
 }

@@ -19,19 +19,47 @@
 
 package org.crsh.command;
 
+import org.crsh.Pipe;
+
 import java.io.IOException;
 
-public abstract class AbstractPipeCommand<E> implements PipeCommand<E> {
+class PipeCommandProxy<E> extends PipeCommand<E> {
 
+  /** . */
+  private final PipeCommand<E> delegate;
+
+  /** . */
+  private final Pipe<E> next;
+
+  PipeCommandProxy(PipeCommand<E> delegate, Pipe<E> next) {
+    this.delegate = delegate;
+    this.next = next;
+  }
+
+  @Override
   public void open() throws ScriptException {
+    if (next != null && next instanceof PipeCommand) {
+      ((PipeCommand)next).open();
+    }
+    delegate.setPiped(isPiped());
+    delegate.open();
   }
 
+  @Override
   public void provide(E element) throws ScriptException, IOException {
+    delegate.provide(element);
   }
 
-  public void flush() throws IOException {
+  @Override
+  public void flush() throws ScriptException, IOException {
+    delegate.flush();
   }
 
+  @Override
   public void close() throws ScriptException {
+    delegate.close();
+    if (next != null && next instanceof PipeCommand) {
+      ((PipeCommand)next).close();
+    }
   }
 }

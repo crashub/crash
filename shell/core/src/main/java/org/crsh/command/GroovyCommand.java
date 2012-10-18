@@ -33,7 +33,13 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
   /** . */
   private LinkedList<InvocationContext<?>> stack;
 
-  protected abstract CommandContext getContext();
+  /** The current context. */
+  protected CommandContext context;
+
+  protected GroovyCommand() {
+    this.stack = null;
+    this.context = null;
+  }
 
   public final void pushContext(InvocationContext<?> context) {
     if (stack == null) {
@@ -50,7 +56,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
   }
 
   public final InvocationContext<?> peekContext() {
-    return stack == null || stack.isEmpty() ? (InvocationContext<?>)getContext() : stack.getLast();
+    return stack == null || stack.isEmpty() ? (InvocationContext<?>)context : stack.getLast();
   }
 
   @Override
@@ -59,11 +65,6 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
       return super.invokeMethod(name, args);
     }
     catch (MissingMethodException e) {
-
-      //
-      CommandContext context = getContext();
-
-      //
       if (context instanceof InvocationContext) {
         InvocationContext invocationContext = (InvocationContext)context;
         CRaSH crash = (CRaSH)context.getSession().get("crash");
@@ -82,7 +83,9 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
             } else {
               outter = invocationContext;
             }
-            return new CommandDispatcher(cmd, outter).dispatch("", args);
+
+            // Should we use null instead of "" ?
+            return new ClassDispatcher(cmd, outter).dispatch("", CommandClosure.unwrapArgs(args));
           }
         }
       }
@@ -109,56 +112,41 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
 
   @Override
   public final Object getProperty(String property) {
-    CommandContext context = getContext();
-    if ("out".equals(property)) {
-      if (context instanceof InvocationContext<?>) {
-        return ((InvocationContext<?>)context).getWriter();
-      } else {
-        return null;
-      }
-    } else if ("context".equals(property)) {
-      return context;
-    } else {
-      if (context instanceof InvocationContext<?>) {
-        CRaSH crash = (CRaSH)context.getSession().get("crash");
-        if (crash != null) {
-          try {
-            ShellCommand cmd = crash.getCommand(property);
-            if (cmd != null) {
-              InvocationContext outter;
-              if (stack != null && stack.size() > 0) {
-                outter = stack.getLast();
-              } else {
-                outter = (InvocationContext)context;
-              }
-              return new CommandDispatcher(cmd, outter);
+    if (context instanceof InvocationContext<?>) {
+      CRaSH crash = (CRaSH)context.getSession().get("crash");
+      if (crash != null) {
+        try {
+          ShellCommand cmd = crash.getCommand(property);
+          if (cmd != null) {
+            InvocationContext outter;
+            if (stack != null && stack.size() > 0) {
+              outter = stack.getLast();
+            } else {
+              outter = (InvocationContext)context;
             }
-          } catch (NoSuchCommandException e) {
-            throw new InvokerInvocationException(e);
+            return new ClassDispatcher(cmd, outter);
           }
+        } catch (NoSuchCommandException e) {
+          throw new InvokerInvocationException(e);
         }
       }
+    }
 
-      //
-      try {
-        return super.getProperty(property);
-      }
-      catch (MissingPropertyException e) {
-        return context.getSession().get(property);
-      }
+    //
+    try {
+      return super.getProperty(property);
+    }
+    catch (MissingPropertyException e) {
+      return context.getSession().get(property);
     }
   }
 
   @Override
   public final void setProperty(String property, Object newValue) {
-    if ("out".equals(property)) {
-      throw new IllegalArgumentException("Cannot write out");
-    }
     try {
       super.setProperty(property, newValue);
     }
     catch (MissingPropertyException e) {
-      CommandContext context = getContext();
       context.getSession().put(property, newValue);
     }
   }

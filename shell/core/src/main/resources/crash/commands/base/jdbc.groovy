@@ -137,22 +137,6 @@ class jdbc extends CRaSHCommand {
     if (connection == null) {
       throw new ScriptException("You are not connected to database, please call jdbc open [JNDI DS]");
     } else {
-
-      // TEMPORARY HACK BECAUSE THE COMMAND DISPATCHER WILL QUOTE ARGUMENTS
-      // WE NEED TO BUILD A KIND OF INVOKER WITHOUT REBUILDING AND PARSING
-      // AN WHOLE COMMAND  LINE AS WE CANNOT ADAPT SOME STUFF
-      // for instance : jdbc.select "* from derbyDb"
-      if (statement.size() == 1) {
-        String s = statement.get(0);
-        def len = s.length()
-        if (s != null & len > 0) {
-          if (s.charAt(0) && s.charAt(len - 1)) {
-            statement.set(0, s.substring(1, len - 1));
-          }
-        }
-      }
-
-      //
       StringBuilder sb = new StringBuilder("select ");
       statement.each { sb << " " << it };
       String sql = sb.toString().trim();

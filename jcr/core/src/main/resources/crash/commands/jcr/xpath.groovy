@@ -1,7 +1,6 @@
 import javax.jcr.query.Query;
 import org.crsh.text.ui.UIBuilder;
 import org.crsh.cmdline.annotations.Usage
-import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Option
@@ -13,8 +12,7 @@ public class xpath extends org.crsh.command.CRaSHCommand {
   @Command
   @Man("""Executes a JCR query with the xpath dialect, by default results are limited to 5.\
 All results matched by the query are produced by this command.""")
-  public void main(
-    InvocationContext<Void, Node> context,
+  public Object main(
     @Option(names=["o","offset"])
     @Usage("the result offset")
     @Man("The offset of the first node to display")
@@ -85,6 +83,6 @@ All results matched by the query are produced by this command.""")
     }
 
     //
-    context.writer.print(builder);
+    return builder;
   }
 }

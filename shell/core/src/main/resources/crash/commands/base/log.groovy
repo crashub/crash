@@ -18,7 +18,8 @@ import org.crsh.command.InvocationContext
 import org.crsh.cmdline.spi.Value
 
 import org.crsh.cmdline.completers.EnumCompleter
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.ValueCompletion
+import org.crsh.command.PipeCommand;
 
 @Usage("logging commands")
 public class log extends CRaSHCommand implements Completer {
@@ -34,16 +35,21 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
 
 % log ls | log send -m hello -l warn""")
   @Command
-  public void send(InvocationContext<Logger, Void> context, @MsgOpt String msg, @LoggerArg LoggerName name, @LevelOpt Level level) {
+  public PipeCommand<Logger> send(@MsgOpt String msg, @LoggerArg LoggerName name, @LevelOpt Level level) {
     level = level ?: Level.info;
-    if (context.piped) {
-      context.consumer().each() {
-        level.log(it, msg);
+    return new PipeCommand<Logger>() {
+      @Override
+      void open() {
+        if (!isPiped()) {
+          if (name != null) {
+            def logger = LoggerFactory.getLogger(name.string);
+            level.log(logger, msg);
+          }
+        }
       }
-    } else {
-      if (name != null) {
-        def logger = LoggerFactory.getLogger(name.string);
-        level.log(logger, msg);
+      @Override
+      void provide(Logger element) {
+        level.log(element, msg);
       }
     }
   }
@@ -112,7 +118,7 @@ javax.management.modelmbean
 The logls command is a <Void,Logger> command, therefore any logger produced can be consumed.""")
 
   @Command
-  public void ls(InvocationContext<Void, Logger> context, @FilterOpt String filter) {
+  public void ls(InvocationContext<Logger> context, @FilterOpt String filter) {
 
     // Regex filter
     def pattern = Pattern.compile(filter ?: ".*");
@@ -129,7 +135,7 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
 
   @Usage("create one or several loggers")
   @Command
-  public void add(InvocationContext<Void, Logger> context, @LoggerArg List<LoggerName> names) {
+  public void add(InvocationContext<Logger> context, @LoggerArg List<LoggerName> names) {
     names.each {
       if (it.string.length() > 0) {
         Logger logger = LoggerFactory.getLogger(it.string);
@@ -154,8 +160,7 @@ The following set the level warn on all the available loggers:
 % log ls | log set -l warn""")
   @Usage("configures the level of one of several loggers")
   @Command
-  public void set(
-    InvocationContext<Logger, Void> context,
+  public PipeCommand<Logger> set(
     @LoggerArg List<LoggerName> names,
     @LevelOpt Level level,
     @PluginOpt Plugin plugin) {
@@ -165,17 +170,21 @@ The following set the level warn on all the available loggers:
     if (plugin == null)
       throw new ScriptException("No usable plugin");
 
-    //
-    if (context.piped) {
-      context.consumer().each() {
-        plugin.setLevel(it, level);
+    return new PipeCommand<Logger>() {
+      @Override
+      void open() {
+        if (!isPiped()) {
+          names.each() {
+            def logger = LoggerFactory.getLogger(it.string);
+            plugin.setLevel(logger, level);
+          }
+        }
       }
-    } else {
-      names.each() {
-        def logger = LoggerFactory.getLogger(it.string);
-        plugin.setLevel(logger, level);
+      @Override
+      void provide(Logger element) {
+        plugin.setLevel(element, level);
       }
-    }
+    };
   }
 
   public ValueCompletion complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {

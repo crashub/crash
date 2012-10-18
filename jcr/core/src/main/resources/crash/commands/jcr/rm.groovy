@@ -1,10 +1,11 @@
 import org.crsh.command.ScriptException;
-import org.crsh.command.InvocationContext
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Man
 import org.crsh.jcr.command.Path
-import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.command.PipeCommand;
+import javax.jcr.Node;
 
 public class rm extends org.crsh.jcr.command.JCRCommand {
 
@@ -23,38 +24,36 @@ It is possible to specify several nodes.
 Node /foo /bar removed
 
 rm is a <Node,Void> command removing all the consumed nodes.""")
-  public void main(
-    InvocationContext<Node, Void> context,
+  public PipeCommand<Node> main(
     @Argument @Usage("the paths to remove") @Man("The paths of the node to remove") List<Path> paths) {
     assertConnected();
+    def foo = out;
+    return new PipeCommand<Node>() {
+      @Override
+      void open() {
+        foo << 'Removed nodes ';
+        if (!isPiped()) {
+          // First collect nodes
+          def nodes = [];
+          paths.each { path ->
+            def node = getNodeByPath(path);
+            if (node == null)
+              throw new ScriptException("Node path does not exist");
+            nodes.add(node);
+          };
+          // Then remove if we have been able to find them all
+          nodes.each { node ->
+            foo << " $node.path";
+            node.remove();
+          };
+        }
+      }
 
-    //
-    context.writer <<= 'Removed nodes ';
-
-    //
-    if (context.piped) {
-      if (paths != null && paths.empty)
-        throw new ScriptException("No path arguments are permitted in a pipe");
-
-      // Node stream
-      context.consume().each { node ->
-        context.writer <<= " $node.path";
+      @Override
+      void provide(Node node) {
+        foo << " $node.path";
         node.remove();
-      };
-    } else {
-      // First collect nodes
-      def nodes = [];
-      paths.each { path ->
-        def node = getNodeByPath(path);
-        if (node == null)
-          throw new ScriptException("Node path does not exist");
-        nodes.add(node);
-      };
-      // Then remove if we have been able to find them all
-      nodes.each { node ->
-        context.writer <<= " $node.path";
-        node.remove();
-      };
+      }
     }
   }
 }

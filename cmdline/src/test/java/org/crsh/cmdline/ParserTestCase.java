@@ -65,7 +65,7 @@ public class ParserTestCase extends TestCase {
     private <T> Test(Class<T> type, String s) {
       try {
         ClassDescriptor<T> command = CommandFactory.create(type);
-        Matcher<T> parser = Matcher.createMatcher(command);
+        Matcher<T> parser = command.matcher();
         CommandMatch<T, ?, ?> match = parser.match(s);
 
         //
@@ -169,7 +169,7 @@ public class ParserTestCase extends TestCase {
       String a;
     }
     new Test(A.class, "foo").assertArgument(0, 3, "foo").assertDone();
-    new Test(A.class, "foo bar").assertArgument(0, 3, "foo").assertDone(" bar");
+    new Test(A.class, "foo bar").assertArgument(0, 3, "foo").assertDone("bar");
     class B {
       @Argument
       List<String> a;
@@ -232,7 +232,7 @@ public class ParserTestCase extends TestCase {
     //
     new Test(A.class, "-o foo").assertOption("o", "foo").assertDone();
     new Test(A.class, "-p foo -p bar").assertOption("p", "foo", "bar").assertDone();
-    new Test(A.class, "-b foo").assertOption("b").assertDone(" foo");
+    new Test(A.class, "-b foo").assertOption("b").assertDone("foo");
     new Test(A.class, "-b").assertOption("b");
     new Test(A.class, "-o foo -p bar -p juu").assertOption("o", "foo").assertOption("p", "bar", "juu").assertDone();
     new Test(A.class, "-o foo -b -p bar -p juu").assertOption("o", "foo").assertOption("b").assertOption("p", "bar", "juu").assertDone();

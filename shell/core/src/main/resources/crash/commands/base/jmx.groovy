@@ -31,6 +31,7 @@ import org.crsh.cmdline.annotations.Option
 import javax.management.MBeanInfo
 import org.crsh.cmdline.annotations.Argument
 import javax.management.ObjectName
+import org.crsh.command.PipeCommand
 
 @Usage("Java Management Extensions")
 class jmx extends CRaSHCommand {
@@ -38,22 +39,20 @@ class jmx extends CRaSHCommand {
   @Usage("todo")
   @Command
   void ls(
-      InvocationContext<Void, ObjectName> context,
+      InvocationContext<ObjectName> context,
        @Usage("The object name pattern")
        @Option(names=["p","pattern"])
        String pattern) {
 
     //
     ObjectName patternName = pattern != null ? ObjectName.getInstance(pattern) : null;;
-
     MBeanServer server = ManagementFactory.getPlatformMBeanServer();
     Set<ObjectInstance> instances = server.queryMBeans(patternName, null);
-
-    //
+    instances.each { instance ->
+      context.provide(instance.objectName)
+    }
+/*
     if (context.piped) {
-      instances.each { instance ->
-        context.produce(instance.objectName)
-      }
     } else {
       UIBuilder ui = new UIBuilder()
       ui.table(weights: [1,3]) {
@@ -68,17 +67,12 @@ class jmx extends CRaSHCommand {
       }
       out << ui;
     }
+*/
   }
 
   @Usage("todo")
   @Command
-  void get(
-      InvocationContext<ObjectName, Void> context,
-      @Option(names=['a','attributes']) List<String> attributes,
-      @Argument List<String> names) {
-
-    MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-
+  PipeCommand<ObjectName> get(@Option(names=['a','attributes']) List<String> attributes) {
 
     // Determine common attributes from all names
     if (attributes == null || attributes.isEmpty()) {
@@ -94,27 +88,42 @@ class jmx extends CRaSHCommand {
     }
 
     //
+    MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
+    //
+    return new PipeCommand<ObjectName>() {
 
-    UIBuilder ui = new UIBuilder()
-    ui.table() {
-      row(bold: true, fg: black, bg: white) {
-        label("OBJECT NAME");
-        attributes.each { attribute ->
-          label(attribute)
-        }
+      List<ObjectName> names = new ArrayList<ObjectName>();
+
+      @Override
+      void provide(ObjectName element) {
+        names.add(element);
       }
-      names.each { name ->
-        ObjectName on = ObjectName.getInstance(name);
-        row() {
-          label(value: on.getCanonicalName(), foreground: red)
-          attributes.each { attribute ->
-            label(String.valueOf(server.getAttribute(on, attribute)))
+
+      @Override
+      void flush() {
+        UIBuilder ui = new UIBuilder()
+        ui.table() {
+          row(bold: true, fg: black, bg: white) {
+            label("OBJECT NAME");
+            attributes.each { attribute ->
+              label(attribute)
+            }
+          }
+          names.each { name ->
+            ObjectName on = ObjectName.getInstance(name);
+            row() {
+              label(value: on.getCanonicalName(), foreground: red)
+              attributes.each { attribute ->
+                label(String.valueOf(server.getAttribute(on, attribute)))
+              }
+            }
           }
         }
+        out << ui;
+        out.flush();
       }
-    }
-    out << ui;
+    };
   }
 
 }

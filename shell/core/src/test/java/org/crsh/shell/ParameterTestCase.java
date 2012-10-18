@@ -30,6 +30,12 @@ public class ParameterTestCase extends AbstractCommandTestCase {
       "}";
 
   public void testShortOption() throws Exception {
+
+    lifeCycle.setCommand("option_command", option_command);
+
+    assertEquals("bar", assertOk("option_command -o bar"));
+
+    //
     String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
         "@Command\n" +
         "public String main() {\n" +

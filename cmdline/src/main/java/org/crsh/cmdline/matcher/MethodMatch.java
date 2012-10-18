@@ -110,7 +110,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
   }
 
   @Override
-  protected Object doInvoke(InvocationContext context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdInvocationException, CmdSyntaxException {
+  protected Object doInvoke(Resolver context, T command, Map<ParameterDescriptor<?>, Object> values) throws CmdInvocationException, CmdSyntaxException {
 
     // Prepare invocation
     MethodDescriptor<T> descriptor = getDescriptor();
@@ -127,7 +127,7 @@ public class MethodMatch<T> extends CommandMatch<T, MethodDescriptor<T>, MethodA
       Object v;
       if (parameter == null) {
         // Attempt to obtain from invocation context
-        v = context.getAttribute(parameterType);
+        v = context.resolve(parameterType);
       } else {
         v = values.get(parameter);
       }

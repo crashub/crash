@@ -24,8 +24,6 @@ import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Option;
-import org.crsh.cmdline.matcher.InvocationContext;
-import org.crsh.cmdline.matcher.Matcher;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,21 +41,21 @@ public class EscapeTestCase extends TestCase {
       String s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = Matcher.createMatcher(desc);
+    Matcher<A> analyzer = desc.matcher();
 
     //
     A a = new A();
-    analyzer.match("-o \" \"").invoke(new InvocationContext(), a);
+    analyzer.match("-o \" \"").invoke(a);
     assertEquals(" ", a.s);
 
     //
     a = new A();
-    analyzer.match("-o \"'\"").invoke(new InvocationContext(), a);
+    analyzer.match("-o \"'\"").invoke(a);
     assertEquals("'", a.s);
 
     //
     a = new A();
-    analyzer.match("-o \" a b").invoke(new InvocationContext(), a);
+    analyzer.match("-o \" a b").invoke(a);
     assertEquals(" a b", a.s);
   }
 
@@ -67,21 +65,21 @@ public class EscapeTestCase extends TestCase {
       List<String> s;
     }
     ClassDescriptor<A> desc = CommandFactory.create(A.class);
-    Matcher<A> analyzer = Matcher.createMatcher(desc);
+    Matcher<A> analyzer = desc.matcher();
 
     //
     A a = new A();
-    analyzer.match("\" \" b").invoke(new InvocationContext(), a);
+    analyzer.match("\" \" b").invoke(a);
     assertEquals(Arrays.asList(" ", "b"), a.s);
 
     //
     a = new A();
-    analyzer.match("\"'\" b").invoke(new InvocationContext(), a);
+    analyzer.match("\"'\" b").invoke(a);
     assertEquals(Arrays.asList("'", "b"), a.s);
 
     //
     a = new A();
-    analyzer.match("\"a b\" c").invoke(new InvocationContext(), a);
+    analyzer.match("\"a b\" c").invoke(a);
     assertEquals(Arrays.asList("a b", "c"), a.s);
   }
 }

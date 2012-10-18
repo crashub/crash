@@ -9,6 +9,7 @@ import org.crsh.cmdline.annotations.Required;
 import org.crsh.jcr.PropertyType
 import org.crsh.cmdline.annotations.Argument
 import org.crsh.jcr.command.Path
+import org.crsh.command.PipeCommand
 
 @Usage("node commands")
 public class node extends org.crsh.jcr.command.JCRCommand {
@@ -28,7 +29,7 @@ Node /bar /juu created
 The addnode command is a <Void,Node> command that produces all the nodes that were created.""")
   @Command
   public void add(
-    InvocationContext<Void, Node> context,
+    InvocationContext<Node> context,
     @Usage("the paths to be created")
     @Man("The paths of the new node to be created, the paths can either be absolute or relative.")
     @Argument List<Path> paths,
@@ -38,7 +39,7 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
     assertConnected();
 
     //
-    context.writer <<= 'Node';
+    out << 'Node';
     paths.each {
 
       def parent;
@@ -58,14 +59,14 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
       }
 
       //
-      context.produce(node);
+      context.provide(node);
 
       //
-      context.writer <<= " $node.path";
+      out << " $node.path";
     }
 
     //
-    context.writer <<= " created";
+    out << " created";
   }
 
   @Command
@@ -92,8 +93,8 @@ Remove a property
 [/]% set foo
 
 set is a <Node,Void> command updating the property of the consumed node stream.""")
-  public void set(
-    InvocationContext<Node, Void> context,
+  public PipeCommand<Node> set(
+    InvocationContext<Node> context,
     @Argument @Usage("the property name") @Man("The name of the property to alter") String propertyName,
     @Argument @Usage("the property value") @Man("The new value of the property") String propertyValue,
     @Option(names=["t","type"]) @Usage("the property type") @Man("The property type to use when it cannot be inferred") PropertyType propertyType) {
@@ -102,15 +103,22 @@ set is a <Node,Void> command updating the property of the consumed node stream."
     propertyType = propertyType ?: PropertyType.STRING;
 
     //
-    if (context.piped) {
-      context.consume().each { node ->
-        update(node, propertyName, propertyValue, propertyType);
+    return new PipeCommand<Node>() {
+      @Override
+      void open() {
+        if (!isPiped()) {
+          // Operate on current node
+          def node = getCurrentNode();
+          update(node, propertyName, propertyValue, propertyType);
+        }
       }
-    } else {
-      // Get the current node
-      def node = getCurrentNode();
-      update(node, propertyName, propertyValue, propertyType);
-    }
+
+      @Override
+      void provide(Node node) {
+        update(node, propertyName, propertyValue, propertyType);
+        context.provide(node)
+      }
+    };
   }
 
   private void update(Node node, String propertyName, String propertyValue, PropertyType propertyType) {

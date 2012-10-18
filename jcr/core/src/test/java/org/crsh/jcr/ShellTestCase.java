@@ -98,10 +98,8 @@ public class ShellTestCase extends AbstractJCRCommandTestCase {
 
   public void testDistribution() throws Exception {
     assertLogin();
-    Iterator<?> produced = assertResponse(ShellResponse.Ok.class, "produce / | node set foo foo_value + node set bar bar_value + consume").getProduced().iterator();
-    assertTrue(produced.hasNext());
-    assertEquals("/", ((Node)produced.next()).getPath());
-    assertFalse(produced.hasNext());
+    String produced = assertOk("produce / | node set foo foo_value | node set bar bar_value | consume");
+    assertEquals("/\n", produced);
     assertEquals("foo_value", groovyShell.evaluate("return session.rootNode.getProperty('foo').string;"));
     assertEquals("bar_value", groovyShell.evaluate("return session.rootNode.getProperty('bar').string;"));
   }

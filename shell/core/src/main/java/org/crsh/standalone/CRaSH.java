@@ -32,7 +32,6 @@ import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Usage;
 import org.crsh.cmdline.matcher.CommandMatch;
-import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.processor.jline.JLineProcessor;
 import org.crsh.shell.Shell;
@@ -298,8 +297,8 @@ public class CRaSH {
 
     //
     CRaSH main = new CRaSH();
-    Matcher<CRaSH> matcher = Matcher.createMatcher("main", main.descriptor);
+    Matcher<CRaSH> matcher = main.descriptor.matcher("main");
     CommandMatch<CRaSH, ?, ?> match = matcher.match(line.toString());
-    match.invoke(new InvocationContext(), new CRaSH());
+    match.invoke(new CRaSH());
   }
 }

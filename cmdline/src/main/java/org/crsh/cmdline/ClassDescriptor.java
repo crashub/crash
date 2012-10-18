@@ -22,6 +22,8 @@ package org.crsh.cmdline;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import static org.crsh.cmdline.Util.indent;
 
+import org.crsh.cmdline.matcher.Matcher;
+import org.crsh.cmdline.matcher.impl.MatcherImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +62,14 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
     //
     this.methodMap = methodMap;
     this.type = type;
+  }
+
+  public Matcher<T> matcher() {
+    return new MatcherImpl<T>(this);
+  }
+
+  public Matcher<T> matcher(String mainName) {
+    return new MatcherImpl<T>(mainName, this);
   }
 
   @Override

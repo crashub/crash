@@ -24,7 +24,7 @@ public abstract class Token {
 
   public final static class Whitespace extends Token {
 
-    Whitespace(int index, String raw) {
+    public Whitespace(int index, String raw) {
       super(index, raw);
     }
 
@@ -63,24 +63,30 @@ public abstract class Token {
       }
 
       public final static class Short extends Option {
-        Short(int index, String raw, String value) {
+        public Short(int index, String raw, String value) {
           super(index, raw, value, value.substring(1));
+        }
+        public Short(int index, String value) {
+          this(index, value, value);
         }
       }
 
       public final static class Long extends Option {
-        Long(int index, String raw, String value) {
+        public Long(int index, String value) {
+          this(index, value, value);
+        }
+        public Long(int index, String raw, String value) {
           super(index, raw, value, value.substring(2));
         }
       }
     }
 
     public final static class Word extends Literal {
-      Word(int index, String raw, String value) {
+      public Word(int index, String raw, String value) {
         super(index, raw, value);
       }
 
-      Word(int index, String value) {
+      public Word(int index, String value) {
         super(index, value);
       }
     }

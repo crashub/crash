@@ -20,10 +20,9 @@
 package org.crsh.shell;
 
 import org.crsh.Pipe;
-import org.crsh.command.AbstractPipeCommand;
+import org.crsh.command.PipeCommand;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.PipeCommand;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.BaseCommandContext;
 import org.crsh.text.Chunk;
@@ -46,7 +45,7 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
   protected RenderPrintWriter writer;
 
   /** . */
-  private final Pipe<P> producer = new AbstractPipeCommand<P>() {
+  private final Pipe<P> producer = new PipeCommand<P>() {
     public void provide(P element) throws IOException {
       if (producedItems.isEmpty()) {
         producedItems = new LinkedList<P>();
@@ -95,7 +94,7 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
       }
       sb.append(arg);
     }
-    CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.createInvoker(sb.toString());
+    CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.resolveInvoker(sb.toString());
     PipeCommand<C> pc = invoker.invoke(this);
     pc.open();
     pc.close();

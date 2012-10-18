@@ -38,12 +38,15 @@ import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.matcher.tokenizer.Token;
 import org.crsh.cmdline.matcher.tokenizer.Tokenizer;
+import org.crsh.cmdline.matcher.tokenizer.TokenizerImpl;
 import org.crsh.cmdline.spi.Completer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 public class MatcherImpl<T> extends Matcher<T> {
 
@@ -70,11 +73,78 @@ public class MatcherImpl<T> extends Matcher<T> {
     return values;
   }
 
+  public CommandMatch<T, ?, ?> match(final String name, Map<String, ?> options, List<?> arguments) {
+
+    class TokenizerImpl extends ArrayList<Token> {
+      int last() {
+        return size() > 0 ? get(size() - 1).getTo() : 0;
+      }
+      @Override
+      public boolean add(Token token) {
+        if (size() > 0) {
+          super.add(new Token.Whitespace(last(), " "));
+        }
+        return super.add(token);
+      }
+
+      public void addOption(String name) {
+        if (name.length() == 1) {
+          add(new Token.Literal.Option.Short(last(), "-" + name));
+        } else {
+          add(new Token.Literal.Option.Long(last(), "--" + name));
+        }
+      }
+    }
+    final TokenizerImpl t = new TokenizerImpl();
+
+    // Add name
+    if (name != null && name.length() > 0) {
+      t.add(new Token.Literal.Word(t.last(), name));
+    }
+
+    // Add options
+    for (Map.Entry<String, ?> option : options.entrySet()) {
+      if (option.getValue() instanceof Boolean) {
+        if ((Boolean)option.getValue()) {
+          t.addOption(option.getKey());
+        }
+      } else {
+        t.addOption(option.getKey());
+        t.add(new Token.Literal.Word(t.last(), option.getValue().toString()));
+      }
+    }
+
+    //
+    for (Object argument : arguments) {
+      t.add(new Token.Literal.Word(t.last(), argument.toString()));
+    }
+
+    //
+    Tokenizer tokenizer = new Tokenizer() {
+
+      Iterator<Token> i = t.iterator();
+
+      @Override
+      protected Token parse() {
+        return i.hasNext() ? i.next() : null;
+      }
+
+      @Override
+      public Delimiter getDelimiter() {
+        return Delimiter.EMPTY;
+      }
+    };
+
+    //
+    return match(tokenizer);
+  }
+
   @Override
   public CommandMatch<T, ?, ?> match(String s) {
+    return match(new TokenizerImpl(s));
+  }
 
-    Tokenizer tokenizer = new Tokenizer(s);
-    Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Mode.INVOKE);
+  private CommandMatch<T, ?, ?> match(Tokenizer tokenizer) {
 
     //
     List<OptionMatch<ClassFieldBinding>> classOptions = new ArrayList<OptionMatch<ClassFieldBinding>>();
@@ -83,10 +153,10 @@ public class MatcherImpl<T> extends Matcher<T> {
     List<ArgumentMatch<MethodArgumentBinding>> methodArguments = new ArrayList<ArgumentMatch<MethodArgumentBinding>>();
     MethodDescriptor<T> method = null;
 
+    Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Mode.INVOKE);
+
+
     //
-    Integer methodEnd = null;
-    Integer classEnd;
-    Event previous = null;
     while (true) {
       Event event = parser.next();
       if (event instanceof Event.Separator) {
@@ -94,25 +164,11 @@ public class MatcherImpl<T> extends Matcher<T> {
       } else if (event instanceof Event.Stop) {
         // We are done
         // Check error status and react to it maybe
-        Event.Stop end = (Event.Stop)event;
-        int endIndex;
-        if (previous instanceof Event.Separator) {
-          endIndex = ((Event.Separator)previous).getToken().getFrom();
-        } else {
-          endIndex = end.getIndex();
-        }
-
         // We try to match the main if none was found
         if (method == null) {
-          classEnd = endIndex;
           if (mainName != null) {
             method = descriptor.getMethod(mainName);
           }
-          if (method != null) {
-            methodEnd = classEnd;
-          }
-        } else {
-          methodEnd = classEnd = endIndex;
         }
         break;
       } else if (event instanceof Event.Option) {
@@ -138,19 +194,10 @@ public class MatcherImpl<T> extends Matcher<T> {
           }
         }
         if (!done) {
-          OptionMatch match = new OptionMatch(desc, optionEvent.getToken().getName(), bilto(optionEvent.getValues()));
-          options.add(match);
+          options.add(new OptionMatch(desc, optionEvent.getToken().getName(), bilto(optionEvent.getValues())));
         }
       } else if (event instanceof Event.Method) {
-        if (event instanceof Event.Method.Implicit) {
-          Event.Method.Implicit implicit = (Event.Method.Implicit)event;
-          classEnd = implicit.getTrigger().getFrom();
-          method = (MethodDescriptor<T>)implicit.getDescriptor();
-        } else {
-          Event.Method.Explicit explicit = (Event.Method.Explicit)event;
-          classEnd = explicit.getToken().getFrom();
-          method = (MethodDescriptor<T>)explicit.getDescriptor();
-        }
+        method = (MethodDescriptor<T>)((Event.Method)event).getDescriptor();
       } else if (event instanceof Event.Argument) {
         Event.Argument argumentEvent = (Event.Argument)event;
         List<Token.Literal> values = argumentEvent.getValues();
@@ -169,13 +216,19 @@ public class MatcherImpl<T> extends Matcher<T> {
           }
         }
       }
-      previous = event;
     }
 
     //
-    ClassMatch classMatch = new ClassMatch(descriptor, classOptions, classArguments, s.substring(classEnd));
+    StringBuilder rest = new StringBuilder();
+    while (tokenizer.hasNext()) {
+      Token token = tokenizer.next();
+      rest.append(token.getRaw());
+    }
+
+    //
+    ClassMatch classMatch = new ClassMatch(descriptor, classOptions, classArguments, rest.toString());
     if (method != null) {
-      return new MethodMatch(classMatch, method, false, methodOptions, methodArguments, s.substring(methodEnd));
+      return new MethodMatch(classMatch, method, false, methodOptions, methodArguments, rest.toString());
     } else {
       return classMatch;
     }
@@ -198,7 +251,7 @@ public class MatcherImpl<T> extends Matcher<T> {
 
   private Completion getCompletion(Completer completer, String s) throws CmdCompletionException {
 
-    Tokenizer tokenizer = new Tokenizer(s);
+    Tokenizer tokenizer = new TokenizerImpl(s);
     Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Mode.COMPLETE);
 
     // Last non separator event

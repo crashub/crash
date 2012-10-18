@@ -8,7 +8,7 @@ import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Argument
 
 import org.crsh.command.PipeCommand
-import org.crsh.command.AbstractPipeCommand
+import org.crsh.command.PipeCommand
 
 @Usage("JVM thread commands")
 @Man("""\
@@ -108,7 +108,7 @@ public class thread extends CRaSHCommand {
       context.writer.println("Interrupted thread $it");
     })
 */
-    return new AbstractPipeCommand<Thread>() {
+    return new PipeCommand<Thread>() {
       void provide(Thread element) throws IOException {
         element.interrupt();
       }
@@ -127,7 +127,7 @@ public class thread extends CRaSHCommand {
       context.writer.println("Stopped thread $it");
     })
 */
-    return new AbstractPipeCommand<Thread>() {
+    return new PipeCommand<Thread>() {
       void provide(Thread element) throws IOException {
         element.stop();
       }
@@ -147,7 +147,7 @@ public class thread extends CRaSHCommand {
       e.printStackTrace(context.writer)
     })
 */
-    return new AbstractPipeCommand<Thread>() {
+    return new PipeCommand<Thread>() {
       void provide(Thread element) throws IOException {
         Exception e = new Exception("Thread ${element.id} stack trace")
         e.setStackTrace(element.stackTrace)

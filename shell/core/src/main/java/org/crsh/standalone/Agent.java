@@ -24,7 +24,6 @@ import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.matcher.CommandMatch;
-import org.crsh.cmdline.matcher.InvocationContext;
 import org.crsh.cmdline.matcher.Matcher;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
@@ -54,9 +53,9 @@ public class Agent {
       public void run() {
         try {
           ClassDescriptor<Agent> c = CommandFactory.create(Agent.class);
-          Matcher<Agent> matcher = Matcher.createMatcher("main", c);
+          Matcher<Agent> matcher = c.matcher("main");
           CommandMatch<Agent, ?, ?> match = matcher.match(agentArgs);
-          match.invoke(new InvocationContext(), new Agent(inst));
+          match.invoke(new Agent(inst));
         } catch (Exception e) {
           e.printStackTrace();
         }
