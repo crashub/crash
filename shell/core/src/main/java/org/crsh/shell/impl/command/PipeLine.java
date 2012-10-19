@@ -31,7 +31,7 @@ import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
 import org.crsh.text.ChunkBuffer;
-import org.crsh.text.RenderContext;
+import org.crsh.text.RenderingContext;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -125,7 +125,7 @@ class PipeLine {
             final PipeProxy proxy = new PipeProxy(session, context, pipeLine.next);
             proxy.setPiped(true);
             proxy.open();
-            next = new ChunkAdapter(new RenderContext() {
+            next = new ChunkAdapter(new RenderingContext() {
               public int getWidth() {
                 return context.getWidth();
               }
@@ -147,7 +147,7 @@ class PipeLine {
         final ChunkBuffer buffer = new ChunkBuffer(context);
 
         //
-        next = new ChunkAdapter(new RenderContext() {
+        next = new ChunkAdapter(new RenderingContext() {
           public int getWidth() {
             return context.getWidth();
           }

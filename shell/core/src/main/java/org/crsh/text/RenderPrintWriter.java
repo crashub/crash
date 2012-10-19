@@ -34,14 +34,14 @@ public class RenderPrintWriter extends PrintWriter {
   /** . */
   private final RenderWriter out;
 
-  public RenderPrintWriter(RenderContext out) {
+  public RenderPrintWriter(RenderingContext out) {
     super(new RenderWriter(out));
 
     //
     this.out = (RenderWriter)super.out;
   }
 
-  public RenderPrintWriter(RenderContext out, Closeable closeable) {
+  public RenderPrintWriter(RenderingContext out, Closeable closeable) {
     super(new RenderWriter(out, closeable));
 
     //

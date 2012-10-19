@@ -21,7 +21,7 @@ package org.crsh.command;
 
 import org.crsh.Pipe;
 import org.crsh.text.Chunk;
-import org.crsh.text.RenderContext;
+import org.crsh.text.RenderingContext;
 import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;
@@ -61,7 +61,7 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
 
   public RenderPrintWriter getWriter() {
     if (writer == null) {
-      writer = new RenderPrintWriter(new RenderContext() {
+      writer = new RenderPrintWriter(new RenderingContext() {
         public int getWidth() {
           return outter.getWidth();
         }

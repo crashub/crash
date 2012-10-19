@@ -23,10 +23,10 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 
-public class RenderWriter extends Writer implements RenderContext {
+public class RenderWriter extends Writer implements RenderingContext {
 
   /** . */
-  private final RenderContext out;
+  private final RenderingContext out;
 
   /** . */
   private final Closeable closeable;
@@ -37,11 +37,11 @@ public class RenderWriter extends Writer implements RenderContext {
   /** . */
   private boolean empty;
 
-  public RenderWriter(RenderContext out) throws NullPointerException {
+  public RenderWriter(RenderingContext out) throws NullPointerException {
     this(out, null);
   }
 
-  public RenderWriter(RenderContext out, Closeable closeable) throws NullPointerException {
+  public RenderWriter(RenderingContext out, Closeable closeable) throws NullPointerException {
     if (out == null) {
       throw new NullPointerException("No null appendable expected");
     }

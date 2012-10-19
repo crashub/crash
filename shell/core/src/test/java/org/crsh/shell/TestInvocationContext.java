@@ -26,7 +26,7 @@ import org.crsh.command.InvocationContext;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.BaseCommandContext;
 import org.crsh.text.Chunk;
-import org.crsh.text.RenderContext;
+import org.crsh.text.RenderingContext;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.ChunkBuffer;
 
@@ -112,7 +112,7 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
   public RenderPrintWriter getWriter() {
     if (writer == null) {
       reader = new ChunkBuffer();
-      writer = new RenderPrintWriter(new RenderContext() {
+      writer = new RenderPrintWriter(new RenderingContext() {
         public int getWidth() {
           return TestInvocationContext.this.getWidth();
         }

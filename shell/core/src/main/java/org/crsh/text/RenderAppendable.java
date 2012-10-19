@@ -27,12 +27,12 @@ import java.util.LinkedList;
 public class RenderAppendable implements Appendable, Pipe<Chunk> {
 
   /** . */
-  private final RenderContext context;
+  private final RenderingContext context;
 
   /** . */
   private LinkedList<Style.Composite> stack;
 
-  public RenderAppendable(RenderContext context) {
+  public RenderAppendable(RenderingContext context) {
     this.context = context;
   }
   

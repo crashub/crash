@@ -20,7 +20,8 @@
 package org.crsh.text;
 
 /**
- * A color chunk.
+ * A color representing the available ansi colors as well as an additional color {@link #def} that symbolize the
+ * default color.
  */
 public enum Color {
 

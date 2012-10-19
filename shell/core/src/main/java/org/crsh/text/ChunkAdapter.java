@@ -35,7 +35,7 @@ public class ChunkAdapter implements Pipe<Object> {
   /** . */
   private final RenderAppendable out;
 
-  public ChunkAdapter(RenderContext out) {
+  public ChunkAdapter(RenderingContext out) {
     this.out = new RenderAppendable(out);
   }
 

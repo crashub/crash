@@ -24,7 +24,7 @@ import org.crsh.command.BaseCommandContext;
 import org.crsh.command.InvocationContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
-import org.crsh.text.RenderContext;
+import org.crsh.text.RenderingContext;
 import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class CRaSHInvocationContext<P> extends BaseCommandContext implements Inv
 
   public RenderPrintWriter getWriter() {
     if (writer == null) {
-      writer = new RenderPrintWriter(new RenderContext() {
+      writer = new RenderPrintWriter(new RenderingContext() {
         public int getWidth() {
           return processContext.getWidth();
         }

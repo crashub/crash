@@ -24,6 +24,9 @@ import org.crsh.cmdline.CommandCompletion;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A shell command.
+ */
 public interface ShellCommand {
 
   /**
@@ -45,13 +48,21 @@ public interface ShellCommand {
   String describe(String line, DescriptionFormat mode);
 
   /**
-   * Provides an invoker for the specified arguments.
+   * Provides an invoker for the command line specified as a command line to parse.
    *
    * @param line the command line arguments
-   * @return the command to provide
+   * @return the command
    */
   CommandInvoker<?, ?> resolveInvoker(String line);
 
+  /**
+   * Provides an invoker for the command line specified under the form of a command, options and arguments.
+   *
+   * @param name the command name, might be null
+   * @param options the options
+   * @param args the arguments
+   * @return the command
+   */
   CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args);
 
 }

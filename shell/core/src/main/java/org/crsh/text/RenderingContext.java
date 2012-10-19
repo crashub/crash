@@ -21,7 +21,10 @@ package org.crsh.text;
 
 import org.crsh.Pipe;
 
-public interface RenderContext extends Pipe<Chunk> {
+/**
+ * The rendering context is a pipe of chunk providing a defined width.
+ */
+public interface RenderingContext extends Pipe<Chunk> {
 
   /**
    * Return the width.
