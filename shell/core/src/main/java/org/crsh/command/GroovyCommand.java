@@ -25,6 +25,7 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.shell.impl.command.CRaSH;
+import org.crsh.text.RenderPrintWriter;
 
 import java.util.LinkedList;
 
@@ -36,27 +37,44 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
   /** The current context. */
   protected CommandContext context;
 
+  /** The current output. */
+  protected RenderPrintWriter out;
+
   protected GroovyCommand() {
     this.stack = null;
     this.context = null;
   }
 
-  public final void pushContext(InvocationContext<?> context) {
+  public final void pushContext(InvocationContext<?> context) throws NullPointerException {
+    if (context == null) {
+      throw new NullPointerException();
+    }
+
+    //
     if (stack == null) {
       stack = new LinkedList<InvocationContext<?>>();
     }
-    stack.addLast(context);
+
+    // Save current context (is null the first time)
+    stack.addLast((InvocationContext)this.context);
+
+    // Set new context
+    this.context = context;
+    this.out = context.getWriter();
   }
 
   public final InvocationContext<?> popContext() {
     if (stack == null || stack.isEmpty()) {
       throw new IllegalStateException("Cannot pop a context anymore from the stack");
     }
-    return stack.removeLast();
+    InvocationContext context = (InvocationContext)this.context;
+    this.context = stack.removeLast();
+    this.out = this.context != null ? ((InvocationContext)this.context).getWriter() : null;
+    return context;
   }
 
   public final InvocationContext<?> peekContext() {
-    return stack == null || stack.isEmpty() ? (InvocationContext<?>)context : stack.getLast();
+    return (InvocationContext<?>)context;
   }
 
   @Override
@@ -66,7 +84,6 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
     }
     catch (MissingMethodException e) {
       if (context instanceof InvocationContext) {
-        InvocationContext invocationContext = (InvocationContext)context;
         CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
           ShellCommand cmd;
@@ -77,15 +94,8 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
             throw new InvokerInvocationException(ce);
           }
           if (cmd != null) {
-            InvocationContext outter;
-            if (stack != null && stack.size() > 0) {
-              outter = stack.getLast();
-            } else {
-              outter = invocationContext;
-            }
-
             // Should we use null instead of "" ?
-            return new ClassDispatcher(cmd, outter).dispatch("", CommandClosure.unwrapArgs(args));
+            return new ClassDispatcher(cmd, this).dispatch("", CommandClosure.unwrapArgs(args));
           }
         }
       }
@@ -118,13 +128,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
         try {
           ShellCommand cmd = crash.getCommand(property);
           if (cmd != null) {
-            InvocationContext outter;
-            if (stack != null && stack.size() > 0) {
-              outter = stack.getLast();
-            } else {
-              outter = (InvocationContext)context;
-            }
-            return new ClassDispatcher(cmd, outter);
+            return new ClassDispatcher(cmd, this);
           }
         } catch (NoSuchCommandException e) {
           throw new InvokerInvocationException(e);

@@ -32,23 +32,67 @@ import org.crsh.text.RenderPrintWriter;
 import org.crsh.util.Strings;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker<Void, Object> {
+public abstract class GroovyScriptCommand extends Script implements ShellCommand, CommandInvoker<Object, Object> {
 
   /** . */
-  private CommandContext context;
+  private LinkedList<InvocationContext<?>> stack;
+
+  /** The current context. */
+  protected CommandContext context;
+
+  /** The current output. */
+  protected RenderPrintWriter out;
 
   /** . */
   private String[] args;
+
+  protected GroovyScriptCommand() {
+    this.stack = null;
+    this.context = null;
+  }
+
+  public final void pushContext(InvocationContext<?> context) throws NullPointerException {
+    if (context == null) {
+      throw new NullPointerException();
+    }
+
+    //
+    if (stack == null) {
+      stack = new LinkedList<InvocationContext<?>>();
+    }
+
+    // Save current context (is null the first time)
+    stack.addLast((InvocationContext)this.context);
+
+    // Set new context
+    this.context = context;
+    this.out = context.getWriter();
+  }
+
+  public final InvocationContext<?> popContext() {
+    if (stack == null || stack.isEmpty()) {
+      throw new IllegalStateException("Cannot pop a context anymore from the stack");
+    }
+    InvocationContext context = (InvocationContext)this.context;
+    this.context = stack.removeLast();
+    this.out = this.context != null ? ((InvocationContext)this.context).getWriter() : null;
+    return context;
+  }
+
+  public final InvocationContext<?> peekContext() {
+    return (InvocationContext<?>)context;
+  }
 
   public final Class<Object> getProducedType() {
     return Object.class;
   }
 
-  public final Class<Void> getConsumedType() {
-    return Void.class;
+  public final Class<Object> getConsumedType() {
+    return Object.class;
   }
 
   @Override
@@ -71,7 +115,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
             throw new InvokerInvocationException(ce);
           }
           if (cmd != null) {
-            ClassDispatcher dispatcher = new ClassDispatcher(cmd, ic);
+            ClassDispatcher dispatcher = new ClassDispatcher(cmd, this);
             return dispatcher.dispatch("", CommandClosure.unwrapArgs(args));
           }
         }
@@ -99,7 +143,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
           try {
             ShellCommand cmd = crash.getCommand(property);
             if (cmd != null) {
-              return new ClassDispatcher(cmd, (InvocationContext<?>)context);
+              return new ClassDispatcher(cmd, this);
             }
           } catch (NoSuchCommandException e) {
             throw new InvokerInvocationException(e);
@@ -125,8 +169,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return null;
   }
 
-  public final PipeCommand<Void> invoke(final InvocationContext<Object> context) throws ScriptException {
-    return new PipeCommand<Void>() {
+  public final PipeCommand<Object> invoke(final InvocationContext<Object> context) throws ScriptException {
+    return new PipeCommand<Object>() {
 
       @Override
       public void open() throws ScriptException {
@@ -168,7 +212,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
       }
 
       @Override
-      public void provide(Void element) throws IOException {
+      public void provide(Object element) throws IOException {
         // Should never be called
       }
 

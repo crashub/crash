@@ -90,7 +90,7 @@ public class CommandClosure extends Closure {
     if (this instanceof MethodDispatcher) {
       ret = new MethodDispatcher(((MethodDispatcher)this).dispatcher, ((MethodDispatcher)this).name);
     } else {
-      ret = new ClassDispatcher(((ClassDispatcher)this).command, ((ClassDispatcher)this).outter);
+      ret = new ClassDispatcher(((ClassDispatcher)this).command, ((ClassDispatcher)this).owner);
     }
 
     // We merge options

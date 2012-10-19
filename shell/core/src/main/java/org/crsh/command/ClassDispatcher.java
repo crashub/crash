@@ -36,17 +36,17 @@ import java.util.Map;
 final class ClassDispatcher extends CommandClosure {
 
   /** . */
-  final InvocationContext outter;
+  final Object owner;
 
   /** . */
   final ShellCommand command;
 
-  ClassDispatcher(ShellCommand command, InvocationContext outter) {
+  ClassDispatcher(ShellCommand command, Object owner) {
     super(new Object());
 
     //
     this.command = command;
-    this.outter = outter;
+    this.owner = owner;
   }
 
   @Override
@@ -142,6 +142,16 @@ final class ClassDispatcher extends CommandClosure {
     CommandInvoker<Void, Void> invoker = (CommandInvoker<Void, Void>)command.resolveInvoker(name, invokerOptions, invokerArgs);
 
     //
+    InvocationContext context;
+    if (owner instanceof CRaSHCommand) {
+      context = ((CRaSHCommand)owner).peekContext();
+    } else if (owner instanceof GroovyScriptCommand) {
+      context = (InvocationContext)((GroovyScriptCommand)owner).peekContext();
+    } else {
+      throw new UnsupportedOperationException("todo");
+    }
+
+    //
     Pipe producer;
     if (closure != null) {
       PipeCommand producerPipe;
@@ -165,11 +175,11 @@ final class ClassDispatcher extends CommandClosure {
       producerPipe.setPiped(true);
       producer = producerPipe;
     } else {
-      producer = outter;
+      producer = context;
     }
 
     //
-    InnerInvocationContext inner = new InnerInvocationContext(outter, producer);
+    InnerInvocationContext inner = new InnerInvocationContext(context, producer);
     PipeCommand<Void> abc = invoker.invoke(inner);
     return new PipeCommandProxy(abc, producer);
   }

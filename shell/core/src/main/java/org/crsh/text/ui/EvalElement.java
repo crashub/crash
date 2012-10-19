@@ -20,7 +20,9 @@
 package org.crsh.text.ui;
 
 import groovy.lang.Closure;
+import groovy.lang.GroovyObjectSupport;
 import org.crsh.command.CRaSHCommand;
+import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.Renderable;
@@ -40,10 +42,16 @@ public class EvalElement extends Element {
     Object owner = closure.getOwner();
 
     //
-    CRaSHCommand cmd;
+    final InvocationContext ctx;
+    Object cmd;
     while (true) {
       if (owner instanceof CRaSHCommand) {
-        cmd = (CRaSHCommand)owner;
+        cmd = owner;
+        ctx = ((CRaSHCommand)cmd).peekContext();
+        break;
+      } else if (owner instanceof GroovyScriptCommand) {
+        cmd = owner;
+        ctx = ((GroovyScriptCommand)cmd).peekContext();
         break;
       } else if (owner instanceof Closure) {
         owner = ((Closure)owner).getOwner();
@@ -54,9 +62,9 @@ public class EvalElement extends Element {
 
     //
     final LinkedList<Renderer> renderers = new LinkedList<Renderer>();
-    final InvocationContext ctx = cmd.peekContext();
 
-    InvocationContext nested = new InvocationContext() {
+    //
+    final InvocationContext nested = new InvocationContext() {
 
       /** . */
       private LinkedList<Object> buffer = new LinkedList<Object>();
@@ -65,7 +73,7 @@ public class EvalElement extends Element {
       private Renderable renderable;
 
       public RenderPrintWriter getWriter() {
-        throw new UnsupportedOperationException("Implement me");
+        return ctx.getWriter();
       }
 
       public Map<String, Object> getSession() {
@@ -112,12 +120,20 @@ public class EvalElement extends Element {
       }
     };
 
-    cmd.pushContext(nested);
+    if (cmd instanceof CRaSHCommand) {
+      ((CRaSHCommand)cmd).pushContext(nested);
+    } else {
+      ((GroovyScriptCommand)cmd).pushContext(nested);
+    }
     try {
       closure.call();
     }
     finally {
-      cmd.popContext();
+      if (cmd instanceof CRaSHCommand) {
+        ((CRaSHCommand)cmd).popContext();
+      } else {
+        ((GroovyScriptCommand)cmd).popContext();
+      }
     }
 
     // Be sure to flush

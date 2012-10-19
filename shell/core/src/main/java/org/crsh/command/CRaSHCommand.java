@@ -59,9 +59,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   /** The unmatched text, only valid during an invocation. */
   protected String unmatched;
 
-  /** The current output. */
-  protected RenderPrintWriter out;
-
   /** . */
   @Option(names = {"h","help"})
   @Usage("command usage")
@@ -269,9 +266,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           } else {
 
             //
-            CRaSHCommand.this.context = context;
+            pushContext(context);
+
+            //
             CRaSHCommand.this.unmatched = methodMatch.getRest();
-            CRaSHCommand.this.out = context.getWriter();
 
             //
             final Resolver resolver = new Resolver() {
@@ -318,6 +316,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
                 @Override
                 public void close() throws ScriptException {
+                  popContext();
                 }
               };
             } else {
