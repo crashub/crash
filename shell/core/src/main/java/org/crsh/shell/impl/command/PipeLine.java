@@ -30,6 +30,7 @@ import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
+import org.crsh.text.ChunkBuffer;
 import org.crsh.text.RenderContext;
 
 import java.io.IOException;
@@ -103,6 +104,7 @@ class PipeLine {
     public void open() throws ScriptException {
       if (pipeLine.next != null) {
 
+        // Open the next
         // Try to do some type adaptation
         if (pipeLine.invoker.getProducedType() == Chunk.class) {
           if (pipeLine.next.invoker.getConsumedType() == Chunk.class) {
@@ -136,16 +138,24 @@ class PipeLine {
             });
           }
         }
+
       } else {
+
+        // We use this chunk buffer to buffer stuff
+        // but also because it optimises the chunks
+        // which provides better perormances on the client
+        final ChunkBuffer buffer = new ChunkBuffer(context);
+
+        //
         next = new ChunkAdapter(new RenderContext() {
           public int getWidth() {
             return context.getWidth();
           }
           public void provide(Chunk element) throws IOException {
-            context.provide(element);
+            buffer.provide(element);
           }
           public void flush() throws IOException {
-            context.flush();
+            buffer.flush();
           }
         });
       }
@@ -157,7 +167,7 @@ class PipeLine {
           session.crash.getContext().getAttributes(),
           next);
 
-      //
+      // Now open command
       command = pipeLine.invoker.invoke(invocationContext);
       command.setPiped(isPiped());
       command.open();
@@ -170,7 +180,12 @@ class PipeLine {
     }
 
     public void flush() throws IOException {
+
+      // First flush the command
       command.flush();
+
+      // Flush the next because the command may not call it
+      next.flush();
     }
 
     public void close() throws ScriptException {

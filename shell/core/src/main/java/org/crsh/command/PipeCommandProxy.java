@@ -53,6 +53,9 @@ class PipeCommandProxy<E> extends PipeCommand<E> {
   @Override
   public void flush() throws ScriptException, IOException {
     delegate.flush();
+    if (next != null && next instanceof PipeCommand) {
+      ((PipeCommand)next).flush();
+    }
   }
 
   @Override

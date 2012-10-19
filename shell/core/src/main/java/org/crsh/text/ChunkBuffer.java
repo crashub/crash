@@ -37,10 +37,21 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Pipe<Chunk> {
   /** . */
   private Style next;
 
+  /** Where we flush. */
+  private final Pipe<Chunk> out;
+
   public ChunkBuffer() {
     this.chunks = new LinkedList<Chunk>();
     this.current = Style.style();
     this.next = Style.style();
+    this.out = null;
+  }
+
+  public ChunkBuffer(Pipe<Chunk> out) {
+    this.chunks = new LinkedList<Chunk>();
+    this.current = Style.style();
+    this.next = Style.style();
+    this.out = out;
   }
 
   public Iterator<Chunk> iterator() {
@@ -125,7 +136,16 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Pipe<Chunk> {
     append(element);
   }
 
-  public void flush() {
+  public void flush() throws IOException {
+    if (out != null) {
+      for (Chunk chunk : chunks) {
+        out.provide(chunk);
+      }
+    }
+    chunks.clear();
+    if (out != null) {
+      out.flush();
+    }
   }
 
   public ChunkBuffer append(ChunkBuffer s) throws NullPointerException {
