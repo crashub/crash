@@ -35,6 +35,13 @@ public interface Term extends Closeable, Pipe<Chunk> {
   int getWidth();
 
   /**
+   * Returns the term height in chars. When the value is not positive it means the value could not be determined.
+   *
+   * @return the term height
+   */
+  int getHeight();
+
+  /**
    * Retrieves the value of a property specified by this Term
    *
    * @param name name of the term property

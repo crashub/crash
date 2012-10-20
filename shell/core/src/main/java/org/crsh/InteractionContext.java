@@ -30,6 +30,14 @@ public interface InteractionContext<E> extends Pipe<E> {
   int getWidth();
 
   /**
+   * Returns the term height in chars. When the value is not positive it means
+   * the value could not be determined.
+   *
+   * @return the term height
+   */
+  int getHeight();
+
+  /**
    * Returns a generic property, usually this property is resolved by the
    * shell client.
    *

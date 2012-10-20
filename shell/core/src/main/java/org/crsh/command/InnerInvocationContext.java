@@ -51,6 +51,10 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
     return outter.getWidth();
   }
 
+  public int getHeight() {
+    return outter.getHeight();
+  }
+
   public String getProperty(String propertyName) {
     return outter.getProperty(propertyName);
   }

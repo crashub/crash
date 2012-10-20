@@ -129,6 +129,7 @@ public class ServerAutomaton implements Shell {
     try {
       out.writeObject(ClientMessage.EXECUTE);
       out.writeObject(processContext.getWidth());
+      out.writeObject(processContext.getHeight());
       out.writeObject(process.line);
       out.flush();
 
@@ -139,6 +140,11 @@ public class ServerAutomaton implements Shell {
           case GET_WIDTH:
             int width = processContext.getWidth();
             out.writeObject(width);
+            out.flush();
+            break;
+          case GET_HEIGHT:
+            int height = processContext.getHeight();
+            out.writeObject(height);
             out.flush();
             break;
           case READLINE:

@@ -145,6 +145,10 @@ public class SSHIO implements TermIO {
     return command.getContext().getWidth();
   }
 
+  public int getHeight() {
+    return command.getContext().getHeight();
+  }
+
   public String getProperty(String name) {
     return command.getContext().getProperty(name);
   }

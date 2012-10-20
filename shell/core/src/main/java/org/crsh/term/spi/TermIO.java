@@ -43,6 +43,13 @@ public interface TermIO extends Closeable {
   int getWidth();
 
   /**
+   * Returns the term height in chars. When the value is not positive it means the value could not be determined.
+   *
+   * @return the term height
+   */
+  int getHeight();
+
+  /**
    * Retrieves the value of a property specified by this TermIO
    *
    * @param name the name of the property

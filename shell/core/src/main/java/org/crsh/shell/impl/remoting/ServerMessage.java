@@ -23,6 +23,8 @@ public enum ServerMessage {
 
   GET_WIDTH,
 
+  GET_HEIGHT,
+
   READLINE,
 
   CHUNK,

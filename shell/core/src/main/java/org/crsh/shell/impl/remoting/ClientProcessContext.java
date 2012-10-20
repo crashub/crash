@@ -43,6 +43,10 @@ class ClientProcessContext implements ShellProcessContext {
     return client.getWidth();
   }
 
+  public int getHeight() {
+    return client.getHeight();
+  }
+
   public String getProperty(String name) {
     return null;
   }

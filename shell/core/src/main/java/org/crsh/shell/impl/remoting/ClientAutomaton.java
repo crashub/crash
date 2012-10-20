@@ -54,6 +54,9 @@ public class ClientAutomaton implements Runnable {
   /** . */
   Integer width;
 
+  /** . */
+  Integer height;
+
   public ClientAutomaton(ObjectOutputStream out, ObjectInputStream in, Shell shell) {
     CloseableList listeners = new CloseableList();
     listeners.add(in);
@@ -64,6 +67,8 @@ public class ClientAutomaton implements Runnable {
     this.out = out;
     this.shell = shell;
     this.listeners = listeners;
+    this.width = null;
+    this.height = null;
   }
 
   public ClientAutomaton(InputStream in,OutputStream out, Shell shell) throws IOException {
@@ -98,6 +103,7 @@ public class ClientAutomaton implements Runnable {
             break;
           case EXECUTE:
             width = (Integer) in.readObject();
+            height = (Integer) in.readObject();
             String line = (String)in.readObject();
             ShellProcess process = shell.createProcess(line);
             current = new ClientProcessContext(this, process);
@@ -127,5 +133,8 @@ public class ClientAutomaton implements Runnable {
   public int getWidth() {
     return width;
   }
-  
+
+  public int getHeight() {
+    return height;
+  }
 }

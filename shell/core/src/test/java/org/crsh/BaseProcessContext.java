@@ -58,6 +58,9 @@ public class BaseProcessContext implements ShellProcessContext {
   private int width;
 
   /** . */
+  private int height;
+
+  /** . */
   private ShellProcess process;
 
   private BaseProcessContext(ShellProcess process) {
@@ -65,6 +68,7 @@ public class BaseProcessContext implements ShellProcessContext {
     this.latch = new CountDownLatch(1);
     this.response = null;
     this.width = 32;
+    this.height = 40;
   }
 
   private BaseProcessContext(Shell shell, String line) {
@@ -113,6 +117,14 @@ public class BaseProcessContext implements ShellProcessContext {
 
   public void setWidth(int width) {
     this.width = width;
+  }
+
+  public int getHeight() {
+    return height;
+  }
+
+  public void setHeight(int height) {
+    this.height = height;
   }
 
   public String getProperty(String name) {

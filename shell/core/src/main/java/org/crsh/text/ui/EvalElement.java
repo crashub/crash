@@ -88,6 +88,10 @@ public class EvalElement extends Element {
         return ctx.getWidth();
       }
 
+      public int getHeight() {
+        return ctx.getHeight();
+      }
+
       public String getProperty(String propertyName) {
         return ctx.getProperty(propertyName);
       }

@@ -70,7 +70,11 @@ public class SyncTerm implements Term {
   }
 
   public int getWidth() {
-    return 50;
+    return 32;
+  }
+
+  public int getHeight() {
+    return 40;
   }
 
   public String getProperty(String name) {

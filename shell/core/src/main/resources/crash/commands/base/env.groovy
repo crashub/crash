@@ -8,6 +8,7 @@ class env extends CRaSHCommand
   @Command
   void main() {
     out << "width: $context.width\n"
+    out << "height: $context.height\n"
     out << "session: $context.session\n"
     out << "attributes: $context.attributes\n"
  }

@@ -57,6 +57,10 @@ public class CRaSHInvocationContext<P> extends BaseCommandContext implements Inv
     return processContext.getWidth();
   }
 
+  public int getHeight() {
+    return processContext.getHeight();
+  }
+
   public String getProperty(String propertyName) {
     return processContext.getProperty(propertyName);
   }

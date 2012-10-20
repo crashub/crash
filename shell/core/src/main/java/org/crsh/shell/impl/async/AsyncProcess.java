@@ -66,6 +66,10 @@ public class AsyncProcess implements ShellProcess {
       return caller.getWidth();
     }
 
+    public int getHeight() {
+      return caller.getHeight();
+    }
+
     public String getProperty(String name) {
       return caller.getProperty(name);
     }

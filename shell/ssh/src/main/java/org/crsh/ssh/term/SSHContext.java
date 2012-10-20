@@ -61,6 +61,20 @@ public class SSHContext {
     return width;
   }
 
+  public int getHeight() {
+    String s = env.getEnv().get(Environment.ENV_COLUMNS);
+    int width = 0;
+    if (s != null) {
+      try {
+        width = Integer.parseInt(s);
+      }
+      catch (NumberFormatException e) {
+        log.warn("Could not parse ssh term width " + s);
+      }
+    }
+    return width;
+  }
+
   public String getProperty(String key)
   {
     return env.getEnv().get(key);

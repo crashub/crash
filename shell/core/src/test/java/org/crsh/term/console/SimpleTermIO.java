@@ -63,6 +63,10 @@ public class SimpleTermIO implements TermIO {
     throw new UnsupportedOperationException();
   }
 
+  public int getHeight() {
+    throw new UnsupportedOperationException();
+  }
+
   public String getProperty(String name) {
     throw new UnsupportedOperationException();
   }

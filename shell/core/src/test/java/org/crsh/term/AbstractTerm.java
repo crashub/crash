@@ -29,6 +29,10 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
+  public int getHeight() {
+    throw new UnsupportedOperationException();
+  }
+
   public String getProperty(String name) {
     throw new UnsupportedOperationException();
   }

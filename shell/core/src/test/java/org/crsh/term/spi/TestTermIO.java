@@ -45,12 +45,16 @@ public class TestTermIO implements TermIO {
   private int width;
 
   /** . */
+  private int height;
+
+  /** . */
   private Map<String, String> properties;
 
   public TestTermIO() throws IOException {
     this.inner = new LinkedBlockingQueue<Integer>();
     this.outter = new LinkedBlockingQueue<String>();
     this.width = 32;
+    this.height = 40;
     this.properties = new HashMap<String, String>();
   }
 
@@ -67,6 +71,10 @@ public class TestTermIO implements TermIO {
 
   public int getWidth() {
     return width;
+  }
+
+  public int getHeight() {
+    return height;
   }
 
   public void setProperty(String name, String value) {

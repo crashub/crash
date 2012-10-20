@@ -51,6 +51,10 @@ class JLineProcessContext implements ShellProcessContext {
     return processor.reader.getTerminal().getWidth();
   }
 
+  public int getHeight() {
+    return processor.reader.getTerminal().getHeight();
+  }
+
   public String getProperty(String name) {
     return null;
   }

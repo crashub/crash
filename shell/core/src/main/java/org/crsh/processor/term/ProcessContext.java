@@ -49,6 +49,10 @@ class ProcessContext implements ShellProcessContext, Runnable {
     return processor.term.getWidth();
   }
 
+  public int getHeight() {
+    return processor.term.getHeight();
+  }
+
   public String getProperty(String name) {
     return processor.term.getProperty(name);
   }

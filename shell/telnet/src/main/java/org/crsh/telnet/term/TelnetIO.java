@@ -63,6 +63,10 @@ public class TelnetIO implements TermIO {
     return termIO.getColumns();
   }
 
+  public int getHeight() {
+    return termIO.getRows();
+  }
+
   public String getProperty(String name) {
     ConnectionData data = conn.getConnectionData();
     if (data != null)

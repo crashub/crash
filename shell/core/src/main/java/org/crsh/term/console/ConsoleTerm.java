@@ -72,6 +72,10 @@ public class ConsoleTerm implements Term {
     return io.getWidth();
   }
 
+  public int getHeight() {
+    return io.getHeight();
+  }
+
   public String getProperty(String name) {
     return io.getProperty(name);
   }

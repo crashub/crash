@@ -75,6 +75,10 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
     return 32;
   }
 
+  public int getHeight() {
+    return 40;
+  }
+
   public String getProperty(String propertyName) {
     return null;
   }
