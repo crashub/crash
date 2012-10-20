@@ -36,6 +36,9 @@ public class TableElement extends Element {
   /** The column layout. */
   protected ColumnLayout layout;
 
+  /** The table height, null means no limit. */
+  protected Integer height;
+
   public TableElement() {
     this.layout = ColumnLayout.rightToLeft();
   }
@@ -51,6 +54,17 @@ public class TableElement extends Element {
     rows.add(row);
     row.parent = this;
     return this;
+  }
+
+  public Integer getHeight() {
+    return height;
+  }
+
+  public void setHeight(Integer height) throws IllegalArgumentException {
+    if (height != null && height < 0) {
+      throw new IllegalArgumentException("No negative table height accepted");
+    }
+    this.height = height;
   }
 
   public ColumnLayout getLayout() {

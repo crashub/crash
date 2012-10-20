@@ -79,7 +79,9 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
     } else if ("label".equals(name)) {
       element = new LabelElement(value);
     } else if ("table".equals(name)) {
-      element = new TableElement();
+      TableElement table = new TableElement();
+      table.setHeight((Integer)attributes.get("height"));
+      element = table;
     } else if ("row".equals(name)) {
       element = new RowElement();
     } else if ("header".equals(name)) {

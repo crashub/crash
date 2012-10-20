@@ -27,6 +27,11 @@ import org.crsh.term.spi.TermIOHandler;
 public class TelnetHandler implements Shell {
 
   public void run(Connection conn) {
+
+    // Prevent screen flickering
+    conn.getTerminalIO().setAutoflushing(false);
+
+    //
     TelnetIO io = new TelnetIO(conn);
     TelnetLifeCycle lifeCycle = TelnetLifeCycle.getLifeCycle(conn);
     TermIOHandler handler = lifeCycle.getHandler();

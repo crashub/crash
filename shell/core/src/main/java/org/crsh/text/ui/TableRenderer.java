@@ -43,6 +43,9 @@ class TableRenderer extends Renderer {
   /** . */
   private final Style.Composite style;
 
+  /** . */
+  private final Integer height;
+
   TableRenderer(TableElement table) {
 
     //
@@ -56,6 +59,7 @@ class TableRenderer extends Renderer {
     this.layout = table.getLayout();
     this.border = table.getBorder();
     this.style = table.getStyle();
+    this.height = table.getHeight();
   }
 
   private int getMaxColSize() {
@@ -163,22 +167,33 @@ class TableRenderer extends Renderer {
 
       //
       return new LineReader() {
+
+        /** The current height. */
+        int height = 0;
+
         public boolean hasLine() {
-          while (renderers.size() > 0) {
-            Object first = renderers.peekFirst();
-            if (first instanceof LineReader) {
-              if (((LineReader)first).hasLine()) {
-                return true;
+          if (TableRenderer.this.height != null && height >= TableRenderer.this.height) {
+            return false;
+          } else {
+            while (renderers.size() > 0) {
+              Object first = renderers.peekFirst();
+              if (first instanceof LineReader) {
+                if (((LineReader)first).hasLine()) {
+                  return true;
+                } else {
+                  renderers.removeFirst();
+                }
               } else {
-                renderers.removeFirst();
+                return true;
               }
-            } else {
-              return true;
             }
+            return false;
           }
-          return false;
         }
         public void renderLine(RenderAppendable to) {
+          if (!hasLine()) {
+            throw new IllegalStateException();
+          }
           while (renderers.size() > 0) {
             Object first = renderers.peek();
             if (first instanceof LineReader) {
@@ -210,6 +225,7 @@ class TableRenderer extends Renderer {
               break;
             }
           }
+          height++;
         }
       };
     }
