@@ -76,7 +76,7 @@ class RowRenderer extends Renderer {
     }
 
     //
-    widths = ColumnLayout.rightToLeft().compute(border, width, widths, minWidths);
+    widths = Layout.rightToLeft().compute(border, width, widths, minWidths);
 
     //
     if (widths == null) {

@@ -111,15 +111,15 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
     if (element instanceof TableElement) {
       TableElement table = (TableElement)element;
 
-      // Weights
-      Object weightsAttr = attributes.get("weights");
-      if (weightsAttr instanceof Iterable) {
-        List<Integer> list = Utils.list((Iterable<Integer>)weightsAttr);
+      // Columns
+      Object columns = attributes.get("columns");
+      if (columns instanceof Iterable) {
+        List<Integer> list = Utils.list((Iterable<Integer>)columns);
         int[] weights = new int[list.size()];
         for (int i = 0;i < weights.length;i++) {
           weights[i] = list.get(i);
         }
-        table.layout(ColumnLayout.weighted(weights));
+        table.withColumnLayout(Layout.weighted(weights));
       }
 
       // Border

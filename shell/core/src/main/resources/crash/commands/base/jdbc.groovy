@@ -198,7 +198,7 @@ class jdbc extends CRaSHCommand {
     ResultSet rs = md.getTables(null, null, "%", null);
     def ui = new UIBuilder();
     try {
-      ui.table(weights: [1,1,1]) {
+      ui.table(columns: [1,1,1]) {
         header(bold: true, fg: black, bg: white) {
           label("NAME");
           label("CAT");
@@ -227,7 +227,7 @@ class jdbc extends CRaSHCommand {
     }
     DatabaseMetaData md = connection.getMetaData();
     def ui = new UIBuilder();
-    ui.table(weights: [2,2,1,1], border: dashed) {
+    ui.table(columns: [2,2,1,1], border: dashed) {
       header(bold: true, fg: black, bg: white) {
         label("COLUMN")
         label("TYPE")
@@ -264,7 +264,7 @@ class jdbc extends CRaSHCommand {
     if (connection == null) {
       throw new ScriptException("Not connected");
     }
-    // weights : 1,2,2,1,1
+    // columns : 1,2,2,1,1
     DatabaseMetaData md = connection.getMetaData();
 
     //

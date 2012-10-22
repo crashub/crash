@@ -34,17 +34,17 @@ public class TableElement extends Element {
   protected Border border;
 
   /** The column layout. */
-  protected ColumnLayout layout;
+  protected Layout columnLayout;
 
   /** The table height, null means no limit. */
   protected Integer height;
 
   public TableElement() {
-    this.layout = ColumnLayout.rightToLeft();
+    this.columnLayout = Layout.rightToLeft();
   }
 
-  public TableElement(int ... weights) {
-    this.layout = ColumnLayout.weighted(weights);
+  public TableElement(int ... columns) {
+    this.columnLayout = Layout.weighted(columns);
   }
 
   public TableElement add(RowElement row) {
@@ -67,8 +67,8 @@ public class TableElement extends Element {
     this.height = height;
   }
 
-  public ColumnLayout getLayout() {
-    return layout;
+  public Layout getColumnLayout() {
+    return columnLayout;
   }
 
   public Border getBorder() {
@@ -79,8 +79,8 @@ public class TableElement extends Element {
     return new TableRenderer(this);
   }
 
-  public TableElement layout(ColumnLayout layout) {
-    this.layout = layout;
+  public TableElement withColumnLayout(Layout columnLayout) {
+    this.columnLayout = columnLayout;
     return this;
   }
 

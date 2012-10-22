@@ -267,7 +267,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     UIBuilder res = (UIBuilder)shell.evaluate(
         "import org.crsh.text.ui.UIBuilder;\n" +
             "def builder = new UIBuilder();\n" +
-            "builder.table(weights: [1,1]) {\n" +
+            "builder.table(columns: [1,1]) {\n" +
             "row {\n" +
             "}\n" +
             "};\n" +
@@ -275,7 +275,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     );
     assertEquals(1, res.getElements().size());
     TableElement table = assertInstance(TableElement.class, res.getElements().get(0));
-    ColumnLayout.Weighted layout = assertInstance(ColumnLayout.Weighted.class, table.getLayout());
+    Layout.Weighted layout = assertInstance(Layout.Weighted.class, table.getColumnLayout());
     assertTrue(Arrays.equals(new int[]{1,1}, layout.getWeights()));
   }
 

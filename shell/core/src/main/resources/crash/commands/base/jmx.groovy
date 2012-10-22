@@ -55,7 +55,7 @@ class jmx extends CRaSHCommand {
     if (context.piped) {
     } else {
       UIBuilder ui = new UIBuilder()
-      ui.table(weights: [1,3]) {
+      ui.table(columns: [1,3]) {
         row(bold: true, fg: black, bg: white) {
           label("CLASS NAME"); label("OBJECT NAME")
         }

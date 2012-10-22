@@ -29,7 +29,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   public void testSimple() throws Exception {
 
     TableElement table = new TableElement();
-    table.layout(ColumnLayout.rightToLeft());
+    table.withColumnLayout(Layout.rightToLeft());
 
     table.
         add(row().
@@ -77,7 +77,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     table.add(row);
 
     //
-    table.layout(ColumnLayout.rightToLeft());
+    table.withColumnLayout(Layout.rightToLeft());
 
     //
     assertRender(table, 11, "foobar     ");
@@ -94,7 +94,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     assertRender(table, 0);
 
     //
-    table.layout(ColumnLayout.weighted(1, 1));
+    table.withColumnLayout(Layout.weighted(1, 1));
 
     //
     assertRender(table, 11, "foo   bar  ");
@@ -110,7 +110,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     assertRender(table, 0);
 
     //
-    table.layout(ColumnLayout.weighted(1, 2));
+    table.withColumnLayout(Layout.weighted(1, 2));
 
     //
     assertRender(table, 11, "foo bar    ");
@@ -133,7 +133,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     table.add(row);
 
     //
-    table.layout(ColumnLayout.rightToLeft());
+    table.withColumnLayout(Layout.rightToLeft());
 
     //
     assertRender(table, 11, " -------   ", "|foo|bar|  ", " -------   ");
@@ -150,7 +150,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     assertRender(table, 0);
 
     //
-    table.layout(ColumnLayout.weighted(1, 1));
+    table.withColumnLayout(Layout.weighted(1, 1));
 
     //
     assertRender(table, 11, " --------- ", "|foo |bar |", " --------- ");
@@ -167,7 +167,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     assertRender(table, 0);
 
     //
-    table.layout(ColumnLayout.weighted(1, 2));
+    table.withColumnLayout(Layout.weighted(1, 2));
 
     //
     assertRender(table, 11, " --------- ", "|foo|bar  |", " --------- ");
@@ -186,7 +186,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
 
   public void testCosmetic() throws Exception {
     TableElement table = new TableElement();
-    table.layout(ColumnLayout.rightToLeft());
+    table.withColumnLayout(Layout.rightToLeft());
     RowElement row = new RowElement().add(new LabelElement("foo", 5), new LabelElement("This text is larger to be displayed in a cell of 32", 5));
     table.add(row);
     assertRender(table, 32,
@@ -196,7 +196,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
 
   public void testCosmeticWithBorder() throws Exception {
     TableElement table = new TableElement();
-    table.layout(ColumnLayout.rightToLeft());
+    table.withColumnLayout(Layout.rightToLeft());
     RowElement row = new RowElement().add(new LabelElement("foo", 5), new LabelElement("This text is larger to be displayed in a cell of 32", 5));
     table.border(Border.dashed);
     table.add(row);
@@ -210,7 +210,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   public void testBorderStyle() throws Exception {
 
     TableElement table = new TableElement();
-    table.layout(ColumnLayout.rightToLeft());
+    table.withColumnLayout(Layout.rightToLeft());
     table.border(Border.dashed);
 
     table.

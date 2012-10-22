@@ -35,7 +35,7 @@ class TableRenderer extends Renderer {
   private final List<RowRenderer> rows;
 
   /** . */
-  private final ColumnLayout layout;
+  private final Layout layout;
 
   /** . */
   private final Border border;
@@ -56,7 +56,7 @@ class TableRenderer extends Renderer {
 
     //
     this.rows = rows;
-    this.layout = table.getLayout();
+    this.layout = table.getColumnLayout();
     this.border = table.getBorder();
     this.style = table.getStyle();
     this.height = table.getHeight();
