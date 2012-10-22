@@ -33,4 +33,11 @@ public interface RenderingContext extends Pipe<Chunk> {
    */
   int getWidth();
 
+  /**
+   * Returns the height.
+   *
+   * @return the height
+   */
+  int getHeight();
+
 }

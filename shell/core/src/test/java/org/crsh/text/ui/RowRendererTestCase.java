@@ -26,8 +26,8 @@ public class RowRendererTestCase extends AbstractRendererTestCase {
     RowElement row = new RowElement().add(new LabelElement("foo"), new LabelElement("bar"));
 
     //
-    assertRender(row, 8, "foobar  ");
-    assertRender(row, 7, "foobar ");
+    assertRender(row, 8, "foobar");
+    assertRender(row, 7, "foobar");
     assertRender(row, 6, "foobar");
     assertRender(row, 5, "fooba", "   r ");
     assertRender(row, 4, "foob", "   a", "   r");
@@ -35,28 +35,6 @@ public class RowRendererTestCase extends AbstractRendererTestCase {
     assertRender(row, 2, "fo", "o ");
     assertRender(row, 1, "f", "o", "o");
     assertRender(row, 0);
-  }
-
-  private void assertRenderWithBorder(RowElement row, int width, String... expected) {
-    assertRender(row.renderer().renderer(width, Border.dashed), width, expected);
-  }
-
-  public void testRenderWithBorder() throws Exception {
-    RowElement row = new RowElement().add(new LabelElement("foo"), new LabelElement("bar"));
-
-    // Border.dashed
-    assertRenderWithBorder(row, 11, "|foo|bar|  ");
-    assertRenderWithBorder(row, 10, "|foo|bar| ");
-    assertRenderWithBorder(row, 9, "|foo|bar|");
-    assertRenderWithBorder(row, 8, "|foo|ba|", "|   |r |");
-    assertRenderWithBorder(row, 7, "|foo|b|", "|   |a|", "|   |r|");
-    assertRenderWithBorder(row, 6, "|foo| ");
-    assertRenderWithBorder(row, 5, "|foo|");
-    assertRenderWithBorder(row, 4, "|fo|", "|o |");
-    assertRenderWithBorder(row, 3, "|f|", "|o|", "|o|");
-    assertRenderWithBorder(row, 2);
-    assertRenderWithBorder(row, 1);
-    assertRenderWithBorder(row, 0);
   }
 
   public void testCosmetic() throws Exception {

@@ -46,7 +46,7 @@ public class ChunkAdapter implements Pipe<Object> {
       if (element instanceof Chunk) {
         out.provide((Chunk)element);
       } else {
-        out.provide(new Text(element.toString()));
+        out.provide(Text.create(element.toString()));
       }
     } else {
       if (renderable != null && !current.equals(renderable)) {

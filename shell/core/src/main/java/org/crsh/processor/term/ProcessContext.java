@@ -59,7 +59,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
 
   public String readLine(String msg, boolean echo) {
     try {
-      processor.term.provide(new Text(msg));
+      processor.term.provide(Text.create(msg));
     }
     catch (IOException e) {
       return null;
@@ -91,7 +91,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
         try {
           processor.term.setEcho(echo);
           processor.readTerm();
-          processor.term.provide(new Text("\r\n"));
+          processor.term.provide(Text.create("\r\n"));
         }
         catch (IOException e) {
           processor.log.error("Error when readline line");
@@ -133,7 +133,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
             runnable = new Runnable() {
               public void run() {
                 try {
-                  processor.provide(new Text(message));
+                  processor.provide(Text.create(message));
                 }
                 catch (IOException e) {
                   // todo ???

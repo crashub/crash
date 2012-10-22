@@ -242,6 +242,10 @@ public class RenderPrintWriter extends PrintWriter {
     println();
   }
 
+  public void show(Element element) {
+    element.render(new RenderAppendable(this.out));
+  }
+
   @Override
   public void print(Object obj) {
     if (obj instanceof UIBuilder) {

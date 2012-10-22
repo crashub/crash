@@ -19,6 +19,8 @@
 
 package org.crsh.text.ui;
 
+import org.crsh.text.LineReader;
+import org.crsh.text.RenderAppendable;
 import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 
@@ -27,25 +29,30 @@ public abstract class Element {
   /** . */
   private Style.Composite style;
 
-  /** . */
-  Element parent;
-
   protected Element() {
-    this(null);
-  }
-
-  protected Element(Element parent) {
-    this.parent = parent;
   }
 
   public abstract Renderer renderer();
+
+  public void render(RenderAppendable to) {
+    Renderer renderer = renderer();
+
+    // For now height - 1 because of the char that goes to the line in some impl
+    LineReader reader = renderer.reader(to.getWidth(), to.getHeight() - 1);
+    if (reader != null) {
+      while (reader.hasLine()) {
+        reader.renderLine(to);
+        to.append('\n');
+      }
+    }
+  }
 
   public final Style.Composite getStyle() {
     return style;
   }
 
   public final void setStyle(Style.Composite style) {
-    this.style = style;
+    style(style);
   }
 
   public Element style(Style.Composite style) {

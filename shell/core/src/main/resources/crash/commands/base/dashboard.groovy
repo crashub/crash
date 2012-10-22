@@ -1,32 +1,43 @@
 import org.crsh.text.ui.UIBuilder
 
-while (!Thread.interrupted()) {
-  out.cls()
-  UIBuilder ui = new UIBuilder()
-  ui.table(columns: [3,1,1,1], border: dashed, height: context.height) {
-    header(bold: true, fg: black, bg: white) {
-      label("top");
-      label("props");
-      label("env");
-      label("jvm");
-    }
-    row {
-      eval {
-        thread.ls();
+def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
+  header {
+    table(columns:[1]) {
+      header(bold: true, fg: black, bg: white) {
+        label("top");
       }
-      eval {
-        system.propls f:'java.vm.*';
-      }
-      eval {
-        context.provide(Thread.currentThread())
-      }
-      eval {
-        jvm.system();
+      row{
+        eval {
+          thread.ls();
+        }
       }
     }
   }
-  out << ui;
+  header {
+    table(columns: [1,2,1], separator: dashed) {
+      header(bold: true, fg: black, bg: white) {
+        label("props");
+        label("env");
+        label("jvm");
+      }
+      row {
+        eval {
+          system.propls f:'java.vm.*';
+        }
+        eval {
+          context.provide(Thread.currentThread())
+        }
+        eval {
+          jvm.system();
+        }
+      }
+    }
+  }
+}
 
+while (!Thread.interrupted()) {
+  out.cls()
+  out.show(table);
   out.flush();
   Thread.sleep(1000);
 }

@@ -72,6 +72,7 @@ public class TreeRendererTestCase extends AbstractRendererTestCase {
     assertRender(elt, 32,
         "+-foo value is very very very to",
         "| o large for the console       ",
-        "+-bar                           ");
+        "+-bar                           ",
+        "                                ");
   }
 }

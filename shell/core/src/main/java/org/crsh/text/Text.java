@@ -21,14 +21,18 @@ package org.crsh.text;
 
 public class Text extends Chunk {
 
+  public static Text create(CharSequence s) {
+    return new Text(s);
+  }
+
   /** . */
   final StringBuilder buffer;
 
-  public Text() {
+  Text() {
     this.buffer = new StringBuilder();
   }
 
-  public Text(CharSequence s) {
+  private Text(CharSequence s) {
     this.buffer = new StringBuilder().append(s);
   }
 

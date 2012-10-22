@@ -218,7 +218,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
     assertEquals(1, ((TableElement)res.getElements().get(0)).getRows().size());
-    assertEquals(0, ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().size());
+    assertEquals(0, ((TableElement)res.getElements().get(0)).getRows().get(0).getSize());
   }
 
   public void testRow() {
@@ -236,9 +236,9 @@ public class UIBuilderTestCase extends AbstractTestCase {
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
     assertEquals(1, ((TableElement)res.getElements().get(0)).getRows().size());
-    assertEquals(2, ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().size());
-    assertEquals("Label[col1]", ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().get(0).toString());
-    assertEquals("Label[col2]", ((TableElement)res.getElements().get(0)).getRows().get(0).getCols().get(1).toString());
+    assertEquals(2, ((TableElement)res.getElements().get(0)).getRows().get(0).getSize());
+    assertEquals("Label[col1]", ((TableElement)res.getElements().get(0)).getRows().get(0).getCol(0).toString());
+    assertEquals("Label[col2]", ((TableElement)res.getElements().get(0)).getRows().get(0).getCol(1).toString());
   }
 
   public void testRowStyleWithEnd() {
@@ -258,7 +258,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     assertEquals(1, res.getElements().size());
     TableElement table = assertInstance(TableElement.class, res.getElements().get(0));
     assertEquals(1, table.getRows().size());
-    assertEquals(2, table.getRows().get(0).getCols().size());
+    assertEquals(2, table.getRows().get(0).getSize());
     assertEquals(Decoration.bold.fg(Color.red).bg(Color.green), table.getRows().get(0).getStyle());
   }
 
@@ -292,7 +292,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     );
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
-    assertSame(Border.dashed, ((TableElement)res.getElements().get(0)).border);
+    assertSame(BorderStyle.dashed, ((TableElement)res.getElements().get(0)).border);
   }
 
   public void testTableBorderFalse() {
@@ -331,32 +331,32 @@ public class UIBuilderTestCase extends AbstractTestCase {
     GroovyShell shell = new GroovyShell();
     UIBuilder res = (UIBuilder)shell.evaluate(
         "import org.crsh.text.ui.UIBuilder;\n" +
-            "def builder = new UIBuilder();\n" +
-            "builder.table(border: org.crsh.text.ui.Border.dashed) {\n" +
-            "row {\n" +
-            "}\n" +
-            "};\n" +
-            "return builder;\n"
+        "def builder = new UIBuilder();\n" +
+        "builder.table(border:org.crsh.text.ui.BorderStyle.dashed) {\n" +
+        "row {\n" +
+        "}\n" +
+        "};\n" +
+        "return builder;\n"
     );
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
-    assertSame(Border.dashed, ((TableElement)res.getElements().get(0)).border);
+    assertSame(BorderStyle.dashed, ((TableElement)res.getElements().get(0)).border);
   }
 
   public void testTableBorderStar() {
     GroovyShell shell = new GroovyShell();
     UIBuilder res = (UIBuilder)shell.evaluate(
-        "import org.crsh.text.ui.UIBuilder;\n" +
-            "def builder = new UIBuilder();\n" +
-            "builder.table(border: org.crsh.text.ui.Border.star) {\n" +
-            "row {\n" +
-            "}\n" +
-            "};\n" +
-            "return builder;\n"
+        "import org.crsh.text.ui.UIBuilder\n" +
+        "def builder = new UIBuilder();\n" +
+        "builder.table(border: org.crsh.text.ui.BorderStyle.star) {\n" +
+        "row {\n" +
+        "}\n" +
+        "};\n" +
+        "return builder;\n"
     );
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
-    assertSame(Border.star, ((TableElement)res.getElements().get(0)).border);
+    assertSame(BorderStyle.star, ((TableElement)res.getElements().get(0)).border);
   }
 
   public void testTableHeader() {
@@ -422,8 +422,8 @@ public class UIBuilderTestCase extends AbstractTestCase {
     TableElement table = assertInstance(TableElement.class, elements.get(0));
     assertEquals(1, table.getRows().size());
     RowElement row = table.getRows().get(0);
-    assertEquals(1, row.getCols().size());
-    EvalElement eval = assertInstance(EvalElement.class, row.getCols().get(0));
+    assertEquals(1, row.getSize());
+    EvalElement eval = assertInstance(EvalElement.class, row.getCol(0));
     assertNotNull(eval.closure);
     assertEquals("HELLO", eval.closure.call());
   }

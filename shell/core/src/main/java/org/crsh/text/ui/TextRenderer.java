@@ -46,7 +46,17 @@ public class TextRenderer extends Renderer {
   }
 
   @Override
-  public LineReader renderer(final int width) {
+  public int getActualHeight(int width) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int getMinHeight(int width) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public LineReader reader(final int width) {
     return new LineReader() {
 
       /** . */

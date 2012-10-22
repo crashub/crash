@@ -19,49 +19,24 @@
 
 package org.crsh.text.ui;
 
-import org.crsh.text.Style;
+public enum BorderStyle {
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+  dashed('-', '|', ' '),
 
-public class RowElement extends Element {
+  star('*', '*', '*');
 
   /** . */
-  List<Element> cols;
+  final char horizontal;
 
   /** . */
-  final boolean header;
+  final char vertical;
 
-  public RowElement() {
-    this(false);
-  }
+  /** . */
+  final char corner;
 
-  public RowElement(boolean header) {
-    this.cols = new ArrayList<Element>();
-    this.header = header;
-  }
-
-  public int getSize() {
-    return cols.size();
-  }
-
-  public Element getCol(int index) {
-    return cols.get(index);
-  }
-
-  public RowElement add(Element... cols) {
-    Collections.addAll(this.cols, cols);
-    return this;
-  }
-
-  @Override
-  public RowElement style(Style.Composite style) {
-    return (RowElement)super.style(style);
-  }
-
-  @Override
-  public RowRenderer renderer() {
-    return new RowRenderer(this);
+  private BorderStyle(char horizontal, char vertical, char corner) {
+    this.horizontal = horizontal;
+    this.vertical = vertical;
+    this.corner = corner;
   }
 }

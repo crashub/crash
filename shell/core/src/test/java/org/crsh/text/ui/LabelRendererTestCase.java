@@ -26,8 +26,8 @@ public class LabelRendererTestCase extends AbstractRendererTestCase {
   public void testRender() throws IOException {
     assertRender(new LabelElement(""), 5, "     ");
 
-    // Not sure this one is good
-    assertRender(new LabelElement("\n"), 5, "     ");
+    //
+    assertRender(new LabelElement("\n"), 5, "     ", "     ");
 
     //
     assertRender(new LabelElement("a"), 5, "a    ");
@@ -35,7 +35,7 @@ public class LabelRendererTestCase extends AbstractRendererTestCase {
     assertRender(new LabelElement("a"), 3, "a  ");
     assertRender(new LabelElement("a"), 2, "a ");
     assertRender(new LabelElement("a"), 1, "a");
-    assertRender(new LabelElement("a"), 0, "");
+    assertNoRender(new LabelElement("a"), 0);
 
     //
     assertRender(new LabelElement("ab"), 1, "a", "b");
@@ -44,7 +44,33 @@ public class LabelRendererTestCase extends AbstractRendererTestCase {
     assertRender(new LabelElement("a\nb"), 1, "a", "b");
 
     //
-    assertRender(new LabelElement("ABCDEF\n"), 5, "ABCDE", "F    ");
+    assertRender(new LabelElement("ABCDEF\n"), 5, "ABCDE", "F    ", "     ");
     assertRender(new LabelElement("ABCDEF\nG"), 5, "ABCDE", "F    ", "G    ");
+  }
+
+  public void testActualHeight() {
+    assertEquals(1, new LabelElement("").actualHeight);
+    assertEquals(1, new LabelElement("a").actualHeight);
+    assertEquals(2, new LabelElement("\n").actualHeight);
+    assertEquals(2, new LabelElement("\na").actualHeight);
+    assertEquals(2, new LabelElement("a\n").actualHeight);
+    assertEquals(2, new LabelElement("a\nb").actualHeight);
+    assertEquals(3, new LabelElement("a\nb\n").actualHeight);
+    assertEquals(3, new LabelElement("\n\n").actualHeight);
+  }
+
+  public void testRenderFixed() {
+    LabelElement label = new LabelElement("foo\nbar");
+    assertRender(label, 2, 5, "fo", "o ", "ba", "r ", "  ");
+    assertRender(label, 2, 4, "fo", "o ", "ba", "r ");
+    assertNoRender(label, 2, 3);
+    assertNoRender(label, 2, 2);
+    assertNoRender(label, 2, 1);
+    assertRender(label, 3, 3, "foo", "bar", "   ");
+    assertRender(label, 3, 2, "foo", "bar");
+    assertNoRender(label, 3, 1);
+    assertRender(label, 4, 3, "foo ", "bar ", "    ");
+    assertRender(label, 4, 2, "foo ", "bar ");
+    assertNoRender(label, 4, 1);
   }
 }

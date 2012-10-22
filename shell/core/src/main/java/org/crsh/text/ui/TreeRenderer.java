@@ -67,19 +67,29 @@ class TreeRenderer extends Renderer {
   }
 
   @Override
-  public LineReader renderer(final int width) {
+  public int getActualHeight(int width) {
+    throw new UnsupportedOperationException("Implement me");
+  }
+
+  @Override
+  public int getMinHeight(int width) {
+    throw new UnsupportedOperationException("Implement me");
+  }
+
+  @Override
+  public LineReader reader(final int width) {
 
 
-    final LinkedList<LineReader> renderers  = new LinkedList<LineReader>();
+    final LinkedList<LineReader> readers  = new LinkedList<LineReader>();
     for (Renderer child : children) {
-      renderers.addLast(child.renderer(width - 2));
+      readers.addLast(child.reader(width - 2));
     }
 
     //
     return new LineReader() {
 
       /** . */
-      LineReader value = TreeRenderer.this.value != null ? TreeRenderer.this.value.renderer(width) : null;
+      LineReader value = TreeRenderer.this.value != null ? TreeRenderer.this.value.reader(width) : null;
 
       /** . */
       boolean node = true;
@@ -92,11 +102,11 @@ class TreeRenderer extends Renderer {
             value = null;
           }
         }
-        while (renderers.size() > 0) {
-          if (renderers.peekFirst().hasLine()) {
+        while (readers.size() > 0) {
+          if (readers.peekFirst().hasLine()) {
             return true;
           } else {
-            renderers.removeFirst();
+            readers.removeFirst();
             node = true;
           }
         }
@@ -112,14 +122,14 @@ class TreeRenderer extends Renderer {
           }
         }
         if (value == null) {
-          while (renderers.size() > 0) {
-            LineReader first = renderers.peekFirst();
+          while (readers.size() > 0) {
+            LineReader first = readers.peekFirst();
             if (first.hasLine()) {
               if (node) {
                 to.append("+-");
                 node = false;
               } else {
-                Iterator<LineReader> i = renderers.descendingIterator();
+                Iterator<LineReader> i = readers.descendingIterator();
                 boolean rest = false;
                 while (i.hasNext()) {
                   LineReader renderer = i.next();

@@ -17,26 +17,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.text.ui;
+package org.crsh.util;
 
-public enum Border {
+public class Pair<F, S> {
 
-  dashed('-', '|', ' '),
-
-  star('*', '*', '*');
-
-  /** . */
-  final char horizontal;
+  public static <F, S> Pair<F, S> of(F first, S second) {
+    return new Pair<F, S>(first, second);
+  }
 
   /** . */
-  final char vertical;
+  private final F first;
 
   /** . */
-  final char corner;
+  private final S second;
 
-  private Border(char horizontal, char vertical, char corner) {
-    this.horizontal = horizontal;
-    this.vertical = vertical;
-    this.corner = corner;
+  public Pair(F first, S second) {
+    this.first = first;
+    this.second = second;
+  }
+
+  public F getFirst() {
+    return first;
+  }
+
+  public S getSecond() {
+    return second;
   }
 }

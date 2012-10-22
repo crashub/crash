@@ -97,6 +97,9 @@ class ClassManager<T> {
           GroovyClassLoader gcl = new GroovyClassLoader(context.getLoader(), config);
           clazz = gcl.parseClass(gcs, false);
         }
+        catch (NoClassDefFoundError e) {
+          throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+        }
         catch (UnsupportedEncodingException e) {
           throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
         }

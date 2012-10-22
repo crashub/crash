@@ -30,7 +30,8 @@ public class TreeElementTestCase extends AbstractRendererTestCase {
     assertRender(elt, 3,
         "+-1",
         "| 1",
-        "+-2");
+        "+-2",
+        "   ");
   }
 
   public void testFoo() throws Exception {
@@ -64,6 +65,7 @@ public class TreeElementTestCase extends AbstractRendererTestCase {
     assertRender(elt, 32,
         "+-foo value is very very very to",
         "| o large for the console       ",
-        "+-bar                           ");
+        "+-bar                           ",
+        "                                ");
   }
 }

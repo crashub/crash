@@ -117,7 +117,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
     try {
       String welcome = shell.getWelcome();
       log.debug("Writing welcome message to term");
-      term.provide(new Text(welcome));
+      term.provide(Text.create(welcome));
       log.debug("Wrote welcome message to term");
       writePromptFlush();
     }
@@ -310,7 +310,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
       if (buffer != null) {
         sb.append(buffer);
       }
-      term.provide(new Text(sb));
+      term.provide(Text.create(sb));
       term.flush();
     } catch (IOException e) {
       // Todo : improve that
@@ -389,7 +389,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
           }
 
           // We propose
-          term.provide(new Text(sb.toString()));
+          term.provide(Text.create(sb.toString()));
           writePromptFlush();
         }
       }

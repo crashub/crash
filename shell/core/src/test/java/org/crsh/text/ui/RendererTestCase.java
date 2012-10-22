@@ -76,7 +76,15 @@ public class RendererTestCase extends AbstractRendererTestCase {
             return 1;
           }
           @Override
-          public LineReader renderer(final int width) {
+          public int getActualHeight(int width) {
+            throw new UnsupportedOperationException();
+          }
+          @Override
+          public int getMinHeight(int width) {
+            throw new UnsupportedOperationException();
+          }
+          @Override
+          public LineReader reader(final int width) {
             return new LineReader() {
 
               boolean done = false;
@@ -89,9 +97,9 @@ public class RendererTestCase extends AbstractRendererTestCase {
                 if (done) {
                   throw new IllegalStateException();
                 }
-                foo.renderer().renderer(3).renderLine(to);
-                bar.renderer().renderer(3).renderLine(to);
-                juu.renderer().renderer(3).renderLine(to);
+                foo.renderer().reader(3).renderLine(to);
+                bar.renderer().reader(3).renderLine(to);
+                juu.renderer().reader(3).renderLine(to);
                 done = true;
               }
             };
@@ -102,20 +110,26 @@ public class RendererTestCase extends AbstractRendererTestCase {
 
     TableElement table = new TableElement().style(Style.style(Decoration.bold)).add(
         row().style(Color.red.fg()).add(custom));
-    assertRender(table, 32, "\033[1;31mfoo\033[22mbar\033[1mjuu\033[39m                       ");
+    assertRender(table, 32, "\033[1;31mfoo\033[22mbar\033[1mjuu\033[0m                       ");
   }
 
   public void testStyleOff() {
     TableElement table = new TableElement().
-        border(Border.dashed).
+        border(BorderStyle.dashed).
+        separator(BorderStyle.dashed).
         style(Style.style(Decoration.bold)).
         add(
             row().style(Style.style(Decoration.underline)).add(label("foo"), label("bar")));
 
     assertRender(table, 32,
         " -------                        ",
-        "\033[0m|\033[1;4mfoo\033[0m|\033[1;4mbar\033[0m|                       ",
+        "|\033[1;4mfoo\033[0m|\033[1;4mbar\033[0m|                       ",
         " -------                        ");
   }
 
+  public void testNullLabelInTable() {
+    TableElement tableElement = new TableElement();
+    tableElement.add(new RowElement().add(new LabelElement("a\nb")));
+    assertNoRender(tableElement, 1, 1);
+  }
 }

@@ -40,41 +40,41 @@ public class ChunkBufferTestCase extends AbstractTestCase {
   private static final Style RED_UNDERLINE = Style.style(Decoration.underline, null, Color.red);
 
   public void testSimple() {
-    assertReader(new ChunkBuffer().append("a"), new Text("a"));
-    assertReader(new ChunkBuffer().append(RED, "a"), RED, new Text("a"));
+    assertReader(new ChunkBuffer().append("a"), Text.create("a"));
+    assertReader(new ChunkBuffer().append(RED, "a"), RED, Text.create("a"));
   }
 
   public void testMergeCharSequence() {
-    assertReader(new ChunkBuffer().append("a").append("b"), new Text("ab"));
+    assertReader(new ChunkBuffer().append("a").append("b"), Text.create("ab"));
   }
 
   public void testMergeColor() {
-    assertReader(new ChunkBuffer().append(RED, "a", RED, "b"), RED, new Text("ab"));
+    assertReader(new ChunkBuffer().append(RED, "a", RED, "b"), RED, Text.create("ab"));
   }
 
   public void testOverwriteColor() {
-    assertReader(new ChunkBuffer().append(BLUE, RED, "a"), RED, new Text("a"));
+    assertReader(new ChunkBuffer().append(BLUE, RED, "a"), RED, Text.create("a"));
   }
 
   public void testOverwriteMergeColor() {
-    assertReader(new ChunkBuffer().append(RED, "a", BLUE, RED, "b"), RED, new Text("ab"));
+    assertReader(new ChunkBuffer().append(RED, "a", BLUE, RED, "b"), RED, Text.create("ab"));
   }
 
   public void testLastColor() {
-    assertReader(new ChunkBuffer().append(RED, "a", BLUE), RED, new Text("a"));
+    assertReader(new ChunkBuffer().append(RED, "a", BLUE), RED, Text.create("a"));
   }
 
   public void testBlendStyle() {
-    assertReader(new ChunkBuffer().append(RED, UNDERLINE, "a"), RED_UNDERLINE, new Text("a"));
+    assertReader(new ChunkBuffer().append(RED, UNDERLINE, "a"), RED_UNDERLINE, Text.create("a"));
   }
 
   public void testConcatenation() {
-    assertReader(new ChunkBuffer().append(RED).append(new ChunkBuffer().append("a")), RED, new Text("a"));
-    assertReader(new ChunkBuffer().append(new ChunkBuffer().append(RED)).append("a"), RED, new Text("a"));
+    assertReader(new ChunkBuffer().append(RED).append(new ChunkBuffer().append("a")), RED, Text.create("a"));
+    assertReader(new ChunkBuffer().append(new ChunkBuffer().append(RED)).append("a"), RED, Text.create("a"));
   }
 
   public void testBlend() throws IOException {
-    assertReader(new ChunkBuffer().append(Color.red.fg(),"foo", Color.red.fg(), "bar"), Color.red.fg(), new Text("foobar"));
+    assertReader(new ChunkBuffer().append(Color.red.fg(),"foo", Color.red.fg(), "bar"), Color.red.fg(), Text.create("foobar"));
   }
 
   private void assertReader(ChunkBuffer reader, Chunk... expected) {

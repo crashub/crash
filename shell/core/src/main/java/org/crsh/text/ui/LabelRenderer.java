@@ -20,93 +20,58 @@
 package org.crsh.text.ui;
 
 import org.crsh.text.LineReader;
-import org.crsh.text.RenderAppendable;
 import org.crsh.text.Renderer;
-import org.crsh.text.Style;
+import org.crsh.util.Pair;
 
 class LabelRenderer extends Renderer {
 
   /** . */
-  private final LabelElement label;
+  private final LabelElement element;
 
-  LabelRenderer(LabelElement label) {
-    this.label = label;
+  LabelRenderer(LabelElement element) {
+    this.element = element;
   }
 
   @Override
   public int getMinWidth() {
-    return label.minWidth;
+    return element.minWidth;
   }
 
   @Override
   public int getActualWidth() {
-    return label.width;
+    return element.actualWidth;
   }
 
   @Override
-  public LineReader renderer(final int width) {
+  public int getActualHeight(int width) {
+    return element.slicer.lines(width).length;
+  }
 
+  @Override
+  public int getMinHeight(int width) {
+    // For now we don't support cropping
+    return getActualHeight(width);
+  }
+
+  @Override
+  public LineReader reader(int width) {
+    return reader(width, -1);
+  }
+
+  @Override
+  public LineReader reader(final int width, int height) {
     if (width == 0) {
-      return new LineReader() {
-        boolean done = false;
-        public boolean hasLine() {
-          return !done;
-        }
-        public void renderLine(RenderAppendable to) throws IllegalStateException {
-          if (done) {
-            throw new IllegalStateException();
-          } else {
-            done = true;
-          }
-        }
-      };
+      return null;
     } else {
-      return new LineReader() {
-
-        /** . */
-        boolean done = false;
-
-        /** . */
-        int index = 0;
-
-        public boolean hasLine() {
-          return !done;
-        }
-
-        public void renderLine(RenderAppendable to) {
-          if (done) {
-            throw new IllegalStateException();
-          } else {
-            Style.Composite style = label.getStyle();
-            if (style != null) {
-              to.enterStyle(style);
-            }
-            int pos = label.value.indexOf('\n', index);
-            int next;
-            if (pos == -1) {
-              pos = Math.min(index + width, label.value.length());
-              next = pos;
-            } else {
-              if (pos <= index + width) {
-                next = pos + 1;
-              } else {
-                next = pos = index + width;
-              }
-            }
-            to.append(label.value, index, pos);
-            int missing = pos - index;
-            while (missing < width) {
-              to.append(' ');
-              missing++;
-            }
-            index = next;
-            done = index >= label.value.length();
-            if (style != null) {
-              to.leaveStyle();
-            }
-          }
-        }
-      };
+      Pair<Integer, Integer>[] lines = element.slicer.lines(width);
+      if (height == -1) {
+        height = lines.length;
+      }
+      if (lines.length > height) {
+        return null;
+      } else {
+        return new LabelReader(element, lines, width, height);
+      }
     }
   }
 }

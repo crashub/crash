@@ -19,12 +19,43 @@
 
 package org.crsh.text;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
  * Something that can be rendered within a context.
  */
 public abstract class Renderer {
+
+  public static final Renderer NULL = new Renderer() {
+    @Override
+    public int getActualWidth() {
+      return 0;
+    }
+    @Override
+    public int getMinWidth() {
+      return 0;
+    }
+    @Override
+    public int getMinHeight(int width) {
+      return 0;
+    }
+    @Override
+    public int getActualHeight(int width) {
+      return 0;
+    }
+    @Override
+    public LineReader reader(int width) {
+      return new LineReader() {
+        public boolean hasLine() {
+          return false;
+        }
+        public void renderLine(RenderAppendable to) throws IllegalStateException {
+          throw new IllegalStateException();
+        }
+      };
+    }
+  };
 
   public static Renderer compose(Iterable<Renderer> renderers) {
     Iterator<Renderer> i = renderers.iterator();
@@ -36,27 +67,7 @@ public abstract class Renderer {
         return renderer;
       }
     } else {
-      return new Renderer() {
-        @Override
-        public int getActualWidth() {
-          return 0;
-        }
-        @Override
-        public int getMinWidth() {
-          return 0;
-        }
-        @Override
-        public LineReader renderer(int width) {
-          return new LineReader() {
-            public boolean hasLine() {
-              return false;
-            }
-            public void renderLine(RenderAppendable to) throws IllegalStateException {
-              throw new IllegalStateException();
-            }
-          };
-        }
-      };
+      return NULL;
     }
   }
 
@@ -75,12 +86,46 @@ public abstract class Renderer {
   public abstract int getMinWidth();
 
   /**
-   * Create a renderer for the specified width or return null if the element does not provide any output.
+   * Return the minimum height for the specified with.
    *
-   * @param width the width the width
+   * @param width the width
+   * @return the actual height
+   */
+  public abstract int getMinHeight(int width);
+
+  /**
+   * Return the actual height for the specified with.
+   *
+   * @param width the width
+   * @return the minimum height
+   */
+  public abstract int getActualHeight(int width);
+
+  /**
+   * Create a renderer for the specified width and height or return null if the element does not provide any output
+   * for the specified dimensions. The default implementation delegates to the {@link #reader(int)} method when the
+   * <code>height</code> argument is not positive otherwise it returns null. Subclasses should override this method
+   * when they want to provide content that can adapts to the specified height.
+   *
+   * @param width the width
+   * @param height the height
    * @return the renderer
    */
-  public abstract LineReader renderer(int width);
+  public LineReader reader(int width, int height) {
+    if (height > 0) {
+      return null;
+    } else {
+      return reader(width);
+    }
+  }
+
+  /**
+   * Create a renderer for the specified width or return null if the element does not provide any output.
+   *
+   * @param width the width
+   * @return the renderer
+   */
+  public abstract LineReader reader(int width);
 
   /**
    * Renders this object to the provided output.
@@ -88,7 +133,7 @@ public abstract class Renderer {
    * @param out the output
    */
   public final void render(RenderAppendable out) {
-    LineReader renderer = renderer(out.getWidth());
+    LineReader renderer = reader(out.getWidth());
     if (renderer != null) {
       while (renderer.hasLine()) {
         renderer.renderLine(out);
@@ -133,11 +178,38 @@ public abstract class Renderer {
     }
 
     @Override
-    public LineReader renderer(final int width) {
+    public int getActualHeight(int width) {
+      int actualHeight = 0;
+      for (Renderer renderer : renderers) {
+        actualHeight += renderer.getActualHeight(width);
+      }
+      return actualHeight;
+    }
+
+    @Override
+    public int getMinHeight(int width) {
+      int minHeight = 0;
+      for (Renderer renderer : renderers) {
+        minHeight += renderer.getMinHeight(width);
+      }
+      return minHeight;
+    }
+
+    @Override
+    public LineReader reader(final int width) {
+
+      //
+      final ArrayList<LineReader> readers = new ArrayList<LineReader>();
+      for (Renderer renderer : renderers) {
+        LineReader reader = renderer.reader(width);
+        readers.add(reader);
+      }
+
+      //
       return new LineReader() {
 
         /** . */
-        Iterator<? extends Renderer> i = renderers.iterator();
+        Iterator<? extends LineReader> i = readers.iterator();
 
         /** . */
         LineReader current = null;
@@ -152,7 +224,7 @@ public abstract class Renderer {
               }
             } else {
               if (i.hasNext()) {
-                current = i.next().renderer(width);
+                current = i.next();
               } else {
                 break;
               }

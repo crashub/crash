@@ -19,12 +19,10 @@
 
 package org.crsh.text;
 
-import org.crsh.Pipe;
-
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class RenderAppendable implements Appendable, Pipe<Chunk> {
+public class RenderAppendable implements Appendable, RenderingContext {
 
   /** . */
   private final RenderingContext context;
@@ -49,6 +47,10 @@ public class RenderAppendable implements Appendable, Pipe<Chunk> {
     return context.getWidth();
   }
 
+  public int getHeight() {
+    return context.getHeight();
+  }
+
   public void provide(Chunk element) throws IOException {
     context.provide(element);
   }
@@ -58,7 +60,7 @@ public class RenderAppendable implements Appendable, Pipe<Chunk> {
   }
 
   public RenderAppendable append(CharSequence csq) {
-    safeAppend(new Text(csq));
+    safeAppend(Text.create(csq));
     return this;
   }
 
@@ -151,12 +153,12 @@ public class RenderAppendable implements Appendable, Pipe<Chunk> {
   }
 
   public RenderAppendable append(CharSequence csq, int start, int end) {
-    safeAppend(new Text(csq.subSequence(start, end)));
+    safeAppend(Text.create(csq.subSequence(start, end)));
     return this;
   }
 
   public RenderAppendable append(char c) {
-    safeAppend(new Text(Character.toString(c)));
+    safeAppend(Text.create(Character.toString(c)));
     return this;
   }
 }

@@ -41,11 +41,7 @@ public class TreeElement extends Element {
   }
 
   public TreeElement addChild(Element child) {
-    if (child.parent != null) {
-      throw new IllegalArgumentException("Child has already a parent");
-    }
     children.add(child);
-    child.parent =  this;
     return this;
   }
 

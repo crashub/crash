@@ -31,48 +31,63 @@ public class TableElement extends Element {
   ArrayList<RowElement> rows = new ArrayList<RowElement>();
 
   /** . */
-  protected Border border;
+  protected BorderStyle border;
+
+  /** . */
+  protected BorderStyle separator;
 
   /** The column layout. */
   protected Layout columnLayout;
 
-  /** The table height, null means no limit. */
-  protected Integer height;
+  /** The optional row row layout. */
+  protected Layout rowLayout;
 
   public TableElement() {
     this.columnLayout = Layout.rightToLeft();
+    this.rowLayout = Layout.rightToLeft();
+    this.border = null;
+    this.separator = null;
   }
 
   public TableElement(int ... columns) {
     this.columnLayout = Layout.weighted(columns);
+    this.rowLayout = Layout.rightToLeft();
+    this.border = null;
+    this.separator = null;
+  }
+
+  public TableElement(int[] rows, int[] columns) {
+    this.rowLayout = Layout.weighted(rows);
+    this.columnLayout = Layout.weighted(columns);
+    this.border = null;
+    this.separator = null;
   }
 
   public TableElement add(RowElement row) {
-    if (row.parent != null) {
-      throw new IllegalArgumentException("Row has already a parent");
-    }
     rows.add(row);
-    row.parent = this;
     return this;
-  }
-
-  public Integer getHeight() {
-    return height;
-  }
-
-  public void setHeight(Integer height) throws IllegalArgumentException {
-    if (height != null && height < 0) {
-      throw new IllegalArgumentException("No negative table height accepted");
-    }
-    this.height = height;
   }
 
   public Layout getColumnLayout() {
     return columnLayout;
   }
 
-  public Border getBorder() {
-    return border;
+  public void setColumnLayout(Layout columnLayout) {
+    if (columnLayout == null) {
+      throw new NullPointerException("Column layout cannot be null");
+    }
+    this.columnLayout = columnLayout;
+  }
+
+  public Layout getRowLayout() {
+    return rowLayout;
+  }
+
+  public void setRowLayout(Layout rowLayout) {
+    if (rowLayout == null) {
+      throw new NullPointerException("Row layout cannot be null");
+    }
+    this.rowLayout = rowLayout;
   }
 
   public Renderer renderer() {
@@ -80,7 +95,12 @@ public class TableElement extends Element {
   }
 
   public TableElement withColumnLayout(Layout columnLayout) {
-    this.columnLayout = columnLayout;
+    setColumnLayout(columnLayout);
+    return this;
+  }
+
+  public TableElement withRowLayout(Layout rowLayout) {
+    setRowLayout(rowLayout);
     return this;
   }
 
@@ -88,13 +108,35 @@ public class TableElement extends Element {
     return rows;
   }
 
-  public TableElement border(Border border) {
+  public BorderStyle getBorder() {
+    return border;
+  }
+
+  public void setBorder(BorderStyle border) {
+    this.border = border;
+  }
+
+  public TableElement border(BorderStyle border) {
     setBorder(border);
     return this;
   }
 
-  public void setBorder(Border border) {
-    this.border = border;
+  public BorderStyle getSeparator() {
+    return separator;
+  }
+
+  public void setSeparator(BorderStyle separator) {
+    this.separator = separator;
+  }
+
+  public TableElement collapse() {
+    setSeparator(null);
+    return this;
+  }
+
+  public TableElement separator(BorderStyle separator) {
+    setSeparator(separator);
+    return this;
   }
 
   @Override

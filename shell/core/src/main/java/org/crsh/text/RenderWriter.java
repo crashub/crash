@@ -60,6 +60,10 @@ public class RenderWriter extends Writer implements RenderingContext {
     return out.getWidth();
   }
 
+  public int getHeight() {
+    return out.getHeight();
+  }
+
   public void provide(Chunk element) throws IOException {
     if (element instanceof Text) {
       Text text = (Text)element;

@@ -144,7 +144,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
         return new BaseProcess(request) {
           @Override
           public void process(String request, ShellProcessContext processContext) throws IOException {
-            processContext.provide(new Text("juu"));
+            processContext.provide(Text.create("juu"));
             processContext.end(ShellResponse.ok());
           }
         };
@@ -256,7 +256,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
                 e.printStackTrace();
               }
             }
-            processContext.provide(new Text("juu"));
+            processContext.provide(Text.create("juu"));
             processContext.end(ShellResponse.ok());
           }
           @Override

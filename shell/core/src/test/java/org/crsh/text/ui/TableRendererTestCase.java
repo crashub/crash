@@ -128,7 +128,64 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   }
 
   public void testRenderWithBorder() throws Exception {
-    TableElement table = new TableElement().border(Border.dashed);
+    TableElement table = new TableElement().border(BorderStyle.dashed);
+    RowElement row = new RowElement().add(new LabelElement("foo"), new LabelElement("bar"));
+    table.add(row);
+
+    //
+    table.withColumnLayout(Layout.rightToLeft());
+
+    //
+    assertRender(table, 11, " ------    ", "|foobar|   ", " ------    ");
+    assertRender(table, 10, " ------   ", "|foobar|  ", " ------   ");
+    assertRender(table, 9, " ------  ", "|foobar| ", " ------  ");
+    assertRender(table, 8, " ------ ", "|foobar|", " ------ ");
+    assertRender(table, 7, " ----- ", "|fooba|", "|   r |", " ----- ");
+    assertRender(table, 6, " ---- ", "|foob|", "|   a|", "|   r|", " ---- ");
+    assertRender(table, 5, " --- ", "|foo|", " --- ");
+    assertRender(table, 4, " -- ", "|fo|", "|o |", " -- ");
+    assertRender(table, 3, " - ", "|f|", "|o|", "|o|"," - ");
+    assertRender(table, 2);
+    assertRender(table, 1);
+    assertRender(table, 0);
+
+    //
+    table.withColumnLayout(Layout.weighted(1, 1));
+
+    //
+    assertRender(table, 11, " --------- ", "|foo  bar |", " --------- ");
+    assertRender(table, 10, " -------- ", "|foo bar |", " -------- ");
+    assertRender(table, 9, " ------- ", "|foo bar|", " ------- ");
+    assertRender(table, 8, " ------ ", "|foobar|", " ------ ");
+    assertRender(table, 7, " ----- ", "|fooba|", "|   r |", " ----- ");
+    assertRender(table, 6, " ---- ", "|foba|", "|o r |", " ---- ");
+    assertRender(table, 5, " --- ", "|fob|", "|o a|", "|  r|", " --- ");
+    assertRender(table, 4, " -- ", "|fb|", "|oa|", "|or|", " -- ");
+    assertRender(table, 3, " - ", "|f|", "|o|", "|o|", " - ");
+    assertRender(table, 2);
+    assertRender(table, 1);
+    assertRender(table, 0);
+
+    //
+    table.withColumnLayout(Layout.weighted(1, 2));
+
+    //
+    assertRender(table, 11, " --------- ", "|foobar   |", " --------- ");
+    assertRender(table, 10, " -------- ", "|foobar  |", " -------- ");
+    assertRender(table, 9, " ------- ", "|fobar  |", "|o      |", " ------- ");
+    assertRender(table, 8, " ------ ", "|fobar |", "|o     |", " ------ ");
+    assertRender(table, 7, " ----- ", "|fobar|", "|o    |", " ----- ");
+    assertRender(table, 6, " ---- ", "|fbar|", "|o   |", "|o   |", " ---- ");
+    assertRender(table, 5, " --- ", "|fba|", "|or |", "|o  |", " --- ");
+    assertRender(table, 4, " -- ", "|fo|", "|o |", " -- ");
+    assertRender(table, 3, " - ", "|f|", "|o|", "|o|", " - ");
+    assertRender(table, 2);
+    assertRender(table, 1);
+    assertRender(table, 0);
+  }
+
+  public void testRenderWithBorderAndSeparator() throws Exception {
+    TableElement table = new TableElement().border(BorderStyle.dashed).separator(BorderStyle.dashed);
     RowElement row = new RowElement().add(new LabelElement("foo"), new LabelElement("bar"));
     table.add(row);
 
@@ -198,7 +255,8 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     TableElement table = new TableElement();
     table.withColumnLayout(Layout.rightToLeft());
     RowElement row = new RowElement().add(new LabelElement("foo", 5), new LabelElement("This text is larger to be displayed in a cell of 32", 5));
-    table.border(Border.dashed);
+    table.separator(BorderStyle.dashed);
+    table.border(BorderStyle.dashed);
     table.add(row);
     assertRender(table, 32,
         " ------------------------------ ",
@@ -211,7 +269,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
 
     TableElement table = new TableElement();
     table.withColumnLayout(Layout.rightToLeft());
-    table.border(Border.dashed);
+    table.border(BorderStyle.dashed);
 
     table.
         add(row().style(Color.blue.fg().bg(Color.green).bold()).
@@ -243,5 +301,75 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
         , ansi);
 
 */
+  }
+
+  public void testRowLayout() {
+    TableElement table = new TableElement();
+    table.add(new RowElement().add(new LabelElement("foo")));
+    table.add(new RowElement().add(new LabelElement("bar")));
+
+    //
+    assertRender(table, 3, 2, "foo", "bar");
+    assertRender(table, 3, 1, "foo");
+    assertRender(table, 2, 4, "fo", "o ", "ba", "r ");
+    assertRender(table, 2, 3, "fo", "o ", "  ");
+  }
+
+  public void testRowLayoutWithHeader() {
+    TableElement table = new TableElement();
+    table.add(new RowElement(true).add(new LabelElement("foo")));
+    table.add(new RowElement().add(new LabelElement("bar")));
+
+    //
+    assertRender(table, 3, 3, "foo", "---", "bar");
+    assertRender(table, 3, 2, "foo", "   ");
+    assertNoRender(table, 3, 1);
+
+    //
+    assertRender(table, 2, 5, "fo", "o ", "--", "ba", "r ");
+    assertRender(table, 2, 4, "fo", "o ", "  ", "  ");
+    assertRender(table, 2, 3, "fo", "o ", "  ");
+  }
+
+  public void testRowLayoutWithBorder() {
+    TableElement table = new TableElement().border(BorderStyle.dashed);
+    table.add(new RowElement().add(new LabelElement("foo")));
+    table.add(new RowElement().add(new LabelElement("bar")));
+
+    //
+    assertRender(table, 5, 4, " --- ", "|foo|", "|bar|", " --- ");
+    assertRender(table, 5, 3, " --- ", "|foo|", " --- ");
+    assertNoRender(table, 5, 2);
+
+    //
+    assertRender(table, 4, 6, " -- ", "|fo|", "|o |", "|ba|", "|r |", " -- ");
+    assertRender(table, 4, 5, " -- ", "|fo|", "|o |", "|  |", " -- ");
+    assertRender(table, 4, 4, " -- ", "|fo|", "|o |", " -- ");
+  }
+
+  public void testRowLayoutWithHeaderBorder() {
+    TableElement table = new TableElement().border(BorderStyle.dashed);
+    table.add(new RowElement(true).add(new LabelElement("foo")));
+    table.add(new RowElement().add(new LabelElement("bar")));
+
+    //
+    assertRender(table, 5, 5, " --- ", "|foo|", " --- ", "|bar|", " --- ");
+    assertRender(table, 5, 4, " --- ", "|foo|", "|   |", " --- ");
+    assertNoRender(table, 5, 3);
+
+    //
+    assertRender(table, 4, 7, " -- ", "|fo|", "|o |", " -- ", "|ba|", "|r |", " -- ");
+    assertRender(table, 4, 6, " -- ", "|fo|", "|o |", "|  |", "|  |", " -- ");
+    assertRender(table, 4, 5, " -- ", "|fo|", "|o |", "|  |", " -- ");
+    assertNoRender(table, 4, 4);
+  }
+
+  public void testRowLayoutWithColumns() {
+    TableElement table = new TableElement().border(BorderStyle.dashed).separator(BorderStyle.dashed);
+    table.add(new RowElement().add(new LabelElement("foo"), new LabelElement("bar")));
+
+    //
+    assertRender(table, 9, 3, " ------- ", "|foo|bar|", " ------- ");
+    assertRender(table, 9, 4, " ------- ", "|foo|bar|", "|   |   |", " ------- ");
   }
 }

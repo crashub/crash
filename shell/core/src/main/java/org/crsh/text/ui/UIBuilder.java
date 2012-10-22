@@ -79,9 +79,7 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
     } else if ("label".equals(name)) {
       element = new LabelElement(value);
     } else if ("table".equals(name)) {
-      TableElement table = new TableElement();
-      table.setHeight((Integer)attributes.get("height"));
-      element = table;
+      element = new TableElement();
     } else if ("row".equals(name)) {
       element = new RowElement();
     } else if ("header".equals(name)) {
@@ -122,17 +120,40 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
         table.withColumnLayout(Layout.weighted(weights));
       }
 
+      // Columns
+      Object rows = attributes.get("rows");
+      if (rows instanceof Iterable) {
+        List<Integer> list = Utils.list((Iterable<Integer>)rows);
+        int[] weights = new int[list.size()];
+        for (int i = 0;i < weights.length;i++) {
+          weights[i] = list.get(i);
+        }
+        table.withRowLayout(Layout.weighted(weights));
+      }
+
       // Border
       Object border = attributes.get("border");
-      Border borderChar;
+      BorderStyle borderStyle;
       if (border instanceof Boolean && (Boolean)border) {
-        borderChar = Border.dashed;
-      } else if (border instanceof Border) {
-        borderChar = (Border)border;
+        borderStyle = BorderStyle.dashed;
+      } else if (border instanceof BorderStyle) {
+        borderStyle = (BorderStyle)border;
       } else {
-        borderChar = null;
+        borderStyle = null;
       }
-      table.border(borderChar);
+      table.border(borderStyle);
+
+      // Separator
+      Object separator = attributes.get("separator");
+      BorderStyle separatorStyle;
+      if (separator instanceof Boolean && (Boolean)separator) {
+        separatorStyle = BorderStyle.dashed;
+      } else if (separator instanceof BorderStyle) {
+        separatorStyle = (BorderStyle)separator;
+      } else {
+        separatorStyle = null;
+      }
+      table.separator(separatorStyle);
     }
 
     //
@@ -167,7 +188,7 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
       }
       parentElement.add(childElement);
     } else {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("Unrecognized parent " + parent);
     }
   }
 

@@ -21,6 +21,8 @@ package org.crsh.text.ui;
 
 import org.crsh.text.Renderer;
 import org.crsh.text.Style;
+import org.crsh.util.CharSlicer;
+import org.crsh.util.Pair;
 
 public class LabelElement extends Element {
 
@@ -31,33 +33,29 @@ public class LabelElement extends Element {
   final int minWidth;
 
   /** . */
-  final int width;
+  final int actualWidth;
 
-  private static int width(String s, int index) {
-    if (index < s.length()) {
-      int pos = s.indexOf('\n', index + 1);
-      if (pos == -1) {
-        return s.length() - index;
-      } else {
-        return Math.max(pos - index, width(s, pos + 1));
-      }
-    } else {
-      return 0;
-    }
-  }
+  /** . */
+  final int actualHeight;
+
+  /** . */
+  final CharSlicer slicer;
 
   public LabelElement(String value, int minWidth) {
     if (minWidth < 0) {
       throw new IllegalArgumentException("No negative min size allowed");
     }
 
-    // Determine width
-    int width = width(value, 0);
+    // Determine size
+    CharSlicer slicer = new CharSlicer(value);
+    Pair<Integer, Integer> size = slicer.size();
 
     //
     this.value = value;
-    this.minWidth = Math.min(width, minWidth);
-    this.width = width;
+    this.minWidth = Math.min(size.getFirst(), minWidth);
+    this.actualWidth = size.getFirst();
+    this.actualHeight = size.getSecond();
+    this.slicer = slicer;
   }
 
   public LabelElement(String value) {

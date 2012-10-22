@@ -17,51 +17,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.text.ui;
+package org.crsh.util;
 
-import org.crsh.text.Style;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+public class BaseIterator<E> implements Iterator<E> {
 
-public class RowElement extends Element {
-
-  /** . */
-  List<Element> cols;
-
-  /** . */
-  final boolean header;
-
-  public RowElement() {
-    this(false);
+  public boolean hasNext() {
+    return false;
   }
 
-  public RowElement(boolean header) {
-    this.cols = new ArrayList<Element>();
-    this.header = header;
+  public E next() {
+    throw new NoSuchElementException("No more elements");
   }
 
-  public int getSize() {
-    return cols.size();
-  }
-
-  public Element getCol(int index) {
-    return cols.get(index);
-  }
-
-  public RowElement add(Element... cols) {
-    Collections.addAll(this.cols, cols);
-    return this;
-  }
-
-  @Override
-  public RowElement style(Style.Composite style) {
-    return (RowElement)super.style(style);
-  }
-
-  @Override
-  public RowRenderer renderer() {
-    return new RowRenderer(this);
+  public void remove() {
+    throw new UnsupportedOperationException();
   }
 }

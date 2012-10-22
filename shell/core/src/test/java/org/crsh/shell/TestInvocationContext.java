@@ -120,6 +120,9 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
         public int getWidth() {
           return TestInvocationContext.this.getWidth();
         }
+        public int getHeight() {
+          return TestInvocationContext.this.getHeight();
+        }
         public void provide(Chunk element) throws IOException {
           reader.provide(element);
         }

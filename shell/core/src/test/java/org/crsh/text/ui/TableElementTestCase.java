@@ -103,7 +103,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
   public void testInNodeBorder() throws Exception {
 
     TableElement tableElement = new TableElement(1, 1);
-    tableElement.border(Border.dashed);
+    tableElement.border(BorderStyle.dashed);
 
     tableElement.
         add(row().
@@ -121,8 +121,8 @@ public class TableElementTestCase extends AbstractRendererTestCase {
     assertRender(node, 32,
         "+-foo                           ",
         "+- ---------------------------- ",
-        "| |a             |b            |",
-        "| |c             |d            |",
+        "| |a             b             |",
+        "| |c             d             |",
         "|  ---------------------------- ",
         "+-bar                           ");
   }
@@ -157,7 +157,8 @@ public class TableElementTestCase extends AbstractRendererTestCase {
   public void testInNodeTooLargeBorder() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.border(Border.dashed);
+    tableElement.border(BorderStyle.dashed);
+    tableElement.separator(BorderStyle.dashed);
 
     tableElement.
         add(row().
@@ -186,7 +187,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
   public void testInNodeHeader() throws Exception {
 
-    TableElement tableElement = new TableElement().border(Border.dashed);
+    TableElement tableElement = new TableElement().border(BorderStyle.dashed);
 
     tableElement.
         add(row().
@@ -212,15 +213,15 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
     assertRender(node, 32,
         "+-foo                           ",
-        "+- ---                          ",
-        "| |a|b|                         ",
-        "| |c|d|                         ",
-        "|  ---                          ",
-        "| |e|f|                         ",
-        "|  ---                          ",
-        "| |g|h|                         ",
-        "| |i|j|                         ",
-        "|  ---                          ",
+        "+- --                           ",
+        "| |ab|                          ",
+        "| |cd|                          ",
+        "|  --                           ",
+        "| |ef|                          ",
+        "|  --                           ",
+        "| |gh|                          ",
+        "| |ij|                          ",
+        "|  --                           ",
         "+-bar                           ");
   }
 
@@ -255,15 +256,16 @@ public class TableElementTestCase extends AbstractRendererTestCase {
             add(label("d")));
 
     //
-    tableElement.border(Border.dashed);
+    tableElement.border(BorderStyle.dashed);
     assertRender(tableElement, 32,
-        " ---                            ",
-        "|a|b|                           ",
-        "|c|d|                           ",
-        " ---                            ");
+        " --                             ",
+        "|ab|                            ",
+        "|cd|                            ",
+        " --                             ");
 
     //
-    tableElement.border(Border.star);
+    tableElement.border(BorderStyle.star);
+    tableElement.separator(BorderStyle.star);
     assertRender(tableElement, 32,
         "*****                           ",
         "*a*b*                           ",
@@ -275,7 +277,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.border(Border.dashed);
+    tableElement.border(BorderStyle.dashed);
 
     tableElement.
         add(header().
@@ -292,14 +294,14 @@ public class TableElementTestCase extends AbstractRendererTestCase {
             add(label("h")));
 
     assertRender(tableElement, 32,
-        " ---                            ",
-        "|a|b|                           ",
-        " ---                            ",
-        "|c|d|                           ",
-        "|e|f|                           ",
-        " ---                            ",
-        "|g|h|                           ",
-        " ---                            ");
+        " --                             ",
+        "|ab|                            ",
+        " --                             ",
+        "|cd|                            ",
+        "|ef|                            ",
+        " --                             ",
+        "|gh|                            ",
+        " --                             ");
   }
 
   public void testNoBorderHeaderTopBottom() throws Exception {
@@ -321,6 +323,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
     assertRender(tableElement, 3,
         "ab ",
+        "-- ",
         "cd ",
         "ef ");
 
@@ -330,7 +333,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.border(Border.dashed);
+    tableElement.border(BorderStyle.dashed);
 
     tableElement.
         add(row().
@@ -350,22 +353,22 @@ public class TableElementTestCase extends AbstractRendererTestCase {
             add(label("j")));
 
     assertRender(tableElement, 32,
-        " ---                            ",
-        "|a|b|                           ",
-        "|c|d|                           ",
-        " ---                            ",
-        "|e|f|                           ",
-        " ---                            ",
-        "|g|h|                           ",
-        "|i|j|                           ",
-        " ---                            ");
+        " --                             ",
+        "|ab|                            ",
+        "|cd|                            ",
+        " --                             ",
+        "|ef|                            ",
+        " --                             ",
+        "|gh|                            ",
+        "|ij|                            ",
+        " --                             ");
   }
 
   public void testBorderHeaderTwoMiddle() throws Exception {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.border(Border.dashed);
+    tableElement.border(BorderStyle.dashed);
 
     tableElement.
         add(row().
@@ -388,23 +391,24 @@ public class TableElementTestCase extends AbstractRendererTestCase {
             add(label("l")));
 
     assertRender(tableElement, 32,
-        " ---                            ",
-        "|a|b|                           ",
-        "|c|d|                           ",
-        " ---                            ",
-        "|e|f|                           ",
-        " ---                            ",
-        "|g|h|                           ",
-        " ---                            ",
-        "|i|j|                           ",
-        "|k|l|                           ",
-        " ---                            ");
+        " --                             ",
+        "|ab|                            ",
+        "|cd|                            ",
+        " --                             ",
+        "|ef|                            ",
+        " --                             ",
+        "|gh|                            ",
+        " --                             ",
+        "|ij|                            ",
+        "|kl|                            ",
+        " --                             ");
 
   }
 
   public void testTooLargeBorder() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.border(Border.dashed);
+    tableElement.border(BorderStyle.dashed);
+    tableElement.separator(BorderStyle.dashed);
 
     tableElement.
         add(row().
@@ -425,7 +429,8 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
   public void testTooLargeBorderHeader() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.border(Border.dashed);
+    tableElement.border(BorderStyle.dashed);
+    tableElement.separator(BorderStyle.dashed);
 
     tableElement.
         add(header().
@@ -448,7 +453,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
   public void testBorderStyle() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.border(Border.dashed);
+    tableElement.border(BorderStyle.dashed);
 
     tableElement.
         add(row().style(Color.green.bg().fg(Color.blue).bold()).
@@ -484,7 +489,8 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
   public void testTooManyColumns() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.border(Border.dashed);
+    tableElement.separator(BorderStyle.dashed);
+    tableElement.border(BorderStyle.dashed);
 
     tableElement.
         add(row().

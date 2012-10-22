@@ -83,6 +83,9 @@ public class CRaSHInvocationContext<P> extends BaseCommandContext implements Inv
         public int getWidth() {
           return processContext.getWidth();
         }
+        public int getHeight() {
+          return processContext.getHeight();
+        }
         public void provide(Chunk element) throws IOException {
           producer.provide(element);
         }

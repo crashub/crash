@@ -19,6 +19,8 @@
 
 package org.crsh.text.ui;
 
+import java.util.Arrays;
+
 /**
  * The layout computes the lengths of a list of contiguous cells.
  */
@@ -42,15 +44,18 @@ public abstract class Layout {
    *
    * The returned array is the list of lengths from left to right, the array size may be less than the
    * number of cells (i.e the size of the <code>actualLengths</code> and <code>minLengths</code> arguments). Missing
-   * cells are just be discarded and not part of the resulting layout.
+   * cells are just be discarded and not part of the resulting layout. Array should contain only positive values,
+   * any zero length cell should be discarded. When cells must be discarded it must begin with the tail of the
+   * list, i.e it is not allowed to discard a cell that does not have a successor.
    *
-   * @param border the border
-   * @param length the lengths
+   *
+   * @param spaced true if the cells are separated by one char
+   * @param length the length
    * @param actualLengths the actual length : an estimation of what cell's desired length
    * @param minLengths the minmum length : the length under which a cell cannot be rendered
    * @return the list of length.
    */
-  abstract int[] compute(Border border, int length, int[] actualLengths, int[] minLengths);
+  abstract int[] compute(boolean spaced, int length, int[] actualLengths, int[] minLengths);
 
   public static class Weighted extends Layout {
 
@@ -81,7 +86,7 @@ public abstract class Layout {
     }
 
     @Override
-    int[] compute(Border border, int length, int[] actualLengths, int[] minLengths) {
+    int[] compute(boolean spaced, int length, int[] actualLengths, int[] minLengths) {
 
       //
       int count = Math.min(actualLengths.length, weights.length);
@@ -90,24 +95,22 @@ public abstract class Layout {
       for (int i = count;i > 0;i--) {
 
         //
-        int totalLength = 0;
-        int len2 = length;
+        int totalLength = length;
+        int totalWeight = 0;
         for (int j = 0;j < i;j++) {
-          totalLength += weights[j];
-          if (border != null) {
-            if (j == 0) {
-              len2 -= 2;
-            } else {
-              len2 -= 1;
+          totalWeight += weights[j];
+          if (spaced) {
+            if (j > 0) {
+              totalLength--;
             }
           }
         }
 
         // Compute the length of each cell
-        int[] ret = new int[actualLengths.length];
+        int[] ret = new int[i];
         for (int j = 0;j < i;j++) {
-          int w = len2 * weights[j];
-          if (w < minLengths[j] * totalLength) {
+          int w = totalLength * weights[j];
+          if (w < minLengths[j] * totalWeight) {
             ret = null;
             break;
           } else {
@@ -127,14 +130,14 @@ public abstract class Layout {
           for (int j = 0;j < ret.length;j++) {
 
             // Compute base value
-            int value = ret[j] / totalLength;
+            int value = ret[j] / totalWeight;
 
             // Lower value
-            int lower = value * totalLength;
+            int lower = value * totalWeight;
             int errLower = err + ret[j] - lower;
 
             // Upper value
-            int upper = lower + totalLength;
+            int upper = lower + totalWeight;
             int errUpper = err + ret[j] - upper;
 
             // We choose between lower/upper according to the accumulated error
@@ -159,21 +162,18 @@ public abstract class Layout {
   private static final Layout RTL = new Layout() {
 
     @Override
-    int[] compute(Border border, int length, int[] actualLengths, int[] minLengths) {
+    int[] compute(boolean spaced, int length, int[] actualLengths, int[] minLengths) {
 
       //
       int[] ret = actualLengths.clone();
 
       //
       int totalLength = 0;
-      for (int actualLength : actualLengths) {
-        if (border != null) {
-          totalLength += 1;
+      for (int i = 0;i < actualLengths.length;i++) {
+        totalLength += actualLengths[i];
+        if (spaced && i > 0) {
+          totalLength++;
         }
-        totalLength += actualLength;
-      }
-      if (border != null) {
-        totalLength += 1;
       }
 
       //
@@ -182,25 +182,32 @@ public abstract class Layout {
         int delta = totalLength - length;
         int bar = actualLengths[index] - minLengths[index];
         if (delta <= bar) {
-          int sub = Math.min(bar, delta);
-          totalLength -= sub;
-          ret[index] -= sub;
+          // We are done
+          totalLength = length;
+          ret[index] -= delta;
         } else {
           int foo = actualLengths[index];
-          if (border != null) {
-            foo++;
-            if (index == 0) {
+          if (spaced) {
+            if (index > 0) {
               foo++;
             }
           }
           totalLength -= foo;
           ret[index] = 0;
+          index--;
         }
-        index--;
       }
 
       //
-      return totalLength > 0 ? ret : null;
+      if (totalLength > 0) {
+        if (index == minLengths.length - 1) {
+          return ret;
+        } else {
+          return Arrays.copyOf(ret, index + 1);
+        }
+      } else {
+        return null;
+      }
     }
   };
 /*

@@ -24,48 +24,53 @@ import org.crsh.text.RenderAppendable;
 import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class TableRenderer extends Renderer {
 
   /** . */
-  private final List<RowRenderer> rows;
+  private final Layout columnLayout;
 
   /** . */
-  private final Layout layout;
+  private final Layout rowLayout;
 
   /** . */
-  private final Border border;
+  private final BorderStyle border;
+
+  /** . */
+  private final BorderStyle separator;
 
   /** . */
   private final Style.Composite style;
 
   /** . */
-  private final Integer height;
+  private TableRowRenderer head;
+
+  /** . */
+  private TableRowRenderer tail;
 
   TableRenderer(TableElement table) {
-
-    //
-    List<RowRenderer> rows = new ArrayList<RowRenderer>(table.getRows().size());
     for (RowElement row : table.getRows()) {
-      rows.add(row.renderer());
+      if (head == null) {
+        head = tail = new TableRowRenderer(row.renderer(), row.header);
+      } else {
+        tail = tail.add(new TableRowRenderer(row.renderer(), row.header));
+      }
     }
 
     //
-    this.rows = rows;
-    this.layout = table.getColumnLayout();
+    this.rowLayout = table.getRowLayout();
+    this.columnLayout = table.getColumnLayout();
     this.border = table.getBorder();
     this.style = table.getStyle();
-    this.height = table.getHeight();
+    this.separator = table.getSeparator();
   }
 
   private int getMaxColSize() {
     int n = 0;
-    for (RowRenderer row : rows) {
-      n = Math.max(n, row.getSize());
+    for (TableRowRenderer row = head;row != null;row = row.next()) {
+      n = Math.max(n, row.getColsSize());
     }
     return n;
   }
@@ -73,7 +78,7 @@ class TableRenderer extends Renderer {
   @Override
   public int getMinWidth() {
     int width = 0;
-    for (RowRenderer row : rows) {
+    for (TableRowRenderer row = head;row != null;row = row.next()) {
       width = Math.max(width, row.getMinWidth());
     }
     return width;
@@ -82,21 +87,46 @@ class TableRenderer extends Renderer {
   @Override
   public int getActualWidth() {
     int width = 0;
-    for (RowRenderer row : rows) {
+    for (TableRowRenderer row = head;row != null;row = row.next()) {
       width = Math.max(width, row.getActualWidth());
     }
     return width;
   }
 
   @Override
-  public LineReader renderer(final int width) {
+  public int getActualHeight(int width) {
+    if (border != null) {
+      width -= 2;
+    }
+    int actualHeight = 0;
+    for (TableRowRenderer row = head;row != null;row = row.next()) {
+      actualHeight += row.getActualHeight(width);
+    }
+    if (border != null) {
+      actualHeight += 2;
+    }
+    return actualHeight;
+  }
+
+  @Override
+  public int getMinHeight(int width) {
+    return border != null ? 2 : 0;
+  }
+
+  @Override
+  public LineReader reader(int width) {
+    return reader(width, 0);
+  }
+
+  @Override
+  public LineReader reader(final int width, final int height) {
 
     int len = getMaxColSize();
     int[] eltWidths = new int[len];
     int[] eltMinWidths = new int[len];
 
     // Compute each column as is
-    for (RowRenderer row : rows) {
+    for (TableRowRenderer row = head;row != null;row = row.next()) {
       for (int i = 0;i < row.getCols().size();i++) {
         Renderer renderable = row.getCols().get(i);
         eltWidths[i] = Math.max(eltWidths[i], renderable.getActualWidth());
@@ -105,129 +135,236 @@ class TableRenderer extends Renderer {
     }
 
     // Note that we may have a different widths != eltWidths according to the layout algorithm
-    final int[] widths = layout.compute(border, width, eltWidths, eltMinWidths);
+    final int[] widths = columnLayout.compute(separator != null, width - (border != null ? 2 : 0), eltWidths, eltMinWidths);
 
     //
-    if (widths == null) {
-      return new LineReader() {
-        public int getWidth() {
-          return width;
-        }
-        public boolean hasLine() {
-          return false;
-        }
-        public void renderLine(RenderAppendable to) throws IllegalStateException {
-          throw new IllegalStateException();
-        }
-      };
-    } else {
-      final LinkedList<Object> renderers = new LinkedList<Object>();
-
-      // Add all rows
-      boolean prev = false;
-      for (int i = 0;i < rows.size();i++) {
-        RowRenderer row = rows.get(i);
-        if (border != null && (row.isHeader() || i == 0) && !prev) {
-          renderers.add(border);
-        }
-
-        //
-        int[] bilto = layout.compute(
-            border,
-            width,
-            Arrays.copyOf(eltWidths, row.getCols().size()),
-            Arrays.copyOf(eltMinWidths, row.getCols().size()));
-
-        //
-        renderers.add(row.renderer(bilto, width, border));
-
-        //
-        if (border != null && (row.isHeader() || i == rows.size() - 1)) {
-          renderers.add(border);
-          prev = true;
-        } else {
-          prev = false;
-        }
-      }
-
-      //
-      final int borderWidth;
+    if (widths != null) {
+      // Compute new widths array
+      final AtomicInteger effectiveWidth = new AtomicInteger();
       if (border != null) {
-        int foo = 1;
-        for (int i = 0;i < widths.length;i++) {
-          if (widths[i] >= eltMinWidths[i]) {
-            foo += widths[i] + 1;
+        effectiveWidth.addAndGet(2);
+      }
+      for (int i = 0;i < widths.length;i++) {
+        effectiveWidth.addAndGet(widths[i]);
+        if (separator != null) {
+          if (i > 0) {
+            effectiveWidth.addAndGet(1);
           }
         }
-        borderWidth = foo;
+      }
+
+      //
+      final int[] heights;
+      if (height > 0) {
+        // Apply vertical layout
+        int size = tail.getSize();
+        int[] actualHeights = new int[size];
+        int[] minHeights = new int[size];
+        for (TableRowRenderer row = head;row != null;row = row.next()) {
+
+          int actualHeight = 0;
+          int minHeight = 0;
+          for (int i = 0;i < widths.length;i++) {
+            Renderer col = row.row.getCols().get(i);
+            actualHeight = Math.max(actualHeight, col.getActualHeight(widths[i]));
+            minHeight = Math.max(minHeight, col.getMinHeight(widths[i]));
+          }
+
+          //
+          if (row.hasTop()) {
+            actualHeight++;
+            minHeight++;
+          }
+          if (row.hasBottom()) {
+            actualHeight++;
+            minHeight++;
+          }
+
+          //
+          actualHeights[row.getIndex()] = actualHeight;
+          minHeights[row.getIndex()] = minHeight;
+        }
+        heights = rowLayout.compute(false, height - (border != null ? 2 : 0), actualHeights, minHeights);
+        if (heights == null) {
+          return null;
+        }
       } else {
-        // Will not be used
-        borderWidth = 0;
+        heights = new int[tail.getSize()];
+        Arrays.fill(heights, -1);
       }
 
       //
       return new LineReader() {
 
-        /** The current height. */
-        int height = 0;
+        /** . */
+        TableRowReader rHead = null;
+
+        /** . */
+        TableRowReader rTail = null;
+
+        /** . */
+        int index = 0;
+
+        /**
+         * 0 -> render top
+         * 1 -> render rows
+         * 2 -> render bottom
+         * 3 -> done
+         */
+        int status = border != null ? 0 : 1;
+
+        {
+          // Add all rows
+          for (TableRowRenderer row = head;row != null;row = row.next()) {
+            if (row.getIndex() < heights.length) {
+              int[] what;
+              if (row.getColsSize() == widths.length) {
+                what = widths;
+              } else {
+                // Redistribute space among columns
+                what = new int[row.getColsSize()];
+                for (int j = 0;j < widths.length;j++) {
+                  what[j % what.length] += widths[j];
+                }
+              }
+              TableRowReader next = row.renderer(what, separator, heights[row.getIndex()]);
+              if (rHead == null) {
+                rHead = rTail = next;
+              } else {
+                rTail = rTail.add(next);
+              }
+            } else {
+              break;
+            }
+          }
+        }
 
         public boolean hasLine() {
-          if (TableRenderer.this.height != null && height >= TableRenderer.this.height) {
-            return false;
-          } else {
-            while (renderers.size() > 0) {
-              Object first = renderers.peekFirst();
-              if (first instanceof LineReader) {
-                if (((LineReader)first).hasLine()) {
+          switch (status) {
+            case 0:
+            case 2:
+              return true;
+            case 1:
+              while (rHead != null) {
+                if (rHead.hasLine()) {
                   return true;
                 } else {
-                  renderers.removeFirst();
+                  rHead = rHead.next();
+                }
+              }
+
+              // Update status according to height
+              if (height > 0) {
+                if (border == null) {
+                  if (index == height) {
+                    status = 3;
+                  }
+                } else {
+                  if (index == height - 1) {
+                    status = 2;
+                  }
                 }
               } else {
-                return true;
+                if (border != null) {
+                  status = 2;
+                } else {
+                  status = 3;
+                }
               }
-            }
-            return false;
+
+              //
+              return status < 3;
+            default:
+              return false;
           }
         }
+
         public void renderLine(RenderAppendable to) {
           if (!hasLine()) {
             throw new IllegalStateException();
           }
-          while (renderers.size() > 0) {
-            Object first = renderers.peek();
-            if (first instanceof LineReader) {
-              if (((LineReader)first).hasLine()) {
-                if (style != null) {
-                  to.enterStyle(style);
-                  ((LineReader)first).renderLine(to);
-                  to.leaveStyle();
-                } else {
-                  ((LineReader)first).renderLine(to);
-                }
-                break;
-              } else {
-                renderers.removeFirst();
-              }
-            } else {
-              Border border = (Border)first;
-              renderers.removeFirst();
+          switch (status) {
+            case 0:
+            case 2: {
               to.styleOff();
               to.append(border.corner);
-              for (int i = 0; i < borderWidth - 2;++i ) {
-                to.append(border.horizontal);
+              for (int i = 0;i < widths.length;i++) {
+                if (widths[i] > 0) {
+                  if (separator != null && i > 0) {
+                    to.append(border.horizontal);
+                  }
+                  for (int j = 0;j < widths[i];j++) {
+                    to.append(border.horizontal);
+                  }
+                }
               }
               to.append(border.corner);
-              for (int i = borderWidth;i < width;i++) {
+              to.styleOn();
+              for (int i = width - effectiveWidth.get();i > 0;i--) {
                 to.append(' ');
               }
-              to.styleOn();
+              status++;
               break;
             }
+            case 1: {
+
+              //
+              boolean sep = rHead != null && rHead.isSeparator();
+              if (border != null) {
+                to.styleOff();
+                to.append(sep ? border.corner : border.vertical);
+                to.styleOn();
+              }
+
+              //
+              if (style != null) {
+                to.enterStyle(style);
+              }
+
+              //
+              if (rHead != null) {
+                // Render row
+                rHead.renderLine(to);
+              } else {
+                // Vertical padding
+                for (int i = 0;i < widths.length;i++) {
+                  if (separator != null && i > 0) {
+                    to.append(separator.vertical);
+                  }
+                  for (int j = 0;j < widths[i];j++) {
+                    to.append(' ');
+                  }
+                }
+              }
+
+              //
+              if (style != null) {
+                to.leaveStyle();
+              }
+
+              //
+              if (border != null) {
+                to.styleOff();
+                to.append(sep ? border.corner : border.vertical);
+                to.styleOn();
+              }
+
+              // Padding
+              for (int i = width - effectiveWidth.get();i > 0;i--) {
+                to.append(' ');
+              }
+              break;
+            }
+            default:
+              throw new AssertionError();
           }
-          height++;
+
+          // Increase vertical index
+          index++;
         }
       };
+    } else {
+      return Renderer.NULL.reader(width);
     }
   }
 }

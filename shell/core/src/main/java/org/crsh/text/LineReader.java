@@ -19,9 +19,6 @@
 
 package org.crsh.text;
 
-/**
- * The line reader is a kind of iterator over a number of lines having a fixed width.
- */
 public interface LineReader {
 
   /**

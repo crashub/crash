@@ -69,6 +69,9 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
         public int getWidth() {
           return outter.getWidth();
         }
+        public int getHeight() {
+          return outter.getHeight();
+        }
         public void provide(Chunk element) throws IOException {
           producer.provide(element);
         }

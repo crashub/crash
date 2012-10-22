@@ -42,6 +42,9 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
         public int getWidth() {
           return width;
         }
+        public int getHeight() {
+          return 40;
+        }
         public void provide(Chunk element) throws IOException {
           buffer.provide(element);
         }
@@ -62,13 +65,30 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
   }
 
   public List<String> render(Element element, int width) {
-    LineReader renderer = element.renderer().renderer(width);
+    LineReader renderer = element.renderer().reader(width);
     return render(renderer, width);
   }
 
-  public void assertRender(Element element, int width, String... expected) {
-    LineReader renderer = element.renderer().renderer(width);
+  public void assertRender(Element element, int width, int height, String... expected) {
+    LineReader renderer = element.renderer().reader(width, height);
+    assertNotNull("Was expecting a renderer", renderer);
     assertRender(renderer, width, expected);
+  }
+
+  public void assertRender(Element element, int width, String... expected) {
+    LineReader renderer = element.renderer().reader(width);
+    assertNotNull("Was expecting a renderer", renderer);
+    assertRender(renderer, width, expected);
+  }
+
+  public void assertNoRender(Element element, int width) {
+    LineReader renderer = element.renderer().reader(width);
+    assertNull(renderer);
+  }
+
+  public void assertNoRender(Element element, int width, int height) {
+    LineReader renderer = element.renderer().reader(width, height);
+    assertNull(renderer);
   }
 
   public void assertRender(LineReader renderer, int width, String... expected) {

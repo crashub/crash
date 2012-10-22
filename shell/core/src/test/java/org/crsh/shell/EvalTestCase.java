@@ -39,6 +39,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
     //
     assertEquals(
         "a                               \n" +
+        "-                               \n" +
         "1                               \n", assertOk("foo"));
   }
 

@@ -129,6 +129,9 @@ class PipeLine {
               public int getWidth() {
                 return context.getWidth();
               }
+              public int getHeight() {
+                return context.getHeight();
+              }
               public void provide(Chunk element) throws IOException {
                 proxy.provide(element);
               }
@@ -150,6 +153,9 @@ class PipeLine {
         next = new ChunkAdapter(new RenderingContext() {
           public int getWidth() {
             return context.getWidth();
+          }
+          public int getHeight() {
+            return context.getHeight();
           }
           public void provide(Chunk element) throws IOException {
             buffer.provide(element);

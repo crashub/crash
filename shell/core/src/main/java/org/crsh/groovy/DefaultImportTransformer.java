@@ -34,7 +34,7 @@ import org.crsh.cmdline.annotations.Option;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.text.ui.Border;
+import org.crsh.text.ui.BorderStyle;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
 import org.crsh.text.Style;
@@ -65,7 +65,7 @@ public class DefaultImportTransformer implements ASTTransformation {
     Color.class,
     Decoration.class,
     Style.class,
-    Border.class
+    BorderStyle.class
   };
 
   public void visit(ASTNode[] nodes, final SourceUnit source) {
