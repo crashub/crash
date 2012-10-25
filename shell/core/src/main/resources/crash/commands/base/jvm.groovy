@@ -35,7 +35,7 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM operating system")
   @Command
   public void system(InvocationContext<Map> context) {
-    out << "OPERATING SYSTEM\n";
+    out << "\nOPERATING SYSTEM\n";
     def os = ManagementFactory.operatingSystemMXBean;
     context.provide([name:"architecture",value:os?.arch]);
     context.provide([name:"name",value:os?.name]);
@@ -49,29 +49,12 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM runtime")
   @Command
   public void runtime() {
-
-    UIBuilder ui = new UIBuilder()
-
-    ui.table() {
-
-      def rt = ManagementFactory.runtimeMXBean
-      row(decoration: bold, foreground: black, background: white) {
-        label("RUNTIME", foreground: red); label("")
-      }
-      row() {
-        label("name", foreground: red); label(rt?.name)
-      }
-      row() {
-        label("spec name", foreground: red); label(rt?.specName)
-      }
-      row() {
-        label("vendor", foreground: red); label(rt?.specVendor)
-      }
-      row() {
-        label("management spec version", foreground: red); label(rt?.managementSpecVersion)
-      }
-    }
-    out << ui;
+    out << "\nJVM runtime\n";
+    def rt = ManagementFactory.runtimeMXBean
+    context.provide([name:"name",value:rt?.name]);
+    context.provide([name:"specName",value:rt?.specName]);
+    context.provide([name:"specVendor",value:rt?.specVendor]);
+    context.provide([name:"managementSpecVersion",value:rt?.managementSpecVersion]);
   }
 
   /**
@@ -80,27 +63,12 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM classloding")
   @Command
   public void classloading() {
-    UIBuilder ui = new UIBuilder()
-    ui.table() {
-      def cl = ManagementFactory.classLoadingMXBean
-
-      row(decoration: bold, foreground: black, background: white) {
-        label("CLASS LOADING SYSTEM", foreground: red); label("")
-      }
-      row() {
-        label("isVerbose", foreground: red); label(cl?.isVerbose())
-      }
-      row() {
-        label("loadedClassCount", foreground: red); label(cl?.loadedClassCount)
-      }
-      row() {
-        label("totalLoadedClassCount", foreground: red); label(cl?.totalLoadedClassCount)
-      }
-      row() {
-        label("unloadedClassCount", foreground: red); label(cl?.unloadedClassCount)
-      }
-    }
-    out << ui;
+    out << "JVM classloding\n";
+    def cl = ManagementFactory.classLoadingMXBean
+    context.provide([name:"isVerbose ",value:cl?.isVerbose()]);
+    context.provide([name:"loadedClassCount ",value:cl?.loadedClassCount]);
+    context.provide([name:"totalLoadedClassCount ",value:cl?.totalLoadedClassCount]);
+    context.provide([name:"unloadedClassCount ",value:cl?.unloadedClassCount]);
   }
 
   /**
@@ -109,17 +77,8 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM compilation")
   @Command
   public void compilation() {
-    UIBuilder ui = new UIBuilder()
-    ui.table() {
-      def comp = ManagementFactory.compilationMXBean
-      row(decoration: bold, foreground: black, background: white) {
-        label("COMPILATION", foreground: red); label("")
-      }
-      row() {
-        label("totalCompilationTime", foreground: red); label(comp.totalCompilationTime)
-      }
-    }
-    out << ui;
+    def comp = ManagementFactory.compilationMXBean
+    context.provide([name:"totalCompilationTime ",value:comp.totalCompilationTime]);
   }
 
   /**
@@ -128,76 +87,36 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM memory")
   @Command
   public void mem() {
-    UIBuilder ui = new UIBuilder()
-    ui.table() {
-      def mem = ManagementFactory.memoryMXBean
-      def heapUsage = mem.heapMemoryUsage
-      def nonHeapUsage = mem.nonHeapMemoryUsage
-      row(decoration: bold, foreground: black, background: white) {
-        label("MEMORY", foreground: red); label("")
-      }
-      row(decoration: bold) {
-        label("HEAP STORAGE", foreground: red); label("")
-      }
-      row() {
-        label("committed", foreground: red); label(heapUsage?.committed)
-      }
-      row() {
-        label("init", foreground: red); label(heapUsage?.init)
-      }
-      row() {
-        label("max", foreground: red); label(heapUsage?.max)
-      }
-      row() {
-        label("used", foreground: red); label(heapUsage?.used)
-      }
-      row(decoration: bold) {
-        label("NON-HEAP STORAGE", foreground: red); label("")
-      }
-      row() {
-        label("committed", foreground: red); label(nonHeapUsage?.committed)
-      }
-      row() {
-        label("init", foreground: red); label(nonHeapUsage?.init)
-      }
-      row() {
-        label("max", foreground: red); label(nonHeapUsage?.max)
-      }
-      row() {
-        label("used", foreground: red); label(nonHeapUsage?.used)
-      }
-    }
-    out << ui;
 
-    ui = new UIBuilder()
-    ui.table() {
-      row(decoration: bold, foreground: black, background: white) {
-        label("MEMORY", foreground: red); label(""); label("")
-      }
-      ManagementFactory.memoryPoolMXBeans.each{ mp ->
-        row() {
-          label("name", foreground: red); label(mp?.name); label("")
-        }
+    def mem = ManagementFactory.memoryMXBean
+    def heapUsage = mem.heapMemoryUsage
+    def nonHeapUsage = mem.nonHeapMemoryUsage
+    out << "\nMEMORY:\n";
+    out << "\nHEAP STORAGE\n\n";
+    out << "committed:" + heapUsage?.committed + "\n";
+    out << "init:" + heapUsage?.init + "\n";
+    out << "max:" + heapUsage?.max + "\n";
+    out << "used:" + heapUsage?.used + "\n";
 
-        String[] mmnames = mp.memoryManagerNames
-        mmnames.each{ mmname ->
-          row() {
-            label(""); label("Manager Name", foreground: red); label(mmname)
-          }
-        }
-        row() {
-          label(""); label("Type", foreground: red); label(mp?.type)
-        }
-        row() {
-          label(""); label("Usage threshold supported", foreground: red); label(mp?.isUsageThresholdSupported())
-        }
-        row() {
-          label("", foreground: red); label(""); label("")
-        }
+    out << "\nNON-HEAP STORAGE\n\n";
+    out << "committed:" + nonHeapUsage?.committed + "\n";
+    out << "init:" + nonHeapUsage?.init + "\n";
+    out << "max:" + nonHeapUsage?.max + "\n\n";
+
+
+    ManagementFactory.memoryPoolMXBeans.each{ mp ->
+      out << "name :" + mp?.name + "\n";
+      String[] mmnames = mp.memoryManagerNames
+      mmnames.each{ mmname ->
+              context.provide([name:"Manager Name",value:mmname]);
       }
+      context.provide([name:"Type ",value:mp?.type]);
+      context.provide([name:"Usage threshold supported ",value:mp?.isUsageThresholdSupported()]);
+      out << "\n";
     }
-    out << ui;
   }
+
+
 
   /**
    * Show JMX data about Thread.
@@ -205,29 +124,19 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM garbage collection")
   @Command
   public void gc() {
-    UIBuilder ui = new UIBuilder()
-    ui.table() {
-      row(decoration: bold, foreground: black, background: white) {
-        label("GARBAGE COLLECTION", foreground: red); label(""); label("")
-      }
+
+      out << "\nGARBAGE COLLECTION\n";
       ManagementFactory.garbageCollectorMXBeans.each { gc ->
-        row() {
-          label("name", foreground: red); label(gc?.name); label("")
-        }
-        row() {
-          label("") ;label("collection count", foreground: red); label(gc?.collectionCount)
-        }
-        row() {
-          label("") ;label("collection time", foreground: red); label(gc?.collectionTime)
-        }
-        String[] mpoolNames = gc.memoryPoolNames
-        mpoolNames.each { mpoolName ->
-          row() {
-            label("") ;label("mpool name", foreground: red); label(mpoolName)
+          out << "name :" + gc?.name + "\n";
+          context.provide([name:"collection count ",value:gc?.collectionCount]);
+          context.provide([name:"collection time ",value:gc?.collectionTime]);
+
+
+          String[] mpoolNames = gc.memoryPoolNames
+          mpoolNames.each { mpoolName ->
+              context.provide([name:"mpool name ",value:mpoolName]);
           }
-        }
+          out << "\n\n";
       }
-    }
-    out << ui;
   }
 }

@@ -97,6 +97,7 @@ public class ThreadRenderable extends Renderable<Thread> {
         time2 = time1;
       }
       long delta = time2 - time1;
+      System.out.print("Thread ID :" + id + " delta:" + delta);
       deltas.put(id, delta);
       total += delta;
     }
@@ -124,7 +125,14 @@ public class ThreadRenderable extends Renderable<Thread> {
       long seconds = times2.get(thread.getId()) / 1000000000;
       long min = seconds / 60;
       String time = min + ":" + (seconds % 60);
-      long cpu = Math.round((deltas.get(thread.getId()) * 100) / total);
+
+      long threadDelta = deltas.get(thread.getId());
+      long cpu = 0;
+      if (threadDelta != 0) {
+          Math.round((threadDelta * 100) / total);
+      }
+
+
 
       //
       ThreadGroup group = thread.getThreadGroup();
