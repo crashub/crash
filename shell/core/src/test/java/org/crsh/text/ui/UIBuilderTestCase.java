@@ -292,7 +292,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     );
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
-    assertSame(BorderStyle.dashed, ((TableElement)res.getElements().get(0)).border);
+    assertSame(BorderStyle.DASHED, ((TableElement)res.getElements().get(0)).border);
   }
 
   public void testTableBorderFalse() {
@@ -332,7 +332,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     UIBuilder res = (UIBuilder)shell.evaluate(
         "import org.crsh.text.ui.UIBuilder;\n" +
         "def builder = new UIBuilder();\n" +
-        "builder.table(border:org.crsh.text.ui.BorderStyle.dashed) {\n" +
+        "builder.table(border:org.crsh.text.ui.BorderStyle.DASHED) {\n" +
         "row {\n" +
         "}\n" +
         "};\n" +
@@ -340,7 +340,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     );
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
-    assertSame(BorderStyle.dashed, ((TableElement)res.getElements().get(0)).border);
+    assertSame(BorderStyle.DASHED, ((TableElement)res.getElements().get(0)).border);
   }
 
   public void testTableBorderStar() {
@@ -348,7 +348,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     UIBuilder res = (UIBuilder)shell.evaluate(
         "import org.crsh.text.ui.UIBuilder\n" +
         "def builder = new UIBuilder();\n" +
-        "builder.table(border: org.crsh.text.ui.BorderStyle.star) {\n" +
+        "builder.table(border: org.crsh.text.ui.BorderStyle.STAR) {\n" +
         "row {\n" +
         "}\n" +
         "};\n" +
@@ -356,7 +356,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
     );
     assertEquals(1, res.getElements().size());
     assertTrue(res.getElements().get(0) instanceof TableElement);
-    assertSame(BorderStyle.star, ((TableElement)res.getElements().get(0)).border);
+    assertSame(BorderStyle.STAR, ((TableElement)res.getElements().get(0)).border);
   }
 
   public void testTableHeader() {

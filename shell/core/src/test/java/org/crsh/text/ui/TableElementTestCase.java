@@ -103,7 +103,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
   public void testInNodeBorder() throws Exception {
 
     TableElement tableElement = new TableElement(1, 1);
-    tableElement.border(BorderStyle.dashed);
+    tableElement.border(BorderStyle.DASHED);
 
     tableElement.
         add(row().
@@ -157,8 +157,8 @@ public class TableElementTestCase extends AbstractRendererTestCase {
   public void testInNodeTooLargeBorder() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.border(BorderStyle.dashed);
-    tableElement.separator(BorderStyle.dashed);
+    tableElement.border(BorderStyle.DASHED);
+    tableElement.separator(BorderStyle.DASHED);
 
     tableElement.
         add(row().
@@ -187,7 +187,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
   public void testInNodeHeader() throws Exception {
 
-    TableElement tableElement = new TableElement().border(BorderStyle.dashed);
+    TableElement tableElement = new TableElement().border(BorderStyle.DASHED);
 
     tableElement.
         add(row().
@@ -256,7 +256,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
             add(label("d")));
 
     //
-    tableElement.border(BorderStyle.dashed);
+    tableElement.border(BorderStyle.DASHED);
     assertRender(tableElement, 32,
         " --                             ",
         "|ab|                            ",
@@ -264,8 +264,8 @@ public class TableElementTestCase extends AbstractRendererTestCase {
         " --                             ");
 
     //
-    tableElement.border(BorderStyle.star);
-    tableElement.separator(BorderStyle.star);
+    tableElement.border(BorderStyle.STAR);
+    tableElement.separator(BorderStyle.STAR);
     assertRender(tableElement, 32,
         "*****                           ",
         "*a*b*                           ",
@@ -277,7 +277,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.border(BorderStyle.dashed);
+    tableElement.border(BorderStyle.DASHED);
 
     tableElement.
         add(header().
@@ -333,7 +333,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.border(BorderStyle.dashed);
+    tableElement.border(BorderStyle.DASHED);
 
     tableElement.
         add(row().
@@ -368,7 +368,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
     TableElement tableElement = new TableElement();
 
-    tableElement.border(BorderStyle.dashed);
+    tableElement.border(BorderStyle.DASHED);
 
     tableElement.
         add(row().
@@ -407,8 +407,8 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
   public void testTooLargeBorder() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.border(BorderStyle.dashed);
-    tableElement.separator(BorderStyle.dashed);
+    tableElement.border(BorderStyle.DASHED);
+    tableElement.separator(BorderStyle.DASHED);
 
     tableElement.
         add(row().
@@ -429,8 +429,8 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
   public void testTooLargeBorderHeader() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.border(BorderStyle.dashed);
-    tableElement.separator(BorderStyle.dashed);
+    tableElement.border(BorderStyle.DASHED);
+    tableElement.separator(BorderStyle.DASHED);
 
     tableElement.
         add(header().
@@ -453,7 +453,7 @@ public class TableElementTestCase extends AbstractRendererTestCase {
   public void testBorderStyle() throws Exception {
 
     TableElement tableElement = new TableElement();
-    tableElement.border(BorderStyle.dashed);
+    tableElement.border(BorderStyle.DASHED);
 
     tableElement.
         add(row().style(Color.green.bg().fg(Color.blue).bold()).
@@ -489,8 +489,8 @@ public class TableElementTestCase extends AbstractRendererTestCase {
 
   public void testTooManyColumns() throws Exception {
     TableElement tableElement = new TableElement();
-    tableElement.separator(BorderStyle.dashed);
-    tableElement.border(BorderStyle.dashed);
+    tableElement.separator(BorderStyle.DASHED);
+    tableElement.border(BorderStyle.DASHED);
 
     tableElement.
         add(row().

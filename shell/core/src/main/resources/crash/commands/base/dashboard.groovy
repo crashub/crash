@@ -6,7 +6,7 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
       header(bold: true, fg: black, bg: white) {
         label("top");
       }
-      row{
+      row {
         eval {
           thread.ls();
         }

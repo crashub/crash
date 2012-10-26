@@ -132,28 +132,42 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
       }
 
       // Border
-      Object border = attributes.get("border");
-      BorderStyle borderStyle;
-      if (border instanceof Boolean && (Boolean)border) {
-        borderStyle = BorderStyle.dashed;
-      } else if (border instanceof BorderStyle) {
-        borderStyle = (BorderStyle)border;
+      Object borderAttr = attributes.get("border");
+      BorderStyle border;
+      if (borderAttr instanceof Boolean && (Boolean)borderAttr) {
+        border = BorderStyle.DASHED;
+      } else if (borderAttr instanceof BorderStyle) {
+        border = (BorderStyle)borderAttr;
       } else {
-        borderStyle = null;
+        border = null;
       }
-      table.border(borderStyle);
+      table.border(border);
 
       // Separator
-      Object separator = attributes.get("separator");
-      BorderStyle separatorStyle;
-      if (separator instanceof Boolean && (Boolean)separator) {
-        separatorStyle = BorderStyle.dashed;
-      } else if (separator instanceof BorderStyle) {
-        separatorStyle = (BorderStyle)separator;
+      Object separatorAttr = attributes.get("separator");
+      BorderStyle separator;
+      if (separatorAttr instanceof Boolean && (Boolean)separatorAttr) {
+        separator = BorderStyle.DASHED;
+      } else if (separatorAttr instanceof BorderStyle) {
+        separator = (BorderStyle)separatorAttr;
       } else {
-        separatorStyle = null;
+        separator = null;
       }
-      table.separator(separatorStyle);
+      table.separator(separator);
+
+      // Overflow
+      Object overflowAttr = attributes.get("overflow");
+      Overflow overflow;
+      if ("hidden".equals(overflowAttr)) {
+        overflow = Overflow.HIDDEN;
+      } else if ("wrap".equals(overflowAttr)) {
+        overflow = Overflow.WRAP;
+      } else if (overflowAttr instanceof Overflow) {
+        overflow = (Overflow)separatorAttr;
+      } else {
+        overflow = Overflow.WRAP;
+      }
+      table.overflow(overflow);
     }
 
     //

@@ -30,6 +30,7 @@ public abstract class Element {
   private Style.Composite style;
 
   protected Element() {
+    this.style = null;
   }
 
   public abstract Renderer renderer();
@@ -52,11 +53,11 @@ public abstract class Element {
   }
 
   public final void setStyle(Style.Composite style) {
-    style(style);
+    this.style = style;
   }
 
   public Element style(Style.Composite style) {
-    this.style = style;
+    setStyle(style);
     return this;
   }
 

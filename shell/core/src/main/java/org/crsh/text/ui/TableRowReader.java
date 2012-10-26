@@ -54,6 +54,8 @@ class TableRowReader implements LineReader {
   /** . */
   private final int height;
 
+  private final Overflow overflow;
+
   /**
    * 0 -> render top
    * 1 -> render cells
@@ -62,7 +64,7 @@ class TableRowReader implements LineReader {
    */
   private int status;
 
-  TableRowReader(RowRenderer renderer, int[] widths, BorderStyle separator, boolean header, int height) {
+  TableRowReader(RowRenderer renderer, int[] widths, BorderStyle separator, boolean header, Overflow overflow, int height) {
 
     //
     this.renderer = renderer;
@@ -74,13 +76,14 @@ class TableRowReader implements LineReader {
     this.separator = separator;
     this.height = height;
     this.status = 1;
+    this.overflow = overflow;
   }
 
   TableRowReader add(TableRowReader next) {
     next.previous = this;
     this.next = next;
-    bottom = header ? (separator != null ? separator : BorderStyle.dashed) : null;
-    next.top = next.header && !header ? (next.separator != null ? next.separator : BorderStyle.dashed) : null;
+    bottom = header ? (separator != null ? separator : BorderStyle.DASHED) : null;
+    next.top = next.header && !header ? (next.separator != null ? next.separator : BorderStyle.DASHED) : null;
     next.status = next.top != null ? 0 : 1;
     return next;
   }
@@ -134,7 +137,7 @@ class TableRowReader implements LineReader {
 
         //
         if (reader == null) {
-          if (height > 0) {
+          if (height > 0 && overflow == Overflow.WRAP) {
             int h = height;
             if (hasTop()) {
               h--;
@@ -152,9 +155,15 @@ class TableRowReader implements LineReader {
         reader.renderLine(to);
 
         //
-        if (!reader.hasLine()) {
+        if (overflow == Overflow.HIDDEN) {
           status = bottom != null ? 2 : 3;
+        } else {
+          if (!reader.hasLine()) {
+            status = bottom != null ? 2 : 3;
+          }
         }
+
+        //
         break;
       }
       default:

@@ -128,7 +128,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   }
 
   public void testRenderWithBorder() throws Exception {
-    TableElement table = new TableElement().border(BorderStyle.dashed);
+    TableElement table = new TableElement().border(BorderStyle.DASHED);
     RowElement row = new RowElement().add(new LabelElement("foo"), new LabelElement("bar"));
     table.add(row);
 
@@ -184,8 +184,65 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     assertRender(table, 0);
   }
 
+  public void testRenderWithOverflowHidden() throws Exception {
+    TableElement table = new TableElement().border(BorderStyle.DASHED).overflow(Overflow.HIDDEN);
+    RowElement row = new RowElement().add(new LabelElement("foo"), new LabelElement("bar"));
+    table.add(row);
+
+    //
+    table.withColumnLayout(Layout.rightToLeft());
+
+    //
+    assertRender(table, 11, " ------    ", "|foobar|   ", " ------    ");
+    assertRender(table, 10, " ------   ", "|foobar|  ", " ------   ");
+    assertRender(table, 9, " ------  ", "|foobar| ", " ------  ");
+    assertRender(table, 8, " ------ ", "|foobar|", " ------ ");
+    assertRender(table, 7, " ----- ", "|fooba|", " ----- ");
+    assertRender(table, 6, " ---- ", "|foob|", " ---- ");
+    assertRender(table, 5, " --- ", "|foo|", " --- ");
+    assertRender(table, 4, " -- ", "|fo|", " -- ");
+    assertRender(table, 3, " - ", "|f|"," - ");
+    assertRender(table, 2);
+    assertRender(table, 1);
+    assertRender(table, 0);
+
+    //
+    table.withColumnLayout(Layout.weighted(1, 1));
+
+    //
+    assertRender(table, 11, " --------- ", "|foo  bar |", " --------- ");
+    assertRender(table, 10, " -------- ", "|foo bar |", " -------- ");
+    assertRender(table, 9, " ------- ", "|foo bar|", " ------- ");
+    assertRender(table, 8, " ------ ", "|foobar|", " ------ ");
+    assertRender(table, 7, " ----- ", "|fooba|", " ----- ");
+    assertRender(table, 6, " ---- ", "|foba|", " ---- ");
+    assertRender(table, 5, " --- ", "|fob|", " --- ");
+    assertRender(table, 4, " -- ", "|fb|", " -- ");
+    assertRender(table, 3, " - ", "|f|", " - ");
+    assertRender(table, 2);
+    assertRender(table, 1);
+    assertRender(table, 0);
+
+    //
+    table.withColumnLayout(Layout.weighted(1, 2));
+
+    //
+    assertRender(table, 11, " --------- ", "|foobar   |", " --------- ");
+    assertRender(table, 10, " -------- ", "|foobar  |", " -------- ");
+    assertRender(table, 9, " ------- ", "|fobar  |", " ------- ");
+    assertRender(table, 8, " ------ ", "|fobar |", " ------ ");
+    assertRender(table, 7, " ----- ", "|fobar|", " ----- ");
+    assertRender(table, 6, " ---- ", "|fbar|", " ---- ");
+    assertRender(table, 5, " --- ", "|fba|", " --- ");
+    assertRender(table, 4, " -- ", "|fo|", " -- ");
+    assertRender(table, 3, " - ", "|f|", " - ");
+    assertRender(table, 2);
+    assertRender(table, 1);
+    assertRender(table, 0);
+  }
+
   public void testRenderWithBorderAndSeparator() throws Exception {
-    TableElement table = new TableElement().border(BorderStyle.dashed).separator(BorderStyle.dashed);
+    TableElement table = new TableElement().border(BorderStyle.DASHED).separator(BorderStyle.DASHED);
     RowElement row = new RowElement().add(new LabelElement("foo"), new LabelElement("bar"));
     table.add(row);
 
@@ -255,8 +312,8 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     TableElement table = new TableElement();
     table.withColumnLayout(Layout.rightToLeft());
     RowElement row = new RowElement().add(new LabelElement("foo", 5), new LabelElement("This text is larger to be displayed in a cell of 32", 5));
-    table.separator(BorderStyle.dashed);
-    table.border(BorderStyle.dashed);
+    table.separator(BorderStyle.DASHED);
+    table.border(BorderStyle.DASHED);
     table.add(row);
     assertRender(table, 32,
         " ------------------------------ ",
@@ -269,7 +326,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
 
     TableElement table = new TableElement();
     table.withColumnLayout(Layout.rightToLeft());
-    table.border(BorderStyle.dashed);
+    table.border(BorderStyle.DASHED);
 
     table.
         add(row().style(Color.blue.fg().bg(Color.green).bold()).
@@ -332,7 +389,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   }
 
   public void testRowLayoutWithBorder() {
-    TableElement table = new TableElement().border(BorderStyle.dashed);
+    TableElement table = new TableElement().border(BorderStyle.DASHED);
     table.add(new RowElement().add(new LabelElement("foo")));
     table.add(new RowElement().add(new LabelElement("bar")));
 
@@ -348,7 +405,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   }
 
   public void testRowLayoutWithHeaderBorder() {
-    TableElement table = new TableElement().border(BorderStyle.dashed);
+    TableElement table = new TableElement().border(BorderStyle.DASHED);
     table.add(new RowElement(true).add(new LabelElement("foo")));
     table.add(new RowElement().add(new LabelElement("bar")));
 
@@ -364,8 +421,25 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     assertNoRender(table, 4, 4);
   }
 
+  public void testRowLayoutWithOverflowHidden() {
+    TableElement table = new TableElement().border(BorderStyle.DASHED).overflow(Overflow.HIDDEN);
+    table.add(new RowElement(true).add(new LabelElement("foo")));
+    table.add(new RowElement().add(new LabelElement("bar")));
+
+    //
+    assertRender(table, 5, 5, " --- ", "|foo|", " --- ", "|bar|", " --- ");
+    assertRender(table, 5, 4, " --- ", "|foo|", "|   |", " --- ");
+    assertNoRender(table, 5, 3);
+
+    //
+    assertRender(table, 4, 6, " -- ", "|fo|", " -- ", "|ba|", "|  |", " -- ");
+    assertRender(table, 4, 5, " -- ", "|fo|", " -- ", "|ba|", " -- ");
+    assertRender(table, 4, 4, " -- ", "|fo|", "|  |", " -- ");
+    assertNoRender(table, 4, 3); // It should work with better impl
+  }
+
   public void testRowLayoutWithColumns() {
-    TableElement table = new TableElement().border(BorderStyle.dashed).separator(BorderStyle.dashed);
+    TableElement table = new TableElement().border(BorderStyle.DASHED).separator(BorderStyle.DASHED);
     table.add(new RowElement().add(new LabelElement("foo"), new LabelElement("bar")));
 
     //

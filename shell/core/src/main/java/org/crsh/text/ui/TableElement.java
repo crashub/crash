@@ -36,6 +36,9 @@ public class TableElement extends Element {
   /** . */
   protected BorderStyle separator;
 
+  /** . */
+  private Overflow overflow;
+
   /** The column layout. */
   protected Layout columnLayout;
 
@@ -47,6 +50,7 @@ public class TableElement extends Element {
     this.rowLayout = Layout.rightToLeft();
     this.border = null;
     this.separator = null;
+    this.overflow = Overflow.WRAP;
   }
 
   public TableElement(int ... columns) {
@@ -54,6 +58,7 @@ public class TableElement extends Element {
     this.rowLayout = Layout.rightToLeft();
     this.border = null;
     this.separator = null;
+    this.overflow = Overflow.WRAP;
   }
 
   public TableElement(int[] rows, int[] columns) {
@@ -61,6 +66,7 @@ public class TableElement extends Element {
     this.columnLayout = Layout.weighted(columns);
     this.border = null;
     this.separator = null;
+    this.overflow = Overflow.WRAP;
   }
 
   public TableElement add(RowElement row) {
@@ -136,6 +142,19 @@ public class TableElement extends Element {
 
   public TableElement separator(BorderStyle separator) {
     setSeparator(separator);
+    return this;
+  }
+
+  public void setOverflow(Overflow overflow) {
+    this.overflow = overflow;
+  }
+
+  public final Overflow getOverflow() {
+    return overflow;
+  }
+
+  public TableElement overflow(Overflow overflow) {
+    setOverflow(overflow);
     return this;
   }
 

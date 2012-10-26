@@ -30,19 +30,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 class TableRenderer extends Renderer {
 
   /** . */
-  private final Layout columnLayout;
+  final Layout columnLayout;
 
   /** . */
-  private final Layout rowLayout;
+  final Layout rowLayout;
 
   /** . */
-  private final BorderStyle border;
+  final BorderStyle border;
 
   /** . */
-  private final BorderStyle separator;
+  final BorderStyle separator;
 
   /** . */
-  private final Style.Composite style;
+  final Overflow overflow;
+
+  /** . */
+  final Style.Composite style;
 
   /** . */
   private TableRowRenderer head;
@@ -53,9 +56,9 @@ class TableRenderer extends Renderer {
   TableRenderer(TableElement table) {
     for (RowElement row : table.getRows()) {
       if (head == null) {
-        head = tail = new TableRowRenderer(row.renderer(), row.header);
+        head = tail = new TableRowRenderer(this, row.renderer(), row.header);
       } else {
-        tail = tail.add(new TableRowRenderer(row.renderer(), row.header));
+        tail = tail.add(new TableRowRenderer(this, row.renderer(), row.header));
       }
     }
 
@@ -65,6 +68,7 @@ class TableRenderer extends Renderer {
     this.border = table.getBorder();
     this.style = table.getStyle();
     this.separator = table.getSeparator();
+    this.overflow = table.getOverflow();
   }
 
   private int getMaxColSize() {
@@ -161,28 +165,8 @@ class TableRenderer extends Renderer {
         int[] actualHeights = new int[size];
         int[] minHeights = new int[size];
         for (TableRowRenderer row = head;row != null;row = row.next()) {
-
-          int actualHeight = 0;
-          int minHeight = 0;
-          for (int i = 0;i < widths.length;i++) {
-            Renderer col = row.row.getCols().get(i);
-            actualHeight = Math.max(actualHeight, col.getActualHeight(widths[i]));
-            minHeight = Math.max(minHeight, col.getMinHeight(widths[i]));
-          }
-
-          //
-          if (row.hasTop()) {
-            actualHeight++;
-            minHeight++;
-          }
-          if (row.hasBottom()) {
-            actualHeight++;
-            minHeight++;
-          }
-
-          //
-          actualHeights[row.getIndex()] = actualHeight;
-          minHeights[row.getIndex()] = minHeight;
+          actualHeights[row.getIndex()] = row.getActualHeight(widths);
+          minHeights[row.getIndex()] = row.getMinHeight(widths);
         }
         heights = rowLayout.compute(false, height - (border != null ? 2 : 0), actualHeights, minHeights);
         if (heights == null) {

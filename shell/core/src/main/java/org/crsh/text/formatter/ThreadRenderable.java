@@ -24,6 +24,7 @@ import org.crsh.text.Decoration;
 import org.crsh.text.Renderable;
 import org.crsh.text.Renderer;
 import org.crsh.text.ui.LabelElement;
+import org.crsh.text.ui.Overflow;
 import org.crsh.text.ui.RowElement;
 import org.crsh.text.ui.TableElement;
 import org.crsh.util.Utils;
@@ -102,7 +103,7 @@ public class ThreadRenderable extends Renderable<Thread> {
     }
 
     //
-    TableElement table = new TableElement(1,1,1,1,1,1,1,2,5);
+    TableElement table = new TableElement(1,1,1,1,1,1,1,2,5).overflow(Overflow.HIDDEN);
 
     // Header
     RowElement header = new RowElement();

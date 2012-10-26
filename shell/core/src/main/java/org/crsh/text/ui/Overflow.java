@@ -19,24 +19,19 @@
 
 package org.crsh.text.ui;
 
-public enum BorderStyle {
+/**
+ * Overflow control.
+ */
+public enum Overflow {
 
-  DASHED('-', '|', ' '),
+  /**
+   * Wrap.
+   */
+  WRAP,
 
-  STAR('*', '*', '*');
+  /**
+   * Hidden.
+   */
+  HIDDEN
 
-  /** . */
-  final char horizontal;
-
-  /** . */
-  final char vertical;
-
-  /** . */
-  final char corner;
-
-  private BorderStyle(char horizontal, char vertical, char corner) {
-    this.horizontal = horizontal;
-    this.vertical = vertical;
-    this.corner = corner;
-  }
 }

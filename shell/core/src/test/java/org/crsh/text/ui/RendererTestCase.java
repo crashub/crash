@@ -115,8 +115,8 @@ public class RendererTestCase extends AbstractRendererTestCase {
 
   public void testStyleOff() {
     TableElement table = new TableElement().
-        border(BorderStyle.dashed).
-        separator(BorderStyle.dashed).
+        border(BorderStyle.DASHED).
+        separator(BorderStyle.DASHED).
         style(Style.style(Decoration.bold)).
         add(
             row().style(Style.style(Decoration.underline)).add(label("foo"), label("bar")));
