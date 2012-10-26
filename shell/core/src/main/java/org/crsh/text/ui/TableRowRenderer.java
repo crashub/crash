@@ -19,12 +19,11 @@
 
 package org.crsh.text.ui;
 
-import org.crsh.text.LineReader;
 import org.crsh.text.Renderer;
 
 import java.util.List;
 
-class TableRowRenderer extends Renderer {
+class TableRowRenderer {
 
   /** . */
   final TableRenderer table;
@@ -84,7 +83,7 @@ class TableRowRenderer extends Renderer {
     return next;
   }
 
-  public boolean isHeader() {
+  boolean isHeader() {
     return header;
   }
 
@@ -92,18 +91,37 @@ class TableRowRenderer extends Renderer {
     return row.getSize();
   }
 
-  public List<Renderer> getCols() {
+  List<Renderer> getCols() {
     return row.getCols();
   }
 
-  @Override
-  public int getActualWidth() {
+  int getActualWidth() {
     return row.getActualWidth();
   }
 
-  @Override
-  public int getMinWidth() {
+  int getMinWidth() {
     return row.getMinWidth();
+  }
+
+  int getActualHeight(int width) {
+    int actualHeight;
+    switch (table.overflow) {
+      case HIDDEN:
+        actualHeight = 1;
+        break;
+      case WRAP:
+        actualHeight = row.getActualHeight(width);
+        break;
+      default:
+        throw new AssertionError();
+    }
+    if (hasTop()) {
+      actualHeight++;
+    }
+    if (hasBottom()) {
+      actualHeight++;
+    }
+    return actualHeight;
   }
 
   int getActualHeight(int[] widths) {
@@ -156,56 +174,7 @@ class TableRowRenderer extends Renderer {
     return minHeight;
   }
 
-  @Override
-  public int getActualHeight(int width) {
-    int actualHeight;
-    switch (table.overflow) {
-      case HIDDEN:
-        actualHeight = 1;
-        break;
-      case WRAP:
-        actualHeight = row.getActualHeight(width);
-        break;
-      default:
-        throw new AssertionError();
-    }
-    if (hasTop()) {
-      actualHeight++;
-    }
-    if (hasBottom()) {
-      actualHeight++;
-    }
-    return actualHeight;
-  }
-
-  @Override
-  public int getMinHeight(int width) {
-    int minHeight;
-    switch (table.overflow) {
-      case HIDDEN:
-        minHeight = 1;
-        break;
-      case WRAP:
-        minHeight = row.getMinHeight(width);
-        break;
-      default:
-        throw new AssertionError();
-    }
-    if (hasTop()) {
-      minHeight++;
-    }
-    if (hasBottom()) {
-      minHeight++;
-    }
-    return minHeight;
-  }
-
   TableRowReader renderer(int[] widths, BorderStyle separator, int height) {
     return new TableRowReader(row, widths, separator, header, table.overflow, height);
-  }
-
-  @Override
-  public LineReader reader(int width) {
-    return row.reader(width);
   }
 }
