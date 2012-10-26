@@ -31,11 +31,14 @@ import org.crsh.util.Utils;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ThreadRenderable extends Renderable<Thread> {
 
@@ -102,6 +105,28 @@ public class ThreadRenderable extends Renderable<Thread> {
       total += delta;
     }
 
+    // Compute cpu
+    final HashMap<Thread, Long> cpus = new HashMap<Thread, Long>(threads.size());
+    for (Thread thread : threads) {
+      long cpu = total == 0 ? 0 : Math.round((deltas.get(thread.getId()) * 100) / total);
+      cpus.put(thread, cpu);
+    }
+
+    // Sort by CPU time : should be a rendering hint...
+    Collections.sort(threads, new Comparator<Thread>() {
+      public int compare(Thread o1, Thread o2) {
+        long l1 = cpus.get(o1);
+        long l2 = cpus.get(o2);
+        if (l1 < l2) {
+          return 1;
+        } else if (l1 > l2) {
+          return -1;
+        } else {
+          return 0;
+        }
+      }
+    });
+
     //
     TableElement table = new TableElement(1,1,1,1,1,1,1,2,5).overflow(Overflow.HIDDEN);
 
@@ -125,17 +150,16 @@ public class ThreadRenderable extends Renderable<Thread> {
       long seconds = times2.get(thread.getId()) / 1000000000;
       long min = seconds / 60;
       String time = min + ":" + (seconds % 60);
-      long cpu = Math.round((deltas.get(thread.getId()) * 100) / total);
+      long cpu = cpus.get(thread);
 
       //
       ThreadGroup group = thread.getThreadGroup();
 
       //
       RowElement row = new RowElement();
-      row.style(c.bg().fg(Color.black));
       row.add(new LabelElement(thread.getId()));
       row.add(new LabelElement(thread.getPriority()));
-      row.add(new LabelElement(thread.getState()));
+      row.add(new LabelElement(thread.getState()).style(c.fg()));
       row.add(new LabelElement(cpu));
       row.add(new LabelElement(time));
       row.add(new LabelElement(thread.isInterrupted()));

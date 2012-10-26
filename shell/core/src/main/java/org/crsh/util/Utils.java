@@ -44,11 +44,11 @@ public class Utils {
     return new HashMap<K, V>();
   }
 
-  public static <E>List<E> list(Iterable<E> iterable) {
+  public static <E> List<E> list(Iterable<E> iterable) {
     return list(iterable.iterator());
   }
 
-  public static <E>List<E> list(Iterator<E> iterator) {
+  public static <E> List<E> list(Iterator<E> iterator) {
     ArrayList<E> list = new ArrayList<E>();
     while (iterator.hasNext()) {
       list.add(iterator.next());
