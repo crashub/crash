@@ -34,7 +34,7 @@ public class RowRendererTestCase extends AbstractRendererTestCase {
     assertRender(row, 3, "foo");
     assertRender(row, 2, "fo", "o ");
     assertRender(row, 1, "f", "o", "o");
-    assertRender(row, 0);
+    assertNoRender(row, 0);
   }
 
   public void testCosmetic() throws Exception {

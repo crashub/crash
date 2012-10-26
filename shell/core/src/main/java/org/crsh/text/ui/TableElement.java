@@ -45,6 +45,12 @@ public class TableElement extends Element {
   /** The optional row row layout. */
   protected Layout rowLayout;
 
+  /** Cell padding left. */
+  private int cellPaddingLeft;
+
+  /** Cell padding right. */
+  private int cellPaddingRight;
+
   public TableElement() {
     this(Layout.flow(), Layout.flow());
   }
@@ -63,6 +69,8 @@ public class TableElement extends Element {
     this.border = null;
     this.separator = null;
     this.overflow = Overflow.WRAP;
+    this.cellPaddingLeft = 0;
+    this.cellPaddingRight = 0;
   }
 
   public TableElement add(RowElement row) {
@@ -151,6 +159,38 @@ public class TableElement extends Element {
 
   public TableElement overflow(Overflow overflow) {
     setOverflow(overflow);
+    return this;
+  }
+
+  public int getCellPaddingLeft() {
+    return cellPaddingLeft;
+  }
+
+  public void setCellPaddingLeft(int cellPaddingLeft) {
+    if (cellPaddingLeft < 0) {
+      throw new IllegalArgumentException("No negative cell padding left accepted");
+    }
+    this.cellPaddingLeft = cellPaddingLeft;
+  }
+
+  public TableElement cellPaddingLeft(int cellPaddingLeft) {
+    setCellPaddingLeft(cellPaddingLeft);
+    return this;
+  }
+
+  public int getCellPaddingRight() {
+    return cellPaddingRight;
+  }
+
+  public void setCellPaddingRight(int cellPaddingRight) {
+    if (cellPaddingRight < 0) {
+      throw new IllegalArgumentException("No negative cell padding right accepted");
+    }
+    this.cellPaddingRight = cellPaddingRight;
+  }
+
+  public TableElement cellPaddingRight(int cellPaddingRight) {
+    setCellPaddingRight(cellPaddingRight);
     return this;
   }
 

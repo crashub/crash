@@ -62,6 +62,6 @@ public class RowElement extends Element {
 
   @Override
   public RowRenderer renderer() {
-    return new RowRenderer(this);
+    return new RowRenderer(this, null, 0, 0);
   }
 }

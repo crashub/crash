@@ -23,6 +23,7 @@ import org.crsh.text.LineReader;
 import org.crsh.text.RenderAppendable;
 import org.crsh.text.Renderer;
 import org.crsh.text.Style;
+import org.crsh.util.Safe;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,6 +48,12 @@ class TableRenderer extends Renderer {
   /** . */
   final Style.Composite style;
 
+  /** Cell padding left. */
+  final int cellPaddingLeft;
+
+  /** Cell padding right. */
+  final int cellPaddingRight;
+
   /** . */
   private TableRowRenderer head;
 
@@ -54,21 +61,23 @@ class TableRenderer extends Renderer {
   private TableRowRenderer tail;
 
   TableRenderer(TableElement table) {
-    for (RowElement row : table.getRows()) {
-      if (head == null) {
-        head = tail = new TableRowRenderer(this, row.renderer(), row.header);
-      } else {
-        tail = tail.add(new TableRowRenderer(this, row.renderer(), row.header));
-      }
-    }
-
-    //
     this.rowLayout = table.getRowLayout();
     this.columnLayout = table.getColumnLayout();
     this.border = table.getBorder();
     this.style = table.getStyle();
     this.separator = table.getSeparator();
     this.overflow = table.getOverflow();
+    this.cellPaddingLeft = table.getCellPaddingLeft();
+    this.cellPaddingRight = table.getCellPaddingRight();
+
+    //
+    for (RowElement row : table.getRows()) {
+      if (head == null) {
+        head = tail = new TableRowRenderer(this, row);
+      } else {
+        tail = tail.add(new TableRowRenderer(this, row));
+      }
+    }
   }
 
   private int getMaxColSize() {
@@ -133,8 +142,8 @@ class TableRenderer extends Renderer {
     for (TableRowRenderer row = head;row != null;row = row.next()) {
       for (int i = 0;i < row.getCols().size();i++) {
         Renderer renderable = row.getCols().get(i);
-        eltWidths[i] = Math.max(eltWidths[i], renderable.getActualWidth());
-        eltMinWidths[i] = Math.max(eltMinWidths[i], renderable.getMinWidth());
+        eltWidths[i] = Math.max(eltWidths[i], renderable.getActualWidth() + row.row.cellPaddingLeft + row.row.cellPaddingRight);
+        eltMinWidths[i] = Math.max(eltMinWidths[i], renderable.getMinWidth()) + row.row.cellPaddingLeft + row.row.cellPaddingRight;
       }
     }
 
@@ -205,13 +214,29 @@ class TableRenderer extends Renderer {
               if (row.getColsSize() == widths.length) {
                 what = widths;
               } else {
+
+                // I'm not sure this algorithm is great
+                // perhaps the space should be computed or some kind of merge
+                // that respect the columns should be done
+
                 // Redistribute space among columns
                 what = new int[row.getColsSize()];
                 for (int j = 0;j < widths.length;j++) {
                   what[j % what.length] += widths[j];
                 }
+
+                // Remove zero length columns to avoid issues
+                int end = what.length;
+                while (end > 0 && what[end - 1] == 0) {
+                  end--;
+                }
+
+                //
+                if (end != what.length) {
+                  what = Arrays.copyOf(what, end);
+                }
               }
-              TableRowReader next = row.renderer(what, separator, heights[row.getIndex()]);
+              TableRowReader next = row.renderer(what, heights[row.getIndex()]);
               if (rHead == null) {
                 rHead = rTail = next;
               } else {

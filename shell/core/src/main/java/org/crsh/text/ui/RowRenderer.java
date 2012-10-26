@@ -37,7 +37,16 @@ class RowRenderer extends Renderer {
   /** . */
   private final Style.Composite style;
 
-  RowRenderer(RowElement row) {
+  /** . */
+  final int cellPaddingLeft;
+
+  /** . */
+  final int cellPaddingRight;
+
+  /** . */
+  private final BorderStyle separator;
+
+  RowRenderer(RowElement row, BorderStyle separator, int cellPaddingLeft, int cellPaddingRight) {
 
     List<Renderer> cols = new ArrayList<Renderer>(row.cols.size());
     for (Element col : row.cols) {
@@ -47,6 +56,9 @@ class RowRenderer extends Renderer {
     //
     this.cols = cols;
     this.style = row.getStyle();
+    this.separator = separator;
+    this.cellPaddingLeft = cellPaddingLeft;
+    this.cellPaddingRight = cellPaddingRight;
   }
 
   int getSize() {
@@ -98,15 +110,11 @@ class RowRenderer extends Renderer {
   // to.append(b.horizontal);
   // }
   // in relation to widths array that can contain (should?) 0 value
-  LineReader renderer(final int[] widths, final BorderStyle separator, int height) {
-    final AtomicInteger totalWidth = new AtomicInteger();
-    final LineReader[] readers = new LineReader[cols.size()];
-    for (int i = 0;i < cols.size();i++) {
-      if (widths[i] > 0) {
-        LineReader reader = cols.get(i).reader(widths[i], height);
-        readers[i] = reader;
-        totalWidth.addAndGet(widths[i]);
-      }
+  LineReader renderer(final int[] widths, int height) {
+    final LineReader[] readers = new LineReader[widths.length];
+    for (int i = 0;i < readers.length;i++) {
+      LineReader reader = cols.get(i).reader(widths[i] - cellPaddingLeft - cellPaddingRight, height);
+      readers[i] = reader;
     }
 
     //
@@ -124,29 +132,46 @@ class RowRenderer extends Renderer {
           throw new IllegalStateException();
         }
 
+        //
         if (style != null) {
           to.enterStyle(style);
         }
+
+        //
         for (int i = 0;i < readers.length;i++) {
-          LineReader renderer = readers[i];
-          if (widths[i] > 0) {
-            if (i > 0) {
-              if (separator != null) {
-                to.styleOff();
-                to.append(separator.vertical);
-                to.styleOn();
-              }
+          LineReader reader = readers[i];
+
+          //
+          if (i > 0) {
+            if (separator != null) {
+              to.styleOff();
+              to.append(separator.vertical);
+              to.styleOn();
             }
-            if (renderer != null && renderer.hasLine()) {
-              renderer.renderLine(to);
-            } else {
-              readers[i] = null;
-              for (int j = widths[i];j > 0;j--) {
+          }
+          if (reader != null && reader.hasLine()) {
+            // Left padding
+            if (cellPaddingLeft > 0) {
+              for (int j = 0;j < cellPaddingLeft;j++) {
                 to.append(' ');
               }
             }
+            reader.renderLine(to);
+            // Right padding
+            if (cellPaddingRight > 0) {
+              for (int j = 0;j < cellPaddingRight;j++) {
+                to.append(' ');
+              }
+            }
+          } else {
+            readers[i] = null;
+            for (int j = widths[i];j > 0;j--) {
+              to.append(' ');
+            }
           }
         }
+
+        //
         if (style != null) {
           to.leaveStyle();
         }
@@ -175,27 +200,13 @@ class RowRenderer extends Renderer {
       widths[i] = Math.max(widths[i], renderable.getActualWidth());
       minWidths[i] = Math.max(minWidths[i], renderable.getMinWidth());
     }
-
-    //
     widths = Layout.flow().compute(false, width, widths, minWidths);
-
-    //
     if (widths == null) {
-      return new LineReader() {
-        public boolean hasLine() {
-          return false;
-        }
-        public void renderLine(RenderAppendable to) throws IllegalStateException {
-          throw new IllegalStateException();
-        }
-      };
+      return null;
     } else {
-
       // Size could be smaller and lead to ArrayIndexOutOfBounds later
       widths = Arrays.copyOf(widths, minWidths.length);
-
-      //
-      return renderer(widths, null, -1);
+      return renderer(widths, -1);
     }
   }
 }

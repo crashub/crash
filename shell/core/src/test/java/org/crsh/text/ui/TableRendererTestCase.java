@@ -360,6 +360,25 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
 */
   }
 
+  public void testCellPadding() {
+    TableElement table = new TableElement().cellPaddingLeft(1).cellPaddingRight(2);
+    table.add(new RowElement().add(new LabelElement("foo"), new LabelElement("bar")));
+
+    //
+    assertRender(table, 12, " foo   bar  ");
+    assertRender(table, 11, " foo   ba  ", "       r   ");
+    assertRender(table, 10, " foo   b  ", "       a  ", "       r  ");
+    assertRender(table, 9, " foo     ");
+    assertRender(table, 8, " foo    ");
+    assertRender(table, 7, " foo   ");
+    assertRender(table, 6, " foo  ");
+    assertRender(table, 5, " fo  ", " o   ");
+    assertRender(table, 4, " f  ", " o  ", " o  ");
+
+    // IT SHOULD BE NO RENDER
+    assertRender(table, 3);
+  }
+
   public void testRowLayout() {
     TableElement table = new TableElement();
     table.add(new RowElement().add(new LabelElement("foo")));

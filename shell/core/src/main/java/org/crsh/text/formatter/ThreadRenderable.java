@@ -128,7 +128,7 @@ public class ThreadRenderable extends Renderable<Thread> {
     });
 
     //
-    TableElement table = new TableElement(1,1,1,1,1,1,1,2,5).overflow(Overflow.HIDDEN);
+    TableElement table = new TableElement(1,1,1,1,1,1,1,2,5).overflow(Overflow.HIDDEN).cellPaddingRight(1);
 
     // Header
     RowElement header = new RowElement();

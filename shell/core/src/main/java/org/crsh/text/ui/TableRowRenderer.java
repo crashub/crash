@@ -32,7 +32,7 @@ class TableRowRenderer {
   final RowRenderer row;
 
   /** . */
-  private final boolean header;
+  final boolean header;
 
   /** . */
   private TableRowRenderer previous;
@@ -43,12 +43,10 @@ class TableRowRenderer {
   /** . */
   private int index;
 
-  TableRowRenderer(TableRenderer table, RowRenderer row, boolean header) {
-
-    //
+  TableRowRenderer(TableRenderer table, RowElement row) {
     this.table = table;
-    this.row = row;
-    this.header = header;
+    this.row = new RowRenderer(row, table.separator, table.cellPaddingLeft, table.cellPaddingRight);
+    this.header = row.header;
     this.index = 0;
   }
 
@@ -174,7 +172,7 @@ class TableRowRenderer {
     return minHeight;
   }
 
-  TableRowReader renderer(int[] widths, BorderStyle separator, int height) {
-    return new TableRowReader(row, widths, separator, header, table.overflow, height);
+  TableRowReader renderer(int[] widths, int height) {
+    return new TableRowReader(this, row, widths, height);
   }
 }
