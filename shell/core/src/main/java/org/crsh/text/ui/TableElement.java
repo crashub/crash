@@ -46,24 +46,20 @@ public class TableElement extends Element {
   protected Layout rowLayout;
 
   public TableElement() {
-    this.columnLayout = Layout.rightToLeft();
-    this.rowLayout = Layout.rightToLeft();
-    this.border = null;
-    this.separator = null;
-    this.overflow = Overflow.WRAP;
+    this(Layout.flow(), Layout.flow());
   }
 
   public TableElement(int ... columns) {
-    this.columnLayout = Layout.weighted(columns);
-    this.rowLayout = Layout.rightToLeft();
-    this.border = null;
-    this.separator = null;
-    this.overflow = Overflow.WRAP;
+    this(Layout.flow(), Layout.weighted(columns));
   }
 
   public TableElement(int[] rows, int[] columns) {
-    this.rowLayout = Layout.weighted(rows);
-    this.columnLayout = Layout.weighted(columns);
+    this(Layout.weighted(rows), Layout.weighted(columns));
+  }
+
+  private TableElement(Layout rowLayout, Layout columnLayout) {
+    this.rowLayout = rowLayout;
+    this.columnLayout = columnLayout;
     this.border = null;
     this.separator = null;
     this.overflow = Overflow.WRAP;

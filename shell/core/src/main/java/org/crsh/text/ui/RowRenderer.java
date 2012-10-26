@@ -177,7 +177,7 @@ class RowRenderer extends Renderer {
     }
 
     //
-    widths = Layout.rightToLeft().compute(false, width, widths, minWidths);
+    widths = Layout.flow().compute(false, width, widths, minWidths);
 
     //
     if (widths == null) {

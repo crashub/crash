@@ -29,7 +29,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   public void testSimple() throws Exception {
 
     TableElement table = new TableElement();
-    table.withColumnLayout(Layout.rightToLeft());
+    table.withColumnLayout(Layout.flow());
 
     table.
         add(row().
@@ -77,7 +77,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     table.add(row);
 
     //
-    table.withColumnLayout(Layout.rightToLeft());
+    table.withColumnLayout(Layout.flow());
 
     //
     assertRender(table, 11, "foobar     ");
@@ -133,7 +133,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     table.add(row);
 
     //
-    table.withColumnLayout(Layout.rightToLeft());
+    table.withColumnLayout(Layout.flow());
 
     //
     assertRender(table, 11, " ------    ", "|foobar|   ", " ------    ");
@@ -190,7 +190,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     table.add(row);
 
     //
-    table.withColumnLayout(Layout.rightToLeft());
+    table.withColumnLayout(Layout.flow());
 
     //
     assertRender(table, 11, " ------    ", "|foobar|   ", " ------    ");
@@ -247,7 +247,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     table.add(row);
 
     //
-    table.withColumnLayout(Layout.rightToLeft());
+    table.withColumnLayout(Layout.flow());
 
     //
     assertRender(table, 11, " -------   ", "|foo|bar|  ", " -------   ");
@@ -300,7 +300,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
 
   public void testCosmetic() throws Exception {
     TableElement table = new TableElement();
-    table.withColumnLayout(Layout.rightToLeft());
+    table.withColumnLayout(Layout.flow());
     RowElement row = new RowElement().add(new LabelElement("foo", 5), new LabelElement("This text is larger to be displayed in a cell of 32", 5));
     table.add(row);
     assertRender(table, 32,
@@ -310,7 +310,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
 
   public void testCosmeticWithBorder() throws Exception {
     TableElement table = new TableElement();
-    table.withColumnLayout(Layout.rightToLeft());
+    table.withColumnLayout(Layout.flow());
     RowElement row = new RowElement().add(new LabelElement("foo", 5), new LabelElement("This text is larger to be displayed in a cell of 32", 5));
     table.separator(BorderStyle.DASHED);
     table.border(BorderStyle.DASHED);
@@ -325,7 +325,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   public void testBorderStyle() throws Exception {
 
     TableElement table = new TableElement();
-    table.withColumnLayout(Layout.rightToLeft());
+    table.withColumnLayout(Layout.flow());
     table.border(BorderStyle.DASHED);
 
     table.

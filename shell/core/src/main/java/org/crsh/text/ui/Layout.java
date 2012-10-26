@@ -26,7 +26,7 @@ import java.util.Arrays;
  */
 public abstract class Layout {
 
-  public static Layout rightToLeft() {
+  public static Layout flow() {
     return RTL;
   }
 
