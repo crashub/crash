@@ -77,7 +77,7 @@ class jmx extends CRaSHCommand {
     // Determine common attributes from all names
     if (attributes == null || attributes.isEmpty()) {
       HashSet<String> tmp = [] as HashSet;
-      names.each { name ->
+      attributes.each { name ->
         ObjectName on = ObjectName.getInstance(name);
         MBeanInfo info = server.getMBeanInfo(on);
         info.attributes.each { attribute ->
