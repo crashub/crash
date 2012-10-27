@@ -26,19 +26,41 @@ import java.io.IOException;
 /**
  * A pipe command.
  *
- * @param <E> the element generic type
+ * @param <C> the consumed generic type
+ * @param <P> the produced generic type
  */
-public abstract class PipeCommand<E> implements Pipe<E> {
+public abstract class PipeCommand<C, P> implements CommandInvoker<C, P> {
 
   /** . */
-  private boolean piped;
+  protected InvocationContext<P> context;
+
+  /** . */
+  protected boolean piped;
+
+  public final Class<P> getProducedType() {
+    throw new UnsupportedOperationException();
+  }
+
+  public final Class<C> getConsumedType() {
+    throw new UnsupportedOperationException();
+  }
 
   public final boolean isPiped() {
     return piped;
   }
 
-  public final void setPiped(boolean piped) {
+  public void setPiped(boolean piped) {
     this.piped = piped;
+  }
+
+  /**
+   * Open pipe.
+   */
+  public final void open(InvocationContext<P> context) throws ScriptException {
+    this.context = context;
+
+    //
+    open();
   }
 
   /**
@@ -54,7 +76,7 @@ public abstract class PipeCommand<E> implements Pipe<E> {
    * @throws ScriptException any script exception
    * @throws IOException any io exception
    */
-  public void provide(E element) throws ScriptException, IOException {
+  public void provide(C element) throws ScriptException, IOException {
   }
 
   /**

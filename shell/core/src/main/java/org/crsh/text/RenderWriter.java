@@ -19,11 +19,13 @@
 
 package org.crsh.text;
 
+import org.crsh.RenderingContext;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 
-public class RenderWriter extends Writer implements RenderingContext {
+public class RenderWriter extends Writer implements RenderingContext<Chunk> {
 
   /** . */
   private final RenderingContext out;
@@ -62,6 +64,10 @@ public class RenderWriter extends Writer implements RenderingContext {
 
   public int getHeight() {
     return out.getHeight();
+  }
+
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
   }
 
   public void provide(Chunk element) throws IOException {

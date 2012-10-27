@@ -34,7 +34,7 @@ class Parser {
     this.token = tokenizer.nextToken();
   }
 
-  public PipeLine parse() {
+  public PipeLineFactory parse() {
     if (token == Token.EOF) {
       return null;
     } else {
@@ -42,11 +42,11 @@ class Parser {
     }
   }
 
-  private PipeLine parseExpr() {
+  private PipeLineFactory parseExpr() {
     if (token instanceof Token.Command) {
       Token.Command command = (Token.Command)token;
       token = tokenizer.nextToken();
-      PipeLine next;
+      PipeLineFactory next;
       if (token == Token.EOF) {
         next = null;
       } else if (token == Token.PIPE) {
@@ -55,7 +55,7 @@ class Parser {
       } else {
         throw new SyntaxException("Syntax error");
       }
-      return new PipeLine(command.line, next);
+      return new PipeLineFactory(command.line, next);
     } else {
       throw new SyntaxException("Syntax error");
     }

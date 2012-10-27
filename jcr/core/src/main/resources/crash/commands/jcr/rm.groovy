@@ -24,11 +24,11 @@ It is possible to specify several nodes.
 Node /foo /bar removed
 
 rm is a <Node,Void> command removing all the consumed nodes.""")
-  public PipeCommand<Node> main(
+  public PipeCommand<Node, Void> main(
     @Argument @Usage("the paths to remove") @Man("The paths of the node to remove") List<Path> paths) {
     assertConnected();
     def foo = out;
-    return new PipeCommand<Node>() {
+    return new PipeCommand<Node, Void>() {
       @Override
       void open() {
         foo << 'Removed nodes ';

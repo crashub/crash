@@ -293,6 +293,10 @@ public final class Processor implements Runnable, Pipe<Chunk> {
     listeners.add(listener);
   }
 
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
+  }
+
   public void provide(Chunk element) throws IOException {
     term.provide(element);
   }

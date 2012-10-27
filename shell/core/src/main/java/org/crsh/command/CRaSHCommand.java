@@ -194,6 +194,14 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return resolveInvoker(match);
   }
 
+  public final void eval(String s) throws ScriptException, IOException {
+    InvocationContext<?> context = peekContext();
+    CommandInvoker invoker = context.resolve(s);
+    invoker.open(context);
+    invoker.flush();
+    invoker.close();
+  }
+
   public final CommandInvoker<?, ?> resolveInvoker(final CommandMatch<CRaSHCommand, ?, ?> match) {
     if (match instanceof MethodMatch) {
 
@@ -214,124 +222,157 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       final boolean doHelp = help;
 
       //
-      return new CommandInvoker() {
-
-        Class consumedType = Void.class;
-        Class producedType = Object.class;
-
-        {
-          // Try to find a command context argument
-          Method m = methodMatch.getDescriptor().getMethod();
-
-          //
-          Class<?>[] parameterTypes = m.getParameterTypes();
-          for (int i = 0;i < parameterTypes.length;i++) {
-            Class<?> parameterType = parameterTypes[i];
-            if (InvocationContext.class.isAssignableFrom(parameterType)) {
-              Type contextGenericParameterType = m.getGenericParameterTypes()[i];
-              producedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
-              break;
-            }
-          }
-
-          //
-          if (PipeCommand.class.isAssignableFrom(m.getReturnType())) {
-            Type ret = m.getGenericReturnType();
-            consumedType = TypeResolver.resolveToClass(ret, PipeCommand.class, 0);
+      Class consumedType;
+      Class producedType;
+      Method m = methodMatch.getDescriptor().getMethod();
+      if (PipeCommand.class.isAssignableFrom(m.getReturnType())) {
+        Type ret = m.getGenericReturnType();
+        consumedType = TypeResolver.resolveToClass(ret, PipeCommand.class, 0);
+        producedType = TypeResolver.resolveToClass(ret, PipeCommand.class, 1);
+      } else {
+        consumedType = Void.class;
+        producedType = Object.class;
+        Class<?>[] parameterTypes = m.getParameterTypes();
+        for (int i = 0;i < parameterTypes.length;i++) {
+          Class<?> parameterType = parameterTypes[i];
+          if (InvocationContext.class.isAssignableFrom(parameterType)) {
+            Type contextGenericParameterType = m.getGenericParameterTypes()[i];
+            producedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
+            break;
           }
         }
+      }
+      final Class _consumedType = consumedType;
+      final Class _producedType = producedType;
 
-        public PipeCommand invoke(final InvocationContext context) throws ScriptException {
-          if (doHelp) {
+      if (doHelp) {
+        return new CommandInvoker<Object, Object>() {
+          public Class<Object> getProducedType() {
+            return _producedType;
+          }
+          public Class<Object> getConsumedType() {
+            return _consumedType;
+          }
+          public void open(InvocationContext<Object> context) {
             try {
               match.printUsage(context.getWriter());
-              return new PipeCommand() {
-                public void provide(Object element) throws IOException {
-                }
-              };
             }
             catch (IOException e) {
               throw new AssertionError(e);
             }
-          } else {
+          }
+          public void setPiped(boolean piped) {
+          }
+          public void provide(Object element) throws IOException {
+          }
+          public void flush() throws IOException {
+          }
+          public void close() {
+          }
+        };
+      } else {
+        if (consumedType == Void.class) {
 
-            //
-            pushContext(context);
+          return new CommandInvoker<Object, Object>() {
+            public Class<Object> getProducedType() {
+              return _producedType;
+            }
+            public Class<Object> getConsumedType() {
+              return _consumedType;
+            }
+            public void open(final InvocationContext<Object> context) {
 
-            //
-            CRaSHCommand.this.unmatched = methodMatch.getRest();
-
-            //
-            final Resolver resolver = new Resolver() {
-              public <T> T resolve(Class<T> type) {
-                if (type.equals(InvocationContext.class)) {
-                  return type.cast(context);
-                } else {
-                  return null;
-                }
-              }
-            };
-
-            //
-            if (consumedType == Void.class) {
-              return new PipeCommand() {
-
-                @Override
-                public void open() throws ScriptException {
-                  Object o;
-                  try {
-                    o = methodMatch.invoke(resolver, CRaSHCommand.this);
-                  } catch (CmdSyntaxException e) {
-                    throw new SyntaxException(e.getMessage());
-                  } catch (CmdInvocationException e) {
-                    throw toScript(e.getCause());
-                  } finally {
-                    CRaSHCommand.this.context = null;
-                    CRaSHCommand.this.unmatched = null;
+              //
+              pushContext(context);
+              CRaSHCommand.this.unmatched = methodMatch.getRest();
+              final Resolver resolver = new Resolver() {
+                public <T> T resolve(Class<T> type) {
+                  if (type.equals(InvocationContext.class)) {
+                    return type.cast(context);
+                  } else {
+                    return null;
                   }
-                  if (o != null) {
-                    context.getWriter().print(o);
-                  }
-                }
-
-                @Override
-                public void provide(Object element) throws ScriptException, IOException {
-                  // We just drop the elements
-                }
-
-                @Override
-                public void flush() throws IOException {
-                  context.flush();
-                }
-
-                @Override
-                public void close() throws ScriptException {
-                  popContext();
                 }
               };
-            } else {
 
-              // JULIEN : WE SHOULD SOMEHOW HONNOR THE FINALLY CLAUSE LIKE IN THE IF BLOCK
-
+              //
+              Object o;
               try {
-                return (PipeCommand)methodMatch.invoke(resolver, CRaSHCommand.this);
+                o = methodMatch.invoke(resolver, CRaSHCommand.this);
               } catch (CmdSyntaxException e) {
                 throw new SyntaxException(e.getMessage());
               } catch (CmdInvocationException e) {
                 throw toScript(e.getCause());
               }
+              if (o != null) {
+                context.getWriter().print(o);
+              }
             }
-          }
-        }
+            public void setPiped(boolean piped) {
+            }
+            public void provide(Object element) throws IOException {
+              // We just drop the elements
+            }
+            public void flush() throws IOException {
+              peekContext().flush();
+            }
+            public void close() {
+              CRaSHCommand.this.unmatched = null;
+              popContext();
+            }
+          };
+        } else {
+          return new CommandInvoker<Object, Object>() {
+            PipeCommand real;
+            boolean piped;
+            public Class<Object> getProducedType() {
+              return _producedType;
+            }
+            public Class<Object> getConsumedType() {
+              return _consumedType;
+            }
+            public void open(final InvocationContext<Object> context) {
 
-        public Class getProducedType() {
-          return producedType;
-        }
+              //
+              pushContext(context);
+              CRaSHCommand.this.unmatched = methodMatch.getRest();
+              final Resolver resolver = new Resolver() {
+                public <T> T resolve(Class<T> type) {
+                  if (type.equals(InvocationContext.class)) {
+                    return type.cast(context);
+                  } else {
+                    return null;
+                  }
+                }
+              };
+              try {
+                real = (PipeCommand)methodMatch.invoke(resolver, CRaSHCommand.this);
+              }
+              catch (CmdSyntaxException e) {
+                throw new SyntaxException(e.getMessage());
+              } catch (CmdInvocationException e) {
+                throw toScript(e.getCause());
+              }
 
-        public Class getConsumedType() {
-          return consumedType;
+              //
+              real.setPiped(piped);
+              real.open(context);
+            }
+            public void setPiped(boolean piped) {
+              this.piped = piped;
+            }
+            public void close() {
+              popContext();
+            }
+            public void provide(Object element) throws IOException {
+              real.provide(element);
+            }
+            public void flush() throws IOException {
+              peekContext().flush();
+            }
+          };
         }
-      };
+      }
     } else if (match instanceof ClassMatch) {
 
       //
@@ -352,31 +393,33 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
       //
       return new CommandInvoker<Void, Object>() {
-        public PipeCommand<Void> invoke(final InvocationContext<Object> context) throws ScriptException {
+        InvocationContext context;
+        public void open(InvocationContext<Object> context) {
+          this.context = context;
           try {
             if (doHelp) {
               match.printUsage(context.getWriter());
             } else {
               classMatch.printUsage(context.getWriter());
             }
-            return new PipeCommand<Void>() {
-              public void provide(Void element) throws IOException {
-              }
-              @Override
-              public void flush() throws IOException {
-                context.flush();
-              }
-            };
           }
           catch (IOException e) {
             throw new AssertionError(e);
           }
         }
-
+        public void setPiped(boolean piped) {
+        }
+        public void close() {
+          this.context = null;
+        }
+        public void provide(Void element) throws IOException {
+        }
+        public void flush() throws IOException {
+          context.flush();
+        }
         public Class<Object> getProducedType() {
           return Object.class;
         }
-
         public Class<Void> getConsumedType() {
           return Void.class;
         }

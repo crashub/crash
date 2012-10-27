@@ -22,8 +22,10 @@ package org.crsh.text.ui;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
 import org.crsh.command.CRaSHCommand;
+import org.crsh.command.CommandInvoker;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.InvocationContext;
+import org.crsh.command.ScriptException;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.Renderable;
 import org.crsh.text.Renderer;
@@ -72,6 +74,10 @@ public class EvalElement extends Element {
       /** . */
       private Renderable renderable;
 
+      public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
+        return ctx.resolve(s);
+      }
+
       public RenderPrintWriter getWriter() {
         return ctx.getWriter();
       }
@@ -98,6 +104,10 @@ public class EvalElement extends Element {
 
       public String readLine(String msg, boolean echo) {
         return null;
+      }
+
+      public Class getConsumedType() {
+        return Object.class;
       }
 
       public void provide(Object element) throws IOException {

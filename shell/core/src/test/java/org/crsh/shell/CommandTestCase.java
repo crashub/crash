@@ -121,8 +121,8 @@ public class CommandTestCase extends AbstractCommandTestCase {
   public void testResolveOut() {
     String resolve = "class resolve extends org.crsh.command.CRaSHCommand {\n" +
         "@Command\n" +
-        "public org.crsh.command.PipeCommand<Object> main() {\n" +
-        "return new org.crsh.command.PipeCommand<Object>() {\n" +
+        "public org.crsh.command.PipeCommand<Object, Object> main() {\n" +
+        "return new org.crsh.command.PipeCommand<Object, Object>() {\n" +
         "public void open() {\n" +
         "out << 'HELLO'\n" +
         "}\n" +

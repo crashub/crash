@@ -72,7 +72,7 @@ class jmx extends CRaSHCommand {
 
   @Usage("todo")
   @Command
-  PipeCommand<ObjectName> get(InvocationContext<Map> context, @Option(names=['a','attributes']) List<String> attributes) {
+  PipeCommand<ObjectName, Map> get(InvocationContext<Map> context, @Option(names=['a','attributes']) List<String> attributes) {
 
     // Determine common attributes from all names
     if (attributes == null || attributes.isEmpty()) {
@@ -91,7 +91,7 @@ class jmx extends CRaSHCommand {
     MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
     //
-    return new PipeCommand<ObjectName>() {
+    return new PipeCommand<ObjectName, Map>() {
       @Override
       void provide(ObjectName name) {
         def tuple = [:];

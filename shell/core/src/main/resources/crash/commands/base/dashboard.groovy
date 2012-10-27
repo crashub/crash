@@ -22,13 +22,13 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
       }
       row {
         eval {
-          system.propls f:'java.vm.*';
+          eval("system propls -f java.*")
         }
         eval {
-          context.provide(Thread.currentThread())
+          eval("thread ls")
         }
         eval {
-          jvm.system();
+          eval("env")
         }
       }
     }

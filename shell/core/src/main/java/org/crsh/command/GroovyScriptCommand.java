@@ -50,6 +50,9 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   /** . */
   private String[] args;
 
+  /** . */
+  private boolean piped;
+
   protected GroovyScriptCommand() {
     this.stack = null;
     this.context = null;
@@ -83,6 +86,14 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return context;
   }
 
+  public final void eval(String s) throws ScriptException, IOException {
+    InvocationContext<?> context = peekContext();
+    CommandInvoker invoker = context.resolve(s);
+    invoker.open(context);
+    invoker.flush();
+    invoker.close();
+  }
+
   public final InvocationContext<?> peekContext() {
     return (InvocationContext<?>)context;
   }
@@ -96,7 +107,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   }
 
   @Override
-  public Object invokeMethod(String name, Object args) {
+  public final Object invokeMethod(String name, Object args) {
 
     //
     try {
@@ -165,62 +176,62 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
   }
 
-  public String describe(String line, DescriptionFormat mode) {
+  public void setPiped(boolean piped) {
+    this.piped = piped;
+  }
+
+  public final String describe(String line, DescriptionFormat mode) {
     return null;
   }
 
-  public final PipeCommand<Object> invoke(final InvocationContext<Object> context) throws ScriptException {
-    return new PipeCommand<Object>() {
+  public final void open(InvocationContext<Object> context) {
 
-      @Override
-      public void open() throws ScriptException {
-        // Set up current binding
-        Binding binding = new Binding(context.getSession());
+    // Set up current binding
+    Binding binding = new Binding(context.getSession());
 
-        // Set the args on the script
-        binding.setProperty("args", args);
+    // Set the args on the script
+    binding.setProperty("args", args);
 
-        //
-        setBinding(binding);
+    //
+    setBinding(binding);
 
-        //
-        GroovyScriptCommand.this.context = context;
-        try {
-          //
-          Object res = run();
+    //
+    pushContext(context);
 
-          // Evaluate the closure
-          if (res instanceof Closure) {
-            Closure closure = (Closure)res;
-            res = closure.call(args);
-          }
+    //
+    try {
+      //
+      Object res = run();
 
-          //
-          if (res != null) {
-            RenderPrintWriter writer = context.getWriter();
-            if (writer.isEmpty()) {
-              writer.print(res);
-            }
-          }
-        }
-        catch (Exception t) {
-          throw CRaSHCommand.toScript(t);
-        }
-        finally {
-          GroovyScriptCommand.this.context = null;
-        }
+      // Evaluate the closure
+      if (res instanceof Closure) {
+        Closure closure = (Closure)res;
+        res = closure.call(args);
       }
 
-      @Override
-      public void provide(Object element) throws IOException {
-        // Should never be called
+      //
+      if (res != null) {
+        RenderPrintWriter writer = context.getWriter();
+        if (writer.isEmpty()) {
+          writer.print(res);
+        }
       }
+    }
+    catch (Exception t) {
+      throw CRaSHCommand.toScript(t);
+    }
+  }
 
-      @Override
-      public void flush() throws IOException {
-        context.flush();
-      }
-    };
+  public final void provide(Object element) throws IOException {
+    // Should never be called
+  }
+
+  public final void flush() throws IOException {
+    peekContext().flush();
+  }
+
+  public final void close() {
+    popContext();
   }
 
   public final CommandInvoker<?, ?> resolveInvoker(String line) {
@@ -229,7 +240,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return this;
   }
 
-  public CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) {
+  public final CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) {
     String[] tmp = new String[args.size()];
     for (int i = 0;i < tmp.length;i++) {
       tmp[i] = args.get(i).toString();

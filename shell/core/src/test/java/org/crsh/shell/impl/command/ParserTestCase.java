@@ -30,14 +30,14 @@ public class ParserTestCase extends TestCase {
 
   public void testCommand() {
     Parser p = new Parser("a");
-    PipeLine e = p.parse();
+    PipeLineFactory e = p.parse();
     assertEquals("a", e.line);
     assertNull(e.next);
   }
 
   public void testPipe() {
     Parser p = new Parser("a|b");
-    PipeLine e = p.parse();
+    PipeLineFactory e = p.parse();
     assertEquals("a", e.line);
     assertEquals("b", e.next.line);
     assertNull(e.next.next);

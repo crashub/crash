@@ -46,8 +46,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
   /** . */
   private final String compound_consume_command = "class compound_consume_command extends org.crsh.command.CRaSHCommand {\n" +
       "@Command\n" +
-      "public org.crsh.command.PipeCommand<String> compound() {\n" +
-      "return new org.crsh.command.PipeCommand<String>() {\n" +
+      "public org.crsh.command.PipeCommand<String, Object> compound() {\n" +
+      "return new org.crsh.command.PipeCommand<String, Object>() {\n" +
       "public void provide(String element) {\n" +
       "org.crsh.shell.CompositionTestCase.list.add(element);\n" +
       "}\n" +

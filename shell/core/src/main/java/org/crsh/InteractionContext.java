@@ -19,23 +19,7 @@
 
 package org.crsh;
 
-public interface InteractionContext<E> extends Pipe<E> {
-
-  /**
-   * Returns the term width in chars. When the value is not positive it means
-   * the value could not be determined.
-   *
-   * @return the term width
-   */
-  int getWidth();
-
-  /**
-   * Returns the term height in chars. When the value is not positive it means
-   * the value could not be determined.
-   *
-   * @return the term height
-   */
-  int getHeight();
+public interface InteractionContext {
 
   /**
    * Returns a generic property, usually this property is resolved by the

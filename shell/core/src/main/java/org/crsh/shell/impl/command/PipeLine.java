@@ -19,271 +19,90 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.Pipe;
 import org.crsh.command.CommandInvoker;
-import org.crsh.command.NoSuchCommandException;
-import org.crsh.command.PipeCommand;
+import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.command.ShellCommand;
-import org.crsh.shell.ErrorType;
-import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
-import org.crsh.text.ChunkAdapter;
-import org.crsh.text.ChunkBuffer;
-import org.crsh.text.RenderingContext;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
-class PipeLine {
-
-  /** . */
-  final String line;
+class PipeLine implements CommandInvoker {
 
   /** . */
-  final String name;
+  private final PipeFilter[] pipes;
 
-  /** . */
-  final String rest;
-
-  /** . */
-  private ShellCommand command;
-
-  /** . */
-  private CommandInvoker invoker;
-
-  /** . */
-  final PipeLine next;
-
-  public String getLine() {
-    return line;
+  PipeLine(PipeFilter[] pipes) {
+    this.pipes = pipes;
   }
 
-  PipeLine(String line, PipeLine next) {
-
-    Pattern p = Pattern.compile("^\\s*(\\S+)");
-    java.util.regex.Matcher m = p.matcher(line);
-    String name = null;
-    String rest = null;
-    if (m.find()) {
-      name = m.group(1);
-      rest = line.substring(m.end());
-    }
-
-    //
-    this.name = name;
-    this.rest = rest;
-    this.line = line;
-    this.next = next;
+  public void invoke(InvocationContext<?> context) throws ScriptException, IOException {
+    open(context);
+    flush();
+    close();
   }
 
-  private static class PipeProxy extends PipeCommand {
+  public Class getConsumedType() {
+    throw new UnsupportedOperationException();
+  }
 
-    /** . */
-    private final CRaSHSession session;
+  public Class getProducedType() {
+    throw new UnsupportedOperationException();
+  }
 
-    /** . */
-    private final ShellProcessContext context;
+  public void setPiped(boolean piped) {
+    throw new UnsupportedOperationException("This should not be called");
+  }
 
-    /** . */
-    private final PipeLine pipeLine;
+  public void open(InvocationContext context) {
 
-    /** . */
-    private Pipe next;
+    InvocationContext<?> last = context;
 
-    /** . */
-    private PipeCommand command;
+    for (int i = pipes.length - 1;i >= 0;i--) {
 
-    private PipeProxy(CRaSHSession session, ShellProcessContext context, PipeLine pipeLine) {
-      this.session = session;
-      this.context = context;
-      this.pipeLine = pipeLine;
-    }
+      //
+      InvocationContext next;
 
-    public void open() throws ScriptException {
-      if (pipeLine.next != null) {
-
-        // Open the next
-        // Try to do some type adaptation
-        if (pipeLine.invoker.getProducedType() == Chunk.class) {
-          if (pipeLine.next.invoker.getConsumedType() == Chunk.class) {
-            PipeProxy proxy = new PipeProxy(session, context, pipeLine.next);
-            proxy.setPiped(true);
-            next = proxy;
-            proxy.open();
-          } else {
-            throw new UnsupportedOperationException("Not supported yet");
-          }
+      // Open the next
+      // Try to do some type adaptation
+      if (pipes[i].getProducedType() == Chunk.class) {
+        if (last.getConsumedType() == Chunk.class) {
+          next = last;
         } else {
-          if (pipeLine.invoker.getProducedType().isAssignableFrom(pipeLine.next.invoker.getConsumedType())) {
-            PipeProxy proxy = new PipeProxy(session, context, pipeLine.next);
-            proxy.setPiped(true);
-            next = proxy;
-            proxy.open();
-          } else {
-            final PipeProxy proxy = new PipeProxy(session, context, pipeLine.next);
-            proxy.setPiped(true);
-            proxy.open();
-            next = new ChunkAdapter(new RenderingContext() {
-              public int getWidth() {
-                return context.getWidth();
-              }
-              public int getHeight() {
-                return context.getHeight();
-              }
-              public void provide(Chunk element) throws IOException {
-                proxy.provide(element);
-              }
-              public void flush() throws IOException {
-                proxy.flush();
-              }
-            });
-          }
+          throw new UnsupportedOperationException("Not supported yet");
         }
-
       } else {
-
-        // We use this chunk buffer to buffer stuff
-        // but also because it optimises the chunks
-        // which provides better perormances on the client
-        final ChunkBuffer buffer = new ChunkBuffer(context);
-
-        //
-        next = new ChunkAdapter(new RenderingContext() {
-          public int getWidth() {
-            return context.getWidth();
-          }
-          public int getHeight() {
-            return context.getHeight();
-          }
-          public void provide(Chunk element) throws IOException {
-            buffer.provide(element);
-          }
-          public void flush() throws IOException {
-            buffer.flush();
-          }
-        });
+        if (last.getConsumedType().isAssignableFrom(pipes[i].getProducedType())) {
+          next = last;
+        } else {
+          Foo foo = new Foo();
+          foo.open(last);
+          next = foo;
+        }
       }
 
       //
-      CRaSHInvocationContext invocationContext = new CRaSHInvocationContext(
-          context,
-          session,
-          session.crash.getContext().getAttributes(),
-          next);
-
-      // Now open command
-      command = pipeLine.invoker.invoke(invocationContext);
-      command.setPiped(isPiped());
-      command.open();
-    }
-
-    public void provide(Object element) throws IOException {
-      if (pipeLine.invoker.getConsumedType().isInstance(element)) {
-        command.provide(element);
+      if (i > 0) {
+        pipes[i].setPiped(true);
       }
-    }
 
-    public void flush() throws IOException {
+      //
+      pipes[i].open(next);
 
-      // First flush the command
-      command.flush();
 
-      // Flush the next because the command may not call it
-      next.flush();
-    }
-
-    public void close() throws ScriptException {
-      command.close();
+      //
+      last = pipes[i];
     }
   }
 
-  PipeLine getLast() {
-    if (next != null) {
-      return next.getLast();
-    }
-    return this;
+  public void close() {
+    pipes[0].close();
   }
 
-   CRaSHProcess create(CRaSHSession session, String request) throws NoSuchCommandException {
-
-     //
-     CommandInvoker invoker = null;
-     if (name != null) {
-       command = session.crash.getCommand(name);
-       if (command != null) {
-         invoker = command.resolveInvoker(rest);
-       }
-     }
-
-     //
-     if (invoker == null) {
-       throw new NoSuchCommandException(name);
-     } else {
-       this.invoker = invoker;
-     }
-
-     //
-     if (next != null) {
-      next.create(session, request);
-    }
-    return new CRaSHProcess(session, request) {
-      @Override
-      ShellResponse doInvoke(ShellProcessContext context) throws InterruptedException {
-
-        PipeProxy proxy = new PipeProxy(crash, context, PipeLine.this);
-
-        try {
-          proxy.open();
-          proxy.flush();
-          proxy.close();
-        }
-        catch (ScriptException e) {
-          // Should we handle InterruptedException here ?
-          return build(e);
-        } catch (Throwable t) {
-          return build(t);
-        }
-        return ShellResponse.ok();
-      }
-    };
+  public void provide(Object element) throws IOException {
+    pipes[0].provide(element);
   }
 
-  private ShellResponse.Error build(Throwable throwable) {
-    ErrorType errorType;
-    if (throwable instanceof ScriptException) {
-      errorType = ErrorType.EVALUATION;
-      Throwable cause = throwable.getCause();
-      if (cause != null) {
-        throwable = cause;
-      }
-    } else {
-      errorType = ErrorType.INTERNAL;
-    }
-    String result;
-    String msg = throwable.getMessage();
-    if (throwable instanceof ScriptException) {
-      if (msg == null) {
-        result = name + ": failed";
-      } else {
-        result = name + ": " + msg;
-      }
-      return ShellResponse.error(errorType, result, throwable);
-    } else {
-      if (msg == null) {
-        msg = throwable.getClass().getSimpleName();
-      }
-      if (throwable instanceof RuntimeException) {
-        result = name + ": exception: " + msg;
-      } else if (throwable instanceof Exception) {
-        result = name + ": exception: " + msg;
-      } else if (throwable instanceof java.lang.Error) {
-        result = name + ": error: " + msg;
-      } else {
-        result = name + ": unexpected throwable: " + msg;
-      }
-      return ShellResponse.error(errorType, result, throwable);
-    }
+  public void flush() throws IOException {
+    pipes[0].flush();
   }
 }

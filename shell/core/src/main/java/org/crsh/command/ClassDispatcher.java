@@ -27,7 +27,6 @@ import org.crsh.Pipe;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -79,9 +78,11 @@ final class ClassDispatcher extends CommandClosure {
   }
 
   Object dispatch(String methodName, Object[] arguments) {
-    PipeCommand pipe = resolvePipe(methodName, arguments);
+    PipeCommandProxy pipe = resolvePipe(methodName, arguments);
+
+    //
     try {
-      pipe.open();
+      pipe.fire();
       pipe.close();
       return null;
     }
@@ -95,7 +96,7 @@ final class ClassDispatcher extends CommandClosure {
     }
   }
 
-  private PipeCommand<?> resolvePipe(String name, Object[] args) {
+  private PipeCommandProxy<?, Object> resolvePipe(String name, Object[] args) {
     final Closure closure;
     int to = args.length;
     if (to > 0 && args[to - 1] instanceof Closure) {
@@ -154,7 +155,7 @@ final class ClassDispatcher extends CommandClosure {
     //
     Pipe producer;
     if (closure != null) {
-      PipeCommand producerPipe;
+      CommandInvoker producerPipe;
       if (closure instanceof MethodDispatcher) {
         MethodDispatcher commandClosure = (MethodDispatcher)closure;
         producerPipe = commandClosure.dispatcher.resolvePipe(commandClosure.name, new Object[0]);
@@ -162,13 +163,28 @@ final class ClassDispatcher extends CommandClosure {
         ClassDispatcher dispatcherClosure = (ClassDispatcher)closure;
         producerPipe = dispatcherClosure.resolvePipe(name, new Object[0]);
       } else {
-        producerPipe = new PipeCommand() {
-          @Override
-          public void provide(Object element) throws ScriptException, IOException {
+        producerPipe = new CommandInvoker() {
+          public Class getProducedType() {
+            throw new UnsupportedOperationException();
+          }
+          public Class getConsumedType() {
+            throw new UnsupportedOperationException();
+          }
+          public void setPiped(boolean piped) {
+          }
+
+          public void open(InvocationContext context) {
+          }
+
+          public void close() {
+          }
+          public void provide(Object element) throws IOException {
             Class[] parameterTypes = closure.getParameterTypes();
             if (parameterTypes != null && parameterTypes.length > 0 && parameterTypes[0].isInstance(element)) {
               closure.call(element);
             }
+          }
+          public void flush() throws IOException {
           }
         };
       }
@@ -180,7 +196,6 @@ final class ClassDispatcher extends CommandClosure {
 
     //
     InnerInvocationContext inner = new InnerInvocationContext(context, producer);
-    PipeCommand<Void> abc = invoker.invoke(inner);
-    return new PipeCommandProxy(abc, producer);
+    return new PipeCommandProxy(inner, invoker, producer);
   }
 }

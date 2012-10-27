@@ -16,34 +16,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
 
-import org.crsh.Pipe;
+package org.crsh;
 
 /**
- * A command invoker.
- *
- * @param <C> the consumed generic type
- * @param <P> the produced generic type
+ * The rendering context extends the pipe and add notion relative to the rendering.
  */
-public interface CommandInvoker<C, P> extends Pipe<C> {
+public interface RenderingContext<E> extends Pipe<E> {
 
   /**
-   * Returns the class of the produced type.
+   * Returns the term width in chars. When the value is not positive it means
+   * the value could not be determined.
    *
-   * @return the produced type
+   * @return the term width
    */
-  Class<P> getProducedType();
-
-  void setPiped(boolean piped);
+  int getWidth();
 
   /**
-   * Open the pipe with the specified context.
+   * Returns the term height in chars. When the value is not positive it means
+   * the value could not be determined.
    *
-   * @param context the context
+   * @return the term height
    */
-  void open(InvocationContext<P> context);
-
-  void close();
+  int getHeight();
 
 }

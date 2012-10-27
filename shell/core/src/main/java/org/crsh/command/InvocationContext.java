@@ -20,9 +20,12 @@
 package org.crsh.command;
 
 import org.crsh.InteractionContext;
+import org.crsh.RenderingContext;
 import org.crsh.text.RenderPrintWriter;
 
-public interface InvocationContext<P> extends CommandContext, InteractionContext<P> {
+import java.io.IOException;
+
+public interface InvocationContext<P> extends CommandContext, InteractionContext, RenderingContext<P> {
 
   /**
    * Returns the writer for the output.
@@ -30,5 +33,15 @@ public interface InvocationContext<P> extends CommandContext, InteractionContext
    * @return the writer
    */
   RenderPrintWriter getWriter();
+
+  /**
+   * Resolve a command invoker for the specified command line.
+   *
+   * @param s the command line
+   * @return the command invoker
+   * @throws ScriptException any script exception
+   * @throws IOException any io exception
+   */
+  CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException;
 
 }

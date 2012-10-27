@@ -93,17 +93,12 @@ Remove a property
 [/]% set foo
 
 set is a <Node,Void> command updating the property of the consumed node stream.""")
-  public PipeCommand<Node> set(
-    InvocationContext<Node> context,
+  public PipeCommand<Node, Node> set(
     @Argument @Usage("the property name") @Man("The name of the property to alter") String propertyName,
     @Argument @Usage("the property value") @Man("The new value of the property") String propertyValue,
     @Option(names=["t","type"]) @Usage("the property type") @Man("The property type to use when it cannot be inferred") PropertyType propertyType) {
-
-    //
     propertyType = propertyType ?: PropertyType.STRING;
-
-    //
-    return new PipeCommand<Node>() {
+    return new PipeCommand<Node, Node>() {
       @Override
       void open() {
         if (!isPiped()) {

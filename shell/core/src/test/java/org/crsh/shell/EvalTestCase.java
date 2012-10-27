@@ -60,4 +60,35 @@ public class EvalTestCase extends AbstractCommandTestCase {
     //
     assertEquals("hello                           \n", assertOk("foo"));
   }
+
+  public void testEvalCommandInEval() {
+    String foo =
+        "class foo extends org.crsh.command.CRaSHCommand {\n" +
+            "  @Command\n" +
+            "  public void main() {\n" +
+            "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
+            "      eval('echo bar')\n" +
+            "    }\n" +
+            "    out << builder\n" +
+            "  }\n" +
+            "}";
+    lifeCycle.setCommand("foo", foo);
+
+    //
+    assertEquals("bar", assertOk("foo"));
+  }
+
+  public void testEvalCommandInCommand() {
+    String foo =
+        "class foo extends org.crsh.command.CRaSHCommand {\n" +
+            "  @Command\n" +
+            "  public void main() {\n" +
+            "    eval('echo bar')\n" +
+            "  }\n" +
+            "}";
+    lifeCycle.setCommand("foo", foo);
+
+    //
+    assertEquals("bar", assertOk("foo"));
+  }
 }

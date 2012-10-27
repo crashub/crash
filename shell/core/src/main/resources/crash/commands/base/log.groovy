@@ -35,9 +35,9 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
 
 % log ls | log send -m hello -l warn""")
   @Command
-  public PipeCommand<Logger> send(@MsgOpt String msg, @LoggerArg LoggerName name, @LevelOpt Level level) {
+  public PipeCommand<Logger, Object> send(@MsgOpt String msg, @LoggerArg LoggerName name, @LevelOpt Level level) {
     level = level ?: Level.info;
-    return new PipeCommand<Logger>() {
+    return new PipeCommand<Logger, Object>() {
       @Override
       void open() {
         if (!isPiped()) {
@@ -160,7 +160,7 @@ The following set the level warn on all the available loggers:
 % log ls | log set -l warn""")
   @Usage("configures the level of one of several loggers")
   @Command
-  public PipeCommand<Logger> set(
+  public PipeCommand<Logger, Object> set(
     @LoggerArg List<LoggerName> names,
     @LevelOpt Level level,
     @PluginOpt Plugin plugin) {
@@ -170,7 +170,7 @@ The following set the level warn on all the available loggers:
     if (plugin == null)
       throw new ScriptException("No usable plugin");
 
-    return new PipeCommand<Logger>() {
+    return new PipeCommand<Logger, Object>() {
       @Override
       void open() {
         if (!isPiped()) {

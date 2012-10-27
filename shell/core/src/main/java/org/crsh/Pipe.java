@@ -25,15 +25,22 @@ import java.io.IOException;
 /**
  * Defines the interface for a pipe.
  *
- * @param <E> the element generic type
+ * @param <C> the element generic type
  */
-public interface Pipe<E> extends Flushable {
+public interface Pipe<C> extends Flushable {
 
   /**
    * Provide an element.
    *
    * @param element the provided element
    */
-  void provide(E element) throws IOException;
+  void provide(C element) throws IOException;
+
+  /**
+   * Returns the class of the consumed type.
+   *
+   * @return the consumed type
+   */
+  Class<C> getConsumedType();
 
 }

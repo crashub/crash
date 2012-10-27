@@ -20,10 +20,13 @@
 package org.crsh.shell;
 
 import org.crsh.InteractionContext;
+import org.crsh.RenderingContext;
 import org.crsh.text.Chunk;
 
-public interface ShellProcessContext extends InteractionContext<Chunk> {
-
+/**
+ * The context provided when a {@link ShellProcess} is executed.
+ */
+public interface ShellProcessContext extends InteractionContext, RenderingContext<Chunk> {
 
   /**
    * This method is invoked when the process ends.

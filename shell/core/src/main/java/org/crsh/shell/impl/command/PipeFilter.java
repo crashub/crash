@@ -17,27 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.text;
+package org.crsh.shell.impl.command;
 
-import org.crsh.Pipe;
+import org.crsh.command.CommandInvoker;
+import org.crsh.command.InvocationContext;
 
-/**
- * The rendering context is a pipe of chunk providing a defined width.
- */
-public interface RenderingContext extends Pipe<Chunk> {
-
-  /**
-   * Return the width.
-   *
-   * @return the width
-   */
-  int getWidth();
-
-  /**
-   * Returns the height.
-   *
-   * @return the height
-   */
-  int getHeight();
-
+public interface PipeFilter<C, P> extends CommandInvoker<C, P>, InvocationContext<C> {
 }

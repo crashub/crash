@@ -19,6 +19,7 @@
 
 package org.crsh.text;
 
+import org.crsh.RenderingContext;
 import org.crsh.text.ui.Element;
 import org.crsh.text.ui.UIBuilder;
 import org.crsh.text.ui.UIBuilderRenderable;

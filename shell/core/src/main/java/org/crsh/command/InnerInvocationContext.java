@@ -21,7 +21,7 @@ package org.crsh.command;
 
 import org.crsh.Pipe;
 import org.crsh.text.Chunk;
-import org.crsh.text.RenderingContext;
+import org.crsh.RenderingContext;
 import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;
@@ -47,6 +47,10 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
     this.producer = producer;
   }
 
+  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
+    return outter.resolve(s);
+  }
+
   public int getWidth() {
     return outter.getWidth();
   }
@@ -65,7 +69,10 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
 
   public RenderPrintWriter getWriter() {
     if (writer == null) {
-      writer = new RenderPrintWriter(new RenderingContext() {
+      writer = new RenderPrintWriter(new RenderingContext<Chunk>() {
+        public Class<Chunk> getConsumedType() {
+          return Chunk.class;
+        }
         public int getWidth() {
           return outter.getWidth();
         }
@@ -81,6 +88,10 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
       });
     }
     return writer;
+  }
+
+  public Class<P> getConsumedType() {
+    throw new UnsupportedOperationException("Todo");
   }
 
   public void provide(P element) throws IOException {

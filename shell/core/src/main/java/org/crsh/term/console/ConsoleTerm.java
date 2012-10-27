@@ -177,6 +177,10 @@ public class ConsoleTerm implements Term {
     }
   }
 
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
+  }
+
   public void provide(Chunk element) throws IOException {
     if (element == null) {
       throw new NullPointerException("No null chunk accepted");

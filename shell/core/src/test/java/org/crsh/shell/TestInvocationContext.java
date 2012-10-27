@@ -23,10 +23,11 @@ import org.crsh.Pipe;
 import org.crsh.command.PipeCommand;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContext;
+import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.BaseCommandContext;
 import org.crsh.text.Chunk;
-import org.crsh.text.RenderingContext;
+import org.crsh.RenderingContext;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.ChunkBuffer;
 
@@ -45,7 +46,7 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
   protected RenderPrintWriter writer;
 
   /** . */
-  private final Pipe<P> producer = new PipeCommand<P>() {
+  private final Pipe<P> producer = new PipeCommand<P, Object>() {
     public void provide(P element) throws IOException {
       if (producedItems.isEmpty()) {
         producedItems = new LinkedList<P>();
@@ -61,6 +62,14 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
     this.reader = null;
     this.writer = null;
     this.producedItems = Collections.emptyList();
+  }
+
+  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  public Class<P> getConsumedType() {
+    throw new UnsupportedOperationException();
   }
 
   public List<P> getProducedItems() {
@@ -99,9 +108,9 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
       sb.append(arg);
     }
     CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.resolveInvoker(sb.toString());
-    PipeCommand<C> pc = invoker.invoke(this);
-    pc.open();
-    pc.close();
+    invoker.open(this);
+    invoker.flush();
+    invoker.close();
     return reader != null ? reader.toString() : null;
   }
 
@@ -116,12 +125,15 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
   public RenderPrintWriter getWriter() {
     if (writer == null) {
       reader = new ChunkBuffer();
-      writer = new RenderPrintWriter(new RenderingContext() {
+      writer = new RenderPrintWriter(new RenderingContext<Chunk>() {
         public int getWidth() {
           return TestInvocationContext.this.getWidth();
         }
         public int getHeight() {
           return TestInvocationContext.this.getHeight();
+        }
+        public Class<Chunk> getConsumedType() {
+          return Chunk.class;
         }
         public void provide(Chunk element) throws IOException {
           reader.provide(element);

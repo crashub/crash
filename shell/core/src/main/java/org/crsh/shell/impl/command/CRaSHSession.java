@@ -158,15 +158,10 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     } else {
       // Create pipeline from request
       Parser parser = new Parser(request);
-      PipeLine pipeline = parser.parse();
+      PipeLineFactory pipeline = parser.parse();
       if (pipeline != null) {
         // Create commands first
-        try {
-          return pipeline.create(this, request);
-        } catch (NoSuchCommandException e) {
-          log.error("Could not create shell process", e);
-          response = ShellResponse.unknownCommand(e.getCommandName());
-        }
+        return pipeline.create(this, request);
       } else {
         response = ShellResponse.noCommand();
       }
@@ -188,10 +183,10 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     ClassLoader previous = setCRaSHLoader();
     try {
       log.debug("Want prefix of " + prefix);
-      PipeLine ast = new Parser(prefix).parse();
+      PipeLineFactory ast = new Parser(prefix).parse();
       String termPrefix;
       if (ast != null) {
-        PipeLine last = ast.getLast();
+        PipeLineFactory last = ast.getLast();
         termPrefix = Utils.trimLeft(last.getLine());
       } else {
         termPrefix = "";

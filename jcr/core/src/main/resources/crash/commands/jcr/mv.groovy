@@ -20,16 +20,14 @@ command is a <Node,Node> command consuming a stream of node to move them and pro
 [/registry]% mv Registry Registry2""")
 
 
-  public PipeCommand<Node> main(
-    InvocationContext<Node> context,
+  public PipeCommand<Node, Node> main(
     @Argument @Usage("the source path") @Man("The path of the source node to move, absolute or relative") Path source,
     @Argument @Usage("the target path") @Man("The destination path absolute or relative") Path target) {
     assertConnected()
 
     // Resolve JCR session
     def session = session;
-
-    return new PipeCommand<Node>() {
+    return new PipeCommand<Node, Node>() {
       @Override
       void open() {
         if (!isPiped()) {

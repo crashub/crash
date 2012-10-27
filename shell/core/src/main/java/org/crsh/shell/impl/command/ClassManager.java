@@ -91,16 +91,23 @@ class ClassManager<T> {
       //
       if (providerRef == null) {
 
+        //
+        String source;
+        try {
+          source = new String(script.getContent(), "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+          throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+        }
+
+        //
         Class<?> clazz;
         try {
-          GroovyCodeSource gcs = new GroovyCodeSource(new String(script.getContent(), "UTF-8"), name, "/groovy/shell");
+          GroovyCodeSource gcs = new GroovyCodeSource(source, name, "/groovy/shell");
           GroovyClassLoader gcl = new GroovyClassLoader(context.getLoader(), config);
           clazz = gcl.parseClass(gcs, false);
         }
         catch (NoClassDefFoundError e) {
-          throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
-        }
-        catch (UnsupportedEncodingException e) {
           throw new NoSuchCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
         }
         catch (CompilationFailedException e) {

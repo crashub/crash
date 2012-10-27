@@ -6,7 +6,6 @@ import org.crsh.cmdline.annotations.Required
 import org.crsh.jcr.command.Path
 import org.crsh.command.PipeCommand
 import javax.jcr.Node
-import org.crsh.command.InvocationContext;
 
 @Usage("mixin commands")
 @Man("""The mixin command manipulates JCR node mixins. Mixins can be added to or removed from nodes.""")
@@ -21,13 +20,12 @@ add a mixin from an incoming node stream, for instance:
 [/]% select * from mynode | mixin add mix:versionable
 """)
   @Command
-  public PipeCommand<Node> add(
-     InvocationContext<Node> context,
+  public PipeCommand<Node, Node> add(
      @Usage("the mixin name to add") @Argument @Required String mixin,
      @Argument @Usage("the paths of the node receiving the mixin") List<Path> paths) {
     assertConnected();
     context.writer << "Mixin $mixin added to nodes";
-    return new PipeCommand<Node>() {
+    return new PipeCommand<Node, Node>() {
       @Override
       void open() {
         perform(paths, this.&provide);
@@ -50,13 +48,12 @@ remove a mixin from an incoming node stream, for instance:
 [/]% select * from mynode | mixin remove mix:versionable
 """)
   @Command
-  public PipeCommand<Node> remove(
-      InvocationContext<Node> context,
+  public PipeCommand<Node, Node> remove(
       @Usage("the mixin name to remove") @Argument @Required String mixin,
       @Argument @Usage("the paths of the node receiving the mixin") List<Path> paths) {
     assertConnected();
     context.writer << "Mixin $mixin removed from nodes";
-    return new PipeCommand<Node>() {
+    return new PipeCommand<Node, Node>() {
       @Override
       void open() {
         perform(paths, this.&provide);

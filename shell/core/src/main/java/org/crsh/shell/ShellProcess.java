@@ -19,6 +19,9 @@
 
 package org.crsh.shell;
 
+/**
+ * A shell process.
+ */
 public interface ShellProcess {
 
   /**

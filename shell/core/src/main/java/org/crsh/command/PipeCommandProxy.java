@@ -23,34 +23,50 @@ import org.crsh.Pipe;
 
 import java.io.IOException;
 
-class PipeCommandProxy<E> extends PipeCommand<E> {
+class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
 
   /** . */
-  private final PipeCommand<E> delegate;
+  private final InvocationContext<P> innerContext;
 
   /** . */
-  private final Pipe<E> next;
+  private final CommandInvoker<C, P> delegate;
 
-  PipeCommandProxy(PipeCommand<E> delegate, Pipe<E> next) {
+  /** . */
+  private final Pipe<C> next;
+
+  PipeCommandProxy(InvocationContext<P> innerContext, CommandInvoker<C, P> delegate, Pipe<C> next) {
+    this.innerContext = innerContext;
     this.delegate = delegate;
     this.next = next;
   }
 
-  @Override
-  public void open() throws ScriptException {
-    if (next != null && next instanceof PipeCommand) {
-      ((PipeCommand)next).open();
-    }
-    delegate.setPiped(isPiped());
-    delegate.open();
+  void fire() {
+    open(innerContext);
   }
 
-  @Override
-  public void provide(E element) throws ScriptException, IOException {
+  public Class<P> getProducedType() {
+    return delegate.getProducedType();
+  }
+
+  public Class<C> getConsumedType() {
+    return delegate.getConsumedType();
+  }
+
+  public void setPiped(boolean piped) {
+    delegate.setPiped(piped);
+  }
+
+  public void open(InvocationContext<P> context) {
+    if (next != null && next instanceof PipeCommandProxy) {
+      ((PipeCommandProxy)next).fire();
+    }
+    delegate.open(context);
+  }
+
+  public void provide(C element) throws ScriptException, IOException {
     delegate.provide(element);
   }
 
-  @Override
   public void flush() throws ScriptException, IOException {
     delegate.flush();
     if (next != null && next instanceof PipeCommand) {
@@ -58,7 +74,6 @@ class PipeCommandProxy<E> extends PipeCommand<E> {
     }
   }
 
-  @Override
   public void close() throws ScriptException {
     delegate.close();
     if (next != null && next instanceof PipeCommand) {

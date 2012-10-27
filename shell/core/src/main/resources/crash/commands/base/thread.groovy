@@ -8,7 +8,6 @@ import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Argument
 
 import org.crsh.command.PipeCommand
-import org.crsh.command.PipeCommand
 
 @Usage("JVM thread commands")
 @Man("""\
@@ -99,16 +98,14 @@ public class thread extends CRaSHCommand {
   @Usage("interrupt vm threads")
   @Man("Interrup VM threads.")
   @Command
-  public PipeCommand<Thread> interrupt(
-    InvocationContext<Void> context,
-    @Argument @Usage("the thread ids to interrupt") List<String> ids) {
+  public PipeCommand<Thread, Object> interrupt(@Argument @Usage("the thread ids to interrupt") List<String> ids) {
 /*
     apply(context, ids, {
       it.interrupt();
       context.writer.println("Interrupted thread $it");
     })
 */
-    return new PipeCommand<Thread>() {
+    return new PipeCommand<Thread, Object>() {
       void provide(Thread element) throws IOException {
         element.interrupt();
       }
@@ -118,16 +115,14 @@ public class thread extends CRaSHCommand {
   @Usage("stop vm threads")
   @Man("Stop VM threads.")
   @Command
-  public PipeCommand<Thread> stop(
-    InvocationContext<Void> context,
-    @Argument @Usage("the thread ids to stop") List<String> ids) {
+  public PipeCommand<Thread, Object> stop(@Argument @Usage("the thread ids to stop") List<String> ids) {
 /*
     apply(context, ids, {
       it.stop();
       context.writer.println("Stopped thread $it");
     })
 */
-    return new PipeCommand<Thread>() {
+    return new PipeCommand<Thread, Object>() {
       void provide(Thread element) throws IOException {
         element.stop();
       }
@@ -137,9 +132,7 @@ public class thread extends CRaSHCommand {
   @Usage("dump vm threads")
   @Man("Dump VM threads.")
   @Command
-  public PipeCommand<Thread> dump(
-          InvocationContext<Void> context,
-          @Argument @Usage("the thread ids to dump") List<String> ids) {
+  public PipeCommand<Thread, Object> dump(@Argument @Usage("the thread ids to dump") List<String> ids) {
 /*
     apply(context, ids, {
       Exception e = new Exception("Thread ${it.id} stack trace")
@@ -147,7 +140,7 @@ public class thread extends CRaSHCommand {
       e.printStackTrace(context.writer)
     })
 */
-    return new PipeCommand<Thread>() {
+    return new PipeCommand<Thread, Object>() {
       void provide(Thread element) throws IOException {
         Exception e = new Exception("Thread ${element.id} stack trace")
         e.setStackTrace(element.stackTrace)

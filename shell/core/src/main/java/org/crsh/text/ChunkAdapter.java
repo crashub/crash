@@ -20,11 +20,12 @@
 package org.crsh.text;
 
 import org.crsh.Pipe;
+import org.crsh.RenderingContext;
 
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class ChunkAdapter implements Pipe<Object> {
+public class ChunkAdapter implements RenderingContext<Object> {
 
   /** . */
   private final LinkedList<Object> buffer = new LinkedList<Object>();
@@ -35,8 +36,20 @@ public class ChunkAdapter implements Pipe<Object> {
   /** . */
   private final RenderAppendable out;
 
-  public ChunkAdapter(RenderingContext out) {
+  public ChunkAdapter(RenderingContext<Chunk> out) {
     this.out = new RenderAppendable(out);
+  }
+
+  public int getWidth() {
+    return out.getWidth();
+  }
+
+  public int getHeight() {
+    return out.getHeight();
+  }
+
+  public Class<Object> getConsumedType() {
+    return Object.class;
   }
 
   public void provide(Object element) throws IOException {
