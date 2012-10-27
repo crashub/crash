@@ -51,9 +51,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   /** . */
-  private boolean unquoteArguments;
-
-  /** . */
   private final ClassDescriptor<?> descriptor;
 
   /** The unmatched text, only valid during an invocation. */
@@ -66,7 +63,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   private boolean help;
 
   protected CRaSHCommand() throws IntrospectionException {
-    this.unquoteArguments = true;
     this.descriptor = CommandFactory.create(getClass());
     this.help = false;
     this.unmatched = null;
@@ -79,19 +75,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
    */
   public ClassDescriptor<?> getDescriptor() {
     return descriptor;
-  }
-
-  /**
-   * Returns true if the command wants its arguments to be unquoted.
-   *
-   * @return true if arguments must be unquoted
-   */
-  public final boolean getUnquoteArguments() {
-    return unquoteArguments;
-  }
-
-  public final void setUnquoteArguments(boolean unquoteArguments) {
-    this.unquoteArguments = unquoteArguments;
   }
 
   protected final String readLine(String msg) {
