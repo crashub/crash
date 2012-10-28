@@ -20,8 +20,9 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandInvoker;
-import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
+import org.crsh.io.Filter;
+import org.crsh.io.ProducerContext;
 import org.crsh.text.Chunk;
 
 import java.io.IOException;
@@ -29,13 +30,13 @@ import java.io.IOException;
 class PipeLine implements CommandInvoker {
 
   /** . */
-  private final PipeFilter[] pipes;
+  private final Filter[] pipes;
 
-  PipeLine(PipeFilter[] pipes) {
+  PipeLine(Filter[] pipes) {
     this.pipes = pipes;
   }
 
-  public void invoke(InvocationContext<?> context) throws ScriptException, IOException {
+  public void invoke(ProducerContext<?> context) throws ScriptException, IOException {
     open(context);
     flush();
     close();
@@ -53,30 +54,37 @@ class PipeLine implements CommandInvoker {
     throw new UnsupportedOperationException("This should not be called");
   }
 
-  public void open(InvocationContext context) {
-
-    InvocationContext<?> last = context;
+  public void open(ProducerContext context) {
+    ProducerContext<?> last = context;
 
     for (int i = pipes.length - 1;i >= 0;i--) {
 
       //
-      InvocationContext next;
+      ProducerContext<?> next;
 
-      // Open the next
-      // Try to do some type adaptation
-      if (pipes[i].getProducedType() == Chunk.class) {
-        if (last.getConsumedType() == Chunk.class) {
-          next = last;
-        } else {
-          throw new UnsupportedOperationException("Not supported yet");
-        }
+      //
+      Class produced = pipes[i].getProducedType();
+      Class<?> consumed = last.getConsumedType();
+
+      if (consumed.isAssignableFrom(produced)) {
+        next = last;
       } else {
-        if (last.getConsumedType().isAssignableFrom(pipes[i].getProducedType())) {
-          next = last;
+
+        // Try to adapt
+        if (produced.equals(Void.class)) {
+          throw new UnsupportedOperationException(produced.getSimpleName() + " -> " + consumed.getSimpleName());
+        } else if (consumed.equals(Void.class)) {
+          SinkPipeFilter filter = new SinkPipeFilter(consumed);
+          filter.open(last);
+          next = filter;
+        } else if (consumed.equals(Chunk.class)) {
+          ToChunkPipeFilter filter = new ToChunkPipeFilter();
+          filter.open((ProducerContext<Chunk>)last);
+          next = filter;
         } else {
-          Foo foo = new Foo();
-          foo.open(last);
-          next = foo;
+          SinkPipeFilter filter = new SinkPipeFilter(consumed);
+          filter.open(last);
+          next = filter;
         }
       }
 
@@ -87,7 +95,6 @@ class PipeLine implements CommandInvoker {
 
       //
       pipes[i].open(next);
-
 
       //
       last = pipes[i];

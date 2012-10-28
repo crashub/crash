@@ -23,7 +23,8 @@ import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.Pipe;
+import org.crsh.io.Consumer;
+import org.crsh.io.ProducerContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -153,7 +154,7 @@ final class ClassDispatcher extends CommandClosure {
     }
 
     //
-    Pipe producer;
+    Consumer producer;
     if (closure != null) {
       CommandInvoker producerPipe;
       if (closure instanceof MethodDispatcher) {
@@ -163,24 +164,32 @@ final class ClassDispatcher extends CommandClosure {
         ClassDispatcher dispatcherClosure = (ClassDispatcher)closure;
         producerPipe = dispatcherClosure.resolvePipe(name, new Object[0]);
       } else {
+
+        // That's the type we cast to
+        Class[] pt = closure.getParameterTypes();
+        final Class type;
+        if (pt.length > 0) {
+          type = pt[0];
+        } else {
+          type = Void.class;
+        }
+
+        //
         producerPipe = new CommandInvoker() {
           public Class getProducedType() {
-            throw new UnsupportedOperationException();
+            return Void.class;
           }
           public Class getConsumedType() {
-            throw new UnsupportedOperationException();
+            return type;
           }
           public void setPiped(boolean piped) {
           }
-
-          public void open(InvocationContext context) {
+          public void open(ProducerContext context) {
           }
-
           public void close() {
           }
           public void provide(Object element) throws IOException {
-            Class[] parameterTypes = closure.getParameterTypes();
-            if (parameterTypes != null && parameterTypes.length > 0 && parameterTypes[0].isInstance(element)) {
+            if (type.isInstance(element)) {
               closure.call(element);
             }
           }

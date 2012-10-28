@@ -21,7 +21,7 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.command.SyntaxException;
 
-class Parser {
+public class PipeLineParser {
 
   /** . */
   private Tokenizer tokenizer;
@@ -29,7 +29,7 @@ class Parser {
   /** . */
   private Token token;
 
-  public Parser(CharSequence s) {
+  public PipeLineParser(CharSequence s) {
     this.tokenizer = new Tokenizer(s);
     this.token = tokenizer.nextToken();
   }

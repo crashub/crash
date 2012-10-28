@@ -23,6 +23,7 @@ import org.crsh.command.CommandInvoker;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
+import org.crsh.io.Filter;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
 /**
  * A factory for a pipeline.
  */
-class PipeLineFactory {
+public class PipeLineFactory {
 
   /** . */
   final String line;
@@ -69,10 +70,10 @@ class PipeLineFactory {
     this.next = next;
   }
 
-  PipeLine create(CRaSHSession session) throws NoSuchCommandException {
+  public PipeLine create(CRaSHSession session) throws NoSuchCommandException {
 
     //
-    LinkedList<PipeProxy> pipes = new LinkedList<PipeProxy>();
+    LinkedList<InvokerPipeFilter> pipes = new LinkedList<InvokerPipeFilter>();
     for (PipeLineFactory current = this;current != null;current = current.next) {
       CommandInvoker commandInvoker = null;
       if (current.name != null) {
@@ -84,59 +85,13 @@ class PipeLineFactory {
       if (commandInvoker == null) {
         throw new NoSuchCommandException(current.name);
       }
-      pipes.add(new PipeProxy(commandInvoker));
+      pipes.add(new InvokerPipeFilter(commandInvoker));
     }
 
     //
-    return new PipeLine(pipes.toArray(new PipeFilter[pipes.size()]));
+    return new PipeLine(pipes.toArray(new Filter[pipes.size()]));
 
   }
-
-/*
-  PipeProxy makeProxy(CRaSHSession session) throws NoSuchCommandException {
-
-    CommandInvoker invoker = null;
-    if (name != null) {
-      ShellCommand command = session.crash.getCommand(name);
-      if (command != null) {
-        invoker = command.resolveInvoker(rest);
-      }
-    }
-
-    //
-    if (invoker == null) {
-      throw new NoSuchCommandException(name);
-    }
-
-    //
-    InvocationContext next;
-    if (this.next != null) {
-
-      PipeProxy proxy = this.next.makeProxy(session);
-
-      // Open the next
-      // Try to do some type adaptation
-      if (invoker.getProducedType() == Chunk.class) {
-        if (proxy.command.getConsumedType() == Chunk.class) {
-          next = this.next.makeProxy(session);
-        } else {
-          throw new UnsupportedOperationException("Not supported yet");
-        }
-      } else {
-        if (invoker.getProducedType().isAssignableFrom(proxy.command.getConsumedType())) {
-          next = this.next.makeProxy(session);
-        } else {
-          next = new Foo(this.next.makeProxy(session));
-        }
-      }
-    } else {
-      next = null;
-    }
-
-    //
-    return new PipeProxy(invoker);
-  }
-*/
 
   PipeLineFactory getLast() {
     if (next != null) {

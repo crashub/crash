@@ -157,7 +157,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
       response = ShellResponse.close();
     } else {
       // Create pipeline from request
-      Parser parser = new Parser(request);
+      PipeLineParser parser = new PipeLineParser(request);
       PipeLineFactory pipeline = parser.parse();
       if (pipeline != null) {
         // Create commands first
@@ -183,7 +183,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     ClassLoader previous = setCRaSHLoader();
     try {
       log.debug("Want prefix of " + prefix);
-      PipeLineFactory ast = new Parser(prefix).parse();
+      PipeLineFactory ast = new PipeLineParser(prefix).parse();
       String termPrefix;
       if (ast != null) {
         PipeLineFactory last = ast.getLast();

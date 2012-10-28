@@ -19,7 +19,7 @@
 
 package org.crsh.command;
 
-import org.crsh.Pipe;
+import org.crsh.io.Pipe;
 
 import java.io.IOException;
 
@@ -29,35 +29,24 @@ import java.io.IOException;
  * @param <C> the consumed generic type
  * @param <P> the produced generic type
  */
-public abstract class PipeCommand<C, P> implements CommandInvoker<C, P> {
-
-  /** . */
-  protected InvocationContext<P> context;
+public abstract class PipeCommand<C, P> {
 
   /** . */
   protected boolean piped;
 
-  public final Class<P> getProducedType() {
-    throw new UnsupportedOperationException();
-  }
-
-  public final Class<C> getConsumedType() {
-    throw new UnsupportedOperationException();
-  }
+  /** . */
+  protected InvocationContext<P> context;
 
   public final boolean isPiped() {
     return piped;
   }
 
-  public void setPiped(boolean piped) {
+  void setPiped(boolean piped) {
     this.piped = piped;
   }
 
-  /**
-   * Open pipe.
-   */
-  public final void open(InvocationContext<P> context) throws ScriptException {
-    this.context = context;
+  void open(InvocationContext<P> context) {
+    this.context = new InvocationContextImpl<P>(context);
 
     //
     open();

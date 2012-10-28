@@ -19,7 +19,7 @@
 
 package org.crsh.term;
 
-import org.crsh.Pipe;
+import org.crsh.io.Pipe;
 import org.crsh.text.Chunk;
 
 import java.io.Closeable;
@@ -97,4 +97,10 @@ public interface Term extends Closeable, Pipe<Chunk> {
    */
   void close();
 
+  /**
+   * Returns the class of the consumed type.
+   *
+   * @return the consumed type
+   */
+  Class<Chunk> getConsumedType();
 }

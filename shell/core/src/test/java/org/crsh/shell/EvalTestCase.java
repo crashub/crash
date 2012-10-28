@@ -75,7 +75,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
     lifeCycle.setCommand("foo", foo);
 
     //
-    assertEquals("bar", assertOk("foo"));
+    assertEquals("bar                             \n", assertOk("foo"));
   }
 
   public void testEvalCommandInCommand() {

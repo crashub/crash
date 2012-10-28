@@ -19,16 +19,16 @@
 
 package org.crsh.text;
 
-import org.crsh.RenderingContext;
+import org.crsh.io.IOContext;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 
-public class RenderWriter extends Writer implements RenderingContext<Chunk> {
+public class RenderWriter extends Writer implements IOContext<Chunk> {
 
   /** . */
-  private final RenderingContext out;
+  private final IOContext out;
 
   /** . */
   private final Closeable closeable;
@@ -39,11 +39,11 @@ public class RenderWriter extends Writer implements RenderingContext<Chunk> {
   /** . */
   private boolean empty;
 
-  public RenderWriter(RenderingContext out) throws NullPointerException {
+  public RenderWriter(IOContext out) throws NullPointerException {
     this(out, null);
   }
 
-  public RenderWriter(RenderingContext out, Closeable closeable) throws NullPointerException {
+  public RenderWriter(IOContext out, Closeable closeable) throws NullPointerException {
     if (out == null) {
       throw new NullPointerException("No null appendable expected");
     }
@@ -64,10 +64,6 @@ public class RenderWriter extends Writer implements RenderingContext<Chunk> {
 
   public int getHeight() {
     return out.getHeight();
-  }
-
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
   }
 
   public void provide(Chunk element) throws IOException {

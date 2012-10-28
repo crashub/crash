@@ -17,30 +17,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
+package org.crsh.io;
 
-import java.io.Flushable;
-import java.io.IOException;
+import java.io.Closeable;
 
-/**
- * Defines the interface for a pipe.
- *
- * @param <C> the element generic type
- */
-public interface Pipe<C> extends Flushable {
+public interface Producer<P> extends Closeable {
 
   /**
-   * Provide an element.
+   * Returns the class of the produced type.
    *
-   * @param element the provided element
+   * @return the produced type
    */
-  void provide(C element) throws IOException;
+  Class<P> getProducedType();
 
   /**
-   * Returns the class of the consumed type.
+   * Set the pipe status.
    *
-   * @return the consumed type
+   * @param piped the piped status
    */
-  Class<C> getConsumedType();
+  void setPiped(boolean piped);
+
+  /**
+   * Open the producer with the specified context.
+   *
+   * @param context the context
+   */
+  void open(ProducerContext<P> context);
+
+  /**
+   * Close the producer.
+   */
+  void close();
 
 }

@@ -136,10 +136,6 @@ public class BaseProcessContext implements ShellProcessContext {
     return input.isEmpty() ? null : input.removeLast();
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
-  }
-
   public void provide(Chunk element) throws IOException {
     if (element instanceof Text) {
       CharSequence seq = ((Text)element).getText();

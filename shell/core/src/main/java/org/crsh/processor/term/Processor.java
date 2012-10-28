@@ -19,7 +19,7 @@
 
 package org.crsh.processor.term;
 
-import org.crsh.Pipe;
+import org.crsh.io.Pipe;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;

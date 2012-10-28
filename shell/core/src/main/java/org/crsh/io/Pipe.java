@@ -16,16 +16,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
 
-import org.crsh.io.Consumer;
-import org.crsh.io.Producer;
+package org.crsh.io;
+
+import java.io.Flushable;
+import java.io.IOException;
 
 /**
- * A command invoker.
+ * Defines the interface for a pipe.
  *
- * @param <C> the consumed generic type
- * @param <P> the produced generic type
+ * @param <C> the element generic type
  */
-public interface CommandInvoker<C, P> extends Consumer<C>, Producer<P> {
+public interface Pipe<C> extends Flushable {
+
+  /**
+   * Provide an element.
+   *
+   * @param element the provided element
+   */
+  void provide(C element) throws IOException;
+
 }

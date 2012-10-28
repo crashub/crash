@@ -19,28 +19,30 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.RenderingContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.text.Chunk;
-import org.crsh.text.RenderPrintWriter;
+import org.crsh.io.Filter;
+import org.crsh.io.ProducerContext;
 
 import java.io.IOException;
 import java.util.Map;
 
-class PipeProxy<C, P> implements PipeFilter<C, P> {
+/**
+ * A pipe filter that invokes a command through a {@link CommandInvoker}.
+ */
+class InvokerPipeFilter<C, P> implements Filter<C, P> {
 
   /** . */
   final CommandInvoker<C, P> command;
 
   /** . */
-  private InvocationContext<P> context;
+  private ProducerContext<P> context;
 
-  /** . */
-  private RenderPrintWriter writer;
+//  /** . */
+//  private RenderPrintWriter writer;
 
-  PipeProxy(CommandInvoker<C, P> command) {
+  InvokerPipeFilter(CommandInvoker<C, P> command) {
     this.command = command;
   }
 
@@ -60,36 +62,6 @@ class PipeProxy<C, P> implements PipeFilter<C, P> {
 
   public Class<C> getConsumedType() {
     return command.getConsumedType();
-  }
-
-  public RenderPrintWriter getWriter() {
-    if (writer == null) {
-      writer = new RenderPrintWriter(new RenderingContext<Chunk>() {
-        public int getWidth() {
-          return PipeProxy.this.getWidth();
-        }
-        public int getHeight() {
-          return PipeProxy.this.getHeight();
-        }
-        public Class<Chunk> getConsumedType() {
-          return Chunk.class;
-        }
-        public void provide(Chunk element) throws IOException {
-          if (command.getConsumedType().isInstance(element)) {
-            C consumed = command.getConsumedType().cast(element);
-            PipeProxy.this.provide(consumed);
-          }
-        }
-        public void flush() throws IOException {
-          PipeProxy.this.flush();
-        }
-      });
-    }
-    return writer;
-  }
-
-  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
-    return context.resolve(s);
   }
 
   public Map<String, Object> getSession() {
@@ -116,7 +88,7 @@ class PipeProxy<C, P> implements PipeFilter<C, P> {
     return context.getHeight();
   }
 
-  public void open(InvocationContext<P> context) {
+  public void open(ProducerContext<P> context) {
 
     //
     this.context = context;

@@ -19,95 +19,99 @@
 
 package org.crsh.command;
 
-import org.crsh.io.Consumer;
-import org.crsh.text.Chunk;
 import org.crsh.io.IOContext;
+import org.crsh.io.ProducerContext;
+import org.crsh.shell.impl.command.CRaSHSession;
+import org.crsh.shell.impl.command.PipeLineFactory;
+import org.crsh.shell.impl.command.PipeLineParser;
+import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;
 import java.util.Map;
 
-class InnerInvocationContext<P> implements InvocationContext<P> {
+class InvocationContextImpl<P> implements InvocationContext<P> {
 
   /** . */
-  final InvocationContext<?> outter;
-
-  /** . */
-  final Consumer<P> consumer;
+  private final ProducerContext<P> producerContext;
 
   /** . */
   private RenderPrintWriter writer;
 
-  InnerInvocationContext(
-    InvocationContext<?> outter,
-    Consumer<P> consumer) {
-
-    //
-    this.outter = outter;
-    this.consumer = consumer;
-  }
-
-  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
-    return outter.resolve(s);
-  }
-
-  public int getWidth() {
-    return outter.getWidth();
-  }
-
-  public int getHeight() {
-    return outter.getHeight();
-  }
-
-  public String getProperty(String propertyName) {
-    return outter.getProperty(propertyName);
-  }
-
-  public String readLine(String msg, boolean echo) {
-    return outter.readLine(msg, echo);
+  InvocationContextImpl(ProducerContext<P> producerContext) {
+    this.producerContext = producerContext;
   }
 
   public RenderPrintWriter getWriter() {
     if (writer == null) {
       writer = new RenderPrintWriter(new IOContext<Chunk>() {
         public int getWidth() {
-          return outter.getWidth();
+          return producerContext.getWidth();
         }
         public int getHeight() {
-          return outter.getHeight();
+          return producerContext.getHeight();
         }
         public void provide(Chunk element) throws IOException {
-          Class<P> consumedType = consumer.getConsumedType();
+          Class<P> consumedType = producerContext.getConsumedType();
           if (consumedType.isInstance(element)) {
             P p = consumedType.cast(element);
-            consumer.provide(p);
+            producerContext.provide(p);
           }
         }
         public void flush() throws IOException {
-          consumer.flush();
+          producerContext.flush();
         }
       });
     }
     return writer;
   }
 
+  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
+    // A bit nasty : will improve that later
+    CRaSHSession session = (CRaSHSession)getSession();
+    PipeLineParser parser= new PipeLineParser(s);
+    PipeLineFactory factory = parser.parse();
+    try {
+      return factory.create(session);
+    }
+    catch (NoSuchCommandException e) {
+      throw new ScriptException(e);
+    }
+  }
+
   public Class<P> getConsumedType() {
-    return consumer.getConsumedType();
+    return producerContext.getConsumedType();
+  }
+
+  public String getProperty(String propertyName) {
+    return producerContext.getProperty(propertyName);
+  }
+
+  public String readLine(String msg, boolean echo) {
+    return producerContext.readLine(msg, echo);
+  }
+
+  public int getWidth() {
+    return producerContext.getWidth();
+  }
+
+  public int getHeight() {
+    return producerContext.getHeight();
   }
 
   public void provide(P element) throws IOException {
-    consumer.provide(element);
+    producerContext.provide(element);
   }
 
   public void flush() throws IOException {
-    consumer.flush();
+    producerContext.flush();
   }
 
   public Map<String, Object> getSession() {
-    return outter.getSession();
+    return producerContext.getSession();
   }
 
   public Map<String, Object> getAttributes() {
-    return outter.getAttributes();
+    return producerContext.getAttributes();
   }
 }

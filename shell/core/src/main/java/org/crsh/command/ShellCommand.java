@@ -19,6 +19,7 @@
 
 package org.crsh.command;
 
+import org.crsh.SessionContext;
 import org.crsh.cmdline.CommandCompletion;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public interface ShellCommand {
    * @param line the original command line arguments
    * @return the completions
    */
-  CommandCompletion complete(CommandContext context, String line);
+  CommandCompletion complete(SessionContext context, String line);
 
   /**
    * Returns a description of the command or null if none can be found.

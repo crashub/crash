@@ -24,9 +24,11 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
+import org.crsh.SessionContext;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.io.ProducerContext;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.util.Strings;
@@ -42,7 +44,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   private LinkedList<InvocationContext<?>> stack;
 
   /** The current context. */
-  protected CommandContext context;
+  protected InvocationContext context;
 
   /** The current output. */
   protected RenderPrintWriter out;
@@ -172,7 +174,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public final CommandCompletion complete(CommandContext context, String line) {
+  public final CommandCompletion complete(SessionContext context, String line) {
     return new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
   }
 
@@ -184,7 +186,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return null;
   }
 
-  public final void open(InvocationContext<Object> context) {
+  public final void open(ProducerContext<Object> context) {
 
     // Set up current binding
     Binding binding = new Binding(context.getSession());
@@ -196,7 +198,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     setBinding(binding);
 
     //
-    pushContext(context);
+    pushContext(new InvocationContextImpl<Object>(context));
 
     //
     try {
@@ -211,7 +213,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
 
       //
       if (res != null) {
-        RenderPrintWriter writer = context.getWriter();
+        RenderPrintWriter writer = peekContext().getWriter();
         if (writer.isEmpty()) {
           writer.print(res);
         }

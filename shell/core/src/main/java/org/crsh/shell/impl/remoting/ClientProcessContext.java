@@ -64,10 +64,6 @@ class ClientProcessContext implements ShellProcessContext {
     }
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
-  }
-
   public void provide(Chunk element) throws IOException {
     try {
       client.out.writeObject(ServerMessage.CHUNK);

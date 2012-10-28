@@ -19,25 +19,23 @@
 
 package org.crsh.shell;
 
-import org.crsh.Pipe;
-import org.crsh.command.PipeCommand;
+import org.crsh.io.Pipe;
 import org.crsh.command.CommandInvoker;
-import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.BaseCommandContext;
+import org.crsh.io.ProducerContext;
 import org.crsh.text.Chunk;
-import org.crsh.RenderingContext;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.ChunkBuffer;
 
 import java.io.IOException;
 import java.util.*;
 
-public class TestInvocationContext<C, P> extends BaseCommandContext implements InvocationContext<P> {
+public class TestInvocationContext<C> extends BaseCommandContext implements ProducerContext<Object> {
 
   /** . */
-  protected List<P> producedItems;
+  protected List<Object> producedItems;
 
   /** . */
   protected ChunkBuffer reader;
@@ -46,12 +44,14 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
   protected RenderPrintWriter writer;
 
   /** . */
-  private final Pipe<P> producer = new PipeCommand<P, Object>() {
-    public void provide(P element) throws IOException {
+  private final Pipe<Object> producer = new Pipe<Object>() {
+    public void provide(Object element) throws IOException {
       if (producedItems.isEmpty()) {
-        producedItems = new LinkedList<P>();
+        producedItems = new LinkedList<Object>();
       }
       producedItems.add(element);
+    }
+    public void flush() throws IOException {
     }
   };
 
@@ -64,20 +64,8 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
     this.producedItems = Collections.emptyList();
   }
 
-  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
-    throw new UnsupportedOperationException();
-  }
-
-  public Class<P> getConsumedType() {
-    throw new UnsupportedOperationException();
-  }
-
-  public List<P> getProducedItems() {
-    return producedItems;
-  }
-
-  public ChunkBuffer getReader() {
-    return reader;
+  public Class<Object> getConsumedType() {
+    return Object.class;
   }
 
   public int getWidth() {
@@ -96,6 +84,33 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
     throw new UnsupportedOperationException();
   }
 
+  public void provide(Object element) throws IOException {
+    if (element instanceof Chunk) {
+      if (reader == null) {
+        reader = new ChunkBuffer();
+      }
+      reader.provide((Chunk)element);
+    } else {
+      producer.provide(element);
+    }
+  }
+
+  public void flush() throws IOException {
+    producer.flush();
+  }
+
+  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  public List<Object> getProducedItems() {
+    return producedItems;
+  }
+
+  public ChunkBuffer getReader() {
+    return reader;
+  }
+
   public String execute(ShellCommand command, String... args) throws Exception {
     if (reader != null) {
       reader.clear();
@@ -107,42 +122,10 @@ public class TestInvocationContext<C, P> extends BaseCommandContext implements I
       }
       sb.append(arg);
     }
-    CommandInvoker<C, P> invoker = (CommandInvoker<C, P>)command.resolveInvoker(sb.toString());
+    CommandInvoker<C, Object> invoker = (CommandInvoker<C, Object>)command.resolveInvoker(sb.toString());
     invoker.open(this);
     invoker.flush();
     invoker.close();
     return reader != null ? reader.toString() : null;
-  }
-
-  public void provide(P element) throws IOException {
-    producer.provide(element);
-  }
-
-  public void flush() throws IOException {
-    producer.flush();
-  }
-
-  public RenderPrintWriter getWriter() {
-    if (writer == null) {
-      reader = new ChunkBuffer();
-      writer = new RenderPrintWriter(new RenderingContext<Chunk>() {
-        public int getWidth() {
-          return TestInvocationContext.this.getWidth();
-        }
-        public int getHeight() {
-          return TestInvocationContext.this.getHeight();
-        }
-        public Class<Chunk> getConsumedType() {
-          return Chunk.class;
-        }
-        public void provide(Chunk element) throws IOException {
-          reader.provide(element);
-        }
-        public void flush() throws IOException {
-          reader.flush();
-        }
-      });
-    }
-    return writer;
   }
 }

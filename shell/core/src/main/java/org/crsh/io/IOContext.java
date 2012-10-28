@@ -17,10 +17,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl.command;
+package org.crsh.io;
 
-import org.crsh.command.CommandInvoker;
-import org.crsh.command.InvocationContext;
+/**
+ * The io context extends the pipe.
+ */
+public interface IOContext<E> extends Pipe<E> {
 
-public interface PipeFilter<C, P> extends CommandInvoker<C, P>, InvocationContext<C> {
+  /**
+   * Returns the term width in chars. When the value is not positive it means
+   * the value could not be determined.
+   *
+   * @return the term width
+   */
+  int getWidth();
+
+  /**
+   * Returns the term height in chars. When the value is not positive it means
+   * the value could not be determined.
+   *
+   * @return the term height
+   */
+  int getHeight();
+
 }

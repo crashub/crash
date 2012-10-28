@@ -17,27 +17,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
+package org.crsh.io;
 
-/**
- * The rendering context extends the pipe and add notion relative to the rendering.
- */
-public interface RenderingContext<E> extends Pipe<E> {
+public interface Consumer<C> extends Pipe<C> {
 
   /**
-   * Returns the term width in chars. When the value is not positive it means
-   * the value could not be determined.
+   * Returns the class of the consumed type.
    *
-   * @return the term width
+   * @return the consumed type
    */
-  int getWidth();
-
-  /**
-   * Returns the term height in chars. When the value is not positive it means
-   * the value could not be determined.
-   *
-   * @return the term height
-   */
-  int getHeight();
+  Class<C> getConsumedType();
 
 }

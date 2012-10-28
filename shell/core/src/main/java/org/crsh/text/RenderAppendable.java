@@ -19,20 +19,20 @@
 
 package org.crsh.text;
 
-import org.crsh.RenderingContext;
+import org.crsh.io.IOContext;
 
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class RenderAppendable implements Appendable, RenderingContext<Chunk> {
+public class RenderAppendable implements Appendable, IOContext<Chunk> {
 
   /** . */
-  private final RenderingContext<Chunk> context;
+  private final IOContext<Chunk> context;
 
   /** . */
   private LinkedList<Style.Composite> stack;
 
-  public RenderAppendable(RenderingContext<Chunk> context) {
+  public RenderAppendable(IOContext<Chunk> context) {
     this.context = context;
   }
   
@@ -51,10 +51,6 @@ public class RenderAppendable implements Appendable, RenderingContext<Chunk> {
 
   public int getHeight() {
     return context.getHeight();
-  }
-
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
   }
 
   public void provide(Chunk element) throws IOException {

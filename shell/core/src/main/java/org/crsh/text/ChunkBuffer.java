@@ -19,7 +19,7 @@
 
 package org.crsh.text;
 
-import org.crsh.Pipe;
+import org.crsh.io.Pipe;
 
 import java.io.IOException;
 import java.io.Serializable;

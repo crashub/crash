@@ -19,7 +19,7 @@
 
 package org.crsh.text;
 
-import org.crsh.RenderingContext;
+import org.crsh.io.IOContext;
 import org.crsh.text.ui.Element;
 import org.crsh.text.ui.UIBuilder;
 import org.crsh.text.ui.UIBuilderRenderable;
@@ -35,14 +35,14 @@ public class RenderPrintWriter extends PrintWriter {
   /** . */
   private final RenderWriter out;
 
-  public RenderPrintWriter(RenderingContext out) {
+  public RenderPrintWriter(IOContext out) {
     super(new RenderWriter(out));
 
     //
     this.out = (RenderWriter)super.out;
   }
 
-  public RenderPrintWriter(RenderingContext out, Closeable closeable) {
+  public RenderPrintWriter(IOContext out, Closeable closeable) {
     super(new RenderWriter(out, closeable));
 
     //

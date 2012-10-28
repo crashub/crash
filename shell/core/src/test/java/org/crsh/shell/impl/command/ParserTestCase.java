@@ -25,18 +25,18 @@ import org.crsh.command.SyntaxException;
 public class ParserTestCase extends TestCase {
 
   public void testEmpty() {
-    assertNull(new Parser("").parse());
+    assertNull(new PipeLineParser("").parse());
   }
 
   public void testCommand() {
-    Parser p = new Parser("a");
+    PipeLineParser p = new PipeLineParser("a");
     PipeLineFactory e = p.parse();
     assertEquals("a", e.line);
     assertNull(e.next);
   }
 
   public void testPipe() {
-    Parser p = new Parser("a|b");
+    PipeLineParser p = new PipeLineParser("a|b");
     PipeLineFactory e = p.parse();
     assertEquals("a", e.line);
     assertEquals("b", e.next.line);
@@ -50,7 +50,7 @@ public class ParserTestCase extends TestCase {
 
   private void assertSyntaxException(String s) {
     try {
-      new Parser(s).parse();
+      new PipeLineParser(s).parse();
       fail();
     } catch (SyntaxException ignore) {
     }

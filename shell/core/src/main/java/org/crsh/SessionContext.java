@@ -16,16 +16,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
 
-import org.crsh.io.Consumer;
-import org.crsh.io.Producer;
+package org.crsh;
 
-/**
- * A command invoker.
- *
- * @param <C> the consumed generic type
- * @param <P> the produced generic type
- */
-public interface CommandInvoker<C, P> extends Consumer<C>, Producer<P> {
+import java.util.Map;
+
+public interface SessionContext {
+
+  /**
+   * Returns the current shell session.
+   *
+   * @return the session map
+   */
+  Map<String, Object> getSession();
+
+  /**
+   * Returns the current shell attributes.
+   *
+   * @return the attributes map
+   */
+  Map<String, Object> getAttributes();
+
 }

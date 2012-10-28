@@ -19,45 +19,38 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.RenderingContext;
-import org.crsh.command.CommandInvoker;
-import org.crsh.command.InvocationContext;
+import org.crsh.io.IOContext;
 import org.crsh.command.ScriptException;
+import org.crsh.io.Filter;
+import org.crsh.io.ProducerContext;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
-import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;
 import java.util.Map;
 
-class Foo implements InvocationContext, CommandInvoker {
+class ToChunkPipeFilter implements Filter<Object, Chunk> {
 
   /** . */
-  private PipeFilter next;
+  private Filter<Chunk, ?> context;
 
   /** . */
   private ChunkAdapter ca;
 
-  Foo() {
+  public Class<Chunk> getProducedType() {
+    return Chunk.class;
   }
 
-  public Class getProducedType() {
-    throw new UnsupportedOperationException();
-  }
-
-  public Class getConsumedType() {
-    throw new UnsupportedOperationException();
+  public Class<Object> getConsumedType() {
+    return Object.class;
   }
 
   public void setPiped(boolean piped) {
-    next.setPiped(piped);
+    context.setPiped(piped);
   }
 
-  public void open(final InvocationContext context) {
-    ca = new ChunkAdapter(new RenderingContext<Chunk>() {
-      public Class<Chunk> getConsumedType() {
-        return Chunk.class;
-      }
+  public void open(final ProducerContext<Chunk> context) {
+    ca = new ChunkAdapter(new IOContext<Chunk>() {
       public int getWidth() {
         return context.getWidth();
       }
@@ -65,15 +58,15 @@ class Foo implements InvocationContext, CommandInvoker {
         return context.getHeight();
       }
       public void provide(Chunk element) throws IOException {
-        next.provide(element);
+        ToChunkPipeFilter.this.context.provide(element);
       }
       public void flush() throws IOException {
-        next.flush();
+        ToChunkPipeFilter.this.context.flush();
       }
     });
 
     //
-    next = (PipeFilter)context;
+    this.context = (Filter<Chunk, ?>)context;
   }
 
   public void provide(Object element) throws ScriptException, IOException {
@@ -85,38 +78,30 @@ class Foo implements InvocationContext, CommandInvoker {
   }
 
   public void close() throws ScriptException {
-    next.close();
-  }
-
-  public RenderPrintWriter getWriter() {
-    return next.getWriter();
-  }
-
-  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
-    return next.resolve(s);
+    context.close();
   }
 
   public Map<String, Object> getSession() {
-    return next.getSession();
+    return context.getSession();
   }
 
   public Map<String, Object> getAttributes() {
-    return next.getAttributes();
+    return context.getAttributes();
   }
 
   public String getProperty(String propertyName) {
-    return next.getProperty(propertyName);
+    return context.getProperty(propertyName);
   }
 
   public String readLine(String msg, boolean echo) {
-    return next.readLine(msg, echo);
+    return context.readLine(msg, echo);
   }
 
   public int getWidth() {
-    return next.getWidth();
+    return context.getWidth();
   }
 
   public int getHeight() {
-    return next.getHeight();
+    return context.getHeight();
   }
 }

@@ -19,21 +19,17 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.RenderingContext;
-import org.crsh.command.CommandInvoker;
-import org.crsh.command.InvocationContext;
-import org.crsh.command.NoSuchCommandException;
-import org.crsh.command.ScriptException;
+import org.crsh.io.IOContext;
+import org.crsh.io.ProducerContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
 import org.crsh.text.ChunkBuffer;
-import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;
 import java.util.Map;
 
-class ProcessInvocationContext implements InvocationContext<Object> {
+class ProcessInvocationContext implements ProducerContext<Object> {
 
   /** . */
   private final CRaSHSession session;
@@ -44,9 +40,6 @@ class ProcessInvocationContext implements InvocationContext<Object> {
   /** . */
   private final ChunkAdapter adapter;
 
-  /** . */
-  private RenderPrintWriter writer;
-
   ProcessInvocationContext(CRaSHSession session, final ShellProcessContext processContext) {
 
     // We use this chunk buffer to buffer stuff
@@ -55,17 +48,13 @@ class ProcessInvocationContext implements InvocationContext<Object> {
     final ChunkBuffer buffer = new ChunkBuffer(processContext);
 
     //
-    final ChunkAdapter adapter = new ChunkAdapter(new RenderingContext<Chunk>() {
+    final ChunkAdapter adapter = new ChunkAdapter(new IOContext<Chunk>() {
       public int getWidth() {
         return processContext.getWidth();
       }
 
       public int getHeight() {
         return processContext.getHeight();
-      }
-
-      public Class<Chunk> getConsumedType() {
-        return Chunk.class;
       }
 
       public void provide(Chunk element) throws IOException {
@@ -111,29 +100,11 @@ class ProcessInvocationContext implements InvocationContext<Object> {
     adapter.flush();
   }
 
-  public RenderPrintWriter getWriter() {
-    if (writer == null) {
-      writer = new RenderPrintWriter(adapter);
-    }
-    return writer;
-  }
-
   public Map<String, Object> getSession() {
     return session;
   }
 
   public Map<String, Object> getAttributes() {
     return session.crash.getContext().getAttributes();
-  }
-
-  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
-    Parser parser= new Parser(s);
-    PipeLineFactory factory = parser.parse();
-    try {
-      return factory.create(session);
-    }
-    catch (NoSuchCommandException e) {
-      throw new ScriptException(e);
-    }
   }
 }
