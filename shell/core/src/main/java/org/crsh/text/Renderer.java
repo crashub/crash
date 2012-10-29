@@ -188,58 +188,57 @@ public abstract class Renderer {
 
     @Override
     public int getMinHeight(int width) {
-      int minHeight = 0;
-      for (Renderer renderer : renderers) {
-        minHeight += renderer.getMinHeight(width);
-      }
-      return minHeight;
+      return 1;
     }
 
     @Override
-    public LineReader reader(final int width) {
+    public LineReader reader(final int width, final int height) {
 
-      //
-      final ArrayList<LineReader> readers = new ArrayList<LineReader>();
-      for (Renderer renderer : renderers) {
-        LineReader reader = renderer.reader(width);
-        readers.add(reader);
-      }
+      final Iterator<? extends Renderer> i = renderers.iterator();
 
       //
       return new LineReader() {
 
         /** . */
-        Iterator<? extends LineReader> i = readers.iterator();
+        private LineReader current;
 
         /** . */
-        LineReader current = null;
+        private int index = 0;
 
         public boolean hasLine() {
-          while (true) {
-            if (current != null) {
-              if (current.hasLine()) {
-                break;
-              } else {
-                current = null;
+          if (height > 0 && index >= height) {
+            return false;
+          } else {
+            if (current == null || !current.hasLine()) {
+              while (i.hasNext()) {
+                Renderer next = i.next();
+                LineReader reader = next.reader(width);
+                if (reader != null && reader.hasLine()) {
+                  current = reader;
+                  return true;
+                }
               }
+              return false;
             } else {
-              if (i.hasNext()) {
-                current = i.next();
-              } else {
-                break;
-              }
+              return true;
             }
           }
-          return current != null;
         }
 
         public void renderLine(RenderAppendable to) throws IllegalStateException {
-          if (!hasLine()) {
+          if (hasLine()) {
+            current.renderLine(to);
+            index++;
+          } else {
             throw new IllegalStateException();
           }
-          current.renderLine(to);
         }
       };
+    }
+
+    @Override
+    public LineReader reader(final int width) {
+      return reader(width, -1);
     }
   }
 }

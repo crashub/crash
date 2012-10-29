@@ -113,7 +113,8 @@ class RowRenderer extends Renderer {
   LineReader renderer(final int[] widths, int height) {
     final LineReader[] readers = new LineReader[widths.length];
     for (int i = 0;i < readers.length;i++) {
-      LineReader reader = cols.get(i).reader(widths[i] - cellPaddingLeft - cellPaddingRight, height);
+      Renderer renderer = cols.get(i);
+      LineReader reader = renderer.reader(widths[i] - cellPaddingLeft - cellPaddingRight, height);
       readers[i] = reader;
     }
 

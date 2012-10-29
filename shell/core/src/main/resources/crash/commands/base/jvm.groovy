@@ -35,7 +35,7 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM operating system")
   @Command
   public void system(InvocationContext<Map> context) {
-    out << "\nOPERATING SYSTEM\n";
+    context.writer << "\nOPERATING SYSTEM\n";
     def os = ManagementFactory.operatingSystemMXBean;
     context.provide([name:"architecture",value:os?.arch]);
     context.provide([name:"name",value:os?.name]);
@@ -49,7 +49,7 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM runtime")
   @Command
   public void runtime() {
-    out << "\nJVM runtime\n";
+    context.writer << "\nJVM runtime\n";
     def rt = ManagementFactory.runtimeMXBean
     context.provide([name:"name",value:rt?.name]);
     context.provide([name:"specName",value:rt?.specName]);

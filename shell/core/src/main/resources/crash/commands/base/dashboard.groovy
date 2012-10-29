@@ -25,7 +25,7 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
           eval("system propls -f java.*")
         }
         execute {
-          eval("thread ls")
+          eval("jvm mem")
         }
         execute {
           eval("env")
