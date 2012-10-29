@@ -71,18 +71,30 @@ class RowRenderer extends Renderer {
 
   @Override
   public int getActualWidth() {
-    int width = 0;
-    for (Renderer col : cols) {
-      width += col.getActualWidth();
+    int actualWidth = 0;
+    for (int i = 0;i < cols.size();i++) {
+      Renderer col = cols.get(i);
+      actualWidth += col.getActualWidth();
+      actualWidth += cellPaddingLeft;
+      actualWidth += cellPaddingRight;
+      if (separator != null && i > 0) {
+        actualWidth++;
+      }
     }
-    return width;
+    return actualWidth;
   }
 
   @Override
   public int getMinWidth() {
     int minWidth = 0;
-    for (Renderer col : cols) {
+    for (int i = 0;i < cols.size();i++) {
+      Renderer col = cols.get(i);
       minWidth += col.getMinWidth();
+      minWidth += cellPaddingLeft;
+      minWidth += cellPaddingRight;
+      if (separator != null && i > 0) {
+        minWidth++;
+      }
     }
     return minWidth;
   }

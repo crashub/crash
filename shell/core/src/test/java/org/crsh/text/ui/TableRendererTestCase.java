@@ -77,6 +77,10 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     table.add(row);
 
     //
+    assertEquals(6, table.renderer().getActualWidth());
+    assertEquals(2, table.renderer().getMinWidth());
+
+    //
     table.withColumnLayout(Layout.flow());
 
     //
@@ -131,6 +135,10 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     TableElement table = new TableElement().border(BorderStyle.DASHED);
     RowElement row = new RowElement().add(new LabelElement("foo"), new LabelElement("bar"));
     table.add(row);
+
+    //
+    assertEquals(8, table.renderer().getActualWidth());
+    assertEquals(4, table.renderer().getMinWidth());
 
     //
     table.withColumnLayout(Layout.flow());
@@ -245,6 +253,10 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
     TableElement table = new TableElement().border(BorderStyle.DASHED).separator(BorderStyle.DASHED);
     RowElement row = new RowElement().add(new LabelElement("foo"), new LabelElement("bar"));
     table.add(row);
+
+    //
+    assertEquals(9, table.renderer().getActualWidth());
+    assertEquals(5, table.renderer().getMinWidth());
 
     //
     table.withColumnLayout(Layout.flow());
@@ -363,6 +375,10 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   public void testCellPadding() {
     TableElement table = new TableElement().cellPaddingLeft(1).cellPaddingRight(2);
     table.add(new RowElement().add(new LabelElement("foo"), new LabelElement("bar")));
+
+    //
+    assertEquals(12, table.renderer().getActualWidth());
+    assertEquals(8, table.renderer().getMinWidth());
 
     //
     assertRender(table, 12, " foo   bar  ");

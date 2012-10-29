@@ -90,20 +90,20 @@ class TableRenderer extends Renderer {
 
   @Override
   public int getMinWidth() {
-    int width = 0;
+    int minWidth = 0;
     for (TableRowRenderer row = head;row != null;row = row.next()) {
-      width = Math.max(width, row.getMinWidth());
+      minWidth = Math.max(minWidth, row.getMinWidth());
     }
-    return width;
+    return minWidth + (border != null ? 2 : 0);
   }
 
   @Override
   public int getActualWidth() {
-    int width = 0;
+    int actualWidth = 0;
     for (TableRowRenderer row = head;row != null;row = row.next()) {
-      width = Math.max(width, row.getActualWidth());
+      actualWidth = Math.max(actualWidth, row.getActualWidth());
     }
-    return width;
+    return actualWidth + (border != null ? 2 : 0);
   }
 
   @Override
