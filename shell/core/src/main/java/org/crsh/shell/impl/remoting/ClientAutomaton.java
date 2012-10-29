@@ -57,6 +57,9 @@ public class ClientAutomaton implements Runnable {
   /** . */
   Integer height;
 
+  /** . */
+  long last;
+
   public ClientAutomaton(ObjectOutputStream out, ObjectInputStream in, Shell shell) {
     CloseableList listeners = new CloseableList();
     listeners.add(in);
@@ -101,9 +104,15 @@ public class ClientAutomaton implements Runnable {
             out.writeObject(completion);
             out.flush();
             break;
+          case SET_SIZE:
+            width = (Integer) in.readObject();
+            height = (Integer) in.readObject();
+            last = System.currentTimeMillis();
+            break;
           case EXECUTE:
             width = (Integer) in.readObject();
             height = (Integer) in.readObject();
+            last = System.currentTimeMillis();
             String line = (String)in.readObject();
             ShellProcess process = shell.createProcess(line);
             current = new ClientProcessContext(this, process);
@@ -121,7 +130,7 @@ public class ClientAutomaton implements Runnable {
       }
     }
     catch (Exception e) {
-//      e.printStackTrace();
+      // e.printStackTrace();
       //
     }
   }

@@ -137,23 +137,23 @@ public class ServerAutomaton implements Shell {
       while (response == null) {
         ServerMessage msg = (ServerMessage)in.readObject();
         switch (msg) {
-          case GET_WIDTH:
+          case GET_SIZE:
+            out.writeObject(ClientMessage.SET_SIZE);
             int width = processContext.getWidth();
-            out.writeObject(width);
-            out.flush();
-            break;
-          case GET_HEIGHT:
             int height = processContext.getHeight();
+            out.writeObject(width);
             out.writeObject(height);
             out.flush();
             break;
           case READLINE:
-            String request = (String)in.readObject();
-            boolean echo = (Boolean)in.readObject();
-            String line = processContext.readLine(request, echo);
-            out.writeObject(line);
-            out.flush();
-            break;
+//            // This case should not really well supported ?
+//            String request = (String)in.readObject();
+//            boolean echo = (Boolean)in.readObject();
+//            String line = processContext.readLine(request, echo);
+//            out.writeObject(line);
+//            out.flush();
+//            break;
+            throw new UnsupportedOperationException("Not handled");
           case END:
             response = (ShellResponse)in.readObject();
             break;

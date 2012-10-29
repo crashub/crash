@@ -25,6 +25,7 @@ import org.crsh.shell.ShellResponse;
 import org.crsh.text.Chunk;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 class ClientProcessContext implements ShellProcessContext {
 
@@ -34,16 +35,40 @@ class ClientProcessContext implements ShellProcessContext {
   /** . */
   final ShellProcess process;
 
+  /** . */
+  final ArrayList<Chunk> buffer;
+
   ClientProcessContext(ClientAutomaton client, ShellProcess process) {
     this.client = client;
     this.process = process;
+    this.buffer = new ArrayList<Chunk>(1000);
+  }
+
+  /**
+   * Ensure we have a recent size, the size is considered as recent if it's younger than 2 second, otherwise
+   * send a get size message.
+   */
+  private void ensureSize() {
+    if (System.currentTimeMillis() - client.last > 2000) {
+      synchronized (this) {
+        try {
+          client.out.writeObject(ServerMessage.GET_SIZE);
+          client.out.flush();
+        }
+        catch (Exception e) {
+          //
+        }
+      }
+    }
   }
 
   public int getWidth() {
+    ensureSize();
     return client.getWidth();
   }
 
   public int getHeight() {
+    ensureSize();
     return client.getHeight();
   }
 
@@ -52,40 +77,48 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   public String readLine(String msg, boolean echo) {
-    try {
-      client.out.writeObject(ServerMessage.READLINE);
-      client.out.writeObject(msg);
-      client.out.writeObject(echo);
-      client.out.flush();
-      return (String)client.in.readObject();
-    }
-    catch (Exception e) {
-      return null;
-    }
+//    try {
+//      client.out.writeObject(ServerMessage.READLINE);
+//      client.out.writeObject(msg);
+//      client.out.writeObject(echo);
+//      client.out.flush();
+//      return (String)client.in.readObject();
+//    }
+//    catch (Exception e) {
+//      return null;
+//    }
+    return null;
   }
 
   public void provide(Chunk element) throws IOException {
-    try {
-      client.out.writeObject(ServerMessage.CHUNK);
-      client.out.writeObject(element);
-      client.out.flush();
-    }
-    catch (IOException ignore) {
-      //
+    buffer.add(element);
+  }
+
+  public synchronized void flush() {
+    if (buffer.size() > 0) {
+      try {
+        for (Chunk chunk : buffer) {
+          client.out.writeObject(ServerMessage.CHUNK);
+          client.out.writeObject(chunk);
+        }
+        client.out.writeObject(ServerMessage.FLUSH);
+        client.out.flush();
+      }
+      catch (IOException ignore) {
+        //
+      }
+      finally {
+        buffer.clear();
+      }
     }
   }
 
-  public void flush() {
-    try {
-      client.out.writeObject(ServerMessage.FLUSH);
-      client.out.flush();
-    }
-    catch (IOException ignore) {
-      //
-    }
-  }
+  public synchronized void end(ShellResponse response) {
 
-  public void end(ShellResponse response) {
+    // Flush what we have in buffer first
+    flush();
+
+    // Send end message
     try {
       client.current = null;
       client.out.writeObject(ServerMessage.END);

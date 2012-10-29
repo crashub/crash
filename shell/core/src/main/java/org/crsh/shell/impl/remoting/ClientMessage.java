@@ -28,6 +28,8 @@ public enum ClientMessage {
 
   GET_COMPLETION,
 
+  SET_SIZE,
+
   EXECUTE,
 
   CANCEL,

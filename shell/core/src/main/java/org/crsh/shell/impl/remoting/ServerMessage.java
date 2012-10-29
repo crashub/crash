@@ -21,9 +21,7 @@ package org.crsh.shell.impl.remoting;
 
 public enum ServerMessage {
 
-  GET_WIDTH,
-
-  GET_HEIGHT,
+  GET_SIZE,
 
   READLINE,
 
