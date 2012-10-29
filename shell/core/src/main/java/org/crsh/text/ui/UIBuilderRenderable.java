@@ -40,6 +40,6 @@ public class UIBuilderRenderable extends Renderable<UIBuilder> {
         renderers.add(element.renderer());
       }
     }
-    return Renderer.compose(renderers);
+    return Renderer.vertical(renderers);
   }
 }

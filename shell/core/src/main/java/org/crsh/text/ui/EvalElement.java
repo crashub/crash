@@ -20,7 +20,6 @@
 package org.crsh.text.ui;
 
 import groovy.lang.Closure;
-import groovy.lang.GroovyObjectSupport;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.GroovyScriptCommand;
@@ -159,6 +158,6 @@ public class EvalElement extends Element {
     }
 
     //
-    return Renderer.compose(renderers);
+    return Renderer.vertical(renderers);
   }
 }

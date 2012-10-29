@@ -43,7 +43,7 @@ public class ElementRenderable extends Renderable<Element> {
           element = stream.next();
           renderers.add(element.renderer());
         }
-        return Renderer.compose(renderers);
+        return Renderer.vertical(renderers);
       } else {
         return element.renderer();
       }

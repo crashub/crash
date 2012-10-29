@@ -57,8 +57,8 @@ public abstract class Renderer {
     }
   };
 
-  public static Renderer compose(Iterable<Renderer> renderers) {
-    Iterator<Renderer> i = renderers.iterator();
+  public static Renderer vertical(Iterable<? extends Renderer> renderers) {
+    Iterator<? extends Renderer> i = renderers.iterator();
     if (i.hasNext()) {
       Renderer renderer = i.next();
       if (i.hasNext()) {

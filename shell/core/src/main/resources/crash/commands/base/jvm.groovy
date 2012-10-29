@@ -24,7 +24,11 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Usage
 import java.lang.management.ManagementFactory
 import org.crsh.text.ui.UIBuilder
-import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContext
+import org.crsh.cmdline.annotations.Argument
+import org.crsh.command.PipeCommand
+import java.lang.management.MemoryPoolMXBean
+import java.lang.management.MemoryUsage;
 
 @Usage("JVM informations")
 class jvm extends CRaSHCommand {
@@ -35,7 +39,6 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM operating system")
   @Command
   public void system(InvocationContext<Map> context) {
-    context.writer << "\nOPERATING SYSTEM\n";
     def os = ManagementFactory.operatingSystemMXBean;
     context.provide([name:"architecture",value:os?.arch]);
     context.provide([name:"name",value:os?.name]);
@@ -49,7 +52,6 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM runtime")
   @Command
   public void runtime() {
-    context.writer << "\nJVM runtime\n";
     def rt = ManagementFactory.runtimeMXBean
     context.provide([name:"name",value:rt?.name]);
     context.provide([name:"specName",value:rt?.specName]);
@@ -63,7 +65,6 @@ class jvm extends CRaSHCommand {
   @Usage("Show JVM classloding")
   @Command
   public void classloading() {
-    out << "JVM classloding\n";
     def cl = ManagementFactory.classLoadingMXBean
     context.provide([name:"isVerbose ",value:cl?.isVerbose()]);
     context.provide([name:"loadedClassCount ",value:cl?.loadedClassCount]);
@@ -82,28 +83,101 @@ class jvm extends CRaSHCommand {
   }
 
   /**
+   * Show memory heap.
+   */
+  @Usage("Show JVM memory heap")
+  @Command
+  public void heap(InvocationContext<MemoryUsage> context) {
+    def mem = ManagementFactory.memoryMXBean
+    def heap = mem.heapMemoryUsage
+    context.provide(heap);
+//    context.provide([name:"commited ",value:heap?.committed]);
+//    context.provide([name:"init ",value:heap?.init]);
+//    context.provide([name:"max ",value:heap?.max]);
+//    context.provide([name:"used ",value:heap?.used]);
+  }
+
+  /**
+   * Show memory non heap.
+   */
+  @Usage("Show JVM memory non heap")
+  @Command
+  public void nonheap(InvocationContext<MemoryUsage> context) {
+    def mem = ManagementFactory.memoryMXBean
+    def nonHeap = mem.nonHeapMemoryUsage
+    context.provide(nonHeap);
+//    context.provide([name:"commited ",value:nonHeap?.committed]);
+//    context.provide([name:"init ",value:nonHeap?.init]);
+//    context.provide([name:"max ",value:nonHeap?.max]);
+//    context.provide([name:"used ",value:nonHeap?.used]);
+  }
+
+  /**
    * Show JMX data about Memory.
    */
-  @Usage("Show JVM memory")
+  @Usage("Show JVM memory pools")
   @Command
-  public void mem() {
+  public void pools(InvocationContext<String> context) {
+    ManagementFactory.memoryPoolMXBeans.each { pool ->
+      context.provide(pool.name);
+    }
+  }
 
-    def mem = ManagementFactory.memoryMXBean
-    def heapUsage = mem.heapMemoryUsage
+  @Command
+  public void top() {
+    while (!Thread.interrupted()) {
+      out.cls()
+      eval("jvm heap")
+      out.flush();
+      Thread.sleep(1000);
+    }
+  }
+
+  /**
+   * Show JMX data about Memory.
+   */
+  @Usage("Show JVM memory pool")
+  @Command
+  public PipeCommand<String, MemoryUsage> pool(@Argument List<String> pools) {
+    def mem = ManagementFactory.memoryPoolMXBeans
+    return new PipeCommand<String, MemoryUsage>() {
+      @Override
+      void open() {
+        for (String pool : pools) {
+          provide(pool);
+        }
+      }
+
+      @Override
+      void provide(String element) {
+
+        MemoryPoolMXBean found = null;
+        for (MemoryPoolMXBean pool : mem) {
+          if (pool.getName().equals(element)) {
+            found = pool;
+            break;
+          }
+        }
+
+        //
+        if (found != null) {
+//          context.provide(found.peakUsage)
+          context.provide(found.usage)
+        }
+      }
+    }
+
+/*
     def nonHeapUsage = mem.nonHeapMemoryUsage
-    out << "\nMEMORY:\n";
-    out << "\nHEAP STORAGE\n\n";
-    out << "committed:" + heapUsage?.committed + "\n";
-    out << "init:" + heapUsage?.init + "\n";
-    out << "max:" + heapUsage?.max + "\n";
-    out << "used:" + heapUsage?.used + "\n";
 
     out << "\nNON-HEAP STORAGE\n\n";
     out << "committed:" + nonHeapUsage?.committed + "\n";
     out << "init:" + nonHeapUsage?.init + "\n";
     out << "max:" + nonHeapUsage?.max + "\n\n";
+*/
 
 
+/*
     ManagementFactory.memoryPoolMXBeans.each{ mp ->
       out << "name :" + mp?.name + "\n";
       String[] mmnames = mp.memoryManagerNames
@@ -114,6 +188,7 @@ class jvm extends CRaSHCommand {
       context.provide([name:"Usage threshold supported ",value:mp?.isUsageThresholdSupported()]);
       out << "\n";
     }
+*/
   }
 
 

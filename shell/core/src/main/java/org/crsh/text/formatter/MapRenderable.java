@@ -91,6 +91,6 @@ public class MapRenderable extends Renderable<Map<?, ?>> {
     }
 
     //
-    return Renderer.compose(renderers);
+    return Renderer.vertical(renderers);
   }
 }

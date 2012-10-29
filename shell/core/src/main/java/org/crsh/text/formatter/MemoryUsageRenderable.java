@@ -17,28 +17,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.text.formatter;
 
 import org.crsh.text.Renderable;
 import org.crsh.text.Renderer;
-import org.crsh.text.ui.LabelElement;
 
+import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class FooRenderable extends Renderable<Foo> {
+public class MemoryUsageRenderable extends Renderable<MemoryUsage> {
 
   @Override
-  public Class<Foo> getType() {
-    return Foo.class;
+  public Class<MemoryUsage> getType() {
+    return MemoryUsage.class;
   }
 
   @Override
-  public Renderer renderer(Iterator<Foo> stream) {
-    ArrayList<Renderer> renderers = new ArrayList<Renderer>();
+  public Renderer renderer(Iterator<MemoryUsage> stream) {
+    ArrayList<MemoryUsageRenderer> renderers = new ArrayList<MemoryUsageRenderer>();
     while (stream.hasNext()) {
-      Foo foo = stream.next();
-      renderers.add(new LabelElement("<foo>" + foo.getValue() + "</foo>").renderer());
+      MemoryUsage usage = stream.next();
+      renderers.add(new MemoryUsageRenderer(usage));
     }
     return Renderer.vertical(renderers);
   }

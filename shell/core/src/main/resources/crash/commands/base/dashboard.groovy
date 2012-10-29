@@ -14,7 +14,7 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
     }
   }
   header {
-    table(columns: [1,2,1], separator: dashed) {
+    table(columns: [1,1,1], separator: dashed, cellRightPadding: 1) {
       header(bold: true, fg: black, bg: white) {
         label("props");
         label("env");
@@ -25,10 +25,29 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
           eval("system propls -f java.*")
         }
         execute {
-          eval("jvm mem")
-        }
-        execute {
           eval("env")
+        }
+        table(columns: [1,2]) {
+          row() {
+            label("Heap:")
+            execute {
+              eval("jvm heap")
+            }
+          }
+          row() {
+            label("Non heap:")
+            execute {
+              eval("jvm nonheap")
+            }
+          }
+          jvm.pools { name ->
+            row() {
+              label("$name:")
+              execute {
+                eval("jvm pool '$name'")
+              }
+            }
+          }
         }
       }
     }
