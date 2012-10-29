@@ -7,7 +7,7 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
         label("top");
       }
       row {
-        eval {
+        execute {
           thread.ls();
         }
       }
@@ -21,13 +21,13 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
         label("jvm");
       }
       row {
-        eval {
+        execute {
           eval("system propls -f java.*")
         }
-        eval {
+        execute {
           eval("thread ls")
         }
-        eval {
+        execute {
           eval("env")
         }
       }

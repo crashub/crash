@@ -48,7 +48,7 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
 
   @Override
   protected Object doInvokeMethod(String methodName, Object name, Object args) {
-    if ("eval".equals(name)) {
+    if ("execute".equals(name)) {
       List list = InvokerHelper.asList(args);
       if (list.size() == 1 && list.get(0) instanceof Closure) {
         EvalElement element = (EvalElement)super.doInvokeMethod(methodName, name, null);
@@ -84,7 +84,7 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
       element = new RowElement();
     } else if ("header".equals(name)) {
       element = new RowElement(true);
-    } else if ("eval".equals(name)) {
+    } else if ("execute".equals(name)) {
       element = new EvalElement();
     } else {
       throw new UnsupportedOperationException("Cannot build object with name " + name + " and value " + value);

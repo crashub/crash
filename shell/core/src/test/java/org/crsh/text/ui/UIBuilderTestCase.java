@@ -408,7 +408,7 @@ public class UIBuilderTestCase extends AbstractTestCase {
         "def builder = new UIBuilder();\n" +
         "builder.table {\n" +
           "row {\n" +
-            "eval {" +
+            "execute {" +
             " return 'HELLO';" +
             "}\n" +
           "}\n" +

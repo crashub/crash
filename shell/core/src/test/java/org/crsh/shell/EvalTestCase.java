@@ -27,7 +27,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "class foo extends org.crsh.command.CRaSHCommand {\n" +
         "  @Command\n" +
         "  public void main() {\n" +
-        "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
+        "    def builder = new org.crsh.text.ui.UIBuilder().execute {" +
         "      bar()\n" +
         "    }\n" +
         "    out << builder\n" +
@@ -48,7 +48,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "class foo extends org.crsh.command.CRaSHCommand {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
-            "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
+            "    def builder = new org.crsh.text.ui.UIBuilder().execute {" +
             "      bar()\n" +
             "    }\n" +
             "    out << builder\n" +
@@ -66,7 +66,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "class foo extends org.crsh.command.CRaSHCommand {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
-            "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
+            "    def builder = new org.crsh.text.ui.UIBuilder().execute {" +
             "      eval('echo bar')\n" +
             "    }\n" +
             "    out << builder\n" +
