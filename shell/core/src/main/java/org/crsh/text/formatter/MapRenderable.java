@@ -65,7 +65,7 @@ public class MapRenderable extends Renderable<Map<?, ?>> {
           if (table.getRows().size() > 0) {
             renderers.add(table.renderer());
           }
-          table = new TableElement();
+          table = new TableElement().cellPaddingRight(1);
           RowElement header = new RowElement(true);
           header.style(Decoration.bold.fg(Color.black).bg(Color.white));
           for (String s : bilto) {
