@@ -34,9 +34,9 @@ class help extends CRaSHCommand
     def builder = new UIBuilder()
 
     //
-    builder.label("Try one of these commands with the -h or --help switch:\n\n");
+    builder.label("Try one of these commands with the -h or --help switch:\n");
 
-    builder.table() {
+    builder.table(cellRightPadding: 1) {
       row(bold: true, fg: black, bg: white) {
         label("NAME"); label("DESCRIPTION")
       }
