@@ -23,7 +23,8 @@ import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.text.ui.UIBuilder
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.plugin.PropertyDescriptor;
+import org.crsh.plugin.PropertyDescriptor
+import org.crsh.text.Color;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -38,42 +39,61 @@ class shell extends CRaSHCommand {
       (CRaSHPlugin.INITIALIZING):"initializing"
   ];
 
+  static def STATUS_COLOR = [
+      (CRaSHPlugin.CONSTRUCTED): Color.blue,
+      (CRaSHPlugin.FAILED):Color.red,
+      (CRaSHPlugin.INITIALIZED):Color.green,
+      (CRaSHPlugin.INITIALIZING):Color.yellow
+  ];
+
   @Usage("list the loaded plugins and their configuration")
   @Command
   public Object plugins() {
-    def builder = new UIBuilder();
-    crash.context.plugins.each() { plugin ->
-      builder.node("plugin") {
-        label("type: $plugin.type")
-        label("implementation: ${plugin.type}")
-        node("status: ${STATUS_MAP[plugin.status]}")
-        node("properties") {
-          plugin.configurationCapabilities.each() { desc ->
-            node(desc.name) {
-              label("description: ${desc.description}")
-              label("type: ${desc.description}")
-              label("default: ${desc.defaultValue}")
+    def table = new UIBuilder().table(cellRightPadding: 1) {
+      crash.context.plugins.each() { plugin ->
+        header(bold: true, fg: black, bg: white) {
+          table(cellRightPadding: 1) {
+            row {
+              label("$plugin.type.simpleName")
+              label(fg: STATUS_COLOR[plugin.status], "(${STATUS_MAP[plugin.status]})")
+            }
+          }
+        }
+        def capabilities = plugin.configurationCapabilities
+        if (capabilities.iterator().hasNext()) {
+          row {
+            table(columns: [2,2,1,1], cellRightPadding: 1) {
+              header {
+                label("name"); label("description"); label("type"); label("default")
+              }
+              capabilities.each { desc ->
+                row {
+                  label(desc.name); label(desc.description); label(desc.type.simpleName); label(desc.defaultValue)
+                }
+              }
             }
           }
         }
       }
-    };
-    return builder;
+    }
+    return table;
   }
 
   @Usage("list the configuration properties and their description")
   @Command
   public Object properties() {
-    def builder = new UIBuilder();
-    PropertyDescriptor.ALL.values().each() { desc ->
-      builder.node(desc.name) {
-        def prop = crash.context.getProperty(desc);
-        label("value: ${prop ?: desc.defaultValue}")
-        label("description: $desc.description")
-        node("type $desc.type")
-        node("default: $desc.defaultValue")
+    def capabilities = PropertyDescriptor.ALL.values()
+    def table = new UIBuilder().table(columns: [2,2,1,1], cellRightPadding: 1) {
+      header(bold: true, fg: black, bg: white) {
+        label("name"); label("description"); label("type"); label("value")
       }
-    };
-    return builder;
+      capabilities.each { desc ->
+        String value = "${crash.context.getProperty(desc)}";
+        row {
+          label(desc.name); label(desc.description); label(desc.type.simpleName); label(value)
+        }
+      }
+    }
+    return table
   }
 }
