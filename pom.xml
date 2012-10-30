@@ -789,6 +789,10 @@
             <configuration>
               <mainClass>org.crsh.standalone.CRaSH</mainClass>
               <classpathScope>test</classpathScope>
+              <arguments>
+                <argument>--property</argument>
+                <argument>crash.vfs.refresh_period=1</argument>
+              </arguments>
             </configuration>
           </plugin>
         </plugins>
