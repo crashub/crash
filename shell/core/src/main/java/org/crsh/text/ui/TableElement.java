@@ -46,10 +46,10 @@ public class TableElement extends Element {
   protected Layout rowLayout;
 
   /** Cell padding left. */
-  private int cellPaddingLeft;
+  private int leftCellPadding;
 
   /** Cell padding right. */
-  private int cellPaddingRight;
+  private int rightCellPadding;
 
   public TableElement() {
     this(Layout.flow(), Layout.flow());
@@ -69,8 +69,8 @@ public class TableElement extends Element {
     this.border = null;
     this.separator = null;
     this.overflow = Overflow.WRAP;
-    this.cellPaddingLeft = 0;
-    this.cellPaddingRight = 0;
+    this.leftCellPadding = 0;
+    this.rightCellPadding = 0;
   }
 
   public TableElement add(RowElement row) {
@@ -162,35 +162,35 @@ public class TableElement extends Element {
     return this;
   }
 
-  public int getCellPaddingLeft() {
-    return cellPaddingLeft;
+  public int getLeftCellPadding() {
+    return leftCellPadding;
   }
 
-  public void setCellPaddingLeft(int cellPaddingLeft) {
-    if (cellPaddingLeft < 0) {
+  public void setLeftCellPadding(int leftCellPadding) {
+    if (leftCellPadding < 0) {
       throw new IllegalArgumentException("No negative cell padding left accepted");
     }
-    this.cellPaddingLeft = cellPaddingLeft;
+    this.leftCellPadding = leftCellPadding;
   }
 
-  public TableElement cellPaddingLeft(int cellPaddingLeft) {
-    setCellPaddingLeft(cellPaddingLeft);
+  public TableElement leftCellPadding(int leftCellPadding) {
+    setLeftCellPadding(leftCellPadding);
     return this;
   }
 
-  public int getCellPaddingRight() {
-    return cellPaddingRight;
+  public int getRightCellPadding() {
+    return rightCellPadding;
   }
 
-  public void setCellPaddingRight(int cellPaddingRight) {
-    if (cellPaddingRight < 0) {
+  public void setRightCellPadding(int rightCellPadding) {
+    if (rightCellPadding < 0) {
       throw new IllegalArgumentException("No negative cell padding right accepted");
     }
-    this.cellPaddingRight = cellPaddingRight;
+    this.rightCellPadding = rightCellPadding;
   }
 
-  public TableElement cellPaddingRight(int cellPaddingRight) {
-    setCellPaddingRight(cellPaddingRight);
+  public TableElement rightCellPadding(int rightCellPadding) {
+    setRightCellPadding(rightCellPadding);
     return this;
   }
 

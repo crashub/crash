@@ -178,20 +178,20 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
       table.overflow(overflow);
 
       // Cell left padding
-      Object cellLeftPaddingAttr = attributes.get("cellLeftPadding");
-      int cellLeftPadding = 0;
-      if (cellLeftPaddingAttr instanceof Number) {
-        cellLeftPadding = ((Number)cellLeftPaddingAttr).intValue();
+      Object leftCellPaddingAttr = attributes.get("leftCellPadding");
+      int leftCellPadding = 0;
+      if (leftCellPaddingAttr instanceof Number) {
+        leftCellPadding = ((Number)leftCellPaddingAttr).intValue();
       }
-      table.setCellPaddingLeft(cellLeftPadding);
+      table.setLeftCellPadding(leftCellPadding);
 
       // Cell right padding
-      Object cellRightPaddingAttr = attributes.get("cellRightPadding");
-      int cellRightPadding = 0;
-      if (cellRightPaddingAttr instanceof Number) {
-        cellRightPadding = ((Number)cellRightPaddingAttr).intValue();
+      Object rightCellPaddingAttr = attributes.get("rightCellPadding");
+      int rightCellPadding = 0;
+      if (rightCellPaddingAttr instanceof Number) {
+        rightCellPadding = ((Number)rightCellPaddingAttr).intValue();
       }
-      table.setCellPaddingRight(cellRightPadding);
+      table.setRightCellPadding(rightCellPadding);
     }
 
     //

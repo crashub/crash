@@ -49,10 +49,10 @@ class shell extends CRaSHCommand {
   @Usage("list the loaded plugins and their configuration")
   @Command
   public Object plugins() {
-    def table = new UIBuilder().table(cellRightPadding: 1) {
+    def table = new UIBuilder().table(rightCellPadding: 1) {
       crash.context.plugins.each() { plugin ->
         header(bold: true, fg: black, bg: white) {
-          table(cellRightPadding: 1) {
+          table(rightCellPadding: 1) {
             row {
               label("$plugin.type.simpleName")
               label(fg: STATUS_COLOR[plugin.status], "(${STATUS_MAP[plugin.status]})")
@@ -62,7 +62,7 @@ class shell extends CRaSHCommand {
         def capabilities = plugin.configurationCapabilities
         if (capabilities.iterator().hasNext()) {
           row {
-            table(columns: [2,2,1,1], cellRightPadding: 1) {
+            table(columns: [2,2,1,1], rightCellPadding: 1) {
               header {
                 label("name"); label("description"); label("type"); label("default")
               }
@@ -83,7 +83,7 @@ class shell extends CRaSHCommand {
   @Command
   public Object properties() {
     def capabilities = PropertyDescriptor.ALL.values()
-    def table = new UIBuilder().table(columns: [2,2,1,1], cellRightPadding: 1) {
+    def table = new UIBuilder().table(columns: [2,2,1,1], rightCellPadding: 1) {
       header(bold: true, fg: black, bg: white) {
         label("name"); label("description"); label("type"); label("value")
       }

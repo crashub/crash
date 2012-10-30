@@ -27,7 +27,6 @@ import org.crsh.text.Style;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 class RowRenderer extends Renderer {
 
@@ -38,15 +37,15 @@ class RowRenderer extends Renderer {
   private final Style.Composite style;
 
   /** . */
-  final int cellPaddingLeft;
+  final int leftCellPadding;
 
   /** . */
-  final int cellPaddingRight;
+  final int rightCellPadding;
 
   /** . */
   private final BorderStyle separator;
 
-  RowRenderer(RowElement row, BorderStyle separator, int cellPaddingLeft, int cellPaddingRight) {
+  RowRenderer(RowElement row, BorderStyle separator, int leftCellPadding, int rightCellPadding) {
 
     List<Renderer> cols = new ArrayList<Renderer>(row.cols.size());
     for (Element col : row.cols) {
@@ -57,8 +56,8 @@ class RowRenderer extends Renderer {
     this.cols = cols;
     this.style = row.getStyle();
     this.separator = separator;
-    this.cellPaddingLeft = cellPaddingLeft;
-    this.cellPaddingRight = cellPaddingRight;
+    this.leftCellPadding = leftCellPadding;
+    this.rightCellPadding = rightCellPadding;
   }
 
   int getSize() {
@@ -75,8 +74,8 @@ class RowRenderer extends Renderer {
     for (int i = 0;i < cols.size();i++) {
       Renderer col = cols.get(i);
       actualWidth += col.getActualWidth();
-      actualWidth += cellPaddingLeft;
-      actualWidth += cellPaddingRight;
+      actualWidth += leftCellPadding;
+      actualWidth += rightCellPadding;
       if (separator != null && i > 0) {
         actualWidth++;
       }
@@ -90,8 +89,8 @@ class RowRenderer extends Renderer {
     for (int i = 0;i < cols.size();i++) {
       Renderer col = cols.get(i);
       minWidth += col.getMinWidth();
-      minWidth += cellPaddingLeft;
-      minWidth += cellPaddingRight;
+      minWidth += leftCellPadding;
+      minWidth += rightCellPadding;
       if (separator != null && i > 0) {
         minWidth++;
       }
@@ -126,7 +125,7 @@ class RowRenderer extends Renderer {
     final LineReader[] readers = new LineReader[widths.length];
     for (int i = 0;i < readers.length;i++) {
       Renderer renderer = cols.get(i);
-      LineReader reader = renderer.reader(widths[i] - cellPaddingLeft - cellPaddingRight, height);
+      LineReader reader = renderer.reader(widths[i] - leftCellPadding - rightCellPadding, height);
       readers[i] = reader;
     }
 
@@ -164,15 +163,15 @@ class RowRenderer extends Renderer {
           }
           if (reader != null && reader.hasLine()) {
             // Left padding
-            if (cellPaddingLeft > 0) {
-              for (int j = 0;j < cellPaddingLeft;j++) {
+            if (leftCellPadding > 0) {
+              for (int j = 0;j < leftCellPadding;j++) {
                 to.append(' ');
               }
             }
             reader.renderLine(to);
             // Right padding
-            if (cellPaddingRight > 0) {
-              for (int j = 0;j < cellPaddingRight;j++) {
+            if (rightCellPadding > 0) {
+              for (int j = 0;j < rightCellPadding;j++) {
                 to.append(' ');
               }
             }

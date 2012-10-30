@@ -14,7 +14,7 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
     }
   }
   header {
-    table(columns: [1,1,1], separator: dashed, cellRightPadding: 1) {
+    table(columns: [1,1,1], separator: dashed, rightCellPadding: 1) {
       header(bold: true, fg: black, bg: white) {
         label("props");
         label("env");

@@ -45,7 +45,7 @@ class TableRowRenderer {
 
   TableRowRenderer(TableRenderer table, RowElement row) {
     this.table = table;
-    this.row = new RowRenderer(row, table.separator, table.cellPaddingLeft, table.cellPaddingRight);
+    this.row = new RowRenderer(row, table.separator, table.leftCellPadding, table.rightCellPadding);
     this.header = row.header;
     this.index = 0;
   }

@@ -23,7 +23,6 @@ import org.crsh.text.LineReader;
 import org.crsh.text.RenderAppendable;
 import org.crsh.text.Renderer;
 import org.crsh.text.Style;
-import org.crsh.util.Safe;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,10 +48,10 @@ class TableRenderer extends Renderer {
   final Style.Composite style;
 
   /** Cell padding left. */
-  final int cellPaddingLeft;
+  final int leftCellPadding;
 
   /** Cell padding right. */
-  final int cellPaddingRight;
+  final int rightCellPadding;
 
   /** . */
   private TableRowRenderer head;
@@ -67,8 +66,8 @@ class TableRenderer extends Renderer {
     this.style = table.getStyle();
     this.separator = table.getSeparator();
     this.overflow = table.getOverflow();
-    this.cellPaddingLeft = table.getCellPaddingLeft();
-    this.cellPaddingRight = table.getCellPaddingRight();
+    this.leftCellPadding = table.getLeftCellPadding();
+    this.rightCellPadding = table.getRightCellPadding();
 
     //
     for (RowElement row : table.getRows()) {
@@ -142,8 +141,8 @@ class TableRenderer extends Renderer {
     for (TableRowRenderer row = head;row != null;row = row.next()) {
       for (int i = 0;i < row.getCols().size();i++) {
         Renderer renderable = row.getCols().get(i);
-        eltWidths[i] = Math.max(eltWidths[i], renderable.getActualWidth() + row.row.cellPaddingLeft + row.row.cellPaddingRight);
-        eltMinWidths[i] = Math.max(eltMinWidths[i], renderable.getMinWidth()) + row.row.cellPaddingLeft + row.row.cellPaddingRight;
+        eltWidths[i] = Math.max(eltWidths[i], renderable.getActualWidth() + row.row.leftCellPadding + row.row.rightCellPadding);
+        eltMinWidths[i] = Math.max(eltMinWidths[i], renderable.getMinWidth()) + row.row.leftCellPadding + row.row.rightCellPadding;
       }
     }
 

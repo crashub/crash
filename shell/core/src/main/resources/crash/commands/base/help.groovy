@@ -36,7 +36,7 @@ class help extends CRaSHCommand
     //
     builder.label("Try one of these commands with the -h or --help switch:\n");
 
-    builder.table(cellRightPadding: 1) {
+    builder.table(rightCellPadding: 1) {
       row(bold: true, fg: black, bg: white) {
         label("NAME"); label("DESCRIPTION")
       }

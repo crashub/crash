@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class ThreadRenderable extends Renderable<Thread> {
 
@@ -128,7 +127,7 @@ public class ThreadRenderable extends Renderable<Thread> {
     });
 
     //
-    TableElement table = new TableElement(1,1,1,1,1,1,1,2,5).overflow(Overflow.HIDDEN).cellPaddingRight(1);
+    TableElement table = new TableElement(1,1,1,1,1,1,1,2,5).overflow(Overflow.HIDDEN).rightCellPadding(1);
 
     // Header
     RowElement header = new RowElement();

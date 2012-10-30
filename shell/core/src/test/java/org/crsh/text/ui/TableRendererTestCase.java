@@ -373,7 +373,7 @@ public class TableRendererTestCase extends AbstractRendererTestCase {
   }
 
   public void testCellPadding() {
-    TableElement table = new TableElement().cellPaddingLeft(1).cellPaddingRight(2);
+    TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(2);
     table.add(new RowElement().add(new LabelElement("foo"), new LabelElement("bar")));
 
     //
