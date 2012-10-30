@@ -8,6 +8,7 @@ import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Argument
 
 import org.crsh.command.PipeCommand
+import org.crsh.text.ui.UIBuilder
 
 @Usage("JVM thread commands")
 @Man("""\
@@ -44,6 +45,27 @@ Interrupted thread Thread[pool-1-thread-3,5,main]
 Interrupted thread Thread[pool-1-thread-4,5,main]
 Interrupted thread Thread[pool-1-thread-5,5,main]""")
 public class thread extends CRaSHCommand {
+
+  @Usage("thread top")
+  @Command
+  public void top() {
+    def table = new UIBuilder().table(columns:[1]) {
+      header(bold: true, fg: black, bg: white) {
+        label("top");
+      }
+      row {
+        execute {
+          eval("thread ls");
+        }
+      }
+    }
+    while (!Thread.interrupted()) {
+      out.cls()
+      out.show(table);
+      out.flush();
+      Thread.sleep(1000);
+    }
+  }
 
   @Usage("list the vm threads")
   @Command
