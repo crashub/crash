@@ -96,13 +96,21 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
       style = Style.style();
     }
     style = style.
-        foreground((Color)attributes.get("fg")).
-        foreground((Color)attributes.get("foreground")).
-        background((Color)attributes.get("bg")).
-        background((Color)attributes.get("background")).
-        bold((Boolean)attributes.get("bold")).
-        underline((Boolean)attributes.get("underline")).
-        blink((Boolean)attributes.get("blink"));
+      bold((Boolean)attributes.get("bold")).
+      underline((Boolean)attributes.get("underline")).
+      blink((Boolean)attributes.get("blink"));
+    if (attributes.containsKey("fg")) {
+      style = style.foreground((Color)attributes.get("fg"));
+    }
+    if (attributes.containsKey("foreground")) {
+      style = style.foreground((Color)attributes.get("foreground"));
+    }
+    if (attributes.containsKey("bg")) {
+      style = style.background((Color)attributes.get("bg"));
+    }
+    if (attributes.containsKey("background")) {
+      style = style.background((Color)attributes.get("background"));
+    }
     element.setStyle(style);
 
     //
