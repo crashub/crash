@@ -23,8 +23,10 @@ import junit.framework.TestCase;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class TypeResolverTestCase extends TestCase {
 
@@ -64,5 +66,14 @@ public class TypeResolverTestCase extends TestCase {
     TypeVariable tv = (TypeVariable)resolved;
     assertEquals(InheritableThreadLocal.class, tv.getGenericDeclaration());
     assertEquals(Object.class, TypeResolver.resolveToClass(InheritableThreadLocal.class, ThreadLocal.class, 0));
+  }
+
+  public void testInstanceOf() {
+    assertEquals(true, TypeResolver.instanceOf(String.class, "java.lang.String"));
+    assertEquals(true, TypeResolver.instanceOf(ArrayList.class, "java.util.List"));
+    assertEquals(true, TypeResolver.instanceOf(List.class, "java.util.List"));
+    assertEquals(true, TypeResolver.instanceOf(ArrayList.class, "java.util.AbstractList"));
+    assertEquals(true, TypeResolver.instanceOf(ArrayList.class, "java.util.AbstractCollection"));
+    assertEquals(false, TypeResolver.instanceOf(String.class, "java.lang.Integer"));
   }
 }

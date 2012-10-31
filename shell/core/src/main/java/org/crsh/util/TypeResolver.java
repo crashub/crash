@@ -117,4 +117,25 @@ public class TypeResolver {
       throw new UnsupportedOperationException("todo " + implementation + " " + implementation.getClass());
     }
   }
+
+
+  public static boolean instanceOf(Class c, String type) {
+
+    if (c.getName().equals(type)) {
+      return true;
+    }
+
+    for (Class i : c.getInterfaces()) {
+      if (instanceOf(i, type)) {
+        return true;
+      }
+    }
+
+    if (c.getSuperclass() != null) {
+      return instanceOf(c.getSuperclass(), type);
+    }
+
+    return false;
+  }
+  
 }
