@@ -7,7 +7,7 @@
 
   <name>CRaSH parent</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
-  <url>http://vietj.github.com/crash/</url>
+  <url>http://www.crashub.org/</url>
 
   <organization>
     <name>eXo Platform SAS</name>
@@ -22,9 +22,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/vietj/crash.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/vietj/crash.git</developerConnection>
-    <url>http://vietj.github.com/crash</url>
+    <connection>scm:git:git://github.com/crashub/crash.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/crashub/crash.git</developerConnection>
+    <url>http://www.crashub.org</url>
   </scm>
 
   <distributionManagement>
@@ -128,7 +128,7 @@
     <tools.jar>${java.home}/../lib/tools.jar</tools.jar>
 
     <!-- site-maven-plugin -->
-    <crsh.github.owner>vietj</crsh.github.owner>
+    <crsh.github.owner>crashub</crsh.github.owner>
     <crsh.github.repository>crash</crsh.github.repository>
   </properties>
 
