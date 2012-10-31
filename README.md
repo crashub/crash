@@ -1,4 +1,3 @@
-
 <pre><code>   ______
  .~      ~. |`````````,       .'.                   ..'''' |         |
 |           |'''|'''''      .''```.              .''       |_________|
@@ -7,19 +6,19 @@
 
 The Common Reusable SHell (CRaSH) is a shell designed for extending Java programs and the Java Virtual Machine.
 
-- Website : http://vietj.github.com/crash
+- Website : http://www.crashub.org
 - Downloads: http://code.google.com/p/crsh/downloads/list
 - JIRA: http://jira.exoplatform.org/browse/CRASH
-- Documentation: http://vietj.github.com/crash/
+- Documentation: http://www.crashub.org
 - Continuous Integration: https://vietj.ci.cloudbees.com/job/CRaSH/
 
 # How to build CRaSH
 
 ## Obtaining CRaSH source code
 
-CRaSH can be obtained by cloning the Git repository `git@github.com:vietj/crash.git`
+CRaSH can be obtained by cloning the Git repository `git@github.com:crashub/crash.git`
 
-<pre><code>git clone git@github.com:vietj/crash.git</code></pre>
+<pre><code>git clone git@github.com:crashub/crash.git</code></pre>
 
 ## Building CRaSH
 
