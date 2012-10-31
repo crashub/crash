@@ -331,7 +331,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             public void open(final ProducerContext<Object> context) {
 
               //
-              InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(context);
+              final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(context);
 
               //
               pushContext(invocationContext);
@@ -339,7 +339,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               final Resolver resolver = new Resolver() {
                 public <T> T resolve(Class<T> type) {
                   if (type.equals(InvocationContext.class)) {
-                    return type.cast(context);
+                    return type.cast(invocationContext);
                   } else {
                     return null;
                   }
