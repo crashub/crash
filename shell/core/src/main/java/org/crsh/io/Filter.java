@@ -19,5 +19,5 @@
 
 package org.crsh.io;
 
-public interface Filter<C, P> extends Consumer<C>, Producer<P>, ProducerContext<C> {
+public interface Filter<C, P> extends ProducerConsumer<C, P>, ProducerContext<C> {
 }
