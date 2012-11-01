@@ -56,7 +56,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
     }
 
     // Save current context (is null the first time)
-    stack.addLast((InvocationContext)this.context);
+    stack.addLast(this.context);
 
     // Set new context
     this.context = context;

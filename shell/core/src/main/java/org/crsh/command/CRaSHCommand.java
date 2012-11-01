@@ -90,11 +90,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   }
 
   protected final String readLine(String msg, boolean echo) {
-    if (context instanceof InvocationContext) {
-      return ((InvocationContext)context).readLine(msg, echo);
-    } else {
-      throw new IllegalStateException("No current context of interaction with the term");
-    }
+    return context.readLine(msg, echo);
   }
 
   public final String getUnmatched() {
