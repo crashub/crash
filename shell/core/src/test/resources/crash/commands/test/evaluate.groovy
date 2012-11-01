@@ -36,6 +36,7 @@ public class evaluate extends org.crsh.command.CRaSHCommand {
     CRaSHSession session = (CRaSHSession)context.session;
     GroovyShell shell = session.getGroovyShell();
     GroovyScriptCommand script = shell.parse(scriptText);
+    script.setSession(session);
     script.open(context);
     script.flush()
     script.close();

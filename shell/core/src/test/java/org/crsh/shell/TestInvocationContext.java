@@ -131,6 +131,7 @@ public class TestInvocationContext<C> extends BaseCommandContext implements Prod
       sb.append(arg);
     }
     CommandInvoker<C, Object> invoker = (CommandInvoker<C, Object>)command.resolveInvoker(sb.toString());
+    invoker.setSession(this);
     invoker.open(this);
     invoker.flush();
     invoker.close();

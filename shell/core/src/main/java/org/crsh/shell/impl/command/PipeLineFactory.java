@@ -84,12 +84,14 @@ public class PipeLineFactory {
       }
       if (commandInvoker == null) {
         throw new NoSuchCommandException(current.name);
+      } else {
+        commandInvoker.setSession(session);
       }
       pipes.add(new InvokerPipeFilter(commandInvoker));
     }
 
     //
-    return new PipeLine(pipes.toArray(new Filter[pipes.size()]));
+    return new PipeLine(session, pipes.toArray(new Filter[pipes.size()]));
 
   }
 

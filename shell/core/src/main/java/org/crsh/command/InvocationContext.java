@@ -24,7 +24,7 @@ import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;
 
-public interface InvocationContext<P> extends ProducerContext<P> {
+public interface InvocationContext<P> extends SessionContext, ProducerContext<P> {
 
   /**
    * Returns the writer for the output.

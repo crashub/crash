@@ -23,10 +23,10 @@ import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.io.Filter;
+import org.crsh.io.ProducerConsumer;
 import org.crsh.io.ProducerContext;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * A pipe filter that invokes a command through a {@link CommandInvoker}.
@@ -34,15 +34,12 @@ import java.util.Map;
 class InvokerPipeFilter<C, P> implements Filter<C, P> {
 
   /** . */
-  final CommandInvoker<C, P> command;
+  final ProducerConsumer<C, P> command;
 
   /** . */
   private ProducerContext<P> context;
 
-//  /** . */
-//  private RenderPrintWriter writer;
-
-  InvokerPipeFilter(CommandInvoker<C, P> command) {
+  InvokerPipeFilter(ProducerConsumer<C, P> command) {
     this.command = command;
   }
 
@@ -70,14 +67,6 @@ class InvokerPipeFilter<C, P> implements Filter<C, P> {
 
   public boolean releaseAlternateBuffer() {
     return context.releaseAlternateBuffer();
-  }
-
-  public Map<String, Object> getSession() {
-    return context.getSession();
-  }
-
-  public Map<String, Object> getAttributes() {
-    return context.getAttributes();
   }
 
   public String getProperty(String propertyName) {

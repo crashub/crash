@@ -24,7 +24,6 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.SessionContext;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
@@ -55,9 +54,14 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   /** . */
   private boolean piped;
 
+  /** . */
+  private SessionContext session;
+
   protected GroovyScriptCommand() {
     this.stack = null;
     this.context = null;
+    this.session = null;
+    this.piped = false;
   }
 
   public final void pushContext(InvocationContext<?> context) throws NullPointerException {
@@ -186,10 +190,14 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return null;
   }
 
+  public final void setSession(SessionContext session) {
+    this.session = session;
+  }
+
   public final void open(ProducerContext<Object> context) {
 
     // Set up current binding
-    Binding binding = new Binding(context.getSession());
+    Binding binding = new Binding(session.getSession());
 
     // Set the args on the script
     binding.setProperty("args", args);
@@ -198,7 +206,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     setBinding(binding);
 
     //
-    pushContext(new InvocationContextImpl<Object>(context));
+    pushContext(new InvocationContextImpl<Object>(context, session));
 
     //
     try {

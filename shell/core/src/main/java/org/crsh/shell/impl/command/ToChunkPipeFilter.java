@@ -27,7 +27,6 @@ import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
 
 import java.io.IOException;
-import java.util.Map;
 
 class ToChunkPipeFilter implements Filter<Object, Chunk> {
 
@@ -87,14 +86,6 @@ class ToChunkPipeFilter implements Filter<Object, Chunk> {
 
   public void close() throws ScriptException {
     context.close();
-  }
-
-  public Map<String, Object> getSession() {
-    return context.getSession();
-  }
-
-  public Map<String, Object> getAttributes() {
-    return context.getAttributes();
   }
 
   public String getProperty(String propertyName) {

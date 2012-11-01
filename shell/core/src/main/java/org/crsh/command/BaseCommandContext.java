@@ -19,8 +19,6 @@
 
 package org.crsh.command;
 
-import org.crsh.SessionContext;
-
 import java.util.Map;
 
 public class BaseCommandContext implements SessionContext {

@@ -19,6 +19,7 @@
 
 package org.crsh.shell.impl.command;
 
+import org.crsh.command.SessionContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.io.Filter;
@@ -30,9 +31,13 @@ import java.io.IOException;
 class PipeLine implements CommandInvoker {
 
   /** . */
+  private final CRaSHSession session;
+
+  /** . */
   private final Filter[] pipes;
 
-  PipeLine(Filter[] pipes) {
+  PipeLine(CRaSHSession session, Filter[] pipes) {
+    this.session = session;
     this.pipes = pipes;
   }
 
@@ -40,6 +45,10 @@ class PipeLine implements CommandInvoker {
     open(context);
     flush();
     close();
+  }
+
+  public void setSession(SessionContext session) {
+    // Should we use it ?
   }
 
   public Class getConsumedType() {

@@ -182,6 +182,8 @@ final class ClassDispatcher extends CommandClosure {
           public Class getConsumedType() {
             return type;
           }
+          public void setSession(SessionContext session) {
+          }
           public void setPiped(boolean piped) {
           }
           public void open(ProducerContext context) {
@@ -205,6 +207,8 @@ final class ClassDispatcher extends CommandClosure {
 
     //
     InnerInvocationContext inner = new InnerInvocationContext(context, producer);
-    return new PipeCommandProxy(inner, invoker, producer);
+    PipeCommandProxy pipe = new PipeCommandProxy(inner, invoker, producer);
+    pipe.setSession(context);
+    return pipe;
   }
 }

@@ -19,7 +19,6 @@
 
 package org.crsh.command;
 
-import org.crsh.SessionContext;
 import org.crsh.cmdline.CommandCompletion;
 
 import java.util.List;

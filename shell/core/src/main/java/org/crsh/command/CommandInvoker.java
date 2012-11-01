@@ -18,8 +18,7 @@
  */
 package org.crsh.command;
 
-import org.crsh.io.Consumer;
-import org.crsh.io.Producer;
+import org.crsh.io.ProducerConsumer;
 
 /**
  * A command invoker.
@@ -27,5 +26,14 @@ import org.crsh.io.Producer;
  * @param <C> the consumed generic type
  * @param <P> the produced generic type
  */
-public interface CommandInvoker<C, P> extends Consumer<C>, Producer<P> {
+public interface CommandInvoker<C, P> extends ProducerConsumer<C, P> {
+
+  /**
+   * Associate the command invoker with a session, the association should be done before
+   * the command is invoked.
+   *
+   * @param session the session
+   */
+  void setSession(SessionContext session);
+
 }

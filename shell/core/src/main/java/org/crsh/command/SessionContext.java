@@ -17,7 +17,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.io;
+package org.crsh.command;
 
-public interface ProducerContext<P> extends InteractionContext<P>, Consumer<P> {
+import java.util.Map;
+
+public interface SessionContext {
+
+  /**
+   * Returns the current shell session.
+   *
+   * @return the session map
+   */
+  Map<String, Object> getSession();
+
+  /**
+   * Returns the current shell attributes.
+   *
+   * @return the attributes map
+   */
+  Map<String, Object> getAttributes();
+
 }

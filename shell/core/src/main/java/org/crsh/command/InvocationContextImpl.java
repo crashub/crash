@@ -36,10 +36,14 @@ class InvocationContextImpl<P> implements InvocationContext<P> {
   private final ProducerContext<P> producerContext;
 
   /** . */
+  private final SessionContext sessionContext;
+
+  /** . */
   private RenderPrintWriter writer;
 
-  InvocationContextImpl(ProducerContext<P> producerContext) {
+  InvocationContextImpl(ProducerContext<P> producerContext, SessionContext sessionContext) {
     this.producerContext = producerContext;
+    this.sessionContext = sessionContext;
   }
 
   public RenderPrintWriter getWriter() {
@@ -116,10 +120,10 @@ class InvocationContextImpl<P> implements InvocationContext<P> {
   }
 
   public Map<String, Object> getSession() {
-    return producerContext.getSession();
+    return sessionContext.getSession();
   }
 
   public Map<String, Object> getAttributes() {
-    return producerContext.getAttributes();
+    return sessionContext.getAttributes();
   }
 }

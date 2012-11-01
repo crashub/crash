@@ -46,7 +46,7 @@ public abstract class PipeCommand<C, P> {
   }
 
   void open(InvocationContext<P> context) {
-    this.context = new InvocationContextImpl<P>(context);
+    this.context = context;
 
     //
     open();

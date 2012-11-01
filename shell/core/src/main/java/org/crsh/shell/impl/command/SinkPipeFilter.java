@@ -37,14 +37,6 @@ class SinkPipeFilter<P> implements Filter<Object, P> {
     this.producedType = producedType;
   }
 
-  public Map<String, Object> getSession() {
-    return context.getSession();
-  }
-
-  public Map<String, Object> getAttributes() {
-    return context.getAttributes();
-  }
-
   public Class<P> getProducedType() {
     return producedType;
   }

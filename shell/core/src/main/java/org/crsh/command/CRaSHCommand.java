@@ -19,7 +19,6 @@
 
 package org.crsh.command;
 
-import org.crsh.SessionContext;
 import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.CommandFactory;
@@ -244,26 +243,40 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
       if (doHelp) {
         return new CommandInvoker<Object, Object>() {
+
+          /** . */
+          private SessionContext session;
+
           public Class<Object> getProducedType() {
             return _producedType;
           }
+
+          public void setSession(SessionContext session) {
+            this.session = session;
+          }
+
           public Class<Object> getConsumedType() {
             return _consumedType;
           }
+
           public void open(ProducerContext<Object> context) {
             try {
-              match.printUsage(new InvocationContextImpl(context).getWriter());
+              match.printUsage(new InvocationContextImpl(context, session).getWriter());
             }
             catch (IOException e) {
               throw new AssertionError(e);
             }
           }
+
           public void setPiped(boolean piped) {
           }
+
           public void provide(Object element) throws IOException {
           }
+
           public void flush() throws IOException {
           }
+
           public void close() {
           }
         };
@@ -271,16 +284,26 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         if (consumedType == Void.class) {
 
           return new CommandInvoker<Object, Object>() {
+
+            /** . */
+            private SessionContext session;
+
+            public void setSession(SessionContext session) {
+              this.session = session;
+            }
+
             public Class<Object> getProducedType() {
               return _producedType;
             }
+
             public Class<Object> getConsumedType() {
               return _consumedType;
             }
+
             public void open(final ProducerContext<Object> context) {
 
               //
-              pushContext(new InvocationContextImpl<Object>(context));
+              pushContext(new InvocationContextImpl<Object>(context, session));
               CRaSHCommand.this.unmatched = methodMatch.getRest();
               final Resolver resolver = new Resolver() {
                 public <T> T resolve(Class<T> type) {
@@ -320,18 +343,32 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           };
         } else {
           return new CommandInvoker<Object, Object>() {
+
+            /** . */
             PipeCommand real;
+
+            /** . */
             boolean piped;
+
+            /** . */
+            private SessionContext session;
+
             public Class<Object> getProducedType() {
               return _producedType;
             }
+
             public Class<Object> getConsumedType() {
               return _consumedType;
             }
+
+            public void setSession(SessionContext session) {
+              this.session = session;
+            }
+
             public void open(final ProducerContext<Object> context) {
 
               //
-              final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(context);
+              final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(context, session);
 
               //
               pushContext(invocationContext);
@@ -358,15 +395,19 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               real.setPiped(piped);
               real.open(invocationContext);
             }
+
             public void setPiped(boolean piped) {
               this.piped = piped;
             }
+
             public void close() {
               popContext();
             }
+
             public void provide(Object element) throws IOException {
               real.provide(element);
             }
+
             public void flush() throws IOException {
               peekContext().flush();
             }
@@ -393,9 +434,15 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
       //
       return new CommandInvoker<Void, Object>() {
+
+        /** . */
+        private SessionContext session;
+
+        /** . */
         InvocationContext context;
+
         public void open(ProducerContext<Object> producerContext) {
-          this.context = new InvocationContextImpl(producerContext);
+          this.context = new InvocationContextImpl(producerContext, session);
           try {
             if (doHelp) {
               match.printUsage(context.getWriter());
@@ -407,19 +454,29 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             throw new AssertionError(e);
           }
         }
+
+        public void setSession(SessionContext session) {
+          this.session = session;
+        }
+
         public void setPiped(boolean piped) {
         }
+
         public void close() {
           this.context = null;
         }
+
         public void provide(Void element) throws IOException {
         }
+
         public void flush() throws IOException {
           context.flush();
         }
+
         public Class<Object> getProducedType() {
           return Object.class;
         }
+
         public Class<Void> getConsumedType() {
           return Void.class;
         }

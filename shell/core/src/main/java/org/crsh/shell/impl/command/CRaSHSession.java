@@ -23,10 +23,12 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.crsh.command.SessionContext;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.command.BaseCommandContext;
+import org.crsh.command.CommandInvoker;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ShellCommand;
@@ -42,8 +44,9 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.Map;
 
-public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable {
+public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, SessionContext {
 
   /** . */
   static final Logger log = LoggerFactory.getLogger(CRaSHSession.class);
@@ -98,6 +101,9 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     //
     try {
       Script login = getLifeCycle("login");
+      if (login instanceof CommandInvoker) {
+        ((CommandInvoker)login).setSession(this);
+      }
       if (login != null) {
         login.run();
       }
@@ -108,12 +114,23 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
 
   }
 
+  public Map<String, Object> getSession() {
+    return this;
+  }
+
+  public Map<String, Object> getAttributes() {
+    return crash.context.getAttributes();
+  }
+
   public void close() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      Script login = getLifeCycle("logout");
-      if (login != null) {
-        login.run();
+      Script logout = getLifeCycle("logout");
+      if (logout instanceof CommandInvoker) {
+        ((CommandInvoker)logout).setSession(this);
+      }
+      if (logout != null) {
+        logout.run();
       }
     }
     catch (NoSuchCommandException e) {
