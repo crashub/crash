@@ -59,11 +59,17 @@ public class thread extends CRaSHCommand {
         }
       }
     }
-    while (!Thread.interrupted()) {
-      out.cls()
-      out.show(table);
-      out.flush();
-      Thread.sleep(1000);
+    context.takeAlternateBuffer();
+    try {
+      while (!Thread.interrupted()) {
+        out.cls()
+        out.show(table);
+        out.flush();
+        Thread.sleep(1000);
+      }
+    }
+    finally {
+      context.releaseAlternateBuffer();
     }
   }
 
