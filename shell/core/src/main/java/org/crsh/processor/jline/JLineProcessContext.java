@@ -85,11 +85,10 @@ class JLineProcessContext implements ShellProcessContext {
     } else {
 
 
-      // Clear screen : this method has drawback to modifying history
-//      processor.writer.print("\033[");
-//      processor.writer.print("2J");
-//      processor.writer.flush();
+      // Clear screen
+      processor.writer.print("\033[2J");
 
+/*
       // Clear all lines without touching the history
       int height = processor.reader.getTerminal().getHeight();
       for (int i = 1;i < height;i++) {
@@ -102,6 +101,7 @@ class JLineProcessContext implements ShellProcessContext {
       // Move cursor to top
       processor.writer.print("\033[");
       processor.writer.print("1;1H");
+*/
 
       // Flush all the changes
 //      processor.writer.flush();

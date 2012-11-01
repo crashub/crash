@@ -57,12 +57,45 @@ public class JLineProcessor implements Runnable, Completer {
 
   public void run() {
 
-    //
-    String welcome = shell.getWelcome();
-    writer.println(welcome);
+    // To get those codes I captured the output of telnet running top
+    // on OSX:
+    // 1/ sudo /usr/libexec/telnetd -debug #run telnet
+    // 2/ telnet localhost >output.txt
+    // 3/ type username + enter
+    // 4/ type password + enter
+    // 5/ type top + enter
+    // 6/ ctrl-c
+    // 7/ type exit + enter
+
+    // Save screen and erase
+    writer.print("\033[?47h"); // Switches to the alternate screen
+    // writer.print("\033[1;43r");
+    writer.print("\033[m"); // Reset to normal (Sets SGR parameters : 0 m == m)
+    // writer.print("\033[4l");
+    // writer.print("\033[?1h");
+    // writer.print("\033[=");
+    writer.print("\033[H"); // Move the cursor to home
+    writer.print("\033[2J"); // Clear screen
     writer.flush();
 
     //
+    try {
+      //
+      String welcome = shell.getWelcome();
+      writer.println(welcome);
+      writer.flush();
+
+      //
+      loop();
+    }
+    finally {
+      // Restore screen
+      writer.print("\033[?47L"); // Switches back to the normal screen
+      writer.flush();
+    }
+  }
+
+  private void loop() {
     while (true) {
       String prompt = getPrompt();
       String line;
