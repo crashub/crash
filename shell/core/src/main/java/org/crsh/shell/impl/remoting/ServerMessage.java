@@ -21,6 +21,10 @@ package org.crsh.shell.impl.remoting;
 
 public enum ServerMessage {
 
+  USE_MAIN_BUFFER,
+
+  USE_ALTERNATE_BUFFER,
+
   GET_SIZE,
 
   READLINE,

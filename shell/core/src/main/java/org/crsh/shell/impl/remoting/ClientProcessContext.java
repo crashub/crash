@@ -73,11 +73,29 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   public boolean takeAlternateBuffer() {
-    throw new UnsupportedOperationException();
+    try {
+      client.out.writeObject(ServerMessage.USE_ALTERNATE_BUFFER);
+      client.out.flush();
+    }
+    catch (Exception e) {
+      //
+    }
+
+    // For now we suppose any impl return true;
+    return true;
   }
 
   public boolean releaseAlternateBuffer() {
-    throw new UnsupportedOperationException();
+    try {
+      client.out.writeObject(ServerMessage.USE_MAIN_BUFFER);
+      client.out.flush();
+    }
+    catch (Exception e) {
+      //
+    }
+
+    // For now we suppose any impl return true;
+    return true;
   }
 
   public String getProperty(String name) {

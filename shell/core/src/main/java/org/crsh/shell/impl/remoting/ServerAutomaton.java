@@ -154,6 +154,12 @@ public class ServerAutomaton implements Shell {
 //            out.flush();
 //            break;
             throw new UnsupportedOperationException("Not handled");
+          case USE_ALTERNATE_BUFFER:
+            processContext.takeAlternateBuffer();
+            break;
+          case USE_MAIN_BUFFER:
+            processContext.releaseAlternateBuffer();
+            break;
           case END:
             response = (ShellResponse)in.readObject();
             break;
