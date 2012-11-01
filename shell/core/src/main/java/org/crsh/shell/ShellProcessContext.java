@@ -26,7 +26,7 @@ import org.crsh.text.Chunk;
 /**
  * The context provided when a {@link ShellProcess} is executed.
  */
-public interface ShellProcessContext extends InteractionContext, IOContext<Chunk> {
+public interface ShellProcessContext extends InteractionContext<Chunk> {
 
   /**
    * This method is invoked when the process ends.

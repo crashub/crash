@@ -72,6 +72,14 @@ class ProcessInvocationContext implements ProducerContext<Object> {
     this.adapter = adapter;
   }
 
+  public boolean takeAlternateBuffer() {
+    return processContext.takeAlternateBuffer();
+  }
+
+  public boolean releaseAlternateBuffer() {
+    return processContext.releaseAlternateBuffer();
+  }
+
   public String getProperty(String propertyName) {
     return processContext.getProperty(propertyName);
   }

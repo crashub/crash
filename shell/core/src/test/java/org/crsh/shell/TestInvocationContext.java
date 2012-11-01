@@ -64,6 +64,14 @@ public class TestInvocationContext<C> extends BaseCommandContext implements Prod
     this.producedItems = Collections.emptyList();
   }
 
+  public boolean takeAlternateBuffer() {
+    return false;
+  }
+
+  public boolean releaseAlternateBuffer() {
+    return false;
+  }
+
   public Class<Object> getConsumedType() {
     return Object.class;
   }

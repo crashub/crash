@@ -49,6 +49,14 @@ class SinkPipeFilter<P> implements Filter<Object, P> {
     return producedType;
   }
 
+  public boolean takeAlternateBuffer() {
+    return context.takeAlternateBuffer();
+  }
+
+  public boolean releaseAlternateBuffer() {
+    return context.releaseAlternateBuffer();
+  }
+
   public void setPiped(boolean piped) {
   }
 

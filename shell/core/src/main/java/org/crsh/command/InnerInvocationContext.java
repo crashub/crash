@@ -59,6 +59,14 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
     return outter.getHeight();
   }
 
+  public boolean takeAlternateBuffer() {
+    return outter.takeAlternateBuffer();
+  }
+
+  public boolean releaseAlternateBuffer() {
+    return outter.releaseAlternateBuffer();
+  }
+
   public String getProperty(String propertyName) {
     return outter.getProperty(propertyName);
   }

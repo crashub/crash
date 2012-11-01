@@ -54,9 +54,15 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
   }
 }
 
-while (!Thread.interrupted()) {
-  out.cls()
-  out.show(table);
-  out.flush();
-  Thread.sleep(1000);
+context.takeAlternateBuffer();
+try {
+  while (!Thread.interrupted()) {
+    out.cls()
+    out.show(table);
+    out.flush();
+    Thread.sleep(1000);
+  }
+}
+finally {
+  context.releaseAlternateBuffer();
 }

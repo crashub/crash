@@ -74,6 +74,14 @@ public class AsyncProcess implements ShellProcess {
       return caller.getProperty(name);
     }
 
+    public boolean takeAlternateBuffer() {
+      return caller.takeAlternateBuffer();
+    }
+
+    public boolean releaseAlternateBuffer() {
+      return caller.releaseAlternateBuffer();
+    }
+
     public String readLine(String msg, boolean echo) {
       return caller.readLine(msg, echo);
     }

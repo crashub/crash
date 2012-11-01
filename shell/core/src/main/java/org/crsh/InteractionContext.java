@@ -19,7 +19,27 @@
 
 package org.crsh;
 
-public interface InteractionContext {
+import org.crsh.io.IOContext;
+
+public interface InteractionContext<E> extends IOContext<E> {
+
+  /**
+   * Take control of the alternate buffer. When the alternate buffer is already used
+   * nothing happens. The buffer switch should occur when then {@link #flush()} method
+   * is invoked.
+   *
+   * @return true if the alternate buffer is shown
+   */
+  boolean takeAlternateBuffer();
+
+  /**
+   * Release control of the alternate buffer. When the normal buffer is already used
+   * nothing happens. The buffer switch should occur when then {@link #flush()} method
+   * is invoked.
+   *
+   * @return true if the usual buffer is shown
+   */
+  boolean releaseAlternateBuffer();
 
   /**
    * Returns a generic property, usually this property is resolved by the

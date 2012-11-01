@@ -77,6 +77,14 @@ public class EvalElement extends Element {
         return ctx.resolve(s);
       }
 
+      public boolean takeAlternateBuffer() {
+        return false;
+      }
+
+      public boolean releaseAlternateBuffer() {
+        return false;
+      }
+
       public RenderPrintWriter getWriter() {
         return ctx.getWriter();
       }

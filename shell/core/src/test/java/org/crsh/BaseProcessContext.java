@@ -111,6 +111,14 @@ public class BaseProcessContext implements ShellProcessContext {
     return this;
   }
 
+  public boolean takeAlternateBuffer() {
+    return false;
+  }
+
+  public boolean releaseAlternateBuffer() {
+    return false;
+  }
+
   public int getWidth() {
     return width;
   }

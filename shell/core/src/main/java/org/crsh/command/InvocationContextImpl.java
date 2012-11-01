@@ -66,6 +66,14 @@ class InvocationContextImpl<P> implements InvocationContext<P> {
     return writer;
   }
 
+  public boolean takeAlternateBuffer() {
+    return producerContext.takeAlternateBuffer();
+  }
+
+  public boolean releaseAlternateBuffer() {
+    return producerContext.releaseAlternateBuffer();
+  }
+
   public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
     // A bit nasty : will improve that later
     CRaSHSession session = (CRaSHSession)getSession();

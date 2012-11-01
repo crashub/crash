@@ -64,6 +64,14 @@ class InvokerPipeFilter<C, P> implements Filter<C, P> {
     return command.getConsumedType();
   }
 
+  public boolean takeAlternateBuffer() {
+    return context.takeAlternateBuffer();
+  }
+
+  public boolean releaseAlternateBuffer() {
+    return context.releaseAlternateBuffer();
+  }
+
   public Map<String, Object> getSession() {
     return context.getSession();
   }

@@ -72,6 +72,14 @@ class ClientProcessContext implements ShellProcessContext {
     return client.getHeight();
   }
 
+  public boolean takeAlternateBuffer() {
+    throw new UnsupportedOperationException();
+  }
+
+  public boolean releaseAlternateBuffer() {
+    throw new UnsupportedOperationException();
+  }
+
   public String getProperty(String name) {
     return null;
   }
