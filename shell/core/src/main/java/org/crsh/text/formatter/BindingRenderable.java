@@ -43,15 +43,25 @@ public class BindingRenderable extends Renderable<BindingRenderable.BindingData>
     TableElement table = new TableElement();
     table.setRightCellPadding(1);
     RowElement header = new RowElement(true);
-    header.add(new LabelElement("NAME"), new LabelElement("CLASS"));
+    header.add(new LabelElement("NAME"));
     table.add(header);
 
     while (stream.hasNext()) {
       BindingData binding = stream.next();
 
       RowElement row = new RowElement();
-      row.add(new LabelElement(binding.name), new LabelElement(binding.type));
+
+       row.add(new LabelElement(binding.name));
+
+      if (binding.verbose) {
+        row.add(new LabelElement(binding.type));
+        if (header.getSize() == 1) {
+          header.add(new LabelElement("CLASS"));
+        }
+      }
+      
       table.add(row);
+
 
     }
 
@@ -62,10 +72,12 @@ public class BindingRenderable extends Renderable<BindingRenderable.BindingData>
 
     public final String name;
     public final String type;
+    public final Boolean verbose;
 
-    public BindingData(String name, String type) {
+    public BindingData(String name, String type,Boolean verbose) {
       this.name = name;
       this.type = type;
+      this.verbose = verbose;
     }
   }
 

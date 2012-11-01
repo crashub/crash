@@ -76,4 +76,11 @@ public class TypeResolverTestCase extends TestCase {
     assertEquals(true, TypeResolver.instanceOf(ArrayList.class, "java.util.AbstractCollection"));
     assertEquals(false, TypeResolver.instanceOf(String.class, "java.lang.Integer"));
   }
+
+  public void testInstanceOfList() {
+    assertEquals(true, TypeResolver.instanceOf(String.class, Arrays.asList("java.lang.String", "java.lang.Integer")));
+    assertEquals(true, TypeResolver.instanceOf(String.class, Arrays.asList("java.lang.Integer", "java.lang.String")));
+    assertEquals(false, TypeResolver.instanceOf(String.class, Arrays.asList("java.lang.Boolean", "java.lang.Integer")));
+  }
+
 }

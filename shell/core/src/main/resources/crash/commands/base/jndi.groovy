@@ -38,43 +38,44 @@ class jndi extends CRaSHCommand {
 
     @Usage("List JNDI resources")
     @Command
-    void ls(InvocationContext<BindingRenderable.BindingData> context, @Option(names=["f","filter"]) String filter) {
-        print(context, filter);
-    }
-    
-    @Usage("List DataSource resources")
-    @Command
-    void datasources(InvocationContext<BindingRenderable.BindingData> context) {
-        print(context, "javax.sql.DataSource");
-    }
-    
-    @Usage("List Entity Manager Factory resources")
-    @Command
-    void emf(InvocationContext<BindingRenderable.BindingData> context) {
-        print(context, "javax.persistence.EntityManagerFactory");
-    }
-    
-    @Usage("List Mail resources")
-    @Command
-    void mail(InvocationContext<BindingRenderable.BindingData> context) {
-        print(context, "javax.mail.Session");
-    }
-    
-    void print(InvocationContext<BindingRenderable.BindingData> context, String filter) {
-        add(context, filter, "");
-        add(context, filter, "java:/");
-        add(context, filter, "java:comp/env/jdbc");
-        add(context, filter, "java:jboss");
-        add(context, filter, "java:global");
-        add(context, filter, "java:app");
-        add(context, filter, "java:module");
+    void find(
+            InvocationContext<BindingRenderable.BindingData> context,
+            @Usage("Filter displayed resources using FQN type'") @Option(names=["f","filter"]) List<String> filters,
+            @Usage("Display resource type'") @Option(names=["v", "verbose"]) Boolean verbose,
+            @Usage("Apply a filter on 'javax.sql.DataSource'") @Option(names=["d", "datasources"]) Boolean datasources,
+            @Usage("Apply a filter on 'javax.persistence.EntityManagerFactory'") @Option(names=["e", "emf"]) Boolean emf,
+            @Usage("Apply a filter on 'javax.mail.Session'") @Option(names=["m", "mail"]) Boolean mail) {
+
+        if (datasources) {
+            if (filters == null) filters = new ArrayList<String>();
+            filters.add("javax.sql.DataSource");
+        }
+
+        if (emf) {
+            if (filters == null) filters = new ArrayList<String>();
+            filters.add("javax.persistence.EntityManagerFactory");
+        }
+
+        if (mail) {
+            if (filters == null) filters = new ArrayList<String>();
+            filters.add("javax.mail.Session");
+        }
+
+        add(context, filters, verbose, "");
+        add(context, filters, verbose, "java:/");
+        add(context, filters, verbose, "java:comp/env/jdbc");
+        add(context, filters, verbose, "java:jboss");
+        add(context, filters, verbose, "java:global");
+        add(context, filters, verbose, "java:app");
+        add(context, filters, verbose, "java:module");
+
     }
 
-    void add(InvocationContext<BindingRenderable.BindingData> context, String filter, String path) {
-        add(context, filter, path, path, null)
+    void add(InvocationContext<BindingRenderable.BindingData> context, List<String> filters, Boolean verbose, String path) {
+        add(context, filters, verbose, path, path, null)
     }
 
-    void add(InvocationContext<BindingRenderable.BindingData> context, String filter, String path, String search, Context ctx) {
+    void add(InvocationContext<BindingRenderable.BindingData> context, List<String> filters, Boolean verbose, String path, String search, Context ctx) {
         try {
             if (ctx == null) {
                 ctx = new InitialContext();
@@ -85,12 +86,15 @@ class jndi extends CRaSHCommand {
 
             ctx.listBindings(search).each { instance ->
                 try {
-                    if (filter == null || TypeResolver.instanceOf(instance.object.class, filter)) {
-                        context.provide(new BindingData(path + instance.name, instance.className));
+                    if (
+                        filters == null ||
+                        filters.size() == 0 ||
+                        TypeResolver.instanceOf(instance.object.class, filters)) {
+                            context.provide(new BindingData(path + instance.name, instance.className, (verbose ? true : false)));
                     }
                 } catch (ClassCastException e) {}
                 if (instance.object instanceof Context) {
-                    add(context, filter, path + instance.name, "", instance.object);
+                    add(context, filters, verbose, path + instance.name, "", instance.object);
                 }
             }
         } catch(Exception e) {}

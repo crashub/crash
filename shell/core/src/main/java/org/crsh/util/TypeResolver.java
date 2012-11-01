@@ -22,6 +22,7 @@ package org.crsh.util;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.List;
 
 public class TypeResolver {
 
@@ -116,6 +117,18 @@ public class TypeResolver {
     } else {
       throw new UnsupportedOperationException("todo " + implementation + " " + implementation.getClass());
     }
+  }
+
+  public static boolean instanceOf(Class c, List<String> types) {
+
+    for (String type: types) {
+      if (instanceOf(c, type)) {
+        return true;
+      }
+    }
+
+    return false;
+
   }
 
 
