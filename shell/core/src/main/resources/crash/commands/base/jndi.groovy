@@ -22,14 +22,10 @@ package crash.commands.base
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
-import javax.naming.InitialContext
 import org.crsh.command.CRaSHCommand
-import javax.naming.Context
 import org.crsh.text.formatter.BindingRenderable
-import org.crsh.text.formatter.BindingRenderable.BindingData
-import org.crsh.util.TypeResolver
 import org.crsh.cmdline.annotations.Option
-import java.util.regex.Pattern
+import org.crsh.util.JNDIHandler
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -63,68 +59,8 @@ class jndi extends CRaSHCommand {
             filters.add("javax.mail.Session");
         }
 
-        def pattern
-        if (name != null) {
+        JNDIHandler.lookup(filters, name, verbose).each { d -> context.provide(d) }
 
-            if (name.charAt(0) != '*') {
-                name = '^' + name;
-            } else {
-                name = name.substring(1);
-            }
-
-            if (name.charAt(name.length() - 1) != '*') {
-                name += '$';
-            } else {
-                name = name.substring(0, name.length() - 1);
-            }
-
-            name = name.replace("*", ".*");
-
-            pattern = Pattern.compile(name);
-        }
-
-        add(context, filters, pattern, verbose, "");
-        add(context, filters, pattern, verbose, "java:/");
-        add(context, filters, pattern, verbose, "java:comp/env/jdbc");
-        add(context, filters, pattern, verbose, "java:jboss");
-        add(context, filters, pattern, verbose, "java:global");
-        add(context, filters, pattern, verbose, "java:app");
-        add(context, filters, pattern, verbose, "java:module");
-
-    }
-
-    void add(InvocationContext<BindingRenderable.BindingData> context, List<String> filters, Pattern pattern, Boolean verbose, String path) {
-        add(context, filters, pattern, verbose, path, path, null)
-    }
-
-    void add(InvocationContext<BindingRenderable.BindingData> context, List<String> filters, Pattern pattern, Boolean verbose, String path, String search, Context ctx) {
-        try {
-            if (ctx == null) {
-                ctx = new InitialContext();
-            }
-            if (path.length() > 0) {
-                path += "/";
-            }
-
-            ctx.listBindings(search).each { instance ->
-                
-                def fullName = path + instance.name;
-
-                try {
-                    if (
-                        filters == null ||
-                        filters.size() == 0 ||
-                        TypeResolver.instanceOf(instance.object.class, filters)) {
-                        if (pattern == null || pattern.matcher(fullName).find()) {
-                            context.provide(new BindingData(fullName, instance.className, (verbose ? true : false)));
-                        }
-                    }
-                } catch (ClassCastException e) {}
-                if (instance.object instanceof Context) {
-                    add(context, filters, pattern, verbose, fullName, "", instance.object);
-                }
-            }
-        } catch(Exception e) {}
     }
 
 }

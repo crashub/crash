@@ -18,7 +18,10 @@ import org.crsh.command.InvocationContext
 import org.crsh.util.Safe
 import java.sql.DatabaseMetaData
 import org.crsh.text.ui.UIBuilder
-import org.crsh.cmdline.completers.JNDICompleter;
+import org.crsh.cmdline.spi.Completer
+import org.crsh.cmdline.spi.ValueCompletion
+import org.crsh.cmdline.ParameterDescriptor
+import org.crsh.util.JNDIHandler;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -73,7 +76,7 @@ class jdbc extends CRaSHCommand {
 
   @Usage("open a connection from JNDI bound datasource")
   @Command
-  public String open(@Usage("The datasource JNDI name") @Argument(completer = JNDICompleter.class) String globalName) {
+  public String open(@Usage("The datasource JNDI name") @Argument(completer = jdbc.DataSourcesCompleter.class) String globalName) {
     if (connection != null) {
       throw new ScriptException("Already connected");
     }
@@ -306,5 +309,21 @@ class jdbc extends CRaSHCommand {
       connection = null;
       return "Connection closed\n"
     }
+  }
+    
+  public static class DataSourcesCompleter implements Completer {
+     ValueCompletion complete(ParameterDescriptor<?> parameter, java.lang.String prefix) {
+         def pattern = (prefix != null && prefix.length() > 0 ? prefix + "*" : null);
+         ValueCompletion c = ValueCompletion.create()
+         JNDIHandler.lookup(["javax.sql.DataSource"], pattern, null).each { d ->
+            if (pattern == null) {
+                c.put(d.name, true);
+            } else {
+                c.put(d.name.substring(pattern.length() - 1), true);
+            }
+        }
+         return c
+     }
+
   }
 }

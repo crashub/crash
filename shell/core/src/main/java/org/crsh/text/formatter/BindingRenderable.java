@@ -77,7 +77,7 @@ public class BindingRenderable extends Renderable<BindingRenderable.BindingData>
     public BindingData(String name, String type,Boolean verbose) {
       this.name = name;
       this.type = type;
-      this.verbose = verbose;
+      this.verbose = (verbose != null ? verbose : false);
     }
   }
 
