@@ -12,7 +12,7 @@ welcome = { ->
 |           |    `.       .'       `.         ..'          |         |
  `.______.' |      `.   .'           `. ....''             |         | ${crash.context.version}
 
-Follow and support the project on http://vietj.github.com/crash
+Follow and support the project on http://www.crashub.org
 Welcome to $hostName + !
 It is ${new Date()} now""";
 }
