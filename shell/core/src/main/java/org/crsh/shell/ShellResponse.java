@@ -162,7 +162,7 @@ public abstract class ShellResponse implements Serializable {
 
     @Override
     public String getMessage() {
-      return "cancelled";
+      return "";
     }
   }
 
