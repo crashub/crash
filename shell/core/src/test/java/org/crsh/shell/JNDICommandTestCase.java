@@ -132,6 +132,68 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
     assertEquals("Bar", output.get(0).type);
   }
 
+  public void testNameExact() throws Exception {
+    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    output.clear();
+    lifeCycle.setCommand("consume_command", consume_command);
+    assertOk("jndi find -n Foo | consume_command");
+    assertEquals(1, output.size());
+    assertEquals("Foo", output.get(0).name);
+    assertEquals("Bar", output.get(0).type);
+  }
+
+  public void testNameBegin() throws Exception {
+    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    output.clear();
+    lifeCycle.setCommand("consume_command", consume_command);
+    assertOk("jndi find -n F* | consume_command");
+    assertEquals(1, output.size());
+    assertEquals("Foo", output.get(0).name);
+    assertEquals("Bar", output.get(0).type);
+  }
+
+  public void testNameEnd() throws Exception {
+    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    output.clear();
+    lifeCycle.setCommand("consume_command", consume_command);
+    assertOk("jndi find -n *o | consume_command");
+    assertEquals(2, output.size());
+    assertEquals("Foo", output.get(0).name);
+    assertEquals("Bar", output.get(0).type);
+    assertEquals("java:global/Foo", output.get(1).name);
+    assertEquals("Bar", output.get(1).type);
+  }
+
+  public void testNameNoBeginEnd() throws Exception {
+    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    output.clear();
+    lifeCycle.setCommand("consume_command", consume_command);
+    assertOk("jndi find -n *global* | consume_command");
+    assertEquals(1, output.size());
+    assertEquals("java:global/Foo", output.get(0).name);
+    assertEquals("Bar", output.get(0).type);
+  }
+
+  public void testNameWildcard() throws Exception {
+    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    output.clear();
+    lifeCycle.setCommand("consume_command", consume_command);
+    assertOk("jndi find -n java:*/Foo | consume_command");
+    assertEquals(1, output.size());
+    assertEquals("java:global/Foo", output.get(0).name);
+    assertEquals("Bar", output.get(0).type);
+  }
+
+  public void testNameWildcardBeginEnd() throws Exception {
+    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    output.clear();
+    lifeCycle.setCommand("consume_command", consume_command);
+    assertOk("jndi find -n *:*/* | consume_command");
+    assertEquals(1, output.size());
+    assertEquals("java:global/Foo", output.get(0).name);
+    assertEquals("Bar", output.get(0).type);
+  }
+
   private void setFactory(String name) {
     defaultFactory = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
     System.setProperty(Context.INITIAL_CONTEXT_FACTORY, name);

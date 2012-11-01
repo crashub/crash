@@ -29,6 +29,7 @@ import org.crsh.text.formatter.BindingRenderable
 import org.crsh.text.formatter.BindingRenderable.BindingData
 import org.crsh.util.TypeResolver
 import org.crsh.cmdline.annotations.Option
+import java.util.regex.Pattern
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -41,6 +42,7 @@ class jndi extends CRaSHCommand {
     void find(
             InvocationContext<BindingRenderable.BindingData> context,
             @Usage("Filter displayed resources using FQN type'") @Option(names=["f","filter"]) List<String> filters,
+            @Usage("Filter displayed resources using name'") @Option(names=["n","name"]) String name,
             @Usage("Display resource type'") @Option(names=["v", "verbose"]) Boolean verbose,
             @Usage("Apply a filter on 'javax.sql.DataSource'") @Option(names=["d", "datasources"]) Boolean datasources,
             @Usage("Apply a filter on 'javax.persistence.EntityManagerFactory'") @Option(names=["e", "emf"]) Boolean emf,
@@ -61,21 +63,41 @@ class jndi extends CRaSHCommand {
             filters.add("javax.mail.Session");
         }
 
-        add(context, filters, verbose, "");
-        add(context, filters, verbose, "java:/");
-        add(context, filters, verbose, "java:comp/env/jdbc");
-        add(context, filters, verbose, "java:jboss");
-        add(context, filters, verbose, "java:global");
-        add(context, filters, verbose, "java:app");
-        add(context, filters, verbose, "java:module");
+        def pattern
+        if (name != null) {
+
+            if (name.charAt(0) != '*') {
+                name = '^' + name;
+            } else {
+                name = name.substring(1);
+            }
+
+            if (name.charAt(name.length() - 1) != '*') {
+                name += '$';
+            } else {
+                name = name.substring(0, name.length() - 1);
+            }
+
+            name = name.replace("*", ".*");
+
+            pattern = Pattern.compile(name);
+        }
+
+        add(context, filters, pattern, verbose, "");
+        add(context, filters, pattern, verbose, "java:/");
+        add(context, filters, pattern, verbose, "java:comp/env/jdbc");
+        add(context, filters, pattern, verbose, "java:jboss");
+        add(context, filters, pattern, verbose, "java:global");
+        add(context, filters, pattern, verbose, "java:app");
+        add(context, filters, pattern, verbose, "java:module");
 
     }
 
-    void add(InvocationContext<BindingRenderable.BindingData> context, List<String> filters, Boolean verbose, String path) {
-        add(context, filters, verbose, path, path, null)
+    void add(InvocationContext<BindingRenderable.BindingData> context, List<String> filters, Pattern pattern, Boolean verbose, String path) {
+        add(context, filters, pattern, verbose, path, path, null)
     }
 
-    void add(InvocationContext<BindingRenderable.BindingData> context, List<String> filters, Boolean verbose, String path, String search, Context ctx) {
+    void add(InvocationContext<BindingRenderable.BindingData> context, List<String> filters, Pattern pattern, Boolean verbose, String path, String search, Context ctx) {
         try {
             if (ctx == null) {
                 ctx = new InitialContext();
@@ -85,16 +107,21 @@ class jndi extends CRaSHCommand {
             }
 
             ctx.listBindings(search).each { instance ->
+                
+                def fullName = path + instance.name;
+
                 try {
                     if (
                         filters == null ||
                         filters.size() == 0 ||
                         TypeResolver.instanceOf(instance.object.class, filters)) {
-                            context.provide(new BindingData(path + instance.name, instance.className, (verbose ? true : false)));
+                        if (pattern == null || pattern.matcher(fullName).find()) {
+                            context.provide(new BindingData(fullName, instance.className, (verbose ? true : false)));
+                        }
                     }
                 } catch (ClassCastException e) {}
                 if (instance.object instanceof Context) {
-                    add(context, filters, verbose, path + instance.name, "", instance.object);
+                    add(context, filters, pattern, verbose, fullName, "", instance.object);
                 }
             }
         } catch(Exception e) {}
