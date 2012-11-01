@@ -74,31 +74,40 @@ public class MemoryUsageRenderer extends Renderer {
         if (!hasLine()) {
           throw new IllegalStateException();
         }
+        long range = usage.getMax() - usage.getInit();
         Color previous = null;
-        char c;
-        for (int i = 0;i < width;i++) {
-          long v = (i * usage.getMax()) / width;
-          Color current;
-          if (v < usage.getInit()) {
-            current = Color.black;
-          } else if (v < usage.getUsed()) {
-            current = Color.red;
-          } else if (v < usage.getCommitted()) {
-            current = Color.blue;
-          } else {
-            current = Color.green;
-          }
-          if (previous != current) {
-            if (previous != null) {
-              to.leaveStyle();
+
+        if (usage.getMax() > 0) {
+          long a = (width * usage.getUsed()) / (usage.getMax());
+          long b = (width * usage.getCommitted()) / (usage.getMax());
+          for (int i = 0;i < width;i++) {
+            Color current;
+            if (i >= b) {
+              // MAX
+              current = Color.green;
+            } else if (i >= a) {
+              // COMMITED
+              current = Color.blue;
+            } else {
+              // USED
+              current = Color.cyan;
             }
-            to.enterStyle(current.bg());
-            previous = current;
+            if (previous != current) {
+              if (previous != null) {
+                to.leaveStyle();
+              }
+              to.enterStyle(current.bg());
+              previous = current;
+            }
+            to.append(' ');
           }
-          to.append(' ');
-        }
-        if (previous != null) {
-          to.leaveStyle();
+          if (previous != null) {
+            to.leaveStyle();
+          }
+        } else {
+          for (int i = 0;i < width;i++) {
+            to.append(' ');
+          }
         }
         index++;
       }
