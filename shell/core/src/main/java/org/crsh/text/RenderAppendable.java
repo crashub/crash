@@ -19,20 +19,20 @@
 
 package org.crsh.text;
 
-import org.crsh.io.IOContext;
+import org.crsh.io.ScreenContext;
 
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class RenderAppendable implements Appendable, IOContext<Chunk> {
+public class RenderAppendable implements Appendable, ScreenContext<Chunk> {
 
   /** . */
-  private final IOContext<Chunk> context;
+  private final ScreenContext<Chunk> context;
 
   /** . */
   private LinkedList<Style.Composite> stack;
 
-  public RenderAppendable(IOContext<Chunk> context) {
+  public RenderAppendable(ScreenContext<Chunk> context) {
     this.context = context;
   }
   

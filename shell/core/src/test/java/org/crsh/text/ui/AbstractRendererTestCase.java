@@ -24,7 +24,7 @@ import org.crsh.text.Chunk;
 import org.crsh.text.ChunkBuffer;
 import org.crsh.text.LineReader;
 import org.crsh.text.RenderAppendable;
-import org.crsh.io.IOContext;
+import org.crsh.io.ScreenContext;
 import org.crsh.util.Strings;
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
     ArrayList<String> result = new ArrayList<String>();
     while (renderer.hasLine()) {
       final ChunkBuffer buffer = new ChunkBuffer();
-      renderer.renderLine(new RenderAppendable(new IOContext<Chunk>() {
+      renderer.renderLine(new RenderAppendable(new ScreenContext<Chunk>() {
         public int getWidth() {
           return width;
         }

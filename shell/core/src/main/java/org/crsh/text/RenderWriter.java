@@ -19,16 +19,16 @@
 
 package org.crsh.text;
 
-import org.crsh.io.IOContext;
+import org.crsh.io.ScreenContext;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 
-public class RenderWriter extends Writer implements IOContext<Chunk> {
+public class RenderWriter extends Writer implements ScreenContext<Chunk> {
 
   /** . */
-  private final IOContext out;
+  private final ScreenContext out;
 
   /** . */
   private final Closeable closeable;
@@ -39,11 +39,11 @@ public class RenderWriter extends Writer implements IOContext<Chunk> {
   /** . */
   private boolean empty;
 
-  public RenderWriter(IOContext out) throws NullPointerException {
+  public RenderWriter(ScreenContext out) throws NullPointerException {
     this(out, null);
   }
 
-  public RenderWriter(IOContext out, Closeable closeable) throws NullPointerException {
+  public RenderWriter(ScreenContext out, Closeable closeable) throws NullPointerException {
     if (out == null) {
       throw new NullPointerException("No null appendable expected");
     }

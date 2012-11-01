@@ -19,6 +19,11 @@
 
 package org.crsh.io;
 
+/**
+ * The consumer is a pipe that defines a type of consumed object.
+ *
+ * @param <C> the consumed generic type
+ */
 public interface Consumer<C> extends Pipe<C> {
 
   /**

@@ -19,7 +19,6 @@
 
 package org.crsh.io;
 
-import org.crsh.InteractionContext;
 import org.crsh.SessionContext;
 
 public interface ProducerContext<P> extends SessionContext, InteractionContext<P>, Consumer<P> {

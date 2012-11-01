@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.io.IOContext;
+import org.crsh.io.ScreenContext;
 import org.crsh.io.ProducerContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
@@ -48,7 +48,7 @@ class ProcessInvocationContext implements ProducerContext<Object> {
     final ChunkBuffer buffer = new ChunkBuffer(processContext);
 
     //
-    final ChunkAdapter adapter = new ChunkAdapter(new IOContext<Chunk>() {
+    final ChunkAdapter adapter = new ChunkAdapter(new ScreenContext<Chunk>() {
       public int getWidth() {
         return processContext.getWidth();
       }

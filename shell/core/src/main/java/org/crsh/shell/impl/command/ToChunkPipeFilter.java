@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.io.IOContext;
+import org.crsh.io.ScreenContext;
 import org.crsh.command.ScriptException;
 import org.crsh.io.Filter;
 import org.crsh.io.ProducerContext;
@@ -50,7 +50,7 @@ class ToChunkPipeFilter implements Filter<Object, Chunk> {
   }
 
   public void open(final ProducerContext<Chunk> context) {
-    ca = new ChunkAdapter(new IOContext<Chunk>() {
+    ca = new ChunkAdapter(new ScreenContext<Chunk>() {
       public int getWidth() {
         return context.getWidth();
       }

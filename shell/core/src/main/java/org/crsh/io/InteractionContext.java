@@ -17,11 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
+package org.crsh.io;
 
-import org.crsh.io.IOContext;
-
-public interface InteractionContext<E> extends IOContext<E> {
+/**
+ * The interaction context extends the screen context and provides interaction with the client.
+ *
+ * @param <E> the element generic type
+ */
+public interface InteractionContext<E> extends ScreenContext<E> {
 
   /**
    * Take control of the alternate buffer. When the alternate buffer is already used

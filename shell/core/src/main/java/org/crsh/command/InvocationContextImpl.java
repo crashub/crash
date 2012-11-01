@@ -19,7 +19,7 @@
 
 package org.crsh.command;
 
-import org.crsh.io.IOContext;
+import org.crsh.io.ScreenContext;
 import org.crsh.io.ProducerContext;
 import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.shell.impl.command.PipeLineFactory;
@@ -44,7 +44,7 @@ class InvocationContextImpl<P> implements InvocationContext<P> {
 
   public RenderPrintWriter getWriter() {
     if (writer == null) {
-      writer = new RenderPrintWriter(new IOContext<Chunk>() {
+      writer = new RenderPrintWriter(new ScreenContext<Chunk>() {
         public int getWidth() {
           return producerContext.getWidth();
         }

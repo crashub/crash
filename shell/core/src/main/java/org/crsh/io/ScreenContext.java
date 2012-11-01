@@ -20,12 +20,14 @@
 package org.crsh.io;
 
 /**
- * The io context extends the pipe.
+ * The screen context extends the pipe and add information about the screen.
+ *
+ * @param <E> the element generic type
  */
-public interface IOContext<E> extends Pipe<E> {
+public interface ScreenContext<E> extends Pipe<E> {
 
   /**
-   * Returns the term width in chars. When the value is not positive it means
+   * Returns the screen width in chars. When the value is not positive it means
    * the value could not be determined.
    *
    * @return the term width
@@ -33,7 +35,7 @@ public interface IOContext<E> extends Pipe<E> {
   int getWidth();
 
   /**
-   * Returns the term height in chars. When the value is not positive it means
+   * Returns the screen height in chars. When the value is not positive it means
    * the value could not be determined.
    *
    * @return the term height

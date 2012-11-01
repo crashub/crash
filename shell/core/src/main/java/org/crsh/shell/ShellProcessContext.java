@@ -19,8 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.InteractionContext;
-import org.crsh.io.IOContext;
+import org.crsh.io.InteractionContext;
 import org.crsh.text.Chunk;
 
 /**
