@@ -214,7 +214,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
       CommandCompletion completion;
       int pos = termPrefix.indexOf(' ');
       if (pos == -1) {
-        ValueCompletion completions = ValueCompletion.create();
+        ValueCompletion completions = ValueCompletion.create(prefix);
         for (String resourceId : crash.context.listResourceId(ResourceKind.COMMAND)) {
           if (resourceId.startsWith(termPrefix)) {
             completions.put(resourceId.substring(termPrefix.length()), true);
