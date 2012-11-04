@@ -26,7 +26,7 @@ import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
@@ -306,7 +306,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
     ClientProcessor t = new ClientProcessor(clientOIS, clientOOS, new BaseShell() {
       @Override
       public CommandCompletion complete(String prefix) {
-        return new CommandCompletion(Delimiter.DOUBLE_QUOTE, new ValueCompletion(prefix, Collections.singletonMap("ix", true)));
+        return new CommandCompletion(Delimiter.DOUBLE_QUOTE, Completion.create(prefix, "ix", true));
       }
     });
     t.start();
@@ -315,10 +315,10 @@ public class RemoteShellTestCase extends AbstractTestCase {
     ServerAutomaton server = new ServerAutomaton(serverOOS, serverOIS);
     CommandCompletion completion = server.complete("pref");
     assertEquals(Delimiter.DOUBLE_QUOTE, completion.getDelimiter());
-    ValueCompletion value = completion.getValue();
+    Completion value = completion.getValue();
     assertEquals("pref", value.getPrefix());
     assertEquals(1, value.getSize());
-    assertEquals(Collections.singleton("ix"), value.getSuffixes());
+    assertEquals(Collections.singleton("ix"), value.getValues());
     assertEquals(true, value.get("ix"));
 
     //

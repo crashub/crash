@@ -20,9 +20,9 @@
 package org.crsh.cmdline.completers;
 
 import org.crsh.cmdline.ParameterDescriptor;
+import org.crsh.cmdline.spi.Completion;
 import org.crsh.cmdline.type.ValueType;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.ValueCompletion;
 
 import java.lang.reflect.Method;
 
@@ -40,9 +40,9 @@ public class EnumCompleter implements Completer {
     return instance;
   }
 
-  public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-    ValueCompletion completions = ValueCompletion.create();
+  public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
     if (parameter.getType() == ValueType.ENUM) {
+      Completion.Builder builder = null;
       Class<?> vt = parameter.getDeclaredType();
       Method valuesM = vt.getDeclaredMethod("values");
       Method nameM = vt.getMethod("name");
@@ -50,13 +50,15 @@ public class EnumCompleter implements Completer {
       for (Enum<?> value : values) {
         String name = (String)nameM.invoke(value);
         if (name.startsWith(prefix)) {
-          if (completions.isEmpty()) {
-            completions = new ValueCompletion();
+          if (builder == null) {
+            builder = Completion.builder(prefix);
           }
-          completions.put(name.substring(prefix.length()), true);
+          builder.add(name.substring(prefix.length()), true);
         }
       }
+      return builder != null ? builder.build() : Completion.create();
+    } else {
+      return Completion.create();
     }
-    return completions;
   }
 }

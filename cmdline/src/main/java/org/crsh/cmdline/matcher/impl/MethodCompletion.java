@@ -24,9 +24,8 @@ import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.MethodDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
-import org.crsh.cmdline.spi.ValueCompletion;
 
-class MethodCompletion<T> extends Completion {
+class MethodCompletion<T> extends org.crsh.cmdline.matcher.impl.Completion {
 
   /** . */
   private final ClassDescriptor<T> descriptor;
@@ -49,15 +48,15 @@ class MethodCompletion<T> extends Completion {
 
   @Override
   protected CommandCompletion complete() throws CmdCompletionException {
-    ValueCompletion completions = new ValueCompletion(prefix);
+    org.crsh.cmdline.spi.Completion.Builder builder = org.crsh.cmdline.spi.Completion.builder(prefix);
     for (MethodDescriptor<?> m : descriptor.getMethods()) {
       String name = m.getName();
       if (name.startsWith(prefix)) {
         if (!name.equals(mainName)) {
-          completions.put(name.substring(prefix.length()), true);
+          builder.add(name.substring(prefix.length()), true);
         }
       }
     }
-    return new CommandCompletion(delimiter, completions);
+    return new CommandCompletion(delimiter, builder.build());
   }
 }

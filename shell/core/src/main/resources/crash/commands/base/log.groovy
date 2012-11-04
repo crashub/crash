@@ -17,7 +17,7 @@ import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
 
 import org.crsh.cmdline.completers.EnumCompleter
-import org.crsh.cmdline.spi.ValueCompletion
+import org.crsh.cmdline.spi.Completion
 import org.crsh.command.PipeCommand;
 
 @Usage("logging commands")
@@ -186,12 +186,12 @@ The following set the level warn on all the available loggers:
     };
   }
 
-  public ValueCompletion complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
-    def c = ValueCompletion.create(prefix);
+  public Completion complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
+    def c = Completion.create(prefix);
     if (parameter.getDeclaredType() == LoggerName.class) {
       loggers.each() {
         if (it.startsWith(prefix)) {
-          c.put(it.substring(prefix.length()), true);
+          c.add(it.substring(prefix.length()), true);
         }
       }
     }

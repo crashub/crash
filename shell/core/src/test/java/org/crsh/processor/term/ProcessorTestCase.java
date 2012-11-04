@@ -26,7 +26,7 @@ import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -238,7 +238,7 @@ public class ProcessorTestCase extends TestCase {
     Controller controller = create(new BaseShell(BaseProcessFactory.ECHO) {
       @Override
       public CommandCompletion complete(String prefix) {
-        return new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create(new StringBuilder(prefix).reverse().toString(), false));
+        return new CommandCompletion(Delimiter.EMPTY, Completion.create(new StringBuilder(prefix).reverse().toString(), false));
       }
     });
     controller.assertStart();

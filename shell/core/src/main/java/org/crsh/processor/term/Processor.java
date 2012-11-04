@@ -19,10 +19,10 @@
 
 package org.crsh.processor.term;
 
+import org.crsh.cmdline.spi.Completion;
 import org.crsh.io.Pipe;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
-import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.text.Chunk;
@@ -325,7 +325,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
   private void complete(CharSequence prefix) {
     log.debug("About to get completions for " + prefix);
     CommandCompletion completion = shell.complete(prefix.toString());
-    ValueCompletion completions = completion.getValue();
+    Completion completions = completion.getValue();
     log.debug("Completions for " + prefix + " are " + completions);
 
     //
@@ -344,7 +344,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
           buffer.append(completion.getDelimiter().getValue());
         }
       } else {
-        String commonCompletion = Strings.findLongestCommonPrefix(completions.getSuffixes());
+        String commonCompletion = Strings.findLongestCommonPrefix(completions.getValues());
         if (commonCompletion.length() > 0) {
           term.getInsertBuffer().append(delimiter.escape(commonCompletion));
         } else {
@@ -356,7 +356,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
 
           // Get the max length
           int max = 0;
-          for (String suffix : completions.getSuffixes()) {
+          for (String suffix : completions.getValues()) {
             max = Math.max(max, completionPrefix.length() + suffix.length());
           }
 
@@ -368,7 +368,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
           if (max < width) {
             int columns = width / max;
             int index = 0;
-            for (String suffix : completions.getSuffixes()) {
+            for (String suffix : completions.getValues()) {
               sb.append(completionPrefix).append(suffix);
               for (int l = completionPrefix.length() + suffix.length();l < max;l++) {
                 sb.append(' ');
@@ -382,7 +382,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
               sb.append('\n');
             }
           } else {
-            for (Iterator<String> i = completions.getSuffixes().iterator();i.hasNext();) {
+            for (Iterator<String> i = completions.getValues().iterator();i.hasNext();) {
               String suffix = i.next();
               sb.append(commonCompletion).append(suffix);
               if (i.hasNext()) {

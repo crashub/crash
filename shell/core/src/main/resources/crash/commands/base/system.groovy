@@ -13,7 +13,7 @@ import org.crsh.cmdline.ParameterDescriptor
 import org.crsh.cmdline.annotations.Option
 
 import org.crsh.cmdline.completers.EnumCompleter
-import org.crsh.cmdline.spi.ValueCompletion
+import org.crsh.cmdline.spi.Completion
 import java.util.regex.Pattern
 import org.crsh.cmdline.annotations.Required
 
@@ -65,13 +65,13 @@ class system extends CRaSHCommand implements Completer {
     System.clearProperty name.toString()
   }
 
-  ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix)
+  Completion complete(ParameterDescriptor<?> parameter, String prefix)
   {
-    def c = ValueCompletion.create(prefix);
+    def c = Completion.create(prefix);
     if (parameter.getDeclaredType() == PropName.class) {
       System.getProperties().each() {
         if (it.key.startsWith(prefix)) {
-          c.put(it.key.substring(prefix.length()), true)
+          c.add(it.key.substring(prefix.length()), true)
         }
       }
     }

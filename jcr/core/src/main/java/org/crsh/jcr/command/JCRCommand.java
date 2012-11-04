@@ -23,7 +23,7 @@ import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.completers.AbstractPathCompleter;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 import org.crsh.command.CRaSHCommand;
 
 import javax.jcr.Node;
@@ -39,7 +39,7 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
   protected JCRCommand() throws IntrospectionException {
   }
 
-  public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+  public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
     if (parameter.getDeclaredType() == Path.class) {
 
       final Path path = (Path)getProperty("currentPath");
@@ -101,6 +101,6 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
     }
 
     //
-    return ValueCompletion.create();
+    return Completion.create();
   }
 }

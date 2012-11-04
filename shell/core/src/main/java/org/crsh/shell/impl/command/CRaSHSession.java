@@ -23,10 +23,10 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.crsh.cmdline.spi.Completion;
 import org.crsh.command.SessionContext;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
-import org.crsh.cmdline.spi.ValueCompletion;
 import org.crsh.command.BaseCommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.NoSuchCommandException;
@@ -214,13 +214,13 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
       CommandCompletion completion;
       int pos = termPrefix.indexOf(' ');
       if (pos == -1) {
-        ValueCompletion completions = ValueCompletion.create(prefix);
+        Completion.Builder builder = Completion.builder(prefix);
         for (String resourceId : crash.context.listResourceId(ResourceKind.COMMAND)) {
           if (resourceId.startsWith(termPrefix)) {
-            completions.put(resourceId.substring(termPrefix.length()), true);
+            builder.add(resourceId.substring(termPrefix.length()), true);
           }
         }
-        completion = new CommandCompletion(Delimiter.EMPTY, completions);
+        completion = new CommandCompletion(Delimiter.EMPTY, builder.build());
       } else {
         String commandName = termPrefix.substring(0, pos);
         termPrefix = termPrefix.substring(pos);
@@ -229,12 +229,12 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
           if (command != null) {
             completion = command.complete(new BaseCommandContext(this, crash.context.getAttributes()), termPrefix);
           } else {
-            completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
+            completion = new CommandCompletion(Delimiter.EMPTY, Completion.create());
           }
         }
         catch (NoSuchCommandException e) {
           log.debug("Could not create command for completion of " + prefix, e);
-          completion = new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
+          completion = new CommandCompletion(Delimiter.EMPTY, Completion.create());
         }
       }
 

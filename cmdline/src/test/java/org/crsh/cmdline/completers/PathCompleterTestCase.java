@@ -2,7 +2,7 @@ package org.crsh.cmdline.completers;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,9 +104,9 @@ public class PathCompleterTestCase extends TestCase {
     assertTrue(foo.createNewFile());
 
     //
-    assertCompletion("/", ValueCompletion.create("foo", true));
-    assertCompletion("/f", ValueCompletion.create("f", "oo", true));
-    assertCompletion("/foo", ValueCompletion.create("", true));
+    assertCompletion("/", Completion.create("foo", true));
+    assertCompletion("/f", Completion.create("f", "oo", true));
+    assertCompletion("/foo", Completion.create("", true));
 
     //
     assertTrue(foo.delete());
@@ -115,74 +115,74 @@ public class PathCompleterTestCase extends TestCase {
     assertTrue(bar.createNewFile());
 
     //
-    assertCompletion("/", ValueCompletion.create("foo/", false));
-    assertCompletion("/f", ValueCompletion.create("f", "oo/", false));
-    assertCompletion("/foo", ValueCompletion.create("/", false));
-    assertCompletion("/foo/", ValueCompletion.create("bar", true));
-    assertCompletion("/foo/b", ValueCompletion.create("b", "ar", true));
-    assertCompletion("/foo/bar", ValueCompletion.create("", true));
+    assertCompletion("/", Completion.create("foo/", false));
+    assertCompletion("/f", Completion.create("f", "oo/", false));
+    assertCompletion("/foo", Completion.create("/", false));
+    assertCompletion("/foo/", Completion.create("bar", true));
+    assertCompletion("/foo/b", Completion.create("b", "ar", true));
+    assertCompletion("/foo/bar", Completion.create("", true));
   }
 
   public void testAbsoluteDir() throws Exception {
-    assertCompletion("/", ValueCompletion.create());
-    assertCompletion("/f", ValueCompletion.create("f"));
+    assertCompletion("/", Completion.create());
+    assertCompletion("/f", Completion.create("f"));
 
     //
     File foo = new File(root, "foo");
     assertTrue(foo.mkdir());
-    assertCompletion("/", ValueCompletion.create("foo/", false));
-    assertCompletion("/f", ValueCompletion.create("f", "oo/", false));
-    assertCompletion("/foo", ValueCompletion.create("/", false));
-    assertCompletion("/foo/", ValueCompletion.create());
+    assertCompletion("/", Completion.create("foo/", false));
+    assertCompletion("/f", Completion.create("f", "oo/", false));
+    assertCompletion("/foo", Completion.create("/", false));
+    assertCompletion("/foo/", Completion.create());
 
     //
     File bar = new File(foo, "bar");
     assertTrue(bar.mkdir());
-    assertCompletion("/", ValueCompletion.create("foo/", false));
-    assertCompletion("/f", ValueCompletion.create("f", "oo/", false));
-    assertCompletion("/foo", ValueCompletion.create("/", false));
-    assertCompletion("/foo/", ValueCompletion.create("bar/", false));
-    assertCompletion("/foo/b", ValueCompletion.create("b", "ar/", false));
-    assertCompletion("/foo/bar", ValueCompletion.create("/", false));
-    assertCompletion("/foo/bar/", ValueCompletion.create());
+    assertCompletion("/", Completion.create("foo/", false));
+    assertCompletion("/f", Completion.create("f", "oo/", false));
+    assertCompletion("/foo", Completion.create("/", false));
+    assertCompletion("/foo/", Completion.create("bar/", false));
+    assertCompletion("/foo/b", Completion.create("b", "ar/", false));
+    assertCompletion("/foo/bar", Completion.create("/", false));
+    assertCompletion("/foo/bar/", Completion.create());
 
     //
     File juu = new File(bar, "juu");
     assertTrue(juu.mkdir());
-    assertCompletion("/", ValueCompletion.create("foo/", false));
-    assertCompletion("/f", ValueCompletion.create("f", "oo/", false));
-    assertCompletion("/foo", ValueCompletion.create("/", false));
-    assertCompletion("/foo/", ValueCompletion.create("bar/", false));
-    assertCompletion("/foo/b", ValueCompletion.create("b", "ar/", false));
-    assertCompletion("/foo/bar", ValueCompletion.create("/", false));
-    assertCompletion("/foo/bar/", ValueCompletion.create("juu/", false));
-    assertCompletion("/foo/bar/j", ValueCompletion.create("j", "uu/", false));
-    assertCompletion("/foo/bar/juu", ValueCompletion.create("/", false));
-    assertCompletion("/foo/bar/juu/", ValueCompletion.create());
+    assertCompletion("/", Completion.create("foo/", false));
+    assertCompletion("/f", Completion.create("f", "oo/", false));
+    assertCompletion("/foo", Completion.create("/", false));
+    assertCompletion("/foo/", Completion.create("bar/", false));
+    assertCompletion("/foo/b", Completion.create("b", "ar/", false));
+    assertCompletion("/foo/bar", Completion.create("/", false));
+    assertCompletion("/foo/bar/", Completion.create("juu/", false));
+    assertCompletion("/foo/bar/j", Completion.create("j", "uu/", false));
+    assertCompletion("/foo/bar/juu", Completion.create("/", false));
+    assertCompletion("/foo/bar/juu/", Completion.create());
   }
 
   public void testRootRelativeDir() throws Exception {
-    assertCompletion("", ValueCompletion.create());
-    assertCompletion("f", ValueCompletion.create("f"));
+    assertCompletion("", Completion.create());
+    assertCompletion("f", Completion.create("f"));
 
     //
     File foo = new File(root, "foo");
     assertTrue(foo.mkdir());
-    assertCompletion("", ValueCompletion.create("foo/", false));
-    assertCompletion("f", ValueCompletion.create("f", "oo/", false));
-    assertCompletion("foo", ValueCompletion.create("/", false));
-    assertCompletion("foo/", ValueCompletion.create());
+    assertCompletion("", Completion.create("foo/", false));
+    assertCompletion("f", Completion.create("f", "oo/", false));
+    assertCompletion("foo", Completion.create("/", false));
+    assertCompletion("foo/", Completion.create());
 
     //
     File bar = new File(foo, "bar");
     assertTrue(bar.mkdir());
-    assertCompletion("", ValueCompletion.create("foo/", false));
-    assertCompletion("f", ValueCompletion.create("f", "oo/", false));
-    assertCompletion("foo", ValueCompletion.create("/", false));
-    assertCompletion("foo/", ValueCompletion.create("bar/", false));
-    assertCompletion("foo/b", ValueCompletion.create("b", "ar/", false));
-    assertCompletion("foo/bar", ValueCompletion.create("/", false));
-    assertCompletion("foo/bar/", ValueCompletion.create());
+    assertCompletion("", Completion.create("foo/", false));
+    assertCompletion("f", Completion.create("f", "oo/", false));
+    assertCompletion("foo", Completion.create("/", false));
+    assertCompletion("foo/", Completion.create("bar/", false));
+    assertCompletion("foo/b", Completion.create("b", "ar/", false));
+    assertCompletion("foo/bar", Completion.create("/", false));
+    assertCompletion("foo/bar/", Completion.create());
   }
 
   public void testSubRelativeDir() throws Exception {
@@ -191,31 +191,31 @@ public class PathCompleterTestCase extends TestCase {
     completer.setCurrent(sub);
 
     //
-    assertCompletion("", ValueCompletion.create());
-    assertCompletion("f", ValueCompletion.create("f"));
+    assertCompletion("", Completion.create());
+    assertCompletion("f", Completion.create("f"));
 
     //
     File foo = new File(sub, "foo");
     assertTrue(foo.mkdir());
-    assertCompletion("", ValueCompletion.create("foo/", false));
-    assertCompletion("f", ValueCompletion.create("f", "oo/", false));
-    assertCompletion("foo", ValueCompletion.create("/", false));
-    assertCompletion("foo/", ValueCompletion.create());
+    assertCompletion("", Completion.create("foo/", false));
+    assertCompletion("f", Completion.create("f", "oo/", false));
+    assertCompletion("foo", Completion.create("/", false));
+    assertCompletion("foo/", Completion.create());
 
     //
     File bar = new File(foo, "bar");
     assertTrue(bar.mkdir());
-    assertCompletion("", ValueCompletion.create("foo/", false));
-    assertCompletion("f", ValueCompletion.create("f", "oo/", false));
-    assertCompletion("foo", ValueCompletion.create("/", false));
-    assertCompletion("foo/", ValueCompletion.create("bar/", false));
-    assertCompletion("foo/b", ValueCompletion.create("b", "ar/", false));
-    assertCompletion("foo/bar", ValueCompletion.create("/", false));
-    assertCompletion("foo/bar/", ValueCompletion.create());
+    assertCompletion("", Completion.create("foo/", false));
+    assertCompletion("f", Completion.create("f", "oo/", false));
+    assertCompletion("foo", Completion.create("/", false));
+    assertCompletion("foo/", Completion.create("bar/", false));
+    assertCompletion("foo/b", Completion.create("b", "ar/", false));
+    assertCompletion("foo/bar", Completion.create("/", false));
+    assertCompletion("foo/bar/", Completion.create());
   }
 
-  private void assertCompletion(String path, ValueCompletion expected) throws Exception {
-    ValueCompletion completions = completer.complete (null, path);
+  private void assertCompletion(String path, Completion expected) throws Exception {
+    Completion completions = completer.complete (null, path);
     assertEquals(expected, completions);
   }
 }

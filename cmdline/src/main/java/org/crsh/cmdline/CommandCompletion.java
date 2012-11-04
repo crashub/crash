@@ -19,7 +19,7 @@
 
 package org.crsh.cmdline;
 
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 
 import java.io.Serializable;
 
@@ -29,9 +29,9 @@ public final class CommandCompletion implements Serializable {
   private final Delimiter delimiter;
 
   /** . */
-  private final ValueCompletion value;
+  private final Completion value;
 
-  public CommandCompletion(Delimiter delimiter, ValueCompletion value) throws NullPointerException {
+  public CommandCompletion(Delimiter delimiter, Completion value) throws NullPointerException {
     if (delimiter == null) {
       throw new NullPointerException("No null delimiter accepted");
     }
@@ -48,7 +48,7 @@ public final class CommandCompletion implements Serializable {
     return delimiter;
   }
 
-  public ValueCompletion getValue() {
+  public Completion getValue() {
     return value;
   }
 

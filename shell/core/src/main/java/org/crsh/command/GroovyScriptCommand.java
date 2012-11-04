@@ -26,7 +26,7 @@ import groovy.lang.Script;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 import org.crsh.io.ProducerContext;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.text.RenderPrintWriter;
@@ -179,7 +179,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   }
 
   public final CommandCompletion complete(SessionContext context, String line) {
-    return new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
+    return new CommandCompletion(Delimiter.EMPTY, Completion.create());
   }
 
   public void setPiped(boolean piped) {

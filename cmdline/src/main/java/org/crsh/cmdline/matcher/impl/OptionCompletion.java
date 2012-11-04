@@ -24,11 +24,10 @@ import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.matcher.tokenizer.Token;
-import org.crsh.cmdline.spi.ValueCompletion;
 
 import java.util.Set;
 
-class OptionCompletion<T> extends Completion {
+class OptionCompletion<T> extends org.crsh.cmdline.matcher.impl.Completion {
 
   /** . */
   private final CommandDescriptor<T, ?> descriptor;
@@ -43,13 +42,13 @@ class OptionCompletion<T> extends Completion {
 
   @Override
   protected CommandCompletion complete() throws CmdCompletionException {
-    ValueCompletion completions = new ValueCompletion(prefix.getValue());
+    org.crsh.cmdline.spi.Completion.Builder builder = org.crsh.cmdline.spi.Completion.builder(prefix.getValue());
     Set<String> optionNames = prefix instanceof Token.Literal.Option.Short ? descriptor.getShortOptionNames() : descriptor.getLongOptionNames();
     for (String optionName : optionNames) {
       if (optionName.startsWith(prefix.getValue())) {
-        completions.put(optionName.substring(prefix.getValue().length()), true);
+        builder.add(optionName.substring(prefix.getValue().length()), true);
       }
     }
-    return new CommandCompletion(Delimiter.EMPTY, completions);
+    return new CommandCompletion(Delimiter.EMPTY, builder.build());
   }
 }

@@ -21,7 +21,7 @@ package org.crsh.cmdline.completers;
 
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 
 public class EmptyCompleter implements Completer {
 
@@ -40,7 +40,7 @@ public class EmptyCompleter implements Completer {
   /**
    * Returns the value returned by {@link java.util.Collections#emptyList()}.
    */
-  public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) {
-    return ValueCompletion.create();
+  public Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+    return Completion.create();
   }
 }

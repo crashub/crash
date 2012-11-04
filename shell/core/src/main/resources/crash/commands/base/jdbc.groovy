@@ -18,7 +18,7 @@ import org.crsh.util.Safe
 import java.sql.DatabaseMetaData
 import org.crsh.text.ui.UIBuilder
 import org.crsh.cmdline.spi.Completer
-import org.crsh.cmdline.spi.ValueCompletion
+import org.crsh.cmdline.spi.Completion
 import org.crsh.cmdline.ParameterDescriptor
 import org.crsh.util.JNDIHandler;
 
@@ -311,14 +311,14 @@ class jdbc extends CRaSHCommand {
   }
     
   public static class DataSourcesCompleter implements Completer {
-     ValueCompletion complete(ParameterDescriptor<?> parameter, java.lang.String prefix) {
+     Completion complete(ParameterDescriptor<?> parameter, java.lang.String prefix) {
          def pattern = (prefix != null && prefix.length() > 0 ? prefix + "*" : null);
-         ValueCompletion c = ValueCompletion.create()
+         Completion c = Completion.create()
          JNDIHandler.lookup(["javax.sql.DataSource"], pattern, null).each { d ->
             if (pattern == null) {
-                c.put(d.name, true);
+                c.add(d.name, true);
             } else {
-                c.put(d.name.substring(pattern.length() - 1), true);
+                c.add(d.name.substring(pattern.length() - 1), true);
             }
         }
          return c

@@ -21,7 +21,7 @@ package org.crsh.cmdline.completers;
 
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 
 import java.util.Collection;
 
@@ -41,7 +41,7 @@ public abstract class AbstractPathCompleter<P> implements Completer {
 
   protected abstract String getName(P path) throws Exception;
 
-  public final ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+  public final Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
 
     // Handle empty dir
     if (!prefix.startsWith("/")) {
@@ -68,23 +68,23 @@ public abstract class AbstractPathCompleter<P> implements Completer {
             if (children.size() > 0) {
               return listDir(f, "");
             } else {
-              return ValueCompletion.create();
+              return Completion.create();
             }
           } else {
-            return ValueCompletion.create();
+            return Completion.create();
           }
         } else {
           Collection<P> children = getChilren(f);
           if (children == null) {
-            return ValueCompletion.create();
+            return Completion.create();
           } else {
-            return ValueCompletion.create("/", false);
+            return Completion.create("/", false);
           }
         }
       } else if (isFile(f)) {
-        return ValueCompletion.create("", true);
+        return Completion.create("", true);
       }
-      return ValueCompletion.create();
+      return Completion.create();
     } else {
       int pos = prefix.lastIndexOf('/');
       if (pos != -1) {
@@ -100,21 +100,21 @@ public abstract class AbstractPathCompleter<P> implements Completer {
           if (isDirectory(f)) {
             return listDir(f, filter);
           } else {
-            return ValueCompletion.create();
+            return Completion.create();
           }
         } else {
-          return ValueCompletion.create();
+          return Completion.create();
         }
       } else {
-        return ValueCompletion.create();
+        return Completion.create();
       }
     }
   }
 
-  private ValueCompletion listDir(P dir, final String filter) throws Exception {
+  private Completion listDir(P dir, final String filter) throws Exception {
     Collection<P> children = getChilren(dir);
     if (children != null) {
-      ValueCompletion map = new ValueCompletion(filter);
+      Completion.Builder builder = Completion.builder(filter);
       for (P child : children) {
         String name = getName(child);
         if (name.startsWith(filter)) {
@@ -122,18 +122,18 @@ public abstract class AbstractPathCompleter<P> implements Completer {
           if (isDirectory(child)) {
             Collection<P> grandChildren = getChilren(child);
             if (grandChildren != null) {
-              map.put(suffix + "/", false);
+              builder.add(suffix + "/", false);
             } else {
               // Skip it
             }
           } else {
-            map.put(suffix, true);
+            builder.add(suffix, true);
           }
         }
       }
-      return map;
+      return builder.build();
     } else {
-      return ValueCompletion.create();
+      return Completion.create();
     }
   }
 }

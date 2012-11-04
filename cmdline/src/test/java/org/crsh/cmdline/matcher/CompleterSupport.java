@@ -21,7 +21,7 @@ package org.crsh.cmdline.matcher;
 
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 
 /**
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
@@ -33,41 +33,41 @@ public class CompleterSupport {
   }
 
   public static class RuntimeException implements Completer {
-    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
+    public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
       throw new java.lang.RuntimeException();
     }
   }
 
   public static class Exception implements Completer {
-    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
+    public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
       throw new java.lang.Exception();
     }
   }
 
   public static class Mirror implements Completer {
-    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) {
-      return ValueCompletion.create(new StringBuilder(prefix).reverse().toString(), false);
+    public Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+      return Completion.create(new StringBuilder(prefix).reverse().toString(), false);
     }
   }
 
   public static class Echo implements Completer {
-    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) {
-      return ValueCompletion.create(prefix, false);
+    public Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+      return Completion.create(prefix, false);
     }
   }
 
   public static class Foo implements Completer {
-    public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) {
+    public Completion complete(ParameterDescriptor<?> parameter, String prefix) {
       if (prefix.equals("foo")) {
-        return ValueCompletion.create("", true);
+        return Completion.create("", true);
       } else if (prefix.equals("fo")) {
-        return ValueCompletion.create("o", true);
+        return Completion.create("o", true);
       } else if (prefix.equals("f")) {
-        return ValueCompletion.create("oo", true);
+        return Completion.create("oo", true);
       } else if (prefix.equals("")) {
-        return ValueCompletion.create("foo", true);
+        return Completion.create("foo", true);
       } else {
-        return ValueCompletion.create();
+        return Completion.create();
       }
     }
   }

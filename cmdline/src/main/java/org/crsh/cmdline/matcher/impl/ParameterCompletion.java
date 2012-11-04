@@ -25,9 +25,8 @@ import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.matcher.CmdCompletionException;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.ValueCompletion;
 
-class ParameterCompletion extends Completion {
+class ParameterCompletion extends org.crsh.cmdline.matcher.impl.Completion {
 
   /** . */
   private final String prefix;
@@ -72,7 +71,7 @@ class ParameterCompletion extends Completion {
         throw new CmdCompletionException(e);
       }
     } else {
-      return new CommandCompletion(delimiter, ValueCompletion.create());
+      return new CommandCompletion(delimiter, org.crsh.cmdline.spi.Completion.create());
     }
   }
 }

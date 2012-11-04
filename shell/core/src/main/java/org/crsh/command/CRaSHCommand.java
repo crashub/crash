@@ -39,7 +39,7 @@ import org.crsh.cmdline.matcher.MethodMatch;
 import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.matcher.Resolver;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.ValueCompletion;
+import org.crsh.cmdline.spi.Completion;
 import org.crsh.io.ProducerContext;
 import org.crsh.util.TypeResolver;
 import org.slf4j.Logger;
@@ -111,7 +111,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
     catch (CmdCompletionException e) {
       log.error("Error during completion of line " + line, e);
-      return new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create());
+      return new CommandCompletion(Delimiter.EMPTY, Completion.create());
     }
   }
 
