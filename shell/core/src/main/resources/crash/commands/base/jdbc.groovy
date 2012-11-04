@@ -13,7 +13,6 @@ import java.sql.DriverManager
 import org.crsh.command.ScriptException
 import org.crsh.cmdline.annotations.Option
 import java.lang.reflect.InvocationTargetException
-import org.crsh.cmdline.spi.Value
 import org.crsh.command.InvocationContext
 import org.crsh.util.Safe
 import java.sql.DatabaseMetaData
@@ -35,7 +34,7 @@ class jdbc extends CRaSHCommand {
   public String connect(
           @Usage("The username") @Option(names=["u","username"]) String user,
           @Usage("The password") @Option(names=["p","password"]) String password,
-          @Usage("The extra properties") @Option(names=["properties"]) Value.Properties properties,
+          @Usage("The extra properties") @Option(names=["properties"]) Properties properties,
           @Usage("The connection string") @Argument String connectionString) {
     if (connection != null) {
       throw new ScriptException("Already connected");

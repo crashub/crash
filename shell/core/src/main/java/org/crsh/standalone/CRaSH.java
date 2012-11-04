@@ -62,7 +62,7 @@ public class CRaSH {
   private final ClassDescriptor<CRaSH> descriptor;
 
   public CRaSH() throws IntrospectionException {
-    this.descriptor = CommandFactory.create(CRaSH.class);
+    this.descriptor = CommandFactory.DEFAULT.create(CRaSH.class);
   }
 
   @Command

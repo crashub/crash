@@ -71,7 +71,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   private boolean help;
 
   protected CRaSHCommand() throws IntrospectionException {
-    this.descriptor = CommandFactory.create(getClass());
+    this.descriptor = new CommandFactory(getClass().getClassLoader()).create(getClass());
     this.help = false;
     this.unmatched = null;
   }

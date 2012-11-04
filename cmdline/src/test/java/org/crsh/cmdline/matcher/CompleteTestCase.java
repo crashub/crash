@@ -49,7 +49,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher();
 
     //
@@ -68,7 +68,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher();
 
     //
@@ -88,7 +88,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher("main");
 
     //
@@ -109,7 +109,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher("main");
 
     //
@@ -126,7 +126,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher();
 
     //
@@ -146,7 +146,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher();
 
     //
@@ -171,7 +171,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher("main");
 
     //
@@ -186,7 +186,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher();
     assertEquals(new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create("foo", true)), matcher.complete("-a "));
     assertEquals(new CommandCompletion(Delimiter.EMPTY, ValueCompletion.create("oo", true)), matcher.complete("-a f"));
@@ -204,7 +204,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher("main");
 
     //
@@ -223,7 +223,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher("main");
 
     //
@@ -243,7 +243,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher("main");
 
     //
@@ -274,7 +274,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher("main");
 
     //
@@ -297,7 +297,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher();
 
     //
@@ -331,7 +331,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> matcher = desc.matcher();
 
     //
@@ -354,7 +354,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void foo(@Option(names = "a", completer = CompleterSupport.Exception.class) String a) { }
     }
-    Matcher<A> matcherA = CommandFactory.create(A.class).matcher();
+    Matcher<A> matcherA = CommandFactory.DEFAULT.create(A.class).matcher();
     try {
       matcherA.complete("foo -a b");
       fail();
@@ -367,7 +367,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void foo(@Option(names = "a", completer = CompleterSupport.RuntimeException.class) String a) { }
     }
-    Matcher<B> matcherB = CommandFactory.create(B.class).matcher();
+    Matcher<B> matcherB = CommandFactory.DEFAULT.create(B.class).matcher();
     try {
       matcherB.complete("foo -a b");
       fail();
@@ -380,7 +380,7 @@ public class CompleteTestCase extends TestCase {
       @Command
       void foo(@Option(names = "a", completer = CompleterSupport.Abstract.class) String a) { }
     }
-    Matcher<C> matcherC = CommandFactory.create(C.class).matcher();
+    Matcher<C> matcherC = CommandFactory.DEFAULT.create(C.class).matcher();
     try {
       matcherC.complete("foo -a b");
       fail();
@@ -392,12 +392,12 @@ public class CompleteTestCase extends TestCase {
   public void testArgumentProvidedValue() throws Exception {
 
     class A {
-      ValueSupport.Provided o;
+      Custom o;
       @Command
-      public void foo(@Argument ValueSupport.Provided o) { this.o = o; }
+      public void foo(@Argument Custom o) { this.o = o; }
     }
 
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = new CommandFactory(CompleteTestCase.class.getClassLoader()).create(A.class);
 
     //
     Matcher<A> matcher = desc.matcher();

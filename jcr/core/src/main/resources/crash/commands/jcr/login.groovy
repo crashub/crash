@@ -44,7 +44,7 @@ findItemByPath = { Path path ->
   def item = getItemByPath(path);
   if (item != null)
     return item;
-  throw new ScriptException("""$path.string : no such item""");
+  throw new ScriptException("""$path.value : no such item""");
 };
 
 /**
@@ -63,7 +63,7 @@ getNodeByPath = { Path path ->
   } else if (item instanceof Node) {
     return item;
   } else {
-    throw new ScriptException("The path $path.string is an item instead of a node");
+    throw new ScriptException("The path $path.value is an item instead of a node");
   }
 }
 
@@ -78,12 +78,12 @@ getItemByPath = { Path path ->
   if (path == null)
     throw new ScriptException("No path provided");
   if (path.isAbsolute())
-    return session.getItem(path.string);
+    return session.getItem(path.value);
   def node = getCurrentNode();
-  if (node.hasNode(path.string))
-    return node.getNode(path.string);
-  if (node.hasProperty(path.string))
-    return node.getProperty(path.string);
+  if (node.hasNode(path.value))
+    return node.getNode(path.value);
+  if (node.hasProperty(path.value))
+    return node.getProperty(path.value);
   return null;
 };
 
@@ -101,15 +101,15 @@ absolutePath = { Path path ->
   def parent;
   if (path.isAbsolute()) {
     parent = session.rootNode;
-    path = new Path(path.string.substring(1));
+    path = new Path(path.value.substring(1));
   } else {
     parent = getCurrentNode();
   }
   def parentPath = parent.path;
   if (parentPath == "/") {
-    return new Path("/" + path.string);
+    return new Path("/" + path.value);
   } else {
-    return new Path(parent.path + "/" + path.string);
+    return new Path(parent.path + "/" + path.value);
   }
 };
 

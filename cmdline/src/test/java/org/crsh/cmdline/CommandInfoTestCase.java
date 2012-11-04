@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.type.ValueType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -40,7 +41,7 @@ public class CommandInfoTestCase extends TestCase {
   public void testCommandImplicitDescription() throws IntrospectionException {
     class A {
     }
-    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals("", c.getUsage());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, c.getOptions().size());
@@ -49,7 +50,7 @@ public class CommandInfoTestCase extends TestCase {
   public void testCommandDescription() throws IntrospectionException {
     class A {
     }
-    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals("", c.getUsage());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, c.getOptions().size());
@@ -60,7 +61,7 @@ public class CommandInfoTestCase extends TestCase {
       @Option(names = "i")
       private int i;
     }
-    CommandDescriptor<A, ?> ai = CommandFactory.create(A.class);
+    CommandDescriptor<A, ?> ai = CommandFactory.DEFAULT.create(A.class);
     assertEquals(1,ai.getOptions().size());
     OptionDescriptor i = ai.getOption("-i");
     assertEquals(Arrays.asList("i"),i.getNames());
@@ -71,10 +72,10 @@ public class CommandInfoTestCase extends TestCase {
       @Argument()
       private int i;
     }
-    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals(1, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
-    assertEquals(SimpleValueType.INTEGER, i.getType());
+    assertEquals(ValueType.INTEGER, i.getType());
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(false, i.isRequired());
   }
@@ -86,14 +87,14 @@ public class CommandInfoTestCase extends TestCase {
       @Argument
       private List<Integer> j;
     }
-    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals(2, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
-    assertEquals(SimpleValueType.INTEGER, i.getType());
+    assertEquals(ValueType.INTEGER, i.getType());
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(false, i.isRequired());
     ArgumentDescriptor j = c.getArguments().get(1);
-    assertEquals(SimpleValueType.INTEGER, j.getType());
+    assertEquals(ValueType.INTEGER, j.getType());
     assertEquals(Multiplicity.MULTI, j.getMultiplicity());
   }
 
@@ -105,7 +106,7 @@ public class CommandInfoTestCase extends TestCase {
       private List<Integer> j;
     }
     try {
-      CommandFactory.create(A.class);
+      CommandFactory.DEFAULT.create(A.class);
       fail();
     }
     catch (IntrospectionException e) {
@@ -120,7 +121,7 @@ public class CommandInfoTestCase extends TestCase {
       }
     }
 
-    ClassDescriptor<A> a = CommandFactory.create(A.class);
+    ClassDescriptor<A> a = CommandFactory.DEFAULT.create(A.class);
     MethodDescriptor<?> b = a.getMethod("b");
     assertNotNull(b);
 
@@ -137,7 +138,7 @@ public class CommandInfoTestCase extends TestCase {
     }
 
     try {
-      CommandFactory.create(A.class);
+      CommandFactory.DEFAULT.create(A.class);
       fail();
     }
     catch (IntrospectionException e) {
@@ -157,7 +158,7 @@ public class CommandInfoTestCase extends TestCase {
       String l;
     }
 
-    CommandDescriptor<A, ?> a = CommandFactory.create(A.class);
+    CommandDescriptor<A, ?> a = CommandFactory.DEFAULT.create(A.class);
     assertEquals(1,a.getOptions().size());
     OptionDescriptor i = a.getOption("-l");
     assertEquals(Arrays.asList("l"),i.getNames());

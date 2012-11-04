@@ -55,7 +55,7 @@ public class ExoPlugin extends JCRPlugin<ExoPlugin> {
 
     //
     if (topContainer != null) {
-      String containerName = properties.get("container");
+      String containerName = properties != null ? properties.get("container") : null;
       Object container;
       if (containerName != null) {
         Method getPortalContainerMethod = topContainer.getClass().getMethod("getPortalContainer",

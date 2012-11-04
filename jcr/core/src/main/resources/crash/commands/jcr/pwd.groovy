@@ -13,6 +13,6 @@ public class pwd extends org.crsh.command.CRaSHCommand {
 /gadgets""")
   public void main(InvocationContext<Node> context) {
     context.provide(getCurrentNode());
-    out << currentPath.string;
+    out << currentPath.value;
   }
 }

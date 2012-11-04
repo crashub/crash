@@ -44,7 +44,7 @@ public class MatcherTestCase extends TestCase {
       @Required
       String s;
     }
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> analyzer = desc.matcher();
 
     A a = new A();
@@ -65,7 +65,7 @@ public class MatcherTestCase extends TestCase {
       @Option(names = "o")
       String s;
     }
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> analyzer = desc.matcher();
 
     A a = new A();
@@ -82,7 +82,7 @@ public class MatcherTestCase extends TestCase {
       @Argument
       int i;
     }
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> analyzer = desc.matcher();
 
     A a = new A();
@@ -108,7 +108,7 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testPrimitiveMethodArgument() throws Exception {
-    ClassDescriptor<PMA> desc = CommandFactory.create(PMA.class);
+    ClassDescriptor<PMA> desc = CommandFactory.DEFAULT.create(PMA.class);
     Matcher<PMA> analyzer = desc.matcher();
 
     PMA a = new PMA();
@@ -133,7 +133,7 @@ public class MatcherTestCase extends TestCase {
       @Argument
       String s;
     }
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> analyzer = desc.matcher();
 
     A a = new A();
@@ -157,7 +157,7 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testOptionalArgumentList() throws Exception {
-    ClassDescriptor<BC> desc = CommandFactory.create(BC.class);
+    ClassDescriptor<BC> desc = CommandFactory.DEFAULT.create(BC.class);
     Matcher<BC> analyzer = desc.matcher();
 
     for (String s : Arrays.asList("", "bar ")) {
@@ -185,7 +185,7 @@ public class MatcherTestCase extends TestCase {
       @Required
       List<String> s;
     }
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> analyzer = desc.matcher();
 
     A a = new A();
@@ -219,7 +219,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testMethodInvocation() throws Exception {
 
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> analyzer = desc.matcher();
 
     //
@@ -268,7 +268,7 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testMainMethodInvocation() throws Exception {
-    ClassDescriptor<B> desc = CommandFactory.create(B.class);
+    ClassDescriptor<B> desc = CommandFactory.DEFAULT.create(B.class);
     Matcher<B> analyzer = desc.matcher("main");
 
     //
@@ -289,7 +289,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testInvocationAttributeInjection() throws Exception {
 
-    ClassDescriptor<C> desc = CommandFactory.create(C.class);
+    ClassDescriptor<C> desc = CommandFactory.DEFAULT.create(C.class);
     Matcher<C> analyzer = desc.matcher("main");
 
     //
@@ -324,7 +324,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testInvocationTypeConversionInjection() throws Exception {
 
-    ClassDescriptor<D> desc = CommandFactory.create(D.class);
+    ClassDescriptor<D> desc = CommandFactory.DEFAULT.create(D.class);
 
     //
     D d = new D();
@@ -349,7 +349,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testQuoted() throws Exception {
 
-    ClassDescriptor<E> desc = CommandFactory.create(E.class);
+    ClassDescriptor<E> desc = CommandFactory.DEFAULT.create(E.class);
 
     //
     E e = new E();
@@ -370,7 +370,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testOptionList() throws Exception {
 
-    ClassDescriptor<F> desc = CommandFactory.create(F.class);
+    ClassDescriptor<F> desc = CommandFactory.DEFAULT.create(F.class);
 
     //
     F f = new F();
@@ -385,19 +385,20 @@ public class MatcherTestCase extends TestCase {
 
 
   public static class G {
-    ValueSupport.Provided o;
+    Custom o;
     @Command
-    public void foo(@Option(names = "o") ValueSupport.Provided o) { this.o = o; }
+    public void foo(@Option(names = "o") Custom o) { this.o = o; }
   }
 
   public void testValue() throws Exception {
 
-    ClassDescriptor<G> desc = CommandFactory.create(G.class);
+    //
+    ClassDescriptor<G> desc = new CommandFactory(MatcherTestCase.class.getClassLoader()).create(G.class);
 
     //
     G g = new G();
     desc.matcher("foo").match("-o a").invoke(g);
-    assertEquals(new ValueSupport.Provided("a"), g.o);
+    assertEquals(new Custom("a"), g.o);
   }
 
   public static class H {
@@ -407,7 +408,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testException() throws Exception {
 
-    ClassDescriptor<H> desc = CommandFactory.create(H.class);
+    ClassDescriptor<H> desc = CommandFactory.DEFAULT.create(H.class);
 
     //
     H h = new H();
@@ -428,7 +429,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testRuntimeException() throws Exception {
 
-    ClassDescriptor<I> desc = CommandFactory.create(I.class);
+    ClassDescriptor<I> desc = CommandFactory.DEFAULT.create(I.class);
 
     //
     I i = new I();
@@ -449,7 +450,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testError() throws Exception {
 
-    ClassDescriptor<J> desc = CommandFactory.create(J.class);
+    ClassDescriptor<J> desc = CommandFactory.DEFAULT.create(J.class);
 
     //
     J j = new J();
@@ -467,7 +468,7 @@ public class MatcherTestCase extends TestCase {
       @Option(names = "o")
       boolean o;
     }
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> analyzer = desc.matcher();
 
     //
@@ -484,7 +485,7 @@ public class MatcherTestCase extends TestCase {
       @Required
       String target;
     }
-    ClassDescriptor<SCP> desc = CommandFactory.create(SCP.class);
+    ClassDescriptor<SCP> desc = CommandFactory.DEFAULT.create(SCP.class);
     Matcher<SCP> analyzer = desc.matcher();
 
     //

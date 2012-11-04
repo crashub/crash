@@ -15,7 +15,6 @@ import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.InvocationContext
-import org.crsh.cmdline.spi.Value
 
 import org.crsh.cmdline.completers.EnumCompleter
 import org.crsh.cmdline.spi.ValueCompletion
@@ -35,14 +34,14 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
 
 % log ls | log send -m hello -l warn""")
   @Command
-  public PipeCommand<Logger, Object> send(@MsgOpt String msg, @LoggerArg LoggerName name, @LevelOpt Level level) {
+  public PipeCommand<Logger, Object> send(@MsgOpt String msg, @LoggerArg String name, @LevelOpt Level level) {
     level = level ?: Level.info;
     return new PipeCommand<Logger, Object>() {
       @Override
       void open() {
         if (!isPiped()) {
           if (name != null) {
-            def logger = LoggerFactory.getLogger(name.string);
+            def logger = LoggerFactory.getLogger(name);
             level.log(logger, msg);
           }
         }
@@ -135,10 +134,10 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
 
   @Usage("create one or several loggers")
   @Command
-  public void add(InvocationContext<Logger> context, @LoggerArg List<LoggerName> names) {
+  public void add(InvocationContext<Logger> context, @LoggerArg List<String> names) {
     names.each {
       if (it.string.length() > 0) {
-        Logger logger = LoggerFactory.getLogger(it.string);
+        Logger logger = LoggerFactory.getLogger(it);
         if (logger != null) {
           context.provide(logger);
         }
@@ -161,7 +160,7 @@ The following set the level warn on all the available loggers:
   @Usage("configures the level of one of several loggers")
   @Command
   public PipeCommand<Logger, Object> set(
-    @LoggerArg List<LoggerName> names,
+    @LoggerArg List<String> names,
     @LevelOpt Level level,
     @PluginOpt Plugin plugin) {
 
@@ -175,7 +174,7 @@ The following set the level warn on all the available loggers:
       void open() {
         if (!isPiped()) {
           names.each() {
-            def logger = LoggerFactory.getLogger(it.string);
+            def logger = LoggerFactory.getLogger(it);
             plugin.setLevel(logger, level);
           }
         }
@@ -189,7 +188,7 @@ The following set the level warn on all the available loggers:
 
   public ValueCompletion complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
     def c = ValueCompletion.create(prefix);
-    if (parameter.getJavaValueType() == LoggerName.class) {
+    if (parameter.getDeclaredType() == LoggerName.class) {
       loggers.each() {
         if (it.startsWith(prefix)) {
           c.put(it.substring(prefix.length()), true);
@@ -270,12 +269,6 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 @Option(names=["m","message"])
 @Required
 @interface MsgOpt { }
-
-class LoggerName extends Value {
-  LoggerName(String string) {
-    super(string)
-  }
-}
 
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the logger name")

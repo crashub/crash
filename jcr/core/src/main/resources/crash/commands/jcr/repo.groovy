@@ -25,7 +25,6 @@ import org.crsh.cmdline.annotations.Usage
 
 import org.crsh.text.ui.UIBuilder
 import org.crsh.jcr.JCRPlugin
-import org.crsh.cmdline.spi.Value
 
 @Usage("repository interaction commands")
 @Man("""\
@@ -73,8 +72,8 @@ The parameters is specific to JCR plugin implementations, more details can be fo
   public Object use(
       @Argument
       @Usage("the parameters")
-      @Man("The parameters used to instantiate the repository to be used in this session") Value.Properties parameters) {
-    repository = JCRPlugin.findRepository(parameters.getProperties());
+      @Man("The parameters used to instantiate the repository to be used in this session") Properties parameters) {
+    repository = JCRPlugin.findRepository(parameters);
     return info();
   }
 

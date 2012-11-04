@@ -24,9 +24,6 @@ import org.crsh.cmdline.binding.MethodArgumentBinding;
 import static org.crsh.cmdline.Util.indent;
 import static org.crsh.cmdline.Util.tuples;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -40,9 +37,6 @@ public class MethodDescriptor<T> extends CommandDescriptor<T, MethodArgumentBind
 
   /** . */
   private static final Set<String> MAIN_SINGLETON = Collections.singleton("main");
-
-  /** . */
-  private static final Logger log = LoggerFactory.getLogger(MethodDescriptor.class);
 
   /** . */
   private final ClassDescriptor<T> owner;

@@ -39,7 +39,7 @@ public class DescriptionTestCase extends TestCase {
 
     class A { }
 
-    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals("", c.getUsage());
     assertEquals(new Description(), c.getDescription());
   }
@@ -50,7 +50,7 @@ public class DescriptionTestCase extends TestCase {
     @Man("class_man")
     class A { }
 
-    CommandDescriptor<A, ?> c = CommandFactory.create(A.class);
+    CommandDescriptor<A, ?> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals("class_usage", c.getUsage());
     assertEquals("class_usage", c.getDescription().getUsage());
     assertEquals("class_man", c.getDescription().getMan());
@@ -64,7 +64,7 @@ public class DescriptionTestCase extends TestCase {
       @Command void m() {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     assertEquals("method_usage", m.getUsage());
     assertEquals("method_usage", m.getDescription().getUsage());
@@ -80,7 +80,7 @@ public class DescriptionTestCase extends TestCase {
         @Option(names = "a") String s) {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
     assertEquals("option_usage", a.getUsage());
@@ -105,7 +105,7 @@ public class DescriptionTestCase extends TestCase {
       void m(@Foo String s) {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
     assertEquals("foo_usage", a.getUsage());
@@ -119,7 +119,7 @@ public class DescriptionTestCase extends TestCase {
       @Command void m(@Bar String s) {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
     assertEquals("", a.getUsage());
@@ -134,7 +134,7 @@ public class DescriptionTestCase extends TestCase {
         @Foo String s) {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.create(A.class);
+    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
     MethodDescriptor<A> m = c.getMethod("m");
     OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
     assertEquals("option_usage", a.getUsage());

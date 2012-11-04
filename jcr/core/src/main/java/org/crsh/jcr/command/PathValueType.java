@@ -19,47 +19,16 @@
 
 package org.crsh.jcr.command;
 
-public class Path {
+import org.crsh.cmdline.type.ValueType;
 
-  /** . */
-  public static final Path ROOT = new Path("/");
+public class PathValueType extends ValueType<Path> {
 
-  /** . */
-  private final String value;
-
-  public Path(String string) throws NullPointerException {
-    if (string == null) {
-      throw new NullPointerException("No null value accepted");
-    }
-
-    //
-    this.value = string;
-  }
-
-  public boolean isAbsolute() {
-    return value.startsWith("/");
-  }
-
-  public String getValue() {
-    return value;
+  public PathValueType() throws NullPointerException {
+    super(Path.class);
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    } else {
-      if (obj instanceof Path) {
-        Path that = (Path)obj;
-        return value.equals(that.value);
-      } else {
-        return false;
-      }
-    }
-  }
-
-  @Override
-  public String toString() {
-    return "Path[" + value + "]";
+  public <S extends Path> S parse(Class<S> type, String s) throws Exception {
+    return type.cast(new Path(s));
   }
 }

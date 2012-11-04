@@ -23,12 +23,10 @@ import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.Value;
+import org.crsh.cmdline.type.ValueType;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
 public abstract class ParameterDescriptor<B extends TypeBinding> {
@@ -40,22 +38,13 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   private final Description description;
 
   /** . */
-  private final SimpleValueType type;
-
-  /** . */
-  private final Multiplicity multiplicity;
+  private final ParameterType<?> type;
 
   /** . */
   private final boolean required;
 
   /** . */
   private final boolean password;
-
-  /** . */
-  private final Type javaType;
-
-  /** . */
-  private final Class<?> javaValueType;
 
   /** . */
   private final Class<? extends Completer> completerType;
@@ -71,7 +60,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
 
   public ParameterDescriptor(
     B binding,
-    Type javaType,
+    ParameterType<?> type,
     Description description,
     boolean required,
     boolean password,
@@ -80,71 +69,23 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
 
     //
-    Class<?> javaValueType;
-    Multiplicity multiplicity;
-    if (javaType instanceof Class<?>) {
-      javaValueType = (Class<Object>)javaType;
-      multiplicity = Multiplicity.SINGLE;
-    } else if (javaType instanceof ParameterizedType) {
-      ParameterizedType parameterizedType = (ParameterizedType)javaType;
-      Type rawType = parameterizedType.getRawType();
-      if (rawType instanceof Class<?>) {
-        Class<?> classRawType = (Class<Object>)rawType;
-        if (List.class.equals(classRawType)) {
-          Type elementType = parameterizedType.getActualTypeArguments()[0];
-          if (elementType instanceof Class<?>) {
-            javaValueType = (Class<Object>)elementType;
-            multiplicity = Multiplicity.MULTI;
-          } else {
-            throw new IllegalValueTypeException();
-          }
-        } else {
-          throw new IllegalValueTypeException();
-        }
-      } else {
-        throw new IllegalValueTypeException();
-      }
-    } else {
-      throw new IllegalValueTypeException();
-    }
-
-    //
-    SimpleValueType valueType;
-    if (javaValueType == String.class) {
-      valueType = SimpleValueType.STRING;
-    } else if (javaValueType == Integer.class || javaValueType == int.class) {
-      valueType = SimpleValueType.INTEGER;
-    } else if (javaValueType == Boolean.class || javaValueType == boolean.class) {
-      valueType = SimpleValueType.BOOLEAN;
-    } else if (Enum.class.isAssignableFrom(javaValueType)) {
-      valueType = SimpleValueType.ENUM;
-    } else if (Value.class.isAssignableFrom(javaValueType)) {
-      valueType = SimpleValueType.VALUE;
-    } else {
-      throw new IllegalValueTypeException("Type " + javaValueType.getName() + " is not handled at the moment");
-    }
-
-    //
     if (completerType == EmptyCompleter.class) {
-      completerType = valueType.getCompleter();
+      completerType = type.getValueType().getCompleter();
     }
 
     //
     this.binding = binding;
-    this.javaType = javaType;
     this.description = description;
-    this.type = valueType;
-    this.multiplicity = multiplicity;
     this.required = required;
     this.password = password;
     this.completerType = completerType;
     this.annotation = annotation;
-    this.javaValueType = javaValueType;
     this.unquote = unquote;
+    this.type = type;
   }
 
   public Object parse(String s) throws Exception {
-    return type.parse(javaValueType, s);
+    return type.parse(s);
   }
 
   public abstract Object parse(List<String> values) throws CmdSyntaxException;
@@ -153,12 +94,8 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     return owner;
   }
 
-  public Type getJavaType() {
-    return javaType;
-  }
-
-  public Class<?> getJavaValueType() {
-    return javaValueType;
+  public Class<?> getDeclaredType() {
+    return type.getDeclaredType();
   }
 
   public final B getBinding() {
@@ -189,20 +126,20 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     return password;
   }
 
-  public final SimpleValueType getType() {
-    return type;
+  public final ValueType getType() {
+    return type.getValueType();
   }
 
   public final Multiplicity getMultiplicity() {
-    return multiplicity;
+    return type.getMultiplicity();
   }
 
   public final boolean isSingleValued() {
-    return multiplicity == Multiplicity.SINGLE;
+    return getMultiplicity() == Multiplicity.SINGLE;
   }
 
   public final boolean isMultiValued() {
-    return multiplicity == Multiplicity.MULTI;
+    return getMultiplicity() == Multiplicity.MULTI;
   }
 
   public final Class<? extends Completer> getCompleterType() {

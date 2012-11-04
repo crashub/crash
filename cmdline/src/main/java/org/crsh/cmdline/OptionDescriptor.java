@@ -22,10 +22,10 @@ package org.crsh.cmdline;
 import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.type.ValueType;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +40,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
 
   public OptionDescriptor(
     B binding,
-    Type javaType,
+    ParameterType<?> type,
     List<String> names,
     Description info,
     boolean required,
@@ -50,7 +50,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
     super(
       binding,
-      javaType,
+      type,
       info,
       required,
       password,
@@ -59,7 +59,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
       annotation);
 
     //
-    if (getMultiplicity() == Multiplicity.MULTI && getType() == SimpleValueType.BOOLEAN) {
+    if (getMultiplicity() == Multiplicity.MULTI && getType() == ValueType.BOOLEAN) {
       throw new IllegalParameterException();
     }
 
@@ -78,7 +78,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
     }
 
     //
-    if (getType() == SimpleValueType.BOOLEAN) {
+    if (getType() == ValueType.BOOLEAN) {
       arity = 0;
     } else {
       arity = 1;

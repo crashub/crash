@@ -26,6 +26,7 @@ import org.crsh.cmdline.annotations.Required;
 import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.type.ValueTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,22 +37,74 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommandFactory {
 
   /** . */
+  public static final CommandFactory DEFAULT = new CommandFactory();
+
+  /** . */
   private static final Logger log = LoggerFactory.getLogger(CommandFactory.class);
 
-  public static <T> ClassDescriptor<T> create(Class<T> type) throws IntrospectionException {
-    ClassDescriptor<T> descriptor = new ClassDescriptor<T>(type, new Description(type));
+  /** . */
+  private final ValueTypeFactory valueTypeFactory;
+
+  private CommandFactory() {
+    this.valueTypeFactory = ValueTypeFactory.DEFAULT;
+  }
+
+  public CommandFactory(ClassLoader loader) throws NullPointerException {
+    this(new ValueTypeFactory(loader));
+  }
+
+  public CommandFactory(ValueTypeFactory valueTypeFactory) throws NullPointerException {
+    if (valueTypeFactory == null) {
+      throw new NullPointerException("No null value type factory accepted");
+    }
+
+    //
+    this.valueTypeFactory = valueTypeFactory;
+  }
+
+  private <T> List<MethodDescriptor<T>> commands(ClassDescriptor descriptor, Class<T> type, Class<?> introspected) throws IntrospectionException {
+    List<MethodDescriptor<T>> commands;
+    Class<?> superIntrospected = introspected.getSuperclass();
+    if (superIntrospected == null) {
+      commands = new ArrayList<MethodDescriptor<T>>();
+    } else {
+      commands = commands(descriptor, type, superIntrospected);
+      for (Method m : introspected.getDeclaredMethods()) {
+        MethodDescriptor<T> mDesc = create(descriptor, m);
+        if (mDesc != null) {
+          commands.add(mDesc);
+        }
+      }
+    }
+    return commands;
+  }
+
+  public <T> ClassDescriptor<T> create(Class<T> type) throws IntrospectionException {
+
+    //
+    Map<String, MethodDescriptor<T>> methodMap = new LinkedHashMap<String, MethodDescriptor<T>>();
+    ClassDescriptor<T> descriptor = new ClassDescriptor<T>(type, methodMap, new Description(type));
+    for (MethodDescriptor<T> method : commands(descriptor, type, type)) {
+      methodMap.put(method.getName(), method);
+    }
+
+    //
     for (ParameterDescriptor<ClassFieldBinding> parameter : parameters(type)) {
       descriptor.addParameter(parameter);
     }
+
+    //
     return descriptor;
   }
 
-  protected static <B extends TypeBinding> ParameterDescriptor<B> create(
+  protected <B extends TypeBinding> ParameterDescriptor<B> create(
     B binding,
     Type type,
     Argument argumentAnn,
@@ -70,7 +123,7 @@ public class CommandFactory {
       return new ArgumentDescriptor<B>(
         binding,
         argumentAnn.name(),
-        type,
+        ParameterType.create(valueTypeFactory, type),
         info,
         required,
         argumentAnn.password(),
@@ -80,7 +133,7 @@ public class CommandFactory {
     } else if (optionAnn != null) {
       return new OptionDescriptor<B>(
         binding,
-        type,
+        ParameterType.create(valueTypeFactory, type),
         Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
         info,
         required,
@@ -139,7 +192,7 @@ public class CommandFactory {
     return new Tuple(argumentAnn, optionAnn, required != null && required,description, info);
   }
 
-  public static <T> MethodDescriptor<T> create(ClassDescriptor<T> owner, Method m) throws IntrospectionException {
+  public <T> MethodDescriptor<T> create(ClassDescriptor<T> owner, Method m) throws IntrospectionException {
     Command command = m.getAnnotation(Command.class);
     if (command != null) {
 
@@ -200,7 +253,7 @@ public class CommandFactory {
     }
   }
 
-  private static List<ParameterDescriptor<ClassFieldBinding>> parameters(Class<?> introspected) throws IntrospectionException {
+  private List<ParameterDescriptor<ClassFieldBinding>> parameters(Class<?> introspected) throws IntrospectionException {
     List<ParameterDescriptor<ClassFieldBinding>> parameters;
     Class<?> superIntrospected = introspected.getSuperclass();
     if (superIntrospected == null) {
@@ -210,7 +263,7 @@ public class CommandFactory {
       for (Field f : introspected.getDeclaredFields()) {
         Tuple tuple = CommandFactory.get(f.getAnnotations());
         ClassFieldBinding binding = new ClassFieldBinding(f);
-        ParameterDescriptor<ClassFieldBinding> parameter = CommandFactory.create(
+        ParameterDescriptor<ClassFieldBinding> parameter = create(
           binding,
           f.getGenericType(),
           tuple.argumentAnn,

@@ -88,7 +88,7 @@ public class ParserTestCase extends TestCase {
 
     class A {
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
@@ -101,7 +101,7 @@ public class ParserTestCase extends TestCase {
       @Command
       void main() {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
@@ -115,7 +115,7 @@ public class ParserTestCase extends TestCase {
       @Command
       void m() {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "m -o");
@@ -129,7 +129,7 @@ public class ParserTestCase extends TestCase {
     class A {
       @Option(names = "o") String o;
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
@@ -154,7 +154,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Option(names = "o") String o) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
@@ -178,7 +178,7 @@ public class ParserTestCase extends TestCase {
       @Option(names = "o")
       List<String> o;
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
@@ -200,7 +200,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Option(names = "o") List<String> o) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
@@ -226,7 +226,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Option(names = "p") String p) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
@@ -284,7 +284,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void m(@Option(names = "p") String p) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
@@ -354,7 +354,7 @@ public class ParserTestCase extends TestCase {
     class A {
       @Argument(name = "arg") String arg;
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
@@ -374,7 +374,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "arg") String arg) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
@@ -396,7 +396,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "arg") String arg) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
@@ -418,7 +418,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "args") List<String> args) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
@@ -453,7 +453,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "args") List<String> args) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
@@ -488,7 +488,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "arg1") String arg1, @Argument(name = "arg2") String arg2) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
@@ -511,7 +511,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "arg1") String arg1, @Argument(name = "arg2") String arg2) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
@@ -534,7 +534,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Required @Argument(name = "arg1") String arg1, @Required @Argument(name = "arg2") String arg2) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
@@ -557,7 +557,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Required @Argument(name = "arg1") String arg1, @Required @Argument(name = "arg2") String arg2) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
@@ -580,7 +580,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "arg1") List<String> arg1, @Argument(name = "arg2") String arg2) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
@@ -601,7 +601,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "arg1") List<String> arg1, @Argument(name = "arg2") String arg2) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
@@ -624,7 +624,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "arg") String arg) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "main");
@@ -639,7 +639,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Argument(name = "arg") String arg) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "main", Mode.INVOKE);
@@ -654,7 +654,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Option(names = "o") String o, @Argument(name = "arg") String arg) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "--", Mode.COMPLETE);
@@ -681,7 +681,7 @@ public class ParserTestCase extends TestCase {
       @Command
       public void main(@Option(names = "o") String o, @Argument(name = "arg") String arg) {}
     }
-    ClassDescriptor<A> cmd = CommandFactory.create(A.class);
+    ClassDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
     Tester<A> tester = new Tester<A>(cmd, "--", Mode.INVOKE);

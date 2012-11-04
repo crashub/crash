@@ -20,7 +20,7 @@
 package org.crsh.cmdline.completers;
 
 import org.crsh.cmdline.ParameterDescriptor;
-import org.crsh.cmdline.SimpleValueType;
+import org.crsh.cmdline.type.ValueType;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.ValueCompletion;
 
@@ -42,8 +42,8 @@ public class EnumCompleter implements Completer {
 
   public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
     ValueCompletion completions = ValueCompletion.create();
-    if (parameter.getType() == SimpleValueType.ENUM) {
-      Class<?> vt = parameter.getJavaValueType();
+    if (parameter.getType() == ValueType.ENUM) {
+      Class<?> vt = parameter.getDeclaredType();
       Method valuesM = vt.getDeclaredMethod("values");
       Method nameM = vt.getMethod("name");
       Enum<?>[] values = (Enum<?>[])valuesM.invoke(null);

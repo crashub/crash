@@ -25,6 +25,6 @@ The cp command copies a node to a target location in the JCR tree.
     def targetPath = absolutePath(target);
 
     //
-    sourceNode.session.workspace.copy(sourceNode.path, targetPath.string);
+    sourceNode.session.workspace.copy(sourceNode.path, targetPath.value);
   }
 }

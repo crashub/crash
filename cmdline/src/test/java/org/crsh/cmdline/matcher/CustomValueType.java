@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 eXo Platform SAS.
+ * Copyright (C) 2012 eXo Platform SAS.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -19,17 +19,16 @@
 
 package org.crsh.cmdline.matcher;
 
-import org.crsh.cmdline.spi.Value;
+import org.crsh.cmdline.type.ValueType;
 
-/**
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
- * @version $Revision$
- */
-public class ValueSupport {
+public class CustomValueType extends ValueType<Custom> {
 
-  public static class Provided extends Value {
-    public Provided(String string) throws NullPointerException {
-      super(string);
-    }
+  public CustomValueType() {
+    super(Custom.class);
+  }
+
+  @Override
+  public <S extends Custom> S parse(Class<S> type, String s) throws Exception {
+    return type.cast(new Custom(s));
   }
 }

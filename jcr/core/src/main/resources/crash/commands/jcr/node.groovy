@@ -45,7 +45,7 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
       def parent;
       if (it.isAbsolute()) {
         parent = session.rootNode;
-        it = new Path(it.string.substring(1));
+        it = new Path(it.value.substring(1));
       } else {
         parent = getCurrentNode();
       }
@@ -53,9 +53,9 @@ The addnode command is a <Void,Node> command that produces all the nodes that we
       //
       def node;
       if (primaryNodeTypeName != null) {
-        node = parent.addNode(it.string, primaryNodeTypeName);
+        node = parent.addNode(it.value, primaryNodeTypeName);
       } else {
-        node = parent.addNode(it.string);
+        node = parent.addNode(it.value);
       }
 
       //
@@ -169,17 +169,17 @@ The node has been exported
     def session = srcNode.session;
 
     // Destination parent
-    int pos = target.string.lastIndexOf('/');
+    int pos = target.value.lastIndexOf('/');
     if (pos == -1)
       throw new ScriptException("The destination must be absolute");
     def dstParenNodet;
     def dstName;
     if (pos == 0) {
       dstParentNode = findNodeByPath(Path.ROOT);
-      dstName = target.string.substring(1);
+      dstName = target.value.substring(1);
     } else {
-      dstParentNode = findNodeByPath(new Path(target.string.substring(0, pos)));
-      dstName = target.string.substring(pos + 1);
+      dstParentNode = findNodeByPath(new Path(target.value.substring(0, pos)));
+      dstName = target.value.substring(pos + 1);
     }
 
     //
@@ -238,7 +238,7 @@ Node imported
     def dstNode = findNodeByPath(target);
 
     //
-    srcNode.session.importXML(target.string, data, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+    srcNode.session.importXML(target.value, data, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
 
     //
     return "Node imported";

@@ -52,7 +52,7 @@ public class Agent {
       @Override
       public void run() {
         try {
-          ClassDescriptor<Agent> c = CommandFactory.create(Agent.class);
+          ClassDescriptor<Agent> c = CommandFactory.DEFAULT.create(Agent.class);
           Matcher<Agent> matcher = c.matcher("main");
           CommandMatch<Agent, ?, ?> match = matcher.match(agentArgs);
           match.invoke(new Agent(inst));

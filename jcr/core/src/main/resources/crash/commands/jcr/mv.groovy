@@ -33,7 +33,7 @@ command is a <Node,Node> command consuming a stream of node to move them and pro
         if (!isPiped()) {
           def sourceNode = findNodeByPath(source);
           def targetPath = absolutePath(target);
-          sourceNode.session.workspace.move(sourceNode.path, targetPath.string);
+          sourceNode.session.workspace.move(sourceNode.path, targetPath.value);
           def targetNode = findNodeByPath(targetPath);
           context.provide(targetNode);
         }

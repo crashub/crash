@@ -64,7 +64,7 @@ public class ParserTestCase extends TestCase {
 
     private <T> Test(Class<T> type, String s) {
       try {
-        ClassDescriptor<T> command = CommandFactory.create(type);
+        ClassDescriptor<T> command = CommandFactory.DEFAULT.create(type);
         Matcher<T> parser = command.matcher();
         CommandMatch<T, ?, ?> match = parser.match(s);
 

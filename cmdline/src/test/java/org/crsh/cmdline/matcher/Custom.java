@@ -17,31 +17,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.jcr.command;
+package org.crsh.cmdline.matcher;
 
-public class Path {
-
-  /** . */
-  public static final Path ROOT = new Path("/");
+public class Custom {
 
   /** . */
-  private final String value;
+  private final String string;
 
-  public Path(String string) throws NullPointerException {
-    if (string == null) {
-      throw new NullPointerException("No null value accepted");
-    }
-
-    //
-    this.value = string;
-  }
-
-  public boolean isAbsolute() {
-    return value.startsWith("/");
-  }
-
-  public String getValue() {
-    return value;
+  public Custom(String string) {
+    this.string = string;
   }
 
   @Override
@@ -49,17 +33,12 @@ public class Path {
     if (obj == this) {
       return true;
     } else {
-      if (obj instanceof Path) {
-        Path that = (Path)obj;
-        return value.equals(that.value);
+      if (obj instanceof Custom) {
+        Custom that = (Custom)obj;
+        return string.equals(that.string);
       } else {
         return false;
       }
     }
-  }
-
-  @Override
-  public String toString() {
-    return "Path[" + value + "]";
   }
 }

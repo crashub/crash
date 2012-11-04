@@ -25,7 +25,6 @@ import org.crsh.cmdline.spi.Completer;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
   public ArgumentDescriptor(
     B binding,
     String name,
-    Type javaType,
+    ParameterType<?> type,
     Description info,
     boolean required,
     boolean password,
@@ -46,7 +45,7 @@ public class ArgumentDescriptor<B extends TypeBinding> extends ParameterDescript
     Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
     super(
       binding,
-      javaType,
+      type,
       info,
       required,
       password,

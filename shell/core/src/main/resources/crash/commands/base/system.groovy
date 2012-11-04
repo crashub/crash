@@ -8,7 +8,6 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import org.crsh.cmdline.annotations.Man
 import org.crsh.cmdline.annotations.Argument
-import org.crsh.cmdline.spi.Value
 import org.crsh.cmdline.spi.Completer
 import org.crsh.cmdline.ParameterDescriptor
 import org.crsh.cmdline.annotations.Option
@@ -50,26 +49,26 @@ class system extends CRaSHCommand implements Completer {
 
   @Usage("set a system property")
   @Command
-  public void propset(@PropertyName @Required PropName name, @PropertyValue @Required String value) {
+  public void propset(@PropertyName @Required String name, @PropertyValue @Required String value) {
     System.setProperty name.toString(), value
   }
 
   @Usage("get a system property")
   @Command
-  public String propget(@PropertyName @Required PropName name) {
+  public String propget(@PropertyName @Required String name) {
     return System.getProperty(name.toString()) ?: ""
   }
 
   @Usage("remove a system property")
   @Command
-  public void proprm(@PropertyName @Required PropName name) {
+  public void proprm(@PropertyName @Required String name) {
     System.clearProperty name.toString()
   }
 
   ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix)
   {
     def c = ValueCompletion.create(prefix);
-    if (parameter.getJavaValueType() == PropName.class) {
+    if (parameter.getDeclaredType() == PropName.class) {
       System.getProperties().each() {
         if (it.key.startsWith(prefix)) {
           c.put(it.key.substring(prefix.length()), true)
@@ -111,11 +110,6 @@ class system extends CRaSHCommand implements Completer {
 @Man("The name of the property")
 @Argument(name = "name")
 @interface PropertyName { }
-class PropName extends Value {
-  PropName(String string) {
-    super(string)
-  }
-}
 
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the property value")

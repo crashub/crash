@@ -28,7 +28,6 @@ import org.crsh.command.CRaSHCommand;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
   }
 
   public ValueCompletion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-    if (parameter.getJavaValueType() == Path.class) {
+    if (parameter.getDeclaredType() == Path.class) {
 
       final Path path = (Path)getProperty("currentPath");
       final Session session = (Session)getProperty("session");
@@ -52,7 +51,7 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
         AbstractPathCompleter<Node> pc = new AbstractPathCompleter<Node>() {
           @Override
           protected String getCurrentPath() throws Exception {
-            return path != null ? path.getString() : "/";
+            return path != null ? path.getValue() : "/";
           }
 
           @Override

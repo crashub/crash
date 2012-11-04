@@ -40,7 +40,7 @@ public class EscapeTestCase extends TestCase {
       @Option(names = "o")
       String s;
     }
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> analyzer = desc.matcher();
 
     //
@@ -64,7 +64,7 @@ public class EscapeTestCase extends TestCase {
       @Argument
       List<String> s;
     }
-    ClassDescriptor<A> desc = CommandFactory.create(A.class);
+    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     Matcher<A> analyzer = desc.matcher();
 
     //

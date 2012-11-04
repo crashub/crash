@@ -28,13 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Formatter;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,20 +42,13 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   private final Class<T> type;
 
   /** . */
-  private final Map<String, MethodDescriptor<T>> methodMap;
+  private final Map<String, MethodDescriptor<T>> methods;
 
-  public ClassDescriptor(Class<T> type, Description info) throws IntrospectionException {
+  ClassDescriptor(Class<T> type, Map<String, MethodDescriptor<T>> methods, Description info) throws IntrospectionException {
     super(type.getSimpleName().toLowerCase(), info);
 
-    // Make sure we can add it
-    Map<String, MethodDescriptor<T>> methodMap = new LinkedHashMap<String, MethodDescriptor<T>>();
-    for (MethodDescriptor<T> method : commands(type)) {
-      //
-      methodMap.put(method.getName(), method);
-    }
-
     //
-    this.methodMap = methodMap;
+    this.methods = methods;
     this.type = type;
   }
 
@@ -82,7 +70,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
       for (String optionName : option.getNames()) {
         blah.add((optionName.length() == 1 ? "-" : "--") + optionName);
       }
-      for (MethodDescriptor<T> method : methodMap.values()) {
+      for (MethodDescriptor<T> method : methods.values()) {
         Set<String> diff = new HashSet<String>(method.getOptionNames());
         diff.retainAll(blah);
         if (diff.size() > 0) {
@@ -103,7 +91,7 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
 
   @Override
   public Map<String, ? extends CommandDescriptor<T, ?>> getSubordinates() {
-    return methodMap;
+    return methods;
   }
 
   @Override
@@ -113,8 +101,8 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
 
   @Override
   public void printUsage(Appendable writer) throws IOException {
-    if (methodMap.size() == 1) {
-      methodMap.values().iterator().next().printUsage(writer);
+    if (methods.size() == 1) {
+      methods.values().iterator().next().printUsage(writer);
     } else {
       writer.append("usage: ").append(getName());
       for (OptionDescriptor<?> option : getOptions()) {
@@ -131,8 +119,8 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   }
 
   public void printMan(Appendable writer) throws IOException {
-    if (methodMap.size() == 1) {
-      methodMap.values().iterator().next().printMan(writer);
+    if (methods.size() == 1) {
+      methods.values().iterator().next().printMan(writer);
     } else {
 
       // Name
@@ -190,27 +178,10 @@ public class ClassDescriptor<T> extends CommandDescriptor<T, ClassFieldBinding> 
   }
 
   public Iterable<MethodDescriptor<T>> getMethods() {
-    return methodMap.values();
+    return methods.values();
   }
 
   public MethodDescriptor<T> getMethod(String name) {
-    return methodMap.get(name);
-  }
-
-  private List<MethodDescriptor<T>> commands(Class<?> introspected) throws IntrospectionException {
-    List<MethodDescriptor<T>> commands;
-    Class<?> superIntrospected = introspected.getSuperclass();
-    if (superIntrospected == null) {
-      commands = new ArrayList<MethodDescriptor<T>>();
-    } else {
-      commands = commands(superIntrospected);
-      for (Method m : introspected.getDeclaredMethods()) {
-        MethodDescriptor<T> mDesc = CommandFactory.create(this, m);
-        if (mDesc != null) {
-          commands.add(mDesc);
-        }
-      }
-    }
-    return commands;
+    return methods.get(name);
   }
 }
