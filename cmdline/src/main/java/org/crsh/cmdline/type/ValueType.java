@@ -23,6 +23,7 @@ import org.crsh.cmdline.completers.EmptyCompleter;
 import org.crsh.cmdline.completers.EnumCompleter;
 import org.crsh.cmdline.spi.Completer;
 
+import javax.management.ObjectName;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -68,6 +69,7 @@ public abstract class ValueType<V> {
     }
   };
 
+  /** . */
   public static final ValueType<Properties> PROPERTIES = new ValueType<Properties>(Properties.class) {
     @Override
     public <S extends Properties> S parse(Class<S> type, String s) throws Exception {
@@ -82,6 +84,14 @@ public abstract class ValueType<V> {
         }
       }
       return type.cast(props);
+    }
+  };
+
+  /** . */
+  public static final ValueType<ObjectName> OBJECT_NAME = new ValueType<ObjectName>(ObjectName.class) {
+    @Override
+    public <S extends ObjectName> S parse(Class<S> type, String s) throws Exception {
+      return type.cast(ObjectName.getInstance(s));
     }
   };
 

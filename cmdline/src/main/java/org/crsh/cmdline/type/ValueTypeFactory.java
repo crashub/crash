@@ -41,7 +41,7 @@ public class ValueTypeFactory {
 
   private ValueTypeFactory() {
     this.types = new ValueType<?>[]{ ValueType.STRING, ValueType.INTEGER, ValueType.BOOLEAN,
-        ValueType.ENUM, ValueType.PROPERTIES};
+        ValueType.ENUM, ValueType.PROPERTIES, ValueType.OBJECT_NAME};
   }
 
   /**

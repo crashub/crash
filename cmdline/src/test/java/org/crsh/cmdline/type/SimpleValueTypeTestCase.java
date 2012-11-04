@@ -21,6 +21,7 @@ package org.crsh.cmdline.type;
 
 import junit.framework.TestCase;
 
+import javax.management.ObjectName;
 import java.util.Properties;
 
 public class SimpleValueTypeTestCase extends TestCase {
@@ -69,5 +70,11 @@ public class SimpleValueTypeTestCase extends TestCase {
     assertEquals(2, props.size());
     assertEquals("repository-in-memory.xml", props.get("org.apache.jackrabbit.repository.conf"));
     assertEquals("/home/ehugonnet/tmp/crash/jcr/target/test-classes/conf/transient", props.get("org.apache.jackrabbit.repository.home"));
+  }
+
+  public void testObjectName() throws Exception {
+    ValueType<ObjectName> propertiesVT = factory.get(ObjectName.class);
+    ObjectName name = propertiesVT.parse(ObjectName.class, "foo:bar=juu");
+    assertEquals(new ObjectName("foo", "bar", "juu"), name);
   }
 }
