@@ -67,6 +67,38 @@
 
   <profiles>
     <profile>
+      <id>main</id>
+      <dependencies>
+        <dependency>
+          <groupId>jline</groupId>
+          <artifactId>jline</artifactId>
+        </dependency>
+      </dependencies>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>default-java</id>
+                  <configuration>
+                    <arguments>
+                      <argument>--property</argument>
+                      <argument>crash.vfs.refresh_period=1</argument>
+                      <argument>--property</argument>
+                      <argument>crash.auth=simple</argument>
+                    </arguments>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+    <profile>
       <id>no-network</id>
       <build>
         <pluginManagement>

@@ -82,6 +82,15 @@
 
   <profiles>
     <profile>
+      <id>main</id>
+      <dependencies>
+        <dependency>
+          <groupId>jline</groupId>
+          <artifactId>jline</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
       <id>no-network</id>
       <build>
         <pluginManagement>

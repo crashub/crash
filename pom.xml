@@ -772,28 +772,33 @@
                 </execution>
               </executions>
             </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>default-java</id>
+                  <goals>
+                    <goal>java</goal>
+                  </goals>
+                  <phase>test</phase>
+                  <configuration>
+                    <mainClass>org.crsh.standalone.CRaSH</mainClass>
+                    <classpathScope>test</classpathScope>
+                    <arguments>
+                      <argument>--property</argument>
+                      <argument>crash.vfs.refresh_period=1</argument>
+                    </arguments>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
           </plugins>
         </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-                <phase>test</phase>
-              </execution>
-            </executions>
-            <configuration>
-              <mainClass>org.crsh.standalone.CRaSH</mainClass>
-              <classpathScope>test</classpathScope>
-              <arguments>
-                <argument>--property</argument>
-                <argument>crash.vfs.refresh_period=1</argument>
-              </arguments>
-            </configuration>
           </plugin>
         </plugins>
       </build>
