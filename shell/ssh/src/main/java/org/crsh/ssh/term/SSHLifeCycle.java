@@ -123,20 +123,12 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setPasswordAuthenticator(new PasswordAuthenticator() {
         public boolean authenticate(String _username, String _password, ServerSession session) {
           boolean auth;
-          if (authPlugin != null)
-          {
-            try {
-              log.debug("Using authentication plugin " + authPlugin + " to authenticate user " + _username);
-              auth = authPlugin.authenticate(_username, _password);
-            } catch (Exception e) {
-              log.error("Exception authenticating user " + _username + " in authentication plugin: " + authPlugin, e);
-              return false;
-            }
-          }
-          else 
-          {
-            // Say ok as this will be used later for performing an other kind of authentication
-            auth = true;
+          try {
+            log.debug("Using authentication plugin " + authPlugin + " to authenticate user " + _username);
+            auth = authPlugin.authenticate(_username, _password);
+          } catch (Exception e) {
+            log.error("Exception authenticating user " + _username + " in authentication plugin: " + authPlugin, e);
+            return false;
           }
 
           // We store username and password in session for later reuse
