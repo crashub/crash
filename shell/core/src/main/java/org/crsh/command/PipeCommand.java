@@ -45,7 +45,7 @@ public abstract class PipeCommand<C, P> {
     this.piped = piped;
   }
 
-  void open(InvocationContext<P> context) {
+  void doOpen(InvocationContext<P> context) {
     this.context = context;
 
     //
@@ -75,6 +75,7 @@ public abstract class PipeCommand<C, P> {
    * @throws IOException any io exception
    */
   public void flush() throws ScriptException, IOException {
+    context.flush();
   }
 
   /**

@@ -64,13 +64,14 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
   }
 
   public final InvocationContext<?> popContext() {
-    if (stack == null || stack.isEmpty()) {
-      throw new IllegalStateException("Cannot pop a context anymore from the stack");
+    if (stack != null && stack.size() > 0) {
+      InvocationContext context = this.context;
+      this.context = stack.removeLast();
+      this.out = this.context != null ? this.context.getWriter() : null;
+      return context;
+    } else {
+      return null;
     }
-    InvocationContext context = (InvocationContext)this.context;
-    this.context = stack.removeLast();
-    this.out = this.context != null ? ((InvocationContext)this.context).getWriter() : null;
-    return context;
   }
 
   public final InvocationContext<?> peekContext() {

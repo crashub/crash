@@ -361,6 +361,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               this.session = session;
             }
 
+            public void setPiped(boolean piped) {
+              this.piped = piped;
+            }
+
             public void open(final ProducerContext<Object> context) {
 
               //
@@ -389,15 +393,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
               //
               real.setPiped(piped);
-              real.open(invocationContext);
-            }
-
-            public void setPiped(boolean piped) {
-              this.piped = piped;
-            }
-
-            public void close() {
-              popContext();
+              real.doOpen(invocationContext);
             }
 
             public void provide(Object element) throws IOException {
@@ -405,7 +401,16 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             }
 
             public void flush() throws IOException {
-              peekContext().flush();
+              real.flush();
+            }
+
+            public void close() {
+              try {
+                real.close();
+              }
+              finally {
+                popContext();
+              }
             }
           };
         }

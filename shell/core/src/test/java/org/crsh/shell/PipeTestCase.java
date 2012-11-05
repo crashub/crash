@@ -252,6 +252,78 @@ public class PipeTestCase extends AbstractCommandTestCase {
     assertEquals("<foo>abc</foo>                  \n", buffer.toString());
   }
 
+  public void testLifeCycle() throws Exception {
+    String producer =
+        "class producer extends org.crsh.command.CRaSHCommand {\n" +
+        "  @Command\n" +
+        "  public org.crsh.command.PipeCommand<Object, Object> main() {\n" +
+        "    return new org.crsh.command.PipeCommand<Object, Object>() {\n" +
+        "    };\n" +
+        "  }\n" +
+        "}";
+    String consumer =
+        "class consumer extends org.crsh.command.CRaSHCommand {\n" +
+        "  @Command\n" +
+        "  public org.crsh.command.PipeCommand<Object, Object> main() {\n" +
+        "    return new org.crsh.command.PipeCommand<Object, Object>() {\n" +
+        "      public void open() {\n" +
+        "        org.crsh.shell.PipeTestCase.list.add('open');\n" +
+        "      }\n" +
+        "      public void close() {\n" +
+        "        org.crsh.shell.PipeTestCase.list.add('close');\n" +
+        "      }\n" +
+        "    };\n" +
+        "  }\n" +
+        "}";
+
+    //
+    lifeCycle.setCommand("producer", producer);
+    lifeCycle.setCommand("consumer", consumer);
+
+    //
+    list.clear();
+    assertOk("producer | consumer");
+    assertEquals(Arrays.asList("open"), list);
+  }
+
+  public void testFlush() throws Exception {
+    String producer =
+        "class producer extends org.crsh.command.CRaSHCommand {\n" +
+        "  @Command\n" +
+        "  public org.crsh.command.PipeCommand<Object, Object> main() {\n" +
+        "    return new org.crsh.command.PipeCommand<Object, Object>() {\n" +
+        "      public void open() {\n" +
+        "        context.flush();\n" +
+        "      }\n" +
+        "    };\n" +
+        "  }\n" +
+        "}";
+    String consumer =
+        "class consumer extends org.crsh.command.CRaSHCommand {\n" +
+        "  @Command\n" +
+        "  public org.crsh.command.PipeCommand<Object, Object> main() {\n" +
+        "    return new org.crsh.command.PipeCommand<Object, Object>() {\n" +
+        "      public void flush() {\n" +
+        "        new Exception().printStackTrace();\n" +
+        "        org.crsh.shell.PipeTestCase.list.add('flush');\n" +
+        "      }\n" +
+        "    };\n" +
+        "  }\n" +
+        "}";
+
+    //
+    lifeCycle.setCommand("producer", producer);
+    lifeCycle.setCommand("consumer", consumer);
+
+    //
+    list.clear();
+    assertOk("producer | consumer");
+
+    // Producer flush
+    // Before close flush
+    assertEquals(Arrays.asList("flush", "flush"), list);
+  }
+
   public void testIncompatibleType() throws Exception {
     String producer = "class producer extends org.crsh.command.CRaSHCommand {\n" +
         "@Command\n" +

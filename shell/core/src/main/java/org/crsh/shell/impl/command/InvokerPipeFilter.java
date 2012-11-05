@@ -101,12 +101,7 @@ class InvokerPipeFilter<C, P> implements Filter<C, P> {
   }
 
   public void flush() throws IOException {
-
-    // First flush the command
     command.flush();
-
-    // Flush the next because the command may not call it
-    context.flush();
   }
 
   public void close() throws ScriptException {
