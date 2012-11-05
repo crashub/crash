@@ -97,10 +97,4 @@ public interface Term extends Closeable, Pipe<Chunk> {
    */
   void close();
 
-  /**
-   * Returns the class of the consumed type.
-   *
-   * @return the consumed type
-   */
-  Class<Chunk> getConsumedType();
 }

@@ -114,10 +114,6 @@ public class SyncTerm implements Term {
     }
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
-  }
-
   public void provide(Chunk element) throws IOException {
   }
 

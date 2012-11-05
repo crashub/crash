@@ -45,10 +45,6 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
-  public Class<Chunk> getConsumedType() {
-    throw new UnsupportedOperationException();
-  }
-
   public void provide(Chunk element) throws IOException {
     throw new UnsupportedOperationException();
   }

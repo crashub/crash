@@ -132,10 +132,6 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Pipe<Chunk> {
     }
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
-  }
-
   public void provide(Chunk element) throws IOException {
     append(element);
   }
