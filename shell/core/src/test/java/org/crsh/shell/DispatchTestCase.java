@@ -19,65 +19,12 @@
 
 package org.crsh.shell;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
-public class CompositionTestCase extends AbstractCommandTestCase {
-
-  /** . */
-  public static final ArrayList<?> list = new ArrayList<Object>();
-
-  /** . */
-  private final String compound_command = "class compound_command extends org.crsh.command.CRaSHCommand {\n" +
-      "@Command\n" +
-      "public String compound() {\n" +
-      "return 'bar';" +
-      "}\n" +
-      "}";
-
-  /** . */
-  private final String compound_produce_command = "class compound_produce_command extends org.crsh.command.CRaSHCommand {\n" +
-      "@Command\n" +
-      "public void compound(org.crsh.command.InvocationContext<String> context) {\n" +
-      "['foo','bar'].each { context.provide(it) }" +
-      "}\n" +
-      "}";
-
-  /** . */
-  private final String compound_consume_command = "class compound_consume_command extends org.crsh.command.CRaSHCommand {\n" +
-      "@Command\n" +
-      "public org.crsh.command.PipeCommand<String, Object> compound() {\n" +
-      "return new org.crsh.command.PipeCommand<String, Object>() {\n" +
-      "public void provide(String element) {\n" +
-      "org.crsh.shell.CompositionTestCase.list.add(element);\n" +
-      "}\n" +
-      "}\n" +
-      "}\n" +
-      "}";
-
-  /** . */
-  private final String checked_exception_command = "class checked_exception_command extends org.crsh.command.CRaSHCommand {\n" +
-      "@Command\n" +
-      "public String main() {\n" +
-      "throw new javax.naming.NamingException();" +
-      "}\n" +
-      "}";
-
-  /** . */
-  private final String script_exception_command = "class script_exception_command extends org.crsh.command.CRaSHCommand {\n" +
-      "@Command\n" +
-      "public String main() {\n" +
-      "throw new org.crsh.command.ScriptException();" +
-      "}\n" +
-      "}";
-
-  /** . */
-  private final String groovy_script_exception_command = "class groovy_script_exception_command extends org.crsh.command.CRaSHCommand {\n" +
-      "@Command\n" +
-      "public String main() {\n" +
-      "throw new groovy.util.ScriptException();" +
-      "}\n" +
-      "}";
+/**
+ * Various test related to command dispatch.
+ */
+public class DispatchTestCase extends AbstractCommandTestCase {
 
   public void testInvokeCompound() throws Exception {
     String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
@@ -86,42 +33,122 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "compound_command.compound 'bar'\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("compound_command", compound_command);
-    lifeCycle.setCommand("foo", foo);
+    lifeCycle.bind("compound_command", Commands.Compound.class);
+    lifeCycle.bind("foo", foo);
 
     //
     assertEquals("bar", assertOk("foo"));
   }
 
-  /** . */
-  private final String runtime_exception_command = "class runtime_exception_command extends org.crsh.command.CRaSHCommand {\n" +
-      "@Command\n" +
-      "public String main() {\n" +
-      "throw new java.lang.SecurityException();" +
-      "}\n" +
-      "}";
+  public void testProduceToClosure() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "produce_command { out << it }\n" +
+        "}\n" +
+        "}";
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("produce_command", Commands.ProduceString.class);
 
-  /** . */
-  private final String error_command = "class error_command extends org.crsh.command.CRaSHCommand {\n" +
-      "@Command\n" +
-      "public String main() {\n" +
-      "throw new java.awt.AWTError();" +
-      "}\n" +
-      "}";
+    //
+    assertEquals("foobar", assertOk("foo"));
+  }
 
-  /** . */
-  private final String cannot_create_command = "class cannot_create_command extends org.crsh.command.CRaSHCommand {\n" +
-      "{ throw new RuntimeException(); } \n" +
-      "@Command\n" +
-      "public String main() {\n" +
-      "throw new java.awt.AWTError();" +
-      "}\n" +
-      "}";
+  public void testProduceToCommandAsClosure() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "def closure = consume_command\n" +
+        "produce_command closure\n" +
+        "}\n" +
+        "}";
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("produce_command", Commands.ProduceString.class);
+    lifeCycle.bind("consume_command", Commands.ConsumeString.class);
 
-  public void testInvokeCompoundInScript() throws Exception {
-    String foo = "compound_command.compound 'bar'\n";
-    lifeCycle.setCommand("compound_command", compound_command);
-    lifeCycle.setCommand("foo", foo);
+    //
+    Commands.list.clear();
+    assertEquals("", assertOk("foo"));
+    assertEquals(Arrays.asList("foo", "bar"), Commands.list);
+  }
+
+  // Cannot pass at the moment
+  public void testProduceToCommandWithOptionAsClosure() {
+    String noOpt = "class noOpt extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "def closure = consume_command_with_option\n" +
+        "produce_command closure\n" +
+        "}\n" +
+        "}";
+    String opt = "class opt extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "def closure = consume_command_with_option.with(opt:'prefix')\n" +
+        "produce_command closure\n" +
+        "}\n" +
+        "}";
+    String args = "class args extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "def closure = consume_command_with_option.with('juu')\n" +
+        "produce_command closure\n" +
+        "}\n" +
+        "}";
+    String optArgs = "class args extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "def closure = consume_command_with_option.with(opt:'prefix','juu')\n" +
+        "produce_command closure\n" +
+        "}\n" +
+        "}";
+
+    //
+    lifeCycle.bind("noOpt", noOpt);
+    lifeCycle.bind("opt", opt);
+    lifeCycle.bind("args", args);
+    lifeCycle.bind("optArgs", optArgs);
+    lifeCycle.bind("produce_command", Commands.ProduceString.class);
+    lifeCycle.bind("consume_command_with_option", Commands.ParameterizedConsumeToList.class);
+
+    //
+    Commands.list.clear();
+    assertEquals("", assertOk("noOpt"));
+    assertEquals(Arrays.asList("foo", "bar"), Commands.list);
+
+    //
+    Commands.list.clear();
+    assertEquals("", assertOk("opt"));
+    assertEquals(Arrays.asList("prefixfoo", "prefixbar"), Commands.list);
+
+    //
+    Commands.list.clear();
+    assertEquals("", assertOk("args"));
+    assertEquals(Arrays.asList("juu", "foo", "bar"), Commands.list);
+
+    //
+    Commands.list.clear();
+    assertEquals("", assertOk("optArgs"));
+    assertEquals(Arrays.asList("prefixjuu", "prefixfoo", "prefixbar"), Commands.list);
+  }
+
+  public void testProduceToClosureInScript() {
+    lifeCycle.bind("foo", "produce_command { out << it }\n");
+    lifeCycle.bind("produce_command", Commands.ProduceString.class);
+
+    //
+    assertEquals("foobar", assertOk("foo"));
+  }
+
+  public void testClosure() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "def closure = echo\n" +
+        "closure 'bar'\n" +
+        "}\n" +
+        "}";
+    lifeCycle.bind("foo", foo);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -130,8 +157,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
   public void testClosureInScript() {
     String foo = "def closure = echo\n" +
         "closure 'bar'\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("compound_command", compound_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("compound_command", Commands.Compound.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -145,8 +172,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "closure()\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("compound_command", compound_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("compound_command", Commands.Compound.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -155,8 +182,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
   public void testCompoundClosureInScript() {
     String foo = "def closure = compound_command.compound\n" +
         "closure()\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("compound_command", compound_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("compound_command", Commands.Compound.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -169,8 +196,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "compound_produce_command.compound { out << it }\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("foobar", assertOk("foo"));
 
     // Test with wrong type
@@ -180,34 +207,43 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "compound_produce_command.compound { boolean it -> out << it }\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("bar", bar);
-    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+    lifeCycle.bind("bar", bar);
+    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("", assertOk("bar"));
   }
 
   public void testCompoundProduceToClosureInScript() {
     String foo = "compound_produce_command.compound { out << it }\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("foobar", assertOk("foo"));
 
     //
     String bar = "compound_produce_command.compound { boolean it -> out << it }\n";
-    lifeCycle.setCommand("bar", bar);
-    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
+    lifeCycle.bind("bar", bar);
+    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("", assertOk("bar"));
   }
 
   public void testCompoundCommandAsClosure() {
     String foo =
         "def closure = compound_consume_command.compound\n" +
-        "compound_produce_command.compound closure\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("compound_produce_command", compound_produce_command);
-    lifeCycle.setCommand("compound_consume_command", compound_consume_command);
-    list.clear();
+            "compound_produce_command.compound closure\n";
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
+    lifeCycle.bind("compound_consume_command", Commands.CompoundConsumeString.class);
+    Commands.list.clear();
     assertEquals("", assertOk("foo"));
-    assertEquals(Arrays.asList("foo", "bar"), list);
+    assertEquals(Arrays.asList("foo", "bar"), Commands.list);
+  }
+
+  public void testInvokeCompoundInScript() throws Exception {
+    String foo = "compound_command.compound 'bar'\n";
+    lifeCycle.bind("compound_command", Commands.Compound.class);
+    lifeCycle.bind("foo", foo);
+
+    //
+    assertEquals("bar", assertOk("foo"));
   }
 
   public void testCheckedException() {
@@ -221,8 +257,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("checked_exception_command", checked_exception_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("checked_exception_command", Commands.ThrowCheckedException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -234,8 +270,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "} catch(javax.naming.NamingException e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("checked_exception_command", checked_exception_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("checked_exception_command", Commands.ThrowCheckedException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -252,8 +288,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("script_exception_command", script_exception_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("script_exception_command", Commands.ThrowScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -265,8 +301,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "} catch(org.crsh.command.ScriptException e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("script_exception_command", script_exception_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("script_exception_command", Commands.ThrowScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -283,8 +319,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("groovy_script_exception_command", groovy_script_exception_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -296,8 +332,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "} catch(org.crsh.command.ScriptException e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("groovy_script_exception_command", groovy_script_exception_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -314,8 +350,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("runtime_exception_command", runtime_exception_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("runtime_exception_command", Commands.ThrowRuntimeException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -327,8 +363,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "} catch(java.lang.SecurityException e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("runtime_exception_command", runtime_exception_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("runtime_exception_command", Commands.ThrowRuntimeException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -345,8 +381,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("error_command", error_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("error_command", Commands.ThrowError.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -358,8 +394,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "} catch(java.awt.AWTError e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("error_command", error_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("error_command", Commands.ThrowError.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -376,8 +412,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("cannot_create_command", cannot_create_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("cannot_create_command", Commands.CannotInstantiate.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -389,8 +425,8 @@ public class CompositionTestCase extends AbstractCommandTestCase {
         "} catch (org.crsh.command.NoSuchCommandException e) {\n" +
         "return 'bar';\n" +
         "}\n";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("cannot_create_command", cannot_create_command);
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("cannot_create_command", Commands.CannotInstantiate.class);
 
     //
     assertEquals("bar", assertOk("foo"));

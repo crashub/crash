@@ -19,7 +19,7 @@
 
 package org.crsh.cmdline;
 
-public class IntrospectionException extends Exception {
+public class IntrospectionException extends RuntimeException {
 
   public IntrospectionException() {
   }

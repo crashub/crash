@@ -19,16 +19,27 @@
 
 package org.crsh.shell;
 
-public class Foo {
+import org.crsh.text.Renderable;
+import org.crsh.text.Renderer;
+import org.crsh.text.ui.LabelElement;
 
-  /** . */
-  private final String value;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-  public Foo(String value) {
-    this.value = value;
+public class ValueRenderable extends Renderable<Value> {
+
+  @Override
+  public Class<Value> getType() {
+    return Value.class;
   }
 
-  public String getValue() {
-    return value;
+  @Override
+  public Renderer renderer(Iterator<Value> stream) {
+    ArrayList<Renderer> renderers = new ArrayList<Renderer>();
+    while (stream.hasNext()) {
+      Value value = stream.next();
+      renderers.add(new LabelElement("<value>" + value.getValue() + "</value>").renderer());
+    }
+    return Renderer.vertical(renderers);
   }
 }

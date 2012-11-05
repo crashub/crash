@@ -19,6 +19,7 @@
 
 package org.crsh;
 
+import org.crsh.command.CRaSHCommand;
 import org.crsh.plugin.*;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.shell.impl.command.CRaSHSession;
@@ -66,7 +67,7 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
     this.crash = new CRaSH(context);
   }
 
-  public void setCommand(String name, String command) {
+  public void bind(String name, String command) {
     if (name.contains("/")) {
       throw new IllegalArgumentException("Command name must not contain /");
     }
@@ -74,6 +75,17 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
       throw new IllegalArgumentException("Command name must not contain .");
     }
     commands.add(Path.get("/" + name + ".groovy"), command);
+    context.refresh();
+  }
+
+  public void bind(String name, Class<? extends CRaSHCommand> command) {
+    if (name.contains("/")) {
+      throw new IllegalArgumentException("Command name must not contain /");
+    }
+    if (name.contains(".")) {
+      throw new IllegalArgumentException("Command name must not contain .");
+    }
+    commands.add(Path.get("/" + name + ".groovy"), "public class " + name + " extends " + command.getName() + "{}");
     context.refresh();
   }
 

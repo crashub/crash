@@ -33,8 +33,8 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "    out << builder\n" +
         "  }\n" +
         "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("bar", "context.provide([a:1]);");
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("bar", "context.provide([a:1]);");
 
     //
     assertEquals(
@@ -54,8 +54,8 @@ public class EvalTestCase extends AbstractCommandTestCase {
             "    out << builder\n" +
             "  }\n" +
             "}";
-    lifeCycle.setCommand("foo", foo);
-    lifeCycle.setCommand("bar", "out << 'hello';");
+    lifeCycle.bind("foo", foo);
+    lifeCycle.bind("bar", "out << 'hello';");
 
     //
     assertEquals("hello                           \n", assertOk("foo"));
@@ -72,7 +72,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
             "    out << builder\n" +
             "  }\n" +
             "}";
-    lifeCycle.setCommand("foo", foo);
+    lifeCycle.bind("foo", foo);
 
     //
     assertEquals("bar                             \n", assertOk("foo"));
@@ -86,7 +86,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
             "    eval('echo bar')\n" +
             "  }\n" +
             "}";
-    lifeCycle.setCommand("foo", foo);
+    lifeCycle.bind("foo", foo);
 
     //
     assertEquals("bar", assertOk("foo"));
