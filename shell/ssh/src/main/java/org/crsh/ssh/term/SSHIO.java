@@ -49,12 +49,6 @@ public class SSHIO implements TermIO {
   private static final Logger log = LoggerFactory.getLogger(SSHIO.class);
 
   /** . */
-  private static final char DELETE_PREV_CHAR = 8;
-
-  /** . */
-  private static final String DEL_SEQ = DELETE_PREV_CHAR + " " + DELETE_PREV_CHAR;
-
-  /** . */
   private final Reader reader;
 
   /** . */
@@ -204,7 +198,7 @@ public class SSHIO implements TermIO {
   }
 
   public void writeDel() throws IOException {
-    writer.write(DEL_SEQ);
+    writer.write("\033[D \033[D");
   }
 
   public void writeCRLF() throws IOException {
