@@ -87,6 +87,8 @@ public class Commands {
           for (String s : buffer) {
             context.provide(s);
           }
+          buffer.clear();
+          super.flush();
         }
       };
     }

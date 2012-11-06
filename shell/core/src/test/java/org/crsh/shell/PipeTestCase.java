@@ -254,14 +254,4 @@ public class PipeTestCase extends AbstractCommandTestCase {
     assertOk("produce_command | f | consume_command");
     assertEquals(2, Commands.list.size());
   }
-
-  public void testProvideAfterFlush() {
-    lifeCycle.bind("produce_command", Commands.ProduceString.class);
-    lifeCycle.bind("f", Commands.Filter.class);
-    lifeCycle.bind("b", Commands.Buffer.class);
-    assertTrue(assertOk("produce_command").length() > 0);
-    assertTrue(assertOk("produce_command | f").length() > 0);
-    //assertTrue(assertOk("produce_command | b").length() > 0); // should pass
-  }
-
 }
