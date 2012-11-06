@@ -24,6 +24,8 @@ import org.crsh.command.CRaSHCommand
 import org.crsh.cmdline.annotations.Command
 import org.crsh.command.PipeCommand
 import org.crsh.cmdline.annotations.Option
+import java.util.regex.Pattern
+import org.crsh.util.Utils
 
 /** 
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -35,24 +37,25 @@ class filter extends CRaSHCommand {
   @Command
   PipeCommand<Map, Map> main(
        @Usage("format <key>:<value>")
-       @Option(names=['e','equals']) List<String> eq) {
+       @Option(names=['p','pattern']) List<String> patterns) {
 
        return new PipeCommand<Map, Map>() {
            @Override
            void provide(Map element) {
 
-               if (eq == null || eq.size() == 0) {
+               if (patterns == null || patterns.size() == 0) {
                    context.provide(element);
                    return;
                }
 
-               for(String e : eq) {
-                   if (e.contains(":")) {
-                       e = e.trim();
-                       int pos = e.indexOf(":");
-                       String key = e.substring(0, pos);
-                       String value = e.substring(pos + 1);
-                       if (value.equals(element.get(key))) {
+               for(String p : patterns) {
+                   if (p.contains(":")) {
+                       p = p.trim();
+                       int pos = p.indexOf(":");
+                       String key = p.substring(0, pos);
+                       String value = p.substring(pos + 1);
+                       Pattern pattern = Pattern.compile(Utils.applyRegex(value));
+                       if (pattern.matcher(element.get(key)).find()) {
                            context.provide(element);
                            return;
                        }

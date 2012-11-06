@@ -92,4 +92,22 @@ public class Utils {
       return e2;
     }
   }
+
+  public static String applyRegex(String pattern) {
+    if (pattern.charAt(0) != '*') {
+        pattern = '^' + pattern;
+    } else {
+        pattern = pattern.substring(1);
+    }
+
+    if (pattern.charAt(pattern.length() - 1) != '*') {
+        pattern += '$';
+    } else {
+        pattern = pattern.substring(0, pattern.length() - 1);
+    }
+
+    pattern = pattern.replace("*", ".*");
+    return pattern;
+  }
+
 }

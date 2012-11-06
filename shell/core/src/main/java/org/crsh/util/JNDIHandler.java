@@ -19,20 +19,7 @@ public class JNDIHandler {
 
         Pattern pattern = null;
         if (name != null) {
-
-            if (name.charAt(0) != '*') {
-                name = '^' + name;
-            } else {
-                name = name.substring(1);
-            }
-
-            if (name.charAt(name.length() - 1) != '*') {
-                name += '$';
-            } else {
-                name = name.substring(0, name.length() - 1);
-            }
-
-            name = name.replace("*", ".*");
+            name = Utils.applyRegex(name);
             pattern = Pattern.compile(name);
         }
 
