@@ -73,6 +73,37 @@ public class Commands {
     }
   }
 
+  public static class Buffer extends CRaSHCommand {
+    @Command
+    public org.crsh.command.PipeCommand<String, Object> main() {
+      return new PipeCommand<String, Object>() {
+        List<String> buffer = new ArrayList<String>();
+        @Override
+        public void provide(String element) throws ScriptException, IOException {
+          buffer.add(element);
+        }
+        @Override
+        public void flush() throws ScriptException, IOException {
+          for (String s : buffer) {
+            context.provide(s);
+          }
+        }
+      };
+    }
+  }
+
+  public static class Filter extends CRaSHCommand {
+    @Command
+    public org.crsh.command.PipeCommand<String, Object> main() {
+      return new PipeCommand<String, Object>() {
+        @Override
+        public void provide(String element) throws ScriptException, IOException {
+          context.provide(element);
+        }
+      };
+    }
+  }
+
   public static class ProduceInteger extends CRaSHCommand {
     @Command
     public void main(org.crsh.command.InvocationContext<Integer> context) throws IOException {

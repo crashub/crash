@@ -19,6 +19,7 @@
 
 package org.crsh.shell;
 
+import org.codehaus.groovy.tools.shell.Command;
 import org.crsh.command.ScriptException;
 import org.crsh.text.ChunkBuffer;
 
@@ -178,5 +179,29 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Throwable t = assertError("producer | consumer", ErrorType.EVALUATION);
     ScriptException ex = assertInstance(ScriptException.class, t);
     assertEquals("foo", ex.getMessage());
+  }
+
+  public void testBuffer() {
+    lifeCycle.bind("produce_command", Commands.ProduceString.class);
+    lifeCycle.bind("buffer", Commands.Buffer.class);
+    lifeCycle.bind("consume_command", Commands.ConsumeString.class);
+    Commands.list.clear();
+    assertOk("produce_command | consume_command");
+    assertEquals(2, Commands.list.size());
+    Commands.list.clear();
+    assertOk("produce_command | buffer | consume_command");
+    assertEquals(2, Commands.list.size());
+  }
+
+  public void testFilter() {
+    lifeCycle.bind("produce_command", Commands.ProduceString.class);
+    lifeCycle.bind("filter", Commands.Filter.class);
+    lifeCycle.bind("consume_command", Commands.ConsumeString.class);
+    Commands.list.clear();
+    assertOk("produce_command | consume_command");
+    assertEquals(2, Commands.list.size());
+    Commands.list.clear();
+    assertOk("produce_command | filter | consume_command");
+    assertEquals(2, Commands.list.size());
   }
 }
