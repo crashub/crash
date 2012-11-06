@@ -171,20 +171,25 @@ public class SSHTestCase extends Assert {
   public void testServerWriteDel() throws Exception {
     handler.add(IOAction.del());
     handler.add(IOAction.flush());
-    assertEquals('\b', client.read());
+    assertEquals('\033', client.read());
+    assertEquals('[', client.read());
+    assertEquals('D', client.read());
     assertEquals(' ', client.read());
-    assertEquals('\b', client.read());
+    assertEquals('\033', client.read());
+    assertEquals('[', client.read());
+    assertEquals('D', client.read());
     lifeCycle.stop();
     assertEquals(-1, client.read());
   }
 
   @Test
   public void testServerMoveLeft() throws Exception {
-    handler.add(IOAction.del());
+    handler.add(IOAction.left());
     handler.add(IOAction.flush());
-    assertEquals('\b', client.read());
-    assertEquals(' ', client.read());
-    assertEquals('\b', client.read());
+    assertEquals('\033', client.read());
+    assertEquals('[', client.read());
+    assertEquals('1', client.read());
+    assertEquals('D', client.read());
     lifeCycle.stop();
     assertEquals(-1, client.read());
   }
