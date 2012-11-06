@@ -20,11 +20,15 @@
 package org.crsh.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -42,6 +46,21 @@ public class Utils {
 
   public static <K, V> HashMap<K, V> newHashMap() {
     return new HashMap<K, V>();
+  }
+
+  public static <K, V, M extends Map<K, V>> M map(M map, K key, V value) {
+    map.put(key, value);
+    return map;
+  }
+
+  public static <K, V> HashMap<K, V> map(K key, V value) {
+    HashMap<K, V> map = new HashMap<K, V>();
+    map.put(key, value);
+    return map;
+  }
+
+  public static <E> List<E> list(E... elements) {
+    return Arrays.asList(elements);
   }
 
   public static <E> List<E> list(Iterable<E> iterable) {
@@ -93,21 +112,60 @@ public class Utils {
     }
   }
 
-  public static String applyRegex(String pattern) {
-    if (pattern.charAt(0) != '*') {
-        pattern = '^' + pattern;
-    } else {
-        pattern = pattern.substring(1);
-    }
+  private static final Pattern FOO = Pattern.compile("" +
+      "(\\*)" + // Wildcard *
+      "|" +
+      "(\\?)" + // Wildcard ?
+      "|" +
+      "(?:\\[([^)]+)\\])" + // Range
+      "|" +
+      "(\\\\.)" // Escape
+  );
 
-    if (pattern.charAt(pattern.length() - 1) != '*') {
-        pattern += '$';
-    } else {
-        pattern = pattern.substring(0, pattern.length() - 1);
+  /**
+   * Create a pattern that transforms a glob expression into a regular expression, the following task are supported
+   * <ul>
+   *   <li>* : Match any number of unknown characters</li>
+   *   <li>? : Match one unknown character</li>
+   *   <li>[characters] : Match a character as part of a group of characters</li>
+   *   <li>\ : Escape character</li>
+   * </ul>
+   *
+   * @param globex the glob expression
+   * @return the regular expression
+   * @throws NullPointerException when the globex argument is null
+   */
+  public static String globexToRegex(String globex) throws NullPointerException {
+    if (globex == null) {
+      throw new NullPointerException("No null globex accepted");
     }
-
-    pattern = pattern.replace("*", ".*");
-    return pattern;
+    StringBuilder regex = new StringBuilder();
+    int prev = 0;
+    Matcher matcher = FOO.matcher(globex);
+    while (matcher.find()) {
+      int next = matcher.start();
+      if (next > prev) {
+        regex.append(Pattern.quote(globex.substring(prev, next)));
+      }
+      if (matcher.group(1) != null) {
+        regex.append(".*");
+      } else if (matcher.group(2) != null) {
+        regex.append(".");
+      } else if (matcher.group(3) != null) {
+        regex.append("[");
+        regex.append(Pattern.quote(matcher.group(3)));
+        regex.append("]");
+      } else if (matcher.group(4) != null) {
+        regex.append(Pattern.quote(Character.toString(matcher.group(4).charAt(1))));
+      } else {
+        throw new UnsupportedOperationException("Not handled yet");
+      }
+      prev = matcher.end();
+    }
+    if (prev < globex.length()) {
+      regex.append(Pattern.quote(globex.substring(prev)));
+    }
+    return regex.toString();
   }
 
 }

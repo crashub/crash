@@ -18,9 +18,12 @@
  */
 package org.crsh.shell;
 
+import org.crsh.command.ScriptException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import static org.crsh.util.Utils.*;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -43,18 +46,9 @@ public class FilterCommandTestCase extends AbstractCommandTestCase {
   private final String produce_command = "class produce_command extends org.crsh.command.CRaSHCommand {\n" +
       "@Command\n" +
       "public void main(org.crsh.command.InvocationContext<java.util.Map> context) {\n" +
-      "java.util.Map m = new java.util.HashMap<String, String>();\n" +
-      "m.put(\"A\", \"A\");\n" +
-      "m.put(\"B\", \"C\");\n" +
-      "java.util.Map m2 = new java.util.HashMap<String, String>();\n" +
-      "m2.put(\"A\", \"B\");\n" +
-      "m2.put(\"B\", \"B\");\n" +
-      "java.util.Map m3 = new java.util.HashMap<String, String>();\n" +
-      "m3.put(\"A\", \"C\");\n" +
-      "m3.put(\"B\", \"A\");\n" +
-      "context.provide(m);\n" +
-      "context.provide(m2);\n" +
-      "context.provide(m3);\n" +
+      "context.provide([A:'A',B:'C']);\n" +
+      "context.provide([A:'B',B:'B']);\n" +
+      "context.provide([A:'C',B:'A']);\n" +
       "}\n" +
       "}";
   
@@ -62,35 +56,31 @@ public class FilterCommandTestCase extends AbstractCommandTestCase {
     output.clear();
     lifeCycle.bind("consume_command", consume_command);
     lifeCycle.bind("produce_command", produce_command);
-    assertOk("produce_command | filter -e A:C | consume_command");
-    assertEquals(1, output.size());
-    assertEquals("C", output.get(0).get("A"));
+    assertOk("produce_command | filter -p A:C | consume_command");
+    assertEquals(list(map(map("A", "C"), "B", "A")), output);
   }
 
   public void testMany() throws Exception {
     output.clear();
     lifeCycle.bind("consume_command", consume_command);
     lifeCycle.bind("produce_command", produce_command);
-    assertOk("produce_command | filter -e A:C -e A:B | consume_command");
-    assertEquals(2, output.size());
-    assertEquals("B", output.get(0).get("A"));
-    assertEquals("C", output.get(1).get("A"));
+    assertOk("produce_command | filter -p A:C -p A:B | consume_command");
+    assertEquals(list(map(map("A", "B"), "B", "B"), map(map("A", "C"), "B", "A")), output);
   }
 
   public void testInvalid() throws Exception {
     output.clear();
     lifeCycle.bind("consume_command", consume_command);
     lifeCycle.bind("produce_command", produce_command);
-    assertOk("produce_command | filter -e invalid | consume_command");
-    assertEquals(3, output.size());
+    assertError("produce_command | filter -p invalid | consume_command", ErrorType.EVALUATION, ScriptException.class);
   }
 
   public void testIntersect() throws Exception {
     output.clear();
     lifeCycle.bind("consume_command", consume_command);
     lifeCycle.bind("produce_command", produce_command);
-    assertOk("produce_command | filter -e A:C -e B:A | consume_command");
-    assertEquals(1, output.size());
+    assertOk("produce_command | filter -p A:C -p B:A | consume_command");
+    assertEquals(list(map(map("A", "C"), "B", "A")), output);
   }
 
 }
