@@ -72,7 +72,7 @@ class jmx extends CRaSHCommand {
 
   @Usage("todo")
   @Command
-  PipeCommand<ObjectName, Map> get(InvocationContext<Map> context, @Option(names=['a','attributes']) List<String> attributes, @Option(names=['p','property']) List<String> properties) {
+  PipeCommand<ObjectName, Map> get(InvocationContext<Map> context, @Option(names=['a','attributes']) List<String> attributes) {
 
     // Determine common attributes from all names
     if (attributes == null || attributes.isEmpty()) {
@@ -94,12 +94,14 @@ class jmx extends CRaSHCommand {
     return new PipeCommand<ObjectName, Map>() {
       @Override
       void provide(ObjectName name) {
-        def tuple = [:];
-        properties.each { property ->
-          tuple[property] = name.getKeyProperty(property);
-        }
-        attributes.each { attribute ->
-          tuple[attribute] = String.valueOf(server.getAttribute(name, attribute));
+          def tuple = [:];
+          attributes.each { attribute ->
+          String prop = name.getKeyProperty(attribute);
+          if (prop != null) {
+            tuple[attribute] = prop;
+          } else {
+            tuple[attribute] = String.valueOf(server.getAttribute(name, attribute));
+          }
         }
         context.provide(tuple);
       }
