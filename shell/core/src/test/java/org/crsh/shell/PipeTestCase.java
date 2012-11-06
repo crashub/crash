@@ -145,6 +145,56 @@ public class PipeTestCase extends AbstractCommandTestCase {
     assertEquals(Arrays.asList("flush", "flush"), Commands.list);
   }
 
+  public void testProvideInFlush() throws Exception {
+    String producer =
+        "class producer extends org.crsh.command.CRaSHCommand {\n" +
+        "  @Command\n" +
+        "  public org.crsh.command.PipeCommand<Object, String> main() {\n" +
+        "    return new org.crsh.command.PipeCommand<Object, String>() {\n" +
+        "      public void flush() {\n" +
+        "        context.provide('foo');\n" +
+        "      }\n" +
+        "    };\n" +
+        "  }\n" +
+        "}";
+
+    //
+    lifeCycle.bind("producer", producer);
+    lifeCycle.bind("consumer", Commands.ConsumeString.class);
+
+    //
+    Commands.list.clear();
+    assertOk("producer | consumer");
+
+    //
+    assertEquals(Arrays.asList("foo"), Commands.list);
+  }
+
+  public void testProvideInClose() throws Exception {
+    String producer =
+        "class producer extends org.crsh.command.CRaSHCommand {\n" +
+            "  @Command\n" +
+            "  public org.crsh.command.PipeCommand<Object, String> main() {\n" +
+            "    return new org.crsh.command.PipeCommand<Object, String>() {\n" +
+            "      public void close() {\n" +
+            "        context.provide('foo');\n" +
+            "      }\n" +
+            "    };\n" +
+            "  }\n" +
+            "}";
+
+    //
+    lifeCycle.bind("producer", producer);
+    lifeCycle.bind("consumer", Commands.ConsumeString.class);
+
+    //
+    Commands.list.clear();
+    assertOk("producer | consumer");
+
+    //
+    assertEquals(Arrays.asList("foo"), Commands.list);
+  }
+
   public void testNotAssignableType() throws Exception {
     lifeCycle.bind("producer", Commands.ProduceInteger.class);
     lifeCycle.bind("consumer", Commands.ConsumeBoolean.class);
