@@ -2,13 +2,13 @@
   <parent>
     <artifactId>crsh.shell</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.2.0-cr2-SNAPSHOT</version>
+    <version>1.2.0-cr2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.shell.telnet</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.0-cr2-SNAPSHOT</version>
+  <version>1.2.0-cr2</version>
 
   <name>CRaSH telnet</name>
   <description>The CRaSH telner module</description>
