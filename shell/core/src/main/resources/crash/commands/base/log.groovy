@@ -187,15 +187,15 @@ The following set the level warn on all the available loggers:
   }
 
   public Completion complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
-    def c = Completion.create(prefix);
+    def builder = new Completion.Builder(prefix);
     if (parameter.getDeclaredType() == LoggerName.class) {
       loggers.each() {
         if (it.startsWith(prefix)) {
-          c.add(it.substring(prefix.length()), true);
+          builder.add(it.substring(prefix.length()), true);
         }
       }
     }
-    return c;
+    return builder.build();
   }
 }
 

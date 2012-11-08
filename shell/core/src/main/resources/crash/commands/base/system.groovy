@@ -67,15 +67,15 @@ class system extends CRaSHCommand implements Completer {
 
   Completion complete(ParameterDescriptor<?> parameter, String prefix)
   {
-    def c = Completion.create(prefix);
+    def b = new Completion.Builder(prefix);
     if (parameter.getDeclaredType() == PropName.class) {
       System.getProperties().each() {
         if (it.key.startsWith(prefix)) {
-          c.add(it.key.substring(prefix.length()), true)
+          b.add(it.key.substring(prefix.length()), true)
         }
       }
     }
-    return c
+    return b.build();
   }
 
   // Memory commands
