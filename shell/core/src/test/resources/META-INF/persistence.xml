@@ -1,0 +1,20 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+  <persistence-unit name="testPU" transaction-type="RESOURCE_LOCAL">
+    <class>org.crsh.shell.entities.Foo</class>
+    <properties>
+      <property name="eclipselink.target-database" value="DERBY"/>
+      <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
+      <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:derby:memory:db;create=true"/>
+      <property name="javax.persistence.jdbc.user" value="my_user"/>
+      <property name="javax.persistence.jdbc.password" value="my_password"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+      <property name="hibernate.show_sql" value="false"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect"/>
+      <property name="derby.authentication.provider" value="BUILTIN"/>
+    </properties>
+  </persistence-unit>
+</persistence>
