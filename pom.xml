@@ -351,6 +351,11 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>org.apache.ivy</groupId>
+        <artifactId>ivy</artifactId>
+        <version>2.2.0</version>
+      </dependency>
+      <dependency>
         <groupId>jline</groupId>
         <artifactId>jline</artifactId>
         <version>2.7</version>
@@ -812,24 +817,6 @@
 
     <!-- Release profile -->
     <profile>
-      <id>groovy-1.6</id>
-      <dependencyManagement>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>1.6.5</version>
-            <exclusions>
-              <exclusion>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-              </exclusion>
-            </exclusions>
-          </dependency>
-        </dependencies>
-      </dependencyManagement>
-    </profile>
-    <profile>
       <id>groovy-1.8</id>
       <dependencyManagement>
         <dependencies>
@@ -843,6 +830,11 @@
                 <artifactId>junit</artifactId>
               </exclusion>
             </exclusions>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.ivy</groupId>
+            <artifactId>ivy</artifactId>
+            <version>2.2.0</version>
           </dependency>
         </dependencies>
       </dependencyManagement>
