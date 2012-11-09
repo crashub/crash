@@ -53,6 +53,9 @@ public class thread extends CRaSHCommand {
     @Usage("Filter the threads with a glob expression on their name")
     @Option(names=["n","name"])
     String nameFilter,
+    @Usage("Filter the threads with a glob expression on their group")
+    @Option(names=["g","group"])
+    String groupFilter,
     @Usage("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
     @Option(names=["s","state"])
     String stateFilter) {
@@ -69,6 +72,10 @@ public class thread extends CRaSHCommand {
           if (stateFilter != null) {
             args.state = stateFilter;
           }
+          if (groupFilter != null) {
+            args.group = groupFilter;
+          }
+          // We need to use getProperty otherwise "thread" resolve to this class as a java.lang.Class object
           getProperty("thread").ls args;
         }
       }
@@ -96,11 +103,22 @@ public class thread extends CRaSHCommand {
     @Usage("Filter the threads with a glob expression on their name")
     @Option(names=["n","name"])
     String nameFilter,
+    @Usage("Filter the threads with a glob expression on their group")
+    @Option(names=["g","group"])
+    String groupFilter,
     @Usage("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
     @Option(names=["s","state"])
     String stateFilter) {
 
-    // Regex filter
+    // Group filter
+    Pattern groupPattern;
+    if (groupFilter != null) {
+      groupPattern = Pattern.compile('^' + Utils.globexToRegex(groupFilter) + '$');
+    } else {
+      groupPattern = ANY;
+    }
+
+    // Name filter
     Pattern namePattern;
     if (nameFilter != null) {
       namePattern = Pattern.compile('^' + Utils.globexToRegex(nameFilter) + '$');
@@ -122,9 +140,10 @@ public class thread extends CRaSHCommand {
     Map<String, Thread> threads = getThreads();
     threads.each() {
       if (it != null) {
-        def matcher = it.value.name =~ namePattern;
+        def nameMatcher = it.value.name =~ namePattern;
+        def groupMatcher = it.value.threadGroup.name =~ groupPattern;
         def thread = it.value;
-        if (matcher.matches() && (state == null || it.value.state == state)) {
+        if (nameMatcher.matches() && groupMatcher.matches() && (state == null || it.value.state == state)) {
           try {
             context.provide(thread)
           }
