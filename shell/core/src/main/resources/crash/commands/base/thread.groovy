@@ -9,6 +9,7 @@ import org.crsh.cmdline.annotations.Argument
 
 import org.crsh.command.PipeCommand
 import org.crsh.text.ui.UIBuilder
+import org.crsh.util.Utils
 
 @Usage("JVM thread commands")
 @Man("""\
@@ -48,14 +49,27 @@ public class thread extends CRaSHCommand {
 
   @Usage("thread top")
   @Command
-  public void top() {
+  public void top(
+    @Usage("Filter the threads with a glob expression on their name")
+    @Option(names=["n","name"])
+    String nameFilter,
+    @Usage("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
+    @Option(names=["s","state"])
+    String stateFilter) {
     def table = new UIBuilder().table(columns:[1]) {
       header(bold: true, fg: black, bg: white) {
         label("top");
       }
       row {
         execute {
-          eval("thread ls");
+          def args = [:];
+          if (nameFilter != null) {
+            args.name = nameFilter
+          }
+          if (stateFilter != null) {
+            args.state = stateFilter;
+          }
+          getProperty("thread").ls args;
         }
       }
     }
@@ -73,27 +87,26 @@ public class thread extends CRaSHCommand {
     }
   }
 
+  private static final Pattern ANY = Pattern.compile(".*");
+
   @Usage("list the vm threads")
   @Command
   public void ls(
     InvocationContext<Thread> context,
-    @Usage("Retain the thread with the specified name")
+    @Usage("Filter the threads with a glob expression on their name")
     @Option(names=["n","name"])
-    String name,
-    @Usage("Filter the threads with a regular expression on their name")
-    @Option(names=["f","filter"])
     String nameFilter,
     @Usage("Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)")
     @Option(names=["s","state"])
     String stateFilter) {
 
     // Regex filter
-    if (name != null) {
-      nameFilter = Pattern.quote(name);
-    } else if (nameFilter == null) {
-      nameFilter = ".*";
+    Pattern namePattern;
+    if (nameFilter != null) {
+      namePattern = Pattern.compile('^' + Utils.globexToRegex(nameFilter) + '$');
+    } else {
+      namePattern = ANY;
     }
-    def pattern = Pattern.compile(nameFilter);
 
     // State filter
     Thread.State state = null;
@@ -101,7 +114,7 @@ public class thread extends CRaSHCommand {
       try {
         state = Thread.State.valueOf(stateFilter.toUpperCase());
       } catch (IllegalArgumentException iae) {
-        throw new ScriptException("Invalid state filter $stateFilter");
+        throw new ScriptException("Invalid state filter $stateFilter", iae);
       }
     }
 
@@ -109,7 +122,7 @@ public class thread extends CRaSHCommand {
     Map<String, Thread> threads = getThreads();
     threads.each() {
       if (it != null) {
-        def matcher = it.value.name =~ pattern;
+        def matcher = it.value.name =~ namePattern;
         def thread = it.value;
         if (matcher.matches() && (state == null || it.value.state == state)) {
           try {
