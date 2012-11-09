@@ -95,7 +95,6 @@ class jmx extends CRaSHCommand {
       @Override
       void provide(ObjectName name) {
           def tuple = [:];
-          def foo = server.getMBeanInfo(name)
           attributes.each { attribute ->
           String prop = name.getKeyProperty(attribute);
           if (prop != null) {
