@@ -127,20 +127,20 @@ public class ThreadRenderable extends Renderable<Thread> {
     });
 
     //
-    TableElement table = new TableElement(1,1,1,1,1,1,1,2,5).overflow(Overflow.HIDDEN).rightCellPadding(1);
+    TableElement table = new TableElement(1,3,2,1,1,1,1,1,1).overflow(Overflow.HIDDEN).rightCellPadding(1);
 
     // Header
     RowElement header = new RowElement();
     header.style(Decoration.bold.fg(Color.black).bg(Color.white));
     header.add(new LabelElement("ID"));
+    header.add(new LabelElement("NAME"));
+    header.add(new LabelElement("GROUP"));
     header.add(new LabelElement("PRIORITY"));
     header.add(new LabelElement("STATE"));
     header.add(new LabelElement("%CPU"));
     header.add(new LabelElement("TIME"));
     header.add(new LabelElement("INTERRUPTED"));
     header.add(new LabelElement("DAEMON"));
-    header.add(new LabelElement("GROUP"));
-    header.add(new LabelElement("NAME"));
     table.add(header);
 
     //
@@ -157,14 +157,14 @@ public class ThreadRenderable extends Renderable<Thread> {
       //
       RowElement row = new RowElement();
       row.add(new LabelElement(thread.getId()));
+      row.add(new LabelElement(thread.getName()));
+      row.add(new LabelElement(group == null ? "" : group.getName()));
       row.add(new LabelElement(thread.getPriority()));
       row.add(new LabelElement(thread.getState()).style(c.fg()));
       row.add(new LabelElement(cpu));
       row.add(new LabelElement(time));
       row.add(new LabelElement(thread.isInterrupted()));
       row.add(new LabelElement(thread.isDaemon()));
-      row.add(new LabelElement(group == null ? "" : group.getName()));
-      row.add(new LabelElement(thread.getName()));
       table.add(row);
     }
 
