@@ -243,6 +243,9 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           /** . */
           private SessionContext session;
 
+          /** . */
+          private InvocationContextImpl context;
+
           public Class<Object> getProducedType() {
             return _producedType;
           }
@@ -256,8 +259,9 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           }
 
           public void open(ProducerContext<Object> context) {
+            this.context = new InvocationContextImpl(context, session);
             try {
-              match.printUsage(new InvocationContextImpl(context, session).getWriter());
+              match.printUsage(this.context.getWriter());
             }
             catch (IOException e) {
               throw new AssertionError(e);
@@ -271,6 +275,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           }
 
           public void flush() throws IOException {
+            this.context.flush();
           }
 
           public void close() {
