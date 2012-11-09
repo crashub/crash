@@ -91,4 +91,21 @@ public class EvalTestCase extends AbstractCommandTestCase {
     //
     assertEquals("bar", assertOk("foo"));
   }
+
+  public void testContextLeftShift() {
+    String bar = "context << 'juu'\n" +
+        "return null";
+    String foo =
+        "class foo extends org.crsh.command.CRaSHCommand {\n" +
+            "  @Command\n" +
+            "  public void main() {\n" +
+            "    eval('bar')\n" +
+            "  }\n" +
+            "}";
+    lifeCycle.bind("bar", bar);
+    lifeCycle.bind("foo", foo);
+
+    //
+    assertEquals("juu", assertOk("foo"));
+  }
 }

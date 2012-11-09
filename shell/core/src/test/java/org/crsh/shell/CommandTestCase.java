@@ -127,6 +127,30 @@ public class CommandTestCase extends AbstractCommandTestCase {
     assertEquals("HELLO", assertOk("resolve"));
   }
 
+  public void testContextLeftShift() {
+    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main() {\n" +
+        "context << 'hello'\n" +
+        "context << 3\n" +
+        "}\n" +
+        "}";
+    lifeCycle.bind("foo", foo);
+
+    //
+    assertEquals("hello3", assertOk("foo"));
+  }
+
+  public void testScriptContextLeftShift() {
+    String foo = "context << 'hello'\n" +
+        "context << 3\n" +
+        "return null";
+    lifeCycle.bind("foo", foo);
+
+    //
+    assertEquals("hello3", assertOk("foo"));
+  }
+
   public void testThrowScript() throws Exception {
     lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
         "@Command\n" +

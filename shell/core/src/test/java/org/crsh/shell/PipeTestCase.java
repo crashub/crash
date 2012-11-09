@@ -73,6 +73,23 @@ public class PipeTestCase extends AbstractCommandTestCase {
     assertEquals("<value>abc</value>              \n", assertOk("cmd"));
   }
 
+  public void testLeftShiftOperator() {
+    String producer = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "@Command\n" +
+        "public void main(org.crsh.command.InvocationContext<Integer> context) {\n" +
+        "context << 'hello';\n" +
+        "context << 3;\n" +
+        "}\n" +
+        "}";
+    lifeCycle.bind("producer", producer);
+    lifeCycle.bind("consumer", Commands.ConsumeInteger.class);
+
+    //
+    Commands.list.clear();
+    assertOk("producer | consumer");
+    assertEquals(Arrays.<Object>asList(3), Commands.list);
+  }
+
   public void testAdaptToChunk() {
     lifeCycle.bind("producer", Commands.ProduceValue.class);
     lifeCycle.bind("consumer", Commands.ConsumeChunk.class);

@@ -30,7 +30,7 @@ import org.crsh.text.RenderPrintWriter;
 import java.io.IOException;
 import java.util.Map;
 
-class InvocationContextImpl<P> implements InvocationContext<P> {
+final class InvocationContextImpl<P> implements InvocationContext<P> {
 
   /** . */
   private final ProducerContext<P> producerContext;
@@ -125,5 +125,13 @@ class InvocationContextImpl<P> implements InvocationContext<P> {
 
   public Map<String, Object> getAttributes() {
     return sessionContext.getAttributes();
+  }
+
+  public InvocationContextImpl<P> leftShift(Object o) throws IOException {
+    if (producerContext.getConsumedType().isInstance(o)) {
+      P p = producerContext.getConsumedType().cast(o);
+      producerContext.provide(p);
+    }
+    return this;
   }
 }
