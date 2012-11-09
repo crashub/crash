@@ -22,20 +22,16 @@ package org.crsh.shell.entities;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
 @Entity
-public class Foo implements Serializable {
+public class Foo2 implements Serializable {
 
   private Long id;
-
-  private String name;
-
-  private Calendar created;
-
-  private Bar bar;
+  private List<Bar> bars;
 
   @Id
   @GeneratedValue
@@ -47,37 +43,12 @@ public class Foo implements Serializable {
     this.id = id;
   }
 
-  public String getName() {
-    return name;
+  @OneToMany
+  public List<Bar> getBars() {
+    return bars;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  @Temporal(TemporalType.TIMESTAMP)
-  public Calendar getCreated() {
-    return created;
-  }
-
-  public void setCreated(Calendar created) {
-    this.created = created;
-  }
-
-  public Foo() {
-  }
-
-  public Foo(String name, Calendar created) {
-    this.name = name;
-    this.created = created;
-  }
-
-  @ManyToOne
-  public Bar getBar() {
-    return bar;
-  }
-
-  public void setBar(Bar bar) {
-    this.bar = bar;
+  public void setBars(List<Bar> bars) {
+    this.bars = bars;
   }
 }

@@ -31,6 +31,7 @@ import org.crsh.cmdline.spi.Completion
 import org.crsh.cmdline.ParameterDescriptor
 import org.crsh.util.JNDIHandler
 import com.sun.tools.jdi.LinkedHashMap
+import org.crsh.util.TypeResolver
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -114,13 +115,64 @@ class jpa extends CRaSHCommand implements Completer {
 
     q.resultList.each { r ->
       type = em.metamodel.entity(r.class);
-      Map result = new LinkedHashMap();
+      Map idColumn = new LinkedHashMap();
+      Map valueColumn = new LinkedHashMap();
       type.attributes.each { a ->
-        result.put(a.name, r."${a.name}");
+        if (!a.collection && a.id) {
+          addValue(a, r, idColumn)
+        } else {
+          addValue(a, r, valueColumn)
+        }
       }
-      context.provide(result);
+      idColumn.putAll(valueColumn);
+      context.provide(idColumn);
     }
 
+  }
+
+  void addValue(attribute, row, result) {
+    if (!attribute.collection) {
+      if (TypeResolver.instanceOf(attribute.type.class, "javax.persistence.metamodel.EntityType")) {
+        if (row."${attribute.name}" != null) {
+          result.put(attribute.name, formatEntity(attribute.type, row."${attribute.name}"))
+        } else {
+          result.put(attribute.name, "<null>");
+        }
+      } else {
+        def value = String.valueOf(row."${attribute.name}");
+        if (value.length() > 50) {
+          value = value.substring(0, 47) + "...";
+        }
+        if (attribute.id) {
+          result.put("*" + attribute.name, value)
+        } else {
+          result.put(attribute.name, value)
+        }
+      }
+    } else {
+      result.put(attribute.name, formatEntities(attribute.elementType, row."${attribute.name}"))
+    }
+  }
+
+  String formatEntity(entity, instance) {
+    def ids = "";
+    entity.attributes.each { a ->
+      if (TypeResolver.instanceOf(a.class, "javax.persistence.metamodel.SingularAttribute") && a.id) {
+        ids += a.name + "=" + instance."${a.name}" + ","
+      }
+    }
+    return "${entity.name}[${ids.substring(0, ids.length() - 1)}]";
+  }
+
+  String formatEntities(entity, collection) {
+    if (collection.size() == 0) {
+      return "{}";
+    }
+    def entities = "";
+    collection.each { instance ->
+      entities += formatEntity(entity, instance) + ","
+    }
+    return "{${entities.substring(0, entities.length() - 1)}}";
   }
 
   public static class EmfCompleter implements Completer {
