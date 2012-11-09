@@ -30,7 +30,7 @@ class sort extends CRaSHCommand {
   @Usage("Sort a map")
   @Command
   PipeCommand<Map, Map> main(
-      @Usage("format <key>:<value>")
+      @Usage("Filed used to sort")
       @Option(names = ['f', 'fields']) List<String> fields) {
     return new PipeCommand<Map, Map>() {
       List<Map> d = new ArrayList<Map>();
@@ -63,12 +63,24 @@ class sort extends CRaSHCommand {
     int compare(Map o1, Map o2) {
 
       for (String field : fields) {
+
+        int order = 1;
+        if (field.endsWith(":asc")) {
+          field = field.substring(0, field.length() - 4)
+        }
+        if (field.endsWith(":desc")) {
+          field = field.substring(0, field.length() - 5)
+          order = -1;
+        }
+
         if (o1.containsKey(field) && o2.containsKey(field)) {
-          String v1 = o1.get(field);
-          String v2 = o2.get(field);
-          int r = v1.compareTo(v2);
-          if (r != 0) {
-            return r;
+          def v1 = o1.get(field);
+          def v2 = o2.get(field);
+          if (v1 instanceof Comparable && v2 instanceof Comparable) {
+            int r = v1.compareTo(v2);
+            if (r != 0) {
+              return r * order;
+            }
           }
         }
         else {

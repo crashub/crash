@@ -96,6 +96,40 @@ public class SortCommandTestCase extends AbstractCommandTestCase {
     assertEquals("A", ((Map<String,String>)output.get(2)).get("C"));
   }
 
+  public void testAsc() throws Exception {
+    output.clear();
+    lifeCycle.bind("produce_command", produce_command);
+    lifeCycle.bind("consume_command", consume_command);
+    assertOk("produce_command | sort -f B:asc | consume_command");
+    assertEquals(3, output.size());
+    assertEquals("A", ((Map<String,String>)output.get(0)).get("A"));
+    assertEquals("A", ((Map<String,String>)output.get(0)).get("B"));
+    assertEquals("B", ((Map<String,String>)output.get(0)).get("C"));
+    assertEquals("A", ((Map<String,String>)output.get(1)).get("A"));
+    assertEquals("B", ((Map<String,String>)output.get(1)).get("B"));
+    assertEquals("C", ((Map<String,String>)output.get(1)).get("C"));
+    assertEquals("C", ((Map<String,String>)output.get(2)).get("A"));
+    assertEquals("B", ((Map<String,String>)output.get(2)).get("B"));
+    assertEquals("A", ((Map<String,String>)output.get(2)).get("C"));
+  }
+
+  public void testDesc() throws Exception {
+    output.clear();
+    lifeCycle.bind("produce_command", produce_command);
+    lifeCycle.bind("consume_command", consume_command);
+    assertOk("produce_command | sort -f B:desc | consume_command");
+    assertEquals(3, output.size());
+    assertEquals("A", ((Map<String,String>)output.get(0)).get("A"));
+    assertEquals("B", ((Map<String,String>)output.get(0)).get("B"));
+    assertEquals("C", ((Map<String,String>)output.get(0)).get("C"));
+    assertEquals("C", ((Map<String,String>)output.get(1)).get("A"));
+    assertEquals("B", ((Map<String,String>)output.get(1)).get("B"));
+    assertEquals("A", ((Map<String,String>)output.get(1)).get("C"));
+    assertEquals("A", ((Map<String,String>)output.get(2)).get("A"));
+    assertEquals("A", ((Map<String,String>)output.get(2)).get("B"));
+    assertEquals("B", ((Map<String,String>)output.get(2)).get("C"));
+  }
+
   public void testMany() throws Exception {
     output.clear();
     lifeCycle.bind("produce_command", produce_command);
