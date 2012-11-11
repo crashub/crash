@@ -7,7 +7,7 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
         label("top");
       }
       row {
-        execute {
+        eval {
           thread.ls();
         }
       }
@@ -21,30 +21,30 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
         label("jvm");
       }
       row {
-        execute {
-          eval("system propls -f java.*")
+        eval {
+          execute("system propls -f java.*")
         }
-        execute {
-          eval("env")
+        eval {
+          execute("env")
         }
         table(columns: [1,2]) {
           row() {
             label("Heap:")
-            execute {
-              eval("jvm heap")
+            eval {
+              execute("jvm heap")
             }
           }
           row() {
             label("Non heap:")
-            execute {
-              eval("jvm nonheap")
+            eval {
+              execute("jvm nonheap")
             }
           }
           jvm.pools { name ->
             row() {
               label("$name:")
-              execute {
-                eval("jvm pool '$name'")
+              eval {
+                execute("jvm pool '$name'")
               }
             }
           }

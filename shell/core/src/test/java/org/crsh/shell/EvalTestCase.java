@@ -27,7 +27,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "class foo extends org.crsh.command.CRaSHCommand {\n" +
         "  @Command\n" +
         "  public void main() {\n" +
-        "    def builder = new org.crsh.text.ui.UIBuilder().execute {" +
+        "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
         "      bar()\n" +
         "    }\n" +
         "    out << builder\n" +
@@ -48,7 +48,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "class foo extends org.crsh.command.CRaSHCommand {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
-            "    def builder = new org.crsh.text.ui.UIBuilder().execute {" +
+            "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
             "      bar()\n" +
             "    }\n" +
             "    out << builder\n" +
@@ -66,8 +66,8 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "class foo extends org.crsh.command.CRaSHCommand {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
-            "    def builder = new org.crsh.text.ui.UIBuilder().execute {" +
-            "      eval('echo bar')\n" +
+            "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
+            "      execute('echo bar')\n" +
             "    }\n" +
             "    out << builder\n" +
             "  }\n" +
@@ -83,7 +83,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "class foo extends org.crsh.command.CRaSHCommand {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
-            "    eval('echo bar')\n" +
+            "    execute('echo bar')\n" +
             "  }\n" +
             "}";
     lifeCycle.bind("foo", foo);
@@ -99,7 +99,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "class foo extends org.crsh.command.CRaSHCommand {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
-            "    eval('bar')\n" +
+            "    execute('bar')\n" +
             "  }\n" +
             "}";
     lifeCycle.bind("bar", bar);

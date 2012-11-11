@@ -195,7 +195,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return resolveInvoker(match);
   }
 
-  public final void eval(String s) throws ScriptException, IOException {
+  public final void execute(String s) throws ScriptException, IOException {
     InvocationContext<?> context = peekContext();
     CommandInvoker invoker = context.resolve(s);
     invoker.open(context);

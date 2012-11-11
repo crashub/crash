@@ -64,7 +64,7 @@ public class thread extends CRaSHCommand {
         label("top");
       }
       row {
-        execute {
+        eval {
           def args = [:];
           if (nameFilter != null) {
             args.name = nameFilter

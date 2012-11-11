@@ -86,13 +86,13 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     if (stack == null || stack.isEmpty()) {
       throw new IllegalStateException("Cannot pop a context anymore from the stack");
     }
-    InvocationContext context = (InvocationContext)this.context;
+    InvocationContext context = this.context;
     this.context = stack.removeLast();
-    this.out = this.context != null ? ((InvocationContext)this.context).getWriter() : null;
+    this.out = this.context != null ? this.context.getWriter() : null;
     return context;
   }
 
-  public final void eval(String s) throws ScriptException, IOException {
+  public final void execute(String s) throws ScriptException, IOException {
     InvocationContext<?> context = peekContext();
     CommandInvoker invoker = context.resolve(s);
     invoker.open(context);
