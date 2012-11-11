@@ -36,9 +36,9 @@ import org.crsh.command.PipeCommand
 @Usage("Java Management Extensions")
 class jmx extends CRaSHCommand {
 
-  @Usage("todo")
+  @Usage("Find managed bean")
   @Command
-  void ls(
+  void find(
       InvocationContext<ObjectName> context,
        @Usage("The object name pattern")
        @Option(names=["p","pattern"])
@@ -70,7 +70,7 @@ class jmx extends CRaSHCommand {
 */
   }
 
-  @Usage("todo")
+  @Usage("Get managed bean attribute")
   @Command
   PipeCommand<ObjectName, Map> get(InvocationContext<Map> context, @Option(names=['a','attributes']) List<String> attributes) {
 
