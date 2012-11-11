@@ -24,7 +24,7 @@ import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cmdline.spi.Completion;
-import org.crsh.command.SessionContext;
+import org.crsh.command.CommandContext;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.command.BaseCommandContext;
@@ -46,7 +46,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, SessionContext {
+public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, CommandContext {
 
   /** . */
   static final Logger log = LoggerFactory.getLogger(CRaSHSession.class);

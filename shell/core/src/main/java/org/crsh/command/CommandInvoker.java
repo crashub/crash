@@ -34,6 +34,6 @@ public interface CommandInvoker<C, P> extends ProducerConsumer<C, P> {
    *
    * @param session the session
    */
-  void setSession(SessionContext session);
+  void setSession(CommandContext session);
 
 }

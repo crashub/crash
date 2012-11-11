@@ -35,7 +35,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
   private LinkedList<InvocationContext<?>> stack;
 
   /** The current context. */
-  protected InvocationContext context;
+  protected CommandContext context;
 
   /** The current output. */
   protected RenderPrintWriter out;
@@ -56,7 +56,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
     }
 
     // Save current context (is null the first time)
-    stack.addLast(this.context);
+    stack.addLast((InvocationContext<?>)this.context);
 
     // Set new context
     this.context = context;
@@ -65,9 +65,9 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
 
   public final InvocationContext<?> popContext() {
     if (stack != null && stack.size() > 0) {
-      InvocationContext context = this.context;
+      InvocationContext context = (InvocationContext)this.context;
       this.context = stack.removeLast();
-      this.out = this.context != null ? this.context.getWriter() : null;
+      this.out = this.context != null ? ((InvocationContext)this.context).getWriter() : null;
       return context;
     } else {
       return null;

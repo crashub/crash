@@ -90,14 +90,18 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   }
 
   protected final String readLine(String msg, boolean echo) {
-    return context.readLine(msg, echo);
+    if (context instanceof InvocationContext) {
+      return ((InvocationContext)context).readLine(msg, echo);
+    } else {
+      throw new IllegalStateException("Cannot invoke read line without an invocation context");
+    }
   }
 
   public final String getUnmatched() {
     return unmatched;
   }
 
-  public final CommandCompletion complete(SessionContext context, String line) {
+  public final CommandCompletion complete(CommandContext context, String line) {
 
     // WTF
     Matcher analyzer = descriptor.matcher("main");
@@ -106,6 +110,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     Completer completer = this instanceof Completer ? (Completer)this : null;
 
     //
+    this.context = context;
     try {
       return analyzer.complete(completer, line);
     }
@@ -113,6 +118,9 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       log.error("Error during completion of line " + line, e);
       e.printStackTrace();
       return new CommandCompletion(Delimiter.EMPTY, Completion.create());
+    }
+    finally {
+      this.context = null;
     }
   }
 
@@ -242,7 +250,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         return new CommandInvoker<Object, Object>() {
 
           /** . */
-          private SessionContext session;
+          private CommandContext session;
 
           /** . */
           private InvocationContextImpl context;
@@ -251,7 +259,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             return _producedType;
           }
 
-          public void setSession(SessionContext session) {
+          public void setSession(CommandContext session) {
             this.session = session;
           }
 
@@ -288,9 +296,9 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           return new CommandInvoker<Object, Object>() {
 
             /** . */
-            private SessionContext session;
+            private CommandContext session;
 
-            public void setSession(SessionContext session) {
+            public void setSession(CommandContext session) {
               this.session = session;
             }
 
@@ -353,7 +361,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             boolean piped;
 
             /** . */
-            private SessionContext session;
+            private CommandContext session;
 
             public Class<Object> getProducedType() {
               return _producedType;
@@ -363,7 +371,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               return _consumedType;
             }
 
-            public void setSession(SessionContext session) {
+            public void setSession(CommandContext session) {
               this.session = session;
             }
 
@@ -443,7 +451,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       return new CommandInvoker<Void, Object>() {
 
         /** . */
-        private SessionContext session;
+        private CommandContext session;
 
         /** . */
         InvocationContext context;
@@ -462,7 +470,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           }
         }
 
-        public void setSession(SessionContext session) {
+        public void setSession(CommandContext session) {
           this.session = session;
         }
 

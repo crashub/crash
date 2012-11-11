@@ -55,7 +55,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   private boolean piped;
 
   /** . */
-  private SessionContext session;
+  private CommandContext session;
 
   protected GroovyScriptCommand() {
     this.stack = null;
@@ -178,7 +178,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public final CommandCompletion complete(SessionContext context, String line) {
+  public final CommandCompletion complete(CommandContext context, String line) {
     return new CommandCompletion(Delimiter.EMPTY, Completion.create());
   }
 
@@ -190,7 +190,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return null;
   }
 
-  public final void setSession(SessionContext session) {
+  public final void setSession(CommandContext session) {
     this.session = session;
   }
 

@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.command.SessionContext;
+import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.io.Filter;
@@ -47,7 +47,7 @@ class PipeLine implements CommandInvoker {
     close();
   }
 
-  public void setSession(SessionContext session) {
+  public void setSession(CommandContext session) {
     // Should we use it ?
   }
 

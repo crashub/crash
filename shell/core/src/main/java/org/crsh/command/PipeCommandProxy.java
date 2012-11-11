@@ -45,7 +45,7 @@ class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
     open(innerContext);
   }
 
-  public void setSession(SessionContext session) {
+  public void setSession(CommandContext session) {
     delegate.setSession(session);
   }
 

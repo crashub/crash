@@ -182,7 +182,7 @@ final class ClassDispatcher extends CommandClosure {
           public Class getConsumedType() {
             return type;
           }
-          public void setSession(SessionContext session) {
+          public void setSession(CommandContext session) {
           }
           public void setPiped(boolean piped) {
           }

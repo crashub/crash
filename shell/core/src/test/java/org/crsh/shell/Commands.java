@@ -263,8 +263,12 @@ public class Commands {
 
   public static class CompleteWithSession extends CRaSHCommand implements Completer {
     public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
-      getProperty("object_in_session");
-      return org.crsh.cmdline.spi.Completion.builder(prefix).add("bar", true).build();
+      Object juu = context.getSession().get("juu");
+      Completion.Builder ret = Completion.builder(prefix);
+      if (juu != null) {
+        ret.add(juu.toString(), true);
+      }
+      return ret.build();
     }
     @Command
     public void main(@Argument String arg) {

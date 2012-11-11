@@ -21,7 +21,7 @@ package org.crsh.command;
 
 import java.util.Map;
 
-public interface SessionContext {
+public interface CommandContext {
 
   /**
    * Returns the current shell session.

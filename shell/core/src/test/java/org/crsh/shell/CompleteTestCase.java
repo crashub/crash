@@ -37,10 +37,11 @@ public class CompleteTestCase extends AbstractCommandTestCase {
 
   public void testSessionAccess() {
     lifeCycle.bind("complete", Commands.CompleteWithSession.class);
+    shell.getSession().put("juu", "juu_value");
     CommandCompletion commandCompletion = assertComplete("complete foo");
     Completion completion = commandCompletion.getValue();
     assertEquals("foo", completion.getPrefix());
-    assertEquals(Collections.singleton("bar"), completion.getValues());
-    assertTrue(completion.get("bar"));
+    assertEquals(Collections.singleton("juu_value"), completion.getValues());
+    assertTrue(completion.get("juu_value"));
   }
 }

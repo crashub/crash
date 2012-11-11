@@ -36,7 +36,7 @@ public interface ShellCommand {
    * @param line the original command line arguments
    * @return the completions
    */
-  CommandCompletion complete(SessionContext context, String line);
+  CommandCompletion complete(CommandContext context, String line);
 
   /**
    * Returns a description of the command or null if none can be found.
