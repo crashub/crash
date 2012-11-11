@@ -319,7 +319,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
     assertEquals("pref", value.getPrefix());
     assertEquals(1, value.getSize());
     assertEquals(Collections.singleton("ix"), value.getValues());
-    assertEquals(true, value.get("ix"));
+    assertEquals(Boolean.TRUE, value.get("ix"));
 
     //
     t.interrupt();

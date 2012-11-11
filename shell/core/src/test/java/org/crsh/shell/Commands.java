@@ -20,9 +20,12 @@
 package org.crsh.shell;
 
 import org.crsh.cmdline.IntrospectionException;
+import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.spi.Completer;
+import org.crsh.cmdline.spi.Completion;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.PipeCommand;
 import org.crsh.command.ScriptException;
@@ -246,6 +249,15 @@ public class Commands {
     }
     @Command
     public void main() {
+    }
+  }
+
+  public static class Complete extends CRaSHCommand implements Completer {
+    public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+      return org.crsh.cmdline.spi.Completion.builder(prefix).add("bar", true).build();
+    }
+    @Command
+    public void main(@Argument String arg) {
     }
   }
 }

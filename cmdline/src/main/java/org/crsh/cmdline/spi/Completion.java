@@ -123,7 +123,7 @@ public final class Completion implements Iterable<Map.Entry<String, Boolean>>, S
     return values.isEmpty();
   }
 
-  public Object get(String key) {
+  public Boolean get(String key) {
     return values.get(key);
   }
 

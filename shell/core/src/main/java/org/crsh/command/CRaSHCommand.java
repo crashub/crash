@@ -111,6 +111,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     }
     catch (CmdCompletionException e) {
       log.error("Error during completion of line " + line, e);
+      e.printStackTrace();
       return new CommandCompletion(Delimiter.EMPTY, Completion.create());
     }
   }
