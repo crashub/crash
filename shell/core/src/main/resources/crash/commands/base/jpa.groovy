@@ -32,6 +32,9 @@ import org.crsh.cmdline.ParameterDescriptor
 import org.crsh.util.JNDIHandler
 import com.sun.tools.jdi.LinkedHashMap
 import org.crsh.util.TypeResolver
+import org.crsh.cmdline.completers.AbstractPathCompleter
+import org.crsh.text.formatter.BindingRenderable
+import org.crsh.text.formatter.BindingRenderable.BindingData
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -175,18 +178,10 @@ class jpa extends CRaSHCommand implements Completer {
     return "{${entities.substring(0, entities.length() - 1)}}";
   }
 
-  public static class EmfCompleter implements Completer {
-    Completion complete(ParameterDescriptor<?> parameter, java.lang.String prefix) {
-      def builder = new Completion.Builder(prefix);
-      def pattern = (prefix != null && prefix.length() > 0 ? prefix + "*" : null);
-      JNDIHandler.lookup(["javax.persistence.EntityManagerFactory"], pattern, null).each { d ->
-        if (pattern == null) {
-          builder.add(d.name, true)
-        } else {
-          builder.add(d.name.substring(pattern.length() - 1), true)
-        }
-      }
-      return builder.build();
+  public static class EmfCompleter implements Completer  {
+    Completer c = new JNDIHandler.JNDICompleter("javax.persistence.EntityManagerFactory");
+    Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+      return c.complete(parameter, prefix);
     }
   }
 

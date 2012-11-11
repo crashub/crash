@@ -1,13 +1,13 @@
 package org.crsh.util;
 
+import org.crsh.cmdline.completers.AbstractPathCompleter;
 import org.crsh.text.formatter.BindingRenderable;
 
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /** @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a> */
@@ -72,11 +72,11 @@ public class JNDIHandler {
                 filters.size() == 0 ||
                 TypeResolver.instanceOf(instance.getObject().getClass(), filters)) {
           if (pattern == null || pattern.matcher(fullName).find()) {
-            data.add(new BindingRenderable.BindingData(fullName, instance.getClassName(), verbose));
+            data.add(new BindingRenderable.BindingData(fullName, instance.getClassName(), instance, verbose));
           }
         }
         if (instance.getObject() instanceof Context) {
-          data.addAll(get(filters, pattern, verbose, fullName, "", (Context)instance.getObject()));
+          data.addAll(get(filters, pattern, verbose, fullName, "", (Context) instance.getObject()));
         }
 
       }
@@ -86,6 +86,95 @@ public class JNDIHandler {
     }
 
     return data;
+  }
+
+  public static class JNDICompleter extends AbstractPathCompleter<String> {
+
+    private final String[] filters;
+    private List<BindingRenderable.BindingData> bindings;
+
+    public JNDICompleter(String... filters) {
+      this.filters = filters;
+      bindings = JNDIHandler.lookup(Arrays.asList(filters), null, true);
+    }
+
+    @Override
+    protected String getCurrentPath() {
+      return "";
+    }
+
+    @Override
+    protected String getPath(String path) {
+      return path;
+    }
+
+    @Override
+    protected boolean exists(String path) {
+      if (path.equals("/") || path.endsWith("/")) {
+        return true;
+      } else {
+        for (BindingRenderable.BindingData binding : bindings) {
+          if (binding.name.startsWith(path.substring(1) + "/")) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    @Override
+    protected boolean isDirectory(String path) {
+      if (path.equals("/")) {
+        return true;
+      }
+      if (path.startsWith("/")) {
+        path = path.substring(1);
+      }
+      for (BindingRenderable.BindingData binding : bindings) {
+        if (binding.name.startsWith(path + "/")) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    @Override
+    protected boolean isFile(String path) {
+      if (path.equals("/")) {
+        return false;
+      }
+      if (path.startsWith("/")) {
+        path = path.substring(1);
+      }
+      if (path.endsWith("/")) {
+        for (BindingRenderable.BindingData binding : bindings) {
+          if (binding.name.equals(path.substring(0, path.length() - 1))) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    @Override
+    protected Collection<String> getChilren(String path) {
+      List<String> l = new ArrayList<String>();
+      for (BindingRenderable.BindingData binding : bindings) {
+        if (path.equals("/") || binding.name.startsWith(path.substring(1))) {
+          String completion = binding.name.substring(path.substring(1).length());
+          if (completion.startsWith("/")) {
+            completion = completion.substring(1);
+          }
+          l.add(completion);
+        }
+      }
+      return l;
+    }
+
+    @Override
+    protected String getName(String path) {
+      return path;
+    }
   }
 
 }

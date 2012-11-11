@@ -32,6 +32,7 @@ import java.util.Iterator;
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
 public class BindingRenderable extends Renderable<BindingRenderable.BindingData> {
+  
   @Override
   public Class<BindingData> getType() {
     return BindingData.class;
@@ -62,7 +63,6 @@ public class BindingRenderable extends Renderable<BindingRenderable.BindingData>
       
       table.add(row);
 
-
     }
 
     return table.renderer();
@@ -72,11 +72,13 @@ public class BindingRenderable extends Renderable<BindingRenderable.BindingData>
 
     public final String name;
     public final String type;
+    public final Object instance;
     public final Boolean verbose;
 
-    public BindingData(String name, String type,Boolean verbose) {
+    public BindingData(String name, String type, Object instance, Boolean verbose) {
       this.name = name;
       this.type = type;
+      this.instance = instance;
       this.verbose = (verbose != null ? verbose : false);
     }
   }
