@@ -87,9 +87,9 @@ class jpa extends CRaSHCommand implements Completer {
 
   @Usage("Display JPA entity")
   @Command
-  void entity(InvocationContext<EntityTypeRenderable.EntityTypeData> context, @Argument(completer = jpa.class) String name) {
+  void entity(InvocationContext<EntityTypeRenderable.EntityTypeData> context, @Argument String name) {
     def en;
-    em.metamodel.entities.each { e ->
+      em.metamodel.entities.each { e ->
       if (e.name.equals(name)) {
         en = e;
       }
@@ -185,13 +185,13 @@ class jpa extends CRaSHCommand implements Completer {
     }
   }
 
-  Completion complete(ParameterDescriptor<?> parameter, java.lang.String prefix) {
+  Completion complete(ParameterDescriptor<?> parameter, java.lang.String prefix) throws Exception {
     def builder = new Completion.Builder(prefix);
       em.metamodel.entities.each { e ->
-        if (prefix == null) {
+        if (prefix == null || prefix.length() == 0) {
           builder.add(e.name, true);
-        } else if (e.name.startWith(prefix)) {
-          builder.add(e.name.substring(prefix.length() - 1), true);
+        } else if (e.name.startsWith(prefix)) {
+          builder.add(e.name.substring(prefix.length()), true);
         }
       }
       return builder.build()
