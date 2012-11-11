@@ -23,7 +23,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
-import org.crsh.term.console.ConsoleTerm;
 import org.crsh.term.spi.TestTermIO;
 
 import java.io.IOException;
@@ -159,8 +158,110 @@ public class ConsoleTermTestCase extends TestCase {
   public void testBufferInsert() throws Exception {
     io.append("a");
     io.moveLeft();
-    term.getInsertBuffer().append('b');
+    term.getDirectBuffer().append('b');
     io.append("\r\n");
     assertLine("ba");
+  }
+
+  public void testBackwardWord() throws Exception {
+    io.appendBackwardWord();
+    io.append("a");
+    io.append("\r\n");
+    assertLine("a");
+  }
+
+  public void testBackwardWord2() throws Exception {
+    io.append("ab");
+    io.appendBackwardWord();
+    io.append("c");
+    io.append("\r\n");
+    assertLine("cab");
+  }
+
+  public void testBackwardWord3() throws Exception {
+    io.append("  ab");
+    io.appendMoveLeft();
+    io.appendMoveLeft();
+    io.appendBackwardWord();
+    io.append("c");
+    io.append("\r\n");
+    assertLine("c  ab");
+  }
+
+  public void testBackwardWord4() throws Exception {
+    io.append("ab");
+    io.appendMoveLeft();
+    io.appendBackwardWord();
+    io.append("c");
+    io.append("\r\n");
+    assertLine("cab");
+  }
+
+  public void testForwardWord1() throws Exception {
+    io.appendForwardWord();
+    io.append("a");
+    io.append("\r\n");
+    assertLine("a");
+  }
+
+  public void testForwardWord2() throws Exception {
+    io.append("ab");
+    io.appendMoveLeft();
+    io.appendMoveLeft();
+    io.appendForwardWord();
+    io.append("c");
+    io.append("\r\n");
+    assertLine("abc");
+  }
+
+  public void testForwardWord3() throws Exception {
+    io.append("  ab");
+    io.appendMoveLeft();
+    io.appendMoveLeft();
+    io.appendMoveLeft();
+    io.appendMoveLeft();
+    io.appendForwardWord();
+    io.append("c");
+    io.append("\r\n");
+    assertLine("  abc");
+  }
+
+  public void testForwardWord4() throws Exception {
+    io.append("ab");
+    io.appendMoveLeft();
+    io.appendForwardWord();
+    io.append("c");
+    io.append("\r\n");
+    assertLine("abc");
+  }
+
+  public void testForwardWord5() throws Exception {
+    io.append("ab ");
+    io.appendMoveLeft();
+    io.appendMoveLeft();
+    io.appendMoveLeft();
+    io.appendForwardWord();
+    io.append("c");
+    io.append("\r\n");
+    assertLine("abc ");
+  }
+
+  public void testBeginningOfLine() throws Exception {
+    io.append("ab");
+    io.appendBeginningOfLine();
+    io.append("c");
+    io.append("\r\n");
+    assertLine("cab");
+  }
+
+  public void testEndOfLine() throws Exception {
+    io.append("ab");
+    io.appendMoveLeft();
+    io.appendMoveLeft();
+    io.append("c");
+    io.appendEndOfLine();
+    io.append("d");
+    io.append("\r\n");
+    assertLine("cabd");
   }
 }

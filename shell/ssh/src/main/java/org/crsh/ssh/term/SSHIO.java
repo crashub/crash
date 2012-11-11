@@ -46,6 +46,12 @@ public class SSHIO implements TermIO {
   private static final int HANDLED = 1305;
 
   /** . */
+  private static final int BACKWARD_WORD = -1;
+
+  /** . */
+  private static final int FORWARD_WORD = -2;
+
+  /** . */
   private static final Logger log = LoggerFactory.getLogger(SSHIO.class);
 
   /** . */
@@ -109,6 +115,12 @@ public class SSHIO implements TermIO {
             case STATUS_READ_ESC_1:
               if (r == 91) {
                 status = STATUS_READ_ESC_2;
+              } else if (r == 98) {
+                status = STATUS_NORMAL;
+                return BACKWARD_WORD;
+              } else if (r == 102) {
+                status = STATUS_NORMAL;
+                return FORWARD_WORD;
               } else {
                 status = STATUS_NORMAL;
                 log.error("Unrecognized stream data " + r + " after reading ESC code");
@@ -154,6 +166,10 @@ public class SSHIO implements TermIO {
       switch (code) {
         case HANDLED:
           return CodeType.CLOSE;
+        case 1:
+          return CodeType.BEGINNING_OF_LINE;
+        case 5:
+          return CodeType.END_OF_LINE;
         case 3:
           return CodeType.BREAK;
         case 9:
@@ -166,6 +182,10 @@ public class SSHIO implements TermIO {
           return CodeType.LEFT;
         case RIGHT:
           return CodeType.RIGHT;
+        case BACKWARD_WORD:
+          return CodeType.BACKWARD_WORD;
+        case FORWARD_WORD:
+          return CodeType.FORWARD_WORD;
         default:
           return CodeType.CHAR;
       }

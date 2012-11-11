@@ -49,7 +49,7 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
-  public Appendable getInsertBuffer() {
+  public Appendable getDirectBuffer() {
     throw new UnsupportedOperationException();
   }
 

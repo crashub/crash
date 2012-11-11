@@ -134,6 +134,53 @@ public class ConsoleTerm implements Term {
         case TAB:
           log.debug("Tab");
           return TermEvent.complete(buffer.getBufferToCursor());
+        case BACKWARD_WORD: {
+          int cursor = buffer.getCursor();
+          int pos = cursor;
+          // Skip any white char first
+          while (pos > 0 && buffer.charAt(pos - 1) == ' ') {
+            pos--;
+          }
+          // Skip until next white char
+          while (pos > 0 && buffer.charAt(pos - 1) != ' ') {
+            pos--;
+          }
+          if (pos < cursor) {
+            buffer.moveLeft(cursor - pos);
+          }
+          break;
+        }
+        case FORWARD_WORD: {
+          int size = buffer.getSize();
+          int cursor = buffer.getCursor();
+          int pos = cursor;
+          // Skip any white char first
+          while (pos < size && buffer.charAt(pos) == ' ') {
+            pos++;
+          }
+          // Skip until next white char
+          while (pos < size && buffer.charAt(pos) != ' ') {
+            pos++;
+          }
+          if (pos > cursor) {
+            buffer.moveRight(pos - cursor);
+          }
+          break;
+        }
+        case BEGINNING_OF_LINE: {
+          int cursor = buffer.getCursor();
+          if (cursor > 0) {
+            buffer.moveLeft(cursor);
+          }
+          break;
+        }
+        case END_OF_LINE: {
+          int cursor = buffer.getSize() - buffer.getCursor();
+          if (cursor > 0) {
+            buffer.moveRight  (cursor);
+          }
+          break;
+        }
       }
 
       //
@@ -146,7 +193,7 @@ public class ConsoleTerm implements Term {
     }
   }
 
-  public Appendable getInsertBuffer() {
+  public Appendable getDirectBuffer() {
     return buffer;
   }
 

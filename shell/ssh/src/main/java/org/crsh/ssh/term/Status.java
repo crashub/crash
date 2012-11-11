@@ -17,44 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.term;
+package org.crsh.ssh.term;
 
-public enum CodeType {
+public enum Status {
 
-  CLOSE,
+  READ_ANY,
 
-  BACKSPACE,
+  READ_ESC,
 
-  UP,
+  READ_ESC_2
 
-  DOWN,
-
-  CHAR,
-
-  RIGHT,
-
-  LEFT,
-
-  TAB,
-
-  BREAK,
-
-  BACKWARD_WORD,
-
-  FORWARD_WORD,
-
-  BEGINNING_OF_LINE,
-
-  END_OF_LINE;
-
-  /** . */
-  private static final CodeType[] ALL = values();
-
-  public static CodeType valueOf(int ordinal) {
-    if (ordinal >= 0 && ordinal < ALL.length) {
-      return ALL[ordinal];
-    } else {
-      return null;
-    }
-  }
 }

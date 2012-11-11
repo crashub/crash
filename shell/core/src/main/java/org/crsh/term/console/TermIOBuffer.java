@@ -77,6 +77,32 @@ final class TermIOBuffer implements Appendable, Iterator<CharSequence> {
     return size;
   }
 
+  /**
+   * Returns the current cursor position.
+   *
+   * @return the cursor position
+   */
+  int getCursor() {
+    return curAt;
+  }
+
+  /**
+   * Returns a character at a specified index in the buffer.
+   *
+   * @param index the index
+   * @return the char
+   * @throws IndexOutOfBoundsException if the index is negative or larget than the size
+   */
+  char charAt(int index) throws IndexOutOfBoundsException {
+    if (index < 0) {
+      throw new IndexOutOfBoundsException("No negative position accepted");
+    }
+    if (index >= size) {
+      throw new IndexOutOfBoundsException("Cannot accept position greater than size:" + index + " >= " + size);
+    }
+    return buffer[index];
+  }
+
   CharSequence getBufferToCursor() {
     return new String(buffer, 0, curAt);
   }
@@ -151,22 +177,49 @@ final class TermIOBuffer implements Appendable, Iterator<CharSequence> {
   }
 
   boolean moveRight() throws IOException {
-    if (curAt < size && io.moveRight(buffer[curAt])) {
-      io.flush();
-      curAt++;
-      return true;
-    } else {
-      return false;
-    }
+    return moveRight(1) == 1;
   }
 
   boolean moveLeft() throws IOException {
-    boolean moved = curAt > 0 && io.moveLeft();
-    if (moved) {
-      io.flush();
-      curAt--;
+    return moveLeft(1) == 1;
+  }
+
+  int moveRight(int count) throws IOException, IllegalArgumentException {
+    if (count < 0) {
+      throw new IllegalArgumentException("Cannot move with negative count " + count);
     }
-    return moved;
+    int delta = 0;
+    while (delta < count) {
+      if (curAt + delta < size && io.moveRight(buffer[curAt + delta])) {
+        delta++;
+      } else {
+        break;
+      }
+    }
+    if (delta > 0) {
+      io.flush();
+      curAt += delta;
+    }
+    return delta;
+  }
+
+  int moveLeft(int count) throws IOException, IllegalArgumentException {
+    if (count < 0) {
+      throw new IllegalArgumentException("Cannot move with negative count " + count);
+    }
+    int delta = 0;
+    while (delta < count) {
+      if (delta < curAt && io.moveLeft()) {
+        delta++;
+      } else {
+        break;
+      }
+    }
+    if (delta > 0) {
+      io.flush();
+      curAt -= delta;
+    }
+    return delta;
   }
 
   /**

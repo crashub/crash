@@ -337,16 +337,16 @@ public final class Processor implements Runnable, Pipe<Chunk> {
         // Do nothing
       } else if (completions.getSize() == 1) {
         Map.Entry<String, Boolean> entry = completions.iterator().next();
-        Appendable buffer = term.getInsertBuffer();
+        Appendable buffer = term.getDirectBuffer();
         String insert = entry.getKey();
-        term.getInsertBuffer().append(delimiter.escape(insert));
+        term.getDirectBuffer().append(delimiter.escape(insert));
         if (entry.getValue()) {
           buffer.append(completion.getDelimiter().getValue());
         }
       } else {
         String commonCompletion = Strings.findLongestCommonPrefix(completions.getValues());
         if (commonCompletion.length() > 0) {
-          term.getInsertBuffer().append(delimiter.escape(commonCompletion));
+          term.getDirectBuffer().append(delimiter.escape(commonCompletion));
         } else {
           // Format stuff
           int width = term.getWidth();

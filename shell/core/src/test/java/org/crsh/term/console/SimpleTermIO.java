@@ -120,8 +120,8 @@ public class SimpleTermIO implements TermIO {
   }
 
   public boolean moveRight(char c) {
-    if (supportsCursorMove) {
-      position++;
+    if (supportsCursorMove && position < line.length()) {
+      line.setCharAt(position++, c);
       return true;
     } else {
       return false;

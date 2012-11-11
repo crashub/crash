@@ -117,7 +117,7 @@ public class SyncTerm implements Term {
   public void provide(Chunk element) throws IOException {
   }
 
-  public Appendable getInsertBuffer() {
+  public Appendable getDirectBuffer() {
     return null;
   }
 

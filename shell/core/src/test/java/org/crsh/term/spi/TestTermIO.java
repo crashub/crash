@@ -21,7 +21,6 @@ package org.crsh.term.spi;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
-import net.wimpi.telnetd.io.TerminalIO;
 import org.crsh.term.CodeType;
 import org.crsh.text.Style;
 
@@ -34,6 +33,39 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class TestTermIO implements TermIO {
+
+  /** . */
+  private static final int TAB = -1;
+
+  /** . */
+  private static final int DEL = -2;
+
+  /** . */
+  private static final int UP = -3;
+
+  /** . */
+  private static final int DOWN = -4;
+
+  /** . */
+  private static final int RIGHT = -5;
+
+  /** . */
+  private static final int LEFT = -6;
+
+  /** . */
+  private static final int BREAK = -7;
+
+  /** . */
+  private static final int BACKWARD_WORD = -8;
+
+  /** . */
+  private static final int FORWARD_WORD = -9;
+
+  /** . */
+  private static final int BEGINNING_OF_LINE = -10;
+
+  /** . */
+  private static final int END_OF_LINE = -11;
 
   /** . */
   private final BlockingQueue<Integer> inner;
@@ -97,31 +129,47 @@ public class TestTermIO implements TermIO {
   }
 
   public TestTermIO appendTab() {
-    return append(TerminalIO.TABULATOR);
+    return append(TAB);
   }
 
   public TestTermIO appendDel() {
-    return append(TerminalIO.DELETE);
+    return append(DEL);
   }
 
   public TestTermIO appendMoveUp() {
-    return append(TerminalIO.UP);
+    return append(UP);
   }
 
   public TestTermIO appendMoveDown() {
-    return append(TerminalIO.DOWN);
+    return append(DOWN);
   }
 
   public TestTermIO appendMoveRight() {
-    return append(TerminalIO.RIGHT);
+    return append(RIGHT);
   }
 
   public TestTermIO appendMoveLeft() {
-    return append(TerminalIO.LEFT);
+    return append(LEFT);
   }
 
   public TestTermIO appendBreak() {
-    return append(3);
+    return append(BREAK);
+  }
+
+  public TestTermIO appendBackwardWord() {
+    return append(BACKWARD_WORD);
+  }
+
+  public TestTermIO appendForwardWord() {
+    return append(FORWARD_WORD);
+  }
+
+  public TestTermIO appendBeginningOfLine() {
+    return append(BEGINNING_OF_LINE);
+  }
+
+  public TestTermIO appendEndOfLine() {
+    return append(END_OF_LINE);
   }
 
   public TestTermIO append(char c) {
@@ -144,20 +192,28 @@ public class TestTermIO implements TermIO {
 
   public CodeType decode(int code) {
     switch (code) {
-      case 3:
+      case BREAK:
         return CodeType.BREAK;
-      case TerminalIO.DELETE:
+      case DEL:
         return CodeType.BACKSPACE;
-      case TerminalIO.TABULATOR:
+      case TAB:
         return CodeType.TAB;
-      case TerminalIO.UP:
+      case UP:
         return CodeType.UP;
-      case TerminalIO.DOWN:
+      case DOWN:
         return CodeType.DOWN;
-      case TerminalIO.LEFT:
+      case LEFT:
         return CodeType.LEFT;
-      case TerminalIO.RIGHT:
+      case RIGHT:
         return CodeType.RIGHT;
+      case BACKWARD_WORD:
+        return CodeType.BACKWARD_WORD;
+      case FORWARD_WORD:
+        return CodeType.FORWARD_WORD;
+      case BEGINNING_OF_LINE:
+        return CodeType.BEGINNING_OF_LINE;
+      case END_OF_LINE:
+        return CodeType.END_OF_LINE;
       default:
         return CodeType.CHAR;
     }

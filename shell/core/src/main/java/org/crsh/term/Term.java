@@ -66,12 +66,12 @@ public interface Term extends Closeable, Pipe<Chunk> {
   TermEvent read() throws IOException;
 
   /**
-   * Returns the insert buffer, any char appended in the returned appendable will translate into an
+   * Returns the direct buffer, any char appended in the returned appendable will translate into an
    * insertion in the buffer.
    *
    * @return the insert buffer.
    */
-  Appendable getInsertBuffer();
+  Appendable getDirectBuffer();
 
   /**
    * Returns the current buffer content to the cursor;

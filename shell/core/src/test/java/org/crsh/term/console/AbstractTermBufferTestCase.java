@@ -156,6 +156,19 @@ public abstract class AbstractTermBufferTestCase extends TestCase {
 
   protected abstract String getExpectedMoveRightAtEndOfLine();
 
+  public void testMoveRightByTwoChars() throws Exception {
+    resetConsole();
+    buffer.append("ab");
+    buffer.moveLeft();
+    buffer.moveLeft();
+    buffer.moveRight(2);
+    buffer.append("c\n");
+    assertTrue(buffer.hasNext());
+    assertEquals("abc", buffer.next());
+    assertFalse(buffer.hasNext());
+    client.assertChars("abc");
+  }
+
   public void testMoveLeftAtBeginningOfLine() throws IOException {
     resetConsole();
     buffer.append("a");

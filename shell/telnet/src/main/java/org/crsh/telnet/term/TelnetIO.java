@@ -84,6 +84,10 @@ public class TelnetIO implements TermIO {
 
   public CodeType decode(int code) {
     switch (code) {
+      case 1304:
+        return CodeType.BEGINNING_OF_LINE;
+      case 5:
+        return CodeType.END_OF_LINE;
       case 3:
         return CodeType.BREAK;
       case TerminalIO.TABULATOR:
