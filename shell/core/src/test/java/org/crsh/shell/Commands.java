@@ -260,4 +260,14 @@ public class Commands {
     public void main(@Argument String arg) {
     }
   }
+
+  public static class CompleteWithSession extends CRaSHCommand implements Completer {
+    public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+      getProperty("object_in_session");
+      return org.crsh.cmdline.spi.Completion.builder(prefix).add("bar", true).build();
+    }
+    @Command
+    public void main(@Argument String arg) {
+    }
+  }
 }
