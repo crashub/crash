@@ -3,13 +3,13 @@
   <parent>
     <artifactId>crsh.jcr</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.2.0-cr3</version>
+    <version>1.2.0-cr4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.jcr.jackrabbit</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.0-cr3</version>
+  <version>1.2.0-cr4-SNAPSHOT</version>
 
   <name>CRaSH jcr Jackrabbit Implementation</name>
   <description>The CRaSH JCR module for Apache Jackrabbit</description>
