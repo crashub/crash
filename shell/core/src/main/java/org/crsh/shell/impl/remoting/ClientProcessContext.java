@@ -19,10 +19,12 @@
 
 package org.crsh.shell.impl.remoting;
 
+import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.text.Chunk;
+import org.crsh.util.Statement;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,6 +61,21 @@ class ClientProcessContext implements ShellProcessContext {
           //
         }
       }
+    }
+  }
+
+  void execute() {
+    try {
+      process.execute(this);
+    }
+    catch(final Throwable t) {
+      new Statement() {
+        @Override
+        protected void run() throws Throwable {
+          // If it's not executing then we attempt to end it
+          end(ShellResponse.error(ErrorType.INTERNAL, "Unexpected process execution error", t));
+        }
+      }.all();
     }
   }
 
@@ -141,22 +158,26 @@ class ClientProcessContext implements ShellProcessContext {
 
   public synchronized void end(ShellResponse response) {
 
-    // Flush what we have in buffer first
-    flush();
+    // It may have been cancelled concurrently
+    if (client.current == this) {
 
-    // Send end message
-    try {
-      client.current = null;
-      client.out.writeObject(ServerMessage.END);
-      client.out.writeObject(response);
-      client.out.flush();
-    }
-    catch (IOException ignore) {
-      //
-    }
-    finally {
-      if (response instanceof ShellResponse.Close) {
-        client.close();
+      // Flush what we have in buffer first
+      flush();
+
+      // Send end message
+      try {
+        client.current = null;
+        client.out.writeObject(ServerMessage.END);
+        client.out.writeObject(response);
+        client.out.flush();
+      }
+      catch (IOException ignore) {
+        //
+      }
+      finally {
+        if (response instanceof ShellResponse.Close) {
+          client.close();
+        }
       }
     }
   }

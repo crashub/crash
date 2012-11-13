@@ -27,6 +27,7 @@ import org.crsh.BaseShell;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.Completion;
+import org.crsh.shell.ErrorType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -231,6 +233,75 @@ public class RemoteShellTestCase extends AbstractTestCase {
     assertJoin(t);
   }
 
+  public void testExceptionDuringRequest() throws Exception {
+
+    final CountDownLatch latch = new CountDownLatch(1);
+
+    ClientProcessor t = new ClientProcessor(clientOIS, clientOOS, new BaseShell(new BaseProcessFactory() {
+      int count = 0;
+      @Override
+      public BaseProcess create(String request) {
+        return new BaseProcess(request) {
+          @Override
+          public void process(String request, final ShellProcessContext processContext) throws IOException {
+            if (count == 0) {
+              count = 1;
+              new Thread() {
+                @Override
+                public void run() {
+                  try {
+                    latch.await();
+                  }
+                  catch (InterruptedException e) {
+                  }
+                  processContext.end(ShellResponse.ok());
+                }
+              }.start();
+              throw new RuntimeException();
+            } else {
+              processContext.end(ShellResponse.ok());
+            }
+          }
+        };
+      }
+    }));
+    t.start();
+
+    //
+    serverOOS.writeObject(ClientMessage.EXECUTE);
+    serverOOS.writeObject(32);
+    serverOOS.writeObject(40);
+    serverOOS.writeObject("");
+    serverOOS.flush();
+
+    //
+    ServerMessage resp = (ServerMessage)serverOIS.readObject();
+    assertEquals(ServerMessage.END, resp);
+    ShellResponse response = (ShellResponse)serverOIS.readObject();
+    ShellResponse.Error error = assertInstance(ShellResponse.Error.class, response);
+    assertEquals(ErrorType.INTERNAL, error.getType());
+    assertInstance(RuntimeException.class, error.getThrowable());
+
+    //
+    latch.countDown();
+
+    //
+    serverOOS.writeObject(ClientMessage.EXECUTE);
+    serverOOS.writeObject(32);
+    serverOOS.writeObject(40);
+    serverOOS.writeObject("");
+    serverOOS.flush();
+
+    //
+    resp = (ServerMessage)serverOIS.readObject();
+    assertEquals(ServerMessage.END, resp);
+    response = (ShellResponse)serverOIS.readObject();
+    assertInstance(ShellResponse.Ok.class, response);
+
+    //
+    t.interrupt();
+    assertJoin(t);
+  }
 
   public void testCancel() throws Exception {
 

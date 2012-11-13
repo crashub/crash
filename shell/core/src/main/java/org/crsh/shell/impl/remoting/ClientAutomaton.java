@@ -22,7 +22,9 @@ package org.crsh.shell.impl.remoting;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
+import org.crsh.shell.ShellResponse;
 import org.crsh.util.CloseableList;
+import org.crsh.util.Statement;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -114,9 +116,8 @@ public class ClientAutomaton implements Runnable {
             height = (Integer) in.readObject();
             last = System.currentTimeMillis();
             String line = (String)in.readObject();
-            ShellProcess process = shell.createProcess(line);
-            current = new ClientProcessContext(this, process);
-            process.execute(current);
+            current = new ClientProcessContext(this, shell.createProcess(line));
+            current.execute();
             break;
           case CANCEL:
             if (current != null) {
@@ -132,6 +133,9 @@ public class ClientAutomaton implements Runnable {
     catch (Exception e) {
       // e.printStackTrace();
       //
+    }
+    finally {
+      close();
     }
   }
 
