@@ -19,13 +19,33 @@
 
 package org.crsh;
 
+import org.crsh.cmdline.CommandCompletion;
 import org.crsh.shell.AbstractCommandTestCase;
 
 public class SystemCommandTestCase extends AbstractCommandTestCase {
 
   public void testFoo() throws Exception {
     System.setProperty("foo", "bar");
-    lifeCycle.bind("ls", "system.propls filter:'foo', { out << it['VALUE'] }");
-    assertEquals("bar", assertOk("ls"));
+    try {
+      lifeCycle.bind("ls", "system.propls filter:'foo', { out << it['VALUE'] }");
+      assertEquals("bar", assertOk("ls"));
+    } finally {
+      System.clearProperty("foo");
+    }
   }
+
+  public void testComplete() throws Exception {
+    System.setProperty("foo.bar", "bar");
+    System.setProperty("foo.bar2", "bar");
+    try {
+      CommandCompletion completion = assertComplete("system propget foo");
+      assertEquals(2, completion.getValue().getSize());
+      assertTrue(completion.getValue().get(".bar") != null);
+      assertTrue(completion.getValue().get(".bar2") != null);
+    } finally {
+      System.clearProperty("foo.bar");
+      System.clearProperty("foo.bar2");
+    }
+  }
+  
 }
