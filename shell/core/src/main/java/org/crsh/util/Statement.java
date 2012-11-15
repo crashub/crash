@@ -32,26 +32,30 @@ public abstract class Statement {
   protected abstract void run() throws Throwable;
 
   public Statement with(final Runnable runnable) {
-    return next = new Statement() {
+    return with(new Statement() {
       @Override
       protected void run() throws Throwable {
         runnable.run();
       }
-    };
+    });
   }
 
   public Statement with(final Callable<?> callable) {
-    return next = new Statement() {
+    return with(new Statement() {
       @Override
       protected void run() throws Throwable {
         callable.call();
       }
-    };
+    });
   }
 
   public Statement with(Statement callback) {
-    next = callback;
-    return callback;
+    if (next != null) {
+      next.with(callback);
+    } else {
+      next = callback;
+    }
+    return this;
   }
 
   public void all() {

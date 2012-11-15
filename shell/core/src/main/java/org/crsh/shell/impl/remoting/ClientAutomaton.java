@@ -121,7 +121,19 @@ public class ClientAutomaton implements Runnable {
             break;
           case CANCEL:
             if (current != null) {
-              current.process.cancel();
+              final ClientProcessContext context = current;
+              Statement statements = new Statement() {
+                @Override
+                protected void run() throws Throwable {
+                  context.end(ShellResponse.cancelled());
+                }
+              }.with(new Statement() {
+                @Override
+                protected void run() throws Throwable {
+                  context.process.cancel();
+                }
+              });
+              statements.all();
             }
             break;
           case CLOSE:

@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class RemoteShellTestCase extends AbstractTestCase {
 
@@ -306,39 +307,51 @@ public class RemoteShellTestCase extends AbstractTestCase {
   public void testCancel() throws Exception {
 
     final AtomicBoolean waiting = new AtomicBoolean();
-    final Object lock = new Object();
+    final CountDownLatch latch = new CountDownLatch(1);
 
-    ClientProcessor t = new ClientProcessor(clientOIS, clientOOS, new AsyncShell(Executors.newCachedThreadPool(), new BaseShell(new BaseProcessFactory() {
+    //
+    ClientProcessor t = new ClientProcessor(clientOIS, clientOOS, new BaseShell(new BaseProcessFactory() {
       @Override
       public BaseProcess create(String request) {
         return new BaseProcess(request) {
           @Override
-          public void process(String request, ShellProcessContext processContext) throws IOException {
-            synchronized (lock) {
-              if (waiting.get()) {
-                lock.notifyAll();
-              } else {
-                waiting.set(true);
+          public void process(String request, final ShellProcessContext processContext) throws IOException {
+            new Thread() {
+              @Override
+              public void run() {
+                synchronized (waiting) {
+                  if (waiting.get()) {
+                    waiting.notifyAll();
+                  } else {
+                    waiting.set(true);
+                  }
+                  try {
+                    waiting.wait();
+                  }
+                  catch (InterruptedException e) {
+                    e.printStackTrace();
+                  }
+                }
+                try {
+                  processContext.provide(Text.create("juu"));
+                  processContext.end(ShellResponse.ok());
+                }
+                catch (IOException e) {
+                  e.printStackTrace();
+                }
+                latch.countDown();
               }
-              try {
-                lock.wait();
-              }
-              catch (InterruptedException e) {
-                e.printStackTrace();
-              }
-            }
-            processContext.provide(Text.create("juu"));
-            processContext.end(ShellResponse.ok());
+            }.start();
           }
           @Override
           public void cancel() {
-            synchronized (lock) {
-              lock.notifyAll();
+            synchronized (waiting) {
+              waiting.notifyAll();
             }
           }
         };
       }
-    })));
+    }));
     t.start();
 
     //
@@ -346,6 +359,8 @@ public class RemoteShellTestCase extends AbstractTestCase {
     ShellProcess process = server.createProcess("hello");
     final BaseProcessContext context = BaseProcessContext.create(process);
 
+    //
+    final AtomicReference<Throwable> error = new AtomicReference<Throwable>();
     Thread u = new Thread() {
       @Override
       public void run() {
@@ -354,23 +369,34 @@ public class RemoteShellTestCase extends AbstractTestCase {
         assertInstance(ShellResponse.Cancelled.class, response);
       }
     };
+    u.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+      public void uncaughtException(Thread t, Throwable e) {
+        error.set(e);
+      }
+    });
     u.start();
 
     //
-    synchronized (lock) {
+    synchronized (waiting) {
       if (!waiting.get()) {
         waiting.set(true);
-        lock.wait();
+        waiting.wait();
       }
     }
 
     //
     process.cancel();
 
+    //
+    latch.await();
 
     //
     t.interrupt();
     assertJoin(t);
+    assertJoin(u);
+    if (error.get() != null) {
+      throw failure(error.get());
+    }
   }
 
   public void testComplete() {
