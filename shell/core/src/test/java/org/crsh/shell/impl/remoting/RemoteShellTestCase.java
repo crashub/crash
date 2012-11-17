@@ -32,16 +32,15 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.impl.async.AsyncShell;
 import org.crsh.text.Text;
-import org.crsh.util.PipedChannel;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -86,22 +85,35 @@ public class RemoteShellTestCase extends AbstractTestCase {
   @Override
   protected void setUp() throws Exception {
 
-    PipedChannel a = new PipedChannel();
-    PipedChannel b = new PipedChannel();
+    PipedInputStream a = new PipedInputStream();
+    PipedOutputStream b = new PipedOutputStream(a);
+
+    PipedInputStream c = new PipedInputStream();
+    PipedOutputStream d = new PipedOutputStream(c);
 
     //
-    ObjectOutputStream clientOOS = new ObjectOutputStream(a.getOut());
+    ObjectOutputStream clientOOS = new ObjectOutputStream(b);
     clientOOS.flush();
-    ObjectOutputStream serverOOS = new ObjectOutputStream(b.getOut());
+    ObjectOutputStream serverOOS = new ObjectOutputStream(d);
     serverOOS.flush();
-    ObjectInputStream serverOIS = new ObjectInputStream(a.getIn());
-    ObjectInputStream clientOIS = new ObjectInputStream(b.getIn());
+    ObjectInputStream serverOIS = new ObjectInputStream(a);
+    ObjectInputStream clientOIS = new ObjectInputStream(c);
 
     //
     this.clientOIS = clientOIS;
     this.clientOOS = clientOOS;
     this.serverOIS = serverOIS;
     this.serverOOS = serverOOS;
+  }
+
+  public void testSerialization() throws Exception {
+
+    ServerMessage message = new ServerMessage.Completion(new CommandCompletion(Delimiter.DOUBLE_QUOTE, Completion.create("pref", "ix", true)));
+    clientOOS.writeObject(message);
+    clientOOS.flush();
+    ServerMessage after = (ServerMessage)serverOIS.readObject();
+    System.out.println("after = " + after);
+
   }
 
   public void testPrompt() throws Exception {
@@ -211,15 +223,10 @@ public class RemoteShellTestCase extends AbstractTestCase {
     t.start();
 
     //
-    serverOOS.writeObject(ClientMessage.EXECUTE);
-    serverOOS.writeObject(32);
-    serverOOS.writeObject(40);
-    serverOOS.writeObject("");
+    serverOOS.writeObject(new ClientMessage.Execute(32, 50, ""));
     serverOOS.flush();
-    ServerMessage proto = (ServerMessage)serverOIS.readObject();
-    assertEquals(ServerMessage.END, proto);
-    ShellResponse response = (ShellResponse)serverOIS.readObject();
-    assertInstance(ShellResponse.Close.class, response);
+    ServerMessage.End message = (ServerMessage.End)serverOIS.readObject();
+    assertInstance(ShellResponse.Close.class, message.response);
 
     // This should fail at some point
     try {
@@ -269,17 +276,12 @@ public class RemoteShellTestCase extends AbstractTestCase {
     t.start();
 
     //
-    serverOOS.writeObject(ClientMessage.EXECUTE);
-    serverOOS.writeObject(32);
-    serverOOS.writeObject(40);
-    serverOOS.writeObject("");
+    serverOOS.writeObject(new ClientMessage.Execute(32, 50, ""));
     serverOOS.flush();
 
     //
-    ServerMessage resp = (ServerMessage)serverOIS.readObject();
-    assertEquals(ServerMessage.END, resp);
-    ShellResponse response = (ShellResponse)serverOIS.readObject();
-    ShellResponse.Error error = assertInstance(ShellResponse.Error.class, response);
+    ServerMessage.End message = (ServerMessage.End)serverOIS.readObject();
+    ShellResponse.Error error = assertInstance(ShellResponse.Error.class, message.response);
     assertEquals(ErrorType.INTERNAL, error.getType());
     assertInstance(RuntimeException.class, error.getThrowable());
 
@@ -287,17 +289,12 @@ public class RemoteShellTestCase extends AbstractTestCase {
     latch.countDown();
 
     //
-    serverOOS.writeObject(ClientMessage.EXECUTE);
-    serverOOS.writeObject(32);
-    serverOOS.writeObject(40);
-    serverOOS.writeObject("");
+    serverOOS.writeObject(new ClientMessage.Execute(32, 50, ""));
     serverOOS.flush();
 
     //
-    resp = (ServerMessage)serverOIS.readObject();
-    assertEquals(ServerMessage.END, resp);
-    response = (ShellResponse)serverOIS.readObject();
-    assertInstance(ShellResponse.Ok.class, response);
+    message = (ServerMessage.End)serverOIS.readObject();
+    assertInstance(ShellResponse.Ok.class, message.response);
 
     //
     t.interrupt();

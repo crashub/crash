@@ -54,7 +54,7 @@ class ClientProcessContext implements ShellProcessContext {
     if (System.currentTimeMillis() - client.last > 2000) {
       synchronized (this) {
         try {
-          client.out.writeObject(ServerMessage.GET_SIZE);
+          client.out.writeObject(new ServerMessage.GetSize());
           client.out.flush();
         }
         catch (Exception e) {
@@ -91,7 +91,7 @@ class ClientProcessContext implements ShellProcessContext {
 
   public boolean takeAlternateBuffer() {
     try {
-      client.out.writeObject(ServerMessage.USE_ALTERNATE_BUFFER);
+      client.out.writeObject(new ServerMessage.UseAlternateBuffer());
       client.out.flush();
     }
     catch (Exception e) {
@@ -104,7 +104,7 @@ class ClientProcessContext implements ShellProcessContext {
 
   public boolean releaseAlternateBuffer() {
     try {
-      client.out.writeObject(ServerMessage.USE_MAIN_BUFFER);
+      client.out.writeObject(new ServerMessage.UseMainBuffer());
       client.out.flush();
     }
     catch (Exception e) {
@@ -141,10 +141,9 @@ class ClientProcessContext implements ShellProcessContext {
     if (buffer.size() > 0) {
       try {
         for (Chunk chunk : buffer) {
-          client.out.writeObject(ServerMessage.CHUNK);
-          client.out.writeObject(chunk);
+          client.out.writeObject(new ServerMessage.Chunk(chunk));
         }
-        client.out.writeObject(ServerMessage.FLUSH);
+        client.out.writeObject(new ServerMessage.Flush());
         client.out.flush();
       }
       catch (IOException ignore) {
@@ -167,8 +166,7 @@ class ClientProcessContext implements ShellProcessContext {
       // Send end message
       try {
         client.current = null;
-        client.out.writeObject(ServerMessage.END);
-        client.out.writeObject(response);
+        client.out.writeObject(new ServerMessage.End(response));
         client.out.flush();
       }
       catch (IOException ignore) {

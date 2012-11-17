@@ -21,7 +21,6 @@ package org.crsh.shell.impl.remoting;
 
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.shell.Shell;
-import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
 import org.crsh.util.CloseableList;
 import org.crsh.util.Statement;
@@ -32,9 +31,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
 public class ClientAutomaton implements Runnable {
 
@@ -89,56 +85,51 @@ public class ClientAutomaton implements Runnable {
     try {
       while (!listeners.isClosed()) {
         ClientMessage msg = (ClientMessage)in.readObject();
-        switch (msg) {
-          case GET_WELCOME:
-            String welcome = shell.getWelcome();
-            out.writeObject(welcome);
-            out.flush();
-            break;
-          case GET_PROMPT:
-            String prompt = shell.getPrompt();
-            out.writeObject(prompt);
-            out.flush();
-            break;
-          case GET_COMPLETION:
-            String prefix = (String)in.readObject();
-            CommandCompletion completion = shell.complete(prefix);
-            out.writeObject(completion);
-            out.flush();
-            break;
-          case SET_SIZE:
-            width = (Integer) in.readObject();
-            height = (Integer) in.readObject();
-            last = System.currentTimeMillis();
-            break;
-          case EXECUTE:
-            width = (Integer) in.readObject();
-            height = (Integer) in.readObject();
-            last = System.currentTimeMillis();
-            String line = (String)in.readObject();
-            current = new ClientProcessContext(this, shell.createProcess(line));
-            current.execute();
-            break;
-          case CANCEL:
-            if (current != null) {
-              final ClientProcessContext context = current;
-              Statement statements = new Statement() {
-                @Override
-                protected void run() throws Throwable {
-                  context.end(ShellResponse.cancelled());
-                }
-              }.with(new Statement() {
-                @Override
-                protected void run() throws Throwable {
-                  context.process.cancel();
-                }
-              });
-              statements.all();
-            }
-            break;
-          case CLOSE:
-            close();
-            break;
+
+        //
+        if (msg instanceof ClientMessage.GetWelcome) {
+          String welcome = shell.getWelcome();
+          out.writeObject(new ServerMessage.Welcome(welcome));
+          out.flush();
+        } else if (msg instanceof ClientMessage.GetPrompt) {
+          String prompt = shell.getPrompt();
+          out.writeObject(new ServerMessage.Prompt(prompt));
+          out.flush();
+        } else if (msg instanceof ClientMessage.GetCompletion) {
+          String prefix = ((ClientMessage.GetCompletion)msg).prefix;
+          CommandCompletion completion = shell.complete(prefix);
+          out.writeObject(new ServerMessage.Completion(completion));
+          out.flush();
+        } else if (msg instanceof ClientMessage.SetSize) {
+          ClientMessage.SetSize setSize = (ClientMessage.SetSize)msg;
+          width = setSize.width;
+          height = setSize.height;
+          last = System.currentTimeMillis();
+        } else if (msg instanceof ClientMessage.Execute) {
+          ClientMessage.Execute execute = (ClientMessage.Execute)msg;
+          width = execute.width;
+          height = execute.height;
+          last = System.currentTimeMillis();
+          current = new ClientProcessContext(this, shell.createProcess(execute.line));
+          current.execute();
+        } else if (msg instanceof ClientMessage.Cancel) {
+          if (current != null) {
+            final ClientProcessContext context = current;
+            Statement statements = new Statement() {
+              @Override
+              protected void run() throws Throwable {
+                context.end(ShellResponse.cancelled());
+              }
+            }.with(new Statement() {
+              @Override
+              protected void run() throws Throwable {
+                context.process.cancel();
+              }
+            });
+            statements.all();
+          }
+        } else if (msg instanceof ClientMessage.Close) {
+          close();
         }
       }
     }

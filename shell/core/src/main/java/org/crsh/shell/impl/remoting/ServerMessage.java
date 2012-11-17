@@ -19,20 +19,80 @@
 
 package org.crsh.shell.impl.remoting;
 
-public enum ServerMessage {
+import org.crsh.cmdline.CommandCompletion;
+import org.crsh.shell.ShellResponse;
 
-  USE_MAIN_BUFFER,
+import java.io.Serializable;
 
-  USE_ALTERNATE_BUFFER,
+public class ServerMessage implements Serializable {
 
-  GET_SIZE,
+  public static class Welcome extends ServerMessage {
 
-  READLINE,
+    /** . */
+    public final String value;
 
-  CHUNK,
+    public Welcome(String value) {
+      this.value = value;
+    }
+  }
 
-  FLUSH,
+  public static class Prompt extends ServerMessage {
 
-  END
+    /** . */
+    public final String value;
 
+    public Prompt(String value) {
+      this.value = value;
+    }
+  }
+
+  public static class Completion extends ServerMessage {
+
+    /** . */
+    public final CommandCompletion value;
+
+    public Completion(CommandCompletion value) {
+      this.value = value;
+    }
+  }
+
+  public static class UseMainBuffer extends ServerMessage {
+
+  }
+
+  public static class UseAlternateBuffer extends ServerMessage {
+
+  }
+
+  public static class GetSize extends ServerMessage {
+
+  }
+
+  public static class ReadLine extends ServerMessage {
+
+  }
+
+  public static class Chunk extends ServerMessage {
+
+    /** . */
+    public final org.crsh.text.Chunk payload;
+
+    public Chunk(org.crsh.text.Chunk payload) {
+      this.payload = payload;
+    }
+  }
+
+  public static class Flush extends ServerMessage {
+
+  }
+
+  public static class End extends ServerMessage {
+
+    /** . */
+    public final ShellResponse response;
+
+    public End(ShellResponse response) {
+      this.response = response;
+    }
+  }
 }

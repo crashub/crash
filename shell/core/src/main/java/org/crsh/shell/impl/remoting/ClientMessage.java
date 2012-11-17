@@ -19,21 +19,61 @@
 
 package org.crsh.shell.impl.remoting;
 
-public enum ClientMessage {
+import java.io.Serializable;
 
+public abstract class ClientMessage implements Serializable {
 
-  GET_WELCOME,
+  public static class GetWelcome extends ClientMessage {
+  }
 
-  GET_PROMPT,
+  public static class GetPrompt extends ClientMessage {
+  }
 
-  GET_COMPLETION,
+  public static class GetCompletion extends ClientMessage {
 
-  SET_SIZE,
+    /** . */
+    public final String prefix;
 
-  EXECUTE,
+    public GetCompletion(String prefix) {
+      this.prefix = prefix;
+    }
+  }
 
-  CANCEL,
+  public static class SetSize extends ClientMessage {
 
-  CLOSE
+    /** . */
+    public final int width;
 
+    /** . */
+    public final int height;
+
+    public SetSize(int width, int height) {
+      this.width = width;
+      this.height = height;
+    }
+  }
+
+  public static class Execute extends ClientMessage {
+
+    /** . */
+    public final int width;
+
+    /** . */
+    public final int height;
+
+    /** . */
+    public final String line;
+
+    public Execute(int width, int height, String line) {
+      this.width = width;
+      this.height = height;
+      this.line = line;
+    }
+  }
+
+  public static class Cancel extends ClientMessage {
+  }
+
+  public static class Close extends ClientMessage {
+  }
 }

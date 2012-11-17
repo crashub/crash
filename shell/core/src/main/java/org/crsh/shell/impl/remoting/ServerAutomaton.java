@@ -24,7 +24,6 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Chunk;
 import org.crsh.util.CloseableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,9 +75,9 @@ public class ServerAutomaton implements Shell {
 
   public String getWelcome() {
     try {
-      out.writeObject(ClientMessage.GET_WELCOME);
+      out.writeObject(new ClientMessage.GetWelcome());
       out.flush();
-      return (String)in.readObject();
+      return ((ServerMessage.Welcome)in.readObject()).value;
     }
     catch (Exception e) {
       throw new UndeclaredThrowableException(e);
@@ -87,9 +86,9 @@ public class ServerAutomaton implements Shell {
 
   public String getPrompt() {
     try {
-      out.writeObject(ClientMessage.GET_PROMPT);
+      out.writeObject(new ClientMessage.GetPrompt());
       out.flush();
-      return (String)in.readObject();
+      return ((ServerMessage.Prompt)in.readObject()).value;
     }
     catch (Exception e) {
       throw new UndeclaredThrowableException(e);
@@ -102,10 +101,9 @@ public class ServerAutomaton implements Shell {
 
   public CommandCompletion complete(String prefix) {
     try {
-      out.writeObject(ClientMessage.GET_COMPLETION);
-      out.writeObject(prefix);
+      out.writeObject(new ClientMessage.GetCompletion(prefix));
       out.flush();
-      return (CommandCompletion)in.readObject();
+      return ((ServerMessage.Completion)in.readObject()).value;
     }
     catch (Exception e) {
       throw new UndeclaredThrowableException(e);
@@ -127,25 +125,16 @@ public class ServerAutomaton implements Shell {
     //
     ShellResponse response = null;
     try {
-      out.writeObject(ClientMessage.EXECUTE);
-      out.writeObject(processContext.getWidth());
-      out.writeObject(processContext.getHeight());
-      out.writeObject(process.line);
+      out.writeObject(new ClientMessage.Execute(processContext.getWidth(), processContext.getHeight(), process.line));
       out.flush();
 
       //
       while (response == null) {
         ServerMessage msg = (ServerMessage)in.readObject();
-        switch (msg) {
-          case GET_SIZE:
-            out.writeObject(ClientMessage.SET_SIZE);
-            int width = processContext.getWidth();
-            int height = processContext.getHeight();
-            out.writeObject(width);
-            out.writeObject(height);
-            out.flush();
-            break;
-          case READLINE:
+        if (msg instanceof ServerMessage.GetSize) {
+          out.writeObject(new ClientMessage.SetSize(processContext.getWidth(), processContext.getHeight()));
+          out.flush();
+        } else if (msg instanceof ServerMessage.ReadLine) {
 //            // This case should not really well supported ?
 //            String request = (String)in.readObject();
 //            boolean echo = (Boolean)in.readObject();
@@ -153,26 +142,19 @@ public class ServerAutomaton implements Shell {
 //            out.writeObject(line);
 //            out.flush();
 //            break;
-            throw new UnsupportedOperationException("Not handled");
-          case USE_ALTERNATE_BUFFER:
-            processContext.takeAlternateBuffer();
-            break;
-          case USE_MAIN_BUFFER:
-            processContext.releaseAlternateBuffer();
-            break;
-          case END:
-            response = (ShellResponse)in.readObject();
-            break;
-          case CHUNK:
-            Chunk chunk = (Chunk)in.readObject();
-            processContext.provide(chunk);
-            break;
-          case FLUSH:
-            processContext.flush();
-            break;
-          default:
-            response = ShellResponse.internalError("Unexpected");
-            break;
+          throw new UnsupportedOperationException("Not handled");
+        } else if (msg instanceof ServerMessage.UseAlternateBuffer) {
+          processContext.takeAlternateBuffer();
+        } else if (msg instanceof ServerMessage.UseMainBuffer) {
+          processContext.releaseAlternateBuffer();
+        } else if (msg instanceof ServerMessage.End) {
+          response = ((ServerMessage.End)msg).response;
+        } else if (msg instanceof ServerMessage.Chunk) {
+          processContext.provide(((ServerMessage.Chunk)msg).payload);
+        } else if (msg instanceof ServerMessage.Flush) {
+          processContext.flush();
+        } else {
+          response = ShellResponse.internalError("Unexpected");
         }
       }
     }
@@ -198,7 +180,7 @@ public class ServerAutomaton implements Shell {
     if (process == this.process) {
       this.process = null;
       try {
-        out.writeObject(ClientMessage.CANCEL);
+        out.writeObject(new ClientMessage.Cancel());
         out.flush();
       }
       catch (IOException ignore) {
