@@ -39,6 +39,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -244,6 +245,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
   public void testExceptionDuringRequest() throws Exception {
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final AtomicReference<RuntimeException> ex = new AtomicReference<RuntimeException>();
 
     ClientProcessor t = new ClientProcessor(clientOIS, clientOOS, new BaseShell(new BaseProcessFactory() {
       int count = 0;
@@ -265,7 +267,8 @@ public class RemoteShellTestCase extends AbstractTestCase {
                   processContext.end(ShellResponse.ok());
                 }
               }.start();
-              throw new RuntimeException();
+              ex.set(new RuntimeException("this is a runtime exception"));
+              throw ex.get();
             } else {
               processContext.end(ShellResponse.ok());
             }
@@ -283,7 +286,9 @@ public class RemoteShellTestCase extends AbstractTestCase {
     ServerMessage.End message = (ServerMessage.End)serverOIS.readObject();
     ShellResponse.Error error = assertInstance(ShellResponse.Error.class, message.response);
     assertEquals(ErrorType.INTERNAL, error.getType());
-    assertInstance(RuntimeException.class, error.getThrowable());
+    assertInstance(Exception.class, error.getThrowable());
+    assertEquals("this is a runtime exception", error.getThrowable().getMessage());
+    assertEquals(Arrays.asList(ex.get().getStackTrace()), Arrays.asList(error.getThrowable().getStackTrace()));
 
     //
     latch.countDown();

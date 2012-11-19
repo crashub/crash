@@ -20,8 +20,12 @@
 package org.crsh.shell.impl.remoting;
 
 import org.crsh.cmdline.CommandCompletion;
+import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class ServerMessage implements Serializable {
@@ -89,10 +93,47 @@ public class ServerMessage implements Serializable {
   public static class End extends ServerMessage {
 
     /** . */
-    public final ShellResponse response;
+    public ShellResponse response;
 
     public End(ShellResponse response) {
+      if (response == null) {
+        throw new NullPointerException("No null response accepted");
+      }
+
+      //
       this.response = response;
+    }
+
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+      oos.defaultWriteObject();
+
+      if (response instanceof ShellResponse.Error) {
+        oos.writeBoolean(false);
+        ShellResponse.Error error = (ShellResponse.Error)response;
+        oos.writeObject(error.getType());
+        oos.writeObject(error.getMessage());
+        oos.writeObject(error.getThrowable().getMessage());
+        oos.writeObject(error.getThrowable().getStackTrace());
+      } else {
+        oos.writeBoolean(true);
+        oos.writeObject(response);
+      }
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException,
+        ClassNotFoundException {
+      ois.defaultReadObject();
+      if (ois.readBoolean()) {
+        response = (ShellResponse)ois.readObject();
+      } else {
+        ErrorType type = (ErrorType)ois.readObject();
+        String message = (String)ois.readObject();
+        String errorMessage = (String)ois.readObject();
+        StackTraceElement[] errorTrace = (StackTraceElement[])ois.readObject();
+        Exception ex = new Exception(errorMessage);
+        ex.setStackTrace(errorTrace);
+        response = ShellResponse.error(type, message, ex);
+      }
     }
   }
 }
