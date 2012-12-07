@@ -21,7 +21,6 @@ package org.crsh.vfs;
 
 import org.crsh.vfs.spi.FSDriver;
 import org.crsh.vfs.spi.file.FileDriver;
-import org.crsh.vfs.spi.mount.MountDriver;
 import org.crsh.vfs.spi.url.URLDriver;
 
 import java.io.IOException;
@@ -44,26 +43,12 @@ public class FS {
     return new File(this, path);
   }
 
-  public <H> FS mount(FSDriver<H> driver, Path path) {
+  public <H> FS mount(FSDriver<H> driver) {
     if (driver == null) {
       throw new NullPointerException();
     }
-    if (path.equals(Path.get("/"))) {
-      mounts.add(Mount.wrap(driver));
-    } else {
-      mounts.add(Mount.wrap(new MountDriver<H>(path, driver)));
-    }
+    mounts.add(Mount.wrap(driver));
     return this;
-  }
-
-  // WE SHOULD REMOVE THAT AND REMOVE THE MOUNT
-  // BUT FIRST WE NEED TO UPDATE THE SERVLET CONTEXT DRIVER
-  public <H> FS mount(FSDriver<H> driver, String path) {
-    return mount(driver, Path.get(path));
-  }
-
-  public <H> FS mount(FSDriver<H> driver) {
-    return mount(driver, "/");
   }
 
   public FS mount(java.io.File root) {

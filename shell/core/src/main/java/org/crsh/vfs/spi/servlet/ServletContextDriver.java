@@ -40,25 +40,33 @@ public class ServletContextDriver extends AbstractFSDriver<String> {
   /** . */
   private final ServletContext ctx;
 
-  public ServletContextDriver(ServletContext ctx) {
+  /** . */
+  private final String root;
+
+  public ServletContextDriver(ServletContext ctx, String root) {
     if (ctx == null) {
       throw new NullPointerException();
     }
+    if (root == null) {
+      throw new NullPointerException();
+    }
+    assertMatch(root);
 
     //
     this.ctx = ctx;
+    this.root = root;
   }
 
   public String root() throws IOException {
-    return "/";
+    return root;
   }
 
   public String name(String file) throws IOException {
-    return matcher(file).group(1);
+    return assertMatch(file).group(1);
   }
 
   public boolean isDir(String file) throws IOException {
-    Matcher matcher = matcher(file);
+    Matcher matcher = assertMatch(file);
     String slash = matcher.group(2);
     return "/".equals(slash);
   }
@@ -110,7 +118,7 @@ public class ServletContextDriver extends AbstractFSDriver<String> {
     return ctx.getResource(handle).openConnection().getInputStream();
   }
 
-  private Matcher matcher(String path) {
+  private Matcher assertMatch(String path) {
     Matcher m = pathPattern.matcher(path);
     if (m.matches()) {
       return m;

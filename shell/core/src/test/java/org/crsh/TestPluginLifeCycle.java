@@ -61,7 +61,7 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
     this.context = new PluginContext(
       discovery,
       attributes,
-      new FS().mount(classLoader,Path.get("/crash/commands/")).mount(commands, "/"),
+      new FS().mount(classLoader,Path.get("/crash/commands/")).mount(commands),
       new FS().mount(classLoader,Path.get("/crash/")),
       classLoader);
     this.crash = new CRaSH(context);

@@ -36,7 +36,7 @@ public class SpringWebBootstrap extends SpringBootstrap implements ServletContex
   protected FS createCommandFS() throws IOException, URISyntaxException {
     FS commandFS = super.createCommandFS();
     if (servletContext != null) {
-      commandFS.mount(new ServletContextDriver(servletContext), "/WEB-INF/crash/commands/");
+      commandFS.mount(new ServletContextDriver(servletContext, "/WEB-INF/crash/commands/"));
     }
     return commandFS;
   }
