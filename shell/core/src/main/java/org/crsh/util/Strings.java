@@ -60,6 +60,43 @@ public class Strings {
     }
   }
 
+  public static String[] split(CharSequence s, char separator) {
+    return foo(s, separator, 0, 0, 0);
+  }
+
+  public static String[] split(CharSequence s, char separator, int rightPadding) {
+    if (rightPadding < 0) {
+      throw new IllegalArgumentException("Right padding cannot be negative");
+    }
+    return foo(s, separator, 0, 0, rightPadding);
+  }
+
+  private static String[] foo(CharSequence s, char separator, int count, int from, int rightPadding) {
+    int len = s.length();
+    if (from < len) {
+      int to = from;
+      while (to < len && s.charAt(to) != separator) {
+        to++;
+      }
+      String[] ret;
+      if (to == len - 1) {
+        ret = new String[count + 2 + rightPadding];
+        ret[count + 1] = "";
+      }
+      else {
+        ret = to == len ? new String[count + 1 + rightPadding] : foo(s, separator, count + 1, to + 1, rightPadding);
+      }
+      ret[count] = from == to ? "" : s.subSequence(from, to).toString();
+      return ret;
+    }
+    else if (from == len) {
+      return new String[count + rightPadding];
+    }
+    else {
+      throw new AssertionError();
+    }
+  }
+
   /**
    * @see #findLongestCommonPrefix(Iterable)
    */

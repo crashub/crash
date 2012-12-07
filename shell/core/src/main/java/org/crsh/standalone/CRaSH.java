@@ -272,6 +272,9 @@ public class CRaSH {
       try {
         processor.run();
       }
+      catch (Throwable t) {
+        t.printStackTrace();
+      }
       finally {
 
         //

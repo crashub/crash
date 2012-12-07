@@ -21,16 +21,16 @@ package org.crsh.vfs;
 
 import junit.framework.TestCase;
 import org.crsh.util.IO;
-import org.crsh.vfs.spi.jarurl.*;
 import org.crsh.vfs.spi.ram.RAMDriver;
+import org.crsh.vfs.spi.url.Node;
+import org.crsh.vfs.spi.url.URLDriver;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import java.io.InputStream;
-import java.net.JarURLConnection;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Iterator;
 
 public class FSTestCase extends TestCase {
@@ -57,45 +57,76 @@ public class FSTestCase extends TestCase {
     exporter.exportTo(file, true);
 
     //
-    URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()});
-    URL classURL = cl.findResource(FSTestCase.class.getName().replace('.', '/') + ".class");
-    JarURLConnection conn = (JarURLConnection)classURL.openConnection();
-
-    //
-    JarURLDriver driver = new JarURLDriver(cl, conn);
-    org.crsh.vfs.spi.jarurl.Handle root = driver.root();
+    URLDriver driver = new URLDriver();
+    driver.merge(file.toURI().toURL());
+    Node root = driver.root();
     assertEquals("", driver.name(root));
     assertTrue(driver.isDir(root));
 
     //
-    Iterator<org.crsh.vfs.spi.jarurl.Handle> rootChildren = driver.children(root).iterator();
-    org.crsh.vfs.spi.jarurl.Handle org = rootChildren.next();
+    Iterator<Node> rootChildren = driver.children(root).iterator();
+    Node org = rootChildren.next();
     assertFalse(rootChildren.hasNext());
     assertEquals("org", driver.name(org));
     assertTrue(driver.isDir(org));
 
     //
-    Iterator<org.crsh.vfs.spi.jarurl.Handle> orgChildren = driver.children(org).iterator();
-    org.crsh.vfs.spi.jarurl.Handle crsh = orgChildren.next();
+    Iterator<Node> orgChildren = driver.children(org).iterator();
+    Node crsh = orgChildren.next();
     assertFalse(orgChildren.hasNext());
     assertEquals("crsh", driver.name(crsh));
     assertTrue(driver.isDir(crsh));
 
     //
-    Iterator<org.crsh.vfs.spi.jarurl.Handle> vfsChildren = driver.children(crsh).iterator();
-    org.crsh.vfs.spi.jarurl.Handle vfs = vfsChildren.next();
+    Iterator<Node> vfsChildren = driver.children(crsh).iterator();
+    Node vfs = vfsChildren.next();
     assertFalse(vfsChildren.hasNext());
     assertEquals("vfs", driver.name(vfs));
     assertTrue(driver.isDir(vfs));
 
     //
-    Iterator<org.crsh.vfs.spi.jarurl.Handle> clazzChildren = driver.children(vfs).iterator();
-    org.crsh.vfs.spi.jarurl.Handle clazz = clazzChildren.next();
+    Iterator<Node> clazzChildren = driver.children(vfs).iterator();
+    Node clazz = clazzChildren.next();
     assertFalse(clazzChildren.hasNext());
     assertEquals(FSTestCase.class.getSimpleName() + ".class", driver.name(clazz));
     assertFalse(driver.isDir(clazz));
     InputStream in = driver.open(clazz);
     in.close();
+  }
+
+  public void testNestedJar() throws Exception {
+    java.io.File file = java.io.File.createTempFile("test", ".war");
+    file.deleteOnExit();
+    JavaArchive jar = ShrinkWrap.create(JavaArchive.class,"foo.jar");
+    jar.addClass(FSTestCase.class);
+    WebArchive war = ShrinkWrap.create(WebArchive.class);
+    war.addAsLibraries(jar);
+    ZipExporter exporter = war.as(ZipExporter.class);
+    exporter.exportTo(file, true);
+
+    //
+    URL url = new URL("jar:" + file.toURI().toURL() + "!/WEB-INF/lib/foo.jar");
+    URLDriver driver = new URLDriver();
+    driver.merge(new URL("jar:" + file.toURI().toURL() + "!/WEB-INF/"));
+    Node root = driver.root();
+    Node lib = driver.child(root, "lib");
+    Node foo_jar = driver.child(lib, "foo.jar");
+    assertNotNull(foo_jar);
+    InputStream in = driver.open(foo_jar);
+    assertNotNull(in);
+    byte[] bytes = IO.readAsBytes(in);
+
+    //
+    url = new URL("jar:" + url + "!/org/crsh/");
+    driver = new URLDriver();
+    driver.merge(url);
+    root = driver.root();
+    Node vfs = driver.child(root, "vfs");
+    Node FSTestCase_class = driver.child(vfs, "FSTestCase.class");
+    assertNotNull(FSTestCase_class);
+    in = driver.open(FSTestCase_class);
+    assertNotNull(in);
+    bytes = IO.readAsBytes(in);
   }
 
   public void testRAM() throws Exception {

@@ -21,13 +21,10 @@ package org.crsh.vfs;
 
 import org.crsh.vfs.spi.FSDriver;
 import org.crsh.vfs.spi.file.FileDriver;
-import org.crsh.vfs.spi.jarurl.JarURLDriver;
 import org.crsh.vfs.spi.mount.MountDriver;
-import org.crsh.vfs.spi.servlet.ServletContextDriver;
+import org.crsh.vfs.spi.url.URLDriver;
 
-import javax.servlet.ServletContext;
 import java.io.IOException;
-import java.net.JarURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -59,6 +56,8 @@ public class FS {
     return this;
   }
 
+  // WE SHOULD REMOVE THAT AND REMOVE THE MOUNT
+  // BUT FIRST WE NEED TO UPDATE THE SERVLET CONTEXT DRIVER
   public <H> FS mount(FSDriver<H> driver, String path) {
     return mount(driver, Path.get(path));
   }
@@ -81,20 +80,15 @@ public class FS {
     if (!path.isDir()) {
       throw new IllegalArgumentException("Path " + path + " must be a dir");
     }
+    URLDriver driver = new URLDriver();
+    // Add the resources
     Enumeration<URL> en = cl.getResources(path.getValue().substring(1));
     while (en.hasMoreElements()) {
       URL url = en.nextElement();
-      String protocol = url.getProtocol();
-      if ("file".equals(protocol)) {
-        java.io.File root = new java.io.File(url.toURI());
-        mount(root);
-      } else if ("jar".equals(protocol)) {
-        JarURLConnection conn = (JarURLConnection)url.openConnection();
-        JarURLDriver jarDriver = new JarURLDriver(cl, conn);
-        mount(jarDriver, path);
-      }
+      driver.merge(url);
     }
-    return this;
+
+    return mount(driver);
   }
 
   public FS mount(Class<?> clazz) throws IOException, URISyntaxException {
@@ -102,16 +96,8 @@ public class FS {
       throw new NullPointerException();
     }
     URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
-    String protocol = url.getProtocol();
-    FSDriver<?> driver;
-    if (protocol.equals("file")) {
-      driver = new FileDriver(new java.io.File(url.toURI()));
-    } else if (protocol.equals("jar")) {
-      JarURLConnection conn = (JarURLConnection)url.openConnection();
-      driver = new JarURLDriver(clazz.getClassLoader(), conn);
-    } else {
-      throw new IllegalArgumentException("Protocol " + protocol + " not supported");
-    }
+    URLDriver driver = new URLDriver();
+    driver.merge(url);
     return mount(driver);
   }
 }

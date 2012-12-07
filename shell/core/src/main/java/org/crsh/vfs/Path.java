@@ -49,7 +49,7 @@ public final class Path implements Iterable<String> {
       throw new IllegalArgumentException("No empty path");
     }
     if (s.charAt(0) != '/') {
-      throw new IllegalArgumentException("Path must begin with a '/'");
+      throw new IllegalArgumentException("Path " + s + " must begin with a '/'");
     }
 
     // Count

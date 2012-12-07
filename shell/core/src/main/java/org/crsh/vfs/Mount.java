@@ -30,7 +30,7 @@ class Mount<H> {
   }
 
   /** . */
-  private final FSDriver<H> driver;
+  final FSDriver<H> driver;
 
   /**
    * Create a new mount
