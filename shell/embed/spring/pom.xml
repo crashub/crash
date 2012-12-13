@@ -22,13 +22,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.telnet</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -68,6 +64,12 @@
             </exclusions>
           </dependency>
     -->
+
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.telnet</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.crsh</groupId>
