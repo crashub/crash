@@ -532,6 +532,7 @@
     <module>shell</module>
     <module>jcr</module>
     <module>doc</module>
+    <module>plugins</module>
     <module>distrib</module>
     <module>site</module>
   </modules>
