@@ -6,3 +6,6 @@ release.properties
 *.iml
 derby.log
 nul
+.classpath
+.project
+

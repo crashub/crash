@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:spring="http://www.springframework.org/schema/beans" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <spring:beans>
+        <context:property-placeholder
+            ignore-resource-not-found="true"
+            location="classpath:crash-config-default.properties,classpath:crash-config-override.properties" />
+
+        <util:properties id="crashConfig">
+            <spring:prop key="crash.ssh.port">${crash.ssh.port}</spring:prop>
+            <spring:prop key="crash.telnet.port">${crash.telnet.port}</spring:prop>
+        </util:properties>
+
+        <spring:bean class="org.crsh.spring.SpringBootstrap"
+            p:config-ref="crashConfig" />
+        <spring:bean class="org.crsh.telnet.TelnetPlugin" />
+        <spring:bean class="org.crsh.ssh.SSHPlugin" />
+    </spring:beans>
+</mule>
