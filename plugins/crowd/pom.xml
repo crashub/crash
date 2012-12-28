@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>crsh.plugins</artifactId>
+    <groupId>org.crsh</groupId>
+    <version>1.2.0-cr4-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.crsh</groupId>
+  <artifactId>crsh.plugins.crowd</artifactId>
+  <packaging>jar</packaging>
+  <version>1.2.0-cr4-SNAPSHOT</version>
+
+  <name>CRaSH Plugin - Atlassian Crowd authentication and commands</name>
+  <description>This plugin allows to delegate CRaSH authentication to an Atlassian Crowd directory and to add various commands to manage the server</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.atlassian.crowd</groupId>
+      <artifactId>crowd-integration-client-rest</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+
+  </dependencies>
+
+</project>
