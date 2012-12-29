@@ -1,0 +1,8 @@
+<jboss-deployment-structure>
+  <!-- Get Bouncy Castle in AS7 from a module, please see here : https://community.jboss.org/thread/175395  -->
+  <deployment>
+    <dependencies>
+      <module name="org.bouncycastle" slot="main" export="true"/>
+    </dependencies>
+  </deployment>
+</jboss-deployment-structure>
