@@ -19,15 +19,10 @@
 
 package org.crsh.spring;
 
-import org.crsh.auth.JaasAuthenticationPlugin;
-import org.crsh.auth.SimpleAuthenticationPlugin;
-import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginDiscovery;
 import org.crsh.plugin.PluginLifeCycle;
 import org.crsh.plugin.ServiceLoaderDiscovery;
-import org.crsh.processor.term.ProcessorIOHandler;
-import org.crsh.shell.impl.command.CRaSHShellFactory;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.springframework.beans.BeansException;
@@ -40,10 +35,8 @@ import org.springframework.beans.factory.ListableBeanFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class SpringBootstrap extends PluginLifeCycle implements
@@ -71,19 +64,11 @@ public class SpringBootstrap extends PluginLifeCycle implements
 
   public void afterPropertiesSet() throws Exception {
 
-    // Add built in plugins
-    Collection<CRaSHPlugin> plugins = new LinkedHashSet<CRaSHPlugin>();
-    plugins.add(new CRaSHShellFactory());
-    plugins.add(new ProcessorIOHandler());
-    plugins.add(new JaasAuthenticationPlugin());
-    plugins.add(new SimpleAuthenticationPlugin());
-
     // List beans
     Map<String,Object> attributes = new HashMap<String, Object>();
     attributes.put("factory", factory);
     if (factory instanceof ListableBeanFactory) {
       ListableBeanFactory listable = (ListableBeanFactory)factory;
-      plugins.addAll(listable.getBeansOfType(CRaSHPlugin.class).values());
       attributes.put("beans", new SpringMap(listable));
     }
 
