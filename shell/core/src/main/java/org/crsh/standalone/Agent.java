@@ -76,7 +76,7 @@ public class Agent {
 
   @Command
   public void main(
-    @Option(names={"j","jar"})
+    @Option(names={"c","classpath"})
     List<String> jars,
     @Option(names={"c","cmd"})
     List<String> cmds,
@@ -94,7 +94,7 @@ public class Agent {
     if (cmds != null) {
       for (String cmd : cmds) {
         File cmdPath = new File(cmd);
-        bootstrap.addCmdPath(cmdPath);
+        bootstrap.addToCmdPath(cmdPath);
       }
     }
 
@@ -102,7 +102,7 @@ public class Agent {
     if (confs != null) {
       for (String conf : confs) {
         File confPath = new File(conf);
-        bootstrap.addConfPath(confPath);
+        bootstrap.addToConfPath(confPath);
       }
     }
 
@@ -110,7 +110,7 @@ public class Agent {
     if (jars != null) {
       for (String jar : jars) {
         File jarFile = new File(jar);
-        bootstrap.addJarPath(jarFile);
+        bootstrap.addToClassPath(jarFile);
       }
     }
 

@@ -13,4 +13,25 @@
   <name>CRaSH cmdline</name>
   <description>The CRaSH cmdline module</description>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-standalone</id>
+            <configuration>
+              <archive>
+                <manifestEntries>
+                  <Main-Class>org.crsh.cmdline.bootstrap.Main</Main-Class>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

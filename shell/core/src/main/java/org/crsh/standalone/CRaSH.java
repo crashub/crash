@@ -45,13 +45,17 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.*;
 import java.util.List;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class CRaSH {
 
@@ -67,12 +71,6 @@ public class CRaSH {
 
   @Command
   public void main(
-    @Option(names = {"h","help"})
-    @Usage("display standalone mode help")
-    Boolean help,
-    @Option(names={"j","jar"})
-    @Usage("specify a file system path of a jar added to the class path")
-    List<String> jars,
     @Option(names={"c","cmd"})
     @Usage("specify a file system path of a dir added to the command path")
     List<String> cmds,
@@ -87,204 +85,205 @@ public class CRaSH {
     Integer pid) throws Exception {
 
     //
-    if (Boolean.TRUE.equals(help)) {
-      descriptor.printUsage(System.out);
-    } else {
+    CloseableList closeable = new CloseableList();
+    Shell shell;
+    if (pid != null) {
 
-      CloseableList closeable = new CloseableList();
-      Shell shell;
-      if (pid != null) {
+      // Standalone
+      log.log(Level.INFO, "Attaching to remote process " + pid);
+      final VirtualMachine vm = VirtualMachine.attach("" + pid);
 
-        // Standalone
-        URL url = CRaSH.class.getProtectionDomain().getCodeSource().getLocation();
-        java.io.File f = new java.io.File(url.toURI());
-        log.log(Level.INFO, "Attaching to remote process " + pid);
-        final VirtualMachine vm = VirtualMachine.attach("" + pid);
-
-        //
-        RemoteServer server = new RemoteServer(0);
-        int port = server.bind();
-        log.log(Level.INFO, "Callback server set on port " + port);
-
-        // Build the options
-        StringBuilder sb = new StringBuilder();
-
-        // Rewrite canonical path
-        if (cmds != null) {
-          for (String cmd : cmds) {
-            File cmdPath = new File(cmd);
-            if (cmdPath.exists()) {
-              sb.append("--cmd ");
-              Delimiter.EMPTY.escape(cmdPath.getCanonicalPath(), sb);
-              sb.append(' ');
-            }
+      // Compute classpath
+      String classpath = System.getProperty("java.class.path");
+      String sep = System.getProperty("path.separator");
+      StringBuilder buffer = new StringBuilder();
+      for (String path : classpath.split(Pattern.quote(sep))) {
+        File file = new File(path);
+        if (file.exists()) {
+          if (buffer.length() > 0) {
+            buffer.append(' ');
           }
+          buffer.append(file.getCanonicalPath());
         }
+      }
 
-        // Rewrite canonical path
-        if (confs != null) {
-          for (String conf : confs) {
-            File confPath = new File(conf);
-            if (confPath.exists()) {
-              sb.append("--conf ");
-              Delimiter.EMPTY.escape(confPath.getCanonicalPath(), sb);
-              sb.append(' ');
-            }
-          }
-        }
+      // Create manifest
+      Manifest manifest = new Manifest();
+      Attributes attributes = manifest.getMainAttributes();
+      attributes.putValue("Agent-Class", Agent.class.getName());
+      attributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
+      attributes.put(Attributes.Name.CLASS_PATH, buffer.toString());
 
-        // Rewrite canonical path
-        if (jars != null) {
-          for (String jar : jars) {
-            File jarPath = new File(jar);
-            if (jarPath.exists()) {
-              sb.append("--jar ");
-              Delimiter.EMPTY.escape(jarPath.getCanonicalPath(), sb);
-              sb.append(' ');
-            }
-          }
-        }
+      // Create jar file
+      File agentFile = File.createTempFile("agent", ".jar");
+      agentFile.deleteOnExit();
+      JarOutputStream out = new JarOutputStream(new FileOutputStream(agentFile), manifest);
+      out.close();
+      log.log(Level.INFO, "Created agent jar " + agentFile.getCanonicalPath());
 
-        // Propagate canonical config
-        if (properties != null) {
-          for (String property : properties) {
-            sb.append("--property ");
-            Delimiter.EMPTY.escape(property, sb);
+      //
+      RemoteServer server = new RemoteServer(0);
+      int port = server.bind();
+      log.log(Level.INFO, "Callback server set on port " + port);
+
+      // Build the options
+      StringBuilder sb = new StringBuilder();
+
+      // Rewrite canonical path
+      if (cmds != null) {
+        for (String cmd : cmds) {
+          File cmdPath = new File(cmd);
+          if (cmdPath.exists()) {
+            sb.append("--cmd ");
+            Delimiter.EMPTY.escape(cmdPath.getCanonicalPath(), sb);
             sb.append(' ');
           }
         }
-
-        // Append callback port
-        sb.append(port);
-
-        //
-        String options = sb.toString();
-        log.log(Level.INFO, "Loading agent with command " + options);
-        vm.loadAgent(f.getCanonicalPath(), options);
-
-        //
-        server.accept();
-
-        //
-        shell = server.getShell();
-        closeable.add(new Closeable() {
-          public void close() throws IOException {
-            vm.detach();
-          }
-        });
-      } else {
-        final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
-
-        //
-        if (cmds != null) {
-          for (String cmd : cmds) {
-            File cmdPath = new File(cmd);
-            bootstrap.addCmdPath(cmdPath);
-          }
-        }
-
-        //
-        if (confs != null) {
-          for (String conf : confs) {
-            File confPath = new File(conf);
-            bootstrap.addConfPath(confPath);
-          }
-        }
-
-        //
-        if (jars != null) {
-          for (String jar : jars) {
-            File jarPath = new File(jar);
-            bootstrap.addJarPath(jarPath);
-          }
-        }
-
-        //
-        if (properties != null) {
-          Properties config = new Properties();
-          for (String property : properties) {
-            int index = property.indexOf('=');
-            if (index == -1) {
-              config.setProperty(property, "");
-            } else {
-              config.setProperty(property.substring(0, index), property.substring(index + 1));
-            }
-          }
-          bootstrap.setConfig(config);
-        }
-
-        // Register shutdown hook
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-          @Override
-          public void run() {
-            // Should trigger some kind of run interruption
-          }
-        });
-
-        // Do bootstrap
-        bootstrap.bootstrap();
-        Runtime.getRuntime().addShutdownHook(new Thread(){
-          @Override
-          public void run() {
-            bootstrap.shutdown();
-          }
-        });
-
-        //
-        ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
-        shell = factory.create(null);
-        closeable = null;
       }
 
-      // Start crash for this command line
-      final Terminal term = TerminalFactory.create();
-      term.init();
-      ConsoleReader reader = new ConsoleReader(null, new FileInputStream(FileDescriptor.in), System.out, term);
+      // Rewrite canonical path
+      if (confs != null) {
+        for (String conf : confs) {
+          File confPath = new File(conf);
+          if (confPath.exists()) {
+            sb.append("--conf ");
+            Delimiter.EMPTY.escape(confPath.getCanonicalPath(), sb);
+            sb.append(' ');
+          }
+        }
+      }
+
+      // Propagate canonical config
+      if (properties != null) {
+        for (String property : properties) {
+          sb.append("--property ");
+          Delimiter.EMPTY.escape(property, sb);
+          sb.append(' ');
+        }
+      }
+
+      // Append callback port
+      sb.append(port);
+
+      //
+      String options = sb.toString();
+      log.log(Level.INFO, "Loading agent with command " + options + " as agent " + agentFile.getCanonicalPath());
+      vm.loadAgent(agentFile.getCanonicalPath(), options);
+
+      //
+      server.accept();
+
+      //
+      shell = server.getShell();
+      closeable.add(new Closeable() {
+        public void close() throws IOException {
+          vm.detach();
+        }
+      });
+    } else {
+      final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
+
+      //
+      if (cmds != null) {
+        for (String cmd : cmds) {
+          File cmdPath = new File(cmd);
+          bootstrap.addToCmdPath(cmdPath);
+        }
+      }
+
+      //
+      if (confs != null) {
+        for (String conf : confs) {
+          File confPath = new File(conf);
+          bootstrap.addToConfPath(confPath);
+        }
+      }
+
+      //
+      if (properties != null) {
+        Properties config = new Properties();
+        for (String property : properties) {
+          int index = property.indexOf('=');
+          if (index == -1) {
+            config.setProperty(property, "");
+          } else {
+            config.setProperty(property.substring(0, index), property.substring(index + 1));
+          }
+        }
+        bootstrap.setConfig(config);
+      }
+
+      // Register shutdown hook
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+        public void run() {
+          // Should trigger some kind of run interruption
+        }
+      });
+
+      // Do bootstrap
+      bootstrap.bootstrap();
       Runtime.getRuntime().addShutdownHook(new Thread(){
         @Override
         public void run() {
-          try {
-            term.restore();
-          }
-          catch (Exception ignore) {
-          }
+          bootstrap.shutdown();
         }
       });
 
       //
-      final PrintWriter out = new PrintWriter(System.out);
-      final JLineProcessor processor = new JLineProcessor(
+      ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
+      shell = factory.create(null);
+      closeable = null;
+    }
+
+    // Start crash for this command line
+    final Terminal term = TerminalFactory.create();
+    term.init();
+    ConsoleReader reader = new ConsoleReader(null, new FileInputStream(FileDescriptor.in), System.out, term);
+    Runtime.getRuntime().addShutdownHook(new Thread(){
+      @Override
+      public void run() {
+        try {
+          term.restore();
+        }
+        catch (Exception ignore) {
+        }
+      }
+    });
+
+    //
+    final PrintWriter out = new PrintWriter(System.out);
+    final JLineProcessor processor = new JLineProcessor(
         shell,
         reader,
         out
-      );
-      reader.addCompleter(processor);
+    );
+    reader.addCompleter(processor);
 
-      // Install signal handler
-      InterruptHandler ih = new InterruptHandler(new Runnable() {
-        public void run() {
-          processor.cancel();
-        }
-      });
-      ih.install();
+    // Install signal handler
+    InterruptHandler ih = new InterruptHandler(new Runnable() {
+      public void run() {
+        processor.cancel();
+      }
+    });
+    ih.install();
+
+    //
+    try {
+      processor.run();
+    }
+    catch (Throwable t) {
+      t.printStackTrace();
+    }
+    finally {
 
       //
-      try {
-        processor.run();
+      if (closeable != null) {
+        Safe.close(closeable);
       }
-      catch (Throwable t) {
-        t.printStackTrace();
-      }
-      finally {
 
-        //
-        if (closeable != null) {
-          Safe.close(closeable);
-        }
-
-        // Force exit
-        System.exit(0);
-      }
+      // Force exit
+      System.exit(0);
     }
   }
 

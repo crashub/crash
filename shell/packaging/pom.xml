@@ -19,42 +19,26 @@
 
   <dependencies>
 
-    <!-- Standalone dependencies-->
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.core</artifactId>
-      <classifier>standalone</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.telnet</artifactId>
-      <classifier>standalone</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.ssh</artifactId>
-      <classifier>standalone</classifier>
-    </dependency>
-
-    <!-- War dependencies -->
+    <!-- Cmdline standalone -->
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.cmdline</artifactId>
     </dependency>
     <dependency>
       <groupId>org.crsh</groupId>
+      <artifactId>crsh.cmdline</artifactId>
+      <classifier>standalone</classifier>
+    </dependency>
+
+    <!-- Core -->
+    <dependency>
+      <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.telnet</artifactId>
+      <groupId>jline</groupId>
+      <artifactId>jline</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.ssh</artifactId>
-    </dependency>
-
-    <!-- Core dependencies -->
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
@@ -64,7 +48,23 @@
       <artifactId>ivy</artifactId>
     </dependency>
 
+    <!-- Standalone dependencies-->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.telnet</artifactId>
+      <classifier>standalone</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.ssh</artifactId>
+      <classifier>standalone</classifier>
+    </dependency>
+
     <!-- SSHD connector dependencies -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.ssh</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.sshd</groupId>
       <artifactId>sshd-core</artifactId>
@@ -89,6 +89,10 @@
     </dependency>
 
     <!-- Telnet connector dependencies -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.telnet</artifactId>
+    </dependency>
     <dependency>
       <groupId>net.wimpi</groupId>
       <artifactId>telnetd-x</artifactId>

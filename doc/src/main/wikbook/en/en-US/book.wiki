@@ -2,7 +2,7 @@ The Common Reusable SHell (CRaSH) deploys in a Java runtime and provides interac
 Commands are written in Groovy and can be developped at runtime making the extension of the shell very easy
 with fast development cycle.
 
-= Running CRaSH =
+= Running CRaSH {{anchor id=running /}} =
 
 {{include document="running.wiki" /}}
 
@@ -10,21 +10,21 @@ with fast development cycle.
 
 {{include document="shell.wiki" /}}
 
-= JCR extension =
-
-{{include document="jcr.wiki" /}}
-
 = Configuration =
 
 {{include document="configuration.wiki" /}}
+
+= Developers =
+
+{{include document="developers.wiki" /}}
 
 = Extending CRaSH =
 
 {{include document="extension.wiki" /}}
 
-= Developers =
+= JCR extension =
 
-{{include document="developers.wiki" /}}
+{{include document="jcr.wiki" /}}
 
 = Hey, I want to contribute! =
 

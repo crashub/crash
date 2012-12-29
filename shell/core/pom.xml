@@ -84,8 +84,7 @@
             <configuration>
               <archive>
                 <manifestEntries>
-                  <Main-Class>org.crsh.standalone.CRaSH</Main-Class>
-                  <Agent-Class>org.crsh.standalone.Agent</Agent-Class>
+                  <Main-Class>org.crsh.cmdline.bootstrap.Main</Main-Class>
                 </manifestEntries>
               </archive>
             </configuration>

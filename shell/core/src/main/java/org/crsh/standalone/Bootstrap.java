@@ -35,19 +35,22 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A boostrap for starting a standalone CRaSH.
+ */
 public class Bootstrap extends PluginLifeCycle {
 
   /** . */
   protected final Logger log = Logger.getLogger(getClass().getName());
 
   /** The mounted path on the file system. */
-  private List<File> cmds = Utils.newArrayList();
+  private List<File> cmdpath = Utils.newArrayList();
 
   /** The mounted path on the file system. */
-  private List<File> confs = Utils.newArrayList();
+  private List<File> confpath = Utils.newArrayList();
 
   /** The class path. */
-  private List<File> jars = Utils.newArrayList();
+  private List<File> classpath = Utils.newArrayList();
 
   /** The base classloader. */
   private ClassLoader baseLoader;
@@ -55,6 +58,12 @@ public class Bootstrap extends PluginLifeCycle {
   /** The attributes. */
   private Map<String, Object> attributes;
 
+  /**
+   * Create a bootstrap instance with the base classloader and an empty and unmodifiable attribute map.
+   *
+   * @param baseLoader the base classloader crash will use
+   * @throws NullPointerException if the loader argument is null
+   */
   public Bootstrap(ClassLoader baseLoader) throws NullPointerException {
     if (baseLoader == null) {
       throw new NullPointerException("No null base loader accepted");
@@ -63,39 +72,79 @@ public class Bootstrap extends PluginLifeCycle {
     this.attributes = Collections.emptyMap();
   }
 
+  /**
+   * Replaces the attributes to use, the new attributes map will be used as is and not copied.
+   *
+   * @param attributes the attribute map
+   */
   public void setAttributes(Map<String, Object> attributes) {
     this.attributes = attributes;
   }
 
-  public Bootstrap addConfPath(File file) {
-    confs.add(file);
+  /**
+   * Add a conf path directory.
+   *
+   * @param path the configuration path
+   * @return this bootstrap
+   * @throws NullPointerException when the path argument is null
+   */
+  public Bootstrap addToConfPath(File path) throws NullPointerException {
+    if (path == null) {
+      throw new NullPointerException("No null configuration path");
+    }
+    confpath.add(path);
     return this;
   }
 
-  public Bootstrap addCmdPath(File file) {
-    cmds.add(file);
+  /**
+   * Add a command path directory.
+   *
+   * @param path the configuration path
+   * @return this bootstrap
+   * @throws NullPointerException when the path argument is null
+   */
+  public Bootstrap addToCmdPath(File path) {
+    if (path == null) {
+      throw new NullPointerException("No null command path");
+    }
+    cmdpath.add(path);
     return this;
   }
 
-  public Bootstrap addJarPath(File file) {
-    jars.add(file);
+  /**
+   * Add a jar path.
+   *
+   * @param path the jar path
+   * @return this bootstrap
+   * @throws NullPointerException when the path argument is null
+   */
+  public Bootstrap addToClassPath(File path) {
+    if (path == null) {
+      throw new NullPointerException("No null jar path");
+    }
+    classpath.add(path);
     return this;
   }
 
+  /**
+   * Trigger the boostrap.
+   *
+   * @throws Exception any exception that would prevent the bootstrap
+   */
   public void bootstrap() throws Exception {
 
     // Compute the url classpath
-    URL[] urls = new URL[jars.size()];
+    URL[] urls = new URL[classpath.size()];
     for (int i = 0;i < urls.length;i++) {
-      urls[i] = jars.get(i).toURI().toURL();
+      urls[i] = classpath.get(i).toURI().toURL();
     }
 
-    // Create the classloader
+    // Create the classloader from the url classpath
     URLClassLoader classLoader = new URLClassLoader(urls, baseLoader);
 
     // Create the cmd file system
     FS cmdFS = new FS();
-    for (File cmd : cmds) {
+    for (File cmd : cmdpath) {
       cmdFS.mount(cmd);
     }
 
@@ -104,7 +153,7 @@ public class Bootstrap extends PluginLifeCycle {
 
     // Create the conf file system
     FS confFS = new FS();
-    for (File conf : confs) {
+    for (File conf : confpath) {
       confFS.mount(conf);
     }
     confFS.mount(classLoader, Path.get("/crash/"));
@@ -114,12 +163,12 @@ public class Bootstrap extends PluginLifeCycle {
 
     //
     StringBuilder info = new StringBuilder("Booting crash with classpath=");
-    info.append(jars).append(" and mounts=[");
-    for (int i = 0;i < cmds.size();i++) {
+    info.append(classpath).append(" and mounts=[");
+    for (int i = 0;i < cmdpath.size();i++) {
       if (i > 0) {
         info.append(',');
       }
-      info.append(cmds.get(i).getAbsolutePath());
+      info.append(cmdpath.get(i).getAbsolutePath());
     }
     info.append(']');
     log.log(Level.INFO, info.toString());

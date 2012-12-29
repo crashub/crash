@@ -1,6 +1,5 @@
-There are several ways to run CRaSH.
-
-CRaSH provides has various ways to be started, it can also be easily embedded.
+There are several ways to run CRaSH, as a standalone application it controls its own JVM or as an embedded
+service in an existing runtime like a web application or a Spring application.
 
 = Standalone =
 
@@ -91,7 +90,11 @@ If you want you can embed CRaSH in your own //web.xml// configuration:
 
 == Embedding in Spring ==
 
-CRaSH can be easily embedded and configured in a Spring configuration, here is an example of embedding crash:
+CRaSH can be easily embedded and configured in a Spring configuration
+
+=== Embedding as a Spring bean ===
+
+Here is an example of embedding crash:
 
 {{example title="Embedding CRaSH in Spring"}}
 {{xml}}
@@ -205,7 +208,7 @@ in XML:
 {{/xml}}
 {{/example}}
 
-== Embedding in a Spring web app ==
+=== Embedding in a Spring web app ===
 
 In case you are embedding CRaSH in a Spring application running with a servlet container, the bean
  ##org.crsh.spring.SpringWebBootstrap## can be used instead of ##org.crsh.spring.SpringBootstrap##. The ##SpringWebBootstrap##

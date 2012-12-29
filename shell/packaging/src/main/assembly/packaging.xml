@@ -31,13 +31,16 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/bin</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.shell.core:jar:standalone</include>
+        <include>org.crsh:crsh.cmdline:jar:standalone</include>
       </includes>
     </dependencySet>
     <dependencySet>
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/lib</outputDirectory>
       <includes>
+        <include>jline:jline</include>
+        <include>org.codehaus.groovy:groovy-all</include>
+        <include>org.crsh:crsh.shell.core</include>
         <include>org.apache.ivy:ivy</include>
         <include>org.crsh:crsh.shell.telnet:jar:standalone</include>
         <include>org.crsh:crsh.shell.ssh:jar:standalone</include>

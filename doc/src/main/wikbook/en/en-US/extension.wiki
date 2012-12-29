@@ -1,3 +1,25 @@
+= Embedding CRaSH =
+
+The [[#running]] explains how to run CRaSH as a standalone or an embedded service. We will study in this section the technical
+aspect of running application and show how CRaSH can be embedded in specific environments.
+
+The root class for reusing CRaSH is the ##org.crsh.plugin.PluginLifeCycle## class. This class is abstract and it cannot
+be used directly, instead it should be subclasses for providing specific behavior for running CRaSH. There are several
+subclasses using it:
+
+* The standalone bootstrap with the ##org.crsh.standalone.Bootstrap## class : designed for using CRaSH with a real
+file system (i.e ##java.io.File##). It defines a specific layout for locating resources (libraries, configuration and commands).
+* The embedded approaches
+** ##org.crsh.plugin.WebPluginLifeCycle## : uses a ##javax.servlet.ServletContext##
+** ##org.crsh.spring.SpringBootstrap## : embeds CRaSH as a Spring bean
+** ##org.crsh.spring.SpringWebBootstrap## : extends the ##SpringBootstrap## and uses the existing ##ServletContext##
+
+== Standalone bootstrap customization ==
+
+The ##org.crsh.standalone.Bootstrap## class provides a Java //main// method:
+
+{{warning}}finish me!!!{{/warning}}
+
 = Pluggable authentication {{anchor id=pluggable_auth /}} =
 
 Creating a custom authentication mechanism is done by implementing a CRaSH plugin that provides an implementation of the ##AuthenticationPlugin##

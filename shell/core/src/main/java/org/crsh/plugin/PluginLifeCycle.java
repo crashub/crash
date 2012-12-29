@@ -27,6 +27,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The base class for managing the CRaSH life cycle.
+ */
 public abstract class PluginLifeCycle {
 
   /** . */
