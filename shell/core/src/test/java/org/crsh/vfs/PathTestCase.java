@@ -38,6 +38,7 @@ public class PathTestCase extends TestCase {
     assertSamePath("/a/b/", true, "a", "b");
     assertSamePath("/a//b/", true, "a", "b");
     assertSamePath("//a/b/", true, "a", "b");
+    assertSamePath("//a/b//", true, "a", "b");
   }
 
   private void assertSamePath(String s, boolean dir, String... expectedNames) {

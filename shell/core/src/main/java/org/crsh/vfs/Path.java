@@ -25,6 +25,9 @@ import java.util.NoSuchElementException;
 public final class Path implements Iterable<String> {
 
   /** . */
+  private static final String[] EMPTY_STRING = new String[0];
+
+  /** . */
   private final boolean dir;
 
   /** . */
@@ -52,48 +55,42 @@ public final class Path implements Iterable<String> {
       throw new IllegalArgumentException("Path " + s + " must begin with a '/'");
     }
 
-    // Count
+    //
+    int start = 0;
     int end = s.length();
-
-    //
-    int count = 0;
-    int prev = 1;
-    while (true) {
-      int next = s.indexOf('/', prev);
-      if (next == -1) {
-        if (prev < end) {
-          count++;
-        }
+    String[] names = EMPTY_STRING;
+    while (start < end) {
+      if (s.charAt(end - 1) == '/') {
+        end--;
+      } else if (s.charAt(start) == '/') {
+        start++;
+      } else {
+        names = parseNames(s, start, end, 0);
         break;
-      } else if (next - prev > 0) {
-        count++;
       }
-      prev = next + 1;
     }
 
     //
-    String[] names = new String[count];
-    prev = 1;
-    count = 0;
-    boolean dir;
-    while (true) {
-      int next = s.indexOf('/', prev);
-      if (next == -1) {
-        if (prev < end) {
-          names[count] = s.substring(prev);
-          dir = false;
-        } else {
-          dir = true;
-        }
-        break;
-      } else if (next - prev > 0) {
-        names[count++] = s.substring(prev, next);
-      }
-      prev = next + 1;
-    }
+    return new Path(end < s.length(), names);
+  }
 
-    //
-    return new Path(dir, names);
+  private static String[] parseNames(final String s, final int prev, int end, final int count) {
+    int next = s.indexOf('/', prev);
+    if (next == -1 || next > end) {
+      if (prev < end) {
+        String[] ret = new String[count + 1];
+        ret[count] = s.substring(prev);
+        return ret;
+      } else {
+        return new String[count];
+      }
+    } else if (next - prev > 0) {
+      String[] ret = parseNames(s, next + 1, end, count + 1);
+      ret[count] = s.substring(prev, next);
+      return ret;
+    } else {
+      return parseNames(s, next + 1, end, count);
+    }
   }
 
   private Path(boolean dir, String[] names) {
