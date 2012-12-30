@@ -22,12 +22,10 @@ package org.crsh.processor.term;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
-import org.crsh.shell.impl.async.AsyncShell;
 import org.crsh.term.console.ConsoleTerm;
 import org.crsh.term.spi.TermIO;
 import org.crsh.term.spi.TermIOHandler;
 
-import java.io.Closeable;
 import java.security.Principal;
 
 public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandler {
@@ -51,14 +49,10 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
 
   public void handle(final TermIO io, Principal user) {
     Shell shell = factory.create(user);
-    AsyncShell asyncShell = new AsyncShell(getContext().getExecutor(), shell);
     ConsoleTerm term = new ConsoleTerm(io);
-    Processor processor = new Processor(term, asyncShell);
+    Processor processor = new Processor(term, shell);
     processor.addListener(io);
-    processor.addListener(asyncShell);
-    if (shell instanceof Closeable) {
-      processor.addListener((Closeable)shell);
-    }
+    processor.addListener(shell);
     processor.run();
   }
 }

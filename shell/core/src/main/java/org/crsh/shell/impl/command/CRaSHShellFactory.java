@@ -23,6 +23,7 @@ import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
+import org.crsh.shell.impl.async.AsyncShell;
 
 import java.security.Principal;
 
@@ -46,6 +47,7 @@ public class CRaSHShellFactory extends CRaSHPlugin<ShellFactory> implements Shel
   }
 
   public Shell create(Principal principal) {
-    return crash.createSession(principal);
+    CRaSHSession session = crash.createSession(principal);
+    return new AsyncShell(getContext().getExecutor(), session);
   }
 }

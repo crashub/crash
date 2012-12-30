@@ -25,6 +25,7 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
 public class SyncShell implements Shell {
@@ -93,5 +94,8 @@ public class SyncShell implements Shell {
 
   public CommandCompletion complete(String prefix) {
     throw new UnsupportedOperationException();
+  }
+
+  public void close() throws IOException {
   }
 }

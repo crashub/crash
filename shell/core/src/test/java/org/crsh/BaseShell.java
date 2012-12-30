@@ -24,6 +24,8 @@ import org.crsh.cmdline.spi.Completion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 
+import java.io.IOException;
+
 public class BaseShell implements Shell {
 
   /** . */
@@ -75,5 +77,8 @@ public class BaseShell implements Shell {
    */
   public CommandCompletion complete(String prefix) {
     return new CommandCompletion(Delimiter.EMPTY, Completion.create());
+  }
+
+  public void close() throws IOException {
   }
 }

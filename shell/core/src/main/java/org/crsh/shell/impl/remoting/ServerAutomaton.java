@@ -110,7 +110,7 @@ public class ServerAutomaton implements Shell {
     }
   }
 
-  void close() {
+  public void close() {
     listeners.close();
   }
 

@@ -21,7 +21,9 @@ package org.crsh.shell;
 
 import org.crsh.cmdline.CommandCompletion;
 
-public interface Shell {
+import java.io.Closeable;
+
+public interface Shell extends Closeable {
 
   /**
    * Returns the welcome message.
