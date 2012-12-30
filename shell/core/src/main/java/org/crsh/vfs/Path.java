@@ -19,6 +19,8 @@
 
 package org.crsh.vfs;
 
+import org.crsh.util.BaseIterator;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -99,7 +101,7 @@ public final class Path implements Iterable<String> {
   }
 
   public Iterator<String> iterator() {
-    return new Iterator<String>() {
+    return new BaseIterator<String>() {
       int index = 0;
       public boolean hasNext() {
         return index < names.length;
@@ -110,9 +112,6 @@ public final class Path implements Iterable<String> {
         } else {
           throw new NoSuchElementException();
         }
-      }
-      public void remove() {
-        throw new UnsupportedOperationException();
       }
     };
   }
@@ -173,6 +172,11 @@ public final class Path implements Iterable<String> {
     return hashCode;
   }
 
+  /**
+   * Returns the canonical path value.
+   *
+   * @return the value
+   */
   public String getValue() {
     if (value == null) {
       StringBuilder sb = new StringBuilder(8 * names.length);
