@@ -13,8 +13,10 @@ Default properties are:
 
 ## Commands
 
-Get Mule instance details:
+Get information about the broker:
 
     mule info
 
+List all the deployed applications:
 
+    mule apps

@@ -6,13 +6,16 @@ import org.crsh.cmdline.annotations.Required
 import org.crsh.text.ui.UIBuilder
 
 import javax.management.MBeanServerFactory
+import javax.management.MBeanServer
 
 @Usage("mule commands")
 class mule extends CRaSHCommand {
-  @Usage("print information about a mule broker")
+  MBeanServer mbeanServer = getMBeanServer()
+
+  @Usage("print information about the broker")
   @Command
   void info() {
-      def muleContextMBean = getFirstMuleContextMBean();
+      def muleContextMBean = getFirstMuleContextMBean()
       if (muleContextMBean == null) {
           out << "Failed to locate any MuleContext MBean - report this issue to the developers of this command\n"
       } else {
@@ -25,20 +28,34 @@ class mule extends CRaSHCommand {
       }
   }
 
-  // TODO list apps
+  @Usage("list the names of all deployed applications")
+  @Command
+  void apps() {
+      mbeanServer.domains.each { domain ->
+          if (isMuleApplicationDomain(domain)) {
+              out << "${domain.substring(5)}\n"
+          }
+      }
+  }
+
   // TODO control one app
   // TODO list flows and connectors in app
   // TODO control one flow/connector
-  
+
   private GroovyMBean getFirstMuleContextMBean() {
-      def mbeanServers = MBeanServerFactory.findMBeanServer(null)
-      for (mbeanServer in mbeanServers) {
-          for (domain in mbeanServer.domains) {
-              if (domain ==~ /Mule\..+/) {
-                  return new GroovyMBean(mbeanServer, "$domain:name=MuleContext")
-              }
+      for (domain in mbeanServer.domains) {
+          if (isMuleApplicationDomain(domain)) {
+              return new GroovyMBean(mbeanServer, "$domain:name=MuleContext")
           }
       }
       return null
+  }
+
+  private boolean isMuleApplicationDomain(String domain) {
+      domain ==~ /Mule\..+/
+  }
+
+  private MBeanServer getMBeanServer() {
+      MBeanServerFactory.findMBeanServer(null)[0]
   }
 }
