@@ -1,9 +1,9 @@
 import org.crsh.command.CRaSHCommand
+import org.crsh.command.ScriptException
 import org.crsh.cmdline.annotations.Usage
 import org.crsh.cmdline.annotations.Command
 import org.crsh.cmdline.annotations.Argument
 import org.crsh.cmdline.annotations.Required
-import org.crsh.text.ui.UIBuilder
 import org.crsh.cmdline.spi.Completer
 import org.crsh.cmdline.spi.Completion
 import org.crsh.cmdline.ParameterDescriptor
@@ -15,6 +15,7 @@ import javax.management.ObjectName
 
 @Usage("mule commands")
 class mule extends CRaSHCommand implements Completer {
+  static final ObjectName WRAPPER_MANAGER_ON = new ObjectName('Mule:name=WrapperManager')
   MBeanServer mbeanServer = getMBeanServer()
 
   @Usage("print information about the broker")
@@ -22,8 +23,9 @@ class mule extends CRaSHCommand implements Completer {
   void info() {
       def muleContextMBean = getFirstMuleContextMBean()
       if (muleContextMBean == null) {
-          out << "Failed to locate any MuleContext MBean - report this issue to the developers of this command\n"
+          throw new ScriptException("No MuleContext MBean located");
       } else {
+          def muleWrapperManagerMBean = getMuleWrapperManagerMBean()
           context.provide([name:"Mule Version",value:muleContextMBean.Version])
           context.provide([name:"Build Number",value:muleContextMBean.BuildNumber])
           context.provide([name:"Build Date",value:muleContextMBean.BuildDate])
@@ -31,6 +33,10 @@ class mule extends CRaSHCommand implements Completer {
           context.provide([name:"Hostname",value:muleContextMBean.Hostname])
           context.provide([name:"OS",value:muleContextMBean.OsVersion])
           context.provide([name:"JDK",value:muleContextMBean.JdkVersion])
+          context.provide([name:"Launched As Service",value:muleWrapperManagerMBean.LaunchedAsService])
+          context.provide([name:"Debug Enabled",value:muleWrapperManagerMBean.DebugEnabled])
+          context.provide([name:"Java PID",value:muleWrapperManagerMBean.JavaPID])
+          context.provide([name:"JVM Id",value:muleWrapperManagerMBean.JVMId])
       }
   }
 
@@ -158,6 +164,32 @@ class mule extends CRaSHCommand implements Completer {
       }
   }
 
+  public static enum BrokerAction {
+      restart('restart'), stop('stop'), thread_dump('requestThreadDump')
+      private final String value
+      BrokerAction(String value) { this.value = value }
+      public String value() { return value }
+  }
+
+  @Usage("control the broker")
+  @Command
+  void broker(@Usage("The broker action to run") @Required @Argument BrokerAction brokerAction,
+              @Usage("The exit code for the stop action (default is 0)") @Option(names=["x"]) Integer exitCode) {
+      try {
+          if (brokerAction == BrokerAction.stop) {
+              getMuleWrapperManagerMBean().invokeMethod(brokerAction.value(), [exitCode == null?0:exitCode] as Object[])
+          } else {
+              getMuleWrapperManagerMBean().invokeMethod(brokerAction.value(), [] as Object[])
+          }
+          out << "Action $brokerAction successfully run.\n"
+      } catch (Exception e) {
+          out << "Failed to $brokerAction the broker ($e.message)\n"
+      }
+  }
+
+  private GroovyMBean getMuleWrapperManagerMBean() {
+      new GroovyMBean(mbeanServer, WRAPPER_MANAGER_ON)
+  }
 
   private void listMBeans(String applicationName, String type, Closure extractor) {
       getObjectNames(applicationName, type).sort().each { objectName ->
@@ -186,11 +218,11 @@ class mule extends CRaSHCommand implements Completer {
   }
 
   private List<String> getApplicationNames() {
-      mbeanServer.domains.sort().findAll { domain ->
+      mbeanServer.domains.findAll { domain ->
           isMuleApplicationDomain(domain)
       }.collect { domain ->
           domain.substring(5)
-      }
+      }.sort()
   }
 
   private GroovyMBean getFirstMuleContextMBean() {
@@ -208,5 +240,11 @@ class mule extends CRaSHCommand implements Completer {
 
   private MBeanServer getMBeanServer() {
       MBeanServerFactory.findMBeanServer(null)[0]
+//      for (MBeanServer mbeanServer : MBeanServerFactory.findMBeanServer(null)) {
+//          if (mbeanServer.isRegistered(WRAPPER_MANAGER_ON)) {
+//              return mbeanServer
+//          }
+//      }
+//      throw new ScriptException("No Mule wrapper manager located");
   }
 }
