@@ -87,7 +87,6 @@ class mule extends CRaSHCommand implements Completer {
   }
 
   // TODO control one app
-  // TODO control one connector
 
   public static enum EndpointAction {connect, disconnect}
 
@@ -111,6 +110,33 @@ class mule extends CRaSHCommand implements Completer {
       }
 
       out << "Failed to locate an endpoint for the provided parameters\n"
+  }
+
+  public static enum ConnectorAction {
+      initialise('initialise'), start('startConnector'), stop('stopConnector'), dispose('dispose')
+      private final String value
+      ConnectorAction(String value) { this.value = value }
+      public String value() { return value }
+  }
+
+  @Usage("control a connector")
+  @Command
+  void connector(@Usage("The application name") @Required @Option(names=["a"], completer=mule.class) String applicationName,
+                 @Usage("The connector name") @Required @Option(names=["c"]) String connectorName,
+                 @Usage("The connector action to run") @Required @Argument ConnectorAction connectorAction) {
+
+      try {
+          def connectorMBean = new GroovyMBean(mbeanServer, "Mule.$applicationName:type=Connector,name=\"$connectorName\"")
+          try {
+              connectorMBean.invokeMethod(connectorAction.value(), [] as Object[])
+              out << "Action $connectorAction successfully run. Connector started: $connectorMBean.Started, disposed: $connectorMBean.Disposed\n"
+          } catch (Exception e) {
+              out << "Failed to $connectorAction the connector ($e.message)\n"
+          }
+      }
+      catch (Exception e) {
+          out << "Failed to locate a connector for the provided parameters\n"
+      }
   }
 
   private void listMBeans(String applicationName, String type, Closure extractor) {
