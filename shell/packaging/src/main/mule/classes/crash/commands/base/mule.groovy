@@ -38,8 +38,8 @@ class mule extends CRaSHCommand implements Completer {
   @Command
   void apps() {
       getApplicationNames().each { appName ->
-          def muleContextMBean = new GroovyMBean(mbeanServer, "Mule.$appName:name=MuleContext")
-          context.provide([name:appName,'start time':muleContextMBean.StartTime])
+          def contextMBean = new GroovyMBean(mbeanServer, "Mule.$appName:name=MuleContext")
+          context.provide([name:appName,'start time':contextMBean.StartTime,initialized:contextMBean.Initialised,stopped:contextMBean.Stopped])
       }
   }
 
@@ -86,8 +86,6 @@ class mule extends CRaSHCommand implements Completer {
       })
   }
 
-  // TODO control one app
-
   public static enum EndpointAction {connect, disconnect}
 
   @Usage("control an endpoint")
@@ -113,7 +111,7 @@ class mule extends CRaSHCommand implements Completer {
   }
 
   public static enum ConnectorAction {
-      initialise('initialise'), start('startConnector'), stop('stopConnector'), dispose('dispose')
+      initialize('initialise'), start('startConnector'), stop('stopConnector'), dispose('dispose')
       private final String value
       ConnectorAction(String value) { this.value = value }
       public String value() { return value }
@@ -138,6 +136,28 @@ class mule extends CRaSHCommand implements Completer {
           out << "Failed to locate a connector for the provided parameters\n"
       }
   }
+
+  public static enum ApplicationAction {start, stop, dispose}
+
+  @Usage("control an application")
+  @Command
+  void app(@Usage("The application name") @Required @Option(names=["a"], completer=mule.class) String applicationName,
+           @Usage("The application action to run") @Required @Argument ApplicationAction applicationAction) {
+
+      try {
+          def contextMBean = new GroovyMBean(mbeanServer, "Mule.$applicationName:name=MuleContext")
+          try {
+              contextMBean.invokeMethod(applicationAction.toString(), [] as Object[])
+              out << "Action $applicationAction successfully run. Application intialized: $contextMBean.Initialised, stopped: $contextMBean.Stopped\n"
+          } catch (Exception e) {
+              out << "Failed to $applicationAction the application ($e.message)\n"
+          }
+      }
+      catch (Exception e) {
+          out << "Failed to locate an application for the provided parameters\n"
+      }
+  }
+
 
   private void listMBeans(String applicationName, String type, Closure extractor) {
       getObjectNames(applicationName, type).sort().each { objectName ->
