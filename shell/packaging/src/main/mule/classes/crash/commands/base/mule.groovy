@@ -19,12 +19,13 @@ class mule extends CRaSHCommand {
       if (muleContextMBean == null) {
           out << "Failed to locate any MuleContext MBean - report this issue to the developers of this command\n"
       } else {
-          out << "Mule Version: $muleContextMBean.Version\n"
-          out << "Build Number: $muleContextMBean.BuildNumber\n"
-          out << "Build Date  : $muleContextMBean.BuildDate\n"
-          out << "Host        : $muleContextMBean.HostIp $muleContextMBean.Hostname\n"
-          out << "OS          : $muleContextMBean.OsVersion\n"
-          out << "JDK         : $muleContextMBean.JdkVersion\n"
+          context.provide([name:"Mule Version",value:muleContextMBean.Version])
+          context.provide([name:"Build Number",value:muleContextMBean.BuildNumber])
+          context.provide([name:"Build Date",value:muleContextMBean.BuildDate])
+          context.provide([name:"Host IP",value:muleContextMBean.HostIp])
+          context.provide([name:"Hostname",value:muleContextMBean.Hostname])
+          context.provide([name:"OS",value:muleContextMBean.OsVersion])
+          context.provide([name:"JDK",value:muleContextMBean.JdkVersion])
       }
   }
 
@@ -33,14 +34,29 @@ class mule extends CRaSHCommand {
   void apps() {
       mbeanServer.domains.each { domain ->
           if (isMuleApplicationDomain(domain)) {
-              out << "${domain.substring(5)}\n"
+              def muleContextMBean = new GroovyMBean(mbeanServer, "$domain:name=MuleContext")
+              context.provide([name:domain.substring(5),'start time':muleContextMBean.StartTime])
+          }
+      }
+  }
+
+  @Usage("print an application's statistics")
+  @Command
+  void stats(@Usage("The application name") @Required @Argument String applicationName) {
+      def statisticsMBean = new GroovyMBean(mbeanServer, "Mule.$applicationName:type=org.mule.Statistics,Application=application totals")
+      if (statisticsMBean == null) {
+          out << "No application named $applicationName has been found\n"
+      } else {
+          statisticsMBean.listAttributeNames().each { statisticName ->
+              context.provide([name:statisticName,value:statisticsMBean[statisticName]])
           }
       }
   }
 
   // TODO control one app
-  // TODO list flows and connectors in app
-  // TODO control one flow/connector
+  // TODO list flows, connectors and endpoints in app
+  // TODO get one flow stats
+  // TODO control one flow, connector or endpoint
 
   private GroovyMBean getFirstMuleContextMBean() {
       for (domain in mbeanServer.domains) {

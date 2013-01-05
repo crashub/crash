@@ -13,10 +13,4 @@ Default properties are:
 
 ## Commands
 
-Get information about the broker:
-
-    mule info
-
-List all the deployed applications:
-
-    mule apps
+Run the `mule` command to get the list of supported commands.
