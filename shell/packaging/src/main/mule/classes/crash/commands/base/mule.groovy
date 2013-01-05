@@ -86,18 +86,44 @@ class mule extends CRaSHCommand implements Completer {
       })
   }
 
+  // TODO control one app
+  // TODO control one connector
+
+  public static enum EndpointAction {connect, disconnect}
+
+  @Usage("control an endpoint")
+  @Command
+  void endpoint(@Usage("The application name") @Required @Option(names=["a"], completer=mule.class) String applicationName,
+                 @Usage("The endpoint name") @Required @Option(names=["e"]) String endpointName,
+                 @Usage("The endpoint action to run") @Required @Argument EndpointAction endpointAction) {
+
+      for (ObjectName endpointObjectName : getObjectNames(applicationName, "Endpoint")) {
+          def endpointMBean = new GroovyMBean(mbeanServer, endpointObjectName)
+          if (endpointMBean.Name == endpointName) {
+              try {
+                  endpointMBean.invokeMethod(endpointAction.toString(), [] as Object[])
+                  out << "Action $endpointAction successfully run. Endpoint connected: $endpointMBean.Connected\n"
+              } catch (Exception e) {
+                  out << "Failed to $endpointAction the endpoint ($e.message)\n"
+              }
+              return
+          }
+      }
+
+      out << "Failed to locate an endpoint for the provided parameters\n"
+  }
+
   private void listMBeans(String applicationName, String type, Closure extractor) {
-      def mBeanPattern = new ObjectName("Mule.$applicationName:type=$type,*")
-      mbeanServer.queryNames(mBeanPattern, null).sort().each { objectName ->
+      getObjectNames(applicationName, type).sort().each { objectName ->
           def mBean = new GroovyMBean(mbeanServer, objectName)
           context.provide(extractor(mBean))
       }
   }
 
-  // TODO control one app
-  // TODO control one flow
-  // TODO control one connector
-  // TODO control one endpoint
+  private Collection<ObjectName> getObjectNames(String applicationName, String type) {
+      def mBeanPattern = new ObjectName("Mule.$applicationName:type=$type,*")
+      mbeanServer.queryNames(mBeanPattern, null)
+  }
 
   Completion complete(ParameterDescriptor<?> parameter, String prefix) {
       if (parameter instanceof OptionDescriptor && parameter.names.contains("a")) {
