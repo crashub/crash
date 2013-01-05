@@ -60,17 +60,38 @@ class mule extends CRaSHCommand {
       }
   }
 
-  @Usage("list the names of all the flows of an application")
+  @Usage("list all the flows of an application")
   @Command
   void flows(@Usage("The application name") @Required @Option(names=["a","app"]) String applicationName) {
-      def flowMBeanPattern = new ObjectName("Mule.$applicationName:type=Flow,name=\"*\"")
-      mbeanServer.queryNames(flowMBeanPattern, null).sort().each { objectName ->
-          def flowMBean = new GroovyMBean(mbeanServer, objectName)
-          context.provide([name:flowMBean.Name])
+      listMBeans(applicationName, 'Flow', { mBean -> 
+          [name:mBean.Name,type:mBean.Type]
+      })
+  }
+
+  @Usage("list all the connectors of an application")
+  @Command
+  void connectors(@Usage("The application name") @Required @Option(names=["a","app"]) String applicationName) {
+      listMBeans(applicationName, 'Connector', { mBean -> 
+          [name:mBean.Name, protocol:mBean.Protocol,started:mBean.Started,disposed:mBean.Disposed]
+      })
+  }
+
+  @Usage("list all the endpoints of an application")
+  @Command
+  void endpoints(@Usage("The application name") @Required @Option(names=["a","app"]) String applicationName) {
+      listMBeans(applicationName, 'Endpoint', { mBean -> 
+          [name:mBean.Name,address:mBean.Address,flow:mBean.ComponentName,inbound:mBean.Inbound,outbound:mBean.Outbound,connected:mBean.Connected]
+      })
+  }
+
+  private void listMBeans(String applicationName, String type, Closure extractor) {
+      def mBeanPattern = new ObjectName("Mule.$applicationName:type=$type,*")
+      mbeanServer.queryNames(mBeanPattern, null).sort().each { objectName ->
+          def mBean = new GroovyMBean(mbeanServer, objectName)
+          context.provide(extractor(mBean))
       }
   }
 
-  // TODO list connectors and endpoints in app
   // TODO control one app
   // TODO control one flow, connector or endpoint
 
