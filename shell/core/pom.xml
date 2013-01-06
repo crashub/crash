@@ -15,22 +15,18 @@
 
   <dependencies>
 
-    <!-- Should be provided by assembly plugin will fail if so -->
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.cmdline</artifactId>
     </dependency>
 
+    <!-- Not optional until CRaSH becomes polyglot -->
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.ivy</groupId>
-      <artifactId>ivy</artifactId>
-      <version>2.1.0</version>
-    </dependency>
 
+    <!-- Optional as one does not have to use jline but could use another connector -->
     <dependency>
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
