@@ -101,9 +101,6 @@
               </archive>
             </configuration>
           </execution>
-          <execution>
-            <id>make-packaging</id>
-          </execution>
         </executions>
       </plugin>
     </plugins>
