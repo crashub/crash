@@ -22,19 +22,19 @@ import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.util.SecurityUtils;
 import org.bouncycastle.openssl.PEMReader;
 import org.crsh.vfs.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class URLKeyPairProvider extends AbstractKeyPairProvider {
 
   /** . */
-  private static final Logger LOG = LoggerFactory.getLogger(URLKeyPairProvider.class);
+  private static final Logger log = Logger.getLogger(URLKeyPairProvider.class.getName());
 
   /** . */
   private final Resource key;
@@ -61,7 +61,7 @@ public class URLKeyPairProvider extends AbstractKeyPairProvider {
           r.close();
         }
       } catch (Exception e) {
-        LOG.info("Unable to read key {}: {}", key, e);
+        log.log(Level.INFO, "Unable to read key " + key + ": " + key, e);
       }
     }
     return keys.toArray(new KeyPair[keys.size()]);

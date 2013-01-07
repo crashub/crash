@@ -37,6 +37,8 @@
         </excludes>
       </unpackOptions>
       <includes>
+        <include>org.slf4j:slf4j-api</include>
+        <include>org.slf4j:slf4j-jdk14</include>
         <include>org.apache.sshd:sshd-core</include>
         <include>org.apache.sshd:sshd-pam</include>
         <include>org.apache.mina:mina-core</include>

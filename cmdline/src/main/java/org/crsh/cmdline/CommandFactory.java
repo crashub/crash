@@ -27,9 +27,6 @@ import org.crsh.cmdline.binding.ClassFieldBinding;
 import org.crsh.cmdline.binding.MethodArgumentBinding;
 import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.type.ValueTypeFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -40,6 +37,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CommandFactory {
 
@@ -47,7 +46,7 @@ public class CommandFactory {
   public static final CommandFactory DEFAULT = new CommandFactory();
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(CommandFactory.class);
+  private static final Logger log = Logger.getLogger(CommandFactory.class.getName());
 
   /** . */
   private final ValueTypeFactory valueTypeFactory;
@@ -224,7 +223,7 @@ public class CommandFactory {
         if (parameter != null) {
           descriptor.addParameter(parameter);
         } else {
-          log.debug("Method argument with index " + i + " of method " + m + " is not annotated");
+          log.log(Level.FINE, "Method argument with index " + i + " of method " + m + " is not annotated");
         }
       }
 

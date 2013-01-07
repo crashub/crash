@@ -25,8 +25,6 @@ import org.crsh.plugin.ServiceLoaderDiscovery;
 import org.crsh.util.Utils;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -34,11 +32,13 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Bootstrap extends PluginLifeCycle {
 
   /** . */
-  protected final Logger log = LoggerFactory.getLogger(getClass());
+  protected final Logger log = Logger.getLogger(getClass().getName());
 
   /** The mounted path on the file system. */
   private List<File> cmds = Utils.newArrayList();
@@ -122,7 +122,7 @@ public class Bootstrap extends PluginLifeCycle {
       info.append(cmds.get(i).getAbsolutePath());
     }
     info.append(']');
-    log.info(info.toString());
+    log.log(Level.INFO, info.toString());
 
     //
     PluginContext context = new PluginContext(

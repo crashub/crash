@@ -19,14 +19,13 @@
 
 package org.crsh.cmdline.type;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A factory for value types.
@@ -67,8 +66,8 @@ public class ValueTypeFactory {
       }
       catch (ServiceConfigurationError e) {
         // Log it
-        Logger logger = LoggerFactory.getLogger(ValueTypeFactory.class);
-        logger.warn("Could not load value type factory", e);
+        Logger logger = Logger.getLogger(ValueTypeFactory.class.getName());
+        logger.log(Level.WARNING, "Could not load value type factory", e);
       }
     }
 

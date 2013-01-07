@@ -20,15 +20,15 @@
 package org.crsh.plugin;
 
 import org.crsh.util.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PluginManager {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(PluginManager.class);
+  private final Logger log = Logger.getLogger(PluginManager.class.getName());
 
   /** . */
   private final PluginContext context;
@@ -81,11 +81,11 @@ public class PluginManager {
             try {
               plugin.status = CRaSHPlugin.INITIALIZING;
               plugin.init();
-              log.info("Initialized plugin " + plugin);
+              log.log(Level.INFO, "Initialized plugin " + plugin);
               status = CRaSHPlugin.INITIALIZED;
             }
             catch (Exception e) {
-              log.error("Could not initialize plugin " + plugin, e);
+              log.log(Level.SEVERE, "Could not initialize plugin " + plugin, e);
             } finally {
               plugin.status = status;
             }

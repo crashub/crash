@@ -22,8 +22,6 @@ import org.crsh.vfs.FS;
 import org.crsh.vfs.File;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,6 +32,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +43,7 @@ public final class PluginContext {
   private static final Pattern p = Pattern.compile("(.+)\\.groovy");
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(PluginContext.class);
+  private static final Logger log = Logger.getLogger(PluginContext.class.getName());
 
   /** . */
   final PluginManager manager;
@@ -121,12 +121,12 @@ public final class PluginContext {
         version = props.getProperty("version");
       }
     } catch (Exception e) {
-      log.error("Could not load maven properties", e);
+      log.log(Level.SEVERE, "Could not load maven properties", e);
     }
 
     //
     if (version == null) {
-      log.warn("No version found will use unknown value instead");
+      log.log(Level.WARNING, "No version found will use unknown value instead");
       version = "unknown";
     }
 
@@ -211,11 +211,11 @@ public final class PluginContext {
       throw new NullPointerException();
     }
     if (value == null) {
-      log.debug("Removing property " + desc.name);
+      log.log(Level.FINE, "Removing property " + desc.name);
       properties.remove(desc);
     } else {
       Property<T> property = new Property<T>(desc, value);
-      log.debug("Setting property " + desc.name + " to value " + property.getValue());
+      log.log(Level.FINE, "Setting property " + desc.name + " to value " + property.getValue());
       properties.put(desc, property);
     }
   }
@@ -234,11 +234,11 @@ public final class PluginContext {
       throw new NullPointerException();
     }
     if (value == null) {
-      log.debug("Removing property " + desc.name);
+      log.log(Level.FINE, "Removing property " + desc.name);
       properties.remove(desc);
     } else {
       Property<T> property = desc.toProperty(value);
-      log.debug("Setting property " + desc.name + " to value " + property.getValue());
+      log.log(Level.FINE, "Setting property " + desc.name + " to value " + property.getValue());
       properties.put(desc, property);
     }
   }
@@ -291,7 +291,7 @@ public final class PluginContext {
           }
       }
     } catch (IOException e) {
-      log.warn("Could not obtain resource " + resourceId, e);
+      log.log(Level.WARNING, "Could not obtain resource " + resourceId, e);
     }
     return res;
   }
@@ -407,7 +407,7 @@ public final class PluginContext {
       //
       started = true;
     } else {
-      log.warn("Attempt to double start");
+      log.log(Level.WARNING, "Attempt to double start");
     }
   }
 
@@ -429,7 +429,7 @@ public final class PluginContext {
       // Shutdown executor
       executor.shutdownNow();
     } else {
-      log.warn("Attempt to stop when stopped");
+      log.log(Level.WARNING, "Attempt to stop when stopped");
     }
   }
 }

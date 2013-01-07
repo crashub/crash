@@ -20,13 +20,14 @@ package org.crsh.ssh.term;
 
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SSHContext {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(SSHContext.class);
+  private static final Logger log = Logger.getLogger(SSHContext.class.getName());
 
   /** . */
   public final int verase;
@@ -55,7 +56,7 @@ public class SSHContext {
         width = Integer.parseInt(s);
       }
       catch (NumberFormatException e) {
-        log.warn("Could not parse ssh term width " + s);
+        log.log(Level.WARNING, "Could not parse ssh term width " + s);
       }
     }
     return width;
@@ -69,7 +70,7 @@ public class SSHContext {
         height = Integer.parseInt(s);
       }
       catch (NumberFormatException e) {
-        log.warn("Could not parse ssh term height " + s);
+        log.log(Level.WARNING, "Could not parse ssh term height " + s);
       }
     }
     return height;

@@ -42,8 +42,6 @@ import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.Completion;
 import org.crsh.io.ProducerContext;
 import org.crsh.util.TypeResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -52,11 +50,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  private final Logger log = Logger.getLogger(getClass().getName());
 
   /** . */
   private final ClassDescriptor<?> descriptor;
@@ -115,7 +115,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       return analyzer.complete(completer, line);
     }
     catch (CmdCompletionException e) {
-      log.error("Error during completion of line " + line, e);
+      log.log(Level.SEVERE, "Error during completion of line " + line, e);
       return new CommandCompletion(Delimiter.EMPTY, Completion.create());
     }
     finally {

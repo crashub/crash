@@ -18,17 +18,16 @@
  */
 package org.crsh.plugin;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServiceLoaderDiscovery implements PluginDiscovery {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(PluginManager.class);
+  private static final Logger log = Logger.getLogger(PluginManager.class.getName());
 
   /** . */
   private final ClassLoader classLoader;
@@ -55,12 +54,12 @@ public class ServiceLoaderDiscovery implements PluginDiscovery {
     try {
       ServiceLoader<CRaSHPlugin> loader = ServiceLoader.load(CRaSHPlugin.class, classLoader);
       for (CRaSHPlugin<?> plugin : loader) {
-        log.info("Loaded plugin " + plugin);
+        log.log(Level.INFO, "Loaded plugin " + plugin);
         plugins.add(plugin);
       }
     }
     catch (ServiceConfigurationError e) {
-      log.error("Could not load plugins", e);
+      log.log(Level.SEVERE, "Could not load plugins", e);
     }
 
     //

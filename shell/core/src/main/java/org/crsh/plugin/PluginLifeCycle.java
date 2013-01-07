@@ -20,17 +20,17 @@
 package org.crsh.plugin;
 
 import org.crsh.vfs.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class PluginLifeCycle {
 
   /** . */
-  protected final Logger log = LoggerFactory.getLogger(getClass());
+  protected final Logger log = Logger.getLogger(getClass().getName());
 
   /** . */
   private PluginContext context;
@@ -63,12 +63,12 @@ public abstract class PluginLifeCycle {
     if (res != null) {
       try {
         config.load(new ByteArrayInputStream(res.getContent()));
-        log.debug("Loaded properties from " + config);
+        log.log(Level.FINE, "Loaded properties from " + config);
       } catch (IOException e) {
-        log.warn("Could not configure from crash.properties", e);
+        log.log(Level.WARNING, "Could not configure from crash.properties", e);
       }
     } else {
-      log.debug("Could not find crash.properties file");
+      log.log(Level.FINE, "Could not find crash.properties file");
     }
 
     // Override default properties from external config
@@ -110,11 +110,11 @@ public abstract class PluginLifeCycle {
     String value = props.getProperty(key);
     if (value != null) {
       try {
-        log.info("Configuring property " + desc.name + "=" + value + " from properties");
+        log.log(Level.INFO, "Configuring property " + desc.name + "=" + value + " from properties");
         context.setProperty(desc, value);
       }
       catch (IllegalArgumentException e) {
-        log.error("Could not configure property", e);
+        log.log(Level.SEVERE, "Could not configure property", e);
       }
     }
   }

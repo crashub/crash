@@ -29,8 +29,6 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.async.AsyncShell;
 import org.crsh.shell.impl.remoting.RemoteClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
@@ -38,14 +36,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Agent {
 
   /** . */
-  private static Logger log = LoggerFactory.getLogger(Agent.class);
+  private static Logger log = Logger.getLogger(Agent.class.getName());
 
   public static void agentmain(final String agentArgs, final Instrumentation inst) throws Exception {
-    log.info("CRaSH agent loaded");
+    log.log(Level.INFO, "CRaSH agent loaded");
 
     //
     Thread t = new Thread() {
@@ -64,7 +64,7 @@ public class Agent {
 
     //
     t.start();
-    log.info("Spawned CRaSH thread " + t.getId() + " for further processing");
+    log.log(Level.INFO, "Spawned CRaSH thread " + t.getId() + " for further processing");
   }
 
   /** . */
@@ -141,7 +141,7 @@ public class Agent {
       Shell shell = factory.create(null);
       AsyncShell async = new AsyncShell(bootstrap.getContext().getExecutor(), shell);
       RemoteClient client = new RemoteClient(port, async);
-      log.info("Callback back remote on port " + port);
+      log.log(Level.INFO, "Callback back remote on port " + port);
       client.connect();
       client.getRunnable().run();
     }

@@ -19,13 +19,12 @@
 
 package org.crsh.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class InterruptHandler {
 
@@ -33,7 +32,7 @@ public class InterruptHandler {
   private final Runnable runnable;
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(InterruptHandler.class);
+  private final Logger log = Logger.getLogger(InterruptHandler.class.getName());
 
   private final InvocationHandler handler = new InvocationHandler() {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -82,7 +81,7 @@ public class InterruptHandler {
       handle.invoke(null, INT, proxy);
     }
     catch (Exception e) {
-      log.error("Could not install signal handler", e);
+      log.log(Level.SEVERE, "Could not install signal handler", e);
     }
   }
 }

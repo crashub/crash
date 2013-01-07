@@ -26,9 +26,10 @@ import org.crsh.text.Renderer;
 import org.crsh.text.ui.LabelElement;
 import org.crsh.text.ui.RowElement;
 import org.crsh.text.ui.TableElement;
-import org.slf4j.Logger;
 
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LoggerRenderable extends Renderable<Logger> {
 
@@ -54,15 +55,15 @@ public class LoggerRenderable extends Renderable<Logger> {
 
       // Determine level
       String level;
-      if (logger.isTraceEnabled()) {
+      if (logger.isLoggable(Level.FINER)) {
         level = "TRACE";
-      } else if (logger.isDebugEnabled()) {
+      } else if (logger.isLoggable(Level.FINE)) {
         level = "DEBUG";
-      } else if (logger.isInfoEnabled()) {
+      } else if (logger.isLoggable(Level.INFO)) {
         level = "INFO";
-      } else if (logger.isWarnEnabled()) {
+      } else if (logger.isLoggable(Level.WARNING)) {
         level = "WARN";
-      }  else if (logger.isErrorEnabled()) {
+      }  else if (logger.isLoggable(Level.SEVERE)) {
         level = "ERROR";
       } else {
         level = "UNKNOWN";

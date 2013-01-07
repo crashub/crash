@@ -31,6 +31,9 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/WEB-INF/lib</outputDirectory>
       <includes>
+        <include>commons-logging:commons-logging</include>
+        <include>org.slf4j:slf4j-api</include>
+        <include>org.slf4j:slf4j-jdk14</include>
         <include>org.apache.sshd:sshd-core</include>
         <include>org.apache.sshd:sshd-pam</include>
         <include>org.bouncycastle:bcprov-jdk16</include>
@@ -50,6 +53,9 @@
         <include>org.springframework:spring-beans</include>
         <include>org.springframework:spring-web</include>
       </includes>
+      <excludes>
+        <exclude>*:*:standalone</exclude>
+      </excludes>
     </dependencySet>
     <dependencySet>
       <useTransitiveDependencies>false</useTransitiveDependencies>

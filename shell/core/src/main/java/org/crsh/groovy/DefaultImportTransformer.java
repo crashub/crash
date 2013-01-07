@@ -38,14 +38,15 @@ import org.crsh.text.ui.BorderStyle;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
 import org.crsh.text.Style;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @GroovyASTTransformation(phase= CompilePhase.CONVERSION)
 public class DefaultImportTransformer implements ASTTransformation {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(DefaultImportTransformer.class);
+  private static final Logger log = Logger.getLogger(DefaultImportTransformer.class.getName());
 
   /** . */
   private static final Class<?>[] defaultImports = {
@@ -69,15 +70,15 @@ public class DefaultImportTransformer implements ASTTransformation {
   };
 
   public void visit(ASTNode[] nodes, final SourceUnit source) {
-    log.debug("Transforming source to add default import package");
+    log.log(Level.FINE, "Transforming source to add default import package");
     for (Class<?> defaultImport : defaultImports) {
-      log.debug("Adding default import for class " + defaultImport.getName());
+      log.log(Level.FINE, "Adding default import for class " + defaultImport.getName());
       if (source.getAST().getImport(defaultImport.getSimpleName()) == null) {
         source.getAST().addImport(defaultImport.getSimpleName(), ClassHelper.make(defaultImport));
       }
     }
     for (Class<?> defaultStaticImport : defaultStaticImports) {
-      log.debug("Adding default static import for class " + defaultStaticImport.getName());
+      log.log(Level.FINE, "Adding default static import for class " + defaultStaticImport.getName());
       if (!source.getAST().getStaticStarImports().containsKey(defaultStaticImport.getSimpleName())) {
         source.getAST().addStaticStarImport(defaultStaticImport.getSimpleName(), ClassHelper.make(defaultStaticImport));
       }

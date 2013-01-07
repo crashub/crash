@@ -27,6 +27,7 @@ import org.crsh.term.TermEvent;
 import org.crsh.text.Text;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 class ProcessContext implements ShellProcessContext, Runnable {
 
@@ -102,7 +103,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
           processor.term.provide(Text.create("\r\n"));
         }
         catch (IOException e) {
-          processor.log.error("Error when readline line");
+          processor.log.log(Level.SEVERE, "Error when readline line");
         }
         finally {
           processor.waitingEvent = false;

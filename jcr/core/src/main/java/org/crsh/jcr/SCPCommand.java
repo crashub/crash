@@ -21,8 +21,6 @@ package org.crsh.jcr;
 import org.apache.sshd.server.Environment;
 import org.crsh.ssh.term.AbstractCommand;
 import org.crsh.ssh.term.SSHLifeCycle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
@@ -33,11 +31,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class SCPCommand extends AbstractCommand implements Runnable {
 
   /** . */
-  protected final Logger log = LoggerFactory.getLogger(getClass());
+  protected final Logger log = Logger.getLogger(getClass().getName());
 
   /** . */
   protected static final int OK = 0;
@@ -66,7 +66,7 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
    * @throws IOException any io exception
    */
   final InputStream read(final int length) throws IOException {
-    log.debug("Returning stream for length " + length);
+    log.log(Level.FINE, "Returning stream for length " + length);
     return new InputStream() {
 
       /** How many we've read so far. */
@@ -99,7 +99,7 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
       case 0:
         break;
       case 1:
-        log.debug("Received warning: " + readLine());
+        log.log(Level.FINE, "Received warning: " + readLine());
         break;
       case 2:
         throw new IOException("Received nack: " + readLine());
@@ -143,7 +143,7 @@ public abstract class SCPCommand extends AbstractCommand implements Runnable {
       execute();
     }
     catch (Exception e) {
-      log.error("Error during command execution", e);
+      log.log(Level.SEVERE, "Error during command execution", e);
       exitMsg = e.getMessage();
       exitStatus = ERROR;
     }

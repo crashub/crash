@@ -31,6 +31,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase {
   
@@ -86,7 +87,7 @@ public abstract class AbstractJCRCommandTestCase extends AbstractCommandTestCase
     while (it.hasNext()) {
       Node n = it.nextNode();
       if(!n.getName().equals("jcr:system")) {
-        log.debug("Removed node " + n.getPath());
+        log.log(Level.FINE, "Removed node " + n.getPath());
         n.remove();
       }
     }

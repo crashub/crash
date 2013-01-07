@@ -38,8 +38,6 @@
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.slf4j:slf4j-api</include>
-        <include>org.slf4j:slf4j-jdk14</include>
         <include>jline:jline</include>
         <include>org.crsh:crsh.cmdline</include>
         <include>org.codehaus.groovy:groovy-all</include>

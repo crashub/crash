@@ -19,9 +19,6 @@
 
 package org.crsh.vfs;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,9 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public final class File {
-
-  /** . */
-  private static final Logger log = LoggerFactory.getLogger(Resource.class);
 
   /** . */
   private final FS fs;

@@ -9,8 +9,9 @@ import com.atlassian.crowd.service.client.ClientResourceLocator;
 import com.atlassian.crowd.service.client.CrowdClient;
 import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.plugin.CRaSHPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Allows to use an Atlassian Crowd serer to authenticate on CRaSH
@@ -29,7 +30,7 @@ public class CrowdAuthenticationPlugin extends
   /**
    * Logger
    */
-  protected final Logger log = LoggerFactory.getLogger(getClass());
+  protected final Logger log = Logger.getLogger(getClass().getName());
 
   /**
    * Crowd client instance
@@ -73,19 +74,21 @@ public class CrowdAuthenticationPlugin extends
   public boolean authenticate(String username, String password) throws Exception {
     // Username and passwords are required
     if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-      log.warn("Unable to logon without username and password.");
+      log.log(Level.WARNING, "Unable to logon without username and password.");
       return false;
     }
     try {
       // Authenticate the user
-      if (log.isDebugEnabled()) log.debug("Authenticating '" + username + "' on crowd directory");
+      if (log.isLoggable(Level.FINE)) {
+        log.log(Level.FINE, "Authenticating '" + username + "' on crowd directory");
+      }
       getCrowdClient().authenticateUser(username, password);
       return true;
     } catch (InvalidAuthenticationException e) {
-      log.warn("Authentication failed for user '" + username + "'");
+      log.log(Level.WARNING, "Authentication failed for user '" + username + "'");
       return false;
     } catch (ApplicationPermissionException e) {
-      log.error("Application not authorized to authenticate user '" + username + "'", e);
+      log.log(Level.SEVERE, "Application not authorized to authenticate user '" + username + "'", e);
       return false;
     }
   }

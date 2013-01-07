@@ -26,6 +26,7 @@ import org.crsh.vfs.Resource;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.logging.Level;
 
 public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
 
@@ -56,11 +57,11 @@ public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
     URL configURL = TelnetPlugin.class.getResource("telnet.properties");
     if (configURL != null) {
       try {
-        log.debug("Found embedded telnet config url " + configURL);
+        log.log(Level.FINE, "Found embedded telnet config url " + configURL);
         config = new Resource(configURL);
       }
       catch (IOException e) {
-        log.debug("Could not load embedded telnet config url " + configURL + " will bypass it", e);
+        log.log(Level.FINE, "Could not load embedded telnet config url " + configURL + " will bypass it", e);
       }
     }
 
@@ -68,12 +69,12 @@ public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
     Resource res = getContext().loadResource("telnet.properties", ResourceKind.CONFIG);
     if (res != null) {
       config = res;
-      log.debug("Found telnet config url " + configURL);
+      log.log(Level.FINE, "Found telnet config url " + configURL);
     }
 
     //
     if (configURL == null) {
-      log.info("Could not boot Telnet due to missing config");
+      log.log(Level.INFO, "Could not boot Telnet due to missing config");
       return;
     }
 

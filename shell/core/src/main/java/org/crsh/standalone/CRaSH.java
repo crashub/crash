@@ -40,8 +40,6 @@ import org.crsh.shell.impl.remoting.RemoteServer;
 import org.crsh.util.CloseableList;
 import org.crsh.util.InterruptHandler;
 import org.crsh.util.Safe;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.File;
@@ -52,11 +50,13 @@ import java.io.PrintWriter;
 import java.net.*;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CRaSH {
 
   /** . */
-  private static Logger log = LoggerFactory.getLogger(CRaSH.class);
+  private static Logger log = Logger.getLogger(CRaSH.class.getName());
 
   /** . */
   private final ClassDescriptor<CRaSH> descriptor;
@@ -98,13 +98,13 @@ public class CRaSH {
         // Standalone
         URL url = CRaSH.class.getProtectionDomain().getCodeSource().getLocation();
         java.io.File f = new java.io.File(url.toURI());
-        log.info("Attaching to remote process " + pid);
+        log.log(Level.INFO, "Attaching to remote process " + pid);
         final VirtualMachine vm = VirtualMachine.attach("" + pid);
 
         //
         RemoteServer server = new RemoteServer(0);
         int port = server.bind();
-        log.info("Callback server set on port " + port);
+        log.log(Level.INFO, "Callback server set on port " + port);
 
         // Build the options
         StringBuilder sb = new StringBuilder();
@@ -159,7 +159,7 @@ public class CRaSH {
 
         //
         String options = sb.toString();
-        log.info("Loading agent with command " + options);
+        log.log(Level.INFO, "Loading agent with command " + options);
         vm.loadAgent(f.getCanonicalPath(), options);
 
         //

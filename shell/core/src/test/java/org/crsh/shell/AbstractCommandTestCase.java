@@ -27,8 +27,8 @@ import org.crsh.TestPluginLifeCycle;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.command.CRaSHSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Logger;
 
 public abstract class AbstractCommandTestCase extends AbstractTestCase {
 
@@ -36,7 +36,7 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
   private final CRaSHPlugin[] NO_PLUGINS = new CRaSHPlugin[0];
 
   /** . */
-  protected final Logger log = LoggerFactory.getLogger(getClass());
+  protected final Logger log = Logger.getLogger(getClass().getName());
 
   /** . */
   protected CRaSHSession shell;

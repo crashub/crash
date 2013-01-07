@@ -28,8 +28,9 @@ import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.term.TermLifeCycle;
 import org.crsh.term.spi.TermIOHandler;
 import org.crsh.vfs.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SSHLifeCycle extends TermLifeCycle {
 
@@ -40,7 +41,7 @@ public class SSHLifeCycle extends TermLifeCycle {
   public static final Session.AttributeKey<String> PASSWORD = new Session.AttributeKey<java.lang.String>();
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(SSHLifeCycle.class);
+  private final Logger log = Logger.getLogger(SSHLifeCycle.class.getName());
 
   /** . */
   private SshServer server;
@@ -124,10 +125,10 @@ public class SSHLifeCycle extends TermLifeCycle {
         public boolean authenticate(String _username, String _password, ServerSession session) {
           boolean auth;
           try {
-            log.debug("Using authentication plugin " + authPlugin + " to authenticate user " + _username);
+            log.log(Level.FINE, "Using authentication plugin " + authPlugin + " to authenticate user " + _username);
             auth = authPlugin.authenticate(_username, _password);
           } catch (Exception e) {
-            log.error("Exception authenticating user " + _username + " in authentication plugin: " + authPlugin, e);
+            log.log(Level.SEVERE, "Exception authenticating user " + _username + " in authentication plugin: " + authPlugin, e);
             return false;
           }
 
@@ -141,15 +142,15 @@ public class SSHLifeCycle extends TermLifeCycle {
       });
 
       //
-      log.info("About to start CRaSSHD");
+      log.log(Level.INFO, "About to start CRaSSHD");
       server.start();
-      log.info("CRaSSHD started on port " + port);
+      log.log(Level.INFO, "CRaSSHD started on port " + port);
 
       //
       this.server = server;
     }
     catch (Throwable e) {
-      log.error("Could not start CRaSSHD", e);
+      log.log(Level.SEVERE, "Could not start CRaSSHD", e);
     }
   }
 
@@ -160,7 +161,7 @@ public class SSHLifeCycle extends TermLifeCycle {
         server.stop();
       }
       catch (InterruptedException e) {
-        log.debug("Got an interruption when stopping server", e);
+        log.log(Level.FINE, "Got an interruption when stopping server", e);
       }
     }
   }

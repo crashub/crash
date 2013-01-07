@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.logging.Level;
+
 import org.apache.sshd.common.util.SecurityUtils;
 
 public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
@@ -63,7 +65,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     //
     Integer port = getContext().getProperty(SSH_PORT);
     if (port == null) {
-      log.info("Could not boot SSHD due to missing due to missing port configuration");
+      log.log(Level.INFO, "Could not boot SSHD due to missing due to missing port configuration");
       return;
     }
 
@@ -74,11 +76,11 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     URL keyURL = SSHPlugin.class.getResource("hostkey.pem");
     if (keyURL != null) {
       try {
-        log.debug("Found embedded key url " + keyURL);
+        log.log(Level.FINE, "Found embedded key url " + keyURL);
         key = new Resource(keyURL);
       }
       catch (IOException e) {
-        log.debug("Could not load ssh key from url " + keyURL, e);
+        log.log(Level.FINE, "Could not load ssh key from url " + keyURL, e);
       }
     }
 
@@ -86,28 +88,28 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     Resource res = getContext().loadResource("hostkey.pem", ResourceKind.CONFIG);
     if (res != null) {
       key = res;
-      log.debug("Found ssh key url");
+      log.log(Level.FINE, "Found ssh key url");
     }
 
     // If we have a key path, we convert is as an URL
     String keyPath = getContext().getProperty(SSH_KEYPATH);
     if (keyPath != null) {
-      log.debug("Found key path " + keyPath);
+      log.log(Level.FINE, "Found key path " + keyPath);
       File f = new File(keyPath);
       if (f.exists() && f.isFile()) {
         try {
           keyURL = f.toURI().toURL();
         } catch (MalformedURLException e) {
-          log.debug("Ignoring invalid key " + keyPath, e);
+          log.log(Level.FINE, "Ignoring invalid key " + keyPath, e);
         }
       } else {
-        log.debug("Ignoring invalid key path " + keyPath);
+        log.log(Level.FINE, "Ignoring invalid key path " + keyPath);
       }
     }
 
     //
     if (keyURL == null) {
-      log.info("Could not boot SSHD due to missing key");
+      log.log(Level.INFO, "Could not boot SSHD due to missing key");
       return;
     }
 
@@ -115,7 +117,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     String authentication = getContext().getProperty(AUTH);
 
     //
-    log.info("Booting SSHD");
+    log.log(Level.INFO, "Booting SSHD");
     SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext());
     lifeCycle.setPort(port);
     lifeCycle.setKey(key);
@@ -129,7 +131,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   @Override
   public void destroy() {
     if (lifeCycle != null) {
-      log.info("Shutting down SSHD");
+      log.log(Level.INFO, "Shutting down SSHD");
       lifeCycle.destroy();
       lifeCycle = null;
     }

@@ -25,8 +25,6 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.util.CloseableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -35,11 +33,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerAutomaton implements Shell {
 
   /** . */
-  final Logger log = LoggerFactory.getLogger(ServerAutomaton.class);
+  final Logger log = Logger.getLogger(ServerAutomaton.class.getName());
 
   /** . */
   final ObjectInputStream in;
@@ -159,7 +159,7 @@ public class ServerAutomaton implements Shell {
       }
     }
     catch (Exception e) {
-      log.error("Remoting issue", e);
+      log.log(Level.SEVERE, "Remoting issue", e);
       response = ShellResponse.internalError("Remoting issue", e);
     }
     finally {

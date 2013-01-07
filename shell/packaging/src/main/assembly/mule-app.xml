@@ -31,6 +31,9 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/lib</outputDirectory>
       <includes>
+        <include>commons-logging:commons-logging</include>
+        <include>org.slf4j:slf4j-api</include>
+        <include>org.slf4j:slf4j-jdk14</include>
         <include>org.apache.sshd:sshd-core</include>
         <include>org.apache.sshd:sshd-pam</include>
         <include>org.apache.mina:mina-core</include>
@@ -42,6 +45,9 @@
         <include>org.crsh:crsh.shell.ssh</include>
         <include>org.crsh:crsh.shell.embed.spring</include>
       </includes>
+      <excludes>
+        <exclude>*:*:standalone</exclude>
+      </excludes>
     </dependencySet>
     <dependencySet>
       <useTransitiveDependencies>false</useTransitiveDependencies>

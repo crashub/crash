@@ -20,17 +20,16 @@
 package org.crsh.plugin;
 
 import org.crsh.util.TypeResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class CRaSHPlugin<P> {
 
   /** . */
-  protected final Logger log = LoggerFactory.getLogger(getClass());
+  protected final Logger log = Logger.getLogger(getClass().getName());
 
   /** . */
   public static final int FAILED = -1;

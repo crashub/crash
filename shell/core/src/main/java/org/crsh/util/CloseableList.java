@@ -19,17 +19,16 @@
 
 package org.crsh.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class CloseableList implements Closeable {
 
   /** . */
-  final Logger log = LoggerFactory.getLogger(CloseableList.class);
+  final Logger log = Logger.getLogger(CloseableList.class.getName());
 
   /** . */
   private final ArrayList<Closeable> closeables;
@@ -68,7 +67,7 @@ public final class CloseableList implements Closeable {
   public void close() {
     if (closed.compareAndSet(false, true)) {
       for (Closeable closeable : closeables) {
-        log.debug("Closing " + closeable.getClass().getSimpleName());
+        log.log(Level.FINE, "Closing " + closeable.getClass().getSimpleName());
         Safe.close(closeable);
       }
     }

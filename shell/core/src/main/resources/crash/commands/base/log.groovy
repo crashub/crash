@@ -1,6 +1,7 @@
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import java.util.logging.LogManager;
+import org.crsh.cmdline.ParameterDescriptor
+
+import java.util.logging.LogManager
+import java.util.logging.Logger;
 import java.util.logging.LoggingMXBean;
 import java.util.regex.Pattern;
 import javax.management.ObjectName;
@@ -21,7 +22,7 @@ import org.crsh.cmdline.spi.Completion
 import org.crsh.command.PipeCommand;
 
 @Usage("logging commands")
-public class log extends CRaSHCommand implements Completer {
+public class log extends CRaSHCommand {
 
   @Usage("send a message to a logger")
   @Man("""\
@@ -41,7 +42,7 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
       void open() {
         if (!isPiped()) {
           if (name != null) {
-            def logger = LoggerFactory.getLogger(name);
+            def logger = Logger.getLogger(name);
             level.log(logger, msg);
           }
         }
@@ -53,45 +54,34 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
     }
   }
 
-  private Collection<String> getLoggers() {
+  static Collection<String> getLoggers() {
     def names = [] as Set;
-    def factory = LoggerFactory.ILoggerFactory;
-    def factoryName = factory.class.simpleName;
-    if (factoryName.equals("JDK14LoggerFactory")) {
-      // JDK
-      LogManager mgr = LogManager.logManager;
-      LoggingMXBean mbean = mgr.loggingMXBean;
 
-      // Add the known names
-      names.addAll(mbean.loggerNames);
+    // JDK
+    LogManager mgr = LogManager.logManager;
+    LoggingMXBean mbean = mgr.loggingMXBean;
 
-      // This is a trick to get the logger names per web application in Tomcat environment
-      try {
-        def registryClass = Thread.currentThread().contextClassLoader.loadClass("org.apache.tomcat.util.modeler.Registry");
-        def getRegistry = registry.getMethod("getRegistry");
-        def registry = registry.invoke(null);
-        def server = registry.MBeanServer;
-        ObjectName on = new ObjectName("*:j2eeType=WebModule,*");
-        def res = server.queryNames(on, null).each {
-          def loader = server.getAttribute(it, "loader");
-          def oldCL = Thread.currentThread().contextClassLoader;
-          try {
-            Thread.currentThread().contextClassLoader = loader.classLoader;
-            names.addAll(mbean.loggerNames);
-            } finally {
-            Thread.currentThread().contextClassLoader = oldCL;
-          }
+    // Add the known names
+    names.addAll(mbean.loggerNames);
+
+    // This is a trick to get the logger names per web application in Tomcat environment
+    try {
+      def registryClass = Thread.currentThread().contextClassLoader.loadClass("org.apache.tomcat.util.modeler.Registry");
+      def getRegistry = registryClass.getMethod("getRegistry");
+      def registry = getRegistry.invoke(null);
+      def server = registry.MBeanServer;
+      ObjectName on = new ObjectName("*:j2eeType=WebModule,*");
+      def res = server.queryNames(on, null).each {
+        def loader = server.getAttribute(it, "loader");
+        def oldCL = Thread.currentThread().contextClassLoader;
+        try {
+          Thread.currentThread().contextClassLoader = loader.classLoader;
+          names.addAll(mbean.loggerNames);
+        } finally {
+          Thread.currentThread().contextClassLoader = oldCL;
         }
-      } catch (Exception ignore) {
       }
-    } else if (factoryName.equals("JBossLoggerFactory")) {
-      // JBoss AS
-      def f = factory.class.getDeclaredField("loggerMap");
-      f.accessible = true;
-      def loggers = f.get(factory);
-      names.addAll(loggers.keySet());
-    } else {
-      System.out.println("Implement log lister for implementation " + factory.getClass().getName());
+    } catch (Exception ignore) {
     }
 
     //
@@ -126,7 +116,7 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
     loggers.each {
        def matcher = it =~ pattern;
        if (matcher.matches()) {
-         def logger = LoggerFactory.getLogger(it);
+         def logger = Logger.getLogger(it);
          context.provide(logger);
        }
     }
@@ -136,8 +126,8 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
   @Command
   public void add(InvocationContext<Logger> context, @LoggerArg List<String> names) {
     names.each {
-      if (it.string.length() > 0) {
-        Logger logger = LoggerFactory.getLogger(it);
+      if (it.length() > 0) {
+        Logger logger = Logger.getLogger(it);
         if (logger != null) {
           context.provide(logger);
         }
@@ -159,101 +149,55 @@ The following set the level warn on all the available loggers:
 % log ls | log set -l warn""")
   @Usage("configures the level of one of several loggers")
   @Command
-  public PipeCommand<Logger, Object> set(
-    @LoggerArg List<String> names,
-    @LevelOpt Level level,
-    @PluginOpt Plugin plugin) {
+  public PipeCommand<Logger, Object> set(@LoggerArg List<String> names, @LevelOpt @Required Level level) {
 
     //
-    plugin = plugin ?: Plugin.autoDetect();
-    if (plugin == null)
-      throw new ScriptException("No usable plugin");
-
     return new PipeCommand<Logger, Object>() {
       @Override
       void open() {
         if (!isPiped()) {
           names.each() {
-            def logger = LoggerFactory.getLogger(it);
-            plugin.setLevel(logger, level);
+            def logger = Logger.getLogger(it);
+            level.setLevel(logger)
           }
         }
       }
       @Override
       void provide(Logger element) {
-        plugin.setLevel(element, level);
+        level.setLevel(element);
       }
     };
   }
-
-  public Completion complete(org.crsh.cmdline.ParameterDescriptor<?> parameter, String prefix) {
-    def builder = new Completion.Builder(prefix);
-    if (parameter.getDeclaredType() == LoggerName.class) {
-      loggers.each() {
-        if (it.startsWith(prefix)) {
-          builder.add(it.substring(prefix.length()), true);
-        }
-      }
-    }
-    return builder.build();
-  }
 }
 
-enum Plugin {
-  jdk , log4j ;
-
-  public static Plugin autoDetect() {
-    // Auto detect plugin from SLF4J
-    def ilfName = LoggerFactory.ILoggerFactory.class.simpleName;
-    switch (ilfName) {
-      case "JDK14LoggerFactory":
-        return Plugin.jdk;
-        break;
-      case "Log4jLoggerFactory":
-        return Plugin.log4j;
-        break;
-      case "JBossLoggerFactory":
-        // Here we see if we have log4j in the classpath and we use it
-        try {
-          Thread.currentThread().getContextClassLoader().loadClass("org.apache.log4j.LogManager");
-          return Plugin.log4j;
-        }
-        catch (ClassNotFoundException nf) {
-        }
-    }
-    return null;
-  }
-
-  public void setLevel(Logger logger, Level level) {
-    switch (name()) {
-      case "jdk":
-      def f = Thread.currentThread().getContextClassLoader().loadClass("org.slf4j.impl.JDK14LoggerAdapter").getDeclaredField("logger");
-      f.accessible = true;
-        def julLogger = f.get(logger);
-        julLogger.level = level.jdkObject;
-      case "log4j":
-        def l = Thread.currentThread().getContextClassLoader().loadClass("org.apache.log4j.Logger");
-        def log4jLogger = l.getLogger(logger.name);
-        log4jLogger.level = level.log4jObject;
-    }
-  }
-}
-
-enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"), warn("WARNING","WARNING"), error("SEVERE","ERROR") ;
-  final String jdk;
-  final String log4j;
-  Level(String jdk, String log4j) {
-    this.jdk = jdk;
-    this.log4j=log4j;
-  }
-  Object getLog4jObject() {
-    return Thread.currentThread().getContextClassLoader().loadClass("org.apache.log4j.Level")[log4j];
-  }
-  Object getJDKObject() {
-    return java.util.logging.Level[jdk];
+enum Level {
+  trace(java.util.logging.Level.FINEST),
+  debug(java.util.logging.Level.FINER),
+  info(java.util.logging.Level.INFO),
+  warn(java.util.logging.Level.WARNING),
+  error(java.util.logging.Level.SEVERE) ;
+  final java.util.logging.Level value;
+  Level(java.util.logging.Level value) {
+    this.value = value;
   }
   void log(Logger logger, String msg) {
     logger."${name()}"(msg);
+  }
+  void setLevel(Logger logger) {
+    logger.level = value;
+  }
+}
+
+class LoggerCompleter implements Completer {
+
+  Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+    def builder = new Completion.Builder(prefix);
+    log.loggers.each() {
+      if (it.startsWith(prefix)) {
+        builder.add(it.substring(prefix.length()), true);
+      }
+    }
+    return builder.build();
   }
 }
 
@@ -273,7 +217,7 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the logger name")
 @Man("The name of the logger")
-@Argument(name = "name")
+@Argument(name = "name", completer = LoggerCompleter.class)
 @interface LoggerArg { }
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -281,9 +225,3 @@ enum Level { trace("FINEST","TRACE"), debug("FINER","DEBUG"), info("INFO","INFO"
 @Man("A regular expressions used to filter the loggers")
 @Option(names=["f","filter"])
 @interface FilterOpt { }
-
-@Retention(RetentionPolicy.RUNTIME)
-@Usage("the plugin implementation")
-@Man("Force the plugin implementation to use")
-@Option(names=["p","plugin"])
-@interface PluginOpt { }

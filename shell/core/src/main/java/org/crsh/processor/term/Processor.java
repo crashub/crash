@@ -31,14 +31,14 @@ import org.crsh.term.TermEvent;
 import org.crsh.text.Text;
 import org.crsh.util.CloseableList;
 import org.crsh.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Processor implements Runnable, Pipe<Chunk> {
 
@@ -70,7 +70,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
   };
 
   /** . */
-  final Logger log = LoggerFactory.getLogger(Processor.class);
+  final Logger log = Logger.getLogger(Processor.class.getName());
 
   /** . */
   final Term term;
@@ -116,9 +116,9 @@ public final class Processor implements Runnable, Pipe<Chunk> {
     // Display initial stuff
     try {
       String welcome = shell.getWelcome();
-      log.debug("Writing welcome message to term");
+      log.log(Level.FINE, "Writing welcome message to term");
       term.provide(Text.create(welcome));
-      log.debug("Wrote welcome message to term");
+      log.log(Level.FINE, "Wrote welcome message to term");
       writePromptFlush();
     }
     catch (IOException e) {
@@ -275,7 +275,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
       runnable.run();
     }
     catch (IOException e) {
-      log.error("Error when reading term", e);
+      log.log(Level.SEVERE, "Error when reading term", e);
     }
     finally {
       synchronized (termLock) {
@@ -323,10 +323,10 @@ public final class Processor implements Runnable, Pipe<Chunk> {
   }
 
   private void complete(CharSequence prefix) {
-    log.debug("About to get completions for " + prefix);
+    log.log(Level.FINE, "About to get completions for " + prefix);
     CommandCompletion completion = shell.complete(prefix.toString());
     Completion completions = completion.getValue();
-    log.debug("Completions for " + prefix + " are " + completions);
+    log.log(Level.FINE, "Completions for " + prefix + " are " + completions);
 
     //
     Delimiter delimiter = completion.getDelimiter();
@@ -399,7 +399,7 @@ public final class Processor implements Runnable, Pipe<Chunk> {
       }
     }
     catch (IOException e) {
-      log.error("Could not write completion", e);
+      log.log(Level.SEVERE, "Could not write completion", e);
     }
   }
 }

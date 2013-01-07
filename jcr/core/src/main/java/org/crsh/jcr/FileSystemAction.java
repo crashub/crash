@@ -19,23 +19,22 @@
 
 package org.crsh.jcr;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 abstract class FileSystemAction {
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(FileSystemAction.class);
+  private static final Logger log = Logger.getLogger(FileSystemAction.class.getName());
 
   public static void read(SCPCommand cmd, FileSystem fs) throws IOException {
     cmd.ack();
-    log.debug("Want to read line");
+    log.log(Level.FINE, "Want to read line");
     String line = cmd.readLine();
-    log.debug("Read line " + line);
+    log.log(Level.FINE, "Read line " + line);
     FileSystemAction action = decode(line);
-    log.debug("Action: " + action);
+    log.log(Level.FINE, "Action: " + action);
     read(cmd, action, fs);
   }
 
@@ -51,7 +50,7 @@ abstract class FileSystemAction {
       while (true) {
         String nextLine = cmd.readLine();
         FileSystemAction nextAction = decode(nextLine);
-        log.debug("Next action: " + nextAction);
+        log.log(Level.FINE, "Next action: " + nextAction);
         if (nextAction instanceof FileSystemAction.EndDirectory) {
           fs.endDirectory(directoryName);
           break;
@@ -72,7 +71,7 @@ abstract class FileSystemAction {
       fs.file(file.name, file.length, cmd.read(file.length));
 
       //
-      log.debug("About to send ack for file");
+      log.log(Level.FINE, "About to send ack for file");
       cmd.ack();
       cmd.readAck();
     }

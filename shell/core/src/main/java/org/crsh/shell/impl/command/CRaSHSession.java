@@ -38,21 +38,21 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.util.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, CommandContext {
 
   /** . */
-  static final Logger log = LoggerFactory.getLogger(CRaSHSession.class);
+  static final Logger log = Logger.getLogger(CRaSHSession.class.getName());
 
   /** . */
-  static final Logger accessLog = LoggerFactory.getLogger("org.crsh.shell.access");
+  static final Logger accessLog = Logger.getLogger("org.crsh.shell.access");
 
   /** . */
   private GroovyShell groovyShell;
@@ -168,7 +168,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   }
 
   public ShellProcess createProcess(String request) {
-    log.debug("Invoking request " + request);
+    log.log(Level.FINE, "Invoking request " + request);
     final ShellResponse response;
     if ("bye".equals(request) || "exit".equals(request)) {
       response = ShellResponse.close();
@@ -199,7 +199,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public CommandCompletion complete(final String prefix) {
     ClassLoader previous = setCRaSHLoader();
     try {
-      log.debug("Want prefix of " + prefix);
+      log.log(Level.FINE, "Want prefix of " + prefix);
       PipeLineFactory ast = new PipeLineParser(prefix).parse();
       String termPrefix;
       if (ast != null) {
@@ -210,7 +210,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
       }
 
       //
-      log.debug("Retained term prefix is " + prefix);
+      log.log(Level.FINE, "Retained term prefix is " + prefix);
       CommandCompletion completion;
       int pos = termPrefix.indexOf(' ');
       if (pos == -1) {
@@ -233,13 +233,13 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
           }
         }
         catch (NoSuchCommandException e) {
-          log.debug("Could not create command for completion of " + prefix, e);
+          log.log(Level.FINE, "Could not create command for completion of " + prefix, e);
           completion = new CommandCompletion(Delimiter.EMPTY, Completion.create());
         }
       }
 
       //
-      log.debug("Found completions for " + prefix + ": " + completion);
+      log.log(Level.FINE, "Found completions for " + prefix + ": " + completion);
       return completion;
     }
     finally {

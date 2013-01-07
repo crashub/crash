@@ -28,19 +28,19 @@ import net.wimpi.telnetd.util.StringUtil;
 import org.crsh.plugin.PluginContext;
 import org.crsh.term.TermLifeCycle;
 import org.crsh.vfs.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TelnetLifeCycle extends TermLifeCycle {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(TelnetLifeCycle.class);
+  private final Logger log = Logger.getLogger(TelnetLifeCycle.class.getName());
 
   /** . */
   private Integer port;
@@ -85,10 +85,10 @@ public class TelnetLifeCycle extends TermLifeCycle {
 
     //
     if (port != null) {
-      log.debug("Explicit telnet port configuration with value " + port);
+      log.log(Level.FINE, "Explicit telnet port configuration with value " + port);
       props.put("std.port", port.toString());
     } else {
-      log.debug("Use default telnet port configuration " + props.getProperty("std.port"));
+      log.log(Level.FINE, "Use default telnet port configuration " + props.getProperty("std.port"));
     }
 
     //
@@ -117,7 +117,7 @@ public class TelnetLifeCycle extends TermLifeCycle {
 
   @Override
   protected synchronized void doDestroy() {
-    log.info("Destroying telnet life cycle");
+    log.log(Level.INFO, "Destroying telnet life cycle");
     if (listeners != null) {
       List<PortListener> listeners = this.listeners;
       this.listeners = null;

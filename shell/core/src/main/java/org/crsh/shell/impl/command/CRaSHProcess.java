@@ -22,6 +22,8 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 
+import java.util.logging.Level;
+
 abstract class CRaSHProcess implements ShellProcess {
 
   /** . */
@@ -48,10 +50,8 @@ abstract class CRaSHProcess implements ShellProcess {
       thread = Thread.currentThread();
 
       //
-      if (crash.user != null) {
-        String userName = crash.user != null ? crash.user.getName() : "unauthenticated";
-        CRaSHSession.accessLog.debug("User " + userName + " executes " + request);
-      }
+      String userName = crash.user != null ? crash.user.getName() : "unauthenticated";
+      CRaSHSession.accessLog.log(Level.FINE, "User " + userName + " executes " + request);
 
       //
       try {
@@ -78,9 +78,9 @@ abstract class CRaSHProcess implements ShellProcess {
         ShellResponse.Error error = (ShellResponse.Error)resp;
         Throwable t = error.getThrowable();
         if (t != null) {
-          CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getMessage(), t);
+          CRaSHSession.log.log(Level.SEVERE, "Error while evaluating request '" + request + "' " + error.getMessage(), t);
         } else {
-          CRaSHSession.log.error("Error while evaluating request '" + request + "' " + error.getMessage());
+          CRaSHSession.log.log(Level.SEVERE, "Error while evaluating request '" + request + "' " + error.getMessage());
         }
       }
     }

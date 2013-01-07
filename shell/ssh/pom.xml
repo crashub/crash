@@ -40,6 +40,18 @@
       <artifactId>mina-core</artifactId>
     </dependency>
 
+    <!-- For standalone jar -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <optional>true</optional>
+    </dependency>
+
     <!-- For unit testing purpose -->
 
     <dependency>

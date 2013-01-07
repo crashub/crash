@@ -22,11 +22,11 @@ package org.crsh.ssh.term;
 import org.crsh.term.CodeType;
 import org.crsh.term.spi.TermIO;
 import org.crsh.text.Style;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SSHIO implements TermIO {
 
@@ -52,7 +52,7 @@ public class SSHIO implements TermIO {
   private static final int FORWARD_WORD = -2;
 
   /** . */
-  private static final Logger log = LoggerFactory.getLogger(SSHIO.class);
+  private static final Logger log = Logger.getLogger(SSHIO.class.getName());
 
   /** . */
   private final Reader reader;
@@ -123,7 +123,7 @@ public class SSHIO implements TermIO {
                 return FORWARD_WORD;
               } else {
                 status = STATUS_NORMAL;
-                log.error("Unrecognized stream data " + r + " after reading ESC code");
+                log.log(Level.SEVERE, "Unrecognized stream data " + r + " after reading ESC code");
               }
               break;
             case STATUS_READ_ESC_2:
@@ -138,7 +138,7 @@ public class SSHIO implements TermIO {
                 case 68:
                   return LEFT;
                 default:
-                  log.error("Unrecognized stream data " + r + " after reading ESC+91 code");
+                  log.log(Level.SEVERE, "Unrecognized stream data " + r + " after reading ESC+91 code");
                   break;
               }
           }
@@ -194,9 +194,9 @@ public class SSHIO implements TermIO {
 
   public void close() {
     if (closed.get()) {
-      log.debug("Attempt to closed again");
+      log.log(Level.FINE, "Attempt to closed again");
     } else {
-      log.debug("Closing SSHIO");
+      log.log(Level.FINE, "Closing SSHIO");
       command.session.close(false);
     }
   }

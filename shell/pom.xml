@@ -21,4 +21,13 @@
     <module>packaging</module>
   </modules>
 
+  <dependencies>
+    <!-- Tests depends on MINA (because of SCP) that depends on SLF -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
 </project>

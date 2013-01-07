@@ -27,11 +27,11 @@ import org.crsh.text.CLS;
 import org.crsh.text.Chunk;
 import org.crsh.text.Style;
 import org.crsh.text.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implements the {@link Term interface}.
@@ -39,7 +39,7 @@ import java.util.LinkedList;
 public class ConsoleTerm implements Term {
 
   /** . */
-  private final Logger log = LoggerFactory.getLogger(ConsoleTerm.class);
+  private final Logger log = Logger.getLogger(ConsoleTerm.class.getName());
 
   /** . */
   private final LinkedList<CharSequence> history;
@@ -121,18 +121,18 @@ public class ConsoleTerm implements Term {
           buffer.moveLeft();
           break;
         case BREAK:
-          log.debug("Want to cancel evaluation");
+          log.log(Level.FINE, "Want to cancel evaluation");
           buffer.clear();
           return TermEvent.brk();
         case CHAR:
           if (code >= 0 && code < 128) {
             buffer.append((char)code);
           } else {
-            log.debug("Unhandled char " + code);
+            log.log(Level.FINE, "Unhandled char " + code);
           }
           break;
         case TAB:
-          log.debug("Tab");
+          log.log(Level.FINE, "Tab");
           return TermEvent.complete(buffer.getBufferToCursor());
         case BACKWARD_WORD: {
           int cursor = buffer.getCursor();
@@ -210,17 +210,17 @@ public class ConsoleTerm implements Term {
       io.flush();
     }
     catch (IOException e) {
-      log.debug("Exception thrown during term flush()", e);
+      log.log(Level.FINE, "Exception thrown during term flush()", e);
     }
   }
 
   public void close() {
     try {
-      log.debug("Closing connection");
+      log.log(Level.FINE, "Closing connection");
       io.flush();
       io.close();
     } catch (IOException e) {
-      log.debug("Exception thrown during term close()", e);
+      log.log(Level.FINE, "Exception thrown during term close()", e);
     }
   }
 
