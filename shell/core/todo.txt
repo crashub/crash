@@ -1,3 +1,4 @@
+- investigate using one classloader per plugin
 - think about replacing VFS by http://code.google.com/p/reflections/wiki/JBossIntegration that integrates with JBoss VFS
 - Interesting db shell : http://ewaters.github.com/altsql-shell/
 - decouple connectors from instantiating CRaSH and instead use a shell factory
