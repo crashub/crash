@@ -45,6 +45,7 @@
       <version>1.6</version>
       <scope>system</scope>
       <systemPath>${tools.jar}</systemPath>
+      <optional>true</optional>
     </dependency>
 
     <!-- For unit testing purpose -->
