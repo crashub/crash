@@ -3,7 +3,7 @@
   <groupId>org.crsh</groupId>
   <artifactId>crsh.parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.2.0-cr5</version>
+  <version>1.2.0-cr6-SNAPSHOT</version>
 
   <name>CRaSH parent</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
@@ -139,12 +139,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cmdline</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cmdline</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -152,25 +152,25 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -178,18 +178,18 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -197,18 +197,18 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -216,12 +216,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.embed.spring</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.embed.spring</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -229,32 +229,32 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>war</type>
         <classifier>spring</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>zip</type>
         <classifier>mule-app</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>tar.gz</type>
       </dependency>
 
@@ -262,37 +262,37 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -300,19 +300,19 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.exo</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.exo</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.exo</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -320,19 +320,19 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.jackrabbit</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.jackrabbit</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.jackrabbit</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -340,13 +340,13 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.plugins.crowd</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.plugins.crowd</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -354,20 +354,20 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <type>pdf</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc</artifactId>
-        <version>1.2.0-cr5</version>
+        <version>1.2.0-cr6-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>
 
