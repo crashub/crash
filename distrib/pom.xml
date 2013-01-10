@@ -241,7 +241,7 @@
                     </upload>
                     <upload>
                       <file>${project.build.directory}/crash-${project.version}-docs.tar.gz</file>
-                      <summary>CRaSH documentation and sources bundle ${project.version}</summary>
+                      <summary>CRaSH Documentation and sources bundle ${project.version}</summary>
                       <labels>
                         <label>Documentation</label>
                       </labels>
