@@ -1,0 +1,78 @@
+<!--
+  ~ Copyright (C) 2012 eXo Platform SAS.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
+  <id>docs</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+
+  <baseDirectory>crash-${project.version}-docs</baseDirectory>
+
+  <componentDescriptors>
+    <componentDescriptor>src/main/assembly/distrib.xml</componentDescriptor>
+  </componentDescriptors>
+
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/src</outputDirectory>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+          <exclude>META-INF/**</exclude>
+        </excludes>
+      </unpackOptions>
+      <includes>
+        <include>org.crsh:crsh.cmdline:jar:sources</include>
+        <include>org.crsh:crsh.shell.core:jar:sources</include>
+        <include>org.crsh:crsh.shell.telnet:jar:sources</include>
+        <include>org.crsh:crsh.shell.ssh:jar:sources</include>
+        <include>org.crsh:crsh.shell.embed.spring:jar:sources</include>
+        <include>org.crsh:crsh.jcr.core:jar:sources</include>
+        <include>org.crsh:crsh.jcr.exo:jar:sources</include>
+        <include>org.crsh:crsh.jcr.jackrabbit:jar:sources</include>
+        <include>org.crsh:crsh.plugins.crowd:jar:sources</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/doc/html</outputDirectory>
+      <unpack>true</unpack>
+      <includes>
+        <include>org.crsh:crsh.doc:zip:html</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/doc</outputDirectory>
+      <outputFileNameMapping>crash.pdf</outputFileNameMapping>
+      <includes>
+        <include>org.crsh:crsh.doc:pdf</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/doc/javadoc</outputDirectory>
+      <unpack>true</unpack>
+      <includes>
+        <include>org.crsh:crsh.doc:jar:javadoc</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>

@@ -15,6 +15,43 @@
 
   <dependencies>
 
+    <!-- Standalone -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.packaging</artifactId>
+      <type>tar.gz</type>
+    </dependency>
+
+    <!-- War -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.packaging</artifactId>
+      <type>war</type>
+    </dependency>
+
+    <!-- GateIn war -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr.exo</artifactId>
+      <type>war</type>
+    </dependency>
+
+    <!-- Spring war -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.packaging</artifactId>
+      <type>war</type>
+      <classifier>spring</classifier>
+    </dependency>
+
+    <!-- Mule application -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.packaging</artifactId>
+      <type>zip</type>
+      <classifier>mule-app</classifier>
+    </dependency>
+
     <!-- Sources -->
     <dependency>
       <groupId>org.crsh</groupId>
@@ -38,7 +75,27 @@
     </dependency>
     <dependency>
       <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.embed.spring</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
       <artifactId>crsh.jcr.core</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr.exo</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr.jackrabbit</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.plugins.crowd</artifactId>
       <classifier>sources</classifier>
     </dependency>
 
@@ -62,245 +119,77 @@
 
   </dependencies>
 
-  <profiles>
-
-    <profile>
-      <id>izpack</id>
-      <dependencies>
-
-        <!-- -->
-        <dependency>
-          <groupId>org.apache.maven</groupId>
-          <artifactId>maven-ant-tasks</artifactId>
-          <version>2.1.1</version>
-        </dependency>
-
-        <!-- -->
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.cmdline</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.shell.core</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.codehaus.groovy</groupId>
-          <artifactId>groovy-all</artifactId>
-        </dependency>
-
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.shell.telnet</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>net.wimpi</groupId>
-          <artifactId>telnetd-x</artifactId>
-        </dependency>
-
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.shell.ssh</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.mina</groupId>
-          <artifactId>mina-core</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.sshd</groupId>
-          <artifactId>sshd-core</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.sshd</groupId>
-          <artifactId>sshd-pam</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcprov-jdk16</artifactId>
-        </dependency>
-
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.jcr.core</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.jcr.exo</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.jcr.jackrabbit</artifactId>
-        </dependency>
-
-      </dependencies>
-      <build>
-        <plugins>
-          <!--  copy other checked resource into staging area, expected by install.xml -->
-          <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.6</version>
-            <executions>
-              <execution>
-                <id>create-staging-area</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <tasks>
-
-                    <!-- -->
-                    <property name="target" value="${project.build.directory}/staging" />
-
-                    <!-- -->
-                    <copy todir="${target}">
-                      <filterset>
-                        <filter token="version" value="${project.version}" />
-                      </filterset>
-                      <fileset dir="${basedir}/src/main/izpack" />
-                    </copy>
-
-                    <!-- CRaSH -->
-                    <property name="crash" value="${target}/crash" />
-                    <copy file="${org.crsh:crsh.cmdline:jar}" todir="${crash}/lib" />
-                    <copy file="${org.crsh:crsh.shell.core:jar}" todir="${crash}/lib" />
-                    <unzip src="${org.crsh:crsh.shell.core:jar}" dest="${crash}">
-                      <patternset>
-                        <include name="crash/**" />
-                      </patternset>
-                    </unzip>
-
-                    <!-- Groovy -->
-                    <property name="groovy" value="${target}/groovy" />
-                    <copy file="${org.codehaus.groovy:groovy-all:jar}" todir="${groovy}/lib" />
-
-                    <!-- Telnet -->
-                    <property name="telnet" value="${target}/telnet" />
-                    <copy file="${org.crsh:crsh.shell.telnet:jar}" todir="${telnet}/lib" />
-                    <copy file="${net.wimpi:telnetd-x:jar}" todir="${telnet}/lib" />
-                    <unzip src="${org.crsh:crsh.shell.telnet:jar}" dest="${telnet}">
-                      <patternset>
-                        <include name="crash/**" />
-                      </patternset>
-                    </unzip>
-
-                    <!-- SSH -->
-                    <property name="ssh" value="${target}/ssh" />
-                    <copy file="${org.crsh:crsh.shell.ssh:jar}" todir="${ssh}/lib" />
-                    <copy file="${org.apache.mina:mina-core:jar}" todir="${ssh}/lib" />
-                    <copy file="${org.apache.sshd:sshd-core:jar}" todir="${ssh}/lib" />
-                    <copy file="${org.apache.sshd:sshd-pam:jar}" todir="${ssh}/lib" />
-                    <unzip src="${org.crsh:crsh.shell.ssh:jar}" dest="${ssh}">
-                      <patternset>
-                        <include name="crash/**" />
-                      </patternset>
-                    </unzip>
-
-                    <!-- Bouncy -->
-                    <property name="bouncy" value="${target}/bouncy" />
-                    <copy file="${org.bouncycastle:bcprov-jdk16:jar}" todir="${bouncy}/lib" />
-
-                    <!-- JCR -->
-                    <property name="jcr" value="${target}/jcr" />
-                    <copy file="${org.crsh:crsh.jcr.core:jar}" todir="${jcr}/lib" />
-                    <unzip src="${org.crsh:crsh.jcr.core:jar}" dest="${jcr}">
-                      <patternset>
-                        <include name="crash/**" />
-                      </patternset>
-                    </unzip>
-
-                    <!-- eXo -->
-                    <property name="exo" value="${target}/exo" />
-                    <copy file="${org.crsh:crsh.jcr.exo:jar}" todir="${exo}/lib" />
-                    <unzip src="${org.crsh:crsh.jcr.exo:jar}" dest="${exo}">
-                      <patternset>
-                        <include name="crash/**" />
-                      </patternset>
-                    </unzip>
-
-                    <!-- Jackrabbit -->
-                    <property name="jackrabbit" value="${target}/jackrabbit" />
-                    <copy file="${org.crsh:crsh.jcr.jackrabbit:jar}" todir="${jackrabbit}/lib" />
-                    <unzip src="${org.crsh:crsh.jcr.jackrabbit:jar}" dest="${jackrabbit}">
-                      <patternset>
-                        <include name="crash/**" />
-                      </patternset>
-                    </unzip>
-
-                    <!-- Doc -->
-                    <property name="doc" value="${target}/doc" />
-                    <copy file="${org.crsh:crsh.doc:pdf}" tofile="${doc}/crash.pdf" />
-                    <unzip src="${org.crsh:crsh.doc:zip:html}" dest="${doc}/html" />
-                    <unzip src="${org.crsh:crsh.doc:jar:javadoc}" dest="${doc}/javadoc" />
-
-                  </tasks>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.izpack</groupId>
-            <artifactId>izpack-maven-plugin</artifactId>
-            <version>5.0.0-beta9</version>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>izpack</goal>
-                </goals>
-                <configuration>
-                  <installFile>${project.build.directory}/staging/install.xml</installFile>
-                  <attach>true</attach>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>release</id>
-      <dependencies>
-        <!-- Packagings -->
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.shell.packaging</artifactId>
-          <type>war</type>
-        </dependency>
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.shell.packaging</artifactId>
-          <type>war</type>
-          <classifier>spring</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.shell.packaging</artifactId>
-          <type>tar.gz</type>
-        </dependency>
-        <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.jcr.exo</artifactId>
-          <type>war</type>
-        </dependency>
-      </dependencies>
-      <build>
-        <finalName>crsh-${project.version}</finalName>
-        <plugins>
-          <!-- Final assembly -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>make-packaging</id>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+  <build>
+    <finalName>crash-${project.version}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-docs</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/docs.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-war</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <appendAssemblyId>true</appendAssemblyId>
+              <descriptors>
+                <descriptor>src/main/assembly/war.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-spring</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/spring.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-mule-app</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/mule-app.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-gatein</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/gatein.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

@@ -20,12 +20,12 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
-  <id>packaging</id>
+  <id>gatein</id>
   <formats>
     <format>tar.gz</format>
   </formats>
 
-  <baseDirectory>crash-${project.version}</baseDirectory>
+  <baseDirectory>crash-${project.version}-gatein</baseDirectory>
 
   <componentDescriptors>
     <componentDescriptor>src/main/assembly/distrib.xml</componentDescriptor>
@@ -33,10 +33,10 @@
 
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/crash</outputDirectory>
-      <unpack>true</unpack>
+      <outputDirectory>/</outputDirectory>
+      <outputFileNameMapping>crash.war</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.shell.packaging:tar.gz</include>
+        <include>org.crsh:crsh.jcr.exo:war</include>
       </includes>
     </dependencySet>
   </dependencySets>

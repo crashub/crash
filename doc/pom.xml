@@ -47,40 +47,78 @@
       <artifactId>crsh.shell.core</artifactId>
       <classifier>standalone</classifier>
     </dependency>
-
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.jcr.core</artifactId>
       <classifier>standalone</classifier>
     </dependency>
-
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.ssh</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.core</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.ssh</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
       <version>1.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.exoplatform.jcr</groupId>
+      <artifactId>exo.jcr.component.core</artifactId>
+      <version>1.11.1</version>
+    </dependency>
 
+    <!-- -->
     <dependency>
       <groupId>org.wikbook</groupId>
       <artifactId>wikbook.docbkxstyle</artifactId>
       <version>${wikbook.version}</version>
+    </dependency>
+
+    <!-- Sources -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.cmdline</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.core</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.telnet</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.ssh</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.embed.spring</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr.core</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr.exo</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.jcr.jackrabbit</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.plugins.crowd</artifactId>
+      <classifier>sources</classifier>
     </dependency>
 
   </dependencies>
@@ -366,6 +404,11 @@
                   </dependency>
                   <dependency>
                     <groupId>org.crsh</groupId>
+                    <artifactId>crsh.shell.embed.spring</artifactId>
+                    <classifier>sources</classifier>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.crsh</groupId>
                     <artifactId>crsh.jcr.core</artifactId>
                     <classifier>sources</classifier>
                   </dependency>
@@ -377,6 +420,11 @@
                   <dependency>
                     <groupId>org.crsh</groupId>
                     <artifactId>crsh.jcr.jackrabbit</artifactId>
+                    <classifier>sources</classifier>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.crsh</groupId>
+                    <artifactId>crsh.plugins.crowd</artifactId>
                     <classifier>sources</classifier>
                   </dependency>
                 </dependencies>

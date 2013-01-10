@@ -248,6 +248,13 @@
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
         <version>1.2.0-cr5-SNAPSHOT</version>
+        <type>zip</type>
+        <classifier>mule-app</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.packaging</artifactId>
+        <version>1.2.0-cr5-SNAPSHOT</version>
         <type>tar.gz</type>
       </dependency>
 
@@ -302,6 +309,12 @@
         <version>1.2.0-cr5-SNAPSHOT</version>
         <type>war</type>
       </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.jcr.exo</artifactId>
+        <version>1.2.0-cr5-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
 
       <!-- Module JCR Jackrabbit -->
       <dependency>
@@ -315,6 +328,26 @@
         <artifactId>crsh.jcr.jackrabbit</artifactId>
         <version>1.2.0-cr5-SNAPSHOT</version>
         <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.jcr.jackrabbit</artifactId>
+        <version>1.2.0-cr5-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
+
+      <!-- Module Crowd -->
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.plugins.crowd</artifactId>
+        <version>1.2.0-cr5-SNAPSHOT</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.plugins.crowd</artifactId>
+        <version>1.2.0-cr5-SNAPSHOT</version>
+        <classifier>sources</classifier>
       </dependency>
 
       <!-- Module doc -->

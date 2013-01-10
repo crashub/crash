@@ -17,28 +17,14 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
-  <id>packaging</id>
-  <formats>
-    <format>tar.gz</format>
-  </formats>
-
-  <baseDirectory>crash-${project.version}</baseDirectory>
-
-  <componentDescriptors>
-    <componentDescriptor>src/main/assembly/distrib.xml</componentDescriptor>
-  </componentDescriptors>
-
-  <dependencySets>
-    <dependencySet>
-      <outputDirectory>/crash</outputDirectory>
-      <unpack>true</unpack>
+<component>
+  <fileSets>
+    <fileSet>
+      <outputDirectory>.</outputDirectory>
+      <directory>src/main/packaging</directory>
       <includes>
-        <include>org.crsh:crsh.shell.packaging:tar.gz</include>
+        <include>**/*</include>
       </includes>
-    </dependencySet>
-  </dependencySets>
-
-</assembly>
+    </fileSet>
+  </fileSets>
+</component>
