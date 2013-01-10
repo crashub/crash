@@ -30,11 +30,7 @@ import org.crsh.cmdline.spi.Completer
 import org.crsh.cmdline.spi.Completion
 import org.crsh.cmdline.ParameterDescriptor
 import org.crsh.util.JNDIHandler
-import com.sun.tools.jdi.LinkedHashMap
 import org.crsh.util.TypeResolver
-import org.crsh.cmdline.completers.AbstractPathCompleter
-import org.crsh.text.formatter.BindingRenderable
-import org.crsh.text.formatter.BindingRenderable.BindingData
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
