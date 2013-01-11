@@ -7,7 +7,7 @@ CRaSH provides has various ways to be started, it can also be easily embedded.
 == Standalone mode ==
 
 The standalone mode allows you to run CRaSH from the command line directly. It provides the same functionality as the
-war deployment but does not require a web container as it runs its own virtual machine. The directory __crash__ directory
+war deployment but does not require a web container as it runs its own virtual machine. The __crash__ directory
 in the application contains the standalone distribution.
 
 The bin directory ///crash/bin// can be added to the system path, it contains the //crash.sh// script that will start
@@ -59,7 +59,7 @@ It is Thu Apr 12 22:09:23 CEST 2012 now
 %
 {{/screen}}
 
-In this example we will attach crash to the Test JVM. We obtained the Test JVM PID thanks to the //jps// command that belongs
+In this example we attached crash to the Test JVM. We obtained the Test JVM PID thanks to the //jps// command that belongs
 to the Java Platform. During this mode the commands are executed in the target JVM.
 
 = Embedded mode =
@@ -130,7 +130,7 @@ The configuration properties are set as properties with the //config// property 
 == Embedding in Spring within a web application ==
 
 In case you are embedding CRaSH in a Spring application running with a servlet container, the bean
- ##org.crsh.spring.SpringBootstrap## can be used instead of ##org.crsh.spring.SpringBootstrap##. The ##SpringWebBootstrap##
+ ##org.crsh.spring.SpringWebBootstrap## can be used instead of ##org.crsh.spring.SpringBootstrap##. The ##SpringWebBootstrap##
  extends the ##SpringBootstrap## class and adds the //WEB-INF/crash// directory to the command path.
 
 An example packaging comes with the CRaSH distribution, a __spring__ war file found under //deploy/spring/crash.war// provides

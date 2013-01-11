@@ -2,7 +2,8 @@
 
 == Connection ==
 
-You need to connect using telnet, SSH to use the shell, there is a third special mode using the JVM input and output.
+You need to connect using telnet, SSH or //directly// to use the
+shell.  The last method is a special mode using the JVM input and output.
 
 === Telnet access ===
 
@@ -43,15 +44,16 @@ The ##bye## command disconnect from the shell.
 
 === Native access ===
 
-A third mode is available for standalone CRaSH usage because it uses the JVM native input and output. When you are using
-it, CRaSh will be available just after the JVM is launched.
+A third mode is available for standalone CRaSH usage where it uses the
+JVM native input and output. When you run in standalone, CRaSh will be available just after the JVM is launched.
 
 == Features ==
 
 * Line edition: the current line can be edited via left and right arrow keys
 * History: the key up and key down enable history browsing
 * Quoting: simple quotes or double quotes allow to insert blanks in command options and arguments, for instance
-//"old boy"// or //'old boy'//. One quote style can quote another, like //"ol' boy"//.
+//"old boy"// or //'old boy'//. One quote style can quote another,
+like //"hi, it's me"//.
 * Completion: an advanced completion system is available
 
 = Command usage =
@@ -172,7 +174,7 @@ A CRaSH command is able to consume and produce a stream of object, allowing comp
 where they can exchange stream of compatible objets. Most of the time, JCR nodes are the objects exchanged by the
 commands but any command is free to produce or consume any type.
 
-By default a command that does not support this feature does not consumer or produce anything. Such commands usually
+By default a command that does not support this feature does not consume or produce anything. Such commands usually
 inherits from the ##org.crsh.command.ClassCommand## class that does not care about it. If you look at this class
 you will see it extends the the ##org.crsh.command.BaseCommand##.
 

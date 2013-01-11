@@ -1,9 +1,9 @@
 = Pluggable authentication {{anchor id=pluggable_auth /}} =
 
-Creating a custom is done by implementing a CRaSH plugin that provides an implementation of the ##AuthenticationPlugin##
-interface, let's study the //simple// authentication plugin implementation.
+Creating a custom authentication mechanism is done by implementing a CRaSH plugin that provides an implementation of the ##AuthenticationPlugin##
+interface. Let's study the //simple// authentication plugin implementation.
 
-The ##AuthenticationPlugin## is the interface to implement to integrate CRaSH with an authentication mechanism:
+The ##AuthenticationPlugin## is the interface to implement in order to integrate CRaSH with an authentication mechanism:
 
 {{java}}
 {@include org.crsh.auth.AuthenticationPlugin}
@@ -27,8 +27,9 @@ public class SimpleAuthenticationPlugin extends
 
 * The ##getName()## method returns the //simple// value that matchs the //crash.auth// configuration property
 * The ##getImplementation()## method returns the object that implements the ##AuthenticationPlugin## class, this method
-is implemented from the ##CRaSHPlugin## abstract class, in our case it simply returns ##this## as the plugin and the
-implementation of ##AuthentionPlugin## are the same class
+is implemented from the ##CRaSHPlugin## abstract class, but in our case it
+simply returns ##this## because ##SimpleAuthenticationPlugin## is
+directly the implementation class.
 
 Now let's study how the plugin retrieves the configuration properties ##crash.auth.simple.username## and ##crash.auth.simple.password##:
 
@@ -75,7 +76,7 @@ the class under the name ##META-INF/services/org.crsh.plugin.CRaSHPlugin## conta
 org.crsh.auth.SimpleAuthenticationPlugin
 {{/code}}
 
-When all of this is done, the plugin and its service loader descriptor must be package in a jar file and available on the classpath
+When all of this is done, the plugin and its service loader descriptor must be packaged in a jar file and available on the classpath
 of CRaSH.
 
 {{info}}You can learn more about the ##java.util.ServiceLoader## by looking at the online
