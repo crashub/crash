@@ -8,7 +8,7 @@ by Java Virtual Machine system properties by using the same property name.
 CRaSH properties are always prefixed by the //crash.// value
 {{/note}}
 
-= Change the SSH server key =
+= Changing SSH server key =
 
 The key can be changed by replacing the file //WEB-INF/sshd/hostkey.pem//. Alternatively you can configure the server
 to use an external file by using the //crash.ssh.keypath// parameter in the //crash.properties//. Uncomment the corresponding
@@ -18,7 +18,7 @@ property and change the path to the key file.
 #crash.ssh.keypath=/path/to/the/key/file
 {{/code}}
 
-= Change the ports of the telnet or SSH server =
+= Changing telnet or SSH server ports =
 
 The ports of the server are parameterized by the //crash.ssh.port// and //crash.telnet.port// parameters in the //crash.properties// file
 
@@ -32,12 +32,12 @@ crash.ssh.port=2000
 crash.telnet.port=5000
 {{/code}}
 
-= Remove the telnet or SSH access =
+= Removing telnet or SSH access =
 
 * to remove the telnet access, remove the jar file in the //WEB-INF/lib/crsh.shell.telnet-$[crash.version].jar// .
 * to remove the SSH access, remove the jar file in the //WEB-INF/lib/crsh.shell.ssh-$[crash.version].jar// .
 
-= Configure the shell default message =
+= Configuring shell default message =
 
 The ///WEB-INF/crash/commands/base/login.groovy// file contains two closures that are evaluated each time a message is required
 
@@ -46,7 +46,7 @@ The ///WEB-INF/crash/commands/base/login.groovy// file contains two closures tha
 
 Those closure can be customized to return different messages.
 
-= Configuration the authentication =
+= Configuring authentication =
 
 Authentication is used by the SSH server when a user authenticates. Authentication interface is pluggable and has default
 implementations. The [[#pluggable_auth]] explains how to write a custom authentication plugin, in this section we cover the

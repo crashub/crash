@@ -9,10 +9,10 @@ several signifiant advantages:
 
 Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell.
 The files are located in
-* In the standalone distribution the //cmd// directory
-* In a web archive deployment the ///WEB-INF/crash/commands// directory
+* //cmd// directory for the standalone distribution
+* ///WEB-INF/crash/commands// directory for the web archive deployment
 
-New commands can directly be placed in the commands directory however they can also be placed in a sub directory of the
+New commands can directly be placed in the commands directory; however they can also be placed in a sub directory of the
 command directory, which is useful to group commands of the same kind.
 
 In addition of that there are two special files called //login.groovy// and //logout.groovy// that are executed upon login
@@ -58,7 +58,7 @@ class date extends CRaSHCommand {
   }
 }{{/code}}
 
-The command is pretty straightforward to undertand:
+The command is pretty straightforward to understand:
 
 * The ##@Command## annotation declares the ##main## method as a command
 * The command takes one optional ##format## option
@@ -69,7 +69,7 @@ The command is pretty straightforward to undertand:
 Thu Apr 19 15:44:05 CEST 2012
 {{/screen}}
 
-The ##@Usage## annotation is important because it will give a decent humand description of the command
+The ##@Usage## annotation is important because it will give a decent human description of the command
 
 {{screen}}
 % date -h
@@ -117,9 +117,10 @@ Connection closed
 
 = Command context {{anchor id=command_context/}} =
 
-During the execution of a command, CRaSH provides a //context// for interacting with the context of execution
- of the current command: the property //context// is resolve to an instance of ##org.crsh.command.InvocationContext##,
-the invocation context class extends the ##org.crsh.command.CommandContext##, let's have a look at those types:
+During the execution of a command, CRaSH provides a //context// for
+interacting with it : the property //context// is resolved to an instance of ##org.crsh.command.InvocationContext##,
+the invocation context class extends
+the ##org.crsh.command.CommandContext##. Let's have a look at those types:
 
 {{example title="The command context"}}
 {{java}}
@@ -142,8 +143,8 @@ out.println(bar); // <2> The bar is resolved as an session attribute by Groovy
 The ##CommandContext## provides also access to the shell attributes as a ##Map<String, Object>##. Context attributes
 are useful to interact with object shared globally by the CRaSH environment:
 
-* When embedded in a web application context attributes resolves to servlet context attributes.
-* When embedded in Spring context attributes resolve to Spring objects:
+* When embedded in a web application context, attributes resolves to servlet context attributes.
+* When embedded in Spring context, attributes resolve to Spring objects:
 ** //attributes.factory// returns the Spring factory
 ** //attributes.beans// returns Spring beans, for example //attribute.beans.telnet// returns the //telnet// bean
 * When attached to a virtual machine, the context attributes has only a single ##instrumentation## entry
@@ -186,7 +187,7 @@ the pipe mechanism.
 
 = Adding style =
 
-CRaSH adds since version 1.1 the support for colored text and text decoration. Each portion of text printed
+CRaSH adds (since version 1.1) the support for colored text and text decoration. Each portion of text printed
  has three style attributes:
 
 * //Decoration// : bold, underline or blink, as the ##org.crsh.text.Decoration## enum.
@@ -250,7 +251,7 @@ they can be used out of the box in any CRaSH command without requiring prior imp
 
 = Inter command API =
 
-In this section we study how a command can reuse existing commands, here is an example
+In this section we study how a command can reuse existing commands. Here is an example
 
 {{example title="dbscript.groovy"}}
 {{code}}
