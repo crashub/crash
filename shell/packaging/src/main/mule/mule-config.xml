@@ -14,6 +14,9 @@
             location="classpath:crash-config-default.properties,classpath:crash-config-override.properties" />
 
         <util:properties id="crashConfig">
+            <spring:prop key="crash.auth">${crash.auth}</spring:prop>
+            <spring:prop key="crash.auth.simple.username">${crash.auth.simple.username}</spring:prop>
+            <spring:prop key="crash.auth.simple.password">${crash.auth.simple.password}</spring:prop>
             <spring:prop key="crash.ssh.port">${crash.ssh.port}</spring:prop>
             <spring:prop key="crash.telnet.port">${crash.telnet.port}</spring:prop>
         </util:properties>

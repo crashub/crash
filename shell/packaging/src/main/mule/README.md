@@ -8,8 +8,27 @@ To override the default ports create a file named `crash-config-override.propert
 
 Default properties are:
 
+    crash.auth=simple
+    crash.auth.simple.username=root
+    crash.auth.simple.password=mule
     crash.telnet.port=4020
     crash.ssh.port=4022
+    crash.telnet.port=4020
+    crash.ssh.port=4022
+
+
+## Connection
+
+With the default configuration, connect to the shell with either:
+
+    telnet localhost 4020
+
+or:
+
+    ssh -p 4022 -l root localhost
+
+using `mule` as password.
+
 
 ## Commands
 
