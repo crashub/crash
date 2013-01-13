@@ -105,14 +105,4 @@ public interface Term extends Closeable, Pipe<Chunk> {
    */
   void addToHistory(CharSequence line);
 
-  /**
-   * Flush the term buffer.
-   */
-  void flush();
-
-  /**
-   * Close the term. If threads are blocked in the {@link #read()} operation, those thread should be unblocked.
-   */
-  void close();
-
 }
