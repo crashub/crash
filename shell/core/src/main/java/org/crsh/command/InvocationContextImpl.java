@@ -70,11 +70,11 @@ final class InvocationContextImpl<P> implements InvocationContext<P> {
     return writer;
   }
 
-  public boolean takeAlternateBuffer() {
+  public boolean takeAlternateBuffer() throws IOException {
     return producerContext.takeAlternateBuffer();
   }
 
-  public boolean releaseAlternateBuffer() {
+  public boolean releaseAlternateBuffer() throws IOException {
     return producerContext.releaseAlternateBuffer();
   }
 

@@ -68,11 +68,11 @@ class ToChunkPipeFilter implements Filter<Object, Chunk> {
     this.context = (Filter<Chunk, ?>)context;
   }
 
-  public boolean takeAlternateBuffer() {
+  public boolean takeAlternateBuffer() throws IOException {
     return context.takeAlternateBuffer();
   }
 
-  public boolean releaseAlternateBuffer() {
+  public boolean releaseAlternateBuffer() throws IOException {
     return context.releaseAlternateBuffer();
   }
 

@@ -42,9 +42,13 @@ public class TelnetIO implements TermIO {
   /** . */
   private final BasicTerminalIO termIO;
 
+  /** . */
+  private boolean useAlternate;
+
   public TelnetIO(Connection conn) {
     this.conn = conn;
     this.termIO = conn.getTerminalIO();
+    this.useAlternate = false;
   }
 
   public int read() throws IOException {
@@ -80,6 +84,22 @@ public class TelnetIO implements TermIO {
       }
     }
     return null;
+  }
+
+  public boolean takeAlternateBuffer() throws IOException {
+    if (!useAlternate) {
+      useAlternate = true;
+      termIO.write("\033[?47h");
+    }
+    return true;
+  }
+
+  public boolean releaseAlternateBuffer() throws IOException {
+    if (useAlternate) {
+      useAlternate = false;
+      termIO.write("\033[?47l"); // Switches back to the normal screen
+    }
+    return true;
   }
 
   public CodeType decode(int code) {

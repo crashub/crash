@@ -41,6 +41,14 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
+  public boolean takeAlternateBuffer() throws IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  public boolean releaseAlternateBuffer() throws IOException {
+    throw new UnsupportedOperationException();
+  }
+
   public TermEvent read() throws IOException {
     throw new UnsupportedOperationException();
   }

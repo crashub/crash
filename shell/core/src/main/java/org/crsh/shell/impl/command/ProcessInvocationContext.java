@@ -72,11 +72,11 @@ class ProcessInvocationContext implements ProducerContext<Object> {
     this.adapter = adapter;
   }
 
-  public boolean takeAlternateBuffer() {
+  public boolean takeAlternateBuffer() throws IOException {
     return processContext.takeAlternateBuffer();
   }
 
-  public boolean releaseAlternateBuffer() {
+  public boolean releaseAlternateBuffer() throws IOException {
     return processContext.releaseAlternateBuffer();
   }
 

@@ -58,6 +58,24 @@ public interface TermIO extends Closeable {
   String getProperty(String name);
 
   /**
+   * Take control of the alternate buffer. When the alternate buffer is already used
+   * nothing happens. The buffer switch should occur when then {@link #flush()} method
+   * is invoked.
+   *
+   * @return true if the alternate buffer is shown
+   */
+  boolean takeAlternateBuffer() throws IOException;
+
+  /**
+   * Release control of the alternate buffer. When the normal buffer is already used
+   * nothing happens. The buffer switch should occur when then {@link #flush()} method
+   * is invoked.
+   *
+   * @return true if the usual buffer is shown
+   */
+  boolean releaseAlternateBuffer() throws IOException;
+
+  /**
    * Decode the intput value.
    *
    * @param code the code

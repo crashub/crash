@@ -71,6 +71,14 @@ public class SimpleTermIO implements TermIO {
     throw new UnsupportedOperationException();
   }
 
+  public boolean takeAlternateBuffer() {
+    throw new UnsupportedOperationException();
+  }
+
+  public boolean releaseAlternateBuffer() {
+    throw new UnsupportedOperationException();
+  }
+
   public CodeType decode(int code) {
     throw new UnsupportedOperationException();
   }

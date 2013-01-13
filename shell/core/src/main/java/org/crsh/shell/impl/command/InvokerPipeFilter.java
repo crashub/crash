@@ -61,11 +61,11 @@ class InvokerPipeFilter<C, P> implements Filter<C, P> {
     return command.getConsumedType();
   }
 
-  public boolean takeAlternateBuffer() {
+  public boolean takeAlternateBuffer() throws IOException {
     return context.takeAlternateBuffer();
   }
 
-  public boolean releaseAlternateBuffer() {
+  public boolean releaseAlternateBuffer() throws IOException {
     return context.releaseAlternateBuffer();
   }
 

@@ -19,6 +19,8 @@
 
 package org.crsh.io;
 
+import java.io.IOException;
+
 /**
  * The interaction context extends the screen context and provides interaction with the client.
  *
@@ -33,7 +35,7 @@ public interface InteractionContext<E> extends ScreenContext<E> {
    *
    * @return true if the alternate buffer is shown
    */
-  boolean takeAlternateBuffer();
+  boolean takeAlternateBuffer() throws IOException;
 
   /**
    * Release control of the alternate buffer. When the normal buffer is already used
@@ -42,7 +44,7 @@ public interface InteractionContext<E> extends ScreenContext<E> {
    *
    * @return true if the usual buffer is shown
    */
-  boolean releaseAlternateBuffer();
+  boolean releaseAlternateBuffer() throws IOException;
 
   /**
    * Returns a generic property, usually this property is resolved by the

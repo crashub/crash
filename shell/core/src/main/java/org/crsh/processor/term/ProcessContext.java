@@ -42,12 +42,12 @@ class ProcessContext implements ShellProcessContext, Runnable {
     this.processor = processor;
   }
 
-  public boolean takeAlternateBuffer() {
-    throw new UnsupportedOperationException();
+  public boolean takeAlternateBuffer() throws IOException {
+    return processor.term.takeAlternateBuffer();
   }
 
-  public boolean releaseAlternateBuffer() {
-    throw new UnsupportedOperationException();
+  public boolean releaseAlternateBuffer() throws IOException {
+    return processor.term.releaseAlternateBuffer();
   }
 
   public void run() {

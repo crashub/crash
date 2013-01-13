@@ -82,7 +82,14 @@ public class SyncTerm implements Term {
   }
 
   public void setEcho(boolean echo) {
-  
+  }
+
+  public boolean takeAlternateBuffer() throws IOException {
+    return false;
+  }
+
+  public boolean releaseAlternateBuffer() throws IOException {
+    return false;
   }
 
   public TermEvent read() throws IOException {

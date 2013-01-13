@@ -23,7 +23,6 @@ import org.crsh.io.Filter;
 import org.crsh.io.ProducerContext;
 
 import java.io.IOException;
-import java.util.Map;
 
 class SinkPipeFilter<P> implements Filter<Object, P> {
 
@@ -41,11 +40,11 @@ class SinkPipeFilter<P> implements Filter<Object, P> {
     return producedType;
   }
 
-  public boolean takeAlternateBuffer() {
+  public boolean takeAlternateBuffer() throws IOException {
     return context.takeAlternateBuffer();
   }
 
-  public boolean releaseAlternateBuffer() {
+  public boolean releaseAlternateBuffer() throws IOException {
     return context.releaseAlternateBuffer();
   }
 

@@ -121,6 +121,14 @@ public class TestTermIO implements TermIO {
     return properties.get(name);
   }
 
+  public boolean takeAlternateBuffer() {
+    return false;
+  }
+
+  public boolean releaseAlternateBuffer() {
+    return false;
+  }
+
   public void setWidth(int width) {
     if (width < 1) {
       throw new IllegalArgumentException("No negative width accepted");

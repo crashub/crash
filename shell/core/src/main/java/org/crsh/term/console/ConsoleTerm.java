@@ -84,6 +84,14 @@ public class ConsoleTerm implements Term {
     buffer.setEchoing(echo);
   }
 
+  public boolean takeAlternateBuffer() throws IOException {
+    return io.takeAlternateBuffer();
+  }
+
+  public boolean releaseAlternateBuffer() throws IOException {
+    return io.releaseAlternateBuffer();
+  }
+
   public TermEvent read() throws IOException {
 
     //

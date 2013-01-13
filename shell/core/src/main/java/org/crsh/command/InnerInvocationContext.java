@@ -59,11 +59,11 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
     return outter.getHeight();
   }
 
-  public boolean takeAlternateBuffer() {
+  public boolean takeAlternateBuffer() throws IOException {
     return outter.takeAlternateBuffer();
   }
 
-  public boolean releaseAlternateBuffer() {
+  public boolean releaseAlternateBuffer() throws IOException {
     return outter.releaseAlternateBuffer();
   }
 

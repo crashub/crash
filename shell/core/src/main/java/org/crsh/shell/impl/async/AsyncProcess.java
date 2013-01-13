@@ -74,11 +74,11 @@ public class AsyncProcess implements ShellProcess {
       return caller.getProperty(name);
     }
 
-    public boolean takeAlternateBuffer() {
+    public boolean takeAlternateBuffer() throws IOException {
       return caller.takeAlternateBuffer();
     }
 
-    public boolean releaseAlternateBuffer() {
+    public boolean releaseAlternateBuffer() throws IOException {
       return caller.releaseAlternateBuffer();
     }
 

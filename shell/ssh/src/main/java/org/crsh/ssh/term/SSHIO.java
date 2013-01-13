@@ -78,12 +78,16 @@ public class SSHIO implements TermIO {
   /** . */
   final AtomicBoolean closed;
 
+  /** . */
+  private boolean useAlternate;
+
   public SSHIO(CRaSHCommand command) {
     this.command = command;
     this.writer = new OutputStreamWriter(command.out);
     this.reader = new InputStreamReader(command.in);
     this.status = STATUS_NORMAL;
     this.closed = new AtomicBoolean(false);
+    this.useAlternate = false;
   }
 
   public int read() throws IOException {
@@ -157,6 +161,22 @@ public class SSHIO implements TermIO {
 
   public String getProperty(String name) {
     return command.getContext().getProperty(name);
+  }
+
+  public boolean takeAlternateBuffer() throws IOException {
+    if (!useAlternate) {
+      useAlternate = true;
+      writer.write("\033[?47h");
+    }
+    return true;
+  }
+
+  public boolean releaseAlternateBuffer() throws IOException {
+    if (useAlternate) {
+      useAlternate = false;
+      writer.write("\033[?47l"); // Switches back to the normal screen
+    }
+    return true;
   }
 
   public CodeType decode(int code) {
