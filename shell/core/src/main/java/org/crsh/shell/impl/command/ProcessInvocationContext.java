@@ -26,10 +26,11 @@ import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
 import org.crsh.text.ChunkBuffer;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 
-class ProcessInvocationContext implements ProducerContext<Object> {
+class ProcessInvocationContext implements ProducerContext<Object>, Closeable {
 
   /** . */
   private final CRaSHSession session;
@@ -39,6 +40,9 @@ class ProcessInvocationContext implements ProducerContext<Object> {
 
   /** . */
   private final ChunkAdapter adapter;
+
+  /** . */
+  private boolean useAlternateBuffer;
 
   ProcessInvocationContext(CRaSHSession session, final ShellProcessContext processContext) {
 
@@ -70,14 +74,15 @@ class ProcessInvocationContext implements ProducerContext<Object> {
     this.session = session;
     this.processContext = processContext;
     this.adapter = adapter;
+    this.useAlternateBuffer = false;
   }
 
   public boolean takeAlternateBuffer() throws IOException {
-    return processContext.takeAlternateBuffer();
+    return useAlternateBuffer = processContext.takeAlternateBuffer();
   }
 
   public boolean releaseAlternateBuffer() throws IOException {
-    return processContext.releaseAlternateBuffer();
+    return useAlternateBuffer = processContext.releaseAlternateBuffer();
   }
 
   public String getProperty(String propertyName) {
@@ -114,5 +119,11 @@ class ProcessInvocationContext implements ProducerContext<Object> {
 
   public Map<String, Object> getAttributes() {
     return session.crash.getContext().getAttributes();
+  }
+
+  public void close() throws IOException {
+    if (useAlternateBuffer) {
+      releaseAlternateBuffer();
+    }
   }
 }

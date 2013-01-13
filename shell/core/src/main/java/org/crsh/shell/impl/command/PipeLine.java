@@ -41,7 +41,7 @@ class PipeLine implements CommandInvoker {
     this.pipes = pipes;
   }
 
-  public void invoke(ProducerContext<?> context) throws ScriptException, IOException {
+  void invoke(ProcessInvocationContext context) throws ScriptException, IOException {
     open(context);
     flush();
     close();

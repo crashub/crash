@@ -27,6 +27,7 @@ import org.crsh.io.Filter;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
+import org.crsh.util.Safe;
 
 import java.util.LinkedList;
 import java.util.regex.Pattern;
@@ -92,7 +93,6 @@ public class PipeLineFactory {
 
     //
     return new PipeLine(session, pipes.toArray(new Filter[pipes.size()]));
-
   }
 
   PipeLineFactory getLast() {
@@ -118,14 +118,16 @@ public class PipeLineFactory {
         }
 
         //
+        ProcessInvocationContext invocationContext = new ProcessInvocationContext(session, context);
         try {
-          proxy.invoke(new ProcessInvocationContext(session, context));
+          proxy.invoke(invocationContext);
         }
         catch (ScriptException e) {
-          // Should we handle InterruptedException here ?
           return build(e);
         } catch (Throwable t) {
           return build(t);
+        } finally {
+          Safe.close(invocationContext);
         }
         return ShellResponse.ok();
       }
