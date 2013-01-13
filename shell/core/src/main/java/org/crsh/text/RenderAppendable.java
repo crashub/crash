@@ -45,6 +45,10 @@ public class RenderAppendable implements Appendable, ScreenContext<Chunk> {
     }
   }
 
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
+  }
+
   public int getWidth() {
     return context.getWidth();
   }

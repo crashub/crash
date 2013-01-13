@@ -108,6 +108,10 @@ class JLineProcessContext implements ShellProcessContext {
     }
   }
 
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
+  }
+
   public void provide(Chunk element) throws IOException {
     if (element instanceof Text) {
       Text textChunk = (Text)element;

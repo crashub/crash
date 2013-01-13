@@ -114,6 +114,10 @@ class ProcessContext implements ShellProcessContext, Runnable {
     }
   }
 
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
+  }
+
   public void provide(Chunk element) throws IOException {
     processor.term.provide(element);
   }

@@ -27,7 +27,7 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.Completion;
-import org.crsh.io.ProducerContext;
+import org.crsh.io.InteractionContext;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.util.Strings;
@@ -194,7 +194,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     this.session = session;
   }
 
-  public final void open(ProducerContext<Object> context) {
+  public final void open(InteractionContext<Object> context) {
 
     // Set up current binding
     Binding binding = new Binding(session.getSession());

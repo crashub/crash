@@ -47,6 +47,10 @@ public class ChunkAdapter implements ScreenContext<Object> {
     return out.getHeight();
   }
 
+  public Class<Object> getConsumedType() {
+    return Object.class;
+  }
+
   public void provide(Object element) throws IOException {
     Renderable current = Renderable.getRenderable(element.getClass());
     if (current == null) {

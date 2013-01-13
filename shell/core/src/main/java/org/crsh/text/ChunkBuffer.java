@@ -19,14 +19,14 @@
 
 package org.crsh.text;
 
-import org.crsh.io.Pipe;
+import org.crsh.io.Consumer;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class ChunkBuffer implements Iterable<Chunk>, Serializable, Pipe<Chunk> {
+public class ChunkBuffer implements Iterable<Chunk>, Serializable, Consumer<Chunk> {
 
   /** . */
   private final LinkedList<Chunk> chunks;
@@ -38,7 +38,7 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Pipe<Chunk> {
   private Style next;
 
   /** Where we flush. */
-  private final Pipe<Chunk> out;
+  private final Consumer<Chunk> out;
 
   public ChunkBuffer() {
     this.chunks = new LinkedList<Chunk>();
@@ -47,7 +47,7 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Pipe<Chunk> {
     this.out = null;
   }
 
-  public ChunkBuffer(Pipe<Chunk> out) {
+  public ChunkBuffer(Consumer<Chunk> out) {
     this.chunks = new LinkedList<Chunk>();
     this.current = Style.style();
     this.next = Style.style();
@@ -130,6 +130,10 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Pipe<Chunk> {
       chunks.addLast(text);
       return text;
     }
+  }
+
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
   }
 
   public void provide(Chunk element) throws IOException {
@@ -228,7 +232,7 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Pipe<Chunk> {
     return sb.toString();
   }
 
-  public void writeTo(Pipe<Chunk> writer) throws IOException {
+  public void writeTo(Consumer<Chunk> writer) throws IOException {
     for (Chunk chunk : chunks) {
       writer.provide(chunk);
     }

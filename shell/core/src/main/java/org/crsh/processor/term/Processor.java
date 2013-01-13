@@ -20,7 +20,7 @@
 package org.crsh.processor.term;
 
 import org.crsh.cmdline.spi.Completion;
-import org.crsh.io.Pipe;
+import org.crsh.io.Consumer;
 import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.shell.Shell;
@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class Processor implements Runnable, Pipe<Chunk> {
+public final class Processor implements Runnable, Consumer<Chunk> {
 
   /** . */
   static final Runnable NOOP = new Runnable() {

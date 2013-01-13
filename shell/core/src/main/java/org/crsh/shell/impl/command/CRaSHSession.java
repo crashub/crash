@@ -31,12 +31,15 @@ import org.crsh.command.BaseCommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.GroovyScriptCommand;
+import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.shell.ErrorType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.util.Safe;
 import org.crsh.util.Utils;
 
 import java.io.Closeable;
@@ -175,10 +178,71 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     } else {
       // Create pipeline from request
       PipeLineParser parser = new PipeLineParser(request);
-      PipeLineFactory pipeline = parser.parse();
-      if (pipeline != null) {
-        // Create commands first
-        return pipeline.create(this, request);
+      final PipeLineFactory factory = parser.parse();
+      if (factory != null) {
+        try {
+          final PipeLine pipeLine = factory.create(this);
+          return new CRaSHProcess(this, request) {
+
+            @Override
+            ShellResponse doInvoke(final ShellProcessContext context) throws InterruptedException {
+              ProcessInvocationContext invocationContext = new ProcessInvocationContext(CRaSHSession.this, context);
+              try {
+                pipeLine.open(invocationContext);
+                pipeLine.flush();
+                return ShellResponse.ok();
+              }
+              catch (ScriptException e) {
+                return build(e);
+              } catch (Throwable t) {
+                return build(t);
+              } finally {
+                Safe.close(pipeLine);
+                Safe.close(invocationContext);
+              }
+            }
+
+            private ShellResponse.Error build(Throwable throwable) {
+              ErrorType errorType;
+              if (throwable instanceof ScriptException) {
+                errorType = ErrorType.EVALUATION;
+                Throwable cause = throwable.getCause();
+                if (cause != null) {
+                  throwable = cause;
+                }
+              } else {
+                errorType = ErrorType.INTERNAL;
+              }
+              String result;
+              String msg = throwable.getMessage();
+              if (throwable instanceof ScriptException) {
+                if (msg == null) {
+                  result = request + ": failed";
+                } else {
+                  result = request + ": " + msg;
+                }
+                return ShellResponse.error(errorType, result, throwable);
+              } else {
+                if (msg == null) {
+                  msg = throwable.getClass().getSimpleName();
+                }
+                if (throwable instanceof RuntimeException) {
+                  result = request + ": exception: " + msg;
+                } else if (throwable instanceof Exception) {
+                  result = request + ": exception: " + msg;
+                } else if (throwable instanceof java.lang.Error) {
+                  result = request + ": error: " + msg;
+                } else {
+                  result = request + ": unexpected throwable: " + msg;
+                }
+                return ShellResponse.error(errorType, result, throwable);
+              }
+            }
+          };
+        }
+        catch (NoSuchCommandException e) {
+          response = ShellResponse.unknownCommand(e.getCommandName());
+        }
       } else {
         response = ShellResponse.noCommand();
       }

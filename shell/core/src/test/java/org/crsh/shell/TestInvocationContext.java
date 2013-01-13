@@ -19,12 +19,12 @@
 
 package org.crsh.shell;
 
-import org.crsh.io.Pipe;
+import org.crsh.io.InteractionContext;
+import org.crsh.io.Consumer;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.BaseCommandContext;
-import org.crsh.io.ProducerContext;
 import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.ChunkBuffer;
@@ -32,7 +32,7 @@ import org.crsh.text.ChunkBuffer;
 import java.io.IOException;
 import java.util.*;
 
-public class TestInvocationContext<C> extends BaseCommandContext implements ProducerContext<Object> {
+public class TestInvocationContext<C> extends BaseCommandContext implements InteractionContext<Object> {
 
   /** . */
   protected List<Object> producedItems;
@@ -44,7 +44,10 @@ public class TestInvocationContext<C> extends BaseCommandContext implements Prod
   protected RenderPrintWriter writer;
 
   /** . */
-  private final Pipe<Object> producer = new Pipe<Object>() {
+  private final Consumer<Object> producer = new Consumer<Object>() {
+    public Class<Object> getConsumedType() {
+      return Object.class;
+    }
     public void provide(Object element) throws IOException {
       if (producedItems.isEmpty()) {
         producedItems = new LinkedList<Object>();

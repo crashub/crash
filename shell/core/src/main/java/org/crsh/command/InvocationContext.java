@@ -19,12 +19,12 @@
 
 package org.crsh.command;
 
-import org.crsh.io.ProducerContext;
+import org.crsh.io.InteractionContext;
 import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;
 
-public interface InvocationContext<P> extends CommandContext, ProducerContext<P> {
+public interface InvocationContext<P> extends CommandContext, InteractionContext<P> {
 
   /**
    * Returns the writer for the output.

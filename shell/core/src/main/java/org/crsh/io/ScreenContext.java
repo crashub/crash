@@ -24,7 +24,7 @@ package org.crsh.io;
  *
  * @param <E> the element generic type
  */
-public interface ScreenContext<E> extends Pipe<E> {
+public interface ScreenContext<E> extends Consumer<E> {
 
   /**
    * Returns the screen width in chars. When the value is not positive it means

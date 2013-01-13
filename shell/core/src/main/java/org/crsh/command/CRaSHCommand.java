@@ -40,7 +40,7 @@ import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.matcher.Resolver;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.Completion;
-import org.crsh.io.ProducerContext;
+import org.crsh.io.InteractionContext;
 import org.crsh.util.TypeResolver;
 
 import java.io.IOException;
@@ -266,7 +266,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             return _consumedType;
           }
 
-          public void open(ProducerContext<Object> context) {
+          public void open(InteractionContext<Object> context) {
             this.context = new InvocationContextImpl(context, session);
             try {
               match.printUsage(this.context.getWriter());
@@ -309,7 +309,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               return _consumedType;
             }
 
-            public void open(final ProducerContext<Object> context) {
+            public void open(final InteractionContext<Object> context) {
 
               //
               pushContext(new InvocationContextImpl<Object>(context, session));
@@ -378,7 +378,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               this.piped = piped;
             }
 
-            public void open(final ProducerContext<Object> context) {
+            public void open(final InteractionContext<Object> context) {
 
               //
               final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(context, session);
@@ -455,7 +455,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         /** . */
         InvocationContext context;
 
-        public void open(ProducerContext<Object> producerContext) {
+        public void open(InteractionContext<Object> producerContext) {
           this.context = new InvocationContextImpl(producerContext, session);
           try {
             if (doHelp) {

@@ -137,6 +137,10 @@ class ClientProcessContext implements ShellProcessContext {
     buffer.add(element);
   }
 
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
+  }
+
   public synchronized void flush() {
     if (buffer.size() > 0) {
       try {

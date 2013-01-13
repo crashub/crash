@@ -35,6 +35,7 @@ import javax.naming.NamingException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Commands {
 
@@ -272,6 +273,95 @@ public class Commands {
     }
     @Command
     public void main(@Argument String arg) {
+    }
+  }
+
+  public static class FailDuringOpen1 extends CRaSHCommand {
+
+    public static void reset() {
+      openCount.set(0);
+      provideCound.set(0);
+      flushCount.set(0);
+      closeCount.set(0);
+    }
+
+    /** . */
+    static final AtomicInteger openCount = new AtomicInteger();
+
+    /** . */
+    static final AtomicInteger provideCound = new AtomicInteger();
+
+    /** . */
+    static final AtomicInteger flushCount = new AtomicInteger();
+
+    /** . */
+    static final AtomicInteger closeCount = new AtomicInteger();
+
+    @Command
+    public org.crsh.command.PipeCommand<String, Object> main() {
+      return new PipeCommand<String, Object>() {
+        @Override
+        public void open() throws ScriptException {
+          openCount.incrementAndGet();
+          throw new ScriptException();
+        }
+        @Override
+        public void provide(String element) throws ScriptException, IOException {
+          provideCound.incrementAndGet();
+        }
+        @Override
+        public void flush() throws ScriptException, IOException {
+          flushCount.incrementAndGet();
+        }
+        @Override
+        public void close() throws ScriptException {
+          closeCount.incrementAndGet();
+        }
+      };
+    }
+  }
+
+  public static class FailDuringOpen2 extends CRaSHCommand {
+
+    public static void reset() {
+      openCount.set(0);
+      provideCound.set(0);
+      flushCount.set(0);
+      closeCount.set(0);
+    }
+
+    /** . */
+    static final AtomicInteger openCount = new AtomicInteger();
+
+    /** . */
+    static final AtomicInteger provideCound = new AtomicInteger();
+
+    /** . */
+    static final AtomicInteger flushCount = new AtomicInteger();
+
+    /** . */
+    static final AtomicInteger closeCount = new AtomicInteger();
+
+    @Command
+    public org.crsh.command.PipeCommand<String, Object> main() {
+      return new PipeCommand<String, Object>() {
+        @Override
+        public void open() throws ScriptException {
+          openCount.incrementAndGet();
+        }
+        @Override
+        public void provide(String element) throws ScriptException, IOException {
+          provideCound.incrementAndGet();
+        }
+        @Override
+        public void flush() throws ScriptException, IOException {
+          flushCount.incrementAndGet();
+        }
+        @Override
+        public void close() throws ScriptException {
+          closeCount.incrementAndGet();
+        }
+      };
     }
   }
 }

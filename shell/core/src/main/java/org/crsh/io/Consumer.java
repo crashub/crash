@@ -19,18 +19,27 @@
 
 package org.crsh.io;
 
+import java.io.Flushable;
+import java.io.IOException;
+
 /**
- * The consumer is a pipe that defines a type of consumed object.
+ * Defines the interface for a consumer.
  *
- * @param <C> the consumed generic type
+ * @param <E> the element generic type
  */
-public interface Consumer<C> extends Pipe<C> {
+public interface Consumer<E> extends Flushable {
 
   /**
-   * Returns the class of the consumed type.
+   * Provide an element.
+   *
+   * @param element the provided element
+   */
+  void provide(E element) throws IOException;
+
+  /**
+   * Returns the class of the element generic type.
    *
    * @return the consumed type
    */
-  Class<C> getConsumedType();
-
+  Class<E> getConsumedType();
 }

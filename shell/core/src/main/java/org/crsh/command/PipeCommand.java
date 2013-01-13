@@ -19,8 +19,6 @@
 
 package org.crsh.command;
 
-import org.crsh.io.Pipe;
-
 import java.io.IOException;
 
 /**
@@ -59,7 +57,7 @@ public abstract class PipeCommand<C, P> {
   }
 
   /**
-   * Extends the throw clause of the {@link Pipe#provide(Object)} method.
+   * Extends the throw clause of the {@link org.crsh.io.Consumer#provide(Object)} method.
    *
    * @param element the provided element
    * @throws ScriptException any script exception

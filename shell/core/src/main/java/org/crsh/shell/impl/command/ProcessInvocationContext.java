@@ -19,8 +19,8 @@
 
 package org.crsh.shell.impl.command;
 
+import org.crsh.io.InteractionContext;
 import org.crsh.io.ScreenContext;
-import org.crsh.io.ProducerContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
@@ -30,7 +30,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 
-class ProcessInvocationContext implements ProducerContext<Object>, Closeable {
+class ProcessInvocationContext implements InteractionContext<Chunk>, Closeable {
 
   /** . */
   private final CRaSHSession session;
@@ -59,6 +59,10 @@ class ProcessInvocationContext implements ProducerContext<Object>, Closeable {
 
       public int getHeight() {
         return processContext.getHeight();
+      }
+
+      public Class<Chunk> getConsumedType() {
+        return Chunk.class;
       }
 
       public void provide(Chunk element) throws IOException {
@@ -101,11 +105,11 @@ class ProcessInvocationContext implements ProducerContext<Object>, Closeable {
     return adapter.getHeight();
   }
 
-  public Class<Object> getConsumedType() {
-    return Object.class;
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
   }
 
-  public void provide(Object element) throws IOException {
+  public void provide(Chunk element) throws IOException {
     adapter.provide(element);
   }
 

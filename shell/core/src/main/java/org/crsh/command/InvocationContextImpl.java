@@ -19,8 +19,8 @@
 
 package org.crsh.command;
 
+import org.crsh.io.InteractionContext;
 import org.crsh.io.ScreenContext;
-import org.crsh.io.ProducerContext;
 import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.shell.impl.command.PipeLineFactory;
 import org.crsh.shell.impl.command.PipeLineParser;
@@ -33,7 +33,7 @@ import java.util.Map;
 final class InvocationContextImpl<P> implements InvocationContext<P> {
 
   /** . */
-  private final ProducerContext<P> producerContext;
+  private final InteractionContext<P> producerContext;
 
   /** . */
   private final CommandContext sessionContext;
@@ -41,7 +41,7 @@ final class InvocationContextImpl<P> implements InvocationContext<P> {
   /** . */
   private RenderPrintWriter writer;
 
-  InvocationContextImpl(ProducerContext<P> producerContext, CommandContext sessionContext) {
+  InvocationContextImpl(InteractionContext<P> producerContext, CommandContext sessionContext) {
     this.producerContext = producerContext;
     this.sessionContext = sessionContext;
   }
@@ -54,6 +54,9 @@ final class InvocationContextImpl<P> implements InvocationContext<P> {
         }
         public int getHeight() {
           return producerContext.getHeight();
+        }
+        public Class<Chunk> getConsumedType() {
+          return Chunk.class;
         }
         public void provide(Chunk element) throws IOException {
           Class<P> consumedType = producerContext.getConsumedType();

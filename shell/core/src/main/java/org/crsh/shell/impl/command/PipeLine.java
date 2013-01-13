@@ -22,40 +22,34 @@ package org.crsh.shell.impl.command;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
-import org.crsh.io.Filter;
-import org.crsh.io.ProducerContext;
+import org.crsh.io.InteractionContext;
 import org.crsh.text.Chunk;
+import org.crsh.util.Safe;
 
 import java.io.IOException;
 
-class PipeLine implements CommandInvoker {
+public class PipeLine implements CommandInvoker<Void, Chunk> {
 
   /** . */
-  private final CRaSHSession session;
+  private final CommandInvoker[] invokers;
 
   /** . */
-  private final Filter[] pipes;
+  private Pipe.Invoker current;
 
-  PipeLine(CRaSHSession session, Filter[] pipes) {
-    this.session = session;
-    this.pipes = pipes;
-  }
-
-  void invoke(ProcessInvocationContext context) throws ScriptException, IOException {
-    open(context);
-    flush();
-    close();
+  PipeLine(CommandInvoker[] invokers) {
+    this.invokers = invokers;
+    this.current = null;
   }
 
   public void setSession(CommandContext session) {
     // Should we use it ?
   }
 
-  public Class getConsumedType() {
+  public Class<Void> getConsumedType() {
     throw new UnsupportedOperationException();
   }
 
-  public Class getProducedType() {
+  public Class<Chunk> getProducedType() {
     throw new UnsupportedOperationException();
   }
 
@@ -63,62 +57,64 @@ class PipeLine implements CommandInvoker {
     throw new UnsupportedOperationException("This should not be called");
   }
 
-  public void open(ProducerContext context) {
-    ProducerContext<?> last = context;
+  public void open(InteractionContext<Chunk> context) {
+    open(0, context);
+  }
 
-    for (int i = pipes.length - 1;i >= 0;i--) {
+  private InteractionContext open(final int index, final InteractionContext last) {
+    if (index < invokers.length) {
 
       //
-      ProducerContext<?> next;
+      final CommandInvoker invoker = invokers[index];
+      InteractionContext next = open(index + 1, last);
 
       //
-      Class produced = pipes[i].getProducedType();
-      Class<?> consumed = last.getConsumedType();
+      final Class produced = invoker.getProducedType();
+      final Class<?> consumed = next.getConsumedType();
 
-      if (consumed.isAssignableFrom(produced)) {
-        next = last;
-      } else {
-
-        // Try to adapt
+      if (!consumed.isAssignableFrom(produced)) {
         if (produced.equals(Void.class)) {
-          throw new UnsupportedOperationException(produced.getSimpleName() + " -> " + consumed.getSimpleName());
+          throw new UnsupportedOperationException("Implement me " + produced.getSimpleName() + " -> " + consumed.getSimpleName());
         } else if (consumed.equals(Void.class)) {
-          SinkPipeFilter filter = new SinkPipeFilter(consumed);
-          filter.open(last);
+          Pipe.Sink filter = new Pipe.Sink(consumed);
+          filter.open(next);
           next = filter;
         } else if (consumed.equals(Chunk.class)) {
-          ToChunkPipeFilter filter = new ToChunkPipeFilter();
-          filter.open((ProducerContext<Chunk>)last);
+          Pipe.Chunkizer filter = new Pipe.Chunkizer();
+          filter.open((InteractionContext<Chunk>)next);
           next = filter;
         } else {
-          SinkPipeFilter filter = new SinkPipeFilter(consumed);
-          filter.open(last);
+          Pipe.Sink filter = new Pipe.Sink(consumed);
+          filter.open(next);
           next = filter;
         }
       }
 
       //
-      if (i > 0) {
-        pipes[i].setPiped(true);
-      }
+      Pipe.Invoker filterContext = new Pipe.Invoker(invoker);
+      filterContext.setPiped(index > 0);
+      filterContext.open(next);
+
+      // Save current filter in field
+      // so if anything wrong happens it will be closed
+      current = filterContext;
 
       //
-      pipes[i].open(next);
-
-      //
-      last = pipes[i];
+      return filterContext;
+    } else {
+      return last;
     }
   }
 
-  public void close() {
-    pipes[0].close();
-  }
-
-  public void provide(Object element) throws IOException {
-    pipes[0].provide(element);
+  public void provide(Void element) throws IOException {
+    throw new UnsupportedOperationException("This is not yet implemented");
   }
 
   public void flush() throws IOException {
-    pipes[0].flush();
+    current.flush();
+  }
+
+  public void close() {
+    current.close();
   }
 }

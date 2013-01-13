@@ -66,6 +66,10 @@ public class RenderWriter extends Writer implements ScreenContext<Chunk> {
     return out.getHeight();
   }
 
+  public Class<Chunk> getConsumedType() {
+    return Chunk.class;
+  }
+
   public void provide(Chunk element) throws IOException {
     if (element instanceof Text) {
       Text text = (Text)element;

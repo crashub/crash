@@ -86,6 +86,10 @@ public class AsyncProcess implements ShellProcess {
       return caller.readLine(msg, echo);
     }
 
+    public Class<Chunk> getConsumedType() {
+      return Chunk.class;
+    }
+
     public void provide(Chunk element) throws IOException {
       caller.provide(element);
     }

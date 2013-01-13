@@ -42,7 +42,7 @@ public interface Producer<P> extends Closeable {
    *
    * @param context the context
    */
-  void open(ProducerContext<P> context);
+  void open(InteractionContext<P> context);
 
   /**
    * Close the producer.

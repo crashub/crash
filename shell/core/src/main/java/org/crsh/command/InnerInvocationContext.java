@@ -78,6 +78,9 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
   public RenderPrintWriter getWriter() {
     if (writer == null) {
       writer = new RenderPrintWriter(new ScreenContext<Chunk>() {
+        public Class<Chunk> getConsumedType() {
+          return Chunk.class;
+        }
         public int getWidth() {
           return outter.getWidth();
         }

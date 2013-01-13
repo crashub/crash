@@ -19,5 +19,10 @@
 
 package org.crsh.io;
 
-public interface Filter<C, P> extends ProducerConsumer<C, P>, ProducerContext<C> {
+/**
+ * A filter is the combination of a producer and a consumer.
+ * @param <C>
+ * @param <P>
+ */
+public interface Filter<C, P> extends Consumer<C>, Producer<P>  {
 }

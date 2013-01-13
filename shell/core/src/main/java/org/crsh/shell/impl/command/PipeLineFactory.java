@@ -23,7 +23,6 @@ import org.crsh.command.CommandInvoker;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
-import org.crsh.io.Filter;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
@@ -74,7 +73,7 @@ public class PipeLineFactory {
   public PipeLine create(CRaSHSession session) throws NoSuchCommandException {
 
     //
-    LinkedList<InvokerPipeFilter> pipes = new LinkedList<InvokerPipeFilter>();
+    LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();
     for (PipeLineFactory current = this;current != null;current = current.next) {
       CommandInvoker commandInvoker = null;
       if (current.name != null) {
@@ -88,11 +87,11 @@ public class PipeLineFactory {
       } else {
         commandInvoker.setSession(session);
       }
-      pipes.add(new InvokerPipeFilter(commandInvoker));
+      pipes.add(commandInvoker);
     }
 
     //
-    return new PipeLine(session, pipes.toArray(new Filter[pipes.size()]));
+    return new PipeLine(pipes.toArray(new CommandInvoker[pipes.size()]));
   }
 
   PipeLineFactory getLast() {
@@ -100,74 +99,5 @@ public class PipeLineFactory {
       return next.getLast();
     }
     return this;
-  }
-
-  //
-  CRaSHProcess create(final CRaSHSession session, String request) {
-    return new CRaSHProcess(session, request) {
-      @Override
-      ShellResponse doInvoke(final ShellProcessContext context) throws InterruptedException {
-
-        //
-        PipeLine proxy;
-        try {
-          proxy = create(crash);
-        }
-        catch (NoSuchCommandException e) {
-          return ShellResponse.unknownCommand(e.getCommandName());
-        }
-
-        //
-        ProcessInvocationContext invocationContext = new ProcessInvocationContext(session, context);
-        try {
-          proxy.invoke(invocationContext);
-        }
-        catch (ScriptException e) {
-          return build(e);
-        } catch (Throwable t) {
-          return build(t);
-        } finally {
-          Safe.close(invocationContext);
-        }
-        return ShellResponse.ok();
-      }
-    };
-  }
-
-  private ShellResponse.Error build(Throwable throwable) {
-    ErrorType errorType;
-    if (throwable instanceof ScriptException) {
-      errorType = ErrorType.EVALUATION;
-      Throwable cause = throwable.getCause();
-      if (cause != null) {
-        throwable = cause;
-      }
-    } else {
-      errorType = ErrorType.INTERNAL;
-    }
-    String result;
-    String msg = throwable.getMessage();
-    if (throwable instanceof ScriptException) {
-      if (msg == null) {
-        result = name + ": failed";
-      } else {
-        result = name + ": " + msg;
-      }
-      return ShellResponse.error(errorType, result, throwable);
-    } else {
-      if (msg == null) {
-        msg = throwable.getClass().getSimpleName();
-      }
-      if (throwable instanceof RuntimeException) {
-        result = name + ": exception: " + msg;
-      } else if (throwable instanceof Exception) {
-        result = name + ": exception: " + msg;
-      } else if (throwable instanceof java.lang.Error) {
-        result = name + ": error: " + msg;
-      } else {
-        result = name + ": unexpected throwable: " + msg;
-      }
-      return ShellResponse.error(errorType, result, throwable);
-    }
   }
 }

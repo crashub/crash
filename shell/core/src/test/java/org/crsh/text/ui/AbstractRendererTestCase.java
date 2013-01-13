@@ -45,6 +45,9 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
         public int getHeight() {
           return 40;
         }
+        public Class<Chunk> getConsumedType() {
+          return Chunk.class;
+        }
         public void provide(Chunk element) throws IOException {
           buffer.provide(element);
         }
