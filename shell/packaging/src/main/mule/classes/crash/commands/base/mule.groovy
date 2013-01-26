@@ -244,7 +244,6 @@ class mule extends CRaSHCommand implements Completer {
   }
 
   private MBeanServer getMBeanServer() {
-//      MBeanServerFactory.findMBeanServer(null)[0]
       for (MBeanServer mbeanServer : MBeanServerFactory.findMBeanServer(null)) {
           if ((mbeanServer.isRegistered(CE_WRAPPER_MANAGER_ON)) || (mbeanServer.isRegistered(EE_WRAPPER_MANAGER_ON))) {
               return mbeanServer
