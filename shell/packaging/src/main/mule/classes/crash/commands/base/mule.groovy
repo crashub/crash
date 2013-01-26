@@ -15,7 +15,8 @@ import javax.management.ObjectName
 
 @Usage("mule commands")
 class mule extends CRaSHCommand implements Completer {
-  static final ObjectName WRAPPER_MANAGER_ON = new ObjectName('Mule:name=WrapperManager')
+  static final ObjectName CE_WRAPPER_MANAGER_ON = new ObjectName('Mule:name=WrapperManager')
+  static final ObjectName EE_WRAPPER_MANAGER_ON = new ObjectName('org.tanukisoftware.wrapper:type=WrapperManager')
   MBeanServer mbeanServer = getMBeanServer()
 
   @Usage("print information about the broker")
@@ -188,7 +189,11 @@ class mule extends CRaSHCommand implements Completer {
   }
 
   private GroovyMBean getMuleWrapperManagerMBean() {
-      new GroovyMBean(mbeanServer, WRAPPER_MANAGER_ON)
+      if (mbeanServer.isRegistered(CE_WRAPPER_MANAGER_ON)) {
+          new GroovyMBean(mbeanServer, CE_WRAPPER_MANAGER_ON)
+      } else {
+          new GroovyMBean(mbeanServer, EE_WRAPPER_MANAGER_ON)
+      }
   }
 
   private void listMBeans(String applicationName, String type, Closure extractor) {
@@ -239,12 +244,12 @@ class mule extends CRaSHCommand implements Completer {
   }
 
   private MBeanServer getMBeanServer() {
-      MBeanServerFactory.findMBeanServer(null)[0]
-//      for (MBeanServer mbeanServer : MBeanServerFactory.findMBeanServer(null)) {
-//          if (mbeanServer.isRegistered(WRAPPER_MANAGER_ON)) {
-//              return mbeanServer
-//          }
-//      }
-//      throw new ScriptException("No Mule wrapper manager located");
+//      MBeanServerFactory.findMBeanServer(null)[0]
+      for (MBeanServer mbeanServer : MBeanServerFactory.findMBeanServer(null)) {
+          if ((mbeanServer.isRegistered(CE_WRAPPER_MANAGER_ON)) || (mbeanServer.isRegistered(EE_WRAPPER_MANAGER_ON))) {
+              return mbeanServer
+          }
+      }
+      throw new ScriptException("No Mule wrapper manager located");
   }
 }
