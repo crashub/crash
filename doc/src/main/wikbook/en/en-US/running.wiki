@@ -127,6 +127,85 @@ CRaSH can be easily embedded and configured in a Spring configuration, here is a
 
 The configuration properties are set as properties with the //config// property of the ##SpringBootstrap## bean.
 
+Any Spring managed beans that extend ##org.crsh.plugin.CRaSHPlugin## will be automatically 
+registered as plugins in addition to those declared in ##META-INF/services/org.crsh.plugin.CRaSHPlugin##.
+
+For example, the following implements a CRaSH authentication plugin that uses a JDBC DataSource 
+managed by Spring:
+
+{{example title="Spring managed authentication plugin"}}
+{{java}}
+package example;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.sql.DataSource;
+
+import org.crsh.auth.AuthenticationPlugin;
+import org.crsh.plugin.CRaSHPlugin;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component("dbCrshAuth")
+public class DbCrshAuthPlugin extends CRaSHPlugin<AuthenticationPlugin>
+        implements AuthenticationPlugin {
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Override
+    public AuthenticationPlugin getImplementation() {
+        return this;
+    }
+
+    @Override
+    public boolean authenticate(String username, String password)
+            throws Exception {
+        Connection conn = dataSource.getConnection();
+        
+        PreparedStatement statement = conn
+                .prepareStatement("SELECT COUNT(*) FROM users WHERE username = ? AND password = ?");
+        statement.setString(1, username);
+        statement.setString(2, password);
+        
+        ResultSet rs = statement.executeQuery();
+        return rs.getInt(1) >= 1;
+    }
+
+    @Override
+    public String getName() {
+        return "dbCrshAuth";
+    }
+    
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+}
+{{/java}}
+{{/example}}
+
+The above code uses Spring annotation driven beans, but this works the same with beans configured 
+in XML:
+
+{{example title="Custom authentication bean in spring.xml"}}
+{{xml}}
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean class="example.DbCrshAuthPlugin">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+</beans>
+{{/xml}}
+{{/example}}
+
+
 == Embedding in Spring within a web application ==
 
 In case you are embedding CRaSH in a Spring application running with a servlet container, the bean
