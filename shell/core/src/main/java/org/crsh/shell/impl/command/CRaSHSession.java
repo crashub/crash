@@ -39,6 +39,7 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.text.Chunk;
 import org.crsh.util.Safe;
 import org.crsh.util.Utils;
 
@@ -181,7 +182,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
       final PipeLineFactory factory = parser.parse();
       if (factory != null) {
         try {
-          final PipeLine pipeLine = factory.create(this);
+          final CommandInvoker<Void, Chunk> pipeLine = factory.create(this);
           return new CRaSHProcess(this, request) {
 
             @Override

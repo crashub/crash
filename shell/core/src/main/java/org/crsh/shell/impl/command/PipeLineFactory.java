@@ -26,6 +26,7 @@ import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.ShellProcessContext;
+import org.crsh.text.Chunk;
 import org.crsh.util.Safe;
 
 import java.util.LinkedList;
@@ -70,7 +71,7 @@ public class PipeLineFactory {
     this.next = next;
   }
 
-  public PipeLine create(CRaSHSession session) throws NoSuchCommandException {
+  public CommandInvoker<Void, Chunk> create(CRaSHSession session) throws NoSuchCommandException {
 
     //
     LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();

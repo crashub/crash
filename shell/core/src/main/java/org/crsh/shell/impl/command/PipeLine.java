@@ -28,7 +28,7 @@ import org.crsh.util.Safe;
 
 import java.io.IOException;
 
-public class PipeLine implements CommandInvoker<Void, Chunk> {
+class PipeLine implements CommandInvoker<Void, Chunk> {
 
   /** . */
   private final CommandInvoker[] invokers;
