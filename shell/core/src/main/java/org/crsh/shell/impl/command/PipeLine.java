@@ -73,9 +73,8 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
       final Class<?> consumed = next.getConsumedType();
 
       if (!consumed.isAssignableFrom(produced)) {
-        if (produced.equals(Void.class)) {
-          throw new UnsupportedOperationException("Implement me " + produced.getSimpleName() + " -> " + consumed.getSimpleName());
-        } else if (consumed.equals(Void.class)) {
+        if (produced.equals(Void.class) || consumed.equals(Void.class)) {
+          // We need to check (i.e test) what happens for chunk (i.e the writer)
           Pipe.Sink filter = new Pipe.Sink(consumed);
           filter.open(next);
           next = filter;
