@@ -19,27 +19,13 @@
 
 package org.crsh.term;
 
-import org.crsh.io.Pipe;
+import org.crsh.io.ScreenContext;
 import org.crsh.text.Chunk;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-public interface Term extends Closeable, Pipe<Chunk> {
-
-  /**
-   * Returns the term width in chars. When the value is not positive it means the value could not be determined.
-   *
-   * @return the term width
-   */
-  int getWidth();
-
-  /**
-   * Returns the term height in chars. When the value is not positive it means the value could not be determined.
-   *
-   * @return the term height
-   */
-  int getHeight();
+public interface Term extends Closeable, ScreenContext<Chunk> {
 
   /**
    * Retrieves the value of a property specified by this Term

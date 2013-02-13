@@ -21,6 +21,7 @@ package org.crsh.util;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.Connection;
@@ -114,5 +115,17 @@ public class Safe {
 
   public static boolean notEquals(Object o1, Object o2) {
     return !equals(o1, o2);
+  }
+
+  public static boolean flush(Flushable flushable) {
+    if (flushable != null) {
+      try {
+        flushable.flush();
+        return true;
+      }
+      catch (IOException ignore) {
+      }
+    }
+    return false;
   }
 }
