@@ -30,7 +30,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 
-class ProcessInvocationContext implements InteractionContext<Chunk>, Closeable {
+class CRaSHProcessContext implements InteractionContext<Chunk>, Closeable {
 
   /** . */
   private final CRaSHSession session;
@@ -44,7 +44,7 @@ class ProcessInvocationContext implements InteractionContext<Chunk>, Closeable {
   /** . */
   private boolean useAlternateBuffer;
 
-  ProcessInvocationContext(CRaSHSession session, final ShellProcessContext processContext) {
+  CRaSHProcessContext(CRaSHSession session, final ShellProcessContext processContext) {
 
     // We use this chunk buffer to buffer stuff
     // but also because it optimises the chunks

@@ -187,7 +187,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
 
             @Override
             ShellResponse doInvoke(final ShellProcessContext context) throws InterruptedException {
-              ProcessInvocationContext invocationContext = new ProcessInvocationContext(CRaSHSession.this, context);
+              CRaSHProcessContext invocationContext = new CRaSHProcessContext(CRaSHSession.this, context);
               try {
                 pipeLine.open(invocationContext);
                 pipeLine.flush();
