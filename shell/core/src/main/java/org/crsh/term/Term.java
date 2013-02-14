@@ -19,7 +19,7 @@
 
 package org.crsh.term;
 
-import org.crsh.io.ScreenContext;
+import org.crsh.shell.ScreenContext;
 import org.crsh.text.Chunk;
 
 import java.io.Closeable;

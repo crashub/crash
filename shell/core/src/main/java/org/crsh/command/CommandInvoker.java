@@ -19,14 +19,15 @@
 package org.crsh.command;
 
 import org.crsh.io.Filter;
+import org.crsh.shell.InteractionContext;
 
 /**
- * A command invoker.
+ * A command invoker is a filter for an {@link InteractionContext} consumer.
  *
- * @param <C> the consumed generic type
- * @param <P> the produced generic type
+ * @param <C> the consumed element generic type
+ * @param <P> the produced element generic type
  */
-public interface CommandInvoker<C, P> extends Filter<C, P> {
+public interface CommandInvoker<C, P> extends Filter<C, P, InteractionContext<P>> {
 
   /**
    * Associate the command invoker with a session, the association should be done before

@@ -20,16 +20,16 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.ScriptException;
-import org.crsh.io.InteractionContext;
+import org.crsh.shell.InteractionContext;
 import org.crsh.io.Filter;
-import org.crsh.io.ScreenContext;
+import org.crsh.shell.ScreenContext;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
 
 import java.io.IOException;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-abstract class Pipe<C, P> implements Filter<C, P>, InteractionContext<C> {
+abstract class Pipe<C, P> implements Filter<C, P, InteractionContext<P>>, InteractionContext<C> {
 
   /** . */
   protected InteractionContext<P> context;
@@ -64,9 +64,9 @@ abstract class Pipe<C, P> implements Filter<C, P>, InteractionContext<C> {
   static class Invoker<C, P> extends Pipe<C, P> {
 
     /** . */
-    final Filter<C, P> command;
+    final Filter<C, P, InteractionContext<P>> command;
 
-    Invoker(Filter<C, P> command) {
+    Invoker(Filter<C, P, InteractionContext<P>> command) {
       this.command = command;
     }
 
@@ -82,9 +82,9 @@ abstract class Pipe<C, P> implements Filter<C, P>, InteractionContext<C> {
       return command.getConsumedType();
     }
 
-    public void open(InteractionContext<P> context) {
-      this.context = context;
-      this.command.open(context);
+    public void open(InteractionContext<P> consumer) {
+      this.context = consumer;
+      this.command.open(consumer);
     }
 
     public void provide(C element) throws IOException {
@@ -119,13 +119,13 @@ abstract class Pipe<C, P> implements Filter<C, P>, InteractionContext<C> {
       ((Pipe<Chunk, ?>)context).setPiped(piped);
     }
 
-    public void open(final InteractionContext<Chunk> context) {
+    public void open(final InteractionContext<Chunk> consumer) {
       ca = new ChunkAdapter(new ScreenContext<Chunk>() {
         public int getWidth() {
-          return context.getWidth();
+          return consumer.getWidth();
         }
         public int getHeight() {
-          return context.getHeight();
+          return consumer.getHeight();
         }
         public Class<Chunk> getConsumedType() {
           return Chunk.class;
@@ -138,7 +138,7 @@ abstract class Pipe<C, P> implements Filter<C, P>, InteractionContext<C> {
         }
       });
 
-      this.context = context;
+      this.context = consumer;
     }
 
     public void provide(Object element) throws ScriptException, IOException {
@@ -170,8 +170,8 @@ abstract class Pipe<C, P> implements Filter<C, P>, InteractionContext<C> {
     public void setPiped(boolean piped) {
     }
 
-    public void open(InteractionContext<P> context) {
-      this.context = context;
+    public void open(InteractionContext<P> consumer) {
+      this.context = consumer;
     }
 
     public void provide(Object element) throws IOException {

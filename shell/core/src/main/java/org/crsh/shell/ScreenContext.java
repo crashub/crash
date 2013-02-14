@@ -17,10 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.io;
+package org.crsh.shell;
+
+import org.crsh.io.Consumer;
 
 /**
- * The screen context extends the pipe and add information about the screen.
+ * The screen context extends the consumer and add information about the screen.
  *
  * @param <E> the element generic type
  */

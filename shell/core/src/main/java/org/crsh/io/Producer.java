@@ -21,14 +21,20 @@ package org.crsh.io;
 
 import java.io.Closeable;
 
-public interface Producer<P> extends Closeable {
+/**
+ * A producer that produces elements in a specific consumer.
+ *
+ * @param <E> the element generic type
+ * @param <C> the consumer generic type
+ */
+public interface Producer<E, C extends Consumer<E>> extends Closeable {
 
   /**
    * Returns the class of the produced type.
    *
    * @return the produced type
    */
-  Class<P> getProducedType();
+  Class<E> getProducedType();
 
   /**
    * Set the pipe status.
@@ -38,11 +44,11 @@ public interface Producer<P> extends Closeable {
   void setPiped(boolean piped);
 
   /**
-   * Open the producer with the specified context.
+   * Open the producer with the specified consumer.
    *
-   * @param context the context
+   * @param consumer the consumer
    */
-  void open(InteractionContext<P> context);
+  void open(C consumer);
 
   /**
    * Close the producer.

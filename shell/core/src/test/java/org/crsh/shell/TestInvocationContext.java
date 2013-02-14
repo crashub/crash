@@ -19,7 +19,6 @@
 
 package org.crsh.shell;
 
-import org.crsh.io.InteractionContext;
 import org.crsh.io.Consumer;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;

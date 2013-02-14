@@ -19,8 +19,8 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.io.InteractionContext;
-import org.crsh.io.ScreenContext;
+import org.crsh.shell.InteractionContext;
+import org.crsh.shell.ScreenContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;

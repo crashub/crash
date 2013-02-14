@@ -19,7 +19,7 @@
 
 package org.crsh.text;
 
-import org.crsh.io.ScreenContext;
+import org.crsh.shell.ScreenContext;
 
 import java.io.IOException;
 import java.util.LinkedList;

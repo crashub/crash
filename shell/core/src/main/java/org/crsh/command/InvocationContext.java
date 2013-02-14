@@ -19,7 +19,7 @@
 
 package org.crsh.command;
 
-import org.crsh.io.InteractionContext;
+import org.crsh.shell.InteractionContext;
 import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;

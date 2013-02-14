@@ -19,7 +19,7 @@
 
 package org.crsh.command;
 
-import org.crsh.io.InteractionContext;
+import org.crsh.shell.InteractionContext;
 import org.crsh.io.Consumer;
 
 import java.io.IOException;
@@ -61,11 +61,11 @@ class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
     delegate.setPiped(piped);
   }
 
-  public void open(InteractionContext<P> context) {
+  public void open(InteractionContext<P> consumer) {
     if (next != null && next instanceof PipeCommandProxy) {
       ((PipeCommandProxy)next).fire();
     }
-    delegate.open(context);
+    delegate.open(consumer);
   }
 
   public void provide(C element) throws ScriptException, IOException {

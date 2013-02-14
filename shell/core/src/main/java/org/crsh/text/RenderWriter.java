@@ -19,7 +19,7 @@
 
 package org.crsh.text;
 
-import org.crsh.io.ScreenContext;
+import org.crsh.shell.ScreenContext;
 
 import java.io.Closeable;
 import java.io.IOException;

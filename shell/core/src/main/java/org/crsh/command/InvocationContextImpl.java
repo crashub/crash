@@ -19,8 +19,8 @@
 
 package org.crsh.command;
 
-import org.crsh.io.InteractionContext;
-import org.crsh.io.ScreenContext;
+import org.crsh.shell.InteractionContext;
+import org.crsh.shell.ScreenContext;
 import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.shell.impl.command.PipeLineFactory;
 import org.crsh.shell.impl.command.PipeLineParser;

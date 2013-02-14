@@ -21,10 +21,8 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
-import org.crsh.command.ScriptException;
-import org.crsh.io.InteractionContext;
+import org.crsh.shell.InteractionContext;
 import org.crsh.text.Chunk;
-import org.crsh.util.Safe;
 
 import java.io.IOException;
 
@@ -57,8 +55,8 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
     throw new UnsupportedOperationException("This should not be called");
   }
 
-  public void open(InteractionContext<Chunk> context) {
-    open(0, context);
+  public void open(InteractionContext<Chunk> consumer) {
+    open(0, consumer);
   }
 
   private InteractionContext open(final int index, final InteractionContext last) {

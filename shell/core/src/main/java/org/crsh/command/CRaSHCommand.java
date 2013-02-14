@@ -40,7 +40,7 @@ import org.crsh.cmdline.matcher.OptionMatch;
 import org.crsh.cmdline.matcher.Resolver;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.Completion;
-import org.crsh.io.InteractionContext;
+import org.crsh.shell.InteractionContext;
 import org.crsh.util.TypeResolver;
 
 import java.io.IOException;
@@ -266,8 +266,8 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             return _consumedType;
           }
 
-          public void open(InteractionContext<Object> context) {
-            this.context = new InvocationContextImpl(context, session);
+          public void open(InteractionContext<Object> consumer) {
+            this.context = new InvocationContextImpl(consumer, session);
             try {
               match.printUsage(this.context.getWriter());
             }
@@ -309,10 +309,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               return _consumedType;
             }
 
-            public void open(final InteractionContext<Object> context) {
+            public void open(final InteractionContext<Object> consumer) {
 
               //
-              pushContext(new InvocationContextImpl<Object>(context, session));
+              pushContext(new InvocationContextImpl<Object>(consumer, session));
               CRaSHCommand.this.unmatched = methodMatch.getRest();
               final Resolver resolver = new Resolver() {
                 public <T> T resolve(Class<T> type) {
@@ -378,10 +378,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               this.piped = piped;
             }
 
-            public void open(final InteractionContext<Object> context) {
+            public void open(final InteractionContext<Object> consumer) {
 
               //
-              final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(context, session);
+              final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(consumer, session);
 
               //
               pushContext(invocationContext);
@@ -455,8 +455,8 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         /** . */
         InvocationContext context;
 
-        public void open(InteractionContext<Object> producerContext) {
-          this.context = new InvocationContextImpl(producerContext, session);
+        public void open(InteractionContext<Object> consumer) {
+          this.context = new InvocationContextImpl(consumer, session);
           try {
             if (doHelp) {
               match.printUsage(context.getWriter());

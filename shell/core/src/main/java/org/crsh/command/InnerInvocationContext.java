@@ -21,7 +21,7 @@ package org.crsh.command;
 
 import org.crsh.io.Consumer;
 import org.crsh.text.Chunk;
-import org.crsh.io.ScreenContext;
+import org.crsh.shell.ScreenContext;
 import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;

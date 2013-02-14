@@ -24,7 +24,7 @@ import org.crsh.text.Chunk;
 import org.crsh.text.ChunkBuffer;
 import org.crsh.text.LineReader;
 import org.crsh.text.RenderAppendable;
-import org.crsh.io.ScreenContext;
+import org.crsh.shell.ScreenContext;
 import org.crsh.util.Strings;
 
 import java.io.IOException;
