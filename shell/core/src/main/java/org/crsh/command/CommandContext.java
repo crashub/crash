@@ -21,6 +21,13 @@ package org.crsh.command;
 
 import java.util.Map;
 
+/**
+ * The minimum set of services that a command needs for executing properly:
+ * <ul>
+ *   <li>a session map</li>
+ *   <li>an attribute map</li>
+ * </ul>
+ */
 public interface CommandContext {
 
   /**
