@@ -73,7 +73,7 @@ public class SpringBootstrap extends PluginLifeCycle implements
     }
 
     //
-    PluginDiscovery discovery = new ServiceLoaderDiscovery(loader);
+    PluginDiscovery discovery = new SpringPluginDiscovery(loader, factory);
 
     //
     FS cmdFS = createCommandFS();
