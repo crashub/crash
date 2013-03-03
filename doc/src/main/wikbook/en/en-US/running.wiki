@@ -64,7 +64,7 @@ to the Java Platform. During this mode the commands are executed in the target J
 
 = Embedded mode =
 
-== Embedding as a web archive ==
+== Embedding in a web app ==
 
 CRaSH can use a standard web archive to be deployed in a web container. The war file is used for its packaging capabilities
 and triggering the CRaSH life cycle start/stop. In this mode CRaSH has two packaging available:
@@ -127,7 +127,7 @@ CRaSH can be easily embedded and configured in a Spring configuration, here is a
 
 The configuration properties are set as properties with the //config// property of the ##SpringBootstrap## bean.
 
-== Embedding in Spring within a web application ==
+== Embedding in a Spring web app ==
 
 In case you are embedding CRaSH in a Spring application running with a servlet container, the bean
  ##org.crsh.spring.SpringWebBootstrap## can be used instead of ##org.crsh.spring.SpringBootstrap##. The ##SpringWebBootstrap##
