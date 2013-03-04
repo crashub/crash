@@ -19,9 +19,9 @@
 
 package org.crsh.processor.term;
 
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.cmdline.spi.Completion;
 import org.crsh.io.Consumer;
-import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
@@ -324,7 +324,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
 
   private void complete(CharSequence prefix) {
     log.log(Level.FINE, "About to get completions for " + prefix);
-    CommandCompletion completion = shell.complete(prefix.toString());
+    CompletionMatch completion = shell.complete(prefix.toString());
     Completion completions = completion.getValue();
     log.log(Level.FINE, "Completions for " + prefix + " are " + completions);
 

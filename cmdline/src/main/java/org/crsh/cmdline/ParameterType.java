@@ -28,7 +28,7 @@ import java.util.List;
 
 public final class ParameterType<V> {
 
-  static ParameterType create(ValueTypeFactory factory, Type type) throws IllegalValueTypeException {
+  public static ParameterType create(ValueTypeFactory factory, Type type) throws IllegalValueTypeException {
     Class<?> declaredType;
     Multiplicity multiplicity;
     if (type instanceof Class<?>) {

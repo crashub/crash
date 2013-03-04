@@ -331,7 +331,7 @@ class jdbc extends CRaSHCommand implements Completer{
     }
   }
 
-  Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+  Completion complete(ParameterDescriptor parameter, String prefix) {
     return c.complete(parameter, prefix);
   }
 

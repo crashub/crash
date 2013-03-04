@@ -39,7 +39,7 @@ public abstract class JCRCommand extends CRaSHCommand implements Completer {
   protected JCRCommand() throws IntrospectionException {
   }
 
-  public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+  public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
     if (parameter.getDeclaredType() == Path.class) {
 
       final Path path = (Path)getProperty("currentPath");

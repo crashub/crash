@@ -23,7 +23,7 @@ import com.sun.tools.attach.VirtualMachine;
 import jline.Terminal;
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
-import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.IntrospectionException;
@@ -31,8 +31,8 @@ import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Usage;
-import org.crsh.cmdline.matcher.CommandMatch;
-import org.crsh.cmdline.matcher.Matcher;
+import org.crsh.cmdline.invocation.InvocationMatch;
+import org.crsh.cmdline.invocation.InvocationMatcher;
 import org.crsh.processor.jline.JLineProcessor;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
@@ -59,7 +59,7 @@ public class CRaSH {
   private static Logger log = Logger.getLogger(CRaSH.class.getName());
 
   /** . */
-  private final ClassDescriptor<CRaSH> descriptor;
+  private final CommandDescriptor<CRaSH> descriptor;
 
   public CRaSH() throws IntrospectionException {
     this.descriptor = CommandFactory.DEFAULT.create(CRaSH.class);
@@ -300,8 +300,8 @@ public class CRaSH {
 
     //
     CRaSH main = new CRaSH();
-    Matcher<CRaSH> matcher = main.descriptor.matcher("main");
-    CommandMatch<CRaSH, ?, ?> match = matcher.match(line.toString());
+    InvocationMatcher<CRaSH> matcher = main.descriptor.invoker("main");
+    InvocationMatch<CRaSH> match = matcher.match(line.toString());
     match.invoke(new CRaSH());
   }
 }

@@ -24,7 +24,7 @@ import org.crsh.BaseProcess;
 import org.crsh.BaseProcessContext;
 import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.Completion;
 import org.crsh.shell.ErrorType;
@@ -109,7 +109,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
 
   public void testSerialization() throws Exception {
 
-    ServerMessage message = new ServerMessage.Completion(new CommandCompletion(Delimiter.DOUBLE_QUOTE, Completion.create("pref", "ix", true)));
+    ServerMessage message = new ServerMessage.Completion(new CompletionMatch(Delimiter.DOUBLE_QUOTE, Completion.create("pref", "ix", true)));
     clientOOS.writeObject(message);
     clientOOS.flush();
     ServerMessage after = (ServerMessage)serverOIS.readObject();
@@ -404,15 +404,15 @@ public class RemoteShellTestCase extends AbstractTestCase {
   public void testComplete() {
     ClientProcessor t = new ClientProcessor(clientOIS, clientOOS, new BaseShell() {
       @Override
-      public CommandCompletion complete(String prefix) {
-        return new CommandCompletion(Delimiter.DOUBLE_QUOTE, Completion.create(prefix, "ix", true));
+      public CompletionMatch complete(String prefix) {
+        return new CompletionMatch(Delimiter.DOUBLE_QUOTE, Completion.create(prefix, "ix", true));
       }
     });
     t.start();
 
     //
     ServerAutomaton server = new ServerAutomaton(serverOOS, serverOIS);
-    CommandCompletion completion = server.complete("pref");
+    CompletionMatch completion = server.complete("pref");
     assertEquals(Delimiter.DOUBLE_QUOTE, completion.getDelimiter());
     Completion value = completion.getValue();
     assertEquals("pref", value.getPrefix());

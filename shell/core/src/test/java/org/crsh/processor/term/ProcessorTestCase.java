@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 import org.crsh.BaseProcess;
 import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.Completion;
 import org.crsh.shell.Shell;
@@ -237,8 +237,8 @@ public class ProcessorTestCase extends TestCase {
   public void testCompletion1() throws Exception {
     Controller controller = create(new BaseShell(BaseProcessFactory.ECHO) {
       @Override
-      public CommandCompletion complete(String prefix) {
-        return new CommandCompletion(Delimiter.EMPTY, Completion.create(new StringBuilder(prefix).reverse().toString(), false));
+      public CompletionMatch complete(String prefix) {
+        return new CompletionMatch(Delimiter.EMPTY, Completion.create(new StringBuilder(prefix).reverse().toString(), false));
       }
     });
     controller.assertStart();

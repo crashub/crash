@@ -20,13 +20,13 @@
 package org.crsh.jcr;
 
 import org.apache.sshd.server.Command;
-import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CLIException;
+import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.IntrospectionException;
-import org.crsh.cmdline.matcher.CmdLineException;
-import org.crsh.cmdline.matcher.CommandMatch;
-import org.crsh.cmdline.matcher.Matcher;
-import org.crsh.cmdline.matcher.Resolver;
+import org.crsh.cmdline.invocation.InvocationMatch;
+import org.crsh.cmdline.invocation.InvocationMatcher;
+import org.crsh.cmdline.invocation.Resolver;
 import org.crsh.ssh.term.FailCommand;
 import org.crsh.ssh.term.scp.CommandPlugin;
 import org.crsh.ssh.term.scp.SCPAction;
@@ -40,9 +40,9 @@ public class SCPCommandPlugin extends CommandPlugin {
       try {
         command = command.substring(4);
         SCPAction action = new SCPAction();
-        ClassDescriptor<SCPAction> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
-        Matcher<SCPAction> analyzer = descriptor.matcher("main");
-        CommandMatch<SCPAction, ?, ?> match = analyzer.match(command);
+        CommandDescriptor<SCPAction> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
+        InvocationMatcher<SCPAction> analyzer = descriptor.invoker("main");
+        InvocationMatch<SCPAction> match = analyzer.match(command);
         match.invoke(Resolver.EMPTY, action);
         if (Boolean.TRUE.equals(action.isSource())) {
           return new SourceCommand(action.getTarget(), Boolean.TRUE.equals(action.isRecursive()));
@@ -54,7 +54,7 @@ public class SCPCommandPlugin extends CommandPlugin {
           return new FailCommand("Cannot execute command " + command);
         }
       }
-      catch (CmdLineException e) {
+      catch (CLIException e) {
         return new FailCommand("Cannot execute command " + command, e);
       }
       catch (IntrospectionException e) {

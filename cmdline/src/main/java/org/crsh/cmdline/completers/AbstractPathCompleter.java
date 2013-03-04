@@ -41,7 +41,7 @@ public abstract class AbstractPathCompleter<P> implements Completer {
 
   protected abstract String getName(P path) throws Exception;
 
-  public final Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+  public final Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
 
     // Handle empty dir
     if (!prefix.startsWith("/")) {

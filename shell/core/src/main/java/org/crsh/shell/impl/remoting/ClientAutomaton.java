@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.remoting;
 
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellResponse;
 import org.crsh.util.CloseableList;
@@ -97,7 +97,7 @@ public class ClientAutomaton implements Runnable {
           out.flush();
         } else if (msg instanceof ClientMessage.GetCompletion) {
           String prefix = ((ClientMessage.GetCompletion)msg).prefix;
-          CommandCompletion completion = shell.complete(prefix);
+          CompletionMatch completion = shell.complete(prefix);
           out.writeObject(new ServerMessage.Completion(completion));
           out.flush();
         } else if (msg instanceof ClientMessage.SetSize) {

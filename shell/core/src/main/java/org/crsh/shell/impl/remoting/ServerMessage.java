@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.remoting;
 
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 
@@ -53,9 +53,9 @@ public class ServerMessage implements Serializable {
   public static class Completion extends ServerMessage {
 
     /** . */
-    public final CommandCompletion value;
+    public final CompletionMatch value;
 
-    public Completion(CommandCompletion value) {
+    public Completion(CompletionMatch value) {
       this.value = value;
     }
   }

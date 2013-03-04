@@ -21,7 +21,6 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
 import org.crsh.cmdline.completers.EmptyCompleter;
-import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.type.ValueType;
 
@@ -29,10 +28,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-public abstract class ParameterDescriptor<B extends TypeBinding> {
+public abstract class ParameterDescriptor {
 
   /** . */
-  private final B binding;
+  private final TypeBinding binding;
 
   /** . */
   private final Description description;
@@ -56,10 +55,10 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
   private final boolean unquote;
 
   /** . */
-  CommandDescriptor<?, B> owner;
+  CommandDescriptor<?> owner;
 
   public ParameterDescriptor(
-    B binding,
+    TypeBinding binding,
     ParameterType<?> type,
     Description description,
     boolean required,
@@ -88,9 +87,9 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     return type.parse(s);
   }
 
-  public abstract Object parse(List<String> values) throws CmdSyntaxException;
+  public abstract Object parse(List<String> values) throws SyntaxException;
 
-  public CommandDescriptor<?, B> getOwner() {
+  public CommandDescriptor<?> getOwner() {
     return owner;
   }
 
@@ -98,7 +97,7 @@ public abstract class ParameterDescriptor<B extends TypeBinding> {
     return type.getDeclaredType();
   }
 
-  public final B getBinding() {
+  public final TypeBinding getBinding() {
     return binding;
   }
 

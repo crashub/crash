@@ -24,7 +24,7 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.Completion;
 import org.crsh.shell.InteractionContext;
@@ -178,8 +178,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public final CommandCompletion complete(CommandContext context, String line) {
-    return new CommandCompletion(Delimiter.EMPTY, Completion.create());
+  public final CompletionMatch complete(CommandContext context, String line) {
+    return new CompletionMatch(Delimiter.EMPTY, Completion.create());
   }
 
   public void setPiped(boolean piped) {

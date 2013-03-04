@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 
 import java.io.Closeable;
 
@@ -55,6 +55,6 @@ public interface Shell extends Closeable {
    * @param prefix the prefix to complete
    * @return the sorted list of available suffixes
    */
-  CommandCompletion complete(String prefix);
+  CompletionMatch complete(String prefix);
 
 }

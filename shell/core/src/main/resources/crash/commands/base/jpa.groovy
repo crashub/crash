@@ -176,12 +176,12 @@ class jpa extends CRaSHCommand implements Completer {
 
   public static class EmfCompleter implements Completer  {
     Completer c = new JNDIHandler.JNDICompleter("javax.persistence.EntityManagerFactory");
-    Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+    Completion complete(ParameterDescriptor parameter, String prefix) {
       return c.complete(parameter, prefix);
     }
   }
 
-  Completion complete(ParameterDescriptor<?> parameter, java.lang.String prefix) throws Exception {
+  Completion complete(ParameterDescriptor parameter, java.lang.String prefix) throws Exception {
     def builder = new Completion.Builder(prefix);
       em.metamodel.entities.each { e ->
         if (prefix == null || prefix.length() == 0) {

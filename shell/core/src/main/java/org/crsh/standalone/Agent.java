@@ -18,13 +18,13 @@
  */
 package org.crsh.standalone;
 
-import org.crsh.cmdline.ClassDescriptor;
+import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
-import org.crsh.cmdline.matcher.CommandMatch;
-import org.crsh.cmdline.matcher.Matcher;
+import org.crsh.cmdline.invocation.InvocationMatch;
+import org.crsh.cmdline.invocation.InvocationMatcher;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.async.AsyncShell;
@@ -52,9 +52,9 @@ public class Agent {
       @Override
       public void run() {
         try {
-          ClassDescriptor<Agent> c = CommandFactory.DEFAULT.create(Agent.class);
-          Matcher<Agent> matcher = c.matcher("main");
-          CommandMatch<Agent, ?, ?> match = matcher.match(agentArgs);
+          CommandDescriptor<Agent> c = CommandFactory.DEFAULT.create(Agent.class);
+          InvocationMatcher<Agent> matcher = c.invoker("main");
+          InvocationMatch<Agent> match = matcher.match(agentArgs);
           match.invoke(new Agent(inst));
         } catch (Exception e) {
           e.printStackTrace();

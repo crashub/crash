@@ -24,7 +24,6 @@ import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Man;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Usage;
-import org.crsh.cmdline.binding.MethodArgumentBinding;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -39,7 +38,7 @@ public class DescriptionTestCase extends TestCase {
 
     class A { }
 
-    CommandDescriptor<A, ?> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals("", c.getUsage());
     assertEquals(new Description(), c.getDescription());
   }
@@ -50,7 +49,7 @@ public class DescriptionTestCase extends TestCase {
     @Man("class_man")
     class A { }
 
-    CommandDescriptor<A, ?> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals("class_usage", c.getUsage());
     assertEquals("class_usage", c.getDescription().getUsage());
     assertEquals("class_man", c.getDescription().getMan());
@@ -64,8 +63,8 @@ public class DescriptionTestCase extends TestCase {
       @Command void m() {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
-    MethodDescriptor<A> m = c.getMethod("m");
+    CommandDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> m = c.getSubordinate("m");
     assertEquals("method_usage", m.getUsage());
     assertEquals("method_usage", m.getDescription().getUsage());
     assertEquals("method_man", m.getDescription().getMan());
@@ -80,9 +79,9 @@ public class DescriptionTestCase extends TestCase {
         @Option(names = "a") String s) {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
-    MethodDescriptor<A> m = c.getMethod("m");
-    OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
+    CommandDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> m = c.getSubordinate("m");
+    OptionDescriptor a = m.getOption("-a");
     assertEquals("option_usage", a.getUsage());
     assertEquals("option_usage", a.getDescription().getUsage());
     assertEquals("option_man", a.getDescription().getMan());
@@ -105,9 +104,9 @@ public class DescriptionTestCase extends TestCase {
       void m(@Foo String s) {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
-    MethodDescriptor<A> m = c.getMethod("m");
-    OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
+    CommandDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> m = c.getSubordinate("m");
+    OptionDescriptor a = m.getOption("-a");
     assertEquals("foo_usage", a.getUsage());
     assertEquals("foo_usage", a.getDescription().getUsage());
     assertEquals("foo_man", a.getDescription().getMan());
@@ -119,9 +118,9 @@ public class DescriptionTestCase extends TestCase {
       @Command void m(@Bar String s) {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
-    MethodDescriptor<A> m = c.getMethod("m");
-    OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
+    CommandDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> m = c.getSubordinate("m");
+    OptionDescriptor a = m.getOption("-a");
     assertEquals("", a.getUsage());
     assertEquals(new Description(), a.getDescription());
   }
@@ -134,9 +133,9 @@ public class DescriptionTestCase extends TestCase {
         @Foo String s) {}
     }
 
-    ClassDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
-    MethodDescriptor<A> m = c.getMethod("m");
-    OptionDescriptor<MethodArgumentBinding> a = m.getOption("-a");
+    CommandDescriptor<A> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> m = c.getSubordinate("m");
+    OptionDescriptor a = m.getOption("-a");
     assertEquals("option_usage", a.getUsage());
     assertEquals("option_usage", a.getDescription().getUsage());
     assertEquals("foo_man", a.getDescription().getMan());

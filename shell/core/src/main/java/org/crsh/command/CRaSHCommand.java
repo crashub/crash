@@ -19,9 +19,8 @@
 
 package org.crsh.command;
 
-import org.crsh.cmdline.ClassDescriptor;
-import org.crsh.cmdline.CommandCompletion;
-import org.crsh.cmdline.CommandFactory;
+import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.annotations.Man;
@@ -29,15 +28,14 @@ import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.annotations.Usage;
-import org.crsh.cmdline.matcher.ClassMatch;
-import org.crsh.cmdline.matcher.CmdCompletionException;
-import org.crsh.cmdline.matcher.CmdInvocationException;
-import org.crsh.cmdline.matcher.CmdSyntaxException;
-import org.crsh.cmdline.matcher.CommandMatch;
-import org.crsh.cmdline.matcher.Matcher;
-import org.crsh.cmdline.matcher.MethodMatch;
-import org.crsh.cmdline.matcher.OptionMatch;
-import org.crsh.cmdline.matcher.Resolver;
+import org.crsh.cmdline.completion.CompletionException;
+import org.crsh.cmdline.completion.CompletionMatcher;
+import org.crsh.cmdline.impl.CommandFactoryImpl;
+import org.crsh.cmdline.invocation.InvocationException;
+import org.crsh.cmdline.invocation.InvocationMatch;
+import org.crsh.cmdline.invocation.InvocationMatcher;
+import org.crsh.cmdline.invocation.OptionMatch;
+import org.crsh.cmdline.invocation.Resolver;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.spi.Completion;
 import org.crsh.shell.InteractionContext;
@@ -46,7 +44,6 @@ import org.crsh.util.TypeResolver;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +56,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   private final Logger log = Logger.getLogger(getClass().getName());
 
   /** . */
-  private final ClassDescriptor<?> descriptor;
+  private final CommandDescriptor<?> descriptor;
 
   /** The unmatched text, only valid during an invocation. */
   protected String unmatched;
@@ -71,7 +68,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   private boolean help;
 
   protected CRaSHCommand() throws IntrospectionException {
-    this.descriptor = new CommandFactory(getClass().getClassLoader()).create(getClass());
+    this.descriptor = new CommandFactoryImpl(getClass().getClassLoader()).create(getClass());
     this.help = false;
     this.unmatched = null;
   }
@@ -81,7 +78,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
    *
    * @return the command descriptor
    */
-  public ClassDescriptor<?> getDescriptor() {
+  public CommandDescriptor<?> getDescriptor() {
     return descriptor;
   }
 
@@ -101,10 +98,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return unmatched;
   }
 
-  public final CommandCompletion complete(CommandContext context, String line) {
+  public final CompletionMatch complete(CommandContext context, String line) {
 
     // WTF
-    Matcher analyzer = descriptor.matcher("main");
+    CompletionMatcher analyzer = descriptor.completer("main");
 
     //
     Completer completer = this instanceof Completer ? (Completer)this : null;
@@ -112,11 +109,11 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     //
     this.context = context;
     try {
-      return analyzer.complete(completer, line);
+      return analyzer.match(completer, line);
     }
-    catch (CmdCompletionException e) {
+    catch (CompletionException e) {
       log.log(Level.SEVERE, "Error during completion of line " + line, e);
-      return new CommandCompletion(Delimiter.EMPTY, Completion.create());
+      return new CompletionMatch(Delimiter.EMPTY, Completion.create());
     }
     finally {
       this.context = null;
@@ -126,10 +123,16 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   public final String describe(String line, DescriptionFormat mode) {
 
     // WTF
-    Matcher analyzer = descriptor.matcher("main");
+    InvocationMatcher analyzer = descriptor.invoker("main");
 
     //
-    CommandMatch match = analyzer.match(line);
+    InvocationMatch match;
+    try {
+      match = analyzer.match(line);
+    }
+    catch (org.crsh.cmdline.SyntaxException e) {
+      throw new org.crsh.command.SyntaxException(e.getMessage());
+    }
 
     //
     try {
@@ -139,12 +142,12 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         case MAN:
           StringWriter sw = new StringWriter();
           PrintWriter pw = new PrintWriter(sw);
-          match.printMan(pw);
+          match.getDescriptor().printMan(pw);
           return sw.toString();
         case USAGE:
           StringWriter sw2 = new StringWriter();
           PrintWriter pw2 = new PrintWriter(sw2);
-          match.printUsage(pw2);
+          match.getDescriptor().printUsage(pw2);
           return sw2.toString();
       }
     }
@@ -182,15 +185,27 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       throw new UnsupportedOperationException("Implement me");
     } else {
 
-      Matcher matcher = descriptor.matcher("main");
-      CommandMatch<CRaSHCommand, ?, ?> match = matcher.match(name, options, args);
+      InvocationMatcher matcher = descriptor.invoker("main");
+      InvocationMatch<CRaSHCommand> match = null;
+      try {
+        match = matcher.match(name, options, args);
+      }
+      catch (org.crsh.cmdline.SyntaxException e) {
+        throw new org.crsh.command.SyntaxException(e.getMessage());
+      }
       return resolveInvoker(match);
     }
   }
 
   public CommandInvoker<?, ?> resolveInvoker(String line) {
-    Matcher analyzer = descriptor.matcher("main");
-    final CommandMatch<CRaSHCommand, ?, ?> match = analyzer.match(line);
+    InvocationMatcher analyzer = descriptor.invoker("main");
+    InvocationMatch<CRaSHCommand> match;
+    try {
+      match = analyzer.match(line);
+    }
+    catch (org.crsh.cmdline.SyntaxException e) {
+      throw new org.crsh.command.SyntaxException(e.getMessage());
+    }
     return resolveInvoker(match);
   }
 
@@ -202,18 +217,21 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     invoker.close();
   }
 
-  public final CommandInvoker<?, ?> resolveInvoker(final CommandMatch<CRaSHCommand, ?, ?> match) {
-    if (match instanceof MethodMatch) {
+  public final CommandInvoker<?, ?> resolveInvoker(final InvocationMatch<CRaSHCommand> match) {
 
-      //
-      final MethodMatch<CRaSHCommand> methodMatch = (MethodMatch<CRaSHCommand>)match;
+    //
+    final org.crsh.cmdline.invocation.CommandInvoker invoker = match.getInvoker();
+
+    //
+    if (invoker != null) {
 
       //
       boolean help = false;
-      for (OptionMatch optionMatch : methodMatch.getOwner().getOptionMatches()) {
-        ParameterDescriptor<?> parameterDesc = optionMatch.getParameter();
-        if (parameterDesc instanceof OptionDescriptor<?>) {
-          OptionDescriptor<?> optionDesc = (OptionDescriptor<?>)parameterDesc;
+      // was: methodMatch.getOwner().getOptionMatches()
+      for (OptionMatch optionMatch : match.options()) {
+        ParameterDescriptor parameterDesc = optionMatch.getParameter();
+        if (parameterDesc instanceof OptionDescriptor) {
+          OptionDescriptor optionDesc = (OptionDescriptor)parameterDesc;
           if (optionDesc.getNames().contains("h")) {
             help = true;
           }
@@ -224,19 +242,18 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       //
       Class consumedType;
       Class producedType;
-      Method m = methodMatch.getDescriptor().getMethod();
-      if (PipeCommand.class.isAssignableFrom(m.getReturnType())) {
-        Type ret = m.getGenericReturnType();
+      if (PipeCommand.class.isAssignableFrom(invoker.getReturnType())) {
+        Type ret = invoker.getGenericReturnType();
         consumedType = TypeResolver.resolveToClass(ret, PipeCommand.class, 0);
         producedType = TypeResolver.resolveToClass(ret, PipeCommand.class, 1);
       } else {
         consumedType = Void.class;
         producedType = Object.class;
-        Class<?>[] parameterTypes = m.getParameterTypes();
+        Class<?>[] parameterTypes = invoker.getParameterTypes();
         for (int i = 0;i < parameterTypes.length;i++) {
           Class<?> parameterType = parameterTypes[i];
           if (InvocationContext.class.isAssignableFrom(parameterType)) {
-            Type contextGenericParameterType = m.getGenericParameterTypes()[i];
+            Type contextGenericParameterType = invoker.getGenericParameterTypes()[i];
             producedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
             break;
           }
@@ -269,7 +286,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           public void open(InteractionContext<Object> consumer) {
             this.context = new InvocationContextImpl(consumer, session);
             try {
-              match.printUsage(this.context.getWriter());
+              match.getDescriptor().printUsage(this.context.getWriter());
             }
             catch (IOException e) {
               throw new AssertionError(e);
@@ -313,7 +330,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
               //
               pushContext(new InvocationContextImpl<Object>(consumer, session));
-              CRaSHCommand.this.unmatched = methodMatch.getRest();
+              CRaSHCommand.this.unmatched = match.getRest();
               final Resolver resolver = new Resolver() {
                 public <T> T resolve(Class<T> type) {
                   if (type.equals(InvocationContext.class)) {
@@ -327,10 +344,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
               //
               Object o;
               try {
-                o = methodMatch.invoke(resolver, CRaSHCommand.this);
-              } catch (CmdSyntaxException e) {
-                throw new SyntaxException(e.getMessage());
-              } catch (CmdInvocationException e) {
+                o = invoker.invoke(resolver, CRaSHCommand.this);
+              } catch (org.crsh.cmdline.SyntaxException e) {
+                throw new org.crsh.command.SyntaxException(e.getMessage());
+              } catch (InvocationException e) {
                 throw toScript(e.getCause());
               }
               if (o != null) {
@@ -385,7 +402,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
               //
               pushContext(invocationContext);
-              CRaSHCommand.this.unmatched = methodMatch.getRest();
+              CRaSHCommand.this.unmatched = match.getRest();
               final Resolver resolver = new Resolver() {
                 public <T> T resolve(Class<T> type) {
                   if (type.equals(InvocationContext.class)) {
@@ -396,11 +413,11 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
                 }
               };
               try {
-                real = (PipeCommand)methodMatch.invoke(resolver, CRaSHCommand.this);
+                real = (PipeCommand)invoker.invoke(resolver, CRaSHCommand.this);
               }
-              catch (CmdSyntaxException e) {
-                throw new SyntaxException(e.getMessage());
-              } catch (CmdInvocationException e) {
+              catch (org.crsh.cmdline.SyntaxException e) {
+                throw new org.crsh.command.SyntaxException(e.getMessage());
+              } catch (InvocationException e) {
                 throw toScript(e.getCause());
               }
 
@@ -428,17 +445,14 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           };
         }
       }
-    } else if (match instanceof ClassMatch) {
-
-      //
-      final ClassMatch<?> classMatch = (ClassMatch)match;
+    } else {
 
       //
       boolean help = false;
-      for (OptionMatch optionMatch : classMatch.getOptionMatches()) {
-        ParameterDescriptor<?> parameterDesc = optionMatch.getParameter();
-        if (parameterDesc instanceof OptionDescriptor<?>) {
-          OptionDescriptor<?> optionDesc = (OptionDescriptor<?>)parameterDesc;
+      for (OptionMatch optionMatch : match.options()) {
+        ParameterDescriptor parameterDesc = optionMatch.getParameter();
+        if (parameterDesc instanceof OptionDescriptor) {
+          OptionDescriptor optionDesc = (OptionDescriptor)parameterDesc;
           if (optionDesc.getNames().contains("h")) {
             help = true;
           }
@@ -458,11 +472,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         public void open(InteractionContext<Object> consumer) {
           this.context = new InvocationContextImpl(consumer, session);
           try {
-            if (doHelp) {
-              match.printUsage(context.getWriter());
-            } else {
-              classMatch.printUsage(context.getWriter());
-            }
+            match.getDescriptor().printUsage(context.getWriter());
           }
           catch (IOException e) {
             throw new AssertionError(e);
@@ -495,9 +505,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           return Void.class;
         }
       };
-
-    } else {
-      return null;
     }
   }
 }

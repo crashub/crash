@@ -37,7 +37,7 @@ public final class Description {
     this.usage = this.man = "";
   }
 
-  Description(Description child, Description parent) {
+  public Description(Description child, Description parent) {
     if (child == null) {
       throw new NullPointerException();
     }
@@ -50,7 +50,7 @@ public final class Description {
     this.man = child.man.length() > 0 ? child.man : parent.man;
   }
 
-  Description(String usage, String man) {
+  public Description(String usage, String man) {
     if (usage == null) {
       throw new NullPointerException();
     }
@@ -67,7 +67,7 @@ public final class Description {
     this(annotated.getAnnotations());
   }
 
-  Description(Annotation... annotations) {
+  public Description(Annotation... annotations) {
     if (annotations == null) {
       throw new NullPointerException();
     }

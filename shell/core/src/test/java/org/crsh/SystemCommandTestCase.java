@@ -19,7 +19,7 @@
 
 package org.crsh;
 
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.shell.AbstractCommandTestCase;
 
 public class SystemCommandTestCase extends AbstractCommandTestCase {
@@ -38,7 +38,7 @@ public class SystemCommandTestCase extends AbstractCommandTestCase {
     System.setProperty("foo.bar", "bar");
     System.setProperty("foo.bar2", "bar");
     try {
-      CommandCompletion completion = assertComplete("system propget foo");
+      CompletionMatch completion = assertComplete("system propget foo");
       assertEquals(2, completion.getValue().getSize());
       assertTrue(completion.getValue().get(".bar") != null);
       assertTrue(completion.getValue().get(".bar2") != null);

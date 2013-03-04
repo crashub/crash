@@ -19,7 +19,6 @@
 
 package org.crsh.shell;
 
-import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.ParameterDescriptor;
 import org.crsh.cmdline.annotations.Argument;
 import org.crsh.cmdline.annotations.Command;
@@ -254,7 +253,7 @@ public class Commands {
   }
 
   public static class Complete extends CRaSHCommand implements Completer {
-    public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+    public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
       return org.crsh.cmdline.spi.Completion.builder(prefix).add("bar", true).build();
     }
     @Command
@@ -263,7 +262,7 @@ public class Commands {
   }
 
   public static class CompleteWithSession extends CRaSHCommand implements Completer {
-    public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+    public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
       Object juu = context.getSession().get("juu");
       Completion.Builder ret = Completion.builder(prefix);
       if (juu != null) {

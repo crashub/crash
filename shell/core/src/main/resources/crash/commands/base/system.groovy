@@ -65,7 +65,7 @@ class system extends CRaSHCommand implements Completer {
     System.clearProperty name.toString()
   }
 
-  Completion complete(ParameterDescriptor<?> parameter, String prefix)
+  Completion complete(ParameterDescriptor parameter, String prefix)
   {
     def b = new Completion.Builder(prefix);
     if (parameter.getAnnotation().annotationType().equals(PropertyName.class)) {

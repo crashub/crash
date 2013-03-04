@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.remoting;
 
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
@@ -99,7 +99,7 @@ public class ServerAutomaton implements Shell {
     return new ServerProcess(this, request);
   }
 
-  public CommandCompletion complete(String prefix) {
+  public CompletionMatch complete(String prefix) {
     try {
       out.writeObject(new ClientMessage.GetCompletion(prefix));
       out.flush();

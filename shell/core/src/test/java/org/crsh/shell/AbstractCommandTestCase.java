@@ -24,7 +24,7 @@ import junit.framework.AssertionFailedError;
 import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.command.CRaSHSession;
 
@@ -131,7 +131,7 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
     return assertOk("evaluate \"" + s.replaceAll("\"", "\\\"") + "\"");
   }
 
-  protected final CommandCompletion assertComplete(String prefix) {
+  protected final CompletionMatch assertComplete(String prefix) {
     return shell.complete(prefix);
   }
 

@@ -33,31 +33,31 @@ public class CompleterSupport {
   }
 
   public static class RuntimeException implements Completer {
-    public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
+    public Completion complete(ParameterDescriptor parameter, String prefix) throws java.lang.Exception {
       throw new java.lang.RuntimeException();
     }
   }
 
   public static class Exception implements Completer {
-    public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws java.lang.Exception {
+    public Completion complete(ParameterDescriptor parameter, String prefix) throws java.lang.Exception {
       throw new java.lang.Exception();
     }
   }
 
   public static class Mirror implements Completer {
-    public Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+    public Completion complete(ParameterDescriptor parameter, String prefix) {
       return Completion.create(new StringBuilder(prefix).reverse().toString(), false);
     }
   }
 
   public static class Echo implements Completer {
-    public Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+    public Completion complete(ParameterDescriptor parameter, String prefix) {
       return Completion.create(prefix, false);
     }
   }
 
   public static class Foo implements Completer {
-    public Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+    public Completion complete(ParameterDescriptor parameter, String prefix) {
       if (prefix.equals("foo")) {
         return Completion.create("", true);
       } else if (prefix.equals("fo")) {

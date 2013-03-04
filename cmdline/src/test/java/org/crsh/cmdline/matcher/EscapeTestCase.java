@@ -20,10 +20,11 @@
 package org.crsh.cmdline.matcher;
 
 import junit.framework.TestCase;
+import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.annotations.Argument;
-import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandFactory;
 import org.crsh.cmdline.annotations.Option;
+import org.crsh.cmdline.invocation.InvocationMatcher;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,8 +41,8 @@ public class EscapeTestCase extends TestCase {
       @Option(names = "o")
       String s;
     }
-    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    Matcher<A> analyzer = desc.matcher();
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<A> analyzer = desc.invoker();
 
     //
     A a = new A();
@@ -64,8 +65,8 @@ public class EscapeTestCase extends TestCase {
       @Argument
       List<String> s;
     }
-    ClassDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    Matcher<A> analyzer = desc.matcher();
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<A> analyzer = desc.invoker();
 
     //
     A a = new A();

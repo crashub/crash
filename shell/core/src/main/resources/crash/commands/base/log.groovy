@@ -190,7 +190,7 @@ enum Level {
 
 class LoggerCompleter implements Completer {
 
-  Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+  Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
     def builder = new Completion.Builder(prefix);
     log.loggers.each() {
       if (it.startsWith(prefix)) {

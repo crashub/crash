@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.cmdline.spi.Completion;
 
 import java.util.Collections;
@@ -28,8 +28,8 @@ public class CompleteTestCase extends AbstractCommandTestCase {
 
   public void testCommandImplementingCompleter() {
     lifeCycle.bind("complete", Commands.Complete.class);
-    CommandCompletion commandCompletion = assertComplete("complete foo");
-    Completion completion = commandCompletion.getValue();
+    CompletionMatch completionMatch = assertComplete("complete foo");
+    Completion completion = completionMatch.getValue();
     assertEquals("foo", completion.getPrefix());
     assertEquals(Collections.singleton("bar"), completion.getValues());
     assertTrue(completion.get("bar"));
@@ -38,8 +38,8 @@ public class CompleteTestCase extends AbstractCommandTestCase {
   public void testSessionAccess() {
     lifeCycle.bind("complete", Commands.CompleteWithSession.class);
     shell.getSession().put("juu", "juu_value");
-    CommandCompletion commandCompletion = assertComplete("complete foo");
-    Completion completion = commandCompletion.getValue();
+    CompletionMatch completionMatch = assertComplete("complete foo");
+    Completion completion = completionMatch.getValue();
     assertEquals("foo", completion.getPrefix());
     assertEquals(Collections.singleton("juu_value"), completion.getValues());
     assertTrue(completion.get("juu_value"));

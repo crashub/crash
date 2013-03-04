@@ -23,9 +23,9 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.cmdline.spi.Completion;
 import org.crsh.command.CommandContext;
-import org.crsh.cmdline.CommandCompletion;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.command.BaseCommandContext;
 import org.crsh.command.CommandInvoker;
@@ -261,7 +261,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   /**
    * For now basic implementation
    */
-  public CommandCompletion complete(final String prefix) {
+  public CompletionMatch complete(final String prefix) {
     ClassLoader previous = setCRaSHLoader();
     try {
       log.log(Level.FINE, "Want prefix of " + prefix);
@@ -276,7 +276,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
 
       //
       log.log(Level.FINE, "Retained term prefix is " + prefix);
-      CommandCompletion completion;
+      CompletionMatch completion;
       int pos = termPrefix.indexOf(' ');
       if (pos == -1) {
         Completion.Builder builder = Completion.builder(prefix);
@@ -285,7 +285,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
             builder.add(resourceId.substring(termPrefix.length()), true);
           }
         }
-        completion = new CommandCompletion(Delimiter.EMPTY, builder.build());
+        completion = new CompletionMatch(Delimiter.EMPTY, builder.build());
       } else {
         String commandName = termPrefix.substring(0, pos);
         termPrefix = termPrefix.substring(pos);
@@ -294,12 +294,12 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
           if (command != null) {
             completion = command.complete(new BaseCommandContext(this, crash.context.getAttributes()), termPrefix);
           } else {
-            completion = new CommandCompletion(Delimiter.EMPTY, Completion.create());
+            completion = new CompletionMatch(Delimiter.EMPTY, Completion.create());
           }
         }
         catch (NoSuchCommandException e) {
           log.log(Level.FINE, "Could not create command for completion of " + prefix, e);
-          completion = new CommandCompletion(Delimiter.EMPTY, Completion.create());
+          completion = new CompletionMatch(Delimiter.EMPTY, Completion.create());
         }
       }
 

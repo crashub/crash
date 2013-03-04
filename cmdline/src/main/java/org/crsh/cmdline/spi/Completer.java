@@ -32,6 +32,6 @@ public interface Completer {
    * @return the possible suffix map
    * @throws Exception any exception that would prevent completion to perform correctly
    */
-  Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception;
+  Completion complete(ParameterDescriptor parameter, String prefix) throws Exception;
 
 }

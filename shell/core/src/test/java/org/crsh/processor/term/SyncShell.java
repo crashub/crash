@@ -20,7 +20,7 @@
 package org.crsh.processor.term;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
@@ -92,7 +92,7 @@ public class SyncShell implements Shell {
     }
   }
 
-  public CommandCompletion complete(String prefix) {
+  public CompletionMatch complete(String prefix) {
     throw new UnsupportedOperationException();
   }
 

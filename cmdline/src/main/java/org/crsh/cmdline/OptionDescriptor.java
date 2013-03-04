@@ -20,7 +20,6 @@
 package org.crsh.cmdline;
 
 import org.crsh.cmdline.binding.TypeBinding;
-import org.crsh.cmdline.matcher.CmdSyntaxException;
 import org.crsh.cmdline.spi.Completer;
 import org.crsh.cmdline.type.ValueType;
 
@@ -30,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor<B> {
+public class OptionDescriptor extends ParameterDescriptor {
 
   /** . */
   private final int arity;
@@ -39,7 +38,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
   private final List<String> names;
 
   public OptionDescriptor(
-    B binding,
+    TypeBinding binding,
     ParameterType<?> type,
     List<String> names,
     Description info,
@@ -97,23 +96,23 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
   }
 
   @Override
-  public Object parse(List<String> values) throws CmdSyntaxException {
+  public Object parse(List<String> values) throws SyntaxException {
     if (arity == 0) {
       if (values.size() > 0) {
-        throw new CmdSyntaxException("Too many option values: " + values);
+        throw new SyntaxException("Too many option values: " + values);
       }
       // It's a boolean and it is true
       return Boolean.TRUE;
     } else {
       if (getMultiplicity() == Multiplicity.SINGLE) {
         if (values.size() > 1) {
-          throw new CmdSyntaxException("Too many option values: " + values);
+          throw new SyntaxException("Too many option values: " + values);
         }
         String value = values.get(0);
         try {
           return parse(value);
         } catch (Exception e) {
-          throw new CmdSyntaxException("Could not parse value: <" + value + ">");
+          throw new SyntaxException("Could not parse value: <" + value + ">");
         }
       } else {
         List<Object> v = new ArrayList<Object>(values.size());
@@ -121,7 +120,7 @@ public class OptionDescriptor<B extends TypeBinding> extends ParameterDescriptor
           try {
             v.add(parse(value));
           } catch (Exception e) {
-            throw new CmdSyntaxException("Could not parse value: <" + value + ">");
+            throw new SyntaxException("Could not parse value: <" + value + ">");
           }
         }
         return v;

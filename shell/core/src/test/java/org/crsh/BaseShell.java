@@ -18,7 +18,7 @@
  */
 package org.crsh;
 
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.Completion;
 import org.crsh.shell.Shell;
@@ -75,8 +75,8 @@ public class BaseShell implements Shell {
   /**
    * Returns an empty unmodifiable map.
    */
-  public CommandCompletion complete(String prefix) {
-    return new CommandCompletion(Delimiter.EMPTY, Completion.create());
+  public CompletionMatch complete(String prefix) {
+    return new CompletionMatch(Delimiter.EMPTY, Completion.create());
   }
 
   public void close() throws IOException {

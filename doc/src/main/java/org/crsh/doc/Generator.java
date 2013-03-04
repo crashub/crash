@@ -19,7 +19,6 @@
 
 package org.crsh.doc;
 
-import org.crsh.cmdline.ClassDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.DescriptionFormat;
@@ -63,9 +62,9 @@ public class Generator {
       StringBuilder man = new StringBuilder();
       if (cmd instanceof CRaSHCommand) {
         CRaSHCommand cc = (CRaSHCommand)cmd;
-        ClassDescriptor<?> desc = cc.getDescriptor();
+        CommandDescriptor<?> desc = cc.getDescriptor();
         if (desc.getSubordinates().size() > 1) {
-          for (CommandDescriptor<?, ?> m : desc.getSubordinates().values()) {
+          for (CommandDescriptor<?> m : desc.getSubordinates().values()) {
             man.append("{{screen}}");
             m.printMan(man);
             man.append("{{/screen}}");

@@ -40,7 +40,7 @@ public class EnumCompleter implements Completer {
     return instance;
   }
 
-  public Completion complete(ParameterDescriptor<?> parameter, String prefix) throws Exception {
+  public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
     if (parameter.getType() == ValueType.ENUM) {
       Completion.Builder builder = null;
       Class<?> vt = parameter.getDeclaredType();

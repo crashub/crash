@@ -19,12 +19,16 @@
 
 package org.crsh.cmdline;
 
-import org.crsh.cmdline.binding.TypeBinding;
+import org.crsh.cmdline.completion.CompletionMatcher;
+import org.crsh.cmdline.impl.Util;
+import org.crsh.cmdline.invocation.InvocationMatch;
+import org.crsh.cmdline.invocation.InvocationMatcher;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Formatter;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,7 +36,12 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class CommandDescriptor<T, B extends TypeBinding> {
+import static org.crsh.cmdline.impl.Util.tuples;
+
+public abstract class CommandDescriptor<T> {
+
+  /** . */
+  private static final Set<String> MAIN_SINGLETON = Collections.singleton("main");
 
   /** . */
   private final String name;
@@ -41,7 +50,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   private final Description description;
 
   /** . */
-  private final Map<String, OptionDescriptor<B>> optionMap;
+  private final Map<String, OptionDescriptor> optionMap;
 
   /** . */
   private final Set<String> shortOptionNames;
@@ -53,16 +62,16 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   private boolean listArgument;
 
   /** . */
-  private final List<OptionDescriptor<B>> options;
+  private final List<OptionDescriptor> options;
 
   /** . */
-  private final List<ArgumentDescriptor<B>> arguments;
+  private final List<ArgumentDescriptor> arguments;
 
   /** . */
-  private final List<ParameterDescriptor<B>> parameters;
+  private final List<ParameterDescriptor> parameters;
 
   /** . */
-  private final Map<String, OptionDescriptor<B>> uOptionMap;
+  private final Map<String, OptionDescriptor> uOptionMap;
 
   /** . */
   private final Set<String> uShortOptionNames;
@@ -71,23 +80,23 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
   private final Set<String> uLongOptionNames;
 
   /** . */
-  private final List<OptionDescriptor<B>> uOptions;
+  private final List<OptionDescriptor> uOptions;
 
   /** . */
-  private final List<ArgumentDescriptor<B>> uArguments;
+  private final List<ArgumentDescriptor> uArguments;
 
   /** . */
-  private final List<ParameterDescriptor<B>> uParameters;
+  private final List<ParameterDescriptor> uParameters;
 
-  CommandDescriptor(String name, Description description) throws IntrospectionException {
+  protected CommandDescriptor(String name, Description description) throws IntrospectionException {
 
     //
     this.description = description;
-    this.optionMap = new LinkedHashMap<String, OptionDescriptor<B>>();
-    this.arguments = new ArrayList<ArgumentDescriptor<B>>();
-    this.options = new ArrayList<OptionDescriptor<B>>();
+    this.optionMap = new LinkedHashMap<String, OptionDescriptor>();
+    this.arguments = new ArrayList<ArgumentDescriptor>();
+    this.options = new ArrayList<OptionDescriptor>();
     this.name = name;
-    this.parameters = new ArrayList<ParameterDescriptor<B>>();
+    this.parameters = new ArrayList<ParameterDescriptor>();
     this.listArgument = false;
     this.shortOptionNames = new HashSet<String>();
     this.longOptionNames = new HashSet<String>();
@@ -101,6 +110,24 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
     this.uLongOptionNames = longOptionNames;
   }
 
+  public final InvocationMatcher<T> invoker() {
+    return new InvocationMatcher<T>(this, null);
+  }
+
+  public final InvocationMatcher<T> invoker(String mainName) {
+    return new InvocationMatcher<T>(this, mainName);
+  }
+
+  public final CompletionMatcher<T> completer() {
+    return new CompletionMatcher<T>(this);
+  }
+
+  public final CompletionMatcher<T> completer(String mainName) {
+    return new CompletionMatcher<T>(mainName, this);
+  }
+
+  public abstract InvocationMatch<T> createInvocationMatch();
+
   /**
    * Add a parameter to the command.
    *
@@ -109,7 +136,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    * @throws NullPointerException if the parameter is null
    * @throws IllegalArgumentException if the parameter is already associated with another command
    */
-  void addParameter(ParameterDescriptor<B> parameter) throws IntrospectionException, NullPointerException, IllegalArgumentException {
+  protected void addParameter(ParameterDescriptor parameter) throws IntrospectionException, NullPointerException, IllegalArgumentException {
 
     //
     if (parameter == null) {
@@ -121,7 +148,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
     //
     if (parameter instanceof OptionDescriptor) {
-      OptionDescriptor<B> option = (OptionDescriptor<B>)parameter;
+      OptionDescriptor option = (OptionDescriptor)parameter;
       for (String optionName : option.getNames()) {
         String name;
         if (optionName.length() == 1) {
@@ -134,10 +161,10 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
         optionMap.put(name, option);
       }
       options.add(option);
-      ListIterator<ParameterDescriptor<B>> i = parameters.listIterator();
+      ListIterator<ParameterDescriptor> i = parameters.listIterator();
       while (i.hasNext()) {
-        ParameterDescriptor<B> next = i.next();
-        if (next instanceof ArgumentDescriptor<?>) {
+        ParameterDescriptor next = i.next();
+        if (next instanceof ArgumentDescriptor) {
           i.previous();
           break;
         }
@@ -145,7 +172,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
       i.add(parameter);
       parameter.owner = this;
     } else if (parameter instanceof ArgumentDescriptor) {
-      ArgumentDescriptor<B> argument = (ArgumentDescriptor<B>)parameter;
+      ArgumentDescriptor argument = (ArgumentDescriptor)parameter;
       if (argument.getMultiplicity() == Multiplicity.MULTI) {
         if (listArgument) {
           throw new IntrospectionException();
@@ -160,16 +187,238 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
 
   public abstract Class<T> getType();
 
-  public abstract void printUsage(Appendable writer) throws IOException;
+  public abstract CommandDescriptor<T> getOwner();
 
-  public abstract void printMan(Appendable writer) throws IOException;
+  public final int getDepth() {
+    CommandDescriptor<T> owner = getOwner();
+    return owner == null ? 0 : 1 + owner.getDepth();
+  }
+
+  public final void printUsage(Appendable writer) throws IOException {
+    int depth = getDepth();
+    switch (depth) {
+      case 0: {
+        Map<String, ? extends CommandDescriptor<T>> methods = getSubordinates();
+        if (methods.size() == 1) {
+          methods.values().iterator().next().printUsage(writer);
+        } else {
+          writer.append("usage: ").append(getName());
+          for (OptionDescriptor option : getOptions()) {
+            option.printUsage(writer);
+          }
+          writer.append(" COMMAND [ARGS]\n\n");
+          writer.append("The most commonly used ").append(getName()).append(" commands are:\n");
+          String format = "   %1$-16s %2$s\n";
+          for (CommandDescriptor<T> method : methods.values()) {
+            Formatter formatter = new Formatter(writer);
+            formatter.format(format, method.getName(), method.getUsage());
+          }
+        }
+        break;
+      }
+      case 1: {
+
+        CommandDescriptor<T> owner = getOwner();
+        int length = 0;
+        List<String> parameterUsages = new ArrayList<String>();
+        List<String> parameterBilto = new ArrayList<String>();
+        boolean printName = !owner.getSubordinates().keySet().equals(MAIN_SINGLETON);
+
+        //
+        writer.append("usage: ").append(owner.getName());
+
+        //
+        for (OptionDescriptor option : owner.getOptions()) {
+          writer.append(" ");
+          StringBuilder sb = new StringBuilder();
+          option.printUsage(sb);
+          String usage = sb.toString();
+          writer.append(usage);
+
+          length = Math.max(length, usage.length());
+          parameterUsages.add(usage);
+          parameterBilto.add(option.getUsage());
+        }
+
+        //
+        writer.append(printName ? (" " + getName()) : "");
+
+        //
+        for (ParameterDescriptor parameter : getParameters()) {
+          writer.append(" ");
+          StringBuilder sb = new StringBuilder();
+          parameter.printUsage(sb);
+          String usage = sb.toString();
+          writer.append(usage);
+
+          length = Math.max(length, usage.length());
+          parameterBilto.add(parameter.getUsage());
+          parameterUsages.add(usage);
+        }
+        writer.append("\n\n");
+
+        //
+        String format = "   %1$-" + length + "s %2$s\n";
+        for (String[] tuple : tuples(String.class, parameterUsages, parameterBilto)) {
+          Formatter formatter = new Formatter(writer);
+          formatter.format(format, tuple[0], tuple[1]);
+        }
+
+        //
+        writer.append("\n\n");
+        break;
+      }
+      default:
+        throw new UnsupportedOperationException("Does not make sense");
+    }
+
+
+  }
+
+  public final void printMan(Appendable writer) throws IOException {
+    int depth = getDepth();
+    switch (depth) {
+      case 0: {
+        Map<String, ? extends CommandDescriptor<T>> methods = getSubordinates();
+        if (methods.size() == 1) {
+          methods.values().iterator().next().printMan(writer);
+        } else {
+
+          // Name
+          writer.append("NAME\n");
+          writer.append(Util.MAN_TAB).append(getName());
+          if (getUsage().length() > 0) {
+            writer.append(" - ").append(getUsage());
+          }
+          writer.append("\n\n");
+
+          // Synopsis
+          writer.append("SYNOPSIS\n");
+          writer.append(Util.MAN_TAB).append(getName());
+          for (OptionDescriptor option : getOptions()) {
+            writer.append(" ");
+            option.printUsage(writer);
+          }
+          writer.append(" COMMAND [ARGS]\n\n");
+
+          //
+          String man = getDescription().getMan();
+          if (man.length() > 0) {
+            writer.append("DESCRIPTION\n");
+            Util.indent(Util.MAN_TAB, man, writer);
+            writer.append("\n\n");
+          }
+
+          // Common options
+          if (getOptions().size() > 0) {
+            writer.append("PARAMETERS\n");
+            for (OptionDescriptor option : getOptions()) {
+              writer.append(Util.MAN_TAB);
+              option.printUsage(writer);
+              String optionText = option.getDescription().getBestEffortMan();
+              if (optionText.length() > 0) {
+                writer.append("\n");
+                Util.indent(Util.MAN_TAB_EXTRA, optionText, writer);
+              }
+              writer.append("\n\n");
+            }
+          }
+
+          //
+          writer.append("COMMANDS\n");
+          for (CommandDescriptor<T> method : methods.values()) {
+            writer.append(Util.MAN_TAB).append(method.getName());
+            String methodText = method.getDescription().getBestEffortMan();
+            if (methodText.length() > 0) {
+              writer.append("\n");
+              Util.indent(Util.MAN_TAB_EXTRA, methodText, writer);
+            }
+            writer.append("\n\n");
+          }
+        }
+        break;
+      }
+      case 1: {
+
+        CommandDescriptor<T> owner = getOwner();
+
+        //
+        boolean printName = !owner.getSubordinates().keySet().equals(MAIN_SINGLETON);
+
+        // Name
+        writer.append("NAME\n");
+        writer.append(Util.MAN_TAB).append(owner.getName());
+        if (printName) {
+          writer.append(" ").append(getName());
+        }
+        if (getUsage().length() > 0) {
+          writer.append(" - ").append(getUsage());
+        }
+        writer.append("\n\n");
+
+        // Synopsis
+        writer.append("SYNOPSIS\n");
+        writer.append(Util.MAN_TAB).append(owner.getName());
+        for (OptionDescriptor option : owner.getOptions()) {
+          writer.append(" ");
+          option.printUsage(writer);
+        }
+        if (printName) {
+          writer.append(" ").append(getName());
+        }
+        for (OptionDescriptor option : getOptions()) {
+          writer.append(" ");
+          option.printUsage(writer);
+        }
+        for (ArgumentDescriptor argument : getArguments()) {
+          writer.append(" ");
+          argument.printUsage(writer);
+        }
+        writer.append("\n\n");
+
+        // Description
+        String man = getDescription().getMan();
+        if (man.length() > 0) {
+          writer.append("DESCRIPTION\n");
+          Util.indent(Util.MAN_TAB, man, writer);
+          writer.append("\n\n");
+        }
+
+        // Parameters
+        List<OptionDescriptor> options = new ArrayList<OptionDescriptor>();
+        options.addAll(owner.getOptions());
+        options.addAll(getOptions());
+        if (options.size() > 0) {
+          writer.append("\nPARAMETERS\n");
+          for (ParameterDescriptor parameter : Util.join(owner.getOptions(), getParameters())) {
+            writer.append(Util.MAN_TAB);
+            parameter.printUsage(writer);
+            String parameterText = parameter.getDescription().getBestEffortMan();
+            if (parameterText.length() > 0) {
+              writer.append("\n");
+              Util.indent(Util.MAN_TAB_EXTRA, parameterText, writer);
+            }
+            writer.append("\n\n");
+          }
+        }
+
+        //
+        break;
+      }
+      default:
+        throw new UnsupportedOperationException("Does not make sense");
+    }
+  }
+
 
   /**
    * Returns the command subordinates as a map.
    *
    * @return the subordinates
    */
-  public abstract Map<String, ? extends CommandDescriptor<T, ?>> getSubordinates();
+  public abstract Map<String, ? extends CommandDescriptor<T>> getSubordinates();
+
+  public abstract CommandDescriptor<T> getSubordinate(String name);
 
   /**
    * Returns the command parameters, the returned collection contains the command options and
@@ -177,7 +426,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    *
    * @return the command parameters
    */
-  public final Collection<ParameterDescriptor<B>> getParameters() {
+  public final List<ParameterDescriptor> getParameters() {
     return uParameters;
   }
 
@@ -213,7 +462,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    *
    * @return the command options
    */
-  public final Collection<OptionDescriptor<B>> getOptions() {
+  public final Collection<OptionDescriptor> getOptions() {
     return uOptions;
   }
 
@@ -223,7 +472,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    * @param name the option name
    * @return the option
    */
-  public final OptionDescriptor<B> getOption(String name) {
+  public final OptionDescriptor getOption(String name) {
     return optionMap.get(name);
   }
 
@@ -233,14 +482,14 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    * @param name the option name
    * @return the option
    */
-  public abstract OptionDescriptor<?> findOption(String name);
+  public abstract OptionDescriptor findOption(String name);
 
   /**
    * Returns a list of the command arguments.
    *
    * @return the command arguments
    */
-  public final List<ArgumentDescriptor<B>> getArguments() {
+  public final List<ArgumentDescriptor> getArguments() {
     return uArguments;
   }
 
@@ -251,7 +500,7 @@ public abstract class CommandDescriptor<T, B extends TypeBinding> {
    * @return the command argument
    * @throws IllegalArgumentException if the index is not within the bounds
    */
-  public final ArgumentDescriptor<B> getArgument(int index) throws IllegalArgumentException {
+  public final ArgumentDescriptor getArgument(int index) throws IllegalArgumentException {
     if (index < 0) {
       throw new IllegalArgumentException();
     }

@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.async;
 
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.shell.Shell;
 
 import java.io.Closeable;
@@ -88,7 +88,7 @@ public class AsyncShell implements Shell, Closeable {
     return shell.getPrompt();
   }
 
-  public CommandCompletion complete(String prefix) {
+  public CompletionMatch complete(String prefix) {
     return shell.complete(prefix);
   }
 

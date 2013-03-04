@@ -21,7 +21,7 @@ package org.crsh.processor.jline;
 
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
-import org.crsh.cmdline.CommandCompletion;
+import org.crsh.cmdline.completion.CompletionMatch;
 import org.crsh.cmdline.Delimiter;
 import org.crsh.cmdline.spi.Completion;
 import org.crsh.shell.Shell;
@@ -126,7 +126,7 @@ public class JLineProcessor implements Runnable, Completer {
 
   public int complete(String buffer, int cursor, List<CharSequence> candidates) {
     String prefix = buffer.substring(0, cursor);
-    CommandCompletion completion = shell.complete(prefix);
+    CompletionMatch completion = shell.complete(prefix);
     Completion vc = completion.getValue();
     if (vc.isEmpty()) {
       return -1;
