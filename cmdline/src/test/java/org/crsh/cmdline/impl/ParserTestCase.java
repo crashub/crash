@@ -351,6 +351,21 @@ public class ParserTestCase extends TestCase {
     tester.assertEnd(Event.Stop.Done.class, 11);
   }
 
+  public void testImplicitSubordinateOption() {
+
+    class A {
+      @Command
+      public void main(@Option(names = "o") String o) {}
+    }
+    CommandDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
+
+    //
+    Tester<A> tester = new Tester<A>(cmd, "-o foo");
+    tester.assertMethod("main");
+    tester.assertOption("o", "foo");
+    tester.assertEnd(Event.Stop.Done.class, 6);
+  }
+
   public void testClassArgument() throws Exception {
 
     class A {

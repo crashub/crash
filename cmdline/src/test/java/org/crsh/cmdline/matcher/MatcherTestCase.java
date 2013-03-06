@@ -516,6 +516,19 @@ public class MatcherTestCase extends TestCase {
     assertEquals("foo", l.opt);
   }
 
+  public static class M {
+    String opt;
+    @Command
+    public void main(@Option(names = "o") String opt) { this.opt = opt; }
+  }
+
+  public void testImplicitSubordinateOption() throws Exception {
+    CommandDescriptor<M> desc = CommandFactory.DEFAULT.create(M.class);
+    M m = new M();
+    desc.invoker("main").match("-o foo").invoke(m);
+    assertEquals("foo", m.opt);
+  }
+
   public void testBooleanParameter() throws Exception {
     class A implements Runnable {
       @Option(names = "o")
