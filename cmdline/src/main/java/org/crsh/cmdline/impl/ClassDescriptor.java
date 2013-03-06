@@ -160,11 +160,6 @@ class ClassDescriptor<T> extends CommandDescriptor<T> {
     return methods;
   }
 
-  @Override
-  public OptionDescriptor findOption(String name) {
-    return getOption(name);
-  }
-
   public MethodDescriptor<T> getSubordinate(String name) {
     return methods.get(name);
   }

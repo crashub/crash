@@ -473,12 +473,21 @@ public abstract class CommandDescriptor<T> {
   }
 
   /**
-   * Find an command option by its name.
+   * Find an command option by its name, this will look through the command hierarchy.
    *
    * @param name the option name
-   * @return the option
+   * @return the option or null
    */
-  public abstract OptionDescriptor findOption(String name);
+  public final OptionDescriptor findOption(String name) {
+    OptionDescriptor option = getOption(name);
+    if (option == null) {
+      CommandDescriptor<T> owner = getOwner();
+      if (owner != null) {
+        option = owner.findOption(name);
+      }
+    }
+    return option;
+  }
 
   /**
    * Returns a list of the command arguments.

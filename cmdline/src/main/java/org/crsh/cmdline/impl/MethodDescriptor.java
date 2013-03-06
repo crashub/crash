@@ -42,7 +42,7 @@ import java.util.Map;
 class MethodDescriptor<T> extends CommandDescriptor<T> {
 
   /** . */
-  private final CommandDescriptor<T> owner;
+  private final ClassDescriptor<T> owner;
 
   /** . */
   private final Method method;
@@ -111,15 +111,6 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
     return owner.getType();
   }
 
-  @Override
-  public OptionDescriptor findOption(String name) {
-    OptionDescriptor option = getOption(name);
-    if (option == null) {
-      option = owner.findOption(name);
-    }
-    return option;
-  }
-
   public CommandInvoker<T> getInvoker(final InvocationMatch<T> _match) {
     return new CommandInvoker<T>() {
       @Override
@@ -146,7 +137,7 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
       public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
 
         //
-        ((ClassDescriptor<T>)_match.owner().getDescriptor()).configure(_match.owner(), command);
+        owner.configure(_match.owner(), command);
 
         // Prepare invocation
         Method m = getMethod();
