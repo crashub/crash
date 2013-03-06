@@ -396,7 +396,6 @@ public class MatcherTestCase extends TestCase {
     assertEquals(Arrays.asList("a", "b"), f.s);
   }
 
-
   public static class G {
     Custom o;
     @Command
@@ -474,6 +473,47 @@ public class MatcherTestCase extends TestCase {
     } catch (Error e) {
       assertEquals("fooerror", e.getMessage());
     }
+  }
+
+  public static class K {
+    @Option(names = "o")
+    String opt;
+    @Command
+    public void cmd() {}
+  }
+
+  public void testSpecifyClassOptionBeforeSubordinate() throws Exception {
+    CommandDescriptor<K> desc = CommandFactory.DEFAULT.create(K.class);
+    K k = new K();
+    desc.invoker("main").match("-o foo cmd").invoke(k);
+    assertEquals("foo", k.opt);
+  }
+
+  public void testSpecifyClassOptionAfterSubordinate() throws Exception {
+    CommandDescriptor<K> desc = CommandFactory.DEFAULT.create(K.class);
+    K k = new K();
+    desc.invoker("main").match("cmd -o foo").invoke(k);
+    assertEquals(null, k.opt);
+  }
+
+  public static class L {
+    String opt;
+    @Command
+    public void cmd(@Option(names = "o") String opt) { this.opt = opt; }
+  }
+
+  public void testSpecifySubordinateOptionBeforeSubordinate() throws Exception {
+    CommandDescriptor<L> desc = CommandFactory.DEFAULT.create(L.class);
+    L l = new L();
+    desc.invoker("main").match("-o foo cmd").invoke(l);
+    assertEquals(null, l.opt);
+  }
+
+  public void testSpecifySubordinateOptionAfterSubordinate() throws Exception {
+    CommandDescriptor<L> desc = CommandFactory.DEFAULT.create(L.class);
+    L l = new L();
+    desc.invoker("main").match("cmd -o foo").invoke(l);
+    assertEquals("foo", l.opt);
   }
 
   public void testBooleanParameter() throws Exception {
