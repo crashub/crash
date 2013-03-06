@@ -123,7 +123,7 @@ public class InvocationMatcher<T> {
 
     //
     Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Mode.INVOKE);
-    InvocationMatch<T> current = descriptor.createInvocationMatch();
+    InvocationMatch<T> current = new InvocationMatch<T>(descriptor);
 
     //
     while (true) {

@@ -19,10 +19,10 @@
 
 package org.crsh.cmdline.invocation;
 
-import org.crsh.cmdline.SyntaxException;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
+import org.crsh.cmdline.SyntaxException;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-public abstract class InvocationMatch<T> {
+public final class InvocationMatch<T> {
 
   /** . */
   private final CommandDescriptor<T> descriptor;
@@ -46,20 +46,33 @@ public abstract class InvocationMatch<T> {
   /** . */
   private String rest;
 
+  /** . */
+  private final InvocationMatch<T> owner;
+
   public InvocationMatch(CommandDescriptor<T> descriptor) {
+    this(null, descriptor);
+  }
+
+  private InvocationMatch(InvocationMatch<T> owner, CommandDescriptor<T> descriptor) {
+    this.owner = owner;
     this.descriptor = descriptor;
     this.options = Collections.emptyMap();
     this.rest = null;
     this.arguments = Collections.emptyList();
   }
 
-  public abstract InvocationMatch<T> owner();
+  public InvocationMatch<T> owner() {
+    return owner;
+  }
 
-  public abstract InvocationMatch<T> subordinate(String name);
-
-  public abstract void configure(T command) throws InvocationException, SyntaxException;
-
-  public abstract CommandInvoker<T> getInvoker();
+  public InvocationMatch<T> subordinate(String name) {
+    CommandDescriptor<T> subordinate = descriptor.getSubordinate(name);
+    if (subordinate != null) {
+      return new InvocationMatch<T>(this, subordinate);
+    } else {
+      return null;
+    }
+  }
 
   public CommandDescriptor<T> getDescriptor() {
     return descriptor;
@@ -78,18 +91,21 @@ public abstract class InvocationMatch<T> {
     }
   }
 
-  public final CommandInvoker<T> invoke(T command) throws InvocationException, SyntaxException {
+  public CommandInvoker<T> getInvoker() {
+    return descriptor.getInvoker(this);
+  }
+
+  public Object invoke(T command) throws InvocationException, SyntaxException {
     return invoke(Resolver.EMPTY, command);
   }
 
-  public final CommandInvoker<T> invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
+  public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
     CommandInvoker<T> invoker = getInvoker();
     if (invoker != null) {
-      invoker.invoke(resolver, command);
+      return invoker.invoke(resolver, command);
     } else {
-      configure(command);
+      return null;
     }
-    return invoker;
   }
 
   public Collection<OptionMatch> options() {

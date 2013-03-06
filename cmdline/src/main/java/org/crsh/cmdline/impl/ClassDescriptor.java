@@ -19,13 +19,22 @@
 
 package org.crsh.cmdline.impl;
 
+import org.crsh.cmdline.ArgumentDescriptor;
 import org.crsh.cmdline.CommandDescriptor;
 import org.crsh.cmdline.Description;
 import org.crsh.cmdline.IntrospectionException;
 import org.crsh.cmdline.OptionDescriptor;
 import org.crsh.cmdline.ParameterDescriptor;
+import org.crsh.cmdline.SyntaxException;
+import org.crsh.cmdline.binding.ClassFieldBinding;
+import org.crsh.cmdline.invocation.CommandInvoker;
+import org.crsh.cmdline.invocation.InvocationException;
 import org.crsh.cmdline.invocation.InvocationMatch;
+import org.crsh.cmdline.invocation.ParameterMatch;
+import org.crsh.cmdline.invocation.Resolver;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -44,11 +53,6 @@ class ClassDescriptor<T> extends CommandDescriptor<T> {
     //
     this.methods = methods;
     this.type = type;
-  }
-
-  @Override
-  public InvocationMatch<T> createInvocationMatch() {
-    return new ClassMatch<T>(this);
   }
 
   @Override
@@ -73,6 +77,64 @@ class ClassDescriptor<T> extends CommandDescriptor<T> {
 
     //
     super.addParameter(parameter);
+  }
+
+  @Override
+  public CommandInvoker<T> getInvoker(final InvocationMatch<T> match) {
+    return new CommandInvoker<T>() {
+      @Override
+      public Class<?> getReturnType() {
+        return Void.class;
+      }
+
+      @Override
+      public Type getGenericReturnType() {
+        return Void.class;
+      }
+
+      @Override
+      public Class<?>[] getParameterTypes() {
+        return new Class<?>[0];
+      }
+
+      @Override
+      public Type[] getGenericParameterTypes() {
+        return new Type[0];
+      }
+
+      @Override
+      public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
+        configure(match, command);
+        return null;
+      }
+    };
+  }
+
+  void configure(InvocationMatch<T> classMatch, T command) throws InvocationException, SyntaxException {
+    for (ParameterDescriptor parameter : getParameters()) {
+      ParameterMatch match = classMatch.getParameter(parameter);
+      if (match == null) {
+        if (parameter.isRequired()) {
+          if (parameter instanceof ArgumentDescriptor) {
+            ArgumentDescriptor argument = (ArgumentDescriptor)parameter;
+            throw new SyntaxException("Missing argument " + argument.getName());
+          } else {
+            OptionDescriptor option = (OptionDescriptor)parameter;
+            throw new SyntaxException("Missing option " + option.getNames());
+          }
+        }
+      } else {
+        Object value = match.computeValue();
+        Field f = ((ClassFieldBinding)parameter.getBinding()).getField();
+        try {
+          f.setAccessible(true);
+          f.set(command, value);
+        }
+        catch (Exception e) {
+          throw new InvocationException(e.getMessage(), e);
+        }
+      }
+    }
   }
 
   @Override

@@ -21,6 +21,7 @@ package org.crsh.cmdline;
 
 import org.crsh.cmdline.completion.CompletionMatcher;
 import org.crsh.cmdline.impl.Util;
+import org.crsh.cmdline.invocation.CommandInvoker;
 import org.crsh.cmdline.invocation.InvocationMatch;
 import org.crsh.cmdline.invocation.InvocationMatcher;
 
@@ -110,6 +111,8 @@ public abstract class CommandDescriptor<T> {
     this.uLongOptionNames = longOptionNames;
   }
 
+  public abstract CommandInvoker<T> getInvoker(InvocationMatch<T> match);
+
   public final InvocationMatcher<T> invoker() {
     return new InvocationMatcher<T>(this, null);
   }
@@ -125,8 +128,6 @@ public abstract class CommandDescriptor<T> {
   public final CompletionMatcher<T> completer(String mainName) {
     return new CompletionMatcher<T>(mainName, this);
   }
-
-  public abstract InvocationMatch<T> createInvocationMatch();
 
   /**
    * Add a parameter to the command.
