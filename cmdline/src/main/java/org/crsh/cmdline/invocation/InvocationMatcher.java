@@ -142,7 +142,7 @@ public class InvocationMatcher<T> {
         break;
       } else if (event instanceof Event.Option) {
         Event.Option optionEvent = (Event.Option)event;
-        OptionDescriptor desc = optionEvent.getDescriptor();
+        OptionDescriptor desc = optionEvent.getParameter();
         Iterable<OptionMatch> options = current.options();
         OptionMatch option = null;
         for (OptionMatch om : options) {
@@ -167,12 +167,12 @@ public class InvocationMatcher<T> {
         ArgumentMatch match;
         if (values.size() > 0) {
           match = new ArgumentMatch(
-              argumentEvent.getDescriptor(),
+              argumentEvent.getParameter(),
               argumentEvent.getFrom(),
               argumentEvent.getTo(),
               bilto(argumentEvent.getValues())
           );
-          if (argumentEvent.getDescriptor().getOwner() == current.getDescriptor()) {
+          if (argumentEvent.getCommand() == current.getDescriptor()) {
             current.argument(match);
           } else {
             throw new AssertionError();

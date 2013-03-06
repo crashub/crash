@@ -184,7 +184,7 @@ abstract class Status {
                   break;
                 }
               }
-              response.add(new Event.Option(desc, optionToken, values));
+              response.add(new Event.Option(req.command, desc, optionToken, values));
             } else {
               // We are reading an unknown option
               // it could match an option of an implicit command
@@ -339,7 +339,7 @@ abstract class Status {
                 size--;
               }
             }
-            events.addLast(new Event.Argument(argument, values));
+            events.addLast(new Event.Argument(req.command, argument, values));
 
             // Add the whitespace if needed
             if (req.tokenizer.hasNext() && req.tokenizer.peek() instanceof Token.Whitespace) {
@@ -400,7 +400,7 @@ abstract class Status {
           switch (argument.getMultiplicity()) {
             case SINGLE:
               req.tokenizer.next();
-              response.add(new Event.Argument(argument, Arrays.asList(literal)));
+              response.add(new Event.Argument(req.command, argument, Arrays.asList(literal)));
               response.status = next();
               break;
             case MULTI:
@@ -420,7 +420,7 @@ abstract class Status {
                   }
                 }
               }
-              response.add(new Event.Argument(argument, values));
+              response.add(new Event.Argument(req.command, argument, values));
           }
         } else {
           response.add(new Event.Stop.Unresolved.TooManyArguments(literal));

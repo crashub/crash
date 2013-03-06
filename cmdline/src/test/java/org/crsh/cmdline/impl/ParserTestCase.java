@@ -69,13 +69,13 @@ public class ParserTestCase extends TestCase {
 
     public void assertOption(String name, String... values) {
       Event.Option event = (Event.Option)parser.next();
-      assertTrue(event.getDescriptor().getNames().contains(name));
+      assertTrue(event.getParameter().getNames().contains(name));
       assertEquals(Arrays.asList(values), event.getStrings());
     }
 
     public void assertArgument(String name, String... values) {
       Event.Argument event = (Event.Argument)parser.next();
-      assertEquals(name, event.getDescriptor().getName());
+      assertEquals(name, event.getParameter().getName());
       assertEquals(Arrays.asList(values), event.getStrings());
     }
 

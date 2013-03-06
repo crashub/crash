@@ -43,18 +43,26 @@ public abstract class Event {
   public abstract static class Parameter<T extends Token.Literal, D extends ParameterDescriptor> extends Event {
 
     /** . */
-    protected final D descriptor;
+    protected final CommandDescriptor<?> command;
+
+    /** . */
+    protected final D parameter;
 
     /** . */
     protected final List<T> values;
 
-    public Parameter(D descriptor, List<T> values) {
-      this.descriptor = descriptor;
+    public Parameter(CommandDescriptor<?> command, D parameter, List<T> values) {
+      this.command = command;
+      this.parameter = parameter;
       this.values = values;
     }
 
-    public final D getDescriptor() {
-      return descriptor;
+    public CommandDescriptor<?> getCommand() {
+      return command;
+    }
+
+    public final D getParameter() {
+      return parameter;
     }
 
     public final List<T> getValues() {
@@ -84,7 +92,7 @@ public abstract class Event {
 
     @Override
     public String toString() {
-      return getClass().getSimpleName() + "[descriptor=" + descriptor + ",values=" + values +  "]";
+      return getClass().getSimpleName() + "[descriptor=" + parameter + ",values=" + values +  "]";
     }
   }
 
@@ -93,8 +101,8 @@ public abstract class Event {
     /** . */
     private final Token.Literal.Option token;
 
-    Option(OptionDescriptor descriptor, Token.Literal.Option token, List<Token.Literal.Word> values) {
-      super(descriptor, values);
+    Option(CommandDescriptor<?> command, OptionDescriptor descriptor, Token.Literal.Option token, List<Token.Literal.Word> values) {
+      super(command, descriptor, values);
 
       this.token = token;
     }
@@ -116,8 +124,8 @@ public abstract class Event {
 
   public static final class Argument extends Parameter<Token.Literal, ArgumentDescriptor> {
 
-    Argument(ArgumentDescriptor descriptor, List<Token.Literal> values) throws IllegalArgumentException {
-      super(descriptor, values);
+    Argument(CommandDescriptor<?> command, ArgumentDescriptor descriptor, List<Token.Literal> values) throws IllegalArgumentException {
+      super(command, descriptor, values);
 
       //
       if (values.size() == 0) {

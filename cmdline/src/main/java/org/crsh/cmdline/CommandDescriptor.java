@@ -142,9 +142,6 @@ public abstract class CommandDescriptor<T> {
     if (parameter == null) {
       throw new NullPointerException("No null parameter accepted");
     }
-    if (parameter.owner != null) {
-      throw new IllegalArgumentException("The parameter is already associated with a command");
-    }
 
     //
     if (parameter instanceof OptionDescriptor) {
@@ -170,7 +167,6 @@ public abstract class CommandDescriptor<T> {
         }
       }
       i.add(parameter);
-      parameter.owner = this;
     } else if (parameter instanceof ArgumentDescriptor) {
       ArgumentDescriptor argument = (ArgumentDescriptor)parameter;
       if (argument.getMultiplicity() == Multiplicity.MULTI) {
@@ -181,7 +177,6 @@ public abstract class CommandDescriptor<T> {
       }
       arguments.add(argument);
       parameters.add(argument);
-      parameter.owner = this;
     }
   }
 

@@ -154,7 +154,7 @@ public final class CompletionMatcher<T> {
     if (last instanceof Event.Option) {
       Event.Option optionEvent = (Event.Option)last;
       List<Token.Literal.Word> values = optionEvent.getValues();
-      OptionDescriptor option = optionEvent.getDescriptor();
+      OptionDescriptor option = optionEvent.getParameter();
       if (separator == null) {
         if (values.size() == 0) {
           return new SpaceCompletion();
@@ -177,11 +177,11 @@ public final class CompletionMatcher<T> {
       }
     } else if (last instanceof Event.Argument) {
       Event.Argument eventArgument = (Event.Argument)last;
-      ArgumentDescriptor argument = eventArgument.getDescriptor();
+      ArgumentDescriptor argument = eventArgument.getParameter();
       if (separator != null) {
         switch (argument.getMultiplicity()) {
           case SINGLE:
-            List<? extends ArgumentDescriptor> arguments = argument.getOwner().getArguments();
+            List<? extends ArgumentDescriptor> arguments = eventArgument.getCommand().getArguments();
             int index = arguments.indexOf(argument) + 1;
             if (index < arguments.size()) {
               ArgumentDescriptor nextArg = arguments.get(index);

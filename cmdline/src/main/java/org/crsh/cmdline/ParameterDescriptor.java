@@ -54,9 +54,6 @@ public abstract class ParameterDescriptor {
   /** . */
   private final boolean unquote;
 
-  /** . */
-  CommandDescriptor<?> owner;
-
   public ParameterDescriptor(
     TypeBinding binding,
     ParameterType<?> type,
@@ -88,10 +85,6 @@ public abstract class ParameterDescriptor {
   }
 
   public abstract Object parse(List<String> values) throws SyntaxException;
-
-  public CommandDescriptor<?> getOwner() {
-    return owner;
-  }
 
   public Class<?> getDeclaredType() {
     return type.getDeclaredType();
