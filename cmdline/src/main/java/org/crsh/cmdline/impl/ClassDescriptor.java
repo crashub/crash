@@ -81,33 +81,41 @@ class ClassDescriptor<T> extends CommandDescriptor<T> {
 
   @Override
   public CommandInvoker<T> getInvoker(final InvocationMatch<T> match) {
-    return new CommandInvoker<T>() {
-      @Override
-      public Class<?> getReturnType() {
-        return Void.class;
-      }
 
-      @Override
-      public Type getGenericReturnType() {
-        return Void.class;
-      }
-
-      @Override
-      public Class<?>[] getParameterTypes() {
-        return new Class<?>[0];
-      }
-
-      @Override
-      public Type[] getGenericParameterTypes() {
-        return new Type[0];
-      }
-
-      @Override
-      public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
-        configure(match, command);
-        return null;
-      }
-    };
+    if (Runnable.class.isAssignableFrom(type)) {
+      return new CommandInvoker<T>() {
+        @Override
+        public Class<?> getReturnType() {
+          return Void.class;
+        }
+        @Override
+        public Type getGenericReturnType() {
+          return Void.class;
+        }
+        @Override
+        public Class<?>[] getParameterTypes() {
+          return new Class<?>[0];
+        }
+        @Override
+        public Type[] getGenericParameterTypes() {
+          return new Type[0];
+        }
+        @Override
+        public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
+          configure(match, command);
+          Runnable runnable = Runnable.class.cast(command);
+          try {
+            runnable.run();
+          }
+          catch (Exception e) {
+            throw new InvocationException(e);
+          }
+          return null;
+        }
+      };
+    } else {
+      return null;
+    }
   }
 
   void configure(InvocationMatch<T> classMatch, T command) throws InvocationException, SyntaxException {

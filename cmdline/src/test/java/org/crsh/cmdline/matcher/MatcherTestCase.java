@@ -45,10 +45,11 @@ public class MatcherTestCase extends TestCase {
 
 
   public void testRequiredClassOption() throws Exception {
-    class A {
+    class A implements Runnable{
       @Option(names = "o")
       @Required
       String s;
+      public void run() {}
     }
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     InvocationMatcher<A> analyzer = desc.invoker();
@@ -67,9 +68,10 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testOptionalClassOption() throws Exception {
-    class A {
+    class A implements Runnable {
       @Option(names = "o")
       String s;
+      public void run() {}
     }
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     InvocationMatcher<A> analyzer = desc.invoker();
@@ -84,9 +86,10 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testPrimitiveClassArgument() throws Exception {
-    class A {
+    class A implements Runnable {
       @Argument
       int i;
+      public void run() {}
     }
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     InvocationMatcher<A> analyzer = desc.invoker();
@@ -135,9 +138,10 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testOptionalClassArgument() throws Exception {
-    class A {
+    class A implements Runnable {
       @Argument
       String s;
+      public void run() {}
     }
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     InvocationMatcher<A> analyzer = desc.invoker();
@@ -155,11 +159,12 @@ public class MatcherTestCase extends TestCase {
     assertEquals(null, a.s);
   }
 
-  public static class BC {
+  public static class BC implements Runnable {
     @Argument
     List<String> s;
     @Command
     public void bar(@Argument List<String> s) { this.s = s; }
+    public void run() {}
   }
 
   public void testOptionalArgumentList() throws Exception {
@@ -186,10 +191,11 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testRequiredArgumentList() throws Exception {
-    class A {
+    class A implements Runnable {
       @Argument
       @Required
       List<String> s;
+      public void run() {}
     }
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     InvocationMatcher<A> analyzer = desc.invoker();
@@ -211,7 +217,7 @@ public class MatcherTestCase extends TestCase {
     assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
 
-  public static class A {
+  public static class A implements Runnable {
     @Option(names = "s")
     String s;
     @Command
@@ -221,6 +227,7 @@ public class MatcherTestCase extends TestCase {
     }
     String o;
     String a;
+    public void run() {}
   }
 
   public void testMethodInvocation() throws Exception {
@@ -470,9 +477,10 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testBooleanParameter() throws Exception {
-    class A {
+    class A implements Runnable {
       @Option(names = "o")
       boolean o;
+      public void run() {}
     }
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     InvocationMatcher<A> analyzer = desc.invoker();
@@ -484,12 +492,13 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testSCP() throws Exception {
-    class SCP {
+    class SCP implements Runnable {
       @Option(names = "t")
       boolean t;
       @Argument
       @Required
       String target;
+      public void run() {}
     }
     CommandDescriptor<SCP> desc = CommandFactory.DEFAULT.create(SCP.class);
     InvocationMatcher<SCP> analyzer = desc.invoker();

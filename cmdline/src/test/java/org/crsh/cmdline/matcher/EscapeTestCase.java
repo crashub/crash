@@ -37,12 +37,15 @@ public class EscapeTestCase extends TestCase {
 
 
   public void testOption() throws Exception {
-    class A {
+    class A implements Runnable {
       @Option(names = "o")
       String s;
+      public void run() {}
     }
+
+    //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.invoker();
+    InvocationMatcher<A> analyzer = desc.invoker("main");
 
     //
     A a = new A();
@@ -60,11 +63,15 @@ public class EscapeTestCase extends TestCase {
     assertEquals(" a b", a.s);
   }
 
+
   public void testArgumentList() throws Exception {
-    class A {
+    class A implements Runnable {
       @Argument
       List<String> s;
+      public void run() {}
     }
+
+    //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     InvocationMatcher<A> analyzer = desc.invoker();
 
