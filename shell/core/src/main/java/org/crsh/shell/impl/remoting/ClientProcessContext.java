@@ -40,10 +40,14 @@ class ClientProcessContext implements ShellProcessContext {
   /** . */
   final ArrayList<Chunk> buffer;
 
+  /** . */
+  private boolean closed;
+
   ClientProcessContext(ClientAutomaton client, ShellProcess process) {
     this.client = client;
     this.process = process;
     this.buffer = new ArrayList<Chunk>(1000);
+    this.closed = false;
   }
 
   /**
@@ -80,22 +84,32 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   public int getWidth() {
-    ensureSize();
-    return client.getWidth();
+    if (!closed) {
+      ensureSize();
+      return client.getWidth();
+    } else {
+      return -1;
+    }
   }
 
   public int getHeight() {
-    ensureSize();
-    return client.getHeight();
+    if (!closed) {
+      ensureSize();
+      return client.getHeight();
+    } else {
+      return -1;
+    }
   }
 
   public boolean takeAlternateBuffer() {
-    try {
-      client.out.writeObject(new ServerMessage.UseAlternateBuffer());
-      client.out.flush();
-    }
-    catch (Exception e) {
-      //
+    if (!closed) {
+      try {
+        client.out.writeObject(new ServerMessage.UseAlternateBuffer());
+        client.out.flush();
+      }
+      catch (Exception e) {
+        //
+      }
     }
 
     // For now we suppose any impl return true;
@@ -103,12 +117,14 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   public boolean releaseAlternateBuffer() {
-    try {
-      client.out.writeObject(new ServerMessage.UseMainBuffer());
-      client.out.flush();
-    }
-    catch (Exception e) {
-      //
+    if (!closed) {
+      try {
+        client.out.writeObject(new ServerMessage.UseMainBuffer());
+        client.out.flush();
+      }
+      catch (Exception e) {
+        //
+      }
     }
 
     // For now we suppose any impl return true;
@@ -134,7 +150,9 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   public void provide(Chunk element) throws IOException {
-    buffer.add(element);
+    if (!closed) {
+      buffer.add(element);
+    }
   }
 
   public Class<Chunk> getConsumedType() {
@@ -142,19 +160,21 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   public synchronized void flush() {
-    if (buffer.size() > 0) {
-      try {
-        for (Chunk chunk : buffer) {
-          client.out.writeObject(new ServerMessage.Chunk(chunk));
+    if (!closed) {
+      if (buffer.size() > 0) {
+        try {
+          for (Chunk chunk : buffer) {
+            client.out.writeObject(new ServerMessage.Chunk(chunk));
+          }
+          client.out.writeObject(new ServerMessage.Flush());
+          client.out.flush();
         }
-        client.out.writeObject(new ServerMessage.Flush());
-        client.out.flush();
-      }
-      catch (IOException ignore) {
-        //
-      }
-      finally {
-        buffer.clear();
+        catch (IOException ignore) {
+          //
+        }
+        finally {
+          buffer.clear();
+        }
       }
     }
   }
@@ -177,6 +197,7 @@ class ClientProcessContext implements ShellProcessContext {
         //
       }
       finally {
+        closed = true;
         if (response instanceof ShellResponse.Close) {
           client.close();
         }

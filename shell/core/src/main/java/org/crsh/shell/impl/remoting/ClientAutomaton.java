@@ -114,6 +114,15 @@ public class ClientAutomaton implements Runnable {
           current.execute();
         } else if (msg instanceof ClientMessage.Cancel) {
           if (current != null) {
+
+            // For now we
+            // 1/ end the context
+            // 2/ cancel the process
+            // it is not the best strategy instead we should
+            // 1/ cancel the process
+            // 2/ wait a few milli seconds
+            // 3/ if it's not ended then we end it
+
             final ClientProcessContext context = current;
             Statement statements = new Statement() {
               @Override
