@@ -13,6 +13,7 @@ file system (i.e ##java.io.File##). It defines a specific layout for locating re
 ** ##org.crsh.plugin.WebPluginLifeCycle## : uses a ##javax.servlet.ServletContext##
 ** ##org.crsh.spring.SpringBootstrap## : embeds CRaSH as a Spring bean
 ** ##org.crsh.spring.SpringWebBootstrap## : extends the ##SpringBootstrap## and uses the existing ##ServletContext##
+** ##org.crsh.guice## : embeds CRaSH as a Guice module
 
 == Standalone bootstrap customization ==
 

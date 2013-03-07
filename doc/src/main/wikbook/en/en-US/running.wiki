@@ -220,3 +220,23 @@ the base CRaSH functionnalities bootstrapped by the Spring Framework. It can be 
 
 This example is bundled with a //spring// command that shows how the Spring factory or beans can be accessed within
 a CRaSH command.
+
+== Embedding in a Guice web app ==
+
+In order to embed CRaSH in a Guice web app, the only thing to do is install the ##org.crsh.guice.CrashGuiceSupport## module in it.
+
+{{example title="Add CrashGuiceSupport to your Guice Application"}}
+{{java}}
+
+public class MyGuiceApplication extends ServletModule {
+	
+	@Override
+	protected void configureServlets() {
+		super.configureServlets();
+		install(new CrashGuiceSupport(ImmutableMap.<PropertyDescriptor<Object>, Object>of()));
+		serve("/").with(MyServlet.class);
+	}
+}
+{{/java}}
+{{/example}}
+

@@ -231,6 +231,20 @@
         <classifier>sources</classifier>
       </dependency>
 
+      <!-- Module shell embed guice -->
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.embed.guice</artifactId>
+        <version>1.2.0-cr7-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.shell.embed.guice</artifactId>
+        <version>1.2.0-cr7-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
+
+
       <!-- Module shell packaging -->
       <dependency>
         <groupId>org.crsh</groupId>
