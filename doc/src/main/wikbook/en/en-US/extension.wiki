@@ -14,11 +14,25 @@ file system (i.e ##java.io.File##). It defines a specific layout for locating re
 ** ##org.crsh.spring.SpringBootstrap## : embeds CRaSH as a Spring bean
 ** ##org.crsh.spring.SpringWebBootstrap## : extends the ##SpringBootstrap## and uses the existing ##ServletContext##
 
-== Standalone bootstrap customization ==
+== Standalone bootstrap {{anchor id=standalone_bootstrap /}}==
 
-The ##org.crsh.standalone.Bootstrap## class provides a Java //main// method:
+The ##org.crsh.standalone.Bootstrap## class is a generic class that can be used to embed the shell in your Java programs
+Its usage is quite straighforward and configurable. The bootstrap is a coarse grained approach and it needs a bit of configuration for running:
 
-{{warning}}finish me!!!{{/warning}}
+* The ##baseLoader## properties is the ##java.lang.ClassLoader## used by CRaSH for loading plugins, resources or command sources (under the
+///crash/commands/// path. This property is not modifiable and must be provided when the bootstrap is instantiated.
+* The ##config## properties provides the contextual properties used by CRaSH configuration such as //crash.vfs.refresh_period//
+* The ##attributes## property provides the contextual attributes used by CRaSH available at runtime via the ##org.crsh.command.CommandContext##,
+it is useful for providing objects to commands in a similar fashion to servlet context attributes
+* The ##cmdPath## property is a list of ##java.io.File## scanned by CRaSH for loading additional commands
+* The ##confPath## property is a list of ##java.io.File## scanned by CRaSH for loading configuration files
+
+Let's see an example on how to use it
+
+== Standalone CRaSH ##
+
+The standalone shell is a Java class configurable and runnable from the command line that is used by the standalone distribution. It is
+built upon the [[#standalone_bootstrap]] class.
 
 = Pluggable authentication {{anchor id=pluggable_auth /}} =
 
