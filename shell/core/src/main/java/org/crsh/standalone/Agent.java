@@ -27,7 +27,6 @@ import org.crsh.cmdline.invocation.InvocationMatch;
 import org.crsh.cmdline.invocation.InvocationMatcher;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
-import org.crsh.shell.impl.async.AsyncShell;
 import org.crsh.shell.impl.remoting.RemoteClient;
 
 import java.io.File;
@@ -76,8 +75,6 @@ public class Agent {
 
   @Command
   public void main(
-    @Option(names={"c","classpath"})
-    List<String> jars,
     @Option(names={"c","cmd"})
     List<String> cmds,
     @Option(names={"conf"})
@@ -103,14 +100,6 @@ public class Agent {
       for (String conf : confs) {
         File confPath = new File(conf);
         bootstrap.addToConfPath(confPath);
-      }
-    }
-
-    //
-    if (jars != null) {
-      for (String jar : jars) {
-        File jarFile = new File(jar);
-        bootstrap.addToClassPath(jarFile);
       }
     }
 

@@ -49,9 +49,6 @@ public class Bootstrap extends PluginLifeCycle {
   /** The mounted path on the file system. */
   private List<File> confpath = Utils.newArrayList();
 
-  /** The class path. */
-  private List<File> classpath = Utils.newArrayList();
-
   /** The base classloader. */
   private ClassLoader baseLoader;
 
@@ -112,35 +109,14 @@ public class Bootstrap extends PluginLifeCycle {
   }
 
   /**
-   * Add a jar path.
-   *
-   * @param path the jar path
-   * @return this bootstrap
-   * @throws NullPointerException when the path argument is null
-   */
-  public Bootstrap addToClassPath(File path) {
-    if (path == null) {
-      throw new NullPointerException("No null jar path");
-    }
-    classpath.add(path);
-    return this;
-  }
-
-  /**
    * Trigger the boostrap.
    *
    * @throws Exception any exception that would prevent the bootstrap
    */
   public void bootstrap() throws Exception {
 
-    // Compute the url classpath
-    URL[] urls = new URL[classpath.size()];
-    for (int i = 0;i < urls.length;i++) {
-      urls[i] = classpath.get(i).toURI().toURL();
-    }
-
     // Create the classloader from the url classpath
-    URLClassLoader classLoader = new URLClassLoader(urls, baseLoader);
+    URLClassLoader classLoader = new URLClassLoader(new URL[]{}, baseLoader);
 
     // Create the cmd file system
     FS cmdFS = new FS();
@@ -162,8 +138,7 @@ public class Bootstrap extends PluginLifeCycle {
     ServiceLoaderDiscovery discovery = new ServiceLoaderDiscovery(classLoader);
 
     //
-    StringBuilder info = new StringBuilder("Booting crash with classpath=");
-    info.append(classpath).append(" and mounts=[");
+    StringBuilder info = new StringBuilder("Booting crash with mounts=[");
     for (int i = 0;i < cmdpath.size();i++) {
       if (i > 0) {
         info.append(',');
