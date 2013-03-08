@@ -61,7 +61,7 @@ public final class PluginContext {
   private volatile List<File> dirs;
 
   /** . */
-  private final Map<PropertyDescriptor<?>, Property<?>> properties;
+  private final Map<String, Property<?>> properties;
 
   /** . */
   private final FS cmdFS;
@@ -136,7 +136,7 @@ public final class PluginContext {
     this.version = version;
     this.dirs = Collections.emptyList();
     this.cmdFS = cmdFS;
-    this.properties = new HashMap<PropertyDescriptor<?>, Property<?>>();
+    this.properties = new HashMap<String, Property<?>>();
     this.started = false;
     this.manager = new PluginManager(this, discovery);
     this.confFS = confFS;
@@ -167,9 +167,7 @@ public final class PluginContext {
     if (desc == null) {
       throw new NullPointerException();
     }
-    @SuppressWarnings("unchecked")
-    Property<T> property = (Property<T>)properties.get(desc);
-    return property != null ? property.getValue() : desc.defaultValue;
+    return getProperty(desc.getName(), desc.getType());
   }
 
   /**
@@ -188,11 +186,11 @@ public final class PluginContext {
     if (type == null) {
       throw new NullPointerException("No null property type accepted");
     }
-    for (PropertyDescriptor<?> pd : properties.keySet())
-    {
-      if (pd.name.equals(propertyName) && type.isAssignableFrom(pd.type))
-      {
-        return type.cast(getProperty(pd));
+    Property<?> property = properties.get(propertyName);
+    if (property != null) {
+      PropertyDescriptor<?> descriptor = property.getDescriptor();
+      if (descriptor.getType().isAssignableFrom(type)) {
+        return type.cast(property.getValue());
       }
     }
     return null;
@@ -212,11 +210,11 @@ public final class PluginContext {
     }
     if (value == null) {
       log.log(Level.FINE, "Removing property " + desc.name);
-      properties.remove(desc);
+      properties.remove(desc.getName());
     } else {
       Property<T> property = new Property<T>(desc, value);
       log.log(Level.FINE, "Setting property " + desc.name + " to value " + property.getValue());
-      properties.put(desc, property);
+      properties.put(desc.getName(), property);
     }
   }
 
@@ -235,11 +233,11 @@ public final class PluginContext {
     }
     if (value == null) {
       log.log(Level.FINE, "Removing property " + desc.name);
-      properties.remove(desc);
+      properties.remove(desc.getName());
     } else {
       Property<T> property = desc.toProperty(value);
       log.log(Level.FINE, "Setting property " + desc.name + " to value " + property.getValue());
-      properties.put(desc, property);
+      properties.put(desc.getName(), property);
     }
   }
 
