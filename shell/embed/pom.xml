@@ -15,6 +15,7 @@
 
   <modules>
     <module>spring</module>
+    <module>guice</module>
   </modules>
 
 </project>

@@ -241,3 +241,6 @@ will be nevertheless invoked.
 
 == //jdbc// command ==
 {{include document="jdbc.wiki" /}}
+
+== //guice// command ==
+{{include document="guice.wiki" /}}

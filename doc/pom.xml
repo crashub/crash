@@ -102,6 +102,11 @@
     </dependency>
     <dependency>
       <groupId>org.crsh</groupId>
+      <artifactId>crsh.shell.embed.guice</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
       <artifactId>crsh.jcr.core</artifactId>
       <classifier>sources</classifier>
     </dependency>
