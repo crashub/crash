@@ -55,6 +55,8 @@ public class SSHLifeCycle extends TermLifeCycle {
   /** . */
   private String authentication;
 
+  private Integer localPort;
+
   public SSHLifeCycle(PluginContext context) {
     super(context);
   }
@@ -67,6 +69,10 @@ public class SSHLifeCycle extends TermLifeCycle {
     this.port = port;
   }
 
+  public Integer getLocalPort() {
+	  return localPort;
+  }
+  
   public Resource getKey() {
     return key;
   }
@@ -144,7 +150,8 @@ public class SSHLifeCycle extends TermLifeCycle {
       //
       log.log(Level.INFO, "About to start CRaSSHD");
       server.start();
-      log.log(Level.INFO, "CRaSSHD started on port " + port);
+      localPort = server.getPort();
+      log.log(Level.INFO, "CRaSSHD started on port " + localPort);
 
       //
       this.server = server;
