@@ -24,6 +24,7 @@ import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.type.ValueType;
 
 import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -166,6 +167,83 @@ public class OptionTestCase extends TestCase {
     assertEquals(Multiplicity.SINGLE, i.getMultiplicity());
     assertEquals(false, i.isRequired());
     assertEquals(ValueType.ENUM, i.getType());
+  }
+
+  public void testSingleLetterName() {
+    class A {
+      @Option(names = "o")
+      RetentionPolicy o;
+    }
+    OptionDescriptor i = CommandFactory.DEFAULT.create(A.class).getOption("-o");
+    assertEquals(Arrays.asList("o"), i.getNames());
+
+    //
+    class B {
+      @Option(names = "-")
+      RetentionPolicy o;
+    }
+    assertIllegalParameter(B.class);
+
+    //
+    class C {
+      @Option(names = "_")
+      RetentionPolicy o;
+    }
+    assertIllegalParameter(C.class);
+  }
+
+  public void testTwoLettersName() {
+    class A {
+      @Option(names = "op")
+      RetentionPolicy o;
+    }
+    OptionDescriptor i = CommandFactory.DEFAULT.create(A.class).getOption("--op");
+    assertEquals(Arrays.asList("op"), i.getNames());
+
+    //
+    class B {
+      @Option(names = "-o")
+      RetentionPolicy o;
+    }
+    assertIllegalParameter(B.class);
+
+    //
+    class C {
+      @Option(names = "o-")
+      RetentionPolicy o;
+    }
+    assertIllegalParameter(C.class);
+  }
+
+  public void testThreeLettersName() {
+    class A {
+      @Option(names = "opt")
+      RetentionPolicy o;
+    }
+    OptionDescriptor i = CommandFactory.DEFAULT.create(A.class).getOption("--opt");
+    assertEquals(Arrays.asList("opt"), i.getNames());
+
+    //
+    class B {
+      @Option(names = "-oo")
+      RetentionPolicy o;
+    }
+    assertIllegalParameter(B.class);
+
+    //
+    class C {
+      @Option(names = "oo-")
+      RetentionPolicy o;
+    }
+    assertIllegalParameter(C.class);
+
+    //
+    class D {
+      @Option(names = "o-o")
+      RetentionPolicy o;
+    }
+    i = CommandFactory.DEFAULT.create(D.class).getOption("--o-o");
+    assertEquals(Arrays.asList("o-o"), i.getNames());
   }
 
   private void assertIllegalValueType(Class<?> type) throws IntrospectionException {

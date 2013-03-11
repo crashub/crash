@@ -109,7 +109,7 @@ class State {
         }
       }
       case LONG_OPTION: {
-        if (Character.isLetter(c)) {
+        if (Character.isLetter(c) || (buffer.length() > 0 && c == '-')) {
           buffer.append(c);
           return;
         } else {

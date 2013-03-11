@@ -26,10 +26,31 @@ import org.crsh.cmdline.type.ValueType;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
 public class OptionDescriptor extends ParameterDescriptor {
+
+  /** . */
+  private static final BitSet A = new BitSet(256);
+
+  /** . */
+  private static final BitSet B = new BitSet(256);
+
+  static {
+    for (char c = 'a';c <= 'z';c++) {
+      A.set(c);
+    }
+    B.or(A);
+    B.set('-');
+  }
+
+  private static void checkChar(String s, int index, BitSet authorized) {
+    if (!authorized.get(s.charAt(index))) {
+      throw new IllegalParameterException("Option name " + s + " cannot contain "  + s.charAt(index) + " at position " + index);
+    }
+  }
 
   /** . */
   private final int arity;
@@ -68,11 +89,17 @@ public class OptionDescriptor extends ParameterDescriptor {
       if (name == null) {
         throw new IllegalParameterException("Option name must not be null");
       }
-      if (name.length() == 0) {
+      int length = name.length();
+      if (length == 0) {
         throw new IllegalParameterException("Option name cannot be empty");
       }
-      if (name.contains("-")) {
-        throw new IllegalParameterException("Option name must not contain the hyphen character");
+      if (!A.get(name.charAt(0))) {
+        throw new IllegalParameterException("Option name " + name + " cannot start with " + name.charAt(0));
+      }
+      checkChar(name, 0, A);
+      checkChar(name, length - 1, A);
+      for (int i = 1;i < length - 1;i++) {
+        checkChar(name, i, B);
       }
     }
 

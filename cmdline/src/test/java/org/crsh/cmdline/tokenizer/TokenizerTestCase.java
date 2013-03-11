@@ -219,6 +219,12 @@ public class TokenizerTestCase extends TestCase {
     assertDone(tokenizer);
   }
 
+  public void testLongOptionWithHyphen() throws Exception {
+    Tokenizer tokenizer = new TokenizerImpl("--a-b");
+    assertEquals(new Token.Literal.Option.Long(0, "--a-b", "--a-b"), tokenizer.next());
+    assertDone(tokenizer);
+  }
+
   public void testBackSlash1() throws Exception {
     Tokenizer tokenizer = new TokenizerImpl("\\a");
     assertEquals(new Token.Literal.Word(0, "\\a", "a"), tokenizer.next());
