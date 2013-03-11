@@ -126,20 +126,23 @@ public class OptionDescriptor extends ParameterDescriptor {
   public Object parse(List<String> values) throws SyntaxException {
     if (arity == 0) {
       if (values.size() > 0) {
-        throw new SyntaxException("Too many option values: " + values);
+        throw new SyntaxException("Too many values " + values + " for option " + names.get(0));
       }
       // It's a boolean and it is true
       return Boolean.TRUE;
     } else {
       if (getMultiplicity() == Multiplicity.SINGLE) {
         if (values.size() > 1) {
-          throw new SyntaxException("Too many option values: " + values);
+          throw new SyntaxException("Too many values " + values + " for option " + names.get(0));
+        }
+        if (values.size() == 0) {
+          throw new SyntaxException("Missing option " + names.get(0) + " value");
         }
         String value = values.get(0);
         try {
           return parse(value);
         } catch (Exception e) {
-          throw new SyntaxException("Could not parse value: <" + value + ">");
+          throw new SyntaxException("Could not parse value <" + value + "> for option " + names.get(0));
         }
       } else {
         List<Object> v = new ArrayList<Object>(values.size());
@@ -147,7 +150,7 @@ public class OptionDescriptor extends ParameterDescriptor {
           try {
             v.add(parse(value));
           } catch (Exception e) {
-            throw new SyntaxException("Could not parse value: <" + value + ">");
+            throw new SyntaxException("Could not parse value <" + value + "> for option " + names.get(0));
           }
         }
         return v;

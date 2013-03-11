@@ -29,6 +29,7 @@ import org.crsh.cmdline.annotations.Command;
 import org.crsh.cmdline.annotations.Option;
 import org.crsh.cmdline.annotations.Required;
 import org.crsh.cmdline.impl.CommandFactoryImpl;
+import org.crsh.cmdline.invocation.InvocationException;
 import org.crsh.cmdline.invocation.InvocationMatch;
 import org.crsh.cmdline.invocation.InvocationMatcher;
 import org.crsh.cmdline.invocation.Resolver;
@@ -188,6 +189,48 @@ public class MatcherTestCase extends TestCase {
       analyzer.match(s + "foo ").invoke(a);
       assertEquals(Arrays.asList("foo"), a.s);
     }
+  }
+
+  public class OptionSyntaxException {
+    @Option(names = "o")
+    int option;
+    @Command
+    public void main() {
+    }
+  }
+
+  public void testOptionSyntaxException() throws Exception {
+    CommandDescriptor<OptionSyntaxException> desc = CommandFactory.DEFAULT.create(OptionSyntaxException.class);
+    InvocationMatcher<OptionSyntaxException> analyzer = desc.invoker("main");
+    OptionSyntaxException cmd = new OptionSyntaxException();
+
+    //
+    try {
+      analyzer.match("-o").invoke(cmd);
+      fail();
+    }
+    catch (SyntaxException ignore) {
+    }
+
+    //
+    try {
+      analyzer.match("-o 0 -o 1").invoke(cmd);
+      fail();
+    }
+    catch (SyntaxException ignore) {
+    }
+
+    //
+    try {
+      analyzer.match("-o a").invoke(cmd);
+      fail();
+    }
+    catch (SyntaxException ignore) {
+    }
+
+    //
+    analyzer.match("-o 45").invoke(cmd);
+    assertEquals(45, cmd.option);
   }
 
   public void testRequiredArgumentList() throws Exception {
