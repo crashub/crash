@@ -113,8 +113,10 @@ public abstract class PluginLifeCycle {
     String value = props.getProperty(key);
     if (value != null) {
       try {
-        log.log(Level.INFO, "Configuring property " + desc.name + "=" + value + " from properties");
-        context.setProperty(desc, value);
+        if (context.getProperty(desc) == null) {
+          log.log(Level.INFO, "Configuring property " + desc.name + "=" + value + " from properties");
+          context.setProperty(desc, value);
+        }
       }
       catch (IllegalArgumentException e) {
         log.log(Level.SEVERE, "Could not configure property", e);

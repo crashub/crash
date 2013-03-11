@@ -73,7 +73,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     Resource key = null;
 
     // Get embedded default key
-    URL keyURL = SSHPlugin.class.getResource("hostkey.pem");
+    URL keyURL = SSHPlugin.class.getResource("/crash/hostkey.pem");
     if (keyURL != null) {
       try {
         log.log(Level.FINE, "Found embedded key url " + keyURL);

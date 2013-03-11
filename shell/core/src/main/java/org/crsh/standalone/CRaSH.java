@@ -38,9 +38,14 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.remoting.RemoteServer;
 import org.crsh.util.CloseableList;
+import org.crsh.util.IO;
 import org.crsh.util.InterruptHandler;
 import org.crsh.util.Safe;
+import org.crsh.vfs.FS;
+import org.crsh.vfs.Path;
+import org.crsh.vfs.Resource;
 
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileDescriptor;
@@ -69,20 +74,83 @@ public class CRaSH {
     this.descriptor = CommandFactory.DEFAULT.create(CRaSH.class);
   }
 
+  private void copy(org.crsh.vfs.File src, File dst) throws IOException {
+    if (src.isDir()) {
+      if (!dst.exists()) {
+        if (dst.mkdir()) {
+          log.fine("Could not create dir " + dst.getCanonicalPath());
+        }
+      }
+      if (dst.exists() && dst.isDirectory()) {
+        for (org.crsh.vfs.File child : src.children()) {
+          copy(child, new File(dst, child.getName()));
+        }
+      }
+    } else {
+      if (!dst.exists()) {
+        Resource resource = src.getResource();
+        if (resource != null) {
+          log.info("Copied resource " + src.getPath().getValue() + " to " + dst.getCanonicalPath());
+          IO.copy(new ByteArrayInputStream(resource.getContent()), new FileOutputStream(dst));
+        }
+      }
+    }
+  }
+
   @Command
   public void main(
     @Option(names={"c","cmd"})
-    @Usage("specify a file system path of a dir added to the command path")
+    @Usage("adds a dir to the command path")
     List<String> cmds,
     @Option(names={"conf"})
-    @Usage("specify a file system path of a dir added to the configuration path")
+    @Usage("adds a dir to the conf path")
     List<String> confs,
     @Option(names={"p","property"})
-    @Usage("specify a configuration property of the form a=b")
+    @Usage("set a property of the form a=b")
     List<String> properties,
+    @Option(names = {"cmd-mode"})
+    @Usage("the cmd mode (read or copy), copy mode requires at least one cmd path to be specified")
+    ResourceMode cmdMode,
+    @Option(names = {"conf-mode"})
+    @Usage("the conf mode (read of copy), copy mode requires at least one conf path to be specified")
+    ResourceMode confMode,
     @Argument(name = "pid")
     @Usage("the optional JVM process id to attach to")
     Integer pid) throws Exception {
+
+    //
+    boolean copyCmd = cmdMode != ResourceMode.read && cmds != null && cmds.size() > 0;
+    boolean copyConf = confMode != ResourceMode.read && confs != null && confs.size() > 0;
+
+    //
+    if (copyCmd) {
+      File dst = new File(cmds.get(0));
+      if (!dst.isDirectory()) {
+        throw new Exception("Directory " + dst.getAbsolutePath() + " does not exist");
+      }
+      FS fs = new FS();
+      fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/commands/"));
+      org.crsh.vfs.File f = fs.get(Path.get("/"));
+      log.info("Copying command classpath resources");
+      copy(f, dst);
+    }
+
+    //
+    if (copyConf) {
+      File dst = new File(confs.get(0));
+      if (!dst.isDirectory()) {
+        throw new Exception("Directory " + dst.getAbsolutePath() + " does not exist");
+      }
+      FS fs = new FS();
+      fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
+      org.crsh.vfs.File f = fs.get(Path.get("/"));
+      log.info("Copying conf classpath resources");
+      for (org.crsh.vfs.File child : f.children()) {
+        if (!child.isDir()) {
+          copy(child, new File(dst, child.getName()));
+        }
+      }
+    }
 
     //
     CloseableList closeable = new CloseableList();
@@ -184,6 +252,9 @@ public class CRaSH {
       final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
       //
+      if (!copyCmd) {
+        bootstrap.addToCmdPath(Path.get("/crash/commands/"));
+      }
       if (cmds != null) {
         for (String cmd : cmds) {
           File cmdPath = new File(cmd);
@@ -192,6 +263,9 @@ public class CRaSH {
       }
 
       //
+      if (!copyConf) {
+        bootstrap.addToConfPath(Path.get("/crash/"));
+      }
       if (confs != null) {
         for (String conf : confs) {
           File confPath = new File(conf);

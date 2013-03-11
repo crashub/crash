@@ -54,7 +54,7 @@ public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
     Resource config = null;
 
     //
-    URL configURL = TelnetPlugin.class.getResource("telnet.properties");
+    URL configURL = TelnetPlugin.class.getResource("/crash/telnet.properties");
     if (configURL != null) {
       try {
         log.log(Level.FINE, "Found embedded telnet config url " + configURL);

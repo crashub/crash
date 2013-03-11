@@ -36,8 +36,8 @@ Let's review quickly what you can find in standalone crash:
 == Attach mode ==
 
 The attach mode allows you to attach CRaSH to a JVM located on the same host with the attach API provided by the Hotspot
-JVM. It works thanks to the standalone mode, the main difference is when you run the command line you can specify a
-process id of a JVM and CRaSH will hook into the targetted JVM, let's see quickly an example of how to use it
+JVM. It is the standalone mode attached to a running JVM specified by a process id. CRaSH will hook into the targetted JVM
+instead of the JVM started by CRaSH. Let's see quickly an example of how to use it
 
 {{screen}}
 > jps
@@ -60,6 +60,67 @@ It is Thu Apr 12 22:09:23 CEST 2012 now
 
 In this example we attached crash to the Test JVM. We obtained the Test JVM PID thanks to the //jps// command that belongs
 to the Java Platform. During this mode the commands are executed in the target JVM.
+
+== Configuration ==
+
+The standalone mode relies on the ##org.crsh.standalone.CRaSH## class main method to configure and run the shell. The
+startup scripts //crash.sh// and //crash.bar// configures this class. You can tweak those scripts to your environment,
+let's review the options and arguments of ##CRaSH##:
+
+=== //\--cmd// option ===
+
+The //\--cmd// option specifies a directory containing command source files. Such directory contains commands as //.groovy// files,
+commands can be in directories for grouping purpose. Several folders can be specified by repeating the option.
+
+=== //\--cmd-mode// option ===
+
+The standalone shell search commands in folders (specified with the //\--cmd// option and in the classpath (under the
+///crash/commands/// folder). The //\--cmd-mode// option defines how to handle the classpath commands:
+
+* The //read// option value uses commands from directories and classpath.
+* The //copy// option value scans the classpath during the startup and copies the commands in the first command folder, then commands
+ are used from the folders. This value requires at least one command directory to be specified for extracting the commands.
+
+=== //\--conf// option ===
+
+The //\--conf// option specifies a directory containing configuration files. Several folders can be specified by repeating the option.
+
+=== //\--conf-mode// option ===
+
+The standalone shell search configuration files in folders (specified with the //\--conf// option and in the classpath (under the
+///crash/// folder). The //\--conf-mode// option defines how to handle the classpath configuration:
+
+* The //read// option value uses configuration files from directories and classpath.
+* The //copy// option value scans the classpath during the startup and copies the files in the first configuration folder, then configuration
+ are used from the folders. This value requires at least one conf directory to be specified for extracting the configuration files.
+
+=== //\--property// option ===
+
+The //\--cmd// option sets and overrides a shell configuration property, the value follows the pattern //a=b//, for instance:
+
+{{screen}}
+crash.sh --property crash.telnet.port=3000
+{{/screen}}
+
+=== //pid// argument ===
+
+The ##org.crsh.standalone.CRaSH## main has a single optional argument that is a JVM //process id//. When a JVM process id is specified,
+  CRaSH will dynamically attach to this virtual machine and will be executed in that machine. The two JVM will communicate with
+  a socket.
+
+== Resource extraction ==
+
+When the options //\--cmd-mode// or //\--conf-mode// are set to the //copy//, CRaSH will scan the classpath and extract the
+ resources in the corresponding directory.
+
+The default value of these options is //copy// however no copy happens unless at least one directory for extracting the resources
+is specified, therefore
+
+* The ##org.crsh.standalone.CRaSH## does nothing by default
+* The //crash.sh// or //crash.bat// extracts the resources in the corresponding directory as the //cmd// and //conf// directories
+are specified
+
+To prevent any resource copying the value //read// should be used/
 
 = Embedded mode =
 
