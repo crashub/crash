@@ -27,24 +27,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.FIELD,ElementType.PARAMETER,ElementType.ANNOTATION_TYPE})
+/**
+ * An option command parameter.
+ */
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Option {
 
   /**
-   * The option names, when an option name has one letter it will be used as a short switch, when it has
-   * more letter it is considered as a long switch.
+   * The option names, when an option name has a single letter it will be used as a short switch, when it has
+   * two letters or more it is considered as a long switch.
    *
    * @return the option names
    */
   String[] names();
-
-  /**
-   * Not yet implemented.
-   *
-   * @return the password value
-   */
-  boolean password() default false;
 
   /**
    * Indicates whether or not the value should be unquoted.

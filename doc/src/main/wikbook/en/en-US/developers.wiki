@@ -50,7 +50,10 @@ Let's study a simple class command example:
 class date extends CRaSHCommand {
   @Usage("show the current time")
   @Command
-  Object main(@Usage("the time format") @Option(names=["f","format"]) String format) {
+  Object main(
+     @Usage("the time format")
+     @Option(names=["f","format"])
+     String format) {
     if (format == null)
       format = "EEE MMM d HH:mm:ss z yyyy";
     def date = new Date();
@@ -91,10 +94,18 @@ class jdbc extends CRaSHCommand {
   @Usage("connect to database with a JDBC connection string")
   @Command
   public String connect(
-          @Usage("The username") @Option(names=["u","username"]) String user,
-          @Usage("The password") @Option(names=["p","password"]) String password,
-          @Usage("The extra properties") @Option(names=["properties"]) Value.Properties properties,
-          @Usage("The connection string") @Argument String connectionString) {
+          @Usage("The username")
+          @Option(names=["u","username"])
+          String user,
+          @Usage("The password")
+          @Option(names=["p","password"])
+          String password,
+          @Usage("The extra properties")
+          @Option(names=["properties"])
+          Properties properties,
+          @Usage("The connection string")
+          @Argument
+          String connectionString) {
      ...
   }
 
@@ -152,7 +163,7 @@ are useful to interact with object shared globally by the CRaSH environment:
 
 {{example title="Obtaining a Spring bean"}}
 {{java}}
-def bean = context.attributes.beans.["TheBean"];
+def bean = context.attributes.beans["TheBean"];
 {{/java}}
 {{/example}}
 

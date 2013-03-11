@@ -122,7 +122,7 @@ public class CommandFactoryImpl extends CommandFactory {
           ParameterType.create(valueTypeFactory, type),
           info,
           required,
-          argumentAnn.password(),
+          false,
           argumentAnn.unquote(),
           argumentAnn.completer(),
           ann);
@@ -133,7 +133,7 @@ public class CommandFactoryImpl extends CommandFactory {
           Collections.unmodifiableList(Arrays.asList(optionAnn.names())),
           info,
           required,
-          optionAnn.password(),
+          false,
           optionAnn.unquote(),
           optionAnn.completer(),
           ann);

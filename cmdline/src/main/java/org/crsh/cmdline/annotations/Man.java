@@ -22,7 +22,17 @@ package org.crsh.cmdline.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * Provides the manual text, this method can be used to annotate a command class, a command method or
+ * a command parameter.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Man {
+
+  /**
+   * The manual text.
+   *
+   * @return the text
+   */
   String value();
 }

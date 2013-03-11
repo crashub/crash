@@ -22,7 +22,16 @@ package org.crsh.cmdline.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * Declares if a command parameter is required or not.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Required {
+
+  /**
+   * Returns true if the parameter is required, false otherwise.
+   *
+   * @return the required value
+   */
   boolean value() default true;
 }

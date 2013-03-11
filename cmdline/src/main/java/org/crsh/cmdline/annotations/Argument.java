@@ -27,7 +27,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.FIELD,ElementType.PARAMETER,ElementType.ANNOTATION_TYPE})
+/**
+ * A command argument.
+ */
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Argument {
 
@@ -37,13 +40,6 @@ public @interface Argument {
    * @return the argument name
    */
   String name() default "";
-
-  /**
-   * Not yet implemented.
-   *
-   * @return the password value
-   */
-  boolean password() default false;
 
   /**
    * Indicates whether or not the value should be unquoted.
