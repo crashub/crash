@@ -26,7 +26,7 @@ set CLASSPATH=%JAVA_HOME%\lib\tools.jar
 set TOOLS_JAR=%JAVA_HOME%\lib\tools.jar
 
 :addCrashJar
-for %%F in (%CRASH_HOME%\bin\crsh.cmdline*.jar) do set JARNAME=%%~nxF
+for %%F in (%CRASH_HOME%\bin\crsh.cli*.jar) do set JARNAME=%%~nxF
 set CLASSPATH=%CLASSPATH%;%CRASH_HOME%\bin\%JARNAME%
 
 :setJars

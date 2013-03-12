@@ -22,7 +22,7 @@
     <!-- Cmdline standalone -->
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.cmdline</artifactId>
+      <artifactId>crsh.cli</artifactId>
     </dependency>
 
     <!-- Core -->

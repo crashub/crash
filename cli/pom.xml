@@ -6,12 +6,12 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
-  <artifactId>crsh.cmdline</artifactId>
+  <artifactId>crsh.cli</artifactId>
   <packaging>jar</packaging>
   <version>1.2.0-cr7-SNAPSHOT</version>
 
-  <name>CRaSH cmdline</name>
-  <description>The CRaSH cmdline module</description>
+  <name>CRaSH CLI</name>
+  <description>The CRaSH command line interface module</description>
 
   <build>
     <plugins>
@@ -21,7 +21,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.crsh.cmdline.bootstrap.Main</mainClass>
+							<mainClass>org.crsh.cli.bootstrap.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

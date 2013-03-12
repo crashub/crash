@@ -135,15 +135,15 @@
   <dependencyManagement>
     <dependencies>
 
-      <!-- Module cmdline -->
+      <!-- Module cli -->
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.cmdline</artifactId>
+        <artifactId>crsh.cli</artifactId>
         <version>1.2.0-cr7-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.cmdline</artifactId>
+        <artifactId>crsh.cli</artifactId>
         <version>1.2.0-cr7-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
@@ -556,7 +556,7 @@
   </dependencies>
 
   <modules>
-    <module>cmdline</module>
+    <module>cli</module>
     <module>shell</module>
     <module>jcr</module>
     <module>doc</module>

@@ -41,7 +41,7 @@
         </excludes>
       </unpackOptions>
       <includes>
-        <include>org.crsh:crsh.cmdline:jar:sources</include>
+        <include>org.crsh:crsh.cli:jar:sources</include>
         <include>org.crsh:crsh.shell.core:jar:sources</include>
         <include>org.crsh:crsh.shell.telnet:jar:sources</include>
         <include>org.crsh:crsh.shell.ssh:jar:sources</include>

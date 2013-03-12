@@ -17,7 +17,7 @@
 
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.cmdline</artifactId>
+      <artifactId>crsh.cli</artifactId>
     </dependency>
 
     <!-- Not optional until CRaSH becomes polyglot -->
@@ -84,7 +84,7 @@
             <configuration>
               <archive>
                 <manifestEntries>
-                  <Main-Class>org.crsh.cmdline.bootstrap.Main</Main-Class>
+                  <Main-Class>org.crsh.cli.bootstrap.Main</Main-Class>
                 </manifestEntries>
               </archive>
             </configuration>

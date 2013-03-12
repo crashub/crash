@@ -39,6 +39,6 @@ if [ -n "$JAVA_HOME" ]; then
 	BOOTCP=-Xbootclasspath/a:$TOOLS_JAR
 fi
 
-export CLASSPATH=$CLASSPATH:$CRASH_HOME/bin/crsh.cmdline-${project.version}.jar:$EXT_JARS
+export CLASSPATH=$CLASSPATH:$CRASH_HOME/bin/crsh.cli-${project.version}.jar:$EXT_JARS
 
-java $BOOTCP -Djava.util.logging.config.file=$CRASH_HOME/conf/logging.properties org.crsh.cmdline.bootstrap.Main --conf $CRASH_HOME/conf --cmd $CRASH_HOME/cmd "$@"
+java $BOOTCP -Djava.util.logging.config.file=$CRASH_HOME/conf/logging.properties org.crsh.cli.bootstrap.Main --conf $CRASH_HOME/conf --cmd $CRASH_HOME/cmd "$@"

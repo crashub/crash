@@ -39,7 +39,7 @@
         <include>org.apache.mina:mina-core</include>
         <include>net.wimpi:telnetd-x</include>
         <include>org.apache.ivy:ivy</include>
-        <include>org.crsh:crsh.cmdline</include>
+        <include>org.crsh:crsh.cli</include>
         <include>org.crsh:crsh.shell.core</include>
         <include>org.crsh:crsh.shell.telnet</include>
         <include>org.crsh:crsh.shell.ssh</include>

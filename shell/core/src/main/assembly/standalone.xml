@@ -39,7 +39,7 @@
       <unpack>true</unpack>
       <includes>
         <include>jline:jline</include>
-        <include>org.crsh:crsh.cmdline</include>
+        <include>org.crsh:crsh.cli</include>
         <include>org.codehaus.groovy:groovy-all</include>
         <include>org.crsh:crsh.shell.core</include>
       </includes>

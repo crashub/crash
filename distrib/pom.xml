@@ -55,7 +55,7 @@
     <!-- Sources -->
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.cmdline</artifactId>
+      <artifactId>crsh.cli</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
