@@ -17,14 +17,14 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>org.crsh.cli.bootstrap.Main</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.crsh.cli.bootstrap.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>
