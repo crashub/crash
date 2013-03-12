@@ -4,8 +4,8 @@ A CRaSH command is written in the [[Groovy>>http://groovy.codehaus.org/]] langua
 several signifiant advantages:
 
 * Commands can be bare scripts or can be a class
-* Java developers can write Groovy commands without learning it
-* Groovy is dynamic and expressive
+* Java developers can write Groovy commands without learning much of it
+* Groovy is a dynamic language and can manipulate unknown types
 
 Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell.
 The files are located in
@@ -26,27 +26,35 @@ The simplest command can be a simple script that returns a string
 return "Hello World";
 {{/code}}
 
-It is possible to use also the ##out## implicit variable to send a message to the console:
+The ##out## implicit variable can be used to send a message to the console:
 
 {{code}}
 out.println("Hello World");
 {{/code}}
 
+It can be even Groovier:
+
+{{code}}
+out << "Hello World"
+{{/code}}
+
 == Commands as a class ==
 
-Class can also be used to defined a command, it provides significant advantages over scripts:
+Class can also be used for defining a command, it provides significant advantages over scripts:
 
-* Commands can declare options and arguments for the command
-* Commands can use annotations to describe the command behavior and parameters
+* A command can declare options and arguments for the command
+* Sub command style (git style) can be expressed easily
 
-When the user types a command in the sell, the command line is parsed by the //cmdline// framework
-and injected in the command class. Previously the //args4j// framework was used but this framework does not support
-natively code completion and could not be extended to support it. The support of command line completion is the
-main motivation of the development of such a framework.
+When the user types a command in the sell, the command line is parsed by the //cmdline// framework and injected in
+the command class.
 
 Let's study a simple class command example:
 
 {{code}}
+import org.crsh.cmdline.annotations.Command;
+import org.crsh.cmdline.annotations.Usage;
+import org.crsh.cmdline.annotations.Option;
+
 class date extends CRaSHCommand {
   @Usage("show the current time")
   @Command
@@ -61,10 +69,10 @@ class date extends CRaSHCommand {
   }
 }{{/code}}
 
-The command is pretty straightforward to understand:
+The command is pretty straightforward to grasp:
 
 * The ##@Command## annotation declares the ##main## method as a command
-* The command takes one optional ##format## option
+* The command takes one optional ##format## option declared by the ##@Option## annotation
 * The ##@Usage## annotation describes the usage of the command and its parameters
 
 {{screen}}
@@ -82,7 +90,7 @@ usage: date [-h | --help] [-f | --format]
    [-f | --format] the time format
 {{/screen}}
 
-== Multi commands ==
+== Sub commands ==
 
 A class can hold several commands allowing a single file to group several commands, let's study the JDBC command
 structure:
@@ -125,6 +133,175 @@ Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
 % jdbc close
 Connection closed
 {{/screen}}
+
+== Command line annotations ==
+
+Let's review the various annotations for declaring a command.
+
+=== ##@org.crsh.cmdline.annotations.Command## ===
+
+Defines a command method, when using a mono command the method should be named ##main##:
+
+{{java}}
+public class sample {
+
+  @Command
+  public void main() {
+    ...
+  }
+}
+{{/java}}
+
+Sub commands will simply declares several methods:
+
+{{java}}
+public class sample {
+
+  @Command
+  public void sub1() {
+    ...
+  }
+
+  @Command
+  public void sub2() {
+    ...
+  }
+}
+{{/java}}
+
+=== ##org.crsh.cmdline.annotations.Option## ===
+
+Declares an option, the //names// member must be specified: single letter name are turned into posix style option (single hyphen)
+other names are turned into GNU style option (double hyphen). Several names can specified as aliases of the same option. Option
+can be declared as method parameters or a class fields.
+
+{{java}}
+public class sample {
+
+  @Option(names = ["o", "opt1"])
+  private String opt1;
+
+  @Command
+  public void sub1(@Option(names = ["opt2"]) String opt2) {
+    ...
+  }
+}
+{{/java}}
+
+{{screen}}
+> sample foo
+> sample -o foo
+> sample --opt1 foo sub1
+> sample sub1 --opt2 bar
+> sample --opt1 foo foo sub1 --opt2 bar
+{{/screen}}
+
+=== ##@org.crsh.cmdline.annotations.Argument## ===
+
+Declares an argument, this annotation should be declares as method parameters.
+
+{{java}}
+public class sample {
+
+  @Command
+  public void sub1(@Argument String arg) {
+    ...
+  }
+}
+{{/java}}
+
+{{screen}}
+> sample sub1
+> sample sub1 foo
+{{/screen}}
+
+=== ##@org.crsh.cmdline.annotations.Required## ===
+
+By default a parameter is optional, the ##@Required## annotation can be used to force the user to specify a parameter:
+
+{{java}}
+public class sample {
+
+  @Command
+  public void sub1(@Required @Argument String arg) {
+    ...
+  }
+}
+{{/java}}
+
+=== ##@org.crsh.cmdline.annotations.Usage## and ##@org.crsh.cmdline.annotations.Man## ===
+
+Those annotations are useful for documenting commands help and manual:
+
+{{java}}
+@Usage("sample commands")
+public class sample {
+
+  @Command
+  @Usage("command description, begins with lower case")
+  @Man("Verbose descrition of the argument, it should begin with an upper case")
+  public void sub1(
+    @Usage("argument description, begins with a lower case")
+    @Man("Verbose description of the argument, it should begin with an upper case")
+    @Argument String arg) {
+    ...
+  }
+}
+{{/java}}
+
+* ##@Usage## specifies the usage, rather a short description
+* ##@Man## provides the manuel, rather a verbose description
+
+== Parameter types ==
+
+Option and argument parameters are represented by //simple// types. The string type is universal and will
+work with any value provided by the user, other types will require parsing. At the moment the framework does not
+support plugable types, however it supports a few simple types other than string:
+
+* //Integer// type
+* //Boolean// type
+* //Enum// types
+
+Boolean type is special because it does not need a value when combined with options. The option declaration is enough
+to set the value to true:
+
+{{java}}
+public class sample {
+
+  @Command
+  public void sub1(@Option(names = ["o"]) Boolean opt) {
+    ...
+  }
+}
+{{/java}}
+
+The option will be true with:
+
+{{screen}}
+> sample sub1 -o
+{{/screen}}
+
+== Parameter multiplicity ==
+
+The multiplicity is the number of values expected by a parameter, the multiplicity with simple types is always 1. The arity can
+also be //several// when the ##java.util.List## type is used.
+
+{{java}}
+public class sample {
+
+  @Command
+  public void sub1(@Option(names = ["o"]) List<String> opts) {
+    ...
+  }
+}
+{{/java}}
+
+The option can now accept several values:
+
+{{screen}}
+> sample sub1 -o foo -o bar
+{{/screen}}
+
 
 = Command context {{anchor id=command_context/}} =
 
