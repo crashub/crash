@@ -1,12 +1,10 @@
-import javax.jcr.Node;
+import javax.jcr.Node
 
-import org.crsh.command.ScriptException;
-import org.crsh.command.InvocationContext
-import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Usage
-import org.crsh.cmdline.annotations.Man
+import org.crsh.cli.Command
+import org.crsh.cli.Usage
+import org.crsh.cli.Man
 import org.crsh.jcr.command.Path
-import org.crsh.cmdline.annotations.Argument
+import org.crsh.cli.Argument
 import org.crsh.command.PipeCommand;
 
 public class mv extends org.crsh.jcr.command.JCRCommand {

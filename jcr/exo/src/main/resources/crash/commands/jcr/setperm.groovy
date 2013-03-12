@@ -1,13 +1,12 @@
 import org.crsh.command.ScriptException;
 import javax.jcr.Node;
-import org.exoplatform.services.jcr.access.AccessControlList;
-import org.crsh.command.InvocationContext
-import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Usage
-import org.crsh.cmdline.annotations.Man
+import org.exoplatform.services.jcr.access.AccessControlList
+import org.crsh.cli.Command
+import org.crsh.cli.Usage
+import org.crsh.cli.Man
 import org.crsh.jcr.command.Path
-import org.crsh.cmdline.annotations.Option
-import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cli.Option
+import org.crsh.cli.Argument;
 
 public class setperm extends org.crsh.jcr.command.JCRCommand {
 

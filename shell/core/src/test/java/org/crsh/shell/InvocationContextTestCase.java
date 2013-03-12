@@ -160,7 +160,7 @@ public class InvocationContextTestCase extends TestCase {
   public void testArgumentQuoteInClass() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand {\n" +
       "@Command\n" +
-      "public Object main(@org.crsh.cmdline.annotations.Argument List<String> arguments) {\n" +
+      "public Object main(@org.crsh.cli.Argument List<String> arguments) {\n" +
       "return arguments;\n" +
       "}\n" +
       "}\n");
@@ -173,7 +173,7 @@ public class InvocationContextTestCase extends TestCase {
   public void testArgumentQuoteInClass2() throws Exception {
     Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand {\n" +
       "@Command\n" +
-      "public Object main(@org.crsh.cmdline.annotations.Argument(unquote = false) List<String> arguments) {\n" +
+      "public Object main(@org.crsh.cli.Argument(unquote = false) List<String> arguments) {\n" +
       "return arguments;\n" +
       "}\n" +
       "}\n");

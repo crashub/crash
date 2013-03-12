@@ -19,17 +19,16 @@
 
 package crash.commands.base
 
-import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Usage
+import org.crsh.cli.Command
+import org.crsh.cli.Usage
 import org.crsh.command.CRaSHCommand
-import org.crsh.text.ui.UIBuilder
+
 import java.lang.management.ManagementFactory
 import javax.management.MBeanServer
 import javax.management.ObjectInstance
 import org.crsh.command.InvocationContext
-import org.crsh.cmdline.annotations.Option
+import org.crsh.cli.Option
 import javax.management.MBeanInfo
-import org.crsh.cmdline.annotations.Argument
 import javax.management.ObjectName
 import org.crsh.command.PipeCommand
 

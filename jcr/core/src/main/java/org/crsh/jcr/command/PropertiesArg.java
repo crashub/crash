@@ -19,8 +19,8 @@
 
 package org.crsh.jcr.command;
 
-import org.crsh.cmdline.annotations.Argument;
-import org.crsh.cmdline.annotations.Usage;
+import org.crsh.cli.Argument;
+import org.crsh.cli.Usage;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

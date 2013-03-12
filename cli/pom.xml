@@ -21,12 +21,24 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.crsh.cli.bootstrap.Main</mainClass>
+              <mainClass>org.crsh.cli.impl.bootstrap.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <show>public</show>
+          <quiet>true</quiet>
+          <maxmemory>512M</maxmemory>
+          <excludePackageNames>org.crsh.cli.impl:org.crsh.cmdline</excludePackageNames>
+        </configuration>
+      </plugin>
     </plugins>
+
   </build>
 
 </project>

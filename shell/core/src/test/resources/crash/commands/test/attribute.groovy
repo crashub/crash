@@ -1,8 +1,8 @@
 package crash.commands.test
 
-import org.crsh.cmdline.annotations.Argument
-import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Usage
+import org.crsh.cli.Argument
+import org.crsh.cli.Command
+import org.crsh.cli.Usage
 
 public class attribute extends org.crsh.command.CRaSHCommand {
 

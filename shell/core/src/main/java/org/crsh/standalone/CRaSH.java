@@ -20,19 +20,19 @@
 package org.crsh.standalone;
 
 import com.sun.tools.attach.VirtualMachine;
+import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
 import jline.Terminal;
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
-import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.CommandFactory;
-import org.crsh.cmdline.Delimiter;
-import org.crsh.cmdline.IntrospectionException;
-import org.crsh.cmdline.annotations.Argument;
-import org.crsh.cmdline.annotations.Command;
-import org.crsh.cmdline.annotations.Option;
-import org.crsh.cmdline.annotations.Usage;
-import org.crsh.cmdline.invocation.InvocationMatch;
-import org.crsh.cmdline.invocation.InvocationMatcher;
+import org.crsh.cli.impl.Delimiter;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
+import org.crsh.cli.Argument;
+import org.crsh.cli.Command;
+import org.crsh.cli.Option;
+import org.crsh.cli.Usage;
+import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.cli.impl.invocation.InvocationMatch;
+import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.processor.jline.JLineProcessor;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
@@ -68,7 +68,7 @@ public class CRaSH {
   private static Logger log = Logger.getLogger(CRaSH.class.getName());
 
   /** . */
-  private final CommandDescriptor<CRaSH> descriptor;
+  private final CommandDescriptorImpl<CRaSH> descriptor;
 
   public CRaSH() throws IntrospectionException {
     this.descriptor = CommandFactory.DEFAULT.create(CRaSH.class);

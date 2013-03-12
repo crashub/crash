@@ -1,8 +1,8 @@
 import org.crsh.command.InvocationContext
-import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Usage
+import org.crsh.cli.Command
+import org.crsh.cli.Usage
 import org.crsh.jcr.command.Path
-import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cli.Argument;
 import javax.jcr.Node;
 
 public class produce extends org.crsh.command.CRaSHCommand  {

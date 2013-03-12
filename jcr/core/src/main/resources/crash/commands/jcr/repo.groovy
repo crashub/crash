@@ -18,10 +18,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-import org.crsh.cmdline.annotations.Argument
-import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Man
-import org.crsh.cmdline.annotations.Usage
+import org.crsh.cli.Argument
+import org.crsh.cli.Command
+import org.crsh.cli.Man
+import org.crsh.cli.Usage
 
 import org.crsh.text.ui.UIBuilder
 import org.crsh.jcr.JCRPlugin

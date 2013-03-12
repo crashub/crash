@@ -51,9 +51,9 @@ the command class.
 Let's study a simple class command example:
 
 {{code}}
-import org.crsh.cmdline.annotations.Command;
-import org.crsh.cmdline.annotations.Usage;
-import org.crsh.cmdline.annotations.Option;
+import org.crsh.cli.Command;
+import org.crsh.cli.Usage;
+import org.crsh.cli.Option;
 
 class date extends CRaSHCommand {
   @Usage("show the current time")
@@ -138,7 +138,7 @@ Connection closed
 
 Let's review the various annotations for declaring a command.
 
-=== ##@org.crsh.cmdline.annotations.Command## ===
+=== ##@org.crsh.cli.Command## ===
 
 Defines a command method, when using a mono command the method should be named ##main##:
 
@@ -169,7 +169,7 @@ public class sample {
 }
 {{/java}}
 
-=== ##org.crsh.cmdline.annotations.Option## ===
+=== ##@org.crsh.cli.Option## ===
 
 Declares an option, the //names// member must be specified: single letter name are turned into posix style option (single hyphen)
 other names are turned into GNU style option (double hyphen). Several names can specified as aliases of the same option. Option
@@ -196,7 +196,7 @@ public class sample {
 > sample --opt1 foo foo sub1 --opt2 bar
 {{/screen}}
 
-=== ##@org.crsh.cmdline.annotations.Argument## ===
+=== ##@org.crsh.cli.Argument## ===
 
 Declares an argument, this annotation should be declares as method parameters.
 
@@ -215,7 +215,7 @@ public class sample {
 > sample sub1 foo
 {{/screen}}
 
-=== ##@org.crsh.cmdline.annotations.Required## ===
+=== ##@org.crsh.cli.Required## ===
 
 By default a parameter is optional, the ##@Required## annotation can be used to force the user to specify a parameter:
 
@@ -229,7 +229,7 @@ public class sample {
 }
 {{/java}}
 
-=== ##@org.crsh.cmdline.annotations.Usage## and ##@org.crsh.cmdline.annotations.Man## ===
+=== ##@org.crsh.cli.Usage## and ##@org.crsh.cli.Man## ===
 
 Those annotations are useful for documenting commands help and manual:
 

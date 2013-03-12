@@ -19,11 +19,11 @@
 
 package org.crsh.jcr.command;
 
-import org.crsh.cmdline.IntrospectionException;
-import org.crsh.cmdline.ParameterDescriptor;
-import org.crsh.cmdline.completers.AbstractPathCompleter;
-import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.Completion;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
+import org.crsh.cli.descriptor.ParameterDescriptor;
+import org.crsh.cli.completers.AbstractPathCompleter;
+import org.crsh.cli.spi.Completer;
+import org.crsh.cli.spi.Completion;
 import org.crsh.command.CRaSHCommand;
 
 import javax.jcr.Node;

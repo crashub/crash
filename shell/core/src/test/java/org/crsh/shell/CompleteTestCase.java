@@ -19,8 +19,8 @@
 
 package org.crsh.shell;
 
-import org.crsh.cmdline.completion.CompletionMatch;
-import org.crsh.cmdline.spi.Completion;
+import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.cli.spi.Completion;
 
 import java.util.Collections;
 

@@ -21,9 +21,9 @@ package org.crsh.processor.jline;
 
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
-import org.crsh.cmdline.completion.CompletionMatch;
-import org.crsh.cmdline.Delimiter;
-import org.crsh.cmdline.spi.Completion;
+import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.cli.impl.Delimiter;
+import org.crsh.cli.spi.Completion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;

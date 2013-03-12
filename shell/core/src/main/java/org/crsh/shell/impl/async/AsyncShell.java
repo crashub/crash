@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.async;
 
-import org.crsh.cmdline.completion.CompletionMatch;
+import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.shell.Shell;
 
 import java.io.Closeable;

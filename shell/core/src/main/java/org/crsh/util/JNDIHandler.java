@@ -1,6 +1,6 @@
 package org.crsh.util;
 
-import org.crsh.cmdline.completers.AbstractPathCompleter;
+import org.crsh.cli.completers.AbstractPathCompleter;
 import org.crsh.text.formatter.BindingRenderable;
 
 import javax.naming.Binding;

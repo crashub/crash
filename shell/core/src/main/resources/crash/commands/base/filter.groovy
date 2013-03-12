@@ -19,12 +19,12 @@
 
 package crash.commands.base
 
-import org.crsh.cmdline.annotations.Usage
+import org.crsh.cli.Usage
 import org.crsh.command.CRaSHCommand
 import org.crsh.command.ScriptException
-import org.crsh.cmdline.annotations.Command
+import org.crsh.cli.Command
 import org.crsh.command.PipeCommand
-import org.crsh.cmdline.annotations.Option
+import org.crsh.cli.Option
 import java.util.regex.Pattern
 import org.crsh.util.Utils
 

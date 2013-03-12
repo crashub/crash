@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.remoting;
 
-import org.crsh.cmdline.completion.CompletionMatch;
+import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 

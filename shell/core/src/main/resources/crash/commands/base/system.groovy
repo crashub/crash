@@ -1,21 +1,21 @@
 package crash.commands.base
 
 import org.crsh.command.CRaSHCommand
-import org.crsh.cmdline.annotations.Usage
-import org.crsh.cmdline.annotations.Command
+import org.crsh.cli.Usage
+import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
-import org.crsh.cmdline.annotations.Man
-import org.crsh.cmdline.annotations.Argument
-import org.crsh.cmdline.spi.Completer
-import org.crsh.cmdline.ParameterDescriptor
-import org.crsh.cmdline.annotations.Option
+import org.crsh.cli.Man
+import org.crsh.cli.Argument
+import org.crsh.cli.spi.Completer
+import org.crsh.cli.descriptor.ParameterDescriptor
+import org.crsh.cli.Option
 
-import org.crsh.cmdline.completers.EnumCompleter
-import org.crsh.cmdline.spi.Completion
+import org.crsh.cli.completers.EnumCompleter
+import org.crsh.cli.spi.Completion
 import java.util.regex.Pattern
-import org.crsh.cmdline.annotations.Required
+import org.crsh.cli.Required
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>

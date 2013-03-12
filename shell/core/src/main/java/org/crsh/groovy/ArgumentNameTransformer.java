@@ -32,7 +32,7 @@ import org.codehaus.groovy.control.CompilePhase;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
-import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cli.Argument;
 
 import java.util.List;
 

@@ -18,10 +18,9 @@
  */
 package org.crsh.ssh.term.scp;
 
-import org.crsh.cmdline.annotations.Argument;
-import org.crsh.cmdline.annotations.Command;
-import org.crsh.cmdline.annotations.Option;
-import org.crsh.cmdline.annotations.Required;
+import org.crsh.cli.Argument;
+import org.crsh.cli.Option;
+import org.crsh.cli.Required;
 
 public class SCPAction {
 

@@ -19,26 +19,26 @@
 
 package crash.commands.base
 
-import org.crsh.cmdline.annotations.Usage
-import org.crsh.cmdline.annotations.Command
+import org.crsh.cli.Usage
+import org.crsh.cli.Command
 import org.crsh.command.CRaSHCommand
 import java.sql.Statement
-import org.crsh.cmdline.annotations.Argument
+import org.crsh.cli.Argument
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import javax.naming.InitialContext
 import javax.naming.NoInitialContextException
 import java.sql.DriverManager
 import org.crsh.command.ScriptException
-import org.crsh.cmdline.annotations.Option
+import org.crsh.cli.Option
 import java.lang.reflect.InvocationTargetException
 import org.crsh.command.InvocationContext
 import org.crsh.util.Safe
 import java.sql.DatabaseMetaData
 import org.crsh.text.ui.UIBuilder
-import org.crsh.cmdline.spi.Completer
-import org.crsh.cmdline.spi.Completion
-import org.crsh.cmdline.ParameterDescriptor
+import org.crsh.cli.spi.Completer
+import org.crsh.cli.spi.Completion
+import org.crsh.cli.descriptor.ParameterDescriptor
 import org.crsh.util.JNDIHandler;
 
 /**

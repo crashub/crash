@@ -19,7 +19,7 @@
 
 package org.crsh.standalone;
 
-import org.crsh.cmdline.bootstrap.CommandProvider;
+import org.crsh.cli.impl.bootstrap.CommandProvider;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class CRaSHProvider implements CommandProvider {

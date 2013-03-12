@@ -84,7 +84,7 @@
             <configuration>
               <archive>
                 <manifestEntries>
-                  <Main-Class>org.crsh.cli.bootstrap.Main</Main-Class>
+                  <Main-Class>org.crsh.cli.impl.bootstrap.Main</Main-Class>
                 </manifestEntries>
               </archive>
             </configuration>

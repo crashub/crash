@@ -19,7 +19,7 @@
 
 package org.crsh.jcr.command;
 
-import org.crsh.cmdline.type.ValueType;
+import org.crsh.cli.type.ValueType;
 
 public class PathValueType extends ValueType<Path> {
 

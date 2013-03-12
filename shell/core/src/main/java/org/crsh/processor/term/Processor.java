@@ -19,10 +19,10 @@
 
 package org.crsh.processor.term;
 
-import org.crsh.cmdline.completion.CompletionMatch;
-import org.crsh.cmdline.spi.Completion;
+import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.cli.spi.Completion;
 import org.crsh.io.Consumer;
-import org.crsh.cmdline.Delimiter;
+import org.crsh.cli.impl.Delimiter;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.text.Chunk;

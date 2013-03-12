@@ -19,7 +19,7 @@
 
 package org.crsh.command;
 
-import org.crsh.cmdline.completion.CompletionMatch;
+import org.crsh.cli.impl.completion.CompletionMatch;
 
 import java.util.List;
 import java.util.Map;

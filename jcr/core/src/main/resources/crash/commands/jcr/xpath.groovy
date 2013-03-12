@@ -1,10 +1,10 @@
 import javax.jcr.query.Query;
 import org.crsh.text.ui.UIBuilder;
-import org.crsh.cmdline.annotations.Usage
-import org.crsh.cmdline.annotations.Man
-import org.crsh.cmdline.annotations.Command
-import org.crsh.cmdline.annotations.Option
-import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cli.Usage
+import org.crsh.cli.Man
+import org.crsh.cli.Command
+import org.crsh.cli.Option
+import org.crsh.cli.Argument;
 
 public class xpath extends org.crsh.command.CRaSHCommand {
 

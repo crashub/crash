@@ -19,7 +19,7 @@
 
 package org.crsh.doc;
 
-import org.crsh.cmdline.CommandDescriptor;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.DescriptionFormat;
 import org.crsh.command.ShellCommand;

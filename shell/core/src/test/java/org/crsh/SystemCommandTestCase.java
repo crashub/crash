@@ -19,7 +19,7 @@
 
 package org.crsh;
 
-import org.crsh.cmdline.completion.CompletionMatch;
+import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.shell.AbstractCommandTestCase;
 
 public class SystemCommandTestCase extends AbstractCommandTestCase {

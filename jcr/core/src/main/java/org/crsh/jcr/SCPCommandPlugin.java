@@ -19,14 +19,13 @@
 
 package org.crsh.jcr;
 
+import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
 import org.apache.sshd.server.Command;
-import org.crsh.cmdline.CLIException;
-import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.CommandFactory;
-import org.crsh.cmdline.IntrospectionException;
-import org.crsh.cmdline.invocation.InvocationMatch;
-import org.crsh.cmdline.invocation.InvocationMatcher;
-import org.crsh.cmdline.invocation.Resolver;
+import org.crsh.cli.CLIException;
+import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.cli.impl.invocation.InvocationMatch;
+import org.crsh.cli.impl.invocation.InvocationMatcher;
+import org.crsh.cli.impl.invocation.Resolver;
 import org.crsh.ssh.term.FailCommand;
 import org.crsh.ssh.term.scp.CommandPlugin;
 import org.crsh.ssh.term.scp.SCPAction;
@@ -40,7 +39,7 @@ public class SCPCommandPlugin extends CommandPlugin {
       try {
         command = command.substring(4);
         SCPAction action = new SCPAction();
-        CommandDescriptor<SCPAction> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
+        CommandDescriptorImpl<SCPAction> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
         InvocationMatcher<SCPAction> analyzer = descriptor.invoker("main");
         InvocationMatch<SCPAction> match = analyzer.match(command);
         match.invoke(Resolver.EMPTY, action);
@@ -55,9 +54,6 @@ public class SCPCommandPlugin extends CommandPlugin {
         }
       }
       catch (CLIException e) {
-        return new FailCommand("Cannot execute command " + command, e);
-      }
-      catch (IntrospectionException e) {
         return new FailCommand("Cannot execute command " + command, e);
       }
     } else {

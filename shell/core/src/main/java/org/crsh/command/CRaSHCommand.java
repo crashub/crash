@@ -19,20 +19,21 @@
 
 package org.crsh.command;
 
-import org.crsh.cmdline.CommandDescriptor;
-import org.crsh.cmdline.HelpDescriptor;
-import org.crsh.cmdline.completion.CompletionMatch;
-import org.crsh.cmdline.Delimiter;
-import org.crsh.cmdline.IntrospectionException;
-import org.crsh.cmdline.completion.CompletionException;
-import org.crsh.cmdline.completion.CompletionMatcher;
-import org.crsh.cmdline.impl.CommandFactoryImpl;
-import org.crsh.cmdline.invocation.InvocationException;
-import org.crsh.cmdline.invocation.InvocationMatch;
-import org.crsh.cmdline.invocation.InvocationMatcher;
-import org.crsh.cmdline.invocation.Resolver;
-import org.crsh.cmdline.spi.Completer;
-import org.crsh.cmdline.spi.Completion;
+import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
+import org.crsh.cli.impl.descriptor.HelpDescriptor;
+import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.cli.impl.Delimiter;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
+import org.crsh.cli.impl.completion.CompletionException;
+import org.crsh.cli.impl.completion.CompletionMatcher;
+import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.cli.impl.invocation.InvocationException;
+import org.crsh.cli.impl.invocation.InvocationMatch;
+import org.crsh.cli.impl.invocation.InvocationMatcher;
+import org.crsh.cli.impl.invocation.Resolver;
+import org.crsh.cli.spi.Completer;
+import org.crsh.cli.spi.Completion;
 import org.crsh.shell.InteractionContext;
 import org.crsh.util.TypeResolver;
 
@@ -51,13 +52,13 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   private final Logger log = Logger.getLogger(getClass().getName());
 
   /** . */
-  private final CommandDescriptor<?> descriptor;
+  private final CommandDescriptorImpl<?> descriptor;
 
   /** The unmatched text, only valid during an invocation. */
   protected String unmatched;
 
   protected CRaSHCommand() throws IntrospectionException {
-    this.descriptor = HelpDescriptor.create(new CommandFactoryImpl(getClass().getClassLoader()).create(getClass()));
+    this.descriptor = HelpDescriptor.create(new CommandFactory(getClass().getClassLoader()).create(getClass()));
     this.unmatched = null;
   }
 
@@ -118,7 +119,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     try {
       match = analyzer.match(line);
     }
-    catch (org.crsh.cmdline.SyntaxException e) {
+    catch (org.crsh.cli.SyntaxException e) {
       throw new org.crsh.command.SyntaxException(e.getMessage());
     }
 
@@ -178,7 +179,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
       try {
         match = matcher.match(name, options, args);
       }
-      catch (org.crsh.cmdline.SyntaxException e) {
+      catch (org.crsh.cli.SyntaxException e) {
         throw new org.crsh.command.SyntaxException(e.getMessage());
       }
       return resolveInvoker(match);
@@ -191,7 +192,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     try {
       match = analyzer.match(line);
     }
-    catch (org.crsh.cmdline.SyntaxException e) {
+    catch (org.crsh.cli.SyntaxException e) {
       throw new org.crsh.command.SyntaxException(e.getMessage());
     }
     return resolveInvoker(match);
@@ -208,7 +209,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
   public final CommandInvoker<?, ?> resolveInvoker(final InvocationMatch<CRaSHCommand> match) {
 
     //
-    final org.crsh.cmdline.invocation.CommandInvoker invoker = match.getInvoker();
+    final org.crsh.cli.impl.invocation.CommandInvoker invoker = match.getInvoker();
 
     //
     Class consumedType;
@@ -272,7 +273,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           Object o;
           try {
             o = invoker.invoke(resolver, CRaSHCommand.this);
-          } catch (org.crsh.cmdline.SyntaxException e) {
+          } catch (org.crsh.cli.SyntaxException e) {
             throw new org.crsh.command.SyntaxException(e.getMessage());
           } catch (InvocationException e) {
             throw toScript(e.getCause());
@@ -342,7 +343,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           try {
             real = (PipeCommand)invoker.invoke(resolver, CRaSHCommand.this);
           }
-          catch (org.crsh.cmdline.SyntaxException e) {
+          catch (org.crsh.cli.SyntaxException e) {
             throw new org.crsh.command.SyntaxException(e.getMessage());
           } catch (InvocationException e) {
             throw toScript(e.getCause());

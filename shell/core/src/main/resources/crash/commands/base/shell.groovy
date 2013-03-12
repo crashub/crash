@@ -19,8 +19,8 @@
  */
 
 import org.crsh.command.CRaSHCommand
-import org.crsh.cmdline.annotations.Usage
-import org.crsh.cmdline.annotations.Command
+import org.crsh.cli.Usage
+import org.crsh.cli.Command
 import org.crsh.text.ui.UIBuilder
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor

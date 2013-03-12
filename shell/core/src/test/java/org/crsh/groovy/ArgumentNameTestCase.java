@@ -21,7 +21,7 @@ package org.crsh.groovy;
 
 import groovy.lang.GroovyClassLoader;
 import junit.framework.TestCase;
-import org.crsh.cmdline.annotations.Argument;
+import org.crsh.cli.Argument;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
