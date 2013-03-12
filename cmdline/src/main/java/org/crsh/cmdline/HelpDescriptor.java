@@ -181,11 +181,10 @@ public class HelpDescriptor<T> extends CommandDescriptor<T> {
       public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
 
         // Get the option from the top match
-        InvocationMatch<T> current = match;
-        while (current.owner() != null) {
-          current = current.owner();
+        ParameterMatch<OptionDescriptor> help = null;
+        for (InvocationMatch<T> current = match;current.owner() != null && help == null;current = current.owner()) {
+          help = current.getParameter(HELP_OPTION);
         }
-        ParameterMatch<OptionDescriptor> help = current.getParameter(HELP_OPTION);
 
         //
         if (help == null && invoker != null) {
