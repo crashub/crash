@@ -241,3 +241,21 @@ will be nevertheless invoked.
 
 == //jdbc// command ==
 {{include document="jdbc.wiki" /}}
+
+== //java// command ==
+{{include document="java.wiki" /}}
+
+== //jmx// command ==
+{{include document="jmx.wiki" /}}
+
+== //thread// command ==
+{{include document="thread.wiki" /}}
+
+== //sleep// command ==
+{{include document="sleep.wiki" /}}
+
+== //jpa// command ==
+{{include document="jpa.wiki" /}}
+
+== //env// command ==
+{{include document="env.wiki" /}}
