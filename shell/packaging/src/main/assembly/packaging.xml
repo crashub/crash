@@ -31,7 +31,7 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/bin</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.cmdline:jar:standalone</include>
+        <include>org.crsh:crsh.cmdline:jar</include>
       </includes>
     </dependencySet>
     <dependencySet>

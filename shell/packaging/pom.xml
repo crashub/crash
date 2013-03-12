@@ -24,11 +24,6 @@
       <groupId>org.crsh</groupId>
       <artifactId>crsh.cmdline</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.cmdline</artifactId>
-      <classifier>standalone</classifier>
-    </dependency>
 
     <!-- Core -->
     <dependency>

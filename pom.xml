@@ -147,12 +147,6 @@
         <version>1.2.0-cr7-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
-      <dependency>
-        <groupId>org.crsh</groupId>
-        <artifactId>crsh.cmdline</artifactId>
-        <version>1.2.0-cr7-SNAPSHOT</version>
-        <classifier>standalone</classifier>
-      </dependency>
 
       <!-- Module shell core -->
       <dependency>
