@@ -152,6 +152,13 @@ public class sample {
 }
 {{/java}}
 
+Using this annotation automatically turns a class into a class command.
+
+{{note}}
+Previous versions of CRaSH required command classes to extend the ##org.crsh.command.CRaSHCommand## class, this is not
+necessary anymore as the ##@Command## annotation is enough.
+{{/note}}
+
 Sub commands will simply declares several methods:
 
 {{java}}
