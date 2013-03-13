@@ -2,6 +2,7 @@ import org.crsh.command.ScriptException
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.cli.Argument
+import org.crsh.cli.Option
 import org.crsh.cli.Required
 import org.crsh.cli.spi.Completer
 import org.crsh.cli.spi.Completion
@@ -207,7 +208,7 @@ class mule implements Completer {
       mbeanServer.queryNames(mBeanPattern, null)
   }
 
-  Completion complete(ParameterDescriptor<?> parameter, String prefix) {
+  Completion complete(ParameterDescriptor parameter, String prefix) {
       if (parameter instanceof OptionDescriptor && parameter.names.contains("a")) {
           def completionBuilder = Completion.builder(prefix)
           getApplicationNames().findAll { appName ->
