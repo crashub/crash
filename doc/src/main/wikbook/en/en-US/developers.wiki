@@ -262,11 +262,16 @@ public class sample {
 == Parameter types ==
 
 Option and argument parameters are represented by //simple// types. The string type is universal and will
-work with any value provided by the user, other types will require parsing. At the moment the framework does not
-support plugable types, however it supports a few simple types other than string:
+work with any value provided by the user, other types will require parsing.
+
+=== Builtin types ===
+
+CRaSH provides supports a few builtin simple types other than string:
 
 * //Integer// type
 * //Boolean// type
+* ##java.util.Properties## type
+* ##javax.management.ObjectName## type
 * //Enum// types
 
 Boolean type is special because it does not need a value when combined with options. The option declaration is enough
@@ -287,6 +292,41 @@ The option will be true with:
 {{screen}}
 > sample sub1 -o
 {{/screen}}
+
+=== Providing your own type ===
+
+Providing a custom type is possible, CRaSH uses the ##ServiceLoader## discovery mechanism to discover custom types. Custom
+types are implemented by a ##org.crsh.cli.type.ValueType## subclass and implement its ##parse## method:
+
+{{example title="Our custom value type"}}
+{{java}}
+package my;
+
+public class CustomValueType extends ValueType<Custom> {
+
+  public CustomValueType() {
+    super(Custom.class); // <1> The custom type is passed to the super class
+  }
+
+  @Override
+  public <S extends Custom> S parse(Class<S> type, String s) throws Exception {
+    return type.cast(new Custom(s)); // <2> The parse method should reutrn an instance of the type
+  }
+}
+{{/java}}
+{{/example}}
+
+{{note}}The ##parse## method uses the ##<S>## generic type because the implementation of enum types has an effective
+ type which is a subclass of the base enum type.{{/note}}
+
+In order to make the custom type discovered by CRaSH, a file named //org.crsh.cli.type.ValueType// should be placed
+in the ///META-INF/services/// directory of the jar containing the custom value type:
+
+{{example title="The custom value type declared in META-INF/services/org.crsh.cli.type.ValueType"}}
+{{code}}
+my.CustomValueTpye
+{{/code}}
+{{/example}}
 
 == Parameter multiplicity ==
 

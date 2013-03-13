@@ -139,12 +139,12 @@ public abstract class ValueType<V> {
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return type.hashCode();
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public final boolean equals(Object obj) {
     if (obj == null) {
       return false;
     } else {
@@ -165,11 +165,11 @@ public abstract class ValueType<V> {
     return completer;
   }
 
-  public Class<V> getType() {
+  public final Class<V> getType() {
     return type;
   }
 
-  public V parse(String s) throws Exception {
+  public final V parse(String s) throws Exception {
     return parse(type, s);
   }
 
