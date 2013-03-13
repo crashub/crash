@@ -349,6 +349,33 @@ The option can now accept several values:
 > sample sub1 -o foo -o bar
 {{/screen}}
 
+= Parameter annotations: Don't Repeat Yourself =
+
+When one or several commands uses the same parameter (option or argument), there is the opportunity to avoid repetition and
+ define a custom annotation that can be used for declaring the parameter:
+
+{{java}}
+@Retention(RetentionPolicy.RUNTIME)
+@Usage("A color")
+@Option(names = "c")
+public @interface PathOption {
+}
+{{/java}}
+
+The annotation can then be used instead for declaring an option:
+
+{{java}}
+public class mycommand {
+  @Command
+  public void foo(@ColorOption String color) {
+    ...
+  }
+  @Command
+  public void bar(@ColorOption String color) {
+    ...
+  }
+}
+{{/java}}
 
 = Command context {{anchor id=command_context/}} =
 
