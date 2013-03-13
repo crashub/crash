@@ -1,4 +1,3 @@
-import org.crsh.command.CRaSHCommand
 import org.crsh.command.ScriptException
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
@@ -14,7 +13,7 @@ import javax.management.MBeanServer
 import javax.management.ObjectName
 
 @Usage("mule commands")
-class mule extends CRaSHCommand implements Completer {
+class mule implements Completer {
   static final ObjectName CE_WRAPPER_MANAGER_ON = new ObjectName('Mule:name=WrapperManager')
   static final ObjectName EE_WRAPPER_MANAGER_ON = new ObjectName('org.tanukisoftware.wrapper:type=WrapperManager')
   MBeanServer mbeanServer = getMBeanServer()

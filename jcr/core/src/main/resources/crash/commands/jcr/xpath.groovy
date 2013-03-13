@@ -6,7 +6,7 @@ import org.crsh.cli.Command
 import org.crsh.cli.Option
 import org.crsh.cli.Argument;
 
-public class xpath extends org.crsh.command.CRaSHCommand {
+public class xpath {
 
   @Usage("execute a JCR xpath query")
   @Command

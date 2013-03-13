@@ -1,4 +1,3 @@
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.cli.Argument
@@ -6,7 +5,7 @@ import org.crsh.cli.Required
 import org.crsh.text.ui.UIBuilder
 
 @Usage("various java language commands")
-class java extends CRaSHCommand {
+class java {
   @Usage("print information about a java type")
   @Command
   void type(@Usage("The full qualified type name") @Required @Argument String name) {

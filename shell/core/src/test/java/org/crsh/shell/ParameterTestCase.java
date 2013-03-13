@@ -22,7 +22,7 @@ package org.crsh.shell;
 public class ParameterTestCase extends AbstractCommandTestCase {
 
   /** . */
-  private final String option_command = "class option_command extends org.crsh.command.CRaSHCommand {\n" +
+  private final String option_command = "class option_command {\n" +
       "@Command\n" +
       "public String main(@Option(names=['o','option']) String opt) {\n" +
       "return opt;" +
@@ -36,7 +36,7 @@ public class ParameterTestCase extends AbstractCommandTestCase {
     assertEquals("bar", assertOk("option_command -o bar"));
 
     //
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public String main() {\n" +
         "option_command o:'bar'\n" +
@@ -59,7 +59,7 @@ public class ParameterTestCase extends AbstractCommandTestCase {
   }
 
   public void testLongOption() throws Exception {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public String main() {\n" +
         "option_command option:'bar'\n" +

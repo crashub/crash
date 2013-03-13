@@ -10,7 +10,7 @@ import org.crsh.cli.Usage
 import org.crsh.cli.Argument
 import org.crsh.cli.Option;
 
-public class select extends org.crsh.command.CRaSHCommand {
+public class select {
 
   @Usage("execute a JCR sql query")
   @Command

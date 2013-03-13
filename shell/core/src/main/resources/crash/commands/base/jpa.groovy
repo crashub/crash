@@ -23,7 +23,6 @@ import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
 import javax.naming.InitialContext
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Argument
 import org.crsh.text.formatter.EntityTypeRenderable
 import org.crsh.cli.spi.Completer
@@ -36,7 +35,7 @@ import org.crsh.util.TypeResolver
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
 @Usage("Java persistance API")
-class jpa extends CRaSHCommand implements Completer {
+class jpa implements Completer {
 
   @Usage("Open a JPA session")
   @Command

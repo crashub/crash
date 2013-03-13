@@ -18,7 +18,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.text.ui.UIBuilder
@@ -30,7 +29,7 @@ import org.crsh.text.Color;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
 @Usage("shell related command")
-class shell extends CRaSHCommand {
+class shell {
 
   static def STATUS_MAP = [
       (CRaSHPlugin.CONSTRUCTED):"constructed",

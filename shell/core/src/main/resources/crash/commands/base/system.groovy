@@ -1,6 +1,5 @@
 package crash.commands.base
 
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
@@ -22,7 +21,7 @@ import org.crsh.cli.Required
  * @version $Revision$
  */
 @Usage("vm system properties commands")
-class system extends CRaSHCommand implements Completer {
+class system implements Completer {
 
   // Properties command
 

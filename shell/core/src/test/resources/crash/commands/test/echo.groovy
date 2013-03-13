@@ -3,7 +3,7 @@ import org.crsh.cli.Argument
 import org.crsh.cli.Command
 import org.crsh.cli.Option;
 
-public class echo extends org.crsh.command.CRaSHCommand {
+public class echo {
 
   @Command
   @Usage("echo text")

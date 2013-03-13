@@ -25,7 +25,7 @@ import org.crsh.cli.Usage
 import org.crsh.shell.impl.command.CRaSHSession
 import org.crsh.command.GroovyScriptCommand
 
-public class evaluate extends org.crsh.command.CRaSHCommand {
+public class evaluate {
 
   @Command
   @Usage("evaluate groovy script")

@@ -3,7 +3,7 @@ import org.crsh.cli.Usage
 import org.crsh.cli.Argument
 import org.crsh.cli.Command;
 
-public class invoke extends org.crsh.command.CRaSHCommand {
+public class invoke {
 
   @Usage("invoke a static method")
   @Command

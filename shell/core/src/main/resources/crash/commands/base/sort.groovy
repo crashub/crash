@@ -22,10 +22,9 @@ package crash.commands.base
 import org.crsh.cli.Command
 import org.crsh.cli.Option
 import org.crsh.cli.Usage
-import org.crsh.command.CRaSHCommand
 import org.crsh.command.PipeCommand
 
-class sort extends CRaSHCommand {
+class sort {
 
   @Usage("Sort a map")
   @Command

@@ -1,6 +1,5 @@
 package crash.commands.base
 
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.cli.Argument
@@ -9,7 +8,7 @@ import org.crsh.cli.Required
 import org.crsh.text.ui.UIBuilder
 
 @Usage("Spring commands")
-class spring extends CRaSHCommand {
+class spring {
 
   @Usage("list the beans")
   @Command

@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class DispatchTestCase extends AbstractCommandTestCase {
 
   public void testInvokeCompound() throws Exception {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public String main() {\n" +
         "compound_command.compound 'bar'\n" +
@@ -41,7 +41,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testProduceToClosure() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "produce_command { out << it }\n" +
@@ -55,7 +55,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testProduceToCommandAsClosure() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "def closure = consume_command\n" +
@@ -74,28 +74,28 @@ public class DispatchTestCase extends AbstractCommandTestCase {
 
   // Cannot pass at the moment
   public void testProduceToCommandWithOptionAsClosure() {
-    String noOpt = "class noOpt extends org.crsh.command.CRaSHCommand {\n" +
+    String noOpt = "class noOpt {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "def closure = consume_command_with_option\n" +
         "produce_command closure\n" +
         "}\n" +
         "}";
-    String opt = "class opt extends org.crsh.command.CRaSHCommand {\n" +
+    String opt = "class opt {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "def closure = consume_command_with_option.with(opt:'prefix')\n" +
         "produce_command closure\n" +
         "}\n" +
         "}";
-    String args = "class args extends org.crsh.command.CRaSHCommand {\n" +
+    String args = "class args {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "def closure = consume_command_with_option.with('juu')\n" +
         "produce_command closure\n" +
         "}\n" +
         "}";
-    String optArgs = "class args extends org.crsh.command.CRaSHCommand {\n" +
+    String optArgs = "class args {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "def closure = consume_command_with_option.with(opt:'prefix','juu')\n" +
@@ -141,7 +141,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testClosure() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "def closure = echo\n" +
@@ -165,7 +165,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testCompoundClosure() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "def closure = compound_command.compound\n" +
@@ -190,7 +190,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testCompoundProduceToClosure() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "compound_produce_command.compound { out << it }\n" +
@@ -201,7 +201,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     assertEquals("foobar", assertOk("foo"));
 
     // Test with wrong type
-    String bar = "class bar extends org.crsh.command.CRaSHCommand {\n" +
+    String bar = "class bar {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "compound_produce_command.compound { boolean it -> out << it }\n" +
@@ -247,7 +247,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testCheckedException() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public String main() {\n" +
         "try {" +
@@ -278,7 +278,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testScriptException() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public String main() {\n" +
         "try {" +
@@ -309,7 +309,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testGroovyScriptException() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public String main() {\n" +
         "try {" +
@@ -340,7 +340,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testRuntimeException() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public String main() {\n" +
         "try {" +
@@ -371,7 +371,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testError() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public String main() {\n" +
         "try {" +
@@ -402,7 +402,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testCannotCreateCommand() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public String main() {\n" +
         "try {\n" +

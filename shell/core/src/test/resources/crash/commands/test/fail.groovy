@@ -1,11 +1,10 @@
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 
 import org.crsh.cli.Option
 import org.crsh.cli.Argument
 
-public class fail extends CRaSHCommand {
+public class fail {
 
   @Usage("fails in an configurable manner")
   @Command

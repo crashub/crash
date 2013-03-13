@@ -3,7 +3,7 @@ package crash.commands.test
 import org.crsh.cli.Command
 import org.crsh.cli.Usage
 
-public class password extends org.crsh.command.CRaSHCommand {
+public class password {
 
   @Command
   @Usage("prompt a password")

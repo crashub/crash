@@ -1,9 +1,8 @@
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.cli.Argument
 
-class sleep extends CRaSHCommand {
+class sleep {
   @Usage("sleep for some time")
   @Command
   Object main(@Usage("sleep time in seconds") @Argument int time) {

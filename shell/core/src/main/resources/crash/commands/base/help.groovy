@@ -1,10 +1,9 @@
 import org.crsh.command.DescriptionFormat
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.text.ui.UIBuilder
 
-class help extends CRaSHCommand
+class help
 {
 
   /** . */

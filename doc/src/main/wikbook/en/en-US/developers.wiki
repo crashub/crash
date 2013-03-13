@@ -55,7 +55,7 @@ import org.crsh.cli.Command;
 import org.crsh.cli.Usage;
 import org.crsh.cli.Option;
 
-class date extends CRaSHCommand {
+class date {
   @Usage("show the current time")
   @Command
   Object main(
@@ -97,7 +97,7 @@ structure:
 
 {{code}}
 @Usage("JDBC connection")
-class jdbc extends CRaSHCommand {
+class jdbc {
 
   @Usage("connect to database with a JDBC connection string")
   @Command

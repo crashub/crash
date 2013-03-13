@@ -28,7 +28,7 @@ import java.util.EmptyStackException;
 public class CommandTestCase extends AbstractCommandTestCase {
 
   /** . */
-  private final String no_ret = "class no_ret extends org.crsh.command.CRaSHCommand {\n" +
+  private final String no_ret = "class no_ret {\n" +
       "@Command\n" +
       "public void main() {\n" +
       "}\n" +
@@ -62,7 +62,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testInvokeNoRet() throws Exception {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
       "@Command\n" +
       "public String main() {\n" +
       "no_ret()\n" +
@@ -85,7 +85,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testInvoke() throws Exception {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
       "@Command\n" +
       "public String main() {\n" +
       "echo 'bar'\n" +
@@ -111,7 +111,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testResolveOut() {
-    String resolve = "class resolve extends org.crsh.command.CRaSHCommand {\n" +
+    String resolve = "class resolve {\n" +
         "@Command\n" +
         "public org.crsh.command.PipeCommand<Object, Object> main() {\n" +
         "return new org.crsh.command.PipeCommand<Object, Object>() {\n" +
@@ -128,7 +128,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testContextLeftShift() {
-    String foo = "class foo extends org.crsh.command.CRaSHCommand {\n" +
+    String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "context << 'hello'\n" +
@@ -152,7 +152,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testThrowScript() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws org.crsh.command.ScriptException {\n" +
         "throw new org.crsh.command.ScriptException()" +
@@ -162,7 +162,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testThrowGroovyScript() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws groovy.util.ScriptException {\n" +
         "throw new groovy.util.ScriptException()" +
@@ -172,7 +172,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testThrowCheckedException() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws javax.management.JMException {\n" +
         "throw new javax.management.JMException()" +
@@ -182,7 +182,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testThrowRuntimeException() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws java.util.EmptyStackException {\n" +
         "throw new java.util.EmptyStackException()" +
@@ -192,7 +192,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testThrowError() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws java.awt.AWTError {\n" +
         "throw new java.awt.AWTError()" +
@@ -202,7 +202,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowScript() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new org.crsh.command.ScriptException()" +
@@ -212,7 +212,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowGroovyScript() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new groovy.util.ScriptException()" +
@@ -222,7 +222,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowCheckedException() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new javax.management.JMException()" +
@@ -232,7 +232,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowRuntimeException() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new java.util.EmptyStackException()" +
@@ -242,7 +242,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowError() throws Exception {
-    lifeCycle.bind("a", "public class a extends org.crsh.command.CRaSHCommand {\n" +
+    lifeCycle.bind("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new java.awt.AWTError()" +

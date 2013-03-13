@@ -32,7 +32,7 @@ public class FilterCommandTestCase extends AbstractCommandTestCase {
 
   public static List<Map> output = new ArrayList<Map>();
 
-  private final String consume_command = "class consume_command extends org.crsh.command.CRaSHCommand {\n" +
+  private final String consume_command = "class consume_command {\n" +
       "@Command\n" +
       "public org.crsh.command.PipeCommand<java.util.Map, Object> main() {\n" +
       "return new org.crsh.command.PipeCommand<java.util.Map, Object>() {\n" +
@@ -43,7 +43,7 @@ public class FilterCommandTestCase extends AbstractCommandTestCase {
       "}\n" +
       "}";
 
-  private final String produce_command = "class produce_command extends org.crsh.command.CRaSHCommand {\n" +
+  private final String produce_command = "class produce_command {\n" +
       "@Command\n" +
       "public void main(org.crsh.command.InvocationContext<java.util.Map> context) {\n" +
       "context.provide([A:'A',B:'C']);\n" +

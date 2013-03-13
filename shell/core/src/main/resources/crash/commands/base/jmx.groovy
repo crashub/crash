@@ -21,7 +21,6 @@ package crash.commands.base
 
 import org.crsh.cli.Command
 import org.crsh.cli.Usage
-import org.crsh.command.CRaSHCommand
 
 import java.lang.management.ManagementFactory
 import javax.management.MBeanServer
@@ -33,7 +32,7 @@ import javax.management.ObjectName
 import org.crsh.command.PipeCommand
 
 @Usage("Java Management Extensions")
-class jmx extends CRaSHCommand {
+class jmx {
 
   @Usage("Find managed bean")
   @Command

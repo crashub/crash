@@ -22,7 +22,6 @@ package crash.commands.base
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
-import org.crsh.command.CRaSHCommand
 import org.crsh.text.formatter.BindingRenderable
 import org.crsh.cli.Option
 import org.crsh.util.JNDIHandler
@@ -31,7 +30,7 @@ import org.crsh.util.JNDIHandler
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
 @Usage("Java Naming and Directory Interface")
-class jndi extends CRaSHCommand {
+class jndi {
 
     @Usage("List JNDI resources")
     @Command

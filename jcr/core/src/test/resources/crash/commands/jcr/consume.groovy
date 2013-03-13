@@ -3,7 +3,7 @@ import org.crsh.cli.Usage
 import org.crsh.command.PipeCommand;
 import javax.jcr.Node;
 
-public class consume extends org.crsh.command.CRaSHCommand {
+public class consume {
   @Command
   @Usage("collects and log a set of nodes")
   public PipeCommand<Node, Object> main() {

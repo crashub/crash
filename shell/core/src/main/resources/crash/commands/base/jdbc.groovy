@@ -21,7 +21,6 @@ package crash.commands.base
 
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
-import org.crsh.command.CRaSHCommand
 import java.sql.Statement
 import org.crsh.cli.Argument
 import java.sql.ResultSet
@@ -46,7 +45,7 @@ import org.crsh.util.JNDIHandler;
  * @version $Revision$
  */
 @Usage("JDBC connection")
-class jdbc extends CRaSHCommand implements Completer{
+class jdbc implements Completer{
 
   Completer c = new JNDIHandler.JNDICompleter("javax.sql.DataSource");
   

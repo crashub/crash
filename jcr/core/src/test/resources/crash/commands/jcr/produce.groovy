@@ -5,7 +5,7 @@ import org.crsh.jcr.command.Path
 import org.crsh.cli.Argument;
 import javax.jcr.Node;
 
-public class produce extends org.crsh.command.CRaSHCommand  {
+public class produce {
 
   @Command
   @Usage("produce a set of nodes")

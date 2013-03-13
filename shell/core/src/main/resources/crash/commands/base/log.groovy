@@ -12,7 +12,6 @@ import org.crsh.cli.Usage
 import org.crsh.cli.Option
 import org.crsh.cli.Required
 import org.crsh.cli.Argument
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Man
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
@@ -22,7 +21,7 @@ import org.crsh.cli.spi.Completion
 import org.crsh.command.PipeCommand;
 
 @Usage("logging commands")
-public class log extends CRaSHCommand {
+public class log {
 
   @Usage("send a message to a logger")
   @Man("""\

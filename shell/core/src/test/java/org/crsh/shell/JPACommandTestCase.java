@@ -40,7 +40,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
   public static List<EntityTypeRenderable.EntityTypeData> output_entity = new ArrayList<EntityTypeRenderable.EntityTypeData>();
   public static List<Map> output_value = new ArrayList<Map>();
 
-  private final String consume_command_entity = "class consume_command_entity extends org.crsh.command.CRaSHCommand {\n" +
+  private final String consume_command_entity = "class consume_command_entity {\n" +
       "@Command\n" +
       "public org.crsh.command.PipeCommand<org.crsh.text.formatter.EntityTypeRenderable.EntityTypeData, Object> main() {\n" +
       "return new org.crsh.command.PipeCommand<org.crsh.text.formatter.EntityTypeRenderable.EntityTypeData, Object>() {\n" +
@@ -51,7 +51,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
       "}\n" +
       "}";
 
-  private final String consume_command_value = "class consume_command_value extends org.crsh.command.CRaSHCommand {\n" +
+  private final String consume_command_value = "class consume_command_value {\n" +
       "@Command\n" +
       "public org.crsh.command.PipeCommand<Map, Object> main() {\n" +
       "return new org.crsh.command.PipeCommand<Map, Object>() {\n" +

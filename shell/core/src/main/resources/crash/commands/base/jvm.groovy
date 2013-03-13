@@ -19,7 +19,6 @@
 
 package crash.commands.base
 
-import org.crsh.command.CRaSHCommand;
 import org.crsh.cli.Command
 import org.crsh.cli.Usage
 import java.lang.management.ManagementFactory
@@ -31,7 +30,7 @@ import java.lang.management.MemoryPoolMXBean
 import java.lang.management.MemoryUsage;
 
 @Usage("JVM informations")
-class jvm extends CRaSHCommand {
+class jvm {
 
   /**
    * Show JMX data about os.

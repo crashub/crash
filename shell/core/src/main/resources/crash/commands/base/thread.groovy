@@ -1,5 +1,4 @@
 import java.util.regex.Pattern;
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
@@ -45,7 +44,7 @@ Interrupted thread Thread[pool-1-thread-2,5,main]
 Interrupted thread Thread[pool-1-thread-3,5,main]
 Interrupted thread Thread[pool-1-thread-4,5,main]
 Interrupted thread Thread[pool-1-thread-5,5,main]""")
-public class thread extends CRaSHCommand {
+public class thread {
 
   @Usage("thread top")
   @Command

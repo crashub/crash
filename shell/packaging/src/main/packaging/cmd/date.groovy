@@ -1,4 +1,4 @@
-class date extends CRaSHCommand {
+class date {
   @Usage("show the current time")
   @Command
   Object main(@Usage("the time format") @Option(names=["f","format"]) String format) {

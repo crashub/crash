@@ -3,7 +3,7 @@ import org.crsh.cli.Command
 import org.crsh.cli.Usage
 import org.crsh.cli.Man;
 
-public class pwd extends org.crsh.command.CRaSHCommand {
+public class pwd {
 
   @Usage("print the current node path")
   @Command

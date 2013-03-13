@@ -1,10 +1,9 @@
 import org.crsh.command.DescriptionFormat
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.cli.Argument;
 
-class man extends CRaSHCommand {
+class man {
   @Usage("format and display the on-line manual pages")
   @Command
   Object main(@Usage("the command") @Argument String command) {

@@ -20,7 +20,6 @@
 package crash.commands.base
 
 import org.crsh.cli.Usage
-import org.crsh.command.CRaSHCommand
 import org.crsh.command.ScriptException
 import org.crsh.cli.Command
 import org.crsh.command.PipeCommand
@@ -29,7 +28,7 @@ import java.util.regex.Pattern
 import org.crsh.util.Utils
 
 @Usage("A filter for a stream of map")
-class filter extends CRaSHCommand {
+class filter {
 
   /** . */
   private static final String[] EMPTY_KEYS = new String[0];

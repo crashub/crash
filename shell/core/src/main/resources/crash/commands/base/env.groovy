@@ -1,8 +1,7 @@
-import org.crsh.command.CRaSHCommand
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 
-class env extends CRaSHCommand
+class env
 {
   @Usage("display the term env")
   @Command

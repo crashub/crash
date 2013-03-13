@@ -49,7 +49,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testOut() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+    Class clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public void main() {" +
       "out.print(\"abc\");" +
@@ -62,7 +62,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+    Class clazz = loader.parseClass("class foo { " +
       "@Option(names=\"s\") @Required def String str = 'default value';" +
       "@Command\n" +
       "public Object main() {" +
@@ -82,7 +82,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testContextAccessFromCommandClassCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+    Class clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main() {" +
       "return juu;" +
@@ -97,7 +97,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testArgumentInjectionInCommandCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+    Class clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main(@Argument String str) {" +
       "return str;" +
@@ -110,7 +110,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testMainInCommandCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+    Class clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main() {" +
       "return 'foo';" +
@@ -123,7 +123,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testContextAccessInCommandClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+    Class clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main() {" +
       "return bar;" +
@@ -140,7 +140,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testClosureInvocationInClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand { " +
+    Class clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main() {" +
       "return bar();" +
@@ -158,7 +158,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testArgumentQuoteInClass() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand {\n" +
+    Class clazz = loader.parseClass("class foo {\n" +
       "@Command\n" +
       "public Object main(@org.crsh.cli.Argument List<String> arguments) {\n" +
       "return arguments;\n" +
@@ -171,7 +171,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testArgumentQuoteInClass2() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand {\n" +
+    Class clazz = loader.parseClass("class foo {\n" +
       "@Command\n" +
       "public Object main(@org.crsh.cli.Argument(unquote = false) List<String> arguments) {\n" +
       "return arguments;\n" +
@@ -204,7 +204,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testResolveContext() throws Exception {
-    Class clazz = loader.parseClass("class foo extends org.crsh.command.CRaSHCommand {\n" +
+    Class clazz = loader.parseClass("class foo {\n" +
       "@Command\n" +
       "public Object main() {\n" +
       "return context.class.name;\n" +

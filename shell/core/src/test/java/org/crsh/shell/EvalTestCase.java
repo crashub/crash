@@ -24,7 +24,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
 
   public void testProvideRenderable() {
     String foo =
-        "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "class foo {\n" +
         "  @Command\n" +
         "  public void main() {\n" +
         "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
@@ -45,7 +45,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
 
   public void testProvideText() {
     String foo =
-        "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "class foo {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
             "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
@@ -63,7 +63,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
 
   public void testEvalCommandInEval() {
     String foo =
-        "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "class foo {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
             "    def builder = new org.crsh.text.ui.UIBuilder().eval {" +
@@ -80,7 +80,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
 
   public void testEvalCommandInCommand() {
     String foo =
-        "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "class foo {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
             "    execute('echo bar')\n" +
@@ -96,7 +96,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
     String bar = "context << 'juu'\n" +
         "return null";
     String foo =
-        "class foo extends org.crsh.command.CRaSHCommand {\n" +
+        "class foo {\n" +
             "  @Command\n" +
             "  public void main() {\n" +
             "    execute('bar')\n" +

@@ -1,2 +1,3 @@
 org.crsh.groovy.ArgumentNameTransformer
 org.crsh.groovy.DefaultImportTransformer
+org.crsh.groovy.CommandTransformer

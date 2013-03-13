@@ -31,7 +31,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   private String defaultFactory;
   public static List<BindingRenderable.BindingData> output = new ArrayList<BindingRenderable.BindingData>();
 
-  private final String consume_command = "class consume_command extends org.crsh.command.CRaSHCommand {\n" +
+  private final String consume_command = "class consume_command {\n" +
       "@Command\n" +
       "public org.crsh.command.PipeCommand<org.crsh.text.formatter.BindingRenderable.BindingData, Object> main() {\n" +
       "return new org.crsh.command.PipeCommand<org.crsh.text.formatter.BindingRenderable.BindingData, Object>() {\n" +
