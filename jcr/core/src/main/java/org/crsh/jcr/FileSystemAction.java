@@ -41,7 +41,7 @@ abstract class FileSystemAction {
   private static void read(final SCPCommand cmd, FileSystemAction action, FileSystem fs) throws IOException {
     if (action instanceof StartDirectory) {
       String directoryName = ((StartDirectory)action).name;
-      fs.startDirectory(directoryName);
+      fs.beginDirectory(directoryName);
 
       //
       cmd.ack();

@@ -61,7 +61,7 @@ public class Exporter extends DefaultHandler {
   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
     try {
       String fileName = XML.fileName(qName);
-      fs.startDirectory(fileName);
+      fs.beginDirectory(fileName);
 
       //
       ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -42,7 +42,7 @@ public class SourceCommand extends SCPCommand implements Runnable {
   @Override
   protected void execute(Session session, String path) throws Exception {
     FileSystem fs = new FileSystem() {
-      public void startDirectory(String directoryName) throws IOException {
+      public void beginDirectory(String directoryName) throws IOException {
         out.write("D0755 0 ".getBytes());
         out.write(directoryName.getBytes());
         out.write("\n".getBytes());

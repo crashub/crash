@@ -23,7 +23,7 @@ import java.io.InputStream;
 
 public interface FileSystem {
 
-  void startDirectory(String directoryName) throws IOException;
+  void beginDirectory(String directoryName) throws IOException;
 
   void file(String fileName, int length, InputStream data) throws IOException;
 

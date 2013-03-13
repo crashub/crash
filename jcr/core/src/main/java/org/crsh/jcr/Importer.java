@@ -74,7 +74,7 @@ public class Importer implements FileSystem {
     this.prefixes = new ArrayList<String>();
   }
 
-  public void startDirectory(String directoryName) throws IOException {
+  public void beginDirectory(String directoryName) throws IOException {
   }
 
   public void file(String fileName, int length, InputStream data) throws IOException {

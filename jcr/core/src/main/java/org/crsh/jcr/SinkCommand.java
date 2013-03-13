@@ -43,7 +43,7 @@ public class SinkCommand extends SCPCommand implements Runnable {
 
     // FS that will import
     FileSystem fs = new FileSystem() {
-      public void startDirectory(String directoryName) throws IOException {
+      public void beginDirectory(String directoryName) throws IOException {
       }
       public void file(String fileName, int length, InputStream data) throws IOException {
         try {
