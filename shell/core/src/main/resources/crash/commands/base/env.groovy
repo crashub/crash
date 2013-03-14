@@ -8,7 +8,7 @@ class env
   void main() {
     out << "width: $context.width\n"
     out << "height: $context.height\n"
-    out << "session: $context.session\n"
-    out << "attributes: $context.attributes\n"
+    out << "session: ${context.session.keySet()}\n"
+    out << "attributes: ${context.attributes.keySet()}\n"
  }
 }
