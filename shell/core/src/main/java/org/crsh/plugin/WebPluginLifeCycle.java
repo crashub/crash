@@ -57,8 +57,8 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
   }
 
   public void contextInitialized(ServletContextEvent sce) {
-    ServletContext sc = sce.getServletContext();
-    String contextPath = sc.getContextPath();
+    ServletContext context = sce.getServletContext();
+    String contextPath = context.getContextPath();
 
     // Use JVM properties as external config
     setConfig(System.getProperties());
@@ -68,26 +68,48 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
       if (!contextMap.containsKey(contextPath)) {
 
         //
-        FS cmdFS = new FS().mount(new ServletContextDriver(sc, "/WEB-INF/crash/commands/"));
-        FS confFS = new FS().mount(new ServletContextDriver(sc, "/WEB-INF/crash/"));
+        FS cmdFS = createCommandFS(context);
+        FS confFS = createConfFS(context);
         ClassLoader webAppLoader = Thread.currentThread().getContextClassLoader();
 
         //
-        PluginContext context = new PluginContext(
+        PluginContext pluginContext = new PluginContext(
           new ServiceLoaderDiscovery(webAppLoader),
-          new ServletContextMap(sc),
+          new ServletContextMap(context),
           cmdFS,
           confFS,
           webAppLoader);
 
         //
-        contextMap.put(contextPath, context);
+        contextMap.put(contextPath, pluginContext);
         registered = true;
 
         //
-        start(context);
+        start(pluginContext);
       }
     }
+  }
+
+  /**
+   * Create the command file system, this method binds the <code>/WEB-INF/crash/commands/</code> path of the
+   * servlet context.
+   *
+   * @param context the servlet context
+   * @return the command file system
+   */
+  protected FS createCommandFS(ServletContext context) {
+    return new FS().mount(new ServletContextDriver(context, "/WEB-INF/crash/commands/"));
+  }
+
+  /**
+   * Create the conf file system, this method binds the <code>/WEB-INF/crash/</code> path of the
+   * servlet context.
+   *
+   * @param context the servlet context
+   * @return the conf file system
+   */
+  protected FS createConfFS(ServletContext context) {
+    return new FS().mount(new ServletContextDriver(context, "/WEB-INF/crash/"));
   }
 
   public void contextDestroyed(ServletContextEvent sce) {
