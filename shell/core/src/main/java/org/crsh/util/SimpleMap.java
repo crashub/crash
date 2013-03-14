@@ -79,6 +79,7 @@ public abstract class SimpleMap<K, V> extends AbstractMap<K, V> {
       int size = 0;
       for (Iterator<K> names = keys();names.hasNext();) {
         size++;
+        names.next();
       }
       return size;
     }
