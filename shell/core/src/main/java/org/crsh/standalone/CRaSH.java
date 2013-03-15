@@ -198,6 +198,11 @@ public class CRaSH {
       StringBuilder sb = new StringBuilder();
 
       // Rewrite canonical path
+      if (copyCmd) {
+        sb.append("--cmd-mode copy ");
+      } else {
+        sb.append("--cmd-mode read ");
+      }
       if (cmds != null) {
         for (String cmd : cmds) {
           File cmdPath = new File(cmd);
@@ -210,6 +215,11 @@ public class CRaSH {
       }
 
       // Rewrite canonical path
+      if (copyCmd) {
+        sb.append("--conf-mode copy ");
+      } else {
+        sb.append("--conf-mode read ");
+      }
       if (confs != null) {
         for (String conf : confs) {
           File confPath = new File(conf);
