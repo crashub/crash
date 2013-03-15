@@ -46,8 +46,16 @@ public class CRaSHShellFactory extends CRaSHPlugin<ShellFactory> implements Shel
     return this;
   }
 
-  public Shell create(Principal principal) {
+  public Shell create(Principal principal, boolean async) {
     CRaSHSession session = crash.createSession(principal);
-    return new AsyncShell(getContext().getExecutor(), session);
+    if (async) {
+      return new AsyncShell(getContext().getExecutor(), session);
+    } else {
+      return session;
+    }
+  }
+
+  public Shell create(Principal principal) {
+    return create(principal, true);
   }
 }
