@@ -19,6 +19,7 @@
 package org.crsh.shell.impl.command;
 
 import groovy.lang.Binding;
+import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -147,28 +148,36 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
 
   // Shell implementation **********************************************************************************************
 
-  public String getWelcome() {
+  private String eval(String name, String def) {
     ClassLoader previous = setCRaSHLoader();
     try {
       GroovyShell shell = getGroovyShell();
-      Object ret = shell.evaluate("welcome();");
+      Object ret = shell.evaluate("return " + name + ";");
+      if (ret instanceof Closure) {
+        log.log(Level.FINEST, "Invoking " + name + " closure");
+        Closure c = (Closure)ret;
+        ret = c.call();
+      } else if (ret == null) {
+        log.log(Level.FINEST, "No " + name + " will use empty");
+        return def;
+      }
       return String.valueOf(ret);
+    }
+    catch (Exception e) {
+      log.log(Level.SEVERE, "Could not get a " + name + " message, will use empty", e);
+      return def;
     }
     finally {
       setPreviousLoader(previous);
     }
   }
 
+  public String getWelcome() {
+    return eval("welcome", "");
+  }
+
   public String getPrompt() {
-    ClassLoader previous = setCRaSHLoader();
-    try {
-      GroovyShell shell = getGroovyShell();
-      Object ret = shell.evaluate("prompt();");
-      return String.valueOf(ret);
-    }
-    finally {
-      setPreviousLoader(previous);
-    }
+    return eval("prompt", "% ");
   }
 
   public ShellProcess createProcess(String request) {
