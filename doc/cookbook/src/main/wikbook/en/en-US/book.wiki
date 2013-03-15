@@ -15,18 +15,22 @@ See documentation Connection in Shell Usage chapter  http://www.crashub.org/doc.
 
 = Developping commands =
 
-== Create your first command ==
+== Create your first script command ==
 
 You can create ac command dynamicaly without restarting CRaSH.
 
 === Run CRaSH ===
 
+{{screen}}
 cd $CRASH_HOME/bin
 ./crash.sh
 Type help at prompt
+{{/screen}}
+
 
 You will see something like :
 
+{{screen}}
  Try one of these commands with the -h or --help switch:
 
 NAME      DESCRIPTION
@@ -50,17 +54,23 @@ sleep     sleep for some time
 sort      Sort a map
 system    vm system properties commands
 thread    JVM thread commands
+{{/screen}}
+
 
 === Add new command ===
 
+{{screen}}
 cd $CRASH_HOME/cmd
 vi test.groovy
+{{/screen}}
 
 Put the following in test.groovy :
 
+{{screen}}
 for (int i = 0;i < 10;i++) {
   System.out.println("CRaSH is cool !");
 }
+{{/screen}}
 
 Note : In this example, we create a command by using Java syntax.
 It's because Groovy understand Java Syntax.So you could begin to develop
@@ -70,6 +80,7 @@ your command in Java and when you want try cool Groovy stuff.
 
 Type help again at prompt and you will see test command
 
+{{screen}}
   % help
 Try one of these commands with the -h or --help switch:
 
@@ -95,6 +106,11 @@ sort      Sort a map
 system    vm system properties commands
 test
 thread    JVM thread commands
+{{/screen}}
+
+
+== Create your first command as a class ==
+
 
 
 
