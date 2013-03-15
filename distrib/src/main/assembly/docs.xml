@@ -61,7 +61,7 @@
     </dependencySet>
     <dependencySet>
       <outputDirectory>/reference</outputDirectory>
-      <outputFileNameMapping>crash.pdf</outputFileNameMapping>
+      <outputFileNameMapping>crash-reference.pdf</outputFileNameMapping>
       <includes>
         <include>org.crsh:crsh.doc.reference:pdf</include>
       </includes>
@@ -71,6 +71,20 @@
       <unpack>true</unpack>
       <includes>
         <include>org.crsh:crsh.doc.reference:jar:javadoc</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/cookbook/html</outputDirectory>
+      <unpack>true</unpack>
+      <includes>
+        <include>org.crsh:crsh.doc.cookbook:zip:html</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/cookbook</outputDirectory>
+      <outputFileNameMapping>crash-cookbook.pdf</outputFileNameMapping>
+      <includes>
+        <include>org.crsh:crsh.doc.cookbook:pdf</include>
       </includes>
     </dependencySet>
   </dependencySets>

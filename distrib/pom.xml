@@ -116,6 +116,17 @@
       <artifactId>crsh.doc.reference</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.doc.cookbook</artifactId>
+      <type>pdf</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.doc.cookbook</artifactId>
+      <classifier>html</classifier>
+      <type>zip</type>
+    </dependency>
 
   </dependencies>
 

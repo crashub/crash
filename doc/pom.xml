@@ -15,6 +15,7 @@
 
   <modules>
     <module>reference</module>
+    <module>cookbook</module>
   </modules>
 
 </project>

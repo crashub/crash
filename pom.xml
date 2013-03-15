@@ -371,6 +371,21 @@
         <classifier>javadoc</classifier>
       </dependency>
 
+      <!-- Module cookbook -->
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.doc.cookbook</artifactId>
+        <version>1.2.0-cr8-SNAPSHOT</version>
+        <type>pdf</type>
+      </dependency>
+      <dependency>
+        <groupId>org.crsh</groupId>
+        <artifactId>crsh.doc.cookbook</artifactId>
+        <version>1.2.0-cr8-SNAPSHOT</version>
+        <classifier>html</classifier>
+        <type>zip</type>
+      </dependency>
+
       <!-- Thirdparty dependencies -->
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
