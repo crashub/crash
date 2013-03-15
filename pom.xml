@@ -350,23 +350,23 @@
         <classifier>sources</classifier>
       </dependency>
 
-      <!-- Module doc -->
+      <!-- Module reference documentation -->
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.doc</artifactId>
+        <artifactId>crsh.doc.reference</artifactId>
         <version>1.2.0-cr8-SNAPSHOT</version>
         <type>pdf</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.doc</artifactId>
+        <artifactId>crsh.doc.reference</artifactId>
         <version>1.2.0-cr8-SNAPSHOT</version>
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
-        <artifactId>crsh.doc</artifactId>
+        <artifactId>crsh.doc.reference</artifactId>
         <version>1.2.0-cr8-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>

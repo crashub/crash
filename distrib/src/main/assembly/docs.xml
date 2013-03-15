@@ -53,24 +53,24 @@
       </includes>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/doc/html</outputDirectory>
+      <outputDirectory>/reference/html</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.doc:zip:html</include>
+        <include>org.crsh:crsh.doc.reference:zip:html</include>
       </includes>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/doc</outputDirectory>
+      <outputDirectory>/reference</outputDirectory>
       <outputFileNameMapping>crash.pdf</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.doc:pdf</include>
+        <include>org.crsh:crsh.doc.reference:pdf</include>
       </includes>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/doc/javadoc</outputDirectory>
+      <outputDirectory>/reference/javadoc</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.doc:jar:javadoc</include>
+        <include>org.crsh:crsh.doc.reference:jar:javadoc</include>
       </includes>
     </dependencySet>
   </dependencySets>
