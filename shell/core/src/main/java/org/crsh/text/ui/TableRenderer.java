@@ -142,7 +142,7 @@ class TableRenderer extends Renderer {
       for (int i = 0;i < row.getCols().size();i++) {
         Renderer renderable = row.getCols().get(i);
         eltWidths[i] = Math.max(eltWidths[i], renderable.getActualWidth() + row.row.leftCellPadding + row.row.rightCellPadding);
-        eltMinWidths[i] = Math.max(eltMinWidths[i], renderable.getMinWidth()) + row.row.leftCellPadding + row.row.rightCellPadding;
+        eltMinWidths[i] = Math.max(eltMinWidths[i], renderable.getMinWidth() + row.row.leftCellPadding + row.row.rightCellPadding);
       }
     }
 
