@@ -1,1 +1,13 @@
 Cookbook.
+
+= FAQ {{anchor id=faq /}} =
+
+{{include document="FAQ.wiki" /}}
+
+= Create your first command {{anchor id=firstCmd /}} =
+
+{{include document="firstCommand.wiki" /}}
+
+= How to print an array {{anchor id=printArr /}} =
+
+{{include document="howToPrintAnArray.wiki" /}}
