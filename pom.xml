@@ -127,9 +127,6 @@
     <!-- Base tools path -->
     <tools.jar>${java.home}/../lib/tools.jar</tools.jar>
 
-    <!-- site-maven-plugin -->
-    <crsh.github.owner>crashub</crsh.github.owner>
-    <crsh.github.repository>crash</crsh.github.repository>
   </properties>
 
   <dependencyManagement>
@@ -577,7 +574,6 @@
     <module>doc</module>
     <module>plugins</module>
     <module>distrib</module>
-    <module>site</module>
   </modules>
   
   <build>
