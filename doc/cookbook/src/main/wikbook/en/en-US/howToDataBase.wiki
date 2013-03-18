@@ -1,0 +1,44 @@
+
+In this cookbook, you will see how to connect to a database and how to execute query.
+
+= Connect to a database =
+
+You have 2 possibility to connect to your databases :
+* open    :  open a connection from JNDI bound datasource
+* connect :  connect to database with a JDBC connection string
+
+Here is some examples :
+
+* H2
+
+{{screen}}
+jdbc connect jdbc:h2:mem:test -u sa
+{{/screen}}
+
+* MYSQL
+
+{{screen}}
+jdbc connect -u USER -p PASSWORD jdbc:mysql://localhost:3306/DATABASE
+{{/screen}}
+
+= Run a query =
+
+== Execute a query ==
+
+If you want run a query without result.
+
+== Make a select on a table ==
+
+jdbc select * from UTILISATEUR;
+
+{{note}}
+Table name are case sensitive.
+{{/note}}
+
+= Close connection =
+
+{{screen}}
+jdbc close
+{{/screen}}
+
+

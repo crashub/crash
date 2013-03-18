@@ -41,11 +41,31 @@ See command as a class : [[http://www.crashub.org/doc.html#d5e531]]
 * See cookbook and documentation.
 
 
-= Commons errors =
+= Commons problems =
 
 == "Command not found" ==
 
 In most cases, when you created a command, it's a syntax error in a command.
 Check your import and syntax with your ide.
+
+== Can't find crash.properties file ==
+
+You have to launch CRaSH in standalone mode once.
+Then, it will appears in ##$CRASH_HOME/conf/##
+
+== "Remoting issue" ==
+
+It could happen when you have an error in your command.
+For example :
+
+{{screen}}
+% jdbc select se
+Remoting issue
+{{/screen}}
+
+== Where are base commands ? ==
+
+They will be in ##$CRASH_HOME/cmd/base## directory.
+You have to launch CRaSH once in standalone mode.
 
 
