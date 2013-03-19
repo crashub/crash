@@ -21,7 +21,6 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
-import org.crsh.shell.InteractionContext;
 import org.crsh.text.Chunk;
 
 import java.io.IOException;
@@ -39,10 +38,6 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
     this.current = null;
   }
 
-  public void setSession(CommandContext session) {
-    // Should we use it ?
-  }
-
   public Class<Void> getConsumedType() {
     throw new UnsupportedOperationException();
   }
@@ -55,16 +50,16 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
     throw new UnsupportedOperationException("This should not be called");
   }
 
-  public void open(InteractionContext<Chunk> consumer) {
+  public void open(CommandContext<Chunk> consumer) {
     open(0, consumer);
   }
 
-  private InteractionContext open(final int index, final InteractionContext last) {
+  private CommandContext open(final int index, final CommandContext last) {
     if (index < invokers.length) {
 
       //
       final CommandInvoker invoker = invokers[index];
-      InteractionContext next = open(index + 1, last);
+      CommandContext next = open(index + 1, last);
 
       //
       final Class produced = invoker.getProducedType();
@@ -78,7 +73,7 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
           next = filter;
         } else if (consumed.equals(Chunk.class)) {
           Pipe.Chunkizer filter = new Pipe.Chunkizer();
-          filter.open((InteractionContext<Chunk>)next);
+          filter.open((CommandContext<Chunk>)next);
           next = filter;
         } else {
           Pipe.Sink filter = new Pipe.Sink(consumed);

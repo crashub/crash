@@ -34,7 +34,6 @@ import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.cli.impl.invocation.Resolver;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
-import org.crsh.shell.InteractionContext;
 import org.crsh.util.TypeResolver;
 
 import java.io.IOException;
@@ -87,7 +86,7 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     return unmatched;
   }
 
-  public final CompletionMatch complete(CommandContext context, String line) {
+  public final CompletionMatch complete(RuntimeContext context, String line) {
 
     // WTF
     CompletionMatcher analyzer = descriptor.completer("main");
@@ -239,13 +238,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
 
       return new CommandInvoker<Object, Object>() {
 
-        /** . */
-        private CommandContext session;
-
-        public void setSession(CommandContext session) {
-          this.session = session;
-        }
-
         public Class<Object> getProducedType() {
           return _producedType;
         }
@@ -254,10 +246,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           return _consumedType;
         }
 
-        public void open(final InteractionContext<Object> consumer) {
+        public void open(final CommandContext<Object> consumer) {
 
           //
-          pushContext(new InvocationContextImpl<Object>(consumer, session));
+          pushContext(new InvocationContextImpl<Object>(consumer));
           CRaSHCommand.this.unmatched = match.getRest();
           final Resolver resolver = new Resolver() {
             public <T> T resolve(Class<T> type) {
@@ -304,9 +296,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         /** . */
         boolean piped;
 
-        /** . */
-        private CommandContext session;
-
         public Class<Object> getProducedType() {
           return _producedType;
         }
@@ -315,18 +304,14 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           return _consumedType;
         }
 
-        public void setSession(CommandContext session) {
-          this.session = session;
-        }
-
         public void setPiped(boolean piped) {
           this.piped = piped;
         }
 
-        public void open(final InteractionContext<Object> consumer) {
+        public void open(final CommandContext<Object> consumer) {
 
           //
-          final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(consumer, session);
+          final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(consumer);
 
           //
           pushContext(invocationContext);

@@ -27,7 +27,6 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.spi.Completion;
-import org.crsh.shell.InteractionContext;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.util.Strings;
@@ -54,13 +53,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   /** . */
   private boolean piped;
 
-  /** . */
-  private CommandContext session;
-
   protected GroovyScriptCommand() {
     this.stack = null;
-    this.context = null;
-    this.session = null;
     this.piped = false;
   }
 
@@ -178,7 +172,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     }
   }
 
-  public final CompletionMatch complete(CommandContext context, String line) {
+  public final CompletionMatch complete(RuntimeContext context, String line) {
     return new CompletionMatch(Delimiter.EMPTY, Completion.create());
   }
 
@@ -190,14 +184,10 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return null;
   }
 
-  public final void setSession(CommandContext session) {
-    this.session = session;
-  }
-
-  public final void open(InteractionContext<Object> consumer) {
+  public final void open(CommandContext<Object> consumer) {
 
     // Set up current binding
-    Binding binding = new Binding(session.getSession());
+    Binding binding = new Binding(consumer.getSession());
 
     // Set the args on the script
     binding.setProperty("args", args);
@@ -206,7 +196,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     setBinding(binding);
 
     //
-    pushContext(new InvocationContextImpl<Object>(consumer, session));
+    pushContext(new InvocationContextImpl<Object>(consumer));
 
     //
     try {

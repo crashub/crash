@@ -36,12 +36,17 @@ final class InvocationContextImpl<P> implements InvocationContext<P> {
   private final InteractionContext<P> producerContext;
 
   /** . */
-  private final CommandContext sessionContext;
+  private final RuntimeContext sessionContext;
 
   /** . */
   private RenderPrintWriter writer;
 
-  InvocationContextImpl(InteractionContext<P> producerContext, CommandContext sessionContext) {
+  InvocationContextImpl(CommandContext<P> producerContext) {
+    this.producerContext = producerContext;
+    this.sessionContext = producerContext;
+  }
+
+  InvocationContextImpl(InteractionContext<P> producerContext, RuntimeContext sessionContext) {
     this.producerContext = producerContext;
     this.sessionContext = sessionContext;
   }

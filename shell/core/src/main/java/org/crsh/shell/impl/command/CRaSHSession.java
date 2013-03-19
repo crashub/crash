@@ -25,9 +25,9 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
-import org.crsh.command.CommandContext;
+import org.crsh.command.BaseRuntimeContext;
+import org.crsh.command.RuntimeContext;
 import org.crsh.cli.impl.Delimiter;
-import org.crsh.command.BaseCommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.GroovyScript;
 import org.crsh.command.NoSuchCommandException;
@@ -51,7 +51,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, CommandContext {
+public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, RuntimeContext {
 
   /** . */
   static final Logger log = Logger.getLogger(CRaSHSession.class.getName());
@@ -297,7 +297,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
         try {
           ShellCommand command = crash.getCommand(commandName);
           if (command != null) {
-            completion = command.complete(new BaseCommandContext(this, crash.context.getAttributes()), termPrefix);
+            completion = command.complete(new BaseRuntimeContext(this, crash.context.getAttributes()), termPrefix);
           } else {
             completion = new CompletionMatch(Delimiter.EMPTY, Completion.create());
           }

@@ -21,13 +21,8 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.NoSuchCommandException;
-import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
-import org.crsh.shell.ErrorType;
-import org.crsh.shell.ShellResponse;
-import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
-import org.crsh.util.Safe;
 
 import java.util.LinkedList;
 import java.util.regex.Pattern;
@@ -85,8 +80,6 @@ public class PipeLineFactory {
       }
       if (commandInvoker == null) {
         throw new NoSuchCommandException(current.name);
-      } else {
-        commandInvoker.setSession(session);
       }
       pipes.add(commandInvoker);
     }

@@ -19,7 +19,6 @@
 
 package org.crsh.command;
 
-import org.crsh.shell.InteractionContext;
 import org.crsh.io.Consumer;
 
 import java.io.IOException;
@@ -27,7 +26,7 @@ import java.io.IOException;
 class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
 
   /** . */
-  private final InteractionContext<P> innerContext;
+  private final CommandContext<P> innerContext;
 
   /** . */
   private final CommandInvoker<C, P> delegate;
@@ -35,7 +34,7 @@ class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
   /** . */
   private final Consumer<C> next;
 
-  PipeCommandProxy(InteractionContext<P> innerContext, CommandInvoker<C, P> delegate, Consumer<C> next) {
+  PipeCommandProxy(CommandContext<P> innerContext, CommandInvoker<C, P> delegate, Consumer<C> next) {
     this.innerContext = innerContext;
     this.delegate = delegate;
     this.next = next;
@@ -43,10 +42,6 @@ class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
 
   void fire() {
     open(innerContext);
-  }
-
-  public void setSession(CommandContext session) {
-    delegate.setSession(session);
   }
 
   public Class<P> getProducedType() {
@@ -61,7 +56,7 @@ class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
     delegate.setPiped(piped);
   }
 
-  public void open(InteractionContext<P> consumer) {
+  public void open(CommandContext<P> consumer) {
     if (next != null && next instanceof PipeCommandProxy) {
       ((PipeCommandProxy)next).fire();
     }

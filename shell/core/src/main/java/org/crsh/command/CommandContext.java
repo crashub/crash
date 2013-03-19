@@ -16,32 +16,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.command;
 
-import java.util.Map;
+import org.crsh.shell.InteractionContext;
 
 /**
- * The minimum set of services that a command needs for executing properly:
- * <ul>
- *   <li>a session map</li>
- *   <li>an attribute map</li>
- * </ul>
+ * The command context provides the services for invoking a command.
+ *
+ * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public interface CommandContext {
-
-  /**
-   * Returns the current shell session.
-   *
-   * @return the session map
-   */
-  Map<String, Object> getSession();
-
-  /**
-   * Returns the current shell attributes.
-   *
-   * @return the attributes map
-   */
-  Map<String, Object> getAttributes();
-
+public interface CommandContext<P> extends InteractionContext<P>, RuntimeContext {
 }

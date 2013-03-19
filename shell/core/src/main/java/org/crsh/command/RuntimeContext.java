@@ -16,33 +16,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.crsh.command;
 
-import groovy.lang.Binding;
-import groovy.lang.MissingPropertyException;
-import groovy.lang.Script;
+import java.util.Map;
 
-/** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-public abstract class GroovyScript extends Script {
+/**
+ * The minimum set of services that a command needs for executing properly:
+ * <ul>
+ *   <li>a session map</li>
+ *   <li>an attribute map</li>
+ * </ul>
+ */
+public interface RuntimeContext {
 
-  protected GroovyScript() {
-  }
+  /**
+   * Returns the current session.
+   *
+   * @return the session map
+   */
+  Map<String, Object> getSession();
 
-  protected GroovyScript(Binding binding) {
-    super(binding);
-  }
+  /**
+   * Returns the current attributes.
+   *
+   * @return the attributes map
+   */
+  Map<String, Object> getAttributes();
 
-  public void setContext(RuntimeContext context) {
-    setBinding(new Binding(context.getSession()));
-  }
-
-  @Override
-  public Object getProperty(String property) {
-    try {
-      return super.getProperty(property);
-    }
-    catch (MissingPropertyException e) {
-      return null;
-    }
-  }
 }

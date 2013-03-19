@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.shell.InteractionContext;
+import org.crsh.command.CommandContext;
 import org.crsh.shell.ScreenContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
@@ -30,7 +30,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 
-class CRaSHProcessContext implements InteractionContext<Chunk>, Closeable {
+class CRaSHProcessContext implements CommandContext<Chunk>, Closeable {
 
   /** . */
   private final CRaSHSession session;

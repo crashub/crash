@@ -19,6 +19,7 @@
 
 package org.crsh.shell.impl.command;
 
+import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptException;
 import org.crsh.shell.InteractionContext;
 import org.crsh.io.Filter;
@@ -27,12 +28,13 @@ import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
 
 import java.io.IOException;
+import java.util.Map;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-abstract class Pipe<C, P> implements Filter<C, P, InteractionContext<P>>, InteractionContext<C> {
+abstract class Pipe<C, P> implements Filter<C, P, CommandContext<P>>, CommandContext<C> {
 
   /** . */
-  protected InteractionContext<P> context;
+  protected CommandContext<P> context;
 
   public final boolean takeAlternateBuffer() throws IOException {
     return context.takeAlternateBuffer();
@@ -56,6 +58,14 @@ abstract class Pipe<C, P> implements Filter<C, P, InteractionContext<P>>, Intera
 
   public final int getHeight() {
     return context.getHeight();
+  }
+
+  public Map<String, Object> getSession() {
+    return context.getSession();
+  }
+
+  public Map<String, Object> getAttributes() {
+    return context.getAttributes();
   }
 
   /**
@@ -82,7 +92,7 @@ abstract class Pipe<C, P> implements Filter<C, P, InteractionContext<P>>, Intera
       return command.getConsumedType();
     }
 
-    public void open(InteractionContext<P> consumer) {
+    public void open(CommandContext<P> consumer) {
       this.context = consumer;
       this.command.open(consumer);
     }
@@ -119,7 +129,7 @@ abstract class Pipe<C, P> implements Filter<C, P, InteractionContext<P>>, Intera
       ((Pipe<Chunk, ?>)context).setPiped(piped);
     }
 
-    public void open(final InteractionContext<Chunk> consumer) {
+    public void open(final CommandContext<Chunk> consumer) {
       ca = new ChunkAdapter(new ScreenContext<Chunk>() {
         public int getWidth() {
           return consumer.getWidth();
@@ -170,7 +180,7 @@ abstract class Pipe<C, P> implements Filter<C, P, InteractionContext<P>>, Intera
     public void setPiped(boolean piped) {
     }
 
-    public void open(InteractionContext<P> consumer) {
+    public void open(CommandContext<P> consumer) {
       this.context = consumer;
     }
 

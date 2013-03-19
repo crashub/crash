@@ -24,7 +24,6 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.io.Consumer;
-import org.crsh.shell.InteractionContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -182,11 +181,9 @@ final class ClassDispatcher extends CommandClosure {
           public Class<Object> getConsumedType() {
             return type;
           }
-          public void setSession(CommandContext session) {
-          }
           public void setPiped(boolean piped) {
           }
-          public void open(InteractionContext<Void> consumer) {
+          public void open(CommandContext<Void> consumer) {
           }
           public void close() {
           }
@@ -207,8 +204,6 @@ final class ClassDispatcher extends CommandClosure {
 
     //
     InnerInvocationContext inner = new InnerInvocationContext(context, producer);
-    PipeCommandProxy pipe = new PipeCommandProxy(inner, invoker, producer);
-    pipe.setSession(context);
-    return pipe;
+    return new PipeCommandProxy(inner, invoker, producer);
   }
 }

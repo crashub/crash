@@ -21,7 +21,7 @@ package org.crsh.command;
 
 import java.util.Map;
 
-public class BaseCommandContext implements CommandContext {
+public class BaseRuntimeContext implements RuntimeContext {
 
   /** . */
   private final Map<String, Object> session;
@@ -29,7 +29,7 @@ public class BaseCommandContext implements CommandContext {
   /** . */
   private final Map<String, Object> attributes;
 
-  public BaseCommandContext(Map<String, Object> session, Map<String, Object> attributes) {
+  public BaseRuntimeContext(Map<String, Object> session, Map<String, Object> attributes) {
     this.session = session;
     this.attributes = attributes;
   }

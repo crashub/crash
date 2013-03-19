@@ -19,28 +19,25 @@
 
 package org.crsh.shell;
 
+import org.crsh.command.CommandContext;
 import org.crsh.io.Consumer;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
-import org.crsh.command.BaseCommandContext;
+import org.crsh.command.BaseRuntimeContext;
 import org.crsh.text.Chunk;
-import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.ChunkBuffer;
 
 import java.io.IOException;
 import java.util.*;
 
-public class TestInvocationContext<C> extends BaseCommandContext implements InteractionContext<Object> {
+public class TestInvocationContext<C> extends BaseRuntimeContext implements CommandContext<Object> {
 
   /** . */
   protected List<Object> producedItems;
 
   /** . */
   protected ChunkBuffer reader;
-
-  /** . */
-  protected RenderPrintWriter writer;
 
   /** . */
   private final Consumer<Object> producer = new Consumer<Object>() {
@@ -62,7 +59,6 @@ public class TestInvocationContext<C> extends BaseCommandContext implements Inte
 
     //
     this.reader = null;
-    this.writer = null;
     this.producedItems = Collections.emptyList();
   }
 
@@ -133,7 +129,6 @@ public class TestInvocationContext<C> extends BaseCommandContext implements Inte
       sb.append(arg);
     }
     CommandInvoker<C, Object> invoker = (CommandInvoker<C, Object>)command.resolveInvoker(sb.toString());
-    invoker.setSession(this);
     invoker.open(this);
     invoker.flush();
     invoker.close();

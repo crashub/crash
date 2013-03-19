@@ -35,7 +35,7 @@ public abstract class GroovyCommand extends GroovyObjectSupport {
   private LinkedList<InvocationContext<?>> stack;
 
   /** The current context. */
-  protected CommandContext context;
+  protected RuntimeContext context;
 
   /** The current output. */
   protected RenderPrintWriter out;
