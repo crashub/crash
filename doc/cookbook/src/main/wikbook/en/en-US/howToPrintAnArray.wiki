@@ -1,0 +1,133 @@
+
+= Exemple =
+
+Here is an example for printing an array :
+
+
+{{code}}
+
+import org.crsh.text.ui.UIBuilder
+
+UIBuilder ui = new UIBuilder();
+
+ui.table(separator: dashed) {
+    header(decoration: bold, foreground: black, background: white) {
+        label("ATTRIBUTE NAME"); label("ACCESS"); label("TYPE"); label("DESCRIPTION"); label("ATTRIBUTE VALUE")
+    }
+
+    for(Attr tmpAttr : lst) {
+        if (null != tmpAttr) {
+            row() {
+                label(tmpAttr.name, foreground: red);
+                label(tmpAttr.access);
+                label(tmpAttr.type);
+                label(tmpAttr.desc);
+                label(tmpAttr.attrs.toString());
+            }
+        }
+    }
+}
+out << ui;
+
+{{/code}}
+
+= Table Elements =
+
+To define an array, you will use elements like header, label ...
+If you want to see an example, edit dashboard.groovy in ##$CRASH_HOME/cmd/base/##
+
+
+= table =
+
+* Define table.
+
+
+== label ==
+
+* Print a label.
+
+== columns ==
+
+* Define columns.
+* e.g : columns: [1]
+
+== rows ==
+
+* Define rows.
+* rows: [1,1]
+
+== header ==
+
+* Define header.
+* header element
+
+== eval ==
+
+* Execute an other CRaSH command.
+
+{{screen}}
+eval {
+  execute("jvm heap")
+}
+{{/screen}}
+
+
+= attributes =
+
+Attribute can be add to table element.
+
+== border ==
+
+* Define a border.
+* e.g: border: dashed
+
+== row ==
+
+
+== separator ==
+
+* Define separator style.
+* e.g : dashed,star
+
+== overflow ==
+
+* overflow          ?
+
+== leftCellPadding ==
+
+* Left align in cell.
+
+== rightCellPadding ==
+
+* Right align in cell
+* e.g : rightCellPadding: 1
+
+
+
+= styles =
+
+Class ##org.crsh.text.Style## contains style that we will use when making elements (e.g : header)
+
+
+== bold ==
+
+* Type : boolean
+* e.g : bold: true
+
+== underline ==
+
+* Type : boolean
+
+== blink ==
+
+* Type : boolean
+
+== fg, foreground ==
+
+* Type : Color
+* fg: black
+
+== bg, background ==
+
+* Type : Color
+* bg: white
