@@ -46,9 +46,6 @@ class ClassManager<T> {
   private final PluginContext context;
 
   /** . */
-  private final Class<? extends Script> baseScriptClass;
-
-  /** . */
   private final CompilerConfiguration config;
 
   /** . */
@@ -60,11 +57,10 @@ class ClassManager<T> {
   ClassManager(PluginContext context, ResourceKind kind, Class<T> baseClass, Class<? extends Script> baseScriptClass) {
     CompilerConfiguration config = new CompilerConfiguration();
     config.setRecompileGroovySource(true);
-    config.setScriptBaseClass(GroovyScriptCommand.class.getName());
+    config.setScriptBaseClass(baseScriptClass.getName());
 
     //
     this.context = context;
-    this.baseScriptClass = baseScriptClass;
     this.config = config;
     this.baseClass = baseClass;
     this.kind = kind;

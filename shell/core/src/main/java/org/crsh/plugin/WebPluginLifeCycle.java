@@ -26,8 +26,6 @@ import org.crsh.vfs.spi.servlet.ServletContextDriver;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +54,18 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
     }
   }
 
+  /**
+   * Create the service loader discovery, this can be subclassed to provide an implementation, the current
+   * implementation returns a {@link ServiceLoaderDiscovery} instance.
+   *
+   * @param context the servlet context
+   * @param classLoader the class loader
+   * @return the plugin discovery
+   */
+  protected PluginDiscovery createDiscovery(ServletContext context, ClassLoader classLoader) {
+    return new ServiceLoaderDiscovery(classLoader);
+  }
+
   public void contextInitialized(ServletContextEvent sce) {
     ServletContext context = sce.getServletContext();
     String contextPath = context.getContextPath();
@@ -74,7 +84,7 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
 
         //
         PluginContext pluginContext = new PluginContext(
-          new ServiceLoaderDiscovery(webAppLoader),
+          createDiscovery(context, webAppLoader),
           new ServletContextMap(context),
           cmdFS,
           confFS,

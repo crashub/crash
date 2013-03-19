@@ -21,7 +21,6 @@ package org.crsh.shell.impl.command;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
-import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.impl.completion.CompletionMatch;
@@ -30,6 +29,7 @@ import org.crsh.command.CommandContext;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.command.BaseCommandContext;
 import org.crsh.command.CommandInvoker;
+import org.crsh.command.GroovyScript;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ScriptException;
@@ -83,10 +83,10 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     return groovyShell;
   }
 
-  public Script getLifeCycle(String name) throws NoSuchCommandException, NullPointerException {
-    Class<? extends Script> scriptClass = crash.lifecycles.getClass(name);
+  public GroovyScript getLifeCycle(String name) throws NoSuchCommandException, NullPointerException {
+    Class<? extends GroovyScript> scriptClass = crash.scriptManager.getClass(name);
     if (scriptClass != null) {
-      Script script = InvokerHelper.createScript(scriptClass, new Binding(this));
+      GroovyScript script = (GroovyScript)InvokerHelper.createScript(scriptClass, new Binding(this));
       script.setBinding(new Binding(this));
       return script;
     } else {
@@ -105,11 +105,9 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
 
     //
     try {
-      Script login = getLifeCycle("login");
-      if (login instanceof CommandInvoker) {
-        ((CommandInvoker)login).setSession(this);
-      }
+      GroovyScript login = getLifeCycle("login");
       if (login != null) {
+        login.setContext(this);
         login.run();
       }
     }
@@ -130,11 +128,9 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public void close() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      Script logout = getLifeCycle("logout");
-      if (logout instanceof CommandInvoker) {
-        ((CommandInvoker)logout).setSession(this);
-      }
+      GroovyScript logout = getLifeCycle("logout");
       if (logout != null) {
+        logout.setContext(this);
         logout.run();
       }
     }
