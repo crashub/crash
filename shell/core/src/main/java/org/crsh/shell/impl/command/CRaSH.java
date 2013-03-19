@@ -19,7 +19,6 @@
 
 package org.crsh.shell.impl.command;
 
-import groovy.lang.Script;
 import org.crsh.command.GroovyScript;
 import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.NoSuchCommandException;
@@ -33,10 +32,10 @@ public class CRaSH {
 
 
   /** . */
-  final ClassManager<? extends ShellCommand> commandManager;
+  final AbstractClassManager<? extends ShellCommand> commandManager;
 
   /** . */
-  final ClassManager<? extends GroovyScript> scriptManager;
+  final AbstractClassManager<? extends GroovyScript> scriptManager;
 
   /** . */
   final PluginContext context;
@@ -55,7 +54,7 @@ public class CRaSH {
     );
   }
 
-  public CRaSH(PluginContext context, ClassManager<ShellCommand> commandManager, ClassManager<? extends GroovyScript> scriptManager) {
+  public CRaSH(PluginContext context, AbstractClassManager<ShellCommand> commandManager, AbstractClassManager<? extends GroovyScript> scriptManager) {
     this.context = context;
     this.commandManager = commandManager;
     this.scriptManager = scriptManager;
