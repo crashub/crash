@@ -31,7 +31,7 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/WEB-INF/lib</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.jcr.core</include>
+        <include>org.crsh:crsh.jcr.jackrabbit</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -39,7 +39,7 @@
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.shell.packaging:war</include>
+        <include>org.crsh:crsh.jcr.core:war</include>
       </includes>
     </dependencySet>
   </dependencySets>
