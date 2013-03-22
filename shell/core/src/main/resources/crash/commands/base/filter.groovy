@@ -27,7 +27,6 @@ import org.crsh.cli.Option
 import java.util.regex.Pattern
 import org.crsh.util.Utils
 
-@Usage("A filter for a stream of map")
 class filter {
 
   /** . */
@@ -37,6 +36,7 @@ class filter {
   private static final Pattern[] EMPTY_VALUES = new Pattern[0];
 
   @Command
+  @Usage("A filter for a stream of map")
   PipeCommand<Map, Map> main(
     @Usage("format <key>:<value>")
     @Option(names=['p','pattern']) List<String> patterns) {
