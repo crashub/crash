@@ -33,10 +33,22 @@ done
 mkdir -p $CRASH_HOME/tmp
 
 # Hotspot and OpenJDK requires tools.jar in CLASSPATH for VirtualMachine
-if [ -n "$JAVA_HOME" ]; then
-	TOOLS_JAR=$JAVA_HOME/lib/tools.jar
-	CLASSPATH=$TOOLS_JAR
-	BOOTCP=-Xbootclasspath/a:$TOOLS_JAR
+if [ -z "$JAVA_HOME" ]; then
+  JAVA_BIN_PATH=`which java`
+  if [ ! -z "$JAVA_BIN_PATH" ]; then
+    TOOLS_DIR=`dirname $JAVA_BIN_PATH`
+    TOOLS_DIR=$TOOLS_DIR/../lib/
+  fi
+else
+   TOOLS_DIR=$JAVA_HOME/lib
+fi
+
+if [ -n $TOOLS_DIR/tools.jar ]; then
+  TOOLS_JAR=$TOOLS_DIR/tools.jar
+  CLASSPATH=$TOOLS_JAR
+  BOOTCP=-Xbootclasspath/a:$TOOLS_JAR
+else
+  echo "warning tools.jar can't be find, please ensure JAVA_HOME is set accrordingly"
 fi
 
 export CLASSPATH=$CLASSPATH:$CRASH_HOME/bin/crsh.cli-${project.version}.jar:$EXT_JARS
