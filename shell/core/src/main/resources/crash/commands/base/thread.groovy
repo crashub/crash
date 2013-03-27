@@ -1,3 +1,9 @@
+import org.crsh.cli.descriptor.ParameterDescriptor
+import org.crsh.cli.spi.Completer
+import org.crsh.cli.spi.Completion
+
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
 import java.util.regex.Pattern;
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
@@ -44,7 +50,7 @@ Interrupted thread Thread[pool-1-thread-2,5,main]
 Interrupted thread Thread[pool-1-thread-3,5,main]
 Interrupted thread Thread[pool-1-thread-4,5,main]
 Interrupted thread Thread[pool-1-thread-5,5,main]""")
-public class thread {
+public class thread  implements Completer {
 
   @Usage("thread top")
   @Command
@@ -153,7 +159,21 @@ public class thread {
       }
     }
   }
-    
+
+  @Usage("produces threads for pipe")
+  @Man("Produces VM threads from ids (use with pipe to dump or interrupt them). eg 'thread produce 12 | thread dump'")
+  @Command
+  public void produce(
+          InvocationContext<Thread> context,
+          @ThreadId @Argument @Usage("the thread ids to produces") List<String> ids) {
+    ids.each { id ->
+      def t = getThreads()[id]
+      if (t != null) {
+        context.provide(t);
+      }
+    }
+  }
+
   @Usage("interrupt vm threads")
   @Man("Interrup VM threads.")
   @Command
@@ -208,6 +228,17 @@ public class thread {
     }
   }
 
+    Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
+        def b = new Completion.Builder(prefix);
+        if (parameter.getAnnotation().annotationType().equals(ThreadId.class)) {
+            getThreads().each() { k, thread ->
+            if (thread.id.toString().startsWith(prefix)) {
+              b.add(thread.id.toString().substring(prefix.length()), true)
+            }
+          }
+        }
+        return b.build();
+    }
 /*
   public void apply(InvocationContext<Thread, Void> context, List<String> ids, Closure closure) {
     if (context.piped) {
@@ -251,4 +282,10 @@ public class thread {
     return map;
   }
 }
+
+@Retention(RetentionPolicy.RUNTIME)
+@Usage("the thread ids")
+@Man("The ids of the thread")
+@Argument(name = "ids")
+@interface ThreadId { }
 
