@@ -17,6 +17,91 @@ done
 # Get standard environment variables
 PRGDIR=`dirname "$PRG"`
 
+# OS specific support.  $var _must_ be set to either true or false.
+cygwin=false;
+darwin=false;
+mingw=false
+case "`uname`" in
+  CYGWIN*) cygwin=true ;;
+  MINGW*) mingw=true;;
+  Darwin*) darwin=true
+           if [ -z "$JAVA_VERSION" ] ; then
+             JAVA_VERSION="CurrentJDK"
+           fi
+           if [ -z "$JAVA_HOME" ] ; then
+             JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/${JAVA_VERSION}/Home
+           fi
+           ;;
+esac
+
+if [ -z "$JAVA_HOME" ] ; then
+  if [ -r /etc/gentoo-release ] ; then
+    JAVA_HOME=`java-config --jre-home`
+  fi
+fi
+
+# For Cygwin, ensure paths are in UNIX format before anything is touched
+if $cygwin ; then
+  [ -n "$JAVA_HOME" ] &&
+    JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+  [ -n "$CLASSPATH" ] &&
+    CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
+fi
+
+# For Migwn, ensure paths are in UNIX format before anything is touched
+if $mingw ; then
+  [ -n "$JAVA_HOME" ] &&
+    JAVA_HOME="`(cd "$JAVA_HOME"; pwd)`"
+  # TODO classpath?
+fi
+
+if [ -z "$JAVA_HOME" ]; then
+  javaExecutable="`which javac`"
+  if [ -n "$javaExecutable" -a ! "`expr \"$javaExecutable\" : '\([^ ]*\)'`" = "no" ]; then
+    # readlink(1) is not available as standard on Solaris 10.
+    readLink=`which readlink`
+    if [ ! `expr "$readLink" : '\([^ ]*\)'` = "no" ]; then
+      javaExecutable="`readlink -f \"$javaExecutable\"`"
+      javaHome="`dirname \"$javaExecutable\"`"
+      javaHome=`expr "$javaHome" : '\(.*\)/bin'`
+      JAVA_HOME="$javaHome"
+      export JAVA_HOME
+    fi
+  fi
+fi
+
+if [ -z "$JAVACMD" ] ; then
+  if [ -n "$JAVA_HOME"  ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+      # IBM's JDK on AIX uses strange locations for the executables
+      JAVACMD="$JAVA_HOME/jre/sh/java"
+    else
+      JAVACMD="$JAVA_HOME/bin/java"
+    fi
+  else
+    JAVACMD="`which java`"
+  fi
+fi
+
+if [ ! -x "$JAVACMD" ] ; then
+  echo "Error: JAVA_HOME is not defined correctly."
+  echo "  We cannot execute $JAVACMD"
+  exit 1
+fi
+
+if [ -z "$JAVA_HOME" ] ; then
+  echo "Warning: JAVA_HOME environment variable is not set."
+fi
+
+# Locate tools.jar 
+TOOLS_JAR=$JAVA_HOME/lib/tools.jar
+if [ -n $JAVA_HOME/lib/tools.jar ]; then
+  CLASSPATH=$TOOLS_JAR  
+  BOOTCP=-Xbootclasspath/a:$TOOLS_JAR
+else
+  echo "Warning: tools.jar not found, crash won't works without it."
+fi
+
 # Only set CRASH_HOME if not already set
 [ -z "$CRASH_HOME" ] && CRASH_HOME=`cd "$PRGDIR/.." >/dev/null; pwd`
 
@@ -32,25 +117,8 @@ done
 # Create tmp dir if it does not exist
 mkdir -p $CRASH_HOME/tmp
 
-# Hotspot and OpenJDK requires tools.jar in CLASSPATH for VirtualMachine
-if [ -z "$JAVA_HOME" ]; then
-  JAVA_BIN_PATH=`which java`
-  if [ ! -z "$JAVA_BIN_PATH" ]; then
-    TOOLS_DIR=`dirname $JAVA_BIN_PATH`
-    TOOLS_DIR=$TOOLS_DIR/../lib/
-  fi
-else
-   TOOLS_DIR=$JAVA_HOME/lib
-fi
-
-if [ -n $TOOLS_DIR/tools.jar ]; then
-  TOOLS_JAR=$TOOLS_DIR/tools.jar
-  CLASSPATH=$TOOLS_JAR
-  BOOTCP=-Xbootclasspath/a:$TOOLS_JAR
-else
-  echo "warning tools.jar can't be find, please ensure JAVA_HOME is set accrordingly"
-fi
-
 export CLASSPATH=$CLASSPATH:$CRASH_HOME/bin/crsh.cli-${project.version}.jar:$EXT_JARS
 
-java $BOOTCP -Djava.util.logging.config.file=$CRASH_HOME/conf/logging.properties org.crsh.cli.impl.bootstrap.Main --conf $CRASH_HOME/conf --cmd $CRASH_HOME/cmd "$@"
+exec $JAVACMD $BOOTCP \
+     -Djava.util.logging.config.file=$CRASH_HOME/conf/logging.properties \
+     org.crsh.cli.impl.bootstrap.Main --conf $CRASH_HOME/conf --cmd $CRASH_HOME/cmd "$@"
