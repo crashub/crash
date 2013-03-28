@@ -24,6 +24,7 @@ import org.crsh.plugin.PluginLifeCycle;
 import org.crsh.plugin.ServiceLoaderDiscovery;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
+import org.crsh.vfs.spi.FSDriver;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +79,22 @@ public class Bootstrap extends PluginLifeCycle {
   }
 
   /**
+   * Add a configuration path driver.
+   *
+   * @param driver the configuration driver
+   * @return this bootstrap
+   * @throws NullPointerException when the driver is null
+   */
+  public Bootstrap addToConfPath(FSDriver<?> driver) throws NullPointerException {
+    if (driver == null) {
+      throw new NullPointerException("No null conf driver");
+    }
+    log.info("Added " + driver + " driver to conf path");
+    confFS.mount(driver);
+    return this;
+  }
+
+  /**
    * Add a configuration path directory.
    *
    * @param path the configuration path
@@ -89,7 +106,7 @@ public class Bootstrap extends PluginLifeCycle {
     if (path == null) {
       throw new NullPointerException("No null conf path");
     }
-    log.info("Added " + path.getCanonicalPath() + " command to conf path");
+    log.info("Added " + path.getCanonicalPath() + " file to conf path");
     confFS.mount(path);
     return this;
   }
@@ -107,8 +124,24 @@ public class Bootstrap extends PluginLifeCycle {
     if (path == null) {
       throw new NullPointerException("No null conf path");
     }
-    log.info("Added " + path.getValue() + " command to conf path");
+    log.info("Added " + path.getValue() + " path to conf path");
     confFS.mount(loader, path);
+    return this;
+  }
+
+  /**
+   * Add a command path driver.
+   *
+   * @param driver the command driver
+   * @return this bootstrap
+   * @throws NullPointerException when the driver is null
+   */
+  public Bootstrap addToCmdPath(FSDriver<?> driver) throws NullPointerException {
+    if (driver == null) {
+      throw new NullPointerException("No null conf driver");
+    }
+    log.info("Added " + driver + " driver to command path");
+    cmdFS.mount(driver);
     return this;
   }
 
@@ -124,7 +157,7 @@ public class Bootstrap extends PluginLifeCycle {
     if (path == null) {
       throw new NullPointerException("No null command path");
     }
-    log.info("Added " + path.getAbsolutePath() + " command to command path");
+    log.info("Added " + path.getAbsolutePath() + " file to command path");
     cmdFS.mount(path);
     return this;
   }
@@ -142,7 +175,7 @@ public class Bootstrap extends PluginLifeCycle {
     if (path == null) {
       throw new NullPointerException("No null command path");
     }
-    log.info("Added " + path.getValue() + " command to command path");
+    log.info("Added " + path.getValue() + " path to command path");
     cmdFS.mount(loader, path);
     return this;
   }
