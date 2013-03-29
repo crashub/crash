@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -55,10 +56,7 @@ public final class PluginContext {
   private final String version;
 
   /** . */
-  private ScheduledExecutorService scanner;
-
-  /** . */
-  private volatile List<File> dirs;
+  private final ScheduledExecutorService scanner;
 
   /** . */
   private final Map<String, Property<?>> properties;
@@ -72,11 +70,17 @@ public final class PluginContext {
   /** . */
   private final FS confFS;
 
+  /** The shared executor. */
+  private final ExecutorService executor;
+
+  /** . */
+  private volatile List<File> dirs;
+
   /** . */
   private boolean started;
 
-  /** The shared executor. */
-  private ExecutorService executor;
+  /** . */
+  private ScheduledFuture scannerFuture;
 
 
   /**
@@ -90,6 +94,34 @@ public final class PluginContext {
    * @throws NullPointerException if any parameter argument is null
    */
   public PluginContext(
+      PluginDiscovery discovery,
+      Map<String, Object> attributes,
+      FS cmdFS,
+      FS confFS,
+      ClassLoader loader) throws NullPointerException {
+    this(
+        Executors.newFixedThreadPool(20),
+        new ScheduledThreadPoolExecutor(1),
+        discovery,
+        attributes,
+        cmdFS,
+        confFS,
+        loader);
+  }
+
+  /**
+   * Create a new plugin context.
+   *
+   * @param discovery the plugin discovery
+   * @param cmdFS the command file system
+   * @param attributes the attributes
+   * @param confFS the conf file system
+   * @param loader the loader
+   * @throws NullPointerException if any parameter argument is null
+   */
+  public PluginContext(
+    ExecutorService executor,
+    ScheduledExecutorService scanner,
     PluginDiscovery discovery,
     Map<String, Object> attributes,
     FS cmdFS,
@@ -141,6 +173,7 @@ public final class PluginContext {
     this.manager = new PluginManager(this, discovery);
     this.confFS = confFS;
     this.executor = Executors.newFixedThreadPool(20);
+    this.scanner = scanner;
   }
 
   public String getVersion() {
@@ -391,8 +424,7 @@ public final class PluginContext {
       TimeUnit timeUnit = getProperty(PropertyDescriptor.VFS_REFRESH_UNIT);
       if (refreshRate != null && refreshRate > 0) {
         TimeUnit tu = timeUnit != null ? timeUnit : TimeUnit.SECONDS;
-        scanner =  new ScheduledThreadPoolExecutor(1);
-        scanner.scheduleWithFixedDelay(new Runnable() {
+        scannerFuture = scanner.scheduleWithFixedDelay(new Runnable() {
           public void run() {
             refresh();
           }
@@ -418,11 +450,12 @@ public final class PluginContext {
       manager.shutdown();
 
       // Shutdown scanner
-      if (scanner != null) {
-        ScheduledExecutorService tmp = scanner;
-        scanner = null;
-        tmp.shutdownNow();
+      if (scannerFuture != null) {
+        scannerFuture.cancel(true);
       }
+
+      //
+      scanner.shutdownNow();
 
       // Shutdown executor
       executor.shutdownNow();
