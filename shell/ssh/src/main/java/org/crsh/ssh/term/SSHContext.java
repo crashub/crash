@@ -50,7 +50,7 @@ public class SSHContext {
 
   public int getWidth() {
     String s = env.getEnv().get(Environment.ENV_COLUMNS);
-    int width = 0;
+    int width = -1;
     if (s != null) {
       try {
         width = Integer.parseInt(s);
@@ -64,7 +64,7 @@ public class SSHContext {
 
   public int getHeight() {
     String s = env.getEnv().get(Environment.ENV_LINES);
-    int height = 0;
+    int height = -1;
     if (s != null) {
       try {
         height = Integer.parseInt(s);
