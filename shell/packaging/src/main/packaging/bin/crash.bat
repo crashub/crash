@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal ENABLEDELAYEDEXPANSION
 
 REM init variables
 set CMD_LINE_ARGS=
@@ -29,13 +29,13 @@ set CLASSPATH=%CLASSPATH%;%CRASH_HOME%\bin\%JARNAME%
 
 :setJars
 REM add all jars from the lib directory to the classpath
-for %%F in (%CRASH_HOME%\lib\*.jar) do set CLASSPATH=%CLASSPATH%;%%F
+for %%F in (%CRASH_HOME%\lib\*.jar) do set CLASSPATH=!CLASSPATH!;%%F
 
 REM Create tmp dir if it does not exist
 mkdir  %CRASH_HOME%\tmp
 
 REM start the application with all parameters. Add tools.jar to the bootclasspath, otherwise it cannot be found
-java -Xbootclasspath/a:"%TOOLS_JAR%" -classpath "%CLASSPATH%" -Djava.util.logging.config.file="%CRASH_HOME%\conf\logging.properties" -jar "%CRASH_HOME%\bin\%JARNAME%" --conf "%CRASH_HOME%\conf" --cmd "%CRASH_HOME%\cmd" %CMD_LINE_ARGS%
+java -Xbootclasspath/a:"%TOOLS_JAR%" -classpath "%CLASSPATH%" %MAVEN_DEBUG_OPTS% -Djava.util.logging.config.file="%CRASH_HOME%\conf\logging.properties" org.crsh.cli.impl.bootstrap.Main --conf "%CRASH_HOME%\conf" --cmd "%CRASH_HOME%\cmd" %CMD_LINE_ARGS%
 
 set ERROR_CODE=%ERRORLEVEL%
 endlocal & set ERROR_CODE=%ERROR_CODE%
