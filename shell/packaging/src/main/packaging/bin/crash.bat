@@ -1,4 +1,6 @@
 @echo off
+setlocal
+
 REM init variables
 set CMD_LINE_ARGS=
 
@@ -7,17 +9,13 @@ set PRGDIR=%~dp0
 
 REM Only set CRASH_HOME if not already set
 if not ".%CRASH_HOME%" == "." goto setupArgs
-pushd 
-cd %~dp0\..
+pushd %PRGDIR%..
 set CRASH_HOME=%CD%
 popd
 
 :setupArgs
-REM copy args one by one from the command line
-if "%1%a"=="a" goto setClasspath
-set CMD_LINE_ARGS=%CMD_LINE_ARGS% %1
-shift
-goto setupArgs
+REM copy args from the command line
+set CMD_LINE_ARGS=%*
 
 :setClasspath
 REM if JAVA_HOME is set, add tools.jar to classpath
@@ -38,3 +36,7 @@ mkdir  %CRASH_HOME%\tmp
 
 REM start the application with all parameters. Add tools.jar to the bootclasspath, otherwise it cannot be found
 java -Xbootclasspath/a:"%TOOLS_JAR%" -classpath "%CLASSPATH%" -Djava.util.logging.config.file="%CRASH_HOME%\conf\logging.properties" -jar "%CRASH_HOME%\bin\%JARNAME%" --conf "%CRASH_HOME%\conf" --cmd "%CRASH_HOME%\cmd" %CMD_LINE_ARGS%
+
+set ERROR_CODE=%ERRORLEVEL%
+endlocal & set ERROR_CODE=%ERROR_CODE%
+exit /B %ERROR_CODE%
