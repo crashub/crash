@@ -2,13 +2,13 @@
   <parent>
     <artifactId>crsh.shell.embed</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.2.0-cr11-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.shell.embed.spring</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.0-cr11-SNAPSHOT</version>
+  <version>1.2.1-SNAPSHOT</version>
 
   <name>CRaSH Spring</name>
   <description>The CRaSH Spring integration module</description>

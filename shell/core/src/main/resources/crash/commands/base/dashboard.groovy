@@ -1,3 +1,5 @@
+package crash.commands.base
+
 import org.crsh.text.ui.UIBuilder
 
 def table = new UIBuilder().table(columns: [1], rows: [1,1]) {

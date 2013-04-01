@@ -43,6 +43,9 @@ public class CharSlicer {
   }
 
   private static Pair<Integer, Integer> size(String s, int index, int height) {
+    if (height < 1) {
+      throw new IllegalArgumentException("A non positive height=" + height + " cannot be accepted");
+    }
     if (index < s.length()) {
       int pos = s.indexOf('\n', index);
       if (pos == -1) {
@@ -73,7 +76,9 @@ public class CharSlicer {
   }
 
   public Iterator<Pair<Integer, Integer>> linesIterator(final int width) {
-
+    if (width < 1) {
+      throw new IllegalArgumentException("A non positive width=" + width + " cannot be accepted");
+    }
     return new BaseIterator<Pair<Integer, Integer>>() {
 
       /** . */

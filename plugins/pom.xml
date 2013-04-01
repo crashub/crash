@@ -3,13 +3,13 @@
   <parent>
     <artifactId>crsh.parent</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.2.0-cr11-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.plugins</artifactId>
   <packaging>pom</packaging>
-  <version>1.2.0-cr11-SNAPSHOT</version>
+  <version>1.2.1-SNAPSHOT</version>
 
   <name>CRaSH plugins parent</name>
 
