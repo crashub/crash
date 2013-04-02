@@ -309,7 +309,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
     String prompt = shell.getPrompt();
     try {
       String p = prompt == null ? "% " : prompt;
-      StringBuilder sb = new StringBuilder("\r\n").append(p);
+      StringBuilder sb = new StringBuilder(p);
       CharSequence buffer = term.getBuffer();
       if (buffer != null) {
         sb.append(buffer);

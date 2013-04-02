@@ -108,7 +108,7 @@ public abstract class ShellResponse implements Serializable {
 
     @Override
     public String getMessage() {
-      return "Please type something";
+      return "";
     }
   }
 
