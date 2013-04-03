@@ -25,16 +25,29 @@ if ".%JAVA_HOME%" == "."  goto addCrashJar
 set CLASSPATH=%JAVA_HOME%\lib\tools.jar
 set TOOLS_JAR=%JAVA_HOME%\lib\tools.jar
 
+
 :addCrashJar
 for %%F in (%CRASH_HOME%\bin\crsh.cli*.jar) do set JARNAME=%%~nxF
 set CLASSPATH=%CLASSPATH%;%CRASH_HOME%\bin\%JARNAME%
 
 :setJars
 REM add all jars from the lib directory to the classpath
-for %%F in (%CRASH_HOME%\lib\*.jar) do set CLASSPATH=%CLASSPATH%;%%F
+for %%F in (%CRASH_HOME%\lib\*.jar) do (
+	call :concat %%F
+)
 
 REM Create tmp dir if it does not exist
 mkdir  %CRASH_HOME%\tmp
 
+set CLASSPATH=%CLASSPATH%;%LIB%
+
 REM start the application with all parameters. Add tools.jar to the bootclasspath, otherwise it cannot be found
-java -Xbootclasspath/a:"%TOOLS_JAR%" -classpath "%CLASSPATH%" -Djava.util.logging.config.file="%CRASH_HOME%\conf\logging.properties" -jar "%CRASH_HOME%\bin\%JARNAME%" --conf "%CRASH_HOME%\conf" --cmd "%CRASH_HOME%\cmd" %CMD_LINE_ARGS%
+java -Xbootclasspath/a:"%TOOLS_JAR%" -classpath "%CLASSPATH%" -Djava.util.logging.config.file=%CRASH_HOME%/conf/logging.properties org.crsh.cli.impl.bootstrap.Main -jar "%CRASH_HOME%\bin\%JARNAME%" --conf "%CRASH_HOME%\conf" --cmd "%CRASH_HOME%\cmd" %CMD_LINE_ARGS%
+
+:concat
+if "%LIB%" == "" (
+	set LIB=%1
+) else (
+	set LIB=%LIB%;%1;
+)
+goto :eof
