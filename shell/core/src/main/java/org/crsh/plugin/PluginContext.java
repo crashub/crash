@@ -84,7 +84,16 @@ public final class PluginContext {
 
 
   /**
-   * Create a new plugin context.
+   * Create a new plugin context with preconfigured executor and scanner, this is equivalent to invoking:
+   *
+   * <code><pre>new PluginContext(
+   *    Executors.newFixedThreadPool(20),
+   *    new ScheduledThreadPoolExecutor(1),
+   *    discovery,
+   *    attributes,
+   *    cmdFS,
+   *    confFS,
+   *    loader);</pre></code>
    *
    * @param discovery the plugin discovery
    * @param cmdFS the command file system
@@ -112,6 +121,8 @@ public final class PluginContext {
   /**
    * Create a new plugin context.
    *
+   * @param executor the executor for executing asynchronous jobs
+   * @param scanner the background scanner for scanning commands
    * @param discovery the plugin discovery
    * @param cmdFS the command file system
    * @param attributes the attributes
@@ -127,8 +138,14 @@ public final class PluginContext {
     FS cmdFS,
     FS confFS,
     ClassLoader loader) throws NullPointerException {
+    if (executor == null) {
+      throw new NullPointerException("No null executor accepted");
+    }
+    if (scanner == null) {
+      throw new NullPointerException("No null scanner accepted");
+    }
     if (discovery == null) {
-      throw new NullPointerException("No null plugin disocovery accepted");
+      throw new NullPointerException("No null plugin discovery accepted");
     }
     if (confFS == null) {
       throw new NullPointerException("No null configuration file system accepted");
@@ -137,10 +154,10 @@ public final class PluginContext {
       throw new NullPointerException("No null command file system accepted");
     }
     if (loader == null) {
-      throw new NullPointerException();
+      throw new NullPointerException("No null loader accepted");
     }
     if (attributes == null) {
-      throw new NullPointerException();
+      throw new NullPointerException("No null attributes accepted");
     }
 
     //
@@ -172,7 +189,7 @@ public final class PluginContext {
     this.started = false;
     this.manager = new PluginManager(this, discovery);
     this.confFS = confFS;
-    this.executor = Executors.newFixedThreadPool(20);
+    this.executor = executor;
     this.scanner = scanner;
   }
 
