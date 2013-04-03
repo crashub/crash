@@ -35,7 +35,7 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- For unit testing purpose -->
+    <!-- For unit testing purpose (byteman needs tools.jar) -->
 
     <dependency>
       <groupId>org.jboss.byteman</groupId>
