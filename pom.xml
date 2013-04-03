@@ -952,12 +952,12 @@
     </profile>
 
     <profile>
-      <id>mac</id>
-      <activation>
-        <os>
-          <family>mac</family>
-        </os>
-      </activation>
+      <id>mac-1.6</id>
+        <activation>
+          <file>
+            <exists>${java.home}/../Classes/classes.jar</exists>
+          </file>
+        </activation>
       <properties>
         <tools.jar>${java.home}/../Classes/classes.jar</tools.jar>
       </properties>
