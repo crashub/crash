@@ -52,11 +52,9 @@ public abstract class AbstractPathCompleter<P> implements Completer {
 
     public final Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
 
-      System.out.println("prefix :" + prefix);
     // Handle empty dir
     if (!prefix.startsWith(sep)) {
       String currentPath = getCurrentPath();
-        System.out.println("currentPath :" + currentPath);
 
         if (!currentPath.endsWith(sep)) {
         currentPath += sep;
@@ -67,7 +65,6 @@ public abstract class AbstractPathCompleter<P> implements Completer {
         prefix = currentPath;
       }
     }
-      System.out.println("prefix2 :" + prefix);
 
       //
     P f = getPath(prefix);
