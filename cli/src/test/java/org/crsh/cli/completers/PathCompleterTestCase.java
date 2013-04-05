@@ -45,8 +45,6 @@ public class PathCompleterTestCase extends TestCase {
       if (current.equals(root)) {
         return sep;
       } else {
-          System.out.println("==>" + root.getCanonicalPath().substring(root.getCanonicalPath().length()));
-
         return current.getCanonicalPath().substring(root.getCanonicalPath().length());
       }
     }
@@ -98,8 +96,6 @@ public class PathCompleterTestCase extends TestCase {
 
     //
     this.root = tmp;
-      System.out.println("tmp canonical:" + tmp.getName());
-      System.out.println("tmp absolute:" + tmp.getAbsolutePath());
     this.completer = new NodeCompleter(root);
   }
 
