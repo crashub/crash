@@ -41,13 +41,25 @@ public abstract class AbstractPathCompleter<P> implements Completer {
 
   protected abstract String getName(P path) throws Exception;
 
-  public final Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
+  public String sep = "/";
 
+
+    public final Completion complete(ParameterDescriptor parameter, String prefix, String currentSeparator) throws Exception {
+        sep = currentSeparator;
+        return complete(parameter, prefix);
+
+    }
+
+    public final Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
+
+      System.out.println("prefix :" + prefix);
     // Handle empty dir
-    if (!prefix.startsWith("/")) {
+    if (!prefix.startsWith(sep)) {
       String currentPath = getCurrentPath();
-      if (!currentPath.endsWith("/")) {
-        currentPath += "/";
+        System.out.println("currentPath :" + currentPath);
+
+        if (!currentPath.endsWith(sep)) {
+        currentPath += sep;
       }
       if (prefix.length() > 0) {
         prefix = currentPath + prefix;
@@ -55,14 +67,15 @@ public abstract class AbstractPathCompleter<P> implements Completer {
         prefix = currentPath;
       }
     }
+      System.out.println("prefix2 :" + prefix);
 
-    //
+      //
     P f = getPath(prefix);
 
     //
     if (exists(f)) {
       if (isDirectory(f)) {
-        if (prefix.endsWith("/")) {
+        if (prefix.endsWith(sep)) {
           Collection<P> children = getChilren(f);
           if (children != null) {
             if (children.size() > 0) {
@@ -78,7 +91,7 @@ public abstract class AbstractPathCompleter<P> implements Completer {
           if (children == null) {
             return Completion.create();
           } else {
-            return Completion.create("/", false);
+            return Completion.create(sep, false);
           }
         }
       } else if (isFile(f)) {
@@ -86,11 +99,11 @@ public abstract class AbstractPathCompleter<P> implements Completer {
       }
       return Completion.create();
     } else {
-      int pos = prefix.lastIndexOf('/');
+      int pos = prefix.lastIndexOf(sep);
       if (pos != -1) {
         String filter;
         if (pos == 0) {
-          f = getPath("/");
+          f = getPath(sep);
           filter = prefix.substring(1);
         } else {
           f = getPath(prefix.substring(0, pos));
@@ -122,7 +135,7 @@ public abstract class AbstractPathCompleter<P> implements Completer {
           if (isDirectory(child)) {
             Collection<P> grandChildren = getChilren(child);
             if (grandChildren != null) {
-              builder.add(suffix + "/", false);
+              builder.add(suffix + sep, false);
             } else {
               // Skip it
             }
