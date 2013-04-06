@@ -16,19 +16,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.jcr.command;
 
-import org.crsh.cli.type.ValueType;
+import org.crsh.cli.spi.Completer;
 
-public class PathValueType extends ValueType<Path> {
-
-  public PathValueType() throws NullPointerException {
-    super(Path.class, PathCompleter.class);
-  }
-
-  @Override
-  public <S extends Path> S parse(Class<S> type, String s) throws Exception {
-    return type.cast(new Path(s));
-  }
+/**
+ * A marker interface.
+ *
+ * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+ */
+public interface PathCompleter extends Completer {
 }

@@ -56,16 +56,24 @@ public class CompleterSupport {
     }
   }
 
-  public static class Foo implements Completer {
+  public static class Foo extends CompleterSupport.Constant {
+    public Foo() {
+      super("foo");
+    }
+  }
+
+  public static abstract class Constant implements Completer {
+
+    /** . */
+    private final String value;
+
+    public Constant(String value) {
+      this.value = value;
+    }
+
     public Completion complete(ParameterDescriptor parameter, String prefix) {
-      if (prefix.equals("foo")) {
-        return Completion.create("", true);
-      } else if (prefix.equals("fo")) {
-        return Completion.create("o", true);
-      } else if (prefix.equals("f")) {
-        return Completion.create("oo", true);
-      } else if (prefix.equals("")) {
-        return Completion.create("foo", true);
+      if (value.startsWith(prefix)) {
+        return Completion.create(value.substring(prefix.length()), true);
       } else {
         return Completion.create();
       }

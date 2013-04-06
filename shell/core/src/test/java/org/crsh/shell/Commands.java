@@ -257,7 +257,7 @@ public class Commands {
       return Completion.builder(prefix).add("bar", true).build();
     }
     @Command
-    public void main(@Argument String arg) {
+    public void main(@Argument(completer = Complete.class) String arg) {
     }
   }
 
@@ -271,7 +271,7 @@ public class Commands {
       return ret.build();
     }
     @Command
-    public void main(@Argument String arg) {
+    public void main(@Argument(completer = CompleteWithSession.class) String arg) {
     }
   }
 

@@ -2,17 +2,15 @@ package crash.commands.base
 
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
+import org.crsh.cli.completers.SystemPropertyNameCompleter
 import org.crsh.command.InvocationContext
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import org.crsh.cli.Man
 import org.crsh.cli.Argument
-import org.crsh.cli.spi.Completer
-import org.crsh.cli.descriptor.ParameterDescriptor
 import org.crsh.cli.Option
 
 import org.crsh.cli.completers.EnumCompleter
-import org.crsh.cli.spi.Completion
 import java.util.regex.Pattern
 import org.crsh.cli.Required
 
@@ -21,7 +19,7 @@ import org.crsh.cli.Required
  * @version $Revision$
  */
 @Usage("vm system properties commands")
-class system implements Completer {
+class system {
 
   // Properties command
 
@@ -64,19 +62,6 @@ class system implements Completer {
     System.clearProperty name.toString()
   }
 
-  Completion complete(ParameterDescriptor parameter, String prefix)
-  {
-    def b = new Completion.Builder(prefix);
-    if (parameter.getAnnotation().annotationType().equals(PropertyName.class)) {
-      System.getProperties().each() {
-        if (it.key.startsWith(prefix)) {
-          b.add(it.key.substring(prefix.length()), true)
-        }
-      }
-    }
-    return b.build();
-  }
-
   // Memory commands
 
   @Usage("call garbage collector")
@@ -107,7 +92,7 @@ class system implements Completer {
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the property name")
 @Man("The name of the property")
-@Argument(name = "name")
+@Argument(name = "name", completer = SystemPropertyNameCompleter.class)
 @interface PropertyName { }
 
 @Retention(RetentionPolicy.RUNTIME)

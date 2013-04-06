@@ -41,13 +41,18 @@ import java.util.List;
  */
 public class CompleteTestCase extends TestCase {
 
-  public void testCompleterResolution() throws Exception {
+  public void testUseInstance() throws Exception {
+
+    class Some extends CompleterSupport.Constant {
+      private Some() {
+        super("bilto");
+      }
+    }
+    Some some = new Some();
 
     class A {
       @Command
-      void m(@Argument() String arg) {}
-      @Command
-      void n(@Argument(completer =  CompleterSupport.Foo.class) String arg) {}
+      void n(@Argument(completer =  Some.class) String arg) {}
     }
 
     //
@@ -55,10 +60,13 @@ public class CompleteTestCase extends TestCase {
     CompletionMatcher<A> matcher = desc.completer();
 
     //
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create()), matcher.match("m fo"));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("o", true)), matcher.match("n fo"));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("ab", false)), matcher.match(new CompleterSupport.Echo(), "m ab"));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("o", true)), matcher.match(new CompleterSupport.Echo(), "n fo"));
+    try {
+      matcher.match("n b");
+      fail();
+    }
+    catch (CompletionException ignore) {
+    }
+    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("ilto", true)), matcher.match(some, "n b"));
   }
 
   public void testExplicitCommandSingleArgument() throws Exception
