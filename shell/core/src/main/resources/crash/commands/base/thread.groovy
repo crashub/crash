@@ -50,7 +50,7 @@ Interrupted thread Thread[pool-1-thread-2,5,main]
 Interrupted thread Thread[pool-1-thread-3,5,main]
 Interrupted thread Thread[pool-1-thread-4,5,main]
 Interrupted thread Thread[pool-1-thread-5,5,main]""")
-public class thread  implements Completer {
+public class thread  {
 
   @Usage("thread top")
   @Command
@@ -165,7 +165,9 @@ public class thread  implements Completer {
   @Command
   public void produce(
           InvocationContext<Thread> context,
-          @ThreadId @Argument @Usage("the thread ids to produces") List<String> ids) {
+          @ThreadId
+          @Usage("the thread ids to produces")
+          @Man("The ids of the threads to produce") List<String> ids) {
     ids.each { id ->
       def t = getThreads()[id]
       if (t != null) {
@@ -228,17 +230,6 @@ public class thread  implements Completer {
     }
   }
 
-    Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
-        def b = new Completion.Builder(prefix);
-        if (parameter.getAnnotation().annotationType().equals(ThreadId.class)) {
-            getThreads().each() { k, thread ->
-            if (thread.id.toString().startsWith(prefix)) {
-              b.add(thread.id.toString().substring(prefix.length()), true)
-            }
-          }
-        }
-        return b.build();
-    }
 /*
   public void apply(InvocationContext<Thread, Void> context, List<String> ids, Closure closure) {
     if (context.piped) {
@@ -259,7 +250,7 @@ public class thread  implements Completer {
   }
 */
 
-  private ThreadGroup getRoot() {
+  static ThreadGroup getRoot() {
     ThreadGroup group = Thread.currentThread().threadGroup;
     ThreadGroup parent;
     while ((parent = group.parent) != null) {
@@ -268,7 +259,7 @@ public class thread  implements Completer {
     return group;
   }
 
-  private Map<String, Thread> getThreads() {
+  static Map<String, Thread> getThreads() {
     ThreadGroup root = getRoot();
     Thread[] threads = new Thread[root.activeCount()];
     while (root.enumerate(threads, true) == threads.length ) {
@@ -283,9 +274,21 @@ public class thread  implements Completer {
   }
 }
 
+class ThreadCompleter implements Completer {
+
+  Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
+    def b = new Completion.Builder(prefix);
+    thread.getThreads().each() { k, thread ->
+      if (thread.id.toString().startsWith(prefix)) {
+        b.add(thread.id.toString().substring(prefix.length()), true)
+      }
+    }
+    return b.build();
+  }
+
+}
+
 @Retention(RetentionPolicy.RUNTIME)
-@Usage("the thread ids")
-@Man("The ids of the thread")
-@Argument(name = "ids")
+@Argument(name = "ids", completer = ThreadCompleter.class)
 @interface ThreadId { }
 
