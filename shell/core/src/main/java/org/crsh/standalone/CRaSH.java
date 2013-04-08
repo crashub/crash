@@ -364,6 +364,9 @@ public class CRaSH {
     finally {
 
       //
+      AnsiConsole.systemUninstall();
+
+      //
       if (closeable != null) {
         Safe.close(closeable);
       }
