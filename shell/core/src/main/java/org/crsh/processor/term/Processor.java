@@ -345,56 +345,60 @@ public final class Processor implements Runnable, Consumer<Chunk> {
         }
       } else {
         String commonCompletion = Strings.findLongestCommonPrefix(completions.getValues());
-        if (commonCompletion.length() > 0) {
-          term.getDirectBuffer().append(delimiter.escape(commonCompletion));
-        } else {
-          // Format stuff
-          int width = term.getWidth();
 
-          //
-          String completionPrefix = completions.getPrefix();
+        // Format stuff
+        int width = term.getWidth();
 
-          // Get the max length
-          int max = 0;
+        //
+        String completionPrefix = completions.getPrefix();
+
+        // Get the max length
+        int max = 0;
+        for (String suffix : completions.getValues()) {
+          max = Math.max(max, completionPrefix.length() + suffix.length());
+        }
+
+        // Separator : use two whitespace like in BASH
+        max += 2;
+
+        //
+        StringBuilder sb = new StringBuilder().append('\n');
+        if (max < width) {
+          int columns = width / max;
+          int index = 0;
           for (String suffix : completions.getValues()) {
-            max = Math.max(max, completionPrefix.length() + suffix.length());
-          }
-
-          // Separator : use two whitespace like in BASH
-          max += 2;
-
-          //
-          StringBuilder sb = new StringBuilder().append('\n');
-          if (max < width) {
-            int columns = width / max;
-            int index = 0;
-            for (String suffix : completions.getValues()) {
-              sb.append(completionPrefix).append(suffix);
-              for (int l = completionPrefix.length() + suffix.length();l < max;l++) {
-                sb.append(' ');
-              }
-              if (++index >= columns) {
-                index = 0;
-                sb.append('\n');
-              }
+            sb.append(completionPrefix).append(suffix);
+            for (int l = completionPrefix.length() + suffix.length();l < max;l++) {
+              sb.append(' ');
             }
-            if (index > 0) {
+            if (++index >= columns) {
+              index = 0;
               sb.append('\n');
             }
-          } else {
-            for (Iterator<String> i = completions.getValues().iterator();i.hasNext();) {
-              String suffix = i.next();
-              sb.append(commonCompletion).append(suffix);
-              if (i.hasNext()) {
-                sb.append('\n');
-              }
-            }
+          }
+          if (index > 0) {
             sb.append('\n');
           }
+        } else {
+          for (Iterator<String> i = completions.getValues().iterator();i.hasNext();) {
+            String suffix = i.next();
+            sb.append(commonCompletion).append(suffix);
+            if (i.hasNext()) {
+              sb.append('\n');
+            }
+          }
+          sb.append('\n');
+        }
 
-          // We propose
-          term.provide(Text.create(sb.toString()));
-          writePromptFlush();
+        // We propose
+        term.provide(Text.create(sb.toString()));
+
+        // Rewrite prompt
+        writePromptFlush();
+
+        // If we have common completion we append it now
+        if (commonCompletion.length() > 0) {
+          term.getDirectBuffer().append(delimiter.escape(commonCompletion));
         }
       }
     }
