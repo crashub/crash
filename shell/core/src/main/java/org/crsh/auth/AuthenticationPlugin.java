@@ -19,7 +19,12 @@
 
 package org.crsh.auth;
 
+import org.crsh.plugin.PropertyDescriptor;
+
 public interface AuthenticationPlugin {
+
+  /** The authentication plugin to use. */
+  PropertyDescriptor<String> AUTH = PropertyDescriptor.create("auth", (String)null, "The authentication plugin");
 
   /**
    * Returns the authentication plugin name.

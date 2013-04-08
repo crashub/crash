@@ -19,6 +19,7 @@
 
 package org.crsh.ssh;
 
+import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.ResourceKind;
@@ -42,9 +43,6 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   /** The SSH key path. */
   public static final PropertyDescriptor<String> SSH_KEYPATH = PropertyDescriptor.create("ssh.keypath", (String)null, "The path to the key file");
 
-  /** The authentication plugin to use. */
-  public static final PropertyDescriptor<String> AUTH = PropertyDescriptor.create("auth", (String)null, "The authentication plugin");
-
   /** . */
   private SSHLifeCycle lifeCycle;
 
@@ -55,7 +53,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   @Override
   protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
-    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_KEYPATH, AUTH);
+    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_KEYPATH, AuthenticationPlugin.AUTH);
   }
 
   @Override
@@ -114,7 +112,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     }
 
     // Get the authentication
-    String authentication = getContext().getProperty(AUTH);
+    String authentication = getContext().getProperty(AuthenticationPlugin.AUTH);
 
     //
     log.log(Level.INFO, "Booting SSHD");
