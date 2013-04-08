@@ -17,9 +17,6 @@
   <!--
   How to test easily jackrabbit:
   > mvn test -Pmain
-
-  in another shell:
-  > telnet localhost 5000
   % bootstrap
   % repo use
   % ws login -u root -p exo ws
@@ -88,8 +85,8 @@
       <id>main</id>
       <dependencies>
         <dependency>
-          <groupId>org.crsh</groupId>
-          <artifactId>crsh.shell.telnet</artifactId>
+          <groupId>jline</groupId>
+          <artifactId>jline</artifactId>
         </dependency>
       </dependencies>
     </profile>
