@@ -27,123 +27,130 @@ import java.util.Collection;
 
 public abstract class AbstractPathCompleter<P> implements Completer {
 
-  protected abstract String getCurrentPath() throws Exception;
+	protected abstract String getCurrentPath() throws Exception;
 
-  protected abstract P getPath(String path) throws Exception;
+	protected abstract P getPath(String path) throws Exception;
 
-  protected abstract boolean exists(P path) throws Exception;
+	protected abstract boolean exists(P path) throws Exception;
 
-  protected abstract boolean isDirectory(P path) throws Exception;
+	protected abstract boolean isDirectory(P path) throws Exception;
 
-  protected abstract boolean isFile(P path) throws Exception;
+	protected abstract boolean isFile(P path) throws Exception;
 
-  protected abstract Collection<P> getChilren(P path) throws Exception;
+	protected abstract Collection<P> getChilren(P path) throws Exception;
 
-  protected abstract String getName(P path) throws Exception;
+	protected abstract String getName(P path) throws Exception;
 
-  public String sep = "/";
+	private String sep = "/";
 
+	/**
+	 * Complete with a different separator.e.g: On windows, use /.
+	 * @param parameter
+	 * @param prefix
+	 * @param currentSeparator
+	 * @return
+	 * @throws Exception
+	 */
+	public final Completion complete(ParameterDescriptor parameter, String prefix, String currentSeparator) throws Exception {
+		sep = currentSeparator;
+		return complete(parameter, prefix);
 
-    public final Completion complete(ParameterDescriptor parameter, String prefix, String currentSeparator) throws Exception {
-        sep = currentSeparator;
-        return complete(parameter, prefix);
+	}
 
-    }
+	public final Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
 
-    public final Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
+		// Handle empty dir
+		if (!prefix.startsWith(sep)) {
+			String currentPath = getCurrentPath();
 
-    // Handle empty dir
-    if (!prefix.startsWith(sep)) {
-      String currentPath = getCurrentPath();
+			if (!currentPath.endsWith(sep)) {
+				currentPath += sep;
+			}
+			if (prefix.length() > 0) {
+				prefix = currentPath + prefix;
+			} else {
+				prefix = currentPath;
+			}
+		}
 
-        if (!currentPath.endsWith(sep)) {
-        currentPath += sep;
-      }
-      if (prefix.length() > 0) {
-        prefix = currentPath + prefix;
-      } else {
-        prefix = currentPath;
-      }
-    }
+		//
+		P f = getPath(prefix);
 
-      //
-    P f = getPath(prefix);
+		//
+		if (exists(f)) {
+			if (isDirectory(f)) {
+				if (prefix.endsWith(sep)) {
+					Collection<P> children = getChilren(f);
+					if (children != null) {
+						if (children.size() > 0) {
+							return listDir(f, "");
+						} else {
+							return Completion.create();
+						}
+					} else {
+						return Completion.create();
+					}
+				} else {
+					Collection<P> children = getChilren(f);
+					if (children == null) {
+						return Completion.create();
+					} else {
+						return Completion.create(sep, false);
+					}
+				}
+			} else if (isFile(f)) {
+				return Completion.create("", true);
+			}
+			return Completion.create();
+		} else {
+			int pos = prefix.lastIndexOf(sep);
+			if (pos != -1) {
+				String filter;
+				if (pos == 0) {
+					f = getPath(sep);
+					filter = prefix.substring(1);
+				} else {
+					f = getPath(prefix.substring(0, pos));
+					filter = prefix.substring(pos + 1);
+				}
+				if (exists(f)) {
+					if (isDirectory(f)) {
+						return listDir(f, filter);
+					} else {
+						return Completion.create();
+					}
+				} else {
+					return Completion.create();
+				}
+			} else {
+				return Completion.create();
+			}
+		}
+	}
 
-    //
-    if (exists(f)) {
-      if (isDirectory(f)) {
-        if (prefix.endsWith(sep)) {
-          Collection<P> children = getChilren(f);
-          if (children != null) {
-            if (children.size() > 0) {
-              return listDir(f, "");
-            } else {
-              return Completion.create();
-            }
-          } else {
-            return Completion.create();
-          }
-        } else {
-          Collection<P> children = getChilren(f);
-          if (children == null) {
-            return Completion.create();
-          } else {
-            return Completion.create(sep, false);
-          }
-        }
-      } else if (isFile(f)) {
-        return Completion.create("", true);
-      }
-      return Completion.create();
-    } else {
-      int pos = prefix.lastIndexOf(sep);
-      if (pos != -1) {
-        String filter;
-        if (pos == 0) {
-          f = getPath(sep);
-          filter = prefix.substring(1);
-        } else {
-          f = getPath(prefix.substring(0, pos));
-          filter = prefix.substring(pos + 1);
-        }
-        if (exists(f)) {
-          if (isDirectory(f)) {
-            return listDir(f, filter);
-          } else {
-            return Completion.create();
-          }
-        } else {
-          return Completion.create();
-        }
-      } else {
-        return Completion.create();
-      }
-    }
-  }
-
-  private Completion listDir(P dir, final String filter) throws Exception {
-    Collection<P> children = getChilren(dir);
-    if (children != null) {
-      Completion.Builder builder = Completion.builder(filter);
-      for (P child : children) {
-        String name = getName(child);
-        if (name.startsWith(filter)) {
-          String suffix = name.substring(filter.length());
-          if (isDirectory(child)) {
-            Collection<P> grandChildren = getChilren(child);
-            if (grandChildren != null) {
-              builder.add(suffix + sep, false);
-            } else {
-              // Skip it
-            }
-          } else {
-            builder.add(suffix, true);
-          }
-        }
-      }
-      return builder.build();
-    } else {
-      return Completion.create();
-    }
-  }
+	private Completion listDir(P dir, final String filter) throws Exception {
+		Collection<P> children = getChilren(dir);
+		if (children != null) {
+			Completion.Builder builder = Completion.builder(filter);
+			for (P child : children) {
+				String name = getName(child);
+				if (name.startsWith(filter)) {
+					String suffix = name.substring(filter.length());
+					if (isDirectory(child)) {
+						Collection<P> grandChildren = getChilren(child);
+						if (grandChildren != null) {
+							builder.add(suffix + sep, false);
+						} else {
+							// Skip it
+						}
+					} else {
+						builder.add(suffix, true);
+					}
+				}
+			}
+			return builder.build();
+		} else {
+			return Completion.create();
+		}
+	}
 }
