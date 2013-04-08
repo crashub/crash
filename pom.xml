@@ -117,9 +117,9 @@
     <pushChanges>false</pushChanges>
     <autoVersionSubmodules>true</autoVersionSubmodules>
 
-    <!-- Java 5 -->
-    <maven.compiler.source>5</maven.compiler.source>
-    <maven.compiler.target>5</maven.compiler.target>
+    <!-- Java 6 -->
+    <maven.compiler.source>6</maven.compiler.source>
+    <maven.compiler.target>6</maven.compiler.target>
 
     <!-- Encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
