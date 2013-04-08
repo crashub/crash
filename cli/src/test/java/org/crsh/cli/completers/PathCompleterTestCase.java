@@ -43,7 +43,7 @@ public class PathCompleterTestCase extends TestCase {
     @Override
     protected String getCurrentPath() throws Exception {
       if (current.equals(root)) {
-        return sep;
+        return File.separator;
       } else {
         return current.getCanonicalPath().substring(root.getCanonicalPath().length());
       }
@@ -51,8 +51,8 @@ public class PathCompleterTestCase extends TestCase {
 
     @Override
     protected File getPath(String path) throws Exception {
-      if (!path.startsWith(sep)) {
-        throw new AssertionFailedError("Path " + path + " does not start with " + sep);
+      if (!path.startsWith(File.separator)) {
+        throw new AssertionFailedError("Path " + path + " does not start with separator");
       }
       return new File(root, path.substring(1));
     }
@@ -215,7 +215,7 @@ public class PathCompleterTestCase extends TestCase {
   }
 
   private void assertCompletion(String path, Completion expected) throws Exception {
-    Completion completions = completer.complete (null, path, File.separator);
+    Completion completions = completer.complete (null, path);
     assertEquals(expected, completions);
   }
 }

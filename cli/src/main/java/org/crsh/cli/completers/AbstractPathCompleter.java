@@ -23,6 +23,7 @@ import org.crsh.cli.descriptor.ParameterDescriptor;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
 
+import java.io.File;
 import java.util.Collection;
 
 public abstract class AbstractPathCompleter<P> implements Completer {
@@ -41,16 +42,10 @@ public abstract class AbstractPathCompleter<P> implements Completer {
 
   protected abstract String getName(P path) throws Exception;
 
-  public String sep = "/";
+  public final Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
 
-
-    public final Completion complete(ParameterDescriptor parameter, String prefix, String currentSeparator) throws Exception {
-        sep = currentSeparator;
-        return complete(parameter, prefix);
-
-    }
-
-    public final Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
+    //
+    String sep = File.separator;
 
     // Handle empty dir
     if (!prefix.startsWith(sep)) {
@@ -132,7 +127,7 @@ public abstract class AbstractPathCompleter<P> implements Completer {
           if (isDirectory(child)) {
             Collection<P> grandChildren = getChilren(child);
             if (grandChildren != null) {
-              builder.add(suffix + sep, false);
+              builder.add(suffix + File.separator, false);
             } else {
               // Skip it
             }
