@@ -190,8 +190,8 @@ public class thread  {
   @Usage("dump vm threads")
   @Man("Dump VM threads.")
   @Command
-  public PipeCommand<Thread, Thread> dump(@Argument @Usage("the thread ids to dump") List<Thread> threads) {
-    return new PipeCommand<Thread, Thread>() {
+  public PipeCommand<Thread, Object> dump(@Argument @Usage("the thread ids to dump") List<Thread> threads) {
+    return new PipeCommand<Thread, Object>() {
       void open() throws org.crsh.command.ScriptException {
         threads.each(this.&provide)
       }
@@ -199,7 +199,6 @@ public class thread  {
         Exception e = new Exception("Thread ${element.id} stack trace")
         e.setStackTrace(element.stackTrace)
         e.printStackTrace(context.writer)
-        context.provide(element);
       }
     }
   }
