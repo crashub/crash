@@ -44,6 +44,7 @@ import org.crsh.util.Safe;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.Resource;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -335,8 +336,9 @@ public class CRaSH {
       }
     });
 
-    //
-    final PrintWriter out = new PrintWriter(System.out);
+    AnsiConsole.systemInstall();
+
+    final PrintWriter out = new PrintWriter(AnsiConsole.out);
     final JLineProcessor processor = new JLineProcessor(
         shell,
         reader,
@@ -360,6 +362,9 @@ public class CRaSH {
       t.printStackTrace();
     }
     finally {
+
+      //
+      AnsiConsole.systemUninstall();
 
       //
       if (closeable != null) {
