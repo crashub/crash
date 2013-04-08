@@ -27,6 +27,18 @@ public interface AuthenticationPlugin {
   PropertyDescriptor<String> AUTH = PropertyDescriptor.create("auth", (String)null, "The authentication plugin");
 
   /**
+   * The plugin that never authenticates, returns the name value <code>null</code>.
+   */
+  AuthenticationPlugin NULL = new AuthenticationPlugin() {
+    public String getName() {
+      return "null";
+    }
+    public boolean authenticate(String username, String password) throws Exception {
+      return false;
+    }
+  };
+
+  /**
    * Returns the authentication plugin name.
    *
    * @return the plugin name

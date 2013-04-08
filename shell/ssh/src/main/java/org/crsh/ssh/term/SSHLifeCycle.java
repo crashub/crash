@@ -21,6 +21,7 @@ package org.crsh.ssh.term;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.Session;
 import org.apache.sshd.server.PasswordAuthenticator;
+import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
 import org.crsh.auth.AuthenticationPlugin;
@@ -29,9 +30,14 @@ import org.crsh.term.TermLifeCycle;
 import org.crsh.term.spi.TermIOHandler;
 import org.crsh.vfs.Resource;
 
+import java.security.PublicKey;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Interesting stuff here : http://gerrit.googlecode.com/git-history/4b9e5e7fb9380cfadd28d7ffe3dc496dc06f5892/gerrit-sshd/src/main/java/com/google/gerrit/sshd/DatabasePubKeyAuth.java
+ */
 public class SSHLifeCycle extends TermLifeCycle {
 
   /** . */
@@ -53,13 +59,20 @@ public class SSHLifeCycle extends TermLifeCycle {
   private Resource key;
 
   /** . */
-  private String authentication;
+  private final AuthenticationPlugin authentication;
 
   /** . */
   private Integer localPort;
 
-  public SSHLifeCycle(PluginContext context) {
+  /** . */
+  private final Set<PublicKey> authorizedKeys;
+
+  public SSHLifeCycle(PluginContext context, AuthenticationPlugin authentication, Set<PublicKey> authorizedKeys) {
     super(context);
+
+    //
+    this.authentication = authentication;
+    this.authorizedKeys = authorizedKeys;
   }
 
   public int getPort() {
@@ -88,14 +101,6 @@ public class SSHLifeCycle extends TermLifeCycle {
     this.key = key;
   }
 
-  public String getAuthentication() {
-    return authentication;
-  }
-
-  public void setAuthentication(String authentication) {
-    this.authentication = authentication;
-  }
-
   @Override
   protected void doInit() {
     try {
@@ -110,38 +115,30 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setCommandFactory(new SCPCommandFactory(getContext()));
       server.setKeyPairProvider(new URLKeyPairProvider(key));
 
-      // We never authenticate by default
-      AuthenticationPlugin plugin = new AuthenticationPlugin() {
-        public String getName() {
-          return "null";
-        }
-        public boolean authenticate(String username, String password) throws Exception {
-          return false;
-        }
-      };
-
-      // Lookup for an authentication plugin
-      if (authentication != null) {
-        for (AuthenticationPlugin authenticationPlugin : getContext().getPlugins(AuthenticationPlugin.class)) {
-          if (authentication.equals(authenticationPlugin.getName())) {
-            plugin = authenticationPlugin;
-            break;
-          }
-        }
-      }
-
       //
-      final AuthenticationPlugin authPlugin = plugin;
+      if (authorizedKeys != null && authorizedKeys.size() > 0) {
+        server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
+          public boolean authenticate(String username, PublicKey key, ServerSession session) {
+            if (authorizedKeys.contains(key)) {
+              log.log(Level.FINE, "Authenticated " + username + " with public key " + key);
+              return true;
+            } else {
+              log.log(Level.FINE, "Denied " + username + " with public key " + key);
+              return false;
+            }
+          }
+        });
+      }
 
       //
       server.setPasswordAuthenticator(new PasswordAuthenticator() {
         public boolean authenticate(String _username, String _password, ServerSession session) {
           boolean auth;
           try {
-            log.log(Level.FINE, "Using authentication plugin " + authPlugin + " to authenticate user " + _username);
-            auth = authPlugin.authenticate(_username, _password);
+            log.log(Level.FINE, "Using authentication plugin " + authentication + " to authenticate user " + _username);
+            auth = authentication.authenticate(_username, _password);
           } catch (Exception e) {
-            log.log(Level.SEVERE, "Exception authenticating user " + _username + " in authentication plugin: " + authPlugin, e);
+            log.log(Level.SEVERE, "Exception authenticating user " + _username + " in authentication plugin: " + authentication, e);
             return false;
           }
 
