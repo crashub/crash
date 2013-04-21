@@ -100,6 +100,9 @@ public class CRaSH {
 
   @Command
   public void main(
+    @Option(names= {"non-interactive"})
+    @Usage("non interactive mode, the JVM io will not be used")
+    Boolean nonInteractive,
     @Option(names={"c","cmd"})
     @Usage("adds a dir to the command path")
     List<String> cmds,
@@ -321,58 +324,62 @@ public class CRaSH {
       closeable = null;
     }
 
-    // Start crash for this command line
-    final Terminal term = TerminalFactory.create();
-    term.init();
-    ConsoleReader reader = new ConsoleReader(null, new FileInputStream(FileDescriptor.in), System.out, term);
-    Runtime.getRuntime().addShutdownHook(new Thread(){
-      @Override
-      public void run() {
-        try {
-          term.restore();
-        }
-        catch (Exception ignore) {
-        }
-      }
-    });
-
-    AnsiConsole.systemInstall();
-
-    final PrintWriter out = new PrintWriter(AnsiConsole.out);
-    final JLineProcessor processor = new JLineProcessor(
-        shell,
-        reader,
-        out
-    );
-    reader.addCompleter(processor);
-
-    // Install signal handler
-    InterruptHandler ih = new InterruptHandler(new Runnable() {
-      public void run() {
-        processor.cancel();
-      }
-    });
-    ih.install();
-
     //
-    try {
-      processor.run();
-    }
-    catch (Throwable t) {
-      t.printStackTrace();
-    }
-    finally {
+    if (nonInteractive == null || !nonInteractive) {
+
+      // Start crash for this command line
+      final Terminal term = TerminalFactory.create();
+      term.init();
+      ConsoleReader reader = new ConsoleReader(null, new FileInputStream(FileDescriptor.in), System.out, term);
+      Runtime.getRuntime().addShutdownHook(new Thread(){
+        @Override
+        public void run() {
+          try {
+            term.restore();
+          }
+          catch (Exception ignore) {
+          }
+        }
+      });
+
+      AnsiConsole.systemInstall();
+
+      final PrintWriter out = new PrintWriter(AnsiConsole.out);
+      final JLineProcessor processor = new JLineProcessor(
+          shell,
+          reader,
+          out
+      );
+      reader.addCompleter(processor);
+
+      // Install signal handler
+      InterruptHandler ih = new InterruptHandler(new Runnable() {
+        public void run() {
+          processor.cancel();
+        }
+      });
+      ih.install();
 
       //
-      AnsiConsole.systemUninstall();
-
-      //
-      if (closeable != null) {
-        Safe.close(closeable);
+      try {
+        processor.run();
       }
+      catch (Throwable t) {
+        t.printStackTrace();
+      }
+      finally {
 
-      // Force exit
-      System.exit(0);
+        //
+        AnsiConsole.systemUninstall();
+
+        //
+        if (closeable != null) {
+          Safe.close(closeable);
+        }
+
+        // Force exit
+        System.exit(0);
+      }
     }
   }
 

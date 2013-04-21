@@ -102,6 +102,14 @@ The //\--cmd// option sets and overrides a shell configuration property, the val
 crash.sh --property crash.telnet.port=3000
 {{/screen}}
 
+=== //\--non-interactive// option ===
+
+The //\--non-interactive// option disable the usage of the JVM input and output.
+
+{{screen}}
+crash.sh --non-interactive
+{{/screen}}
+
 === //pid// argument ===
 
 The ##org.crsh.standalone.CRaSH## main has a single optional argument that is a JVM //process id//. When a JVM process id is specified,
