@@ -50,9 +50,6 @@ public final class PluginContext {
   private final ScheduledExecutorService scanner;
 
   /** . */
-  private final Map<String, Property<?>> properties;
-
-  /** . */
   private final Map<String, Object> attributes;
 
   /** The shared executor. */
@@ -66,6 +63,9 @@ public final class PluginContext {
 
   /** . */
   private final ResourceManager resourceManager;
+
+  /** . */
+  private final PropertyManager propertyManager;
 
   /**
    * Create a new plugin context with preconfigured executor and scanner, this is equivalent to invoking:
@@ -167,12 +167,12 @@ public final class PluginContext {
     this.loader = loader;
     this.attributes = attributes;
     this.version = version;
-    this.properties = new HashMap<String, Property<?>>();
     this.started = false;
     this.manager = new PluginManager(this, discovery);
     this.executor = executor;
     this.scanner = scanner;
     this.resourceManager = new ResourceManager(cmdFS, confFS);
+    this.propertyManager = new PropertyManager();
   }
 
   public String getVersion() {
@@ -196,10 +196,7 @@ public final class PluginContext {
    * @throws NullPointerException if the descriptor argument is null
    */
   public <T> T getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
-    if (desc == null) {
-      throw new NullPointerException();
-    }
-    return getProperty(desc.getName(), desc.getType());
+    return propertyManager.getProperty(desc);
   }
 
   /**
@@ -212,20 +209,7 @@ public final class PluginContext {
    * @throws NullPointerException if the descriptor argument is null
    */
   public <T> T getProperty(String propertyName, Class<T> type) throws NullPointerException {
-    if (propertyName == null) {
-      throw new NullPointerException("No null property name accepted");
-    }
-    if (type == null) {
-      throw new NullPointerException("No null property type accepted");
-    }
-    Property<?> property = properties.get(propertyName);
-    if (property != null) {
-      PropertyDescriptor<?> descriptor = property.getDescriptor();
-      if (descriptor.getType().isAssignableFrom(type)) {
-        return type.cast(property.getValue());
-      }
-    }
-    return null;
+    return propertyManager.getProperty(propertyName, type);
   }
 
   /**
@@ -237,17 +221,7 @@ public final class PluginContext {
    * @throws NullPointerException if the descriptor argument is null
    */
   public <T> void setProperty(PropertyDescriptor<T> desc, T value) throws NullPointerException {
-    if (desc == null) {
-      throw new NullPointerException();
-    }
-    if (value == null) {
-      log.log(Level.FINE, "Removing property " + desc.name);
-      properties.remove(desc.getName());
-    } else {
-      Property<T> property = new Property<T>(desc, value);
-      log.log(Level.FINE, "Setting property " + desc.name + " to value " + property.getValue());
-      properties.put(desc.getName(), property);
-    }
+    propertyManager.setProperty(desc, value);
   }
 
   /**
@@ -260,17 +234,7 @@ public final class PluginContext {
    * @throws IllegalArgumentException if the string value cannot be converted to the property type
    */
   public <T> void setProperty(PropertyDescriptor<T> desc, String value) throws NullPointerException, IllegalArgumentException {
-    if (desc == null) {
-      throw new NullPointerException();
-    }
-    if (value == null) {
-      log.log(Level.FINE, "Removing property " + desc.name);
-      properties.remove(desc.getName());
-    } else {
-      Property<T> property = desc.toProperty(value);
-      log.log(Level.FINE, "Setting property " + desc.name + " to value " + property.getValue());
-      properties.put(desc.getName(), property);
-    }
+    propertyManager.setProperty(desc, value);
   }
 
   /**
