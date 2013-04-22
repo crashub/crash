@@ -19,12 +19,8 @@
 package org.crsh.plugin;
 
 import org.crsh.vfs.FS;
-import org.crsh.vfs.File;
-import org.crsh.vfs.Path;
 import org.crsh.vfs.Resource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -35,13 +31,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class PluginContext {
-
-  /** . */
-  private static final Pattern p = Pattern.compile("(.+)\\.groovy");
 
   /** . */
   private static final Logger log = Logger.getLogger(PluginContext.class.getName());
@@ -62,19 +53,10 @@ public final class PluginContext {
   private final Map<String, Property<?>> properties;
 
   /** . */
-  private final FS cmdFS;
-
-  /** . */
   private final Map<String, Object> attributes;
-
-  /** . */
-  private final FS confFS;
 
   /** The shared executor. */
   private final ExecutorService executor;
-
-  /** . */
-  private volatile List<File> dirs;
 
   /** . */
   private boolean started;
@@ -82,6 +64,8 @@ public final class PluginContext {
   /** . */
   private ScheduledFuture scannerFuture;
 
+  /** . */
+  private final ResourceManager resourceManager;
 
   /**
    * Create a new plugin context with preconfigured executor and scanner, this is equivalent to invoking:
@@ -183,14 +167,12 @@ public final class PluginContext {
     this.loader = loader;
     this.attributes = attributes;
     this.version = version;
-    this.dirs = Collections.emptyList();
-    this.cmdFS = cmdFS;
     this.properties = new HashMap<String, Property<?>>();
     this.started = false;
     this.manager = new PluginManager(this, discovery);
-    this.confFS = confFS;
     this.executor = executor;
     this.scanner = scanner;
+    this.resourceManager = new ResourceManager(cmdFS, confFS);
   }
 
   public String getVersion() {
@@ -299,49 +281,7 @@ public final class PluginContext {
    * @return the resource or null if it cannot be found
    */
   public Resource loadResource(String resourceId, ResourceKind resourceKind) {
-    Resource res = null;
-    try {
-
-      //
-      switch (resourceKind) {
-        case LIFECYCLE:
-          if ("login".equals(resourceId) || "logout".equals(resourceId)) {
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            long timestamp = Long.MIN_VALUE;
-            for (File path : dirs) {
-              File f = path.child(resourceId + ".groovy", false);
-              if (f != null) {
-                Resource sub = f.getResource();
-                if (sub != null) {
-                  buffer.write(sub.getContent());
-                  buffer.write('\n');
-                  timestamp = Math.max(timestamp, sub.getTimestamp());
-                }
-              }
-            }
-            return new Resource(buffer.toByteArray(), timestamp);
-          }
-          break;
-        case COMMAND:
-          // Find the resource first, we find for the first found
-          for (File path : dirs) {
-            File f = path.child(resourceId + ".groovy", false);
-            if (f != null) {
-              res = f.getResource();
-            }
-          }
-          break;
-        case CONFIG:
-          String path = "/" + resourceId;
-          File file = confFS.get(Path.get(path));
-          if (file != null) {
-            res = file.getResource();
-          }
-      }
-    } catch (IOException e) {
-      log.log(Level.WARNING, "Could not obtain resource " + resourceId, e);
-    }
-    return res;
+    return resourceManager.loadResource(resourceId, resourceKind);
   }
 
   /**
@@ -351,29 +291,7 @@ public final class PluginContext {
    * @return the resource ids
    */
   public List<String> listResourceId(ResourceKind kind) {
-    switch (kind) {
-      case COMMAND:
-        SortedSet<String> all = new TreeSet<String>();
-        try {
-          for (File path : dirs) {
-            for (File file : path.children()) {
-              String name = file.getName();
-              Matcher matcher = p.matcher(name);
-              if (matcher.matches()) {
-                all.add(matcher.group(1));
-              }
-            }
-          }
-        }
-        catch (IOException e) {
-          e.printStackTrace();
-        }
-        all.remove("login");
-        all.remove("logout");
-        return new ArrayList<String>(all);
-      default:
-        return Collections.emptyList();
-    }
+    return resourceManager.listResourceId(kind);
   }
 
   /**
@@ -417,20 +335,7 @@ public final class PluginContext {
    * invoked to trigger explicit refreshes.
    */
   public void refresh() {
-    try {
-      File commands = cmdFS.get(Path.get("/"));
-      List<File> newDirs = new ArrayList<File>();
-      newDirs.add(commands);
-      for (File path : commands.children()) {
-        if (path.isDir()) {
-          newDirs.add(path);
-        }
-      }
-      dirs = newDirs;
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
+    resourceManager.refresh();
   }
 
   synchronized void start() {
