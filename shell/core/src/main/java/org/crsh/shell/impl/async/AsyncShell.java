@@ -26,9 +26,7 @@ import java.io.Closeable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
 
 public class AsyncShell implements Shell, Closeable {
 
@@ -39,7 +37,7 @@ public class AsyncShell implements Shell, Closeable {
   private AsyncProcess current;
 
   /** . */
-  final CompletionService<AsyncProcess> executor;
+  final ExecutorService executor;
 
   /** . */
   boolean closed;
@@ -50,10 +48,10 @@ public class AsyncShell implements Shell, Closeable {
   /** . */
   final Set<AsyncProcess> processes;
 
-  public AsyncShell(Executor executor, Shell shell) {
+  public AsyncShell(ExecutorService executor, Shell shell) {
     this.shell = shell;
     this.current = null;
-    this.executor = new ExecutorCompletionService<AsyncProcess>(executor);
+    this.executor = executor;
     this.closed = false;
     this.processes = Collections.synchronizedSet(new HashSet<AsyncProcess>());
   }
