@@ -51,7 +51,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("c").assertFlush();
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("abc").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -71,7 +71,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertDel().assertFlush();
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("ab").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -87,7 +87,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("a").assertFlush();
     controller.connector.assertChars("b").assertFlush();
     controller.connector.assertChars("c").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.connector.append("def\r\n");
@@ -96,7 +96,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("f").assertFlush();
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("def").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -116,7 +116,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("cb").assertMoveLeft().assertFlush();
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("acb").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -133,7 +133,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("a").assertFlush();
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("a").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -150,7 +150,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("a").assertFlush();
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("a").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -166,7 +166,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("a").assertFlush();
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("a").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.connector.appendMoveUp();
@@ -174,7 +174,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.append("\r\n");
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("a").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.connector.appendMoveUp();
@@ -196,7 +196,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("a").assertFlush();
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("a").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.connector.appendMoveUp();
@@ -205,7 +205,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.append("\r\n");
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("a").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -221,14 +221,14 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("a").assertFlush();
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertChars("a").assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.connector.appendMoveDown();
     controller.connector.append("\r\n");
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -274,7 +274,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.append("\r\n");
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertCLS().assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -304,7 +304,7 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertCRLF().assertFlush();
     controller.connector.assertFlush(); // The good one
     controller.connector.assertFlush();
-    controller.connector.assertChars("% ").assertFlush();
+    controller.connector.assertCRLF().assertChars("% ").assertFlush();
 
     //
     controller.assertStop();
@@ -360,7 +360,7 @@ public class ProcessorTestCase extends TestCase {
       assertTrue(running);
 
       //
-      //connector.assertCRLF();
+      connector.assertCRLF();
       connector.assertChars("% ");
       connector.assertFlush();
     }
