@@ -73,39 +73,6 @@
     </developer>
   </developers>
 
-  <repositories>
-    <repository>
-      <id>repository.jboss.org</id>
-      <url>http://repository.jboss.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>maven2-repository.dev.java.net</id>
-      <url>http://download.java.net/maven/2/</url>
-    </repository>
-    <repository>
-      <id>repository.exoplatform.org</id>
-      <url>http://repository.exoplatform.org/public</url>
-    </repository>
-    <repository>
-      <id>evgeny-goldin.org</id>
-      <url>http://evgeny-goldin.org/artifactory/repo/</url>
-    </repository>    
-  </repositories>
-  
-  <pluginRepositories>
-    <pluginRepository>
-      <id>evgeny-goldin.org</id>
-      <url>http://evgeny-goldin.org/artifactory/repo/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>repository.exoplatform.org</id>
-      <url>http://repository.exoplatform.org/public</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <properties>
     <!-- Repositories URLs -->
     <crsh.releases.repo.url>http://repository.exoplatform.org/service/local/staging/deploy/maven2/</crsh.releases.repo.url>
@@ -773,6 +740,47 @@
   </build>
 
   <profiles>
+
+    <profile>
+      <id>repo</id>
+      <activation>
+        <property>
+          <name>!repo</name>
+        </property>
+      </activation>
+      <repositories>
+        <repository>
+          <id>repository.jboss.org</id>
+          <url>http://repository.jboss.org/maven2</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>maven2-repository.dev.java.net</id>
+          <url>http://download.java.net/maven/2/</url>
+        </repository>
+        <repository>
+          <id>repository.exoplatform.org</id>
+          <url>http://repository.exoplatform.org/public</url>
+        </repository>
+        <repository>
+          <id>evgeny-goldin.org</id>
+          <url>http://evgeny-goldin.org/artifactory/repo/</url>
+        </repository>
+      </repositories>
+
+      <pluginRepositories>
+        <pluginRepository>
+          <id>evgeny-goldin.org</id>
+          <url>http://evgeny-goldin.org/artifactory/repo/</url>
+        </pluginRepository>
+        <pluginRepository>
+          <id>repository.exoplatform.org</id>
+          <url>http://repository.exoplatform.org/public</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
 
     <!-- Deploy profile -->
     <profile>
