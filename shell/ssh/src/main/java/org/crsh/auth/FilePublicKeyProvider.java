@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.ssh.term;
+package org.crsh.auth;
 
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.util.SecurityUtils;
@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public class FilePublicKeyProvider extends AbstractKeyPairProvider {
+class FilePublicKeyProvider extends AbstractKeyPairProvider {
 
   /** . */
   private static final Logger LOG = LoggerFactory.getLogger(FilePublicKeyProvider.class);
@@ -49,11 +49,11 @@ public class FilePublicKeyProvider extends AbstractKeyPairProvider {
   /** . */
   private PasswordFinder passwordFinder;
 
-  public FilePublicKeyProvider(String[] files) {
+  FilePublicKeyProvider(String[] files) {
     this.files = files;
   }
 
-  public FilePublicKeyProvider(String[] files, PasswordFinder passwordFinder) {
+  FilePublicKeyProvider(String[] files, PasswordFinder passwordFinder) {
     this.files = files;
     this.passwordFinder = passwordFinder;
   }

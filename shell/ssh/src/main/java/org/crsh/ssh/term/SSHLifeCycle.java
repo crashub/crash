@@ -31,7 +31,6 @@ import org.crsh.term.spi.TermIOHandler;
 import org.crsh.vfs.Resource;
 
 import java.security.PublicKey;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,15 +63,11 @@ public class SSHLifeCycle extends TermLifeCycle {
   /** . */
   private Integer localPort;
 
-  /** . */
-  private final Set<PublicKey> authorizedKeys;
-
-  public SSHLifeCycle(PluginContext context, AuthenticationPlugin authentication, Set<PublicKey> authorizedKeys) {
+  public SSHLifeCycle(PluginContext context, AuthenticationPlugin<?> authentication) {
     super(context);
 
     //
     this.authentication = authentication;
-    this.authorizedKeys = authorizedKeys;
   }
 
   public int getPort() {
@@ -116,31 +111,19 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setKeyPairProvider(new URLKeyPairProvider(key));
 
       //
-      if (authorizedKeys != null && authorizedKeys.size() > 0) {
-        server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
-          public boolean authenticate(String username, PublicKey key, ServerSession session) {
-            if (authorizedKeys.contains(key)) {
-              log.log(Level.FINE, "Authenticated " + username + " with public key " + key);
-              return true;
-            } else {
-              log.log(Level.FINE, "Denied " + username + " with public key " + key);
+      if (authentication.getCredentialType().equals(String.class)) {
+        @SuppressWarnings("unchecked")
+        final AuthenticationPlugin<String> passwordAuthentication = (AuthenticationPlugin<String>)authentication;
+        server.setPasswordAuthenticator(new PasswordAuthenticator() {
+          public boolean authenticate(String _username, String _password, ServerSession session) {
+            boolean auth;
+            try {
+              log.log(Level.FINE, "Using authentication plugin " + authentication + " to authenticate user " + _username);
+              auth = passwordAuthentication.authenticate(_username, _password);
+            } catch (Exception e) {
+              log.log(Level.SEVERE, "Exception authenticating user " + _username + " in authentication plugin: " + authentication, e);
               return false;
             }
-          }
-        });
-      }
-
-      //
-      server.setPasswordAuthenticator(new PasswordAuthenticator() {
-        public boolean authenticate(String _username, String _password, ServerSession session) {
-          boolean auth;
-          try {
-            log.log(Level.FINE, "Using authentication plugin " + authentication + " to authenticate user " + _username);
-            auth = authentication.authenticate(_username, _password);
-          } catch (Exception e) {
-            log.log(Level.SEVERE, "Exception authenticating user " + _username + " in authentication plugin: " + authentication, e);
-            return false;
-          }
 
           // We store username and password in session for later reuse
           session.setAttribute(USERNAME, _username);
@@ -150,6 +133,24 @@ public class SSHLifeCycle extends TermLifeCycle {
           return auth;
         }
       });
+      } else if (authentication.getCredentialType().equals(PublicKey.class)) {
+        @SuppressWarnings("unchecked")
+        final AuthenticationPlugin<PublicKey> keyAuthentication = (AuthenticationPlugin<PublicKey>)authentication;
+        server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
+          public boolean authenticate(String username, PublicKey key, ServerSession session) {
+            try {
+              log.log(Level.FINE, "Using authentication plugin " + authentication + " to authenticate user " + username);
+
+
+              return keyAuthentication.authenticate(username, key);
+            }
+            catch (Exception e) {
+              log.log(Level.SEVERE, "Exception authenticating user " + username + " in authentication plugin: " + authentication, e);
+              return false;
+            }
+          }
+        });
+      }
 
       //
       log.log(Level.INFO, "About to start CRaSSHD");

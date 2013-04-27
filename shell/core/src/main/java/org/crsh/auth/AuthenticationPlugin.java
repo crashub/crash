@@ -21,7 +21,12 @@ package org.crsh.auth;
 
 import org.crsh.plugin.PropertyDescriptor;
 
-public interface AuthenticationPlugin {
+/**
+ * The authentication plugin.
+ *
+ * @param <C> the credential parameter type
+ */
+public interface AuthenticationPlugin<C> {
 
   /** The authentication plugin to use. */
   PropertyDescriptor<String> AUTH = PropertyDescriptor.create("auth", (String)null, "The authentication plugin");
@@ -29,11 +34,14 @@ public interface AuthenticationPlugin {
   /**
    * The plugin that never authenticates, returns the name value <code>null</code>.
    */
-  AuthenticationPlugin NULL = new AuthenticationPlugin() {
+  AuthenticationPlugin<Object> NULL = new AuthenticationPlugin<Object>() {
+    public Class<Object> getCredentialType() {
+      return Object.class;
+    }
     public String getName() {
       return "null";
     }
-    public boolean authenticate(String username, String password) throws Exception {
+    public boolean authenticate(String username, Object password) throws Exception {
       return false;
     }
   };
@@ -46,12 +54,19 @@ public interface AuthenticationPlugin {
   String getName();
 
   /**
-   * Returns true if the user is authentified by its username and password.
+   * Returns the credential type.
+   *
+   * @return the credential type
+   */
+  Class<C> getCredentialType();
+
+  /**
+   * Returns true if the user is authentified by its username and credential.
    *
    * @param username the username
-   * @param password the password
+   * @param credential the credential
    * @return true if authentication succeeded
    * @throws Exception any exception that would prevent authentication to happen
    */
-  boolean authenticate(String username, String password) throws Exception;
+  boolean authenticate(String username, C credential) throws Exception;
 }

@@ -97,21 +97,17 @@ jaas domain to use when performing authentication:
 {{code}}
 # Authentication configuration
 crash.auth=jaas
-crash.auth.jaas.domain=gatein-domain
+crash.auth.jaas.domain=my-domain
 {{/code}}
 
-=== Configuring SSH authorized key ===
+=== Key authentication ===
 
-The //crash.ssh.authorized.keypath// property can be used to configure the SSH server to use a public key for performing
-authentication. The property should point to a valid //.pem// file. Obviously only a public key is required to be in the
-file, although it can also contain a private key (that will not be used).
+Key authentication relies on a set of authorized public keys to perform authentication configured with the
+//crash.auth.key.path// property to specify the path of the keys. . The property should point to a valid //.pem// file.
+Obviously only a public key is required to be in the file, although it can also contain a private key (that will not be used).
 
 {{code}}
 # Authentication configuration
-crash.auth.authorized.keypath=/Users/julien/.ssh/id_dsa.pem
+crash.auth=key
+crash.auth.key.path=/Users/julien/.ssh/id_dsa.pem
 {{/code}}
-
-{{note}}
-In case you are using an authorized SSH key for authentication, you can disable password based authentication by clearing
- the //crash.auth// property.
-{{/note}}
