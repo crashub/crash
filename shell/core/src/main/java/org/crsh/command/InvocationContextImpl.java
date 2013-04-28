@@ -19,7 +19,6 @@
 
 package org.crsh.command;
 
-import org.crsh.shell.InteractionContext;
 import org.crsh.shell.ScreenContext;
 import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.shell.impl.command.PipeLineFactory;
@@ -33,45 +32,40 @@ import java.util.Map;
 final class InvocationContextImpl<P> implements InvocationContext<P> {
 
   /** . */
-  private final InteractionContext<P> producerContext;
-
-  /** . */
-  private final RuntimeContext sessionContext;
+  private final CommandContext<P> commandContext;
 
   /** . */
   private RenderPrintWriter writer;
 
-  InvocationContextImpl(CommandContext<P> producerContext) {
-    this.producerContext = producerContext;
-    this.sessionContext = producerContext;
+  InvocationContextImpl(CommandContext<P> commandContext) {
+    this.commandContext = commandContext;
   }
 
-  InvocationContextImpl(InteractionContext<P> producerContext, RuntimeContext sessionContext) {
-    this.producerContext = producerContext;
-    this.sessionContext = sessionContext;
+  public boolean isPiped() {
+    return commandContext.isPiped();
   }
 
   public RenderPrintWriter getWriter() {
     if (writer == null) {
       writer = new RenderPrintWriter(new ScreenContext<Chunk>() {
         public int getWidth() {
-          return producerContext.getWidth();
+          return commandContext.getWidth();
         }
         public int getHeight() {
-          return producerContext.getHeight();
+          return commandContext.getHeight();
         }
         public Class<Chunk> getConsumedType() {
           return Chunk.class;
         }
         public void provide(Chunk element) throws IOException {
-          Class<P> consumedType = producerContext.getConsumedType();
+          Class<P> consumedType = commandContext.getConsumedType();
           if (consumedType.isInstance(element)) {
             P p = consumedType.cast(element);
-            producerContext.provide(p);
+            commandContext.provide(p);
           }
         }
         public void flush() throws IOException {
-          producerContext.flush();
+          commandContext.flush();
         }
       });
     }
@@ -79,11 +73,11 @@ final class InvocationContextImpl<P> implements InvocationContext<P> {
   }
 
   public boolean takeAlternateBuffer() throws IOException {
-    return producerContext.takeAlternateBuffer();
+    return commandContext.takeAlternateBuffer();
   }
 
   public boolean releaseAlternateBuffer() throws IOException {
-    return producerContext.releaseAlternateBuffer();
+    return commandContext.releaseAlternateBuffer();
   }
 
   public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
@@ -100,45 +94,45 @@ final class InvocationContextImpl<P> implements InvocationContext<P> {
   }
 
   public Class<P> getConsumedType() {
-    return producerContext.getConsumedType();
+    return commandContext.getConsumedType();
   }
 
   public String getProperty(String propertyName) {
-    return producerContext.getProperty(propertyName);
+    return commandContext.getProperty(propertyName);
   }
 
   public String readLine(String msg, boolean echo) {
-    return producerContext.readLine(msg, echo);
+    return commandContext.readLine(msg, echo);
   }
 
   public int getWidth() {
-    return producerContext.getWidth();
+    return commandContext.getWidth();
   }
 
   public int getHeight() {
-    return producerContext.getHeight();
+    return commandContext.getHeight();
   }
 
   public void provide(P element) throws IOException {
-    producerContext.provide(element);
+    commandContext.provide(element);
   }
 
   public void flush() throws IOException {
-    producerContext.flush();
+    commandContext.flush();
   }
 
   public Map<String, Object> getSession() {
-    return sessionContext.getSession();
+    return commandContext.getSession();
   }
 
   public Map<String, Object> getAttributes() {
-    return sessionContext.getAttributes();
+    return commandContext.getAttributes();
   }
 
   public InvocationContextImpl<P> leftShift(Object o) throws IOException {
-    if (producerContext.getConsumedType().isInstance(o)) {
-      P p = producerContext.getConsumedType().cast(o);
-      producerContext.provide(p);
+    if (commandContext.getConsumedType().isInstance(o)) {
+      P p = commandContext.getConsumedType().cast(o);
+      commandContext.provide(p);
     }
     return this;
   }

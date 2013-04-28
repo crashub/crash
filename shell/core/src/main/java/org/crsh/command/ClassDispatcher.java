@@ -78,7 +78,7 @@ final class ClassDispatcher extends CommandClosure {
   }
 
   Object dispatch(String methodName, Object[] arguments) {
-    PipeCommandProxy pipe = resolvePipe(methodName, arguments);
+    PipeCommandProxy pipe = resolvePipe(methodName, arguments, false);
 
     //
     try {
@@ -96,7 +96,7 @@ final class ClassDispatcher extends CommandClosure {
     }
   }
 
-  private PipeCommandProxy<?, Object> resolvePipe(String name, Object[] args) {
+  private PipeCommandProxy<?, Object> resolvePipe(String name, Object[] args, boolean piped) {
     final Closure closure;
     int to = args.length;
     if (to > 0 && args[to - 1] instanceof Closure) {
@@ -158,10 +158,10 @@ final class ClassDispatcher extends CommandClosure {
       CommandInvoker producerPipe;
       if (closure instanceof MethodDispatcher) {
         MethodDispatcher commandClosure = (MethodDispatcher)closure;
-        producerPipe = commandClosure.dispatcher.resolvePipe(commandClosure.name, new Object[0]);
+        producerPipe = commandClosure.dispatcher.resolvePipe(commandClosure.name, new Object[0], true);
       } else if (closure instanceof ClassDispatcher) {
         ClassDispatcher dispatcherClosure = (ClassDispatcher)closure;
-        producerPipe = dispatcherClosure.resolvePipe(name, new Object[0]);
+        producerPipe = dispatcherClosure.resolvePipe(name, new Object[0], true);
       } else {
 
         // That's the type we cast to
@@ -181,8 +181,6 @@ final class ClassDispatcher extends CommandClosure {
           public Class<Object> getConsumedType() {
             return type;
           }
-          public void setPiped(boolean piped) {
-          }
           public void open(CommandContext<Void> consumer) {
           }
           public void close() {
@@ -196,14 +194,13 @@ final class ClassDispatcher extends CommandClosure {
           }
         };
       }
-      producerPipe.setPiped(true);
       producer = producerPipe;
     } else {
       producer = context;
     }
 
     //
-    InnerInvocationContext inner = new InnerInvocationContext(context, producer);
+    InnerInvocationContext inner = new InnerInvocationContext(context, producer, piped);
     return new PipeCommandProxy(inner, invoker, producer);
   }
 }

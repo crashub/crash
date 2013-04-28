@@ -37,13 +37,6 @@ public interface Producer<E, C extends Consumer<E>> extends Closeable {
   Class<E> getProducedType();
 
   /**
-   * Set the pipe status.
-   *
-   * @param piped the piped status
-   */
-  void setPiped(boolean piped);
-
-  /**
    * Open the producer with the specified consumer.
    *
    * @param consumer the consumer

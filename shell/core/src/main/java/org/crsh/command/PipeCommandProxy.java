@@ -52,10 +52,6 @@ class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
     return delegate.getConsumedType();
   }
 
-  public void setPiped(boolean piped) {
-    delegate.setPiped(piped);
-  }
-
   public void open(CommandContext<P> consumer) {
     if (next != null && next instanceof PipeCommandProxy) {
       ((PipeCommandProxy)next).fire();

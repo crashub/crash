@@ -26,4 +26,7 @@ import org.crsh.shell.InteractionContext;
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
 public interface CommandContext<P> extends InteractionContext<P>, RuntimeContext {
+
+  boolean isPiped();
+
 }

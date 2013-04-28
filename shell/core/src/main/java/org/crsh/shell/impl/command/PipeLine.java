@@ -31,7 +31,7 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
   private final CommandInvoker[] invokers;
 
   /** . */
-  private Pipe.Invoker current;
+  private Pipe current;
 
   PipeLine(CommandInvoker[] invokers) {
     this.invokers = invokers;
@@ -44,10 +44,6 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
 
   public Class<Chunk> getProducedType() {
     throw new UnsupportedOperationException();
-  }
-
-  public void setPiped(boolean piped) {
-    throw new UnsupportedOperationException("This should not be called");
   }
 
   public void open(CommandContext<Chunk> consumer) {
@@ -64,27 +60,30 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
       //
       final Class produced = invoker.getProducedType();
       final Class<?> consumed = next.getConsumedType();
-
+      boolean piped = index > 0;
       if (!consumed.isAssignableFrom(produced)) {
         if (produced.equals(Void.class) || consumed.equals(Void.class)) {
           // We need to check (i.e test) what happens for chunk (i.e the writer)
-          Pipe.Sink filter = new Pipe.Sink(consumed);
+          PipeFilter.Sink filter = new PipeFilter.Sink(consumed, piped);
           filter.open(next);
           next = filter;
         } else if (consumed.equals(Chunk.class)) {
-          Pipe.Chunkizer filter = new Pipe.Chunkizer();
+          PipeFilter.Chunkizer filter = new PipeFilter.Chunkizer(piped);
           filter.open((CommandContext<Chunk>)next);
           next = filter;
         } else {
-          Pipe.Sink filter = new Pipe.Sink(consumed);
+          PipeFilter.Sink filter = new PipeFilter.Sink(consumed, piped);
           filter.open(next);
           next = filter;
         }
+      } else {
+        PipeFilter.Noop filter = new PipeFilter.Noop(piped);
+        filter.open(next);
+        next = filter;
       }
 
       //
-      Pipe.Invoker filterContext = new Pipe.Invoker(invoker);
-      filterContext.setPiped(index > 0);
+      Pipe filterContext = new Pipe(invoker);
       filterContext.open(next);
 
       // Save current filter in field

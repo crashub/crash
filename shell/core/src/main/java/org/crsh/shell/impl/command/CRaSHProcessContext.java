@@ -81,6 +81,10 @@ class CRaSHProcessContext implements CommandContext<Chunk>, Closeable {
     this.useAlternateBuffer = false;
   }
 
+  public boolean isPiped() {
+    throw new UnsupportedOperationException();
+  }
+
   public boolean takeAlternateBuffer() throws IOException {
     return useAlternateBuffer = processContext.takeAlternateBuffer();
   }
