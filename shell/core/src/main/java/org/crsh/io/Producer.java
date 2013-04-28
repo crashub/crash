@@ -24,17 +24,17 @@ import java.io.Closeable;
 /**
  * A producer that produces elements in a specific consumer.
  *
- * @param <E> the element generic type
- * @param <C> the consumer generic type
+ * @param <P> the produced element generic type
+ * @param <C> the consumer element generic type
  */
-public interface Producer<E, C extends Consumer<E>> extends Closeable {
+public interface Producer<P, C extends Consumer<P>> extends Closeable {
 
   /**
    * Returns the class of the produced type.
    *
    * @return the produced type
    */
-  Class<E> getProducedType();
+  Class<P> getProducedType();
 
   /**
    * Open the producer with the specified consumer.
