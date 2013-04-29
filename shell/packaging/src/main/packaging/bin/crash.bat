@@ -4,6 +4,9 @@ setlocal ENABLEDELAYEDEXPANSION
 REM init variables
 set CMD_LINE_ARGS=
 
+REM Uncomment for remote debugging
+REM set CRASH_DEBUG_OPTS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+
 REM Get standard environment variables
 set PRGDIR=%~dp0
 
@@ -35,9 +38,9 @@ REM Create tmp dir if it does not exist
 if not exist "%CRASH_HOME%\tmp" mkdir %CRASH_HOME%\tmp
 
 REM start the application with all parameters. Add tools.jar to the bootclasspath, otherwise it cannot be found
-REM echo "java -Xbootclasspath/a:%TOOLS_JAR% -classpath %CLASSPATH% %MAVEN_DEBUG_OPTS% -Djava.util.logging.config.file=%CRASH_HOME%\conf\logging.properties org.crsh.cli.impl.bootstrap.Main --conf %CRASH_HOME%\conf --cmd %CRASH_HOME%\cmd %CMD_LINE_ARGS%"
+REM echo "java -Xbootclasspath/a:%TOOLS_JAR% -classpath %CLASSPATH% %CRASH_DEBUG_OPTS% -Djava.util.logging.config.file=%CRASH_HOME%\conf\logging.properties org.crsh.cli.impl.bootstrap.Main --conf %CRASH_HOME%\conf --cmd %CRASH_HOME%\cmd %CMD_LINE_ARGS%"
 
-java -Xbootclasspath/a:"%TOOLS_JAR%" -classpath "%CLASSPATH%" %MAVEN_DEBUG_OPTS% -Djava.util.logging.config.file="%CRASH_HOME%\conf\logging.properties" org.crsh.cli.impl.bootstrap.Main -jar "%CRASH_HOME%\bin\%JARNAME%" --conf "%CRASH_HOME%\conf" --cmd "%CRASH_HOME%\cmd" %CMD_LINE_ARGS%
+java -Xbootclasspath/a:"%TOOLS_JAR%" -classpath "%CLASSPATH%" %CRASH_DEBUG_OPTS% -Djava.util.logging.config.file="%CRASH_HOME%\conf\logging.properties" org.crsh.cli.impl.bootstrap.Main -jar "%CRASH_HOME%\bin\%JARNAME%" --conf "%CRASH_HOME%\conf" --cmd "%CRASH_HOME%\cmd" %CMD_LINE_ARGS%
 
 set ERROR_CODE=%ERRORLEVEL%
 endlocal & set ERROR_CODE=%ERROR_CODE%
