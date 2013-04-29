@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PluginManager {
+class PluginManager {
 
   /** . */
   private final Logger log = Logger.getLogger(PluginManager.class.getName());
@@ -45,7 +45,7 @@ public class PluginManager {
     this.discovery = discovery;
   }
 
-  public synchronized Iterable<CRaSHPlugin<?>> getPlugins() {
+  synchronized Iterable<CRaSHPlugin<?>> getPlugins() {
     if (plugins == null) {
       List<CRaSHPlugin<?>> plugins = Utils.list(discovery.getPlugins());
       for (CRaSHPlugin<?> plugin : plugins) {
@@ -57,7 +57,7 @@ public class PluginManager {
     return plugins;
   }
 
-  public synchronized <T> Iterable<T> getPlugins(Class<T> wantedType) {
+  synchronized <T> Iterable<T> getPlugins(Class<T> wantedType) {
 
     //
     Iterable<CRaSHPlugin<?>> plugins = getPlugins();

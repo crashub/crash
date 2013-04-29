@@ -1,9 +1,5 @@
-import org.crsh.cli.descriptor.ParameterDescriptor
-import org.crsh.cli.spi.Completer
-import org.crsh.cli.spi.Completion
+package crash.commands.base;
 
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import java.util.regex.Pattern;
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
@@ -50,7 +46,10 @@ Interrupted thread Thread[pool-1-thread-2,5,main]
 Interrupted thread Thread[pool-1-thread-3,5,main]
 Interrupted thread Thread[pool-1-thread-4,5,main]
 Interrupted thread Thread[pool-1-thread-5,5,main]""")
-public class thread  implements Completer {
+public class thread  {
+
+  /** . */
+  private static final Pattern ANY = Pattern.compile(".*");
 
   @Usage("thread top")
   @Command
@@ -98,8 +97,6 @@ public class thread  implements Completer {
       context.releaseAlternateBuffer();
     }
   }
-
-  private static final Pattern ANY = Pattern.compile(".*");
 
   @Usage("list the vm threads")
   @Command
@@ -160,33 +157,17 @@ public class thread  implements Completer {
     }
   }
 
-  @Usage("produces threads for pipe")
-  @Man("Produces VM threads from ids (use with pipe to dump or interrupt them). eg 'thread produce 12 | thread dump'")
-  @Command
-  public void produce(
-          InvocationContext<Thread> context,
-          @ThreadId @Argument @Usage("the thread ids to produces") List<String> ids) {
-    ids.each { id ->
-      def t = getThreads()[id]
-      if (t != null) {
-        context.provide(t);
-      }
-    }
-  }
-
   @Usage("interrupt vm threads")
   @Man("Interrup VM threads.")
   @Command
-  public PipeCommand<Thread, Object> interrupt(@Argument @Usage("the thread ids to interrupt") List<String> ids) {
-/*
-    apply(context, ids, {
-      it.interrupt();
-      context.writer.println("Interrupted thread $it");
-    })
-*/
-    return new PipeCommand<Thread, Object>() {
+  public PipeCommand<Thread, Thread> interrupt(@Argument @Usage("the thread ids to interrupt") List<Thread> threads) {
+    return new PipeCommand<Thread, Thread>() {
+      void open() throws org.crsh.command.ScriptException {
+        threads.each(this.&provide)
+      }
       void provide(Thread element) throws IOException {
         element.interrupt();
+        context.provide(element);
       }
     }
   }
@@ -194,16 +175,14 @@ public class thread  implements Completer {
   @Usage("stop vm threads")
   @Man("Stop VM threads.")
   @Command
-  public PipeCommand<Thread, Object> stop(@Argument @Usage("the thread ids to stop") List<String> ids) {
-/*
-    apply(context, ids, {
-      it.stop();
-      context.writer.println("Stopped thread $it");
-    })
-*/
-    return new PipeCommand<Thread, Object>() {
+  public PipeCommand<Thread, Thread> stop(@Argument @Usage("the thread ids to stop") List<Thread> threads) {
+    return new PipeCommand<Thread, Thread>() {
+      void open() throws org.crsh.command.ScriptException {
+        threads.each(this.&provide)
+      }
       void provide(Thread element) throws IOException {
         element.stop();
+        context.provide(element);
       }
     }
   }
@@ -211,15 +190,11 @@ public class thread  implements Completer {
   @Usage("dump vm threads")
   @Man("Dump VM threads.")
   @Command
-  public PipeCommand<Thread, Object> dump(@Argument @Usage("the thread ids to dump") List<String> ids) {
-/*
-    apply(context, ids, {
-      Exception e = new Exception("Thread ${it.id} stack trace")
-      e.setStackTrace(it.stackTrace)
-      e.printStackTrace(context.writer)
-    })
-*/
+  public PipeCommand<Thread, Object> dump(@Argument @Usage("the thread ids to dump") List<Thread> threads) {
     return new PipeCommand<Thread, Object>() {
+      void open() throws org.crsh.command.ScriptException {
+        threads.each(this.&provide)
+      }
       void provide(Thread element) throws IOException {
         Exception e = new Exception("Thread ${element.id} stack trace")
         e.setStackTrace(element.stackTrace)
@@ -228,38 +203,7 @@ public class thread  implements Completer {
     }
   }
 
-    Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
-        def b = new Completion.Builder(prefix);
-        if (parameter.getAnnotation().annotationType().equals(ThreadId.class)) {
-            getThreads().each() { k, thread ->
-            if (thread.id.toString().startsWith(prefix)) {
-              b.add(thread.id.toString().substring(prefix.length()), true)
-            }
-          }
-        }
-        return b.build();
-    }
-/*
-  public void apply(InvocationContext<Thread, Void> context, List<String> ids, Closure closure) {
-    if (context.piped) {
-      context.consumer().each(closure)
-    } else {
-      Map<String, Thread> threadMap = getThreads();
-      List<String> threads = [];
-      for (String id : ids) {
-        Thread thread = threadMap[id];
-        if (thread != null) {
-          threads << thread;
-        } else {
-          throw new ScriptException("Thread $id does not exist");
-        }
-      }
-      threads.each(closure);
-    }
-  }
-*/
-
-  private ThreadGroup getRoot() {
+  static ThreadGroup getRoot() {
     ThreadGroup group = Thread.currentThread().threadGroup;
     ThreadGroup parent;
     while ((parent = group.parent) != null) {
@@ -268,7 +212,7 @@ public class thread  implements Completer {
     return group;
   }
 
-  private Map<String, Thread> getThreads() {
+  static Map<String, Thread> getThreads() {
     ThreadGroup root = getRoot();
     Thread[] threads = new Thread[root.activeCount()];
     while (root.enumerate(threads, true) == threads.length ) {
@@ -282,10 +226,3 @@ public class thread  implements Completer {
     return map;
   }
 }
-
-@Retention(RetentionPolicy.RUNTIME)
-@Usage("the thread ids")
-@Man("The ids of the thread")
-@Argument(name = "ids")
-@interface ThreadId { }
-

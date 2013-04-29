@@ -34,13 +34,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class JCRCommand extends CRaSHCommand implements Completer {
+public abstract class JCRCommand extends CRaSHCommand implements PathCompleter {
 
   protected JCRCommand() throws IntrospectionException {
   }
 
   public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
-    if (parameter.getDeclaredType() == Path.class) {
+    if (parameter.getCompleterType() == PathCompleter.class) {
 
       final Path path = (Path)getProperty("currentPath");
       final Session session = (Session)getProperty("session");

@@ -16,17 +16,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
+package org.crsh.cli.completers;
 
-import org.crsh.shell.InteractionContext;
+import org.crsh.cli.descriptor.ParameterDescriptor;
+import org.crsh.cli.spi.Completer;
+import org.crsh.cli.spi.Completion;
+
+import java.util.Enumeration;
 
 /**
- * The command context provides the services for invoking a command.
+ * A completer for system property names.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public interface CommandContext<P> extends InteractionContext<P>, RuntimeContext {
+public class SystemPropertyNameCompleter implements Completer {
 
-  boolean isPiped();
-
+  public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
+    Completion.Builder b = new Completion.Builder(prefix);
+    for (Enumeration<Object> e = System.getProperties().keys();e.hasMoreElements();) {
+      Object key = e.nextElement();
+      if (key instanceof String) {
+        String s = (String)key;
+        if (s.startsWith(prefix)) {
+          b.add(s.substring(prefix.length()), true);
+        }
+      }
+    }
+    return b.build();
+  }
 }

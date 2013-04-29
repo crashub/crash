@@ -16,15 +16,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.cli.completers;
 
-package org.crsh.io;
+import org.crsh.cli.descriptor.ParameterDescriptor;
+import org.crsh.cli.spi.Completer;
+import org.crsh.cli.spi.Completion;
 
-/**
- * A filter is the combination of a producer and a consumer.
- *
- * @param <C> the consumed element generic type
- * @param <P> the produced element generic type
- * @param <CONS> the consumer generic type
- */
-public interface Filter<C, P, CONS extends Consumer<P>> extends Consumer<C>, Producer<P, CONS>  {
+/** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
+public class ThreadCompleter implements Completer {
+
+  public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
+    Completion.Builder b = new Completion.Builder(prefix);
+    for (Thread t : Thread.getAllStackTraces().keySet()) {
+      String id = Long.toString(t.getId());
+      if (id.startsWith(prefix)) {
+        b.add(id.substring(prefix.length()), true);
+      }
+    }
+    return b.build();
+  }
+
 }

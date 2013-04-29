@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 public class SimpleAuthenticationPlugin extends
   CRaSHPlugin<AuthenticationPlugin> implements
-  AuthenticationPlugin {
+  AuthenticationPlugin<String> {
 
   /** The username. */
   public static final PropertyDescriptor<String> SIMPLE_USERNAME =
@@ -54,6 +54,10 @@ public class SimpleAuthenticationPlugin extends
     return Arrays.<PropertyDescriptor<?>>asList(
       SIMPLE_USERNAME,
       SIMPLE_PASSWORD);
+  }
+
+  public Class<String> getCredentialType() {
+    return String.class;
   }
 
   @Override

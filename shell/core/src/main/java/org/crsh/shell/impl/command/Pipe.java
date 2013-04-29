@@ -23,18 +23,22 @@ import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptException;
 import org.crsh.shell.InteractionContext;
 import org.crsh.io.Filter;
-import org.crsh.shell.ScreenContext;
-import org.crsh.text.Chunk;
-import org.crsh.text.ChunkAdapter;
 
 import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-abstract class Pipe<C, P> implements Filter<C, P, CommandContext<P>>, CommandContext<C> {
+class Pipe<C, P> implements Filter<C, P, CommandContext<P>>, CommandContext<C> {
 
   /** . */
   protected CommandContext<P> context;
+
+  /** . */
+  final Filter<C, P, InteractionContext<P>> command;
+
+  Pipe(Filter<C, P, InteractionContext<P>> command) {
+    this.command = command;
+  }
 
   public final boolean takeAlternateBuffer() throws IOException {
     return context.takeAlternateBuffer();
@@ -68,135 +72,34 @@ abstract class Pipe<C, P> implements Filter<C, P, CommandContext<P>>, CommandCon
     return context.getAttributes();
   }
 
-  /**
-   * A pipe filter that invokes a command through a {@link org.crsh.command.CommandInvoker}.
-   */
-  static class Invoker<C, P> extends Pipe<C, P> {
+  public boolean isPiped() {
+    return context.isPiped();
+  }
 
-    /** . */
-    final Filter<C, P, InteractionContext<P>> command;
+  public Class<P> getProducedType() {
+    return command.getProducedType();
+  }
 
-    Invoker(Filter<C, P, InteractionContext<P>> command) {
-      this.command = command;
-    }
+  public Class<C> getConsumedType() {
+    return command.getConsumedType();
+  }
 
-    public void setPiped(boolean piped) {
-      command.setPiped(piped);
-    }
+  public void open(CommandContext<P> consumer) {
+    this.context = consumer;
+    this.command.open(consumer);
+  }
 
-    public Class<P> getProducedType() {
-      return command.getProducedType();
-    }
-
-    public Class<C> getConsumedType() {
-      return command.getConsumedType();
-    }
-
-    public void open(CommandContext<P> consumer) {
-      this.context = consumer;
-      this.command.open(consumer);
-    }
-
-    public void provide(C element) throws IOException {
-      if (command.getConsumedType().isInstance(element)) {
-        command.provide(element);
-      }
-    }
-
-    public void flush() throws IOException {
-      command.flush();
-    }
-
-    public void close() throws ScriptException {
-      command.close();
+  public void provide(C element) throws IOException {
+    if (command.getConsumedType().isInstance(element)) {
+      command.provide(element);
     }
   }
 
-  static class Chunkizer extends Pipe<Object, Chunk> {
-
-    /** . */
-    private ChunkAdapter ca;
-
-    public Class<Chunk> getProducedType() {
-      return Chunk.class;
-    }
-
-    public Class<Object> getConsumedType() {
-      return Object.class;
-    }
-
-    public void setPiped(boolean piped) {
-      ((Pipe<Chunk, ?>)context).setPiped(piped);
-    }
-
-    public void open(final CommandContext<Chunk> consumer) {
-      ca = new ChunkAdapter(new ScreenContext<Chunk>() {
-        public int getWidth() {
-          return consumer.getWidth();
-        }
-        public int getHeight() {
-          return consumer.getHeight();
-        }
-        public Class<Chunk> getConsumedType() {
-          return Chunk.class;
-        }
-        public void provide(Chunk element) throws IOException {
-          Chunkizer.this.context.provide(element);
-        }
-        public void flush() throws IOException {
-          Chunkizer.this.context.flush();
-        }
-      });
-
-      this.context = consumer;
-    }
-
-    public void provide(Object element) throws ScriptException, IOException {
-      ca.provide(element);
-    }
-
-    public void flush() throws ScriptException, IOException {
-      ca.flush();
-    }
-
-    public void close() throws ScriptException {
-      ((Pipe<Chunk, ?>)context).close();
-    }
+  public void flush() throws IOException {
+    command.flush();
   }
 
-  static class Sink<P> extends Pipe<Object, P> {
-
-    /** . */
-    private final Class<P> producedType;
-
-    Sink(Class<P> producedType) {
-      this.producedType = producedType;
-    }
-
-    public Class<P> getProducedType() {
-      return producedType;
-    }
-
-    public void setPiped(boolean piped) {
-    }
-
-    public void open(CommandContext<P> consumer) {
-      this.context = consumer;
-    }
-
-    public void provide(Object element) throws IOException {
-    }
-
-    public Class<Object> getConsumedType() {
-      return Object.class;
-    }
-
-    public void flush() throws IOException {
-      context.flush();
-    }
-
-    public void close() {
-      ((Pipe<P, ?>)context).close();
-    }
+  public void close() throws ScriptException {
+    command.close();
   }
 }

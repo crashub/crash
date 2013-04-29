@@ -16,15 +16,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.jcr.command;
 
-package org.crsh.io;
+import org.crsh.cli.spi.Completer;
 
 /**
- * A filter is the combination of a producer and a consumer.
+ * A marker interface.
  *
- * @param <C> the consumed element generic type
- * @param <P> the produced element generic type
- * @param <CONS> the consumer generic type
+ * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public interface Filter<C, P, CONS extends Consumer<P>> extends Consumer<C>, Producer<P, CONS>  {
+public interface PathCompleter extends Completer {
 }

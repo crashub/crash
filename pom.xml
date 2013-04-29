@@ -3,7 +3,7 @@
   <groupId>org.crsh</groupId>
   <artifactId>crsh.parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.2.1-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
 
   <name>CRaSH parent</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
@@ -73,39 +73,6 @@
     </developer>
   </developers>
 
-  <repositories>
-    <repository>
-      <id>repository.jboss.org</id>
-      <url>http://repository.jboss.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>maven2-repository.dev.java.net</id>
-      <url>http://download.java.net/maven/2/</url>
-    </repository>
-    <repository>
-      <id>repository.exoplatform.org</id>
-      <url>http://repository.exoplatform.org/public</url>
-    </repository>
-    <repository>
-      <id>evgeny-goldin.org</id>
-      <url>http://evgeny-goldin.org/artifactory/repo/</url>
-    </repository>    
-  </repositories>
-  
-  <pluginRepositories>
-    <pluginRepository>
-      <id>evgeny-goldin.org</id>
-      <url>http://evgeny-goldin.org/artifactory/repo/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>repository.exoplatform.org</id>
-      <url>http://repository.exoplatform.org/public</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <properties>
     <!-- Repositories URLs -->
     <crsh.releases.repo.url>http://repository.exoplatform.org/service/local/staging/deploy/maven2/</crsh.releases.repo.url>
@@ -136,12 +103,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cli</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.cli</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -149,25 +116,25 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -175,18 +142,18 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.telnet</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -194,18 +161,18 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.ssh</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -213,12 +180,12 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.embed.spring</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.embed.spring</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -226,32 +193,32 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>war</type>
         <classifier>spring</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>zip</type>
         <classifier>mule-app</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.shell.packaging</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>tar.gz</type>
       </dependency>
 
@@ -259,37 +226,37 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.core</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -297,19 +264,19 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.exo</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.exo</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.exo</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -317,19 +284,19 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.jackrabbit</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.jackrabbit</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.jcr.jackrabbit</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -337,13 +304,13 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.plugins.crowd</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.plugins.crowd</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -351,20 +318,20 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc.reference</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>pdf</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc.reference</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc.reference</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>
 
@@ -372,13 +339,13 @@
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc.cookbook</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <type>pdf</type>
       </dependency>
       <dependency>
         <groupId>org.crsh</groupId>
         <artifactId>crsh.doc.cookbook</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>
@@ -403,7 +370,7 @@
       <dependency>
         <groupId>jline</groupId>
         <artifactId>jline</artifactId>
-        <version>2.7</version>
+        <version>2.10</version>
       </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
@@ -727,6 +694,13 @@
           <artifactId>maven-gcu-plugin</artifactId>
           <version>1.1</version>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.1</version>
+        </plugin>
+
       </plugins>
 
     </pluginManagement>
@@ -774,6 +748,82 @@
 
   <profiles>
 
+    <profile>
+      <id>release</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <!-- Release with Java 6 -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-java</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireJavaVersion>
+                      <message>You must release with Java 6!</message>
+                      <version>[1.6,1.7)</version>
+                    </requireJavaVersion>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>repo</id>
+      <activation>
+        <property>
+          <name>!repo</name>
+        </property>
+      </activation>
+      <repositories>
+        <repository>
+          <id>repository.jboss.org</id>
+          <url>http://repository.jboss.org/maven2</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>maven2-repository.dev.java.net</id>
+          <url>http://download.java.net/maven/2/</url>
+        </repository>
+        <repository>
+          <id>repository.exoplatform.org</id>
+          <url>http://repository.exoplatform.org/public</url>
+        </repository>
+        <repository>
+          <id>evgeny-goldin.org</id>
+          <url>http://evgeny-goldin.org/artifactory/repo/</url>
+        </repository>
+      </repositories>
+
+      <pluginRepositories>
+        <pluginRepository>
+          <id>evgeny-goldin.org</id>
+          <url>http://evgeny-goldin.org/artifactory/repo/</url>
+        </pluginRepository>
+        <pluginRepository>
+          <id>repository.exoplatform.org</id>
+          <url>http://repository.exoplatform.org/public</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+
     <!-- Deploy profile -->
     <profile>
       <id>deploy</id>
@@ -814,6 +864,15 @@
       -->
     <profile>
       <id>main</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+          <version>1.6</version>
+          <scope>system</scope>
+          <systemPath>${tools.jar}</systemPath>
+        </dependency>
+      </dependencies>
       <build>
         <pluginManagement>
           <plugins>
@@ -952,12 +1011,12 @@
     </profile>
 
     <profile>
-      <id>mac</id>
-      <activation>
-        <os>
-          <family>mac</family>
-        </os>
-      </activation>
+      <id>mac-1.6</id>
+        <activation>
+          <file>
+            <exists>${java.home}/../Classes/classes.jar</exists>
+          </file>
+        </activation>
       <properties>
         <tools.jar>${java.home}/../Classes/classes.jar</tools.jar>
       </properties>

@@ -22,14 +22,20 @@ package org.crsh;
 import junit.framework.AssertionFailedError;
 
 import java.util.LinkedList;
-import java.util.concurrent.Executor;
+import java.util.List;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
-public class CommandQueue implements Executor {
+public class CommandQueue extends AbstractExecutorService {
 
   /** . */
   private final LinkedList<Runnable> queue = new LinkedList<Runnable>();
+
+  /** . */
+  private final ExecutorService delegate = Executors.newSingleThreadExecutor();
 
   public synchronized void execute(Runnable command) {
     queue.addLast(command);
@@ -44,8 +50,26 @@ public class CommandQueue implements Executor {
       throw new AssertionFailedError();
     }
     Runnable runnable = queue.removeFirst();
-    FutureTask<Runnable> future = new FutureTask<Runnable>(runnable, runnable);
-    new Thread(future).start();
-    return future;
+    return delegate.submit(runnable, runnable);
+  }
+
+  public void shutdown() {
+    delegate.shutdown();
+  }
+
+  public List<Runnable> shutdownNow() {
+    return delegate.shutdownNow();
+  }
+
+  public boolean isShutdown() {
+    return delegate.isShutdown();
+  }
+
+  public boolean isTerminated() {
+    return delegate.isTerminated();
+  }
+
+  public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+    return delegate.awaitTermination(timeout, unit);
   }
 }

@@ -274,8 +274,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
             peekContext().getWriter().print(o);
           }
         }
-        public void setPiped(boolean piped) {
-        }
         public void provide(Object element) throws IOException {
           // We just drop the elements
         }
@@ -293,19 +291,12 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         /** . */
         PipeCommand real;
 
-        /** . */
-        boolean piped;
-
         public Class<Object> getProducedType() {
           return _producedType;
         }
 
         public Class<Object> getConsumedType() {
           return _consumedType;
-        }
-
-        public void setPiped(boolean piped) {
-          this.piped = piped;
         }
 
         public void open(final CommandContext<Object> consumer) {
@@ -335,7 +326,6 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
           }
 
           //
-          real.setPiped(piped);
           real.doOpen(invocationContext);
         }
 

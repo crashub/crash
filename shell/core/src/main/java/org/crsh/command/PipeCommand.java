@@ -30,17 +30,10 @@ import java.io.IOException;
 public abstract class PipeCommand<C, P> {
 
   /** . */
-  protected boolean piped;
-
-  /** . */
   protected InvocationContext<P> context;
 
   public final boolean isPiped() {
-    return piped;
-  }
-
-  void setPiped(boolean piped) {
-    this.piped = piped;
+    return context.isPiped();
   }
 
   void doOpen(InvocationContext<P> context) {

@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.logging.Level;
 
-public class JaasAuthenticationPlugin extends CRaSHPlugin<AuthenticationPlugin> implements AuthenticationPlugin {
+public class JaasAuthenticationPlugin extends CRaSHPlugin<AuthenticationPlugin> implements AuthenticationPlugin<String> {
 
   /** . */
   static final PropertyDescriptor<String> JAAS_DOMAIN = PropertyDescriptor.create("auth.jaas.domain", (String)null, "The JAAS domain name used for authentication");
@@ -45,6 +45,10 @@ public class JaasAuthenticationPlugin extends CRaSHPlugin<AuthenticationPlugin> 
   @Override
   protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
     return Collections.<PropertyDescriptor<?>>singletonList(JAAS_DOMAIN);
+  }
+
+  public Class<String> getCredentialType() {
+    return String.class;
   }
 
   public boolean authenticate(final String username, final String password) throws Exception {

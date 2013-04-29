@@ -21,6 +21,7 @@ package org.crsh.cli.type;
 
 import org.crsh.cli.completers.EmptyCompleter;
 import org.crsh.cli.completers.EnumCompleter;
+import org.crsh.cli.completers.ThreadCompleter;
 import org.crsh.cli.spi.Completer;
 
 import javax.management.ObjectName;
@@ -92,6 +93,20 @@ public abstract class ValueType<V> {
     @Override
     public <S extends ObjectName> S parse(Class<S> type, String s) throws Exception {
       return type.cast(ObjectName.getInstance(s));
+    }
+  };
+
+  /** . */
+  public static final ValueType<Thread> THREAD = new ValueType<Thread>(Thread.class, ThreadCompleter.class) {
+    @Override
+    public <S extends Thread> S parse(Class<S> type, String s) throws Exception {
+      long id = Long.parseLong(s);
+      for (Thread t : Thread.getAllStackTraces().keySet()) {
+        if (t.getId() == id) {
+          return type.cast(t);
+        }
+      }
+      throw new IllegalArgumentException("No thread " + s );
     }
   };
 

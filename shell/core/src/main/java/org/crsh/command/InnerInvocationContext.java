@@ -38,13 +38,22 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
   /** . */
   private RenderPrintWriter writer;
 
+  /** . */
+  private final boolean piped;
+
   InnerInvocationContext(
     InvocationContext<?> outter,
-    Consumer<P> consumer) {
+    Consumer<P> consumer,
+    boolean piped) {
 
     //
     this.outter = outter;
     this.consumer = consumer;
+    this.piped = piped;
+  }
+
+  public boolean isPiped() {
+    return piped;
   }
 
   public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {

@@ -19,6 +19,7 @@
 
 package org.crsh.shell.impl.async;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcess;
 import org.crsh.BaseProcessContext;
@@ -29,7 +30,6 @@ import org.crsh.shell.*;
 import org.crsh.text.Text;
 
 import java.io.IOException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class AsyncShellTestCase extends AbstractTestCase {
@@ -110,11 +110,7 @@ public class AsyncShellTestCase extends AbstractTestCase {
 
   public void testDirect() throws Exception {
     Shell shell = new BaseShell(BaseProcessFactory.ECHO);
-    AsyncShell  asyncShell = new AsyncShell(new Executor() {
-      public void execute(Runnable command) {
-        command.run();
-      }
-    }, shell);
+    AsyncShell  asyncShell = new AsyncShell(MoreExecutors.sameThreadExecutor(), shell);
 
     //
     BaseProcessContext ctx = BaseProcessContext.create(asyncShell, "hello").execute();

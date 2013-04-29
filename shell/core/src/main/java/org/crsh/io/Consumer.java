@@ -25,21 +25,21 @@ import java.io.IOException;
 /**
  * Defines the interface for a consumer.
  *
- * @param <E> the element generic type
+ * @param <C> the consumed element generic type
  */
-public interface Consumer<E> extends Flushable {
+public interface Consumer<C> extends Flushable {
 
   /**
    * Provide an element.
    *
    * @param element the provided element
    */
-  void provide(E element) throws IOException;
+  void provide(C element) throws IOException;
 
   /**
    * Returns the class of the element generic type.
    *
    * @return the consumed type
    */
-  Class<E> getConsumedType();
+  Class<C> getConsumedType();
 }

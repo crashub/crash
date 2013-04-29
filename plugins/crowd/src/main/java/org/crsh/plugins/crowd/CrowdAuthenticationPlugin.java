@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class CrowdAuthenticationPlugin extends
     CRaSHPlugin<AuthenticationPlugin> implements
-    AuthenticationPlugin {
+    AuthenticationPlugin<String> {
 
   /**
    * Logger
@@ -63,6 +63,10 @@ public class CrowdAuthenticationPlugin extends
       }
     }
     return crowdClient;
+  }
+
+  public Class<String> getCredentialType() {
+    return String.class;
   }
 
   @Override

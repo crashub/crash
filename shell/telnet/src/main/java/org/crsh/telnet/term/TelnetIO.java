@@ -161,19 +161,11 @@ public class TelnetIO implements TermIO {
         }
         Color fg = composite.getForeground();
         if (fg != null) {
-          if (fg == Color.def) {
-            termIO.setForegroundColor(BasicTerminalIO.COLORINIT);
-          } else {
-            termIO.setForegroundColor(30 + fg.code);
-          }
+          termIO.setForegroundColor(30 + fg.code);
         }
         Color bg = composite.getBackground();
         if (bg != null) {
-          if (bg == Color.def) {
-            termIO.setBackgroundColor(BasicTerminalIO.COLORINIT);
-          } else {
-            termIO.setBackgroundColor(30 + bg.code);
-          }
+          termIO.setBackgroundColor(30 + bg.code);
         }
       } else {
         termIO.resetAttributes();

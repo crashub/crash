@@ -24,7 +24,7 @@ import org.crsh.cli.type.ValueType;
 public class PathValueType extends ValueType<Path> {
 
   public PathValueType() throws NullPointerException {
-    super(Path.class);
+    super(Path.class, PathCompleter.class);
   }
 
   @Override

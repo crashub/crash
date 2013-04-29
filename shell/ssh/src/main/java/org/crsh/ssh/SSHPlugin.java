@@ -19,6 +19,7 @@
 
 package org.crsh.ssh;
 
+import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.ResourceKind;
@@ -39,11 +40,8 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   /** The SSH port. */
   public static final PropertyDescriptor<Integer> SSH_PORT = PropertyDescriptor.create("ssh.port", 2000, "The SSH port");
 
-  /** The SSH key path. */
-  public static final PropertyDescriptor<String> SSH_KEYPATH = PropertyDescriptor.create("ssh.keypath", (String)null, "The path to the key file");
-
-  /** The authentication plugin to use. */
-  public static final PropertyDescriptor<String> AUTH = PropertyDescriptor.create("auth", (String)null, "The authentication plugin");
+  /** The SSH server key path. */
+  public static final PropertyDescriptor<String> SSH_SERVER_KEYPATH = PropertyDescriptor.create("ssh.keypath", (String)null, "The path to the key file");
 
   /** . */
   private SSHLifeCycle lifeCycle;
@@ -55,7 +53,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   @Override
   protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
-    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_KEYPATH, AUTH);
+    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, AuthenticationPlugin.AUTH);
   }
 
   @Override
@@ -70,58 +68,66 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     }
 
     //
-    Resource key = null;
+    Resource serverKey = null;
 
     // Get embedded default key
-    URL keyURL = SSHPlugin.class.getResource("/crash/hostkey.pem");
-    if (keyURL != null) {
+    URL serverKeyURL = SSHPlugin.class.getResource("/crash/hostkey.pem");
+    if (serverKeyURL != null) {
       try {
-        log.log(Level.FINE, "Found embedded key url " + keyURL);
-        key = new Resource(keyURL);
+        log.log(Level.FINE, "Found embedded key url " + serverKeyURL);
+        serverKey = new Resource(serverKeyURL);
       }
       catch (IOException e) {
-        log.log(Level.FINE, "Could not load ssh key from url " + keyURL, e);
+        log.log(Level.FINE, "Could not load ssh key from url " + serverKeyURL, e);
       }
     }
 
     // Override from config if any
-    Resource res = getContext().loadResource("hostkey.pem", ResourceKind.CONFIG);
-    if (res != null) {
-      key = res;
-      log.log(Level.FINE, "Found ssh key url");
+    Resource serverKeyRes = getContext().loadResource("hostkey.pem", ResourceKind.CONFIG);
+    if (serverKeyRes != null) {
+      serverKey = serverKeyRes;
+      log.log(Level.FINE, "Found server ssh key url");
     }
 
     // If we have a key path, we convert is as an URL
-    String keyPath = getContext().getProperty(SSH_KEYPATH);
-    if (keyPath != null) {
-      log.log(Level.FINE, "Found key path " + keyPath);
-      File f = new File(keyPath);
+    String serverKeyPath = getContext().getProperty(SSH_SERVER_KEYPATH);
+    if (serverKeyPath != null) {
+      log.log(Level.FINE, "Found server key path " + serverKeyPath);
+      File f = new File(serverKeyPath);
       if (f.exists() && f.isFile()) {
         try {
-          keyURL = f.toURI().toURL();
+          serverKeyURL = f.toURI().toURL();
         } catch (MalformedURLException e) {
-          log.log(Level.FINE, "Ignoring invalid key " + keyPath, e);
+          log.log(Level.FINE, "Ignoring invalid server key " + serverKeyPath, e);
         }
       } else {
-        log.log(Level.FINE, "Ignoring invalid key path " + keyPath);
+        log.log(Level.FINE, "Ignoring invalid server key path " + serverKeyPath);
       }
     }
 
     //
-    if (keyURL == null) {
-      log.log(Level.INFO, "Could not boot SSHD due to missing key");
+    if (serverKeyURL == null) {
+      log.log(Level.INFO, "Could not boot SSHD due to missing server key");
       return;
     }
 
     // Get the authentication
-    String authentication = getContext().getProperty(AUTH);
+    AuthenticationPlugin authPlugin = AuthenticationPlugin.NULL;
+    String authentication = getContext().getProperty(AuthenticationPlugin.AUTH);
+    if (authentication != null) {
+      for (AuthenticationPlugin authenticationPlugin : getContext().getPlugins(AuthenticationPlugin.class)) {
+        if (authentication.equals(authenticationPlugin.getName())) {
+          authPlugin = authenticationPlugin;
+          break;
+        }
+      }
+    }
 
     //
     log.log(Level.INFO, "Booting SSHD");
-    SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext());
+    SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext(), authPlugin);
     lifeCycle.setPort(port);
-    lifeCycle.setKey(key);
-    lifeCycle.setAuthentication(authentication);
+    lifeCycle.setKey(serverKey);
     lifeCycle.init();
 
     //

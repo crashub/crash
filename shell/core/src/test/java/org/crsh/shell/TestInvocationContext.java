@@ -62,6 +62,10 @@ public class TestInvocationContext<C> extends BaseRuntimeContext implements Comm
     this.producedItems = Collections.emptyList();
   }
 
+  public boolean isPiped() {
+    throw new UnsupportedOperationException();
+  }
+
   public boolean takeAlternateBuffer() {
     return false;
   }

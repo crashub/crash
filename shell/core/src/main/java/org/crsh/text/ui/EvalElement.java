@@ -77,6 +77,10 @@ public class EvalElement extends Element {
         return ctx.resolve(s);
       }
 
+      public boolean isPiped() {
+        throw new UnsupportedOperationException();
+      }
+
       public boolean takeAlternateBuffer() {
         return false;
       }

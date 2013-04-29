@@ -31,6 +31,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
   public void testIsPiped() {
     lifeCycle.bind("piped", Commands.IsPiped.class);
     lifeCycle.bind("produce_command", Commands.ProduceString.class);
+    lifeCycle.bind("noop", Commands.Noop.class);
 
     //
     Commands.list.clear();
@@ -39,6 +40,9 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertEquals("", assertOk("produce_command | piped"));
     assertEquals(Arrays.asList(Boolean.TRUE), Commands.list);
+    Commands.list.clear();
+    assertEquals("", assertOk("piped | noop"));
+    assertEquals(Arrays.asList(Boolean.FALSE), Commands.list);
 
     //
     lifeCycle.bind("inscript", "produce_command piped");

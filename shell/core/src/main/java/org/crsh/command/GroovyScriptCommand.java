@@ -176,10 +176,6 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
     return new CompletionMatch(Delimiter.EMPTY, Completion.create());
   }
 
-  public void setPiped(boolean piped) {
-    this.piped = piped;
-  }
-
   public final String describe(String line, DescriptionFormat mode) {
     return null;
   }
