@@ -11,7 +11,7 @@ Moreover, you could add your command (Java/Groovy) and that's why CRaSH is reall
 * Make command for your application (add data in a cache, add user, monitor jobs ).
 * Make your JMX command.
 
-== What is the differences between CRaSH and JMX ? Is the same ? ==
+== What is the differences between CRaSH and JMX ? ==
 
 JMX provides only bean and methods.That's all.
 CRaSH permit to access to JMX and to make command with it.
@@ -21,18 +21,18 @@ CRaSH also permit to make script with thread, jdbc, entity ...
 
 == How can I run CRaSH ? ==
 
-See documentation : [[http://www.crashub.org/doc.html#running]]
+See documentation : [[reference.html#running]]
 
 == How can I connect Crash to a JVM ? ==
 
-See documentation Connection in Shell Usage chapter  [[http://www.crashub.org/doc.html#d5e219]]
+See documentation Connection in Shell Usage chapter  [[reference.html#connection]]
 
 = Basic =
 
 == What is the best way to create a command ? ==
 
 The best way to create a command is to use CRaSH utilities.
-See command as a class : [[http://www.crashub.org/doc.html#d5e531]]
+See command as a class : [[reference.html#command_as_class]]
 
 == What is the best way to start with CRaSH ? ==
 

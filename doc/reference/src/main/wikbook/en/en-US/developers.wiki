@@ -38,7 +38,7 @@ It can be even Groovier:
 out << "Hello World"
 {{/code}}
 
-== Commands as a class ==
+== Commands as a class {{anchor id=command_as_class /}} ==
 
 Class can also be used for defining a command, it provides significant advantages over scripts:
 

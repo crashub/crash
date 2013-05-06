@@ -1,6 +1,6 @@
 = Shell usage =
 
-== Connection ==
+== Connection {{anchor id=connection /}}==
 
 You need to connect using telnet, SSH or //directly// to use the
 shell.  The last method is a special mode using the JVM input and output.
