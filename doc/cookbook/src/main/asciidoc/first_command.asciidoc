@@ -2,22 +2,19 @@
 In this cookbook, you will learn how to create a simple script command. You will see that
 you can create it dynamically without restarting CRaSH.
 
-{{note}}
-A better solution to create a command is to use CRaSH class.It provides tools
-to simply command creation.
-{{/note}}
+NOTE: A better solution to create a command is to use CRaSH class.It provides tools to simply command creation.
 
-= Run CRaSH =
+== Run CRaSH
 
-{{screen}}
+----
 cd $CRASH_HOME/bin
 ./crash.sh
 Type help at prompt
-{{/screen}}
+----
 
 You will see something like :
 
-{{screen}}
+----
  Try one of these commands with the -h or --help switch:
 
 NAME      DESCRIPTION
@@ -41,37 +38,34 @@ sleep     sleep for some time
 sort      Sort a map
 system    vm system properties commands
 thread    JVM thread commands
-{{/screen}}
+----
 
-= Add new command =
+== Add new command
 
 To add a command to CRaSH. You have to add a groovy file in the cmd directory :
 
-{{screen}}
+----
 cd $CRASH_HOME/cmd
 vi test.groovy
-{{/screen}}
+----
 
 Put the following in test.groovy :
 
-{{screen}}
+[source,groovy]
+----
 for (int i = 0;i < 10;i++) {
   System.out.println("CRaSH is cool !");
 }
-{{/screen}}
+----
 
-{{note}}
-In this example, we create a command by using Java syntax.
-It's because Groovy understand Java Syntax. So you could begin to develop
+NOTE: In this example, we create a command by using Java syntax. It's because Groovy understand Java Syntax. So you could begin to develop
 your command in Java and when you want try cool Groovy stuff.
-{{/note}}
 
+== refresh console
 
-= refresh console =
+Type help again at prompt and you will see +test+ command.
 
-Type help again at prompt and you will see ##test## command.
-
-{{screen}}
+----
   % help
 Try one of these commands with the -h or --help switch:
 
@@ -97,4 +91,4 @@ sort      Sort a map
 system    vm system properties commands
 test
 thread    JVM thread commands
-{{/screen}}
+----

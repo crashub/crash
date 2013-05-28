@@ -1,0 +1,113 @@
+CRaSH is configured by a set of properties, the properties are configured differently according to the mode.
+
+== Configuring the standalone or attach mode
+
+In standalone or attach mode configuration can be in the _/conf/crash.properties_ file or via the command line directly.
+
+The _crash.properties_ file does not exist by default and it is created at the first run, so you should run CRaSH
+at least once to extract the file:
+
+----
+% crash
+----
+
+You can also specify properties as a CRaSH command line argument with the _-p_ option:
+
+----
+% crash -p crash.property_name=property_value
+----
+
+== Configuring the web application mode
+
+In the war file packaging, the configuration file can be found under _/WEB-INF/crash/crash.properties_ file of the archive.
+Configuration can be overriden by Java Virtual Machine system properties by using the same property name.
+
+== Configuration properties
+
+=== Changing SSH server key
+
+The key can be changed by replacing the file _WEB-INF/sshd/hostkey.pem_. Alternatively you can configure the server
+to use an external file by using the _crash.ssh.keypath_ parameter in the _crash.properties_. Uncomment the corresponding
+property and change the path to the key file.
+
+----
+#crash.ssh.keypath=/path/to/the/key/file
+----
+
+=== Changing telnet or SSH server ports
+
+The ports of the server are parameterized by the _crash.ssh.port_ and _crash.telnet.port_ parameters in the _crash.properties_ file
+
+----
+# SSH configuration
+crash.ssh.port=2000
+----
+
+----
+# Telnet configuration
+crash.telnet.port=5000
+----
+
+=== Removing telnet or SSH access
+
+* to remove the telnet access, remove the jar file in the _WEB-INF/lib/crsh.shell.telnet-{version}.jar_ .
+* to remove the SSH access, remove the jar file in the _WEB-INF/lib/crsh.shell.ssh-{version}.jar_ .
+
+=== Configuring shell default message
+
+The _/WEB-INF/crash/commands/base/login.groovy_ file contains two closures that are evaluated each time a message is required
+
+* The +prompt+ closure returns the prompt message
+* The +welcome+ closure returns the welcome message
+
+Those closure can be customized to return different messages.
+
+=== Configuring authentication
+
+Authentication is used by the SSH server when a user authenticates. Authentication interface is pluggable and has default
+implementations. The <<pluggable_auth,authentication chapter>> explains how to write a custom authentication plugin, in this section we cover the
+configuation of the authentication.
+
+The configuration of the authentication plugin is done via property, this is necessary because several plugins can be detected
+by CRaSH, and the plugin is selected via the property _crash.auth_ that must match the authentication plugin name:
+
+----
+crash.auth=simple
+----
+
+CRaSH comes out of the box with two authentication plugins.
+
+==== Simple authentication
+
+Simple authentication provides a simple username/password authentication configured with the _crash.auth.simple.username_ and
+_crash.auth.simple.password_ properties:
+
+----
+# Authentication configuration
+crash.auth=simple
+crash.auth.simple.username=admin
+crash.auth.simple.password=admin
+----
+
+==== Jaas authentation
+
+Jaas authentication uses jaas to perform authentication configured with the _crash.auth.jaas.domain_ property to define the
+jaas domain to use when performing authentication:
+
+----
+# Authentication configuration
+crash.auth=jaas
+crash.auth.jaas.domain=my-domain
+----
+
+==== Key authentication
+
+Key authentication relies on a set of authorized public keys to perform authentication configured with the
+_crash.auth.key.path_ property to specify the path of the keys. The property should point to a valid _.pem_ file.
+Obviously only a public key is required to be in the file, although it can also contain a private key (that will not be used).
+
+----
+# Authentication configuration
+crash.auth=key
+crash.auth.key.path=/Users/julien/.ssh/id_dsa.pem
+----

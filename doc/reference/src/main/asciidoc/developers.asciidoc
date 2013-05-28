@@ -1,0 +1,585 @@
+== Developping commands
+
+A CRaSH command is written in the http://groovy.codehaus.org/[Groovy] language. The Groovy language provides
+several signifiant advantages:
+
+* Commands can be bare scripts or can be a class
+* Java developers can write Groovy commands without learning much of it
+* Groovy is a dynamic language and can manipulate unknown types
+
+Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell.
+The files are located in
+* _cmd_ directory for the standalone distribution
+* _/WEB-INF/crash/commands_ directory for the web archive deployment
+
+New commands can directly be placed in the commands directory; however they can also be placed in a sub directory of the
+command directory, which is useful to group commands of the same kind.
+
+In addition of that there are two special files called _login.groovy_ and _logout.groovy_ that are executed upon login
+and logout of a user. They are useful to setup and cleanup things related to the current user session.
+
+=== Commands as a script
+
+The simplest command can be a simple script that returns a string
+
+----
+return "Hello World";
+----
+
+The +out+ implicit variable can be used to send a message to the console:
+
+----
+out.println("Hello World");
+----
+
+It can be even Groovier:
+
+----
+out << "Hello World"
+----
+
+=== Commands as a class
+
+[[command_as_class]]
+
+Class can also be used for defining a command, it provides significant advantages over scripts:
+
+* A command can declare options and arguments for the command
+* Sub command style (git style) can be expressed easily
+
+When the user types a command in the sell, the command line is parsed by the _cmdline_ framework and injected in
+the command class.
+
+Let's study a simple class command example:
+
+[source,java]
+----
+import org.crsh.cli.Command;
+import org.crsh.cli.Usage;
+import org.crsh.cli.Option;
+
+class date {
+  @Usage("show the current time")
+  @Command
+  Object main(
+     @Usage("the time format")
+     @Option(names=["f","format"])
+     String format) {
+    if (format == null)
+      format = "EEE MMM d HH:mm:ss z yyyy";
+    def date = new Date();
+    return date.format(format);
+  }
+}
+----
+
+The command is pretty straightforward to grasp:
+
+* The +@Command+ annotation declares the +main+ method as a command
+* The command takes one optional +format+ option declared by the +@Option+ annotation
+* The +@Usage+ annotation describes the usage of the command and its parameters
+
+----
+% date
+Thu Apr 19 15:44:05 CEST 2012
+----
+
+The +@Usage+ annotation is important because it will give a decent human description of the command
+
+----
+% date -h
+usage: date [-h | --help] [-f | --format]
+
+   [-h | --help]   command usage
+   [-f | --format] the time format
+----
+
+=== Sub commands
+
+A class can hold several commands allowing a single file to group several commands, let's study the JDBC command
+structure:
+
+[source,java]
+----
+@Usage("JDBC connection")
+class jdbc {
+
+  @Usage("connect to database with a JDBC connection string")
+  @Command
+  public String connect(
+          @Usage("The username")
+          @Option(names=["u","username"])
+          String user,
+          @Usage("The password")
+          @Option(names=["p","password"])
+          String password,
+          @Usage("The extra properties")
+          @Option(names=["properties"])
+          Properties properties,
+          @Usage("The connection string")
+          @Argument
+          String connectionString) {
+     ...
+  }
+
+  @Usage("close the current connection")
+  @Command
+  public String close() {
+     ...
+  }
+}
+----
+
+We can see that the class declares two commands +connect+ and +close+, they are invoked this way:
+
+----
+% jdbc connect jdbc:derby:memory:EmbeddedDB;create=true
+Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
+% jdbc close
+Connection closed
+----
+
+=== Command line annotations
+
+Let's review the various annotations for declaring a command.
+
+==== +@org.crsh.cli.Command+
+
+Defines a command method, when using a mono command the method should be named +main+:
+
+[source,java]
+----
+public class sample {
+
+  @Command
+  public void main() {
+    ...
+  }
+}
+----
+
+Using this annotation automatically turns a class into a class command.
+
+NOTE: Previous versions of CRaSH required command classes to extend the +org.crsh.command.CRaSHCommand+ class, this is not
+necessary anymore as the +@Command+ annotation is enough.
+
+Sub commands will simply declares several methods:
+
+[source,java]
+----
+public class sample {
+
+  @Command
+  public void sub1() {
+    ...
+  }
+
+  @Command
+  public void sub2() {
+    ...
+  }
+}
+----
+
+==== +@org.crsh.cli.Option+
+
+Declares an option, the _names_ member must be specified: single letter name are turned into posix style option (single hyphen)
+other names are turned into GNU style option (double hyphen). Several names can specified as aliases of the same option. Option
+can be declared as method parameters or a class fields.
+
+[source,java]
+----
+public class sample {
+
+  @Option(names = ["o", "opt1"])
+  private String opt1;
+
+  @Command
+  public void sub1(@Option(names = ["opt2"]) String opt2) {
+    ...
+  }
+}
+----
+
+----
+> sample foo
+> sample -o foo
+> sample --opt1 foo sub1
+> sample sub1 --opt2 bar
+> sample --opt1 foo foo sub1 --opt2 bar
+----
+
+==== +@org.crsh.cli.Argument+
+
+Declares an argument, this annotation should be declares as method parameters.
+
+[source,java]
+----
+public class sample {
+
+  @Command
+  public void sub1(@Argument String arg) {
+    ...
+  }
+}
+----
+
+----
+> sample sub1
+> sample sub1 foo
+----
+
+==== +@org.crsh.cli.Required+
+
+By default a parameter is optional, the +@Required+ annotation can be used to force the user to specify a parameter:
+
+[source,java]
+----
+public class sample {
+
+  @Command
+  public void sub1(@Required @Argument String arg) {
+    ...
+  }
+}
+----
+
+==== +@org.crsh.cli.Usage+ and +@org.crsh.cli.Man+
+
+Those annotations are useful for documenting commands help and manual:
+
+[source,java]
+----
+@Usage("sample commands")
+public class sample {
+
+  @Command
+  @Usage("command description, begins with lower case")
+  @Man("Verbose descrition of the argument, it should begin with an upper case")
+  public void sub1(
+    @Usage("argument description, begins with a lower case")
+    @Man("Verbose description of the argument, it should begin with an upper case")
+    @Argument String arg) {
+    ...
+  }
+}
+----
+
+* +@Usage+ specifies the usage, rather a short description
+* +@Man+ provides the manuel, rather a verbose description
+
+=== Parameter types
+
+Option and argument parameters are represented by _simple_ types. The string type is universal and will
+work with any value provided by the user, other types will require parsing.
+
+==== Builtin types
+
+CRaSH provides supports a few builtin simple types other than string:
+
+* +Integer+ type
+* +Boolean+ type
+* +java.util.Properties+ type
+* +javax.management.ObjectName+ type
+* +Enum+ types
+
+Boolean type is special because it does not need a value when combined with options. The option declaration is enough
+to set the value to true:
+
+[source,java]
+----
+public class sample {
+
+  @Command
+  public void sub1(@Option(names = ["o"]) Boolean opt) {
+    ...
+  }
+}
+----
+
+The option will be true with:
+
+----
+> sample sub1 -o
+----
+
+==== Providing your own type
+
+Providing a custom type is possible, CRaSH uses the +ServiceLoader+ discovery mechanism to discover custom types. Custom
+types are implemented by a +org.crsh.cli.type.ValueType+ subclass and implement its +parse+ method:
+
+[source,java]
+.Our custom value type
+----
+package my;
+
+public class CustomValueType extends ValueType<Custom> {
+
+  public CustomValueType() {
+    super(Custom.class); _ // <1>
+  }
+
+  @Override
+  public <S extends Custom> S parse(Class<S> type, String s) throws Exception {
+    return type.cast(new Custom(s)); // <2>
+  }
+}
+----
+<1> The custom type is passed to the super class
+<2> The parse method should reutrn an instance of the type
+
+NOTE: The +parse+ method uses the +<S>+ generic type because the implementation of enum types has an effective
+ type which is a subclass of the base enum type.
+
+In order to make the custom type discovered by CRaSH, a file named _org.crsh.cli.type.ValueType_ should be placed
+in the _/META-INF/services/_ directory of the jar containing the custom value type:
+
+.The custom value type declared in META-INF/services/org.crsh.cli.type.ValueType
+----
+my.CustomValueTpye
+----
+
+=== Parameter multiplicity
+
+The multiplicity is the number of values expected by a parameter, the multiplicity with simple types is always 1. The arity can
+also be _several_ when the +java.util.List+ type is used.
+
+[source,java]
+----
+public class sample {
+
+  @Command
+  public void sub1(@Option(names = ["o"]) List<String> opts) {
+    ...
+  }
+}
+----
+
+The option can now accept several values:
+
+----
+> sample sub1 -o foo -o bar
+----
+
+== Parameter annotations: Don't Repeat Yourself
+
+When one or several commands uses the same parameter (option or argument), there is the opportunity to avoid repetition and
+ define a custom annotation that can be used for declaring the parameter:
+
+[source,java]
+----
+@Retention(RetentionPolicy.RUNTIME)
+@Usage("A color")
+@Option(names = "c")
+public @interface PathOption {
+}
+----
+
+The annotation can then be used instead for declaring an option:
+
+[source,java]
+----
+public class mycommand {
+  @Command
+  public void foo(@ColorOption String color) {
+    ...
+  }
+  @Command
+  public void bar(@ColorOption String color) {
+    ...
+  }
+}
+----
+
+== Command context
+
+[[command_context]]
+
+During the execution of a command, CRaSH provides a _context_ for
+interacting with it : the property _context_ is resolved to an instance of +org.crsh.command.InvocationContext+,
+the invocation context class extends
+the +org.crsh.command.CommandContext+. Let's have a look at those types:
+
+[source,java]
+.The command context
+----
+{@javadoc org.crsh.command.CommandContext}
+{@include org.crsh.command.CommandContext}
+----
+
+The +CommandContext+ provides access to the shell session as a +Map<String, Object>+. Session attributes
+can be accessed using this map, but they are also accessible as Groovy script properties. It means that writing such
+code will be equivalent:
+
+[source,java]
+.Using shell session
+----
+context.session["foo"] = "bar"; // <1>
+out.println(bar); // // <2>
+----
+<1> Bind the session attribute foo with the value bar
+<2> The bar is resolved as an session attribute by Groovy
+
+The +CommandContext+ provides also access to the shell attributes as a +Map<String, Object>+. Context attributes
+are useful to interact with object shared globally by the CRaSH environment:
+
+* When embedded in a web application context, attributes resolves to servlet context attributes.
+* When embedded in Spring context, attributes resolve to Spring objects:
+** _attributes.factory_ returns the Spring factory
+** _attributes.beans_ returns Spring beans, for example _attribute.beans.telnet_ returns the _telnet_ bean
+* When attached to a virtual machine, the context attributes has only a single +instrumentation+ entry
+ that is the +java.lang.instrument.Instrumentation+ instance obtained when attaching to a virtual machine.
+
+[source,java]
+.Obtaining a Spring bean
+----
+def bean = context.attributes.beans["TheBean"];
+----
+
+Now let's examine the +InvocationContext+ that extends the +CommandContext+:
+
+[source,java]
+.The invocation context
+----
+{@javadoc org.crsh.command.InvocationContext}
+{@include org.crsh.command.InvocationContext}
+----
+
+The +PrintWriter+ object is the command output, it can be used also via the _out_ property in Groovy scripts:
+
+[source,java]
+.Printing on the shell
+----
+context.writer.print("Hello"); // <1>
+out.print("hello"); // <2>
+----
+<1> Printing using the context writer
+<2> Printing using the _out_
+
+The +readLine+ method can be used to get interactive information from the user during the execution of a command.
+
+[source,java]
+.Reading on the console
+----
+def age = context.readLine("How old are you?", false);
+----
+
+Finally the +isPiped+, +consume+ and +produce+ methods are used when writing commands that exchange objects via
+the pipe mechanism.
+
+== Adding style
+
+CRaSH adds (since version 1.1) the support for colored text and text decoration. Each portion of text printed
+ has three style attributes:
+
+* _Decoration_ : bold, underline or blink, as the +org.crsh.text.Decoration+ enum.
+* _Foreground_ color.
+* _Background_ color.
+
+Available colors are grouped as the +org.crsh.text.Color+ enum: black, red, green, yellow, blue, magenta, cyan, white.
+
+Decoration and colors can be applied with overloaded +print+ and +println+ methods provided by the +ShellPrinterWriter+.
+This printer is available as the implicit _out_ attribute or thanks to the +<<command_context,context>>.getWriter()+
+method.
+
+[source,java]
+.Decorating and coloring text
+----
+out.println("hello", red); // <1>
+out.println("hello", red, blue); // <2>
+out.println("hello", underline, red, blue); // <3>
+----
+<1> Print hello in red color
+<2> Print hello in red with a red blue
+<3> Print hello in red underlined with a red blue
+
+The combination of the decoration, background and foreground colors is a _style_ represented by the +org.crsh.text.Style+
+object. Styles can be used like decoration and colors:
+
+[source,java]
+.Printing styled text
+----
+out.println("hello", style(red)); <1>
+out.println("hello", style(red, blue)); <2>
+out.println("hello", style(underline, red, blue)); <3>
+----
+<1> Print hello in red color
+<2> Print hello in red with a red blue
+<3> Print hello in red underlined with a red blue
+
+When using the print methods, the style will be used for the currently printed object. It is possible to change the
+style permanently (until it is reset) using Groovy _leftshift_ operator : +<<+
+
+By default the +<<+ operator prints output on the console. The +ShellPrintWriter+ overrides the operator to work
+with color, decoration and styles:
+
+[source,java]
+.Styling with the leftshift operator
+----
+out << red // <1>
+out << underline // <2>
+out << "hello" // <3>
+out << reset; // <4>
+----
+<1> Set red foreground color
+<2> Set underline
+<3> Print hello in underlined red
+<4> Reset style
+
+Operators can also be combined on the same line providing a more compact syntax:
+
+[source,java]
+----
+out << red << underline << "hello" << reset
+----
+
+[source,java]
+----
+out << style(underline, red, blue) << "hello" << reset
+----
+
+NOTE: Throughout the examples we have used decoration, color and styles. CRaSH automatically imports those classes so
+they can be used out of the box in any CRaSH command without requiring prior import.
+
+== Inter command API
+
+In this section we study how a command can reuse existing commands. Here is an example
+
+[source,java]
+.dbscript.groovy
+----
+jdbc.connect username:root, password:crash, "jdbc:derby:memory:EmbeddedDB;create=true"
+jdbc.execute "create table derbyDB(num int, addr varchar(40))"
+jdbc.execute "insert into derbyDB values (1956,'Webster St.')"
+jdbc.execute "insert into derbyDB values (1910,'Union St.')"
+jdbc.execute "select * from derbyDb"
+jdbc.close
+----
+
+This script is written in Groovy and use Groovy DSL capabilities, let's study the first statement:
+
+* the +jdbc.connect+ statement can be decomposed into two steps
+** the +jdbc+ is resolved as the command itself
+** the +connect+ invokes the connect command
+* the +username+ and +password+ are considered as command options
+* the SQL statement +"jdbc:derby:memory:EmbeddedDB;create=true"+ is the main argument of the command
+
+It is equivalent to the shell command:
+
+----
+% jdbc connect --username root --password crash jdbc:derby:memory:EmbeddedDB;create=true
+----
+
+The rest of the script is fairly easy to understand, here is the output of the script execution:
+
+----
+% dbscript
+Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
+Query executed successfully
+Query executed successfully
+Query executed successfully
+NUM                  ADDR
+1956                 Webster St.
+1910                 Union St.
+Connection closed
+----

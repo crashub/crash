@@ -1,71 +1,56 @@
-= General =
+== General
 
-== What is CRaSH ? ==
+=== What is CRaSH ?
 
 CRaSH is a shell that extends JVM. With CRaSH, you will connect with a shell directly on a JVM.
 Moreover, you could add your command (Java/Groovy) and that's why CRaSH is really interesting.
 
-== What can I do with CRaSH ? ==
+=== What can I do with CRaSH ?
 
 * Monitoring JVM and make your own dashboard command.
 * Make command for your application (add data in a cache, add user, monitor jobs ).
 * Make your JMX command.
 
-== What is the differences between CRaSH and JMX ? ==
+=== What is the differences between CRaSH and JMX ?
 
-JMX provides only bean and methods.That's all.
-CRaSH permit to access to JMX and to make command with it.
+JMX provides only bean and methods, that's all. CRaSH permit to access to JMX and to make command with it.
 CRaSH also permit to make script with thread, jdbc, entity ...
 
-= Running CRaSH =
+== Running CRaSH
 
-== How can I run CRaSH ? ==
+=== How can I run CRaSH ?
 
 See documentation : [[reference.html#running]]
 
-== How can I connect Crash to a JVM ? ==
+=== How can I connect Crash to a JVM ?
 
 See documentation Connection in Shell Usage chapter  [[reference.html#connection]]
 
-= Basic =
+== Basic
 
-== What is the best way to create a command ? ==
+=== What is the best way to create a command ?
 
 The best way to create a command is to use CRaSH utilities.
 See command as a class : [[reference.html#command_as_class]]
 
-== What is the best way to start with CRaSH ? ==
+=== What is the best way to start with CRaSH ?
 
 * Launch CRaSH and play with commands
 * Create commands (script command and class command)
 * See cookbook and documentation.
 
+== Commons problems
 
-= Commons problems =
-
-== "Command not found" ==
+=== Command not found
 
 In most cases, when you created a command, it's a syntax error in a command.
 Check your import and syntax with your ide.
 
-== Can't find crash.properties file ==
+=== Can't find crash.properties file
 
 You have to launch CRaSH in standalone mode once.
-Then, it will appears in ##$CRASH_HOME/conf/##
+Then, it will appears in +$CRASH_HOME/conf/+
 
-== "Remoting issue" ==
+=== Where are the base commands ?
 
-It could happen when you have an error in your command.
-For example :
-
-{{screen}}
-% jdbc select se
-Remoting issue
-{{/screen}}
-
-== Where are base commands ? ==
-
-They will be in ##$CRASH_HOME/cmd/base## directory.
-You have to launch CRaSH once in standalone mode.
-
-
+They will be in +$CRASH_HOME/cmd/base+ directory. You have to launch CRaSH once in standalone mode.

@@ -1,15 +1,17 @@
-= Shell usage =
+== Shell usage
 
-== Connection {{anchor id=connection /}}==
+=== Connection
+
+[[connection]]
 
 You need to connect using telnet, SSH or //directly// to use the
 shell.  The last method is a special mode using the JVM input and output.
 
-=== Telnet access ===
+==== Telnet access
 
 Telnet connection is done on port 5000:
 
-{{screen}}
+----
 (! 520)-> telnet localhost 5000
 Trying ::1...
 Connected to localhost.
@@ -18,36 +20,36 @@ Escape character is '^]'.
  .~      ~. |`````````,       .'.                   ..'''' |         |
 |           |'''|'''''      .''```.              .''       |_________|
 |           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         | $[crash.version]
+ `.______.' |      `.   .'           `. ....''             |         | {version}
 
 Follow and support the project on http://vietj.github.com/crash
 Welcome to julien.local + !
 It is Fri Dec 03 16:20:40 CET 2010 now
-{{/screen}}
+----
 
-The ##bye## command disconnect from the shell.
+The +bye+ command disconnect from the shell.
 
-=== SSH access ===
+==== SSH access
 
 SSH connection is done on port 2000 with the password **//crash//**:
 
-{{screen}}
+----
 juliens-macbook-pro:~ julien$ ssh -p 2000 -l root localhost
 root@localhost's password:
-CRaSH $[crash.version] (http://vietj.github.com/crash)
+CRaSH {version} (http://vietj.github.com/crash)
 Welcome to juliens-macbook-pro.local!
 It is Fri Jan 08 21:12:53 CET 2010 now.
 %
-{{/screen}}
+----
 
-The ##bye## command disconnect from the shell.
+The +bye+ command disconnect from the shell.
 
-=== Native access ===
+==== Native access
 
 A third mode is available for standalone CRaSH usage where it uses the
 JVM native input and output. When you run in standalone, CRaSh will be available just after the JVM is launched.
 
-== Features ==
+=== Features
 
 * Line edition: the current line can be edited via left and right arrow keys
 * History: the key up and key down enable history browsing
@@ -56,13 +58,13 @@ JVM native input and output. When you run in standalone, CRaSh will be available
 like //"hi, it's me"//.
 * Completion: an advanced completion system is available
 
-= Command usage =
+== Command usage
 
-== Getting basic help ==
+=== Getting basic help
 
-The ##help## command will display the list of known commands by the shell.
+The +help+ command will display the list of known commands by the shell.
 
-{{screen}}
+----
 [/]% help
 % help
 Try one of these commands with the -h or --help switch:
@@ -95,27 +97,27 @@ Try one of these commands with the -h or --help switch:
   wait             Invoke a static method
   ws               workspace commands
   xpath            execute a JCR xpath query
-{{/screen}}
+----
 
-== Command line usage ==
+=== Command line usage
 
 The basic CRaSH usage is like any shell, you just type a command with its options and arguments. However it is possible
  to compose commands and create powerful combinations.
 
-=== Basic command usage ===
+==== Basic command usage
 
 Typing the command followed by options and arguments will do the job
 
-{{screen}}
+----
 % ls /
 ...
-{{/screen}}
+----
 
-=== Command help display ===
+==== Command help display
 
 Any command help can be displayed by using the -h argument:
 
-{{screen}}
+----
 % ls -h
 usage: ls [-h | --help] [-h | --help] [-d | --depth] path
 
@@ -123,11 +125,11 @@ usage: ls [-h | --help] [-h | --help] [-d | --depth] path
    [-h | --help]  command usage
    [-d | --depth] Print depth
    path           the path of the node content to list
-{{/screen}}
+----
 
-In addition of that, commands can have a complete manual that can be displayed thanks to the ##man## command:
+In addition of that, commands can have a complete manual that can be displayed thanks to the +man+ command:
 
-{{screen}}
+----
 % man ls
 NAME
        ls - list the content of a node
@@ -166,23 +168,23 @@ PARAMETERS
 
        path
            the path of the node content to list
-{{/screen}}
+----
 
-=== Advanced command usage ===
+==== Advanced command usage
 
 A CRaSH command is able to consume and produce a stream of object, allowing complex interactions between commands
 where they can exchange stream of compatible objets. Most of the time, JCR nodes are the objects exchanged by the
 commands but any command is free to produce or consume any type.
 
 By default a command that does not support this feature does not consume or produce anything. Such commands usually
-inherits from the ##org.crsh.command.ClassCommand## class that does not care about it. If you look at this class
-you will see it extends the the ##org.crsh.command.BaseCommand##.
+inherits from the +org.crsh.command.ClassCommand+ class that does not care about it. If you look at this class
+you will see it extends the the +org.crsh.command.BaseCommand+.
 
-More advanced commands inherits from ##org.crsh.command.BaseCommand## class that specifies two generic types ##<C>##
-and ##<P>##:
+More advanced commands inherits from +org.crsh.command.BaseCommand+ class that specifies two generic types +<C>+
+and +<P>+:
 
-* ##<C>## is the type of the object that the command consumes
-* ##<P>## is the type of the object that the command produces
+* +<C>+ is the type of the object that the command consumes
+* +<P>+ is the type of the object that the command produces
 
 The command composition provides two operators:
 
@@ -190,72 +192,31 @@ The command composition provides two operators:
 * The distribution operator **+** allows to distribute an input stream to several commands and to combine the output stream
 of several commands into a single stream.
 
-=== Connecting a ##<Void,Node>## command to a ##<Node,Void>## command through a pipe ===
+==== Connecting a +<Void,Node>+ command to a +<Node,Void>+ command through a pipe
 
-{{example title="Remove all nt:unstructed nodes"}}
-{{screen}}
+.Remove all nt:unstructed nodes
+----
 % select * from nt:unstructed | rm
-{{/screen}}
-{{/example}}
+----
 
-=== Connecting a ##<Void,Node>## command to two ##<Node,Void>## commands through a pipe ===
+==== Connecting a +<Void,Node>+ command to two +<Node,Void>+ commands through a pipe
 
-{{example title="Update the security of all nt:unstructed nodes"}}
-{{screen}}
+.Update the security of all nt:unstructed nodes
+----
 % select * from nt:unstructured | setperm -i any -a read + setperm -i any -a write
-{{/screen}}
-{{/example}}
+----
 
-=== Connecting two ##<Void,Node>## command to a ##<Node,Void>## commands through a pipe ==
+==== Connecting two +<Void,Node>+ command to a +<Node,Void>+ commands through a pipe
 
-{{example title="Add the mixin mix:referenceable to any node of type nt:file or nt:folder"}}
-{{screen}}
+.Add the mixin mix:referenceable to any node of type nt:file or nt:folder
+----
 % select * from nt:file + select * from nt:folder | addmixin mix:referenceable
-{{/screen}}
-{{/example}}
+----
 
-=== Mixed cases ===
+==== Mixed cases
 
 When a command does not consume a stream but is involved in a distribution it will not receive any stream but will
 be nevertheless invoked.
 
 Likewise when a command does not produce a stream but is involved in a distribution, it will not produce anything but
 will be nevertheless invoked.
-
-= Base commands =
-
-== //sleep// command ==
-{{include document="sleep.wiki" /}}
-
-== //man// command ==
-{{include document="man.wiki" /}}
-
-== //log// command ==
-{{include document="log.wiki" /}}
-
-== //thread// command ==
-{{include document="thread.wiki" /}}
-
-== //system// command ==
-{{include document="system.wiki" /}}
-
-== //jdbc// command ==
-{{include document="jdbc.wiki" /}}
-
-== //java// command ==
-{{include document="java.wiki" /}}
-
-== //jmx// command ==
-{{include document="jmx.wiki" /}}
-
-== //thread// command ==
-{{include document="thread.wiki" /}}
-
-== //sleep// command ==
-{{include document="sleep.wiki" /}}
-
-== //jpa// command ==
-{{include document="jpa.wiki" /}}
-
-== //env// command ==
-{{include document="env.wiki" /}}

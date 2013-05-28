@@ -39,153 +39,40 @@
     <wikbook.target>${project.build.directory}/wikbook</wikbook.target>
   </properties>
 
-  <dependencies>
-
-    <!-- -->
-    <dependency>
-      <groupId>org.wikbook</groupId>
-      <artifactId>wikbook.docbkxstyle</artifactId>
-      <version>${wikbook.version}</version>
-    </dependency>
-
-  </dependencies>
-
   <build>
 
     <plugins>
 
-     <!-- The wikbook maven plugin generates the docbook document from the wiki source -->
-     <plugin>
-        <groupId>org.wikbook</groupId>
-        <artifactId>wikbook.maven</artifactId>
-        <version>${wikbook.version}</version>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>transform</goal>
-            </goals>
+            <id>copy-asciidoc</id>
+          </execution>
+          <execution>
+            <id>copy-stylesheets</id>
           </execution>
         </executions>
-        <configuration>
-          <sourceDirectory>${wikbook.source}/en/en-US</sourceDirectory>
-          <extraSourceDirectory>${wikbook.target}/man</extraSourceDirectory>
-          <sourceFileName>book.wiki</sourceFileName>
-          <destinationDirectory>${wikbook.target}/src</destinationDirectory>
-          <destinationFileName>index.xml</destinationFileName>
-          <emitDoctype>false</emitDoctype>
-          <beforeBookBodyXML><![CDATA[<xi:include href="${basedir}/src/main/wikbook/en/en-US/bookinfo.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />]]></beforeBookBodyXML>
-        </configuration>
-     </plugin>
-
-     <plugin>
-       <groupId>org.wikbook</groupId>
-       <artifactId>wikbook.docbkxstyle</artifactId>
-       <version>${wikbook.version}</version>
-       <configuration>
-         <sourceDirectory>${wikbook.target}/src</sourceDirectory>
-         <includes>index.xml</includes>
-         <highlightSource>1</highlightSource>
-         <xincludeSupported>true</xincludeSupported>
-         <useExtensions>1</useExtensions>
-         <calloutsExtension>1</calloutsExtension>
-       </configuration>
-       <executions>
-         <execution>
-           <id>generate-html</id>
-           <goals>
-             <goal>generate-html</goal>
-           </goals>
-           <phase>package</phase>
-           <configuration>
-             <targetDirectory>${wikbook.target}/output/html</targetDirectory>
-             <htmlCustomization>xsl/bootstrap/html.xsl</htmlCustomization>
-           </configuration>
-         </execution>
-         <execution>
-           <id>generate-xhtml</id>
-           <goals>
-             <goal>generate-xhtml</goal>
-           </goals>
-           <phase>package</phase>
-           <configuration>
-             <targetDirectory>${wikbook.target}/output/xhtml</targetDirectory>
-             <targetFileExtension>html</targetFileExtension>
-             <xhtmlCustomization>xsl/simple/pdf.xsl</xhtmlCustomization>
-           </configuration>
-         </execution>
-       </executions>
-       <dependencies>
-         <dependency>
-           <groupId>org.docbook</groupId>
-           <artifactId>docbook-xml</artifactId>
-           <version>4.4</version>
-           <scope>runtime</scope>
-         </dependency>
-       </dependencies>
-     </plugin>
-
-     <plugin>
-       <groupId>org.wikbook</groupId>
-       <artifactId>wikbook.html2pdf</artifactId>
-       <version>${wikbook.version}</version>
-       <executions>
-         <execution>
-           <phase>package</phase>
-           <goals>
-             <goal>transform</goal>
-           </goals>
-         </execution>
-       </executions>
-       <configuration>
-         <sourceDirectory>${wikbook.target}/output/xhtml</sourceDirectory>
-         <sourceFileName>index.html</sourceFileName>
-         <destinationDirectory>${wikbook.target}/output/pdf</destinationDirectory>
-         <destinationFileName>index.pdf</destinationFileName>
-       </configuration>
-     </plugin>
-
-     <!-- Attach the HTML zip -->
-     <plugin>
-       <artifactId>maven-assembly-plugin</artifactId>
-       <executions>
-         <execution>
-           <phase>package</phase>
-           <goals>
-             <goal>single</goal>
-           </goals>
-           <configuration>
-             <descriptors>
-               <descriptor>src/main/assembly/html.xml</descriptor>
-               <descriptor>src/main/assembly/docbook.xml</descriptor>
-             </descriptors>
-           </configuration>
-         </execution>
-       </executions>
-     </plugin>
-
-     <!-- Attach the PDF -->
-     <plugin>
-       <groupId>org.codehaus.mojo</groupId>
-       <artifactId>build-helper-maven-plugin</artifactId>
-       <executions>
-         <execution>
-           <id>attach-artifacts</id>
-           <phase>package</phase>
-           <goals>
-             <goal>attach-artifact</goal>
-           </goals>
-           <configuration>
-             <artifacts>
-               <artifact>
-                 <file>target/wikbook/output/pdf/index.pdf</file>
-                 <type>pdf</type>
-               </artifact>
-             </artifacts>
-           </configuration>
-         </execution>
-       </executions>
-     </plugin>
+      </plugin>
+      <plugin>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>0.1.3.1</version>
+        <executions>
+          <execution>
+            <id>generate-html</id>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>assemble-html</id>
+          </execution>
+        </executions>
+      </plugin>
 
     </plugins>
 

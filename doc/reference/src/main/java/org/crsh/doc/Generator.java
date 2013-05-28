@@ -58,37 +58,35 @@ public class Generator {
       Thread.currentThread().getContextClassLoader());
     ctx.refresh();
     CRaSH crash = new CRaSH(ctx);
-    for (String name : crash.getCommandNames()) {
-      ShellCommand cmd = crash.getCommand(name);
-      StringBuilder man = new StringBuilder();
-      if (cmd instanceof CRaSHCommand) {
-        BaseShellCommand<?> cc = (BaseShellCommand<?>)cmd;
+    StringBuilder buffer = new StringBuilder();
+    for (String s : crash.getCommandNames()) {
+      ShellCommand cmd = crash.getCommand(s);
+      if (cmd instanceof BaseShellCommand) {
+        BaseShellCommand cc = (BaseShellCommand)cmd;
         CommandDescriptor<?> desc = cc.getDescriptor();
+        buffer.append("== ").append(desc.getName()).append("\n");
         if (desc.getSubordinates().size() > 1) {
           for (CommandDescriptor<?> m : desc.getSubordinates().values()) {
-            man.append("{{screen}}");
-            m.printMan(man);
-            man.append("{{/screen}}");
+            buffer.append("=== ").append(desc.getName()).append(" ").append(m.getName()).append("\n");
+            buffer.append("----\n");
+            m.printMan(buffer);
+            buffer.append("----\n");
           }
         } else {
-          man.append("{{screen}}");
-          desc.printMan(man);
-          man.append("{{/screen}}");
+          buffer.append("----\n");
+          desc.printMan(buffer);
+          buffer.append("----\n");
         }
-      } else {
-        man.append(cmd.describe(name, DescriptionFormat.MAN));
       }
-      if (man.length() > 0) {
-        File f = new File(root, name + ".wiki");
-        if (!f.exists()) {
-          PrintWriter pw = new PrintWriter(f);
-          try {
-            System.out.println("Generating wiki file " + f.getCanonicalPath());
-            pw.print(man);
-          } finally {
-            pw.close();
-          }
-        }
+    }
+    if (buffer.length() > 0) {
+      File f = new File(root, "reference.asciidoc");
+      PrintWriter pw = new PrintWriter(f);
+      try {
+        System.out.println("Generating asciidoc file " + f.getCanonicalPath());
+        pw.print(buffer);
+      } finally {
+        pw.close();
       }
     }
   }

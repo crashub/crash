@@ -1,0 +1,24 @@
+CRaSH reference guide
+=====================
+Julien Viet <julien@julienviet.com>
+
+The Common Reusable SHell (CRaSH) deploys in a Java runtime and provides interactions with the JVM.
+Commands are written in Groovy and can be developped at runtime making the extension of the shell very easy
+with fast development cycle.
+
+= FAQ
+
+include::faq.asciidoc[]
+
+= Create your first command
+
+include::first_command.asciidoc[]
+
+= Attaching to a running JVM
+
+include::attaching_to.asciidoc[]
+
+= Interacting with a database
+
+include::how_to_database.asciidoc[]
+

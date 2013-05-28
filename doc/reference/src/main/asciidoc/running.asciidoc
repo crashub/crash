@@ -1,18 +1,18 @@
 There are several ways to run CRaSH, as a standalone application it controls its own JVM or as an embedded
 service in an existing runtime like a web application or a Spring application.
 
-= Standalone =
+== Standalone
 
-== Standalone mode ==
+=== Standalone mode
 
 The standalone mode allows you to run CRaSH from the command line directly. It provides the same functionality as the
-war deployment but does not require a web container as it runs its own virtual machine. The __crash__ directory
+war deployment but does not require a web container as it runs its own virtual machine. The _crash_ directory
 in the application contains the standalone distribution.
 
-The bin directory ///crash/bin// can be added to the system path, it contains the //crash.sh// script that will start
+The bin directory _/crash/bin_ can be added to the system path, it contains the _crash.sh_ script that will start
 the standalone mode, for instance you can set it up this way:
 
-{{screen}}
+----
 > export PATH=/.../crash/bin:$PATH
 > crash.sh
    ______
@@ -21,25 +21,25 @@ the standalone mode, for instance you can set it up this way:
 |           |    `.       .'       `.         ..'          |         |
  `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr2-SNAPSHOT
 
-Follow and support the project on http://vietj.github.com/crash
+Follow and support the project on http://www.crashub.org
 Welcome to jerry + !
 It is Thu Apr 12 21:19:35 CEST 2012 now
-{{/screen}}
+----
 
 Let's review quickly what you can find in standalone crash:
 
-* The //bin// directory contains the //crash.sh// script and the standalone crash jar file
-* The //conf// directory contains the configuration properties //crash.properties// and JVM logging configuration //logging.properties//
-* The //cmd// directory contains the commands that will be available in crash by default it contains a few example commands
-* The //lib// directory contains the various libraries used by crash, you should place additional jar files there
+* The _bin_ directory contains the _crash.sh_ script and the standalone crash jar file
+* The _conf_ directory contains the configuration properties _crash.properties_ and JVM logging configuration _logging.properties_
+* The _cmd_ directory contains the commands that will be available in crash by default it contains a few example commands
+* The _lib_ directory contains the various libraries used by crash, you should place additional jar files there
 
-== Attach mode ==
+=== Attach mode
 
 The attach mode allows you to attach CRaSH to a JVM located on the same host with the attach API provided by the Hotspot
 JVM. It is the standalone mode attached to a running JVM specified by a process id. CRaSH will hook into the targetted JVM
 instead of the JVM started by CRaSH. Let's see quickly an example of how to use it
 
-{{screen}}
+----
 > jps
 3165 RemoteMavenServer
 20650 Test
@@ -56,120 +56,121 @@ Follow and support the project on http://vietj.github.com/crash
 Welcome to jerry + !
 It is Thu Apr 12 22:09:23 CEST 2012 now
 %
-{{/screen}}
+----
 
-In this example we attached crash to the Test JVM. We obtained the Test JVM PID thanks to the //jps// command that belongs
+In this example we attached crash to the Test JVM. We obtained the Test JVM PID thanks to the _jps_ command that belongs
 to the Java Platform. During this mode the commands are executed in the target JVM.
 
-== Configuration ==
+=== Configuration
 
-The standalone mode relies on the ##org.crsh.standalone.CRaSH## class main method to configure and run the shell. The
-startup scripts //crash.sh// and //crash.bar// configures this class. You can tweak those scripts to your environment,
-let's review the options and arguments of ##CRaSH##:
+The standalone mode relies on the +org.crsh.standalone.CRaSH+ class main method to configure and run the shell. The
+startup scripts _crash.sh_ and _crash.bar_ configures this class. You can tweak those scripts to your environment,
+let's review the options and arguments of +CRaSH+:
 
-=== //\--cmd// option ===
+==== _--cmd_ option
 
-The //\--cmd// option specifies a directory containing command source files. Such directory contains commands as //.groovy// files,
+The _--cmd_ option specifies a directory containing command source files. Such directory contains commands as _.groovy_ files,
 commands can be in directories for grouping purpose. Several folders can be specified by repeating the option.
 
-=== //\--cmd-mode// option ===
+==== _--cmd-mode_ option
 
-The standalone shell search commands in folders (specified with the //\--cmd// option and in the classpath (under the
-///crash/commands/// folder). The //\--cmd-mode// option defines how to handle the classpath commands:
+The standalone shell search commands in folders (specified with the _--cmd_ option and in the classpath (under the
+_/crash/commands/_ folder). The _--cmd-mode_ option defines how to handle the classpath commands:
 
-* The //read// option value uses commands from directories and classpath.
-* The //copy// option value scans the classpath during the startup and copies the commands in the first command folder, then commands
+* The _read_ option value uses commands from directories and classpath.
+* The _copy_ option value scans the classpath during the startup and copies the commands in the first command folder, then commands
  are used from the folders. This value requires at least one command directory to be specified for extracting the commands.
 
-=== //\--conf// option ===
+==== _--conf_ option
 
-The //\--conf// option specifies a directory containing configuration files. Several folders can be specified by repeating the option.
+The _--conf_ option specifies a directory containing configuration files. Several folders can be specified by repeating the option.
 
-=== //\--conf-mode// option ===
+==== _--conf-mode_ option
 
-The standalone shell search configuration files in folders (specified with the //\--conf// option and in the classpath (under the
-///crash/// folder). The //\--conf-mode// option defines how to handle the classpath configuration:
+The standalone shell search configuration files in folders (specified with the _--conf_ option and in the classpath (under the
+_/crash/_ folder). The _--conf-mode_ option defines how to handle the classpath configuration:
 
-* The //read// option value uses configuration files from directories and classpath.
-* The //copy// option value scans the classpath during the startup and copies the files in the first configuration folder, then configuration
+* The _read_ option value uses configuration files from directories and classpath.
+* The _copy_ option value scans the classpath during the startup and copies the files in the first configuration folder, then configuration
  are used from the folders. This value requires at least one conf directory to be specified for extracting the configuration files.
 
-=== //\--property// option ===
+==== _--property_ option
 
-The //\--cmd// option sets and overrides a shell configuration property, the value follows the pattern //a=b//, for instance:
+The _--cmd_ option sets and overrides a shell configuration property, the value follows the pattern _a=b_, for instance:
 
-{{screen}}
+----
 crash.sh --property crash.telnet.port=3000
-{{/screen}}
+----
 
-=== //\--non-interactive// option ===
+==== _--non-interactive_ option
 
-The //\--non-interactive// option disable the usage of the JVM input and output.
+The _--non-interactive_ option disable the usage of the JVM input and output.
 
-{{screen}}
+----
 crash.sh --non-interactive
-{{/screen}}
+----
 
-=== //pid// arguments ===
+==== _pid_ arguments
 
-The ##org.crsh.standalone.CRaSH## main has an optional list of arguments that are JVM //process id//. When one or several JVM process id
+The +org.crsh.standalone.CRaSH+ main has an optional list of arguments that are JVM _process id_. When one or several JVM process id
   are specified, CRaSH will dynamically attach to this virtual machine and will be executed in that machine. By default the two JVM will
-  communicate with a socket unless the //non-interactive// option is set.
+  communicate with a socket unless the _non-interactive_ option is set.
 
-{{warning}}When more than one process id is specified, the //non-interactive// option must be set because CRaSH will not be able
+{{warning}}When more than one process id is specified, the _non-interactive_ option must be set because CRaSH will not be able
 to aggregate two command lines in the same terminal.{{/warning}}
 
-== Resource extraction ==
+=== Resource extraction
 
-When the options //\--cmd-mode// or //\--conf-mode// are set to the //copy//, CRaSH will scan the classpath and extract the
+When the options _--cmd-mode_ or _--conf-mode_ are set to the _copy_, CRaSH will scan the classpath and extract the
  resources in the corresponding directory.
 
-The default value of these options is //copy// however no copy happens unless at least one directory for extracting the resources
+The default value of these options is _copy_ however no copy happens unless at least one directory for extracting the resources
 is specified, therefore
 
-* The ##org.crsh.standalone.CRaSH## does nothing by default
-* The //crash.sh// or //crash.bat// extracts the resources in the corresponding directory as the //cmd// and //conf// directories
+* The +org.crsh.standalone.CRaSH+ does nothing by default
+* The _crash.sh_ or _crash.bat_ extracts the resources in the corresponding directory as the _cmd_ and _conf_ directories
 are specified
 
-To prevent any resource copying the value //read// should be used/
+To prevent any resource copying the value _read_ should be used/
 
-= Embedded mode =
+== Embedded mode
 
-== Embedding in a web app ==
+=== Embedding in a web app
 
 CRaSH can use a standard web archive to be deployed in a web container. The war file is used for its packaging capabilities
 and triggering the CRaSH life cycle start/stop. In this mode CRaSH has two packaging available:
 
-* A __core__ war file found under //deploy/core/crash.war// provides the base CRaSH functionnalities
-* A __gatein__ war file found under //deploy/gatein/crash.war// provides additional Java Content Repository (JCR)
+* A __core__ war file found under _deploy/core/crash.war_ provides the base CRaSH functionnalities
+* A __gatein__ war file found under _deploy/gatein/crash.war_ provides additional Java Content Repository (JCR)
  features but deploys only in a GateIn server (Tomcat or JBoss). It extends the core packaging and adds
 ** JCR browsing and interactions
 ** SCP support for JCR import and export
 
-You have to copy the //crash.war// in the appropriate server, regardless of the packaging used.
+You have to copy the _crash.war_ in the appropriate server, regardless of the packaging used.
 
-If you want you can embed CRaSH in your own //web.xml// configuration:
+If you want you can embed CRaSH in your own _web.xml_ configuration:
 
-{{example title="Embedding CRaSH in a web application"}}
-{{xml}}
+.Embedding CRaSH in a web application
+[source,xml]
+----
 <web-app>
   <listener>
     <listener-class>org.crsh.plugin.WebPluginLifeCycle</listener-class>
   </listener>
 </web-app>
-{{/xml}}
-{{/example}}
+----
 
-== Embedding in Spring ==
+=== Embedding in Spring
 
 CRaSH can be easily embedded and configured in a Spring configuration
 
-=== Embedding as a Spring bean ===
+==== Embedding as a Spring bean
 
 Here is an example of embedding crash:
 
-{{example title="Embedding CRaSH in Spring"}}
-{{xml}}
+.Embedding CRaSH in Spring
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -183,7 +184,7 @@ Here is an example of embedding crash:
         <prop key="crash.vfs.refresh_period">1</prop>
 
         <!-- SSH configuration -->
-       <prop key="crash.ssh.port">2000</prop>
+        <prop key="crash.ssh.port">2000</prop>
 
         <!-- Telnet configuration -->
         <prop key="crash.telnet.port">5000</prop>
@@ -194,22 +195,22 @@ Here is an example of embedding crash:
         <prop key="crash.auth.simple.password">admin</prop>
       </props>
     </property>
-	</bean>
+  </bean>
 
 </beans>
-{{/xml}}
-{{/example}}
+----
 
-The configuration properties are set as properties with the //config// property of the ##SpringBootstrap## bean.
+The configuration properties are set as properties with the _config_ property of the +SpringBootstrap+ bean.
 
-Any Spring managed beans that extend ##org.crsh.plugin.CRaSHPlugin## will be automatically
-registered as plugins in addition to those declared in ##META-INF/services/org.crsh.plugin.CRaSHPlugin##.
+Any Spring managed beans that extend +org.crsh.plugin.CRaSHPlugin+ will be automatically
+registered as plugins in addition to those declared in +META-INF/services/org.crsh.plugin.CRaSHPlugin+.
 
 For example, the following implements a CRaSH authentication plugin that uses a JDBC DataSource 
 managed by Spring:
 
-{{example title="Spring managed authentication plugin"}}
-{{java}}
+.Spring managed authentication plugin
+[source,java]
+----
 package example;
 
 import java.sql.Connection;
@@ -258,14 +259,14 @@ public class DbCrshAuthPlugin extends CRaSHPlugin<AuthenticationPlugin>
         this.dataSource = dataSource;
     }
 }
-{{/java}}
-{{/example}}
+----
 
 The above code uses Spring annotation driven beans, but this works the same with beans configured 
 in XML:
 
-{{example title="Custom authentication bean in spring.xml"}}
-{{xml}}
+.Custom authentication bean in spring.xml
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -277,18 +278,17 @@ in XML:
     </bean>
 
 </beans>
-{{/xml}}
-{{/example}}
+----
 
-=== Embedding in a Spring web app ===
+==== Embedding in a Spring web app
 
 In case you are embedding CRaSH in a Spring application running with a servlet container, the bean
- ##org.crsh.spring.SpringWebBootstrap## can be used instead of ##org.crsh.spring.SpringBootstrap##. The ##SpringWebBootstrap##
- extends the ##SpringBootstrap## class and adds the //WEB-INF/crash// directory to the command path.
+ +org.crsh.spring.SpringWebBootstrap+ can be used instead of +org.crsh.spring.SpringBootstrap+. The +SpringWebBootstrap+
+ extends the +SpringBootstrap+ class and adds the _WEB-INF/crash_ directory to the command path.
 
-An example packaging comes with the CRaSH distribution, a __spring__ war file found under //deploy/spring/crash.war// provides
+An example packaging comes with the CRaSH distribution, a _spring_ war file found under _deploy/spring/crash.war_ provides
 the base CRaSH functionnalities bootstrapped by the Spring Framework. It can be used as an example for embedding CRaSH
  in Spring.
 
-This example is bundled with a //spring// command that shows how the Spring factory or beans can be accessed within
+This example is bundled with a _spring_ command that shows how the Spring factory or beans can be accessed within
 a CRaSH command.

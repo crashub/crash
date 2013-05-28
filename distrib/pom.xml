@@ -109,11 +109,13 @@
     </dependency>
 
     <!-- Doc -->
+<!--
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.doc.reference</artifactId>
       <type>pdf</type>
     </dependency>
+-->
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.doc.reference</artifactId>
@@ -125,11 +127,13 @@
       <artifactId>crsh.doc.reference</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
+<!--
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.doc.cookbook</artifactId>
       <type>pdf</type>
     </dependency>
+-->
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.doc.cookbook</artifactId>
