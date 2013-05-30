@@ -187,7 +187,7 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
 
         // Get the option from the top match
         ParameterMatch<OptionDescriptor> help = null;
-        for (InvocationMatch<T> current = match;current.owner() != null && help == null;current = current.owner()) {
+        for (InvocationMatch<T> current = match;current != null && help == null;current = current.owner()) {
           help = current.getParameter(HELP_OPTION);
         }
 
@@ -195,14 +195,7 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
         if (help == null && invoker != null) {
           return invoker.invoke(resolver, command);
         } else {
-          StringBuilder sb = new StringBuilder();
-          try {
-            printUsage(sb);
-          }
-          catch (IOException e) {
-            throw new AssertionError(e);
-          }
-          return sb.toString();
+          return new Help<T>(delegate);
         }
       }
     };

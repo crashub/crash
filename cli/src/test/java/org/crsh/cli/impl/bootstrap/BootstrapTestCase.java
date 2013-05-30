@@ -21,10 +21,13 @@ package org.crsh.cli.impl.bootstrap;
 
 import junit.framework.TestCase;
 import org.crsh.cli.descriptor.CommandDescriptor;
+import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.impl.descriptor.Help;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
+import org.crsh.cli.impl.invocation.ParameterMatch;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationMatch;
@@ -43,26 +46,65 @@ public class BootstrapTestCase extends TestCase {
 
   public void testOption() throws Exception {
 
-
     //
-    HelpDescriptor<A> desc = new HelpDescriptor<A>(CommandFactory.DEFAULT.create(A.class));
-    OptionDescriptor help = desc.getOption("-h");
-    assertNotNull(help);
-    OptionDescriptor foo = desc.getOption("-f");
+    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    HelpDescriptor<A> helpDesc = new HelpDescriptor<A>(desc);
+    OptionDescriptor optionDesc = helpDesc.getOption("-h");
+    assertNotNull(optionDesc);
+    OptionDescriptor foo = helpDesc.getOption("-f");
     assertNotNull(foo);
-    CommandDescriptor<A> bar = desc.getSubordinate("bar");
+    CommandDescriptor<A> bar = helpDesc.getSubordinate("bar");
     OptionDescriptor barHelp = bar.getOption("-h");
     assertNull(barHelp);
+    InvocationMatcher<A> matcher = helpDesc.invoker("main");
 
     //
-    InvocationMatcher<A> matcher = desc.invoker("main");
-    InvocationMatch<A> match = matcher.match("");
+    InvocationMatch<A> match = matcher.match("--help");
+    ParameterMatch<OptionDescriptor> helpMatch = match.getParameter(optionDesc);
+    assertNotNull(helpMatch);
     CommandInvoker<A> invoker = match.getInvoker();
-    invoker.invoke(new A());
+    Help help = (Help)invoker.invoke(new A());
+    assertNotNull(help);
+    assertSame(desc, help.getDescriptor());
 
+    //
+    match = matcher.match("");
+    invoker = match.getInvoker();
+    invoker.invoke(new A());
     match = matcher.match("-f foo_value bar");
     invoker = match.getInvoker();
     assertEquals("invoked:foo_value", invoker.invoke(new A()));
-
   }
+
+  public static class B {
+
+    @Command
+    public void main() throws Exception {
+      throw new UnsupportedOperationException("Should not invoked");
+    }
+  }
+
+  public void testMain() {
+
+    CommandDescriptorImpl<B> desc = CommandFactory.DEFAULT.create(B.class);
+    HelpDescriptor<B> helpDesc = new HelpDescriptor<B>(desc);
+    OptionDescriptor optionDesc = helpDesc.getOption("-h");
+    assertNotNull(optionDesc);
+    InvocationMatcher<B> matcher = helpDesc.invoker("main");
+
+    //
+    InvocationMatch<B> match = matcher.match("--help");
+    ParameterMatch<OptionDescriptor> helpMatch = match.getParameter(optionDesc);
+    assertNull(helpMatch);
+    InvocationMatch<B> ownerMatch = match.owner();
+    helpMatch = ownerMatch.getParameter(optionDesc);
+    assertNotNull(helpMatch);
+    CommandInvoker<B> invoker = match.getInvoker();
+    Help help = (Help)invoker.invoke(new B());
+    assertNotNull(help);
+    CommandDescriptor mainDescriptor = help.getDescriptor();
+    assertEquals("main", mainDescriptor.getName());
+    assertSame(desc, mainDescriptor.getOwner());
+  }
+
 }
