@@ -119,12 +119,13 @@ public class CRaSH {
     @Usage("the conf mode (read of copy), copy mode requires at least one conf path to be specified")
     ResourceMode confMode,
     @Argument(name = "pid")
-    @Usage("the optional JVM process id to attach to")
-    Integer pid) throws Exception {
+    @Usage("the optional list of JVM process id to attach to")
+    List<Integer> pids) throws Exception {
 
     //
     boolean copyCmd = cmdMode != ResourceMode.read && cmds != null && cmds.size() > 0;
     boolean copyConf = confMode != ResourceMode.read && confs != null && confs.size() > 0;
+    boolean interactive = nonInteractive == null || !nonInteractive;
 
     //
     if (copyCmd) {
@@ -159,11 +160,12 @@ public class CRaSH {
     //
     CloseableList closeable = new CloseableList();
     Shell shell;
-    if (pid != null) {
+    if (pids != null && pids.size() > 0) {
 
-      // Standalone
-      log.log(Level.INFO, "Attaching to remote process " + pid);
-      final VirtualMachine vm = VirtualMachine.attach("" + pid);
+      //
+      if (interactive && pids.size() > 1) {
+        throw new Exception("Cannot attach to more than one JVM in interactive mode");
+      }
 
       // Compute classpath
       String classpath = System.getProperty("java.class.path");
@@ -192,11 +194,6 @@ public class CRaSH {
       JarOutputStream out = new JarOutputStream(new FileOutputStream(agentFile), manifest);
       out.close();
       log.log(Level.INFO, "Created agent jar " + agentFile.getCanonicalPath());
-
-      //
-      RemoteServer server = new RemoteServer(0);
-      int port = server.bind();
-      log.log(Level.INFO, "Callback server set on port " + port);
 
       // Build the options
       StringBuilder sb = new StringBuilder();
@@ -244,24 +241,34 @@ public class CRaSH {
         }
       }
 
-      // Append callback port
-      sb.append(port);
-
       //
-      String options = sb.toString();
-      log.log(Level.INFO, "Loading agent with command " + options + " as agent " + agentFile.getCanonicalPath());
-      vm.loadAgent(agentFile.getCanonicalPath(), options);
-
-      //
-      server.accept();
-
-      //
-      shell = server.getShell();
-      closeable.add(new Closeable() {
-        public void close() throws IOException {
-          vm.detach();
+      if (interactive) {
+        RemoteServer server = new RemoteServer(0);
+        int port = server.bind();
+        log.log(Level.INFO, "Callback server set on port " + port);
+        sb.append(port);
+        String options = sb.toString();
+        Integer pid = pids.get(0);
+        final VirtualMachine vm = VirtualMachine.attach("" + pid);
+        log.log(Level.INFO, "Loading agent with command " + options + " as agent " + agentFile.getCanonicalPath());
+        vm.loadAgent(agentFile.getCanonicalPath(), options);
+        server.accept();
+        shell = server.getShell();
+        closeable.add(new Closeable() {
+          public void close() throws IOException {
+            vm.detach();
+          }
+        });
+      } else {
+        for (Integer pid : pids) {
+          log.log(Level.INFO, "Attaching to remote process " + pid);
+          VirtualMachine vm = VirtualMachine.attach("" + pid);
+          String options = sb.toString();
+          log.log(Level.INFO, "Loading agent with command " + options + " as agent " + agentFile.getCanonicalPath());
+          vm.loadAgent(agentFile.getCanonicalPath(), options);
         }
-      });
+        shell = null;
+      }
     } else {
       final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
 
@@ -319,13 +326,17 @@ public class CRaSH {
       });
 
       //
-      ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
-      shell = factory.create(null);
+      if (interactive) {
+        ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
+        shell = factory.create(null);
+      } else {
+        shell = null;
+      }
       closeable = null;
     }
 
     //
-    if (nonInteractive == null || !nonInteractive) {
+    if (shell != null) {
 
       // Start crash for this command line
       final Terminal term = TerminalFactory.create();

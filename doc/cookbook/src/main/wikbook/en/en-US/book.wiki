@@ -11,3 +11,7 @@ Cookbook.
 = How to print an array {{anchor id=printArr /}} =
 
 {{include document="howToPrintAnArray.wiki" /}}
+
+= Attaching to a running JVM =
+
+{{include document="attachingTo.wiki" /}}

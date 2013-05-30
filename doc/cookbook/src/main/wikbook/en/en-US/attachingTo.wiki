@@ -1,0 +1,16 @@
+This chapter provides various recipes using the attach mechanism of CRaSH.
+
+= Expose several already running JVM via SSH using =
+
+In this recipe you will learn how to attach CRaSH to several JVM running on the local host. Each JVM will
+be accessible using the SSH connector. To achieve this goal we need to
+
+* attach CRaSH to one or several virtual machines
+* use the non-interactive mode
+* set the SSH port to 0 to avoid port collisions
+
+{{screen}}
+crash.sh --non-interactive --property crash.ssh.port=0 PID1 PID2 PID3 ...
+{{/screen}}
+
+The execution of CRaSH will last a few seconds, the process will end when all JVM will have their own agent.

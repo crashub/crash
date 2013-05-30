@@ -110,11 +110,14 @@ The //\--non-interactive// option disable the usage of the JVM input and output.
 crash.sh --non-interactive
 {{/screen}}
 
-=== //pid// argument ===
+=== //pid// arguments ===
 
-The ##org.crsh.standalone.CRaSH## main has a single optional argument that is a JVM //process id//. When a JVM process id is specified,
-  CRaSH will dynamically attach to this virtual machine and will be executed in that machine. The two JVM will communicate with
-  a socket.
+The ##org.crsh.standalone.CRaSH## main has an optional list of arguments that are JVM //process id//. When one or several JVM process id
+  are specified, CRaSH will dynamically attach to this virtual machine and will be executed in that machine. By default the two JVM will
+  communicate with a socket unless the //non-interactive// option is set.
+
+{{warning}}When more than one process id is specified, the //non-interactive// option must be set because CRaSH will not be able
+to aggregate two command lines in the same terminal.{{/warning}}
 
 == Resource extraction ==
 
