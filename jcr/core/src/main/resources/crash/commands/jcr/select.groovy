@@ -34,13 +34,13 @@ The query matched 1114 nodes
 
 Display 20 nodes from the offset 10:
 
-[/]% select * from nt:base -o 10 -l 20
+[/]% select -o 10 -l 20 * from nt:base
 The query matched 1114 nodes
 ...
 
 It is possible also to remove the limit of displayed nodes with the -a option (you should use this option with care) :
 
-[/]% select * from nt:base -a
+[/]% select -a * from nt:base
 The query matched 1114 nodes
 ...
 
