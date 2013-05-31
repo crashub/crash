@@ -180,4 +180,41 @@
     </plugins>
   </build>
 
+  <!-- Produce an executable jar file that embeds Tomcat : useful for testing war packaging works well -->
+  <profiles>
+    <profile>
+      <id>tomcat</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <version>2.1</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>exec-war-only</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <warRunDependencies>
+                    <warRunDependency>
+                      <dependency>
+                        <groupId>org.crsh</groupId>
+                        <artifactId>crsh.shell.packaging</artifactId>
+                        <version>${project.version}</version>
+                        <type>war</type>
+                      </dependency>
+                      <contextPath>/</contextPath>
+                    </warRunDependency>
+                  </warRunDependencies>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
