@@ -105,8 +105,6 @@ public class ServerMessage implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream oos) throws IOException {
-      oos.defaultWriteObject();
-
       if (response instanceof ShellResponse.Error) {
         oos.writeBoolean(false);
         ShellResponse.Error error = (ShellResponse.Error)response;
@@ -120,9 +118,7 @@ public class ServerMessage implements Serializable {
       }
     }
 
-    private void readObject(ObjectInputStream ois) throws IOException,
-        ClassNotFoundException {
-      ois.defaultReadObject();
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
       if (ois.readBoolean()) {
         response = (ShellResponse)ois.readObject();
       } else {

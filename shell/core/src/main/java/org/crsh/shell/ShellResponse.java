@@ -171,7 +171,7 @@ public abstract class ShellResponse implements Serializable {
     /** . */
     private final ErrorType type;
 
-    /** . */
+    /** The throwable. */
     private final Throwable throwable;
 
     /** . */
