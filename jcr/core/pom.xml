@@ -2,13 +2,13 @@
   <parent>
     <artifactId>crsh.jcr</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.2.6</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crsh</groupId>
   <artifactId>crsh.jcr.core</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.0-SNAPSHOT</version>
+  <version>1.2.6</version>
 
   <name>CRaSH jcr core</name>
   <description>The CRaSH JCR module</description>
