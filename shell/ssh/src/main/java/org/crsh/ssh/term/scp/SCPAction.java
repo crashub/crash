@@ -22,7 +22,7 @@ import org.crsh.cli.Argument;
 import org.crsh.cli.Option;
 import org.crsh.cli.Required;
 
-public class SCPAction {
+public class SCPAction implements Runnable {
 
   /** . */
   @Option(names="r")
@@ -107,6 +107,10 @@ public class SCPAction {
 
   public void setTarget(String target) {
     this.target = target;
+  }
+
+  public void run() {
+    // Nothing to do as it is handled by SCPCommandPlugin
   }
 
   @Override
