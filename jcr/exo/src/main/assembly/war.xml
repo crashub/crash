@@ -41,6 +41,7 @@
       <unpackOptions>
         <excludes>
           <exclude>WEB-INF/crash/crash.properties</exclude>
+          <exclude>WEB-INF/jboss-deployment-structure.xml</exclude>
         </excludes>
       </unpackOptions>
       <includes>
@@ -53,6 +54,10 @@
     <file>
       <source>src/main/webapp/WEB-INF/crash/crash.properties</source>
       <outputDirectory>WEB-INF/crash</outputDirectory>
+    </file>
+    <file>
+      <source>src/main/webapp/WEB-INF/jboss-deployment-structure.xml</source>
+      <outputDirectory>WEB-INF</outputDirectory>
     </file>
   </files>
 

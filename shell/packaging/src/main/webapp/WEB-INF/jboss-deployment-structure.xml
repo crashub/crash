@@ -1,8 +1,7 @@
 <jboss-deployment-structure>
-  <!-- Get Bouncy Castle in AS7 from a module, please see here : https://community.jboss.org/thread/175395  -->
   <deployment>
-    <dependencies>
-      <module name="org.bouncycastle" slot="main" export="true"/>
-    </dependencies>
+    <resources>
+      <resource-root path="WEB-INF/lib/bcprov-jdk16-1.46.jar" use-physical-code-source="true"/>
+    </resources>
   </deployment>
 </jboss-deployment-structure>
