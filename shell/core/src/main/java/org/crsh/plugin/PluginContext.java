@@ -188,6 +188,13 @@ public final class PluginContext {
   }
 
   /**
+   * @return the property manager
+   */
+  public PropertyManager getPropertyManager() {
+    return propertyManager;
+  }
+
+  /**
    * Returns a context property or null if it cannot be found.
    *
    * @param desc the property descriptor
@@ -196,7 +203,7 @@ public final class PluginContext {
    * @throws NullPointerException if the descriptor argument is null
    */
   public <T> T getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
-    return propertyManager.getProperty(desc);
+    return propertyManager.resolvePropertyValue(desc);
   }
 
   /**
@@ -209,7 +216,7 @@ public final class PluginContext {
    * @throws NullPointerException if the descriptor argument is null
    */
   public <T> T getProperty(String propertyName, Class<T> type) throws NullPointerException {
-    return propertyManager.getProperty(propertyName, type);
+    return propertyManager.resolvePropertyValue(propertyName, type);
   }
 
   /**
@@ -234,7 +241,7 @@ public final class PluginContext {
    * @throws IllegalArgumentException if the string value cannot be converted to the property type
    */
   public <T> void setProperty(PropertyDescriptor<T> desc, String value) throws NullPointerException, IllegalArgumentException {
-    propertyManager.setProperty(desc, value);
+    propertyManager.parseProperty(desc, value);
   }
 
   /**

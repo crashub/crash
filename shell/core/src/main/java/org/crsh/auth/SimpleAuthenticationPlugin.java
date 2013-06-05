@@ -41,7 +41,8 @@ public class SimpleAuthenticationPlugin extends
     PropertyDescriptor.create(
       "auth.simple.password",
       "admin",
-      "The password");
+      "The password",
+      true);
 
   /** . */
   private String username;

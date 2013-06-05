@@ -67,7 +67,7 @@ class shell {
               }
               capabilities.each { desc ->
                 row {
-                  label(desc.name); label(desc.description); label(desc.type.simpleName); label(desc.defaultValue)
+                  label(desc.name); label(desc.description); label(desc.type.simpleName); label(desc.defaultDisplayValue)
                 }
               }
             }
@@ -87,7 +87,8 @@ class shell {
         label("name"); label("description"); label("type"); label("value")
       }
       capabilities.each { desc ->
-        String value = "${crash.context.getProperty(desc)}";
+        def property = crash.context.propertyManager.getProperty(desc);
+        String value = property != null ? property.displayValue : "";
         row {
           label(desc.name); label(desc.description); label(desc.type.simpleName); label(value)
         }

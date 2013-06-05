@@ -26,8 +26,11 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class PropertyDescriptor<T> {
 
-  public static PropertyDescriptor<String> create(String name, String defaultValue, String description) {
-    return new PropertyDescriptor<String>(String.class, name, defaultValue, description) {
+  /** The display value returned when a property is secret. */
+  public static final String SECRET_DISPLAY_VALUE = "*****";
+
+  public static PropertyDescriptor<String> create(String name, String defaultValue, String description, boolean secret) {
+    return new PropertyDescriptor<String>(String.class, name, defaultValue, description, secret) {
       @Override
       protected String doParse(String s) throws Exception {
         return s;
@@ -35,13 +38,22 @@ public abstract class PropertyDescriptor<T> {
     };
   }
 
-  public static PropertyDescriptor<Integer> create(String name, Integer defaultValue, String description) {
-    return new PropertyDescriptor<Integer>(Integer.class, name, defaultValue, description) {
+
+  public static PropertyDescriptor<String> create(String name, String defaultValue, String description) {
+    return create(name, defaultValue, description, false);
+  }
+
+  public static PropertyDescriptor<Integer> create(String name, Integer defaultValue, String description, boolean secret) {
+    return new PropertyDescriptor<Integer>(Integer.class, name, defaultValue, description, secret) {
       @Override
       protected Integer doParse(String s) throws Exception {
         return Integer.parseInt(s);
       }
     };
+  }
+
+  public static PropertyDescriptor<Integer> create(String name, Integer defaultValue, String description) {
+    return create(name, defaultValue, description, false);
   }
 
   /** . */
@@ -73,16 +85,33 @@ public abstract class PropertyDescriptor<T> {
   /** . */
   public final String description;
 
+  /** . */
+  public final boolean secret;
+
   /**
    * Create a new property descriptor.
    *
-   * @param type the property type
-   * @param name the property name
+   * @param type         the property type
+   * @param name         the property name
    * @param defaultValue the default value
-   * @param description the description
+   * @param description  the description
    * @throws NullPointerException if the type, name or description is null
    */
   protected PropertyDescriptor(Class<T> type, String name, T defaultValue, String description) throws NullPointerException {
+    this(type, name, defaultValue, description, false);
+  }
+
+  /**
+   * Create a new property descriptor.
+   *
+   * @param type         the property type
+   * @param name         the property name
+   * @param defaultValue the default value
+   * @param description  the description
+   * @param secret       the value is secret (like a password)
+   * @throws NullPointerException if the type, name or description is null
+   */
+  protected PropertyDescriptor(Class<T> type, String name, T defaultValue, String description, boolean secret) throws NullPointerException {
     if (type == null) {
       throw new NullPointerException("No null type accepted");
     }
@@ -97,6 +126,7 @@ public abstract class PropertyDescriptor<T> {
     this.name = name;
     this.defaultValue = defaultValue;
     this.description = description;
+    this.secret = secret;
 
     //
     INTERNAL_ALL.put(name, this);
@@ -118,12 +148,16 @@ public abstract class PropertyDescriptor<T> {
     return defaultValue;
   }
 
+  public final String getDefaultDisplayValue() {
+    return secret ? SECRET_DISPLAY_VALUE : String.valueOf(defaultValue);
+  }
+
   /**
    * Parse a string representation of a value and returns the corresponding typed value.
    *
    * @param s the string to parse
    * @return the corresponding value
-   * @throws NullPointerException if the argument is null
+   * @throws NullPointerException     if the argument is null
    * @throws IllegalArgumentException if the string value cannot be parsed for some reason
    */
   public final T parse(String s) throws NullPointerException, IllegalArgumentException {
@@ -138,12 +172,24 @@ public abstract class PropertyDescriptor<T> {
     }
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    } else if (obj instanceof PropertyDescriptor<?>) {
+      PropertyDescriptor<?> that = (PropertyDescriptor<?>)obj;
+      return name.equals(that.name) && type.equals(that.type);
+    } else {
+      return false;
+    }
+  }
+
   /**
    * Parse a string representation of a value and returns the correspondig property value.
    *
    * @param s the string to parse
    * @return the corresponding property
-   * @throws NullPointerException if the argument is null
+   * @throws NullPointerException     if the argument is null
    * @throws IllegalArgumentException if the string value cannot be parsed for some reason
    */
   public final Property<T> toProperty(String s) throws NullPointerException, IllegalArgumentException {
@@ -152,8 +198,8 @@ public abstract class PropertyDescriptor<T> {
   }
 
   /**
-   * Implements the real parsing, the string argument must nto be null. The returned value must not be null
-   * instead an exception must be thrown.
+   * Implements the real parsing, the string argument must nto be null. The returned value must not be null instead an
+   * exception must be thrown.
    *
    * @param s the string to parse
    * @return the related value

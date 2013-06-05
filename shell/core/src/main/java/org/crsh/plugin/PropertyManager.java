@@ -45,7 +45,7 @@ class PropertyManager {
    * @return the property value
    * @throws NullPointerException if the descriptor argument is null
    */
-  public <T> T getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
+  public <T> Property<T> getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
     if (desc == null) {
       throw new NullPointerException();
     }
@@ -61,7 +61,7 @@ class PropertyManager {
    * @return the property value
    * @throws NullPointerException if the descriptor argument is null
    */
-  <T> T getProperty(String propertyName, Class<T> type) throws NullPointerException {
+  <T> Property<T> getProperty(String propertyName, Class<T> type) throws NullPointerException {
     if (propertyName == null) {
       throw new NullPointerException("No null property name accepted");
     }
@@ -71,8 +71,87 @@ class PropertyManager {
     Property<?> property = properties.get(propertyName);
     if (property != null) {
       PropertyDescriptor<?> descriptor = property.getDescriptor();
-      if (descriptor.getType().isAssignableFrom(type)) {
-        return type.cast(property.getValue());
+      if (type.equals(descriptor.getType())) {
+        return (Property<T>)property;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns a context property value or null if it cannot be found.
+   *
+   * @param desc the property descriptor
+   * @param <T> the property parameter type
+   * @return the property value
+   * @throws NullPointerException if the descriptor argument is null
+   */
+  public <T> T resolvePropertyValue(PropertyDescriptor<T> desc) throws NullPointerException {
+    if (desc == null) {
+      throw new NullPointerException();
+    }
+    return resolvePropertyValue(desc.getName(), desc.getType());
+  }
+
+  /**
+   * Returns a context property value or null if it cannot be found.
+   *
+   * @param propertyName the name of the property
+   * @param type the property type
+   * @param <T> the property parameter type
+   * @return the property value
+   * @throws NullPointerException if the descriptor argument is null
+   */
+  <T> T resolvePropertyValue(String propertyName, Class<T> type) throws NullPointerException {
+    if (propertyName == null) {
+      throw new NullPointerException("No null property name accepted");
+    }
+    if (type == null) {
+      throw new NullPointerException("No null property type accepted");
+    }
+    Property<? extends T> property = resolveProperty(propertyName, type);
+    if (property != null) {
+      return property.getValue();
+    }
+    return null;
+  }
+
+  /**
+   * Resolve a context property or null if it cannot be resolved.
+   *
+   * @param desc the property descriptor
+   * @param <T> the property parameter type
+   * @return the property value
+   * @throws NullPointerException if the descriptor argument is null
+   */
+  public <T> Property<? extends T> resolveProperty(PropertyDescriptor<T> desc) throws NullPointerException {
+    if (desc == null) {
+      throw new NullPointerException();
+    }
+    return getProperty(desc.getName(), desc.getType());
+  }
+
+  /**
+   * Resolve a context property or null if it cannot be resolved.
+   *
+   * @param propertyName the name of the property
+   * @param type the property type
+   * @param <T> the property parameter type
+   * @return the property value
+   * @throws NullPointerException if the descriptor argument is null
+   */
+  <T> Property<? extends T> resolveProperty(String propertyName, Class<T> type) throws NullPointerException {
+    if (propertyName == null) {
+      throw new NullPointerException("No null property name accepted");
+    }
+    if (type == null) {
+      throw new NullPointerException("No null property type accepted");
+    }
+    Property<?> property = properties.get(propertyName);
+    if (property != null) {
+      PropertyDescriptor<?> descriptor = property.getDescriptor();
+      if (type.isAssignableFrom(descriptor.getType())) {
+        return (Property<? extends T>)property;
       }
     }
     return null;
@@ -88,7 +167,7 @@ class PropertyManager {
    */
   <T> void setProperty(PropertyDescriptor<T> desc, T value) throws NullPointerException {
     if (desc == null) {
-      throw new NullPointerException();
+      throw new NullPointerException("No null descriptor allowed");
     }
     if (value == null) {
       log.log(Level.FINE, "Removing property " + desc.name);
@@ -101,21 +180,20 @@ class PropertyManager {
   }
 
   /**
-   * Set a context property to a new value. If the provided value is null, then the property is removed.
+   * Set a context property to a new value.
    *
    * @param desc the property descriptor
    * @param value the property value
    * @param <T> the property parameter type
-   * @throws NullPointerException if the descriptor argument is null
+   * @throws NullPointerException if the descriptor argument or the value is null
    * @throws IllegalArgumentException if the string value cannot be converted to the property type
    */
-  <T> void setProperty(PropertyDescriptor<T> desc, String value) throws NullPointerException, IllegalArgumentException {
+  <T> void parseProperty(PropertyDescriptor<T> desc, String value) throws NullPointerException, IllegalArgumentException {
     if (desc == null) {
-      throw new NullPointerException();
+      throw new NullPointerException("No null descriptor allowed");
     }
     if (value == null) {
-      log.log(Level.FINE, "Removing property " + desc.name);
-      properties.remove(desc.getName());
+      throw new NullPointerException("No null value accepted");
     } else {
       Property<T> property = desc.toProperty(value);
       log.log(Level.FINE, "Setting property " + desc.name + " to value " + property.getValue());
