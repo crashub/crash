@@ -88,8 +88,16 @@ class shell {
       }
       capabilities.each { desc ->
         String value = "${crash.context.getProperty(desc)}";
-        row {
-          label(desc.name); label(desc.description); label(desc.type.simpleName); label(value)
+
+        if(desc.secret){
+            row {
+                label(desc.name); label(desc.description); label(desc.type.simpleName); label("xxxxx")
+            }
+        }
+        else{
+            row {
+              label(desc.name); label(desc.description); label(desc.type.simpleName); label(value)
+            }
         }
       }
     }

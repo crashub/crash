@@ -26,8 +26,8 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class PropertyDescriptor<T> {
 
-  public static PropertyDescriptor<String> create(String name, String defaultValue, String description) {
-    return new PropertyDescriptor<String>(String.class, name, defaultValue, description) {
+  public static PropertyDescriptor<String> create(String name, String defaultValue, String description, boolean secret) {
+    return new PropertyDescriptor<String>(String.class, name, defaultValue, description, secret) {
       @Override
       protected String doParse(String s) throws Exception {
         return s;
@@ -35,13 +35,22 @@ public abstract class PropertyDescriptor<T> {
     };
   }
 
-  public static PropertyDescriptor<Integer> create(String name, Integer defaultValue, String description) {
-    return new PropertyDescriptor<Integer>(Integer.class, name, defaultValue, description) {
+
+  public static PropertyDescriptor<String> create(String name, String defaultValue, String description) {
+      return create(name, defaultValue, description, false);
+  }
+
+  public static PropertyDescriptor<Integer> create(String name, Integer defaultValue, String description, boolean secret) {
+    return new PropertyDescriptor<Integer>(Integer.class, name, defaultValue, description, secret) {
       @Override
       protected Integer doParse(String s) throws Exception {
         return Integer.parseInt(s);
       }
     };
+  }
+
+  public static PropertyDescriptor<Integer> create(String name, Integer defaultValue, String description) {
+      return create(name, defaultValue, description, false);
   }
 
   /** . */
@@ -73,6 +82,9 @@ public abstract class PropertyDescriptor<T> {
   /** . */
   public final String description;
 
+  /** . */
+  public final boolean secret;
+
   /**
    * Create a new property descriptor.
    *
@@ -83,23 +95,38 @@ public abstract class PropertyDescriptor<T> {
    * @throws NullPointerException if the type, name or description is null
    */
   protected PropertyDescriptor(Class<T> type, String name, T defaultValue, String description) throws NullPointerException {
-    if (type == null) {
-      throw new NullPointerException("No null type accepted");
-    }
-    if (name == null) {
-      throw new NullPointerException("No null name accepted");
-    }
-    if (description == null) {
-      throw new NullPointerException("No null description accepted");
-    }
+      this(type, name, defaultValue, description, false);
+  }
 
-    this.type = type;
-    this.name = name;
-    this.defaultValue = defaultValue;
-    this.description = description;
+  /**
+   * Create a new property descriptor.
+   *
+   * @param type the property type
+   * @param name the property name
+   * @param defaultValue the default value
+   * @param description the description
+   * @param secret the value is secret (like a password)
+   * @throws NullPointerException if the type, name or description is null
+   */
+  protected PropertyDescriptor(Class<T> type, String name, T defaultValue, String description, boolean secret) throws NullPointerException {
+      if (type == null) {
+          throw new NullPointerException("No null type accepted");
+      }
+      if (name == null) {
+          throw new NullPointerException("No null name accepted");
+      }
+      if (description == null) {
+          throw new NullPointerException("No null description accepted");
+      }
 
-    //
-    INTERNAL_ALL.put(name, this);
+      this.type = type;
+      this.name = name;
+      this.defaultValue = defaultValue;
+      this.description = description;
+      this.secret = secret;
+
+      //
+      INTERNAL_ALL.put(name, this);
   }
 
   public final String getName() {
