@@ -70,7 +70,7 @@ class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
     }
   }
 
-  public void close() throws ScriptException {
+  public void close() throws ScriptException, IOException {
     delegate.close();
     if (next != null && next instanceof PipeCommand) {
       ((PipeCommand)next).close();

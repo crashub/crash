@@ -143,6 +143,10 @@ public class EvalElement extends Element {
           renderers.add(i);
         }
       }
+
+      public void close() throws IOException {
+        // Nothing to do, except maybe release resources (and also prevent to do any other operation)
+      }
     };
 
     if (cmd instanceof CRaSHCommand) {

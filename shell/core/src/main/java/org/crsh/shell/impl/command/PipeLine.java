@@ -105,7 +105,7 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
     current.flush();
   }
 
-  public void close() {
+  public void close() throws IOException {
     current.close();
   }
 }

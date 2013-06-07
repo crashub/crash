@@ -99,7 +99,7 @@ class Pipe<C, P> implements Filter<C, P, CommandContext<P>>, CommandContext<C> {
     command.flush();
   }
 
-  public void close() throws ScriptException {
+  public void close() throws ScriptException, IOException {
     command.close();
   }
 }

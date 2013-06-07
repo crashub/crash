@@ -20,6 +20,7 @@
 package org.crsh.io;
 
 import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * A producer that produces elements in a specific consumer.
@@ -46,6 +47,6 @@ public interface Producer<P, C extends Consumer<P>> extends Closeable {
   /**
    * Close the producer.
    */
-  void close();
+  void close() throws IOException;
 
 }

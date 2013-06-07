@@ -107,7 +107,7 @@ abstract class PipeFilter<C, P> implements Filter<C, P, CommandContext<P>>, Comm
     }
 
     public void close() {
-      Safe.close((Closeable)context);
+      Safe.close(context);
     }
   }
 
@@ -158,8 +158,8 @@ abstract class PipeFilter<C, P> implements Filter<C, P, CommandContext<P>>, Comm
       ca.flush();
     }
 
-    public void close() throws ScriptException {
-      ((Pipe<Chunk, ?>)context).close();
+    public void close() throws ScriptException, IOException {
+      context.close();
     }
   }
 
@@ -194,8 +194,8 @@ abstract class PipeFilter<C, P> implements Filter<C, P, CommandContext<P>>, Comm
       context.flush();
     }
 
-    public void close() {
-      ((Pipe<P, ?>)context).close();
+    public void close() throws IOException {
+      context.close();
     }
   }
 }

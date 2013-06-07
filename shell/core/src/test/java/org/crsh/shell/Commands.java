@@ -169,6 +169,22 @@ public class Commands {
     }
   }
 
+  public static class IsClosed extends CRaSHCommand {
+
+    /** . */
+    public static final AtomicInteger closed = new AtomicInteger();
+
+    @Command
+    public org.crsh.command.PipeCommand<Object, Object> main() {
+      return new PipeCommand<Object, Object>() {
+        @Override
+        public void close() throws ScriptException {
+          closed.incrementAndGet();
+        }
+      };
+    }
+  }
+
   public static class IsPiped extends CRaSHCommand {
     @Command
     public org.crsh.command.PipeCommand<Object, Object> main() {

@@ -24,6 +24,7 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.io.Consumer;
+import org.crsh.util.Safe;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,7 +84,6 @@ final class ClassDispatcher extends CommandClosure {
     //
     try {
       pipe.fire();
-      pipe.close();
       return null;
     }
     catch (ScriptException e) {
@@ -93,6 +93,9 @@ final class ClassDispatcher extends CommandClosure {
       } else {
         throw e;
       }
+    }
+    finally {
+      Safe.close(pipe);
     }
   }
 
