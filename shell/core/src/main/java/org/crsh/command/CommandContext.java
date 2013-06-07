@@ -20,12 +20,14 @@ package org.crsh.command;
 
 import org.crsh.shell.InteractionContext;
 
+import java.io.Closeable;
+
 /**
  * The command context provides the services for invoking a command.
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public interface CommandContext<P> extends InteractionContext<P>, RuntimeContext {
+public interface CommandContext<P> extends InteractionContext<P>, RuntimeContext, Closeable {
 
   boolean isPiped();
 

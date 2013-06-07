@@ -19,7 +19,6 @@
 
 package org.crsh.shell;
 
-import org.codehaus.groovy.tools.shell.Command;
 import org.crsh.command.ScriptException;
 import org.crsh.text.ChunkBuffer;
 
@@ -27,6 +26,20 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class PipeTestCase extends AbstractCommandTestCase {
+
+  public void testClose() {
+    lifeCycle.bind("closed", Commands.IsClosed.class);
+
+    //
+    Commands.IsClosed.closed.set(0);
+    assertEquals("", assertOk("closed"));
+    assertEquals(1, Commands.IsClosed.closed.get());
+
+    //
+    Commands.IsClosed.closed.set(0);
+    assertEquals("", assertOk("echo abc | closed"));
+    assertEquals(1, Commands.IsClosed.closed.get());
+  }
 
   public void testIsPiped() {
     lifeCycle.bind("piped", Commands.IsPiped.class);

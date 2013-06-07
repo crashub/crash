@@ -109,6 +109,10 @@ public class TestInvocationContext<C> extends BaseRuntimeContext implements Comm
     producer.flush();
   }
 
+  public void close() throws IOException {
+    //
+  }
+
   public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
     throw new UnsupportedOperationException();
   }

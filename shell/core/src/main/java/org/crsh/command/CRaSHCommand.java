@@ -280,9 +280,10 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
         public void flush() throws IOException {
           peekContext().flush();
         }
-        public void close() {
+        public void close() throws IOException {
           CRaSHCommand.this.unmatched = null;
-          popContext();
+          InvocationContext<?> context = popContext();
+          context.close();
         }
       };
     } else {

@@ -121,6 +121,10 @@ final class InvocationContextImpl<P> implements InvocationContext<P> {
     commandContext.flush();
   }
 
+  public void close() throws IOException {
+    commandContext.close();
+  }
+
   public Map<String, Object> getSession() {
     return commandContext.getSession();
   }

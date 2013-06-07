@@ -123,6 +123,10 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
     consumer.flush();
   }
 
+  public void close() throws IOException {
+    // Nothing to do
+  }
+
   public Map<String, Object> getSession() {
     return outter.getSession();
   }
