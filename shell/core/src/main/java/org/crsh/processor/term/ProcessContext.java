@@ -70,6 +70,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
   public String readLine(String msg, boolean echo) {
     try {
       processor.term.provide(Text.create(msg));
+      processor.term.flush();
     }
     catch (IOException e) {
       return null;
