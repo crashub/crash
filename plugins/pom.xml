@@ -15,6 +15,7 @@
 
   <modules>
     <module>crowd</module>
+    <module>mail</module>
   </modules>
 
 </project>
