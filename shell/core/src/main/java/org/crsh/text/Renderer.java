@@ -19,7 +19,6 @@
 
 package org.crsh.text;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 /**

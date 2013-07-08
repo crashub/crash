@@ -22,6 +22,7 @@ package org.crsh.text.ui;
 import org.crsh.AbstractTestCase;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkBuffer;
+import org.crsh.text.Format;
 import org.crsh.text.LineReader;
 import org.crsh.text.RenderAppendable;
 import org.crsh.shell.ScreenContext;
@@ -57,7 +58,7 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
       }));
       StringBuilder sb = new StringBuilder();
       try {
-        buffer.writeAnsiTo(sb);
+        buffer.format(Format.ANSI, sb);
       }
       catch (IOException e) {
         throw failure(e);

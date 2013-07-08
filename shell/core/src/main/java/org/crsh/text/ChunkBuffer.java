@@ -58,19 +58,10 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Consumer<Chun
     return chunks.iterator();
   }
 
-  @Deprecated
-  public void writeAnsiTo(Appendable appendable) throws IOException {
+  public void format(Format format, Appendable appendable) throws IOException {
     Iterator<Chunk> iterator = iterator();
     while (iterator.hasNext()) {
-      Chunk chunk = iterator.next();
-      if (chunk instanceof Text) {
-        Text text = (Text)chunk;
-        if (text.buffer.length() > 0) {
-          appendable.append(text.buffer);
-        }
-      } else if (chunk instanceof Style) {
-        ((Style)chunk).writeAnsiTo(appendable);
-      }
+      format.append(iterator.next(), appendable);
     }
   }
 
@@ -224,17 +215,11 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Consumer<Chun
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    for (Chunk chunk : chunks) {
-      if (chunk instanceof Text) {
-        sb.append(((Text)chunk).buffer);
-      }
+    try {
+      format(Format.TEXT, sb);
+    }
+    catch (IOException ignore) {
     }
     return sb.toString();
-  }
-
-  public void writeTo(Consumer<Chunk> writer) throws IOException {
-    for (Chunk chunk : chunks) {
-      writer.provide(chunk);
-    }
   }
 }

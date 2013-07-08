@@ -24,7 +24,7 @@ import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
 import javax.naming.InitialContext
 import org.crsh.cli.Argument
-import org.crsh.text.formatter.EntityTypeRenderable
+import org.crsh.text.renderers.EntityTypeRenderable
 import org.crsh.cli.spi.Completer
 import org.crsh.cli.spi.Completion
 import org.crsh.cli.descriptor.ParameterDescriptor

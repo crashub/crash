@@ -21,11 +21,9 @@ package org.crsh.shell;
 import org.crsh.shell.entities.Bar;
 import org.crsh.shell.entities.Foo;
 import org.crsh.shell.entities.Foo2;
-import org.crsh.text.formatter.BindingRenderable;
-import org.crsh.text.formatter.EntityTypeRenderable;
+import org.crsh.text.renderers.EntityTypeRenderable;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -42,9 +40,9 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
 
   private final String consume_command_entity = "class consume_command_entity {\n" +
       "@Command\n" +
-      "public org.crsh.command.PipeCommand<org.crsh.text.formatter.EntityTypeRenderable.EntityTypeData, Object> main() {\n" +
-      "return new org.crsh.command.PipeCommand<org.crsh.text.formatter.EntityTypeRenderable.EntityTypeData, Object>() {\n" +
-      "public void provide(org.crsh.text.formatter.EntityTypeRenderable.EntityTypeData element) {\n" +
+      "public org.crsh.command.PipeCommand<org.crsh.text.renderers.EntityTypeRenderable.EntityTypeData, Object> main() {\n" +
+      "return new org.crsh.command.PipeCommand<org.crsh.text.renderers.EntityTypeRenderable.EntityTypeData, Object>() {\n" +
+      "public void provide(org.crsh.text.renderers.EntityTypeRenderable.EntityTypeData element) {\n" +
       "org.crsh.shell.JPACommandTestCase.output_entity.add(element)\n" +
       "}\n" +
       "}\n" +

@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.text.formatter;
+package org.crsh.text.renderers;
 
 import org.crsh.text.Renderable;
 import org.crsh.text.Renderer;

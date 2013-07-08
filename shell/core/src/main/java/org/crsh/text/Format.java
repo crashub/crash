@@ -16,30 +16,39 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.text;
 
-package org.crsh.text.formatter;
+import java.io.IOException;
 
-import org.crsh.text.Renderable;
-import org.crsh.text.Renderer;
+/** @author Julien Viet */
+public enum Format {
 
-import java.lang.management.MemoryUsage;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-public class MemoryUsageRenderable extends Renderable<MemoryUsage> {
-
-  @Override
-  public Class<MemoryUsage> getType() {
-    return MemoryUsage.class;
-  }
-
-  @Override
-  public Renderer renderer(Iterator<MemoryUsage> stream) {
-    ArrayList<MemoryUsageRenderer> renderers = new ArrayList<MemoryUsageRenderer>();
-    while (stream.hasNext()) {
-      MemoryUsage usage = stream.next();
-      renderers.add(new MemoryUsageRenderer(usage));
+  TEXT() {
+    @Override
+    public void append(Chunk chunk, Appendable to) throws IOException {
+      if (chunk instanceof Text) {
+        Text text = (Text)chunk;
+        if (text.buffer.length() > 0) {
+          to.append(text.buffer);
+        }
+      }
     }
-    return Renderer.vertical(renderers);
-  }
+  },
+
+  ANSI() {
+    @Override
+    public void append(Chunk chunk, Appendable to) throws IOException {
+      if (chunk instanceof Text) {
+        Text text = (Text)chunk;
+        if (text.buffer.length() > 0) {
+          to.append(text.buffer);
+        }
+      } else if (chunk instanceof Style) {
+        ((Style)chunk).writeAnsiTo(to);
+      }
+    }
+  };
+
+  public abstract void append(Chunk chunk, Appendable to) throws IOException;
+
 }

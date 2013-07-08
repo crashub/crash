@@ -22,7 +22,7 @@ package crash.commands.base
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
-import org.crsh.text.formatter.BindingRenderable
+import org.crsh.text.renderers.BindingRenderable
 import org.crsh.cli.Option
 import org.crsh.util.JNDIHandler
 

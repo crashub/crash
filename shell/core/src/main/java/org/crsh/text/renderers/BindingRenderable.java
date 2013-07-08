@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.text.formatter;
+package org.crsh.text.renderers;
 
 import org.crsh.text.Renderable;
 import org.crsh.text.Renderer;
@@ -24,8 +24,6 @@ import org.crsh.text.ui.LabelElement;
 import org.crsh.text.ui.RowElement;
 import org.crsh.text.ui.TableElement;
 
-import javax.naming.Binding;
-import java.awt.*;
 import java.util.Iterator;
 
 /**
