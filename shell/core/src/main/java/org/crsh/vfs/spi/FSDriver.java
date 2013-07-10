@@ -22,6 +22,7 @@ package org.crsh.vfs.spi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Iterator;
 
 public interface FSDriver<H> {
 
@@ -43,6 +44,6 @@ public interface FSDriver<H> {
 
   long getLastModified(H handle) throws IOException;
 
-  InputStream open(H handle) throws IOException;
+  Iterator<InputStream> open(H handle) throws IOException;
 
 }

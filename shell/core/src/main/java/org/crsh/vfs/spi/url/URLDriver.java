@@ -19,21 +19,24 @@
 
 package org.crsh.vfs.spi.url;
 
+import org.crsh.util.Utils;
 import org.crsh.vfs.spi.AbstractFSDriver;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class URLDriver extends AbstractFSDriver<Node> {
 
   /** . */
-  private final Node.Dir root;
+  private final Node root;
 
   public URLDriver() {
-    this.root = new Node.Dir();
+    this.root = new Node();
   }
 
   public void merge(ClassLoader loader) throws IOException, URISyntaxException {
@@ -53,18 +56,22 @@ public class URLDriver extends AbstractFSDriver<Node> {
   }
 
   public boolean isDir(Node handle) throws IOException {
-    return handle instanceof Node.Dir;
+    return handle.files.isEmpty();
   }
 
   public Iterable<Node> children(Node handle) throws IOException {
-    return ((Node.Dir)handle).children.values();
+    return handle.children.values();
   }
 
   public long getLastModified(Node handle) throws IOException {
-    return handle instanceof Node.File ? ((Node.File)handle).lastModified : 0;
+    return handle.files.isEmpty() ? 0 : handle.files.peekFirst().lastModified;
   }
 
-  public InputStream open(Node handle) throws IOException {
-    return ((Node.File)handle).resolver.open();
+  public Iterator<InputStream> open(Node handle) throws IOException {
+    ArrayList<InputStream> list = new ArrayList<InputStream>(handle.files.size());
+    for (Node.File file : handle.files) {
+      list.add(file.resolver.open());
+    }
+    return list.iterator();
   }
 }

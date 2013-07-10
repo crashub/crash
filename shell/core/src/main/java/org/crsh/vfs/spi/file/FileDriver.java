@@ -19,6 +19,7 @@
 
 package org.crsh.vfs.spi.file;
 
+import org.crsh.util.Utils;
 import org.crsh.vfs.spi.AbstractFSDriver;
 
 import java.io.File;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 
 public class FileDriver extends AbstractFSDriver<File> {
 
@@ -69,7 +71,7 @@ public class FileDriver extends AbstractFSDriver<File> {
     return handle.lastModified();
   }
 
-  public InputStream open(File handle) throws IOException {
-    return new FileInputStream(handle);
+  public Iterator<InputStream> open(File handle) throws IOException {
+    return Utils.<InputStream>iterator(new FileInputStream(handle));
   }
 }

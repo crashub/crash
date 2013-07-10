@@ -21,16 +21,46 @@ package org.crsh.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
+
+  /** . */
+  private static final Iterator EMPTY_ITERATOR = Collections.emptyList().iterator();
+
+  public static <E> Iterator<E> iterator() {
+    @SuppressWarnings("unchecked")
+    Iterator<E> iterator = (Iterator<E>)EMPTY_ITERATOR;
+    return iterator;
+  }
+
+  public static <E> Iterator<E> iterator(final E element) {
+    return new BaseIterator<E>() {
+      boolean hasNext = true;
+      @Override
+      public boolean hasNext() {
+        return hasNext;
+      }
+      @Override
+      public E next() {
+        if (hasNext) {
+          hasNext = false;
+          return element;
+        } else {
+          throw new NoSuchElementException();
+        }
+      }
+    };
+  }
 
   public static <E> ArrayList<E> newArrayList() {
     return new ArrayList<E>();

@@ -19,6 +19,7 @@
 
 package org.crsh.vfs.spi.servlet;
 
+import org.crsh.util.Utils;
 import org.crsh.vfs.spi.AbstractFSDriver;
 
 import javax.servlet.ServletContext;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -107,15 +109,15 @@ public class ServletContextDriver extends AbstractFSDriver<String> {
     return ctx.getResource(handle).openConnection().getLastModified();
   }
 
-  public InputStream open(String handle) throws IOException {
+  public Iterator<InputStream> open(String handle) throws IOException {
     String realPath = ctx.getRealPath(handle);
     if (realPath != null) {
       File realFile = new File(realPath);
       if (realFile.exists() && realFile.isFile()) {
-        return new FileInputStream(realFile);
+        return Utils.<InputStream>iterator(new FileInputStream(realFile));
       }
     }
-    return ctx.getResource(handle).openConnection().getInputStream();
+    return Utils.iterator(ctx.getResource(handle).openConnection().getInputStream());
   }
 
   private Matcher assertMatch(String path) {

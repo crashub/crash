@@ -30,148 +30,145 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-public abstract class Node {
+public class Node {
 
   /** . */
   final String name;
 
-  protected Node(String name) {
+  /** . */
+  HashMap<String, Node> children = new HashMap<String, Node>();
+
+  /** . */
+  LinkedList<File> files = new LinkedList<File>();
+
+  public Node() {
+    this.name = "";
+  }
+
+  private Node(String name) {
     this.name = name;
   }
 
-  static class Dir extends Node {
+  void merge(ClassLoader loader) throws IOException, URISyntaxException {
 
-    /** . */
-    HashMap<String, Node> children = new HashMap<String, Node>();
-
-    Dir() {
-      this("");
+    // Get the root class path files
+    for (Enumeration<URL> i = loader.getResources("");i.hasMoreElements();) {
+      URL url = i.nextElement();
+      merge(url);
     }
-
-    private Dir(String name) {
-      super(name);
-    }
-
-    void merge(ClassLoader loader) throws IOException, URISyntaxException {
-
-      // Get the root class path files
-      for (Enumeration<URL> i = loader.getResources("");i.hasMoreElements();) {
-        URL url = i.nextElement();
+    ArrayList<URL> items = Collections.list(loader.getResources("META-INF/MANIFEST.MF"));
+    for (URL item : items) {
+      if ("jar".equals(item.getProtocol())) {
+        String path = item.getPath();
+        int pos = path.indexOf("!/");
+        URL url = new URL(path.substring(0, pos));
         merge(url);
-      }
-      ArrayList<URL> items = Collections.list(loader.getResources("META-INF/MANIFEST.MF"));
-      for (URL item : items) {
-        if ("jar".equals(item.getProtocol())) {
-          String path = item.getPath();
-          int pos = path.indexOf("!/");
-          URL url = new URL(path.substring(0, pos));
-          merge(url);
-        } else {
-          //
-        }
+      } else {
+        //
       }
     }
+  }
 
-    void merge(URL url) throws IOException, URISyntaxException {
-      if (url.getProtocol().equals("file")) {
-        try {
-          java.io.File f = new java.io.File(url.toURI());
-          if (f.isDirectory()) {
-            merge(f);
-          }
-          else if (f.getName().endsWith(".jar")) {
-            merge(new URL("jar:" + url + "!/"));
-          } else {
-            // WTF ?
-          }
+  void merge(URL url) throws IOException, URISyntaxException {
+    if (url.getProtocol().equals("file")) {
+      try {
+        java.io.File f = new java.io.File(url.toURI());
+        if (f.isDirectory()) {
+          merge(f);
         }
-        catch (URISyntaxException e) {
-          throw new IOException(e);
-        }
-      } if (url.getProtocol().equals("jar")) {
-        int pos = url.getPath().lastIndexOf("!/");
-        URL jarURL = new URL(url.getPath().substring(0, pos));
-        String path = url.getPath().substring(pos + 2);
-        ZipIterator i = ZipIterator.create(jarURL);
-        try {
-          while (i.hasNext()) {
-            ZipEntry entry = i.next();
-            if (entry.getName().startsWith(path)) {
-              add(url, entry.getName().substring(path.length()), i.open());
-            }
-          }
-        }
-        finally {
-          Safe.close(i);
-        }
-      } else {
-        if (url.getPath().endsWith(".jar")) {
+        else if (f.getName().endsWith(".jar")) {
           merge(new URL("jar:" + url + "!/"));
         } else {
           // WTF ?
         }
       }
+      catch (URISyntaxException e) {
+        throw new IOException(e);
+      }
+    } else if (url.getProtocol().equals("jar")) {
+      int pos = url.getPath().lastIndexOf("!/");
+      URL jarURL = new URL(url.getPath().substring(0, pos));
+      String path = url.getPath().substring(pos + 2);
+      ZipIterator i = ZipIterator.create(jarURL);
+      try {
+        while (i.hasNext()) {
+          ZipEntry entry = i.next();
+          if (entry.getName().startsWith(path)) {
+            add(url, entry.getName().substring(path.length()), i.open());
+          }
+        }
+      }
+      finally {
+        Safe.close(i);
+      }
+    } else {
+      if (url.getPath().endsWith(".jar")) {
+        merge(new URL("jar:" + url + "!/"));
+      } else {
+        // WTF ?
+      }
     }
+  }
 
-    private void merge(java.io.File f) throws IOException {
-      for (final java.io.File file : f.listFiles()) {
+  private void merge(java.io.File f) throws IOException {
+    java.io.File[] files = f.listFiles();
+    if (files != null) {
+      for (final java.io.File file : files) {
         String name = file.getName();
         Node child = children.get(name);
         if (file.isDirectory()) {
           if (child == null) {
-            Dir dir = new Dir(name);
+            Node dir = new Node(name);
             dir.merge(file);
             children.put(name, dir);
-          } else if (child instanceof Dir) {
-            ((Dir)child).merge(file);
+          } else {
+            child.merge(file);
           }
         }
         else {
           if (child == null) {
-            children.put(name, new File(name, new InputStreamResolver() {
-              public InputStream open() throws IOException {
-                return new FileInputStream(file);
-              }
-            }, file.lastModified()));
+            children.put(name, child = new Node(name));
           }
-        }
-      }
-    }
-
-    private void add(URL baseURL, String entryName, InputStreamResolver resolver) throws IOException {
-      if (entryName.length() > 0 && entryName.charAt(entryName.length() - 1) != '/') {
-        add(baseURL, 0, entryName, 1, resolver);
-      }
-    }
-
-    private void add(URL baseURL, int index, String entryName, long lastModified, InputStreamResolver resolver) throws IOException {
-      int next = entryName.indexOf('/', index);
-      if (next == -1) {
-        String name = entryName.substring(index);
-        Node child = children.get(name);
-        if (child == null) {
-          children.put(name, new File(name, resolver, lastModified));
-        }
-      } else {
-        String name = entryName.substring(index, next);
-        Node child = children.get(name);
-        if (child == null) {
-          Dir dir = new Dir(name);
-          children.put(name, dir);
-          dir.add(baseURL, next + 1, entryName, lastModified, resolver);
-        } else if (child instanceof Dir) {
-          ((Dir)child).add(baseURL, next + 1, entryName, lastModified, resolver);
-        } else {
-          //
+          child.files.add(new File(new InputStreamResolver() {
+            public InputStream open() throws IOException {
+              return new FileInputStream(file);
+            }
+          }, file.lastModified()));
         }
       }
     }
   }
 
-  static class File extends Node {
+  private void add(URL baseURL, String entryName, InputStreamResolver resolver) throws IOException {
+    if (entryName.length() > 0 && entryName.charAt(entryName.length() - 1) != '/') {
+      add(baseURL, 0, entryName, 1, resolver);
+    }
+  }
+
+  private void add(URL baseURL, int index, String entryName, long lastModified, InputStreamResolver resolver) throws IOException {
+    int next = entryName.indexOf('/', index);
+    if (next == -1) {
+      String name = entryName.substring(index);
+      Node child = children.get(name);
+      if (child == null) {
+        children.put(name, child = new Node(name));
+      }
+      child.files.add(new File(resolver, lastModified));
+    } else {
+      String name = entryName.substring(index, next);
+      Node child = children.get(name);
+      if (child == null) {
+        children.put(name, child = new Node(name));
+      }
+      child.add(baseURL, next + 1, entryName, lastModified, resolver);
+    }
+  }
+
+  static class File {
 
     /** . */
     final InputStreamResolver resolver;
@@ -179,10 +176,7 @@ public abstract class Node {
     /** . */
     final long lastModified;
 
-    File(String name, InputStreamResolver url, long lastModified) {
-      super(name);
-
-      //
+    File(InputStreamResolver url, long lastModified) {
       this.resolver = url;
       this.lastModified = lastModified;
     }

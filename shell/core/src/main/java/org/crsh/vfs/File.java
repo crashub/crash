@@ -22,6 +22,7 @@ package org.crsh.vfs;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,12 +73,15 @@ public final class File {
       throw new IllegalStateException("Cannot get url of a dir");
     }
     List<Resource> urls = Collections.emptyList();
-    for (Handle handle : getHandles()) {
+    for (Handle<?> handle : getHandles()) {
       if (urls.isEmpty()) {
         urls = new ArrayList<Resource>();
       }
-      Resource resource = handle.getResource();
-      urls.add(resource);
+      Iterator<Resource> resources = handle.getResources();
+      while (resources.hasNext()) {
+        Resource resource = resources.next();
+        urls.add(resource);
+      }
     }
     return urls;
   }

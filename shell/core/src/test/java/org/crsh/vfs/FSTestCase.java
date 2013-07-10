@@ -90,8 +90,10 @@ public class FSTestCase extends TestCase {
     assertFalse(clazzChildren.hasNext());
     assertEquals(FSTestCase.class.getSimpleName() + ".class", driver.name(clazz));
     assertFalse(driver.isDir(clazz));
-    InputStream in = driver.open(clazz);
-    in.close();
+    Iterator<InputStream> in = driver.open(clazz);
+    assertTrue(in.hasNext());
+    in.next().close();
+    assertFalse(in.hasNext());
   }
 
   public void testNestedJar() throws Exception {
@@ -112,9 +114,11 @@ public class FSTestCase extends TestCase {
     Node lib = driver.child(root, "lib");
     Node foo_jar = driver.child(lib, "foo.jar");
     assertNotNull(foo_jar);
-    InputStream in = driver.open(foo_jar);
+    Iterator<InputStream> in = driver.open(foo_jar);
     assertNotNull(in);
-    byte[] bytes = IO.readAsBytes(in);
+    assertTrue(in.hasNext());
+    byte[] bytes = IO.readAsBytes(in.next());
+    assertFalse(in.hasNext());
 
     //
     url = new URL("jar:" + url + "!/org/crsh/");
@@ -126,7 +130,27 @@ public class FSTestCase extends TestCase {
     assertNotNull(FSTestCase_class);
     in = driver.open(FSTestCase_class);
     assertNotNull(in);
-    bytes = IO.readAsBytes(in);
+    assertTrue(in.hasNext());
+    bytes = IO.readAsBytes(in.next());
+    assertFalse(in.hasNext());
+  }
+
+  public void testDuplicateResource() throws Exception {
+    java.io.File file = java.io.File.createTempFile("test", ".jar");
+    file.deleteOnExit();
+    JavaArchive jar = ShrinkWrap.create(JavaArchive.class);
+    jar.addClass(FSTestCase.class);
+    jar.as(ZipExporter.class).exportTo(file, true);
+    URLDriver driver = new URLDriver();
+    driver.merge(file.toURI().toURL());
+    driver.merge(file.toURI().toURL());
+    Node node = driver.child(driver.child(driver.child(driver.child(driver.root(), "org"), "crsh"), "vfs"), "FSTestCase.class");
+    Iterator<InputStream> i = driver.open(node);
+    assertTrue(i.hasNext());
+    i.next();
+    assertTrue(i.hasNext());
+    i.next();
+    assertFalse(i.hasNext());
   }
 
   public void testRAM() throws Exception {
@@ -136,8 +160,10 @@ public class FSTestCase extends TestCase {
     assertEquals(Path.get("/"), root);
     Path foo = driver.child(root, "foo");
     assertNotNull(foo);
-    InputStream in = driver.open(foo);
-    String file = IO.readAsUTF8(in);
+    Iterator<InputStream> in = driver.open(foo);
+    assertTrue(in.hasNext());
+    String file = IO.readAsUTF8(in.next());
+    assertFalse(in.hasNext());
     assertEquals("bar", file);
   }
 }

@@ -20,11 +20,14 @@
 package org.crsh.vfs;
 
 import org.crsh.util.IO;
+import org.crsh.util.Utils;
 import org.crsh.vfs.spi.FSDriver;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 class Handle<H> {
@@ -63,8 +66,29 @@ class Handle<H> {
     return new Resource(bytes, lastModified);
   }
 
-  InputStream open() throws IOException {
-    return driver.open(handle);
+  Iterator<Resource> getResources() throws IOException {
+    Iterator<InputStream> i = driver.open(handle);
+    if (i.hasNext()) {
+      LinkedList<Resource> resources = new LinkedList<Resource>();
+      while (i.hasNext()) {
+        InputStream in = i.next();
+        byte[] bytes = IO.readAsBytes(in);
+        long lastModified = getLastModified();
+        resources.add(new Resource(bytes, lastModified));
+      }
+      return resources.iterator();
+    } else {
+      return Utils.iterator();
+    }
+  }
+
+  private InputStream open() throws IOException {
+    Iterator<InputStream> i = driver.open(handle);
+    if (i.hasNext()) {
+      return i.next();
+    } else {
+      throw new IOException("No stream");
+    }
   }
 
   long getLastModified() throws IOException {

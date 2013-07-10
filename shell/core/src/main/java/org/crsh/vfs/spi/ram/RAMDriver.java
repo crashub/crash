@@ -19,6 +19,7 @@
 
 package org.crsh.vfs.spi.ram;
 
+import org.crsh.util.Utils;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.spi.AbstractFSDriver;
 
@@ -31,6 +32,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class RAMDriver extends AbstractFSDriver<Path> {
@@ -92,7 +94,7 @@ public class RAMDriver extends AbstractFSDriver<Path> {
     return 0;
   }
 
-  public InputStream open(Path handle) throws IOException {
-    return new ByteArrayInputStream(entries.get(handle).getBytes("UTF-8"));
+  public Iterator<InputStream> open(Path handle) throws IOException {
+    return Utils.<InputStream>iterator(new ByteArrayInputStream(entries.get(handle).getBytes("UTF-8")));
   }
 }
