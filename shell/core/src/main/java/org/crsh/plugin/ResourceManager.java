@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -37,7 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-class ResourceManager {
+public class ResourceManager {
 
   /** . */
   private static final Pattern p = Pattern.compile("(.+)\\.groovy");
@@ -54,7 +55,7 @@ class ResourceManager {
   /** . */
   private volatile List<File> dirs;
 
-  public ResourceManager(FS cmdFS, FS confFS) {
+  ResourceManager(FS cmdFS, FS confFS) {
     this.cmdFS = cmdFS;
     this.confFS = confFS;
   }
@@ -103,7 +104,7 @@ class ResourceManager {
           String path = "/" + resourceId;
           File file = confFS.get(Path.get(path));
           if (file != null) {
-            res = file.getResource();
+            res = loadConf(file);
           }
       }
     } catch (IOException e) {
@@ -162,6 +163,37 @@ class ResourceManager {
     }
     catch (IOException e) {
       e.printStackTrace();
+    }
+  }
+
+  /** . */
+  private static final byte[] SEPARATOR = System.getProperty("line.separator").getBytes();
+
+  public static Resource loadConf(File file) throws IOException {
+    // Special handling for property files
+    if (file.getName().endsWith(".properties")) {
+      Iterator<Resource> i = file.getResources().iterator();
+      if (i.hasNext()) {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        long timestamp = 0;
+        while (i.hasNext()) {
+          Resource resource = i.next();
+          byte[] bytes = resource.getContent();
+          buffer.write(bytes);
+          timestamp = Math.max(timestamp, resource.getTimestamp());
+          if (i.hasNext()) {
+            // Go to line
+            buffer.write(SEPARATOR);
+            // Cosmetic blank line
+            buffer.write(SEPARATOR);
+          }
+        }
+        return new Resource(buffer.toByteArray(), timestamp);
+      } else {
+        return null;
+      }
+    } else {
+      return file.getResource();
     }
   }
 }

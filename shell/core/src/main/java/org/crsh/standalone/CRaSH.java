@@ -33,6 +33,7 @@ import org.crsh.cli.Usage;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
+import org.crsh.plugin.ResourceManager;
 import org.crsh.processor.jline.JLineProcessor;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
@@ -75,7 +76,7 @@ public class CRaSH {
     this.descriptor = CommandFactory.DEFAULT.create(CRaSH.class);
   }
 
-  private void copy(org.crsh.vfs.File src, File dst) throws IOException {
+  private void copyCmd(org.crsh.vfs.File src, File dst) throws IOException {
     if (src.isDir()) {
       if (!dst.exists()) {
         if (dst.mkdir()) {
@@ -84,12 +85,24 @@ public class CRaSH {
       }
       if (dst.exists() && dst.isDirectory()) {
         for (org.crsh.vfs.File child : src.children()) {
-          copy(child, new File(dst, child.getName()));
+          copyCmd(child, new File(dst, child.getName()));
         }
       }
     } else {
       if (!dst.exists()) {
         Resource resource = src.getResource();
+        if (resource != null) {
+          log.info("Copied command " + src.getPath().getValue() + " to " + dst.getCanonicalPath());
+          IO.copy(new ByteArrayInputStream(resource.getContent()), new FileOutputStream(dst));
+        }
+      }
+    }
+  }
+
+  private void copyConf(org.crsh.vfs.File src, File dst) throws IOException {
+    if (!src.isDir()) {
+      if (!dst.exists()) {
+        Resource resource = ResourceManager.loadConf(src);
         if (resource != null) {
           log.info("Copied resource " + src.getPath().getValue() + " to " + dst.getCanonicalPath());
           IO.copy(new ByteArrayInputStream(resource.getContent()), new FileOutputStream(dst));
@@ -137,7 +150,7 @@ public class CRaSH {
       fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/commands/"));
       org.crsh.vfs.File f = fs.get(Path.get("/"));
       log.info("Copying command classpath resources");
-      copy(f, dst);
+      copyCmd(f, dst);
     }
 
     //
@@ -152,7 +165,7 @@ public class CRaSH {
       log.info("Copying conf classpath resources");
       for (org.crsh.vfs.File child : f.children()) {
         if (!child.isDir()) {
-          copy(child, new File(dst, child.getName()));
+          copyConf(child, new File(dst, child.getName()));
         }
       }
     }
