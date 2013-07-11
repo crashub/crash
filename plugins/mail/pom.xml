@@ -15,9 +15,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.mail</groupId>
