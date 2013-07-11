@@ -39,6 +39,13 @@
         <include>org.crsh:crsh.shell.packaging:tar.gz</include>
       </includes>
     </dependencySet>
+    <dependencySet>
+      <outputDirectory>/crash/lib</outputDirectory>
+      <includes>
+        <include>org.crsh:crsh.plugins.mail</include>
+        <include>javax.mail:mail</include>
+      </includes>
+    </dependencySet>
   </dependencySets>
 
 </assembly>

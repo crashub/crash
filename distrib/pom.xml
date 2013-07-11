@@ -51,6 +51,16 @@
       <classifier>mule-app</classifier>
     </dependency>
 
+    <!-- Mail plugin -->
+    <dependency>
+      <groupId>org.crsh</groupId>
+      <artifactId>crsh.plugins.mail</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+    </dependency>
+
     <!-- Sources -->
     <dependency>
       <groupId>org.crsh</groupId>
