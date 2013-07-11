@@ -477,6 +477,11 @@
         <artifactId>spring-web</artifactId>
         <version>3.1.1.RELEASE</version>
       </dependency>
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4</version>
+      </dependency>
 
       <!-- For testing purposes -->
       <dependency>
