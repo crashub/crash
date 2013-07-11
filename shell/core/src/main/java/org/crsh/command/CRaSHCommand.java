@@ -234,119 +234,88 @@ public abstract class CRaSHCommand extends GroovyCommand implements ShellCommand
     final Class _producedType = producedType;
 
     //
-    if (consumedType == Void.class) {
+    return new CommandInvoker<Object, Object>() {
 
-      return new CommandInvoker<Object, Object>() {
+      /** . */
+      PipeCommand real;
 
-        public Class<Object> getProducedType() {
-          return _producedType;
-        }
+      public Class<Object> getProducedType() {
+        return _producedType;
+      }
 
-        public Class<Object> getConsumedType() {
-          return _consumedType;
-        }
+      public Class<Object> getConsumedType() {
+        return _consumedType;
+      }
 
-        public void open(final CommandContext<Object> consumer) {
+      public void open(final CommandContext<Object> consumer) {
 
-          //
-          pushContext(new InvocationContextImpl<Object>(consumer));
-          CRaSHCommand.this.unmatched = match.getRest();
-          final Resolver resolver = new Resolver() {
-            public <T> T resolve(Class<T> type) {
-              if (type.equals(InvocationContext.class)) {
-                return type.cast(peekContext());
-              } else {
-                return null;
-              }
+        //
+        final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(consumer);
+        final Resolver resolver = new Resolver() {
+          public <T> T resolve(Class<T> type) {
+            if (type.equals(InvocationContext.class)) {
+              return type.cast(invocationContext);
+            } else {
+              return null;
             }
-          };
-
-          //
-          Object o;
-          try {
-            o = invoker.invoke(resolver, CRaSHCommand.this);
-          } catch (org.crsh.cli.SyntaxException e) {
-            throw new org.crsh.command.SyntaxException(e.getMessage());
-          } catch (InvocationException e) {
-            throw toScript(e.getCause());
           }
-          if (o != null) {
-            peekContext().getWriter().print(o);
+        };
+
+        // Push context
+        pushContext(invocationContext);
+
+        //  Set the unmatched part
+        CRaSHCommand.this.unmatched = match.getRest();
+
+        //
+        Object ret;
+        try {
+          ret = invoker.invoke(resolver, CRaSHCommand.this);
+        }
+        catch (org.crsh.cli.SyntaxException e) {
+          throw new org.crsh.command.SyntaxException(e.getMessage());
+        } catch (InvocationException e) {
+          throw toScript(e.getCause());
+        }
+
+        // It's a pipe command
+        if (ret instanceof PipeCommand) {
+          real = (PipeCommand)ret;
+          real.doOpen(invocationContext);
+        } else {
+          if (ret != null) {
+            peekContext().getWriter().print(ret);
           }
         }
-        public void provide(Object element) throws IOException {
+      }
+      public void provide(Object element) throws IOException {
+        if (real != null) {
+          real.provide(element);
+        } else {
           // We just drop the elements
         }
-        public void flush() throws IOException {
+      }
+      public void flush() throws IOException {
+        if (real != null) {
+          real.flush();
+        } else {
           peekContext().flush();
         }
-        public void close() throws IOException {
-          CRaSHCommand.this.unmatched = null;
-          InvocationContext<?> context = popContext();
-          context.close();
-        }
-      };
-    } else {
-      return new CommandInvoker<Object, Object>() {
-
-        /** . */
-        PipeCommand real;
-
-        public Class<Object> getProducedType() {
-          return _producedType;
-        }
-
-        public Class<Object> getConsumedType() {
-          return _consumedType;
-        }
-
-        public void open(final CommandContext<Object> consumer) {
-
-          //
-          final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(consumer);
-
-          //
-          pushContext(invocationContext);
-          CRaSHCommand.this.unmatched = match.getRest();
-          final Resolver resolver = new Resolver() {
-            public <T> T resolve(Class<T> type) {
-              if (type.equals(InvocationContext.class)) {
-                return type.cast(invocationContext);
-              } else {
-                return null;
-              }
-            }
-          };
-          try {
-            real = (PipeCommand)invoker.invoke(resolver, CRaSHCommand.this);
-          }
-          catch (org.crsh.cli.SyntaxException e) {
-            throw new org.crsh.command.SyntaxException(e.getMessage());
-          } catch (InvocationException e) {
-            throw toScript(e.getCause());
-          }
-
-          //
-          real.doOpen(invocationContext);
-        }
-
-        public void provide(Object element) throws IOException {
-          real.provide(element);
-        }
-
-        public void flush() throws IOException {
-          real.flush();
-        }
-
-        public void close() {
+      }
+      public void close() throws IOException {
+        if (real != null) {
           try {
             real.close();
           }
           finally {
             popContext();
           }
+        } else {
+          InvocationContext<?> context = popContext();
+          context.close();
         }
-      };
-    }
+        CRaSHCommand.this.unmatched = null;
+      }
+    };
   }
 }
