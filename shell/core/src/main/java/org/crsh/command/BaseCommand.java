@@ -147,27 +147,6 @@ public abstract class BaseCommand extends AbstractCommand implements ShellComman
     return null;
   }
 
-  static ScriptException toScript(Throwable cause) {
-    if (cause instanceof ScriptException) {
-      return (ScriptException)cause;
-    } if (cause instanceof groovy.util.ScriptException) {
-      // Special handling for groovy.util.ScriptException
-      // which may be thrown by scripts because it is imported by default
-      // by groovy imports
-      String msg = cause.getMessage();
-      ScriptException translated;
-      if (msg != null) {
-        translated = new ScriptException(msg);
-      } else {
-        translated = new ScriptException();
-      }
-      translated.setStackTrace(cause.getStackTrace());
-      return translated;
-    } else {
-      return new ScriptException(cause);
-    }
-  }
-
   public CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) {
     if (options.containsKey("h") || options.containsKey("help")) {
       throw new UnsupportedOperationException("Implement me");
@@ -182,6 +161,14 @@ public abstract class BaseCommand extends AbstractCommand implements ShellComman
         throw new SyntaxException(e.getMessage());
       }
       return resolveInvoker(match);
+    }
+  }
+
+  public ScriptException toScript(Throwable cause) {
+    if (cause instanceof ScriptException) {
+      return (ScriptException)cause;
+    } else {
+      return new ScriptException(cause);
     }
   }
 

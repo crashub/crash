@@ -17,12 +17,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
+package org.crsh.lang.groovy.command;
 
 import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
+import org.crsh.command.CRaSHCommand;
+import org.crsh.command.CommandContext;
+import org.crsh.command.CommandInvoker;
+import org.crsh.command.InvocationContext;
+import org.crsh.command.PipeCommandProxy;
+import org.crsh.command.ScriptException;
+import org.crsh.command.ShellCommand;
 import org.crsh.io.Consumer;
 import org.crsh.util.Safe;
 

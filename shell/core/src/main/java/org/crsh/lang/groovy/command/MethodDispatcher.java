@@ -16,33 +16,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
 
-import groovy.lang.Binding;
-import groovy.lang.MissingPropertyException;
-import groovy.lang.Script;
+package org.crsh.lang.groovy.command;
 
-/** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-public abstract class GroovyScript extends Script {
+class MethodDispatcher extends CommandClosure {
 
-  protected GroovyScript() {
-  }
+  /** . */
+  final ClassDispatcher dispatcher;
 
-  protected GroovyScript(Binding binding) {
-    super(binding);
-  }
+  /** . */
+  final String name;
 
-  public void setContext(RuntimeContext context) {
-    setBinding(new Binding(context.getSession()));
+  MethodDispatcher(ClassDispatcher dispatcher, String name) {
+    super(dispatcher);
+
+    //
+    this.dispatcher = dispatcher;
+    this.name = name;
   }
 
   @Override
-  public Object getProperty(String property) {
-    try {
-      return super.getProperty(property);
-    }
-    catch (MissingPropertyException e) {
-      return null;
-    }
+  public Object call(Object[] args) {
+    return dispatcher.dispatch(name, args);
   }
 }
+
+
+

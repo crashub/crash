@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
+package org.crsh.lang.groovy.command;
 
 import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
@@ -27,7 +27,6 @@ import org.codehaus.groovy.runtime.MetaClassHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CommandClosure extends Closure {

@@ -25,6 +25,7 @@ import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.lang.groovy.shell.GroovyCommandManager;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.command.CRaSHSession;
 
@@ -66,7 +67,7 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
 
     //
     this.shell = lifeCycle.createShell();
-    this.groovyShell = shell.getGroovyShell();
+    this.groovyShell = ((GroovyCommandManager)shell.getCommandManager()).getGroovyShell(shell);
     this.lifeCycle = lifeCycle;
   }
 

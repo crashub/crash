@@ -23,7 +23,7 @@ import org.crsh.io.Consumer;
 
 import java.io.IOException;
 
-class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
+public class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
 
   /** . */
   private final CommandContext<P> innerContext;
@@ -34,13 +34,13 @@ class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
   /** . */
   private final Consumer<C> next;
 
-  PipeCommandProxy(CommandContext<P> innerContext, CommandInvoker<C, P> delegate, Consumer<C> next) {
+  public PipeCommandProxy(CommandContext<P> innerContext, CommandInvoker<C, P> delegate, Consumer<C> next) {
     this.innerContext = innerContext;
     this.delegate = delegate;
     this.next = next;
   }
 
-  void fire() {
+  public void fire() {
     open(innerContext);
   }
 

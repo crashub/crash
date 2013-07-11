@@ -16,25 +16,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.lang.groovy.command;
 
-package org.crsh.command;
+import groovy.lang.Binding;
+import groovy.lang.MissingPropertyException;
+import groovy.lang.Script;
 
-import groovy.lang.Closure;
+/** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
+public abstract class GroovyScript extends Script {
 
-public class InvokeCommandClosure extends Closure {
+  protected GroovyScript() {
+  }
 
-  /** . */
-  private final ShellCommand command;
-
-  public InvokeCommandClosure(Object owner, ShellCommand command) {
-    super(owner);
-
-    //
-    this.command = command;
+  protected GroovyScript(Binding binding) {
+    super(binding);
   }
 
   @Override
-  public Object call(Object[] args) {
-    throw new UnsupportedOperationException();
+  public Object getProperty(String property) {
+    try {
+      return super.getProperty(property);
+    }
+    catch (MissingPropertyException e) {
+      return null;
+    }
   }
 }

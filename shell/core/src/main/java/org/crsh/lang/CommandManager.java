@@ -16,30 +16,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.lang;
 
-package org.crsh.command;
+import org.crsh.command.NoSuchCommandException;
+import org.crsh.command.ShellCommand;
+import org.crsh.lang.groovy.shell.GroovyCommandManager;
+import org.crsh.plugin.PluginContext;
 
-class MethodDispatcher extends CommandClosure {
+import java.util.HashMap;
 
-  /** . */
-  final ClassDispatcher dispatcher;
+/** @author Julien Viet */
+public abstract class CommandManager {
 
-  /** . */
-  final String name;
-
-  MethodDispatcher(ClassDispatcher dispatcher, String name) {
-    super(dispatcher);
-
-    //
-    this.dispatcher = dispatcher;
-    this.name = name;
+  public static CommandManager create(PluginContext context) {
+    return new GroovyCommandManager(context);
   }
 
-  @Override
-  public Object call(Object[] args) {
-    return dispatcher.dispatch(name, args);
-  }
+  public abstract ShellCommand getCommand(String name) throws NoSuchCommandException, NullPointerException;
+
+  public abstract void init(HashMap<String, Object> session);
+
+  public abstract void destroy(HashMap<String, Object> session);
+
+  public abstract String doCallBack(HashMap<String, Object> session, String name, String defaultValue);
+
 }
-
-
-

@@ -17,8 +17,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
+package org.crsh.lang.groovy.command;
 
+import org.crsh.command.CommandInvoker;
+import org.crsh.command.InvocationContext;
+import org.crsh.command.ScriptException;
 import org.crsh.io.Consumer;
 import org.crsh.text.Chunk;
 import org.crsh.shell.ScreenContext;

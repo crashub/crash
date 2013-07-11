@@ -19,26 +19,20 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.command.GroovyScript;
-import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
+import org.crsh.lang.CommandManager;
 import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.ResourceKind;
 
 import java.security.Principal;
 
 public class CRaSH {
 
-
-  /** . */
-  final AbstractClassManager<? extends ShellCommand> commandManager;
-
-  /** . */
-  final AbstractClassManager<? extends GroovyScript> scriptManager;
-
   /** . */
   final PluginContext context;
+
+  /** . */
+  final CommandManager commandManager;
 
   /**
    * Create a new CRaSH.
@@ -47,17 +41,8 @@ public class CRaSH {
    * @throws NullPointerException if the context argument is null
    */
   public CRaSH(PluginContext context) throws NullPointerException {
-    this(
-      context,
-      new ClassManager<ShellCommand>(context, ResourceKind.COMMAND, ShellCommand.class, GroovyScriptCommand.class),
-      new ClassManager<GroovyScript>(context, ResourceKind.LIFECYCLE, GroovyScript.class, GroovyScript.class)
-    );
-  }
-
-  public CRaSH(PluginContext context, AbstractClassManager<ShellCommand> commandManager, AbstractClassManager<? extends GroovyScript> scriptManager) {
     this.context = context;
-    this.commandManager = commandManager;
-    this.scriptManager = scriptManager;
+    this.commandManager = CommandManager.create(context);
   }
 
   public CRaSHSession createSession(Principal user) {
@@ -82,6 +67,6 @@ public class CRaSH {
    * @throws NullPointerException if the name argument is null
    */
   public ShellCommand getCommand(String name) throws NoSuchCommandException, NullPointerException {
-    return commandManager.getInstance(name);
+    return commandManager.getCommand(name);
   }
 }

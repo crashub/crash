@@ -23,7 +23,8 @@ import org.crsh.cli.Argument
 import org.crsh.cli.Command
 import org.crsh.cli.Usage
 import org.crsh.shell.impl.command.CRaSHSession
-import org.crsh.command.GroovyScriptCommand
+import org.crsh.lang.groovy.command.GroovyScriptCommand
+import org.crsh.lang.groovy.shell.GroovyCommandManager
 
 public class evaluate {
 
@@ -31,8 +32,9 @@ public class evaluate {
   @Usage("evaluate groovy script")
   public void main(@Usage("the code") @Argument String scriptText) {
     CRaSHSession session = (CRaSHSession)context.session;
-    GroovyShell shell = session.getGroovyShell();
-    GroovyScriptCommand script = shell.parse(scriptText);
+    GroovyCommandManager manager = session.getCommandManager();
+    GroovyShell shell = manager.getGroovyShell(session);
+    GroovyScriptCommand script = (GroovyScriptCommand)shell.parse(scriptText);
     script.open(context);
     script.flush()
     script.close();

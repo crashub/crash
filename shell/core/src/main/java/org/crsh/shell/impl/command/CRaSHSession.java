@@ -18,22 +18,16 @@
  */
 package org.crsh.shell.impl.command;
 
-import groovy.lang.Binding;
-import groovy.lang.Closure;
-import groovy.lang.GroovyShell;
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.BaseRuntimeContext;
 import org.crsh.command.RuntimeContext;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.command.CommandInvoker;
-import org.crsh.command.GroovyScript;
 import org.crsh.command.NoSuchCommandException;
-import org.crsh.command.GroovyScriptCommand;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
+import org.crsh.lang.CommandManager;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.Shell;
@@ -60,38 +54,13 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   static final Logger accessLog = Logger.getLogger("org.crsh.shell.access");
 
   /** . */
-  private GroovyShell groovyShell;
-
-  /** . */
   final CRaSH crash;
 
   /** . */
   final Principal user;
 
-  /**
-   * Used for testing purposes.
-   *
-   * @return a groovy shell operating on the session attributes
-   */
-  public GroovyShell getGroovyShell() {
-    if (groovyShell == null) {
-      CompilerConfiguration config = new CompilerConfiguration();
-      config.setRecompileGroovySource(true);
-      config.setScriptBaseClass(GroovyScriptCommand.class.getName());
-      groovyShell = new GroovyShell(crash.context.getLoader(), new Binding(this), config);
-    }
-    return groovyShell;
-  }
-
-  public GroovyScript getLifeCycle(String name) throws NoSuchCommandException, NullPointerException {
-    Class<? extends GroovyScript> scriptClass = crash.scriptManager.getClass(name);
-    if (scriptClass != null) {
-      GroovyScript script = (GroovyScript)InvokerHelper.createScript(scriptClass, new Binding(this));
-      script.setBinding(new Binding(this));
-      return script;
-    } else {
-      return null;
-    }
+  public CommandManager getCommandManager() {
+    return crash.commandManager;
   }
 
   CRaSHSession(final CRaSH crash, Principal user) {
@@ -99,22 +68,17 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     put("crash", crash);
 
     //
-    this.groovyShell = null;
     this.crash = crash;
     this.user = user;
 
     //
+    ClassLoader previous = setCRaSHLoader();
     try {
-      GroovyScript login = getLifeCycle("login");
-      if (login != null) {
-        login.setContext(this);
-        login.run();
-      }
+      crash.commandManager.init(this);
     }
-    catch (NoSuchCommandException e) {
-      e.printStackTrace();
+    finally {
+      setPreviousLoader(previous);
     }
-
   }
 
   public Map<String, Object> getSession() {
@@ -128,14 +92,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public void close() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      GroovyScript logout = getLifeCycle("logout");
-      if (logout != null) {
-        logout.setContext(this);
-        logout.run();
-      }
-    }
-    catch (NoSuchCommandException e) {
-      e.printStackTrace();
+      crash.commandManager.destroy(this);
     }
     finally {
       setPreviousLoader(previous);
@@ -144,36 +101,24 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
 
   // Shell implementation **********************************************************************************************
 
-  private String eval(String name, String def) {
+  public String getWelcome() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      GroovyShell shell = getGroovyShell();
-      Object ret = shell.evaluate("return " + name + ";");
-      if (ret instanceof Closure) {
-        log.log(Level.FINEST, "Invoking " + name + " closure");
-        Closure c = (Closure)ret;
-        ret = c.call();
-      } else if (ret == null) {
-        log.log(Level.FINEST, "No " + name + " will use empty");
-        return def;
-      }
-      return String.valueOf(ret);
-    }
-    catch (Exception e) {
-      log.log(Level.SEVERE, "Could not get a " + name + " message, will use empty", e);
-      return def;
+      return crash.commandManager.doCallBack(this, "welcome", "");
     }
     finally {
       setPreviousLoader(previous);
     }
   }
 
-  public String getWelcome() {
-    return eval("welcome", "");
-  }
-
   public String getPrompt() {
-    return eval("prompt", "% ");
+    ClassLoader previous = setCRaSHLoader();
+    try {
+      return crash.commandManager.doCallBack(this, "prompt", "% ");
+    }
+    finally {
+      setPreviousLoader(previous);
+    }
   }
 
   public ShellProcess createProcess(String request) {

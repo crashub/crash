@@ -29,7 +29,7 @@ import org.crsh.text.RenderPrintWriter;
 import java.io.IOException;
 import java.util.Map;
 
-final class InvocationContextImpl<P> implements InvocationContext<P> {
+public final class InvocationContextImpl<P> implements InvocationContext<P> {
 
   /** . */
   private final CommandContext<P> commandContext;
@@ -37,7 +37,7 @@ final class InvocationContextImpl<P> implements InvocationContext<P> {
   /** . */
   private RenderPrintWriter writer;
 
-  InvocationContextImpl(CommandContext<P> commandContext) {
+  public InvocationContextImpl(CommandContext<P> commandContext) {
     this.commandContext = commandContext;
   }
 

@@ -22,7 +22,7 @@ package org.crsh.text.ui;
 import groovy.lang.Closure;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.CommandInvoker;
-import org.crsh.command.GroovyScriptCommand;
+import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.text.RenderPrintWriter;

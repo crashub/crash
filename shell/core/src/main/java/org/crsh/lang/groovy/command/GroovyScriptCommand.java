@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
+package org.crsh.lang.groovy.command;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -27,6 +27,15 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.spi.Completion;
+import org.crsh.command.CommandContext;
+import org.crsh.command.CommandInvoker;
+import org.crsh.command.DescriptionFormat;
+import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContextImpl;
+import org.crsh.command.NoSuchCommandException;
+import org.crsh.command.RuntimeContext;
+import org.crsh.command.ScriptException;
+import org.crsh.command.ShellCommand;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.util.Strings;
@@ -50,12 +59,8 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
   /** . */
   private String[] args;
 
-  /** . */
-  private boolean piped;
-
   protected GroovyScriptCommand() {
     this.stack = null;
-    this.piped = false;
   }
 
   public final void pushContext(InvocationContext<?> context) throws NullPointerException {
@@ -214,7 +219,7 @@ public abstract class GroovyScriptCommand extends Script implements ShellCommand
       }
     }
     catch (Exception t) {
-      throw CRaSHCommand.toScript(t);
+      throw GroovyCommand.unwrap(t);
     }
   }
 
