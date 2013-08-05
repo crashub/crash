@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl.command;
+package org.crsh.command.pipeline;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptException;
@@ -27,7 +27,6 @@ import org.crsh.text.Chunk;
 import org.crsh.text.ChunkAdapter;
 import org.crsh.util.Safe;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 

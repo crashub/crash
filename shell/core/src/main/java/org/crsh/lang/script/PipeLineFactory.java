@@ -17,11 +17,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl.command;
+package org.crsh.lang.script;
 
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
+import org.crsh.repl.REPLSession;
+import org.crsh.command.pipeline.PipeLine;
 import org.crsh.text.Chunk;
 
 import java.util.LinkedList;
@@ -48,7 +50,11 @@ public class PipeLineFactory {
     return line;
   }
 
-  PipeLineFactory(String line, PipeLineFactory next) {
+  public PipeLineFactory getNext() {
+    return next;
+  }
+
+  public PipeLineFactory(String line, PipeLineFactory next) {
 
     Pattern p = Pattern.compile("^\\s*(\\S+)");
     java.util.regex.Matcher m = p.matcher(line);
@@ -66,14 +72,14 @@ public class PipeLineFactory {
     this.next = next;
   }
 
-  public CommandInvoker<Void, Chunk> create(CRaSHSession session) throws NoSuchCommandException {
+  public CommandInvoker<Void, Chunk> create(REPLSession session) throws NoSuchCommandException {
 
     //
     LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();
     for (PipeLineFactory current = this;current != null;current = current.next) {
       CommandInvoker commandInvoker = null;
       if (current.name != null) {
-        ShellCommand command = session.crash.getCommand(current.name);
+        ShellCommand command = session.getCommand(current.name);
         if (command != null) {
           commandInvoker = command.resolveInvoker(current.rest);
         }
@@ -88,7 +94,7 @@ public class PipeLineFactory {
     return new PipeLine(pipes.toArray(new CommandInvoker[pipes.size()]));
   }
 
-  PipeLineFactory getLast() {
+  public PipeLineFactory getLast() {
     if (next != null) {
       return next.getLast();
     }

@@ -16,21 +16,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.repl;
 
-package crash.commands.test
+import org.crsh.command.CommandInvoker;
+import org.crsh.shell.ShellResponse;
+import org.crsh.text.Chunk;
 
-import org.crsh.cli.Argument
-import org.crsh.cli.Command
-import org.crsh.cli.Usage
+/** @author Julien Viet */
+public abstract class EvalResponse {
 
-public class evaluate {
+  public static class Invoke extends EvalResponse {
 
-  @Command
-  @Usage("evaluate groovy script")
-  public void main(@Usage("the code") @Argument String scriptText) {
-    Map<String, Object> state = [out:out];
-    Binding binding = new Binding(state);
-    GroovyShell shell = new GroovyShell(binding);
-    shell.evaluate(scriptText);
+    /** . */
+    public final CommandInvoker<Void, ?> invoker;
+
+    public Invoke(CommandInvoker<Void, ?> invoker) {
+      this.invoker = invoker;
+    }
   }
+
+  public static class Response extends EvalResponse {
+
+    /** . */
+    public final ShellResponse response;
+
+    public Response(ShellResponse response) {
+      this.response = response;
+    }
+  }
+
 }

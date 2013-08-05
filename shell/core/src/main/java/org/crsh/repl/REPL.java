@@ -16,39 +16,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.repl;
 
-package org.crsh.shell.impl.command;
+import org.crsh.cli.impl.completion.CompletionMatch;
 
-abstract class Token {
+/**
+ * Read–eval–print loop.
+ *
+ * @author Julien Viet
+ */
+public interface REPL {
 
-  public abstract String toString();
+  /**
+   * Return the repl name.
+   *
+   * @return the repl name
+   */
+  String getName();
 
-  public static Token EOF = new Token(){
-    @Override
-    public String toString() {
-      return "EOF";
-    }
-  };
+  /**
+   * Evaluate a request
+   *
+   * @param session the session
+   * @param request the request to evaluate
+   * @return the evaluation response
+   */
+  EvalResponse eval(REPLSession session, String request);
 
-  public static Token PIPE = new Token(){
-    @Override
-    public String toString() {
-      return "PIPE";
-    }
-  };
+  CompletionMatch complete(REPLSession session, String prefix);
 
-  public static class Command extends Token {
-
-    /** . */
-    final String line;
-
-    public Command(String line) {
-      this.line = line;
-    }
-
-    @Override
-    public String toString() {
-      return "Command[" + line + "]";
-    }
-  }
 }

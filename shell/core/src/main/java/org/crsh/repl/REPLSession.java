@@ -16,21 +16,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.repl;
 
-package crash.commands.test
+import org.crsh.command.NoSuchCommandException;
+import org.crsh.command.ShellCommand;
+import org.crsh.plugin.PluginContext;
 
-import org.crsh.cli.Argument
-import org.crsh.cli.Command
-import org.crsh.cli.Usage
+import java.util.Map;
 
-public class evaluate {
+/** @author Julien Viet */
+public interface REPLSession extends Map<String, Object> {
 
-  @Command
-  @Usage("evaluate groovy script")
-  public void main(@Usage("the code") @Argument String scriptText) {
-    Map<String, Object> state = [out:out];
-    Binding binding = new Binding(state);
-    GroovyShell shell = new GroovyShell(binding);
-    shell.evaluate(scriptText);
-  }
+  ShellCommand getCommand(String name) throws NoSuchCommandException;
+
+  PluginContext getContext();
+
 }

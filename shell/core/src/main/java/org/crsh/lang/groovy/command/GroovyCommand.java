@@ -32,6 +32,8 @@ import org.crsh.command.InvocationContext;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
+import org.crsh.lang.groovy.closure.ClassDispatcher;
+import org.crsh.lang.groovy.closure.CommandClosure;
 import org.crsh.shell.impl.command.CRaSH;
 
 public abstract class GroovyCommand extends BaseCommand implements GroovyObject {
@@ -86,7 +88,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
           }
           if (cmd != null) {
             // Should we use null instead of "" ?
-            return new ClassDispatcher(cmd, this).dispatch("", CommandClosure.unwrapArgs(args));
+            return new ClassDispatcher(cmd, peekContext()).dispatch("", CommandClosure.unwrapArgs(args));
           }
         }
       }
@@ -118,7 +120,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
         try {
           ShellCommand cmd = crash.getCommand(property);
           if (cmd != null) {
-            return new ClassDispatcher(cmd, this);
+            return new ClassDispatcher(cmd, peekContext());
           }
         } catch (NoSuchCommandException e) {
           throw new InvokerInvocationException(e);

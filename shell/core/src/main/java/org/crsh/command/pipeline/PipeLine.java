@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl.command;
+package org.crsh.command.pipeline;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
@@ -25,7 +25,7 @@ import org.crsh.text.Chunk;
 
 import java.io.IOException;
 
-class PipeLine implements CommandInvoker<Void, Chunk> {
+public class PipeLine implements CommandInvoker<Void, Chunk> {
 
   /** . */
   private final CommandInvoker[] invokers;
@@ -33,7 +33,7 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
   /** . */
   private Pipe current;
 
-  PipeLine(CommandInvoker[] invokers) {
+  public PipeLine(CommandInvoker[] invokers) {
     this.invokers = invokers;
     this.current = null;
   }

@@ -17,20 +17,38 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package crash.commands.test
+package org.crsh.lang.script;
 
-import org.crsh.cli.Argument
-import org.crsh.cli.Command
-import org.crsh.cli.Usage
+abstract class Token {
 
-public class evaluate {
+  public abstract String toString();
 
-  @Command
-  @Usage("evaluate groovy script")
-  public void main(@Usage("the code") @Argument String scriptText) {
-    Map<String, Object> state = [out:out];
-    Binding binding = new Binding(state);
-    GroovyShell shell = new GroovyShell(binding);
-    shell.evaluate(scriptText);
+  public static Token EOF = new Token(){
+    @Override
+    public String toString() {
+      return "EOF";
+    }
+  };
+
+  public static Token PIPE = new Token(){
+    @Override
+    public String toString() {
+      return "PIPE";
+    }
+  };
+
+  public static class Command extends Token {
+
+    /** . */
+    final String line;
+
+    public Command(String line) {
+      this.line = line;
+    }
+
+    @Override
+    public String toString() {
+      return "Command[" + line + "]";
+    }
   }
 }

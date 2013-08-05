@@ -26,12 +26,14 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.CommandManager;
+import org.crsh.lang.groovy.ShellBinding;
 import org.crsh.lang.groovy.command.GroovyScript;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,18 +88,22 @@ public class GroovyCommandManager extends CommandManager {
     }
   }
 
+  public GroovyShell getGroovyShell(Map<String, Object> session) {
+    return getGroovyShell(context, session);
+  }
+
   /**
-   * Used for testing purposes.
+   * The underlying groovu shell used for the REPL.
    *
    * @return a groovy shell operating on the session attributes
    */
-  public GroovyShell getGroovyShell(HashMap<String, Object> session) {
+  public static GroovyShell getGroovyShell(PluginContext context, Map<String, Object> session) {
     GroovyShell shell = (GroovyShell)session.get("shell");
     if (shell == null) {
       CompilerConfiguration config = new CompilerConfiguration();
       config.setRecompileGroovySource(true);
-      config.setScriptBaseClass(GroovyScriptCommand.class.getName());
-      shell = new GroovyShell(context.getLoader(), new Binding(session), config);
+      ShellBinding binding = new ShellBinding(session);
+      shell = new GroovyShell(context.getLoader(), binding, config);
       session.put("shell", shell);
     }
     return shell;

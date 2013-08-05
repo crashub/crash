@@ -234,7 +234,13 @@ public abstract class BaseCommand extends AbstractCommand implements ShellComman
         return _consumedType;
       }
 
-      public void open(final CommandContext<Object> consumer) {
+      public void open(CommandContext<? super Object> consumer) {
+        // Java is fine with that but not intellij....
+        CommandContext<Object> consumer2 = (CommandContext<Object>)consumer;
+        open2(consumer2);
+      }
+
+      public void open2(final CommandContext<Object> consumer) {
 
         //
         final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(consumer);

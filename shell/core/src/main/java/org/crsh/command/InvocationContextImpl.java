@@ -21,8 +21,8 @@ package org.crsh.command;
 
 import org.crsh.shell.ScreenContext;
 import org.crsh.shell.impl.command.CRaSHSession;
-import org.crsh.shell.impl.command.PipeLineFactory;
-import org.crsh.shell.impl.command.PipeLineParser;
+import org.crsh.lang.script.PipeLineFactory;
+import org.crsh.lang.script.PipeLineParser;
 import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
 

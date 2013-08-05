@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl.command;
+package org.crsh.lang.script;
 
 import junit.framework.TestCase;
 import org.crsh.command.SyntaxException;
@@ -31,16 +31,16 @@ public class ParserTestCase extends TestCase {
   public void testCommand() {
     PipeLineParser p = new PipeLineParser("a");
     PipeLineFactory e = p.parse();
-    assertEquals("a", e.line);
-    assertNull(e.next);
+    assertEquals("a", e.getLine());
+    assertNull(e.getNext());
   }
 
   public void testPipe() {
     PipeLineParser p = new PipeLineParser("a|b");
     PipeLineFactory e = p.parse();
-    assertEquals("a", e.line);
-    assertEquals("b", e.next.line);
-    assertNull(e.next.next);
+    assertEquals("a", e.getLine());
+    assertEquals("b", e.getNext().getLine());
+    assertNull(e.getNext().getNext());
   }
 
   public void testSyntaxException() {

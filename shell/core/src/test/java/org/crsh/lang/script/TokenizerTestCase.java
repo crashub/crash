@@ -17,10 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl.command;
+package org.crsh.lang.script;
 
 import junit.framework.TestCase;
 import org.crsh.command.ScriptException;
+import org.crsh.lang.script.Token;
+import org.crsh.lang.script.Tokenizer;
 
 public class TokenizerTestCase extends TestCase {
 

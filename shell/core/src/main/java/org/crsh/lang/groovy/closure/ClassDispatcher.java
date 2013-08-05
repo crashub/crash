@@ -17,13 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.lang.groovy.command;
+package org.crsh.lang.groovy.closure;
 
 import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.command.CRaSHCommand;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContext;
@@ -40,15 +39,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class ClassDispatcher extends CommandClosure {
+public final class ClassDispatcher extends CommandClosure {
 
   /** . */
-  final Object owner;
+  final InvocationContext owner;
 
   /** . */
   final ShellCommand command;
 
-  ClassDispatcher(ShellCommand command, Object owner) {
+  public ClassDispatcher(ShellCommand command, InvocationContext owner) {
     super(new Object());
 
     //
@@ -85,7 +84,7 @@ final class ClassDispatcher extends CommandClosure {
     return dispatch("", arguments);
   }
 
-  Object dispatch(String methodName, Object[] arguments) {
+  public Object dispatch(String methodName, Object[] arguments) {
     PipeCommandProxy pipe = resolvePipe(methodName, arguments, false);
 
     //
@@ -153,16 +152,6 @@ final class ClassDispatcher extends CommandClosure {
     CommandInvoker<Void, Void> invoker = (CommandInvoker<Void, Void>)command.resolveInvoker(name, invokerOptions, invokerArgs);
 
     //
-    InvocationContext context;
-    if (owner instanceof CRaSHCommand) {
-      context = ((CRaSHCommand)owner).peekContext();
-    } else if (owner instanceof GroovyScriptCommand) {
-      context = (InvocationContext)((GroovyScriptCommand)owner).peekContext();
-    } else {
-      throw new UnsupportedOperationException("todo");
-    }
-
-    //
     Consumer producer;
     if (closure != null) {
       CommandInvoker producerPipe;
@@ -206,11 +195,11 @@ final class ClassDispatcher extends CommandClosure {
       }
       producer = producerPipe;
     } else {
-      producer = context;
+      producer = owner;
     }
 
     //
-    InnerInvocationContext inner = new InnerInvocationContext(context, producer, piped);
+    InnerInvocationContext inner = new InnerInvocationContext(owner, producer, piped);
     return new PipeCommandProxy(inner, invoker, producer);
   }
 }

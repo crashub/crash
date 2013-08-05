@@ -30,7 +30,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 
-class CRaSHProcessContext implements CommandContext<Chunk>, Closeable {
+class CRaSHProcessContext implements CommandContext<Object>, Closeable {
 
   /** . */
   private final CRaSHSession session;
@@ -109,11 +109,11 @@ class CRaSHProcessContext implements CommandContext<Chunk>, Closeable {
     return adapter.getHeight();
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
+  public Class<Object> getConsumedType() {
+    return Object.class;
   }
 
-  public void provide(Chunk element) throws IOException {
+  public void provide(Object element) throws IOException {
     adapter.provide(element);
   }
 

@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.lang.groovy.command;
+package org.crsh.lang.groovy.closure;
 
 import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
@@ -45,7 +45,7 @@ public class CommandClosure extends Closure {
     this.args = null;
   }
 
-  static Object[] unwrapArgs(Object arguments) {
+  public static Object[] unwrapArgs(Object arguments) {
     if (arguments == null) {
       return MetaClassHelper.EMPTY_ARRAY;
     } else if (arguments instanceof Tuple) {
