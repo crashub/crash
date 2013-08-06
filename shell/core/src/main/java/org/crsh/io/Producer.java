@@ -28,7 +28,7 @@ import java.io.IOException;
  * @param <P> the produced element generic type
  * @param <C> the consumer element generic type
  */
-public interface Producer<P, C extends Consumer<P>> extends Closeable {
+public interface Producer<P, C extends Consumer<? super P>> extends Closeable {
 
   /**
    * Returns the class of the produced type.

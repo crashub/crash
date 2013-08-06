@@ -26,5 +26,5 @@ package org.crsh.io;
  * @param <P> the produced element generic type
  * @param <CONS> the consumer generic type
  */
-public interface Filter<C, P, CONS extends Consumer<P>> extends Consumer<C>, Producer<P, CONS>  {
+public interface Filter<C, P, CONS extends Consumer<? super P>> extends Consumer<C>, Producer<P, CONS>  {
 }

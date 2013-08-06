@@ -26,5 +26,5 @@ import org.crsh.io.Filter;
  * @param <C> the consumed element generic type
  * @param <P> the produced element generic type
  */
-public interface CommandInvoker<C, P> extends Filter<C, P, CommandContext<P>> {
+public interface CommandInvoker<C, P> extends Filter<C, P, CommandContext<? super P>> {
 }

@@ -191,7 +191,7 @@ final class ClassDispatcher extends CommandClosure {
           public Class<Object> getConsumedType() {
             return type;
           }
-          public void open(CommandContext<Void> consumer) {
+          public void open(CommandContext<? super Void> consumer) {
           }
           public void close() {
           }

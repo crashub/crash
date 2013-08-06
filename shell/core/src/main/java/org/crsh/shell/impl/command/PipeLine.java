@@ -46,7 +46,7 @@ class PipeLine implements CommandInvoker<Void, Chunk> {
     throw new UnsupportedOperationException();
   }
 
-  public void open(CommandContext<Chunk> consumer) {
+  public void open(CommandContext<? super Chunk> consumer) {
     open(0, consumer);
   }
 

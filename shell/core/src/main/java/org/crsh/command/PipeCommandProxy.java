@@ -52,7 +52,7 @@ public class PipeCommandProxy<C, P> implements CommandInvoker<C, P> {
     return delegate.getConsumedType();
   }
 
-  public void open(CommandContext<P> consumer) {
+  public void open(CommandContext<? super P> consumer) {
     if (next != null && next instanceof PipeCommandProxy) {
       ((PipeCommandProxy)next).fire();
     }
