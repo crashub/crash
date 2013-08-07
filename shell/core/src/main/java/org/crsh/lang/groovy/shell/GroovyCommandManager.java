@@ -26,7 +26,6 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.CommandManager;
-import org.crsh.lang.groovy.ShellBinding;
 import org.crsh.lang.groovy.command.GroovyScript;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.plugin.PluginContext;

@@ -16,30 +16,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.lang.groovy.closure;
 
-class MethodDispatcher extends CommandClosure {
+import org.crsh.command.CommandContext;
+
+/** @author Julien Viet */
+class ClosureDelegate {
 
   /** . */
-  final ClassDispatcher dispatcher;
+  private final CommandContext context;
 
-  /** . */
-  final String name;
-
-  MethodDispatcher(ClassDispatcher dispatcher, String name) {
-    super(dispatcher);
-
-    //
-    this.dispatcher = dispatcher;
-    this.name = name;
+  public ClosureDelegate(CommandContext context) {
+    this.context = context;
   }
 
-  @Override
-  public Object call(Object[] args) {
-    return dispatcher.dispatch(name, args);
+  public CommandContext getContext() {
+    return context;
   }
 }
-
-
-

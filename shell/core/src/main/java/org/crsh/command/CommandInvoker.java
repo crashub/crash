@@ -20,11 +20,34 @@ package org.crsh.command;
 
 import org.crsh.io.Filter;
 
+import java.io.IOException;
+
 /**
  * A command invoker is a filter for a {@link CommandContext} kind of consumer.
  *
  * @param <C> the consumed element generic type
  * @param <P> the produced element generic type
  */
-public interface CommandInvoker<C, P> extends Filter<C, P, CommandContext<? super P>> {
+public abstract class CommandInvoker<C, P> implements Filter<C, P, CommandContext<? super P>> {
+
+  /**
+   * Invoke the command.
+   *
+   * @param consumer the consumer for this invocation
+   * @throws IOException any io exception
+   */
+  public final void invoke(CommandContext<? super P> consumer) throws IOException {
+    try {
+      open(consumer);
+    }
+    finally {
+      try {
+        flush();
+      }
+      finally {
+        close();
+      }
+    }
+  }
+
 }

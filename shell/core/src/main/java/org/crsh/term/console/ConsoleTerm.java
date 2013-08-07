@@ -236,6 +236,10 @@ public class ConsoleTerm implements Term {
     return Chunk.class;
   }
 
+  public void write(Chunk chunk) throws IOException {
+    provide(chunk);
+  }
+
   public void provide(Chunk element) throws IOException {
     if (element == null) {
       throw new NullPointerException("No null chunk accepted");

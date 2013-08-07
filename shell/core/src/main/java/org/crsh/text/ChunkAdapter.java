@@ -24,7 +24,7 @@ import org.crsh.shell.ScreenContext;
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class ChunkAdapter implements ScreenContext<Object> {
+public class ChunkAdapter implements ScreenContext {
 
   /** . */
   private final LinkedList<Object> buffer = new LinkedList<Object>();
@@ -35,7 +35,7 @@ public class ChunkAdapter implements ScreenContext<Object> {
   /** . */
   private final RenderAppendable out;
 
-  public ChunkAdapter(ScreenContext<Chunk> out) {
+  public ChunkAdapter(ScreenContext out) {
     this.out = new RenderAppendable(out);
   }
 
@@ -51,14 +51,18 @@ public class ChunkAdapter implements ScreenContext<Object> {
     return Object.class;
   }
 
+  public void write(Chunk chunk) throws IOException {
+    provide(chunk);
+  }
+
   public void provide(Object element) throws IOException {
     Renderable current = Renderable.getRenderable(element.getClass());
     if (current == null) {
       send();
       if (element instanceof Chunk) {
-        out.provide((Chunk)element);
+        out.write((Chunk)element);
       } else {
-        out.provide(Text.create(element.toString()));
+        out.write(Text.create(element.toString()));
       }
     } else {
       if (renderable != null && !current.equals(renderable)) {

@@ -18,6 +18,7 @@
  */
 package org.crsh.command;
 
+import org.crsh.io.Consumer;
 import org.crsh.shell.InteractionContext;
 
 import java.io.Closeable;
@@ -27,7 +28,7 @@ import java.io.Closeable;
  *
  * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public interface CommandContext<P> extends InteractionContext<P>, RuntimeContext, Closeable {
+public interface CommandContext<P> extends Consumer<P>, InteractionContext, RuntimeContext, Closeable {
 
   boolean isPiped();
 

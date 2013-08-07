@@ -22,36 +22,26 @@ package org.crsh.lang.groovy.closure;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.io.Consumer;
 import org.crsh.text.Chunk;
-import org.crsh.shell.ScreenContext;
 import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;
 import java.util.Map;
 
-class InnerInvocationContext<P> implements InvocationContext<P> {
+class PipeLineInvocationContext implements InvocationContext<Object> {
 
   /** . */
-  final InvocationContext<?> outter;
-
-  /** . */
-  final Consumer<P> consumer;
-
-  /** . */
-  private RenderPrintWriter writer;
+  final InvocationContext<Object> outter;
 
   /** . */
   private final boolean piped;
 
-  InnerInvocationContext(
-    InvocationContext<?> outter,
-    Consumer<P> consumer,
-    boolean piped) {
+  PipeLineInvocationContext(
+      InvocationContext<Object> outter,
+      boolean piped) {
 
     //
     this.outter = outter;
-    this.consumer = consumer;
     this.piped = piped;
   }
 
@@ -88,42 +78,23 @@ class InnerInvocationContext<P> implements InvocationContext<P> {
   }
 
   public RenderPrintWriter getWriter() {
-    if (writer == null) {
-      writer = new RenderPrintWriter(new ScreenContext<Chunk>() {
-        public Class<Chunk> getConsumedType() {
-          return Chunk.class;
-        }
-        public int getWidth() {
-          return outter.getWidth();
-        }
-        public int getHeight() {
-          return outter.getHeight();
-        }
-        public void provide(Chunk element) throws IOException {
-          Class<P> consumedType = consumer.getConsumedType();
-          if (consumedType.isInstance(element)) {
-            P p = consumedType.cast(element);
-            consumer.provide(p);
-          }
-        }
-        public void flush() throws IOException {
-          consumer.flush();
-        }
-      });
-    }
-    return writer;
+    return outter.getWriter();
   }
 
-  public Class<P> getConsumedType() {
-    return consumer.getConsumedType();
+  public Class<Object> getConsumedType() {
+    return Object.class;
   }
 
-  public void provide(P element) throws IOException {
-    consumer.provide(element);
+  public void write(Chunk chunk) throws IOException {
+    outter.write(chunk);
+  }
+
+  public void provide(Object element) throws IOException {
+    outter.provide(element);
   }
 
   public void flush() throws IOException {
-    consumer.flush();
+    outter.flush();
   }
 
   public void close() throws IOException {

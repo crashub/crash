@@ -21,6 +21,7 @@ package org.crsh.io;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * A producer that produces elements in a specific consumer.
@@ -46,7 +47,10 @@ public interface Producer<P, C extends Consumer<? super P>> extends Closeable {
 
   /**
    * Close the producer.
+   *
+   * @throws IOException any io exception
+   * @throws UndeclaredThrowableException anything other kind of exception
    */
-  void close() throws IOException;
+  void close() throws IOException, UndeclaredThrowableException;
 
 }

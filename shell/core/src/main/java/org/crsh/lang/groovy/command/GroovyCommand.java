@@ -21,6 +21,7 @@ package org.crsh.lang.groovy.command;
 
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.MetaClass;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
@@ -32,9 +33,12 @@ import org.crsh.command.InvocationContext;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
-import org.crsh.lang.groovy.closure.ClassDispatcher;
-import org.crsh.lang.groovy.closure.CommandClosure;
+import org.crsh.lang.groovy.closure.PipeLineClosure;
+import org.crsh.lang.groovy.closure.PipeLineInvoker;
 import org.crsh.shell.impl.command.CRaSH;
+
+import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 public abstract class GroovyCommand extends BaseCommand implements GroovyObject {
 
@@ -46,26 +50,33 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
   }
 
   @Override
-  public ScriptException toScript(Throwable cause) {
-    return unwrap(cause);
+  public UndeclaredThrowableException toScript(Throwable cause) {
+    if (cause instanceof groovy.util.ScriptException) {
+      cause = unwrap((groovy.util.ScriptException)cause);
+    }
+    return super.toScript(cause);
+  }
+
+  public static ScriptException unwrap(groovy.util.ScriptException cause) {
+    // Special handling for groovy.util.ScriptException
+    // which may be thrown by scripts because it is imported by default
+    // by groovy imports
+    String msg = cause.getMessage();
+    ScriptException translated;
+    if (msg != null) {
+      translated = new ScriptException(msg);
+    } else {
+      translated = new ScriptException();
+    }
+    translated.setStackTrace(cause.getStackTrace());
+    return translated;
   }
 
   public static ScriptException unwrap(Throwable cause) {
     if (cause instanceof ScriptException) {
       return (ScriptException)cause;
     } if (cause instanceof groovy.util.ScriptException) {
-      // Special handling for groovy.util.ScriptException
-      // which may be thrown by scripts because it is imported by default
-      // by groovy imports
-      String msg = cause.getMessage();
-      ScriptException translated;
-      if (msg != null) {
-        translated = new ScriptException(msg);
-      } else {
-        translated = new ScriptException();
-      }
-      translated.setStackTrace(cause.getStackTrace());
-      return translated;
+      return unwrap((groovy.util.ScriptException)cause);
     } else {
       return new ScriptException(cause);
     }
@@ -75,7 +86,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
     try {
       return getMetaClass().invokeMethod(this, name, args);
     }
-    catch (MissingMethodException e) {
+    catch (MissingMethodException missing) {
       if (context instanceof InvocationContext) {
         CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
@@ -87,8 +98,19 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
             throw new InvokerInvocationException(ce);
           }
           if (cmd != null) {
-            // Should we use null instead of "" ?
-            return new ClassDispatcher(cmd, peekContext()).dispatch("", CommandClosure.unwrapArgs(args));
+            InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
+            PipeLineClosure closure = new PipeLineClosure(ic, name, cmd);
+            PipeLineInvoker evaluation = closure.bind(args);
+            try {
+              evaluation.invoke(ic);
+              return null;
+            }
+            catch (IOException e) {
+              throw new GroovyRuntimeException(e);
+            }
+            catch (UndeclaredThrowableException e) {
+              throw new GroovyRuntimeException(e.getCause());
+            }
           }
         }
       }
@@ -108,7 +130,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
           return closure.call(args);
         }
       } else {
-        throw e;
+        throw missing;
       }
     }
   }
@@ -120,7 +142,8 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
         try {
           ShellCommand cmd = crash.getCommand(property);
           if (cmd != null) {
-            return new ClassDispatcher(cmd, peekContext());
+            InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
+            return new PipeLineClosure(ic, property, cmd);
           }
         } catch (NoSuchCommandException e) {
           throw new InvokerInvocationException(e);

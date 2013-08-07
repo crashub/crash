@@ -94,6 +94,10 @@ public class TestInvocationContext<C> extends BaseRuntimeContext implements Comm
     throw new UnsupportedOperationException();
   }
 
+  public void write(Chunk chunk) throws IOException {
+    provide(chunk);
+  }
+
   public void provide(Object element) throws IOException {
     if (element instanceof Chunk) {
       if (reader == null) {

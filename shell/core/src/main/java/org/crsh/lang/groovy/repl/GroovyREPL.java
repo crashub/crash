@@ -25,7 +25,8 @@ import org.crsh.cli.spi.Completion;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContextImpl;
-import org.crsh.lang.groovy.ShellBinding;
+import org.crsh.lang.groovy.closure.PipeLineInvoker;
+import org.crsh.lang.groovy.shell.ShellBinding;
 import org.crsh.lang.groovy.shell.GroovyCommandManager;
 import org.crsh.repl.EvalResponse;
 import org.crsh.repl.REPL;
@@ -70,16 +71,23 @@ public class GroovyREPL implements REPL {
         finally {
           binding.setCurrent(null);
         }
-        try {
-          consumer.provide("==> ");
-          if (o != null) {
-            consumer.provide(o);
-          } else {
-            consumer.provide("null");
+        if (o instanceof PipeLineInvoker) {
+          PipeLineInvoker eval = (PipeLineInvoker)o;
+          try {
+            eval.invoke(new InvocationContextImpl<Object>(foo));
           }
-        }
-        catch (IOException ignore) {
-          // ?
+          catch (Exception e) {
+            throw new UnsupportedOperationException("handle me gracefully", e);
+          }
+        } else {
+          try {
+            if (o != null) {
+              consumer.provide(o);
+            }
+          }
+          catch (IOException e) {
+            throw new UnsupportedOperationException("handle me gracefully", e);
+          }
         }
       }
       public void close() throws IOException {

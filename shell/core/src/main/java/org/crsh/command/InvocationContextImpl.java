@@ -47,7 +47,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
 
   public RenderPrintWriter getWriter() {
     if (writer == null) {
-      writer = new RenderPrintWriter(new ScreenContext<Chunk>() {
+      writer = new RenderPrintWriter(new ScreenContext() {
         public int getWidth() {
           return commandContext.getWidth();
         }
@@ -56,6 +56,9 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
         }
         public Class<Chunk> getConsumedType() {
           return Chunk.class;
+        }
+        public void write(Chunk chunk) throws IOException {
+          commandContext.write(chunk);
         }
         public void provide(Chunk element) throws IOException {
           Class<P> consumedType = commandContext.getConsumedType();
@@ -111,6 +114,10 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
 
   public int getHeight() {
     return commandContext.getHeight();
+  }
+
+  public void write(Chunk chunk) throws IOException {
+    commandContext.write(chunk);
   }
 
   public void provide(P element) throws IOException {

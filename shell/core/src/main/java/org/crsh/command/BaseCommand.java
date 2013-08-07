@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -159,12 +160,8 @@ public abstract class BaseCommand extends AbstractCommand implements ShellComman
     return resolveInvoker(match);
   }
 
-  public ScriptException toScript(Throwable cause) {
-    if (cause instanceof ScriptException) {
-      return (ScriptException)cause;
-    } else {
-      return new ScriptException(cause);
-    }
+  public UndeclaredThrowableException toScript(Throwable cause) {
+    return new UndeclaredThrowableException(cause);
   }
 
   public CommandInvoker<?, ?> resolveInvoker(String line) {
@@ -215,95 +212,152 @@ public abstract class BaseCommand extends AbstractCommand implements ShellComman
     final Class _consumedType = consumedType;
     final Class _producedType = producedType;
 
-    //
-    return new CommandInvoker<Object, Object>() {
+    // Do we have a pipe command or not ?
+    if (PipeCommand.class.isAssignableFrom(match.getInvoker().getReturnType())) {
+      return new CommandInvoker<Object, Object>() {
 
-      /** . */
-      PipeCommand real;
+        /** . */
+        PipeCommand real;
 
-      public Class<Object> getProducedType() {
-        return _producedType;
-      }
+        public Class<Object> getProducedType() {
+          return _producedType;
+        }
 
-      public Class<Object> getConsumedType() {
-        return _consumedType;
-      }
+        public Class<Object> getConsumedType() {
+          return _consumedType;
+        }
 
-      public void open(CommandContext<? super Object> consumer) {
-        // Java is fine with that but not intellij....
-        CommandContext<Object> consumer2 = (CommandContext<Object>)consumer;
-        open2(consumer2);
-      }
+        public void open(CommandContext<? super Object> consumer) {
+          // Java is fine with that but not intellij....
+          CommandContext<Object> consumer2 = (CommandContext<Object>)consumer;
+          open2(consumer2);
+        }
 
-      public void open2(final CommandContext<Object> consumer) {
+        public void open2(final CommandContext<Object> consumer) {
 
-        //
-        final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(consumer);
-        final Resolver resolver = new Resolver() {
-          public <T> T resolve(Class<T> type) {
-            if (type.equals(InvocationContext.class)) {
-              return type.cast(invocationContext);
-            } else {
-              return null;
-            }
+          //
+          final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(consumer);
+
+          // Push context
+          pushContext(invocationContext);
+
+          //  Set the unmatched part
+          BaseCommand.this.unmatched = match.getRest();
+
+          //
+          Object ret;
+          try {
+            ret = invoker.invoke(BaseCommand.this);
           }
-        };
+          catch (org.crsh.cli.SyntaxException e) {
+            throw new SyntaxException(e.getMessage());
+          } catch (InvocationException e) {
+            throw toScript(e.getCause());
+          }
 
-        // Push context
-        pushContext(invocationContext);
-
-        //  Set the unmatched part
-        BaseCommand.this.unmatched = match.getRest();
-
-        //
-        Object ret;
-        try {
-          ret = invoker.invoke(resolver, BaseCommand.this);
+          // It's a pipe command
+          if (ret != null) {
+            real = (PipeCommand)ret;
+            real.doOpen(invocationContext);
+          }
         }
-        catch (org.crsh.cli.SyntaxException e) {
-          throw new SyntaxException(e.getMessage());
-        } catch (InvocationException e) {
-          throw toScript(e.getCause());
+        public void provide(Object element) throws IOException {
+          if (real != null) {
+            real.provide(element);
+          }
+        }
+        public void flush() throws IOException {
+          if (real != null) {
+            real.flush();
+          } else {
+            peekContext().flush();
+          }
+        }
+        public void close() throws IOException {
+          if (real != null) {
+            try {
+              real.close();
+            }
+            finally {
+              popContext();
+            }
+          } else {
+            InvocationContext<?> context = popContext();
+            context.close();
+          }
+          BaseCommand.this.unmatched = null;
+        }
+      };
+    } else {
+      return new CommandInvoker<Object, Object>() {
+
+        public Class<Object> getProducedType() {
+          return _producedType;
         }
 
-        // It's a pipe command
-        if (ret instanceof PipeCommand) {
-          real = (PipeCommand)ret;
-          real.doOpen(invocationContext);
-        } else {
+        public Class<Object> getConsumedType() {
+          return _consumedType;
+        }
+
+        public void open(CommandContext<? super Object> consumer) {
+          // Java is fine with that but not intellij....
+          CommandContext<Object> consumer2 = (CommandContext<Object>)consumer;
+          open2(consumer2);
+        }
+
+        public void open2(final CommandContext<Object> consumer) {
+
+          //
+          final InvocationContextImpl<Object> invocationContext = new InvocationContextImpl<Object>(consumer);
+
+          // Push context
+          pushContext(invocationContext);
+
+          //  Set the unmatched part
+          BaseCommand.this.unmatched = match.getRest();
+        }
+        public void provide(Object element) throws IOException {
+          // Drop everything
+        }
+        public void flush() throws IOException {
+          // peekContext().flush();
+        }
+        public void close() throws IOException, UndeclaredThrowableException {
+
+          //
+          final Resolver resolver = new Resolver() {
+            public <T> T resolve(Class<T> type) {
+              if (type.equals(InvocationContext.class)) {
+                return type.cast(peekContext());
+              } else {
+                return null;
+              }
+            }
+          };
+
+          //
+          Object ret;
+          try {
+            ret = invoker.invoke(resolver, BaseCommand.this);
+          }
+          catch (org.crsh.cli.SyntaxException e) {
+            throw new SyntaxException(e.getMessage());
+          } catch (InvocationException e) {
+            throw toScript(e.getCause());
+          }
+
+          //
           if (ret != null) {
             peekContext().getWriter().print(ret);
           }
-        }
-      }
-      public void provide(Object element) throws IOException {
-        if (real != null) {
-          real.provide(element);
-        } else {
-          // We just drop the elements
-        }
-      }
-      public void flush() throws IOException {
-        if (real != null) {
-          real.flush();
-        } else {
-          peekContext().flush();
-        }
-      }
-      public void close() throws IOException {
-        if (real != null) {
-          try {
-            real.close();
-          }
-          finally {
-            popContext();
-          }
-        } else {
+
+          //
           InvocationContext<?> context = popContext();
+          context.flush();
           context.close();
+          BaseCommand.this.unmatched = null;
         }
-        BaseCommand.this.unmatched = null;
-      }
-    };
+      };
+    }
   }
 }

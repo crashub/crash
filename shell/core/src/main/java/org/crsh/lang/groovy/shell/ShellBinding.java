@@ -16,15 +16,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.lang.groovy;
+package org.crsh.lang.groovy.shell;
 
 import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
-import org.crsh.lang.groovy.closure.ClassDispatcher;
+import org.crsh.lang.groovy.closure.PipeLineClosure;
 import org.crsh.shell.impl.command.CRaSH;
+import org.crsh.text.Chunk;
 
 import java.io.IOException;
 import java.util.Map;
@@ -127,6 +128,13 @@ public class ShellBinding extends Binding {
         return current.getAttributes();
       }
     }
+    public void write(Chunk chunk) throws IOException {
+      if (current == null) {
+        throw new IllegalStateException("Not under context");
+      } else {
+        current.write(chunk);
+      }
+    }
   };
 
   public ShellBinding(Map variables) {
@@ -151,7 +159,7 @@ public class ShellBinding extends Binding {
         try {
           ShellCommand cmd = crash.getCommand(name);
           if (cmd != null) {
-            return new ClassDispatcher(cmd, new InvocationContextImpl<Object>(proxy));
+            return new PipeLineClosure(null, name, cmd);
           }
         } catch (NoSuchCommandException ignore) {
           //

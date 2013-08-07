@@ -24,25 +24,29 @@ import org.crsh.shell.ScreenContext;
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class RenderAppendable implements Appendable, ScreenContext<Chunk> {
+public class RenderAppendable implements Appendable, ScreenContext {
 
   /** . */
-  private final ScreenContext<Chunk> context;
+  private final ScreenContext context;
 
   /** . */
   private LinkedList<Style.Composite> stack;
 
-  public RenderAppendable(ScreenContext<Chunk> context) {
+  public RenderAppendable(ScreenContext context) {
     this.context = context;
   }
   
   private void safeAppend(Chunk chunk) {
     try {
-      context.provide(chunk);
+      context.write(chunk);
     }
     catch (java.io.IOException e) {
 //      e.printStackTrace();
     }
+  }
+
+  public void write(Chunk chunk) throws IOException {
+    safeAppend(chunk);
   }
 
   public Class<Chunk> getConsumedType() {
@@ -55,10 +59,6 @@ public class RenderAppendable implements Appendable, ScreenContext<Chunk> {
 
   public int getHeight() {
     return context.getHeight();
-  }
-
-  public void provide(Chunk element) throws IOException {
-    context.provide(element);
   }
 
   public void flush() throws IOException {

@@ -25,7 +25,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 
-public class RenderWriter extends Writer implements ScreenContext<Chunk> {
+public class RenderWriter extends Writer implements ScreenContext {
 
   /** . */
   private final ScreenContext out;
@@ -70,12 +70,16 @@ public class RenderWriter extends Writer implements ScreenContext<Chunk> {
     return Chunk.class;
   }
 
+  public void write(Chunk chunk) throws IOException {
+    provide(chunk);
+  }
+
   public void provide(Chunk element) throws IOException {
     if (element instanceof Text) {
       Text text = (Text)element;
       empty &= text.getText().length() == 0;
     }
-    out.provide(element);
+    out.write(element);
   }
 
   @Override

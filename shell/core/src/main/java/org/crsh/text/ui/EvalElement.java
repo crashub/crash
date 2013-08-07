@@ -25,6 +25,7 @@ import org.crsh.command.CommandInvoker;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
+import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.Renderable;
 import org.crsh.text.Renderer;
@@ -119,6 +120,10 @@ public class EvalElement extends Element {
 
       public Class getConsumedType() {
         return Object.class;
+      }
+
+      public void write(Chunk chunk) throws IOException {
+        provide(chunk);
       }
 
       public void provide(Object element) throws IOException {

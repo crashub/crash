@@ -84,7 +84,7 @@ public class PipeFailureTestCase extends AbstractCommandTestCase {
     assertEquals(0, Commands.FailDuringOpen1.closeCount.get());
     assertEquals(1, Commands.FailDuringOpen2.openCount.get());
     assertEquals(0, Commands.FailDuringOpen2.provideCound.get());
-    assertEquals(0, Commands.FailDuringOpen2.flushCount.get());
+    assertEquals(1, Commands.FailDuringOpen2.flushCount.get());
     assertEquals(1, Commands.FailDuringOpen2.closeCount.get());
   }
 

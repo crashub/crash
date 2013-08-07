@@ -39,7 +39,7 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
     ArrayList<String> result = new ArrayList<String>();
     while (renderer.hasLine()) {
       final ChunkBuffer buffer = new ChunkBuffer();
-      renderer.renderLine(new RenderAppendable(new ScreenContext<Chunk>() {
+      renderer.renderLine(new RenderAppendable(new ScreenContext() {
         public int getWidth() {
           return width;
         }
@@ -48,6 +48,9 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
         }
         public Class<Chunk> getConsumedType() {
           return Chunk.class;
+        }
+        public void write(Chunk chunk) throws IOException {
+          provide(chunk);
         }
         public void provide(Chunk element) throws IOException {
           buffer.provide(element);

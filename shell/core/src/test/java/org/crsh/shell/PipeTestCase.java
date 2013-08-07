@@ -49,19 +49,13 @@ public class PipeTestCase extends AbstractCommandTestCase {
     //
     Commands.list.clear();
     assertEquals("", assertOk("piped"));
-    assertEquals(Arrays.asList(Boolean.FALSE), Commands.list);
+    assertEquals(Arrays.<Object>asList(Boolean.FALSE), Commands.list);
     Commands.list.clear();
     assertEquals("", assertOk("produce_command | piped"));
-    assertEquals(Arrays.asList(Boolean.TRUE), Commands.list);
+    assertEquals(Arrays.<Object>asList(Boolean.TRUE), Commands.list);
     Commands.list.clear();
     assertEquals("", assertOk("piped | noop"));
-    assertEquals(Arrays.asList(Boolean.FALSE), Commands.list);
-
-    //
-    lifeCycle.bind("inscript", "produce_command piped");
-    Commands.list.clear();
-    assertEquals("", assertOk("inscript"));
-    assertEquals(Arrays.asList(Boolean.TRUE), Commands.list);
+    assertEquals(Arrays.<Object>asList(Boolean.FALSE), Commands.list);
   }
 
   public void testKeepLastPipeContent() throws Exception {

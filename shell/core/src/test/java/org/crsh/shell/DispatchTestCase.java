@@ -44,7 +44,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
-        "produce_command { out << it }\n" +
+        "produce_command { it }\n" +
         "}\n" +
         "}";
     lifeCycle.bind("foo", foo);
@@ -54,86 +54,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     assertEquals("foobar", assertOk("foo"));
   }
 
-  public void testProduceToCommandAsClosure() {
-    String foo = "class foo {\n" +
-        "@Command\n" +
-        "public void main() {\n" +
-        "def closure = consume_command\n" +
-        "produce_command closure\n" +
-        "}\n" +
-        "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("produce_command", Commands.ProduceString.class);
-    lifeCycle.bind("consume_command", Commands.ConsumeString.class);
-
-    //
-    Commands.list.clear();
-    assertEquals("", assertOk("foo"));
-    assertEquals(Arrays.asList("foo", "bar"), Commands.list);
-  }
-
-  // Cannot pass at the moment
-  public void testProduceToCommandWithOptionAsClosure() {
-    String noOpt = "class noOpt {\n" +
-        "@Command\n" +
-        "public void main() {\n" +
-        "def closure = consume_command_with_option\n" +
-        "produce_command closure\n" +
-        "}\n" +
-        "}";
-    String opt = "class opt {\n" +
-        "@Command\n" +
-        "public void main() {\n" +
-        "def closure = consume_command_with_option.with(opt:'prefix')\n" +
-        "produce_command closure\n" +
-        "}\n" +
-        "}";
-    String args = "class args {\n" +
-        "@Command\n" +
-        "public void main() {\n" +
-        "def closure = consume_command_with_option.with('juu')\n" +
-        "produce_command closure\n" +
-        "}\n" +
-        "}";
-    String optArgs = "class args {\n" +
-        "@Command\n" +
-        "public void main() {\n" +
-        "def closure = consume_command_with_option.with(opt:'prefix','juu')\n" +
-        "produce_command closure\n" +
-        "}\n" +
-        "}";
-
-    //
-    lifeCycle.bind("noOpt", noOpt);
-    lifeCycle.bind("opt", opt);
-    lifeCycle.bind("args", args);
-    lifeCycle.bind("optArgs", optArgs);
-    lifeCycle.bind("produce_command", Commands.ProduceString.class);
-    lifeCycle.bind("consume_command_with_option", Commands.ParameterizedConsumeToList.class);
-
-    //
-    Commands.list.clear();
-    assertEquals("", assertOk("noOpt"));
-    assertEquals(Arrays.asList("foo", "bar"), Commands.list);
-
-    //
-    Commands.list.clear();
-    assertEquals("", assertOk("opt"));
-    assertEquals(Arrays.asList("prefixfoo", "prefixbar"), Commands.list);
-
-    //
-    Commands.list.clear();
-    assertEquals("", assertOk("args"));
-    assertEquals(Arrays.asList("juu", "foo", "bar"), Commands.list);
-
-    //
-    Commands.list.clear();
-    assertEquals("", assertOk("optArgs"));
-    assertEquals(Arrays.asList("prefixjuu", "prefixfoo", "prefixbar"), Commands.list);
-  }
-
   public void testProduceToClosureInScript() {
-    lifeCycle.bind("foo", "produce_command { out << it }\n");
+    lifeCycle.bind("foo", "produce_command { it }\n");
     lifeCycle.bind("produce_command", Commands.ProduceString.class);
 
     //
@@ -193,7 +115,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
-        "compound_produce_command.compound { out << it }\n" +
+        "compound_produce_command.compound { it }\n" +
         "}\n" +
         "}";
     lifeCycle.bind("foo", foo);
@@ -204,7 +126,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String bar = "class bar {\n" +
         "@Command\n" +
         "public void main() {\n" +
-        "compound_produce_command.compound { boolean it -> out << it }\n" +
+        "compound_produce_command.compound { boolean it -> it }\n" +
         "}\n" +
         "}";
     lifeCycle.bind("bar", bar);
@@ -213,28 +135,16 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testCompoundProduceToClosureInScript() {
-    String foo = "compound_produce_command.compound { out << it }\n";
+    String foo = "compound_produce_command.compound { it }\n";
     lifeCycle.bind("foo", foo);
     lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("foobar", assertOk("foo"));
 
     //
-    String bar = "compound_produce_command.compound { boolean it -> out << it }\n";
+    String bar = "compound_produce_command.compound { boolean it -> it }\n";
     lifeCycle.bind("bar", bar);
     lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("", assertOk("bar"));
-  }
-
-  public void testCompoundCommandAsClosure() {
-    String foo =
-        "def closure = compound_consume_command.compound\n" +
-            "compound_produce_command.compound closure\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
-    lifeCycle.bind("compound_consume_command", Commands.CompoundConsumeString.class);
-    Commands.list.clear();
-    assertEquals("", assertOk("foo"));
-    assertEquals(Arrays.asList("foo", "bar"), Commands.list);
   }
 
   public void testInvokeCompoundInScript() throws Exception {

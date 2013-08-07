@@ -123,10 +123,10 @@ class jvm {
   }
 
   @Command
-  public void top() {
+  public void top(InvocationContext<MemoryUsage> context) {
     while (!Thread.interrupted()) {
-      out.cls()
-      eval("jvm heap")
+      out.cls();
+      heap(context);
       out.flush();
       Thread.sleep(1000);
     }

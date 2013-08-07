@@ -20,6 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
+import org.crsh.io.Consumer;
 import org.crsh.shell.ScreenContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.Chunk;
@@ -49,16 +50,30 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
     // We use this chunk buffer to buffer stuff
     // but also because it optimises the chunks
     // which provides better perormances on the client
-    final ChunkBuffer buffer = new ChunkBuffer(processContext);
+    final ChunkBuffer buffer = new ChunkBuffer(new Consumer<Chunk>() {
+      public void provide(Chunk element) throws IOException {
+        processContext.write(element);
+      }
+      public Class<Chunk> getConsumedType() {
+        return Chunk.class;
+      }
+      public void flush() throws IOException {
+        processContext.flush();
+      }
+    });
 
     //
-    final ChunkAdapter adapter = new ChunkAdapter(new ScreenContext<Chunk>() {
+    final ChunkAdapter adapter = new ChunkAdapter(new ScreenContext() {
       public int getWidth() {
         return processContext.getWidth();
       }
 
       public int getHeight() {
         return processContext.getHeight();
+      }
+
+      public void write(Chunk chunk) throws IOException {
+        provide(chunk);
       }
 
       public Class<Chunk> getConsumedType() {
@@ -111,6 +126,10 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
 
   public Class<Object> getConsumedType() {
     return Object.class;
+  }
+
+  public void write(Chunk chunk) throws IOException {
+    adapter.provide(chunk);
   }
 
   public void provide(Object element) throws IOException {

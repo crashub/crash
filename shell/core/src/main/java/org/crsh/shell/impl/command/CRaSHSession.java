@@ -35,12 +35,12 @@ import org.crsh.shell.ShellResponse;
 import org.crsh.repl.EvalResponse;
 import org.crsh.lang.script.ScriptREPL;
 import org.crsh.repl.REPLSession;
-import org.crsh.text.Chunk;
 import org.crsh.text.Text;
 import org.crsh.util.Safe;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -178,8 +178,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
           ShellResponse doInvoke(final ShellProcessContext context) throws InterruptedException {
             CRaSHProcessContext invocationContext = new CRaSHProcessContext(CRaSHSession.this, context);
             try {
-              pipeLine.open(invocationContext);
-              pipeLine.flush();
+              pipeLine.invoke(invocationContext);
               return ShellResponse.ok();
             }
             catch (ScriptException e) {
@@ -187,14 +186,13 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
             } catch (Throwable t) {
               return build(t);
             } finally {
-              Safe.close(pipeLine);
               Safe.close(invocationContext);
             }
           }
 
           private ShellResponse.Error build(Throwable throwable) {
             ErrorType errorType;
-            if (throwable instanceof ScriptException) {
+            if (throwable instanceof ScriptException || throwable instanceof UndeclaredThrowableException) {
               errorType = ErrorType.EVALUATION;
               Throwable cause = throwable.getCause();
               if (cause != null) {
@@ -236,7 +234,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
       ShellResponse doInvoke(ShellProcessContext context) throws InterruptedException {
         if (msg.length() > 0) {
           try {
-            context.provide(Text.create(msg));
+            context.write(Text.create(msg));
           }
           catch (IOException ignore) {
           }

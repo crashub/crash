@@ -21,23 +21,28 @@ package org.crsh.command.pipeline;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.ScriptException;
-import org.crsh.shell.InteractionContext;
 import org.crsh.io.Filter;
+import org.crsh.text.Chunk;
 
 import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-class Pipe<C, P> implements Filter<C, P, CommandContext<P>>, CommandContext<C> {
+class PipeLineElement<C, P> implements Filter<C, P, CommandContext<P>>, CommandContext<C> {
 
   /** . */
   protected CommandContext<P> context;
 
   /** . */
-  final Filter<C, P, InteractionContext<P>> command;
+  final Filter<C, P, CommandContext<P>> command;
 
-  Pipe(Filter<C, P, InteractionContext<P>> command) {
+  /** . */
+  final Class<C> consumedType;
+
+
+  PipeLineElement(Filter<C, P, CommandContext<P>> command) {
     this.command = command;
+    this.consumedType = command.getConsumedType();
   }
 
   public final boolean takeAlternateBuffer() throws IOException {
@@ -89,10 +94,16 @@ class Pipe<C, P> implements Filter<C, P, CommandContext<P>>, CommandContext<C> {
     this.command.open(consumer);
   }
 
-  public void provide(C element) throws IOException {
-    if (command.getConsumedType().isInstance(element)) {
-      command.provide(element);
+  public void write(Chunk chunk) throws IOException {
+    if (consumedType.isInstance(chunk)) {
+      provide(consumedType.cast(chunk));
+    } else {
+      context.write(chunk);
     }
+  }
+
+  public void provide(C element) throws IOException {
+    command.provide(element);
   }
 
   public void flush() throws IOException {

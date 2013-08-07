@@ -16,19 +16,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.lang.groovy.closure;
 
-package org.crsh.shell;
+import org.crsh.command.CommandInvoker;
 
-/**
- * The context provided when a {@link ShellProcess} is executed.
- */
-public interface ShellProcessContext extends InteractionContext {
+/** @author Julien Viet */
+abstract class PipeLineElement {
 
-  /**
-   * This method is invoked when the process ends.
-   *
-   * @param response the shell response
-   */
-  void end(ShellResponse response);
+  abstract CommandInvoker make();
+
+  abstract void toString(StringBuilder buffer);
 
 }

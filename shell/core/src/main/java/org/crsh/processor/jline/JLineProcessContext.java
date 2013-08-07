@@ -112,6 +112,10 @@ class JLineProcessContext implements ShellProcessContext {
     return Chunk.class;
   }
 
+  public void write(Chunk chunk) throws IOException {
+    provide(chunk);
+  }
+
   public void provide(Chunk element) throws IOException {
     if (element instanceof Text) {
       Text textChunk = (Text)element;

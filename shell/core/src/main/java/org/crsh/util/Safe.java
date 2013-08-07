@@ -35,108 +35,108 @@ public class Safe {
    * Close the socket and catch any exception thrown.
    *
    * @param socket the socket to close
-   * @return true when the close operation returned
+   * @return any Exception thrown during the <code>close</code> operation
    */
-  public static boolean close(Socket socket) {
+  public static Exception close(Socket socket) {
     if (socket != null) {
       try {
         socket.close();
-        return true;
       }
-      catch (Exception ignore) {
+      catch (Exception e) {
+        return e;
       }
     }
-    return false;
+    return null;
   }
 
   /**
    * Close the closeable and catch any exception thrown.
    *
    * @param closeable the closeable to close
-   * @return true when the close operation returned
+   * @return any Exception thrown during the <code>close</code> operation
    */
-  public static boolean close(Closeable closeable) {
+  public static Exception close(Closeable closeable) {
     if (closeable != null) {
       try {
         closeable.close();
-        return true;
       }
-      catch (Exception ignore) {
+      catch (Exception e) {
+        return e;
       }
     }
-    return false;
+    return null;
   }
 
   /**
    * Close the connection and catch any exception thrown.
    *
    * @param connection the socket to close
-   * @return true when the connection operation returned
+   * @return any Exception thrown during the <code>close</code> operation
    */
-  public static boolean close(Connection connection) {
+  public static Exception close(Connection connection) {
     if (connection != null) {
       try {
         connection.close();
-        return true;
       }
-      catch (Exception ignore) {
+      catch (Exception e) {
+        return e;
       }
     }
-    return false;
+    return null;
   }
 
   /**
    * Close the statement and catch any exception thrown.
    *
    * @param statement the statement to close
-   * @return true when the close operation returned
+   * @return any Exception thrown during the <code>close</code> operation
    */
-  public static boolean close(Statement statement) {
+  public static Exception close(Statement statement) {
     if (statement != null) {
       try {
         statement.close();
-        return true;
       }
-      catch (Exception ignore) {
+      catch (Exception e) {
+        return e;
       }
     }
-    return false;
+    return null;
   }
 
   /**
    * Close the result set and catch any exception thrown.
    *
    * @param rs the result set to close
-   * @return true when the close operation returned
+   * @return any Exception thrown during the <code>close</code> operation
    */
-  public static boolean close(ResultSet rs) {
+  public static Exception close(ResultSet rs) {
     if (rs != null) {
       try {
         rs.close();
-        return true;
       }
-      catch (Exception ignore) {
+      catch (Exception e) {
+        return e;
       }
     }
-    return false;
+    return null;
   }
 
   /**
    * Close the context and catch any exception thrown.
    *
    * @param context the context to close
-   * @return true when the close operation returned
+   * @return any Exception thrown during the <code>close</code> operation
    */
-   public static boolean close(Context context) {
+   public static Exception close(Context context) {
       if (context != null) {
          try {
             context.close();
-           return true;
          }
-         catch (Exception ignore) {
+         catch (Exception e) {
+           return e;
          }
       }
-     return false;
+     return null;
    }
 
    public static <T extends Throwable> void rethrow(Class<T> throwableClass, Throwable cause) throws T {
@@ -169,17 +169,17 @@ public class Safe {
    * Flush the flushable and catch any exception thrown.
    *
    * @param flushable the flushable to flush
-   * @return true when the flush operation returned
+   * @return any Exception thrown during the <code>flush</code> operation
    */
-  public static boolean flush(Flushable flushable) {
+  public static Exception flush(Flushable flushable) {
     if (flushable != null) {
       try {
         flushable.flush();
-        return true;
       }
-      catch (Exception ignore) {
+      catch (Exception e) {
+        return e;
       }
     }
-    return false;
+    return null;
   }
 }

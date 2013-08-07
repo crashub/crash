@@ -25,13 +25,13 @@ import org.crsh.text.Chunk;
 
 import java.io.IOException;
 
-public class PipeLine implements CommandInvoker<Void, Chunk> {
+public class PipeLine extends CommandInvoker<Void, Chunk> {
 
   /** . */
   private final CommandInvoker[] invokers;
 
   /** . */
-  private Pipe current;
+  private CommandContext<?> current;
 
   public PipeLine(CommandInvoker[] invokers) {
     this.invokers = invokers;
@@ -61,29 +61,18 @@ public class PipeLine implements CommandInvoker<Void, Chunk> {
       final Class produced = invoker.getProducedType();
       final Class<?> consumed = next.getConsumedType();
       boolean piped = index > 0;
-      if (!consumed.isAssignableFrom(produced)) {
-        if (produced.equals(Void.class) || consumed.equals(Void.class)) {
-          // We need to check (i.e test) what happens for chunk (i.e the writer)
-          PipeFilter.Sink filter = new PipeFilter.Sink(consumed, piped);
-          filter.open(next);
-          next = filter;
-        } else if (consumed.equals(Chunk.class)) {
-          PipeFilter.Chunkizer filter = new PipeFilter.Chunkizer(piped);
-          filter.open((CommandContext<Chunk>)next);
-          next = filter;
-        } else {
-          PipeFilter.Sink filter = new PipeFilter.Sink(consumed, piped);
-          filter.open(next);
-          next = filter;
-        }
+
+      AbstractPipe filter;
+      if (consumed.equals(Chunk.class)) {
+        filter = new ToChunkPipe(produced, piped);
       } else {
-        PipeFilter.Noop filter = new PipeFilter.Noop(piped);
-        filter.open(next);
-        next = filter;
+        filter = new ConvertingPipe(produced, consumed, piped);
       }
+      filter.open(next);
+      next = filter;
 
       //
-      Pipe filterContext = new Pipe(invoker);
+      PipeLineElement filterContext = new PipeLineElement(invoker);
       filterContext.open(next);
 
       // Save current filter in field
@@ -93,6 +82,7 @@ public class PipeLine implements CommandInvoker<Void, Chunk> {
       //
       return filterContext;
     } else {
+      current = last;
       return last;
     }
   }

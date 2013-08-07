@@ -93,11 +93,7 @@ public class SSHInlineShellProcessContext implements ShellProcessContext {
     return null;
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
-  }
-
-  public void provide(Chunk element) throws IOException {
+  public void write(Chunk element) throws IOException {
     if (element instanceof Text) {
       CharSequence seq = ((Text)element).getText();
       int length = seq.length();

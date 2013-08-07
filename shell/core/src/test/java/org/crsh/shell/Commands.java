@@ -49,6 +49,28 @@ public class Commands {
     }
   }
 
+  public static class Parameterized extends CRaSHCommand {
+
+    /** . */
+    public static String opt;
+
+    /** . */
+    public static List<String> args;
+
+    public static void reset() {
+      opt = null;
+      args = null;
+    }
+
+    @Command
+    public void main(final @Option(names={"opt"}) String opt, @Argument List<String> args) {
+      Parameterized.opt = opt;
+      if (args != null) {
+        Parameterized.args = new ArrayList<String>(args);
+      }
+    }
+  }
+
   public static class ProduceValue extends CRaSHCommand {
     @Command
     public void main(org.crsh.command.InvocationContext<Value> context) throws IOException {

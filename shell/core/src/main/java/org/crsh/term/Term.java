@@ -20,12 +20,11 @@
 package org.crsh.term;
 
 import org.crsh.shell.ScreenContext;
-import org.crsh.text.Chunk;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-public interface Term extends Closeable, ScreenContext<Chunk> {
+public interface Term extends Closeable, ScreenContext {
 
   /**
    * Retrieves the value of a property specified by this Term

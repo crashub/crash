@@ -61,6 +61,10 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
+  public void write(Chunk chunk) throws IOException {
+    provide(chunk);
+  }
+
   public Appendable getDirectBuffer() {
     throw new UnsupportedOperationException();
   }

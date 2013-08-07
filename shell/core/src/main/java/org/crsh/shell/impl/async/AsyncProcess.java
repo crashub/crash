@@ -90,8 +90,8 @@ public class AsyncProcess implements ShellProcess {
       return Chunk.class;
     }
 
-    public void provide(Chunk element) throws IOException {
-      caller.provide(element);
+    public void write(Chunk chunk) throws IOException {
+      caller.write(chunk);
     }
 
     public void flush() throws IOException {

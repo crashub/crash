@@ -19,14 +19,15 @@
 
 package org.crsh.shell;
 
-import org.crsh.io.Consumer;
+import org.crsh.text.Chunk;
+
+import java.io.Flushable;
+import java.io.IOException;
 
 /**
  * The screen context extends the consumer and add information about the screen.
- *
- * @param <E> the element generic type
  */
-public interface ScreenContext<E> extends Consumer<E> {
+public interface ScreenContext extends Flushable {
 
   /**
    * Returns the screen width in chars. When the value is not positive it means
@@ -43,5 +44,13 @@ public interface ScreenContext<E> extends Consumer<E> {
    * @return the term height
    */
   int getHeight();
+
+  /**
+   * Write a chunk to the screen.
+   *
+   * @param chunk the chunk
+   * @throws IOException any io exception
+   */
+  void write(Chunk chunk) throws IOException;
 
 }

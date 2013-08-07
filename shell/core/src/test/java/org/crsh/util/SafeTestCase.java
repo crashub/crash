@@ -29,23 +29,25 @@ import java.io.IOException;
 public class SafeTestCase extends TestCase {
 
   public void testClose() {
-    boolean closed = Safe.close(new Closeable() {
+    Exception closed = Safe.close(new Closeable() {
       public void close() throws IOException {
       }
     });
-    assertTrue(closed);
+    assertNull(closed);
+    final IOException ioe = new IOException();
     closed = Safe.close(new Closeable() {
       public void close() throws IOException {
-        throw new IOException();
+        throw ioe;
       }
     });
-    assertFalse(closed);
+    assertSame(ioe, closed);
+    final RuntimeException re = new RuntimeException();
     closed = Safe.close(new Closeable() {
       public void close() throws IOException {
-        throw new RuntimeException();
+        throw re;
       }
     });
-    assertFalse(closed);
+    assertSame(re, closed);
     final Error thrown = new Error();
     try {
       Safe.close(new Closeable() {
@@ -60,23 +62,25 @@ public class SafeTestCase extends TestCase {
   }
 
   public void testFlush() {
-    boolean flushed = Safe.flush(new Flushable() {
+    Exception flushed = Safe.flush(new Flushable() {
       public void flush() throws IOException {
       }
     });
-    assertTrue(flushed);
+    assertNull(flushed);
+    final IOException ioe = new IOException();
     flushed = Safe.flush(new Flushable() {
       public void flush() throws IOException {
-        throw new IOException();
+        throw ioe;
       }
     });
-    assertFalse(flushed);
+    assertSame(ioe, flushed);
+    final RuntimeException re = new RuntimeException();
     flushed = Safe.flush(new Flushable() {
       public void flush() throws IOException {
-        throw new RuntimeException();
+        throw re;
       }
     });
-    assertFalse(flushed);
+    assertSame(re, flushed);
     final Error thrown = new Error();
     try {
       Safe.flush(new Flushable() {

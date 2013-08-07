@@ -149,6 +149,10 @@ class ClientProcessContext implements ShellProcessContext {
     return null;
   }
 
+  public void write(Chunk chunk) throws IOException {
+    provide(chunk);
+  }
+
   public void provide(Chunk element) throws IOException {
     if (!closed) {
       buffer.add(element);

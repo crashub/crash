@@ -23,10 +23,8 @@ import java.io.IOException;
 
 /**
  * The interaction context extends the screen context and provides interaction with the client.
- *
- * @param <E> the element generic type
  */
-public interface InteractionContext<E> extends ScreenContext<E> {
+public interface InteractionContext extends ScreenContext {
 
   /**
    * Take control of the alternate buffer. When the alternate buffer is already used

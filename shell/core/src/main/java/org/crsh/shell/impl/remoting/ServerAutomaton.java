@@ -150,7 +150,7 @@ public class ServerAutomaton implements Shell {
         } else if (msg instanceof ServerMessage.End) {
           response = ((ServerMessage.End)msg).response;
         } else if (msg instanceof ServerMessage.Chunk) {
-          processContext.provide(((ServerMessage.Chunk)msg).payload);
+          processContext.write(((ServerMessage.Chunk)msg).payload);
         } else if (msg instanceof ServerMessage.Flush) {
           processContext.flush();
         } else {

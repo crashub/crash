@@ -160,16 +160,36 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
 
   @Override
   public CommandInvoker<T> getInvoker(final InvocationMatch<T> match) {
+
+    //
     final CommandInvoker<T> invoker = delegate.getInvoker(match);
+
+    // Get the option from the top match
+    ParameterMatch<OptionDescriptor> helpDesc = null;
+    for (InvocationMatch<T> current = match;current != null && helpDesc == null;current = current.owner()) {
+      helpDesc = current.getParameter(HELP_OPTION);
+    }
+
+    //
+    final boolean help = helpDesc != null || invoker == null;
+
     return new CommandInvoker<T>() {
       @Override
       public Class<?> getReturnType() {
-        return invoker != null ? invoker.getReturnType() : Void.class;
+        if (help) {
+          return String.class;
+        } else {
+          return invoker.getReturnType();
+        }
       }
 
       @Override
       public Type getGenericReturnType() {
-        return invoker != null ? invoker.getGenericReturnType() : Void.class;
+        if (help) {
+          return String.class;
+        } else {
+          return invoker.getGenericReturnType();
+        }
       }
 
       @Override
@@ -184,18 +204,10 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
 
       @Override
       public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
-
-        // Get the option from the top match
-        ParameterMatch<OptionDescriptor> help = null;
-        for (InvocationMatch<T> current = match;current != null && help == null;current = current.owner()) {
-          help = current.getParameter(HELP_OPTION);
-        }
-
-        //
-        if (help == null && invoker != null) {
-          return invoker.invoke(resolver, command);
-        } else {
+        if (help) {
           return new Help<T>(delegate);
+        } else {
+          return invoker.invoke(resolver, command);
         }
       }
     };

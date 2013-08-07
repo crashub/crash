@@ -117,7 +117,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
     try {
       String welcome = shell.getWelcome();
       log.log(Level.FINE, "Writing welcome message to term");
-      term.provide(Text.create(welcome));
+      term.write(Text.create(welcome));
       log.log(Level.FINE, "Wrote welcome message to term");
       writePromptFlush();
     }
@@ -298,7 +298,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
   }
 
   public void provide(Chunk element) throws IOException {
-    term.provide(element);
+    term.write(element);
   }
 
   public void flush() throws IOException {
@@ -315,7 +315,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
       if (buffer != null) {
         sb.append(buffer);
       }
-      term.provide(Text.create(sb));
+      term.write(Text.create(sb));
       term.flush();
     } catch (IOException e) {
       // Todo : improve that
@@ -392,7 +392,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
         }
 
         // We propose
-        term.provide(Text.create(sb.toString()));
+        term.write(Text.create(sb.toString()));
 
         // Rewrite prompt
         writePromptFlush();
