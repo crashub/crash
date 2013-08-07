@@ -148,20 +148,15 @@ public abstract class BaseCommand extends AbstractCommand implements ShellComman
   }
 
   public CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) {
-    if (options.containsKey("h") || options.containsKey("help")) {
-      throw new UnsupportedOperationException("Implement me");
-    } else {
-
-      InvocationMatcher matcher = descriptor.invoker("main");
-      InvocationMatch<BaseCommand> match = null;
-      try {
-        match = matcher.match(name, options, args);
-      }
-      catch (org.crsh.cli.SyntaxException e) {
-        throw new SyntaxException(e.getMessage());
-      }
-      return resolveInvoker(match);
+    InvocationMatcher matcher = descriptor.invoker("main");
+    InvocationMatch<BaseCommand> match;
+    try {
+      match = matcher.match(name, options, args);
     }
+    catch (org.crsh.cli.SyntaxException e) {
+      throw new SyntaxException(e.getMessage());
+    }
+    return resolveInvoker(match);
   }
 
   public ScriptException toScript(Throwable cause) {
