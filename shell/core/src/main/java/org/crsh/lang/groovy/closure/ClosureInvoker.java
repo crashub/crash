@@ -44,7 +44,7 @@ public class ClosureInvoker extends CommandInvoker<Object, Object> {
     if (parameterTypes != null && parameterTypes.length > 0) {
       type = parameterTypes[0];
     } else {
-      type = Void.class;
+      type = Object.class;
     }
 
     //
