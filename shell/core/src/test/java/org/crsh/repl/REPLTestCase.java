@@ -68,7 +68,33 @@ public class REPLTestCase extends AbstractCommandTestCase {
     assertEquals(Arrays.<Object>asList("_foo_", "_bar_"), Commands.list);
   }
 
+  public void testCommandInClosure() {
+    lifeCycle.bind("produce", Commands.ProduceString.class);
+    lifeCycle.bind("value", Commands.ProduceInteger.class);
+    lifeCycle.bind("consume", Commands.ConsumeInteger.class);
+    assertOk("repl groovy");
+    Commands.list.clear();
+    assertOk("(produce | { String it -> value(); } | consume)()");
+    assertEquals(Arrays.<Object>asList(3, 3), Commands.list);
+  }
+
+  public void testSubCommandInClosure() {
+    lifeCycle.bind("produce", Commands.ProduceInteger.class);
+    lifeCycle.bind("toto", "public class toto {\n" +
+        "@Command\n" +
+        "public void sub(InvocationContext<String> c) {\n" +
+        "c.provide('foo');\n" +
+        "}\n" +
+        "}");
+    lifeCycle.bind("consume", Commands.ConsumeString.class);
+    assertOk("repl groovy");
+    Commands.list.clear();
+    assertOk("(produce | { Integer it -> toto.sub(); } | consume)()");
+    assertEquals(Arrays.<Object>asList("foo"), Commands.list);
+  }
+
   public static class Toto extends CRaSHCommand {
+
     @Command
     public String sub() {
       return "invoked";

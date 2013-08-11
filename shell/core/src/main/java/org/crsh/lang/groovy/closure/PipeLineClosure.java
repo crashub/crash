@@ -183,6 +183,10 @@ public class PipeLineClosure extends Closure {
     }
   }
 
+  public PipeLineClosure bind(InvocationContext<Object> context) {
+    return new PipeLineClosure(context, elements);
+  }
+
   public PipeLineInvoker bind(Object args) {
     return bind(unwrapArgs(args));
   }

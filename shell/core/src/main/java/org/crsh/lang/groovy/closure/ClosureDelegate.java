@@ -18,19 +18,64 @@
  */
 package org.crsh.lang.groovy.closure;
 
+import groovy.lang.GroovyObjectSupport;
+import groovy.lang.GroovyRuntimeException;
+import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContextImpl;
+
+import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 /** @author Julien Viet */
-class ClosureDelegate {
+class ClosureDelegate extends GroovyObjectSupport {
 
   /** . */
   private final CommandContext context;
 
-  public ClosureDelegate(CommandContext context) {
+  /** . */
+  private final Object owner;
+
+  public ClosureDelegate(CommandContext context, Object owner) {
     this.context = context;
+    this.owner = owner;
   }
 
   public CommandContext getContext() {
     return context;
+  }
+
+  @Override
+  public Object getProperty(String property) {
+    if ("context".equals(property)) {
+      return context;
+    } else {
+      Object value = InvokerHelper.getProperty(owner, property);
+      if (value instanceof PipeLineClosure) {
+        PipeLineClosure closure = (PipeLineClosure)value;
+        value = closure.bind(new InvocationContextImpl<Object>(context));
+      }
+      return value;
+    }
+  }
+
+  @Override
+  public Object invokeMethod(String name, Object args) {
+    Object result = InvokerHelper.invokeMethod(owner, name, args);
+    if (result instanceof PipeLineInvoker) {
+      try {
+        PipeLineInvoker invoker = (PipeLineInvoker)result;
+        invoker.invoke(new InvocationContextImpl<Object>(context));
+        return null;
+      }
+      catch (IOException e) {
+        throw new GroovyRuntimeException(e);
+      }
+      catch (UndeclaredThrowableException e) {
+        throw new GroovyRuntimeException(e.getCause());
+      }
+    } else {
+      return result;
+    }
   }
 }

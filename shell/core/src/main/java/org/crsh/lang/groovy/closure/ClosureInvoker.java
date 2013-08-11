@@ -69,7 +69,7 @@ public class ClosureInvoker extends CommandInvoker<Object, Object> {
 
   public void open(CommandContext<? super Object> consumer) {
     this.consumer = consumer;
-    ClosureDelegate delegate = new ClosureDelegate(consumer);
+    ClosureDelegate delegate = new ClosureDelegate(consumer, closure.getOwner());
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.setDelegate(delegate);
   }
