@@ -2,12 +2,12 @@
   <parent>
     <artifactId>crsh.shell</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.2.7-SNAPSHOT</version>
+    <version>1.2.7</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>crsh.shell.ssh</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.7-SNAPSHOT</version>
+  <version>1.2.7</version>
 
   <name>CRaSH ssh</name>
   <description>The CRaSH ssh module</description>
