@@ -92,7 +92,7 @@ public final class InvocationMatch<T> {
     }
   }
 
-  public CommandInvoker<T> getInvoker() {
+  public CommandInvoker<T, ?> getInvoker() {
     return descriptor.getInvoker(this);
   }
 
@@ -101,7 +101,7 @@ public final class InvocationMatch<T> {
   }
 
   public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
-    CommandInvoker<T> invoker = getInvoker();
+    CommandInvoker<T, ?> invoker = getInvoker();
     if (invoker != null) {
       return invoker.invoke(resolver, command);
     } else {

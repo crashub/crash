@@ -89,7 +89,6 @@ import org.crsh.cli.impl.invocation.ParameterMatch;
 import org.crsh.cli.impl.invocation.Resolver;
 import org.crsh.cli.type.ValueTypeFactory;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -159,10 +158,10 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
   }
 
   @Override
-  public CommandInvoker<T> getInvoker(final InvocationMatch<T> match) {
+  public CommandInvoker<T, ?> getInvoker(final InvocationMatch<T> match) {
 
     //
-    final CommandInvoker<T> invoker = delegate.getInvoker(match);
+    final CommandInvoker<T, ?> invoker = delegate.getInvoker(match);
 
     // Get the option from the top match
     ParameterMatch<OptionDescriptor> helpDesc = null;
@@ -173,44 +172,37 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
     //
     final boolean help = helpDesc != null || invoker == null;
 
-    return new CommandInvoker<T>() {
-      @Override
-      public Class<?> getReturnType() {
-        if (help) {
-          return String.class;
-        } else {
-          return invoker.getReturnType();
+    //
+    if (help) {
+      return new CommandInvoker<T, Help>() {
+        @Override
+        public InvocationMatch<T> getMatch() {
+          return match;
         }
-      }
-
-      @Override
-      public Type getGenericReturnType() {
-        if (help) {
-          return String.class;
-        } else {
-          return invoker.getGenericReturnType();
+        @Override
+        public Class<Help> getReturnType() {
+          return Help.class;
         }
-      }
-
-      @Override
-      public Class<?>[] getParameterTypes() {
-        return invoker != null ? invoker.getParameterTypes() : new Class[0];
-      }
-
-      @Override
-      public Type[] getGenericParameterTypes() {
-        return invoker != null ? invoker.getGenericParameterTypes() : new Type[0];
-      }
-
-      @Override
-      public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
-        if (help) {
+        @Override
+        public Type getGenericReturnType() {
+          return Help.class;
+        }
+        @Override
+        public Class<?>[] getParameterTypes() {
+          return new Class[0];
+        }
+        @Override
+        public Type[] getGenericParameterTypes() {
+          return new Type[0];
+        }
+        @Override
+        public Help invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
           return new Help<T>(delegate);
-        } else {
-          return invoker.invoke(resolver, command);
         }
-      }
-    };
+      };
+    } else {
+      return invoker;
+    }
   }
 
   @Override

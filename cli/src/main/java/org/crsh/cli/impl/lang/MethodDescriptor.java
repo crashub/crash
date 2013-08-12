@@ -111,30 +111,35 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
     return owner.getType();
   }
 
-  public CommandInvoker<T> getInvoker(final InvocationMatch<T> _match) {
-    return new CommandInvoker<T>() {
-      @Override
-      public Class<?> getReturnType() {
-        return getMethod().getReturnType();
-      }
+  public CommandInvoker<T, ?> getInvoker(final InvocationMatch<T> match) {
+    Class<?> type = method.getReturnType();
+    return getInvoker2(match, type);
+  }
 
+  private <V> CommandInvoker<T, V> getInvoker2(final InvocationMatch<T> _match, final Class<V> returnType) {
+    return new CommandInvoker<T, V>() {
+      @Override
+      public InvocationMatch<T> getMatch() {
+        return _match;
+      }
+      @Override
+      public Class<V> getReturnType() {
+        return returnType;
+      }
       @Override
       public Type getGenericReturnType() {
         return getMethod().getGenericReturnType();
       }
-
       @Override
       public Class<?>[] getParameterTypes() {
         return getMethod().getParameterTypes();
       }
-
       @Override
       public Type[] getGenericParameterTypes() {
         return getMethod().getGenericParameterTypes();
       }
-
       @Override
-      public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
+      public V invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
 
         //
         owner.configure(_match.owner(), command);
@@ -181,7 +186,8 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
 
         // Perform method invocation
         try {
-          return m.invoke(command, mArgs);
+          Object ret = m.invoke(command, mArgs);
+          return returnType.cast(ret);
         }
         catch (InvocationTargetException e) {
           Throwable t = e.getTargetException();

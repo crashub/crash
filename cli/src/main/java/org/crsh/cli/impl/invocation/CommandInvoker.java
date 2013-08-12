@@ -24,9 +24,11 @@ import org.crsh.cli.SyntaxException;
 import java.lang.reflect.Type;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-public abstract class CommandInvoker<C> {
+public abstract class CommandInvoker<C, V> {
 
-  public abstract Class<?> getReturnType();
+  public abstract InvocationMatch<C> getMatch();
+
+  public abstract Class<V> getReturnType();
 
   public abstract Type getGenericReturnType();
 
@@ -34,10 +36,10 @@ public abstract class CommandInvoker<C> {
 
   public abstract Type[] getGenericParameterTypes();
 
-  public final Object invoke(C command) throws InvocationException, SyntaxException {
+  public final V invoke(C command) throws InvocationException, SyntaxException {
     return invoke(Resolver.EMPTY, command);
   }
 
-  public abstract Object invoke(Resolver resolver, C command) throws InvocationException, SyntaxException;
+  public abstract V invoke(Resolver resolver, C command) throws InvocationException, SyntaxException;
 
 }

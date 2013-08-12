@@ -80,12 +80,16 @@ class ClassDescriptor<T> extends CommandDescriptorImpl<T> {
   }
 
   @Override
-  public CommandInvoker<T> getInvoker(final InvocationMatch<T> match) {
+  public CommandInvoker<T, ?> getInvoker(final InvocationMatch<T> match) {
 
     if (Runnable.class.isAssignableFrom(type)) {
-      return new CommandInvoker<T>() {
+      return new CommandInvoker<T, Void>() {
         @Override
-        public Class<?> getReturnType() {
+        public InvocationMatch<T> getMatch() {
+          return match;
+        }
+        @Override
+        public Class<Void> getReturnType() {
           return Void.class;
         }
         @Override
@@ -101,7 +105,7 @@ class ClassDescriptor<T> extends CommandDescriptorImpl<T> {
           return new Type[0];
         }
         @Override
-        public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
+        public Void invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
           configure(match, command);
           Runnable runnable = Runnable.class.cast(command);
           try {

@@ -62,7 +62,7 @@ public class BootstrapTestCase extends TestCase {
     InvocationMatch<A> match = matcher.match("--help");
     ParameterMatch<OptionDescriptor> helpMatch = match.getParameter(optionDesc);
     assertNotNull(helpMatch);
-    CommandInvoker<A> invoker = match.getInvoker();
+    CommandInvoker<A, ?> invoker = match.getInvoker();
     Help help = (Help)invoker.invoke(new A());
     assertNotNull(help);
     assertSame(desc, help.getDescriptor());
@@ -99,7 +99,7 @@ public class BootstrapTestCase extends TestCase {
     InvocationMatch<B> ownerMatch = match.owner();
     helpMatch = ownerMatch.getParameter(optionDesc);
     assertNotNull(helpMatch);
-    CommandInvoker<B> invoker = match.getInvoker();
+    CommandInvoker<B, ?> invoker = match.getInvoker();
     Help help = (Help)invoker.invoke(new B());
     assertNotNull(help);
     CommandDescriptor mainDescriptor = help.getDescriptor();

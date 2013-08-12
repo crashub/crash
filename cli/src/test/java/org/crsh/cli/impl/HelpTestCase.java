@@ -21,6 +21,7 @@ package org.crsh.cli.impl;
 import junit.framework.TestCase;
 import org.crsh.cli.Command;
 import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.impl.descriptor.Help;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationMatch;
@@ -43,8 +44,9 @@ public class HelpTestCase extends TestCase {
     CommandDescriptorImpl<A> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(A.class));
     InvocationMatcher<A> matcher = desc.invoker("main");
     InvocationMatch<A> match = matcher.match("", Collections.singletonMap("h", Boolean.TRUE), Collections.emptyList());
-    CommandInvoker<A> invoker = match.getInvoker();
-    invoker.invoke(new A());
-    assertEquals(String.class, invoker.getReturnType());
+    CommandInvoker<A, ?> invoker = match.getInvoker();
+    Object ret = invoker.invoke(new A());
+    assertTrue(ret instanceof Help);
+    assertEquals(Help.class, invoker.getReturnType());
   }
 }

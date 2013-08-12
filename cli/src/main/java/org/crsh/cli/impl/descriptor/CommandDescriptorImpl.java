@@ -60,7 +60,7 @@ public abstract class CommandDescriptorImpl<T> extends CommandDescriptor<T> {
   @Override
   public abstract CommandDescriptorImpl<T> getSubordinate(String name);
 
-  public abstract CommandInvoker<T> getInvoker(InvocationMatch<T> match);
+  public abstract CommandInvoker<T, ?> getInvoker(InvocationMatch<T> match);
 
   public final InvocationMatcher<T> invoker() {
     return new InvocationMatcher<T>(this, null);
