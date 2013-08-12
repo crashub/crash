@@ -72,6 +72,17 @@ public class CommandInfoTestCase extends TestCase {
     assertEquals(Arrays.asList("i"),i.getNames());
   }
 
+  public void testOptionWithUpperCase() throws IntrospectionException {
+    class A {
+      @Option(names = "I")
+      private int i;
+    }
+    CommandDescriptor<A> ai = CommandFactory.DEFAULT.create(A.class);
+    assertEquals(1,ai.getOptions().size());
+    OptionDescriptor i = ai.getOption("-I");
+    assertEquals(Arrays.asList("I"),i.getNames());
+  }
+
   public void testArgument1() throws IntrospectionException {
     class A {
       @Argument()
