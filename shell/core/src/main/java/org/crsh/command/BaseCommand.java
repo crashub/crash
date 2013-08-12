@@ -212,6 +212,17 @@ public abstract class BaseCommand extends AbstractCommand implements ShellComman
     final Class _consumedType = consumedType;
     final Class _producedType = producedType;
 
+    //
+    final Resolver resolver = new Resolver() {
+      public <T> T resolve(Class<T> type) {
+        if (type.equals(InvocationContext.class)) {
+          return type.cast(peekContext());
+        } else {
+          return null;
+        }
+      }
+    };
+
     // Do we have a pipe command or not ?
     if (PipeCommand.class.isAssignableFrom(match.getInvoker().getReturnType())) {
       return new CommandInvoker<Object, Object>() {
@@ -247,7 +258,7 @@ public abstract class BaseCommand extends AbstractCommand implements ShellComman
           //
           Object ret;
           try {
-            ret = invoker.invoke(BaseCommand.this);
+            ret = invoker.invoke(resolver, BaseCommand.this);
           }
           catch (org.crsh.cli.SyntaxException e) {
             throw new SyntaxException(e.getMessage());
@@ -323,17 +334,6 @@ public abstract class BaseCommand extends AbstractCommand implements ShellComman
           // peekContext().flush();
         }
         public void close() throws IOException, UndeclaredThrowableException {
-
-          //
-          final Resolver resolver = new Resolver() {
-            public <T> T resolve(Class<T> type) {
-              if (type.equals(InvocationContext.class)) {
-                return type.cast(peekContext());
-              } else {
-                return null;
-              }
-            }
-          };
 
           //
           Object ret;
