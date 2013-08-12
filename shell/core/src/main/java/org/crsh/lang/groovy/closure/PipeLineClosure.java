@@ -19,6 +19,7 @@
 package org.crsh.lang.groovy.closure;
 
 import groovy.lang.Closure;
+import groovy.lang.GroovyObjectSupport;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Tuple;
@@ -26,6 +27,7 @@ import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ShellCommand;
+import org.crsh.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -125,27 +127,11 @@ public class PipeLineClosure extends Closure {
       return super.invokeMethod(name, args);
     }
     catch (MissingMethodException e) {
-      if ("with".equals(name)) {
-        Object[] array = unwrapArgs(args);
-        if (array.length == 0) {
-          return this;
-        } else if (array[0] instanceof Map) {
-          Map options = (Map)array[0];
-          if( array.length > 1) {
-            return options(options, Arrays.copyOfRange(array, 1, array.length));
-          } else {
-            return options(options, null);
-          }
-        } else {
-          return options(null, array);
-        }
+      PipeLineClosure sub = _sub(name);
+      if (sub != null) {
+        return sub.call((Object[])args);
       } else {
-        PipeLineClosure sub = _sub(name);
-        if (sub != null) {
-          return sub.call((Object[])args);
-        } else {
-          throw e;
-        }
+        throw e;
       }
     }
   }
@@ -195,17 +181,63 @@ public class PipeLineClosure extends Closure {
 
   @Override
   public Object call(Object... args) {
-    PipeLineInvoker binding = bind(args);
-    if (context != null) {
-      try {
-        binding.invoke(context);
-        return null;
-      }
-      catch (Exception e) {
-        return throwRuntimeException(e);
-      }
+
+    final Closure closure;
+    int to = args.length;
+    if (to > 0 && args[to - 1] instanceof Closure) {
+      closure = (Closure)args[--to];
     } else {
-      return binding;
+      closure = null;
+    }
+
+    // Configure the command with the closure
+    if (closure != null) {
+      final HashMap<String, Object> closureOptions = new HashMap<String, Object>();
+      GroovyObjectSupport delegate = new GroovyObjectSupport() {
+        @Override
+        public void setProperty(String property, Object newValue) {
+          closureOptions.put(property, newValue);
+        }
+      };
+      closure.setResolveStrategy(Closure.DELEGATE_ONLY);
+      closure.setDelegate(delegate);
+      Object ret = closure.call();
+      Object[] closureArgs;
+      if (ret != null) {
+        if (ret instanceof Object[]) {
+          closureArgs = (Object[])ret;
+        }
+        else if (ret instanceof Iterable) {
+          closureArgs = Utils.list((Iterable)ret).toArray();
+        }
+        else {
+          boolean use = true;
+          for (Object value : closureOptions.values()) {
+            if (value == ret) {
+              use = false;
+              break;
+            }
+          }
+          // Avoid the case : foo { bar = "juu" } that will make "juu" as an argument
+          closureArgs = use ? new Object[]{ret} : EMPTY_ARGS;
+        }
+      } else {
+        closureArgs = EMPTY_ARGS;
+      }
+      return options(closureOptions, closureArgs);
+    } else {
+      PipeLineInvoker binding = bind(args);
+      if (context != null) {
+        try {
+          binding.invoke(context);
+          return null;
+        }
+        catch (Exception e) {
+          return throwRuntimeException(e);
+        }
+      } else {
+        return binding;
+      }
     }
   }
 
@@ -221,23 +253,13 @@ public class PipeLineClosure extends Closure {
     return new PipeLineInvoker(this, args);
   }
 
-  LinkedList<CommandInvoker> resolve2(InvocationContext<Object> context, Object[] args) {
-
-    // Resolve any final closure
-    final Closure closure;
-    int to = args.length;
-    if (to > 0 && args[to - 1] instanceof Closure) {
-      closure = (Closure)args[--to];
-    } else {
-      closure = null;
-    }
-
-    CommandElement elt = (CommandElement)elements[0];
+  LinkedList<CommandInvoker> resolve2(Object[] args) {
 
     // Resolve options and arguments
+    CommandElement elt = (CommandElement)elements[0];
     Map<String, Object> invokerOptions = elt.options != null ? elt.options : Collections.<String, Object>emptyMap();
     List<Object> invokerArgs = elt.args != null ? elt.args : Collections.emptyList();
-    if (to > 0) {
+    if (args.length > 0) {
       Object first = args[0];
       int from;
       if (first instanceof Map<?, ?>) {
@@ -254,9 +276,9 @@ public class PipeLineClosure extends Closure {
       } else {
         from = 0;
       }
-      if (from < to) {
+      if (from < args.length) {
         invokerArgs = new ArrayList<Object>(invokerArgs);
-        while (from < to) {
+        while (from < args.length) {
           Object o = args[from++];
           if (o != null) {
             invokerArgs.add(o);
@@ -274,11 +296,6 @@ public class PipeLineClosure extends Closure {
     LinkedList<CommandInvoker> ret = new LinkedList<CommandInvoker>();
     for (PipeLineElement _elt : a) {
       ret.add(_elt.make());
-    }
-
-    // Determine the consumer
-    if (closure != null) {
-      ret.addLast(new ClosureInvoker(closure));
     }
 
     //

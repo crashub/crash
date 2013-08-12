@@ -115,7 +115,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
-        "compound_produce_command.compound { it }\n" +
+        "(compound_produce_command.compound | { it })()\n" +
         "}\n" +
         "}";
     lifeCycle.bind("foo", foo);
@@ -126,7 +126,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String bar = "class bar {\n" +
         "@Command\n" +
         "public void main() {\n" +
-        "compound_produce_command.compound { boolean it -> it }\n" +
+        "(compound_produce_command.compound | { boolean it -> it })()\n" +
         "}\n" +
         "}";
     lifeCycle.bind("bar", bar);
@@ -135,13 +135,13 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   }
 
   public void testCompoundProduceToClosureInScript() {
-    String foo = "compound_produce_command.compound { it }\n";
+    String foo = "(compound_produce_command.compound | { it })()\n";
     lifeCycle.bind("foo", foo);
     lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("foobar", assertOk("foo"));
 
     //
-    String bar = "compound_produce_command.compound { boolean it -> it }\n";
+    String bar = "(compound_produce_command.compound | { boolean it -> it })()\n";
     lifeCycle.bind("bar", bar);
     lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("", assertOk("bar"));

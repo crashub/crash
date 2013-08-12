@@ -46,7 +46,7 @@ public class PipeLineInvoker {
 
     //
     PipeLineInvocationContext inner = new PipeLineInvocationContext(context, false);
-    LinkedList<CommandInvoker> pipe = closure.resolve2(context, args);
+    LinkedList<CommandInvoker> pipe = closure.resolve2(args);
     CommandInvoker[] array = pipe.toArray(new CommandInvoker[pipe.size()]);
     PipeLine pipeLine = new PipeLine(array);
 
