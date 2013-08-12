@@ -64,6 +64,7 @@ public class OptionDescriptor extends ParameterDescriptor {
   static {
     for (char c = 'a';c <= 'z';c++) {
       A.set(c);
+      A.set(c + 'A' - 'a');
     }
     B.or(A);
     B.set('-');
