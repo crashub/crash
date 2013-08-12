@@ -2,12 +2,12 @@
   <parent>
     <artifactId>crsh.plugins</artifactId>
     <groupId>org.crsh</groupId>
-    <version>1.2.7</version>
+    <version>1.2.8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>crsh.plugins.crowd</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.7</version>
+  <version>1.2.8-SNAPSHOT</version>
 
   <name>CRaSH Plugin - Atlassian Crowd authentication and commands</name>
   <description>This plugin allows to delegate CRaSH authentication to an Atlassian Crowd directory and to add various commands to manage the server</description>
