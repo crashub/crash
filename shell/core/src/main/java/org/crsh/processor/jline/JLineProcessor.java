@@ -66,21 +66,35 @@ public class JLineProcessor implements Runnable, Completer {
     loop();
   }
 
-  private void loop() {
+  private String readLine() {
+    StringBuilder buffer = new StringBuilder();
+    String prompt = getPrompt();
+    writer.println();
+    writer.flush();
     while (true) {
-      String prompt = getPrompt();
-      String line;
       try {
-        writer.println();
-        writer.flush();
-        if ((line = reader.readLine(prompt)) == null) {
-          break;
+        String chunk;
+        if ((chunk = reader.readLine(prompt)) == null) {
+          return null;
+        }
+        if (chunk.length() > 0 && chunk.charAt(chunk.length() - 1) == '\\') {
+          prompt = "> ";
+          buffer.append(chunk, 0, chunk.length() - 1);
+        } else {
+          buffer.append(chunk);
+          return buffer.toString();
         }
       }
       catch (IOException e) {
         // What should we do other than that ?
-        break;
+        return null;
       }
+    }
+  }
+
+  private void loop() {
+    while (true) {
+      String line = readLine();
 
       //
       ShellProcess process = shell.createProcess(line);
