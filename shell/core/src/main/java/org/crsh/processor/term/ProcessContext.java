@@ -138,7 +138,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
       switch (processor.status) {
         case PROCESSING:
           if (response instanceof ShellResponse.Close) {
-            runnable = processor.CLOSE;
+            runnable = processor.CLOSE_TASK;
             processor.status = Status.CLOSED;
           } else if (response instanceof ShellResponse.Cancelled) {
             runnable = Processor.NOOP;
