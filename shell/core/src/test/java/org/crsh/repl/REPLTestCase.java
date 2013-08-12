@@ -94,10 +94,13 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public static class Toto extends CRaSHCommand {
-
     @Command
     public String sub() {
       return "invoked";
+    }
+    @Command
+    public String find() {
+      return "find_invoked";
     }
   }
 
@@ -106,6 +109,14 @@ public class REPLTestCase extends AbstractCommandTestCase {
     assertOk("repl groovy");
     String result = assertOk("toto.sub()");
     assertEquals("invoked", result);
+  }
+
+  public void testSubCommandOverridesGDK() {
+    lifeCycle.bind("toto", Toto.class);
+    assertOk("repl groovy");
+    String result = assertOk("toto.find()");
+    assertEquals("find_invoked", result);
+    assertOk("toto.find");
   }
 
   public void testProvideToContext() {

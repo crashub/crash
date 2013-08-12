@@ -39,6 +39,9 @@ import java.util.Map;
 public class PipeLineClosure extends Closure {
 
   /** . */
+  private static final Object[] EMPTY_ARGS = new Object[0];
+
+  /** . */
   private final InvocationContext<Object> context;
 
   /** . */
@@ -54,6 +57,23 @@ public class PipeLineClosure extends Closure {
     //
     this.context = context;
     this.elements = elements;
+  }
+
+  public Object find() {
+    return _gdk("find", EMPTY_ARGS);
+  }
+
+  public Object find(Closure closure) {
+    return _gdk("find", new Object[]{closure});
+  }
+
+  private Object _gdk(String name, Object[] args) {
+    PipeLineClosure find = _sub(name);
+    if (find != null) {
+      return find.call(args);
+    } else {
+      throw new MissingMethodException(name, PipeLineClosure.class, args);
+    }
   }
 
   public Object or(Object t) {
@@ -73,20 +93,29 @@ public class PipeLineClosure extends Closure {
     }
   }
 
+  private PipeLineClosure _sub(String name) {
+    if (elements.length == 1) {
+      CommandElement element = (CommandElement)elements[0];
+      if (element.name == null) {
+        return new PipeLineClosure(context, new CommandElement[]{
+            new CommandElement(element.commandName + "." + name, element.command, name)
+        });
+      }
+    }
+    return null;
+  }
+
   public Object getProperty(String property) {
     try {
       return super.getProperty(property);
     }
     catch (MissingPropertyException e) {
-      if (elements.length == 1) {
-        CommandElement element = (CommandElement)elements[0];
-        if (element.name == null) {
-          return new PipeLineClosure(context, new CommandElement[]{
-              new CommandElement(element.commandName + "." + property, element.command, property)
-          });
-        }
+      PipeLineClosure sub = _sub(property);
+      if (sub != null) {
+        return sub;
+      } else {
+        throw e;
       }
-      throw e;
     }
   }
 
@@ -111,15 +140,12 @@ public class PipeLineClosure extends Closure {
           return options(null, array);
         }
       } else {
-        if (elements.length == 1) {
-          CommandElement element = (CommandElement)elements[0];
-          if (element.name == null) {
-            return new PipeLineClosure(context, new CommandElement[]{
-                new CommandElement(element.commandName + "." + name, element.command, name)
-            }).call((Object[])args);
-          }
+        PipeLineClosure sub = _sub(name);
+        if (sub != null) {
+          return sub.call((Object[])args);
+        } else {
+          throw e;
         }
-        throw e;
       }
     }
   }
