@@ -24,6 +24,7 @@ import org.crsh.command.ShellCommand;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -69,23 +70,47 @@ class CommandElement extends PipeLineElement {
         args != null ? args : Collections.<Object>emptyList());
   }
 
+  private void format(Object o, StringBuilder buffer) {
+    if (o instanceof String) {
+      buffer.append('"').append(o).append('"');
+    } else if (o instanceof Boolean || o instanceof Number) {
+      buffer.append(o);
+    } else {
+      buffer.append('<').append(o).append('>');
+    }
+  }
+
   void toString(StringBuilder buffer) {
     buffer.append(commandName);
-    if (options != null && options.size() > 0) {
-      for (Map.Entry<String, Object> option : options.entrySet()) {
-        String optionName = option.getKey();
-        switch (optionName.length()) {
-          case 0:
-            continue;
-          case 1:
-            buffer.append(" -");
-            break;
-          default:
-            buffer.append(" --");
-            break;
+    boolean hasOptions = options != null && options.size() > 0;
+    boolean hasArguments = args != null && args.size() > 0;
+    if (hasOptions || hasArguments) {
+      buffer.append(" {");
+      if (hasOptions) {
+        for (Iterator<Map.Entry<String, Object>> i = options.entrySet().iterator();i.hasNext();) {
+          Map.Entry<String, Object> option = i.next();
+          buffer.append(' ').append(option.getKey()).append('=');
+          format(option.getValue(), buffer);
+          if (i.hasNext()) {
+            buffer.append(";");
+          }
         }
-        buffer.append(optionName).append(" ").append(option.getValue());
+        if (hasArguments) {
+          buffer.append(";");
+        }
       }
+      if (hasArguments) {
+        buffer.append(" [");
+        for (Iterator<Object> i = args.iterator();i.hasNext();) {
+          Object arg = i.next();
+          format(arg, buffer);
+          if (i.hasNext()) {
+            buffer.append(", ");
+          }
+        }
+        buffer.append("]");
+      }
+      buffer.append(" }");
     }
   }
 }
