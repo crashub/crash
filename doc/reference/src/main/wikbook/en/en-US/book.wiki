@@ -18,6 +18,10 @@ with fast development cycle.
 
 {{include document="developers.wiki" /}}
 
+= Groovy guide =
+
+{{include document="groovy.wiki" /}}
+
 = Extending CRaSH =
 
 {{include document="extension.wiki" /}}

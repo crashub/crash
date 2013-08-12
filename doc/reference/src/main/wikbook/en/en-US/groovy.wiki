@@ -1,0 +1,186 @@
+This section teaches about advanced Groovy usage in CRaSH.
+
+= The Groovy REPL =
+
+The //Read–eval–print loop// known as //REPL// is the interactive evaluation of CRaSH. Since CRaSH 1.3, the REPL evaluation
+can be switch to the Groovy language.
+
+The Groovy REPL is switched via the //repl// directive:
+
+{{screen}}
+% repl groovy
+Using repl groovy
+{{/screen}}
+
+== Evaluating commands ==
+
+Simple commands are invoked by calling them just like a function:
+
+{{example title="Invoking a simple command the Groovy way"}}
+{{screen}}
+% repl groovy
+Using repl groovy
+% help()
+Try one of these commands with the -h or --help switch:
+
+NAME          DESCRIPTION
+cls           clear screen
+egrep         search file(s) for lines that match a pattern
+env           display the term env
+...
+{{/screen}}
+{{/example}}
+
+Typing a command name evalutes to a Groovy closure, allowing to call the command just like a function.
+
+{{example title="Typing a command evaluates to a closure"}}
+{{screen}}
+% cmd = help
+help
+% cmd()
+{{/screen}}
+{{/example}}
+
+Sub commands can be invoked by resolving a new closure from the initial command:
+
+{{example title="Invoking a sub command the Groovy way"}}
+{{screen}}
+% thread.ls()
+{{/screen}}
+{{/example}}
+
+Which is equivalent to
+
+{{example title="Sub commands are also evaluated to closures"}}
+{{screen}}
+% cmd = thread
+thread
+% cmd2 = cmd.ls
+thread.ls
+% cmd2()
+...
+{{/screen}}
+{{/example}}
+
+== Passing options and arguments ==
+
+Command options and command arguments are passed as invocation parameters:
+* options are used as a map or named parameters
+* arguments are the other invocation parameters
+
+{{example title="Passing options as named parameters"}}
+{{screen}}
+% thread(h:true)
+usage: thread COMMAND [ARGS]
+
+The most commonly used thread commands are:
+   stop             stop vm threads
+   interrupt        interrupt vm threads
+   top              thread top
+   ls               list the vm threads
+   dump             dump vm threads
+
+% thread.ls(h:true)
+usage: thread ls [-n | --name] [-g | --group] [-s | --state]
+
+   [-n | --name]  Filter the threads with a glob expression on their name
+   [-g | --group] Filter the threads with a glob expression on their group
+   [-s | --state] Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)
+
+{{/screen}}
+{{/example}}
+
+{{example title="Passing an argument"}}
+{{screen}}
+% system.propget("file.encoding")
+UTF-8
+{{/screen}}
+{{/example}}
+
+Passing options and arguments at the same time is easy to do, however the options should be the first method parameters:
+
+{{example title="Passing an options and arguments"}}
+{{screen}}
+% log.send(m:"hello", "the.category")
+Aug 12, 2013 11:22:50 AM org.codehaus.groovy.reflection.CachedMethod invoke
+INFO: hello
+{{/screen}}
+{{/example}}
+
+== Options and arguments binding ==
+
+Options and arguments can also be bound on a closure:
+
+{{example title="Binding options to a command"}}
+{{screen}}
+% (thread.ls { h=true })()
+...
+% cmd = thread.ls { h=true }
+thread.ls { h=true }
+% cmd();
+...
+{{/screen}}
+{{/example}}
+
+{{example title="Binding arguments to a command"}}
+{{screen}}
+% (system.propget { "file.encoding" })()
+...
+% cmd = system.propget { "file.encoding" }
+system.propget { ["file.encoding"] }
+% cmd();
+...
+{{/screen}}
+{{/example}}
+
+Of course it is possible to bind options and arguments too, the arguments needs to be passed as last parameters:
+
+{{example title="Passing an options and arguments"}}
+{{screen}}
+% (log.send { m="hello"; "the category" })()
+...
+% cmd = log.send { m="hello"; "the category" }
+log.send { m="hello"; ["the category"] }
+% cmd()
+...
+{{/screen}}
+{{/example}}
+
+== Command pipeline ==
+
+The object pipeline can be used in the Groovy REPL using the **|** (pipe) operator. When a command closure is combined with a
+ pipe, it returns a new closure that will invoke the pipeline construction.
+
+{{example title="Assembling a command pipe"}}
+{{screen}}
+% (system.propls | egrep { "java.*" })()
+java.runtime.name                        Java(TM) SE Runtime Environment
+java.vm.version                          23.7-b01
+java.vm.vendor                           Oracle Corporation
+...
+% cmd = system.propls | egrep { "java.*" }
+system.propls | egrep { ["java.*"] }
+% cmd()
+...
+{{/screen}}
+{{/example}}
+
+A pipeline can also contain Groovy closures in addition of the existing commands
+
+{{example title="Using a Groovy closure in a pipe"}}
+{{screen}}
+% (thread.ls | { Thread thread -> [id:thread.id, name:thread.name] })()
+id name
+------------------------------------
+2  Reference Handler
+3  Finalizer
+...
+% cmd = thread.ls | { Thread thread -> [id:thread.id, name:thread.name] }
+thread.ls | Script14$_run_closure1@47da4d19
+% cmd()
+...
+{{/screen}}
+{{/example}}
+
+In this example, the closure takes the threads argument and transforms them to a serie of maps that are displayed then as a table
+by CRaSH.
