@@ -42,14 +42,14 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
               execute("jvm nonheap")
             }
           }
-          jvm.pools { name ->
+          (jvm.pools | { name ->
             row() {
               label("$name:")
               eval {
                 execute("jvm pool '$name'")
               }
             }
-          }
+          })()
         }
       }
     }
