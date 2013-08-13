@@ -54,18 +54,8 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
         public int getHeight() {
           return commandContext.getHeight();
         }
-        public Class<Chunk> getConsumedType() {
-          return Chunk.class;
-        }
         public void write(Chunk chunk) throws IOException {
           commandContext.write(chunk);
-        }
-        public void provide(Chunk element) throws IOException {
-          Class<P> consumedType = commandContext.getConsumedType();
-          if (consumedType.isInstance(element)) {
-            P p = consumedType.cast(element);
-            commandContext.provide(p);
-          }
         }
         public void flush() throws IOException {
           commandContext.flush();

@@ -39,11 +39,11 @@ public class PipeLine extends CommandInvoker<Void, Chunk> {
   }
 
   public Class<Void> getConsumedType() {
-    throw new UnsupportedOperationException();
+    return Void.class;
   }
 
   public Class<Chunk> getProducedType() {
-    throw new UnsupportedOperationException();
+    return Chunk.class;
   }
 
   public void open(CommandContext<? super Chunk> consumer) {
@@ -88,7 +88,7 @@ public class PipeLine extends CommandInvoker<Void, Chunk> {
   }
 
   public void provide(Void element) throws IOException {
-    throw new UnsupportedOperationException("This is not yet implemented");
+    // Ignore
   }
 
   public void flush() throws IOException {
