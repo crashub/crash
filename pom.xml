@@ -194,6 +194,19 @@
         <classifier>sources</classifier>
       </dependency>
 
+      <!-- Module embed spring -->
+      <dependency>
+        <groupId>org.crashub</groupId>
+        <artifactId>crash.lang.golo</artifactId>
+        <version>1.3.0-beta18-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.crashub</groupId>
+        <artifactId>crash.lang.golo</artifactId>
+        <version>1.3.0-beta18-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
+
       <!-- Module packaging -->
       <dependency>
         <groupId>org.crashub</groupId>
@@ -427,6 +440,18 @@
         <version>2.1</version>
       </dependency>
 
+      <!-- Golo -->
+      <dependency>
+        <groupId>org.golo-lang</groupId>
+        <artifactId>golo</artifactId>
+        <version>0-preview11</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ow2.asm</groupId>
+        <artifactId>asm</artifactId>
+        <version>4.2</version>
+      </dependency>
+
       <!-- For testing purposes -->
       <dependency>
         <groupId>junit</groupId>
@@ -501,6 +526,7 @@
     <module>cli</module>
     <module>shell</module>
     <module>connectors</module>
+    <module>lang</module>
     <module>embed</module>
     <module>packaging</module>
     <module>doc</module>

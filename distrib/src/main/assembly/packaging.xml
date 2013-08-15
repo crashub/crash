@@ -46,6 +46,9 @@
         <include>javax.mail:mail</include>
         <include>org.crashub:crash.plugins.cron</include>
         <include>it.sauronsoftware.cron4j:cron4j</include>
+        <include>org.crashub:crash.lang.golo</include>
+        <include>org.golo-lang:golo</include>
+        <include>org.ow2.asm:asm</include>
       </includes>
     </dependencySet>
   </dependencySets>

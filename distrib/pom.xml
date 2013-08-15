@@ -44,6 +44,20 @@
       <classifier>mule-app</classifier>
     </dependency>
 
+    <!-- Golo lang -->
+    <dependency>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.lang.golo</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.golo-lang</groupId>
+      <artifactId>golo</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm</artifactId>
+    </dependency>
+
     <!-- Mail plugin -->
     <dependency>
       <groupId>org.crashub</groupId>
