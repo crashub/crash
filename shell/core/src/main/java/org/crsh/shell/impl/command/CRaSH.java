@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.command.NoSuchCommandException;
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.CommandManager;
 import org.crsh.plugin.PluginContext;
@@ -63,10 +63,10 @@ public class CRaSH {
    *
    * @param name the command name
    * @return a command instance
-   * @throws org.crsh.command.NoSuchCommandException if an error occured preventing the command creation
+   * @throws org.crsh.command.CommandCreationException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  public ShellCommand getCommand(String name) throws NoSuchCommandException, NullPointerException {
-    return commandManager.getCommand(name);
+  public ShellCommand getCommand(String name) throws CommandCreationException, NullPointerException {
+    return commandManager.resolveCommand(name);
   }
 }

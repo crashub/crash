@@ -29,8 +29,8 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.groovy.closure.PipeLineClosure;
@@ -94,7 +94,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
           try {
             cmd = crash.getCommand(name);
           }
-          catch (NoSuchCommandException ce) {
+          catch (CommandCreationException ce) {
             throw new InvokerInvocationException(ce);
           }
           if (cmd != null) {
@@ -145,7 +145,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
             InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
             return new PipeLineClosure(ic, property, cmd);
           }
-        } catch (NoSuchCommandException e) {
+        } catch (CommandCreationException e) {
           throw new InvokerInvocationException(e);
         }
       }

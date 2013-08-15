@@ -20,6 +20,7 @@
 package org.crsh.doc;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
+import org.crsh.command.BaseShellCommand;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.DescriptionFormat;
 import org.crsh.command.ShellCommand;
@@ -61,7 +62,7 @@ public class Generator {
       ShellCommand cmd = crash.getCommand(s);
       StringBuilder man = new StringBuilder();
       if (cmd instanceof CRaSHCommand) {
-        CRaSHCommand cc = (CRaSHCommand)cmd;
+        BaseShellCommand<?> cc = (BaseShellCommand<?>)cmd;
         CommandDescriptor<?> desc = cc.getDescriptor();
         if (desc.getSubordinates().size() > 1) {
           for (CommandDescriptor<?> m : desc.getSubordinates().values()) {

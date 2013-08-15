@@ -81,7 +81,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     try {
       return factory.create(session);
     }
-    catch (NoSuchCommandException e) {
+    catch (CommandCreationException e) {
       throw new ScriptException(e);
     }
   }

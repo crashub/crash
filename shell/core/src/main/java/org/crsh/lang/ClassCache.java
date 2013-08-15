@@ -17,9 +17,8 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.lang.groovy.shell;
+package org.crsh.lang;
 
-import groovy.lang.Script;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.util.TimestampedObject;
@@ -28,7 +27,7 @@ import org.crsh.vfs.Resource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ClassManager<T> extends AbstractClassManager<T> {
+public class ClassCache<T> extends AbstractClassCache<T> {
 
   /** . */
   private final Map<String, TimestampedObject<Class<? extends T>>> classes = new ConcurrentHashMap<String, TimestampedObject<Class<? extends T>>>();
@@ -39,8 +38,8 @@ public class ClassManager<T> extends AbstractClassManager<T> {
   /** . */
   private final ResourceKind kind;
 
-  public ClassManager(PluginContext context, ResourceKind kind, Class<T> baseClass, Class<? extends Script> baseScriptClass) {
-    super(context, baseClass, baseScriptClass);
+  public ClassCache(PluginContext context, ClassFactory<T> classFactory, ResourceKind kind) {
+    super(classFactory);
 
     //
     this.context = context;

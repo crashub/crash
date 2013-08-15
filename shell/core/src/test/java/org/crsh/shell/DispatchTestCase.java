@@ -317,7 +317,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "public String main() {\n" +
         "try {\n" +
         "cannot_create_command()" +
-        "} catch (org.crsh.command.NoSuchCommandException e) {\n" +
+        "} catch (org.crsh.command.CommandCreationException e) {\n" +
         "return 'bar';\n" +
         "}\n" +
         "}\n" +
@@ -332,7 +332,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   public void testCannotCreateCommandInScript() {
     String foo = "try {\n" +
         "cannot_create_command()" +
-        "} catch (org.crsh.command.NoSuchCommandException e) {\n" +
+        "} catch (org.crsh.command.CommandCreationException e) {\n" +
         "return 'bar';\n" +
         "}\n";
     lifeCycle.bind("foo", foo);

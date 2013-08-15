@@ -16,16 +16,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.lang.groovy.closure;
 
-import org.crsh.command.CommandCreationException;
-import org.crsh.command.CommandInvoker;
+package org.crsh.command;
 
-/** @author Julien Viet */
-abstract class PipeLineElement {
+import org.crsh.shell.ErrorType;
 
-  abstract CommandInvoker make() throws CommandCreationException;
+public final class CommandCreationException extends Exception {
 
-  abstract void toString(StringBuilder buffer);
+  /** . */
+  private final String commandName;
 
+  public CommandCreationException(String commandName) {
+    this.commandName = commandName;
+  }
+
+  public CommandCreationException(String commandName, ErrorType errorType, String message) {
+    super(message);
+
+    //
+    this.commandName = commandName;
+  }
+
+  public CommandCreationException(String commandName, ErrorType errorType, String message, Throwable cause) {
+    super(message, cause);
+
+    //
+    this.commandName = commandName;
+  }
+
+  public String getCommandName() {
+    return commandName;
+  }
 }

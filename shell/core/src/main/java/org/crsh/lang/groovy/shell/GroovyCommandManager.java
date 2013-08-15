@@ -23,13 +23,20 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
-import org.crsh.command.NoSuchCommandException;
+import org.crsh.command.BaseCommand;
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.ShellCommand;
+import org.crsh.command.BaseShellCommand;
+import org.crsh.lang.AbstractClassCache;
+import org.crsh.lang.ClassCache;
 import org.crsh.lang.CommandManager;
+import org.crsh.lang.groovy.GroovyClassFactory;
 import org.crsh.lang.groovy.command.GroovyScript;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
+import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.shell.ErrorType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,15 +53,15 @@ public class GroovyCommandManager extends CommandManager {
   final PluginContext context;
 
   /** . */
-  final AbstractClassManager<? extends ShellCommand> commandManager;
+  final AbstractClassCache<Object> classCache;
 
   /** . */
-  final AbstractClassManager<? extends GroovyScript> scriptManager;
+  final AbstractClassCache<GroovyScript> scriptCache;
 
   public GroovyCommandManager(PluginContext context) {
     this.context = context;
-    this.commandManager = new ClassManager<ShellCommand>(context, ResourceKind.COMMAND, ShellCommand.class, GroovyScriptCommand.class);
-    this.scriptManager = new ClassManager<GroovyScript>(context, ResourceKind.LIFECYCLE, GroovyScript.class, GroovyScript.class);
+    this.classCache = new ClassCache<Object>(context, new GroovyClassFactory<Object>(context.getLoader(), Object.class, GroovyScriptCommand.class), ResourceKind.COMMAND);
+    this.scriptCache = new ClassCache<GroovyScript>(context, new GroovyClassFactory<GroovyScript>(context.getLoader(), GroovyScript.class, GroovyScript.class), ResourceKind.LIFECYCLE);
   }
 
   public String doCallBack(HashMap<String, Object> session, String name, String defaultValue) {
@@ -69,7 +76,7 @@ public class GroovyCommandManager extends CommandManager {
         login.run();
       }
     }
-    catch (NoSuchCommandException e) {
+    catch (CommandCreationException e) {
       e.printStackTrace();
     }
   }
@@ -82,7 +89,7 @@ public class GroovyCommandManager extends CommandManager {
         logout.run();
       }
     }
-    catch (NoSuchCommandException e) {
+    catch (CommandCreationException e) {
       e.printStackTrace();
     }
   }
@@ -128,8 +135,8 @@ public class GroovyCommandManager extends CommandManager {
     }
   }
 
-  public GroovyScript getLifeCycle(HashMap<String, Object> session, String name) throws NoSuchCommandException, NullPointerException {
-    Class<? extends GroovyScript> scriptClass = scriptManager.getClass(name);
+  public GroovyScript getLifeCycle(HashMap<String, Object> session, String name) throws CommandCreationException, NullPointerException {
+    Class<? extends GroovyScript> scriptClass = scriptCache.getClass(name);
     if (scriptClass != null) {
       GroovyScript script = (GroovyScript)InvokerHelper.createScript(scriptClass, new Binding(session));
       script.setBinding(new Binding(session));
@@ -139,7 +146,31 @@ public class GroovyCommandManager extends CommandManager {
     }
   }
 
-  public ShellCommand getCommand(String name) throws NoSuchCommandException, NullPointerException {
-    return commandManager.getInstance(name);
+  public ShellCommand resolveCommand(String name) throws CommandCreationException, NullPointerException {
+    if (name == null) {
+      throw new NullPointerException("No null command name allowed");
+    }
+    Class<?> clazz = classCache.getClass(name);
+    if (clazz == null) {
+      return null;
+    } else {
+      if (BaseCommand.class.isAssignableFrom(clazz)) {
+        Class<? extends BaseCommand> cmd = clazz.asSubclass(BaseCommand.class);
+        return make(cmd);
+      } else if (GroovyScriptCommand.class.isAssignableFrom(clazz)) {
+        Class<? extends GroovyScriptCommand> cmd = clazz.asSubclass(GroovyScriptCommand.class);
+        return make2(cmd);
+      } else {
+        throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
+      }
+    }
+  }
+
+  private <C extends BaseCommand> BaseShellCommand<C> make(Class<C> clazz) {
+    return new BaseShellCommand<C>(clazz);
+  }
+
+  private <C extends GroovyScriptCommand> GroovyScriptShellCommand<C> make2(Class<C> clazz) {
+    return new GroovyScriptShellCommand<C>(clazz);
   }
 }

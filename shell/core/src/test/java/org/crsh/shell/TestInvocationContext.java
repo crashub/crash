@@ -19,12 +19,16 @@
 
 package org.crsh.shell;
 
+import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
+import org.crsh.command.BaseShellCommand;
 import org.crsh.io.Consumer;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.BaseRuntimeContext;
+import org.crsh.lang.groovy.command.GroovyScriptCommand;
+import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkBuffer;
 
@@ -129,7 +133,15 @@ public class TestInvocationContext<C> extends BaseRuntimeContext implements Comm
     return reader;
   }
 
-  public String execute(ShellCommand command, String... args) throws Exception {
+  public <B extends BaseCommand> String execute(Class<B> commandClass, String... args) throws Exception {
+    return execute(new BaseShellCommand<B>(commandClass), args);
+  }
+
+  public <B extends GroovyScriptCommand> String execute2(Class<B> commandClass, String... args) throws Exception {
+    return execute(new GroovyScriptShellCommand<B>(commandClass), args);
+  }
+
+  private String execute(ShellCommand command, String... args) throws Exception {
     if (reader != null) {
       reader.clear();
     }

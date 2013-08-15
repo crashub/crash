@@ -16,35 +16,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.lang;
 
-package org.crsh.command;
+import org.crsh.command.CommandCreationException;
 
-import org.crsh.shell.ErrorType;
+/** @author Julien Viet */
+public abstract class ClassFactory<T> {
 
-public final class NoSuchCommandException extends Exception {
+  public abstract Class<? extends T> parse(String name, String source) throws CommandCreationException;
 
-  /** . */
-  private final String commandName;
-
-  public NoSuchCommandException(String commandName) {
-    this.commandName = commandName;
-  }
-
-  public NoSuchCommandException(String commandName, ErrorType errorType, String message) {
-    super(message);
-
-    //
-    this.commandName = commandName;
-  }
-
-  public NoSuchCommandException(String commandName, ErrorType errorType, String message, Throwable cause) {
-    super(message, cause);
-
-    //
-    this.commandName = commandName;
-  }
-
-  public String getCommandName() {
-    return commandName;
-  }
 }

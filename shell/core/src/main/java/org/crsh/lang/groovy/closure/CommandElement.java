@@ -18,12 +18,11 @@
  */
 package org.crsh.lang.groovy.closure;
 
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +62,7 @@ class CommandElement extends PipeLineElement {
   }
 
   @Override
-  CommandInvoker make() {
+  CommandInvoker make() throws CommandCreationException {
     return command.resolveInvoker(
         name != null ? name : "",
         options != null ? options : Collections.<String, Object>emptyMap(),

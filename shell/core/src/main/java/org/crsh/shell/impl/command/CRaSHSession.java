@@ -19,9 +19,9 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.RuntimeContext;
 import org.crsh.command.CommandInvoker;
-import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.CommandManager;
@@ -84,7 +84,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     }
   }
 
-  public ShellCommand getCommand(String name) throws NoSuchCommandException {
+  public ShellCommand getCommand(String name) throws CommandCreationException {
     return crash.getCommand(name);
   }
 

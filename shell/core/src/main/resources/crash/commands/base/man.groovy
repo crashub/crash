@@ -8,7 +8,7 @@ class man {
   @Usage("format and display the on-line manual pages")
   @Command
   Object main(@Usage("the command") @Argument @Required String command) {
-    def cmd = crash.getCommand(command);
+    def cmd = crash.resolveCommand(command);
     if (cmd != null) {
       return  cmd.describe(unmatched, DescriptionFormat.MAN);
     } else {

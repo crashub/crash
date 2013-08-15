@@ -18,7 +18,7 @@
  */
 package org.crsh.repl;
 
-import org.crsh.command.NoSuchCommandException;
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
 
@@ -27,7 +27,7 @@ import java.util.Map;
 /** @author Julien Viet */
 public interface REPLSession extends Map<String, Object> {
 
-  ShellCommand getCommand(String name) throws NoSuchCommandException;
+  ShellCommand getCommand(String name) throws CommandCreationException;
 
   PluginContext getContext();
 

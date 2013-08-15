@@ -20,8 +20,8 @@ package org.crsh.lang.groovy.shell;
 
 import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.InvocationContextImpl;
-import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.groovy.closure.PipeLineClosure;
 import org.crsh.shell.impl.command.CRaSH;
@@ -161,7 +161,7 @@ public class ShellBinding extends Binding {
           if (cmd != null) {
             return new PipeLineClosure(null, name, cmd);
           }
-        } catch (NoSuchCommandException ignore) {
+        } catch (CommandCreationException ignore) {
           //
         }
         return super.getVariable(name);

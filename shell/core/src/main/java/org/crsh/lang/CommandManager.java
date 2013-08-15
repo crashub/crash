@@ -18,7 +18,7 @@
  */
 package org.crsh.lang;
 
-import org.crsh.command.NoSuchCommandException;
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.groovy.shell.GroovyCommandManager;
 import org.crsh.plugin.PluginContext;
@@ -32,7 +32,15 @@ public abstract class CommandManager {
     return new GroovyCommandManager(context);
   }
 
-  public abstract ShellCommand getCommand(String name) throws NoSuchCommandException, NullPointerException;
+  /**
+   * Resolve a command for the specified command name.
+   *
+   * @param name the command name
+   * @return the command or null if no command can be resolved
+   * @throws CommandCreationException when the command exists but cannot be created
+   * @throws NullPointerException if the command name is null
+   */
+  public abstract ShellCommand resolveCommand(String name) throws CommandCreationException, NullPointerException;
 
   public abstract void init(HashMap<String, Object> session);
 

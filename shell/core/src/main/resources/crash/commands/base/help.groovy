@@ -18,7 +18,7 @@ class help
     crash.context.listResourceId(org.crsh.plugin.ResourceKind.COMMAND).each() {
       String name ->
       try {
-        def cmd = crash.getCommand(name);
+        def cmd = crash.resolveCommand(name);
         if (cmd != null) {
           def desc = cmd.describe(name, DescriptionFormat.DESCRIBE) ?: "";
           names.add(name);

@@ -23,6 +23,7 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.crsh.command.BaseCommand;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.command.SyntaxException;
@@ -49,7 +50,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testOut() throws Exception {
-    Class clazz = loader.parseClass("class foo { " +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public void main() {" +
       "out.print(\"abc\");" +
@@ -57,12 +58,11 @@ public class InvocationContextTestCase extends TestCase {
       "}");
 
     //
-    ShellCommand command = (ShellCommand)clazz.newInstance();
-    assertEquals("abc", new TestInvocationContext().execute(command));
+    assertEquals("abc", new TestInvocationContext().execute(clazz));
   }
 
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo { " +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo { " +
       "@Option(names=\"s\") @Required def String str = 'default value';" +
       "@Command\n" +
       "public Object main() {" +
@@ -71,10 +71,9 @@ public class InvocationContextTestCase extends TestCase {
       "}");
 
     //
-    ShellCommand command = (ShellCommand)clazz.newInstance();
-    assertEquals("abc", new TestInvocationContext().execute(command, "-s", "abc"));
+    assertEquals("abc", new TestInvocationContext().execute(clazz, "-s", "abc"));
     try {
-      new TestInvocationContext().execute(command);
+      new TestInvocationContext().execute(clazz);
       fail();
     }
     catch (SyntaxException e) {
@@ -82,7 +81,7 @@ public class InvocationContextTestCase extends TestCase {
   }
 
   public void testContextAccessFromCommandClassCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo { " +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main() {" +
       "return juu;" +
@@ -90,14 +89,13 @@ public class InvocationContextTestCase extends TestCase {
       "}");
 
     //
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
     TestInvocationContext<Void> ctx = new TestInvocationContext<Void>();
     ctx.getSession().put("juu", "daa");
-    assertEquals("daa", ctx.execute(cmd));
+    assertEquals("daa", ctx.execute(clazz));
   }
 
   public void testArgumentInjectionInCommandCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo { " +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main(@Argument String str) {" +
       "return str;" +
@@ -105,12 +103,11 @@ public class InvocationContextTestCase extends TestCase {
       "}");
 
     //
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
-    assertEquals("b", new TestInvocationContext().execute(cmd, "b"));
+    assertEquals("b", new TestInvocationContext().execute(clazz, "b"));
   }
 
   public void testMainInCommandCmdLine() throws Exception {
-    Class clazz = loader.parseClass("class foo { " +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main() {" +
       "return 'foo';" +
@@ -118,12 +115,11 @@ public class InvocationContextTestCase extends TestCase {
       "}");
 
     //
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
-    assertEquals("foo", new TestInvocationContext().execute(cmd));
+    assertEquals("foo", new TestInvocationContext().execute(clazz));
   }
 
   public void testContextAccessInCommandClass() throws Exception {
-    Class clazz = loader.parseClass("class foo { " +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main() {" +
       "return bar;" +
@@ -135,12 +131,11 @@ public class InvocationContextTestCase extends TestCase {
     ctx.getSession().put("bar", "bar_value");
 
     // Execute directly
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
-    assertEquals("bar_value", ctx.execute(cmd));
+    assertEquals("bar_value", ctx.execute(clazz));
   }
 
   public void testClosureInvocationInClass() throws Exception {
-    Class clazz = loader.parseClass("class foo { " +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo { " +
       "@Command\n" +
       "public Object main() {" +
       "return bar();" +
@@ -153,12 +148,11 @@ public class InvocationContextTestCase extends TestCase {
     ctx.getSession().put("bar", closure);
 
     // Execute directly
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
-    assertEquals("from_closure", ctx.execute(cmd));
+    assertEquals("from_closure", ctx.execute(clazz));
   }
 
   public void testArgumentQuoteInClass() throws Exception {
-    Class clazz = loader.parseClass("class foo {\n" +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo {\n" +
       "@Command\n" +
       "public Object main(@org.crsh.cli.Argument List<String> arguments) {\n" +
       "return arguments;\n" +
@@ -166,12 +160,11 @@ public class InvocationContextTestCase extends TestCase {
       "}\n");
 
     // Execute directly
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
-    assertEquals("" + Arrays.asList("foo"), new TestInvocationContext().execute(cmd, "'foo'"));
+    assertEquals("" + Arrays.asList("foo"), new TestInvocationContext().execute(clazz, "'foo'"));
   }
 
   public void testArgumentQuoteInClass2() throws Exception {
-    Class clazz = loader.parseClass("class foo {\n" +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo {\n" +
       "@Command\n" +
       "public Object main(@org.crsh.cli.Argument(unquote = false) List<String> arguments) {\n" +
       "return arguments;\n" +
@@ -179,32 +172,28 @@ public class InvocationContextTestCase extends TestCase {
       "}\n");
 
     // Execute directly
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
-    assertEquals("" + Arrays.asList("'foo'"), new TestInvocationContext().execute(cmd, "'foo'"));
+    assertEquals("" + Arrays.asList("'foo'"), new TestInvocationContext().execute(clazz, "'foo'"));
   }
 
   public void testContextAccessInScript() throws Exception {
-    Class clazz = loader.parseClass("System.out.println('bar:' + bar) ; return bar;");
-    ShellCommand script = (ShellCommand)clazz.newInstance();
+    Class<? extends GroovyScriptCommand> clazz = loader.parseClass("System.out.println('bar:' + bar) ; return bar;");
     TestInvocationContext ctx = new TestInvocationContext();
     ctx.getSession().put("bar", "bar_value");
-    assertEquals("bar_value", ctx.execute(script));
+    assertEquals("bar_value", ctx.execute2(clazz));
   }
 
   public void testArgumentAccessInScript() throws Exception {
-    Class clazz = loader.parseClass("return args[0];");
-    ShellCommand script = (ShellCommand)clazz.newInstance();
-    assertEquals("arg_value", new TestInvocationContext().execute(script, "arg_value"));
+    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("return args[0];");
+    assertEquals("arg_value", new TestInvocationContext().execute2(clazz, "arg_value"));
   }
 
   public void testArgumentAccessInClosure() throws Exception {
-    Class clazz = loader.parseClass("{ arg -> return arg };");
-    ShellCommand script = (ShellCommand)clazz.newInstance();
-    assertEquals("arg_value", new TestInvocationContext().execute(script, "arg_value"));
+    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("{ arg -> return arg };");
+    assertEquals("arg_value", new TestInvocationContext().execute2(clazz, "arg_value"));
   }
 
   public void testResolveContext() throws Exception {
-    Class clazz = loader.parseClass("class foo {\n" +
+    Class<? extends BaseCommand> clazz = loader.parseClass("class foo {\n" +
       "@Command\n" +
       "public Object main() {\n" +
       "return context.class.name;\n" +
@@ -212,27 +201,23 @@ public class InvocationContextTestCase extends TestCase {
       "}\n");
 
     // Execute directly
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
     TestInvocationContext context = new TestInvocationContext();
-    assertNotNull(context.execute(cmd));
+    assertNotNull(context.execute(clazz));
   }
 
   public void testResolveContextInScript() throws Exception {
-    Class clazz = loader.parseClass("return context.class.name");
-    ShellCommand cmd = (ShellCommand)clazz.newInstance();
+    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("return context.class.name");
     TestInvocationContext context = new TestInvocationContext();
-    assertNotNull(context.execute(cmd));
+    assertNotNull(context.execute2(clazz));
   }
 
   public void testScriptUseReturnValue() throws Exception {
-    Class clazz = loader.parseClass("return 'def'");
-    ShellCommand script = (ShellCommand)clazz.newInstance();
-    assertEquals("def", new TestInvocationContext().execute(script));
+    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("return 'def'");
+    assertEquals("def", new TestInvocationContext().execute2(clazz));
   }
 
   public void testScriptDiscardReturnValue() throws Exception {
-    Class clazz = loader.parseClass("out << 'abc'\nreturn 'def'");
-    ShellCommand script = (ShellCommand)clazz.newInstance();
-    assertEquals("abc", new TestInvocationContext().execute(script));
+    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("out << 'abc'\nreturn 'def'");
+    assertEquals("abc", new TestInvocationContext().execute2(clazz));
   }
 }

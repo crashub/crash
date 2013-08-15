@@ -22,8 +22,8 @@ import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.BaseRuntimeContext;
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.CommandInvoker;
-import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ShellResponse;
@@ -54,7 +54,7 @@ public class ScriptREPL implements REPL {
         CommandInvoker<Void, Chunk> invoker = factory.create(session);
         return new EvalResponse.Invoke(invoker);
       }
-      catch (NoSuchCommandException e) {
+      catch (CommandCreationException e) {
         return new EvalResponse.Response(ShellResponse.unknownCommand(e.getCommandName()));
       }
     } else {
@@ -95,7 +95,7 @@ public class ScriptREPL implements REPL {
           completion = new CompletionMatch(Delimiter.EMPTY, Completion.create());
         }
       }
-      catch (NoSuchCommandException e) {
+      catch (CommandCreationException e) {
         log.log(Level.FINE, "Could not create command for completion of " + prefix, e);
         completion = new CompletionMatch(Delimiter.EMPTY, Completion.create());
       }

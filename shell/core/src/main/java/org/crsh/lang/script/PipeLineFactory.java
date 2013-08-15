@@ -19,8 +19,8 @@
 
 package org.crsh.lang.script;
 
+import org.crsh.command.CommandCreationException;
 import org.crsh.command.CommandInvoker;
-import org.crsh.command.NoSuchCommandException;
 import org.crsh.command.ShellCommand;
 import org.crsh.repl.REPLSession;
 import org.crsh.command.pipeline.PipeLine;
@@ -72,7 +72,7 @@ public class PipeLineFactory {
     this.next = next;
   }
 
-  public CommandInvoker<Void, Chunk> create(REPLSession session) throws NoSuchCommandException {
+  public CommandInvoker<Void, Chunk> create(REPLSession session) throws CommandCreationException {
 
     //
     LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();
@@ -85,7 +85,7 @@ public class PipeLineFactory {
         }
       }
       if (commandInvoker == null) {
-        throw new NoSuchCommandException(current.name);
+        throw new CommandCreationException(current.name);
       }
       pipes.add(commandInvoker);
     }

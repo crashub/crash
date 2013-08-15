@@ -36,7 +36,7 @@ public interface ShellCommand {
    * @param line the original command line arguments
    * @return the completions
    */
-  CompletionMatch complete(RuntimeContext context, String line);
+  CompletionMatch complete(RuntimeContext context, String line) throws CommandCreationException;
 
   /**
    * Returns a description of the command or null if none can be found.
@@ -53,7 +53,7 @@ public interface ShellCommand {
    * @param line the command line arguments
    * @return the command
    */
-  CommandInvoker<?, ?> resolveInvoker(String line);
+  CommandInvoker<?, ?> resolveInvoker(String line) throws CommandCreationException;
 
   /**
    * Provides an invoker for the command line specified under the form of a command, options and arguments.
@@ -63,6 +63,6 @@ public interface ShellCommand {
    * @param args the arguments
    * @return the command
    */
-  CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args);
+  CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) throws CommandCreationException;
 
 }
