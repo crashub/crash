@@ -47,6 +47,12 @@
       <optional>true</optional>
     </dependency>
 
+    <dependency>
+      <groupId>org.golo-lang</groupId>
+      <artifactId>golo</artifactId>
+      <version>0-preview8</version>
+    </dependency>
+
     <!-- For unit testing purpose -->
 
     <dependency>
@@ -96,6 +102,16 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+            <source>1.7</source>
+            <target>1.7</target>
+        </configuration>
+    </plugin>
+
     </plugins>
   </build>
 

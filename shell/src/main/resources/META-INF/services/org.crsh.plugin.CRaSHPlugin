@@ -3,5 +3,6 @@ org.crsh.processor.term.ProcessorIOHandler
 org.crsh.lang.java.JavaCommandManager
 org.crsh.lang.groovy.GroovyCommandManager
 org.crsh.lang.groovy.GroovyRepl
+org.crsh.lang.golo.GoloREPL
 org.crsh.auth.JaasAuthenticationPlugin
 org.crsh.auth.SimpleAuthenticationPlugin
