@@ -21,10 +21,14 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.ShellCommand;
-import org.crsh.lang.CommandManager;
 import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.ResourceKind;
+import org.crsh.util.TimestampedObject;
+import org.crsh.vfs.Resource;
 
 import java.security.Principal;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CRaSH {
 
@@ -34,6 +38,9 @@ public class CRaSH {
   /** . */
   final CommandManager commandManager;
 
+  /** . */
+  private final Map<String, TimestampedObject<? extends ShellCommand>> commandCache = new ConcurrentHashMap<String, TimestampedObject<? extends ShellCommand>>();
+
   /**
    * Create a new CRaSH.
    *
@@ -42,7 +49,7 @@ public class CRaSH {
    */
   public CRaSH(PluginContext context) throws NullPointerException {
     this.context = context;
-    this.commandManager = CommandManager.create(context);
+    this.commandManager = context.getPlugin(CommandManager.class);
   }
 
   public CRaSHSession createSession(Principal user) {
@@ -67,6 +74,26 @@ public class CRaSH {
    * @throws NullPointerException if the name argument is null
    */
   public ShellCommand getCommand(String name) throws CommandCreationException, NullPointerException {
-    return commandManager.resolveCommand(name);
+    Resource script = context.loadResource(name, ResourceKind.COMMAND);
+    if (script != null) {
+      TimestampedObject<? extends ShellCommand> ref = commandCache.get(name);
+      if (ref != null) {
+        if (script.getTimestamp() != ref.getTimestamp()) {
+          ref = null;
+        }
+      }
+      ShellCommand command;
+      if (ref == null) {
+        command = commandManager.resolveCommand(name, script.getContent());
+        if (command != null) {
+          commandCache.put(name, new TimestampedObject<ShellCommand>(script.getTimestamp(), command));
+        }
+      } else {
+        command = ref.getObject();
+      }
+      return command;
+    } else {
+      return null;
+    }
   }
 }

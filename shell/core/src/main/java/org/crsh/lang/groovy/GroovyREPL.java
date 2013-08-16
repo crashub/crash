@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.lang.groovy.repl;
+package org.crsh.lang.groovy;
 
 import groovy.lang.GroovyShell;
 import org.crsh.cli.impl.Delimiter;
@@ -26,8 +26,6 @@ import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.lang.groovy.closure.PipeLineInvoker;
-import org.crsh.lang.groovy.shell.ShellBinding;
-import org.crsh.lang.groovy.shell.GroovyCommandManager;
 import org.crsh.repl.EvalResponse;
 import org.crsh.repl.REPL;
 import org.crsh.repl.REPLSession;

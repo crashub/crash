@@ -24,7 +24,7 @@ import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.CommandCreationException;
-import org.crsh.lang.ClassFactory;
+import org.crsh.util.ClassFactory;
 import org.crsh.shell.ErrorType;
 
 /** @author Julien Viet */

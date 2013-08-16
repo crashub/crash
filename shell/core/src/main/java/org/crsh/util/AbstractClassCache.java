@@ -17,11 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.lang;
+package org.crsh.util;
 
 import org.crsh.command.CommandCreationException;
 import org.crsh.shell.ErrorType;
-import org.crsh.util.TimestampedObject;
 import org.crsh.vfs.Resource;
 
 import java.io.UnsupportedEncodingException;
@@ -41,7 +40,7 @@ public abstract class AbstractClassCache<T> {
 
   protected abstract Resource getResource(String name);
 
-  public Class<? extends T> getClass(String name) throws CommandCreationException, NullPointerException {
+  public TimestampedObject<Class<? extends T>> getClass(String name) throws CommandCreationException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null argument allowed");
     }
@@ -84,6 +83,6 @@ public abstract class AbstractClassCache<T> {
     }
 
     //
-    return providerRef.getObject();
+    return providerRef;
   }
 }

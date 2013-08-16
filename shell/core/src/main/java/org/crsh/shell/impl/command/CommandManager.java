@@ -16,13 +16,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.lang;
+package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandCreationException;
+import org.crsh.command.ShellCommand;
+
+import java.util.HashMap;
 
 /** @author Julien Viet */
-public abstract class ClassFactory<T> {
+public interface CommandManager {
 
-  public abstract Class<? extends T> parse(String name, String source) throws CommandCreationException;
+  /**
+   * Resolve a command for the specified command name.
+   *
+   * @param name the command name
+   * @param source the command source
+   * @return the command or null if no command can be resolved
+   * @throws CommandCreationException when the command exists but cannot be created
+   * @throws NullPointerException if the command name is null
+   */
+  ShellCommand resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException;
+
+  void init(HashMap<String, Object> session);
+
+  void destroy(HashMap<String, Object> session);
+
+  String doCallBack(HashMap<String, Object> session, String name, String defaultValue);
 
 }

@@ -17,11 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.lang;
+package org.crsh.util;
 
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
-import org.crsh.util.TimestampedObject;
 import org.crsh.vfs.Resource;
 
 import java.util.Map;

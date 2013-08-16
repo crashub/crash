@@ -25,16 +25,13 @@ import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.lang.groovy.shell.GroovyCommandManager;
+import org.crsh.lang.groovy.GroovyCommandManager;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.command.CRaSHSession;
 
 import java.util.logging.Logger;
 
 public abstract class AbstractCommandTestCase extends AbstractTestCase {
-
-  /** . */
-  private final CRaSHPlugin[] NO_PLUGINS = new CRaSHPlugin[0];
 
   /** . */
   protected final Logger log = Logger.getLogger(getClass().getName());
@@ -60,7 +57,7 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
     super.setUp();
 
     //
-    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(NO_PLUGINS);
+    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(new GroovyCommandManager());
 
     //
     lifeCycle.start();

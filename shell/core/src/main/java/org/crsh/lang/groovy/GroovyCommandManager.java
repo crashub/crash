@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.lang.groovy.shell;
+package org.crsh.lang.groovy;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -27,40 +27,50 @@ import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.BaseShellCommand;
-import org.crsh.lang.AbstractClassCache;
-import org.crsh.lang.ClassCache;
-import org.crsh.lang.CommandManager;
-import org.crsh.lang.groovy.GroovyClassFactory;
+import org.crsh.plugin.CRaSHPlugin;
+import org.crsh.util.AbstractClassCache;
+import org.crsh.util.ClassCache;
+import org.crsh.shell.impl.command.CommandManager;
 import org.crsh.lang.groovy.command.GroovyScript;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
+import org.crsh.util.TimestampedObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /** @author Julien Viet */
-public class GroovyCommandManager extends CommandManager {
+public class GroovyCommandManager extends CRaSHPlugin<CommandManager> implements CommandManager {
 
   /** . */
   static final Logger log = Logger.getLogger(GroovyCommandManager.class.getName());
 
   /** . */
-  final PluginContext context;
+  private AbstractClassCache<GroovyScript> scriptCache;
 
   /** . */
-  final AbstractClassCache<Object> classCache;
+  private GroovyClassFactory<Object> objectGroovyClassFactory;
 
-  /** . */
-  final AbstractClassCache<GroovyScript> scriptCache;
+  public GroovyCommandManager() {
+  }
 
-  public GroovyCommandManager(PluginContext context) {
-    this.context = context;
-    this.classCache = new ClassCache<Object>(context, new GroovyClassFactory<Object>(context.getLoader(), Object.class, GroovyScriptCommand.class), ResourceKind.COMMAND);
+  @Override
+  public CommandManager getImplementation() {
+    return this;
+  }
+
+  @Override
+  public void init() {
+    PluginContext context = getContext();
+
+    //
+    this.objectGroovyClassFactory = new GroovyClassFactory<Object>(context.getLoader(), Object.class, GroovyScriptCommand.class);
     this.scriptCache = new ClassCache<GroovyScript>(context, new GroovyClassFactory<GroovyScript>(context.getLoader(), GroovyScript.class, GroovyScript.class), ResourceKind.LIFECYCLE);
   }
 
@@ -95,7 +105,7 @@ public class GroovyCommandManager extends CommandManager {
   }
 
   public GroovyShell getGroovyShell(Map<String, Object> session) {
-    return getGroovyShell(context, session);
+    return getGroovyShell(getContext(), session);
   }
 
   /**
@@ -136,8 +146,9 @@ public class GroovyCommandManager extends CommandManager {
   }
 
   public GroovyScript getLifeCycle(HashMap<String, Object> session, String name) throws CommandCreationException, NullPointerException {
-    Class<? extends GroovyScript> scriptClass = scriptCache.getClass(name);
-    if (scriptClass != null) {
+    TimestampedObject<Class<? extends GroovyScript>> ref = scriptCache.getClass(name);
+    if (ref != null) {
+      Class<? extends GroovyScript> scriptClass = ref.getObject();
       GroovyScript script = (GroovyScript)InvokerHelper.createScript(scriptClass, new Binding(session));
       script.setBinding(new Binding(session));
       return script;
@@ -146,23 +157,32 @@ public class GroovyCommandManager extends CommandManager {
     }
   }
 
-  public ShellCommand resolveCommand(String name) throws CommandCreationException, NullPointerException {
-    if (name == null) {
-      throw new NullPointerException("No null command name allowed");
+  public ShellCommand resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
+
+    //
+    if (source == null) {
+      throw new NullPointerException("No null command source allowed");
     }
-    Class<?> clazz = classCache.getClass(name);
-    if (clazz == null) {
-      return null;
+
+    //
+    String script;
+    try {
+      script = new String(source, "UTF-8");
+    }
+    catch (UnsupportedEncodingException e) {
+      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+    }
+
+    //
+    Class<?> clazz = objectGroovyClassFactory.parse(name, script);
+    if (BaseCommand.class.isAssignableFrom(clazz)) {
+      Class<? extends BaseCommand> cmd = clazz.asSubclass(BaseCommand.class);
+      return make(cmd);
+    } else if (GroovyScriptCommand.class.isAssignableFrom(clazz)) {
+      Class<? extends GroovyScriptCommand> cmd = clazz.asSubclass(GroovyScriptCommand.class);
+      return make2(cmd);
     } else {
-      if (BaseCommand.class.isAssignableFrom(clazz)) {
-        Class<? extends BaseCommand> cmd = clazz.asSubclass(BaseCommand.class);
-        return make(cmd);
-      } else if (GroovyScriptCommand.class.isAssignableFrom(clazz)) {
-        Class<? extends GroovyScriptCommand> cmd = clazz.asSubclass(GroovyScriptCommand.class);
-        return make2(cmd);
-      } else {
-        throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
-      }
+      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
     }
   }
 

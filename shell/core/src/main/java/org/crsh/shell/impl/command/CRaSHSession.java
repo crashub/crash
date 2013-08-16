@@ -24,7 +24,6 @@ import org.crsh.command.RuntimeContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
-import org.crsh.lang.CommandManager;
 import org.crsh.plugin.PluginContext;
 import org.crsh.repl.REPL;
 import org.crsh.shell.ErrorType;

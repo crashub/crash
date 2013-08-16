@@ -1,3 +1,3 @@
-org.crsh.lang.groovy.command.ArgumentNameTransformer
-org.crsh.lang.groovy.command.DefaultImportTransformer
-org.crsh.lang.groovy.command.CommandTransformer
+org.crsh.lang.groovy.ast.ArgumentNameTransformer
+org.crsh.lang.groovy.ast.DefaultImportTransformer
+org.crsh.lang.groovy.ast.CommandTransformer
