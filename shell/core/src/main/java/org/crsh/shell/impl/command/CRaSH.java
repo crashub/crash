@@ -27,6 +27,7 @@ import org.crsh.util.TimestampedObject;
 import org.crsh.vfs.Resource;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,7 +37,7 @@ public class CRaSH {
   final PluginContext context;
 
   /** . */
-  final CommandManager commandManager;
+  final HashMap<String, CommandManager> managers;
 
   /** . */
   private final Map<String, TimestampedObject<? extends ShellCommand>> commandCache = new ConcurrentHashMap<String, TimestampedObject<? extends ShellCommand>>();
@@ -48,8 +49,18 @@ public class CRaSH {
    * @throws NullPointerException if the context argument is null
    */
   public CRaSH(PluginContext context) throws NullPointerException {
+
+    //
+    HashMap<String, CommandManager> managers = new HashMap<String, CommandManager>();
+    for (CommandManager manager : context.getPlugins(CommandManager.class)) {
+      for (String ext : manager.getExtensions()) {
+        managers.put(ext, manager);
+      }
+    }
+
+
     this.context = context;
-    this.commandManager = context.getPlugin(CommandManager.class);
+    this.managers = managers;
   }
 
   public CRaSHSession createSession(Principal user) {
@@ -74,32 +85,34 @@ public class CRaSH {
    * @throws NullPointerException if the name argument is null
    */
   public ShellCommand getCommand(String name) throws CommandCreationException, NullPointerException {
-    Resource script = context.loadResource(name, ResourceKind.COMMAND);
-    if (script != null) {
-      TimestampedObject<? extends ShellCommand> ref = commandCache.get(name);
-      if (ref != null) {
-        if (script.getTimestamp() != ref.getTimestamp()) {
-          ref = null;
-        }
+    Iterable<Resource> resources = context.loadResources(name, ResourceKind.COMMAND);
+    for (Resource resource : resources) {
+      String fileName = resource.getName();
+      String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
+      CommandManager manager = managers.get(ext);
+      if (manager != null) {
+        return getShellCommand(manager, name, resource);
       }
-      ShellCommand command;
-      if (ref == null) {
-        String t = script.getName();
-        String ext = t.substring(t.lastIndexOf('.') + 1);
-        if (commandManager.getExtensions().contains(ext)) {
-          command = commandManager.resolveCommand(name, script.getContent());
-          if (command != null) {
-            commandCache.put(name, new TimestampedObject<ShellCommand>(script.getTimestamp(), command));
-          }
-        } else {
-          command = null;
-        }
-      } else {
-        command = ref.getObject();
-      }
-      return command;
-    } else {
-      return null;
     }
+    return null;
+  }
+
+  private ShellCommand getShellCommand(CommandManager manager, String name, Resource script) throws CommandCreationException {
+    TimestampedObject<? extends ShellCommand> ref = commandCache.get(name);
+    if (ref != null) {
+      if (script.getTimestamp() != ref.getTimestamp()) {
+        ref = null;
+      }
+    }
+    ShellCommand command;
+    if (ref == null) {
+      command = manager.resolveCommand(name, script.getContent());
+      if (command != null) {
+        commandCache.put(name, new TimestampedObject<ShellCommand>(script.getTimestamp(), command));
+      }
+    } else {
+      command = ref.getObject();
+    }
+    return command;
   }
 }

@@ -18,6 +18,7 @@
  */
 package org.crsh.plugin;
 
+import org.crsh.util.Utils;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Resource;
 
@@ -252,6 +253,17 @@ public final class PluginContext {
    * @return the resource or null if it cannot be found
    */
   public Resource loadResource(String resourceId, ResourceKind resourceKind) {
+    return Utils.first(resourceManager.loadResource(resourceId, resourceKind));
+  }
+
+  /**
+   * Load a resource from the context.
+   *
+   * @param resourceId the resource id
+   * @param resourceKind the resource kind
+   * @return the resource or null if it cannot be found
+   */
+  public Iterable<Resource> loadResources(String resourceId, ResourceKind resourceKind) {
     return resourceManager.loadResource(resourceId, resourceKind);
   }
 

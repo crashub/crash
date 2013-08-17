@@ -62,7 +62,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   final Principal user;
 
   public CommandManager getCommandManager() {
-    return crash.commandManager;
+    return crash.managers.get("groovy");
   }
 
   CRaSHSession(final CRaSH crash, Principal user) {
@@ -76,7 +76,9 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     //
     ClassLoader previous = setCRaSHLoader();
     try {
-      crash.commandManager.init(this);
+      for (CommandManager manager : crash.managers.values()) {
+        manager.init(this);
+      }
     }
     finally {
       setPreviousLoader(previous);
@@ -102,7 +104,9 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public void close() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      crash.commandManager.destroy(this);
+      for (CommandManager manager : crash.managers.values()) {
+        manager.destroy(this);
+      }
     }
     finally {
       setPreviousLoader(previous);
@@ -114,7 +118,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public String getWelcome() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      return crash.commandManager.doCallBack(this, "welcome", "");
+      return crash.managers.get("groovy").doCallBack(this, "welcome", "");
     }
     finally {
       setPreviousLoader(previous);
@@ -124,7 +128,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public String getPrompt() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      return crash.commandManager.doCallBack(this, "prompt", "% ");
+      return crash.managers.get("groovy").doCallBack(this, "prompt", "% ");
     }
     finally {
       setPreviousLoader(previous);

@@ -67,11 +67,8 @@ public class ResourceManager {
    * @param resourceKind the resource kind
    * @return the resource or null if it cannot be found
    */
-  Resource loadResource(String resourceId, ResourceKind resourceKind) {
-    Resource res = null;
+  Iterable<Resource> loadResource(String resourceId, ResourceKind resourceKind) {
     try {
-
-      //
       switch (resourceKind) {
         case LIFECYCLE:
           if ("login".equals(resourceId) || "logout".equals(resourceId)) {
@@ -88,7 +85,7 @@ public class ResourceManager {
                 }
               }
             }
-            return new Resource(resourceId + ".groovy", buffer.toByteArray(), timestamp);
+            return Collections.singleton(new Resource(resourceId + ".groovy", buffer.toByteArray(), timestamp));
           }
           break;
         case COMMAND:
@@ -96,7 +93,7 @@ public class ResourceManager {
           for (File path : dirs) {
             File f = path.child(resourceId + ".groovy", false);
             if (f != null) {
-              res = f.getResource();
+              return Collections.singleton(f.getResource());
             }
           }
           break;
@@ -104,13 +101,13 @@ public class ResourceManager {
           String path = "/" + resourceId;
           File file = confFS.get(Path.get(path));
           if (file != null) {
-            res = loadConf(file);
+            return Collections.singleton(loadConf(file));
           }
       }
     } catch (IOException e) {
       log.log(Level.WARNING, "Could not obtain resource " + resourceId, e);
     }
-    return res;
+    return Collections.emptyList();
   }
 
   /**

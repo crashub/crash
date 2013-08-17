@@ -78,6 +78,11 @@ public class Utils {
     return new HashMap<K, V>();
   }
 
+  public static <E> E first(Iterable<E> elements) {
+    Iterator<E> i = elements.iterator();
+    return i.hasNext() ? i.next() : null;
+  }
+
   public static <K, V, M extends Map<K, V>> M map(M map, K key, V value) {
     map.put(key, value);
     return map;
