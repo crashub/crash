@@ -150,7 +150,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
         response = ShellResponse.ok();
       } else {
         REPL found = null;
-        for (REPL repl : ServiceLoader.load(REPL.class)) {
+        for (REPL repl : crash.getContext().getPlugins(REPL.class)) {
           if (repl.getName().equals(name)) {
             found = repl;
             break;

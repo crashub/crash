@@ -20,17 +20,27 @@ package org.crsh.repl;
 
 import org.crsh.cli.Command;
 import org.crsh.command.CRaSHCommand;
+import org.crsh.lang.groovy.GroovyREPL;
+import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.AbstractCommandTestCase;
 import org.crsh.shell.Commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /** @author Julien Viet */
 public class REPLTestCase extends AbstractCommandTestCase {
 
   /** . */
   public static final ArrayList<Object> list = new ArrayList<Object>();
+
+  @Override
+  protected List<CRaSHPlugin<?>> getPlugins() {
+    List<CRaSHPlugin<?>> plugins = super.getPlugins();
+    plugins.add(new GroovyREPL());
+    return plugins;
+  }
 
   public void testResolveContext() {
     Object context = groovyShell.evaluate("context");

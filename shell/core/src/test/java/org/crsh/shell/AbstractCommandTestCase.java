@@ -29,6 +29,8 @@ import org.crsh.lang.groovy.GroovyCommandManager;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.command.CRaSHSession;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public abstract class AbstractCommandTestCase extends AbstractTestCase {
@@ -52,12 +54,19 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
     super(name);
   }
 
+  protected List<CRaSHPlugin<?>> getPlugins() {
+    ArrayList<CRaSHPlugin<?>> plugins = new ArrayList<CRaSHPlugin<?>>();
+    plugins.add(new GroovyCommandManager());
+    return plugins;
+  }
+
   @Override
   protected void setUp() throws Exception {
     super.setUp();
 
     //
-    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(new GroovyCommandManager());
+    List<CRaSHPlugin<?>> plugins = getPlugins();
+    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(plugins.toArray(new CRaSHPlugin[plugins.size()]));
 
     //
     lifeCycle.start();

@@ -26,6 +26,7 @@ import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.lang.groovy.closure.PipeLineInvoker;
+import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.repl.EvalResponse;
 import org.crsh.repl.REPL;
 import org.crsh.repl.REPLSession;
@@ -37,7 +38,12 @@ import java.io.IOException;
  *
  * @author Julien Viet
  */
-public class GroovyREPL implements REPL {
+public class GroovyREPL extends CRaSHPlugin<REPL> implements  REPL {
+
+  @Override
+  public REPL getImplementation() {
+    return this;
+  }
 
   public String getName() {
     return "groovy";
