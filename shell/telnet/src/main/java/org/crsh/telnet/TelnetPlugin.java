@@ -58,7 +58,7 @@ public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
     if (configURL != null) {
       try {
         log.log(Level.FINE, "Found embedded telnet config url " + configURL);
-        config = new Resource(configURL);
+        config = new Resource("telnet.properties", configURL);
       }
       catch (IOException e) {
         log.log(Level.FINE, "Could not load embedded telnet config url " + configURL + " will bypass it", e);

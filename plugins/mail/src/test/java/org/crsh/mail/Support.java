@@ -20,6 +20,7 @@ package org.crsh.mail;
 
 import junit.framework.Assert;
 import org.crsh.TestPluginLifeCycle;
+import org.crsh.lang.groovy.GroovyCommandManager;
 import org.subethamail.smtp.MessageHandlerFactory;
 import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
 import org.subethamail.smtp.server.SMTPServer;
@@ -40,7 +41,7 @@ public class Support {
   }
 
   protected TestPluginLifeCycle createLifeCycle() throws Exception {
-    TestPluginLifeCycle test = new TestPluginLifeCycle(new MailPlugin());
+    TestPluginLifeCycle test = new TestPluginLifeCycle(new MailPlugin(), new GroovyCommandManager());
     test.setProperty(MailPlugin.SMTP_HOST, "localhost");
     test.setProperty(MailPlugin.SMTP_PORT, 5000);
     test.setProperty(MailPlugin.SMTP_FROM, "foo@gmail.com");

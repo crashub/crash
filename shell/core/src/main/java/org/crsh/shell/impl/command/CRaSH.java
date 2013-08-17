@@ -84,9 +84,15 @@ public class CRaSH {
       }
       ShellCommand command;
       if (ref == null) {
-        command = commandManager.resolveCommand(name, script.getContent());
-        if (command != null) {
-          commandCache.put(name, new TimestampedObject<ShellCommand>(script.getTimestamp(), command));
+        String t = script.getName();
+        String ext = t.substring(t.lastIndexOf('.') + 1);
+        if (commandManager.getExtensions().contains(ext)) {
+          command = commandManager.resolveCommand(name, script.getContent());
+          if (command != null) {
+            commandCache.put(name, new TimestampedObject<ShellCommand>(script.getTimestamp(), command));
+          }
+        } else {
+          command = null;
         }
       } else {
         command = ref.getObject();

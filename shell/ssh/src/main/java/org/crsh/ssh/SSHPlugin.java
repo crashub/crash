@@ -75,7 +75,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     if (serverKeyURL != null) {
       try {
         log.log(Level.FINE, "Found embedded key url " + serverKeyURL);
-        serverKey = new Resource(serverKeyURL);
+        serverKey = new Resource("hostkey.pem", serverKeyURL);
       }
       catch (IOException e) {
         log.log(Level.FINE, "Could not load ssh key from url " + serverKeyURL, e);

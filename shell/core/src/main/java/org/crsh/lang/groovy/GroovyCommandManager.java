@@ -40,8 +40,10 @@ import org.crsh.shell.ErrorType;
 import org.crsh.util.TimestampedObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,6 +52,9 @@ public class GroovyCommandManager extends CRaSHPlugin<CommandManager> implements
 
   /** . */
   static final Logger log = Logger.getLogger(GroovyCommandManager.class.getName());
+
+  /** . */
+  static final Set<String> EXT = Collections.singleton("groovy");
 
   /** . */
   private AbstractClassCache<GroovyScript> scriptCache;
@@ -63,6 +68,10 @@ public class GroovyCommandManager extends CRaSHPlugin<CommandManager> implements
   @Override
   public CommandManager getImplementation() {
     return this;
+  }
+
+  public Set<String> getExtensions() {
+    return EXT;
   }
 
   @Override

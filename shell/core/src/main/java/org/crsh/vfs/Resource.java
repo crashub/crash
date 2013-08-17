@@ -28,20 +28,29 @@ import java.net.URLConnection;
 public class Resource {
 
   /** . */
+  private final String name;
+
+  /** . */
   private final byte[] content;
 
   /** . */
   private long timestamp;
 
-  public Resource(byte[] content, long timestamp) {
+  public Resource(String name, byte[] content, long timestamp) {
+    this.name = name;
     this.content = content;
     this.timestamp = timestamp;
   }
 
-  public Resource(URL url) throws IOException {
+  public Resource(String name, URL url) throws IOException {
     URLConnection conn = url.openConnection();
+    this.name = name;
     this.timestamp = conn.getLastModified();
     this.content = IO.readAsBytes(conn.getInputStream());
+  }
+
+  public String getName() {
+    return name;
   }
 
   public byte[] getContent() {

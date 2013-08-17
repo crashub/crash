@@ -63,7 +63,7 @@ class Handle<H> {
     InputStream in = open();
     byte[] bytes = IO.readAsBytes(in);
     long lastModified = getLastModified();
-    return new Resource(bytes, lastModified);
+    return new Resource(key.name, bytes, lastModified);
   }
 
   Iterator<Resource> getResources() throws IOException {
@@ -74,7 +74,7 @@ class Handle<H> {
         InputStream in = i.next();
         byte[] bytes = IO.readAsBytes(in);
         long lastModified = getLastModified();
-        resources.add(new Resource(bytes, lastModified));
+        resources.add(new Resource(key.name, bytes, lastModified));
       }
       return resources.iterator();
     } else {

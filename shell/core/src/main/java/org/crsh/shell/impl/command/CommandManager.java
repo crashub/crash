@@ -22,9 +22,17 @@ import org.crsh.command.CommandCreationException;
 import org.crsh.command.ShellCommand;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /** @author Julien Viet */
 public interface CommandManager {
+
+  /**
+   * Returns the set of extensions managed by this implementation.
+   *
+   * @return the set of extensions, for instance ("groovy")
+   */
+  Set<String> getExtensions();
 
   /**
    * Resolve a command for the specified command name.

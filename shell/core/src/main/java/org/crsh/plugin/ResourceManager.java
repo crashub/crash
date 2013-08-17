@@ -88,7 +88,7 @@ public class ResourceManager {
                 }
               }
             }
-            return new Resource(buffer.toByteArray(), timestamp);
+            return new Resource(resourceId + ".groovy", buffer.toByteArray(), timestamp);
           }
           break;
         case COMMAND:
@@ -188,7 +188,7 @@ public class ResourceManager {
             buffer.write(SEPARATOR);
           }
         }
-        return new Resource(buffer.toByteArray(), timestamp);
+        return new Resource(file.getName(), buffer.toByteArray(), timestamp);
       } else {
         return null;
       }
