@@ -19,7 +19,6 @@
 package org.crsh.shell;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -64,8 +63,8 @@ public class SortCommandTestCase extends AbstractCommandTestCase {
 
   public void testNone() throws Exception {
     output.clear();
-    lifeCycle.bind("produce_command", produce_command);
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("produce_command | sort | consume_command");
     assertEquals(3, output.size());
     assertEquals("A", ((Map<String,String>)output.get(0)).get("A"));
@@ -81,8 +80,8 @@ public class SortCommandTestCase extends AbstractCommandTestCase {
 
   public void testSimple() throws Exception {
     output.clear();
-    lifeCycle.bind("produce_command", produce_command);
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("produce_command | sort -f B | consume_command");
     assertEquals(3, output.size());
     assertEquals("A", ((Map<String,String>)output.get(0)).get("A"));
@@ -98,8 +97,8 @@ public class SortCommandTestCase extends AbstractCommandTestCase {
 
   public void testAsc() throws Exception {
     output.clear();
-    lifeCycle.bind("produce_command", produce_command);
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("produce_command | sort -f B:asc | consume_command");
     assertEquals(3, output.size());
     assertEquals("A", ((Map<String,String>)output.get(0)).get("A"));
@@ -115,8 +114,8 @@ public class SortCommandTestCase extends AbstractCommandTestCase {
 
   public void testDesc() throws Exception {
     output.clear();
-    lifeCycle.bind("produce_command", produce_command);
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("produce_command | sort -f B:desc | consume_command");
     assertEquals(3, output.size());
     assertEquals("A", ((Map<String,String>)output.get(0)).get("A"));
@@ -132,8 +131,8 @@ public class SortCommandTestCase extends AbstractCommandTestCase {
 
   public void testMany() throws Exception {
     output.clear();
-    lifeCycle.bind("produce_command", produce_command);
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("produce_command | sort -f B -f C | consume_command");
     assertEquals(3, output.size());
     assertEquals("A", ((Map<String,String>)output.get(0)).get("A"));
@@ -149,8 +148,8 @@ public class SortCommandTestCase extends AbstractCommandTestCase {
 
   public void testInvalid() throws Exception {
     output.clear();
-    lifeCycle.bind("produce_command", produce_command);
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("produce_command | sort -f B -f invalid | consume_command");
     assertEquals(3, output.size());
     assertEquals("A", ((Map<String,String>)output.get(0)).get("A"));

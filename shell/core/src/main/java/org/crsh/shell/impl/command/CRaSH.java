@@ -27,6 +27,7 @@ import org.crsh.util.TimestampedObject;
 import org.crsh.vfs.Resource;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -85,16 +86,28 @@ public class CRaSH {
    * @throws NullPointerException if the name argument is null
    */
   public ShellCommand getCommand(String name) throws CommandCreationException, NullPointerException {
-    Iterable<Resource> resources = context.loadResources(name, ResourceKind.COMMAND);
-    for (Resource resource : resources) {
-      String fileName = resource.getName();
-      String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
-      CommandManager manager = managers.get(ext);
-      if (manager != null) {
-        return getShellCommand(manager, name, resource);
+    for (CommandManager manager : managers.values()) {
+      for (String ext : manager.getExtensions()) {
+        Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
+        for (Resource resource : resources) {
+          return getShellCommand(manager, name, resource);
+        }
       }
     }
     return null;
+  }
+
+  public Iterable<String> getCommandNames() {
+    ArrayList<String> names = new ArrayList<String>();
+    for (String resourceName : context.listResources(ResourceKind.COMMAND)) {
+      int index = resourceName.indexOf('.');
+      String name = resourceName.substring(0, index);
+      String ext = resourceName.substring(index + 1);
+      if (managers.containsKey(ext)) {
+        names.add(name);
+      }
+    }
+    return names;
   }
 
   private ShellCommand getShellCommand(CommandManager manager, String name, Resource script) throws CommandCreationException {

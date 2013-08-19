@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 public class ResourceManager {
 
   /** . */
-  private static final Pattern p = Pattern.compile("(.+)\\.groovy");
+  private static final Pattern p = Pattern.compile("([^.]+)\\.[^.]+");
 
   /** . */
   private static final Logger log = Logger.getLogger(ResourceManager.class.getName());
@@ -91,7 +91,7 @@ public class ResourceManager {
         case COMMAND:
           // Find the resource first, we find for the first found
           for (File path : dirs) {
-            File f = path.child(resourceId + ".groovy", false);
+            File f = path.child(resourceId, false);
             if (f != null) {
               return Collections.singleton(f.getResource());
             }
@@ -116,17 +116,20 @@ public class ResourceManager {
    * @param kind the resource kind
    * @return the resource ids
    */
-  List<String> listResourceId(ResourceKind kind) {
+  Iterable<String> listResourceId(ResourceKind kind) {
     switch (kind) {
       case COMMAND:
         SortedSet<String> all = new TreeSet<String>();
         try {
           for (File path : dirs) {
             for (File file : path.children()) {
-              String name = file.getName();
-              Matcher matcher = p.matcher(name);
+              String fileName = file.getName();
+              Matcher matcher = p.matcher(fileName);
               if (matcher.matches()) {
-                all.add(matcher.group(1));
+                String name = matcher.group(1);
+                if (!"login".equals(name) && !"logout".equals(name)) {
+                  all.add(fileName);
+                }
               }
             }
           }
@@ -134,9 +137,7 @@ public class ResourceManager {
         catch (IOException e) {
           e.printStackTrace();
         }
-        all.remove("login");
-        all.remove("logout");
-        return new ArrayList<String>(all);
+        return all;
       default:
         return Collections.emptyList();
     }

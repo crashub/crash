@@ -55,7 +55,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testSimple() throws Exception {
     setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find | consume_command");
     assertEquals(2, output.size());
     assertEquals("Foo", output.get(0).name);
@@ -67,7 +67,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testNested() throws Exception {
     setFactory("org.crsh.shell.factory.NestedInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find | consume_command");
     assertEquals(3, output.size());
     assertEquals("java:global/Foo", output.get(0).name);
@@ -81,7 +81,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testError() throws Exception {
     setFactory("org.crsh.shell.factory.ErrorInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find | consume_command");
     assertEquals(2, output.size());
     assertEquals("Empty", output.get(0).name);
@@ -93,7 +93,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testFilter() throws Exception {
     setFactory("org.crsh.shell.factory.TypedInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -f java.lang.String | consume_command");
     assertEquals(1, output.size());
     assertEquals("String", output.get(0).name);
@@ -103,7 +103,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testFilterMany() throws Exception {
     setFactory("org.crsh.shell.factory.TypedInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -f java.lang.String -f java.util.List | consume_command");
     assertEquals(2, output.size());
     assertEquals("String", output.get(0).name);
@@ -115,7 +115,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testFilterInterface() throws Exception {
     setFactory("org.crsh.shell.factory.TypedInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -f java.util.List | consume_command");
     assertEquals(1, output.size());
     assertEquals("ArrayList", output.get(0).name);
@@ -125,7 +125,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testFilterSuperType() throws Exception {
     setFactory("org.crsh.shell.factory.TypedInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -f java.util.AbstractList | consume_command");
     assertEquals(1, output.size());
     assertEquals("ArrayList", output.get(0).name);
@@ -135,7 +135,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testNameExact() throws Exception {
     setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n Foo | consume_command");
     assertEquals(1, output.size());
     assertEquals("Foo", output.get(0).name);
@@ -145,7 +145,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testNameBegin() throws Exception {
     setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n F* | consume_command");
     assertEquals(1, output.size());
     assertEquals("Foo", output.get(0).name);
@@ -155,7 +155,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testNameEnd() throws Exception {
     setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n *o | consume_command");
     assertEquals(2, output.size());
     assertEquals("Foo", output.get(0).name);
@@ -167,7 +167,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testNameNoBeginEnd() throws Exception {
     setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n *global* | consume_command");
     assertEquals(1, output.size());
     assertEquals("java:global/Foo", output.get(0).name);
@@ -177,7 +177,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testNameWildcard() throws Exception {
     setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n java:*/Foo | consume_command");
     assertEquals(1, output.size());
     assertEquals("java:global/Foo", output.get(0).name);
@@ -187,7 +187,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   public void testNameWildcardBeginEnd() throws Exception {
     setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n *:*/* | consume_command");
     assertEquals(1, output.size());
     assertEquals("java:global/Foo", output.get(0).name);

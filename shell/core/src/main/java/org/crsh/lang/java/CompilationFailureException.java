@@ -16,21 +16,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.repl;
+package org.crsh.lang.java;
 
-import org.crsh.command.CommandCreationException;
-import org.crsh.command.ShellCommand;
-import org.crsh.plugin.PluginContext;
-
-import java.util.Map;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
+import java.util.List;
 
 /** @author Julien Viet */
-public interface REPLSession extends Map<String, Object> {
+public class CompilationFailureException extends Exception {
 
-  Iterable<String> getCommandNames();
+  /** . */
+  private final List<Diagnostic<? extends JavaFileObject>> errors;
 
-  ShellCommand getCommand(String name) throws CommandCreationException;
+  public CompilationFailureException(List<Diagnostic<? extends JavaFileObject>> errors) {
+    this.errors = errors;
+  }
 
-  PluginContext getContext();
-
+  public List<Diagnostic<? extends JavaFileObject>> getErrors() {
+    return errors;
+  }
 }

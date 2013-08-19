@@ -273,7 +273,7 @@ public final class PluginContext {
    * @param kind the resource kind
    * @return the resource ids
    */
-  public List<String> listResourceId(ResourceKind kind) {
+  public Iterable<String> listResources(ResourceKind kind) {
     return resourceManager.listResourceId(kind);
   }
 

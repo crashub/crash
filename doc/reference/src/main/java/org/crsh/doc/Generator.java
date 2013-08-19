@@ -58,8 +58,8 @@ public class Generator {
       Thread.currentThread().getContextClassLoader());
     ctx.refresh();
     CRaSH crash = new CRaSH(ctx);
-    for (String s : ctx.listResourceId(ResourceKind.COMMAND)) {
-      ShellCommand cmd = crash.getCommand(s);
+    for (String name : crash.getCommandNames()) {
+      ShellCommand cmd = crash.getCommand(name);
       StringBuilder man = new StringBuilder();
       if (cmd instanceof CRaSHCommand) {
         BaseShellCommand<?> cc = (BaseShellCommand<?>)cmd;
@@ -76,10 +76,10 @@ public class Generator {
           man.append("{{/screen}}");
         }
       } else {
-        man.append(cmd.describe(s, DescriptionFormat.MAN));
+        man.append(cmd.describe(name, DescriptionFormat.MAN));
       }
       if (man.length() > 0) {
-        File f = new File(root, s + ".wiki");
+        File f = new File(root, name + ".wiki");
         if (!f.exists()) {
           PrintWriter pw = new PrintWriter(f);
           try {

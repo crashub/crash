@@ -68,8 +68,8 @@ public class CommandTestCase extends AbstractCommandTestCase {
       "no_ret()\n" +
       "}\n" +
       "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("no_ret", no_ret);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindGroovy("no_ret", no_ret);
 
     //
     assertEquals("", assertOk("foo"));
@@ -77,8 +77,8 @@ public class CommandTestCase extends AbstractCommandTestCase {
 
   public void testInvokeNoRetInScript() throws Exception {
     String foo = "no_ret()\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("no_ret", no_ret);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindGroovy("no_ret", no_ret);
 
     //
     assertEquals("", assertOk("foo"));
@@ -91,7 +91,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
       "echo 'bar'\n" +
       "}\n" +
       "}";
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -99,7 +99,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
 
   public void testInvokeInScript() throws Exception {
     String foo = "echo 'bar'\n";
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -121,7 +121,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("resolve", resolve);
+    lifeCycle.bindGroovy("resolve", resolve);
 
     //
     assertEquals("HELLO", assertOk("resolve"));
@@ -135,7 +135,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
         "context << 3\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("hello3", assertOk("foo"));
@@ -145,14 +145,14 @@ public class CommandTestCase extends AbstractCommandTestCase {
     String foo = "context << 'hello'\n" +
         "context << 3\n" +
         "return null";
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("hello3", assertOk("foo"));
   }
 
   public void testThrowScript() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws org.crsh.command.ScriptException {\n" +
         "throw new org.crsh.command.ScriptException()" +
@@ -162,7 +162,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testThrowGroovyScript() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws groovy.util.ScriptException {\n" +
         "throw new groovy.util.ScriptException()" +
@@ -172,7 +172,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testThrowCheckedException() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws javax.management.JMException {\n" +
         "throw new javax.management.JMException()" +
@@ -182,7 +182,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testThrowRuntimeException() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws java.util.EmptyStackException {\n" +
         "throw new java.util.EmptyStackException()" +
@@ -192,7 +192,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testThrowError() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() throws java.awt.AWTError {\n" +
         "throw new java.awt.AWTError()" +
@@ -202,7 +202,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowScript() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new org.crsh.command.ScriptException()" +
@@ -212,7 +212,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowGroovyScript() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new groovy.util.ScriptException()" +
@@ -222,7 +222,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowCheckedException() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new javax.management.JMException()" +
@@ -232,7 +232,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowRuntimeException() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new java.util.EmptyStackException()" +
@@ -242,7 +242,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testUndeclaredThrowError() throws Exception {
-    lifeCycle.bind("a", "public class a {\n" +
+    lifeCycle.bindGroovy("a", "public class a {\n" +
         "@Command\n" +
         "public void main() {\n" +
         "throw new java.awt.AWTError()" +
@@ -252,27 +252,27 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testScriptThrowScript() throws Exception {
-    lifeCycle.bind("a", "throw new org.crsh.command.ScriptException()");
+    lifeCycle.bindGroovy("a", "throw new org.crsh.command.ScriptException()");
     assertEvalError("a", ScriptException.class);
   }
 
   public void testScriptThrowGroovyScript() throws Exception {
-    lifeCycle.bind("a", "throw new groovy.util.ScriptException()");
+    lifeCycle.bindGroovy("a", "throw new groovy.util.ScriptException()");
     assertEvalError("a", ScriptException.class);
   }
 
   public void testScriptThrowCheckedException() throws Exception {
-    lifeCycle.bind("a", "throw new javax.management.JMException()");
+    lifeCycle.bindGroovy("a", "throw new javax.management.JMException()");
     assertEvalError("a", JMException.class);
   }
 
   public void testScriptThrowRuntimeException() throws Exception {
-    lifeCycle.bind("a", "throw new java.util.EmptyStackException()");
+    lifeCycle.bindGroovy("a", "throw new java.util.EmptyStackException()");
     assertEvalError("a", EmptyStackException.class);
   }
 
   public void testScriptThrowError() throws Exception {
-    lifeCycle.bind("a", "throw new java.awt.AWTError()");
+    lifeCycle.bindGroovy("a", "throw new java.awt.AWTError()");
     assertInternalError("a", AWTError.class);
   }
 }

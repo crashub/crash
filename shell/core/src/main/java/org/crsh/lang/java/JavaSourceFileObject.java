@@ -16,21 +16,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.repl;
+package org.crsh.lang.java;
 
-import org.crsh.command.CommandCreationException;
-import org.crsh.command.ShellCommand;
-import org.crsh.plugin.PluginContext;
-
-import java.util.Map;
+import javax.tools.SimpleJavaFileObject;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /** @author Julien Viet */
-public interface REPLSession extends Map<String, Object> {
+class JavaSourceFileObject extends SimpleJavaFileObject {
 
-  Iterable<String> getCommandNames();
+  /** . */
+  private final String source;
 
-  ShellCommand getCommand(String name) throws CommandCreationException;
+  JavaSourceFileObject(String className, String source) throws URISyntaxException {
+    super(new URI("whatever", null, '/' + className.replace('.', '/') + ".java", null), Kind.SOURCE);
 
-  PluginContext getContext();
+    //
+    this.source = source;
+  }
 
+  @Override
+  public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
+    return source;
+  }
 }

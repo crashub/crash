@@ -28,7 +28,7 @@ import java.util.Collections;
 public class PipeTestCase extends AbstractCommandTestCase {
 
   public void testClose() {
-    lifeCycle.bind("closed", Commands.IsClosed.class);
+    lifeCycle.bindClass("closed", Commands.IsClosed.class);
 
     //
     Commands.IsClosed.closed.set(0);
@@ -42,9 +42,9 @@ public class PipeTestCase extends AbstractCommandTestCase {
   }
 
   public void testIsPiped() {
-    lifeCycle.bind("piped", Commands.IsPiped.class);
-    lifeCycle.bind("produce_command", Commands.ProduceString.class);
-    lifeCycle.bind("noop", Commands.Noop.class);
+    lifeCycle.bindClass("piped", Commands.IsPiped.class);
+    lifeCycle.bindClass("produce_command", Commands.ProduceString.class);
+    lifeCycle.bindClass("noop", Commands.Noop.class);
 
     //
     Commands.list.clear();
@@ -73,14 +73,14 @@ public class PipeTestCase extends AbstractCommandTestCase {
         "context.getWriter().print('foo');\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("cmd", cmd);
+    lifeCycle.bindGroovy("cmd", cmd);
 
     //
     assertEquals("foo", assertOk("cmd"));
   }
 
   public void testProducerWithFormatter() throws Exception {
-    lifeCycle.bind("cmd", Commands.ProduceValue.class);
+    lifeCycle.bindClass("cmd", Commands.ProduceValue.class);
     assertEquals("<value>abc</value>              \n", assertOk("cmd"));
   }
 
@@ -92,8 +92,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
         "context << 3;\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("producer", producer);
-    lifeCycle.bind("consumer", Commands.ConsumeInteger.class);
+    lifeCycle.bindGroovy("producer", producer);
+    lifeCycle.bindClass("consumer", Commands.ConsumeInteger.class);
 
     //
     Commands.list.clear();
@@ -102,8 +102,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
   }
 
   public void testAdaptToChunk() {
-    lifeCycle.bind("producer", Commands.ProduceValue.class);
-    lifeCycle.bind("consumer", Commands.ConsumeChunk.class);
+    lifeCycle.bindClass("producer", Commands.ProduceValue.class);
+    lifeCycle.bindClass("consumer", Commands.ConsumeChunk.class);
     Commands.list.clear();
     assertOk("producer | consumer");
     ChunkBuffer buffer = new ChunkBuffer().append(Commands.list);
@@ -127,8 +127,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
         "}";
 
     //
-    lifeCycle.bind("producer", Commands.Noop.class);
-    lifeCycle.bind("consumer", consumer);
+    lifeCycle.bindClass("producer", Commands.Noop.class);
+    lifeCycle.bindGroovy("consumer", consumer);
 
     //
     Commands.list.clear();
@@ -161,8 +161,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
         "}";
 
     //
-    lifeCycle.bind("producer", producer);
-    lifeCycle.bind("consumer", consumer);
+    lifeCycle.bindGroovy("producer", producer);
+    lifeCycle.bindGroovy("consumer", consumer);
 
     //
     Commands.list.clear();
@@ -187,8 +187,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
         "}";
 
     //
-    lifeCycle.bind("producer", producer);
-    lifeCycle.bind("consumer", Commands.ConsumeString.class);
+    lifeCycle.bindGroovy("producer", producer);
+    lifeCycle.bindClass("consumer", Commands.ConsumeString.class);
 
     //
     Commands.list.clear();
@@ -212,8 +212,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
             "}";
 
     //
-    lifeCycle.bind("producer", producer);
-    lifeCycle.bind("consumer", Commands.ConsumeString.class);
+    lifeCycle.bindGroovy("producer", producer);
+    lifeCycle.bindClass("consumer", Commands.ConsumeString.class);
 
     //
     Commands.list.clear();
@@ -224,16 +224,16 @@ public class PipeTestCase extends AbstractCommandTestCase {
   }
 
   public void testNotAssignableType() throws Exception {
-    lifeCycle.bind("producer", Commands.ProduceInteger.class);
-    lifeCycle.bind("consumer", Commands.ConsumeBoolean.class);
+    lifeCycle.bindClass("producer", Commands.ProduceInteger.class);
+    lifeCycle.bindClass("consumer", Commands.ConsumeBoolean.class);
     Commands.list.clear();
     assertOk("producer | consumer");
     assertEquals(Collections.emptyList(), Commands.list);
   }
 
   public void testSameType() throws Exception {
-    lifeCycle.bind("producer", Commands.ProduceInteger.class);
-    lifeCycle.bind("consumer", Commands.ConsumeInteger.class);
+    lifeCycle.bindClass("producer", Commands.ProduceInteger.class);
+    lifeCycle.bindClass("consumer", Commands.ConsumeInteger.class);
     Commands.list.clear();
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
@@ -251,8 +251,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
             "    };\n" +
             "  }\n" +
             "}\n";
-    lifeCycle.bind("producer", Commands.ProduceInteger.class);
-    lifeCycle.bind("consumer", consumer);
+    lifeCycle.bindClass("producer", Commands.ProduceInteger.class);
+    lifeCycle.bindGroovy("consumer", consumer);
     Commands.list.clear();
     Throwable t = assertError("producer | consumer", ErrorType.EVALUATION);
     ScriptException ex = assertInstance(ScriptException.class, t);
@@ -260,9 +260,9 @@ public class PipeTestCase extends AbstractCommandTestCase {
   }
 
   public void testBuffer() {
-    lifeCycle.bind("produce_command", Commands.ProduceString.class);
-    lifeCycle.bind("b", Commands.Buffer.class);
-    lifeCycle.bind("consume_command", Commands.ConsumeString.class);
+    lifeCycle.bindClass("produce_command", Commands.ProduceString.class);
+    lifeCycle.bindClass("b", Commands.Buffer.class);
+    lifeCycle.bindClass("consume_command", Commands.ConsumeString.class);
     Commands.list.clear();
     assertOk("produce_command | consume_command");
     assertEquals(2, Commands.list.size());
@@ -272,9 +272,9 @@ public class PipeTestCase extends AbstractCommandTestCase {
   }
 
   public void testFilter() {
-    lifeCycle.bind("produce_command", Commands.ProduceString.class);
-    lifeCycle.bind("f", Commands.Filter.class);
-    lifeCycle.bind("consume_command", Commands.ConsumeString.class);
+    lifeCycle.bindClass("produce_command", Commands.ProduceString.class);
+    lifeCycle.bindClass("f", Commands.Filter.class);
+    lifeCycle.bindClass("consume_command", Commands.ConsumeString.class);
     Commands.list.clear();
     assertOk("produce_command | consume_command");
     assertEquals(2, Commands.list.size());

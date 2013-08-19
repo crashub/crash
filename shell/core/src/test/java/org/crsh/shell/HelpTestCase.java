@@ -22,7 +22,7 @@ package org.crsh.shell;
 public class HelpTestCase extends AbstractCommandTestCase {
 
   public void testPiped() {
-    lifeCycle.bind("piped", Commands.IsPiped.class);
+    lifeCycle.bindClass("piped", Commands.IsPiped.class);
     String resp = assertOk("piped -h");
     assertTrue(resp.contains("usage"));
   }

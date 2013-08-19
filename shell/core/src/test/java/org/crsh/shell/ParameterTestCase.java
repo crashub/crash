@@ -31,7 +31,7 @@ public class ParameterTestCase extends AbstractCommandTestCase {
 
   public void testShortOption() throws Exception {
 
-    lifeCycle.bind("option_command", option_command);
+    lifeCycle.bindGroovy("option_command", option_command);
 
     assertEquals("bar", assertOk("option_command -o bar"));
 
@@ -42,8 +42,8 @@ public class ParameterTestCase extends AbstractCommandTestCase {
         "option_command o:'bar'\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("option_command", option_command);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindGroovy("option_command", option_command);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -51,8 +51,8 @@ public class ParameterTestCase extends AbstractCommandTestCase {
 
   public void testShortOptionInScript() throws Exception {
     String foo = "option_command o:'bar'\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("option_command", option_command);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindGroovy("option_command", option_command);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -65,8 +65,8 @@ public class ParameterTestCase extends AbstractCommandTestCase {
         "option_command option:'bar'\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("option_command", option_command);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindGroovy("option_command", option_command);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -74,8 +74,8 @@ public class ParameterTestCase extends AbstractCommandTestCase {
 
   public void testLongOptionInScript() throws Exception {
     String foo = "option_command option:'bar'\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("option_command", option_command);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindGroovy("option_command", option_command);
 
     //
     assertEquals("bar", assertOk("foo"));

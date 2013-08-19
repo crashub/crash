@@ -16,36 +16,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.crsh;
+package org.crsh.lang.java;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.cli.spi.Completion;
+import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.AbstractCommandTestCase;
 
-public class SystemCommandTestCase extends AbstractCommandTestCase {
+import java.util.List;
+import java.util.Map;
 
-  public void testFoo() throws Exception {
-    System.setProperty("foo", "bar");
-    try {
-      lifeCycle.bindGroovy("ls", "(system.propls { filter = 'foo' } | { it['VALUE'] })()");
-      assertEquals("bar", assertOk("ls"));
-    } finally {
-      System.clearProperty("foo");
-    }
+/** @author Julien Viet */
+public class JavaCommandTestCase extends AbstractCommandTestCase {
+
+  public void testSimple() throws Exception {
+    assertEquals("hello", assertOk("java_command"));
+    assertEquals("def", groovyShell.getVariable("abc"));
   }
 
-  public void testComplete() throws Exception {
-    System.setProperty("foo.bar", "bar");
-    System.setProperty("foo.bar2", "bar");
-    try {
-      CompletionMatch completion = assertComplete("system propget foo");
-      assertEquals(2, completion.getValue().getSize());
-      assertTrue(completion.getValue().get(".bar") != null);
-      assertTrue(completion.getValue().get(".bar2") != null);
-    } finally {
-      System.clearProperty("foo.bar");
-      System.clearProperty("foo.bar2");
-    }
+  public void testCompilationFailure() {
+    lifeCycle.bindJava("foo", "public class foo extends BaseCommand {}");
+    assertUnknownCommand("foo");
   }
-  
+
+  public void testComplete() {
+    CompletionMatch match = assertComplete("java_");
+    Completion completion = match.getValue();
+    assertEquals(1, completion.getSize());
+    Map.Entry<String, Boolean> entry = completion.iterator().next();
+    assertEquals("command", entry.getKey());
+    assertTrue(entry.getValue());
+  }
 }

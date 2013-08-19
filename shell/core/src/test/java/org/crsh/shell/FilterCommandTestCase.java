@@ -54,31 +54,31 @@ public class FilterCommandTestCase extends AbstractCommandTestCase {
   
   public void testSimple() throws Exception {
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
-    lifeCycle.bind("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
     assertOk("produce_command | filter -p A:C | consume_command");
     assertEquals(list(map(map("A", "C"), "B", "A")), output);
   }
 
   public void testMany() throws Exception {
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
-    lifeCycle.bind("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
     assertOk("produce_command | filter -p A:C -p A:B | consume_command");
     assertEquals(list(map(map("A", "B"), "B", "B"), map(map("A", "C"), "B", "A")), output);
   }
 
   public void testInvalid() throws Exception {
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
-    lifeCycle.bind("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
     assertError("produce_command | filter -p invalid | consume_command", ErrorType.EVALUATION, ScriptException.class);
   }
 
   public void testIntersect() throws Exception {
     output.clear();
-    lifeCycle.bind("consume_command", consume_command);
-    lifeCycle.bind("produce_command", produce_command);
+    lifeCycle.bindGroovy("consume_command", consume_command);
+    lifeCycle.bindGroovy("produce_command", produce_command);
     assertOk("produce_command | filter -p A:C -p B:A | consume_command");
     assertEquals(list(map(map("A", "C"), "B", "A")), output);
   }

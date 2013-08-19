@@ -17,14 +17,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.vfs.spi.url;
+package org.crsh.util;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-interface InputStreamResolver {
+public interface InputStreamFactory {
 
+  /**
+   * Open the stream.
+   *
+   * @return the stream
+   * @throws IOException any io exception that would prevent the stream to be opened
+   */
   InputStream open() throws IOException;
 
 }

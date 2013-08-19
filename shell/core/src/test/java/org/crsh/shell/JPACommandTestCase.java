@@ -106,7 +106,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
 
   public void testEntities() throws Exception {
     output_entity.clear();
-    lifeCycle.bind("consume_command_entity", consume_command_entity);
+    lifeCycle.bindGroovy("consume_command_entity", consume_command_entity);
     assertOk("jpa open testEmf");
     assertOk("jpa entities | consume_command_entity");
     Collections.sort(output_entity, entityComparator);
@@ -124,7 +124,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
 
   public void testEntity() throws Exception {
     output_entity.clear();
-    lifeCycle.bind("consume_command_entity", consume_command_entity);
+    lifeCycle.bindGroovy("consume_command_entity", consume_command_entity);
     assertOk("jpa open testEmf");
     assertError("jpa entity None", ErrorType.EVALUATION);
     assertOk("jpa entity " + Foo.class.getName() + " | consume_command_entity");
@@ -175,7 +175,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
     em.close();
 
     output_value.clear();
-    lifeCycle.bind("consume_command_value", consume_command_value);
+    lifeCycle.bindGroovy("consume_command_value", consume_command_value);
     assertOk("jpa open testEmf");
     assertOk("jpa select f FROM Foo f order by f.id | consume_command_value");
     assertEquals(2, output_value.size());

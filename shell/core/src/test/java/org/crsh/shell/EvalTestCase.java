@@ -33,8 +33,8 @@ public class EvalTestCase extends AbstractCommandTestCase {
         "    out << builder\n" +
         "  }\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("bar", "context.provide([a:1]);");
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindGroovy("bar", "context.provide([a:1]);");
 
     //
     assertEquals(
@@ -54,8 +54,8 @@ public class EvalTestCase extends AbstractCommandTestCase {
             "    out << builder\n" +
             "  }\n" +
             "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("bar", "out << 'hello';");
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindGroovy("bar", "out << 'hello';");
 
     //
     assertEquals("hello                           \n", assertOk("foo"));
@@ -72,7 +72,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
             "    out << builder\n" +
             "  }\n" +
             "}";
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("bar                             \n", assertOk("foo"));
@@ -86,7 +86,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
             "    execute('echo bar')\n" +
             "  }\n" +
             "}";
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -102,8 +102,8 @@ public class EvalTestCase extends AbstractCommandTestCase {
             "    execute('bar')\n" +
             "  }\n" +
             "}";
-    lifeCycle.bind("bar", bar);
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindGroovy("bar", bar);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("juu", assertOk("foo"));

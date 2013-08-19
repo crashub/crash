@@ -17,9 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.vfs.spi.url;
-
-import org.crsh.util.Safe;
+package org.crsh.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,9 +34,9 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-abstract class ZipIterator implements Closeable {
+public abstract class ZipIterator implements Closeable {
 
-  static ZipIterator create(URL url) throws IOException, URISyntaxException {
+  public static ZipIterator create(URL url) throws IOException, URISyntaxException {
     if (url.getProtocol().equals("file")) {
       return create(new java.io.File(url.toURI()));
     } else if (url.getProtocol().equals("jar")) {
@@ -51,7 +49,7 @@ abstract class ZipIterator implements Closeable {
         while (container.hasNext()) {
           ZipEntry entry = container.next();
           if (entry.getName().equals(path)) {
-            InputStreamResolver resolved = container.open();
+            InputStreamFactory resolved = container.open();
             final InputStream nested = resolved.open();
             InputStream filter = new InputStream() {
               @Override
@@ -122,19 +120,19 @@ abstract class ZipIterator implements Closeable {
     return new ZipIterator() {
       ZipEntry next;
       @Override
-      boolean hasNext() throws IOException {
+      public boolean hasNext() throws IOException {
         return en.hasMoreElements();
       }
       @Override
-      ZipEntry next() throws IOException {
+      public ZipEntry next() throws IOException {
         return next = en.nextElement();
       }
       public void close() throws IOException {
       }
       @Override
-      InputStreamResolver open() throws IOException {
+      public InputStreamFactory open() throws IOException {
         final ZipEntry capture = next;
-        return new InputStreamResolver() {
+        return new InputStreamFactory() {
           public InputStream open() throws IOException {
             return jarFile.getInputStream(capture);
           }
@@ -149,13 +147,13 @@ abstract class ZipIterator implements Closeable {
     final ZipInputStream zip = new ZipInputStream(in);
     return new ZipIterator() {
       ZipEntry next;
-      boolean hasNext() throws IOException {
+      public boolean hasNext() throws IOException {
         if (next == null) {
           next = zip.getNextEntry();
         }
         return next != null;
       }
-      ZipEntry next() throws IOException {
+      public ZipEntry next() throws IOException {
         if (!hasNext()) {
           throw new NoSuchElementException();
         }
@@ -164,7 +162,7 @@ abstract class ZipIterator implements Closeable {
         return tmp;
       }
       @Override
-      InputStreamResolver open() throws IOException {
+      public InputStreamFactory open() throws IOException {
         while (true) {
           int len = zip.read(tmp, 0, tmp.length);
           if (len == -1) {
@@ -175,7 +173,7 @@ abstract class ZipIterator implements Closeable {
         }
         final byte[] buffer = baos.toByteArray();
         baos.reset();
-        return new InputStreamResolver() {
+        return new InputStreamFactory() {
           public InputStream open() throws IOException {
             return new ByteArrayInputStream(buffer);
           }
@@ -187,10 +185,10 @@ abstract class ZipIterator implements Closeable {
     };
   }
 
-  abstract boolean hasNext() throws IOException;
+  public abstract boolean hasNext() throws IOException;
 
-  abstract ZipEntry next() throws IOException;
+  public abstract ZipEntry next() throws IOException;
 
-  abstract InputStreamResolver open() throws IOException;
+  public abstract InputStreamFactory open() throws IOException;
 
 }

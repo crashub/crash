@@ -48,7 +48,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testConfigureOptionWithClosure() {
-    lifeCycle.bind("parameterized", Commands.Parameterized.class);
+    lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     list.clear();
     Commands.Parameterized.reset();
@@ -57,7 +57,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testConfigureArgumentWithClosure() {
-    lifeCycle.bind("parameterized", Commands.Parameterized.class);
+    lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     list.clear();
     Commands.Parameterized.reset();
@@ -67,7 +67,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testConfigureArgumentListWithClosure() {
-    lifeCycle.bind("parameterized", Commands.Parameterized.class);
+    lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     list.clear();
     Commands.Parameterized.reset();
@@ -77,7 +77,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testConfigureArgumentArrayWithClosure() {
-    lifeCycle.bind("parameterized", Commands.Parameterized.class);
+    lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     list.clear();
     Commands.Parameterized.reset();
@@ -87,22 +87,22 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testResolveContextInClosure() {
-    lifeCycle.bind("produce", Commands.ProduceString.class);
+    lifeCycle.bindClass("produce", Commands.ProduceString.class);
     assertOk("repl groovy");
     String result = assertOk("(produce | { String it -> context.provide(it) })()");
     assertEquals("foobar", result);
   }
 
   public void testReturnValueInClosure() {
-    lifeCycle.bind("produce", Commands.ProduceString.class);
+    lifeCycle.bindClass("produce", Commands.ProduceString.class);
     assertOk("repl groovy");
     String result = assertOk("(produce | { String it -> it })()");
     assertEquals("foobar", result);
   }
 
   public void testClosureInPipe() {
-    lifeCycle.bind("produce", Commands.ProduceString.class);
-    lifeCycle.bind("consume", Commands.ConsumeString.class);
+    lifeCycle.bindClass("produce", Commands.ProduceString.class);
+    lifeCycle.bindClass("consume", Commands.ConsumeString.class);
     assertOk("repl groovy");
     Commands.list.clear();
     assertOk("(produce | { String it -> '_' + it + '_' } | consume)()");
@@ -110,9 +110,9 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testCommandInClosure() {
-    lifeCycle.bind("produce", Commands.ProduceString.class);
-    lifeCycle.bind("value", Commands.ProduceInteger.class);
-    lifeCycle.bind("consume", Commands.ConsumeInteger.class);
+    lifeCycle.bindClass("produce", Commands.ProduceString.class);
+    lifeCycle.bindClass("value", Commands.ProduceInteger.class);
+    lifeCycle.bindClass("consume", Commands.ConsumeInteger.class);
     assertOk("repl groovy");
     Commands.list.clear();
     assertOk("(produce | { String it -> value(); } | consume)()");
@@ -120,14 +120,14 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testSubCommandInClosure() {
-    lifeCycle.bind("produce", Commands.ProduceInteger.class);
-    lifeCycle.bind("toto", "public class toto {\n" +
+    lifeCycle.bindClass("produce", Commands.ProduceInteger.class);
+    lifeCycle.bindGroovy("toto", "public class toto {\n" +
         "@Command\n" +
         "public void sub(InvocationContext<String> c) {\n" +
         "c.provide('foo');\n" +
         "}\n" +
         "}");
-    lifeCycle.bind("consume", Commands.ConsumeString.class);
+    lifeCycle.bindClass("consume", Commands.ConsumeString.class);
     assertOk("repl groovy");
     Commands.list.clear();
     assertOk("(produce | { Integer it -> toto.sub(); } | consume)()");
@@ -146,14 +146,14 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testSubCommand() {
-    lifeCycle.bind("toto", Toto.class);
+    lifeCycle.bindClass("toto", Toto.class);
     assertOk("repl groovy");
     String result = assertOk("toto.sub()");
     assertEquals("invoked", result);
   }
 
   public void testSubCommandOverridesGDK() {
-    lifeCycle.bind("toto", Toto.class);
+    lifeCycle.bindClass("toto", Toto.class);
     assertOk("repl groovy");
     String result = assertOk("toto.find()");
     assertEquals("find_invoked", result);
@@ -167,8 +167,8 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testPipe() {
-    lifeCycle.bind("produce", Commands.ProduceString.class);
-    lifeCycle.bind("consume", Commands.ConsumeString.class);
+    lifeCycle.bindClass("produce", Commands.ProduceString.class);
+    lifeCycle.bindClass("consume", Commands.ConsumeString.class);
     assertOk("repl groovy");
     Commands.list.clear();
     assertOk("(produce | consume)()");
@@ -176,7 +176,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testOptions() {
-    lifeCycle.bind("parameterized", Commands.Parameterized.class);
+    lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     Commands.Parameterized.reset();
     assertOk("a = parameterized { opt = 'foo_opt' }");
@@ -188,7 +188,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testArgs() {
-    lifeCycle.bind("parameterized", Commands.Parameterized.class);
+    lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     Commands.Parameterized.reset();
     assertOk("a = parameterized { ['arg1', 'arg2'] }");
@@ -200,7 +200,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
   }
 
   public void testOptionsAndArgs() {
-    lifeCycle.bind("parameterized", Commands.Parameterized.class);
+    lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     Commands.Parameterized.reset();
     assertOk("a = parameterized { opt = 'foo_opt'; ['arg1', 'arg2'] }");

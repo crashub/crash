@@ -19,8 +19,6 @@
 
 package org.crsh.shell;
 
-import java.util.Arrays;
-
 /**
  * Various test related to command dispatch.
  */
@@ -33,8 +31,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "compound_command.compound 'bar'\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("compound_command", Commands.Compound.class);
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindClass("compound_command", Commands.Compound.class);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -47,16 +45,16 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "produce_command { it }\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("produce_command", Commands.ProduceString.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("produce_command", Commands.ProduceString.class);
 
     //
     assertEquals("foobar", assertOk("foo"));
   }
 
   public void testProduceToClosureInScript() {
-    lifeCycle.bind("foo", "produce_command { it }\n");
-    lifeCycle.bind("produce_command", Commands.ProduceString.class);
+    lifeCycle.bindGroovy("foo", "produce_command { it }\n");
+    lifeCycle.bindClass("produce_command", Commands.ProduceString.class);
 
     //
     assertEquals("foobar", assertOk("foo"));
@@ -70,7 +68,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "closure 'bar'\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -79,8 +77,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   public void testClosureInScript() {
     String foo = "def closure = echo\n" +
         "closure 'bar'\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("compound_command", Commands.Compound.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("compound_command", Commands.Compound.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -94,8 +92,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "closure()\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("compound_command", Commands.Compound.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("compound_command", Commands.Compound.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -104,8 +102,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   public void testCompoundClosureInScript() {
     String foo = "def closure = compound_command.compound\n" +
         "closure()\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("compound_command", Commands.Compound.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("compound_command", Commands.Compound.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -118,8 +116,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "(compound_produce_command.compound | { it })()\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("foobar", assertOk("foo"));
 
     // Test with wrong type
@@ -129,28 +127,28 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "(compound_produce_command.compound | { boolean it -> it })()\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("bar", bar);
-    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
+    lifeCycle.bindGroovy("bar", bar);
+    lifeCycle.bindClass("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("", assertOk("bar"));
   }
 
   public void testCompoundProduceToClosureInScript() {
     String foo = "(compound_produce_command.compound | { it })()\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("foobar", assertOk("foo"));
 
     //
     String bar = "(compound_produce_command.compound | { boolean it -> it })()\n";
-    lifeCycle.bind("bar", bar);
-    lifeCycle.bind("compound_produce_command", Commands.CompoundProduceString.class);
+    lifeCycle.bindGroovy("bar", bar);
+    lifeCycle.bindClass("compound_produce_command", Commands.CompoundProduceString.class);
     assertEquals("", assertOk("bar"));
   }
 
   public void testInvokeCompoundInScript() throws Exception {
     String foo = "compound_command.compound 'bar'\n";
-    lifeCycle.bind("compound_command", Commands.Compound.class);
-    lifeCycle.bind("foo", foo);
+    lifeCycle.bindClass("compound_command", Commands.Compound.class);
+    lifeCycle.bindGroovy("foo", foo);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -167,8 +165,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("checked_exception_command", Commands.ThrowCheckedException.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("checked_exception_command", Commands.ThrowCheckedException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -180,8 +178,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "} catch(javax.naming.NamingException e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("checked_exception_command", Commands.ThrowCheckedException.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("checked_exception_command", Commands.ThrowCheckedException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -198,8 +196,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("script_exception_command", Commands.ThrowScriptException.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("script_exception_command", Commands.ThrowScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -211,8 +209,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "} catch(org.crsh.command.ScriptException e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("script_exception_command", Commands.ThrowScriptException.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("script_exception_command", Commands.ThrowScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -229,8 +227,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -242,8 +240,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "} catch(org.crsh.command.ScriptException e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -260,8 +258,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("runtime_exception_command", Commands.ThrowRuntimeException.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("runtime_exception_command", Commands.ThrowRuntimeException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -273,8 +271,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "} catch(java.lang.SecurityException e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("runtime_exception_command", Commands.ThrowRuntimeException.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("runtime_exception_command", Commands.ThrowRuntimeException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -291,8 +289,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("error_command", Commands.ThrowError.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("error_command", Commands.ThrowError.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -304,8 +302,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "} catch(java.awt.AWTError e) {\n" +
         "return 'bar'\n" +
         "}\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("error_command", Commands.ThrowError.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("error_command", Commands.ThrowError.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -322,8 +320,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}\n" +
         "}";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("cannot_create_command", Commands.CannotInstantiate.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("cannot_create_command", Commands.CannotInstantiate.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -335,8 +333,8 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "} catch (org.crsh.command.CommandCreationException e) {\n" +
         "return 'bar';\n" +
         "}\n";
-    lifeCycle.bind("foo", foo);
-    lifeCycle.bind("cannot_create_command", Commands.CannotInstantiate.class);
+    lifeCycle.bindGroovy("foo", foo);
+    lifeCycle.bindClass("cannot_create_command", Commands.CannotInstantiate.class);
 
     //
     assertEquals("bar", assertOk("foo"));

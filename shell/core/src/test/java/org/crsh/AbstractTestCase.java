@@ -21,6 +21,12 @@ package org.crsh;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.exporter.ExplodedExporter;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+
+import java.io.File;
+import java.io.IOException;
 
 public abstract class AbstractTestCase extends TestCase {
 
@@ -39,6 +45,12 @@ public abstract class AbstractTestCase extends TestCase {
 
   public static AssertionFailedError failure(Object message) {
     return new AssertionFailedError("" + message);
+  }
+
+  public static AssertionFailedError failure(Object message, Throwable t) {
+    AssertionFailedError afe = new AssertionFailedError("" + message);
+    afe.initCause(t);
+    return afe;
   }
 
   public static void safeFail(Throwable throwable) {
@@ -85,4 +97,46 @@ public abstract class AbstractTestCase extends TestCase {
     }
   }
 
+  public static void assertEndsWith(String suffix, String test) {
+    assertNotNull(test);
+    assertNotNull(suffix);
+    if (!test.endsWith(suffix)) {
+      throw failure("Was expected " + test + " to end with " + suffix);
+    }
+  }
+
+  public static File assertTmpFile(String ext) {
+    File tmp;
+    try {
+      tmp = File.createTempFile("crash", ext);
+    }
+    catch (IOException e) {
+      throw failure("Could not create temporary file", e);
+    }
+    return tmp;
+  }
+
+  public static File toFile(Archive archive, String ext) {
+    File tmp = assertTmpFile(ext);
+    if (tmp.delete()) {
+      ZipExporter exporter = archive.as(ZipExporter.class);
+      exporter.exportTo(tmp);
+      tmp.deleteOnExit();
+      return tmp;
+    } else {
+      throw failure("Could not delete tmp file " + tmp.getAbsolutePath());
+    }
+  }
+
+  public static File toExploded(Archive archive, String ext) {
+    File tmp = assertTmpFile(ext);
+    if (tmp.delete()) {
+      ExplodedExporter exporter = archive.as(ExplodedExporter.class);
+      exporter.exportExploded(tmp.getParentFile(), tmp.getName());
+      tmp.deleteOnExit();
+      return tmp;
+    } else {
+      throw failure("Could not delete tmp file " + tmp.getAbsolutePath());
+    }
+  }
 }

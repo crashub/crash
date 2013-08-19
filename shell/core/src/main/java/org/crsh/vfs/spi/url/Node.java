@@ -19,7 +19,9 @@
 
 package org.crsh.vfs.spi.url;
 
+import org.crsh.util.InputStreamFactory;
 import org.crsh.util.Safe;
+import org.crsh.util.ZipIterator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -133,7 +135,7 @@ public class Node {
           if (child == null) {
             children.put(name, child = new Node(name));
           }
-          child.files.add(new File(new InputStreamResolver() {
+          child.files.add(new File(new InputStreamFactory() {
             public InputStream open() throws IOException {
               return new FileInputStream(file);
             }
@@ -143,13 +145,13 @@ public class Node {
     }
   }
 
-  private void add(URL baseURL, String entryName, InputStreamResolver resolver) throws IOException {
+  private void add(URL baseURL, String entryName, InputStreamFactory resolver) throws IOException {
     if (entryName.length() > 0 && entryName.charAt(entryName.length() - 1) != '/') {
       add(baseURL, 0, entryName, 1, resolver);
     }
   }
 
-  private void add(URL baseURL, int index, String entryName, long lastModified, InputStreamResolver resolver) throws IOException {
+  private void add(URL baseURL, int index, String entryName, long lastModified, InputStreamFactory resolver) throws IOException {
     int next = entryName.indexOf('/', index);
     if (next == -1) {
       String name = entryName.substring(index);
@@ -171,12 +173,12 @@ public class Node {
   static class File {
 
     /** . */
-    final InputStreamResolver resolver;
+    final InputStreamFactory resolver;
 
     /** . */
     final long lastModified;
 
-    File(InputStreamResolver url, long lastModified) {
+    File(InputStreamFactory url, long lastModified) {
       this.resolver = url;
       this.lastModified = lastModified;
     }

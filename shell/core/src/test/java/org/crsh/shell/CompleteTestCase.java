@@ -27,7 +27,7 @@ import java.util.Collections;
 public class CompleteTestCase extends AbstractCommandTestCase {
 
   public void testCommandImplementingCompleter() {
-    lifeCycle.bind("complete", Commands.Complete.class);
+    lifeCycle.bindClass("complete", Commands.Complete.class);
     CompletionMatch completionMatch = assertComplete("complete foo");
     Completion completion = completionMatch.getValue();
     assertEquals("foo", completion.getPrefix());
@@ -36,7 +36,7 @@ public class CompleteTestCase extends AbstractCommandTestCase {
   }
 
   public void testSessionAccess() {
-    lifeCycle.bind("complete", Commands.CompleteWithSession.class);
+    lifeCycle.bindClass("complete", Commands.CompleteWithSession.class);
     shell.getSession().put("juu", "juu_value");
     CompletionMatch completionMatch = assertComplete("complete foo");
     Completion completion = completionMatch.getValue();

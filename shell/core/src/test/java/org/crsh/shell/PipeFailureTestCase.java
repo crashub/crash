@@ -63,7 +63,7 @@ import org.crsh.command.ScriptException;
 public class PipeFailureTestCase extends AbstractCommandTestCase {
 
   public void testFailDuringOpen1() {
-    lifeCycle.bind("FailDuringOpen1", Commands.FailDuringOpen1.class);
+    lifeCycle.bindClass("FailDuringOpen1", Commands.FailDuringOpen1.class);
     Commands.FailDuringOpen1.reset();
     assertError("FailDuringOpen1", ErrorType.EVALUATION, ScriptException.class);
     assertEquals(1, Commands.FailDuringOpen1.openCount.get());
@@ -73,8 +73,8 @@ public class PipeFailureTestCase extends AbstractCommandTestCase {
   }
 
   public void testFailDuringOpen2() {
-    lifeCycle.bind("FailDuringOpen1", Commands.FailDuringOpen1.class);
-    lifeCycle.bind("FailDuringOpen2", Commands.FailDuringOpen2.class);
+    lifeCycle.bindClass("FailDuringOpen1", Commands.FailDuringOpen1.class);
+    lifeCycle.bindClass("FailDuringOpen2", Commands.FailDuringOpen2.class);
     Commands.FailDuringOpen1.reset();
     Commands.FailDuringOpen2.reset();
     assertError("FailDuringOpen1 | FailDuringOpen2", ErrorType.EVALUATION, ScriptException.class);
@@ -89,8 +89,8 @@ public class PipeFailureTestCase extends AbstractCommandTestCase {
   }
 
   public void testFailDuringOpen3() {
-    lifeCycle.bind("FailDuringOpen1", Commands.FailDuringOpen1.class);
-    lifeCycle.bind("FailDuringOpen2", Commands.FailDuringOpen2.class);
+    lifeCycle.bindClass("FailDuringOpen1", Commands.FailDuringOpen1.class);
+    lifeCycle.bindClass("FailDuringOpen2", Commands.FailDuringOpen2.class);
     Commands.FailDuringOpen1.reset();
     Commands.FailDuringOpen2.reset();
     assertError("FailDuringOpen2 | FailDuringOpen1", ErrorType.EVALUATION, ScriptException.class);

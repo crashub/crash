@@ -67,25 +67,26 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
     this.crash = new CRaSH(context);
   }
 
-  public void bind(String name, String command) {
-    if (name.contains("/")) {
-      throw new IllegalArgumentException("Command name must not contain /");
-    }
-    if (name.contains(".")) {
-      throw new IllegalArgumentException("Command name must not contain .");
-    }
-    commands.add(Path.get("/" + name + ".groovy"), command);
-    context.refresh();
+  public void bindGroovy(String name, String command) {
+    bind(name, "groovy", command);
   }
 
-  public void bind(String name, Class<? extends CRaSHCommand> command) {
+  public void bindJava(String name, String command) {
+    bind(name, "java", command);
+  }
+
+  public void bindClass(String name, Class<? extends CRaSHCommand> command) {
+    bindJava(name, "public class " + name + " extends " + command.getCanonicalName() + " {}");
+  }
+
+  public void bind(String name, String ext, String command) {
     if (name.contains("/")) {
       throw new IllegalArgumentException("Command name must not contain /");
     }
     if (name.contains(".")) {
       throw new IllegalArgumentException("Command name must not contain .");
     }
-    commands.add(Path.get("/" + name + ".groovy"), "public class " + name + " extends " + command.getName() + "{}");
+    commands.add(Path.get("/" + name + "." + ext), command);
     context.refresh();
   }
 

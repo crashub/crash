@@ -85,6 +85,10 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     }
   }
 
+  public Iterable<String> getCommandNames() {
+    return crash.getCommandNames();
+  }
+
   public ShellCommand getCommand(String name) throws CommandCreationException {
     return crash.getCommand(name);
   }

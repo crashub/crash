@@ -78,9 +78,9 @@ public class ScriptREPL implements REPL {
     int pos = termPrefix.indexOf(' ');
     if (pos == -1) {
       Completion.Builder builder = Completion.builder(prefix);
-      for (String resourceId : session.getContext().listResourceId(ResourceKind.COMMAND)) {
-        if (resourceId.startsWith(termPrefix)) {
-          builder.add(resourceId.substring(termPrefix.length()), true);
+      for (String name : session.getCommandNames()) {
+        if (name.startsWith(termPrefix)) {
+          builder.add(name.substring(termPrefix.length()), true);
         }
       }
       completion = new CompletionMatch(Delimiter.EMPTY, builder.build());

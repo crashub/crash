@@ -26,6 +26,7 @@ import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.lang.groovy.GroovyCommandManager;
+import org.crsh.lang.java.JavaCommandManager;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.command.CRaSHSession;
 
@@ -57,6 +58,7 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
   protected List<CRaSHPlugin<?>> getPlugins() {
     ArrayList<CRaSHPlugin<?>> plugins = new ArrayList<CRaSHPlugin<?>>();
     plugins.add(new GroovyCommandManager());
+    plugins.add(new JavaCommandManager());
     return plugins;
   }
 
