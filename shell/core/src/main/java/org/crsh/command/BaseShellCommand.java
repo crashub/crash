@@ -271,7 +271,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
         // It's a pipe command
         if (ret != null) {
           real = ret;
-          real.doOpen(invocationContext);
+          real.open(invocationContext);
         }
       }
 

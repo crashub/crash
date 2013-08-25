@@ -19,6 +19,9 @@
 
 package org.crsh.command;
 
+import org.crsh.io.Filter;
+import org.crsh.util.TypeResolver;
+
 import java.io.IOException;
 
 /**
@@ -27,7 +30,7 @@ import java.io.IOException;
  * @param <C> the consumed generic type
  * @param <P> the produced generic type
  */
-public abstract class PipeCommand<C, P> {
+public abstract class PipeCommand<C, P> implements Filter<C, P, InvocationContext<P>> {
 
   /** . */
   protected InvocationContext<P> context;
@@ -36,8 +39,16 @@ public abstract class PipeCommand<C, P> {
     return context.isPiped();
   }
 
-  void doOpen(InvocationContext<P> context) {
-    this.context = context;
+  public final Class<P> getProducedType() {
+    return (Class<P>)TypeResolver.resolveToClass(getClass(), PipeCommand.class, 1);
+  }
+
+  public final Class<C> getConsumedType() {
+    return (Class<C>)TypeResolver.resolveToClass(getClass(), PipeCommand.class, 0);
+  }
+
+  public void open(InvocationContext<P> consumer) {
+    this.context = consumer;
 
     //
     open();
