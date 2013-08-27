@@ -57,6 +57,10 @@ public abstract class AbstractTelnetTestCase extends Assert {
   /** . */
   private static final AtomicInteger PORTS = new AtomicInteger(5000);
 
+  /** . */
+  private static final int CLIENT_CONNECT_RETRY_LIMIT = 5;
+  private static final long CLIENT_CONNECT_RETRY_SLEEP = 1000;
+
   @Before
   public final void setUp() throws Exception {
 
@@ -79,7 +83,18 @@ public abstract class AbstractTelnetTestCase extends Assert {
 
     //
     TelnetClient client = new TelnetClient();
-    client.connect("localhost", port);
+    for (int retry_count = 0; retry_count < CLIENT_CONNECT_RETRY_LIMIT; retry_count++) {
+      try {
+        client.connect("localhost", port);
+        break;
+      } catch (IOException e) {
+        if (retry_count < CLIENT_CONNECT_RETRY_LIMIT) {
+          Thread.sleep(CLIENT_CONNECT_RETRY_SLEEP);
+        } else {
+          throw e;
+        }
+      }
+    }
 
     //
     this.out = client.getOutputStream();
