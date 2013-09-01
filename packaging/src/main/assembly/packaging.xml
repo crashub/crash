@@ -31,7 +31,7 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/bin</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.cli:jar</include>
+        <include>org.crashub:crash.cli:jar</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -40,10 +40,10 @@
       <includes>
         <include>jline:jline</include>
         <include>org.codehaus.groovy:groovy-all</include>
-        <include>org.crsh:crsh.shell</include>
+        <include>org.crashub:crash.shell</include>
         <include>org.apache.ivy:ivy</include>
-        <include>org.crsh:crsh.connectors.telnet:jar:standalone</include>
-        <include>org.crsh:crsh.connectors.ssh:jar:standalone</include>
+        <include>org.crashub:crash.connectors.telnet:jar:standalone</include>
+        <include>org.crashub:crash.connectors.ssh:jar:standalone</include>
         <include>org.bouncycastle:bcprov-jdk16</include>
       </includes>
     </dependencySet>

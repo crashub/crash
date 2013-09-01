@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>crsh.parent</artifactId>
-    <groupId>org.crsh</groupId>
+    <artifactId>crash.parent</artifactId>
+    <groupId>org.crashub</groupId>
     <version>1.3.0-beta3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>crsh.distrib</artifactId>
+  <artifactId>crash.distrib</artifactId>
   <packaging>jar</packaging>
   <version>1.3.0-beta3-SNAPSHOT</version>
 
@@ -16,45 +16,45 @@
 
     <!-- Standalone -->
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.packaging</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.packaging</artifactId>
       <type>tar.gz</type>
     </dependency>
 
     <!-- War -->
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.packaging</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.packaging</artifactId>
       <type>war</type>
     </dependency>
 
     <!-- GateIn war -->
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.plugins.jcr.exo</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.plugins.jcr.exo</artifactId>
       <type>war</type>
     </dependency>
 
     <!-- Spring war -->
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.packaging</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.packaging</artifactId>
       <type>war</type>
       <classifier>spring</classifier>
     </dependency>
 
     <!-- Mule application -->
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.packaging</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.packaging</artifactId>
       <type>zip</type>
       <classifier>mule-app</classifier>
     </dependency>
 
     <!-- Mail plugin -->
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.plugins.mail</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.plugins.mail</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.mail</groupId>
@@ -63,80 +63,80 @@
 
     <!-- Sources -->
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.cli</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.cli</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.shell</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.connectors.telnet</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.connectors.telnet</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.connectors.ssh</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.connectors.ssh</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.embed.spring</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.embed.spring</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.plugins.jcr.core</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.plugins.jcr.core</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.plugins.jcr.exo</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.plugins.jcr.exo</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.plugins.jcr.jackrabbit</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.plugins.jcr.jackrabbit</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.plugins.crowd</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.plugins.crowd</artifactId>
       <classifier>sources</classifier>
     </dependency>
 
     <!-- Doc -->
 <!--
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.doc.reference</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.doc.reference</artifactId>
       <type>pdf</type>
     </dependency>
 -->
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.doc.reference</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.doc.reference</artifactId>
       <classifier>html</classifier>
       <type>zip</type>
     </dependency>
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.doc.reference</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.doc.reference</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
 <!--
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.doc.cookbook</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.doc.cookbook</artifactId>
       <type>pdf</type>
     </dependency>
 -->
     <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.doc.cookbook</artifactId>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.doc.cookbook</artifactId>
       <classifier>html</classifier>
       <type>zip</type>
     </dependency>

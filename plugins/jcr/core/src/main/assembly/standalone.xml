@@ -50,7 +50,7 @@
         </excludes>
       </unpackOptions>
       <includes>
-        <include>org.crsh:crsh.plugins.jcr.core</include>
+        <include>org.crashub:crash.plugins.jcr.core</include>
       </includes>
     </dependencySet>
   </dependencySets>

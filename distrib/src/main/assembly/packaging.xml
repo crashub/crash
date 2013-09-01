@@ -36,13 +36,13 @@
       <outputDirectory>/crash</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.packaging:tar.gz</include>
+        <include>org.crashub:crash.packaging:tar.gz</include>
       </includes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>/crash/lib</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.plugins.mail</include>
+        <include>org.crashub:crash.plugins.mail</include>
         <include>javax.mail:mail</include>
       </includes>
     </dependencySet>

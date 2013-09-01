@@ -42,7 +42,7 @@
         <include>org.apache.sshd:sshd-core</include>
         <include>org.apache.sshd:sshd-pam</include>
         <include>org.apache.mina:mina-core</include>
-        <include>org.crsh:crsh.connectors.ssh</include>
+        <include>org.crashub:crash.connectors.ssh</include>
       </includes>
     </dependencySet>
   </dependencySets>

@@ -31,7 +31,7 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/WEB-INF/lib</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.plugins.jcr.exo</include>
+        <include>org.crashub:crash.plugins.jcr.exo</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -45,7 +45,7 @@
         </excludes>
       </unpackOptions>
       <includes>
-        <include>org.crsh:crsh.plugins.jcr.core:war</include>
+        <include>org.crashub:crash.plugins.jcr.core:war</include>
       </includes>
     </dependencySet>
   </dependencySets>

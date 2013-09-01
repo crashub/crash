@@ -41,22 +41,22 @@
         </excludes>
       </unpackOptions>
       <includes>
-        <include>org.crsh:crsh.cli:jar:sources</include>
-        <include>org.crsh:crsh.shell:jar:sources</include>
-        <include>org.crsh:crsh.connectors.telnet:jar:sources</include>
-        <include>org.crsh:crsh.connectors.ssh:jar:sources</include>
-        <include>org.crsh:crsh.embed.spring:jar:sources</include>
-        <include>org.crsh:crsh.plugins.jcr.core:jar:sources</include>
-        <include>org.crsh:crsh.plugins.jcr.exo:jar:sources</include>
-        <include>org.crsh:crsh.plugins.jcr.jackrabbit:jar:sources</include>
-        <include>org.crsh:crsh.plugins.crowd:jar:sources</include>
+        <include>org.crashub:crash.cli:jar:sources</include>
+        <include>org.crashub:crash.shell:jar:sources</include>
+        <include>org.crashub:crash.connectors.telnet:jar:sources</include>
+        <include>org.crashub:crash.connectors.ssh:jar:sources</include>
+        <include>org.crashub:crash.embed.spring:jar:sources</include>
+        <include>org.crashub:crash.plugins.jcr.core:jar:sources</include>
+        <include>org.crashub:crash.plugins.jcr.exo:jar:sources</include>
+        <include>org.crashub:crash.plugins.jcr.jackrabbit:jar:sources</include>
+        <include>org.crashub:crash.plugins.crowd:jar:sources</include>
       </includes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>/reference/html</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.doc.reference:zip:html</include>
+        <include>org.crashub:crash.doc.reference:zip:html</include>
       </includes>
     </dependencySet>
 <!--
@@ -64,7 +64,7 @@
       <outputDirectory>/reference</outputDirectory>
       <outputFileNameMapping>crash-reference.pdf</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.doc.reference:pdf</include>
+        <include>org.crashub:crash.doc.reference:pdf</include>
       </includes>
     </dependencySet>
 -->
@@ -72,14 +72,14 @@
       <outputDirectory>/reference/javadoc</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.doc.reference:jar:javadoc</include>
+        <include>org.crashub:crash.doc.reference:jar:javadoc</include>
       </includes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>/cookbook/html</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.doc.cookbook:zip:html</include>
+        <include>org.crashub:crash.doc.cookbook:zip:html</include>
       </includes>
     </dependencySet>
 <!--
@@ -87,7 +87,7 @@
       <outputDirectory>/cookbook</outputDirectory>
       <outputFileNameMapping>crash-cookbook.pdf</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.doc.cookbook:pdf</include>
+        <include>org.crashub:crash.doc.cookbook:pdf</include>
       </includes>
     </dependencySet>
 -->

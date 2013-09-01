@@ -36,7 +36,7 @@
       <outputDirectory>/</outputDirectory>
       <outputFileNameMapping>crash-mule-app.zip</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.packaging:zip:mule-app</include>
+        <include>org.crashub:crash.packaging:zip:mule-app</include>
       </includes>
     </dependencySet>
   </dependencySets>

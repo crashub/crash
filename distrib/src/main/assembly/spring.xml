@@ -36,7 +36,7 @@
       <outputDirectory>/</outputDirectory>
       <outputFileNameMapping>crash.war</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.packaging:war:spring</include>
+        <include>org.crashub:crash.packaging:war:spring</include>
       </includes>
     </dependencySet>
   </dependencySets>

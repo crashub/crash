@@ -36,7 +36,7 @@
       <outputDirectory>/</outputDirectory>
       <outputFileNameMapping>crash.war</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.plugins.jcr.exo:war</include>
+        <include>org.crashub:crash.plugins.jcr.exo:war</include>
       </includes>
     </dependencySet>
   </dependencySets>

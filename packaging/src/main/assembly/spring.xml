@@ -41,11 +41,11 @@
         <include>net.wimpi:telnetd-x</include>
         <include>org.codehaus.groovy:groovy-all</include>
         <include>org.apache.ivy:ivy</include>
-        <include>org.crsh:crsh.cli</include>
-        <include>org.crsh:crsh.shell</include>
-        <include>org.crsh:crsh.connectors.telnet</include>
-        <include>org.crsh:crsh.connectors.ssh</include>
-        <include>org.crsh:crsh.embed.spring</include>
+        <include>org.crashub:crash.cli</include>
+        <include>org.crashub:crash.shell</include>
+        <include>org.crashub:crash.connectors.telnet</include>
+        <include>org.crashub:crash.connectors.ssh</include>
+        <include>org.crashub:crash.embed.spring</include>
         <include>org.springframework:spring-asm</include>
         <include>org.springframework:spring-core</include>
         <include>org.springframework:spring-expression</include>
@@ -67,9 +67,9 @@
       </unpackOptions>
       <outputDirectory>/WEB-INF</outputDirectory>
       <includes>
-        <include>org.crsh:crsh.shell</include>
-        <include>org.crsh:crsh.connectors.telnet</include>
-        <include>org.crsh:crsh.connectors.ssh</include>
+        <include>org.crashub:crash.shell</include>
+        <include>org.crashub:crash.connectors.telnet</include>
+        <include>org.crashub:crash.connectors.ssh</include>
       </includes>
     </dependencySet>
   </dependencySets>

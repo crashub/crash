@@ -39,7 +39,7 @@
       <includes>
         <include>net.wimpi:telnetd-x</include>
         <include>commons-logging:commons-logging</include>
-        <include>org.crsh:crsh.connectors.telnet</include>
+        <include>org.crashub:crash.connectors.telnet</include>
       </includes>
     </dependencySet>
   </dependencySets>
