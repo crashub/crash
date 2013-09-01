@@ -5,6 +5,12 @@
   <packaging>pom</packaging>
   <version>1.3.0-beta3-SNAPSHOT</version>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <name>CRaSH Parent</name>
   <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
   <url>http://www.crashub.org/</url>
@@ -26,17 +32,6 @@
     <developerConnection>scm:git:ssh://git@github.com/crashub/crash.git</developerConnection>
     <url>http://www.crashub.org</url>
   </scm>
-
-  <distributionManagement>
-    <repository>
-      <id>repository.exoplatform.org</id>
-      <url>${crsh.releases.repo.url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>repository.exoplatform.org</id>
-      <url>${crsh.snapshots.repo.url}</url>
-    </snapshotRepository>
-  </distributionManagement>
 
   <developers>
     <developer>
@@ -74,9 +69,6 @@
   </developers>
 
   <properties>
-    <!-- Repositories URLs -->
-    <crsh.releases.repo.url>http://repository.exoplatform.org/service/local/staging/deploy/maven2/</crsh.releases.repo.url>
-    <crsh.snapshots.repo.url>http://repository.exoplatform.org/content/repositories/crsh-snapshots/</crsh.snapshots.repo.url>
 
     <!-- maven-release-plugin -->
     <useReleaseProfile>false</useReleaseProfile>
