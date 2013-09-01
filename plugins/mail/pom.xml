@@ -15,7 +15,7 @@
   <dependencies>
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.core</artifactId>
+      <artifactId>crsh.shell</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.mail</groupId>
@@ -23,7 +23,7 @@
     </dependency>
     <dependency>
       <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.core</artifactId>
+      <artifactId>crsh.shell</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

@@ -36,7 +36,7 @@
       <outputDirectory>/crash</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crsh:crsh.shell.packaging:tar.gz</include>
+        <include>org.crsh:crsh.packaging:tar.gz</include>
       </includes>
     </dependencySet>
     <dependencySet>

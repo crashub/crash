@@ -29,7 +29,7 @@
   <packaging>jar</packaging>
   <version>1.3.0-beta3-SNAPSHOT</version>
 
-  <name>CRaSH cookbook documentation</name>
+  <name>CRaSH Doc Cookbook</name>
   <description>The CRaSH cookbook documentation</description>
 
   <properties>

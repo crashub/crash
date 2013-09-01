@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (C) 2012 eXo Platform SAS.
+  ~ Copyright (C) 2003-2009 eXo Platform SAS.
   ~
   ~ This is free software; you can redistribute it and/or modify it
   ~ under the terms of the GNU Lesser General Public License as
@@ -20,23 +20,37 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
-  <id>spring</id>
+  <id>standalone</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
-    <format>tar.gz</format>
+    <format>jar</format>
   </formats>
-
-  <baseDirectory>crash-${project.version}-spring</baseDirectory>
-
-  <componentDescriptors>
-    <componentDescriptor>src/main/assembly/distrib.xml</componentDescriptor>
-  </componentDescriptors>
 
   <dependencySets>
     <dependencySet>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
       <outputDirectory>/</outputDirectory>
-      <outputFileNameMapping>crash.war</outputFileNameMapping>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+          <exclude>META-INF/**</exclude>
+        </excludes>
+      </unpackOptions>
       <includes>
-        <include>org.crsh:crsh.packaging:war:spring</include>
+        <include>javax.jcr:jcr</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <outputDirectory>/</outputDirectory>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+          <exclude>META-INF/manifest.mf</exclude>
+        </excludes>
+      </unpackOptions>
+      <includes>
+        <include>org.crsh:crsh.plugins.jcr.core</include>
       </includes>
     </dependencySet>
   </dependencySets>

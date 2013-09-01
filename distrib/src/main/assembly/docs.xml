@@ -42,13 +42,13 @@
       </unpackOptions>
       <includes>
         <include>org.crsh:crsh.cli:jar:sources</include>
-        <include>org.crsh:crsh.shell.core:jar:sources</include>
-        <include>org.crsh:crsh.shell.telnet:jar:sources</include>
-        <include>org.crsh:crsh.shell.ssh:jar:sources</include>
-        <include>org.crsh:crsh.shell.embed.spring:jar:sources</include>
-        <include>org.crsh:crsh.jcr.core:jar:sources</include>
-        <include>org.crsh:crsh.jcr.exo:jar:sources</include>
-        <include>org.crsh:crsh.jcr.jackrabbit:jar:sources</include>
+        <include>org.crsh:crsh.shell:jar:sources</include>
+        <include>org.crsh:crsh.connectors.telnet:jar:sources</include>
+        <include>org.crsh:crsh.connectors.ssh:jar:sources</include>
+        <include>org.crsh:crsh.embed.spring:jar:sources</include>
+        <include>org.crsh:crsh.plugins.jcr.core:jar:sources</include>
+        <include>org.crsh:crsh.plugins.jcr.exo:jar:sources</include>
+        <include>org.crsh:crsh.plugins.jcr.jackrabbit:jar:sources</include>
         <include>org.crsh:crsh.plugins.crowd:jar:sources</include>
       </includes>
     </dependencySet>

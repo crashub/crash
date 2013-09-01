@@ -24,20 +24,21 @@ CRaSH can be obtained by cloning the Git repository `git@github.com:crashub/cras
 
 CRaSH is built with Maven.
 
-<pre><code>mvn install</code></pre>
+<pre><code>mvn package</code></pre>
 
-it will produce several files:
+The build produces several archives ready to use:
 
-- `shell/core/target/crsh-core-${version}-standalone.jar` : the standalone jar
-- `shell/packaging/target/crsh-${version}.tar.gz` : the standalone tar gz
-- `shell/packaging/target/crsh-${version}.war` : the web archive package
-- `exo/jackrabbit/target/crsh.jcr.jackrabbit-${version}.war` : the exo jcr web archive
-- `jcr/jackrabbit/target/crsh.jcr.jackrabbit-${version}.war` : the jackrabbit jcr web archive
+- `crsh.shell-${version}-standalone.jar` : a minimalistic standalone jar (to run with `java -jar crsh.shell-${version}-standalone.jar`)
+- `packaging/target/crsh-${version}-spring.war` : the Spring war
+- `packaging/target/crsh-${version}.war` : the web app war
+- `plugins/jcr/exo/target/crsh.plugins.jcr.exo-${version}.war` : the exo JCR war
+- `plugins/jcr/jackrabbit/target/crsh.plugins.jcr.jackrabbit-${version}.war` : the Jackrabbit war
 
-The maven release is build with the release profile.
+It also produce the distribution:
 
-<pre><code>mvn install -Prelease</code></pre>
-
-It will produce:
-
-- `distrib/target/crsh-${version}.tar.gz` : the full distribution
+- `distrib/target/crash-${version}-docs.tar.gz` : the documentation
+- `distrib/target/crash-${version}.tar.gz` : the standalone distribution
+- `distrib/target/crash-${version}-war.tar.gz` : the web app distribution
+- `distrib/target/crash-${version}-spring.tar.gz` : the Spring distribution
+- `distrib/target/crash-${version}-mule-app.tar.gz` : the Mule distribution
+- `distrib/target/crash-${version}-gatein.tar.gz` : the GateIn distribution

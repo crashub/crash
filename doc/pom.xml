@@ -10,7 +10,7 @@
   <packaging>pom</packaging>
   <version>1.3.0-beta3-SNAPSHOT</version>
 
-  <name>CRaSH doc parent</name>
+  <name>CRaSH Doc</name>
 
   <modules>
     <module>reference</module>

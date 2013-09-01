@@ -36,7 +36,7 @@
       <outputDirectory>/</outputDirectory>
       <outputFileNameMapping>crash.war</outputFileNameMapping>
       <includes>
-        <include>org.crsh:crsh.shell.packaging:war</include>
+        <include>org.crsh:crsh.packaging:war</include>
       </includes>
     </dependencySet>
   </dependencySets>
