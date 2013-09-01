@@ -22,6 +22,7 @@ import org.crsh.command.BaseShellCommand;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
+import org.crsh.shell.ErrorType;
 import org.crsh.shell.impl.command.CommandManager;
 
 import java.io.IOException;
@@ -46,32 +47,33 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
   }
 
   public ShellCommand resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
-
     String script = new String(source);
     Compiler compiler = new Compiler();
-    List<JavaClassFileObject> classes;
+    List<JavaClassFileObject> classFiles;
     try {
-      classes = compiler.compile(name, script);
+      classFiles = compiler.compile(name, script);
     }
     catch (IOException e) {
-      throw new CommandCreationException(name);
+      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not access command", e);
     }
     catch (CompilationFailureException e) {
-      throw new CommandCreationException(name);
+        throw new CommandCreationException(name, ErrorType.EVALUATION, "Could not compile command", e);
     }
-    if (classes.size() < 1) {
-      throw new CommandCreationException(name);
-    } else {
-      JavaClassFileObject classFile = classes.get(0);
-      LoadingClassLoader loader = new LoadingClassLoader(getContext().getLoader(), classes);
-      try {
-        Class<?> clazz = loader.loadClass(classFile.getClassName());
-        return new BaseShellCommand(clazz);
-      }
-      catch (ClassNotFoundException e) {
-        throw new CommandCreationException("Command " + name + " not found");
+    for (JavaClassFileObject classFile : classFiles) {
+      String className = classFile.getClassName();
+      String simpleName = className.substring(className.lastIndexOf('.') + 1);
+      if (simpleName.equals(name)) {
+        LoadingClassLoader loader = new LoadingClassLoader(getContext().getLoader(), classFiles);
+        try {
+          Class<?> clazz = loader.loadClass(classFile.getClassName());
+          return new BaseShellCommand(clazz);
+        }
+        catch (ClassNotFoundException e) {
+          throw new CommandCreationException(name, ErrorType.EVALUATION, "Command cannot be loaded", e);
+        }
       }
     }
+    throw new CommandCreationException(name, ErrorType.EVALUATION, "Command class not found");
   }
 
   public void init(HashMap<String, Object> session) {

@@ -174,6 +174,18 @@ public class Commands {
     }
   }
 
+  public static class ConsumeObject extends CRaSHCommand {
+    @Command
+    public org.crsh.command.PipeCommand<Object, Object> main() {
+      return new PipeCommand<Object, Object>() {
+        @Override
+        public void provide(Object element) throws ScriptException, IOException {
+          list.add(element);
+        }
+      };
+    }
+  }
+
   public static class ParameterizedConsumeToList extends CRaSHCommand {
     @Command
     public PipeCommand<String, Object> main(final @Option(names={"opt"}) String opt, @Argument List<String> args) {

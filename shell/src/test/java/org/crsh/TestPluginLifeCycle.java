@@ -19,7 +19,7 @@
 
 package org.crsh;
 
-import org.crsh.command.CRaSHCommand;
+import org.crsh.command.BaseCommand;
 import org.crsh.plugin.*;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.shell.impl.command.CRaSHSession;
@@ -75,7 +75,7 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
     bind(name, "java", command);
   }
 
-  public void bindClass(String name, Class<? extends CRaSHCommand> command) {
+  public void bindClass(String name, Class<? extends BaseCommand> command) {
     bindJava(name, "public class " + name + " extends " + command.getCanonicalName() + " {}");
   }
 

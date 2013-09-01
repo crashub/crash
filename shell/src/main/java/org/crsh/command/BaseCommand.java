@@ -19,8 +19,6 @@
 
 package org.crsh.command;
 
-import org.crsh.cli.impl.descriptor.IntrospectionException;
-
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.logging.Logger;
@@ -33,7 +31,7 @@ public abstract class BaseCommand extends AbstractCommand {
   /** The unmatched text, only valid during an invocation. */
   protected String unmatched;
 
-  protected BaseCommand() throws IntrospectionException {
+  protected BaseCommand() {
     this.unmatched = null;
   }
 
