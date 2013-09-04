@@ -55,7 +55,7 @@ public class ScriptREPL implements REPL {
         return new EvalResponse.Invoke(invoker);
       }
       catch (CommandCreationException e) {
-        e.printStackTrace();
+        //e.printStackTrace();
         return new EvalResponse.Response(ShellResponse.unknownCommand(e.getCommandName()));
       }
     } else {
