@@ -71,6 +71,10 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
     bind(name, "groovy", command);
   }
 
+  public void bindGroovyClass(String name, Class<? extends BaseCommand> command) {
+    bindGroovy(name, "public class " + name + " extends " + command.getCanonicalName() + " {}");
+  }
+
   public void bindJava(String name, String command) {
     bind(name, "java", command);
   }

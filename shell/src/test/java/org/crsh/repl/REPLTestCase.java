@@ -19,7 +19,7 @@
 package org.crsh.repl;
 
 import org.crsh.cli.Command;
-import org.crsh.command.CRaSHCommand;
+import org.crsh.command.BaseCommand;
 import org.crsh.lang.groovy.GroovyREPL;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.AbstractCommandTestCase;
@@ -134,7 +134,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
     assertEquals(Arrays.<Object>asList("foo"), Commands.list);
   }
 
-  public static class Toto extends CRaSHCommand {
+  public static class Toto extends BaseCommand {
     @Command
     public String sub() {
       return "invoked";

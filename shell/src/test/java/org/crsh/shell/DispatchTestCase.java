@@ -228,7 +228,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "}\n" +
         "}";
     lifeCycle.bindGroovy("foo", foo);
-    lifeCycle.bindClass("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
+    lifeCycle.bindGroovyClass("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));
@@ -241,7 +241,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "return 'bar'\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);
-    lifeCycle.bindClass("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
+    lifeCycle.bindGroovyClass("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
 
     //
     assertEquals("bar", assertOk("foo"));

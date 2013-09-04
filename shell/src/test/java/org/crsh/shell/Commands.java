@@ -25,6 +25,7 @@ import org.crsh.cli.Command;
 import org.crsh.cli.Option;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
+import org.crsh.command.BaseCommand;
 import org.crsh.command.CRaSHCommand;
 import org.crsh.command.PipeCommand;
 import org.crsh.command.ScriptException;
@@ -41,7 +42,7 @@ public class Commands {
   /** . */
   public static final ArrayList<Object> list = new ArrayList<Object>();
 
-  public static class Noop extends CRaSHCommand {
+  public static class Noop extends BaseCommand {
     @Command
     public PipeCommand<Object, Object> main() throws IOException {
       return new PipeCommand<Object, Object>() {
@@ -49,7 +50,7 @@ public class Commands {
     }
   }
 
-  public static class Parameterized extends CRaSHCommand {
+  public static class Parameterized extends BaseCommand {
 
     /** . */
     public static String opt;
@@ -71,14 +72,14 @@ public class Commands {
     }
   }
 
-  public static class ProduceValue extends CRaSHCommand {
+  public static class ProduceValue extends BaseCommand {
     @Command
     public void main(org.crsh.command.InvocationContext<Value> context) throws IOException {
       context.provide(new Value("abc"));
     }
   }
 
-  public static class ProduceString extends CRaSHCommand {
+  public static class ProduceString extends BaseCommand {
     @Command
     public void main(org.crsh.command.InvocationContext<String> context) throws IOException {
       context.provide("foo");
@@ -86,7 +87,7 @@ public class Commands {
     }
   }
 
-  public static class ConsumeString extends CRaSHCommand {
+  public static class ConsumeString extends BaseCommand {
     @Command
     public org.crsh.command.PipeCommand<String, Object> main() {
       return new PipeCommand<String, Object>() {
@@ -98,7 +99,7 @@ public class Commands {
     }
   }
 
-  public static class Buffer extends CRaSHCommand {
+  public static class Buffer extends BaseCommand {
     @Command
     public org.crsh.command.PipeCommand<String, String> main() {
       return new PipeCommand<String, String>() {
@@ -119,7 +120,7 @@ public class Commands {
     }
   }
 
-  public static class Filter extends CRaSHCommand {
+  public static class Filter extends BaseCommand {
     @Command
     public org.crsh.command.PipeCommand<String, String> main() {
       return new PipeCommand<String, String>() {
@@ -131,14 +132,14 @@ public class Commands {
     }
   }
 
-  public static class ProduceInteger extends CRaSHCommand {
+  public static class ProduceInteger extends BaseCommand {
     @Command
     public void main(org.crsh.command.InvocationContext<Integer> context) throws IOException {
       context.provide(3);
     }
   }
 
-  public static class ConsumeInteger extends CRaSHCommand {
+  public static class ConsumeInteger extends BaseCommand {
     @Command
     public org.crsh.command.PipeCommand<Integer, Object> main() {
       return new PipeCommand<Integer, Object>() {
@@ -150,7 +151,7 @@ public class Commands {
     }
   }
 
-  public static class ConsumeBoolean extends CRaSHCommand {
+  public static class ConsumeBoolean extends BaseCommand {
     @Command
     public org.crsh.command.PipeCommand<Boolean, Object> main() {
       return new PipeCommand<Boolean, Object>() {
@@ -162,7 +163,7 @@ public class Commands {
     }
   }
 
-  public static class ConsumeChunk extends CRaSHCommand {
+  public static class ConsumeChunk extends BaseCommand {
     @Command
     public org.crsh.command.PipeCommand<Chunk, Object> main() {
       return new PipeCommand<Chunk, Object>() {
@@ -174,7 +175,7 @@ public class Commands {
     }
   }
 
-  public static class ConsumeObject extends CRaSHCommand {
+  public static class ConsumeObject extends BaseCommand {
     @Command
     public org.crsh.command.PipeCommand<Object, Object> main() {
       return new PipeCommand<Object, Object>() {
@@ -186,7 +187,7 @@ public class Commands {
     }
   }
 
-  public static class ParameterizedConsumeToList extends CRaSHCommand {
+  public static class ParameterizedConsumeToList extends BaseCommand {
     @Command
     public PipeCommand<String, Object> main(final @Option(names={"opt"}) String opt, @Argument List<String> args) {
       if (args != null) {
@@ -203,7 +204,7 @@ public class Commands {
     }
   }
 
-  public static class IsClosed extends CRaSHCommand {
+  public static class IsClosed extends BaseCommand {
 
     /** . */
     public static final AtomicInteger closed = new AtomicInteger();
@@ -219,7 +220,7 @@ public class Commands {
     }
   }
 
-  public static class IsPiped extends CRaSHCommand {
+  public static class IsPiped extends BaseCommand {
     @Command
     public org.crsh.command.PipeCommand<Object, Object> main() {
       return new PipeCommand<Object, Object>() {
@@ -231,14 +232,14 @@ public class Commands {
     }
   }
 
-  public static class Compound extends CRaSHCommand {
+  public static class Compound extends BaseCommand {
     @Command
     public String compound() {
       return "bar";
     }
   }
 
-  public static class CompoundProduceString extends CRaSHCommand {
+  public static class CompoundProduceString extends BaseCommand {
     @Command
     public void compound(org.crsh.command.InvocationContext<String> context) throws IOException {
       context.provide("foo");
@@ -246,7 +247,7 @@ public class Commands {
     }
   }
 
-  public static class CompoundConsumeString extends CRaSHCommand {
+  public static class CompoundConsumeString extends BaseCommand {
     @Command
     public org.crsh.command.PipeCommand<String, Object> compound() {
       return new PipeCommand<String, Object>() {
@@ -258,21 +259,21 @@ public class Commands {
     }
   }
 
-  public static class ThrowCheckedException extends CRaSHCommand {
+  public static class ThrowCheckedException extends BaseCommand {
     @Command
     public String main() throws NamingException {
       throw new javax.naming.NamingException();
     }
   }
 
-  public static class ThrowRuntimeException extends CRaSHCommand {
+  public static class ThrowRuntimeException extends BaseCommand {
     @Command
     public String main() {
       throw new java.lang.SecurityException();
     }
   }
 
-  public static class ThrowScriptException extends CRaSHCommand {
+  public static class ThrowScriptException extends BaseCommand {
     @Command
     public String main() {
       throw new org.crsh.command.ScriptException();
@@ -286,14 +287,14 @@ public class Commands {
     }
   }
 
-  public static class ThrowError extends CRaSHCommand {
+  public static class ThrowError extends BaseCommand {
     @Command
     public String main() {
       throw new java.awt.AWTError("whatever");
     }
   }
 
-  public static class CannotInstantiate extends CRaSHCommand {
+  public static class CannotInstantiate extends BaseCommand {
     public CannotInstantiate() {
       throw new RuntimeException();
     }
@@ -302,7 +303,7 @@ public class Commands {
     }
   }
 
-  public static class Complete extends CRaSHCommand implements Completer {
+  public static class Complete extends BaseCommand implements Completer {
     public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
       return Completion.builder(prefix).add("bar", true).build();
     }
@@ -311,7 +312,7 @@ public class Commands {
     }
   }
 
-  public static class CompleteWithSession extends CRaSHCommand implements Completer {
+  public static class CompleteWithSession extends BaseCommand implements Completer {
     public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
       Object juu = context.getSession().get("juu");
       Completion.Builder ret = Completion.builder(prefix);
@@ -325,7 +326,7 @@ public class Commands {
     }
   }
 
-  public static class FailDuringOpen1 extends CRaSHCommand {
+  public static class FailDuringOpen1 extends BaseCommand {
 
     public static void reset() {
       openCount.set(0);
@@ -370,7 +371,7 @@ public class Commands {
     }
   }
 
-  public static class FailDuringOpen2 extends CRaSHCommand {
+  public static class FailDuringOpen2 extends BaseCommand {
 
     public static void reset() {
       openCount.set(0);

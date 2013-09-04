@@ -35,4 +35,14 @@ public class CompilationFailureException extends Exception {
   public List<Diagnostic<? extends JavaFileObject>> getErrors() {
     return errors;
   }
+
+  @Override
+  public String getMessage() {
+    StringBuilder message = new StringBuilder();
+    for (Diagnostic<? extends JavaFileObject> error : errors) {
+      message.append(error.getMessage(null));
+      message.append("\n");
+    }
+    return message.toString();
+  }
 }

@@ -47,4 +47,9 @@ public final class CommandCreationException extends Exception {
   public String getCommandName() {
     return commandName;
   }
+
+  @Override
+  public String getMessage() {
+    return "Could not create command " + commandName + ": " + super.getMessage();
+  }
 }
