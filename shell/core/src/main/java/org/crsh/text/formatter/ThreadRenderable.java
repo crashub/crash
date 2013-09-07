@@ -79,6 +79,7 @@ public class ThreadRenderable extends Renderable<Thread> {
       Thread.sleep(100);
     }
     catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
     }
 
     // Resample
