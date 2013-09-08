@@ -50,8 +50,8 @@ crash.telnet.port=5000
 
 === Removing telnet or SSH access
 
-* to remove the telnet access, remove the jar file in the _WEB-INF/lib/crsh.connectors.telnet-{version}.jar_ .
-* to remove the SSH access, remove the jar file in the _WEB-INF/lib/crsh.connectors.ssh-{version}.jar_ .
+* to remove the telnet access, remove the jar file in the _WEB-INF/lib/crsh.connectors.telnet-{crash-version}.jar_.
+* to remove the SSH access, remove the jar file in the _WEB-INF/lib/crsh.connectors.ssh-{crash-version}.jar_.
 
 === Configuring shell default message
 

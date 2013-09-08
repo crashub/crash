@@ -1,13 +1,16 @@
-
 In this cookbook, you will see how to connect to a database and how to execute query.
 
 == Connect to a database
 
 You have 2 possibility to connect to your databases :
-* open    :  open a connection from JNDI bound datasource
-* connect :  connect to database with a JDBC connection string
 
-Here is some examples :
+open ::
+  open a connection from JNDI bound datasource
+
+connect ::
+  connect to database with a JDBC connection string
+
+Here are some examples:
 
 === H2
 
@@ -34,5 +37,4 @@ NOTE: Table name are case sensitive.
 ----
 jdbc close
 ----
-
 

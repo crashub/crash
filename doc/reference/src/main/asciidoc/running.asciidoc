@@ -12,6 +12,7 @@ in the application contains the standalone distribution.
 The bin directory _/crash/bin_ can be added to the system path, it contains the _crash.sh_ script that will start
 the standalone mode, for instance you can set it up this way:
 
+[subs="attributes,specialcharacters", options="nowrap"]
 ----
 > export PATH=/.../crash/bin:$PATH
 > crash.sh
@@ -19,11 +20,11 @@ the standalone mode, for instance you can set it up this way:
  .~      ~. |`````````,       .'.                   ..'''' |         |
 |           |'''|'''''      .''```.              .''       |_________|
 |           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr2-SNAPSHOT
+ `.______.' |      `.   .'           `. ....''             |         | {crash-version}
 
 Follow and support the project on http://www.crashub.org
 Welcome to jerry + !
-It is Thu Apr 12 21:19:35 CEST 2012 now
+It is {localdatetime} now
 ----
 
 Let's review quickly what you can find in standalone crash:
@@ -37,8 +38,9 @@ Let's review quickly what you can find in standalone crash:
 
 The attach mode allows you to attach CRaSH to a JVM located on the same host with the attach API provided by the Hotspot
 JVM. It is the standalone mode attached to a running JVM specified by a process id. CRaSH will hook into the targetted JVM
-instead of the JVM started by CRaSH. Let's see quickly an example of how to use it
+instead of the JVM started by CRaSH. Let's see quickly an example of how to use it:
 
+[subs="attributes,specialcharacters", options="nowrap"]
 ----
 > jps
 3165 RemoteMavenServer
@@ -50,11 +52,11 @@ instead of the JVM started by CRaSH. Let's see quickly an example of how to use 
  .~      ~. |`````````,       .'.                   ..'''' |         |
 |           |'''|'''''      .''```.              .''       |_________|
 |           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         | 1.0.0-cr2-SNAPSHOT
+ `.______.' |      `.   .'           `. ....''             |         | {crash-version}
 
 Follow and support the project on http://vietj.github.com/crash
 Welcome to jerry + !
-It is Thu Apr 12 22:09:23 CEST 2012 now
+It is {localdatetime} now
 %
 ----
 
@@ -116,8 +118,8 @@ The +org.crsh.standalone.CRaSH+ main has an optional list of arguments that are 
   are specified, CRaSH will dynamically attach to this virtual machine and will be executed in that machine. By default the two JVM will
   communicate with a socket unless the _non-interactive_ option is set.
 
-{{warning}}When more than one process id is specified, the _non-interactive_ option must be set because CRaSH will not be able
-to aggregate two command lines in the same terminal.{{/warning}}
+WARNING: When more than one process id is specified, the _non-interactive_ option must be set because CRaSH will not be able
+to aggregate two command lines in the same terminal.
 
 === Resource extraction
 
@@ -131,7 +133,7 @@ is specified, therefore
 * The _crash.sh_ or _crash.bat_ extracts the resources in the corresponding directory as the _cmd_ and _conf_ directories
 are specified
 
-To prevent any resource copying the value _read_ should be used/
+To prevent any resource copying the value _read_ should be used.
 
 == Embedded mode
 
@@ -142,7 +144,7 @@ and triggering the CRaSH life cycle start/stop. In this mode CRaSH has two packa
 
 * A __core__ war file found under _deploy/core/crash.war_ provides the base CRaSH functionnalities
 * A __gatein__ war file found under _deploy/gatein/crash.war_ provides additional Java Content Repository (JCR)
- features but deploys only in a GateIn server (Tomcat or JBoss). It extends the core packaging and adds
+  features but deploys only in a GateIn server (Tomcat or JBoss). It extends the core packaging and adds:
 ** JCR browsing and interactions
 ** SCP support for JCR import and export
 
@@ -162,7 +164,7 @@ If you want you can embed CRaSH in your own _web.xml_ configuration:
 
 === Embedding in Spring
 
-CRaSH can be easily embedded and configured in a Spring configuration
+CRaSH can be easily embedded and configured in a Spring configuration.
 
 ==== Embedding as a Spring bean
 

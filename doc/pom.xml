@@ -70,18 +70,22 @@
                 <goal>process-asciidoc</goal>
               </goals>
               <configuration>
-                <!-- asciidoctor -d book -o target/book.html -a toc2 -a copycss -a source-highlighter=highlightjs target/asciidoc/book.asciidoc -->
+                <!-- asciidoctor -d book -o target/book.html -a copycss -a toc2 -a sectanchors \
+                     -a source-highlighter=coderay -a stylesheet=foundation-lime.css -a crash-version=${project.version} \
+                     target/asciidoc/book.asciidoc -->
                 <sourceDirectory>${project.build.directory}/asciidoc</sourceDirectory>
                 <sourceDocumentName>${project.build.directory}/asciidoc/book.asciidoc</sourceDocumentName>
                 <outputDirectory>target/docs/html</outputDirectory>
-                <compact>true</compact>
                 <backend>html</backend>
                 <doctype>book</doctype>
                 <attributes>
-                  <toc2 />
+                  <toc2>1</toc2>
                   <stylesheet>foundation-lime.css</stylesheet>
-                  <source-highlighter>highlightjs</source-highlighter>
-                  <version>${project.version}</version>
+                  <source-highlighter>coderay</source-highlighter>
+                  <crash-version>${project.version}</crash-version>
+                  <sectanchors>1</sectanchors>
+                  <icons>font</icons>
+                  <sourcesdir>${project.build.directory}/sources</sourcesdir>
                 </attributes>
               </configuration>
             </execution>

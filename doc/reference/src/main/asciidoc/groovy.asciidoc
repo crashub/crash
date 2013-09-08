@@ -61,6 +61,7 @@ thread.ls
 === Passing options and arguments
 
 Command options and command arguments are passed as invocation parameters:
+
 * options are used as a map or named parameters
 * arguments are the other invocation parameters
 
@@ -137,7 +138,7 @@ log.send { m="hello"; ["the category"] }
 
 === Command pipeline
 
-The object pipeline can be used in the Groovy REPL using the **|** (pipe) operator. When a command closure is combined with a
+The object pipeline can be used in the Groovy REPL using the +|+ (pipe) operator. When a command closure is combined with a
  pipe, it returns a new closure that will invoke the pipeline construction.
 
 .Assembling a command pipe

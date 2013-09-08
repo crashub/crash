@@ -38,4 +38,4 @@ scp -P 2000 gadgets.xml root@localhost:portal:portal-system:/production/
 
 The exported file format use the JCR system view. You can get more information about that in the JCR specification.
 
-CAUTION: The SCP feature is experimental
+CAUTION: The SCP feature is experimental.

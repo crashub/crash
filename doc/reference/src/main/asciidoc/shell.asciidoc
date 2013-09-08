@@ -1,16 +1,16 @@
 == Shell usage
 
+[[connection]]
 === Connection
 
-[[connection]]
-
-You need to connect using telnet, SSH or //directly// to use the
+You need to connect using telnet, SSH or _directly_ to use the
 shell.  The last method is a special mode using the JVM input and output.
 
 ==== Telnet access
 
 Telnet connection is done on port 5000:
 
+[subs="attributes,specialcharacters", options="nowrap"]
 ----
 (! 520)-> telnet localhost 5000
 Trying ::1...
@@ -20,25 +20,25 @@ Escape character is '^]'.
  .~      ~. |`````````,       .'.                   ..'''' |         |
 |           |'''|'''''      .''```.              .''       |_________|
 |           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         | {version}
+ `.______.' |      `.   .'           `. ....''             |         | {crash-version}
 
 Follow and support the project on http://vietj.github.com/crash
 Welcome to julien.local + !
-It is Fri Dec 03 16:20:40 CET 2010 now
+It is {localdatetime} now
 ----
 
 The +bye+ command disconnect from the shell.
 
 ==== SSH access
 
-SSH connection is done on port 2000 with the password **//crash//**:
+SSH connection is done on port 2000 with the password *_crash_*:
 
 ----
 juliens-macbook-pro:~ julien$ ssh -p 2000 -l root localhost
 root@localhost's password:
-CRaSH {version} (http://vietj.github.com/crash)
+CRaSH {crash-version} (http://vietj.github.com/crash)
 Welcome to juliens-macbook-pro.local!
-It is Fri Jan 08 21:12:53 CET 2010 now.
+It is {localdatetime} now.
 %
 ----
 
@@ -54,8 +54,7 @@ JVM native input and output. When you run in standalone, CRaSh will be available
 * Line edition: the current line can be edited via left and right arrow keys
 * History: the key up and key down enable history browsing
 * Quoting: simple quotes or double quotes allow to insert blanks in command options and arguments, for instance
-//"old boy"// or //'old boy'//. One quote style can quote another,
-like //"hi, it's me"//.
++"old boy"+ or +'old boy'+. One quote style can quote another, like `"hi, it's me"`.
 * Completion: an advanced completion system is available
 
 == Command usage
@@ -188,8 +187,8 @@ and +<P>+:
 
 The command composition provides two operators:
 
-* The pipe operator **|** allows to stream a command output stream to a command input stream
-* The distribution operator **+** allows to distribute an input stream to several commands and to combine the output stream
+* The pipe operator `|` allows to stream a command output stream to a command input stream
+* The distribution operator `+` allows to distribute an input stream to several commands and to combine the output stream
 of several commands into a single stream.
 
 ==== Connecting a +<Void,Node>+ command to a +<Node,Void>+ command through a pipe

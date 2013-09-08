@@ -1,11 +1,11 @@
-CRaSH reference guide
-=====================
-Julien Viet <julien@julienviet.com>
+= CRaSH Reference Guide
+Julien Viet <http://www.julienviet.com>
 
 The Common Reusable SHell (CRaSH) deploys in a Java runtime and provides interactions with the JVM.
 Commands are written in Groovy and can be developped at runtime making the extension of the shell very easy
 with fast development cycle.
 
+[[running_crash]]
 = Running CRaSH
 
 include::running.asciidoc[]
@@ -36,8 +36,9 @@ include::jcr.asciidoc[]
 
 = Hey, I want to contribute!
 
-Drop me an email (see my @ on www.julienviet.com), any kind of help is welcome.
+Drop me an email. You can find my email on http://www.julienviet.com. Any kind of help is welcome.
 
+[appendix]
 = Commands reference
 
 include::reference.asciidoc[]
