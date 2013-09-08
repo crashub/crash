@@ -44,6 +44,8 @@
       <includes>
         <include>org.crashub:crash.plugins.mail</include>
         <include>javax.mail:mail</include>
+        <include>org.crashub:crash.plugins.cron</include>
+        <include>it.sauronsoftware.cron4j:cron4j</include>
       </includes>
     </dependencySet>
   </dependencySets>

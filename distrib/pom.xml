@@ -61,6 +61,16 @@
       <artifactId>mail</artifactId>
     </dependency>
 
+    <!-- Cron plugin -->
+    <dependency>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.plugins.cron</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>it.sauronsoftware.cron4j</groupId>
+      <artifactId>cron4j</artifactId>
+    </dependency>
+
     <!-- Sources -->
     <dependency>
       <groupId>org.crashub</groupId>

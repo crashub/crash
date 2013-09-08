@@ -1,0 +1,25 @@
+CRaSH provides a cron plugin for scheduling tasks, the plugin is a thin wrapper of the
+http://www.sauronsoftware.it/projects/cron4j/[cron4j] library.
+
+== Deployment
+
+The plugin consist of two jars:
+
+* the cron4j jar +cron4j-2.2.5.jar+
+* the plugin jar +crash.plugins.cron-{crash-version}.jar+
+
+when the two jars are present in the classpath of CRaSH, they will be detected and the plugin will be present.
+
+== Configuration file
+
+The plugin is configured mainly through the +crontab+ configuration file. This file looks pretty much like any
+other crontab configuration file it consists of two parts:
+
+* a scheduling pattern, for instance +* * * * *+, this is http://www.sauronsoftware.it/projects/cron4j/manual.php#p02[documented] in the cron4j library
+* a command line to execute
+
+.Send an mail with a JVM thread dump once every hour, at the begin of the fifth minute (00:05, 01:05, 02:05 etc.).
+[subs="attributes,specialcharacters", options="nowrap"]
+----
+5 * * * * thread ls | thread dump | mail -s "the threads" -b admin@gmail.com
+----

@@ -30,7 +30,11 @@ include::groovy.asciidoc[]
 
 include::extension.asciidoc[]
 
-= JCR extension
+= Cron plugin
+
+include::cron.asciidoc[]
+
+= JCR plugin
 
 include::jcr.asciidoc[]
 
