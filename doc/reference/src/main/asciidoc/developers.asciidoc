@@ -1,6 +1,6 @@
 == Developping commands
 
-A CRaSH command is written in the http://groovy.codehaus.org/[Groovy] language. The Groovy language provides
+A CRaSH command is written in the http://groovy.codehaus.org[Groovy] language. The Groovy language provides
 several signifiant advantages:
 
 * Commands can be bare scripts or can be a class
@@ -8,7 +8,8 @@ several signifiant advantages:
 * Groovy is a dynamic language and can manipulate unknown types
 
 Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell.
-The files are located in
+The files are located in:
+
 * _cmd_ directory for the standalone distribution
 * _/WEB-INF/crash/commands_ directory for the web archive deployment
 
@@ -18,29 +19,32 @@ command directory, which is useful to group commands of the same kind.
 In addition of that there are two special files called _login.groovy_ and _logout.groovy_ that are executed upon login
 and logout of a user. They are useful to setup and cleanup things related to the current user session.
 
+[[commands_as_script]]
 === Commands as a script
 
 The simplest command can be a simple script that returns a string
 
+[source,java]
 ----
 return "Hello World";
 ----
 
 The +out+ implicit variable can be used to send a message to the console:
 
+[source,java]
 ----
 out.println("Hello World");
 ----
 
 It can be even Groovier:
 
+[source,groovy]
 ----
 out << "Hello World"
 ----
 
+[[commands_as_class]]
 === Commands as a class
-
-[[command_as_class]]
 
 Class can also be used for defining a command, it provides significant advantages over scripts:
 
@@ -52,7 +56,7 @@ the command class.
 
 Let's study a simple class command example:
 
-[source,java]
+[source,groovy]
 ----
 import org.crsh.cli.Command;
 import org.crsh.cli.Usage;
@@ -99,7 +103,7 @@ usage: date [-h | --help] [-f | --format]
 A class can hold several commands allowing a single file to group several commands, let's study the JDBC command
 structure:
 
-[source,java]
+[source,groovy]
 ----
 @Usage("JDBC connection")
 class jdbc {
@@ -147,7 +151,7 @@ Let's review the various annotations for declaring a command.
 
 Defines a command method, when using a mono command the method should be named +main+:
 
-[source,java]
+[source,groovy]
 ----
 public class sample {
 
@@ -165,7 +169,7 @@ necessary anymore as the +@Command+ annotation is enough.
 
 Sub commands will simply declares several methods:
 
-[source,java]
+[source,groovy]
 ----
 public class sample {
 
@@ -187,7 +191,7 @@ Declares an option, the _names_ member must be specified: single letter name are
 other names are turned into GNU style option (double hyphen). Several names can specified as aliases of the same option. Option
 can be declared as method parameters or a class fields.
 
-[source,java]
+[source,groovy]
 ----
 public class sample {
 
@@ -213,7 +217,7 @@ public class sample {
 
 Declares an argument, this annotation should be declares as method parameters.
 
-[source,java]
+[source,groovy]
 ----
 public class sample {
 
@@ -233,7 +237,7 @@ public class sample {
 
 By default a parameter is optional, the +@Required+ annotation can be used to force the user to specify a parameter:
 
-[source,java]
+[source,groovy]
 ----
 public class sample {
 
@@ -248,7 +252,7 @@ public class sample {
 
 Those annotations are useful for documenting commands help and manual:
 
-[source,java]
+[source,groovy]
 ----
 @Usage("sample commands")
 public class sample {
@@ -286,7 +290,7 @@ CRaSH provides supports a few builtin simple types other than string:
 Boolean type is special because it does not need a value when combined with options. The option declaration is enough
 to set the value to true:
 
-[source,java]
+[source,groovy]
 ----
 public class sample {
 
@@ -316,7 +320,7 @@ package my;
 public class CustomValueType extends ValueType<Custom> {
 
   public CustomValueType() {
-    super(Custom.class); _ // <1>
+    super(Custom.class); // <1>
   }
 
   @Override
@@ -336,7 +340,7 @@ in the _/META-INF/services/_ directory of the jar containing the custom value ty
 
 .The custom value type declared in META-INF/services/org.crsh.cli.type.ValueType
 ----
-my.CustomValueTpye
+my.CustomValueType
 ----
 
 === Parameter multiplicity
@@ -391,31 +395,40 @@ public class mycommand {
 }
 ----
 
+[[command_context]]
 == Command context
 
-[[command_context]]
-
 During the execution of a command, CRaSH provides a _context_ for
-interacting with it : the property _context_ is resolved to an instance of +org.crsh.command.InvocationContext+,
-the invocation context class extends
-the +org.crsh.command.CommandContext+. Let's have a look at those types:
+interacting with it:
+
+* the property _context_ is resolved to an instance of +org.crsh.command.InvocationContext+
+* the invocation context class extends the +org.crsh.command.CommandContext+.
+
+Let's have a look at those types:
+
+////
+[source,java]
+.The command context
+----
+include::{sourcesdir}/org/crsh/command/CommandContext.java[tags=javadoc;classdef]
+----
+////
 
 [source,java]
 .The command context
 ----
-{@javadoc org.crsh.command.CommandContext}
-{@include org.crsh.command.CommandContext}
+include::{sourcesdir}/org/crsh/command/CommandContext.java[lines=26..-1]
 ----
 
 The +CommandContext+ provides access to the shell session as a +Map<String, Object>+. Session attributes
 can be accessed using this map, but they are also accessible as Groovy script properties. It means that writing such
 code will be equivalent:
 
-[source,java]
+[source,groovy]
 .Using shell session
 ----
 context.session["foo"] = "bar"; // <1>
-out.println(bar); // // <2>
+out.println(bar); // <2>
 ----
 <1> Bind the session attribute foo with the value bar
 <2> The bar is resolved as an session attribute by Groovy
@@ -430,7 +443,7 @@ are useful to interact with object shared globally by the CRaSH environment:
 * When attached to a virtual machine, the context attributes has only a single +instrumentation+ entry
  that is the +java.lang.instrument.Instrumentation+ instance obtained when attaching to a virtual machine.
 
-[source,java]
+[source,groovy]
 .Obtaining a Spring bean
 ----
 def bean = context.attributes.beans["TheBean"];
@@ -438,16 +451,23 @@ def bean = context.attributes.beans["TheBean"];
 
 Now let's examine the +InvocationContext+ that extends the +CommandContext+:
 
+////
 [source,java]
 .The invocation context
 ----
-{@javadoc org.crsh.command.InvocationContext}
-{@include org.crsh.command.InvocationContext}
+include::{sourcesdir}/org/crsh/command/InvocationContext.java[tags=javadoc;classdef]
+----
+////
+
+[source,java]
+.The invocation context
+----
+include::{sourcesdir}/org/crsh/command/InvocationContext.java[lines=26..-1]
 ----
 
 The +PrintWriter+ object is the command output, it can be used also via the _out_ property in Groovy scripts:
 
-[source,java]
+[source,groovy]
 .Printing on the shell
 ----
 context.writer.print("Hello"); // <1>
@@ -458,7 +478,7 @@ out.print("hello"); // <2>
 
 The +readLine+ method can be used to get interactive information from the user during the execution of a command.
 
-[source,java]
+[source,groovy]
 .Reading on the console
 ----
 def age = context.readLine("How old are you?", false);
@@ -472,17 +492,32 @@ the pipe mechanism.
 CRaSH adds (since version 1.1) the support for colored text and text decoration. Each portion of text printed
  has three style attributes:
 
-* _Decoration_ : bold, underline or blink, as the +org.crsh.text.Decoration+ enum.
+* _Decoration_: bold, underline or blink, as the +org.crsh.text.Decoration+ enum.
 * _Foreground_ color.
 * _Background_ color.
 
-Available colors are grouped as the +org.crsh.text.Color+ enum: black, red, green, yellow, blue, magenta, cyan, white.
+Available colors are grouped as the +org.crsh.text.Color+ enum:
+
+[cols="2*", frame="none", grid="none"]
+|===
+a|
+* [black]#black#
+* [red]#red#
+* [green]#green#
+* [yellow]#yellow#
+
+a|
+* [blue]#blue#
+* [fuchsia]#magenta#
+* [aqua]#cyan#
+* [white black-background]#white#
+|===
 
 Decoration and colors can be applied with overloaded +print+ and +println+ methods provided by the +ShellPrinterWriter+.
 This printer is available as the implicit _out_ attribute or thanks to the +<<command_context,context>>.getWriter()+
 method.
 
-[source,java]
+[source,groovy]
 .Decorating and coloring text
 ----
 out.println("hello", red); // <1>
@@ -496,24 +531,24 @@ out.println("hello", underline, red, blue); // <3>
 The combination of the decoration, background and foreground colors is a _style_ represented by the +org.crsh.text.Style+
 object. Styles can be used like decoration and colors:
 
-[source,java]
+[source,groovy]
 .Printing styled text
 ----
-out.println("hello", style(red)); <1>
-out.println("hello", style(red, blue)); <2>
-out.println("hello", style(underline, red, blue)); <3>
+out.println("hello", style(red)); // <1>
+out.println("hello", style(red, blue)); // <2>
+out.println("hello", style(underline, red, blue)); // <3>
 ----
 <1> Print hello in red color
 <2> Print hello in red with a red blue
 <3> Print hello in red underlined with a red blue
 
 When using the print methods, the style will be used for the currently printed object. It is possible to change the
-style permanently (until it is reset) using Groovy _leftshift_ operator : +<<+
+style permanently (until it is reset) using Groovy _leftshift_ operator: +<<+
 
 By default the +<<+ operator prints output on the console. The +ShellPrintWriter+ overrides the operator to work
 with color, decoration and styles:
 
-[source,java]
+[source,groovy]
 .Styling with the leftshift operator
 ----
 out << red // <1>
@@ -528,12 +563,12 @@ out << reset; // <4>
 
 Operators can also be combined on the same line providing a more compact syntax:
 
-[source,java]
+[source,groovy]
 ----
 out << red << underline << "hello" << reset
 ----
 
-[source,java]
+[source,groovy]
 ----
 out << style(underline, red, blue) << "hello" << reset
 ----
@@ -545,7 +580,7 @@ they can be used out of the box in any CRaSH command without requiring prior imp
 
 In this section we study how a command can reuse existing commands. Here is an example
 
-[source,java]
+[source,groovy]
 .dbscript.groovy
 ----
 jdbc.connect username:root, password:crash, "jdbc:derby:memory:EmbeddedDB;create=true"

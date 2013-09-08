@@ -1,4 +1,3 @@
-
 In this cookbook, you will learn how to create a simple script command. You will see that
 you can create it dynamically without restarting CRaSH.
 

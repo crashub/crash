@@ -64,18 +64,18 @@ public class Generator {
       if (cmd instanceof BaseShellCommand) {
         BaseShellCommand cc = (BaseShellCommand)cmd;
         CommandDescriptor<?> desc = cc.getDescriptor();
-        buffer.append("== ").append(desc.getName()).append("\n");
+        buffer.append("== ").append(desc.getName()).append("\n").append("\n");
         if (desc.getSubordinates().size() > 1) {
           for (CommandDescriptor<?> m : desc.getSubordinates().values()) {
-            buffer.append("=== ").append(desc.getName()).append(" ").append(m.getName()).append("\n");
+            buffer.append("=== ").append(desc.getName()).append(" ").append(m.getName()).append("\n").append("\n");
             buffer.append("----\n");
             m.printMan(buffer);
-            buffer.append("----\n");
+            buffer.append("----\n\n");
           }
         } else {
           buffer.append("----\n");
           desc.printMan(buffer);
-          buffer.append("----\n");
+          buffer.append("----\n\n");
         }
       }
     }
