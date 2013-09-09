@@ -19,6 +19,7 @@
 
 package org.crsh.processor.jline;
 
+import jline.Terminal;
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
 import org.crsh.cli.impl.completion.CompletionMatch;
@@ -29,9 +30,14 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class JLineProcessor implements Runnable, Completer {
@@ -51,21 +57,230 @@ public class JLineProcessor implements Runnable, Completer {
   /** Whether or not we switched on the alternate screen. */
   boolean useAlternate;
 
-  public JLineProcessor(Shell shell, ConsoleReader reader, PrintWriter writer) {
+  // *********
+
+  private BlockingQueue<Integer> queue;
+  private boolean interrupt;
+  private Thread pipe;
+  volatile private boolean running;
+  volatile private boolean eof;
+  private InputStream consoleInput;
+  private InputStream in;
+  private PrintStream out;
+  private PrintStream err;
+  private Thread thread;
+  public static final String IGNORE_INTERRUPTS = "karaf.ignoreInterrupts";
+
+  public JLineProcessor(Shell shell, InputStream in,
+                        PrintStream out,
+                        PrintStream err,
+                        Terminal term) throws IOException {
+
+    //
+    this.consoleInput = new ConsoleInputStream();
+    this.in = in;
+    this.out = out;
+    this.err = err;
+    this.queue = new ArrayBlockingQueue<Integer>(1024);
+    this.pipe = new Thread(new Pipe());
+    pipe.setName("gogo shell pipe thread");
+    pipe.setDaemon(true);
+
+    //
+    ConsoleReader reader = new ConsoleReader(null, consoleInput, out, term);
+    reader.addCompleter(this);
+
+    //
     this.shell = shell;
     this.reader = reader;
-    this.writer = writer;
+    this.writer = new PrintWriter(out);
     this.current = new AtomicReference<ShellProcess>();
     this.useAlternate = false;
   }
 
+  private boolean getBoolean(String name) {
+    if (name.equals(IGNORE_INTERRUPTS)) {
+      return false;
+    } else {
+      throw new UnsupportedOperationException();
+    }
+  }
+
+  private void checkInterrupt() throws IOException {
+    if (Thread.interrupted() || interrupt) {
+      interrupt = false;
+      throw new InterruptedIOException("Keyboard interruption");
+    }
+  }
+
+  private void interrupt() {
+//    interrupt = true;
+//    thread.interrupt();
+    cancel();
+  }
+
+  private class ConsoleInputStream extends InputStream
+  {
+    private int read(boolean wait) throws IOException
+    {
+      if (!running) {
+        return -1;
+      }
+      checkInterrupt();
+      if (eof && queue.isEmpty()) {
+        return -1;
+      }
+      Integer i;
+      if (wait) {
+        try {
+          i = queue.take();
+        } catch (InterruptedException e) {
+          throw new InterruptedIOException();
+        }
+        checkInterrupt();
+      } else {
+        i = queue.poll();
+      }
+      if (i == null) {
+        return -1;
+      }
+      return i;
+    }
+
+    @Override
+    public int read() throws IOException
+    {
+      return read(true);
+    }
+
+    @Override
+    public int read(byte b[], int off, int len) throws IOException
+    {
+      if (b == null) {
+        throw new NullPointerException();
+      } else if (off < 0 || len < 0 || len > b.length - off) {
+        throw new IndexOutOfBoundsException();
+      } else if (len == 0) {
+        return 0;
+      }
+
+      int nb = 1;
+      int i = read(true);
+      if (i < 0) {
+        return -1;
+      }
+      b[off++] = (byte) i;
+      while (nb < len) {
+        i = read(false);
+        if (i < 0) {
+          return nb;
+        }
+        b[off++] = (byte) i;
+        nb++;
+      }
+      return nb;
+    }
+
+    @Override
+    public int available() throws IOException {
+      return queue.size();
+    }
+  }
+
+  private class Pipe implements Runnable
+  {
+    public void run()
+    {
+      try {
+        while (running)
+        {
+          try
+          {
+            int c = in.read();
+            if (c == -1)
+            {
+              return;
+            }
+            else if (c == 4 && !getBoolean(IGNORE_INTERRUPTS))
+            {
+              err.println("^D");
+              return;
+            }
+            else if (c == 3 && !getBoolean(IGNORE_INTERRUPTS))
+            {
+              err.println("^C");
+              reader.getCursorBuffer().clear();
+              interrupt();
+            }
+            queue.put(c);
+          }
+          catch (Throwable t) {
+            return;
+          }
+        }
+      }
+      finally
+      {
+        eof = true;
+        try
+        {
+          queue.put(-1);
+        }
+        catch (InterruptedException e)
+        {
+        }
+      }
+    }
+  }
+
+  private String readAndParseCommand() throws IOException {
+    String command = null;
+    boolean loop = true;
+    boolean first = true;
+    while (loop) {
+      checkInterrupt();
+      String line = reader.readLine(first ? getPrompt() : "> ");
+      if (line == null)
+      {
+        break;
+      }
+      if (command == null) {
+        command = line;
+      } else {
+        command += " " + line;
+      }
+      if (reader.getHistory().size()==0) {
+        reader.getHistory().add(command);
+      } else {
+        // jline doesn't add blank lines to the history so we don't
+        // need to replace the command in jline's console history with
+        // an indented one
+        if (command.length() > 0 && !" ".equals(command)) {
+          reader.getHistory().replace(command);
+        }
+      }
+      try {
+        loop = false;
+      } catch (Exception e) {
+        loop = true;
+        first = false;
+      }
+    }
+    return command;
+  }
+
+  // *****
+
   public void run() {
+    running = true;
+    pipe.start();
     String welcome = shell.getWelcome();
     writer.println(welcome);
     writer.flush();
     loop();
   }
 
+/*
   private String readLine() {
     StringBuilder buffer = new StringBuilder();
     String prompt = getPrompt();
@@ -91,10 +306,19 @@ public class JLineProcessor implements Runnable, Completer {
       }
     }
   }
+*/
 
   private void loop() {
     while (true) {
-      String line = readLine();
+
+      //
+      String line = null;
+      try {
+        line = readAndParseCommand();
+      }
+      catch (Throwable t) {
+        t.printStackTrace();
+      }
 
       //
       ShellProcess process = shell.createProcess(line);
