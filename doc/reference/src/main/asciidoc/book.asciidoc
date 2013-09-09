@@ -30,6 +30,10 @@ include::groovy.asciidoc[]
 
 include::extension.asciidoc[]
 
+= Mail plugin
+
+include::mail.asciidoc[]
+
 = Cron plugin
 
 include::cron.asciidoc[]

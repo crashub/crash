@@ -1,0 +1,40 @@
+The mail plugin configures an email client for CRaSH. This email client can be used as a service or via the +mail+
+command.
+
+== Deployment
+
+The plugin consist of two jars:
+
+* the JavaMail jar +mail-1.4.jar+
+* the plugin jar +crash.plugins.mail-{crash-version}.jar+
+
+when the two jars are present in the classpath of CRaSH, they will be detected and the plugin will be present.
+
+== Configuration
+
+Configuration is done with CRaSH properties:
+
+.Configuring an SMTP server for the CRaSH plugin
+[subs="attributes,specialcharacters", options="nowrap"]
+----
+crash.mail.smtp.host=smtp.gmail.com
+crash.mail.smtp.port=587
+crash.mail.smtp.secure=tls
+crash.mail.smtp.username=admin
+crash.mail.smtp.password=admin
+crash.mail.smtp.from=admin@mydomain.org
+crash.mail.debug=false
+----
+
+The configuration is pretty obvious and follow the usual JavaMail configuration properties.
+
+== Mail command
+
+The mail command can be used to send emails. The command consumes a stream of objects and render them
+to text before sending the email.
+
+.Send an email with a JVM thread dump
+[subs="attributes,specialcharacters", options="nowrap"]
+----
+% thread ls | thread dump | mail -s "The thread dump" admin@foo.com
+----

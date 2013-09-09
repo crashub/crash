@@ -2,6 +2,7 @@ package crash.commands.mail
 
 import org.crsh.cli.Argument
 import org.crsh.cli.Command
+import org.crsh.cli.Man
 import org.crsh.cli.Option
 import org.crsh.cli.Usage
 import org.crsh.command.PipeCommand
@@ -15,7 +16,15 @@ import java.util.concurrent.Future
 
 
 class mail {
-  @Usage("mail input text")
+
+  @Man("""Send an mail to a list of recipients.
+
+The body of the mail is the input stream of the command. For example, the output of the "thread ls | thread dump" command
+can be piped into the mail command: an email with the list of current JVM thread is sent to the admin:
+
+% thread ls | thread dump | mail -s "The thread dump" admin@foo.com
+""")
+  @Usage("send an mail to a list of recipients, the body of the mail is the input stream of the command.")
   @Command
   PipeCommand<Chunk, Chunk> main(
       @Usage("block until the mails are delivered")
