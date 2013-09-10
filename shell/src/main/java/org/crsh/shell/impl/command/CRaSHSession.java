@@ -140,7 +140,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   }
 
   /** . */
-  private REPL repl = new ScriptREPL();
+  private REPL repl = ScriptREPL.getInstance();
 
   public ShellProcess createProcess(String request) {
     log.log(Level.FINE, "Invoking request " + request);
@@ -158,10 +158,14 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
         response = ShellResponse.ok();
       } else {
         REPL found = null;
-        for (REPL repl : crash.getContext().getPlugins(REPL.class)) {
-          if (repl.getName().equals(name)) {
-            found = repl;
-            break;
+        if ("script".equals(name)) {
+          found = ScriptREPL.getInstance();
+        } else {
+          for (REPL repl : crash.getContext().getPlugins(REPL.class)) {
+            if (repl.getName().equals(name)) {
+              found = repl;
+              break;
+            }
           }
         }
         if (found != null) {

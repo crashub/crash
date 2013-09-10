@@ -40,7 +40,17 @@ import java.util.logging.Logger;
 public class ScriptREPL implements REPL {
 
   /** . */
+  private static final ScriptREPL instance = new ScriptREPL();
+
+  /** . */
   static final Logger log = Logger.getLogger(ScriptREPL.class.getName());
+
+  public static ScriptREPL getInstance() {
+    return instance;
+  }
+
+  private ScriptREPL() {
+  }
 
   public String getName() {
     return "script";
