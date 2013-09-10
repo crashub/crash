@@ -149,7 +149,7 @@ public final class PluginContext {
     String version = null;
     try {
       Properties props = new Properties();
-      InputStream in = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.crsh/crsh.shell/pom.properties");
+      InputStream in = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.crashub/crash.shell/pom.properties");
       if (in != null) {
         props.load(in);
         version = props.getProperty("version");
