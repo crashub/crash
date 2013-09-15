@@ -92,6 +92,16 @@
       <artifactId>telnetd-x</artifactId>
     </dependency>
 
+    <!-- -->
+    <dependency>
+      <groupId>org.crashub</groupId>
+      <artifactId>crash.connectors.web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+    </dependency>
+
     <!-- Spring -->
     <dependency>
       <groupId>org.crashub</groupId>

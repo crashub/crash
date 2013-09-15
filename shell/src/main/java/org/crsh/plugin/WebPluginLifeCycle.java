@@ -43,12 +43,11 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
   /**
    * Returns a plugin context associated with the servlet context or null if such context does not exist.
    *
-   * @param sc the servlet context
+   * @param contextPath the context path
    * @return the associated plugin context
    * @throws NullPointerException if the servlet context argument is null
    */
-  public static PluginContext getPluginContext(ServletContext sc) throws NullPointerException {
-    String contextPath = sc.getContextPath();
+  public static PluginContext getPluginContext(String contextPath) throws NullPointerException {
     synchronized (lock) {
       return contextMap.get(contextPath);
     }

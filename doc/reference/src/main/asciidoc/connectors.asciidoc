@@ -1,0 +1,81 @@
+== Connectors
+
+Connectors manages the connection of the client to the shell.
+
+=== JLine connector
+
+todo
+
+=== SSH connector
+
+todo
+
+=== Telnet connector
+
+todo
+
+=== Web connector
+
+The websocket provides connectivity from a web browser through WebSockets based on:
+
+- The jQuery Terminal Emulator Plugin
+- a browser supporting WebSockets
+- a Java web server implementing the JSR 356 API
+
+==== Client setup
+
+CRaSH.js is the client side part of the connector, it is built on top of the _jQuery Terminal Emulator Plugin_ and
+ uses a client/server protocol for the shell connection.
+
+The web page embedding _CRaSH.js_ requires a few assets:
+
+[source,html]
+----
+<script src="js/jquery-1.7.1.min.js"></script>
+<script src="js/jquery.mousewheel-min.js"></script>
+<script src="js/jquery.terminal-0.7.12.js"></script>
+<script src="js/crash.js"></script>
+<link href="css/jquery.terminal.css" rel="stylesheet"/>
+----
+
+It can be setup in a few lines of JavaScript:
+
+[source,javascript]
+----
+
+// Create web socket url
+var path = window.location.pathname;
+var ctx = path.substring(0, path.indexOf('/', 1));
+var protocol;
+if (window.location.protocol == 'http:') {
+  protocol = 'ws';
+} else {
+  protocol = 'wss';
+}
+var url = protocol + '://' + window.location.host + ctx + '/crash';
+
+// Connect to the server
+var crash = new CRaSH($('#term_demo'), 1024, 768);
+crash.connect(url);
+----
+
+==== Server setup
+
+Currently the WebSocket server uses the JSR 356 API, the connector is bootstrapped by the +org.crashub:crash.connectors.web+ jar
+that contains an annotation based endpoint bound to the _/crash_ uri. Therefore the full uri is prefixed by the web application
+context path in which the connector is deployed.
+
+The +org.crashub:crash.connectors.web+ jar contains also the assets for setting up the client side exposed automatically
+when the jar is in the _WEB-INF/lib_ of the web application (they are located in the _META-INF/resources_ entry of the
+jar). To activate the connector the property +crash.web.enabled+ must be set to +true+.
+
+==== Step by step setup (recap)
+
+- put the +org.crashub:crash.connectors.web+ jar in _WEB-INF/lib_
+- add the +crash.web.enabled=true+ in _WEB-INF/crash/crash.properties_
+- create a web page in your war file that contains the assets listed previously
+- setup _CRaSH.js_ in the page
+
+==== Securing the server
+
+todo

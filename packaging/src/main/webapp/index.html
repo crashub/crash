@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>CRaSH Demo</title>
+    <script src="js/jquery-1.7.1.min.js"></script>
+    <script src="js/jquery.mousewheel-min.js"></script>
+    <script src="js/jquery.terminal-0.7.12.js"></script>
+    <script src="js/crash.js"></script>
+    <link href="css/jquery.terminal.css" rel="stylesheet"/>
+    </head>
+<body>
+
+<script>
+
+  //
+  $(function() {
+    // Create web socket url
+    var path = window.location.pathname;
+    var ctx = path.substring(0, path.indexOf('/', 1));
+    var protocol;
+    if (window.location.protocol == 'http:') {
+      protocol = 'ws';
+    } else {
+      protocol = 'wss';
+    }
+    var url = protocol + '://' + window.location.host + ctx + '/crash';
+    var crash = new CRaSH($('#term_demo'));
+    crash.connect(url);
+  });
+
+</script>
+
+  <div id="term_demo"></div>
+
+</body>
+</html>

@@ -130,7 +130,7 @@
         <classifier>standalone</classifier>
       </dependency>
 
-      <!-- Module shell telnet -->
+      <!-- Module connector telnet -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.telnet</artifactId>
@@ -149,7 +149,7 @@
         <classifier>standalone</classifier>
       </dependency>
 
-      <!-- Module shell ssh -->
+      <!-- Module connector ssh -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.ssh</artifactId>
@@ -168,7 +168,20 @@
         <classifier>standalone</classifier>
       </dependency>
 
-      <!-- Module shell embed spring -->
+      <!-- Module connector web -->
+      <dependency>
+        <groupId>org.crashub</groupId>
+        <artifactId>crash.connectors.web</artifactId>
+        <version>1.3.0-beta13-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.crashub</groupId>
+        <artifactId>crash.connectors.web</artifactId>
+        <version>1.3.0-beta13-SNAPSHOT</version>
+        <classifier>sources</classifier>
+      </dependency>
+
+      <!-- Module embed spring -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.embed.spring</artifactId>
@@ -181,7 +194,7 @@
         <classifier>sources</classifier>
       </dependency>
 
-      <!-- Module shell packaging -->
+      <!-- Module packaging -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.packaging</artifactId>
@@ -214,7 +227,7 @@
         <type>tar.gz</type>
       </dependency>
 
-      <!-- Module JCR -->
+      <!-- Module plugin JCR -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.plugins.jcr.core</artifactId>
@@ -252,7 +265,7 @@
         <classifier>standalone</classifier>
       </dependency>
 
-      <!-- Module JCR eXo -->
+      <!-- Module plugin JCR eXo -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.plugins.jcr.exo</artifactId>
@@ -272,7 +285,7 @@
         <classifier>sources</classifier>
       </dependency>
 
-      <!-- Module JCR Jackrabbit -->
+      <!-- Module plugin JCR Jackrabbit -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.plugins.jcr.jackrabbit</artifactId>
@@ -292,7 +305,7 @@
         <classifier>sources</classifier>
       </dependency>
 
-      <!-- Module Crowd -->
+      <!-- Module plugin Crowd -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.plugins.crowd</artifactId>
@@ -306,7 +319,7 @@
         <classifier>sources</classifier>
       </dependency>
 
-      <!-- Module Mail -->
+      <!-- Module plugin Mail -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.plugins.mail</artifactId>
@@ -320,7 +333,7 @@
         <classifier>sources</classifier>
       </dependency>
 
-      <!-- Module Cron -->
+      <!-- Module plugin Cron -->
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.plugins.cron</artifactId>
@@ -419,8 +432,13 @@
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.websocket</groupId>
+        <artifactId>javax.websocket-api</artifactId>
+        <version>1.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.sshd</groupId>
@@ -492,6 +510,11 @@
         <groupId>it.sauronsoftware.cron4j</groupId>
         <artifactId>cron4j</artifactId>
         <version>2.2.5</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.1</version>
       </dependency>
 
       <!-- For testing purposes -->

@@ -18,6 +18,10 @@ include::shell.asciidoc[]
 
 include::configuration.asciidoc[]
 
+= Connectors
+
+include::connectors.asciidoc[]
+
 = Developers
 
 include::developers.asciidoc[]

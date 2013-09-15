@@ -1,0 +1,47 @@
+<!--
+  ~ Copyright (C) 2003-2009 eXo Platform SAS.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
+  <id>jar</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>jar</format>
+  </formats>
+
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>**/WSLifeCycle.class</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <outputDirectory>/META-INF/resources/</outputDirectory>
+      <directory>src/main/webapp</directory>
+      <includes>
+        <include>css/*</include>
+        <include>js/*</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+
+</assembly>

@@ -41,10 +41,12 @@
         <include>net.wimpi:telnetd-x</include>
         <include>org.codehaus.groovy:groovy-all</include>
         <include>org.apache.ivy:ivy</include>
+        <include>com.google.code.gson:gson</include>
         <include>org.crashub:crash.cli</include>
         <include>org.crashub:crash.shell</include>
         <include>org.crashub:crash.connectors.telnet</include>
         <include>org.crashub:crash.connectors.ssh</include>
+        <include>org.crashub:crash.connectors.web</include>
       </includes>
       <excludes>
         <exclude>*:*:standalone</exclude>

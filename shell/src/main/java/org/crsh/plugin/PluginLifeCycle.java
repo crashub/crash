@@ -23,6 +23,7 @@ import org.crsh.vfs.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,10 +86,17 @@ public abstract class PluginLifeCycle {
     }
 
     // Override default properties from plugin defined properties.
-    for (final CRaSHPlugin<?> plugin : context.manager.getPlugins())
-    {
-      for (PropertyDescriptor<?> descriptor : plugin.getConfigurationCapabilities()) {
-        configureProperty(context, config, descriptor);
+    for (final CRaSHPlugin<?> plugin : context.manager.getPlugins()) {
+      Iterable<PropertyDescriptor<?>> capabilities = plugin.getConfigurationCapabilities();
+      Iterator<PropertyDescriptor<?>> i = capabilities.iterator();
+      if (i.hasNext()) {
+        while (i.hasNext()) {
+          PropertyDescriptor<?> descriptor = i.next();
+          log.fine("Adding plugin " + plugin + " property " + descriptor.getName());
+          configureProperty(context, config, descriptor);
+        }
+      } else {
+        log.fine("Plugin " + plugin + " does not declare any configuration property");
       }
     }
 
