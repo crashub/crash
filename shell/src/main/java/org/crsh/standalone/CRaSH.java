@@ -353,7 +353,6 @@ public class CRaSH {
 
       // Start crash for this command line
       final Terminal term = TerminalFactory.create();
-      term.init();
       ConsoleReader reader = new ConsoleReader(null, new FileInputStream(FileDescriptor.in), System.out, term);
       Runtime.getRuntime().addShutdownHook(new Thread(){
         @Override
