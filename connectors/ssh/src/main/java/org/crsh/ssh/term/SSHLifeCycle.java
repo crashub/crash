@@ -19,10 +19,13 @@
 package org.crsh.ssh.term;
 
 import org.apache.sshd.SshServer;
+import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.Session;
+import org.apache.sshd.server.Command;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
+import org.apache.sshd.server.sftp.SftpSubsystem;
 import org.crsh.plugin.PluginContext;
 import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
@@ -31,6 +34,7 @@ import org.crsh.term.spi.TermIOHandler;
 import org.crsh.vfs.Resource;
 
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -109,6 +113,11 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setShellFactory(new CRaSHCommandFactory(handler));
       server.setCommandFactory(new SCPCommandFactory(getContext()));
       server.setKeyPairProvider(new URLKeyPairProvider(key));
+
+      //
+      ArrayList<NamedFactory<Command>> subsystemFactoryList = new ArrayList<NamedFactory<Command>>(1);
+      subsystemFactoryList.add(new SftpSubsystem.Factory());
+      server.setSubsystemFactories(subsystemFactoryList);
 
       //
       if (authentication.getCredentialType().equals(String.class)) {
