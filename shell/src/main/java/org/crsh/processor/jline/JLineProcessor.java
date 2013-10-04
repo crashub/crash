@@ -20,6 +20,7 @@
 package org.crsh.processor.jline;
 
 import jline.console.ConsoleReader;
+import jline.console.UserInterruptException;
 import jline.console.completer.Completer;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.Delimiter;
@@ -94,7 +95,12 @@ public class JLineProcessor implements Runnable, Completer {
 
   private void loop() {
     while (true) {
-      String line = readLine();
+      String line;
+      try {
+        line = readLine();
+      } catch (UserInterruptException e) {
+        continue;
+      }
 
       //
       ShellProcess process = shell.createProcess(line);
