@@ -21,6 +21,7 @@ package org.crsh.shell.impl.command;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.impl.completion.CompletionMatch;
@@ -143,12 +144,18 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   }
 
   // Shell implementation **********************************************************************************************
+  private HashMap<String, Script> parsedScripts = new HashMap<String, Script>();
 
   private String eval(String name, String def) {
     ClassLoader previous = setCRaSHLoader();
     try {
       GroovyShell shell = getGroovyShell();
-      Object ret = shell.evaluate("return " + name + ";");
+      Script script = parsedScripts.get(name);
+      if (script == null) {
+        script = shell.parse("return " + name + ";");
+        parsedScripts.put(name, script);
+      }
+      Object ret = script.run();
       if (ret instanceof Closure) {
         log.log(Level.FINEST, "Invoking " + name + " closure");
         Closure c = (Closure)ret;
