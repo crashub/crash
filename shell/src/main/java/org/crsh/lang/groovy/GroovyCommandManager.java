@@ -21,6 +21,7 @@ package org.crsh.lang.groovy;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.command.BaseCommand;
@@ -134,10 +135,27 @@ public class GroovyCommandManager extends CRaSHPlugin<CommandManager> implements
     return shell;
   }
 
+  private Script getParsedScript(HashMap<String, Object> session, String name) {
+    GroovyShell shell = getGroovyShell(session);
+    HashMap<String, Script> parsedScripts = (HashMap<String, Script>) session.get("parsedScripts");
+    if (parsedScripts == null) {
+      parsedScripts = new HashMap<String, Script>(0);
+    }
+
+    Script script = parsedScripts.get(name);
+    if (script == null) {
+      script = shell.parse("return " + name + ";");
+      parsedScripts.put(name, script);
+    }
+
+    session.put("parsedScripts", parsedScripts);
+
+    return parsedScripts.get(name);
+  }
+
   private String eval(HashMap<String, Object> session, String name, String def) {
     try {
-      GroovyShell shell = getGroovyShell(session);
-      Object ret = shell.evaluate("return " + name + ";");
+      Object ret = getParsedScript(session, name).run();
       if (ret instanceof Closure) {
         log.log(Level.FINEST, "Invoking " + name + " closure");
         Closure c = (Closure)ret;
