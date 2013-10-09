@@ -114,7 +114,7 @@ public class JLineProcessor implements Runnable, Completer {
   }
 
   private void interrupt() {
-//    interrupt = true;
+    interrupt = true;
 //    thread.interrupt();
     cancel();
   }
@@ -316,11 +316,17 @@ public class JLineProcessor implements Runnable, Completer {
       try {
         line = readAndParseCommand();
       }
-      catch (Throwable t) {
-        t.printStackTrace();
+      catch (InterruptedIOException e) {
+          continue;
+      } catch (IOException e) {
+          e.printStackTrace();
       }
 
-      //
+      if (line == null) {
+        break;
+      }
+
+        //
       ShellProcess process = shell.createProcess(line);
       JLineProcessContext context = new JLineProcessContext(this);
       current.set(process);
