@@ -136,6 +136,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
         e.printStackTrace();
       }
       catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
         break;
       }
     }
@@ -215,6 +216,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
           return;
         }
         catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
           throw new AssertionError(e);
         }
       } else {

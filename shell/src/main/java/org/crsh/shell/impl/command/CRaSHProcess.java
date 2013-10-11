@@ -62,6 +62,7 @@ abstract class CRaSHProcess implements ShellProcess {
           }
         }
         catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
           resp = ShellResponse.cancelled();
         }
       } catch (Throwable t) {
