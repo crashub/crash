@@ -148,7 +148,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     ClassLoader previous = setCRaSHLoader();
     try {
       GroovyShell shell = getGroovyShell();
-      Object ret = shell.evaluate("return " + name + ";");
+      Object ret = shell.getContext().getVariable(name);
       if (ret instanceof Closure) {
         log.log(Level.FINEST, "Invoking " + name + " closure");
         Closure c = (Closure)ret;
