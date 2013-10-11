@@ -137,7 +137,7 @@ public class GroovyCommandManager extends CRaSHPlugin<CommandManager> implements
   private String eval(HashMap<String, Object> session, String name, String def) {
     try {
       GroovyShell shell = getGroovyShell(session);
-      Object ret = shell.evaluate("return " + name + ";");
+      Object ret = shell.getContext().getVariable(name);
       if (ret instanceof Closure) {
         log.log(Level.FINEST, "Invoking " + name + " closure");
         Closure c = (Closure)ret;
