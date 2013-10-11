@@ -22,8 +22,8 @@ package org.crsh.processor.jline;
 import jline.Terminal;
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
-import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.Delimiter;
+import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
@@ -101,7 +101,8 @@ public class JLineProcessor implements Runnable, Completer {
   private boolean getBoolean(String name) {
     if (name.equals(IGNORE_INTERRUPTS)) {
       return false;
-    } else {
+    }
+    else {
       throw new UnsupportedOperationException();
     }
   }
@@ -119,10 +120,8 @@ public class JLineProcessor implements Runnable, Completer {
     cancel();
   }
 
-  private class ConsoleInputStream extends InputStream
-  {
-    private int read(boolean wait) throws IOException
-    {
+  private class ConsoleInputStream extends InputStream {
+    private int read(boolean wait) throws IOException {
       if (!running) {
         return -1;
       }
@@ -134,11 +133,13 @@ public class JLineProcessor implements Runnable, Completer {
       if (wait) {
         try {
           i = queue.take();
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           throw new InterruptedIOException();
         }
         checkInterrupt();
-      } else {
+      }
+      else {
         i = queue.poll();
       }
       if (i == null) {
@@ -148,19 +149,19 @@ public class JLineProcessor implements Runnable, Completer {
     }
 
     @Override
-    public int read() throws IOException
-    {
+    public int read() throws IOException {
       return read(true);
     }
 
     @Override
-    public int read(byte b[], int off, int len) throws IOException
-    {
+    public int read(byte b[], int off, int len) throws IOException {
       if (b == null) {
         throw new NullPointerException();
-      } else if (off < 0 || len < 0 || len > b.length - off) {
+      }
+      else if (off < 0 || len < 0 || len > b.length - off) {
         throw new IndexOutOfBoundsException();
-      } else if (len == 0) {
+      }
+      else if (len == 0) {
         return 0;
       }
 
@@ -169,13 +170,13 @@ public class JLineProcessor implements Runnable, Completer {
       if (i < 0) {
         return -1;
       }
-      b[off++] = (byte) i;
+      b[off++] = (byte)i;
       while (nb < len) {
         i = read(false);
         if (i < 0) {
           return nb;
         }
-        b[off++] = (byte) i;
+        b[off++] = (byte)i;
         nb++;
       }
       return nb;
@@ -187,27 +188,20 @@ public class JLineProcessor implements Runnable, Completer {
     }
   }
 
-  private class Pipe implements Runnable
-  {
-    public void run()
-    {
+  private class Pipe implements Runnable {
+    public void run() {
       try {
-        while (running)
-        {
-          try
-          {
+        while (running) {
+          try {
             int c = in.read();
-            if (c == -1)
-            {
+            if (c == -1) {
               return;
             }
-            else if (c == 4 && !getBoolean(IGNORE_INTERRUPTS))
-            {
+            else if (c == 4 && !getBoolean(IGNORE_INTERRUPTS)) {
               err.println("^D");
               return;
             }
-            else if (c == 3 && !getBoolean(IGNORE_INTERRUPTS))
-            {
+            else if (c == 3 && !getBoolean(IGNORE_INTERRUPTS)) {
               err.println("^C");
               reader.getCursorBuffer().clear();
               interrupt();
@@ -219,15 +213,12 @@ public class JLineProcessor implements Runnable, Completer {
           }
         }
       }
-      finally
-      {
+      finally {
         eof = true;
-        try
-        {
+        try {
           queue.put(-1);
         }
-        catch (InterruptedException e)
-        {
+        catch (InterruptedException e) {
         }
       }
     }
@@ -240,18 +231,19 @@ public class JLineProcessor implements Runnable, Completer {
     while (loop) {
       checkInterrupt();
       String line = reader.readLine(first ? getPrompt() : "> ");
-      if (line == null)
-      {
+      if (line == null) {
         break;
       }
       if (command == null) {
         command = line;
-      } else {
+      }
+      else {
         command += " " + line;
       }
-      if (reader.getHistory().size()==0) {
+      if (reader.getHistory().size() == 0) {
         reader.getHistory().add(command);
-      } else {
+      }
+      else {
         // jline doesn't add blank lines to the history so we don't
         // need to replace the command in jline's console history with
         // an indented one
@@ -261,7 +253,8 @@ public class JLineProcessor implements Runnable, Completer {
       }
       try {
         loop = false;
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         loop = true;
         first = false;
       }
@@ -317,16 +310,17 @@ public class JLineProcessor implements Runnable, Completer {
         line = readAndParseCommand();
       }
       catch (InterruptedIOException e) {
-          continue;
-      } catch (IOException e) {
-          e.printStackTrace();
+        continue;
+      }
+      catch (IOException e) {
+        e.printStackTrace();
       }
 
       if (line == null) {
         break;
       }
 
-        //
+      //
       ShellProcess process = shell.createProcess(line);
       JLineProcessContext context = new JLineProcessContext(this);
       current.set(process);
@@ -358,9 +352,11 @@ public class JLineProcessor implements Runnable, Completer {
       //
       if (response instanceof ShellResponse.Cancelled) {
         // Do nothing
-      } else if (response instanceof ShellResponse.Close) {
+      }
+      else if (response instanceof ShellResponse.Close) {
         break;
-      } else {
+      }
+      else {
         if (!flushed) {
           writer.flush();
         }
@@ -396,7 +392,8 @@ public class JLineProcessor implements Runnable, Completer {
     ShellProcess process = current.get();
     if (process != null) {
       process.cancel();
-    } else {
+    }
+    else {
       // Do nothing
     }
   }
