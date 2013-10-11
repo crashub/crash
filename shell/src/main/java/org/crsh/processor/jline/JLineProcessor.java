@@ -341,13 +341,12 @@ public class JLineProcessor implements Runnable, Completer {
       ShellResponse response = context.resp.get();
 
       // Write message
-      boolean flushed = false;
       String msg = response.getMessage();
       if (msg.length() > 0) {
         writer.write(msg);
-        writer.flush();
-        flushed = true;
       }
+      writer.println();
+      writer.flush();
 
       //
       if (response instanceof ShellResponse.Cancelled) {
@@ -355,11 +354,6 @@ public class JLineProcessor implements Runnable, Completer {
       }
       else if (response instanceof ShellResponse.Close) {
         break;
-      }
-      else {
-        if (!flushed) {
-          writer.flush();
-        }
       }
     }
   }
