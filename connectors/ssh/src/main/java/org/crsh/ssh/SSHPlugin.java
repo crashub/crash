@@ -97,8 +97,11 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
       if (f.exists() && f.isFile()) {
         try {
           serverKeyURL = f.toURI().toURL();
+          serverKey = new Resource("hostkey.pem", serverKeyURL);
         } catch (MalformedURLException e) {
           log.log(Level.FINE, "Ignoring invalid server key " + serverKeyPath, e);
+        } catch (IOException e) {
+          log.log(Level.FINE, "Could not load SSH key from " + serverKeyPath, e);
         }
       } else {
         log.log(Level.FINE, "Ignoring invalid server key path " + serverKeyPath);
