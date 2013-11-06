@@ -54,3 +54,16 @@ Then, it will appears in +$CRASH_HOME/conf/+
 === Where are the base commands ?
 
 They will be in +$CRASH_HOME/cmd/base+ directory. You have to launch CRaSH once in standalone mode.
+
+=== I try to run CRaSH in Eclipse and it terminates immediately
+
+CRaSH uses jline to handle keyboard input, and it's bypassing the Java API to read the key events.
+Somewhere in the process there is a mismatch with the input handling in the Console view of Eclipse, and
+CRaSH terminates without any reported error. You have to force jline to use a pure Java
+handling of the keyboard events by adding the following JVM parameter in the Launch Configuration:
+
+----
+-Djline.terminal=jline.UnsupportedTerminal
+----
+
+You will notice that the caret is not positioned correctly after submitting a command.
