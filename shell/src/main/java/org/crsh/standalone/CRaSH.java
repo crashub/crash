@@ -364,11 +364,17 @@ public class CRaSH {
         }
       });
 
-      AnsiConsole.systemInstall();
+      // Use AnsiConsole only if term doesn't support Ansi
+      PrintStream out = System.out;
+      PrintStream err = System.err;
+      if (!term.isAnsiSupported()) {
+        out = AnsiConsole.out;
+        err = AnsiConsole.err;
+      }
 
       //
       FileInputStream in = new FileInputStream(FileDescriptor.in);
-      final JLineProcessor processor = new JLineProcessor( shell, in, AnsiConsole.out, AnsiConsole.err, term);
+      final JLineProcessor processor = new JLineProcessor( shell, in, out, err, term);
 
       // Install signal handler
 //      InterruptHandler ih = new InterruptHandler(new Runnable() {
@@ -386,9 +392,6 @@ public class CRaSH {
         t.printStackTrace();
       }
       finally {
-
-        //
-        AnsiConsole.systemUninstall();
 
         //
         if (closeable != null) {
