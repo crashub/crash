@@ -19,6 +19,7 @@
 package org.crsh.lang.java;
 
 import org.crsh.AbstractTestCase;
+import org.crsh.util.IO;
 import org.crsh.util.Utils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -27,6 +28,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
@@ -109,6 +111,11 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
     assertEquals(2, classes.size());
     assertEndsWith("/HashMap.class", classes.get(0).getName());
     assertEndsWith("/Map.class", classes.get(1).getName());
+
+    // Attempt to get stream
+    InputStream in = classes.get(0).openInputStream();
+    byte[] bytes = IO.readAsBytes(in);
+    assertTrue(bytes.length > 0);
 
     // Recurse
     classes = Utils.list(resolver.resolve("java.util", true));

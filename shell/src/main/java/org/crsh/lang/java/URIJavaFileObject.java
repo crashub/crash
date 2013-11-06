@@ -1,5 +1,7 @@
 package org.crsh.lang.java;
 
+import org.crsh.util.InputStreamFactory;
+
 import javax.lang.model.element.NestingKind;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
@@ -25,11 +27,15 @@ class URIJavaFileObject implements JavaFileObject {
   /** . */
   private final long lastModified;
 
-  public URIJavaFileObject(String binaryName, URI uri, long lastModified) {
+  /** . */
+  private final InputStreamFactory inputStreamFactory;
+
+  public URIJavaFileObject(String binaryName, URI uri, InputStreamFactory inputStreamFactory, long lastModified) {
     this.uri = uri;
     this.binaryName = binaryName;
     this.name = uri.getPath() == null ? uri.getSchemeSpecificPart() : uri.getPath();
     this.lastModified = lastModified;
+    this.inputStreamFactory = inputStreamFactory;
   }
 
   public URI toUri() {
@@ -45,7 +51,7 @@ class URIJavaFileObject implements JavaFileObject {
   }
 
   public InputStream openInputStream() throws IOException {
-    return uri.toURL().openStream();
+    return inputStreamFactory.open();
   }
 
   public OutputStream openOutputStream() throws IOException {

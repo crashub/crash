@@ -18,11 +18,14 @@
  */
 package org.crsh.lang.java;
 
+import org.crsh.util.InputStreamFactory;
 import org.crsh.util.ZipIterator;
 
 import javax.tools.JavaFileObject;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -63,7 +66,7 @@ class ClasspathResolver {
           if (!entry.isDirectory() && name.startsWith(pkgName) && (name.indexOf('/', pkgName.length() + 1) == -1 || recurse)) {
             String binaryName = name.substring(0, name.length() - ".class".length()).replace('/', '.');
             URI entryURI = new URI("jar:" + containerURLs + "!/" + name);
-            ret.add(new URIJavaFileObject(binaryName, entryURI, entry.getTime()));
+            ret.add(new URIJavaFileObject(binaryName, entryURI, i.open(), entry.getTime()));
           }
         }
       } else {
@@ -77,7 +80,7 @@ class ClasspathResolver {
     final File[] children = file.listFiles();
     if (children != null) {
       Arrays.sort(children);
-      for (File child : children) {
+      for (final File child : children) {
         if (child.isDirectory()) {
           if (recurse) {
             resolve(pkgName, ret, child, recurse);
@@ -86,7 +89,13 @@ class ClasspathResolver {
           String childName = child.getName();
           if (childName.endsWith(".class")) {
             String binaryName = pkgName + "." + childName.substring(0, childName.length() - ".class".length());
-            ret.add(new URIJavaFileObject(binaryName, child.toURI(), child.lastModified()));
+            InputStreamFactory streamFactory = new InputStreamFactory() {
+              @Override
+              public InputStream open() throws IOException {
+                return new FileInputStream(child);
+              }
+            };
+            ret.add(new URIJavaFileObject(binaryName, child.toURI(), streamFactory, child.lastModified()));
           }
         }
       }
