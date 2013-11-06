@@ -77,13 +77,19 @@ class jdbc implements Completer{
 
     // We use this trick to work around the fact that the DriverManager#getConnection will not
     // use the thread context classloader because of the nasty DriverManager#getCallerClassLoader method
-    def getConnection = DriverManager.class.getDeclaredMethod("getConnection", String.class, Properties.class, ClassLoader.class)
-    if (!getConnection.accessible)
-      getConnection.accessible = true
-
-    //
     try {
-      connection = getConnection.invoke(null, connectionString, props, Thread.currentThread().getContextClassLoader());
+      try {
+        def getConnection = DriverManager.class.getDeclaredMethod("getConnection", String.class, Properties.class, ClassLoader.class);
+        getConnection.setAccessible(true);
+        connection = getConnection.invoke(null, connectionString, props, Thread.currentThread().getContextClassLoader());
+      }
+      catch (NoSuchMethodException ignore) {
+        // JDK8 does not have this method instead it has the same method but with Class as last argument
+        // that we must invoke with null
+        def getConnection = DriverManager.class.getDeclaredMethod("getConnection", String.class, Properties.class, Class.class);
+        getConnection.setAccessible(true);
+        connection = getConnection.invoke(null, connectionString, props, null);
+      }
     }
     catch (InvocationTargetException ite) {
       throw ite.cause;
