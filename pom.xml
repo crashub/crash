@@ -72,7 +72,7 @@
 
     <!-- maven-release-plugin -->
     <useReleaseProfile>false</useReleaseProfile>
-    <arguments>-Prelease,izpack,sign-artifacts</arguments>
+    <arguments>-Prelease,sign-artifacts</arguments>
     <pushChanges>false</pushChanges>
     <autoVersionSubmodules>true</autoVersionSubmodules>
 
