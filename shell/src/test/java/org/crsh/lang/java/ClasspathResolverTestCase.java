@@ -31,11 +31,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** @author Julien Viet */
@@ -43,6 +45,17 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
 
   /** . */
   private JavaArchive archive;
+  
+  private static List<JavaFileObject> collect(List<JavaFileObject> files) {
+    TreeMap<String, JavaFileObject> map = new TreeMap<String, JavaFileObject>();
+    for (JavaFileObject file : files) {
+      String name = file.getName();
+      int index = name.lastIndexOf('/');
+      String key = name.substring(Math.max(0, index));
+      map.put(key, file);
+    }
+    return new ArrayList<JavaFileObject>(map.values());
+  }
 
   @Override
   protected void setUp() throws Exception {
@@ -58,17 +71,17 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
     ClasspathResolver resolver = new ClasspathResolver(cl);
 
     // No recurse
-    List<JavaFileObject> classes = Utils.list(resolver.resolve("java.util", false));
+    List<JavaFileObject> classes = collect(Utils.list(resolver.resolve("java.util", false)));
     assertEquals(2, classes.size());
     assertEndsWith("/HashMap.class", classes.get(0).getName());
     assertEndsWith("/Map.class", classes.get(1).getName());
 
     // Recurse
-    classes = Utils.list(resolver.resolve("java.util", true));
+    classes = collect(Utils.list(resolver.resolve("java.util", true)));
     assertEquals(3, classes.size());
-    assertEndsWith("/HashMap.class", classes.get(0).getName());
-    assertEndsWith("/Map.class", classes.get(1).getName());
-    assertEndsWith("/ConcurrentHashMap.class", classes.get(2).getName());
+    assertEndsWith("/ConcurrentHashMap.class", classes.get(0).getName());
+    assertEndsWith("/HashMap.class", classes.get(1).getName());
+    assertEndsWith("/Map.class", classes.get(2).getName());
   }
 
 
@@ -78,13 +91,13 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
     ClasspathResolver resolver = new ClasspathResolver(cl);
 
     // No recurse
-    List<JavaFileObject> classes = Utils.list(resolver.resolve("java.util", false));
+    List<JavaFileObject> classes = collect(Utils.list(resolver.resolve("java.util", false)));
     assertEquals(2, classes.size());
     assertEndsWith("/HashMap.class", classes.get(0).getName());
     assertEndsWith("/Map.class", classes.get(1).getName());
 
     // Recurse
-    classes = Utils.list(resolver.resolve("java.util", true));
+    classes = collect(Utils.list(resolver.resolve("java.util", true)));
     assertEquals(3, classes.size());
     assertEndsWith("/ConcurrentHashMap.class", classes.get(0).getName());
     assertEndsWith("/HashMap.class", classes.get(1).getName());
@@ -107,7 +120,7 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
     ClasspathResolver resolver = new ClasspathResolver(cl);
 
     // No recurse
-    List<JavaFileObject> classes = Utils.list(resolver.resolve("java.util", false));
+    List<JavaFileObject> classes = collect(Utils.list(resolver.resolve("java.util", false)));
     assertEquals(2, classes.size());
     assertEndsWith("/HashMap.class", classes.get(0).getName());
     assertEndsWith("/Map.class", classes.get(1).getName());
@@ -118,7 +131,7 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
     assertTrue(bytes.length > 0);
 
     // Recurse
-    classes = Utils.list(resolver.resolve("java.util", true));
+    classes = collect(Utils.list(resolver.resolve("java.util", true)));
     assertEquals(3, classes.size());
     assertEndsWith("/ConcurrentHashMap.class", classes.get(0).getName());
     assertEndsWith("/HashMap.class", classes.get(1).getName());

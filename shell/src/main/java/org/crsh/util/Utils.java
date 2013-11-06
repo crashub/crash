@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,6 +93,12 @@ public class Utils {
     HashMap<K, V> map = new HashMap<K, V>();
     map.put(key, value);
     return map;
+  }
+
+  public static <E> HashSet<E> set(E... elements) {
+    HashSet<E> set = new HashSet<E>(elements.length);
+    Collections.addAll(set, elements);
+    return set;
   }
 
   public static <E> List<E> list(E... elements) {
