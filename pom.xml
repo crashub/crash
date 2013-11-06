@@ -809,7 +809,7 @@
                   <rules>
                     <requireJavaVersion>
                       <message>You must release with Java 6!</message>
-                      <version>[1.6,1.7)</version>
+                      <version>[1.6,1.8)</version>
                     </requireJavaVersion>
                   </rules>
                 </configuration>
