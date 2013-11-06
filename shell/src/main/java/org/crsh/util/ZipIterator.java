@@ -49,7 +49,7 @@ public abstract class ZipIterator implements Closeable {
         while (container.hasNext()) {
           ZipEntry entry = container.next();
           if (entry.getName().equals(path)) {
-            InputStreamFactory resolved = container.open();
+            InputStreamFactory resolved = container.getStreamFactory();
             final InputStream nested = resolved.open();
             InputStream filter = new InputStream() {
               @Override
@@ -130,7 +130,7 @@ public abstract class ZipIterator implements Closeable {
       public void close() throws IOException {
       }
       @Override
-      public InputStreamFactory open() throws IOException {
+      public InputStreamFactory getStreamFactory() throws IOException {
         final ZipEntry capture = next;
         return new InputStreamFactory() {
           public InputStream open() throws IOException {
@@ -162,7 +162,7 @@ public abstract class ZipIterator implements Closeable {
         return tmp;
       }
       @Override
-      public InputStreamFactory open() throws IOException {
+      public InputStreamFactory getStreamFactory() throws IOException {
         while (true) {
           int len = zip.read(tmp, 0, tmp.length);
           if (len == -1) {
@@ -189,6 +189,12 @@ public abstract class ZipIterator implements Closeable {
 
   public abstract ZipEntry next() throws IOException;
 
-  public abstract InputStreamFactory open() throws IOException;
+  /**
+   * Return a stream factory for the current entry.
+   *
+   * @return the stream factory
+   * @throws IOException anything that would prevent to obtain a stream factory
+   */
+  public abstract InputStreamFactory getStreamFactory() throws IOException;
 
 }

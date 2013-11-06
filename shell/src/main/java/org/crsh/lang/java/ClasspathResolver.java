@@ -66,7 +66,7 @@ class ClasspathResolver {
           if (!entry.isDirectory() && name.startsWith(pkgName) && (name.indexOf('/', pkgName.length() + 1) == -1 || recurse)) {
             String binaryName = name.substring(0, name.length() - ".class".length()).replace('/', '.');
             URI entryURI = new URI("jar:" + containerURLs + "!/" + name);
-            ret.add(new URIJavaFileObject(binaryName, entryURI, i.open(), entry.getTime()));
+            ret.add(new URIJavaFileObject(binaryName, entryURI, i.getStreamFactory(), entry.getTime()));
           }
         }
       } else {

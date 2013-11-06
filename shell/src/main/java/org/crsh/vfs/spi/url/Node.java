@@ -100,7 +100,7 @@ public class Node {
         while (i.hasNext()) {
           ZipEntry entry = i.next();
           if (entry.getName().startsWith(path)) {
-            add(url, entry.getName().substring(path.length()), i.open());
+            add(url, entry.getName().substring(path.length()), i.getStreamFactory());
           }
         }
       }
