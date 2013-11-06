@@ -353,7 +353,6 @@ public class CRaSH {
       // Start crash for this command line
       jline.TerminalFactory.registerFlavor(jline.TerminalFactory.Flavor.UNIX, NoInterruptUnixTerminal.class);
       final Terminal term = TerminalFactory.create();
-      term.init();
       Runtime.getRuntime().addShutdownHook(new Thread(){
         @Override
         public void run() {
