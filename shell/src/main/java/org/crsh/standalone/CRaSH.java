@@ -376,14 +376,6 @@ public class CRaSH {
       FileInputStream in = new FileInputStream(FileDescriptor.in);
       final JLineProcessor processor = new JLineProcessor( shell, in, out, err, term);
 
-      // Install signal handler
-//      InterruptHandler ih = new InterruptHandler(new Runnable() {
-//        public void run() {
-//          processor.cancel();
-//        }
-//      });
-//      ih.install();
-
       //
       try {
         processor.run();
