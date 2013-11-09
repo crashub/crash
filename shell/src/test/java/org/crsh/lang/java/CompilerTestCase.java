@@ -23,6 +23,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -30,6 +31,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -53,32 +57,86 @@ public class CompilerTestCase extends AbstractTestCase {
   }
 
   public void testImport() throws Exception {
+
     Compiler compiler = new Compiler();
     List<JavaClassFileObject> files = compiler.compile("foo.A", "package foo;\n public class A {}");
     assertEquals(1, files.size());
-    JavaArchive a = ShrinkWrap.create(JavaArchive.class);
+    final JavaClassFileObject aFile = files.get(0);
+    JavaArchive a = ShrinkWrap.create(JavaArchive.class, "crash.jar");
     a.add(new ByteArrayAsset(files.get(0).getBytes()), "foo/A.class");
-    File tmp = File.createTempFile("crash", ".jar");
-    assertTrue(tmp.delete());
-    a.as(ZipExporter.class).exportTo(tmp);
-    URLClassLoader cl = new URLClassLoader(new URL[]{tmp.toURI().toURL()});
-    compiler = new Compiler(cl);
-    files = compiler.compile("B",
-        "import foo.A;\n" +
-        "public class B implements java.util.concurrent.Callable<A> {\n" +
-        "public A call() {\n" +
-        "return new A();\n" +
-        "}\n" +
-        "}");
-    assertEquals(1, files.size());
-    LoadingClassLoader loader = new LoadingClassLoader(cl, files);
-    Class<?> B = loader.findClass("B");
-    Callable<?> asCallable = (Callable<?>)B.newInstance();
-    Object ret = asCallable.call();
-    assertNotNull(ret);
-    Class<?> A = ret.getClass();
-    assertEquals("foo.A", A.getName());
-    assertEquals(cl, A.getClassLoader());
+    a.setManifest(Thread.currentThread().getContextClassLoader().getResource("META-INF/MANIFEST.MF"));
+
+    for (int i = 0;i < 2;i++) {
+
+      //
+
+      //
+      ClassLoader cl;
+      if (i == 0) {
+        File tmp = File.createTempFile("crash", ".jar");
+        assertTrue(tmp.delete());
+        a.as(ZipExporter.class).exportTo(tmp);
+        cl = new URLClassLoader(new URL[]{tmp.toURI().toURL()});
+      } else {
+        WebArchive b = ShrinkWrap.create(WebArchive.class);
+        b.setManifest(Thread.currentThread().getContextClassLoader().getResource("META-INF/MANIFEST.MF"));
+        b.addAsLibrary(a);
+        final File tmp = File.createTempFile("crash", ".war");
+        assertTrue(tmp.delete());
+        b.as(ZipExporter.class).exportTo(tmp);
+        cl = new ClassLoader(Thread.currentThread().getContextClassLoader()) {
+          Class<?> aClass = null;
+          @Override
+          protected Class<?> findClass(String name) throws ClassNotFoundException {
+            if (name.equals("foo.A")) {
+              if (aClass == null) {
+                // Normally we should use the bytes from the nested crash.jar but it's too difficult
+                // so we just use what we compiled before as it is the same bytecode and already
+                // available here
+                byte[] bytes = aFile.getBytes();
+                aClass = defineClass(name, bytes, 0, bytes.length);
+              }
+              return aClass;
+            } else {
+              return super.loadClass(name);
+            }
+          }
+          @Override
+          protected Enumeration<URL> findResources(String name) throws IOException {
+            if ("META-INF/MANIFEST.MF".equals(name)) {
+              URL u1 = new URL("jar:" + tmp.toURI().toURL() + "!/META-INF/MANIFEST.MF");
+              URL u2 = new URL("jar:" + ("jar:" + tmp.toURI().toURL() + "!/WEB-INF/lib/crash.jar") + "!/META-INF/MANIFEST.MF");
+              return Collections.enumeration(Arrays.asList(u1, u2));
+            } else if ("foo".equals(name)) {
+              String u = "jar:" + ("jar:" + tmp.toURI().toURL() + "!/WEB-INF/lib/crash.jar") + "!/foo/";
+              return Collections.enumeration(Collections.singleton(new URL(u)));
+            } else {
+              return super.findResources(name);
+            }
+          }
+        };
+      }
+
+      //
+      compiler = new Compiler(cl);
+      files = compiler.compile("B",
+          "import foo.A;\n" +
+              "public class B implements java.util.concurrent.Callable<A> {\n" +
+              "public A call() {\n" +
+              "return new A();\n" +
+              "}\n" +
+              "}");
+      assertEquals(1, files.size());
+      LoadingClassLoader loader = new LoadingClassLoader(cl, files);
+      Class<?> B = loader.findClass("B");
+      Callable<?> asCallable = (Callable<?>)B.newInstance();
+      Object ret = asCallable.call();
+      assertNotNull(ret);
+      Class<?> A = ret.getClass();
+      assertEquals("foo.A", A.getName());
+      assertEquals(cl, A.getClassLoader());
+    }
+
   }
 
   public void testCompilationFailure() throws Exception {

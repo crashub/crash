@@ -1,7 +1,27 @@
+/*
+ * Copyright (C) 2012 eXo Platform SAS.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.crsh.lang.java;
 
 import org.crsh.util.InputStreamFactory;
 
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
@@ -9,11 +29,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import javax.lang.model.element.Modifier;
 import java.net.URI;
 
 /** @author Julien Viet */
-class URIJavaFileObject implements JavaFileObject {
+class NodeJavaFileObject implements JavaFileObject {
 
   /** . */
   final String binaryName;
@@ -28,14 +47,14 @@ class URIJavaFileObject implements JavaFileObject {
   private final long lastModified;
 
   /** . */
-  private final InputStreamFactory inputStreamFactory;
+  private final InputStreamFactory stream;
 
-  public URIJavaFileObject(String binaryName, URI uri, InputStreamFactory inputStreamFactory, long lastModified) {
+  public NodeJavaFileObject(String binaryName, URI uri, InputStreamFactory stream, long lastModified) {
     this.uri = uri;
     this.binaryName = binaryName;
     this.name = uri.getPath() == null ? uri.getSchemeSpecificPart() : uri.getPath();
     this.lastModified = lastModified;
-    this.inputStreamFactory = inputStreamFactory;
+    this.stream = stream;
   }
 
   public URI toUri() {
@@ -51,7 +70,7 @@ class URIJavaFileObject implements JavaFileObject {
   }
 
   public InputStream openInputStream() throws IOException {
-    return inputStreamFactory.open();
+    return stream.open();
   }
 
   public OutputStream openOutputStream() throws IOException {

@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -59,10 +60,12 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
 
   @Override
   protected void setUp() throws Exception {
+    URL manifest = Thread.currentThread().getContextClassLoader().getResource("META-INF/MANIFEST.MF");
     archive = ShrinkWrap.create(JavaArchive.class, "my.jar");
     archive.addClass(HashMap.class);
     archive.addClass(Map.class);
     archive.addClass(ConcurrentHashMap.class);
+    archive.setManifest(manifest);
   }
 
   public void testDir() throws Exception {
@@ -86,7 +89,7 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
 
 
   public void testJar() throws Exception {
-    File jar = toFile(this.archive, "");
+    File jar = toFile(this.archive, ".jar");
     ClassLoader cl = new URLClassLoader(new URL[]{jar.toURI().toURL()}, null);
     ClasspathResolver resolver = new ClasspathResolver(cl);
 
@@ -105,11 +108,15 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
   }
 
   public void testNestedJar() throws Exception {
-    final File war = toFile(ShrinkWrap.create(WebArchive.class).addAsLibrary(archive), "");
+    final File war = toFile(ShrinkWrap.create(WebArchive.class).addAsLibrary(archive), ".jar");
     ClassLoader cl = new ClassLoader(null) {
       @Override
       protected Enumeration<URL> findResources(String name) throws IOException {
-        if ("java/util".equals(name)) {
+        if ("META-INF/MANIFEST.MF".equals(name)) {
+          URL u1 = new URL("jar:" + war.toURI().toURL() + "!/META-INF/MANIFEST.MF");
+          URL u2 = new URL("jar:" + ("jar:" + war.toURI().toURL() + "!/WEB-INF/lib/my.jar") + "!/META-INF/MANIFEST.MF");
+          return Collections.enumeration(Arrays.asList(u1, u2));
+        } else if ("java/util".equals(name)) {
           String u = "jar:" + ("jar:" + war.toURI().toURL() + "!/WEB-INF/lib/my.jar") + "!/java/util/";
           return Collections.enumeration(Collections.singleton(new URL(u)));
         } else {

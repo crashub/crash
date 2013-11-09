@@ -32,20 +32,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-public class Node {
+public class Node implements Iterable<Resource> {
 
   /** . */
-  final String name;
+  public final String name;
 
   /** . */
   HashMap<String, Node> children = new HashMap<String, Node>();
 
   /** . */
-  LinkedList<File> files = new LinkedList<File>();
+  LinkedList<Resource> resources = new LinkedList<Resource>();
 
   public Node() {
     this.name = "";
@@ -60,30 +61,30 @@ public class Node {
     // Get the root class path files
     for (Enumeration<URL> i = loader.getResources("");i.hasMoreElements();) {
       URL url = i.nextElement();
-      merge(url);
+      mergeEntries(url);
     }
     ArrayList<URL> items = Collections.list(loader.getResources("META-INF/MANIFEST.MF"));
     for (URL item : items) {
       if ("jar".equals(item.getProtocol())) {
         String path = item.getPath();
-        int pos = path.indexOf("!/");
-        URL url = new URL(path.substring(0, pos));
-        merge(url);
-      } else {
+        int pos = path.lastIndexOf("!/");
+        URL url = new URL("jar:" + path.substring(0, pos + 2));
+        mergeEntries(url);
+      }
+      else {
         //
       }
     }
   }
 
-  void merge(URL url) throws IOException, URISyntaxException {
+  void mergeEntries(URL url) throws IOException, URISyntaxException {
     if (url.getProtocol().equals("file")) {
       try {
         java.io.File f = new java.io.File(url.toURI());
         if (f.isDirectory()) {
           merge(f);
-        }
-        else if (f.getName().endsWith(".jar")) {
-          merge(new URL("jar:" + url + "!/"));
+        } else if (f.getName().endsWith(".jar")) {
+          mergeEntries(new URL("jar:" + url + "!/"));
         } else {
           // WTF ?
         }
@@ -91,7 +92,8 @@ public class Node {
       catch (URISyntaxException e) {
         throw new IOException(e);
       }
-    } else if (url.getProtocol().equals("jar")) {
+    }
+    else if (url.getProtocol().equals("jar")) {
       int pos = url.getPath().lastIndexOf("!/");
       URL jarURL = new URL(url.getPath().substring(0, pos));
       String path = url.getPath().substring(pos + 2);
@@ -100,16 +102,17 @@ public class Node {
         while (i.hasNext()) {
           ZipEntry entry = i.next();
           if (entry.getName().startsWith(path)) {
-            add(url, entry.getName().substring(path.length()), i.getStreamFactory());
+            addEntry(url, entry.getName().substring(path.length()), i.getStreamFactory());
           }
         }
       }
       finally {
         Safe.close(i);
       }
-    } else {
+    }
+    else {
       if (url.getPath().endsWith(".jar")) {
-        merge(new URL("jar:" + url + "!/"));
+        mergeEntries(new URL("jar:" + url + "!/"));
       } else {
         // WTF ?
       }
@@ -130,28 +133,31 @@ public class Node {
           } else {
             child.merge(file);
           }
-        }
-        else {
+        } else {
           if (child == null) {
             children.put(name, child = new Node(name));
           }
-          child.files.add(new File(new InputStreamFactory() {
-            public InputStream open() throws IOException {
-              return new FileInputStream(file);
-            }
-          }, file.lastModified()));
+          child.resources.add(
+              new Resource(file.toURI().toURL(),
+                  new InputStreamFactory() {
+                    public InputStream open() throws IOException {
+                      return new FileInputStream(file);
+                    }
+                  }, file.lastModified()
+              )
+          );
         }
       }
     }
   }
 
-  private void add(URL baseURL, String entryName, InputStreamFactory resolver) throws IOException {
+  private void addEntry(URL baseURL, String entryName, InputStreamFactory resolver) throws IOException {
     if (entryName.length() > 0 && entryName.charAt(entryName.length() - 1) != '/') {
-      add(baseURL, 0, entryName, 1, resolver);
+      addEntry(baseURL, 0, entryName, 1, resolver);
     }
   }
 
-  private void add(URL baseURL, int index, String entryName, long lastModified, InputStreamFactory resolver) throws IOException {
+  private void addEntry(URL baseURL, int index, String entryName, long lastModified, InputStreamFactory resolver) throws IOException {
     int next = entryName.indexOf('/', index);
     if (next == -1) {
       String name = entryName.substring(index);
@@ -159,28 +165,20 @@ public class Node {
       if (child == null) {
         children.put(name, child = new Node(name));
       }
-      child.files.add(new File(resolver, lastModified));
-    } else {
+      child.resources.add(new Resource(new URL(baseURL + entryName), resolver, lastModified));
+    }
+    else {
       String name = entryName.substring(index, next);
       Node child = children.get(name);
       if (child == null) {
         children.put(name, child = new Node(name));
       }
-      child.add(baseURL, next + 1, entryName, lastModified, resolver);
+      child.addEntry(baseURL, next + 1, entryName, lastModified, resolver);
     }
   }
 
-  static class File {
-
-    /** . */
-    final InputStreamFactory resolver;
-
-    /** . */
-    final long lastModified;
-
-    File(InputStreamFactory url, long lastModified) {
-      this.resolver = url;
-      this.lastModified = lastModified;
-    }
+  @Override
+  public Iterator<Resource> iterator() {
+    return resources.iterator();
   }
 }

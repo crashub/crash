@@ -19,7 +19,6 @@
 
 package org.crsh.vfs.spi.url;
 
-import org.crsh.util.Utils;
 import org.crsh.vfs.spi.AbstractFSDriver;
 
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class URLDriver extends AbstractFSDriver<Node> {
   }
 
   public void merge(URL url) throws IOException, URISyntaxException {
-    root.merge(url);
+    root.mergeEntries(url);
   }
 
   public Node root() throws IOException {
@@ -56,7 +55,7 @@ public class URLDriver extends AbstractFSDriver<Node> {
   }
 
   public boolean isDir(Node handle) throws IOException {
-    return handle.files.isEmpty();
+    return handle.resources.isEmpty();
   }
 
   public Iterable<Node> children(Node handle) throws IOException {
@@ -64,13 +63,13 @@ public class URLDriver extends AbstractFSDriver<Node> {
   }
 
   public long getLastModified(Node handle) throws IOException {
-    return handle.files.isEmpty() ? 0 : handle.files.peekFirst().lastModified;
+    return handle.resources.isEmpty() ? 0 : handle.resources.peekFirst().lastModified;
   }
 
   public Iterator<InputStream> open(Node handle) throws IOException {
-    ArrayList<InputStream> list = new ArrayList<InputStream>(handle.files.size());
-    for (Node.File file : handle.files) {
-      list.add(file.resolver.open());
+    ArrayList<InputStream> list = new ArrayList<InputStream>(handle.resources.size());
+    for (Resource resource : handle.resources) {
+      list.add(resource.streamFactory.open());
     }
     return list.iterator();
   }

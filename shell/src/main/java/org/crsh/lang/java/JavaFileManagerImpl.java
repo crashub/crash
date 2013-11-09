@@ -57,8 +57,8 @@ class JavaFileManagerImpl extends ForwardingJavaFileManager<StandardJavaFileMana
 
   @Override
   public String inferBinaryName(Location location, JavaFileObject file) {
-    if (file instanceof URIJavaFileObject) {
-      return ((URIJavaFileObject)file).binaryName;
+    if (file instanceof NodeJavaFileObject) {
+      return ((NodeJavaFileObject)file).binaryName;
     }
     else {
       return fileManager.inferBinaryName(location, file);
@@ -76,7 +76,8 @@ class JavaFileManagerImpl extends ForwardingJavaFileManager<StandardJavaFileMana
       }
       else {
         try {
-          return finder.resolve(packageName, recurse);
+          Iterable<JavaFileObject> ret = finder.resolve(packageName, recurse);
+          return ret;
         }
         catch (URISyntaxException e) {
           throw new IOException(e);

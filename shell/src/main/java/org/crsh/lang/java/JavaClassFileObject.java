@@ -45,7 +45,7 @@ class JavaClassFileObject extends SimpleJavaFileObject {
     return className;
   }
 
-  byte[] getBytes() {
+  public byte[] getBytes() {
     return baos != null ? baos.toByteArray() : null;
   }
 

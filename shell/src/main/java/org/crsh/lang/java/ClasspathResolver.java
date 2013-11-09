@@ -19,7 +19,11 @@
 package org.crsh.lang.java;
 
 import org.crsh.util.InputStreamFactory;
+import org.crsh.util.Strings;
 import org.crsh.util.ZipIterator;
+import org.crsh.vfs.spi.url.Node;
+import org.crsh.vfs.spi.url.Resource;
+import org.crsh.vfs.spi.url.URLDriver;
 
 import javax.tools.JavaFileObject;
 import java.io.File;
@@ -31,7 +35,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.zip.ZipEntry;
 
 /** @author Julien Viet */
@@ -40,11 +47,67 @@ class ClasspathResolver {
   /** . */
   final ClassLoader loader;
 
+  /** . */
+  final URLDriver driver;
+
   public ClasspathResolver(ClassLoader loader) {
+
+    URLDriver driver = null;
+    try {
+      driver = new URLDriver();
+      driver.merge(loader);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    //
     this.loader = loader;
+    this.driver = driver;
+  }
+
+  private void resolve(List<JavaFileObject> files, Node node, String binaryName, boolean recurse) throws IOException, URISyntaxException {
+    for (Node child : driver.children(node)) {
+      Iterator<Resource> i = child.iterator();
+      if (i.hasNext()) {
+        if (child.name.endsWith(".class")) {
+          Resource r = i.next();
+          URI uri = r.url.toURI();
+          files.add(new NodeJavaFileObject(
+              binaryName + "." + child.name.substring(0, child.name.length() - ".class".length()),
+              uri,
+              r.streamFactory,
+              r.lastModified));
+        }
+      } else {
+        if (recurse) {
+          resolve(files, child, binaryName + "." + child.name, recurse);
+        }
+      }
+    }
   }
 
   public Iterable<JavaFileObject> resolve(String pkg, boolean recurse) throws IOException, URISyntaxException {
+
+    Node current = driver.root();
+
+    String[] elts = Strings.split(pkg, '.');
+
+    for (String elt : elts) {
+      current = driver.child(current, elt);
+      if (current == null) {
+        return Collections.emptyList();
+      }
+    }
+
+    //
+    List<JavaFileObject> files = new ArrayList<JavaFileObject>();
+    resolve(files, current, pkg, recurse);
+    return files;
+
+
+
+/*
     String pkgName = pkg.replace('.', '/');
     ArrayList<JavaFileObject> ret = new ArrayList<JavaFileObject>();
     final Enumeration<URL> en = loader.getResources(pkgName);
@@ -74,8 +137,10 @@ class ClasspathResolver {
       }
     }
     return ret;
+*/
   }
 
+/*
   private void resolve(String pkgName, ArrayList<JavaFileObject> ret, File file, boolean recurse) {
     final File[] children = file.listFiles();
     if (children != null) {
@@ -101,4 +166,5 @@ class ClasspathResolver {
       }
     }
   }
+*/
 }
