@@ -26,15 +26,15 @@ public final class CommandCreationException extends Exception {
   /** . */
   private final String commandName;
 
-  public CommandCreationException(String commandName) {
-    this.commandName = commandName;
-  }
+  /** . */
+  private final ErrorType errorType;
 
   public CommandCreationException(String commandName, ErrorType errorType, String message) {
     super(message);
 
     //
     this.commandName = commandName;
+    this.errorType = errorType;
   }
 
   public CommandCreationException(String commandName, ErrorType errorType, String message, Throwable cause) {
@@ -42,6 +42,11 @@ public final class CommandCreationException extends Exception {
 
     //
     this.commandName = commandName;
+    this.errorType = errorType;
+  }
+
+  public ErrorType getErrorType() {
+    return errorType;
   }
 
   public String getCommandName() {
