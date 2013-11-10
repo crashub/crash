@@ -19,6 +19,9 @@
 
 package org.crsh.command;
 
+/**
+ * Wrong syntax provided when invoking the command.
+ */
 public class SyntaxException extends ScriptException {
   public SyntaxException(String message) {
     super(message);

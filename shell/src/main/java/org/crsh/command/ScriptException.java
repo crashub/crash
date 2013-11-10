@@ -18,6 +18,9 @@
  */
 package org.crsh.command;
 
+/**
+ * Base command thrown during the execution of a command.
+ */
 public class ScriptException extends RuntimeException {
 
   public ScriptException() {
