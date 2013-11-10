@@ -45,7 +45,7 @@ public interface ShellCommand {
    * @param mode the description mode
    * @return the description
    */
-  String describe(String line, DescriptionFormat mode);
+  String describe(String line, DescriptionFormat mode) throws CommandCreationException;
 
   /**
    * Provides an invoker for the command line specified as a command line to parse.
