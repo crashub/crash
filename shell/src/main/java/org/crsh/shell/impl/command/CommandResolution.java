@@ -19,34 +19,12 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandCreationException;
-
-import java.util.HashMap;
-import java.util.Set;
+import org.crsh.command.ShellCommand;
 
 /** @author Julien Viet */
-public interface CommandManager {
+public interface CommandResolution {
 
-  /**
-   * Returns the set of extensions managed by this implementation.
-   *
-   * @return the set of extensions, for instance ("groovy")
-   */
-  Set<String> getExtensions();
+  String getDescription();
 
-  /**
-   * Resolve a command for the specified command name.
-   *
-   * @param name the command name
-   * @param source the command source  @return the command or null if no command can be resolved
-   * @throws CommandCreationException when the command exists but cannot be created
-   * @throws NullPointerException if the command name is null
-   */
-  CommandResolution resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException;
-
-  void init(HashMap<String, Object> session);
-
-  void destroy(HashMap<String, Object> session);
-
-  String doCallBack(HashMap<String, Object> session, String name, String defaultValue);
-
+  ShellCommand getCommand() throws CommandCreationException;
 }

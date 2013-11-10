@@ -3,9 +3,7 @@ package crash.commands.base;
 import org.crsh.cli.Command;
 import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
-import org.crsh.command.DescriptionFormat;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.ShellCommand;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
@@ -35,17 +33,14 @@ public class help extends BaseCommand {
     Iterable<String> names = crash.getCommandNames();
     for (String name : names) {
       try {
-        ShellCommand cmd = crash.getCommand(name);
-        if (cmd != null) {
-          String desc = cmd.describe(name, DescriptionFormat.DESCRIBE);
-          if (desc == null) {
-            desc = "";
-          }
-          table.add(
-              new RowElement().
-                  add(new LabelElement(name).style(Style.style(Color.red))).
-                  add(new LabelElement(desc)));
+        String desc = crash.getCommandDescription(name);
+        if (desc == null) {
+          desc = "";
         }
+        table.add(
+            new RowElement().
+                add(new LabelElement(name).style(Style.style(Color.red))).
+                add(new LabelElement(desc)));
       } catch (Exception ignore) {
         //
       }

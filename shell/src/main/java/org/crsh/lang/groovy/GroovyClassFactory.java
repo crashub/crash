@@ -37,7 +37,7 @@ public class GroovyClassFactory<T> extends ClassFactory<T> {
   private final Class<T> baseClass;
 
   /** . */
-  private final CompilerConfiguration config;
+  final CompilerConfiguration config;
 
   public GroovyClassFactory(ClassLoader baseLoader, Class<T> baseClass, Class<? extends Script> baseScriptClass) {
     CompilerConfiguration config = new CompilerConfiguration();

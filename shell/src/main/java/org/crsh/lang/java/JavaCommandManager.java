@@ -20,10 +20,12 @@ package org.crsh.lang.java;
 
 import org.crsh.command.BaseShellCommand;
 import org.crsh.command.CommandCreationException;
+import org.crsh.command.DescriptionFormat;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.impl.command.CommandManager;
+import org.crsh.shell.impl.command.CommandResolution;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -46,7 +48,7 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
     return EXT;
   }
 
-  public ShellCommand resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
+  public CommandResolution resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
     String script = new String(source);
     Compiler compiler = new Compiler();
     List<JavaClassFileObject> classFiles;
@@ -66,7 +68,18 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
         LoadingClassLoader loader = new LoadingClassLoader(getContext().getLoader(), classFiles);
         try {
           Class<?> clazz = loader.loadClass(classFile.getClassName());
-          return new BaseShellCommand(clazz);
+          final BaseShellCommand command = new BaseShellCommand(clazz);
+          final String description = command.describe(name, DescriptionFormat.DESCRIBE);
+          return new CommandResolution() {
+            @Override
+            public String getDescription() {
+              return description;
+            }
+            @Override
+            public ShellCommand getCommand() throws CommandCreationException {
+              return command;
+            }
+          };
         }
         catch (ClassNotFoundException e) {
           throw new CommandCreationException(name, ErrorType.EVALUATION, "Command cannot be loaded", e);

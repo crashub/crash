@@ -41,7 +41,7 @@ public class CRaSH {
   final HashMap<String, CommandManager> managers;
 
   /** . */
-  private final Map<String, TimestampedObject<? extends ShellCommand>> commandCache = new ConcurrentHashMap<String, TimestampedObject<? extends ShellCommand>>();
+  private final Map<String, TimestampedObject<CommandResolution>> commandCache = new ConcurrentHashMap<String, TimestampedObject<CommandResolution>>();
 
   /**
    * Create a new CRaSH.
@@ -78,6 +78,19 @@ public class CRaSH {
   }
 
   /**
+   * Attempt to obtain a command description. Null is returned when such command does not exist.
+   *
+   * @param name the command name
+   * @return a command description
+   * @throws org.crsh.command.CommandCreationException if an error occured preventing the command creation
+   * @throws NullPointerException if the name argument is null
+   */
+  public String getCommandDescription(String name) throws CommandCreationException, NullPointerException {
+    CommandResolution resolution = resolveCommand(name);
+    return resolution != null ? resolution.getDescription() : null;
+  }
+
+  /**
    * Attempt to obtain a command instance. Null is returned when such command does not exist.
    *
    * @param name the command name
@@ -86,11 +99,30 @@ public class CRaSH {
    * @throws NullPointerException if the name argument is null
    */
   public ShellCommand getCommand(String name) throws CommandCreationException, NullPointerException {
+    CommandResolution resolution = resolveCommand(name);
+    return resolution != null ? resolution.getCommand() : null;
+  }
+
+  /**
+   * Attempt to obtain a command instance. Null is returned when such command does not exist.
+   *
+   * @param name the command name
+   * @return a command instance
+   * @throws org.crsh.command.CommandCreationException if an error occured preventing the command creation
+   * @throws NullPointerException if the name argument is null
+   */
+  public CommandResolution resolveCommand(String name) throws CommandCreationException, NullPointerException {
+    if (name == null) {
+      throw new NullPointerException("No null name accepted");
+    }
     for (CommandManager manager : managers.values()) {
       for (String ext : manager.getExtensions()) {
         Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
         for (Resource resource : resources) {
-          return getShellCommand(manager, name, resource);
+          CommandResolution resolution = resolveCommand(manager, name, resource);
+          if (resolution != null) {
+            return resolution;
+          }
         }
       }
     }
@@ -110,18 +142,18 @@ public class CRaSH {
     return names;
   }
 
-  private ShellCommand getShellCommand(CommandManager manager, String name, Resource script) throws CommandCreationException {
-    TimestampedObject<? extends ShellCommand> ref = commandCache.get(name);
+  private CommandResolution resolveCommand(CommandManager manager, String name, Resource script) throws CommandCreationException {
+    TimestampedObject<CommandResolution> ref = commandCache.get(name);
     if (ref != null) {
       if (script.getTimestamp() != ref.getTimestamp()) {
         ref = null;
       }
     }
-    ShellCommand command;
+    CommandResolution command;
     if (ref == null) {
       command = manager.resolveCommand(name, script.getContent());
       if (command != null) {
-        commandCache.put(name, new TimestampedObject<ShellCommand>(script.getTimestamp(), command));
+        commandCache.put(name, new TimestampedObject<CommandResolution>(script.getTimestamp(), command));
       }
     } else {
       command = ref.getObject();

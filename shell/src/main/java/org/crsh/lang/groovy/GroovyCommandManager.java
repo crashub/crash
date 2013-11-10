@@ -21,19 +21,28 @@ package org.crsh.lang.groovy;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
+import org.codehaus.groovy.ast.AnnotationNode;
+import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.ast.CompileUnit;
+import org.codehaus.groovy.ast.MethodNode;
+import org.codehaus.groovy.control.CompilationFailedException;
+import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
+import org.crsh.command.BaseShellCommand;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.ShellCommand;
-import org.crsh.command.BaseShellCommand;
+import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
+import org.crsh.shell.impl.command.CommandResolution;
 import org.crsh.util.AbstractClassCache;
 import org.crsh.util.ClassCache;
 import org.crsh.shell.impl.command.CommandManager;
 import org.crsh.lang.groovy.command.GroovyScript;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
-import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
@@ -166,7 +175,7 @@ public class GroovyCommandManager extends CRaSHPlugin<CommandManager> implements
     }
   }
 
-  public ShellCommand resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
+  public CommandResolution resolveCommand(final String name, byte[] source) throws CommandCreationException, NullPointerException {
 
     //
     if (source == null) {
@@ -174,7 +183,7 @@ public class GroovyCommandManager extends CRaSHPlugin<CommandManager> implements
     }
 
     //
-    String script;
+    final String script;
     try {
       script = new String(source, "UTF-8");
     }
@@ -182,23 +191,72 @@ public class GroovyCommandManager extends CRaSHPlugin<CommandManager> implements
       throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
     }
 
-    //
-    Class<?> clazz = objectGroovyClassFactory.parse(name, script);
-    if (BaseCommand.class.isAssignableFrom(clazz)) {
-      Class<? extends BaseCommand> cmd = clazz.asSubclass(BaseCommand.class);
-      return make(cmd);
-    } else if (GroovyScriptCommand.class.isAssignableFrom(clazz)) {
-      Class<? extends GroovyScriptCommand> cmd = clazz.asSubclass(GroovyScriptCommand.class);
-      return make2(cmd);
-    } else {
-      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
+    // Get the description using a partial compilation because it is much faster than compiling the class
+    // the class will be compiled lazyly
+    String resolveDescription = null;
+    CompilationUnit cu = new CompilationUnit(objectGroovyClassFactory.config);
+    cu.addSource(name, script);
+    try {
+      cu.compile(Phases.CONVERSION);
     }
+    catch (CompilationFailedException e) {
+      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not compile command", e);
+    }
+    CompileUnit ast = cu.getAST();
+    if (ast.getClasses().size() > 0) {
+      ClassNode classNode= (ClassNode)ast.getClasses().get(0);
+      if (classNode != null) {
+        for (AnnotationNode annotation : classNode.getAnnotations()) {
+          if (annotation.getClassNode().getName().equals(Usage.class.getSimpleName())) {
+            resolveDescription = annotation.getMember("value").getText();
+            break;
+          }
+        }
+        if (resolveDescription == null) {
+          for (MethodNode main : classNode.getMethods("main")) {
+            for (AnnotationNode annotation : main.getAnnotations()) {
+              if (annotation.getClassNode().getName().equals(Usage.class.getSimpleName())) {
+                resolveDescription = annotation.getMember("value").getText();
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+    final String description = resolveDescription;
+
+    //
+    return new CommandResolution() {
+      ShellCommand command;
+      @Override
+      public String getDescription() {
+        return description;
+      }
+      @Override
+      public ShellCommand getCommand() throws CommandCreationException {
+        if (command == null) {
+          Class<?> clazz = objectGroovyClassFactory.parse(name, script);
+          if (BaseCommand.class.isAssignableFrom(clazz)) {
+            Class<? extends BaseCommand> cmd = clazz.asSubclass(BaseCommand.class);
+            command = make(cmd);
+          }
+          else if (GroovyScriptCommand.class.isAssignableFrom(clazz)) {
+            Class<? extends GroovyScriptCommand> cmd = clazz.asSubclass(GroovyScriptCommand.class);
+            command = make2(cmd);
+          }
+          else {
+            throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
+          }
+        }
+        return command;
+      }
+    };
   }
 
   private <C extends BaseCommand> BaseShellCommand<C> make(Class<C> clazz) {
     return new BaseShellCommand<C>(clazz);
   }
-
   private <C extends GroovyScriptCommand> GroovyScriptShellCommand<C> make2(Class<C> clazz) {
     return new GroovyScriptShellCommand<C>(clazz);
   }
