@@ -34,6 +34,23 @@ import java.net.URL;
 import java.util.Iterator;
 
 public class FSTestCase extends TestCase {
+
+  /** . */
+  private java.io.File warFile;
+
+  @Override
+  protected void setUp() throws Exception {
+    java.io.File warFile = java.io.File.createTempFile("test", ".war");
+    warFile.deleteOnExit();
+    JavaArchive jar = ShrinkWrap.create(JavaArchive.class,"foo.jar");
+    jar.addClass(FSTestCase.class);
+    WebArchive war = ShrinkWrap.create(WebArchive.class);
+    war.addAsLibraries(jar);
+    ZipExporter exporter = war.as(ZipExporter.class);
+    exporter.exportTo(warFile, true);
+    this.warFile = warFile;
+  }
+
   public void testFoo() throws Exception {
     FS fs = new FS().mount(FSTestCase.class);
     File root = fs.get(Path.get("/"));
@@ -97,19 +114,10 @@ public class FSTestCase extends TestCase {
   }
 
   public void testNestedJar() throws Exception {
-    java.io.File file = java.io.File.createTempFile("test", ".war");
-    file.deleteOnExit();
-    JavaArchive jar = ShrinkWrap.create(JavaArchive.class,"foo.jar");
-    jar.addClass(FSTestCase.class);
-    WebArchive war = ShrinkWrap.create(WebArchive.class);
-    war.addAsLibraries(jar);
-    ZipExporter exporter = war.as(ZipExporter.class);
-    exporter.exportTo(file, true);
 
     //
-    URL url = new URL("jar:" + file.toURI().toURL() + "!/WEB-INF/lib/foo.jar");
     URLDriver driver = new URLDriver();
-    driver.merge(new URL("jar:" + file.toURI().toURL() + "!/WEB-INF/"));
+    driver.merge(new URL("jar:" + warFile.toURI().toURL() + "!/WEB-INF/"));
     Node root = driver.root();
     Node lib = driver.child(root, "lib");
     Node foo_jar = driver.child(lib, "foo.jar");
@@ -121,7 +129,7 @@ public class FSTestCase extends TestCase {
     assertFalse(in.hasNext());
 
     //
-    url = new URL("jar:" + url + "!/org/crsh/");
+    URL url = new URL("jar:jar:" + warFile.toURI().toURL() + "!/WEB-INF/lib/foo.jar!/org/crsh/");
     driver = new URLDriver();
     driver.merge(url);
     root = driver.root();
@@ -133,6 +141,14 @@ public class FSTestCase extends TestCase {
     assertTrue(in.hasNext());
     bytes = IO.readAsBytes(in.next());
     assertFalse(in.hasNext());
+  }
+
+  public void testBar() throws Exception {
+
+    URLDriver driver = new URLDriver();
+    driver.merge(new URL("jar:" + warFile.toURI().toURL() + "!/WEB-INF/lib/foo.jar!/META-INF/crsh/"));
+
+
   }
 
   public void testDuplicateResource() throws Exception {

@@ -77,7 +77,42 @@ public class Node implements Iterable<Resource> {
     }
   }
 
+  /**
+   * Rewrite an URL by analysing the serie of trailing <code>!/</code>. The number of <code>jar:</code> prefixes
+   * does not have to be equals to the number of separators.
+   *
+   * @param url the url to rewrite
+   * @return the rewritten URL
+   */
+  String rewrite(String url) {
+    int end = url.lastIndexOf("!/");
+    if (end >= 0) {
+      String entry = url.substring(end + 2);
+      int start = url.indexOf(':');
+      String protocol = url.substring(0, start);
+      String nestedURL;
+      if (protocol.equals("jar")) {
+        nestedURL = rewrite(url.substring(start + 1, end));
+        return "jar:" + nestedURL + "!/" + entry;
+      } else {
+        nestedURL = rewrite(url.substring(0, end));
+      }
+      return "jar:" + nestedURL + "!/" + entry;
+    } else {
+      return url;
+    }
+  }
+
   void mergeEntries(URL url) throws IOException, URISyntaxException {
+    // We handle a special case of spring-boot URLs here before diving in the recursive analysis
+    // see https://github.com/spring-projects/spring-boot/tree/master/spring-boot-tools/spring-boot-loader#urls
+    if (url.getProtocol().equals("jar")) {
+      url = new URL(rewrite(url.toString()));
+    }
+    _mergeEntries(url);
+  }
+
+  private void _mergeEntries(URL url) throws IOException, URISyntaxException {
     if (url.getProtocol().equals("file")) {
       try {
         java.io.File f = new java.io.File(url.toURI());
