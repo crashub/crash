@@ -23,6 +23,7 @@ import org.crsh.command.CommandCreationException;
 import org.crsh.command.DescriptionFormat;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
+import org.crsh.plugin.PluginContext;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.impl.command.CommandManager;
 import org.crsh.shell.impl.command.CommandResolution;
@@ -39,6 +40,19 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
   /** . */
   private static final Set<String> EXT = Collections.singleton("java");
 
+  /** . */
+  private Compiler compiler;
+
+  @Override
+  public void init() {
+    PluginContext context = getContext();
+    ClassLoader loader = context.getLoader();
+    Compiler compiler = new Compiler(loader);
+
+    //
+    this.compiler = compiler;
+  }
+
   @Override
   public CommandManager getImplementation() {
     return this;
@@ -50,7 +64,6 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
 
   public CommandResolution resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
     String script = new String(source);
-    Compiler compiler = new Compiler();
     List<JavaClassFileObject> classFiles;
     try {
       classFiles = compiler.compile(name, script);
