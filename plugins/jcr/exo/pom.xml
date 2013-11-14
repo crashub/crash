@@ -3,12 +3,12 @@
   <parent>
     <artifactId>crash.plugins.jcr</artifactId>
     <groupId>org.crashub</groupId>
-    <version>1.3.0-beta11-SNAPSHOT</version>
+    <version>1.3.0-beta11</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>crash.plugins.jcr.exo</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.0-beta11-SNAPSHOT</version>
+  <version>1.3.0-beta11</version>
 
   <name>CRaSH Plugin - JCR eXo</name>
   <description>The CRaSH JCR module for eXo Platform</description>
