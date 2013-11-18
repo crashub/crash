@@ -19,11 +19,14 @@
 
 package org.crsh.ssh;
 
+import org.apache.sshd.common.KeyPairProvider;
+import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
 import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.ssh.term.SSHLifeCycle;
+import org.crsh.ssh.term.URLKeyPairProvider;
 import org.crsh.vfs.Resource;
 
 import java.io.File;
@@ -43,6 +46,9 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   /** The SSH server key path. */
   public static final PropertyDescriptor<String> SSH_SERVER_KEYPATH = PropertyDescriptor.create("ssh.keypath", (String)null, "The path to the key file");
 
+  /** SSH host key auto generate */
+  public static final PropertyDescriptor<String> SSH_SERVER_KEYGEN = PropertyDescriptor.create("ssh.keygen", "false", "Whether to automatically generate a host key");
+
   /** . */
   private SSHLifeCycle lifeCycle;
 
@@ -53,7 +59,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   @Override
   protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
-    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, AuthenticationPlugin.AUTH);
+    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, SSH_SERVER_KEYGEN, AuthenticationPlugin.AUTH);
   }
 
   @Override
@@ -69,6 +75,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
     //
     Resource serverKey = null;
+    KeyPairProvider keyPairProvider = null;
 
     // Get embedded default key
     URL serverKeyURL = SSHPlugin.class.getResource("/crash/hostkey.pem");
@@ -94,7 +101,10 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     if (serverKeyPath != null) {
       log.log(Level.FINE, "Found server key path " + serverKeyPath);
       File f = new File(serverKeyPath);
-      if (f.exists() && f.isFile()) {
+      String keyGen = getContext().getProperty(SSH_SERVER_KEYGEN);
+      if (keyGen != null && keyGen.equals("true")) {
+        keyPairProvider = new PEMGeneratorHostKeyProvider(serverKeyPath, "RSA");
+      } else if (f.exists() && f.isFile()) {
         try {
           serverKeyURL = f.toURI().toURL();
           serverKey = new Resource("hostkey.pem", serverKeyURL);
@@ -114,6 +124,11 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
       return;
     }
 
+    //
+    if (keyPairProvider == null) {
+      keyPairProvider = new URLKeyPairProvider(serverKey);
+    }
+
     // Get the authentication
     AuthenticationPlugin authPlugin = AuthenticationPlugin.NULL;
     String authentication = getContext().getProperty(AuthenticationPlugin.AUTH);
@@ -130,7 +145,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     log.log(Level.INFO, "Booting SSHD");
     SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext(), authPlugin);
     lifeCycle.setPort(port);
-    lifeCycle.setKey(serverKey);
+    lifeCycle.setKeyPairProvider(keyPairProvider);
     lifeCycle.init();
 
     //
