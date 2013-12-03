@@ -34,6 +34,13 @@ property and change the path to the key file.
 #crash.ssh.keypath=/path/to/the/key/file
 ----
 
+If you specify an external file, you can also configure the server to generate it for you. In this case, the generation
+will take place when someone first connects through SSH. The default behavior is _false_, i.e. not to generate.
+
+----
+#crash.ssh.keygen=false
+----
+
 === Changing telnet or SSH server ports
 
 The ports of the server are parameterized by the _crash.ssh.port_ and _crash.telnet.port_ parameters in the _crash.properties_ file

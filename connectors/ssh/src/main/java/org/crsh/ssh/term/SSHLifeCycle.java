@@ -19,6 +19,7 @@
 package org.crsh.ssh.term;
 
 import org.apache.sshd.SshServer;
+import org.apache.sshd.common.KeyPairProvider;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.Session;
 import org.apache.sshd.server.Command;
@@ -31,7 +32,6 @@ import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.ssh.term.subsystem.SubsystemFactoryPlugin;
 import org.crsh.term.TermLifeCycle;
 import org.crsh.term.spi.TermIOHandler;
-import org.crsh.vfs.Resource;
 
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class SSHLifeCycle extends TermLifeCycle {
   private int port;
 
   /** . */
-  private Resource key;
+  private KeyPairProvider keyPairProvider;
 
   /** . */
   private final AuthenticationPlugin authentication;
@@ -93,12 +93,12 @@ public class SSHLifeCycle extends TermLifeCycle {
 	  return localPort;
   }
   
-  public Resource getKey() {
-    return key;
+  public KeyPairProvider getKeyPairProvider() {
+    return keyPairProvider;
   }
 
-  public void setKey(Resource key) {
-    this.key = key;
+  public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
+    this.keyPairProvider = keyPairProvider;
   }
 
   @Override
@@ -113,7 +113,7 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setPort(port);
       server.setShellFactory(new CRaSHCommandFactory(handler));
       server.setCommandFactory(new SCPCommandFactory(getContext()));
-      server.setKeyPairProvider(new URLKeyPairProvider(key));
+      server.setKeyPairProvider(keyPairProvider);
 
       //
       ArrayList<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>(0);
