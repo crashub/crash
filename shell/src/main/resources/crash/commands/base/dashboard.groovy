@@ -49,6 +49,7 @@ def table = new UIBuilder().table(columns: [1], rows: [1,1]) {
                 execute("jvm pool '$name'")
               }
             }
+            null
           })()
         }
       }
