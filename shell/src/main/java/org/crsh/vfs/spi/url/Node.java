@@ -61,7 +61,10 @@ public class Node implements Iterable<Resource> {
     // Get the root class path files
     for (Enumeration<URL> i = loader.getResources("");i.hasMoreElements();) {
       URL url = i.nextElement();
-      mergeEntries(url);
+      // In some case we can get null (Tomcat 8)
+      if (url != null) {
+        mergeEntries(url);
+      }
     }
     ArrayList<URL> items = Collections.list(loader.getResources("META-INF/MANIFEST.MF"));
     for (URL item : items) {
