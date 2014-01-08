@@ -23,7 +23,7 @@ CRaSH = (function(element, width, height) {
   var cancelTime = 0;
 
   //
-  var terminal = $('#term_demo').terminal(function (command, term) {
+  var terminal = element.terminal(function (command, term) {
     if (socket != null) {
       var event = {
         type: "execute",
