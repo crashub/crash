@@ -80,14 +80,10 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
         FS cmdFS = createCommandFS(context);
         FS confFS = createConfFS(context);
         ClassLoader webAppLoader = Thread.currentThread().getContextClassLoader();
+        PluginDiscovery discovery = createDiscovery(context, webAppLoader);
 
         //
-        PluginContext pluginContext = new PluginContext(
-          createDiscovery(context, webAppLoader),
-          new ServletContextMap(context),
-          cmdFS,
-          confFS,
-          webAppLoader);
+        PluginContext pluginContext = createPluginContext(context, cmdFS, confFS, discovery);
 
         //
         contextMap.put(contextPath, pluginContext);
@@ -97,6 +93,19 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
         start(pluginContext);
       }
     }
+  }
+
+  /**
+   * Create the plugin context, allowing subclasses to provide a custom configuration.
+   *
+   * @param context the servlet context
+   * @param cmdFS the command file system
+   * @param confFS the conf file system
+   * @param discovery the plugin discovery
+   * @return the plugin context
+   */
+  protected PluginContext createPluginContext(ServletContext context, FS cmdFS, FS confFS, PluginDiscovery discovery) {
+    return new PluginContext(discovery, new ServletContextMap(context), cmdFS, confFS, context.getClassLoader());
   }
 
   /**
