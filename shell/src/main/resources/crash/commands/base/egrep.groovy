@@ -20,10 +20,11 @@ class egrep {
   @Usage("search file(s) for lines that match a pattern")
   @Command
   PipeCommand<Chunk, Chunk> main(@Argument @Usage("the search pattern") String pattern) {
+    if (pattern == null) {
+      pattern = "";
+    }
+    final Matcher matcher = Pattern.compile(pattern).matcher("");
     return new PipeCommand<Chunk, Chunk>() {
-
-      /** . */
-      Matcher matcher = Pattern.compile(pattern).matcher("");
 
       /** . */
       StringBuffer buffer = new StringBuffer()
