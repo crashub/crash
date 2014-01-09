@@ -91,6 +91,8 @@ public class SSHInlineCommand extends AbstractCommand implements Runnable {
       }
       else {
         String errorMsg;
+          // Set the exit status to Error
+        exitStatus = ERROR;
         if (response != null) {
           errorMsg = "Error during command execution : " + response.getMessage();
         }
