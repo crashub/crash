@@ -13,7 +13,8 @@ CRaSH = (function(element, width, height) {
   var log = {
     error: function(message) { console.error(message); },
     debug: function(message) { console.debug(message); },
-    info: function(message) { console.info(message); }
+    info: function(message) { console.info(message); },
+    trace: function(message) { console.trace(message); }
   };
 
   //
@@ -34,7 +35,7 @@ CRaSH = (function(element, width, height) {
       socket.send(JSON.stringify(event));
       term.pause();
     } else {
-      log.debug("Coult not execute command " + command + " because of null socket");
+      log.debug("Could not execute command " + command + " because of null socket");
     }
   }, {
     greetings: '',
@@ -54,16 +55,17 @@ CRaSH = (function(element, width, height) {
         };
         socket.send(JSON.stringify({type: "complete",prefix:prefix}));
       } else {
-        log.debug("Coult not perform completion of " + prefix + " because of null socket");
+        log.debug("Could not perform completion of " + prefix + " because of null socket");
       }
     },
     keypress: function(event, term) {
       if (event.keyCode == 3) {
         if (socket != null) {
+          log.debug("Cancelling current command");
           cancelTime = (new Date()).getTime();
           socket.send(JSON.stringify({type: "cancel"}));
         } else {
-          log.debug("Coult not cancel because of null socket");
+          log.debug("Could not cancel because of null socket");
         }
       }
     }
@@ -123,7 +125,8 @@ CRaSH = (function(element, width, height) {
           var type = event.type;
           if (type == "print") {
             var text = event.data;
-            log.debug("print : <" + text + ">");
+            log.debug("Printing to term");
+            log.trace("Message : <" + text + ">");
             while (true) {
               var index = text.indexOf(cls);
               if (index == -1) {
@@ -136,10 +139,13 @@ CRaSH = (function(element, width, height) {
             }
             terminal.echo(text);
           } else if (type == "prompt") {
+            log.debug("Updating prompt");
             terminal.set_prompt(event.data);
           } else if (type == "end") {
+            log.debug("Ending command");
             terminal.resume();
           } else if (type == "complete") {
+            log.debug("Completing completion");
             var completions = event.data;
             for (var i = 0; i < completions.length; i++) {
               completions[i] = completion.string + completions[i];
