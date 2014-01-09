@@ -60,7 +60,7 @@ public class CRaSHConnector {
 
   public static String getHttpSessionId() {
     Session session = current.get();
-    return (String)session.getUserProperties().get("session_id");
+    return (String)session.getUserProperties().get("CRASHID");
   }
 
   @OnOpen

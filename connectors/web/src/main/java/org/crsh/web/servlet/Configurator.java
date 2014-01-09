@@ -18,21 +18,46 @@
  */
 package org.crsh.web.servlet;
 
-import javax.servlet.http.HttpSession;
 import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Julien Viet
  */
 public class Configurator extends ServerEndpointConfig.Configurator {
 
+  /** . */
+  private static final Pattern cookiePattern = Pattern.compile("([^=]+)=([^\\;]*);?\\s?");
+
   @Override
   public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
-    HttpSession session = (HttpSession)request.getHttpSession();
-    if (session != null) {
-      sec.getUserProperties().put("session_id", session.getId());
+    Map<String, List<String>> requestHeaders = request.getHeaders();
+    List<String> cookieHeaders = requestHeaders.get("cookie");
+    String sessionId = null;
+    if (cookieHeaders != null && cookieHeaders.size() > 0) {
+      for (String cookieHeader : cookieHeaders) {
+        Matcher matcher = cookiePattern.matcher(cookieHeader);
+        while (matcher.find()) {
+          String cookieKey = matcher.group(1);
+          String cookieValue = matcher.group(2);
+          if (cookieKey.equals("CRASHID")) {
+            sessionId = cookieValue;
+          }
+        }
+      }
     }
+    if (sessionId == null) {
+      sessionId = UUID.randomUUID().toString();
+      response.getHeaders().put("Set-Cookie", Collections.singletonList("CRASHID=" + sessionId + "; Path=/"));
+    } else {
+    }
+    sec.getUserProperties().put("CRASHID", sessionId);
   }
 }
