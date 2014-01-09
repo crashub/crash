@@ -117,9 +117,11 @@ public class CRaSHConnector {
 
   @OnMessage
   public void incoming(String message, Session wsSession) {
+    String key = wsSession.getId();
+    log.fine("Received message " + message + " from session " + key);
     current.set(wsSession);
     try {
-      CRaSHSession session = sessions.get(wsSession.getId());
+      CRaSHSession session = sessions.get(key);
       if (session != null) {
         JsonParser parser = new JsonParser();
         JsonElement json = parser.parse(message);
