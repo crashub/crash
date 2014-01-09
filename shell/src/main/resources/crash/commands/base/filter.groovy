@@ -36,7 +36,7 @@ class filter {
   private static final Pattern[] EMPTY_VALUES = new Pattern[0];
 
   @Command
-  @Usage("A filter for a stream of map")
+  @Usage("a filter for a stream of map")
   PipeCommand<Map, Map> main(
     @Usage("format <key>:<value>")
     @Option(names=['p','pattern']) List<String> patterns) {

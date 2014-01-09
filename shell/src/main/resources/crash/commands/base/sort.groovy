@@ -26,7 +26,7 @@ import org.crsh.command.PipeCommand
 
 class sort {
 
-  @Usage("Sort a map")
+  @Usage("sort a map")
   @Command
   PipeCommand<Map, Map> main(
       @Usage("Filed used to sort")
