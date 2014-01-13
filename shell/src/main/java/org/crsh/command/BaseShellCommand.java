@@ -39,6 +39,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -99,7 +100,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
     //
     InvocationMatch match;
     try {
-      match = analyzer.match(line);
+      match = analyzer.parse(line);
     }
     catch (org.crsh.cli.SyntaxException e) {
       throw new SyntaxException(e.getMessage());
@@ -132,13 +133,23 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
 
   public CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) throws CommandCreationException {
     InvocationMatcher<CC> matcher = descriptor.matcher("main");
-    InvocationMatch<CC> match;
-    try {
-      match = matcher.match(name, options, args);
+
+    //
+    if (name != null && name.length() > 0) {
+      matcher = matcher.subordinate(name);
     }
-    catch (org.crsh.cli.SyntaxException e) {
-      throw new SyntaxException(e.getMessage());
+
+    // Minor : remove that and use same signature
+    if (options.size() > 0) {
+      for (Map.Entry<String, ?> option : options.entrySet()) {
+        matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
+      }
     }
+
+    //
+    InvocationMatch<CC> match = matcher.arguments(args);
+
+    //
     return resolveInvoker(match);
   }
 
@@ -146,7 +157,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
     InvocationMatcher<CC> analyzer = descriptor.matcher("main");
     InvocationMatch<CC> match;
     try {
-      match = analyzer.match(line);
+      match = analyzer.parse(line);
     }
     catch (org.crsh.cli.SyntaxException e) {
       throw new SyntaxException(e.getMessage());

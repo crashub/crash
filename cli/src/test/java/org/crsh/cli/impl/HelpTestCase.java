@@ -29,6 +29,7 @@ import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.cli.impl.lang.CommandFactory;
 
 import java.util.Collections;
+import java.util.List;
 
 /** @author Julien Viet */
 public class HelpTestCase extends TestCase {
@@ -43,7 +44,7 @@ public class HelpTestCase extends TestCase {
   public void testFoo() {
     CommandDescriptorImpl<A> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(A.class));
     InvocationMatcher<A> matcher = desc.matcher("main");
-    InvocationMatch<A> match = matcher.match("", Collections.singletonMap("h", Boolean.TRUE), Collections.emptyList());
+    InvocationMatch<A> match = matcher.options(Collections.<String, List<?>>singletonMap("h", Collections.singletonList(Boolean.TRUE))).arguments(Collections.emptyList());
     CommandInvoker<A, ?> invoker = match.getInvoker();
     Object ret = invoker.invoke(new A());
     assertTrue(ret instanceof Help);

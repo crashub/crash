@@ -32,6 +32,7 @@ import org.crsh.cli.impl.parser.Mode;
 import org.crsh.cli.impl.parser.Parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -45,60 +46,63 @@ public class InvocationMatcher<T> {
   /** . */
   private final String mainName;
 
+  /** . */
+  private Iterable<Token> tokens;
+
   public InvocationMatcher(CommandDescriptorImpl<T> descriptor, String mainName) {
-    this.descriptor = descriptor;
-    this.mainName = mainName;
+    this(descriptor, mainName, Collections.<Token>emptyList());
   }
 
-  public InvocationMatch<T> match(String name, Map<String, ?> options, List<?> arguments) throws SyntaxException {
-    class TokenizerImpl extends ArrayList<Token> {
-      int last() {
-        return size() > 0 ? get(size() - 1).getTo() : 0;
-      }
-      @Override
-      public boolean add(Token token) {
-        if (size() > 0) {
-          super.add(new Token.Whitespace(last(), " "));
-        }
-        return super.add(token);
-      }
+  private InvocationMatcher(CommandDescriptorImpl<T> descriptor, String mainName, Iterable<Token> tokens) {
+    this.descriptor = descriptor;
+    this.mainName = mainName;
+    this.tokens = tokens;
+  }
 
-      public void addOption(String name) {
-        if (name.length() == 1) {
-          add(new Token.Literal.Option.Short(last(), "-" + name));
-        } else {
-          add(new Token.Literal.Option.Long(last(), "--" + name));
-        }
-      }
-    }
-    final TokenizerImpl t = new TokenizerImpl();
-
-    // Add name
+  public InvocationMatcher<T> subordinate(String name) throws SyntaxException {
+    TokenList tokens = new TokenList(this.tokens);
     if (name != null && name.length() > 0) {
-      t.add(new Token.Literal.Word(t.last(), name));
+      tokens.add(new Token.Literal.Word(tokens.last(), name));
     }
+    return new InvocationMatcher<T>(descriptor, mainName, tokens);
+  }
 
-    // Add options
-    for (Map.Entry<String, ?> option : options.entrySet()) {
-      if (option.getValue() instanceof Boolean) {
-        if ((Boolean)option.getValue()) {
-          t.addOption(option.getKey());
-        }
-      } else {
-        t.addOption(option.getKey());
-        t.add(new Token.Literal.Word(t.last(), option.getValue().toString()));
-      }
+  public InvocationMatcher<T> option(String optionName, List<?> optionValue) throws SyntaxException {
+    return options(Collections.<String, List<?>>singletonMap(optionName, optionValue));
+  }
+
+  public InvocationMatcher<T> options(Map<String, List<?>> options) throws SyntaxException {
+    TokenList tokens = new TokenList(this.tokens);
+    for (Map.Entry<String, List<?>> option : options.entrySet()) {
+      tokens.addOption(option.getKey(), option.getValue());
     }
+    return new InvocationMatcher<T>(descriptor, mainName, tokens);
+  }
 
-    //
+  public InvocationMatch<T> arguments(List<?> arguments) throws SyntaxException {
+    TokenList tokens = new TokenList(this.tokens);
     for (Object argument : arguments) {
-      t.add(new Token.Literal.Word(t.last(), argument.toString()));
+      tokens.add(new Token.Literal.Word(tokens.last(), argument.toString()));
     }
+    return match(tokens);
+  }
 
-    //
+  public InvocationMatch<T> parse(String s) throws SyntaxException {
+    ArrayList<Token> tokens = new ArrayList<Token>();
+    for (Token token : this.tokens) {
+      tokens.add(token);
+    }
+    for (Iterator<Token> i = new TokenizerImpl(s);i.hasNext();) {
+      tokens.add(i.next());
+    }
+    return match(tokens);
+  }
+
+  private InvocationMatch<T> match(final Iterable<Token> tokens) {
     Tokenizer tokenizer = new Tokenizer() {
 
-      Iterator<Token> i = t.iterator();
+      /** . */
+      Iterator<Token> i = tokens.iterator();
 
       @Override
       protected Token parse() {
@@ -110,13 +114,7 @@ public class InvocationMatcher<T> {
         return Delimiter.EMPTY;
       }
     };
-
-    //
     return match(tokenizer);
-  }
-
-  public InvocationMatch<T> match(String s) throws SyntaxException {
-    return match(new TokenizerImpl(s));
   }
 
   private InvocationMatch<T> match(Tokenizer tokenizer) throws SyntaxException {

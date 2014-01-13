@@ -409,7 +409,7 @@ public class CRaSH {
     //
     CRaSH main = new CRaSH();
     InvocationMatcher<CRaSH> matcher = main.descriptor.matcher("main");
-    InvocationMatch<CRaSH> match = matcher.match(line.toString());
+    InvocationMatch<CRaSH> match = matcher.parse(line.toString());
     match.invoke(new CRaSH());
   }
 }

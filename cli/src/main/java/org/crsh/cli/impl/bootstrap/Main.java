@@ -57,7 +57,7 @@ public class Main {
     CommandDescriptor<T> descriptor = CommandFactory.DEFAULT.create(commandClass);
     descriptor = HelpDescriptor.create(descriptor);
     InvocationMatcher<T> matcher = descriptor.matcher("main");
-    InvocationMatch<T> match = matcher.match(line);
+    InvocationMatch<T> match = matcher.parse(line);
     T instance = commandClass.newInstance();
     Object o = match.invoke(instance);
     if (o != null) {

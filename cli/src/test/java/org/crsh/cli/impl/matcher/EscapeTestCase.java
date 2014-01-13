@@ -45,21 +45,21 @@ public class EscapeTestCase extends TestCase {
 
     //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.matcher("main");
+    InvocationMatcher<A> matcher = desc.matcher("main");
 
     //
     A a = new A();
-    analyzer.match("-o \" \"").invoke(a);
+    matcher.parse("-o \" \"").invoke(a);
     assertEquals(" ", a.s);
 
     //
     a = new A();
-    analyzer.match("-o \"'\"").invoke(a);
+    matcher.parse("-o \"'\"").invoke(a);
     assertEquals("'", a.s);
 
     //
     a = new A();
-    analyzer.match("-o \" a b").invoke(a);
+    matcher.parse("-o \" a b").invoke(a);
     assertEquals(" a b", a.s);
   }
 
@@ -77,17 +77,17 @@ public class EscapeTestCase extends TestCase {
 
     //
     A a = new A();
-    analyzer.match("\" \" b").invoke(a);
+    analyzer.parse("\" \" b").invoke(a);
     assertEquals(Arrays.asList(" ", "b"), a.s);
 
     //
     a = new A();
-    analyzer.match("\"'\" b").invoke(a);
+    analyzer.parse("\"'\" b").invoke(a);
     assertEquals(Arrays.asList("'", "b"), a.s);
 
     //
     a = new A();
-    analyzer.match("\"a b\" c").invoke(a);
+    analyzer.parse("\"a b\" c").invoke(a);
     assertEquals(Arrays.asList("a b", "c"), a.s);
   }
 }

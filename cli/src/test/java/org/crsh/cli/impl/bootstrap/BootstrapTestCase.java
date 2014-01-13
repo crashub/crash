@@ -21,7 +21,6 @@ package org.crsh.cli.impl.bootstrap;
 
 import junit.framework.TestCase;
 import org.crsh.cli.descriptor.CommandDescriptor;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
 import org.crsh.cli.impl.descriptor.Help;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.descriptor.OptionDescriptor;
@@ -59,7 +58,7 @@ public class BootstrapTestCase extends TestCase {
     InvocationMatcher<A> matcher = helpDesc.matcher("main");
 
     //
-    InvocationMatch<A> match = matcher.match("--help");
+    InvocationMatch<A> match = matcher.parse("--help");
     ParameterMatch<OptionDescriptor> helpMatch = match.getParameter(optionDesc);
     assertNotNull(helpMatch);
     CommandInvoker<A, ?> invoker = match.getInvoker();
@@ -68,10 +67,10 @@ public class BootstrapTestCase extends TestCase {
     assertSame(desc, help.getDescriptor());
 
     //
-    match = matcher.match("");
+    match = matcher.parse("");
     invoker = match.getInvoker();
     invoker.invoke(new A());
-    match = matcher.match("-f foo_value bar");
+    match = matcher.parse("-f foo_value bar");
     invoker = match.getInvoker();
     assertEquals("invoked:foo_value", invoker.invoke(new A()));
   }
@@ -93,7 +92,7 @@ public class BootstrapTestCase extends TestCase {
     InvocationMatcher<B> matcher = helpDesc.matcher("main");
 
     //
-    InvocationMatch<B> match = matcher.match("--help");
+    InvocationMatch<B> match = matcher.parse("--help");
     ParameterMatch<OptionDescriptor> helpMatch = match.getParameter(optionDesc);
     assertNull(helpMatch);
     InvocationMatch<B> ownerMatch = match.owner();

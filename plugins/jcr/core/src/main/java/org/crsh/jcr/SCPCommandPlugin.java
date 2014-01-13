@@ -41,7 +41,7 @@ public class SCPCommandPlugin extends CommandPlugin {
         SCPAction action = new SCPAction();
         CommandDescriptor<SCPAction> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
         InvocationMatcher<SCPAction> analyzer = descriptor.matcher("main");
-        InvocationMatch<SCPAction> match = analyzer.match(command);
+        InvocationMatch<SCPAction> match = analyzer.parse(command);
         match.invoke(Resolver.EMPTY, action);
         if (Boolean.TRUE.equals(action.isSource())) {
           return new SourceCommand(action.getTarget(), Boolean.TRUE.equals(action.isRecursive()));
