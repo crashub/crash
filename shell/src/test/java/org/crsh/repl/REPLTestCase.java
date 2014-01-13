@@ -19,6 +19,7 @@
 package org.crsh.repl;
 
 import org.crsh.cli.Command;
+import org.crsh.cli.Option;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.groovy.GroovyREPL;
 import org.crsh.plugin.CRaSHPlugin;
@@ -175,7 +176,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
     assertEquals(Arrays.<Object>asList("foo", "bar"), Commands.list);
   }
 
-  public void testOptions() {
+  public void testMethodOptionBinding() {
     lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     Commands.Parameterized.reset();
@@ -187,7 +188,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
     assertEquals(null, Commands.Parameterized.args);
   }
 
-  public void testArgs() {
+  public void testMethodArgumentBinding() {
     lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     Commands.Parameterized.reset();
@@ -199,7 +200,7 @@ public class REPLTestCase extends AbstractCommandTestCase {
     assertEquals(Arrays.asList("arg1", "arg2"), Commands.Parameterized.args);
   }
 
-  public void testOptionsAndArgs() {
+  public void testMethodOptionBindingMethodArgumentBinding() {
     lifeCycle.bindClass("parameterized", Commands.Parameterized.class);
     assertOk("repl groovy");
     Commands.Parameterized.reset();
@@ -209,5 +210,57 @@ public class REPLTestCase extends AbstractCommandTestCase {
     assertOk("a()");
     assertEquals("foo_opt", Commands.Parameterized.opt);
     assertEquals(Arrays.asList("arg1", "arg2"), Commands.Parameterized.args);
+  }
+
+  public static class ClassOptionBindingSubordinate extends BaseCommand {
+
+    /** . */
+    public static String opt;
+
+    @Option(names = "o")
+    public String option;
+
+    public ClassOptionBindingSubordinate() {
+      System.out.println("zeezf");
+    }
+
+    @Command
+    public void sub() {
+      opt = option;
+    }
+  }
+
+  public void testClassOptionBindingSubordinate() {
+    lifeCycle.bindClass("cmd", ClassOptionBindingSubordinate.class);
+    assertOk("repl groovy");
+    assertOk("a = cmd { o = 'foo_opt'; }");
+    assertOk("a.sub()");
+    assertEquals("foo_opt", Commands.Parameterized.opt);
+  }
+
+  public static class ClassOptionBinding extends BaseCommand {
+
+    /** . */
+    public static String opt;
+
+    @Option(names = "o")
+    public String option;
+
+    public ClassOptionBinding() {
+      System.out.println("zeezf");
+    }
+
+    @Command
+    public void main() {
+      opt = option;
+    }
+  }
+
+  public void testClassOptionBinding() {
+    lifeCycle.bindClass("cmd", ClassOptionBinding.class);
+    assertOk("repl groovy");
+    assertOk("a = cmd { o = 'foo_opt'; }");
+    assertOk("a()");
+    assertEquals("foo_opt", Commands.Parameterized.opt);
   }
 }

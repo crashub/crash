@@ -131,23 +131,30 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
     return null;
   }
 
-  public CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) throws CommandCreationException {
+  public CommandInvoker<?, ?> resolveInvoker(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CommandCreationException {
     InvocationMatcher<CC> matcher = descriptor.matcher("main");
 
     //
-    if (name != null && name.length() > 0) {
-      matcher = matcher.subordinate(name);
-    }
-
-    // Minor : remove that and use same signature
-    if (options.size() > 0) {
+    if (options != null && options.size() > 0) {
       for (Map.Entry<String, ?> option : options.entrySet()) {
         matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
       }
     }
 
     //
-    InvocationMatch<CC> match = matcher.arguments(args);
+    if (subordinate != null && subordinate.length() > 0) {
+      matcher = matcher.subordinate(subordinate);
+
+      // Minor : remove that and use same signature
+      if (subordinateOptions != null && subordinateOptions.size() > 0) {
+        for (Map.Entry<String, ?> option : subordinateOptions.entrySet()) {
+          matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
+        }
+      }
+    }
+
+    //
+    InvocationMatch<CC> match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
 
     //
     return resolveInvoker(match);

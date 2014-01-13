@@ -99,9 +99,9 @@ public class PipeLineClosure extends Closure {
   private PipeLineClosure _sub(String name) {
     if (elements.length == 1) {
       CommandElement element = (CommandElement)elements[0];
-      if (element.name == null) {
+      if (element.subordinate == null) {
         return new PipeLineClosure(context, new CommandElement[]{
-            new CommandElement(element.commandName + "." + name, element.command, name)
+            element.subordinate(name)
         });
       }
     }
@@ -151,32 +151,9 @@ public class PipeLineClosure extends Closure {
   }
 
   private PipeLineClosure options(Map<String, ?> options, Object[] arguments) {
-
-    //
     CommandElement first = (CommandElement)elements[0];
-    Map<String, Object> firstOptions = first.options;
-    List<Object> firstArgs = first.args;
-
-    // We merge options
-    if (options != null && options.size() > 0) {
-      if (firstOptions == null) {
-        firstOptions = new HashMap<String, Object>();
-      } else {
-        firstOptions = new HashMap<String, Object>(options);
-      }
-      for (Map.Entry<?, ?> arg : options.entrySet()) {
-        firstOptions.put(arg.getKey().toString(), arg.getValue());
-      }
-    }
-
-    // We replace arguments
-    if (arguments != null) {
-      firstArgs = new ArrayList<Object>(Arrays.asList(arguments));
-    }
-
-    //
     PipeLineElement[] ret = elements.clone();
-    ret[0] = new CommandElement(first.commandName, first.command, first.name, firstOptions, firstArgs);
+    ret[0] = first.merge(options, arguments != null && arguments.length > 0 ? Arrays.asList(arguments) : Collections.emptyList());
     return new PipeLineClosure(context, ret);
   }
 
@@ -257,9 +234,8 @@ public class PipeLineClosure extends Closure {
   LinkedList<CommandInvoker> resolve2(Object[] args) throws CommandCreationException {
 
     // Resolve options and arguments
-    CommandElement elt = (CommandElement)elements[0];
-    Map<String, Object> invokerOptions = elt.options != null ? elt.options : Collections.<String, Object>emptyMap();
-    List<Object> invokerArgs = elt.args != null ? elt.args : Collections.emptyList();
+    Map<String, Object> invokerOptions = Collections.emptyMap();
+    List<Object> invokerArgs = Collections.emptyList();
     if (args.length > 0) {
       Object first = args[0];
       int from;
@@ -291,7 +267,7 @@ public class PipeLineClosure extends Closure {
     //
     CommandElement first = (CommandElement)elements[0];
     PipeLineElement[] a = elements.clone();
-    a[0] = new CommandElement(first.commandName, first.command, first.name, invokerOptions, invokerArgs);
+    a[0] = first.merge(invokerOptions, invokerArgs);
 
     //
     LinkedList<CommandInvoker> ret = new LinkedList<CommandInvoker>();

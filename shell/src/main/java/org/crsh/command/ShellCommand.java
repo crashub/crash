@@ -56,13 +56,14 @@ public interface ShellCommand {
   CommandInvoker<?, ?> resolveInvoker(String line) throws CommandCreationException;
 
   /**
-   * Provides an invoker for the command line specified under the form of a command, options and arguments.
+   * Provides an invoker for the command line specified in a detyped manner.
    *
-   * @param name the command name, might be null
-   * @param options the options
-   * @param args the arguments
+   * @param options the base options
+   * @param subordinate the subordinate command name, might null
+   * @param subordinateOptions the subordinate options
+   * @param arguments arguments
    * @return the command
    */
-  CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) throws CommandCreationException;
+  CommandInvoker<?, ?> resolveInvoker(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CommandCreationException;
 
 }

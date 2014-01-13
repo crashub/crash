@@ -22,7 +22,9 @@ import org.crsh.command.CommandCreationException;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,36 +39,88 @@ class CommandElement extends PipeLineElement {
   final ShellCommand command;
 
   /** . */
-  final String name;
+  final Map<String, Object> options;
 
   /** . */
-  final Map<String, Object> options;
+  final String subordinate;
+
+  /** . */
+  final Map<String, Object> subordinateOptions;
 
   /** . */
   final List<Object> args;
 
-  public CommandElement(String commandName, ShellCommand command, String name) {
+  public CommandElement(String commandName, ShellCommand command, Map<String, Object> options) {
     this.commandName = commandName;
     this.command = command;
-    this.name = name;
-    this.options = null;
+    this.options = options;
+    this.subordinate = null;
+    this.subordinateOptions = null;
     this.args = null;
   }
 
-  public CommandElement(String commandName, ShellCommand command, String name, Map<String, Object> options, List<Object> args) {
+  public CommandElement subordinate(String name) {
+    return new CommandElement(
+        this.commandName + "." + name,
+        this.command,
+        this.options,
+        name,
+        this.subordinateOptions,
+        this.args);
+  }
+
+  public CommandElement merge(Map<String, ?> options, List<?> arguments) {
+
+    // We merge options
+    Map<String, Object> nextOptions;
+    if (subordinate == null) {
+      nextOptions = this.options;
+    } else {
+      nextOptions = this.subordinateOptions;
+    }
+    if (options != null && options.size() > 0) {
+      if (nextOptions == null) {
+        nextOptions = new HashMap<String, Object>();
+      } else {
+        nextOptions = new HashMap<String, Object>(options);
+      }
+      for (Map.Entry<?, ?> arg : options.entrySet()) {
+        nextOptions.put(arg.getKey().toString(), arg.getValue());
+      }
+    }
+
+    // We merge arguments
+    List<Object> nextArgs;
+    if (arguments != null) {
+      nextArgs = new ArrayList<Object>();
+      if (this.args != null) {
+        nextArgs.addAll(this.args);
+      }
+      nextArgs.addAll(arguments);
+    } else {
+      nextArgs = this.args;
+    }
+
+    //
+    if (subordinate == null) {
+      return new CommandElement(this.commandName, this.command, nextOptions, null, null, nextArgs);
+    } else {
+      return new CommandElement(this.commandName, this.command, this.options, subordinate, nextOptions, nextArgs);
+    }
+  }
+
+  private CommandElement(String commandName, ShellCommand command, Map<String, Object> options, String subordinate, Map<String, Object> subordinateOptions, List<Object> args) {
     this.commandName = commandName;
     this.command = command;
-    this.name = name;
     this.options = options;
+    this.subordinate = subordinate;
+    this.subordinateOptions = subordinateOptions;
     this.args = args;
   }
 
   @Override
   CommandInvoker make() throws CommandCreationException {
-    return command.resolveInvoker(
-        name != null ? name : "",
-        options != null ? options : Collections.<String, Object>emptyMap(),
-        args != null ? args : Collections.<Object>emptyList());
+    return command.resolveInvoker(options, subordinate, subordinateOptions, args);
   }
 
   private void format(Object o, StringBuilder buffer) {
@@ -81,12 +135,12 @@ class CommandElement extends PipeLineElement {
 
   void toString(StringBuilder buffer) {
     buffer.append(commandName);
-    boolean hasOptions = options != null && options.size() > 0;
+    boolean hasOptions = subordinateOptions != null && subordinateOptions.size() > 0;
     boolean hasArguments = args != null && args.size() > 0;
     if (hasOptions || hasArguments) {
       buffer.append(" {");
       if (hasOptions) {
-        for (Iterator<Map.Entry<String, Object>> i = options.entrySet().iterator();i.hasNext();) {
+        for (Iterator<Map.Entry<String, Object>> i = subordinateOptions.entrySet().iterator();i.hasNext();) {
           Map.Entry<String, Object> option = i.next();
           buffer.append(' ').append(option.getKey()).append('=');
           format(option.getValue(), buffer);

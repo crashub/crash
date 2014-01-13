@@ -75,10 +75,10 @@ public class GroovyScriptShellCommand<C extends GroovyScriptCommand> implements 
     return getInvoker(args);
   }
 
-  public final CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) throws CommandCreationException {
-    String[] tmp = new String[args.size()];
+  public final CommandInvoker<?, ?> resolveInvoker(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CommandCreationException {
+    String[] tmp = new String[arguments.size()];
     for (int i = 0;i < tmp.length;i++) {
-      tmp[i] = args.get(i).toString();
+      tmp[i] = arguments.get(i).toString();
     }
     return getInvoker(tmp);
   }
