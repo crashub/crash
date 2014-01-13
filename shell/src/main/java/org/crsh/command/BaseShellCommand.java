@@ -95,7 +95,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
   public final String describe(String line, DescriptionFormat mode) {
 
     // WTF
-    InvocationMatcher analyzer = descriptor.invoker("main");
+    InvocationMatcher analyzer = descriptor.matcher("main");
 
     //
     InvocationMatch match;
@@ -132,7 +132,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
   }
 
   public CommandInvoker<?, ?> resolveInvoker(String name, Map<String, ?> options, List<?> args) throws CommandCreationException {
-    InvocationMatcher<CC> matcher = descriptor.invoker("main");
+    InvocationMatcher<CC> matcher = descriptor.matcher("main");
     InvocationMatch<CC> match;
     try {
       match = matcher.match(name, options, args);
@@ -144,7 +144,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
   }
 
   public CommandInvoker<?, ?> resolveInvoker(String line) throws CommandCreationException {
-    InvocationMatcher<CC> analyzer = descriptor.invoker("main");
+    InvocationMatcher<CC> analyzer = descriptor.matcher("main");
     InvocationMatch<CC> match;
     try {
       match = analyzer.match(line);

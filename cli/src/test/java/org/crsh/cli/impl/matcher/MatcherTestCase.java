@@ -51,7 +51,7 @@ public class MatcherTestCase extends TestCase {
       public void run() {}
     }
     CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.invoker();
+    InvocationMatcher<A> analyzer = desc.matcher();
 
     A a = new A();
     analyzer.match("-o foo").invoke(a);
@@ -73,7 +73,7 @@ public class MatcherTestCase extends TestCase {
       public void run() {}
     }
     CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.invoker();
+    InvocationMatcher<A> analyzer = desc.matcher();
 
     A a = new A();
     analyzer.match("-o foo").invoke(a);
@@ -91,7 +91,7 @@ public class MatcherTestCase extends TestCase {
       public void run() {}
     }
     CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.invoker();
+    InvocationMatcher<A> analyzer = desc.matcher();
 
     A a = new A();
     analyzer.match("5").invoke(a);
@@ -117,7 +117,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testPrimitiveMethodArgument() throws Exception {
     CommandDescriptorImpl<PMA> desc = CommandFactory.DEFAULT.create(PMA.class);
-    InvocationMatcher<PMA> analyzer = desc.invoker();
+    InvocationMatcher<PMA> analyzer = desc.matcher();
 
     PMA a = new PMA();
     analyzer.match("m 5").invoke(a);
@@ -143,7 +143,7 @@ public class MatcherTestCase extends TestCase {
       public void run() {}
     }
     CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.invoker();
+    InvocationMatcher<A> analyzer = desc.matcher();
 
     A a = new A();
     analyzer.match("foo").invoke(a);
@@ -168,7 +168,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testOptionalArgumentList() throws Exception {
     CommandDescriptorImpl<BC> desc = CommandFactory.DEFAULT.create(BC.class);
-    InvocationMatcher<BC> analyzer = desc.invoker();
+    InvocationMatcher<BC> analyzer = desc.matcher();
 
     for (String s : Arrays.asList("", "bar ")) {
       BC a = new BC();
@@ -199,7 +199,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testOptionSyntaxException() throws Exception {
     CommandDescriptorImpl<OptionSyntaxException> desc = CommandFactory.DEFAULT.create(OptionSyntaxException.class);
-    InvocationMatcher<OptionSyntaxException> analyzer = desc.invoker("main");
+    InvocationMatcher<OptionSyntaxException> analyzer = desc.matcher("main");
     OptionSyntaxException cmd = new OptionSyntaxException();
 
     //
@@ -239,7 +239,7 @@ public class MatcherTestCase extends TestCase {
       public void run() {}
     }
     CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.invoker();
+    InvocationMatcher<A> analyzer = desc.matcher();
 
     A a = new A();
     try {
@@ -274,7 +274,7 @@ public class MatcherTestCase extends TestCase {
   public void testMethodInvocation() throws Exception {
 
     CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.invoker();
+    InvocationMatcher<A> analyzer = desc.matcher();
 
     //
     A a = new A();
@@ -323,7 +323,7 @@ public class MatcherTestCase extends TestCase {
 
   public void testMainMethodInvocation() throws Exception {
     CommandDescriptorImpl<B> desc = CommandFactory.DEFAULT.create(B.class);
-    InvocationMatcher<B> analyzer = desc.invoker("main");
+    InvocationMatcher<B> analyzer = desc.matcher("main");
 
     //
     B b = new B();
@@ -344,7 +344,7 @@ public class MatcherTestCase extends TestCase {
   public void testInvocationAttributeInjection() throws Exception {
 
     CommandDescriptorImpl<C> desc = CommandFactory.DEFAULT.create(C.class);
-    InvocationMatcher<C> analyzer = desc.invoker("main");
+    InvocationMatcher<C> analyzer = desc.matcher("main");
 
     //
     C c = new C();
@@ -382,12 +382,12 @@ public class MatcherTestCase extends TestCase {
 
     //
     D d = new D();
-    desc.invoker("a").match("-o 5").invoke(d);
+    desc.matcher("a").match("-o 5").invoke(d);
     assertEquals((Integer)5, d.i);
 
     //
     d = new D();
-    desc.invoker("b").match("-o 5").invoke(d);
+    desc.matcher("b").match("-o 5").invoke(d);
     assertEquals((Integer)5, d.i);
   }
 
@@ -407,12 +407,12 @@ public class MatcherTestCase extends TestCase {
 
     //
     E e = new E();
-    desc.invoker("a").match("-o a").invoke(e);
+    desc.matcher("a").match("-o a").invoke(e);
     assertEquals("a", e.i);
 
     //
     e = new E();
-    desc.invoker("a").match("-o \"a\"").invoke(e);
+    desc.matcher("a").match("-o \"a\"").invoke(e);
     assertEquals("\"a\"", e.i);
   }
 
@@ -428,12 +428,12 @@ public class MatcherTestCase extends TestCase {
 
     //
     F f = new F();
-    desc.invoker("foo").match("-o a").invoke(f);
+    desc.matcher("foo").match("-o a").invoke(f);
     assertEquals(Arrays.asList("a"), f.s);
 
     //
     f = new F();
-    desc.invoker("foo").match("-o a -o b").invoke(f);
+    desc.matcher("foo").match("-o a -o b").invoke(f);
     assertEquals(Arrays.asList("a", "b"), f.s);
   }
 
@@ -450,7 +450,7 @@ public class MatcherTestCase extends TestCase {
 
     //
     G g = new G();
-    desc.invoker("foo").match("-o a").invoke(g);
+    desc.matcher("foo").match("-o a").invoke(g);
     assertEquals(new Custom("a"), g.o);
   }
 
@@ -465,7 +465,7 @@ public class MatcherTestCase extends TestCase {
 
     //
     H h = new H();
-    InvocationMatch<H> match = desc.invoker("foo").match("");
+    InvocationMatch<H> match = desc.matcher("foo").match("");
     try {
       match.invoke(h);
       fail();
@@ -486,7 +486,7 @@ public class MatcherTestCase extends TestCase {
 
     //
     I i = new I();
-    InvocationMatch<I> match = desc.invoker("foo").match("");
+    InvocationMatch<I> match = desc.matcher("foo").match("");
     try {
       match.invoke(i);
       fail();
@@ -507,7 +507,7 @@ public class MatcherTestCase extends TestCase {
 
     //
     J j = new J();
-    InvocationMatch<J> match = desc.invoker("foo").match("");
+    InvocationMatch<J> match = desc.matcher("foo").match("");
     try {
       match.invoke(j);
       fail();
@@ -526,14 +526,14 @@ public class MatcherTestCase extends TestCase {
   public void testSpecifyClassOptionBeforeSubordinate() throws Exception {
     CommandDescriptorImpl<K> desc = CommandFactory.DEFAULT.create(K.class);
     K k = new K();
-    desc.invoker("main").match("-o foo cmd").invoke(k);
+    desc.matcher("main").match("-o foo cmd").invoke(k);
     assertEquals("foo", k.opt);
   }
 
   public void testSpecifyClassOptionAfterSubordinate() throws Exception {
     CommandDescriptorImpl<K> desc = CommandFactory.DEFAULT.create(K.class);
     K k = new K();
-    desc.invoker("main").match("cmd -o foo").invoke(k);
+    desc.matcher("main").match("cmd -o foo").invoke(k);
     assertEquals(null, k.opt);
   }
 
@@ -546,14 +546,14 @@ public class MatcherTestCase extends TestCase {
   public void testSpecifySubordinateOptionBeforeSubordinate() throws Exception {
     CommandDescriptorImpl<L> desc = CommandFactory.DEFAULT.create(L.class);
     L l = new L();
-    desc.invoker("main").match("-o foo cmd").invoke(l);
+    desc.matcher("main").match("-o foo cmd").invoke(l);
     assertEquals(null, l.opt);
   }
 
   public void testSpecifySubordinateOptionAfterSubordinate() throws Exception {
     CommandDescriptorImpl<L> desc = CommandFactory.DEFAULT.create(L.class);
     L l = new L();
-    desc.invoker("main").match("cmd -o foo").invoke(l);
+    desc.matcher("main").match("cmd -o foo").invoke(l);
     assertEquals("foo", l.opt);
   }
 
@@ -566,7 +566,7 @@ public class MatcherTestCase extends TestCase {
   public void testImplicitSubordinateOption() throws Exception {
     CommandDescriptorImpl<M> desc = CommandFactory.DEFAULT.create(M.class);
     M m = new M();
-    desc.invoker("main").match("-o foo").invoke(m);
+    desc.matcher("main").match("-o foo").invoke(m);
     assertEquals("foo", m.opt);
   }
 
@@ -577,7 +577,7 @@ public class MatcherTestCase extends TestCase {
       public void run() {}
     }
     CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.invoker();
+    InvocationMatcher<A> analyzer = desc.matcher();
 
     //
     A a = new A();
@@ -595,7 +595,7 @@ public class MatcherTestCase extends TestCase {
       public void run() {}
     }
     CommandDescriptorImpl<SCP> desc = CommandFactory.DEFAULT.create(SCP.class);
-    InvocationMatcher<SCP> analyzer = desc.invoker();
+    InvocationMatcher<SCP> analyzer = desc.matcher();
 
     //
     SCP scp = new SCP();

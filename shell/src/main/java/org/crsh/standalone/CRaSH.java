@@ -408,7 +408,7 @@ public class CRaSH {
 
     //
     CRaSH main = new CRaSH();
-    InvocationMatcher<CRaSH> matcher = main.descriptor.invoker("main");
+    InvocationMatcher<CRaSH> matcher = main.descriptor.matcher("main");
     InvocationMatch<CRaSH> match = matcher.match(line.toString());
     match.invoke(new CRaSH());
   }

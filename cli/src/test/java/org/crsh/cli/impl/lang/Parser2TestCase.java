@@ -63,7 +63,7 @@ public class Parser2TestCase extends TestCase {
     private <T> Test(Class<T> type, String s) {
       try {
         CommandDescriptorImpl<T> command = CommandFactory.DEFAULT.create(type);
-        InvocationMatcher<T> parser = command.invoker();
+        InvocationMatcher<T> parser = command.matcher();
         InvocationMatch<T> match = parser.match(s);
 
         //

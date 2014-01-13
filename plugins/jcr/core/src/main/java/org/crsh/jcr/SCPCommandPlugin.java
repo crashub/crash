@@ -40,7 +40,7 @@ public class SCPCommandPlugin extends CommandPlugin {
         command = command.substring(4);
         SCPAction action = new SCPAction();
         CommandDescriptorImpl<SCPAction> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
-        InvocationMatcher<SCPAction> analyzer = descriptor.invoker("main");
+        InvocationMatcher<SCPAction> analyzer = descriptor.matcher("main");
         InvocationMatch<SCPAction> match = analyzer.match(command);
         match.invoke(Resolver.EMPTY, action);
         if (Boolean.TRUE.equals(action.isSource())) {

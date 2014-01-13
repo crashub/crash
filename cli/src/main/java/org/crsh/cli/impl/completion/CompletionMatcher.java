@@ -44,11 +44,7 @@ public final class CompletionMatcher<T> {
   /** . */
   private final String mainName;
 
-  public CompletionMatcher(CommandDescriptor<T> descriptor) {
-    this(null, descriptor);
-  }
-
-  public CompletionMatcher(String mainName, CommandDescriptor<T> descriptor) {
+  public CompletionMatcher(CommandDescriptor<T> descriptor, String mainName) {
     this.mainName = mainName;
     this.descriptor = descriptor;
   }

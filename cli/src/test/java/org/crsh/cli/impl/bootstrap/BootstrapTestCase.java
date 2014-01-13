@@ -56,7 +56,7 @@ public class BootstrapTestCase extends TestCase {
     CommandDescriptor<A> bar = helpDesc.getSubordinate("bar");
     OptionDescriptor barHelp = bar.getOption("-h");
     assertNull(barHelp);
-    InvocationMatcher<A> matcher = helpDesc.invoker("main");
+    InvocationMatcher<A> matcher = helpDesc.matcher("main");
 
     //
     InvocationMatch<A> match = matcher.match("--help");
@@ -90,7 +90,7 @@ public class BootstrapTestCase extends TestCase {
     HelpDescriptor<B> helpDesc = new HelpDescriptor<B>(desc);
     OptionDescriptor optionDesc = helpDesc.getOption("-h");
     assertNotNull(optionDesc);
-    InvocationMatcher<B> matcher = helpDesc.invoker("main");
+    InvocationMatcher<B> matcher = helpDesc.matcher("main");
 
     //
     InvocationMatch<B> match = matcher.match("--help");

@@ -42,7 +42,7 @@ public class HelpTestCase extends TestCase {
 
   public void testFoo() {
     CommandDescriptorImpl<A> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(A.class));
-    InvocationMatcher<A> matcher = desc.invoker("main");
+    InvocationMatcher<A> matcher = desc.matcher("main");
     InvocationMatch<A> match = matcher.match("", Collections.singletonMap("h", Boolean.TRUE), Collections.emptyList());
     CommandInvoker<A, ?> invoker = match.getInvoker();
     Object ret = invoker.invoke(new A());

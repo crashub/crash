@@ -62,20 +62,11 @@ public abstract class CommandDescriptorImpl<T> extends CommandDescriptor<T> {
 
   public abstract CommandInvoker<T, ?> getInvoker(InvocationMatch<T> match);
 
-  public final InvocationMatcher<T> invoker() {
-    return new InvocationMatcher<T>(this, null);
-  }
-
-  public final InvocationMatcher<T> invoker(String mainName) {
+  public final InvocationMatcher<T> matcher(String mainName) {
     return new InvocationMatcher<T>(this, mainName);
   }
 
-  public final CompletionMatcher<T> completer() {
-    return new CompletionMatcher<T>(this);
-  }
-
   public final CompletionMatcher<T> completer(String mainName) {
-    return new CompletionMatcher<T>(mainName, this);
+    return new CompletionMatcher<T>(this, mainName);
   }
-
 }

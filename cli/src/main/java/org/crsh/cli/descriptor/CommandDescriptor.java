@@ -19,8 +19,10 @@
 
 package org.crsh.cli.descriptor;
 
+import org.crsh.cli.impl.completion.CompletionMatcher;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.impl.Multiplicity;
+import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.cli.impl.lang.Util;
 
 import java.io.IOException;
@@ -522,4 +524,17 @@ public abstract class CommandDescriptor<T> {
   public final String getUsage() {
     return description != null ? description.getUsage() : "";
   }
+
+  public final InvocationMatcher<T> matcher() {
+    return matcher(null);
+  }
+
+  public abstract InvocationMatcher<T> matcher(String mainName);
+
+  public final CompletionMatcher<T> completer() {
+    return completer(null);
+  }
+
+  public abstract CompletionMatcher<T> completer(String mainName);
+
 }
