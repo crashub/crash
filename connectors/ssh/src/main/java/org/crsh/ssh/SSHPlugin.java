@@ -33,7 +33,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.apache.sshd.common.util.SecurityUtils;
@@ -130,20 +132,19 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     }
 
     // Get the authentication
-    AuthenticationPlugin authPlugin = AuthenticationPlugin.NULL;
-    String authentication = getContext().getProperty(AuthenticationPlugin.AUTH);
+    ArrayList<AuthenticationPlugin> authPlugins = new ArrayList<AuthenticationPlugin>(0);
+    List authentication = getContext().getProperty(AuthenticationPlugin.AUTH);
     if (authentication != null) {
       for (AuthenticationPlugin authenticationPlugin : getContext().getPlugins(AuthenticationPlugin.class)) {
-        if (authentication.equals(authenticationPlugin.getName())) {
-          authPlugin = authenticationPlugin;
-          break;
+        if (authentication.contains(authenticationPlugin.getName())) {
+          authPlugins.add(authenticationPlugin);
         }
       }
     }
 
     //
     log.log(Level.INFO, "Booting SSHD");
-    SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext(), authPlugin);
+    SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext(), authPlugins);
     lifeCycle.setPort(port);
     lifeCycle.setKeyPairProvider(keyPairProvider);
     lifeCycle.init();

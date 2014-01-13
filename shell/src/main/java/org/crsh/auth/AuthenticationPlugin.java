@@ -21,6 +21,8 @@ package org.crsh.auth;
 
 import org.crsh.plugin.PropertyDescriptor;
 
+import java.util.List;
+
 /**
  * The authentication plugin.
  *
@@ -29,7 +31,7 @@ import org.crsh.plugin.PropertyDescriptor;
 public interface AuthenticationPlugin<C> {
 
   /** The authentication plugin to use. */
-  PropertyDescriptor<String> AUTH = PropertyDescriptor.create("auth", (String)null, "The authentication plugin");
+  PropertyDescriptor<List> AUTH = PropertyDescriptor.create("auth", (List) null, "The authentication plugin");
 
   /**
    * The plugin that never authenticates, returns the name value <code>null</code>.

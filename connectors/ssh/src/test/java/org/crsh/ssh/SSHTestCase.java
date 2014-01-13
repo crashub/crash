@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SSHTestCase extends Assert {
@@ -59,7 +60,7 @@ public class SSHTestCase extends Assert {
     //
     TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(new SSHPlugin(), handler, auth);
     lifeCycle.setProperty(SSHPlugin.SSH_PORT, port);
-    lifeCycle.setProperty(AuthenticationPlugin.AUTH, auth.getName());
+    lifeCycle.setProperty(AuthenticationPlugin.AUTH, Arrays.asList(auth.getName()));
     lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_USERNAME, "root");
     lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_PASSWORD, "");
     lifeCycle.start();
