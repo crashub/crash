@@ -22,7 +22,7 @@ package org.crsh.cli.impl.matcher;
 import junit.framework.TestCase;
 import org.crsh.cli.Argument;
 import org.crsh.cli.Option;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
 
@@ -44,7 +44,7 @@ public class EscapeTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     InvocationMatcher<A> analyzer = desc.matcher("main");
 
     //
@@ -72,7 +72,7 @@ public class EscapeTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     InvocationMatcher<A> analyzer = desc.matcher();
 
     //

@@ -97,7 +97,7 @@ import java.util.Map;
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
 
-  public static <T> HelpDescriptor<T> create(CommandDescriptorImpl<T> descriptor) {
+  public static <T> HelpDescriptor<T> create(CommandDescriptor<T> descriptor) {
     return new HelpDescriptor<T>(descriptor);
   }
 
@@ -123,8 +123,8 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
   /** . */
   private final LinkedHashMap<String, HelpDescriptor<T>> subordinates;
 
-  public HelpDescriptor(CommandDescriptorImpl<T> delegate) throws IntrospectionException {
-    this(null, delegate);
+  public HelpDescriptor(CommandDescriptor<T> delegate) throws IntrospectionException {
+    this(null, (CommandDescriptorImpl<T>)delegate);
   }
 
   private HelpDescriptor(HelpDescriptor<T> owner, CommandDescriptorImpl<T> delegate) throws IntrospectionException {

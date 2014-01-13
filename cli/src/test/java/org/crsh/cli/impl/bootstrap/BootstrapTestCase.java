@@ -47,7 +47,7 @@ public class BootstrapTestCase extends TestCase {
   public void testOption() throws Exception {
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     HelpDescriptor<A> helpDesc = new HelpDescriptor<A>(desc);
     OptionDescriptor optionDesc = helpDesc.getOption("-h");
     assertNotNull(optionDesc);
@@ -86,7 +86,7 @@ public class BootstrapTestCase extends TestCase {
 
   public void testMain() {
 
-    CommandDescriptorImpl<B> desc = CommandFactory.DEFAULT.create(B.class);
+    CommandDescriptor<B> desc = CommandFactory.DEFAULT.create(B.class);
     HelpDescriptor<B> helpDesc = new HelpDescriptor<B>(desc);
     OptionDescriptor optionDesc = helpDesc.getOption("-h");
     assertNotNull(optionDesc);

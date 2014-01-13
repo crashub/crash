@@ -19,7 +19,7 @@
 
 package org.crsh.cli.impl.lang;
 
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.ArgumentDescriptor;
 import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
@@ -91,7 +91,7 @@ public class CommandFactory {
     return commands;
   }
 
-  public <T> CommandDescriptorImpl<T> create(Class<T> type) throws IntrospectionException {
+  public <T> CommandDescriptor<T> create(Class<T> type) throws IntrospectionException {
 
     //
     Map<String, MethodDescriptor<T>> methodMap = new LinkedHashMap<String, MethodDescriptor<T>>();

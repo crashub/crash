@@ -20,7 +20,7 @@
 package org.crsh.cli.impl.matcher;
 
 import junit.framework.TestCase;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.completion.CompletionException;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.Delimiter;
@@ -56,7 +56,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer();
 
     //
@@ -78,7 +78,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer();
 
     //
@@ -98,7 +98,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer("main");
 
     //
@@ -119,7 +119,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer("main");
 
     //
@@ -136,7 +136,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer();
 
     //
@@ -156,7 +156,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer();
 
     //
@@ -181,7 +181,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer("main");
 
     //
@@ -196,7 +196,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer();
 
     //
@@ -216,7 +216,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer("main");
 
     //
@@ -235,7 +235,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer("main");
 
     //
@@ -255,7 +255,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer("main");
 
     //
@@ -286,7 +286,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer("main");
 
     //
@@ -309,7 +309,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer();
 
     //
@@ -343,7 +343,7 @@ public class CompleteTestCase extends TestCase {
     }
 
     //
-    CommandDescriptorImpl<A> desc = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
     CompletionMatcher<A> matcher = desc.completer("main");
 
     //
@@ -409,7 +409,7 @@ public class CompleteTestCase extends TestCase {
       public void foo(@Argument Custom o) { this.o = o; }
     }
 
-    CommandDescriptorImpl<A> desc = new CommandFactory(CompleteTestCase.class.getClassLoader()).create(A.class);
+    CommandDescriptor<A> desc = new CommandFactory(CompleteTestCase.class.getClassLoader()).create(A.class);
 
     //
     CompletionMatcher<A> matcher = desc.completer();

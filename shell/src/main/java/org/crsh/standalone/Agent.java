@@ -19,7 +19,7 @@
 package org.crsh.standalone;
 
 import org.crsh.cli.Usage;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
@@ -53,7 +53,7 @@ public class Agent {
       @Override
       public void run() {
         try {
-          CommandDescriptorImpl<Agent> c = CommandFactory.DEFAULT.create(Agent.class);
+          CommandDescriptor<Agent> c = CommandFactory.DEFAULT.create(Agent.class);
           InvocationMatcher<Agent> matcher = c.matcher("main");
           InvocationMatch<Agent> match = matcher.match(agentArgs);
           match.invoke(new Agent(inst));

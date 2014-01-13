@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.cli.impl.invocation.ArgumentMatch;
@@ -62,7 +62,7 @@ public class Parser2TestCase extends TestCase {
 
     private <T> Test(Class<T> type, String s) {
       try {
-        CommandDescriptorImpl<T> command = CommandFactory.DEFAULT.create(type);
+        CommandDescriptor<T> command = CommandFactory.DEFAULT.create(type);
         InvocationMatcher<T> parser = command.matcher();
         InvocationMatch<T> match = parser.match(s);
 

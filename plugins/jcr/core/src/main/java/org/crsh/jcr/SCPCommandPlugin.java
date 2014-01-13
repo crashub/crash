@@ -19,7 +19,7 @@
 
 package org.crsh.jcr;
 
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.apache.sshd.server.Command;
 import org.crsh.cli.CLIException;
 import org.crsh.cli.impl.lang.CommandFactory;
@@ -39,7 +39,7 @@ public class SCPCommandPlugin extends CommandPlugin {
       try {
         command = command.substring(4);
         SCPAction action = new SCPAction();
-        CommandDescriptorImpl<SCPAction> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
+        CommandDescriptor<SCPAction> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
         InvocationMatcher<SCPAction> analyzer = descriptor.matcher("main");
         InvocationMatch<SCPAction> match = analyzer.match(command);
         match.invoke(Resolver.EMPTY, action);

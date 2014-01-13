@@ -21,7 +21,7 @@ package org.crsh.standalone;
 
 import com.sun.tools.attach.VirtualMachine;
 import jline.NoInterruptUnixTerminal;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import jline.Terminal;
 import jline.TerminalFactory;
 import org.crsh.cli.impl.Delimiter;
@@ -69,7 +69,7 @@ public class CRaSH {
   private static Logger log = Logger.getLogger(CRaSH.class.getName());
 
   /** . */
-  private final CommandDescriptorImpl<CRaSH> descriptor;
+  private final CommandDescriptor<CRaSH> descriptor;
 
   public CRaSH() throws IntrospectionException {
     this.descriptor = CommandFactory.DEFAULT.create(CRaSH.class);

@@ -23,7 +23,6 @@ import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionException;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.completion.CompletionMatcher;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
@@ -51,7 +50,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
   private final Class<CC> clazz;
 
   /** . */
-  private final CommandDescriptorImpl<CC> descriptor;
+  private final CommandDescriptor<CC> descriptor;
 
   public BaseShellCommand(Class<CC> clazz) {
 

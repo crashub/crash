@@ -19,7 +19,7 @@
 
 package org.crsh.cli.impl.bootstrap;
 
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.lang.CommandFactory;
@@ -54,7 +54,7 @@ public class Main {
   }
 
   private static <T> void handle(Class<T> commandClass, String line) throws Exception {
-    CommandDescriptorImpl<T> descriptor = CommandFactory.DEFAULT.create(commandClass);
+    CommandDescriptor<T> descriptor = CommandFactory.DEFAULT.create(commandClass);
     descriptor = HelpDescriptor.create(descriptor);
     InvocationMatcher<T> matcher = descriptor.matcher("main");
     InvocationMatch<T> match = matcher.match(line);
