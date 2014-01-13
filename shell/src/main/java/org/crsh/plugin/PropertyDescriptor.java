@@ -19,6 +19,10 @@
 
 package org.crsh.plugin;
 
+import org.crsh.util.Strings;
+
+import java.util.List;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +57,24 @@ public abstract class PropertyDescriptor<T> {
   }
 
   public static PropertyDescriptor<Integer> create(String name, Integer defaultValue, String description) {
+    return create(name, defaultValue, description, false);
+  }
+
+  public static PropertyDescriptor<List> create(String name, List defaultValue, String description, boolean secret) {
+    return new PropertyDescriptor<List>(List.class, name, defaultValue, description, secret) {
+      @Override
+      protected List doParse(String s) throws Exception {
+        String[] split = Strings.split(s, ',');
+        List<String> list = Arrays.asList(split);
+        for (int i = 0;i < list.size();i++) {
+          list.set(i, list.get(i).trim());
+        }
+        return list;
+      }
+    };
+  }
+
+  public static PropertyDescriptor<List> create(String name, List defaultValue, String description) {
     return create(name, defaultValue, description, false);
   }
 

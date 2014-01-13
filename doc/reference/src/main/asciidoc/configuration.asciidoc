@@ -82,6 +82,13 @@ by CRaSH, and the plugin is selected via the property _crash.auth_ that must mat
 crash.auth=simple
 ----
 
+It can also take a comma-separated list of multiple authentication plugins, allowing to mix username/password and key
+authentication. In this case plugins are tested in the order which they were specified:
+
+----
+crash.auth=simple,key
+----
+
 CRaSH comes out of the box with two authentication plugins.
 
 ==== Simple authentication

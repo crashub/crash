@@ -35,7 +35,6 @@ import org.crsh.term.spi.TermIOHandler;
 
 import java.security.PublicKey;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,16 +62,16 @@ public class SSHLifeCycle extends TermLifeCycle {
   private KeyPairProvider keyPairProvider;
 
   /** . */
-  private final AuthenticationPlugin authentication;
+  private final ArrayList<AuthenticationPlugin> authenticationPlugins;
 
   /** . */
   private Integer localPort;
 
-  public SSHLifeCycle(PluginContext context, AuthenticationPlugin<?> authentication) {
+  public SSHLifeCycle(PluginContext context, ArrayList<AuthenticationPlugin> authenticationPlugins) {
     super(context);
 
     //
-    this.authentication = authentication;
+    this.authenticationPlugins = authenticationPlugins;
   }
 
   public int getPort() {
@@ -123,45 +122,29 @@ public class SSHLifeCycle extends TermLifeCycle {
       server.setSubsystemFactories(namedFactoryList);
 
       //
-      if (authentication.getCredentialType().equals(String.class)) {
-        @SuppressWarnings("unchecked")
-        final AuthenticationPlugin<String> passwordAuthentication = (AuthenticationPlugin<String>)authentication;
-        server.setPasswordAuthenticator(new PasswordAuthenticator() {
-          public boolean authenticate(String _username, String _password, ServerSession session) {
-            boolean auth;
-            try {
-              log.log(Level.FINE, "Using authentication plugin " + authentication + " to authenticate user " + _username);
-              auth = passwordAuthentication.authenticate(_username, _password);
-            } catch (Exception e) {
-              log.log(Level.SEVERE, "Exception authenticating user " + _username + " in authentication plugin: " + authentication, e);
-              return false;
+      for (AuthenticationPlugin authenticationPlugin : authenticationPlugins) {
+        if (server.getPasswordAuthenticator() == null && authenticationPlugin.getCredentialType().equals(String.class)) {
+          server.setPasswordAuthenticator(new PasswordAuthenticator() {
+            public boolean authenticate(String _username, String _password, ServerSession session) {
+              if (genericAuthenticate(String.class, _username, _password)) {
+                // We store username and password in session for later reuse
+                session.setAttribute(USERNAME, _username);
+                session.setAttribute(PASSWORD, _password);
+                return true;
+              } else {
+                return false;
+              }
             }
-
-          // We store username and password in session for later reuse
-          session.setAttribute(USERNAME, _username);
-          session.setAttribute(PASSWORD, _password);
-
-          //
-          return auth;
+          });
         }
-      });
-      } else if (authentication.getCredentialType().equals(PublicKey.class)) {
-        @SuppressWarnings("unchecked")
-        final AuthenticationPlugin<PublicKey> keyAuthentication = (AuthenticationPlugin<PublicKey>)authentication;
-        server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
-          public boolean authenticate(String username, PublicKey key, ServerSession session) {
-            try {
-              log.log(Level.FINE, "Using authentication plugin " + authentication + " to authenticate user " + username);
 
-
-              return keyAuthentication.authenticate(username, key);
+        if (server.getPublickeyAuthenticator() == null && authenticationPlugin.getCredentialType().equals(PublicKey.class)) {
+          server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
+            public boolean authenticate(String username, PublicKey key, ServerSession session) {
+              return genericAuthenticate(PublicKey.class, username, key);
             }
-            catch (Exception e) {
-              log.log(Level.SEVERE, "Exception authenticating user " + username + " in authentication plugin: " + authentication, e);
-              return false;
-            }
-          }
-        });
+          });
+        }
       }
 
       //
@@ -188,5 +171,24 @@ public class SSHLifeCycle extends TermLifeCycle {
         log.log(Level.FINE, "Got an interruption when stopping server", e);
       }
     }
+  }
+
+  private <T> boolean genericAuthenticate(Class<T> type, String username, T credential) {
+    for (AuthenticationPlugin authenticationPlugin : authenticationPlugins) {
+      if (authenticationPlugin.getCredentialType().equals(type)) {
+        try {
+          log.log(Level.FINE, "Using authentication plugin " + authenticationPlugin + " to authenticate user " + username);
+          @SuppressWarnings("unchecked")
+          AuthenticationPlugin<T> authPlugin = (AuthenticationPlugin<T>) authenticationPlugin;
+          if (authPlugin.authenticate(username, credential)) {
+            return true;
+          }
+        } catch (Exception e) {
+          log.log(Level.SEVERE, "Exception authenticating user " + username + " in authentication plugin: " + authenticationPlugin, e);
+        }
+      }
+    }
+
+    return false;
   }
 }
