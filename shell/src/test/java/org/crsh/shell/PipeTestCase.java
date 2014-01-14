@@ -20,6 +20,7 @@
 package org.crsh.shell;
 
 import org.crsh.command.ScriptException;
+import org.crsh.command.SyntaxException;
 import org.crsh.text.ChunkBuffer;
 
 import java.util.Arrays;
@@ -281,5 +282,10 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("produce_command | f | consume_command");
     assertEquals(2, Commands.list.size());
+  }
+
+  public void testPipeEOL() {
+    Commands.list.clear();
+    assertError("command |", ErrorType.EVALUATION);
   }
 }

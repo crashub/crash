@@ -24,6 +24,7 @@ import org.crsh.command.RuntimeContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
+import org.crsh.command.SyntaxException;
 import org.crsh.plugin.PluginContext;
 import org.crsh.repl.REPL;
 import org.crsh.shell.ErrorType;
@@ -177,7 +178,14 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
         }
       }
     } else {
-      EvalResponse r = repl.eval(this, request);
+
+      EvalResponse r = null;
+      try {
+        r = repl.eval(this, request);
+      } catch (SyntaxException e) {
+        r = new EvalResponse.Response(ShellResponse.error(ErrorType.EVALUATION, e.getMessage()));
+      }
+
       if (r instanceof EvalResponse.Response) {
         EvalResponse.Response rr = (EvalResponse.Response)r;
         response = rr.response;
