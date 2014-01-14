@@ -43,27 +43,30 @@ import java.util.logging.Logger;
 public final class Processor implements Runnable, Consumer<Chunk> {
 
   /** . */
+  private static final Text CONTINUE_PROMPT = Text.create("> ");
+
+  /** . */
   static final Runnable NOOP = new Runnable() {
     public void run() {
     }
   };
 
   /** . */
-  final Runnable WRITE_PROMPT = new Runnable() {
+  final Runnable WRITE_PROMPT_TASK = new Runnable() {
     public void run() {
       writePromptFlush();
     }
   };
 
   /** . */
-  final Runnable CLOSE = new Runnable() {
+  final Runnable CLOSE_TASK = new Runnable() {
     public void run() {
       close();
     }
   };
 
   /** . */
-  private final Runnable READ_TERM = new Runnable() {
+  private final Runnable READ_TERM_TASK = new Runnable() {
     public void run() {
       readTerm();
     }
@@ -95,6 +98,9 @@ public final class Processor implements Runnable, Consumer<Chunk> {
 
   /** . */
   private final CloseableList listeners;
+
+  /** . */
+  private final StringBuffer lineBuffer = new StringBuffer();
 
   public Processor(Term term, Shell shell) {
     this.term = term;
@@ -155,7 +161,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
           }
         case PROCESSING:
         case CANCELLING:
-          runnable = READ_TERM;
+          runnable = READ_TERM_TASK;
           break;
         case CLOSED:
           return false;
@@ -171,7 +177,6 @@ public final class Processor implements Runnable, Consumer<Chunk> {
     return true;
   }
 
-  // We assume this is called under lock synchronization
   ProcessContext peekProcess() {
     while (true) {
       synchronized (lock) {
@@ -182,13 +187,27 @@ public final class Processor implements Runnable, Consumer<Chunk> {
               complete(((TermEvent.Complete)event).getLine());
             } else {
               String line = ((TermEvent.ReadLine)event).getLine().toString();
-              if (line.length() > 0) {
-                term.addToHistory(line);
+              if (line.endsWith("\\")) {
+                lineBuffer.append(line, 0, line.length() - 1);
+                try {
+                  term.write(CONTINUE_PROMPT);
+                  term.flush();
+                }
+                catch (IOException e) {
+                  e.printStackTrace();
+                }
+              } else {
+                lineBuffer.append(line);
+                String command = lineBuffer.toString();
+                lineBuffer.setLength(0);
+                if (command.length() > 0) {
+                  term.addToHistory(command);
+                }
+                ShellProcess process = shell.createProcess(command);
+                current =  new ProcessContext(this, process);
+                status = Status.PROCESSING;
+                return current;
               }
-              ShellProcess process = shell.createProcess(line);
-              current =  new ProcessContext(this, process);
-              status = Status.PROCESSING;
-              return current;
             }
           } else {
             break;
@@ -204,13 +223,14 @@ public final class Processor implements Runnable, Consumer<Chunk> {
   /** . */
   private final Object termLock = new Object();
 
-  private boolean reading = false;
+  /** . */
+  private boolean termReading = false;
 
   void readTerm() {
 
     //
     synchronized (termLock) {
-      if (reading) {
+      if (termReading) {
         try {
           termLock.wait();
           return;
@@ -220,7 +240,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
           throw new AssertionError(e);
         }
       } else {
-        reading = true;
+        termReading = true;
       }
     }
 
@@ -243,7 +263,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
             };
           }
           else if (status == Status.AVAILABLE) {
-            runnable = WRITE_PROMPT;
+            runnable = WRITE_PROMPT_TASK;
           } else {
             runnable = NOOP;
           }
@@ -260,7 +280,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
               }
             };
           } else if (status != Status.CLOSED) {
-            runnable = CLOSE;
+            runnable = CLOSE_TASK;
           } else {
             runnable = NOOP;
           }
@@ -281,7 +301,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
     }
     finally {
       synchronized (termLock) {
-        reading = false;
+        termReading = false;
         termLock.notifyAll();
       }
     }

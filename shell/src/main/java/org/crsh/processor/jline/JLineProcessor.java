@@ -69,6 +69,8 @@ public class JLineProcessor implements Runnable, Completer {
   private PrintStream out;
   private PrintStream err;
   private Thread thread;
+  private final StringBuilder lineBuffer;
+
 
   public JLineProcessor(Shell shell, InputStream in,
                         PrintStream out,
@@ -95,6 +97,7 @@ public class JLineProcessor implements Runnable, Completer {
     this.writer = new PrintWriter(out);
     this.current = new AtomicReference<ShellProcess>();
     this.useAlternate = false;
+    this.lineBuffer = new StringBuilder();
   }
 
   private void checkInterrupt() throws IOException {
@@ -214,21 +217,29 @@ public class JLineProcessor implements Runnable, Completer {
   }
 
   private String readAndParseCommand() throws IOException {
-    String command = null;
-    boolean loop = true;
-    boolean first = true;
-    while (loop) {
+
+    //
+    lineBuffer.setLength(0);
+    String prompt = getPrompt();
+    while (true) {
       checkInterrupt();
-      String line = reader.readLine(first ? getPrompt() : "> ");
+      String line = reader.readLine(prompt);
       if (line == null) {
         break;
+      } else {
+        if (line.endsWith("\\")) {
+          lineBuffer.append(line, 0, line.length() - 1);
+          prompt = "> ";
+        } else {
+          lineBuffer.append(line);
+          break;
+        }
       }
-      if (command == null) {
-        command = line;
-      }
-      else {
-        command += " " + line;
-      }
+    }
+
+    //
+    String command = lineBuffer.toString();
+    if (command.trim().length() > 0) {
       if (reader.getHistory().size() == 0) {
         reader.getHistory().add(command);
       }
@@ -236,18 +247,11 @@ public class JLineProcessor implements Runnable, Completer {
         // jline doesn't add blank lines to the history so we don't
         // need to replace the command in jline's console history with
         // an indented one
-        if (command.length() > 0 && !" ".equals(command)) {
-          reader.getHistory().replace(command);
-        }
-      }
-      try {
-        loop = false;
-      }
-      catch (Exception e) {
-        loop = true;
-        first = false;
+        reader.getHistory().replace(command);
       }
     }
+
+    //
     return command;
   }
 

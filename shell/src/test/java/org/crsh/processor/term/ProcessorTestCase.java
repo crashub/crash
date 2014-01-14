@@ -28,6 +28,7 @@ import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.spi.Completion;
 import org.crsh.shell.Shell;
+import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.term.console.ConsoleTerm;
@@ -35,6 +36,8 @@ import org.crsh.term.spi.TestTermIO;
 import org.crsh.text.CLS;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -249,6 +252,37 @@ public class ProcessorTestCase extends TestCase {
     controller.connector.assertChars("a").assertFlush();
     controller.connector.assertChars("b").assertFlush();
     controller.connector.assertChars("ba").assertFlush();
+  }
+
+  public void testMultiLine() throws Exception {
+    final LinkedList<String> requests = new LinkedList<String>();
+    final CountDownLatch latch = new CountDownLatch(1);
+    Controller controller = create(new BaseShell(BaseProcessFactory.ECHO) {
+      @Override
+      public ShellProcess createProcess(String request) {
+        return new BaseProcess(request) {
+          @Override
+          protected ShellResponse execute(String request) {
+            requests.add(request);
+            latch.countDown();
+            return super.execute(request);
+          }
+        };
+      }
+    });
+    controller.assertStart();
+
+    //
+    controller.connector.append("a\\\r\n");
+    controller.connector.assertChars("a").assertFlush();
+    controller.connector.assertChars("\\").assertFlush();
+    controller.connector.assertCRLF().assertFlush().assertChars("> ").assertFlush();
+    assertEquals(Collections.<String>emptyList(), requests);
+    controller.connector.append("b\r\n");
+    controller.connector.assertChars("b").assertFlush();
+    controller.connector.assertCRLF().assertFlush();
+    latch.await(5, TimeUnit.SECONDS);
+    assertEquals(Collections.singletonList("ab"), requests);
   }
 
   public void testCLS() throws Exception {
