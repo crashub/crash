@@ -34,7 +34,13 @@ public class PipeLineParser {
     this.token = tokenizer.nextToken();
   }
 
-  public PipeLineFactory parse() {
+  /**
+   * Returns a pipeline factory or null.
+   *
+   * @return a pipe line factory
+   * @throws SyntaxException signals a parse error
+   */
+  public PipeLineFactory parse() throws SyntaxException {
     if (token == Token.EOF) {
       return null;
     } else {
@@ -42,7 +48,7 @@ public class PipeLineParser {
     }
   }
 
-  private PipeLineFactory parseExpr() {
+  private PipeLineFactory parseExpr() throws SyntaxException {
     if (token instanceof Token.Command) {
       Token.Command command = (Token.Command)token;
       token = tokenizer.nextToken();

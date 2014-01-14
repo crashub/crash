@@ -282,4 +282,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     assertOk("produce_command | f | consume_command");
     assertEquals(2, Commands.list.size());
   }
+
+  public void testPipeEOL() {
+    assertError("command |", ErrorType.EVALUATION);
+  }
 }

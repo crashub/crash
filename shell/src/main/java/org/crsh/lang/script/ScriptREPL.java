@@ -25,7 +25,9 @@ import org.crsh.command.BaseRuntimeContext;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
+import org.crsh.command.SyntaxException;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.repl.EvalResponse;
 import org.crsh.repl.REPL;
@@ -58,7 +60,13 @@ public class ScriptREPL implements REPL {
 
   public EvalResponse eval(REPLSession session, String request) {
     PipeLineParser parser = new PipeLineParser(request);
-    final PipeLineFactory factory = parser.parse();
+    PipeLineFactory factory;
+    try {
+      factory = parser.parse();
+    }
+    catch (SyntaxException e) {
+      return new EvalResponse.Response(ShellResponse.error(ErrorType.EVALUATION, e.getMessage()));
+    }
     if (factory != null) {
       try {
         CommandInvoker<Void, Chunk> invoker = factory.create(session);
