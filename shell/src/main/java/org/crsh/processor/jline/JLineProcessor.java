@@ -69,7 +69,6 @@ public class JLineProcessor implements Runnable, Completer {
   private PrintStream out;
   private PrintStream err;
   private Thread thread;
-  public static final String IGNORE_INTERRUPTS = "karaf.ignoreInterrupts";
 
   public JLineProcessor(Shell shell, InputStream in,
                         PrintStream out,
@@ -77,34 +76,25 @@ public class JLineProcessor implements Runnable, Completer {
                         Terminal term) throws IOException {
 
     //
-    this.consoleInput = new ConsoleInputStream();
-    this.in = in;
-    this.out = out;
-    this.err = err;
-    this.queue = new ArrayBlockingQueue<Integer>(1024);
-    this.pipe = new Thread(new Pipe());
-    pipe.setName("gogo shell pipe thread");
+    ConsoleInputStream consoleInput = new ConsoleInputStream();
+    Thread pipe = new Thread(new Pipe());
+    pipe.setName("CRaSH Shell Pipe Thread");
     pipe.setDaemon(true);
-
-    //
     ConsoleReader reader = new ConsoleReader(null, consoleInput, out, term);
     reader.addCompleter(this);
 
     //
+    this.consoleInput = consoleInput;
+    this.in = in;
+    this.out = out;
+    this.err = err;
+    this.queue = new ArrayBlockingQueue<Integer>(1024);
+    this.pipe = pipe;
     this.shell = shell;
     this.reader = reader;
     this.writer = new PrintWriter(out);
     this.current = new AtomicReference<ShellProcess>();
     this.useAlternate = false;
-  }
-
-  private boolean getBoolean(String name) {
-    if (name.equals(IGNORE_INTERRUPTS)) {
-      return false;
-    }
-    else {
-      throw new UnsupportedOperationException();
-    }
   }
 
   private void checkInterrupt() throws IOException {
@@ -116,7 +106,6 @@ public class JLineProcessor implements Runnable, Completer {
 
   private void interrupt() {
     interrupt = true;
-//    thread.interrupt();
     cancel();
   }
 
@@ -197,11 +186,11 @@ public class JLineProcessor implements Runnable, Completer {
             if (c == -1) {
               return;
             }
-            else if (c == 4 && !getBoolean(IGNORE_INTERRUPTS)) {
+            else if (c == 4) {
               err.println("^D");
               return;
             }
-            else if (c == 3 && !getBoolean(IGNORE_INTERRUPTS)) {
+            else if (c == 3) {
               err.println("^C");
               reader.getCursorBuffer().clear();
               interrupt();
@@ -349,10 +338,7 @@ public class JLineProcessor implements Runnable, Completer {
       writer.flush();
 
       //
-      if (response instanceof ShellResponse.Cancelled) {
-        // Do nothing
-      }
-      else if (response instanceof ShellResponse.Close) {
+      if (response instanceof ShellResponse.Close) {
         break;
       }
     }
@@ -386,9 +372,6 @@ public class JLineProcessor implements Runnable, Completer {
     ShellProcess process = current.get();
     if (process != null) {
       process.cancel();
-    }
-    else {
-      // Do nothing
     }
   }
 
