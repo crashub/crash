@@ -25,19 +25,17 @@ import org.crsh.command.SyntaxException;
 public class ParserTestCase extends TestCase {
 
   public void testEmpty() {
-    assertNull(new PipeLineParser("").parse());
+    assertSyntaxException("");
   }
 
   public void testCommand() {
-    PipeLineParser p = new PipeLineParser("a");
-    PipeLineFactory e = p.parse();
+    PipeLineFactory e = Token.parse("a").createFactory();
     assertEquals("a", e.getLine());
     assertNull(e.getNext());
   }
 
   public void testPipe() {
-    PipeLineParser p = new PipeLineParser("a|b");
-    PipeLineFactory e = p.parse();
+    PipeLineFactory e = Token.parse("a|b").createFactory();
     assertEquals("a", e.getLine());
     assertEquals("b", e.getNext().getLine());
     assertNull(e.getNext().getNext());
@@ -46,13 +44,15 @@ public class ParserTestCase extends TestCase {
   public void testSyntaxException() {
     assertSyntaxException("|");
     assertSyntaxException("a|");
+    assertSyntaxException("|b");
   }
 
   private void assertSyntaxException(String s) {
     try {
-      new PipeLineParser(s).parse();
+      Token.parse(s).createFactory();
       fail();
-    } catch (SyntaxException ignore) {
+    }
+    catch (SyntaxException ignore) {
     }
   }
 }

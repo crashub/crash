@@ -19,10 +19,10 @@
 
 package org.crsh.command;
 
+import org.crsh.lang.script.Token;
 import org.crsh.shell.ScreenContext;
 import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.lang.script.PipeLineFactory;
-import org.crsh.lang.script.PipeLineParser;
 import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
 
@@ -74,10 +74,9 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
   }
 
   public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
-    // A bit nasty : will improve that later
     CRaSHSession session = (CRaSHSession)getSession();
-    PipeLineParser parser= new PipeLineParser(s);
-    PipeLineFactory factory = parser.parse();
+    Token token2 = Token.parse(s);
+    PipeLineFactory factory = token2.createFactory();
     try {
       return factory.create(session);
     }

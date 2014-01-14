@@ -26,7 +26,6 @@ import org.crsh.command.CommandCreationException;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.SyntaxException;
-import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.repl.EvalResponse;
@@ -59,10 +58,9 @@ public class ScriptREPL implements REPL {
   }
 
   public EvalResponse eval(REPLSession session, String request) {
-    PipeLineParser parser = new PipeLineParser(request);
     PipeLineFactory factory;
     try {
-      factory = parser.parse();
+      factory = Token.parse(request).createFactory();
     }
     catch (SyntaxException e) {
       return new EvalResponse.Response(ShellResponse.error(ErrorType.EVALUATION, e.getMessage()));
@@ -82,21 +80,21 @@ public class ScriptREPL implements REPL {
   }
 
   public CompletionMatch complete(REPLSession session, String prefix) {
-    PipeLineFactory ast = new PipeLineParser(prefix).parse();
+    Token ast = Token.parse(prefix);
     String termPrefix;
     if (ast != null) {
-      PipeLineFactory last = ast.getLast();
-      termPrefix = Utils.trimLeft(last.getLine());
+      Token last = ast.getLast();
+      termPrefix = Utils.trimLeft(last.value);
     } else {
       termPrefix = "";
     }
 
     //
-    log.log(Level.FINE, "Retained term prefix is " + prefix);
+    log.log(Level.FINE, "Retained term prefix is " + termPrefix);
     CompletionMatch completion;
     int pos = termPrefix.indexOf(' ');
     if (pos == -1) {
-      Completion.Builder builder = Completion.builder(prefix);
+      Completion.Builder builder = Completion.builder(termPrefix);
       for (String name : session.getCommandNames()) {
         if (name.startsWith(termPrefix)) {
           builder.add(name.substring(termPrefix.length()), true);

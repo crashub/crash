@@ -20,14 +20,11 @@
 package org.crsh.lang.script;
 
 import junit.framework.TestCase;
-import org.crsh.command.ScriptException;
-import org.crsh.lang.script.Token;
-import org.crsh.lang.script.Tokenizer;
 
-public class TokenizerTestCase extends TestCase {
+public class TokenTestCase extends TestCase {
 
   public void testEmpty() {
-    new TestTokenizer("").assertEOF();
+    new TestTokenizer("").assertCommand("").assertEOF();
     new TestTokenizer(" ").assertCommand(" ").assertEOF();
   }
 
@@ -54,46 +51,33 @@ public class TokenizerTestCase extends TestCase {
     //
     new TestTokenizer("a b").assertCommand("a b").assertEOF();
   }
-
   public void testPipe() {
-    new TestTokenizer("|").assertPipe().assertEOF();
+    new TestTokenizer("|").assertCommand("").assertCommand("").assertEOF();
   }
 
   public void testComposite() {
     TestTokenizer tokenizer = new TestTokenizer("a | b c");
     tokenizer.assertCommand("a ");
-    tokenizer.assertPipe();
     tokenizer.assertCommand(" b c");
     tokenizer.assertEOF();
   }
 
-  private static class TestTokenizer extends Tokenizer {
+  private static class TestTokenizer {
+
+    /** . */
+    private Token current;
 
     private TestTokenizer(CharSequence s) throws NullPointerException {
-      super(s);
-    }
-
-    public TestTokenizer assertPipe() {
-      assertEquals(Token.PIPE, nextToken());
-      return this;
+      current = Token.parse(s);
     }
 
     public void assertEOF() {
-      assertEquals(Token.EOF, nextToken());
+      assertEquals(null, current);
     }
 
     public TestTokenizer assertCommand(String line) {
-      Token.Command c = (Token.Command)nextToken();
-      assertEquals(line, c.line);
-      return this;
-    }
-
-    public TestTokenizer assertFail() {
-      try {
-        nextToken();
-        fail();
-      } catch (ScriptException ignore) {
-      }
+      assertEquals(line, current.value);
+      current = current.next;
       return this;
     }
   }

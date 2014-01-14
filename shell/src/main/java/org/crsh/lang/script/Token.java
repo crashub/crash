@@ -16,39 +16,57 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.lang.script;
 
-abstract class Token {
+import org.crsh.command.SyntaxException;
 
-  public abstract String toString();
+/**
+ * @author Julien Viet
+ */
+public class Token {
 
-  public static Token EOF = new Token(){
-    @Override
-    public String toString() {
-      return "EOF";
+  /** . */
+  public final String value;
+
+  /** . */
+  public final Token next;
+
+  public Token(String value, Token next) {
+    this.value = value;
+    this.next = next;
+  }
+
+  public PipeLineFactory createFactory() throws SyntaxException {
+    PipeLineFactory nextFactory = next != null ? next.createFactory() : null;
+    return new PipeLineFactory(value, nextFactory);
+  }
+
+  public Token getLast() {
+    return next != null ? next.getLast() : this;
+  }
+
+  public static Token parse(CharSequence s) {
+    return parse(s, 0);
+  }
+
+  public static Token parse(final CharSequence s, final int index) {
+    Character lastQuote = null;
+    int pos = index;
+    while (pos < s.length()) {
+      char c = s.charAt(pos);
+      if (lastQuote == null) {
+        if (c == '|') {
+          break;
+        } else if (c == '"' || c == '\'') {
+          lastQuote = c;
+        }
+      } else {
+        if (lastQuote == c) {
+          lastQuote = null;
+        }      }
+      pos++;
     }
-  };
-
-  public static Token PIPE = new Token(){
-    @Override
-    public String toString() {
-      return "PIPE";
-    }
-  };
-
-  public static class Command extends Token {
-
-    /** . */
-    final String line;
-
-    public Command(String line) {
-      this.line = line;
-    }
-
-    @Override
-    public String toString() {
-      return "Command[" + line + "]";
-    }
+    Token next = pos < s.length() ? parse(s, pos + 1) : null;
+    return new Token(s.subSequence(index, pos).toString(), next);
   }
 }

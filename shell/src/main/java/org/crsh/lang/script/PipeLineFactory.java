@@ -37,6 +37,9 @@ import java.util.regex.Pattern;
 public class PipeLineFactory {
 
   /** . */
+  private static final Pattern p = Pattern.compile("^\\s*(\\S+)");
+
+  /** . */
   final String line;
 
   /** . */
@@ -48,8 +51,14 @@ public class PipeLineFactory {
   /** . */
   final PipeLineFactory next;
 
+  /**
+   * Create a pipeline factory for the specified line and next factory
+   *
+   * @param line the line
+   * @param next the next factory
+   * @throws SyntaxException when the line is not correct
+   */
   public PipeLineFactory(String line, PipeLineFactory next) throws SyntaxException {
-    Pattern p = Pattern.compile("^\\s*(\\S+)");
     java.util.regex.Matcher m = p.matcher(line);
     if (m.find()) {
       this.name = m.group(1);
@@ -57,7 +66,14 @@ public class PipeLineFactory {
       this.line = line;
       this.next = next;
     } else {
-      throw new SyntaxException("Empty name");
+      StringBuilder sb = new StringBuilder("syntax error near unexpected token");
+      if (next != null) {
+        sb.append(' ');
+        for (PipeLineFactory factory = next;factory != null;factory = factory.next) {
+          sb.append('|').append(factory.line);
+        }
+      }
+      throw new SyntaxException(sb.toString());
     }
   }
 
