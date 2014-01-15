@@ -20,7 +20,6 @@
 package org.crsh.cli.impl.parser;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
-import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.tokenizer.Tokenizer;
 
 import java.util.Iterator;
@@ -58,10 +57,6 @@ public final class Parser<T> implements Iterator<Event> {
 
   Status getStatus() {
     return status;
-  }
-
-  public Delimiter getDelimiter() {
-    return tokenizer.getDelimiter();
   }
 
   public boolean hasNext() {

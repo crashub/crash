@@ -20,6 +20,8 @@
 package org.crsh.processor.term;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.cli.impl.line.LineParser;
+import org.crsh.cli.impl.line.MultiLineVisitor;
 import org.crsh.cli.spi.Completion;
 import org.crsh.io.Consumer;
 import org.crsh.cli.impl.Delimiter;
@@ -100,7 +102,10 @@ public final class Processor implements Runnable, Consumer<Chunk> {
   private final CloseableList listeners;
 
   /** . */
-  private final StringBuffer lineBuffer = new StringBuffer();
+  private final LineParser lineBuffer;
+
+  /** . */
+  private final MultiLineVisitor lineVisitor;
 
   public Processor(Term term, Shell shell) {
     this.term = term;
@@ -110,6 +115,8 @@ public final class Processor implements Runnable, Consumer<Chunk> {
     this.status = Status.AVAILABLE;
     this.listeners = new CloseableList();
     this.waitingEvent = false;
+    this.lineVisitor = new MultiLineVisitor();
+    this.lineBuffer = new LineParser(lineVisitor);
   }
 
   public boolean isWaitingEvent() {
@@ -187,8 +194,8 @@ public final class Processor implements Runnable, Consumer<Chunk> {
               complete(((TermEvent.Complete)event).getLine());
             } else {
               String line = ((TermEvent.ReadLine)event).getLine().toString();
-              if (line.endsWith("\\")) {
-                lineBuffer.append(line, 0, line.length() - 1);
+              lineBuffer.append(line);
+              if (!lineBuffer.crlf()) {
                 try {
                   term.write(CONTINUE_PROMPT);
                   term.flush();
@@ -197,9 +204,8 @@ public final class Processor implements Runnable, Consumer<Chunk> {
                   e.printStackTrace();
                 }
               } else {
-                lineBuffer.append(line);
-                String command = lineBuffer.toString();
-                lineBuffer.setLength(0);
+                String command = lineVisitor.getRaw();
+                lineBuffer.reset();
                 if (command.length() > 0) {
                   term.addToHistory(command);
                 }

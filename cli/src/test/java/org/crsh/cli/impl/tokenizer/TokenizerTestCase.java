@@ -242,27 +242,23 @@ public class TokenizerTestCase extends TestCase {
 
   public void testEmptyWord1() throws Exception {
     Tokenizer tokenizer = new TokenizerImpl("\"\"");
-    assertEquals(new Token.Literal.Word(0, "\"\"", ""), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testEmptyWord2() throws Exception {
     Tokenizer tokenizer = new TokenizerImpl(" \"\"");
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
-    assertEquals(new Token.Literal.Word(1, "\"\"", ""), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testEmptyWord3() throws Exception {
     Tokenizer tokenizer = new TokenizerImpl("\"\"\"\"");
-    assertEquals(new Token.Literal.Word(0, "\"\"\"\"", ""), tokenizer.next());
     assertDone(tokenizer);
   }
 
   public void testQuoteAfterWhitespace1() throws Exception {
     Tokenizer tokenizer = new TokenizerImpl(" \"\"");
     assertEquals(new Token.Whitespace(0, " "), tokenizer.next());
-    assertEquals(new Token.Literal.Word(1, "\"\"", ""), tokenizer.next());
     assertDone(tokenizer);
   }
 

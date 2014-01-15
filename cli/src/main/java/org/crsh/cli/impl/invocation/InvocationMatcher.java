@@ -21,7 +21,6 @@ package org.crsh.cli.impl.invocation;
 
 import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
 import org.crsh.cli.SyntaxException;
-import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.LiteralValue;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.impl.tokenizer.Token;
@@ -107,11 +106,6 @@ public class InvocationMatcher<T> {
       @Override
       protected Token parse() {
         return i.hasNext() ? i.next() : null;
-      }
-
-      @Override
-      public Delimiter getDelimiter() {
-        return Delimiter.EMPTY;
       }
     };
     return match(tokenizer);

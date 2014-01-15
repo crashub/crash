@@ -16,24 +16,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.cli.impl.line;
 
-package org.crsh.cli.impl.tokenizer;
+/**
+ * @author Julien Viet
+ */
+public enum Quoting {
 
-import org.crsh.cli.impl.Delimiter;
+  STRONG, WEAK
 
-enum Escape {
-
-  NONE(Delimiter.EMPTY),
-
-  SINGLE(Delimiter.SINGLE_QUOTE),
-
-  DOUBLE(Delimiter.DOUBLE_QUOTE),
-
-  BACKSLASH(Delimiter.EMPTY);
-
-  final Delimiter delimiter;
-
-  Escape(Delimiter delimiter) {
-    this.delimiter = delimiter;
-  }
 }

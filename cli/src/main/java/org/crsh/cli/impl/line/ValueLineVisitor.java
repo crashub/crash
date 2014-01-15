@@ -16,17 +16,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.cli.impl.line;
 
-package org.crsh.cli.impl.tokenizer;
+/**
+ * @author Julien Viet
+ */
+public class ValueLineVisitor extends LineParser.Visitor {
 
-enum Status {
+  /** . */
+  private final StringBuilder evaluated = new StringBuilder();
 
-  INIT,
+  public String getEvaluated() {
+    return evaluated.toString();
+  }
 
-  WORD,
+  @Override
+  public void onChar(int index, Quoting quoting, boolean backslash, char c) {
+    if (quoting != null && backslash) {
+      switch (quoting) {
+        case WEAK:
+          if (c != '"') {
+            evaluated.append('\\');
+          }
+          break;
+        case STRONG:
+          if (c != '\'') {
+            evaluated.append('\\');
+          }
+          break;
+      }
+    }
+    evaluated.append(c);
+  }
 
-  SHORT_OPTION,
-
-  LONG_OPTION
-
+  @Override
+  public void reset() {
+    evaluated.setLength(0);
+  }
 }

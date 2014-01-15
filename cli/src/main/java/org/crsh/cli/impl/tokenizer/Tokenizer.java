@@ -19,8 +19,6 @@
 
 package org.crsh.cli.impl.tokenizer;
 
-import org.crsh.cli.impl.Delimiter;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -99,5 +97,4 @@ public abstract class Tokenizer implements Iterator<Token> {
     return index;
   }
 
-  public abstract Delimiter getDelimiter();
 }

@@ -30,6 +30,7 @@ import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.repl.EvalResponse;
 import org.crsh.repl.REPL;
 import org.crsh.repl.REPLSession;
+import org.crsh.cli.impl.line.LineParser;
 
 import java.io.IOException;
 
@@ -49,7 +50,16 @@ public class GroovyREPL extends CRaSHPlugin<REPL> implements  REPL {
     return "groovy";
   }
 
-  public EvalResponse eval(final REPLSession session, final String request) {
+  public EvalResponse eval(final REPLSession session, final String r2) {
+
+
+    GroovyLineEscaper foo = new GroovyLineEscaper();
+    LineParser parser = new LineParser(foo);
+    parser.append(r2);
+    final String request = foo.buffer.toString();
+
+
+    //
     CommandInvoker<Void, Object> invoker = new CommandInvoker<Void, Object>() {
       public void provide(Void element) throws IOException {
         throw new UnsupportedOperationException("Should not be invoked");

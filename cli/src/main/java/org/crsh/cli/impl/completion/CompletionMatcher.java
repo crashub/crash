@@ -25,7 +25,6 @@ import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.completers.EmptyCompleter;
 import org.crsh.cli.impl.tokenizer.Token;
-import org.crsh.cli.impl.tokenizer.Tokenizer;
 import org.crsh.cli.impl.tokenizer.TokenizerImpl;
 import org.crsh.cli.impl.parser.Event;
 import org.crsh.cli.impl.parser.Mode;
@@ -57,21 +56,23 @@ public final class CompletionMatcher<T> {
     return getCompletion(completer, s).complete();
   }
 
-  private Completion argument(CommandDescriptor<?> method, Completer completer) {
+  private Completion argument(CommandDescriptor<?> method, Completer completer, Delimiter delimiter) {
     List<? extends ArgumentDescriptor> arguments = method.getArguments();
     if (arguments.isEmpty()) {
       return new EmptyCompletion();
     } else {
       ArgumentDescriptor argument = arguments.get(0);
-      return new ParameterCompletion("", Delimiter.EMPTY, argument, completer);
+      return new ParameterCompletion("", delimiter, argument, completer);
     }
   }
 
   private Completion getCompletion(Completer completer, String s) throws CompletionException {
 
+    // Find delimiter
     CommandDescriptor<T> descriptor = this.descriptor;
 
-    Tokenizer tokenizer = new TokenizerImpl(s);
+    TokenizerImpl tokenizer = new TokenizerImpl(s);
+    Delimiter delimiter = tokenizer.getEndingDelimiter();
     Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Mode.COMPLETE);
 
     // Last non separator event
@@ -112,7 +113,7 @@ public final class CompletionMatcher<T> {
       if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
         if (method == null) {
           Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;
-          return new CommandCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), parser.getDelimiter());
+          return new CommandCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), delimiter);
         } else {
           return new EmptyCompletion();
         }
@@ -130,7 +131,7 @@ public final class CompletionMatcher<T> {
           method = descriptor.getSubordinate(mainName);
           List<ArgumentDescriptor> args = method.getArguments();
           if (args.size() > 0) {
-            return new ParameterCompletion("", Delimiter.EMPTY, args.get(0), completer);
+            return new ParameterCompletion("", delimiter, args.get(0), completer);
           } else {
             return new EmptyCompletion();
           }
@@ -156,18 +157,18 @@ public final class CompletionMatcher<T> {
           return new SpaceCompletion();
         } else if (values.size() <= option.getArity()) {
           Token.Literal.Word word = optionEvent.peekLast();
-          return new ParameterCompletion(word.getValue(), parser.getDelimiter(), option, completer);
+          return new ParameterCompletion(word.getValue(), delimiter, option, completer);
         } else {
           return new EmptyCompletion();
         }
       } else {
         if (values.size() < option.getArity()) {
-          return new ParameterCompletion("", Delimiter.EMPTY, option, completer);
+          return new ParameterCompletion("", delimiter, option, completer);
         } else {
           if (method == null) {
-            return new CommandCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), Delimiter.EMPTY);
+            return new CommandCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), delimiter);
           } else {
-            return argument(method, completer);
+            return argument(method, completer, delimiter);
           }
         }
       }
@@ -181,22 +182,22 @@ public final class CompletionMatcher<T> {
             int index = arguments.indexOf(argument) + 1;
             if (index < arguments.size()) {
               ArgumentDescriptor nextArg = arguments.get(index);
-              return new ParameterCompletion("", Delimiter.EMPTY, nextArg, completer);
+              return new ParameterCompletion("", delimiter, nextArg, completer);
             } else {
               return new EmptyCompletion();
             }
           case MULTI:
-            return new ParameterCompletion("", Delimiter.EMPTY, argument, completer);
+            return new ParameterCompletion("", delimiter, argument, completer);
           default:
             throw new AssertionError();
         }
       } else {
         Token.Literal value = eventArgument.peekLast();
-        return new ParameterCompletion(value.getValue(), parser.getDelimiter(), argument, completer);
+        return new ParameterCompletion(value.getValue(), delimiter, argument, completer);
       }
     } else if (last instanceof Event.Subordinate) {
       if (separator != null) {
-        return argument(method, completer);
+        return argument(method, completer, delimiter);
       } else {
         return new SpaceCompletion();
       }

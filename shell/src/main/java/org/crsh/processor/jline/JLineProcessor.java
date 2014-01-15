@@ -28,12 +28,15 @@ import org.crsh.cli.spi.Completion;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
+import org.crsh.cli.impl.line.LineParser;
+import org.crsh.cli.impl.line.MultiLineVisitor;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -69,7 +72,8 @@ public class JLineProcessor implements Runnable, Completer {
   private PrintStream out;
   private PrintStream err;
   private Thread thread;
-  private final StringBuilder lineBuffer;
+  private final LineParser lineBuffer;
+  private final MultiLineVisitor lineVisitor;
 
 
   public JLineProcessor(Shell shell, InputStream in,
@@ -97,7 +101,8 @@ public class JLineProcessor implements Runnable, Completer {
     this.writer = new PrintWriter(out);
     this.current = new AtomicReference<ShellProcess>();
     this.useAlternate = false;
-    this.lineBuffer = new StringBuilder();
+    this.lineVisitor = new MultiLineVisitor();
+    this.lineBuffer = new LineParser(lineVisitor);
   }
 
   private void checkInterrupt() throws IOException {
@@ -219,7 +224,7 @@ public class JLineProcessor implements Runnable, Completer {
   private String readAndParseCommand() throws IOException {
 
     //
-    lineBuffer.setLength(0);
+    lineBuffer.reset();
     String prompt = getPrompt();
     while (true) {
       checkInterrupt();
@@ -227,18 +232,17 @@ public class JLineProcessor implements Runnable, Completer {
       if (line == null) {
         break;
       } else {
-        if (line.endsWith("\\")) {
-          lineBuffer.append(line, 0, line.length() - 1);
-          prompt = "> ";
-        } else {
-          lineBuffer.append(line);
+        lineBuffer.append(line);
+        if (lineBuffer.crlf()) {
           break;
+        } else {
+          prompt = "> ";
         }
       }
     }
 
     //
-    String command = lineBuffer.toString();
+    String command = lineVisitor.getRaw();
     if (command.trim().length() > 0) {
       if (reader.getHistory().size() == 0) {
         reader.getHistory().add(command);
@@ -349,11 +353,22 @@ public class JLineProcessor implements Runnable, Completer {
   }
 
   public int complete(String buffer, int cursor, List<CharSequence> candidates) {
-    String prefix = buffer.substring(0, cursor);
+    String prefix = lineVisitor.getRaw() + buffer.substring(0, cursor);
     CompletionMatch completion = shell.complete(prefix);
     Completion vc = completion.getValue();
     if (vc.isEmpty()) {
       return -1;
+    } else {
+
+      // We need to correct the result in case of multiline
+      int prefixLength = vc.getPrefix().length();
+      int newPrefixLength = Math.min(prefixLength, cursor);
+      String newPrefix = vc.getPrefix().substring(prefixLength - newPrefixLength, prefixLength);
+      HashMap<String, Boolean> suffixes = new HashMap<String, Boolean>();
+      for (Map.Entry<String, Boolean> c : vc) {
+        suffixes.put(c.getKey(), c.getValue());
+      }
+      vc = Completion.create(newPrefix, suffixes);
     }
     Delimiter delimiter = completion.getDelimiter();
     for (Map.Entry<String, Boolean> entry : vc) {
@@ -369,7 +384,8 @@ public class JLineProcessor implements Runnable, Completer {
       catch (IOException ignore) {
       }
     }
-    return cursor - vc.getPrefix().length();
+    int len = vc.getPrefix().length();
+    return cursor - len;
   }
 
   public void cancel() {

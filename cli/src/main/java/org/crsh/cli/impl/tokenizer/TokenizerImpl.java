@@ -20,88 +20,46 @@
 package org.crsh.cli.impl.tokenizer;
 
 import org.crsh.cli.impl.Delimiter;
+import org.crsh.cli.impl.line.LineParser;
 
 public class TokenizerImpl extends Tokenizer {
 
   /** . */
-  private final CharSequence s;
+  private final Automaton automaton;
 
   /** . */
-  private int index;
-
-  /** . */
-  private Delimiter delimiter;
+  private Delimiter endingDelimiter;
 
   public TokenizerImpl(CharSequence s) {
-    this.s = s;
-    this.index = 0;
-    this.delimiter = null;
+
+    this.endingDelimiter = Delimiter.EMPTY;
+
+    Automaton automaton = new Automaton(s);
+    LineParser.Visitor parser2 = new LineParser.Visitor() {
+      public void openStrongQuote(int index) { endingDelimiter = Delimiter.SINGLE_QUOTE; }
+      public void closeStrongQuote(int index) { endingDelimiter = Delimiter.EMPTY; }
+      public void openWeakQuote(int index) { endingDelimiter =  Delimiter.DOUBLE_QUOTE; }
+      public void closeWeakQuote(int index) { endingDelimiter = Delimiter.EMPTY; }
+    };
+
+    //
+    LineParser parser = new LineParser(automaton, parser2);
+    parser.append(s);
+    automaton.close();
+
+    //
+    this.automaton = automaton;
   }
 
   protected Token parse() {
-    Token token = null;
-    if (index < s.length()) {
-      char c = s.charAt(index);
-      int from = index;
-      while (true) {
-        if (Character.isWhitespace(c)) {
-          index++;
-          if (index < s.length()) {
-            c = s.charAt(index);
-          } else {
-            break;
-          }
-        } else {
-          break;
-        }
-      }
-      if (index > from) {
-        token = new Token.Whitespace(from, s.subSequence(from, index).toString());
-      } else {
-        State state = new State();
-        while (true) {
-          if (Character.isWhitespace(c) && state.escape == Escape.NONE) {
-            break;
-          } else {
-            index++;
-            state.push(c);
-            if (index < s.length()) {
-              c = s.charAt(index);
-            } else {
-              break;
-            }
-          }
-        }
-        if (index > from) {
-          switch (state.status) {
-            case INIT: {
-              token = new Token.Literal.Word(from, s.subSequence(from, index).toString(), state.buffer.toString());
-              break;
-            }
-            case WORD: {
-              token = new Token.Literal.Word(from, s.subSequence(from, index).toString(), state.buffer.toString());
-              break;
-            }
-            case SHORT_OPTION: {
-              token = new Token.Literal.Option.Short(from, s.subSequence(from, index).toString(), state.buffer.toString());
-              break;
-            }
-            case LONG_OPTION: {
-              token = new Token.Literal.Option.Long(from, s.subSequence(from, index).toString(), state.buffer.toString());
-              break;
-            }
-            default:
-              throw new AssertionError(state.status);
-          }
-          delimiter = state.escape.delimiter;
-          return token;
-        }
-      }
+    if (automaton.tokens.size() > 0) {
+      return automaton.tokens.removeFirst();
+    } else {
+      return null;
     }
-    return token;
   }
 
-  public Delimiter getDelimiter() {
-    return delimiter;
+  public Delimiter getEndingDelimiter() {
+    return endingDelimiter;
   }
 }
