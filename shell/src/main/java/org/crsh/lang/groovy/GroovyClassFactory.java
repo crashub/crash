@@ -28,7 +28,7 @@ import org.crsh.util.ClassFactory;
 import org.crsh.shell.ErrorType;
 
 /** @author Julien Viet */
-public class GroovyClassFactory<T> extends ClassFactory<T> {
+class GroovyClassFactory<T> extends ClassFactory<T> {
 
   /** . */
   private final ClassLoader baseLoader;
@@ -39,7 +39,7 @@ public class GroovyClassFactory<T> extends ClassFactory<T> {
   /** . */
   final CompilerConfiguration config;
 
-  public GroovyClassFactory(ClassLoader baseLoader, Class<T> baseClass, Class<? extends Script> baseScriptClass) {
+  GroovyClassFactory(ClassLoader baseLoader, Class<T> baseClass, Class<? extends Script> baseScriptClass) {
     CompilerConfiguration config = new CompilerConfiguration();
     config.setRecompileGroovySource(true);
     config.setScriptBaseClass(baseScriptClass.getName());

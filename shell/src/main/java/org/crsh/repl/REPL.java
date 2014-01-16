@@ -28,6 +28,14 @@ import org.crsh.cli.impl.completion.CompletionMatch;
 public interface REPL {
 
   /**
+   * Return true if this REPL is active. Implementation can decide based on the runtime, for instance the
+   * Groovy REPL can be inactive when Groovy is not available at runtime.
+   *
+   * @return the active status
+   */
+  boolean isActive();
+
+  /**
    * Return the repl name.
    *
    * @return the repl name

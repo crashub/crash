@@ -61,8 +61,12 @@ public class repl extends BaseCommand implements ReplCompleter {
         } else {
           for (REPL repl : session.crash.getContext().getPlugins(REPL.class)) {
             if (repl.getName().equals(name)) {
-              found = repl;
-              break;
+              if (repl.isActive()) {
+                found = repl;
+                break;
+              } else {
+                throw new ScriptException("Repl " + name + " is not active");
+              }
             }
           }
         }
@@ -87,12 +91,14 @@ public class repl extends BaseCommand implements ReplCompleter {
       table.add(
           new RowElement().
               add(new LabelElement("NAME").style(Style.style(Decoration.bold))).
-              add(new LabelElement("DESCRIPTION")));
+              add(new LabelElement("DESCRIPTION")).
+              add(new LabelElement("ACTIVE")));
       for (REPL repl : repls) {
         table.add(
             new RowElement().
                 add(new LabelElement(repl.getName()).style(Style.style(Color.red))).
-                add(new LabelElement(repl.getDescription())));
+                add(new LabelElement(repl.getDescription())).
+                add(new LabelElement(repl.isActive())));
       }
 
       //

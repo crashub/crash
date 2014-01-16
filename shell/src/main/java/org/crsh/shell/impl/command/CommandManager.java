@@ -27,6 +27,14 @@ import java.util.Set;
 public interface CommandManager {
 
   /**
+   * Return true if this command manager is active. Implementation can decide based on the runtime, for instance the
+   * Groovy REPL can be inactive when Groovy is not available at runtime.
+   *
+   * @return the active status
+   */
+  boolean isActive();
+
+  /**
    * Returns the set of extensions managed by this implementation.
    *
    * @return the set of extensions, for instance ("groovy")

@@ -74,8 +74,14 @@ public abstract class Renderable<E> {
 
   public static <I> Renderable<? super I> getRenderable(Class<I> itemType) {
     for (Renderable<?> formatter : renderables) {
-      if (formatter.getType().isAssignableFrom(itemType)) {
-        return (Renderable<I>)formatter;
+      try {
+        if (formatter.getType().isAssignableFrom(itemType)) {
+          return (Renderable<I>)formatter;
+        }
+      }
+      catch (Exception e) {
+      }
+      catch (NoClassDefFoundError e) {
       }
     }
     return null;

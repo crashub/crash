@@ -249,10 +249,7 @@ public class RenderPrintWriter extends PrintWriter {
 
   @Override
   public void print(Object obj) {
-    if (obj instanceof UIBuilder) {
-      RenderAppendable out = new RenderAppendable(this.out);
-      new UIBuilderRenderable().renderer(Collections.singleton((UIBuilder)obj).iterator()).render(out);
-    } else if (obj instanceof Element) {
+    if (obj instanceof Element) {
       RenderAppendable out = new RenderAppendable(this.out);
       ((Element)obj).renderer().render(out);
     } else {

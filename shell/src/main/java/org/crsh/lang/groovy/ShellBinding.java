@@ -31,10 +31,13 @@ import java.io.IOException;
 import java.util.Map;
 
 /** @author Julien Viet */
-public class ShellBinding extends Binding {
+class ShellBinding extends Binding {
 
   /** . */
   private CommandContext<Object> current;
+
+  ShellBinding() {
+  }
 
   private CommandContext<Object> proxy = new CommandContext<Object>() {
     public boolean isPiped() {

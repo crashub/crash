@@ -26,11 +26,11 @@ import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.lang.groovy.closure.PipeLineInvoker;
-import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.repl.EvalResponse;
 import org.crsh.repl.REPL;
 import org.crsh.repl.REPLSession;
 import org.crsh.cli.impl.line.LineParser;
+import org.crsh.shell.impl.command.CRaSHSession;
 
 import java.io.IOException;
 
@@ -39,11 +39,16 @@ import java.io.IOException;
  *
  * @author Julien Viet
  */
-public class GroovyREPL extends CRaSHPlugin<REPL> implements  REPL {
+public class GroovyReplImpl implements  REPL {
+
+  public GroovyReplImpl() {
+    // Force to load Groovy here or fail
+    Object o = GroovyShell.class;
+  }
 
   @Override
-  public REPL getImplementation() {
-    return this;
+  public boolean isActive() {
+    return true;
   }
 
   public String getName() {
@@ -80,7 +85,7 @@ public class GroovyREPL extends CRaSHPlugin<REPL> implements  REPL {
       CommandContext<Object> foo;
       public void open(CommandContext<? super Object> consumer) {
         this.foo = (CommandContext<Object>)consumer;
-        GroovyShell shell = GroovyCommandManager.getGroovyShell(session.getContext(), session);
+        GroovyShell shell = GroovyCommandManagerImpl.getGroovyShell((CRaSHSession)session);
         ShellBinding binding = (ShellBinding)shell.getContext();
         binding.setCurrent(foo);
         Object o;

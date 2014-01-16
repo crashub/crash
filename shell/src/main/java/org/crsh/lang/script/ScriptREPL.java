@@ -53,6 +53,11 @@ public class ScriptREPL implements REPL {
   private ScriptREPL() {
   }
 
+  @Override
+  public boolean isActive() {
+    return true;
+  }
+
   public String getName() {
     return "script";
   }

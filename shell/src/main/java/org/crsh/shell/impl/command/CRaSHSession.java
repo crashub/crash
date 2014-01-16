@@ -63,10 +63,6 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   /** . */
   private REPL repl = ScriptREPL.getInstance();
 
-  public CommandManager getCommandManager() {
-    return crash.managers.get("groovy");
-  }
-
   CRaSHSession(final CRaSH crash, Principal user) {
     // Set variable available to all scripts
     put("crash", crash);
@@ -78,7 +74,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     //
     ClassLoader previous = setCRaSHLoader();
     try {
-      for (CommandManager manager : crash.managers.values()) {
+      for (CommandManager manager : crash.activeManagers.values()) {
         manager.init(this);
       }
     }
@@ -132,7 +128,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public void close() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      for (CommandManager manager : crash.managers.values()) {
+      for (CommandManager manager : crash.activeManagers.values()) {
         manager.destroy(this);
       }
     }
@@ -146,7 +142,12 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public String getWelcome() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      return crash.managers.get("groovy").doCallBack(this, "welcome", "");
+      CommandManager groovy = crash.activeManagers.get("groovy");
+      if (groovy != null) {
+        return groovy.doCallBack(this, "welcome", "");
+      } else {
+        return "";
+      }
     }
     finally {
       setPreviousLoader(previous);
@@ -156,7 +157,12 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public String getPrompt() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      return crash.managers.get("groovy").doCallBack(this, "prompt", "% ");
+      CommandManager groovy = crash.activeManagers.get("groovy");
+      if (groovy != null) {
+        return groovy.doCallBack(this, "prompt", "% ");
+      } else {
+        return "% ";
+      }
     }
     finally {
       setPreviousLoader(previous);

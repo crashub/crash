@@ -51,7 +51,7 @@ public class CRaSH {
   final PluginContext context;
 
   /** . */
-  final HashMap<String, CommandManager> managers;
+  final HashMap<String, CommandManager> activeManagers;
 
   /** . */
   private final Map<String, TimestampedObject<CommandResolution>> commandCache = new ConcurrentHashMap<String, TimestampedObject<CommandResolution>>();
@@ -65,16 +65,18 @@ public class CRaSH {
   public CRaSH(PluginContext context) throws NullPointerException {
 
     //
-    HashMap<String, CommandManager> managers = new HashMap<String, CommandManager>();
+    HashMap<String, CommandManager> activeManagers = new HashMap<String, CommandManager>();
     for (CommandManager manager : context.getPlugins(CommandManager.class)) {
-      for (String ext : manager.getExtensions()) {
-        managers.put(ext, manager);
+      if (manager.isActive()) {
+        for (String ext : manager.getExtensions()) {
+          activeManagers.put(ext, manager);
+        }
       }
     }
 
 
     this.context = context;
-    this.managers = managers;
+    this.activeManagers = activeManagers;
   }
 
   public CRaSHSession createSession(Principal user) {
@@ -132,13 +134,15 @@ public class CRaSH {
     if (systemCommand != null) {
       return createCommand(systemCommand);
     } else {
-      for (CommandManager manager : managers.values()) {
-        for (String ext : manager.getExtensions()) {
-          Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
-          for (Resource resource : resources) {
-            CommandResolution resolution = resolveCommand(manager, name, resource);
-            if (resolution != null) {
-              return resolution;
+      for (CommandManager manager : activeManagers.values()) {
+        if (manager.isActive()) {
+          for (String ext : manager.getExtensions()) {
+            Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
+            for (Resource resource : resources) {
+              CommandResolution resolution = resolveCommand(manager, name, resource);
+              if (resolution != null) {
+                return resolution;
+              }
             }
           }
         }
@@ -153,7 +157,7 @@ public class CRaSH {
       int index = resourceName.indexOf('.');
       String name = resourceName.substring(0, index);
       String ext = resourceName.substring(index + 1);
-      if (managers.containsKey(ext)) {
+      if (activeManagers.containsKey(ext)) {
         names.add(name);
       }
     }

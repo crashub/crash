@@ -44,6 +44,11 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
   private Compiler compiler;
 
   @Override
+  public boolean isActive() {
+    return true;
+  }
+
+  @Override
   public void init() {
     PluginContext context = getContext();
     ClassLoader loader = context.getLoader();
