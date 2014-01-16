@@ -50,6 +50,11 @@ public class GroovyREPL extends CRaSHPlugin<REPL> implements  REPL {
     return "groovy";
   }
 
+  @Override
+  public String getDescription() {
+    return "The Groovy REPL provides a Groovy interpreter able to interact with shell commands";
+  }
+
   public EvalResponse eval(final REPLSession session, final String r2) {
 
 

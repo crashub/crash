@@ -35,6 +35,13 @@ public interface REPL {
   String getName();
 
   /**
+   * Returns a descripton of the REPL.
+   *
+   * @return the repl description
+   */
+  String getDescription();
+
+  /**
    * Evaluate a request
    *
    * @param session the session
@@ -43,6 +50,13 @@ public interface REPL {
    */
   EvalResponse eval(REPLSession session, String request);
 
+  /**
+   * Perform completion.
+   *
+   * @param session the session
+   * @param prefix the prefix to complete
+   * @return the completion match
+   */
   CompletionMatch complete(REPLSession session, String prefix);
 
 }

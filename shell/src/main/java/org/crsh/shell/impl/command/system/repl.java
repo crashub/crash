@@ -22,7 +22,6 @@ import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
 import org.crsh.cli.Usage;
 import org.crsh.cli.descriptor.ParameterDescriptor;
-import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
@@ -30,8 +29,15 @@ import org.crsh.command.ScriptException;
 import org.crsh.lang.script.ScriptREPL;
 import org.crsh.repl.REPL;
 import org.crsh.shell.impl.command.CRaSHSession;
+import org.crsh.text.Color;
+import org.crsh.text.Decoration;
+import org.crsh.text.Style;
+import org.crsh.text.ui.LabelElement;
+import org.crsh.text.ui.RowElement;
+import org.crsh.text.ui.TableElement;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /** @author Julien Viet */
 public class repl extends BaseCommand implements ReplCompleter {
@@ -68,7 +74,30 @@ public class repl extends BaseCommand implements ReplCompleter {
         }
       }
     } else {
-      context.provide("current repl is " + current.getName());
+
+      //
+      ArrayList<REPL> repls = new ArrayList<REPL>();
+      repls.add(ScriptREPL.getInstance());
+      for (REPL repl : session.crash.getContext().getPlugins(REPL.class)) {
+        repls.add(repl);
+      }
+
+      //
+      TableElement table = new TableElement().rightCellPadding(1);
+      table.add(
+          new RowElement().
+              add(new LabelElement("NAME").style(Style.style(Decoration.bold))).
+              add(new LabelElement("DESCRIPTION")));
+      for (REPL repl : repls) {
+        table.add(
+            new RowElement().
+                add(new LabelElement(repl.getName()).style(Style.style(Color.red))).
+                add(new LabelElement(repl.getDescription())));
+      }
+
+      //
+      context.provide(new LabelElement("Current repl is \" + current.getName() + \"available repl are:\n"));
+      context.provide(table);
     }
   }
 

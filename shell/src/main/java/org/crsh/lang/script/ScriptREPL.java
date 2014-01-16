@@ -57,6 +57,11 @@ public class ScriptREPL implements REPL {
     return "script";
   }
 
+  @Override
+  public String getDescription() {
+    return "The Script REPL provides command line interpreter with a bash like syntax";
+  }
+
   public EvalResponse eval(REPLSession session, String request) {
     PipeLineFactory factory;
     try {
