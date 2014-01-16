@@ -19,20 +19,33 @@
 
 package org.crsh.shell.impl.command;
 
+import org.crsh.command.BaseCommand;
+import org.crsh.command.BaseShellCommand;
 import org.crsh.command.CommandCreationException;
+import org.crsh.command.DescriptionFormat;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.shell.impl.command.system.help;
+import org.crsh.shell.impl.command.system.repl;
 import org.crsh.util.TimestampedObject;
 import org.crsh.vfs.Resource;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CRaSH {
+
+  /** . */
+  private static final HashMap<String, Class<? extends BaseCommand>> systemCommands = new HashMap<String, Class<? extends BaseCommand>>();
+
+  static {
+    systemCommands.put("help", help.class);
+    systemCommands.put("repl", repl.class);
+  }
 
   /** . */
   final PluginContext context;
@@ -111,26 +124,31 @@ public class CRaSH {
    * @throws org.crsh.command.CommandCreationException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  public CommandResolution resolveCommand(String name) throws CommandCreationException, NullPointerException {
+  public CommandResolution resolveCommand(final String name) throws CommandCreationException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null name accepted");
     }
-    for (CommandManager manager : managers.values()) {
-      for (String ext : manager.getExtensions()) {
-        Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
-        for (Resource resource : resources) {
-          CommandResolution resolution = resolveCommand(manager, name, resource);
-          if (resolution != null) {
-            return resolution;
+    final Class<? extends BaseCommand> systemCommand = systemCommands.get(name);
+    if (systemCommand != null) {
+      return createCommand(systemCommand);
+    } else {
+      for (CommandManager manager : managers.values()) {
+        for (String ext : manager.getExtensions()) {
+          Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
+          for (Resource resource : resources) {
+            CommandResolution resolution = resolveCommand(manager, name, resource);
+            if (resolution != null) {
+              return resolution;
+            }
           }
         }
       }
+      return null;
     }
-    return null;
   }
 
   public Iterable<String> getCommandNames() {
-    ArrayList<String> names = new ArrayList<String>();
+    LinkedHashSet<String> names = new LinkedHashSet<String>(systemCommands.keySet());
     for (String resourceName : context.listResources(ResourceKind.COMMAND)) {
       int index = resourceName.indexOf('.');
       String name = resourceName.substring(0, index);
@@ -159,5 +177,19 @@ public class CRaSH {
       command = ref.getObject();
     }
     return command;
+  }
+
+  private <C extends BaseCommand> CommandResolution createCommand(final Class<C> commandClass) {
+    return new CommandResolution() {
+      final BaseShellCommand<C> shellCommand = new BaseShellCommand<C>(commandClass);
+      @Override
+      public String getDescription() {
+        return shellCommand.describe(commandClass.getSimpleName(), DescriptionFormat.DESCRIBE);
+      }
+      @Override
+      public ShellCommand getCommand() throws CommandCreationException {
+        return shellCommand;
+      }
+    };
   }
 }

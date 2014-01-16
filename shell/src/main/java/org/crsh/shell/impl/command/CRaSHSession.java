@@ -60,6 +60,9 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   /** . */
   final Principal user;
 
+  /** . */
+  private REPL repl = ScriptREPL.getInstance();
+
   public CommandManager getCommandManager() {
     return crash.managers.get("groovy");
   }
@@ -82,6 +85,28 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     finally {
       setPreviousLoader(previous);
     }
+  }
+
+  /**
+   * Returns the current repl of this session.
+   *
+   * @return the current repl
+   */
+  public REPL getRepl() {
+    return repl;
+  }
+
+  /**
+   * Set the current repl of this session.
+   *
+   * @param repl the new repl
+   * @throws NullPointerException if the repl is null
+   */
+  public void setRepl(REPL repl) throws NullPointerException {
+    if (repl == null) {
+      throw new NullPointerException("No null repl accepted");
+    }
+    this.repl = repl;
   }
 
   public Iterable<String> getCommandNames() {
@@ -138,9 +163,6 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     }
   }
 
-  /** . */
-  private REPL repl = ScriptREPL.getInstance();
-
   public ShellProcess createProcess(String request) {
     log.log(Level.FINE, "Invoking request " + request);
     String trimmedRequest = request.trim();
@@ -148,33 +170,6 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     final ShellResponse response;
     if ("bye".equals(trimmedRequest) || "exit".equals(trimmedRequest)) {
       response = ShellResponse.close();
-    } else if (trimmedRequest.equals("repl")) {
-      msg.append("Current repl ").append(repl.getName());
-      response = ShellResponse.ok();
-    } else if (trimmedRequest.startsWith("repl ")) {
-      String name = trimmedRequest.substring("repl ".length()).trim();
-      if (name.equals(repl.getName())) {
-        response = ShellResponse.ok();
-      } else {
-        REPL found = null;
-        if ("script".equals(name)) {
-          found = ScriptREPL.getInstance();
-        } else {
-          for (REPL repl : crash.getContext().getPlugins(REPL.class)) {
-            if (repl.getName().equals(name)) {
-              found = repl;
-              break;
-            }
-          }
-        }
-        if (found != null) {
-          repl = found;
-          msg.append("Using repl ").append(found.getName());
-          response = ShellResponse.ok();
-        } else {
-          response = ShellResponse.error(ErrorType.EVALUATION, "Repl " + name + " not found");
-        }
-      }
     } else {
       EvalResponse r = repl.eval(this, request);
       if (r instanceof EvalResponse.Response) {
