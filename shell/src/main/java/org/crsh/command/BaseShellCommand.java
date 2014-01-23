@@ -31,6 +31,7 @@ import org.crsh.cli.impl.invocation.Resolver;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
+import org.crsh.console.KeyHandler;
 import org.crsh.shell.ErrorType;
 import org.crsh.util.TypeResolver;
 
@@ -263,6 +264,15 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
         open2(consumer2);
       }
 
+      @Override
+      public KeyHandler getKeyHandler() {
+        if (instance instanceof KeyHandler) {
+          return (KeyHandler)instance;
+        } else {
+          return null;
+        }
+      }
+
       public void open2(final CommandContext<P> consumer) {
 
         //
@@ -356,12 +366,24 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
         instance.unmatched = invoker.getMatch().getRest();
       }
 
+
+      @Override
+      public KeyHandler getKeyHandler() {
+        if (instance instanceof KeyHandler) {
+          return (KeyHandler)instance;
+        } else {
+          return null;
+        }
+      }
+
       public void provide(Void element) throws IOException {
         // Drop everything
       }
+
       public void flush() throws IOException {
         // peekContext().flush();
       }
+
       public void close() throws IOException, UndeclaredThrowableException {
 
         //

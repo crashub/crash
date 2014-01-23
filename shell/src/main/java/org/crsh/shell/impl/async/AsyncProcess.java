@@ -19,6 +19,7 @@
 
 package org.crsh.shell.impl.async;
 
+import org.crsh.console.KeyHandler;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -82,7 +83,7 @@ public class AsyncProcess implements ShellProcess {
       return caller.releaseAlternateBuffer();
     }
 
-    public String readLine(String msg, boolean echo) {
+    public String readLine(String msg, boolean echo) throws IOException, InterruptedException {
       return caller.readLine(msg, echo);
     }
 
@@ -125,6 +126,18 @@ public class AsyncProcess implements ShellProcess {
       caller.end(response);
     }
   };
+
+  @Override
+  public KeyHandler getKeyHandler() {
+    synchronized (lock) {
+      if (status != Status.EVALUATING) {
+        throw new IllegalStateException();
+      }
+    }
+    // Should it be synchronous or not ????
+    // no clue for now :-)
+    return callee.getKeyHandler();
+  }
 
   public void execute(ShellProcessContext processContext) {
 

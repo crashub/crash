@@ -19,7 +19,6 @@
 
 package org.crsh.processor.term;
 
-import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.impl.async.AsyncShell;
 import org.crsh.term.TermEvent;
@@ -55,8 +54,9 @@ public class AsyncProcessorTestCase extends AbstractProcessorTestCase {
     final CyclicBarrier syncB = new CyclicBarrier(2);
     final CyclicBarrier syncC = new CyclicBarrier(2);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellProcess() {
-      public void execute(ShellProcessContext processContext) {
+    shell.addProcess(new SyncProcess() {
+      @Override
+      public void run(String request, ShellProcessContext context) throws Exception {
         try {
           syncA.await();
           syncB.await();
@@ -87,8 +87,9 @@ public class AsyncProcessorTestCase extends AbstractProcessorTestCase {
     final CyclicBarrier syncA = new CyclicBarrier(2);
     final CyclicBarrier syncB = new CyclicBarrier(3);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellProcess() {
-      public void execute(ShellProcessContext processContext) {
+    shell.addProcess(new SyncProcess() {
+      @Override
+      public void run(String request, ShellProcessContext context) throws Exception {
         try {
           syncA.await();
           syncB.await();

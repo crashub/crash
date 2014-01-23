@@ -68,24 +68,28 @@ public class ScriptREPL implements REPL {
   }
 
   public EvalResponse eval(REPLSession session, String request) {
-    PipeLineFactory factory;
-    try {
-      factory = Token.parse(request).createFactory();
-    }
-    catch (SyntaxException e) {
-      return new EvalResponse.Response(ShellResponse.error(ErrorType.EVALUATION, e.getMessage()));
-    }
-    if (factory != null) {
-      try {
-        CommandInvoker<Void, Chunk> invoker = factory.create(session);
-        return new EvalResponse.Invoke(invoker);
-      }
-      catch (CommandCreationException e) {
-        log.log(Level.FINER, "Could not create command", e);
-        return new EvalResponse.Response(ShellResponse.unknownCommand(e.getCommandName()));
-      }
+    if (request.trim().length() == 0) {
+      return new EvalResponse.Response(ShellResponse.ok());
     } else {
-      return new EvalResponse.Response(ShellResponse.noCommand());
+      PipeLineFactory factory;
+      try {
+        factory = Token.parse(request).createFactory();
+      }
+      catch (SyntaxException e) {
+        return new EvalResponse.Response(ShellResponse.error(ErrorType.EVALUATION, e.getMessage()));
+      }
+      if (factory != null) {
+        try {
+          CommandInvoker<Void, Chunk> invoker = factory.create(session);
+          return new EvalResponse.Invoke(invoker);
+        }
+        catch (CommandCreationException e) {
+          log.log(Level.FINER, "Could not create command", e);
+          return new EvalResponse.Response(ShellResponse.unknownCommand(e.getCommandName()));
+        }
+      } else {
+        return new EvalResponse.Response(ShellResponse.noCommand());
+      }
     }
   }
 

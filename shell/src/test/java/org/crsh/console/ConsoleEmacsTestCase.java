@@ -16,13 +16,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.console;
 
-package org.crsh.processor.term;
+/**
+ * @author Julien Viet
+ */
+public class ConsoleEmacsTestCase extends AbstractConsoleTestCase {
 
-import org.crsh.shell.ShellProcessContext;
-
-public interface ShellRunnable {
-
-  void run(ShellProcessContext context) throws Exception;
-
+  public void testInterrupt() {
+    // todo
+  }
 }

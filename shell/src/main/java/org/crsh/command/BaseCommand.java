@@ -35,11 +35,11 @@ public abstract class BaseCommand extends AbstractCommand {
     this.unmatched = null;
   }
 
-  protected final String readLine(String msg) {
+  protected final String readLine(String msg) throws IOException, InterruptedException {
     return readLine(msg, true);
   }
 
-  protected final String readLine(String msg, boolean echo) {
+  protected final String readLine(String msg, boolean echo) throws IOException, InterruptedException {
     if (context instanceof InvocationContext) {
       return ((InvocationContext)context).readLine(msg, echo);
     } else {

@@ -19,6 +19,8 @@
 
 package org.crsh.shell;
 
+import org.crsh.console.KeyHandler;
+
 /**
  * A shell process.
  */
@@ -30,13 +32,25 @@ public interface ShellProcess {
    * with an invocation of the {@link ShellProcessContext#end(ShellResponse)} method.
    *
    * @param processContext the process context
-   * @throws IllegalStateException if the process cannot be executed for some reason
+   * @throws IllegalStateException if the process is already executing or has been executed
    */
   void execute(ShellProcessContext processContext) throws IllegalStateException;
 
   /**
-   * Signals the process it should be cancelled.
+   * Returns the key handler or null if the process won't handle key events.
+   *
+   * @return the key handler for this process
    */
-  void cancel();
+  KeyHandler getKeyHandler() throws IllegalStateException;
+
+  /**
+   * Signals the process it should be cancelled. This method cannot be be called before the process has started,
+   * it can be called multiple times after the process has started. The cancellation of the process is asynchronous,
+   * the cancellation of the process will terminate the current context lifecycle by calling the
+   * {@link org.crsh.shell.ShellProcessContext#end(ShellResponse)} method.
+   *
+   * @throws IllegalStateException if the execution has not yet started
+   */
+  void cancel() throws IllegalStateException;
 
 }

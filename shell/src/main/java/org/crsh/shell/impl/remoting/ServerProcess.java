@@ -19,6 +19,7 @@
 
 package org.crsh.shell.impl.remoting;
 
+import org.crsh.console.KeyHandler;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 
@@ -50,6 +51,11 @@ public class ServerProcess implements ShellProcess {
     finally {
       status = 2;
     }
+  }
+
+  @Override
+  public KeyHandler getKeyHandler() {
+    throw new UnsupportedOperationException("Not yet implemented");
   }
 
   public void cancel() {

@@ -958,7 +958,7 @@
                   </goals>
                   <phase>test</phase>
                   <configuration>
-                    <mainClass>org.crsh.standalone.CRaSH</mainClass>
+                    <mainClass>org.crsh.standalone.CRaSH2</mainClass>
                     <classpathScope>test</classpathScope>
                     <arguments>
                       <argument>--property</argument>

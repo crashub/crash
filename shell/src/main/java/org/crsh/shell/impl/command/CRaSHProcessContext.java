@@ -112,7 +112,7 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
     return processContext.getProperty(propertyName);
   }
 
-  public String readLine(String msg, boolean echo) {
+  public String readLine(String msg, boolean echo) throws IOException, InterruptedException {
     return processContext.readLine(msg, echo);
   }
 

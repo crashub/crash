@@ -20,6 +20,9 @@
 package org.crsh;
 
 import junit.framework.Assert;
+import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyHandler;
+import org.crsh.console.KeyType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
@@ -77,6 +80,14 @@ public class BaseProcessContext implements ShellProcessContext {
 
   public BaseProcessContext cancel() {
     process.cancel();
+    return this;
+  }
+
+  public BaseProcessContext on(KeyType type, int[] sequence) {
+    KeyHandler handler = process.getKeyHandler();
+    if (handler != null) {
+      handler.handle(type, sequence);
+    }
     return this;
   }
 

@@ -21,12 +21,14 @@ package org.crsh.processor.term;
 
 import org.crsh.AbstractTestCase;
 import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.console.KeyHandler;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SyncShell implements Shell {
 
@@ -37,30 +39,23 @@ public class SyncShell implements Shell {
   private final Object lock;
 
   /** . */
-  private final LinkedList<ShellProcess> queue;
+  private final LinkedList<SyncProcess> queue;
+
+  /** . */
+  private AtomicReference<SyncCompleter> completer;
 
   public SyncShell() {
     this.lock = new Object();
-    this.queue = new LinkedList<ShellProcess>();
+    this.queue = new LinkedList<SyncProcess>();
     this.failures = new LinkedList<Throwable>();
+    this.completer = new AtomicReference<SyncCompleter>();
   }
 
-  public void publish(final ShellRunnable callable) {
-    publish(new ShellProcess() {
-      public void execute(ShellProcessContext processContext) {
-        try {
-          callable.run(processContext);
-        }
-        catch (Exception e) {
-          throw AbstractTestCase.failure(e);
-        }
-      }
-      public void cancel() {
-      }
-    });
+  public void setCompleter(SyncCompleter completer) {
+    this.completer.set(completer);
   }
 
-  public void publish(ShellProcess process) {
+  public void addProcess(SyncProcess process) {
     synchronized (lock) {
       queue.add(process);
       lock.notifyAll();
@@ -68,18 +63,37 @@ public class SyncShell implements Shell {
   }
 
   public String getWelcome() {
-    return "welcome";
+    return "";
   }
 
   public String getPrompt() {
-    return "%";
+    return "";
   }
 
-  public ShellProcess createProcess(String request) throws IllegalStateException {
+  public ShellProcess createProcess(final String request) throws IllegalStateException {
     synchronized (lock) {
       while (true) {
         if (queue.size() > 0) {
-          return queue.removeFirst();
+          final SyncProcess runnable = queue.removeFirst();
+          return new ShellProcess() {
+            @Override
+            public void execute(ShellProcessContext processContext) throws IllegalStateException {
+              try {
+                runnable.run(request, processContext);
+              }
+              catch (Exception e) {
+                throw AbstractTestCase.failure(e);
+              }
+            }
+            @Override
+            public KeyHandler getKeyHandler() throws IllegalStateException {
+              return runnable.keyHandler();
+            }
+            @Override
+            public void cancel() throws IllegalStateException {
+              runnable.cancel();
+            }
+          };
         } else {
           try {
             lock.wait();
@@ -93,7 +107,8 @@ public class SyncShell implements Shell {
   }
 
   public CompletionMatch complete(String prefix) {
-    throw new UnsupportedOperationException();
+    SyncCompleter completer = this.completer.get();
+    return completer != null ? completer.complete(prefix) : null;
   }
 
   public void close() throws IOException {

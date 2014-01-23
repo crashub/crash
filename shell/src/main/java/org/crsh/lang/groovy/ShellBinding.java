@@ -76,7 +76,7 @@ class ShellBinding extends Binding {
         return current.releaseAlternateBuffer();
       }
     }
-    public String readLine(String msg, boolean echo) {
+    public String readLine(String msg, boolean echo) throws IOException, InterruptedException {
       if (current == null) {
         throw new IllegalStateException("Not under context");
       } else {

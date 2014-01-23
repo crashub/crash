@@ -29,6 +29,7 @@ import org.apache.sshd.server.ServerFactoryManager;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
 import org.crsh.auth.AuthenticationPlugin;
+import org.crsh.shell.ShellFactory;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.ssh.term.subsystem.SubsystemFactoryPlugin;
 import org.crsh.term.TermLifeCycle;
@@ -132,6 +133,7 @@ public class SSHLifeCycle extends TermLifeCycle {
 
       //
       TermIOHandler handler = getHandler();
+      ShellFactory factory = getContext().getPlugin(ShellFactory.class);
 
       //
       SshServer server = SshServer.setUpDefaultServer();
@@ -144,7 +146,7 @@ public class SSHLifeCycle extends TermLifeCycle {
         server.getProperties().put(ServerFactoryManager.AUTH_TIMEOUT, String.valueOf(this.authTimeout));
       }
 
-      server.setShellFactory(new CRaSHCommandFactory(handler));
+      server.setShellFactory(new CRaSHCommandFactory(handler, factory));
       server.setCommandFactory(new SCPCommandFactory(getContext()));
       server.setKeyPairProvider(keyPairProvider);
 

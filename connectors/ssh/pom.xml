@@ -19,6 +19,10 @@
       <groupId>org.crashub</groupId>
       <artifactId>crash.shell</artifactId>
     </dependency>
+    <dependency>
+      <groupId>jline</groupId>
+      <artifactId>jline</artifactId>
+    </dependency>
 
     <!-- SSHD connector dependencies -->
     <dependency>

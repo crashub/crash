@@ -24,6 +24,7 @@ import org.crsh.command.RuntimeContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
+import org.crsh.console.KeyHandler;
 import org.crsh.plugin.PluginContext;
 import org.crsh.repl.REPL;
 import org.crsh.shell.ErrorType;
@@ -184,6 +185,11 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
       } else {
         final CommandInvoker<Void, ?> pipeLine = ((EvalResponse.Invoke)r).invoker;
         return new CRaSHProcess(this, request) {
+
+          @Override
+          public KeyHandler getKeyHandler() {
+            return pipeLine.getKeyHandler();
+          }
 
           @Override
           ShellResponse doInvoke(final ShellProcessContext context) throws InterruptedException {

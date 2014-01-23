@@ -20,7 +20,6 @@
 package org.crsh.processor.term;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.term.TermEvent;
@@ -85,8 +84,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final CyclicBarrier syncA = new CyclicBarrier(2);
     final CountDownLatch syncB = new CountDownLatch(1);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellRunnable() {
-      public void run(ShellProcessContext context) throws Exception {
+    shell.addProcess(new SyncProcess() {
+      public void run(String request, ShellProcessContext context) throws Exception {
         syncA.await();
         syncB.await();
         context.write(Text.create("foo"));
@@ -96,8 +95,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     syncA.await();
     term.publish(TermEvent.readLine("bar"));
     syncB.countDown();
-    shell.publish(new ShellRunnable() {
-      public void run(ShellProcessContext context) throws Exception {
+    shell.addProcess(new SyncProcess() {
+      public void run(String request, ShellProcessContext context) throws Exception {
         context.write(Text.create("bar"));
         context.end(ShellResponse.ok());
       }
@@ -112,8 +111,9 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final CyclicBarrier syncA = new CyclicBarrier(2);
     final CyclicBarrier syncB = new CyclicBarrier(getBarrierSize());
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellProcess() {
-      public void execute(ShellProcessContext processContext) {
+    shell.addProcess(new SyncProcess() {
+      @Override
+      public void run(String request, ShellProcessContext context) throws Exception {
         try {
           syncA.await();
           syncB.await();
@@ -122,6 +122,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
           e.printStackTrace();
         }
       }
+
       public void cancel() {
         try {
           syncB.await();
@@ -134,8 +135,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     syncA.await();
     term.publish(TermEvent.brk());
     term.publish(TermEvent.readLine("bar"));
-    shell.publish(new ShellRunnable() {
-      public void run(ShellProcessContext context) throws Exception {
+    shell.addProcess(new SyncProcess() {
+      public void run(String request, ShellProcessContext context) throws Exception {
         context.write(Text.create("bar"));
         context.end(ShellResponse.ok());
       }
@@ -147,8 +148,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
   public void testProcessClose() throws Exception {
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellRunnable() {
-      public void run(ShellProcessContext context) throws Exception {
+    shell.addProcess(new SyncProcess() {
+      public void run(String request, ShellProcessContext context) throws Exception {
         context.end(ShellResponse.close());
       }
     });
@@ -162,8 +163,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellRunnable() {
-      public void run(ShellProcessContext context) throws Exception {
+    shell.addProcess(new SyncProcess() {
+      public void run(String request, ShellProcessContext context) throws Exception {
         try {
           syncA.await();
           syncB.await();
@@ -202,8 +203,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellRunnable() {
-      public void run(ShellProcessContext context) throws Exception {
+    shell.addProcess(new SyncProcess() {
+      public void run(String request, ShellProcessContext context) throws Exception {
         try {
           syncA.await();
           syncB.await();
@@ -236,8 +237,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellRunnable() {
-      public void run(ShellProcessContext context) throws Exception {
+    shell.addProcess(new SyncProcess() {
+      public void run(String request, ShellProcessContext context) throws Exception {
         try {
           syncA.await();
         }
@@ -280,8 +281,8 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     final AtomicReference<String> line = new AtomicReference<String>();
     processor.addListener(term);
     term.publish(TermEvent.readLine("foo"));
-    shell.publish(new ShellRunnable() {
-      public void run(ShellProcessContext context) throws Exception {
+    shell.addProcess(new SyncProcess() {
+      public void run(String request, ShellProcessContext context) throws Exception {
         try {
           syncA.await();
         }

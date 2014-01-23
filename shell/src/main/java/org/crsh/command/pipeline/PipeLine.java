@@ -21,6 +21,7 @@ package org.crsh.command.pipeline;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandInvoker;
+import org.crsh.console.KeyHandler;
 import org.crsh.text.Chunk;
 
 import java.io.IOException;
@@ -85,6 +86,17 @@ public class PipeLine extends CommandInvoker<Void, Chunk> {
       current = last;
       return last;
     }
+  }
+
+  @Override
+  public KeyHandler getKeyHandler() {
+    for (CommandInvoker<?, ?> invoker : invokers) {
+      KeyHandler handler = invoker.getKeyHandler();
+      if (handler != null) {
+        return handler;
+      }
+    }
+    return null;
   }
 
   public void provide(Void element) throws IOException {

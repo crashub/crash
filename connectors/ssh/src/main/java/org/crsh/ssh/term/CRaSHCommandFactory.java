@@ -20,6 +20,7 @@ package org.crsh.ssh.term;
 
 import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
+import org.crsh.shell.ShellFactory;
 import org.crsh.term.spi.TermIOHandler;
 
 public class CRaSHCommandFactory implements Factory<Command> {
@@ -27,13 +28,17 @@ public class CRaSHCommandFactory implements Factory<Command> {
   /** . */
   final TermIOHandler handler;
 
-  public CRaSHCommandFactory(TermIOHandler handler) {
+  /** . */
+  final ShellFactory shellFactory;
+
+  public CRaSHCommandFactory(TermIOHandler handler, ShellFactory shellFactory) {
     if (handler == null) {
       throw new NullPointerException("No null builder accepted");
     }
 
     //
     this.handler = handler;
+    this.shellFactory = shellFactory;
   }
 
   public Command create() {
