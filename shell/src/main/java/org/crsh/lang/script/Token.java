@@ -19,6 +19,7 @@
 package org.crsh.lang.script;
 
 import org.crsh.command.SyntaxException;
+import org.crsh.util.Utils;
 
 /**
  * @author Julien Viet
@@ -38,7 +39,7 @@ public class Token {
 
   public PipeLineFactory createFactory() throws SyntaxException {
     PipeLineFactory nextFactory = next != null ? next.createFactory() : null;
-    return new PipeLineFactory(value, nextFactory);
+    return Utils.notBlank(value) ? new PipeLineFactory(value, nextFactory) : null;
   }
 
   public Token getLast() {
