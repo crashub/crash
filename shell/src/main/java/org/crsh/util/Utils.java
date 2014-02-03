@@ -146,6 +146,12 @@ public class Utils {
     }
   }
 
+  private static final Pattern blankPattern = Pattern.compile("^\\s*$");
+
+  public static boolean notBlank(String s) {
+    return !blankPattern.matcher(s).find();
+  }
+
   public static <E> E notNull(E e1, E e2) {
     if (e1 != null) {
       return e1;
