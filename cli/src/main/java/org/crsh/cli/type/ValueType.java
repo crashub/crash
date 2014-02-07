@@ -21,21 +21,30 @@ package org.crsh.cli.type;
 
 import org.crsh.cli.completers.EmptyCompleter;
 import org.crsh.cli.completers.EnumCompleter;
+import org.crsh.cli.completers.FileCompleter;
 import org.crsh.cli.completers.ThreadCompleter;
 import org.crsh.cli.spi.Completer;
 
 import javax.management.ObjectName;
+import java.io.File;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
 /**
- * A type for values.
+ * Defines a type for values, this is used for transforming a textual value into a type, for command
+ * argument and options. A value type defines:
+ *
+ * <ul>
+ *   <li>The generic value type that is converted to.</li>
+ *   <li>The implementation of the {@link #parse(Class, String)} method that transforms the string into a value.</li>
+ *   <li>An optional completer.</li>
+ * </ul>
  *
  * @param <V> the generic value type
  */
 public abstract class ValueType<V> {
 
-  /** . */
+  /** Identity. */
   public static final ValueType<String> STRING = new ValueType<String>(String.class) {
     @Override
     public <S extends String> S parse(Class<S> type, String s) throws Exception {
@@ -43,7 +52,7 @@ public abstract class ValueType<V> {
     }
   };
 
-  /** . */
+  /** Integer. */
   public static final ValueType<Integer> INTEGER = new ValueType<Integer>(Integer.class) {
     @Override
     public <S extends Integer> S parse(Class<S> type, String s) throws Exception {
@@ -51,7 +60,7 @@ public abstract class ValueType<V> {
     }
   };
 
-  /** . */
+  /** Boolean. */
   public static final ValueType<Boolean> BOOLEAN = new ValueType<Boolean>(Boolean.class) {
     @Override
     public <S extends Boolean> S parse(Class<S> type, String s) throws Exception {
@@ -59,7 +68,7 @@ public abstract class ValueType<V> {
     }
   };
 
-  /** . */
+  /** Any Java enum. */
   public static final ValueType<Enum> ENUM = new ValueType<Enum>(Enum.class, EnumCompleter.class) {
     @Override
     public <S extends Enum> S parse(Class<S> type, String s) {
@@ -70,7 +79,7 @@ public abstract class ValueType<V> {
     }
   };
 
-  /** . */
+  /** Properties as semi colon separated values. */
   public static final ValueType<Properties> PROPERTIES = new ValueType<Properties>(Properties.class) {
     @Override
     public <S extends Properties> S parse(Class<S> type, String s) throws Exception {
@@ -88,7 +97,7 @@ public abstract class ValueType<V> {
     }
   };
 
-  /** . */
+  /** A JMX object name value type. */
   public static final ValueType<ObjectName> OBJECT_NAME = new ValueType<ObjectName>(ObjectName.class) {
     @Override
     public <S extends ObjectName> S parse(Class<S> type, String s) throws Exception {
@@ -96,7 +105,7 @@ public abstract class ValueType<V> {
     }
   };
 
-  /** . */
+  /** A value type for threads. */
   public static final ValueType<Thread> THREAD = new ValueType<Thread>(Thread.class, ThreadCompleter.class) {
     @Override
     public <S extends Thread> S parse(Class<S> type, String s) throws Exception {
@@ -107,6 +116,14 @@ public abstract class ValueType<V> {
         }
       }
       throw new IllegalArgumentException("No thread " + s );
+    }
+  };
+
+  /** A value type for files. */
+  public static final ValueType<File> FILE = new ValueType<File>(File.class, FileCompleter.class) {
+    @Override
+    public <S extends File> S parse(Class<S> type, String s) throws Exception {
+      return type.cast(new File(s));
     }
   };
 
@@ -188,6 +205,16 @@ public abstract class ValueType<V> {
     return parse(type, s);
   }
 
+  /**
+   * Parse the <code>s</code> argument into a value of type S that is a subclass of the
+   * generic value type V.
+   *
+   * @param type the target type of the value
+   * @param s the string to convert
+   * @param <S> the generic type of the converted value
+   * @return the converted value
+   * @throws Exception any exception that would prevent the conversion to happen
+   */
   public abstract <S extends V> S parse(Class<S> type, String s) throws Exception;
 
 }

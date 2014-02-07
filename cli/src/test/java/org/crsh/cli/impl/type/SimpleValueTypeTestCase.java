@@ -24,6 +24,7 @@ import org.crsh.cli.type.ValueTypeFactory;
 import junit.framework.TestCase;
 
 import javax.management.ObjectName;
+import java.io.File;
 import java.util.Properties;
 
 public class SimpleValueTypeTestCase extends TestCase {
@@ -72,6 +73,15 @@ public class SimpleValueTypeTestCase extends TestCase {
     assertEquals(2, props.size());
     assertEquals("repository-in-memory.xml", props.get("org.apache.jackrabbit.repository.conf"));
     assertEquals("/home/ehugonnet/tmp/crash/jcr/target/test-classes/conf/transient", props.get("org.apache.jackrabbit.repository.home"));
+  }
+
+  public void testFile() throws Exception {
+    ValueType<File> fileVT = factory.get(File.class);
+    File tmp = File.createTempFile("foo", ".bar");
+    tmp.deleteOnExit();
+    File f = fileVT.parse(tmp.getAbsolutePath());
+    assertNotNull(f);
+    assertEquals(f, tmp);
   }
 
   public void testObjectName() throws Exception {

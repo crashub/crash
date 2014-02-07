@@ -285,6 +285,7 @@ CRaSH provides supports a few builtin simple types other than string:
 * +Boolean+ type
 * +java.util.Properties+ type
 * +javax.management.ObjectName+ type
+* +java.io.File+ type with file completion
 * +Enum+ types
 
 Boolean type is special because it does not need a value when combined with options. The option declaration is enough
