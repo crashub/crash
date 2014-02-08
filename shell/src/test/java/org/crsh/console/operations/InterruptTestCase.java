@@ -20,9 +20,8 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
-import org.crsh.console.Status;
+import org.crsh.console.KeyStrokes;
+import org.crsh.console.Mode;
 import org.crsh.processor.term.SyncProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -30,7 +29,6 @@ import org.crsh.shell.ShellResponse;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Julien Viet
@@ -39,61 +37,51 @@ public class InterruptTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs() {
     console.init();
-    doTest(Status.Emacs.class, Status.Emacs.class);
+    doTest(Mode.EMACS, Mode.EMACS);
   }
 
   public void testInsert() {
     console.init();
-    console.toInsert();
-    doTest(Status.Insert.class, Status.Insert.class);
+    doTest(Mode.VI_INSERT, Mode.VI_INSERT);
   }
 
   public void testMove() {
     console.init();
-    console.toMove();
-    doTest(Status.Move.class, Status.Move.class);
+    doTest(Mode.VI_MOVE, Mode.VI_MOVE);
   }
 
   public void testDigit() {
     console.init();
-    console.toMove();
-    console.on(Operation.VI_ARG_DIGIT, '3');
-    doTest(Status.Digit.class, Status.Move.class);
+    doTest(new Mode.Digit(3), Mode.VI_MOVE);
   }
 
   public void testDeleteTo() {
     console.init();
-    console.toMove();
-    console.on(Operation.VI_DELETE_TO, 'd');
-    doTest(Status.DeleteTo.class, Status.Move.class);
+    doTest(Mode.DELETE_TO, Mode.VI_MOVE);
   }
 
   public void testChangeTo() {
     console.init();
-    console.toMove();
-    console.on(Operation.VI_CHANGE_TO, 'c');
-    doTest(Status.ChangeTo.class, Status.Move.class);
+    doTest(Mode.CHANGE_TO, Mode.VI_MOVE);
   }
 
   public void testYankToChar() {
     console.init();
-    console.toMove();
-    console.on(Operation.VI_YANK_TO);
-    doTest(Status.YankTo.class, Status.Move.class);
+    doTest(Mode.YANK_TO, Mode.VI_MOVE);
   }
 
   public void testChangeChar() {
     console.init();
-    console.toMove();
-    console.on(Operation.VI_CHANGE_CHAR);
-    doTest(Status.ChangeChar.class, Status.Move.class);
+    doTest(new Mode.ChangeChar(1), Mode.VI_MOVE);
   }
 
-  private void doTest(Class<? extends Status> prevStatus ,Class<? extends Status> nextStatus) {
-    assertInstance(prevStatus, console.getMode());
-    console.on(KeyEvent.of("foo"));
+  private void doTest(Mode status, Mode expectedStatus) {
+    console.on(KeyStrokes.of("foo"));
+    console.setMode(status);
+    assertEquals("foo", getCurrentLine());
+    assertEquals(3, getCurrentCursor());
     console.on(Operation.INTERRUPT);
-    assertInstance(nextStatus, console.getMode());
+    assertEquals(expectedStatus, console.getMode());
     assertEquals("", getCurrentLine());
     assertEquals(0, getCurrentCursor());
   }
@@ -112,10 +100,10 @@ public class InterruptTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvent.of("foo"));
-    console.on(KeyEvents.ENTER);
-    console.on(KeyEvent.of("a"));
-    console.on(KeyEvents.INTERRUPT);
+    console.on(KeyStrokes.of("foo"));
+    console.on(KeyStrokes.ENTER);
+    console.on(KeyStrokes.of("a"));
+    console.on(KeyStrokes.INTERRUPT);
     latch.await();
     ShellProcessContext context = contexts.poll(1, TimeUnit.SECONDS);
     context.end(ShellResponse.ok());

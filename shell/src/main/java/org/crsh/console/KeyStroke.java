@@ -16,27 +16,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.console.operations;
+package org.crsh.console;
 
 import jline.console.Operation;
-import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyStrokes;
 
 /**
+ * A recorded key stroke that associates an operation with the sequence that triggered it.
+ *
  * @author Julien Viet
  */
-public class ViArgDigitDeleteTestCase extends AbstractConsoleTestCase {
+class KeyStroke {
 
-  public void testDelete2() throws Exception {
-    console.toInsert();
-    console.init();
-    console.on(KeyStrokes.of("thing to delete"));
-    console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.BACKWARD_WORD);
-    console.on(Operation.BACKWARD_WORD);
-    console.on(Operation.VI_ARG_DIGIT, '9');
-    console.on(Operation.VI_ARG_DIGIT, '9');
-    console.on(Operation.VI_DELETE);
-    assertEquals("thing ", getCurrentLine());
+  /** . */
+  final Operation operation;
+
+  /** . */
+  final int[] sequence;
+
+  public KeyStroke(Operation operation, int... sequence) {
+    this.operation = operation;
+    this.sequence = sequence;
   }
 }

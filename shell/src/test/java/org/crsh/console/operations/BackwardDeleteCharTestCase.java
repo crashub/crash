@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -52,7 +52,7 @@ public class BackwardDeleteCharTestCase extends AbstractConsoleTestCase {
   public void testX() throws Exception {
     console.init();
     console.on(Operation.VI_EDITING_MODE);
-    console.on(KeyEvent.of("abc"));
+    console.on(KeyStrokes.of("abc"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.BACKWARD_DELETE_CHAR);
     assertEquals("ac", getCurrentLine());
@@ -68,7 +68,7 @@ public class BackwardDeleteCharTestCase extends AbstractConsoleTestCase {
   public void testRubout1() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("gross animal stuff"));
+    console.on(KeyStrokes.of("gross animal stuff"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.BACKWARD_CHAR);
     console.on(Operation.BACKWARD_DELETE_CHAR);
@@ -80,7 +80,7 @@ public class BackwardDeleteCharTestCase extends AbstractConsoleTestCase {
   public void testRubout2() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("gross animal stuff"));
+    console.on(KeyStrokes.of("gross animal stuff"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.BACKWARD_CHAR);
     console.on(Operation.VI_ARG_DIGIT, '5');

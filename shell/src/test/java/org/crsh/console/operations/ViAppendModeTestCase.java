@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -31,24 +30,25 @@ public class ViAppendModeTestCase extends AbstractConsoleTestCase {
   public void testAppendMode1() throws Exception {
     console.init();
     console.on(Operation.VI_EDITING_MODE);
-    console.on(KeyEvent.of("abc"));
+    console.on(KeyStrokes.of("abc"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_APPEND_MODE);
-    console.on(KeyEvent.of("d"));
+    console.on(KeyStrokes.of("d"));
     assertEquals("abcd", getCurrentLine());
     assertEquals(4, getCurrentCursor());
-    console.on(KeyEvents.LEFT, KeyEvents.RIGHT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.RIGHT);
     assertEquals(3, getCurrentCursor());
   }
 
   public void testAppendMode2() throws Exception {
     console.init();
     console.on(Operation.VI_EDITING_MODE);
-    console.on(KeyEvent.of("abd"));
+    console.on(KeyStrokes.of("abd"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.VI_APPEND_MODE);
-    console.on(KeyEvent.of("c"));
+    console.on(KeyStrokes.of("c"));
     assertEquals("abcd", getCurrentLine());
     assertEquals(3, getCurrentCursor());
   }

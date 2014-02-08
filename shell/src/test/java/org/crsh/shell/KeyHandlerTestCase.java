@@ -19,7 +19,6 @@
 package org.crsh.shell;
 
 import org.crsh.BaseProcessContext;
-import org.crsh.console.KeyEvent;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;

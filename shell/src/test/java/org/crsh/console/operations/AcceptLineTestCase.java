@@ -20,8 +20,8 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.Status;
+import org.crsh.console.KeyStrokes;
+import org.crsh.console.Mode;
 import org.crsh.processor.term.SyncProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -35,16 +35,16 @@ public class AcceptLineTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs() {
     console.init();
-    doTest(Status.Emacs.class);
+    doTest(Mode.EMACS);
   }
 
   public void testInsert() {
     console.init();
     console.toInsert();
-    doTest(Status.Insert.class);
+    doTest(Mode.VI_INSERT);
   }
 
-  private void doTest(Class<? extends Status> expected) {
+  private void doTest(Mode expected) {
     final AtomicReference<String> calls = new AtomicReference<String>();
     shell.addProcess(new SyncProcess() {
       @Override
@@ -53,9 +53,9 @@ public class AcceptLineTestCase extends AbstractConsoleTestCase {
         context.end(ShellResponse.ok());
       }
     });
-    console.on(KeyEvent.of("abc def"));
+    console.on(KeyStrokes.of("abc def"));
     console.on(Operation.ACCEPT_LINE);
     assertEquals("abc def", calls.get());
-    assertInstance(expected, console.getMode());
+    assertEquals(expected, console.getMode());
   }
 }

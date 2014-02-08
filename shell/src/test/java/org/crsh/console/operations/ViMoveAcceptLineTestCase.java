@@ -20,8 +20,8 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.Status;
+import org.crsh.console.KeyStrokes;
+import org.crsh.console.Mode;
 import org.crsh.processor.term.SyncProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -44,10 +44,10 @@ public class ViMoveAcceptLineTestCase extends AbstractConsoleTestCase {
       }
     });
     console.toInsert();
-    console.on(KeyEvent.of("abc def"));
+    console.on(KeyStrokes.of("abc def"));
     console.toMove();
     console.on(Operation.VI_MOVE_ACCEPT_LINE);
     assertEquals("abc def", calls.get());
-    assertInstance(Status.Insert.class, console.getMode());
+    assertEquals(Mode.VI_INSERT, console.getMode());
   }
 }

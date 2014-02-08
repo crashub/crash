@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -40,10 +39,10 @@ public class UnixLineDiscardTestCase extends AbstractConsoleTestCase {
   }
 
   private void doTest() {
-    console.on(KeyEvent.of("abcdef"));
-    console.on(KeyEvents.LEFT);
-    console.on(KeyEvents.LEFT);
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.of("abcdef"));
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("def", getCurrentLine());
     assertEquals(0, getCurrentCursor());
@@ -54,9 +53,11 @@ public class UnixLineDiscardTestCase extends AbstractConsoleTestCase {
   public void testCtrlU1() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("all work and no play"));
+    console.on(KeyStrokes.of("all work and no play"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("play", getCurrentLine());
   }
@@ -64,9 +65,9 @@ public class UnixLineDiscardTestCase extends AbstractConsoleTestCase {
   public void testCtrlU2() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("donkey punch"));
+    console.on(KeyStrokes.of("donkey punch"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.MOVE_BEGINNING);
+    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("donkey punch", getCurrentLine());
   }
@@ -74,7 +75,7 @@ public class UnixLineDiscardTestCase extends AbstractConsoleTestCase {
   public void testCtrlU3() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("rabid hamster"));
+    console.on(KeyStrokes.of("rabid hamster"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("r", getCurrentLine());

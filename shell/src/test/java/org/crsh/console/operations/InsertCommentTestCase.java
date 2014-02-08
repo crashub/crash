@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 import org.crsh.processor.term.SyncProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -44,7 +43,7 @@ public class InsertCommentTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvent.of("putrified whales"));
+    console.on(KeyStrokes.of("putrified whales"));
     console.on(Operation.INSERT_COMMENT);
     String request = requests.poll(5, TimeUnit.SECONDS);
     assertEquals("#putrified whales", request);
@@ -64,7 +63,7 @@ public class InsertCommentTestCase extends AbstractConsoleTestCase {
     });
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("putrified whales"));
+    console.on(KeyStrokes.of("putrified whales"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_INSERT_COMMENT);
     String request = requests.poll(5, TimeUnit.SECONDS);
@@ -82,11 +81,13 @@ public class InsertCommentTestCase extends AbstractConsoleTestCase {
     });
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("echo \"abc"), KeyEvents.ENTER);
-    console.on(KeyEvent.of("def"));
+    console.on(KeyStrokes.of("echo \"abc"));
+    console.on(KeyStrokes.ENTER);
+    console.on(KeyStrokes.of("def"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_INSERT_COMMENT);
-    console.on(KeyEvents.QUOTE, KeyEvents.ENTER);
+    console.on(KeyStrokes.QUOTE);
+    console.on(KeyStrokes.ENTER);
     String request = requests.poll(5, TimeUnit.SECONDS);
     assertEquals("echo \"abc\n#def\n\"", request);
   }

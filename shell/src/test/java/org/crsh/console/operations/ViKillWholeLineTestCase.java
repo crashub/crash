@@ -20,9 +20,8 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
-import org.crsh.console.Status;
+import org.crsh.console.KeyStrokes;
+import org.crsh.console.Mode;
 
 /**
  * @author Julien Viet
@@ -33,12 +32,14 @@ public class ViKillWholeLineTestCase extends AbstractConsoleTestCase {
   public void testS() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("great lakes brewery"));
+    console.on(KeyStrokes.of("great lakes brewery"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.VI_SUBST, 'S');
-    console.on(KeyEvent.of("dogfishhead"));
+    console.on(KeyStrokes.of("dogfishhead"));
     assertEquals("dogfishhead", getCurrentLine());
-    assertInstance(Status.Insert.class, console.getMode());
+    assertEquals(Mode.VI_INSERT, console.getMode());
   }
 }

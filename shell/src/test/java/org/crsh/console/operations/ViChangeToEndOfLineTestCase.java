@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -32,13 +31,14 @@ public class ViChangeToEndOfLineTestCase extends AbstractConsoleTestCase {
   public void testEndOfLine3() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("chicken sushimi"));
+    console.on(KeyStrokes.of("chicken sushimi"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
-    console.on(KeyEvents.RIGHT, KeyEvents.RIGHT);
+    console.on(KeyStrokes.RIGHT);
+    console.on(KeyStrokes.RIGHT);
     console.on(Operation.VI_CHANGE_TO);
     console.on(Operation.END_OF_LINE);
-    console.on(KeyEvent.of("opsticks"));
+    console.on(KeyStrokes.of("opsticks"));
     assertEquals("chopsticks", getCurrentLine());
   }
 }

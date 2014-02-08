@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,7 +30,7 @@ public class ViArgDigitPrevWordTestCase extends AbstractConsoleTestCase {
   public void testWordLeft3() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("lively lolling lark liquid"));
+    console.on(KeyStrokes.of("lively lolling lark liquid"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_ARG_DIGIT, '3');
     console.on(Operation.VI_PREV_WORD);

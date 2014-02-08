@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -40,14 +39,14 @@ public class TransposeCharsTestCase extends AbstractConsoleTestCase {
   }
 
   private void doTest() {
-    console.on(KeyEvent.of("abc"));
-    console.on(KeyEvents.LEFT);
-    console.on(KeyEvents.LEFT);
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.of("abc"));
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.TRANSPOSE_CHARS);
     assertEquals("abc", getCurrentLine());
     assertEquals(0, getCurrentCursor());
-    console.on(KeyEvents.RIGHT);
+    console.on(KeyStrokes.RIGHT);
     console.on(Operation.TRANSPOSE_CHARS);
     assertEquals("bac", getCurrentLine());
     assertEquals(2, getCurrentCursor());
@@ -64,9 +63,9 @@ public class TransposeCharsTestCase extends AbstractConsoleTestCase {
   public void testCtrlT1() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("abcdef"));
+    console.on(KeyStrokes.of("abcdef"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.MOVE_BEGINNING);
+    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.FORWARD_CHAR);
     console.on(Operation.TRANSPOSE_CHARS);
     assertEquals("bacdef", getCurrentLine());
@@ -91,16 +90,16 @@ public class TransposeCharsTestCase extends AbstractConsoleTestCase {
   public void testCtrlT2() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("abcdef"));
+    console.on(KeyStrokes.of("abcdef"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.MOVE_BEGINNING);
+    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.TRANSPOSE_CHARS);
     assertEquals("abcdef", getCurrentLine());
     assertEquals(0, getCurrentCursor());
     console.on(Operation.TRANSPOSE_CHARS);
     assertEquals("abcdef", getCurrentLine());
     assertEquals(0, getCurrentCursor());
-    console.on(KeyEvents.MOVE_END);
+    console.on(KeyStrokes.MOVE_END);
     console.on(Operation.TRANSPOSE_CHARS);
     assertEquals("abcdfe", getCurrentLine());
     assertEquals(5, getCurrentCursor());
@@ -112,7 +111,7 @@ public class TransposeCharsTestCase extends AbstractConsoleTestCase {
   public void testCtrlT3() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("abcdef"));
+    console.on(KeyStrokes.of("abcdef"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.TRANSPOSE_CHARS);
     assertEquals("abcdfe", getCurrentLine());

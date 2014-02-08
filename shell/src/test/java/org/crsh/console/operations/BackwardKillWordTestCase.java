@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,11 +29,11 @@ public class BackwardKillWordTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs() {
     console.init();
-    console.on(KeyEvent.of("abc def ghi "));
+    console.on(KeyStrokes.of("abc def ghi "));
     console.on(Operation.BACKWARD_KILL_WORD);
     assertEquals("abc def ", getCurrentLine());
     assertEquals(8, getCurrentCursor());
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     assertEquals("abc def ", getCurrentLine());
     assertEquals(7, getCurrentCursor());
     console.on(Operation.BACKWARD_KILL_WORD);

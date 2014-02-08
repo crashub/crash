@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -31,7 +30,7 @@ public class ViNextWordTestCase extends AbstractConsoleTestCase {
   public void testWordRight1() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("buttery frog necks"));
+    console.on(KeyStrokes.of("buttery frog necks"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_NEXT_WORD);
@@ -43,9 +42,13 @@ public class ViNextWordTestCase extends AbstractConsoleTestCase {
   public void testWordRight2() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("buttery frog    foo"));
+    console.on(KeyStrokes.of("buttery frog    foo"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.VI_NEXT_WORD);
     console.on(Operation.KILL_LINE);
     assertEquals("buttery frog    ", getCurrentLine());

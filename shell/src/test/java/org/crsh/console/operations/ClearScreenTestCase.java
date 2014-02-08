@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvents;
-import org.crsh.console.Status;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,19 +29,19 @@ public class ClearScreenTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs() {
     console.init();
-    console.on(KeyEvents.a);
-    doTest(Status.Emacs.class);
+    console.on(KeyStrokes.a);
+    doTest();
   }
 
   public void testMove() {
     console.init();
     console.toInsert();
-    console.on(KeyEvents.a);
+    console.on(KeyStrokes.a);
     console.toMove();
-    doTest(Status.Insert.class);
+    doTest();
   }
 
-  private void doTest(Class<? extends Status> expected) {
+  private void doTest() {
     driver.assertChar('a').assertFlush().assertEmpty();
     console.on(Operation.CLEAR_SCREEN);
     driver.assertCLS();

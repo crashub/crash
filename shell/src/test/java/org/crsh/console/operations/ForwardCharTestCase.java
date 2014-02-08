@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -44,7 +43,7 @@ public class ForwardCharTestCase extends AbstractConsoleTestCase {
   public void testForwardChar() throws Exception {
     console.init();
     console.on(Operation.VI_EDITING_MODE);
-    console.on(KeyEvent.of("abc"));
+    console.on(KeyStrokes.of("abc"));
     console.on(Operation.BACKWARD_CHAR);
     console.on(Operation.BACKWARD_CHAR);
     console.on(Operation.FORWARD_CHAR);
@@ -56,14 +55,14 @@ public class ForwardCharTestCase extends AbstractConsoleTestCase {
   public void testMoveRight1() throws Exception {
     console.init();
     console.toInsert();
-    console.on(KeyEvent.of("0123456789"));
+    console.on(KeyStrokes.of("0123456789"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.MOVE_BEGINNING);
+    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.FORWARD_CHAR);
     console.on(Operation.FORWARD_CHAR);
     console.on(Operation.FORWARD_CHAR);
     console.on(Operation.VI_INSERTION_MODE);
-    console.on(KeyEvents.X);
+    console.on(KeyStrokes.X);
     assertEquals("012X3456789", getCurrentLine());
   }
 
@@ -71,14 +70,14 @@ public class ForwardCharTestCase extends AbstractConsoleTestCase {
   public void testMoveRight2() throws Exception {
     console.init();
     console.toInsert();
-    console.on(KeyEvent.of("0123456789ABCDEFHIJK"));
+    console.on(KeyStrokes.of("0123456789ABCDEFHIJK"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.MOVE_BEGINNING);
+    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_ARG_DIGIT, '1');
     console.on(Operation.VI_ARG_DIGIT, '2');
     console.on(Operation.FORWARD_CHAR);
     console.on(Operation.VI_INSERTION_MODE);
-    console.on(KeyEvents.X);
+    console.on(KeyStrokes.X);
     assertEquals("0123456789ABXCDEFHIJK", getCurrentLine());
   }
 
@@ -86,9 +85,9 @@ public class ForwardCharTestCase extends AbstractConsoleTestCase {
   public void testMoveRight3() throws Exception {
     console.init();
     console.toInsert();
-    console.on(KeyEvent.of("a bunch of words"));
+    console.on(KeyStrokes.of("a bunch of words"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.MOVE_BEGINNING);
+    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_ARG_DIGIT, '5');
     console.on(Operation.VI_DELETE_TO);
     console.on(Operation.FORWARD_CHAR);

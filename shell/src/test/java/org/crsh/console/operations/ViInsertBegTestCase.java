@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,10 +30,10 @@ public class ViInsertBegTestCase extends AbstractConsoleTestCase {
   public void testInsertBeginningOfLine() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("dessicated dog droppings"));
+    console.on(KeyStrokes.of("dessicated dog droppings"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_INSERT_BEG);
-    console.on(KeyEvent.of("tasty "));
+    console.on(KeyStrokes.of("tasty "));
     assertEquals("tasty dessicated dog droppings", getCurrentLine());
   }
 }

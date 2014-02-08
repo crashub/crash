@@ -20,7 +20,6 @@
 package org.crsh;
 
 import junit.framework.Assert;
-import org.crsh.console.KeyEvent;
 import org.crsh.console.KeyHandler;
 import org.crsh.console.KeyType;
 import org.crsh.shell.Shell;

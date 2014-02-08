@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -35,7 +35,7 @@ public class ExitOrDeleteCharTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs2() {
     console.init();
-    console.on(KeyEvent.of("a"));
+    console.on(KeyStrokes.of("a"));
     console.on(Operation.EXIT_OR_DELETE_CHAR);
     assertEquals(true, console.isRunning());
     assertEquals("", getCurrentLine());

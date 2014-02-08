@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -32,9 +31,9 @@ public class ViDeleteToForwardCharTestCase extends AbstractConsoleTestCase {
   public void testMoveRight4() throws Exception {
     console.init();
     console.toInsert();
-    console.on(KeyEvent.of("a bunch of words"));
+    console.on(KeyStrokes.of("a bunch of words"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.MOVE_BEGINNING);
+    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_DELETE_TO);
     console.on(Operation.FORWARD_CHAR);
     console.on(Operation.VI_DELETE_TO);

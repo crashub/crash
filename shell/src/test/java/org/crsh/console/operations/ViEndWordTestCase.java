@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class ViEndWordTestCase extends AbstractConsoleTestCase {
   public void testEndWord1() throws IOException {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("putrid pidgen porridge"));
+    console.on(KeyStrokes.of("putrid pidgen porridge"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_END_WORD);
@@ -44,7 +44,7 @@ public class ViEndWordTestCase extends AbstractConsoleTestCase {
   public void testEndWord2() throws IOException {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("    putrid pidgen porridge"));
+    console.on(KeyStrokes.of("    putrid pidgen porridge"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_END_WORD);

@@ -20,12 +20,6 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.processor.term.SyncProcess;
-import org.crsh.shell.ShellProcessContext;
-import org.crsh.shell.ShellResponse;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Julien Viet

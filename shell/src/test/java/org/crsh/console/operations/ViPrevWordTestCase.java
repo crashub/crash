@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -31,7 +30,7 @@ public class ViPrevWordTestCase extends AbstractConsoleTestCase {
   public void testWordLeft1() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("lucious lark liquid    "));
+    console.on(KeyStrokes.of("lucious lark liquid    "));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_PREV_WORD);
     console.on(Operation.VI_PREV_WORD);
@@ -42,9 +41,10 @@ public class ViPrevWordTestCase extends AbstractConsoleTestCase {
   public void testWordLeft2() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("lucious lark liquid"));
+    console.on(KeyStrokes.of("lucious lark liquid"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.LEFT, KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.VI_PREV_WORD);
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("liquid", getCurrentLine());

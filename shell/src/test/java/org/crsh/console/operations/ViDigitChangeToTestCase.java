@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -31,7 +31,7 @@ public class ViDigitChangeToTestCase extends AbstractConsoleTestCase {
   public void testMoveLeft6() throws Exception {
     console.init();
     console.toInsert();
-    console.on(KeyEvent.of("0123456789ABCDEFHIJLMNOPQRSTUVWXYZ"));
+    console.on(KeyStrokes.of("0123456789ABCDEFHIJLMNOPQRSTUVWXYZ"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_ARG_DIGIT, '1');
     console.on(Operation.VI_ARG_DIGIT, '3');
@@ -47,7 +47,7 @@ public class ViDigitChangeToTestCase extends AbstractConsoleTestCase {
   public void testMoveLeft7() throws Exception {
     console.init();
     console.toInsert();
-    console.on(KeyEvent.of("word"));
+    console.on(KeyStrokes.of("word"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_CHANGE_TO);
     console.on(Operation.BACKWARD_CHAR);

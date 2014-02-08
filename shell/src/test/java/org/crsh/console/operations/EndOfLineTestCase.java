@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,7 +29,7 @@ public class EndOfLineTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs() {
     console.init();
-    console.on(KeyEvent.of("abc def"));
+    console.on(KeyStrokes.of("abc def"));
     console.on(Operation.BEGINNING_OF_LINE);
     console.on(Operation.END_OF_LINE);
     assertEquals("abc def", getCurrentLine());
@@ -43,13 +42,21 @@ public class EndOfLineTestCase extends AbstractConsoleTestCase {
   public void testEndOfLine1() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("chicken sushimi"));
+    console.on(KeyStrokes.of("chicken sushimi"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT);
-    console.on(KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.END_OF_LINE);
     console.on(Operation.VI_APPEND_MODE);
-    console.on(KeyEvent.of(" is tasty!"));
+    console.on(KeyStrokes.of(" is tasty!"));
     assertEquals("chicken sushimi is tasty!", getCurrentLine());
   }
 }

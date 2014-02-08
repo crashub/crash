@@ -30,7 +30,6 @@ import org.crsh.shell.Shell;
 import org.crsh.text.Style;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Stack;
 

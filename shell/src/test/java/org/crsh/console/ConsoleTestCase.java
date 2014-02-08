@@ -28,7 +28,6 @@ import org.crsh.shell.ShellResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -39,66 +38,71 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
 
   public void testEditor() {
     console.init();
-    console.on(KeyEvents.a);
+    console.on(KeyStrokes.a);
     driver.assertChar('a').assertFlush().assertEmpty();
   }
 
   public void testInsert() {
     console.init();
-    console.on(KeyEvents.a);
+    console.on(KeyStrokes.a);
     driver.assertChar('a').assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT, KeyEvents.b);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.b);
     driver.assertMoveLeft().assertFlush().assertChars("ba").assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT, KeyEvents.b);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.b);
     driver.assertMoveLeft().assertFlush().assertChars("bba").assertMoveLeft().assertMoveLeft().assertFlush().assertEmpty();
     assertEquals("bba", getCurrentLine());
   }
 
   public void testDeletePrevChar() {
     console.init();
-    console.on(KeyEvents.DELETE_PREV_CHAR);
+    console.on(KeyStrokes.DELETE_PREV_CHAR);
     driver.assertEmpty();
-    console.on(KeyEvents.a);
+    console.on(KeyStrokes.a);
     driver.assertChar('a').assertFlush().assertEmpty();
-    console.on(KeyEvents.DELETE_PREV_CHAR);
+    console.on(KeyStrokes.DELETE_PREV_CHAR);
     driver.assertDel().assertFlush().assertEmpty();
   }
 
   public void testDeleteNextChar() {
     console.init();
-    console.on(KeyEvents.DELETE_NEXT_CHAR);
+    console.on(KeyStrokes.DELETE_NEXT_CHAR);
     driver.assertEmpty();
-    console.on(KeyEvents.a, KeyEvents.b);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.b);
     driver.assertChar('a').assertFlush();
     driver.assertChar('b').assertFlush().assertEmpty();
-    console.on(KeyEvents.DELETE_NEXT_CHAR);
+    console.on(KeyStrokes.DELETE_NEXT_CHAR);
     driver.assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.DELETE_NEXT_CHAR);
+    console.on(KeyStrokes.DELETE_NEXT_CHAR);
     driver.assertMoveRight().assertMoveLeft().assertChar('b').assertChar(' ').assertMoveLeft().assertMoveLeft().assertFlush().assertEmpty();
     assertEquals("b", getCurrentLine());
-    console.on(KeyEvents.DELETE_NEXT_CHAR);
+    console.on(KeyStrokes.DELETE_NEXT_CHAR);
     driver.assertMoveRight().assertDel().assertFlush().assertEmpty();
     assertEquals("", getCurrentLine());
   }
 
   public void testDeleteEnd() {
     console.init();
-    console.on(KeyEvents.DELETE_END);
+    console.on(KeyStrokes.DELETE_END);
     driver.assertEmpty();
     assertEquals("", getClipboard());
-    console.on(KeyEvents.a, KeyEvents.b, KeyEvents.c);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.b);
+    console.on(KeyStrokes.c);
     driver.assertChar('a').assertFlush();
     driver.assertChar('b').assertFlush();
     driver.assertChar('c').assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.DELETE_END);
+    console.on(KeyStrokes.DELETE_END);
     driver.assertMoveRight().assertMoveRight().assertDel().assertDel().assertFlush().assertEmpty();
     assertEquals("a", getCurrentLine());
     assertEquals("bc", getClipboard());
@@ -106,19 +110,22 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
 
   public void testDeleteBeginning() {
     console.init();
-    console.on(KeyEvents.DELETE_BEGINNING);
+    console.on(KeyStrokes.DELETE_BEGINNING);
     driver.assertEmpty();
-    console.on(KeyEvents.a, KeyEvents.b, KeyEvents.c);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.b);
+    console.on(KeyStrokes.c);
     driver.assertChar('a').assertFlush();
     driver.assertChar('b').assertFlush();
     driver.assertChar('c').assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.DELETE_BEGINNING);
+    console.on(KeyStrokes.DELETE_BEGINNING);
     assertEquals("c", getCurrentLine());
     driver.assertMoveLeft().assertChars("c ").assertMoveLeft().assertMoveLeft().assertMoveLeft().assertChars("c ").assertMoveLeft().assertMoveLeft().assertFlush().assertEmpty();
   }
 
+/*
   public void testDeleteNextWord() {
     console.init();
     console.on(KeyEvents.DELETE_NEXT_WORD);
@@ -137,26 +144,32 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
     assertEquals("a", getCurrentLine());
     assertEquals(" cd", getClipboard());
   }
+*/
 
   public void testDeletePrevWord() {
     console.init();
-    console.on(KeyEvents.DELETE_PREV_WORD);
+    console.on(KeyStrokes.DELETE_PREV_WORD);
     driver.assertEmpty();
     assertEquals("", getClipboard());
-    console.on(KeyEvents.a, KeyEvents.b, KeyEvents.SPACE, KeyEvents.c, KeyEvents.d);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.b);
+    console.on(KeyStrokes.SPACE);
+    console.on(KeyStrokes.c);
+    console.on(KeyStrokes.d);
     driver.assertChar('a').assertFlush().assertChar('b').assertFlush().assertChar(' ').assertFlush().assertChar('c').assertFlush().assertChar('d').assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.DELETE_PREV_WORD);
+    console.on(KeyStrokes.DELETE_PREV_WORD);
     driver.assertMoveLeft().assertChars("d ").assertMoveLeft().assertMoveLeft().assertFlush().assertEmpty();
     assertEquals("ab d", getCurrentLine());
     assertEquals("c", getClipboard());
-    console.on(KeyEvents.DELETE_PREV_WORD);
+    console.on(KeyStrokes.DELETE_PREV_WORD);
     driver.assertMoveLeft().assertChars("d ").assertMoveLeft(3).assertChars("d ").assertMoveLeft(3).assertChars("d ").assertMoveLeft(2).assertFlush().assertEmpty();
     assertEquals("d", getCurrentLine());
     assertEquals("ab ", getClipboard());
   }
 
+/*
   public void testPasteBefore() {
     console.init();
     console.on(KeyEvents.PASTE_BEFORE);
@@ -174,94 +187,95 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
     assertEquals("cdab", getCurrentLine());
     assertEquals("cd", getClipboard());
   }
+*/
 
   public void testMovePrevChar() {
     console.init();
-    console.on(KeyEvents.a);
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.LEFT);
     driver.assertChar('a').assertFlush().assertMoveLeft().assertFlush().assertEmpty();
   }
 
   public void testMoveNextChar() {
     console.init();
-    console.on(KeyEvents.RIGHT);
+    console.on(KeyStrokes.RIGHT);
     driver.assertEmpty();
-    console.on(KeyEvents.a);
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.LEFT);
     driver.assertChar('a').assertFlush().assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.RIGHT);
+    console.on(KeyStrokes.RIGHT);
     driver.assertMoveRight().assertFlush().assertEmpty();
   }
 
   public void testMovePrevWord() {
     console.init();
-    console.on(KeyEvents.MOVE_PREV_WORD);
+    console.on(KeyStrokes.MOVE_PREV_WORD);
     driver.assertEmpty();
-    console.on(KeyEvents.SPACE);
+    console.on(KeyStrokes.SPACE);
     driver.assertChar(' ').assertFlush().assertEmpty();
-    console.on(KeyEvents.a);
+    console.on(KeyStrokes.a);
     driver.assertChar('a').assertFlush().assertEmpty();
-    console.on(KeyEvents.b);
+    console.on(KeyStrokes.b);
     driver.assertChar('b').assertFlush().assertEmpty();
-    console.on(KeyEvents.MOVE_PREV_WORD);
+    console.on(KeyStrokes.MOVE_PREV_WORD);
     driver.assertMoveLeft().assertMoveLeft().assertFlush().assertEmpty();
   }
 
   public void testMoveNextWord() {
     console.init();
-    console.on(KeyEvents.MOVE_NEXT_WORD);
+    console.on(KeyStrokes.MOVE_NEXT_WORD);
     driver.assertEmpty();
-    console.on(KeyEvents.a);
+    console.on(KeyStrokes.a);
     driver.assertChar('a').assertFlush().assertEmpty();
-    console.on(KeyEvents.b);
+    console.on(KeyStrokes.b);
     driver.assertChar('b').assertFlush().assertEmpty();
-    console.on(KeyEvents.SPACE);
+    console.on(KeyStrokes.SPACE);
     driver.assertChar(' ').assertFlush().assertEmpty();
-    console.on(KeyEvents.c);
+    console.on(KeyStrokes.c);
     driver.assertChar('c').assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.MOVE_NEXT_WORD);
+    console.on(KeyStrokes.MOVE_NEXT_WORD);
     driver.assertMoveRight().assertMoveRight().assertFlush().assertEmpty();
   }
 
   public void testMoveBeginning() {
     console.init();
-    console.on(KeyEvents.MOVE_BEGINNING);
+    console.on(KeyStrokes.MOVE_BEGINNING);
     driver.assertEmpty();
-    console.on(KeyEvents.a);
+    console.on(KeyStrokes.a);
     driver.assertChar('a').assertFlush().assertEmpty();
-    console.on(KeyEvents.SPACE);
+    console.on(KeyStrokes.SPACE);
     driver.assertChar(' ').assertFlush().assertEmpty();
-    console.on(KeyEvents.b);
+    console.on(KeyStrokes.b);
     driver.assertChar('b').assertFlush().assertEmpty();
-    console.on(KeyEvents.MOVE_BEGINNING);
+    console.on(KeyStrokes.MOVE_BEGINNING);
     driver.assertMoveLeft().assertMoveLeft().assertMoveLeft().assertFlush().assertEmpty();
   }
 
   public void testMoveEnd() {
     console.init();
-    console.on(KeyEvents.MOVE_END);
+    console.on(KeyStrokes.MOVE_END);
     driver.assertEmpty();
-    console.on(KeyEvents.a);
+    console.on(KeyStrokes.a);
     driver.assertChar('a').assertFlush().assertEmpty();
-    console.on(KeyEvents.SPACE);
+    console.on(KeyStrokes.SPACE);
     driver.assertChar(' ').assertFlush().assertEmpty();
-    console.on(KeyEvents.b);
+    console.on(KeyStrokes.b);
     driver.assertChar('b').assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    console.on(KeyEvents.MOVE_END);
+    console.on(KeyStrokes.MOVE_END);
     driver.assertMoveRight().assertMoveRight().assertMoveRight().assertFlush().assertEmpty();
   }
 
@@ -276,10 +290,10 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.a);
-    console.on(KeyEvents.ENTER);
-    console.on(KeyEvents.b);
-    console.on(KeyEvents.ENTER);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
+    console.on(KeyStrokes.b);
+    console.on(KeyStrokes.ENTER);
     assertEquals("a", requests.poll());
     ShellProcessContext context = contexts.poll();
     assertNotNull(context);
@@ -307,8 +321,8 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
         contexts.add(context);
       }
     });
-    console.on(KeyEvents.a);
-    console.on(KeyEvents.ENTER);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('a').assertFlush().assertCRLF().assertFlush().assertEmpty();
     driver.assertEmpty();
     ShellProcessContext context = contexts.poll();
@@ -333,9 +347,9 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.a);
-    console.on(KeyEvents.ENTER);
-    console.on(KeyEvents.b);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
+    console.on(KeyStrokes.b);
     assertEquals(1, keys.size());
     assertEquals((int)'b', (int)keys.poll());
     assertFalse(console.getKeyBuffer().iterator().hasNext());
@@ -350,7 +364,7 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.COMPLETE);
+    console.on(KeyStrokes.COMPLETE);
     driver.assertEmpty();
   }
 
@@ -364,7 +378,7 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.COMPLETE);
+    console.on(KeyStrokes.COMPLETE);
     driver.assertChars("foo").assertFlush().assertEmpty();
     assertEquals("foo", getCurrentLine());
   }
@@ -379,7 +393,7 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.COMPLETE);
+    console.on(KeyStrokes.COMPLETE);
     driver.assertChars("foo").assertChar(' ').assertFlush().assertEmpty();
     assertEquals("foo ", getCurrentLine());
   }
@@ -396,7 +410,7 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
     });
     console.init();
     prompt = "% ";
-    console.on(KeyEvents.COMPLETE);
+    console.on(KeyStrokes.COMPLETE);
     driver.assertChars("\nfoo  bar  \n% ").assertFlush().assertEmpty();
     assertEquals("", getCurrentLine());
   }
@@ -413,14 +427,17 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
     });
     console.init();
     prompt = "% ";
-    console.on(KeyEvents.COMPLETE);
+    console.on(KeyStrokes.COMPLETE);
     driver.assertChars("\nafoo  abar  \n% a").assertFlush().assertEmpty();
     assertEquals("a", getCurrentLine());
   }
 
   public void testMultiline1() {
     console.init();
-    console.on(KeyEvents.a, KeyEvents.BACKSLASH, KeyEvents.ENTER, KeyEvents.b);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.BACKSLASH);
+    console.on(KeyStrokes.ENTER);
+    console.on(KeyStrokes.b);
     assertEquals("b", getCurrentLine());
     driver.assertChar('a').assertFlush();
     driver.assertChar('\\').assertFlush();
@@ -433,19 +450,25 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
         requests.add(request);
       }
     });
-    console.on(KeyEvents.ENTER);
+    console.on(KeyStrokes.ENTER);
     assertEquals(Arrays.asList("ab"), requests);
   }
 
   public void testMultiline2() {
     console.init();
-    console.on(KeyEvents.a, KeyEvents.QUOTE, KeyEvents.ENTER, KeyEvents.b);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.QUOTE);
+    console.on(KeyStrokes.ENTER);
+    console.on(KeyStrokes.b);
     assertEquals("b", getCurrentLine());
     driver.assertChar('a').assertFlush();
     driver.assertChar('"').assertFlush();
     driver.assertCRLF().assertChars("> ").assertFlush();
     driver.assertChar('b').assertFlush().assertEmpty();
-    console.on(KeyEvents.ENTER, KeyEvents.c, KeyEvents.QUOTE, KeyEvents.d);
+    console.on(KeyStrokes.ENTER);
+    console.on(KeyStrokes.c);
+    console.on(KeyStrokes.QUOTE);
+    console.on(KeyStrokes.d);
     driver.assertCRLF().assertChars("> ").assertFlush();
     driver.assertChar('c').assertFlush();
     driver.assertChar('"').assertFlush();
@@ -457,7 +480,7 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
         requests.add(request);
       }
     });
-    console.on(KeyEvents.ENTER);
+    console.on(KeyStrokes.ENTER);
     assertEquals(Arrays.asList("a\"\nb\nc\"d"), requests);
   }
 
@@ -476,15 +499,17 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.s, KeyEvents.BACKSLASH, KeyEvents.ENTER);
+    console.on(KeyStrokes.s);
+    console.on(KeyStrokes.BACKSLASH);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('s').assertFlush();
     driver.assertChar('\\').assertFlush();
     driver.assertCRLF().assertChars("> ").assertFlush();
-    console.on(KeyEvents.COMPLETE);
+    console.on(KeyStrokes.COMPLETE);
     driver.assertChars("\nsend  set   \ns\\\n> e").assertFlush().assertEmpty();
-    console.on(KeyEvents.n);
+    console.on(KeyStrokes.n);
     driver.assertChar('n').assertFlush().assertEmpty();
-    console.on(KeyEvents.COMPLETE);
+    console.on(KeyStrokes.COMPLETE);
     driver.assertChars("d ").assertFlush().assertEmpty();
   }
 
@@ -497,12 +522,13 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.QUOTE, KeyEvents.ENTER);
+    console.on(KeyStrokes.QUOTE);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('"').assertFlush();
     driver.assertCRLF().assertChars("> ").assertFlush().assertEmpty();
-    console.on(KeyEvents.INTERRUPT);
+    console.on(KeyStrokes.INTERRUPT);
     driver.assertCRLF().assertFlush().assertEmpty();
-    console.on(KeyEvents.ENTER);
+    console.on(KeyStrokes.ENTER);
     driver.assertCRLF().assertFlush().assertEmpty();
     String request = keys.poll(1, TimeUnit.SECONDS);
     assertEquals("", request);
@@ -510,9 +536,9 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
 
   public void testHistory() {
     console.init();
-    console.on(KeyEvents.UP);
+    console.on(KeyStrokes.UP);
     driver.assertEmpty();
-    console.on(KeyEvents.DOWN);
+    console.on(KeyStrokes.DOWN);
     driver.assertEmpty();
     shell.addProcess(new SyncProcess() {
       @Override
@@ -520,7 +546,8 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
         context.end(ShellResponse.ok());
       }
     });
-    console.on(KeyEvents.a, KeyEvents.ENTER);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('a').assertFlush().assertCRLF().assertFlush().assertCRLF().assertFlush().assertEmpty();
     shell.addProcess(new SyncProcess() {
       @Override
@@ -528,27 +555,28 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
         context.end(ShellResponse.ok());
       }
     });
-    console.on(KeyEvents.b, KeyEvents.ENTER);
+    console.on(KeyStrokes.b);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('b').assertFlush().assertCRLF().assertFlush().assertCRLF().assertFlush().assertEmpty();
-    console.on(KeyEvents.c);
+    console.on(KeyStrokes.c);
     driver.assertChar('c').assertFlush().assertEmpty();
-    console.on(KeyEvents.UP);
+    console.on(KeyStrokes.UP);
     driver.assertDel().assertChar('b').assertFlush().assertEmpty();
-    console.on(KeyEvents.UNDERSCORE);
+    console.on(KeyStrokes.UNDERSCORE);
     driver.assertChar('_').assertFlush().assertEmpty();
-    console.on(KeyEvents.UP);
+    console.on(KeyStrokes.UP);
     driver.assertDel().assertDel().assertChar('a').assertFlush().assertEmpty();
-    console.on(KeyEvents.UP);
+    console.on(KeyStrokes.UP);
     driver.assertEmpty();
-    console.on(KeyEvents.DOWN);
+    console.on(KeyStrokes.DOWN);
     driver.assertDel().assertChar('b').assertChar('_').assertFlush().assertEmpty();
-    console.on(KeyEvents.DOWN);
+    console.on(KeyStrokes.DOWN);
     driver.assertDel().assertDel().assertChar('c').assertFlush().assertEmpty();
-    console.on(KeyEvents.DOWN);
+    console.on(KeyStrokes.DOWN);
     driver.assertEmpty();
-    console.on(KeyEvents.UP);
+    console.on(KeyStrokes.UP);
     driver.assertDel().assertChar('b').assertChar('_').assertFlush().assertEmpty();
-    console.on(KeyEvents.ONE);
+    console.on(KeyStrokes.ONE);
     driver.assertChar('1').assertFlush().assertEmpty();
     final ArrayList<String> requests = new ArrayList<String>();
     shell.addProcess(new SyncProcess() {
@@ -558,14 +586,14 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
         context.end(ShellResponse.ok());
       }
     });
-    console.on(KeyEvents.ENTER);
+    console.on(KeyStrokes.ENTER);
     driver.assertCRLF().assertFlush().assertCRLF().assertFlush().assertEmpty();
     assertEquals(Arrays.asList("b_1"), requests);
-    console.on(KeyEvents.UP);
+    console.on(KeyStrokes.UP);
     driver.assertChar('b').assertChar('_').assertChar('1').assertFlush().assertEmpty();
-    console.on(KeyEvents.UP);
+    console.on(KeyStrokes.UP);
     driver.assertDel().assertDel().assertDel().assertChar('b').assertChar('_').assertFlush().assertEmpty();
-    console.on(KeyEvents.UP);
+    console.on(KeyStrokes.UP);
     driver.assertDel().assertDel().assertChar('a').assertFlush().assertEmpty();
   }
 
@@ -578,7 +606,8 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.a, KeyEvents.ENTER);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('a').assertFlush().assertCRLF().assertFlush().assertEmpty();
     driver.assertEmpty();
     final ShellProcessContext context = contexts.poll();
@@ -600,7 +629,8 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
     while (t.getState() != Thread.State.WAITING) {
       // Wait until the other thread is waiting
     }
-    console.on(KeyEvents.b, KeyEvents.ENTER);
+    console.on(KeyStrokes.b);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('m').assertFlush().assertChar('b').assertFlush().assertCRLF().assertFlush().assertEmpty();
     String line = lines.poll(3, TimeUnit.SECONDS);
     assertEquals("b", line);
@@ -619,12 +649,14 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.a, KeyEvents.ENTER);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('a').assertFlush().assertCRLF().assertFlush().assertEmpty();
     driver.assertEmpty();
     final ShellProcessContext context = contexts.poll();
     assertNotNull(context);
-    console.on(KeyEvents.b, KeyEvents.ENTER);
+    console.on(KeyStrokes.b);
+    console.on(KeyStrokes.ENTER);
     driver.assertEmpty();
     String line = context.readLine("m", true);
     driver.assertChar('m').assertFlush().assertChar('b').assertFlush().assertCRLF().assertFlush().assertEmpty();
@@ -645,7 +677,8 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.a, KeyEvents.ENTER);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('a').assertFlush().assertCRLF().assertFlush().assertEmpty();
     driver.assertEmpty();
     final ShellProcessContext context = contexts.poll();
@@ -692,7 +725,8 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.a, KeyEvents.ENTER);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('a').assertFlush().assertCRLF().assertFlush().assertEmpty();
     driver.assertEmpty();
     final ShellProcessContext context = contexts.poll();
@@ -733,7 +767,8 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
       }
     });
     console.init();
-    console.on(KeyEvents.a, KeyEvents.ENTER);
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
     driver.assertChar('a').assertFlush().assertCRLF().assertFlush().assertEmpty();
     driver.assertEmpty();
     final ShellProcessContext context = contexts.poll();
@@ -757,7 +792,7 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
     while (t.getState() != Thread.State.WAITING) {
       // Wait until the other thread is waiting
     }
-    console.on(KeyEvents.INTERRUPT);
+    console.on(KeyStrokes.INTERRUPT);
     boolean interrupted = interrupteds.poll(3, TimeUnit.SECONDS);
     assertTrue(interrupted);
   }

@@ -60,10 +60,11 @@ public class ConsoleViMoveTestCase extends AbstractConsoleTestCase {
   public void testEndOfLine4() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("chicken sushimi"));
+    console.on(KeyStrokes.of("chicken sushimi"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
-    console.on(KeyEvents.RIGHT, KeyEvents.RIGHT);
+    console.on(KeyStrokes.RIGHT);
+    console.on(KeyStrokes.RIGHT);
     console.on(Operation.VI_YANK_TO);
     console.on(Operation.END_OF_LINE);
     console.on(Operation.END_OF_LINE);
@@ -97,10 +98,11 @@ public class ConsoleViMoveTestCase extends AbstractConsoleTestCase {
   public void testMoveModeAfterAcceptInMultiline() {
     console.init();
     console.toInsert();
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.BACKSLASH);
     console.toMove();
-    console.on(KeyEvents.a, KeyEvents.BACKSLASH);
     console.on(Operation.VI_MOVE_ACCEPT_LINE);
-    assertInstance(Status.Insert.class, console.getMode());
+    assertEquals(Mode.VI_INSERT, console.getMode());
  }
 
 }

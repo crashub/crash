@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -40,11 +39,11 @@ public class UnixWordRuboutTestCase extends AbstractConsoleTestCase {
   }
 
   private void doTest() {
-    console.on(KeyEvent.of("abc def ghi "));
+    console.on(KeyStrokes.of("abc def ghi "));
     console.on(Operation.UNIX_WORD_RUBOUT);
     assertEquals("abc def ", getCurrentLine());
     assertEquals(8, getCurrentCursor());
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     assertEquals("abc def ", getCurrentLine());
     assertEquals(7, getCurrentCursor());
     console.on(Operation.UNIX_WORD_RUBOUT);
@@ -57,7 +56,7 @@ public class UnixWordRuboutTestCase extends AbstractConsoleTestCase {
   public void testCtrlW1() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("oily rancid badgers"));
+    console.on(KeyStrokes.of("oily rancid badgers"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.UNIX_WORD_RUBOUT);
     assertEquals("oily rancid s", getCurrentLine());
@@ -68,7 +67,7 @@ public class UnixWordRuboutTestCase extends AbstractConsoleTestCase {
   public void testCtrlW2() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("pasty bulimic rats !!!!!"));
+    console.on(KeyStrokes.of("pasty bulimic rats !!!!!"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.UNIX_WORD_RUBOUT);
     assertEquals("pasty bulimic rats !", getCurrentLine());

@@ -21,7 +21,7 @@ package org.crsh.console.operations;
 import jline.console.Operation;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 import org.crsh.processor.term.SyncCompleter;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -51,7 +51,7 @@ public class CompleteTestCase extends AbstractConsoleTestCase {
         return null;
       }
     });
-    console.on(KeyEvent.of("abc def"));
+    console.on(KeyStrokes.of("abc def"));
     console.on(Operation.COMPLETE);
     assertEquals("abc def", completions.get());
   }

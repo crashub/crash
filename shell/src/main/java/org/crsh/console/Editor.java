@@ -23,6 +23,7 @@ import org.crsh.cli.impl.line.MultiLineVisitor;
 import org.crsh.text.Style;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -52,6 +53,9 @@ class Editor extends Plugin {
   final LinkedList<String> history;
 
   /** . */
+  private Mode mode;
+
+  /** . */
   int historyCursor;
 
   /** . */
@@ -59,6 +63,9 @@ class Editor extends Plugin {
 
   /** The buffer that holds what we cut. */
   final StringBuilder clipboard;
+
+  /** . */
+  private final ArrayList<Runnable> modeListeners;
 
   Editor(Console console) {
     this(console, true);
@@ -79,6 +86,23 @@ class Editor extends Plugin {
     this.historyCursor = -1;
     this.historyBuffer = null;
     this.clipboard = new StringBuilder();
+    this.mode = Mode.EMACS;
+    this.modeListeners = new ArrayList<Runnable>();
+  }
+
+  Mode getMode() {
+    return mode;
+  }
+
+  void setMode(Mode mode) {
+    this.mode = mode;
+    for (Runnable listener : modeListeners) {
+      listener.run();
+    }
+  }
+
+  void addModeListener(Runnable runnable) {
+    modeListeners.add(runnable);
   }
 
   void addToHistory(String line) {
@@ -91,7 +115,7 @@ class Editor extends Plugin {
    * @return the current bound
    */
   int getCursorBound() {
-    if (console.getMode() instanceof Status.Emacs) {
+    if (console.getMode() == Mode.EMACS) {
       return buffer.getSize();
     } else {
       return Math.max(0, buffer.getSize() - 1);
@@ -122,19 +146,13 @@ class Editor extends Plugin {
     return buffer.getCursor();
   }
 
-  String append(KeyEvent key) {
+  String append(EditorAction action, int[] sequence) {
     try {
-      return _append(key);
+      return action.execute(this, buffer, sequence, true);
     }
     catch (IOException e) {
       throw new AssertionError("Not yet supported", e);
     }
-  }
-
-  private String _append(KeyEvent key) throws IOException {
-    int[] sequence = key.sequence;
-    EditorAction action = key.action;
-    return action.execute(this, buffer, sequence, true);
   }
 
   void reset() {

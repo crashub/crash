@@ -32,20 +32,26 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The key type.
+ * An action on the editor.
  */
-public class EditorAction {
+class EditorAction {
 
-  public static EditorAction INSERT = new EditorAction() {
-    @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+  static class InsertKey extends EditorAction {
+
+    private final int[] sequence;
+
+    public InsertKey(int[] sequence) {
+      this.sequence = sequence;
+    }
+
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       for (int c : sequence) {
         buffer.append((char)c);
       }
     }
-  };
+  }
 
-  public static EditorAction COMPLETE = new EditorAction() {
+  static EditorAction COMPLETE = new EditorAction() {
     @Override
     String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {
 
@@ -168,7 +174,7 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction INTERRUPT = new EditorAction() {
+  static EditorAction INTERRUPT = new EditorAction() {
     @Override
     String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {
       editor.lineParser.reset();
@@ -185,14 +191,14 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction EOF_MAYBE = new EditorAction() {
+  static EditorAction EOF_MAYBE = new EditorAction() {
     @Override
     String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {
       if (editor.isEmpty()) {
         editor.console.running = false;
         return null;
       } else {
-        if (editor.console.getMode() instanceof Status.Emacs) {
+        if (editor.console.getMode() == Mode.EMACS) {
           return EditorAction.DELETE_PREV_CHAR.execute(editor, buffer, sequence, true);
         } else {
           return EditorAction.ENTER.execute(editor, buffer, sequence, true);
@@ -206,7 +212,7 @@ public class EditorAction {
     protected abstract int getNext(Editor editor);
 
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int nextHistoryCursor = getNext(editor);
       if (nextHistoryCursor >= -1 && nextHistoryCursor < editor.history.size()) {
         String s = nextHistoryCursor == -1 ? editor.historyBuffer : editor.history.get(nextHistoryCursor);
@@ -224,53 +230,53 @@ public class EditorAction {
     }
   }
 
-  public static EditorAction HISTORY_FIRST = new History() {
+  static EditorAction HISTORY_FIRST = new History() {
     @Override
     protected int getNext(Editor editor) {
       return editor.history.size() - 1;
     }
   };
 
-  public static EditorAction HISTORY_LAST = new History() {
+  static EditorAction HISTORY_LAST = new History() {
     @Override
     protected int getNext(Editor editor) {
       return 0;
     }
   };
 
-  public static EditorAction HISTORY_PREV = new History() {
+  static EditorAction HISTORY_PREV = new History() {
     @Override
     protected int getNext(Editor editor) {
       return editor.historyCursor + 1;
     }
   };
 
-  public static EditorAction HISTORY_NEXT = new History() {
+  static EditorAction HISTORY_NEXT = new History() {
     @Override
     protected int getNext(Editor editor) {
       return editor.historyCursor - 1;
     }
   };
 
-  public static EditorAction LEFT = new EditorAction() {
+  static EditorAction LEFT = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       buffer.moveLeft();
     }
   };
 
-  public static EditorAction RIGHT = new EditorAction() {
+  static EditorAction RIGHT = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       if (buffer.getCursor() < editor.getCursorBound()) {
         buffer.moveRight();
       }
     }
   };
 
-  public static EditorAction MOVE_BEGINNING = new EditorAction() {
+  static EditorAction MOVE_BEGINNING = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int cursor = buffer.getCursor();
       if (cursor > 0) {
         buffer.moveLeftBy(cursor);
@@ -278,7 +284,7 @@ public class EditorAction {
     }
   };
 
-  public static class MovePrevWord extends EditorAction {
+  static class MovePrevWord extends EditorAction {
 
     final boolean atBeginning /* otherwise at end */;
 
@@ -287,7 +293,7 @@ public class EditorAction {
     }
 
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int cursor = buffer.getCursor();
       int pos = cursor;
       while (pos > 0) {
@@ -312,11 +318,11 @@ public class EditorAction {
     }
   }
 
-  public static EditorAction MOVE_PREV_WORD_AT_BEGINNING = new MovePrevWord(true);
+  static EditorAction MOVE_PREV_WORD_AT_BEGINNING = new MovePrevWord(true);
 
-  public static EditorAction MOVE_PREV_WORD_AT_END = new MovePrevWord(false);
+  static EditorAction MOVE_PREV_WORD_AT_END = new MovePrevWord(false);
 
-  public static class MoveNextWord extends EditorAction {
+  static class MoveNextWord extends EditorAction {
 
     final At at;
 
@@ -325,7 +331,7 @@ public class EditorAction {
     }
 
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int to = editor.getCursorBound();
       int from = buffer.getCursor();
       int pos = from;
@@ -361,15 +367,15 @@ public class EditorAction {
     }
   }
 
-  public static EditorAction MOVE_NEXT_WORD_AT_BEGINNING = new MoveNextWord(At.BEGINNING);
+  static EditorAction MOVE_NEXT_WORD_AT_BEGINNING = new MoveNextWord(At.BEGINNING);
 
-  public static EditorAction MOVE_NEXT_WORD_AFTER_END = new MoveNextWord(At.AFTER_END);
+  static EditorAction MOVE_NEXT_WORD_AFTER_END = new MoveNextWord(At.AFTER_END);
 
-  public static EditorAction MOVE_NEXT_WORD_BEFORE_END = new MoveNextWord(At.BEFORE_END);
+  static EditorAction MOVE_NEXT_WORD_BEFORE_END = new MoveNextWord(At.BEFORE_END);
 
-  public static EditorAction DELETE_PREV_WORD = new EditorAction() {
+  static EditorAction DELETE_PREV_WORD = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       editor.clipboard.setLength(0);
       boolean chars = false;
       while (true) {
@@ -393,9 +399,9 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction DELETE_NEXT_WORD = new EditorAction() {
+  static EditorAction DELETE_NEXT_WORD = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int count = 0;
       boolean chars = false;
       while (true) {
@@ -425,20 +431,20 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction DELETE_UNTIL_NEXT_WORD = new EditorAction() {
+  static EditorAction DELETE_UNTIL_NEXT_WORD = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int pos = buffer.getCursor();
-      EditorAction.MOVE_NEXT_WORD_AT_BEGINNING.perform(editor, buffer, sequence);
+      EditorAction.MOVE_NEXT_WORD_AT_BEGINNING.perform(editor, buffer);
       while (buffer.getCursor() > pos) {
         buffer.del();
       }
     }
   };
 
-  public static EditorAction DELETE_END = new EditorAction() {
+  static EditorAction DELETE_END = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int count = 0;
       while (buffer.moveRight()) {
         count++;
@@ -454,9 +460,9 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction DELETE_BEGINNING = new EditorAction() {
+  static EditorAction DELETE_BEGINNING = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       // Not really efficient
       if (buffer.getCursor()  > 0) {
         while (buffer.getCursor() > 0) {
@@ -466,7 +472,7 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction DELETE_LINE = new EditorAction() {
+  static EditorAction DELETE_LINE = new EditorAction() {
     @Override
     String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {
       buffer.moveRightBy(buffer.getSize() - buffer.getCursor());
@@ -475,9 +481,9 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction PASTE_BEFORE = new EditorAction() {
+  static EditorAction PASTE_BEFORE = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       if (editor.clipboard.length() > 0) {
         buffer.append(editor.clipboard);
         buffer.flush();
@@ -485,18 +491,18 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction PASTE_AFTER = new EditorAction() {
+  static EditorAction PASTE_AFTER = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       if (editor.clipboard.length() > 0) {
 
       }
     }
   };
 
-  public static EditorAction MOVE_END = new EditorAction() {
+  static EditorAction MOVE_END = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int cursor = editor.getCursorBound() - buffer.getCursor();
       if (cursor > 0) {
         buffer.moveRightBy(cursor);
@@ -504,7 +510,7 @@ public class EditorAction {
     }
   };
 
-  public static class ChangeChars extends EditorAction {
+  static class ChangeChars extends EditorAction {
 
     /** . */
     public final int count;
@@ -518,7 +524,7 @@ public class EditorAction {
     }
 
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int a = Math.min(count, buffer.getSize() - buffer.getCursor());
       while (a-- > 0) {
         buffer.moveRight((char)c);
@@ -527,14 +533,14 @@ public class EditorAction {
     }
   }
 
-  public static EditorAction DELETE_PREV_CHAR = new EditorAction() {
+  static EditorAction DELETE_PREV_CHAR = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       buffer.del();
     }
   };
 
-  public static class DeleteNextChars extends EditorAction {
+  static class DeleteNextChars extends EditorAction {
 
     /** . */
     public final int count;
@@ -544,7 +550,7 @@ public class EditorAction {
     }
 
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int tmp = count;
       while (tmp > 0 && buffer.moveRight()) {
         tmp--;
@@ -558,11 +564,11 @@ public class EditorAction {
     }
   }
 
-  public static EditorAction DELETE_NEXT_CHAR = ((EditorAction)new DeleteNextChars(1));
+  static EditorAction DELETE_NEXT_CHAR = ((EditorAction)new DeleteNextChars(1));
 
-  public static EditorAction CHANGE_CASE = new EditorAction() {
+  static EditorAction CHANGE_CASE = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       if (buffer.getCursor() < buffer.getSize()) {
         char c = buffer.charAt(buffer.getCursor());
         if (Character.isUpperCase(c)) {
@@ -579,9 +585,9 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction TRANSPOSE_CHARS = new EditorAction() {
+  static EditorAction TRANSPOSE_CHARS = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       if (buffer.getSize() > 2) {
         int pos = buffer.getCursor();
         if (pos > 0) {
@@ -592,7 +598,7 @@ public class EditorAction {
               buffer.moveRight(b); // Should be assertion
               buffer.moveRight(a); // Should be assertion
               // A bit not great : need to find a better way to do that...
-              if (editor.console.getMode() instanceof Status.Move && buffer.getCursor() > editor.getCursorBound()) {
+              if (editor.console.getMode() == Mode.VI_MOVE && buffer.getCursor() > editor.getCursorBound()) {
                 buffer.moveLeft();
               }
             }
@@ -609,18 +615,18 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction INSERT_COMMENT = new EditorAction() {
+  static EditorAction INSERT_COMMENT = new EditorAction() {
     @Override
     String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {
-      EditorAction.MOVE_BEGINNING.perform(editor, buffer, sequence);
+      EditorAction.MOVE_BEGINNING.perform(editor, buffer);
       buffer.append("#");
       return EditorAction.ENTER.execute(editor, buffer, sequence, flush);
     }
   };
 
-  public static EditorAction CLS = new EditorAction() {
+  static EditorAction CLS = new EditorAction() {
     @Override
-    void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
       editor.console.driver.cls();
       StringBuilder sb = new StringBuilder();
       int index = 0;
@@ -640,15 +646,15 @@ public class EditorAction {
     }
   };
 
-  public static EditorAction ENTER = new EditorAction() {
+  static EditorAction ENTER = new EditorAction() {
     @Override
     String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {
       editor.historyCursor = -1;
       editor.historyBuffer = null;
       String line = buffer.getLine();
       editor.lineParser.append(line);
-      if (editor.console.getMode() instanceof Status.Move) {
-        editor.console.setMode(new Status.Insert());
+      if (editor.console.getMode() == Mode.VI_MOVE) {
+        editor.console.setMode(Mode.VI_INSERT);
       }
       if (editor.lineParser.crlf()) {
         editor.console.driver.writeCRLF();
@@ -668,14 +674,35 @@ public class EditorAction {
   };
 
   String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {
-    perform(editor, buffer, sequence);
+    perform(editor, buffer);
     if (flush) {
       buffer.flush();
     }
     return null;
   }
 
-  void perform(Editor editor, EditorBuffer buffer, int[] sequence) throws IOException {
+  void perform(Editor editor, EditorBuffer buffer) throws IOException {
     throw new UnsupportedOperationException("Implement the edition logic");
+  }
+
+  public EditorAction append(final EditorAction action) {
+    return new EditorAction() {
+      @Override
+      String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {
+        EditorAction.this.execute(editor, buffer, sequence, flush);
+        return action.execute(editor, buffer, sequence, flush);
+      }
+    };
+  }
+
+  public EditorAction repeat(final int count) {
+    return new EditorAction() {
+      @Override
+      void perform(Editor editor, EditorBuffer buffer) throws IOException {
+        for (int i = 0;i < count;i++) {
+          EditorAction.this.perform(editor, buffer);
+        }
+      }
+    };
   }
 }

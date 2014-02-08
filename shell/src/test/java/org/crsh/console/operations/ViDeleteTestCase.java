@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,7 +30,7 @@ public class ViDeleteTestCase extends AbstractConsoleTestCase {
   public void testx() throws Exception {
     console.init();
     console.on(Operation.VI_EDITING_MODE);
-    console.on(KeyEvent.of("abc"));
+    console.on(KeyStrokes.of("abc"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_DELETE);
     assertEquals("ab", getCurrentLine());
@@ -46,7 +46,7 @@ public class ViDeleteTestCase extends AbstractConsoleTestCase {
   public void testDelete1() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("thing to delete"));
+    console.on(KeyStrokes.of("thing to delete"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.BACKWARD_WORD);
     console.on(Operation.BACKWARD_WORD);

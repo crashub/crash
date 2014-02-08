@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -44,13 +43,13 @@ public class BackwardCharTestCase extends AbstractConsoleTestCase {
   public void testMoveLeft1() throws Exception {
     console.init();
     console.toInsert();
-    console.on(KeyEvent.of("0123456789"));
+    console.on(KeyStrokes.of("0123456789"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.LEFT);
-    console.on(KeyEvents.LEFT);
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.VI_INSERTION_MODE);
-    console.on(KeyEvents.X);
+    console.on(KeyStrokes.X);
     assertEquals("012345X6789", getCurrentLine());
   }
 
@@ -58,12 +57,12 @@ public class BackwardCharTestCase extends AbstractConsoleTestCase {
   public void testMoveLeft2() throws Exception {
     console.init();
     console.toInsert();
-    console.on(KeyEvent.of("0123456789"));
+    console.on(KeyStrokes.of("0123456789"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_ARG_DIGIT, '3');
     console.on(Operation.BACKWARD_CHAR);
     console.on(Operation.VI_INSERTION_MODE);
-    console.on(KeyEvents.X);
+    console.on(KeyStrokes.X);
     assertEquals("012345X6789", getCurrentLine());
   }
 
@@ -71,13 +70,13 @@ public class BackwardCharTestCase extends AbstractConsoleTestCase {
   public void testMoveLeft3() throws Exception {
     console.init();
     console.toInsert();
-    console.on(KeyEvent.of("0123456789ABCDEFHIJLMNOPQRSTUVWXYZ"));
+    console.on(KeyStrokes.of("0123456789ABCDEFHIJLMNOPQRSTUVWXYZ"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_ARG_DIGIT, '1');
     console.on(Operation.VI_ARG_DIGIT, '3');
     console.on(Operation.BACKWARD_CHAR);
     console.on(Operation.VI_INSERTION_MODE);
-    console.on(KeyEvents.X);
+    console.on(KeyStrokes.X);
     assertEquals("0123456789ABCDEFHIJLXMNOPQRSTUVWXYZ", getCurrentLine());
   }
 }

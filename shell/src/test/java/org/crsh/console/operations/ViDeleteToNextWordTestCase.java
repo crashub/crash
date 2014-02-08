@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,13 +30,13 @@ public class ViDeleteToNextWordTestCase extends AbstractConsoleTestCase {
   public void testWordRight7() {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("big brown pickles"));
+    console.on(KeyStrokes.of("big brown pickles"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_NEXT_WORD);
     console.on(Operation.VI_CHANGE_TO);
     console.on(Operation.VI_NEXT_WORD);
-    console.on(KeyEvent.of("green"));
+    console.on(KeyStrokes.of("green"));
     assertEquals("big green pickles", getCurrentLine());
   }
 

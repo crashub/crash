@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 import org.crsh.processor.term.SyncProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -47,9 +46,9 @@ public class ViEofMaybeTestCase extends AbstractConsoleTestCase {
     console.toInsert();
     for (int i = 0;i < 4;i++) {
       shell.addProcess(process);
-      console.on(KeyEvent.of("abc"));
+      console.on(KeyStrokes.of("abc"));
       for (int j = 0;j < i;j++) {
-        console.on(KeyEvents.LEFT);
+        console.on(KeyStrokes.LEFT);
       }
       console.on(Operation.VI_EOF_MAYBE);
       String request = requests.poll(1, TimeUnit.SECONDS);

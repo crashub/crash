@@ -20,9 +20,8 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
-import org.crsh.console.Status;
+import org.crsh.console.KeyStrokes;
+import org.crsh.console.Mode;
 
 /**
  * @author Julien Viet
@@ -33,12 +32,14 @@ public class ViChangeToEolTestCase extends AbstractConsoleTestCase {
   public void testC() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("yogurt"));
+    console.on(KeyStrokes.of("yogurt"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.LEFT, KeyEvents.LEFT, KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.VI_CHANGE_TO, 'C');
-    console.on(KeyEvent.of("yo"));
+    console.on(KeyStrokes.of("yo"));
     assertEquals("yoyo", getCurrentLine());
-    assertInstance(Status.Insert.class, console.getMode());
+    assertEquals(Mode.VI_INSERT, console.getMode());
   }
 }

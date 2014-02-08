@@ -20,8 +20,8 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvents;
-import org.crsh.console.Status;
+import org.crsh.console.KeyStrokes;
+import org.crsh.console.Mode;
 
 /**
  * @author Julien Viet
@@ -31,20 +31,20 @@ public class ViEditingTestCase extends AbstractConsoleTestCase {
   public void testEmacs() {
     console.init();
     console.on(Operation.VI_EDITING_MODE);
-    assertInstance(Status.Insert.class, console.getMode());
+    assertEquals(Mode.VI_INSERT, console.getMode());
   }
 
   // Vi
 
   public void testViMode() throws Exception {
     console.init();
-    console.on(KeyEvents.a);
-    assertInstance(Status.Emacs.class, console.getMode());
+    console.on(KeyStrokes.a);
+    assertEquals(Mode.EMACS, console.getMode());
     console.on(Operation.VI_EDITING_MODE);
     driver.assertChar('a').assertFlush().assertEmpty();
-    assertInstance(Status.Insert.class, console.getMode());
+    assertEquals(Mode.VI_INSERT, console.getMode());
     console.on(Operation.VI_MOVEMENT_MODE);
     driver.assertMoveLeft().assertFlush().assertEmpty();
-    assertInstance(Status.Move.class, console.getMode());
+    assertEquals(Mode.VI_MOVE, console.getMode());
   }
 }

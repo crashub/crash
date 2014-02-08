@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,7 +30,7 @@ public class ViChangeCaseTestCase extends AbstractConsoleTestCase {
   public void testChangeCase1() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("big.LITTLE"));
+    console.on(KeyStrokes.of("big.LITTLE"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     for (int i = 0;i < 10;i++) {

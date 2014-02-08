@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -32,10 +31,11 @@ public class ViDeleteToEndOfLineTestCase extends AbstractConsoleTestCase {
   public void testEndOfLine2() throws Exception {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("chicken sushimi"));
+    console.on(KeyStrokes.of("chicken sushimi"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
-    console.on(KeyEvents.RIGHT, KeyEvents.RIGHT);
+    console.on(KeyStrokes.RIGHT);
+    console.on(KeyStrokes.RIGHT);
     console.on(Operation.VI_DELETE_TO);
     console.on(Operation.END_OF_LINE);
     assertEquals("ch", getCurrentLine());

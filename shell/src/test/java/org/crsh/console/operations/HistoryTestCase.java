@@ -20,8 +20,8 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.Status;
+import org.crsh.console.KeyStrokes;
+import org.crsh.console.Mode;
 import org.crsh.processor.term.SyncProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -33,20 +33,20 @@ public class HistoryTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs() {
     console.init();
-    doTest(new Status.Emacs());
+    doTest(Mode.EMACS);
   }
 
   public void testInsert() {
     console.init();
-    doTest(new Status.Insert());
+    doTest(Mode.VI_INSERT);
   }
 
   public void testMove() {
     console.init();
-    doTest(new Status.Move());
+    doTest(Mode.VI_MOVE);
   }
 
-  private void doTest(Status status) {
+  private void doTest(Mode mode) {
     shell.addProcess(new SyncProcess() {
       @Override
       public void run(String request, ShellProcessContext context) throws Exception {
@@ -59,16 +59,16 @@ public class HistoryTestCase extends AbstractConsoleTestCase {
         context.end(ShellResponse.ok());
       }
     });
-    console.on(KeyEvent.of("abc"));
+    console.on(KeyStrokes.of("abc"));
     console.on(Operation.ACCEPT_LINE);
     assertEquals("", getCurrentLine());
     assertEquals(0, getCurrentCursor());
-    console.on(KeyEvent.of("def"));
+    console.on(KeyStrokes.of("def"));
     console.on(Operation.ACCEPT_LINE);
     assertEquals("", getCurrentLine());
     assertEquals(0, getCurrentCursor());
-    console.setMode(status);
-    console.on(KeyEvent.of("ghi"));
+    console.on(KeyStrokes.of("ghi"));
+    console.setMode(mode);
     console.on(Operation.PREVIOUS_HISTORY);
     assertEquals("def", getCurrentLine());
     assertEquals(3, getCurrentCursor());

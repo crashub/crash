@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -29,7 +29,7 @@ public class ForwardWordTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs() {
     console.init();
-    console.on(KeyEvent.of("abc def "));
+    console.on(KeyStrokes.of("abc def "));
     console.on(Operation.BACKWARD_WORD);
     console.on(Operation.BACKWARD_WORD);
     assertEquals("abc def ", getCurrentLine());

@@ -24,7 +24,6 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.util.Safe;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,7 +42,7 @@ public class Console {
   final AtomicReference<Plugin> handler;
 
   /** The buffer. */
-  final BlockingDeque<KeyEvent> buffer;
+  final BlockingDeque<KeyStroke> buffer;
 
   /** . */
   final ConsoleDriver driver;
@@ -54,51 +53,40 @@ public class Console {
   /** . */
   boolean running;
 
-  /** . */
-  private Status mode;
-
-  /** . */
-  private final ArrayList<Runnable> modeListeners;
-
   public Console(Shell shell, ConsoleDriver driver) throws NullPointerException {
     if (shell == null) {
       throw new NullPointerException("No null shell accepted");
     }
     this.driver = driver;
     this.shell = shell;
-    this.buffer = new LinkedBlockingDeque<KeyEvent>(1024);
+    this.buffer = new LinkedBlockingDeque<KeyStroke>(1024);
     this.handler = new AtomicReference<Plugin>();
     this.editor = new Editor(this);
-    this.mode = new Status.Emacs();
     this.running = true;
-    this.modeListeners = new ArrayList<Runnable>();
   }
 
-  public void setMode(Status mode) {
-    this.mode = mode;
-    for (Runnable listener : modeListeners) {
-      listener.run();
-    }
+  public void setMode(Mode mode) {
+    editor.setMode(mode);
   }
 
   public void toEmacs() {
-    setMode(new Status.Emacs());
+    setMode(Mode.EMACS);
   }
 
   public void toMove() {
-    setMode(new Status.Move());
+    setMode(Mode.VI_MOVE);
   }
 
   public void toInsert() {
-    setMode(new Status.Insert());
+    setMode(Mode.VI_INSERT);
   }
 
-  public Status getMode() {
-    return mode;
+  public Mode getMode() {
+    return editor.getMode();
   }
 
   public void addModeListener(Runnable runnable) {
-    modeListeners.add(runnable);
+    editor.addModeListener(runnable);
   }
 
   public boolean isRunning() {
@@ -123,49 +111,39 @@ public class Console {
     edit();
   }
 
-  public Iterable<KeyEvent> getKeyBuffer() {
+  public Iterable<KeyStroke> getKeyBuffer() {
     return buffer;
   }
 
   public void on(Operation operation, int... buffer) {
-    mode.on(this, operation, buffer);
+    on(new KeyStroke(operation, buffer));
   }
 
-
-  /**
-   * Key event.
-   *
-   * @param event the event
-   */
-  public void on(KeyEvent event) {
-    on(new KeyEvent[]{event});
-  }
-
-  /**
-   * Key event.
-   *
-   * @param events the events
-   */
-  public void on(KeyEvent... events) {
-    for (KeyEvent event : events) {
-      if (event.getAction() == EditorAction.INTERRUPT) {
-        Plugin current = handler.get();
-        if (current == null) {
-          throw new IllegalStateException("Not initialized");
-        } else if (current instanceof ProcessHandler) {
-          ProcessHandler processHandler = (ProcessHandler)current;
-          ProcessHandler.Reader reader = processHandler.editor.get();
-          if (reader != null) {
-            reader.thread.interrupt();
-          }
-          processHandler.process.cancel();
-          continue;
+  public void on(KeyStroke keyStroke) {
+    if (keyStroke.operation == Operation.INTERRUPT) {
+      Plugin current = handler.get();
+      if (current == null) {
+        throw new IllegalStateException("Not initialized");
+      } else if (current instanceof ProcessHandler) {
+        ProcessHandler processHandler = (ProcessHandler)current;
+        ProcessHandler.Reader reader = processHandler.editor.get();
+        if (reader != null) {
+          reader.thread.interrupt();
         }
+        processHandler.process.cancel();
+        return;
       }
-      buffer.add(event);
-      iterate();
+    }
+    buffer.add(keyStroke);
+    iterate();
+  }
+
+  public void on(KeyStroke[] keyStrokes) {
+    for (KeyStroke keyStroke : keyStrokes) {
+      on(keyStroke);
     }
   }
+
 
   void close() {
     running = false;
@@ -197,26 +175,32 @@ public class Console {
   void iterate() {
     while (running) {
       Plugin current = handler.get();
-      KeyEvent key = buffer.poll();
+      KeyStroke key = buffer.poll();
       if (key != null) {
         if (current == null) {
           throw new IllegalStateException("Not initialized");
         } else if (current instanceof Editor) {
           Editor editor = (Editor)current;
-          String line = editor.append(key);
-          if (line != null) {
-            ShellProcess process = shell.createProcess(line);
-            ProcessHandler context = new ProcessHandler(this, process);
-            handler.set(context);
-            process.execute(context);
+          EditorAction action = editor.getMode().on(key);
+          if (action != null) {
+            String line = editor.append(action, key.sequence);
+            if (line != null) {
+              ShellProcess process = shell.createProcess(line);
+              ProcessHandler context = new ProcessHandler(this, process);
+              handler.set(context);
+              process.execute(context);
+            }
           }
         } else if (current instanceof ProcessHandler) {
           ProcessHandler processHandler = (ProcessHandler)current;
           ProcessHandler.Reader reader = processHandler.editor.get();
           if (reader != null) {
-            String s = reader.editor.append(key);
-            if (s != null) {
-              reader.line.add(s);
+            EditorAction action = editor.getMode().on(key);
+            if (action != null) {
+              String s = reader.editor.append(action, key.sequence);
+              if (s != null) {
+                reader.line.add(s);
+              }
             }
           } else {
             KeyHandler keyHandler = processHandler.process.getKeyHandler();

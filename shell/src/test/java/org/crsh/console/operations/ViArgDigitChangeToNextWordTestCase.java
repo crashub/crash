@@ -20,7 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,13 +30,13 @@ public class ViArgDigitChangeToNextWordTestCase extends AbstractConsoleTestCase 
   public void testWordRight8() {
     console.toInsert();
     console.init();
-    console.on(KeyEvent.of("big brown pickles"));
+    console.on(KeyStrokes.of("big brown pickles"));
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_ARG_DIGIT, '2');
     console.on(Operation.VI_CHANGE_TO);
     console.on(Operation.VI_NEXT_WORD);
-    console.on(KeyEvent.of("little bitty"));
+    console.on(KeyStrokes.of("little bitty"));
     assertEquals("little bitty pickles", getCurrentLine());
   }
 }

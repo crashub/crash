@@ -20,8 +20,7 @@ package org.crsh.console.operations;
 
 import jline.console.Operation;
 import org.crsh.console.AbstractConsoleTestCase;
-import org.crsh.console.KeyEvent;
-import org.crsh.console.KeyEvents;
+import org.crsh.console.KeyStrokes;
 
 /**
  * @author Julien Viet
@@ -30,7 +29,7 @@ public class KillLineTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs() {
     console.init();
-    console.on(KeyEvent.of("abc def"));
+    console.on(KeyStrokes.of("abc def"));
     console.on(Operation.KILL_LINE);
     assertEquals("abc def", getCurrentLine());
     assertEquals(7, getCurrentCursor());
@@ -46,9 +45,9 @@ public class KillLineTestCase extends AbstractConsoleTestCase {
   public void testKillLine() throws Exception {
     console.init();
     console.on(Operation.VI_EDITING_MODE);
-    console.on(KeyEvent.of("abcdef"));
+    console.on(KeyStrokes.of("abcdef"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(KeyEvents.LEFT);
+    console.on(KeyStrokes.LEFT);
     console.on(Operation.KILL_LINE);
     assertEquals("abcd", getCurrentLine());
     assertEquals(3, getCurrentCursor());
