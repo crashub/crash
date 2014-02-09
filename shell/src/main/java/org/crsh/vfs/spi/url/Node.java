@@ -145,7 +145,7 @@ public class Node implements Iterable<Resource> {
   private void _mergeEntries(URL url) throws IOException, URISyntaxException {
     if (url.getProtocol().equals("file")) {
       try {
-        java.io.File f = new java.io.File(url.toURI());
+        java.io.File f = Utils.toFile(url);
         if (f.isDirectory()) {
           merge(f);
         } else if (f.getName().endsWith(".jar")) {

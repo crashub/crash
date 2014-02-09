@@ -38,7 +38,7 @@ public abstract class ZipIterator implements Closeable {
 
   public static ZipIterator create(URL url) throws IOException, URISyntaxException {
     if (url.getProtocol().equals("file")) {
-      return create(new java.io.File(url.toURI()));
+      return create(Utils.toFile(url));
     } else if (url.getProtocol().equals("jar")) {
       int pos = url.getPath().lastIndexOf("!/");
       URL jarURL = new URL(url.getPath().substring(0, pos));
