@@ -20,6 +20,7 @@
 package org.crsh.standalone;
 
 import com.sun.tools.attach.VirtualMachine;
+import jline.AnsiWindowsTerminal;
 import jline.NoInterruptUnixTerminal;
 import jline.Terminal;
 import jline.TerminalFactory;
@@ -354,9 +355,21 @@ public class CRaSH2 {
 
 
       final Terminal term = TerminalFactory.create();
-      Runtime.getRuntime().addShutdownHook(new Thread(){
+      final boolean installWindows = term.isAnsiSupported() && term instanceof AnsiWindowsTerminal;
+
+      //
+      if (installWindows) {
+        log.info("Installing windowd ansi console");
+        AnsiConsole.systemInstall();
+      }
+
+
+      Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
+          if (installWindows) {
+            AnsiConsole.systemUninstall();
+          }
           try {
             term.restore();
           }
