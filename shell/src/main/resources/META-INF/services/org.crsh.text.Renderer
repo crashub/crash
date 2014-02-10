@@ -4,5 +4,6 @@ org.crsh.text.renderers.LoggerRenderable
 org.crsh.text.renderers.MemoryUsageRenderer
 org.crsh.text.renderers.BindingRenderer
 org.crsh.text.renderers.EntityTypeRenderer
+org.crsh.text.renderers.LogRecordRenderer
 org.crsh.text.ui.ElementRenderer
 org.crsh.text.ui.UIBuilderRenderer

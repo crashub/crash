@@ -38,7 +38,7 @@ public abstract class Layout {
    * Computes the list of lengths for the specifid list of cells with the following constraints:
    *
    * <ul>
-   *   <li>the sum of the returned array elements must be equals to the <code>length</code> argument</li>
+   *   <li>the sum of the returned array elements must be equals to the <code>totalLength</code> argument</li>
    *   <li>a cell length should never be lesser than the provided minimum length</li>
    * </ul>
    *
@@ -50,12 +50,12 @@ public abstract class Layout {
    *
    *
    * @param spaced true if the cells are separated by one char
-   * @param length the length
+   * @param totalLength the total length of the line
    * @param actualLengths the actual length : an estimation of what cell's desired length
    * @param minLengths the minmum length : the length under which a cell cannot be rendered
    * @return the list of length.
    */
-  abstract int[] compute(boolean spaced, int length, int[] actualLengths, int[] minLengths);
+  abstract int[] compute(boolean spaced, int totalLength, int[] actualLengths, int[] minLengths);
 
   public static class Weighted extends Layout {
 
