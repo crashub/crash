@@ -24,7 +24,7 @@ import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.line.LineParser;
 import org.crsh.cli.impl.line.MultiLineVisitor;
 import org.crsh.cli.spi.Completion;
-import org.crsh.util.Strings;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -93,7 +93,7 @@ class EditorAction {
             buffer.append(sb);
             editor.console.driver.flush();
           } else {
-            String commonCompletion = Strings.findLongestCommonPrefix(completions.getValues());
+            String commonCompletion = Utils.findLongestCommonPrefix(completions.getValues());
 
             // Format stuff
             int width = editor.console.driver.getWidth();

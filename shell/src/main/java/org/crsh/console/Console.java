@@ -21,7 +21,7 @@ package org.crsh.console;
 import jline.console.Operation;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingDeque;
@@ -147,7 +147,7 @@ public class Console {
 
   void close() {
     running = false;
-    Safe.close(driver);
+    Utils.close(driver);
   }
 
   /**

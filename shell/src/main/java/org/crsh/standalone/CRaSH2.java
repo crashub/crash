@@ -41,9 +41,8 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.remoting.RemoteServer;
 import org.crsh.util.CloseableList;
-import org.crsh.util.IO;
 import org.crsh.util.InterruptHandler;
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.Resource;
@@ -95,7 +94,7 @@ public class CRaSH2 {
         Resource resource = src.getResource();
         if (resource != null) {
           log.info("Copied command " + src.getPath().getValue() + " to " + dst.getCanonicalPath());
-          IO.copy(new ByteArrayInputStream(resource.getContent()), new FileOutputStream(dst));
+          Utils.copy(new ByteArrayInputStream(resource.getContent()), new FileOutputStream(dst));
         }
       }
     }
@@ -107,7 +106,7 @@ public class CRaSH2 {
         Resource resource = ResourceManager.loadConf(src);
         if (resource != null) {
           log.info("Copied resource " + src.getPath().getValue() + " to " + dst.getCanonicalPath());
-          IO.copy(new ByteArrayInputStream(resource.getContent()), new FileOutputStream(dst));
+          Utils.copy(new ByteArrayInputStream(resource.getContent()), new FileOutputStream(dst));
         }
       }
     }
@@ -413,7 +412,7 @@ public class CRaSH2 {
 
         //
         if (closeable != null) {
-          Safe.close(closeable);
+          Utils.close(closeable);
         }
 
         // Force exit

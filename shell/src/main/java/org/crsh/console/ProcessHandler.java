@@ -25,7 +25,6 @@ import org.crsh.text.CLS;
 import org.crsh.text.Chunk;
 import org.crsh.text.Style;
 import org.crsh.text.Text;
-import org.crsh.util.Safe;
 
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;

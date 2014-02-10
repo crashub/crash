@@ -18,7 +18,7 @@
  */
 package org.crsh.console;
 
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 
@@ -492,7 +492,7 @@ public abstract class Mode extends EditorAction {
         return true;
       } else if (obj instanceof Digit) {
         Digit that = (Digit)obj;
-        return count == that.count && Safe.equals(to, that.to);
+        return count == that.count && Utils.equals(to, that.to);
       } else {
         return false;
       }
