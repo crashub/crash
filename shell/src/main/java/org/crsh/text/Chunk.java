@@ -21,5 +21,8 @@ package org.crsh.text;
 
 import java.io.Serializable;
 
-public class Chunk implements Serializable {
+/**
+ * The base chunk type.
+ */
+public interface Chunk extends Serializable {
 }

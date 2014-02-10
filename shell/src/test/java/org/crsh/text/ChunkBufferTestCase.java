@@ -44,12 +44,8 @@ public class ChunkBufferTestCase extends AbstractTestCase {
     assertReader(new ChunkBuffer().append(RED, "a"), RED, Text.create("a"));
   }
 
-  public void testMergeCharSequence() {
-    assertReader(new ChunkBuffer().append("a").append("b"), Text.create("ab"));
-  }
-
   public void testMergeColor() {
-    assertReader(new ChunkBuffer().append(RED, "a", RED, "b"), RED, Text.create("ab"));
+    assertReader(new ChunkBuffer().append(RED, "a", RED, "b"), RED, Text.create("a"), Text.create("b"));
   }
 
   public void testOverwriteColor() {
@@ -57,7 +53,7 @@ public class ChunkBufferTestCase extends AbstractTestCase {
   }
 
   public void testOverwriteMergeColor() {
-    assertReader(new ChunkBuffer().append(RED, "a", BLUE, RED, "b"), RED, Text.create("ab"));
+    assertReader(new ChunkBuffer().append(RED, "a", BLUE, RED, "b"), RED, Text.create("a"), Text.create("b"));
   }
 
   public void testLastColor() {
@@ -74,7 +70,7 @@ public class ChunkBufferTestCase extends AbstractTestCase {
   }
 
   public void testBlend() throws IOException {
-    assertReader(new ChunkBuffer().append(Color.red.fg(),"foo", Color.red.fg(), "bar"), Color.red.fg(), Text.create("foobar"));
+    assertReader(new ChunkBuffer().append(Color.red.fg(),"foo", Color.red.fg(), "bar"), Color.red.fg(), Text.create("foo"), Text.create("bar"));
   }
 
   private void assertReader(ChunkBuffer reader, Chunk... expected) {

@@ -104,7 +104,7 @@ public class BlankSequence implements CharSequence {
     if (index < 0) {
       throw new IndexOutOfBoundsException("No negative " + name + " value " + index);
     }
-    if (index >= length) {
+    if (index > length) {
       throw new IndexOutOfBoundsException("The " + name + " value " + index + " cannot greater than length " + length);
     }
   }

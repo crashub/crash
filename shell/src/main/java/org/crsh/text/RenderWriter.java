@@ -24,6 +24,7 @@ import org.crsh.shell.ScreenContext;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.CharBuffer;
 
 public class RenderWriter extends Writer implements ScreenContext {
 
@@ -88,9 +89,7 @@ public class RenderWriter extends Writer implements ScreenContext {
       throw new IOException("Already closed");
     }
     if (len > 0) {
-      Text text = new Text();
-      text.buffer.append(cbuf, off, len);
-      provide(text);
+      provide(Text.create(new String(cbuf, off, len)));
     }
   }
 

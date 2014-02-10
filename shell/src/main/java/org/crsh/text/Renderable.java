@@ -62,7 +62,7 @@ public abstract class Renderable<E> {
         Object next = stream.next();
         if (next instanceof Chunk) {
           if (next instanceof Text) {
-            sb.append(((Text)next).buffer);
+            sb.append(((Text)next).value);
           }
         } else {
           sb.append(next);

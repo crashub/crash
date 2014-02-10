@@ -26,7 +26,20 @@ import java.io.Serializable;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
 
-public abstract class Style extends Chunk implements Serializable {
+/**
+ * A control for the text stylistric attributes:
+ * <u>
+ *   <li>background color</li>
+ *   <li>foreground color</li>
+ *   <li>underline</li>
+ *   <li>bold</li>
+ *   <li>blink</li>
+ * </u>
+ *
+ * A style is either a composite style or the {@link #reset} style. Styles can be composed together to form a new
+ * style <code>style.merge(other)</code>.
+ */
+public abstract class Style implements Chunk {
 
   public static final Style reset = new Style() {
 
@@ -309,6 +322,11 @@ public abstract class Style extends Chunk implements Serializable {
     return ALL[bo][un][bl][fg][bg];
   }
 
+  /**
+   * Create a new blank style.
+   *
+   * @return the style
+   */
   public static Composite style() {
     return style(null, null, null);
   }
