@@ -23,7 +23,7 @@ import org.apache.sshd.SshClient;
 import org.apache.sshd.client.channel.ChannelShell;
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.common.util.SttySupport;
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 
 import java.io.*;
 import java.util.Map;
@@ -140,7 +140,7 @@ public class SSHClient {
 
   public SSHClient close() {
     try {
-      Safe.close(out);
+      Utils.close(out);
       channel.close(false);
       session.close(false);
       client.stop();

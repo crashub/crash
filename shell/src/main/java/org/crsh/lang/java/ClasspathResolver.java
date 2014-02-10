@@ -18,28 +18,19 @@
  */
 package org.crsh.lang.java;
 
-import org.crsh.util.InputStreamFactory;
-import org.crsh.util.Strings;
-import org.crsh.util.ZipIterator;
+import org.crsh.util.Utils;
 import org.crsh.vfs.spi.url.Node;
 import org.crsh.vfs.spi.url.Resource;
 import org.crsh.vfs.spi.url.URLDriver;
 
 import javax.tools.JavaFileObject;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.ZipEntry;
 
 /** @author Julien Viet */
 class ClasspathResolver {
@@ -91,7 +82,7 @@ class ClasspathResolver {
 
     Node current = driver.root();
 
-    String[] elts = Strings.split(pkg, '.');
+    String[] elts = Utils.split(pkg, '.');
 
     for (String elt : elts) {
       current = driver.child(current, elt);

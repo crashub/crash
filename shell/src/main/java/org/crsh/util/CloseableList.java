@@ -68,7 +68,7 @@ public final class CloseableList implements Closeable {
     if (closed.compareAndSet(false, true)) {
       for (Closeable closeable : closeables) {
         log.log(Level.FINE, "Closing " + closeable.getClass().getSimpleName());
-        Safe.close(closeable);
+        Utils.close(closeable);
       }
     }
   }

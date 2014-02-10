@@ -19,6 +19,15 @@
 
 package org.crsh.util;
 
+import javax.naming.Context;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.Flushable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +46,8 @@ public class Utils {
 
   /** . */
   private static final Iterator EMPTY_ITERATOR = Collections.emptyList().iterator();
+  /** . */
+  private static final Pattern p = Pattern.compile("\\S+");
 
   public static <E> Iterator<E> iterator() {
     @SuppressWarnings("unchecked")
@@ -61,22 +72,6 @@ public class Utils {
         }
       }
     };
-  }
-
-  public static <E> ArrayList<E> newArrayList() {
-    return new ArrayList<E>();
-  }
-
-  public static <E> LinkedList<E> newLinkedList() {
-    return new LinkedList<E>();
-  }
-
-  public static <E> HashSet<E> newHashSet() {
-    return new HashSet<E>();
-  }
-
-  public static <K, V> HashMap<K, V> newHashMap() {
-    return new HashMap<K, V>();
   }
 
   public static <E> E first(Iterable<E> elements) {
@@ -210,4 +205,300 @@ public class Utils {
     return regex.toString();
   }
 
+  /**
+   * Close the socket and catch any exception thrown.
+   *
+   * @param socket the socket to close
+   * @return any Exception thrown during the <code>close</code> operation
+   */
+  public static Exception close(Socket socket) {
+    if (socket != null) {
+      try {
+        socket.close();
+      }
+      catch (Exception e) {
+        return e;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Close the closeable and catch any exception thrown.
+   *
+   * @param closeable the closeable to close
+   * @return any Exception thrown during the <code>close</code> operation
+   */
+  public static Exception close(Closeable closeable) {
+    if (closeable != null) {
+      try {
+        closeable.close();
+      }
+      catch (Exception e) {
+        return e;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Close the connection and catch any exception thrown.
+   *
+   * @param connection the socket to close
+   * @return any Exception thrown during the <code>close</code> operation
+   */
+  public static Exception close(Connection connection) {
+    if (connection != null) {
+      try {
+        connection.close();
+      }
+      catch (Exception e) {
+        return e;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Close the statement and catch any exception thrown.
+   *
+   * @param statement the statement to close
+   * @return any Exception thrown during the <code>close</code> operation
+   */
+  public static Exception close(java.sql.Statement statement) {
+    if (statement != null) {
+      try {
+        statement.close();
+      }
+      catch (Exception e) {
+        return e;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Close the result set and catch any exception thrown.
+   *
+   * @param rs the result set to close
+   * @return any Exception thrown during the <code>close</code> operation
+   */
+  public static Exception close(ResultSet rs) {
+    if (rs != null) {
+      try {
+        rs.close();
+      }
+      catch (Exception e) {
+        return e;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Close the context and catch any exception thrown.
+   *
+   * @param context the context to close
+   * @return any Exception thrown during the <code>close</code> operation
+   */
+   public static Exception close(Context context) {
+      if (context != null) {
+         try {
+            context.close();
+         }
+         catch (Exception e) {
+           return e;
+         }
+      }
+     return null;
+   }
+
+  public static <T extends Throwable> void rethrow(Class<T> throwableClass, Throwable cause) throws T {
+    T throwable;
+
+    //
+    try {
+      throwable = throwableClass.newInstance();
+    }
+    catch (Exception e) {
+      throw new AssertionError(e);
+    }
+
+    //
+    throwable.initCause(cause);
+
+    //
+    throw throwable;
+  }
+
+  public static boolean equals(Object o1, Object o2) {
+    return o1 == null ? o2 == null : (o2 != null && o1.equals(o2));
+  }
+
+  public static boolean notEquals(Object o1, Object o2) {
+    return !equals(o1, o2);
+  }
+
+  /**
+   * Flush the flushable and catch any exception thrown.
+   *
+   * @param flushable the flushable to flush
+   * @return any Exception thrown during the <code>flush</code> operation
+   */
+  public static Exception flush(Flushable flushable) {
+    if (flushable != null) {
+      try {
+        flushable.flush();
+      }
+      catch (Exception e) {
+        return e;
+      }
+    }
+    return null;
+  }
+
+  public static List<String> chunks(CharSequence s) {
+    List<String> chunks = new ArrayList<String>();
+    Matcher m = p.matcher(s);
+    while (m.find()) {
+      chunks.add(m.group());
+    }
+    return chunks;
+  }
+
+  public static String join(Iterable<String> strings, String separator) {
+    Iterator<String> i = strings.iterator();
+    if (i.hasNext()) {
+      String first = i.next();
+      if (i.hasNext()) {
+        StringBuilder buf = new StringBuilder();
+        buf.append(first);
+        while (i.hasNext()) {
+          buf.append(separator);
+          buf.append(i.next());
+        }
+        return buf.toString();
+      } else {
+        return first;
+      }
+    } else {
+      return "";
+    }
+  }
+
+  public static String[] split(CharSequence s, char separator) {
+    return foo(s, separator, 0, 0, 0);
+  }
+
+  public static String[] split(CharSequence s, char separator, int rightPadding) {
+    if (rightPadding < 0) {
+      throw new IllegalArgumentException("Right padding cannot be negative");
+    }
+    return foo(s, separator, 0, 0, rightPadding);
+  }
+
+  private static String[] foo(CharSequence s, char separator, int count, int from, int rightPadding) {
+    int len = s.length();
+    if (from < len) {
+      int to = from;
+      while (to < len && s.charAt(to) != separator) {
+        to++;
+      }
+      String[] ret;
+      if (to == len - 1) {
+        ret = new String[count + 2 + rightPadding];
+        ret[count + 1] = "";
+      }
+      else {
+        ret = to == len ? new String[count + 1 + rightPadding] : foo(s, separator, count + 1, to + 1, rightPadding);
+      }
+      ret[count] = from == to ? "" : s.subSequence(from, to).toString();
+      return ret;
+    }
+    else if (from == len) {
+      return new String[count + rightPadding];
+    }
+    else {
+      throw new AssertionError();
+    }
+  }
+
+  /**
+   * @see #findLongestCommonPrefix(Iterable)
+   */
+  public static String findLongestCommonPrefix(CharSequence... seqs) {
+    return findLongestCommonPrefix(Arrays.asList(seqs));
+  }
+
+  /**
+   * Find the longest possible common prefix of the provided char sequence.
+   *
+   * @param seqs the sequences
+   * @return the longest possible prefix
+   */
+  public static String findLongestCommonPrefix(Iterable<? extends CharSequence> seqs) {
+    String common = "";
+    out:
+    while (true) {
+      String candidate = null;
+      for (CharSequence s : seqs) {
+        if (common.length() + 1 > s.length()) {
+          break out;
+        } else {
+          if (candidate == null) {
+            candidate = s.subSequence(0, common.length() + 1).toString();
+          } else if (s.subSequence(0, common.length() + 1).toString().equals(candidate)) {
+            // Ok it is a prefix
+          } else {
+            break out;
+          }
+        }
+      }
+      if (candidate == null) {
+        break;
+      } else {
+        common = candidate;
+      }
+    }
+    return common;
+  }
+
+  public static byte[] readAsBytes(InputStream in) throws IOException {
+    return read(in).toByteArray();
+  }
+
+  public static String readAsUTF8(InputStream in) {
+    try {
+      ByteArrayOutputStream baos = read(in);
+      return baos.toString("UTF-8");
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  public static void copy(InputStream in, OutputStream out) throws IOException {
+    if (in == null) {
+      throw new NullPointerException();
+    }
+    try {
+      byte[] buffer = new byte[256];
+      for (int l = in.read(buffer); l != -1; l = in.read(buffer)) {
+        out.write(buffer, 0, l);
+      }
+    }
+    finally {
+      close(in);
+    }
+  }
+
+  private static ByteArrayOutputStream read(InputStream in) throws IOException {
+    if (in == null) {
+      throw new NullPointerException();
+    }
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    copy(in, baos);
+    return baos;
+  }
 }

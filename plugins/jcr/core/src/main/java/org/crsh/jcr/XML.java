@@ -16,49 +16,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.util;
+package org.crsh.jcr;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+public class XML {
 
-public class BytesOutputStream extends ByteArrayOutputStream {
-
-  /** . */
-  private boolean closed;
-
-  public BytesOutputStream() {
-  }
-
-  public BytesOutputStream(int size) {
-    super(size);
-  }
-
-  public InputStream getInputStream() {
-    if (!closed) {
-      throw new IllegalStateException("Not yet closed");
+  public static String fileName(String qName) {
+    int pos = qName.indexOf(':');
+    if (pos == -1) {
+      return qName;
+    } else {
+      return qName.substring(0, pos) + "__" + qName.substring(pos + 1);
     }
-    return new InputStream() {
-
-      /** . */
-      int read = 0;
-
-      @Override
-      public int read() throws IOException {
-        if (read < count) {
-          return buf[read++];
-        } else {
-          return -1;
-        }
-      }
-    };
   }
 
-  @Override
-  public void close() throws IOException {
-    super.close();
+  public static String qName(String fileName) {
+    int pos = fileName.indexOf("__");
+    if (pos == -1) {
+      return fileName;
+    } else {
+      return fileName.substring(0, pos) + ":" + fileName.substring(pos + 2);
+    }
+  }
 
-    //
-    closed = true;
+  public static String getPrefix(String qName) {
+    int pos = qName.indexOf(':');
+    return pos == -1 ? "" : qName.substring(0, pos);
   }
 }

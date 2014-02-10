@@ -35,7 +35,7 @@ import org.crsh.repl.EvalResponse;
 import org.crsh.lang.script.ScriptREPL;
 import org.crsh.repl.REPLSession;
 import org.crsh.text.Text;
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -197,7 +197,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
             } catch (Throwable t) {
               return build(t);
             } finally {
-              Safe.close(invocationContext);
+              Utils.close(invocationContext);
             }
           }
 

@@ -18,8 +18,7 @@
  */
 package org.crsh.jcr;
 
-import org.crsh.util.BytesOutputStream;
-import org.crsh.util.IO;
+import org.crsh.util.Utils;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -57,7 +56,7 @@ public class SourceCommand extends SCPCommand implements Runnable {
         out.write("\n".getBytes());
         out.flush();
         readAck();
-        IO.copy(data, out);
+        Utils.copy(data, out);
         ack();
         readAck();
       }

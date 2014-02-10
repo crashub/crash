@@ -18,7 +18,7 @@
  */
 package org.crsh.jcr;
 
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -86,7 +86,7 @@ public class Importer implements FileSystem {
       parser.parse(data, attributesHandler);
     }
     catch (Exception e) {
-      Safe.rethrow(IOException.class, e);
+      Utils.rethrow(IOException.class, e);
     }
   }
 
@@ -103,7 +103,7 @@ public class Importer implements FileSystem {
       }
     }
     catch (Exception e) {
-      Safe.rethrow(IOException.class, e);
+      Utils.rethrow(IOException.class, e);
     }
   }
 

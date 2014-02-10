@@ -20,7 +20,7 @@
 package org.crsh.vfs.spi.url;
 
 import org.crsh.util.InputStreamFactory;
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 import org.crsh.util.ZipIterator;
 
 import java.io.FileInputStream;
@@ -145,7 +145,7 @@ public class Node implements Iterable<Resource> {
         }
       }
       finally {
-        Safe.close(i);
+        Utils.close(i);
       }
     }
     else {

@@ -26,7 +26,7 @@ import org.crsh.text.Format;
 import org.crsh.text.LineReader;
 import org.crsh.text.RenderAppendable;
 import org.crsh.shell.ScreenContext;
-import org.crsh.util.Strings;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -101,8 +101,8 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
   public void assertRender(LineReader renderer, int width, String... expected) {
     List<String> result = render(renderer, width);
     if (result.size() != expected.length) {
-      throw failure("Was expecting the same number of lines got:" + Strings.join(result, "/") + " expected:" +
-          Strings.join(Arrays.asList(expected), "/"));
+      throw failure("Was expecting the same number of lines got:" + Utils.join(result, "/") + " expected:" +
+          Utils.join(Arrays.asList(expected), "/"));
     } else {
       for (int i = 0;i < expected.length;i++) {
         if (!result.get(i).equals(expected[i])) {

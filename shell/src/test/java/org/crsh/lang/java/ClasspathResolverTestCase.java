@@ -19,7 +19,6 @@
 package org.crsh.lang.java;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.util.IO;
 import org.crsh.util.Utils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -134,7 +133,7 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
 
     // Attempt to get stream
     InputStream in = classes.get(0).openInputStream();
-    byte[] bytes = IO.readAsBytes(in);
+    byte[] bytes = Utils.readAsBytes(in);
     assertTrue(bytes.length > 0);
 
     // Recurse

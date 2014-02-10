@@ -25,7 +25,7 @@ import org.crsh.shell.ShellResponse;
 import org.crsh.text.Chunk;
 import org.crsh.term.TermEvent;
 import org.crsh.text.Text;
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -160,7 +160,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
                 }
                 finally {
                   // Be sure to flush
-                  Safe.flush(processor.term);
+                  Utils.flush(processor.term);
                 }
               }
             };

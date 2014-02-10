@@ -19,7 +19,7 @@
 
 package org.crsh.plugin;
 
-import org.crsh.util.Strings;
+import org.crsh.util.Utils;
 
 import java.util.List;
 import java.util.Arrays;
@@ -64,7 +64,7 @@ public abstract class PropertyDescriptor<T> {
     return new PropertyDescriptor<List>(List.class, name, defaultValue, description, secret) {
       @Override
       protected List doParse(String s) throws Exception {
-        String[] split = Strings.split(s, ',');
+        String[] split = Utils.split(s, ',');
         List<String> list = Arrays.asList(split);
         for (int i = 0;i < list.size();i++) {
           list.set(i, list.get(i).trim());

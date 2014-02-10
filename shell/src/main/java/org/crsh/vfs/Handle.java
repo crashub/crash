@@ -19,7 +19,6 @@
 
 package org.crsh.vfs;
 
-import org.crsh.util.IO;
 import org.crsh.util.Utils;
 import org.crsh.vfs.spi.FSDriver;
 
@@ -61,7 +60,7 @@ class Handle<H> {
 
   Resource getResource() throws IOException {
     InputStream in = open();
-    byte[] bytes = IO.readAsBytes(in);
+    byte[] bytes = Utils.readAsBytes(in);
     long lastModified = getLastModified();
     return new Resource(key.name, bytes, lastModified);
   }
@@ -72,7 +71,7 @@ class Handle<H> {
       LinkedList<Resource> resources = new LinkedList<Resource>();
       while (i.hasNext()) {
         InputStream in = i.next();
-        byte[] bytes = IO.readAsBytes(in);
+        byte[] bytes = Utils.readAsBytes(in);
         long lastModified = getLastModified();
         resources.add(new Resource(key.name, bytes, lastModified));
       }

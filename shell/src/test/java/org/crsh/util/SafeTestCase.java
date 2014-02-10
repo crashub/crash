@@ -29,20 +29,20 @@ import java.io.IOException;
 public class SafeTestCase extends TestCase {
 
   public void testClose() {
-    Exception closed = Safe.close(new Closeable() {
+    Exception closed = Utils.close(new Closeable() {
       public void close() throws IOException {
       }
     });
     assertNull(closed);
     final IOException ioe = new IOException();
-    closed = Safe.close(new Closeable() {
+    closed = Utils.close(new Closeable() {
       public void close() throws IOException {
         throw ioe;
       }
     });
     assertSame(ioe, closed);
     final RuntimeException re = new RuntimeException();
-    closed = Safe.close(new Closeable() {
+    closed = Utils.close(new Closeable() {
       public void close() throws IOException {
         throw re;
       }
@@ -50,7 +50,7 @@ public class SafeTestCase extends TestCase {
     assertSame(re, closed);
     final Error thrown = new Error();
     try {
-      Safe.close(new Closeable() {
+      Utils.close(new Closeable() {
         public void close() throws IOException {
           throw thrown;
         }
@@ -62,20 +62,20 @@ public class SafeTestCase extends TestCase {
   }
 
   public void testFlush() {
-    Exception flushed = Safe.flush(new Flushable() {
+    Exception flushed = Utils.flush(new Flushable() {
       public void flush() throws IOException {
       }
     });
     assertNull(flushed);
     final IOException ioe = new IOException();
-    flushed = Safe.flush(new Flushable() {
+    flushed = Utils.flush(new Flushable() {
       public void flush() throws IOException {
         throw ioe;
       }
     });
     assertSame(ioe, flushed);
     final RuntimeException re = new RuntimeException();
-    flushed = Safe.flush(new Flushable() {
+    flushed = Utils.flush(new Flushable() {
       public void flush() throws IOException {
         throw re;
       }
@@ -83,7 +83,7 @@ public class SafeTestCase extends TestCase {
     assertSame(re, flushed);
     final Error thrown = new Error();
     try {
-      Safe.flush(new Flushable() {
+      Utils.flush(new Flushable() {
         public void flush() throws IOException {
           throw thrown;
         }

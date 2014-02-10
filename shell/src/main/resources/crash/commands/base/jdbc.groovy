@@ -21,6 +21,8 @@ package crash.commands.base
 
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
+import org.crsh.util.Utils
+
 import java.sql.Statement
 import org.crsh.cli.Argument
 import java.sql.ResultSet
@@ -32,7 +34,6 @@ import org.crsh.command.ScriptException
 import org.crsh.cli.Option
 import java.lang.reflect.InvocationTargetException
 import org.crsh.command.InvocationContext
-import org.crsh.util.Safe
 import java.sql.DatabaseMetaData
 import org.crsh.text.ui.UIBuilder
 import org.crsh.cli.spi.Completer
@@ -122,7 +123,7 @@ class jdbc implements Completer{
     } catch (NoInitialContextException e) {
       throw new ScriptException("No initial context found", e)
     } finally {
-      Safe.close(ctx);
+      Utils.close(ctx);
     }
   }
 
@@ -150,7 +151,7 @@ class jdbc implements Completer{
         return "Statement executed successfully\n";
       }
       finally {
-        Safe.close(stmt);
+        Utils.close(stmt);
       }
     }
   }
@@ -190,11 +191,11 @@ class jdbc implements Completer{
           e.printStackTrace()
         }
         finally {
-          Safe.close(resultSet)
+          Utils.close(resultSet)
         }
       }
       finally {
-        Safe.close(stmt);
+        Utils.close(stmt);
       }
     }
   }
@@ -242,7 +243,7 @@ class jdbc implements Completer{
       }
     }
     finally {
-      Safe.close(rs)
+      Utils.close(rs)
     }
     return ui;
   }
@@ -279,7 +280,7 @@ class jdbc implements Completer{
             }
           }
         } finally {
-          Safe.close(rs)
+          Utils.close(rs)
         }
       }
     }

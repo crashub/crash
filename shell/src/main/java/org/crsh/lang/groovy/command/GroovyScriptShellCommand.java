@@ -32,7 +32,7 @@ import org.crsh.command.RuntimeContext;
 import org.crsh.command.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.text.RenderPrintWriter;
-import org.crsh.util.Strings;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -70,7 +70,7 @@ public class GroovyScriptShellCommand<C extends GroovyScriptCommand> implements 
   }
 
   public final CommandInvoker<?, ?> resolveInvoker(String line) throws CommandCreationException {
-    List<String> chunks = Strings.chunks(line);
+    List<String> chunks = Utils.chunks(line);
     String[] args = chunks.toArray(new String[chunks.size()]);
     return getInvoker(args);
   }

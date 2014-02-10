@@ -16,10 +16,49 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.util;
+package org.crsh.jcr;
 
-public interface FutureListener<V> {
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-  void completed(V value);
+public class BytesOutputStream extends ByteArrayOutputStream {
 
+  /** . */
+  private boolean closed;
+
+  public BytesOutputStream() {
+  }
+
+  public BytesOutputStream(int size) {
+    super(size);
+  }
+
+  public InputStream getInputStream() {
+    if (!closed) {
+      throw new IllegalStateException("Not yet closed");
+    }
+    return new InputStream() {
+
+      /** . */
+      int read = 0;
+
+      @Override
+      public int read() throws IOException {
+        if (read < count) {
+          return buf[read++];
+        } else {
+          return -1;
+        }
+      }
+    };
+  }
+
+  @Override
+  public void close() throws IOException {
+    super.close();
+
+    //
+    closed = true;
+  }
 }

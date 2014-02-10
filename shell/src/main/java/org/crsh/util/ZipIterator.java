@@ -74,8 +74,8 @@ public abstract class ZipIterator implements Closeable {
               }
               @Override
               public void close() throws IOException {
-                Safe.close(nested);
-                Safe.close(container);
+                Utils.close(nested);
+                Utils.close(container);
               }
               @Override
               public synchronized void mark(int readlimit) {
@@ -105,7 +105,7 @@ public abstract class ZipIterator implements Closeable {
         // otherwise it will be the responsibility of the caller to close the zip
         // with the wrapper that will close both the container and the nested zip
         if (zip != null) {
-          Safe.close(container);
+          Utils.close(container);
         }
       }
     } else {

@@ -29,7 +29,7 @@ import org.crsh.plugin.WebPluginLifeCycle;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.ShellProcess;
-import org.crsh.util.Strings;
+import org.crsh.util.Utils;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -169,7 +169,7 @@ public class CRaSHConnector {
                 values.add(sb.toString());
               }
               else {
-                String commonCompletion = Strings.findLongestCommonPrefix(completions.getValues());
+                String commonCompletion = Utils.findLongestCommonPrefix(completions.getValues());
                 if (commonCompletion.length() > 0) {
                   delimiter.escape(commonCompletion, sb);
                   values.add(sb.toString());

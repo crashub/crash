@@ -32,7 +32,7 @@ import org.crsh.term.Term;
 import org.crsh.term.TermEvent;
 import org.crsh.text.Text;
 import org.crsh.util.CloseableList;
-import org.crsh.util.Strings;
+import org.crsh.util.Utils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -373,7 +373,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
           buffer.append(completion.getDelimiter().getValue());
         }
       } else {
-        String commonCompletion = Strings.findLongestCommonPrefix(completions.getValues());
+        String commonCompletion = Utils.findLongestCommonPrefix(completions.getValues());
 
         // Format stuff
         int width = term.getWidth();

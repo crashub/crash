@@ -19,7 +19,7 @@
 
 package org.crsh.vfs;
 
-import org.crsh.util.IO;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -46,7 +46,7 @@ public class Resource {
     URLConnection conn = url.openConnection();
     this.name = name;
     this.timestamp = conn.getLastModified();
-    this.content = IO.readAsBytes(conn.getInputStream());
+    this.content = Utils.readAsBytes(conn.getInputStream());
   }
 
   public String getName() {

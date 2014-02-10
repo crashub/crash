@@ -20,7 +20,7 @@
 package org.crsh.vfs;
 
 import junit.framework.TestCase;
-import org.crsh.util.IO;
+import org.crsh.util.Utils;
 import org.crsh.vfs.spi.ram.RAMDriver;
 import org.crsh.vfs.spi.url.Node;
 import org.crsh.vfs.spi.url.URLDriver;
@@ -125,7 +125,7 @@ public class FSTestCase extends TestCase {
     Iterator<InputStream> in = driver.open(foo_jar);
     assertNotNull(in);
     assertTrue(in.hasNext());
-    byte[] bytes = IO.readAsBytes(in.next());
+    byte[] bytes = Utils.readAsBytes(in.next());
     assertFalse(in.hasNext());
 
     //
@@ -139,7 +139,7 @@ public class FSTestCase extends TestCase {
     in = driver.open(FSTestCase_class);
     assertNotNull(in);
     assertTrue(in.hasNext());
-    bytes = IO.readAsBytes(in.next());
+    bytes = Utils.readAsBytes(in.next());
     assertFalse(in.hasNext());
   }
 
@@ -178,7 +178,7 @@ public class FSTestCase extends TestCase {
     assertNotNull(foo);
     Iterator<InputStream> in = driver.open(foo);
     assertTrue(in.hasNext());
-    String file = IO.readAsUTF8(in.next());
+    String file = Utils.readAsUTF8(in.next());
     assertFalse(in.hasNext());
     assertEquals("bar", file);
   }

@@ -20,7 +20,6 @@ package org.crsh.mail;
 
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
-import org.crsh.util.Strings;
 import org.crsh.util.Utils;
 
 import javax.activation.DataHandler;
@@ -162,7 +161,7 @@ public class MailPlugin extends CRaSHPlugin<MailPlugin> {
       final DataSource... attachments) throws MessagingException {
 
     //
-    final InternetAddress[] addresses = InternetAddress.parse(Strings.join(recipients, ","));
+    final InternetAddress[] addresses = InternetAddress.parse(Utils.join(recipients, ","));
 
     //
     Callable<Boolean> f = (new Callable<Boolean>() {

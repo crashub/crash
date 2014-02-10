@@ -63,9 +63,9 @@ public abstract class AbstractSocketClient implements Closeable {
 
   public final void close() {
     try {
-      Safe.close(socket);
-      Safe.close(in);
-      Safe.close(out);
+      Utils.close(socket);
+      Utils.close(in);
+      Utils.close(out);
     }
     finally {
       this.socket = null;

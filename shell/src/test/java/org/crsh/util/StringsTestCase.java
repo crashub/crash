@@ -24,12 +24,12 @@ import junit.framework.TestCase;
 public class StringsTestCase extends TestCase {
 
   public void testFoo() {
-    assertEquals("", Strings.findLongestCommonPrefix(""));
-    assertEquals("a", Strings.findLongestCommonPrefix("a"));
-    assertEquals("a", Strings.findLongestCommonPrefix("a", "a"));
-    assertEquals("ab", Strings.findLongestCommonPrefix("ab"));
-    assertEquals("ab", Strings.findLongestCommonPrefix("ab", "ab"));
-    assertEquals("a", Strings.findLongestCommonPrefix("ab", "ac"));
-    assertEquals("", Strings.findLongestCommonPrefix("a", "b"));
+    assertEquals("", Utils.findLongestCommonPrefix(""));
+    assertEquals("a", Utils.findLongestCommonPrefix("a"));
+    assertEquals("a", Utils.findLongestCommonPrefix("a", "a"));
+    assertEquals("ab", Utils.findLongestCommonPrefix("ab"));
+    assertEquals("ab", Utils.findLongestCommonPrefix("ab", "ab"));
+    assertEquals("a", Utils.findLongestCommonPrefix("ab", "ac"));
+    assertEquals("", Utils.findLongestCommonPrefix("a", "b"));
   }
 }

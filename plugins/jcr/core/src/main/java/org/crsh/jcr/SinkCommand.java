@@ -18,7 +18,7 @@
  */
 package org.crsh.jcr;
 
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -50,7 +50,7 @@ public class SinkCommand extends SCPCommand implements Runnable {
           session.getWorkspace().importXML(path, data, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
         }
         catch (RepositoryException e) {
-          Safe.rethrow(IOException.class, e);
+          Utils.rethrow(IOException.class, e);
         }
       }
       public void endDirectory(String directoryName) throws IOException {

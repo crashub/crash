@@ -26,7 +26,7 @@ import org.crsh.text.Chunk;
 import org.crsh.text.Color;
 import org.crsh.text.Style;
 import org.crsh.text.Text;
-import org.crsh.util.Safe;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -63,7 +63,7 @@ public class WSProcessContext implements ShellProcessContext {
   public void end(ShellResponse response) {
     CRaSHConnector.log.fine("Ended \"" + command + "\"");
     session.current.compareAndSet(this, null);
-    Safe.flush(this);
+    Utils.flush(this);
     String msg = response.getMessage();
     if (msg.length() > 0) {
       session.send("print", msg);

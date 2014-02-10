@@ -27,7 +27,7 @@ import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ShellFactory;
-import org.crsh.util.Strings;
+import org.crsh.util.Utils;
 import org.crsh.vfs.Resource;
 
 import java.io.BufferedReader;
@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -229,8 +228,8 @@ public class CronPlugin extends CRaSHPlugin<CronPlugin> implements TaskCollector
     }
 
     //
-    String schedulePart = Strings.join(cronLineParts.subList(0, 5), " ");
-    String commandPart = Strings.join(cronLineParts.subList(5, cronLineParts.size()), " ");
+    String schedulePart = Utils.join(cronLineParts.subList(0, 5), " ");
+    String commandPart = Utils.join(cronLineParts.subList(5, cronLineParts.size()), " ");
 
     try {
       return new CRaSHTaskDef(new SchedulingPattern(schedulePart), commandPart);
