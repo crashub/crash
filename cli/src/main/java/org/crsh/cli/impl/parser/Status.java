@@ -154,7 +154,22 @@ abstract class Status {
             }
           } else {
             OptionDescriptor desc = req.command.findOption(literal.getValue());
-            if (desc != null) {
+            CommandDescriptor<T> m = req.command.getSubordinate(req.mainName);
+            if (m != null) {
+              // First try the subordinate, because it might override some of the options
+              desc = m.findOption(literal.getValue());
+              if (desc != null) {
+                response.command = m;
+                response.add(new Event.Subordinate.Implicit(m, literal));
+              } else {
+                if (req.command.getOptionNames().size() == 0) {
+                  response.command = m;
+                  response.add(new Event.Subordinate.Implicit(m, literal));
+                } else {
+                  response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
+                }
+              }
+            } else if (desc != null) {
               req.tokenizer.next();
               int arity = desc.getArity();
               LinkedList<Token.Literal.Word> values = new LinkedList<Token.Literal.Word>();
@@ -186,25 +201,7 @@ abstract class Status {
               }
               response.add(new Event.Option(req.command, desc, optionToken, values));
             } else {
-              // We are reading an unknown option
-              // it could match an option of an implicit command
-              CommandDescriptor<T> m = req.command.getSubordinate(req.mainName);
-              if (m != null) {
-                desc = m.findOption(literal.getValue());
-                if (desc != null) {
-                  response.command = m;
-                  response.add(new Event.Subordinate.Implicit(m, literal));
-                } else {
-                  if (req.command.getOptionNames().size() == 0) {
-                    response.command = m;
-                    response.add(new Event.Subordinate.Implicit(m, literal));
-                  } else {
-                    response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
-                  }
-                }
-              } else {
-                response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
-              }
+              response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
             }
           }
         } else {
