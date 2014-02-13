@@ -21,7 +21,7 @@ package org.crsh.text.renderers;
 
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
-import org.crsh.text.Renderable;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Renderer;
 import org.crsh.text.ui.LabelElement;
 import org.crsh.text.ui.Overflow;
@@ -39,7 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ThreadRenderable extends Renderable<Thread> {
+public class ThreadRenderer extends Renderer<Thread> {
 
   /** . */
   private static final EnumMap<Thread.State, Color> colorMapping = new EnumMap<Thread.State, Color>(Thread.State.class);
@@ -59,7 +59,7 @@ public class ThreadRenderable extends Renderable<Thread> {
   }
 
   @Override
-  public Renderer renderer(Iterator<Thread> stream) {
+  public LineRenderer renderer(Iterator<Thread> stream) {
 
     //
     ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();

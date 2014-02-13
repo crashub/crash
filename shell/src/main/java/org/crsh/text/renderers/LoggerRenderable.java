@@ -21,7 +21,7 @@ package org.crsh.text.renderers;
 
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
-import org.crsh.text.Renderable;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Renderer;
 import org.crsh.text.ui.LabelElement;
 import org.crsh.text.ui.RowElement;
@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoggerRenderable extends Renderable<Logger> {
+public class LoggerRenderable extends Renderer<Logger> {
 
   @Override
   public Class<Logger> getType() {
@@ -39,7 +39,7 @@ public class LoggerRenderable extends Renderable<Logger> {
   }
 
   @Override
-  public Renderer renderer(Iterator<Logger> stream) {
+  public LineRenderer renderer(Iterator<Logger> stream) {
     TableElement table = new TableElement();
 
     // Header

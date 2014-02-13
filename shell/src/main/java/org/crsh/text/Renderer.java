@@ -19,225 +19,76 @@
 
 package org.crsh.text;
 
+import org.crsh.text.ui.LabelElement;
+
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
 
 /**
- * Something that can be rendered within a context.
+ * Provide a renderable.
  */
-public abstract class Renderer {
+public abstract class Renderer<E> {
 
-  public static final Renderer NULL = new Renderer() {
-    @Override
-    public int getActualWidth() {
-      return 0;
+  /** . */
+  private static final Renderer<?>[] renderables;
+
+  static {
+    ArrayList<Renderer<?>> tmp = new ArrayList<Renderer<?>>();
+    Iterator<Renderer> i = ServiceLoader.load(Renderer.class).iterator();
+    while (i.hasNext()) {
+      try {
+        Renderer renderable = i.next();
+        tmp.add(renderable);
+      }
+      catch (ServiceConfigurationError e) {
+        // Config error
+      }
     }
+    renderables = tmp.toArray(new Renderer<?>[tmp.size()]);
+  }
+
+  public static Renderer<Object> ANY = new Renderer<Object>() {
     @Override
-    public int getMinWidth() {
-      return 0;
+    public Class<Object> getType() {
+      return Object.class;
     }
+
     @Override
-    public int getMinHeight(int width) {
-      return 0;
-    }
-    @Override
-    public int getActualHeight(int width) {
-      return 0;
-    }
-    @Override
-    public LineReader reader(int width) {
-      return new LineReader() {
-        public boolean hasLine() {
-          return false;
+    public LineRenderer renderer(Iterator<Object> stream) {
+      StringBuilder sb = new StringBuilder();
+      while (stream.hasNext()) {
+        Object next = stream.next();
+        if (next instanceof Chunk) {
+          if (next instanceof Text) {
+            sb.append(((Text)next).value);
+          }
+        } else {
+          sb.append(next);
         }
-        public void renderLine(RenderAppendable to) throws IllegalStateException {
-          throw new IllegalStateException();
-        }
-      };
+      }
+      return new LabelElement(sb.toString()).renderer();
     }
   };
 
-  public static Renderer vertical(Iterable<? extends Renderer> renderers) {
-    Iterator<? extends Renderer> i = renderers.iterator();
-    if (i.hasNext()) {
-      Renderer renderer = i.next();
-      if (i.hasNext()) {
-        return new Composite(renderers);
-      } else {
-        return renderer;
-      }
-    } else {
-      return NULL;
-    }
-  }
-
-  /**
-   * Returns the element actual width.
-   *
-   * @return the actual width
-   */
-  public abstract int getActualWidth();
-
-  /**
-   * Returns the element minimum width.
-   *
-   * @return the minimum width
-   */
-  public abstract int getMinWidth();
-
-  /**
-   * Return the minimum height for the specified with.
-   *
-   * @param width the width
-   * @return the actual height
-   */
-  public abstract int getMinHeight(int width);
-
-  /**
-   * Return the actual height for the specified with.
-   *
-   * @param width the width
-   * @return the minimum height
-   */
-  public abstract int getActualHeight(int width);
-
-  /**
-   * Create a renderer for the specified width and height or return null if the element does not provide any output
-   * for the specified dimensions. The default implementation delegates to the {@link #reader(int)} method when the
-   * <code>height</code> argument is not positive otherwise it returns null. Subclasses should override this method
-   * when they want to provide content that can adapts to the specified height.
-   *
-   * @param width the width
-   * @param height the height
-   * @return the renderer
-   */
-  public LineReader reader(int width, int height) {
-    if (height > 0) {
-      return null;
-    } else {
-      return reader(width);
-    }
-  }
-
-  /**
-   * Create a renderer for the specified width or return null if the element does not provide any output.
-   *
-   * @param width the width
-   * @return the renderer
-   */
-  public abstract LineReader reader(int width);
-
-  /**
-   * Renders this object to the provided output.
-   *
-   * @param out the output
-   */
-  public final void render(RenderAppendable out) {
-    LineReader renderer = reader(out.getWidth());
-    if (renderer != null) {
-      while (renderer.hasLine()) {
-        renderer.renderLine(out);
-        out.append('\n');
-      }
-    }
-  }
-
-  private static class Composite extends Renderer {
-
-    /** . */
-    private final Iterable<? extends Renderer> renderers;
-
-    /** . */
-    private final int actualWidth;
-
-    /** . */
-    private final int minWidth;
-
-    private Composite(Iterable<? extends Renderer> renderers) {
-
-      int actualWidth = 0;
-      int minWidth = 0;
-      for (Renderer renderer : renderers) {
-        actualWidth = Math.max(actualWidth, renderer.getActualWidth());
-        minWidth = Math.max(minWidth, renderer.getMinWidth());
-      }
-
-      this.actualWidth = actualWidth;
-      this.minWidth = minWidth;
-      this.renderers = renderers;
-    }
-
-    @Override
-    public int getActualWidth() {
-      return actualWidth;
-    }
-
-    @Override
-    public int getMinWidth() {
-      return minWidth;
-    }
-
-    @Override
-    public int getActualHeight(int width) {
-      int actualHeight = 0;
-      for (Renderer renderer : renderers) {
-        actualHeight += renderer.getActualHeight(width);
-      }
-      return actualHeight;
-    }
-
-    @Override
-    public int getMinHeight(int width) {
-      return 1;
-    }
-
-    @Override
-    public LineReader reader(final int width, final int height) {
-
-      final Iterator<? extends Renderer> i = renderers.iterator();
-
-      //
-      return new LineReader() {
-
-        /** . */
-        private LineReader current;
-
-        /** . */
-        private int index = 0;
-
-        public boolean hasLine() {
-          if (height > 0 && index >= height) {
-            return false;
-          } else {
-            if (current == null || !current.hasLine()) {
-              while (i.hasNext()) {
-                Renderer next = i.next();
-                LineReader reader = next.reader(width);
-                if (reader != null && reader.hasLine()) {
-                  current = reader;
-                  return true;
-                }
-              }
-              return false;
-            } else {
-              return true;
-            }
-          }
+  public static <I> Renderer<? super I> getRenderable(Class<I> itemType) {
+    for (Renderer<?> formatter : renderables) {
+      try {
+        if (formatter.getType().isAssignableFrom(itemType)) {
+          return (Renderer<I>)formatter;
         }
-
-        public void renderLine(RenderAppendable to) throws IllegalStateException {
-          if (hasLine()) {
-            current.renderLine(to);
-            index++;
-          } else {
-            throw new IllegalStateException();
-          }
-        }
-      };
+      }
+      catch (Exception e) {
+      }
+      catch (NoClassDefFoundError e) {
+      }
     }
-
-    @Override
-    public LineReader reader(final int width) {
-      return reader(width, -1);
-    }
+    return null;
   }
+
+  public abstract Class<E> getType();
+
+  public abstract LineRenderer renderer(Iterator<E> stream);
+
 }

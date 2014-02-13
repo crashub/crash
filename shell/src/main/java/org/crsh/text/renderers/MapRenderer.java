@@ -21,7 +21,7 @@ package org.crsh.text.renderers;
 
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
-import org.crsh.text.Renderable;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Renderer;
 import org.crsh.text.ui.LabelElement;
 import org.crsh.text.ui.RowElement;
@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-public class MapRenderable extends Renderable<Map<?, ?>> {
+public class MapRenderer extends Renderer<Map<?, ?>> {
 
   @Override
   public Class<Map<?, ?>> getType() {
@@ -41,13 +41,13 @@ public class MapRenderable extends Renderable<Map<?, ?>> {
   }
 
   @Override
-  public Renderer renderer(Iterator<Map<?, ?>> stream) {
+  public LineRenderer renderer(Iterator<Map<?, ?>> stream) {
 
     TableElement table = new TableElement();
     LinkedHashSet<String> current = new LinkedHashSet<String>();
     LinkedHashSet<String> bilto = new LinkedHashSet<String>();
 
-    ArrayList<Renderer> renderers = new ArrayList<Renderer>();
+    ArrayList<LineRenderer> renderers = new ArrayList<LineRenderer>();
 
     while (stream.hasNext()) {
 
@@ -91,6 +91,6 @@ public class MapRenderable extends Renderable<Map<?, ?>> {
     }
 
     //
-    return Renderer.vertical(renderers);
+    return LineRenderer.vertical(renderers);
   }
 }

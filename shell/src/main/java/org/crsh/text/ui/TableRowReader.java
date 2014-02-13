@@ -25,13 +25,13 @@ import org.crsh.text.RenderAppendable;
 class TableRowReader implements LineReader {
 
   /** . */
-  private final TableRowRenderer renderer;
+  private final TableRowLineRenderer renderer;
 
   /** . */
   private final int[] widths;
 
   /** . */
-  private final RowRenderer row;
+  private final RowLineRenderer row;
 
   /** . */
   private LineReader reader;
@@ -59,7 +59,7 @@ class TableRowReader implements LineReader {
    */
   private int status;
 
-  TableRowReader(TableRowRenderer renderer, RowRenderer row, int[] widths, int height) {
+  TableRowReader(TableRowLineRenderer renderer, RowLineRenderer row, int[] widths, int height) {
 
     //
     this.renderer = renderer;

@@ -21,14 +21,11 @@ package org.crsh.text;
 
 import org.crsh.shell.ScreenContext;
 import org.crsh.text.ui.Element;
-import org.crsh.text.ui.UIBuilder;
-import org.crsh.text.ui.UIBuilderRenderable;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.PrintWriter;
-import java.util.Collections;
 
 public class RenderPrintWriter extends PrintWriter {
 

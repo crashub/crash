@@ -20,25 +20,25 @@
 package org.crsh.text.ui;
 
 import org.crsh.text.LineReader;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.RenderAppendable;
-import org.crsh.text.Renderer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-class TreeRenderer extends Renderer {
+class TreeLineRenderer extends LineRenderer {
 
   /** . */
-  private final Renderer value;
+  private final LineRenderer value;
 
   /** . */
-  private final List<Renderer> children;
+  private final List<LineRenderer> children;
 
-  TreeRenderer(TreeElement tree) {
+  TreeLineRenderer(TreeElement tree) {
 
-    ArrayList<Renderer> children = new ArrayList<Renderer>(tree.children.size());
+    ArrayList<LineRenderer> children = new ArrayList<LineRenderer>(tree.children.size());
     for (Element child : tree.children) {
       children.add(child.renderer());
     }
@@ -51,7 +51,7 @@ class TreeRenderer extends Renderer {
   @Override
   public int getActualWidth() {
     int width = value != null ? value.getActualWidth() : 0;
-    for (Renderer child : children) {
+    for (LineRenderer child : children) {
       width = Math.max(width, 2 + child.getActualWidth());
     }
     return width;
@@ -60,7 +60,7 @@ class TreeRenderer extends Renderer {
   @Override
   public int getMinWidth() {
     int width = value != null ? value.getMinWidth() : 0;
-    for (Renderer child : children) {
+    for (LineRenderer child : children) {
       width = Math.max(width, 2 + child.getMinWidth());
     }
     return width;
@@ -81,7 +81,7 @@ class TreeRenderer extends Renderer {
 
 
     final LinkedList<LineReader> readers  = new LinkedList<LineReader>();
-    for (Renderer child : children) {
+    for (LineRenderer child : children) {
       readers.addLast(child.reader(width - 2));
     }
 
@@ -89,7 +89,7 @@ class TreeRenderer extends Renderer {
     return new LineReader() {
 
       /** . */
-      LineReader value = TreeRenderer.this.value != null ? TreeRenderer.this.value.reader(width) : null;
+      LineReader value = TreeLineRenderer.this.value != null ? TreeLineRenderer.this.value.reader(width) : null;
 
       /** . */
       boolean node = true;

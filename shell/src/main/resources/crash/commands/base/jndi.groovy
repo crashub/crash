@@ -22,8 +22,8 @@ package crash.commands.base
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
-import org.crsh.text.renderers.BindingRenderable
 import org.crsh.cli.Option
+import org.crsh.text.renderers.BindingRenderer
 import org.crsh.util.JNDIHandler
 
 /**
@@ -35,7 +35,7 @@ class jndi {
     @Usage("List JNDI resources")
     @Command
     void find(
-            InvocationContext<BindingRenderable.BindingData> context,
+            InvocationContext<BindingRenderer.BindingData> context,
             @Usage("Filter displayed resources using FQN type'") @Option(names=["f","filter"]) List<String> filters,
             @Usage("Filter displayed resources using name'") @Option(names=["n","name"]) String name,
             @Usage("Display resource type'") @Option(names=["v", "verbose"]) Boolean verbose,

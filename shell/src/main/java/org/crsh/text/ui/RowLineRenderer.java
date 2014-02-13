@@ -20,18 +20,18 @@
 package org.crsh.text.ui;
 
 import org.crsh.text.LineReader;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.RenderAppendable;
-import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class RowRenderer extends Renderer {
+class RowLineRenderer extends LineRenderer {
 
   /** . */
-  private final List<Renderer> cols;
+  private final List<LineRenderer> cols;
 
   /** . */
   private final Style.Composite style;
@@ -45,9 +45,9 @@ class RowRenderer extends Renderer {
   /** . */
   private final BorderStyle separator;
 
-  RowRenderer(RowElement row, BorderStyle separator, int leftCellPadding, int rightCellPadding) {
+  RowLineRenderer(RowElement row, BorderStyle separator, int leftCellPadding, int rightCellPadding) {
 
-    List<Renderer> cols = new ArrayList<Renderer>(row.cols.size());
+    List<LineRenderer> cols = new ArrayList<LineRenderer>(row.cols.size());
     for (Element col : row.cols) {
       cols.add(col.renderer());
     }
@@ -64,7 +64,7 @@ class RowRenderer extends Renderer {
     return cols.size();
   }
 
-  public List<Renderer> getCols() {
+  public List<LineRenderer> getCols() {
     return cols;
   }
 
@@ -72,7 +72,7 @@ class RowRenderer extends Renderer {
   public int getActualWidth() {
     int actualWidth = 0;
     for (int i = 0;i < cols.size();i++) {
-      Renderer col = cols.get(i);
+      LineRenderer col = cols.get(i);
       actualWidth += col.getActualWidth();
       actualWidth += leftCellPadding;
       actualWidth += rightCellPadding;
@@ -87,7 +87,7 @@ class RowRenderer extends Renderer {
   public int getMinWidth() {
     int minWidth = 0;
     for (int i = 0;i < cols.size();i++) {
-      Renderer col = cols.get(i);
+      LineRenderer col = cols.get(i);
       minWidth += col.getMinWidth();
       minWidth += leftCellPadding;
       minWidth += rightCellPadding;
@@ -101,7 +101,7 @@ class RowRenderer extends Renderer {
   @Override
   public int getActualHeight(int width) {
     int actualHeight = 0;
-    for (Renderer col : cols) {
+    for (LineRenderer col : cols) {
       actualHeight = Math.max(actualHeight, col.getActualHeight(width));
     }
     return actualHeight;
@@ -110,7 +110,7 @@ class RowRenderer extends Renderer {
   @Override
   public int getMinHeight(int width) {
     int minHeight = 0;
-    for (Renderer col : cols) {
+    for (LineRenderer col : cols) {
       minHeight = Math.max(minHeight, col.getMinHeight(width));
     }
     return minHeight;
@@ -124,7 +124,7 @@ class RowRenderer extends Renderer {
   LineReader renderer(final int[] widths, int height) {
     final LineReader[] readers = new LineReader[widths.length];
     for (int i = 0;i < readers.length;i++) {
-      Renderer renderer = cols.get(i);
+      LineRenderer renderer = cols.get(i);
       LineReader reader = renderer.reader(widths[i] - leftCellPadding - rightCellPadding, height);
       readers[i] = reader;
     }
@@ -208,7 +208,7 @@ class RowRenderer extends Renderer {
     int[] widths = new int[cols.size()];
     int[] minWidths = new int[cols.size()];
     for (int i = 0;i < cols.size();i++) {
-      Renderer renderable = cols.get(i);
+      LineRenderer renderable = cols.get(i);
       widths[i] = Math.max(widths[i], renderable.getActualWidth());
       minWidths[i] = Math.max(minWidths[i], renderable.getMinWidth());
     }

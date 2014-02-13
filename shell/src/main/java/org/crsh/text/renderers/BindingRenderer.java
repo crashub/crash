@@ -18,7 +18,7 @@
  */
 package org.crsh.text.renderers;
 
-import org.crsh.text.Renderable;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Renderer;
 import org.crsh.text.ui.LabelElement;
 import org.crsh.text.ui.RowElement;
@@ -29,7 +29,7 @@ import java.util.Iterator;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class BindingRenderable extends Renderable<BindingRenderable.BindingData> {
+public class BindingRenderer extends Renderer<BindingRenderer.BindingData> {
   
   @Override
   public Class<BindingData> getType() {
@@ -37,7 +37,7 @@ public class BindingRenderable extends Renderable<BindingRenderable.BindingData>
   }
 
   @Override
-  public Renderer renderer(Iterator<BindingData> stream) {
+  public LineRenderer renderer(Iterator<BindingData> stream) {
 
     TableElement table = new TableElement();
     table.setRightCellPadding(1);

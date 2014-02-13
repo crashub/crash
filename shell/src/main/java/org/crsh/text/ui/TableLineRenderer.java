@@ -20,14 +20,14 @@
 package org.crsh.text.ui;
 
 import org.crsh.text.LineReader;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.RenderAppendable;
-import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class TableRenderer extends Renderer {
+class TableLineRenderer extends LineRenderer {
 
   /** . */
   final Layout columnLayout;
@@ -54,12 +54,12 @@ class TableRenderer extends Renderer {
   final int rightCellPadding;
 
   /** . */
-  private TableRowRenderer head;
+  private TableRowLineRenderer head;
 
   /** . */
-  private TableRowRenderer tail;
+  private TableRowLineRenderer tail;
 
-  TableRenderer(TableElement table) {
+  TableLineRenderer(TableElement table) {
     this.rowLayout = table.getRowLayout();
     this.columnLayout = table.getColumnLayout();
     this.border = table.getBorder();
@@ -72,16 +72,16 @@ class TableRenderer extends Renderer {
     //
     for (RowElement row : table.getRows()) {
       if (head == null) {
-        head = tail = new TableRowRenderer(this, row);
+        head = tail = new TableRowLineRenderer(this, row);
       } else {
-        tail = tail.add(new TableRowRenderer(this, row));
+        tail = tail.add(new TableRowLineRenderer(this, row));
       }
     }
   }
 
   private int getMaxColSize() {
     int n = 0;
-    for (TableRowRenderer row = head;row != null;row = row.next()) {
+    for (TableRowLineRenderer row = head;row != null;row = row.next()) {
       n = Math.max(n, row.getColsSize());
     }
     return n;
@@ -90,7 +90,7 @@ class TableRenderer extends Renderer {
   @Override
   public int getMinWidth() {
     int minWidth = 0;
-    for (TableRowRenderer row = head;row != null;row = row.next()) {
+    for (TableRowLineRenderer row = head;row != null;row = row.next()) {
       minWidth = Math.max(minWidth, row.getMinWidth());
     }
     return minWidth + (border != null ? 2 : 0);
@@ -99,7 +99,7 @@ class TableRenderer extends Renderer {
   @Override
   public int getActualWidth() {
     int actualWidth = 0;
-    for (TableRowRenderer row = head;row != null;row = row.next()) {
+    for (TableRowLineRenderer row = head;row != null;row = row.next()) {
       actualWidth = Math.max(actualWidth, row.getActualWidth());
     }
     return actualWidth + (border != null ? 2 : 0);
@@ -111,7 +111,7 @@ class TableRenderer extends Renderer {
       width -= 2;
     }
     int actualHeight = 0;
-    for (TableRowRenderer row = head;row != null;row = row.next()) {
+    for (TableRowLineRenderer row = head;row != null;row = row.next()) {
       actualHeight += row.getActualHeight(width);
     }
     if (border != null) {
@@ -138,9 +138,9 @@ class TableRenderer extends Renderer {
     int[] eltMinWidths = new int[len];
 
     // Compute each column as is
-    for (TableRowRenderer row = head;row != null;row = row.next()) {
+    for (TableRowLineRenderer row = head;row != null;row = row.next()) {
       for (int i = 0;i < row.getCols().size();i++) {
-        Renderer renderable = row.getCols().get(i);
+        LineRenderer renderable = row.getCols().get(i);
         eltWidths[i] = Math.max(eltWidths[i], renderable.getActualWidth() + row.row.leftCellPadding + row.row.rightCellPadding);
         eltMinWidths[i] = Math.max(eltMinWidths[i], renderable.getMinWidth() + row.row.leftCellPadding + row.row.rightCellPadding);
       }
@@ -172,7 +172,7 @@ class TableRenderer extends Renderer {
         int size = tail.getSize();
         int[] actualHeights = new int[size];
         int[] minHeights = new int[size];
-        for (TableRowRenderer row = head;row != null;row = row.next()) {
+        for (TableRowLineRenderer row = head;row != null;row = row.next()) {
           actualHeights[row.getIndex()] = row.getActualHeight(widths);
           minHeights[row.getIndex()] = row.getMinHeight(widths);
         }
@@ -207,7 +207,7 @@ class TableRenderer extends Renderer {
 
         {
           // Add all rows
-          for (TableRowRenderer row = head;row != null;row = row.next()) {
+          for (TableRowLineRenderer row = head;row != null;row = row.next()) {
             if (row.getIndex() < heights.length) {
               int[] what;
               if (row.getColsSize() == widths.length) {
@@ -372,7 +372,7 @@ class TableRenderer extends Renderer {
         }
       };
     } else {
-      return Renderer.NULL.reader(width);
+      return LineRenderer.NULL.reader(width);
     }
   }
 }

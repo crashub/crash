@@ -22,9 +22,10 @@ package crash.commands.base
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
+
 import javax.naming.InitialContext
 import org.crsh.cli.Argument
-import org.crsh.text.renderers.EntityTypeRenderable
+import org.crsh.text.renderers.EntityTypeRenderer
 import org.crsh.cli.spi.Completer
 import org.crsh.cli.spi.Completion
 import org.crsh.cli.descriptor.ParameterDescriptor
@@ -74,15 +75,15 @@ class jpa implements Completer {
 
   @Usage("List JPA entities")
   @Command
-  void entities(InvocationContext<EntityTypeRenderable.EntityTypeData> context) {
+  void entities(InvocationContext<EntityTypeRenderer.EntityTypeData> context) {
     em.metamodel.entities.each { e ->
-      context.provide(new EntityTypeRenderable.EntityTypeData(e.name, e.javaType.name, e.persistenceType.toString()));
+      context.provide(new EntityTypeRenderer.EntityTypeData(e.name, e.javaType.name, e.persistenceType.toString()));
     }
   }
 
   @Usage("Display JPA entity")
   @Command
-  void entity(InvocationContext<EntityTypeRenderable.EntityTypeData> context, @Argument String name) {
+  void entity(InvocationContext<EntityTypeRenderer.EntityTypeData> context, @Argument String name) {
     def en;
       em.metamodel.entities.each { e ->
       if (e.name.equals(name)) {
@@ -93,9 +94,9 @@ class jpa implements Completer {
       throw new ScriptException("${name} is not an entity");
     }
     
-    def etd = new EntityTypeRenderable.EntityTypeData(en.name, en.javaType.name, en.persistenceType.toString(), true)
+    def etd = new EntityTypeRenderer.EntityTypeData(en.name, en.javaType.name, en.persistenceType.toString(), true)
     en.attributes.each { a ->
-      etd.add(new EntityTypeRenderable.AttributeData(a.name, a.javaType.name, a.association, a.collection, a.persistentAttributeType.toString()));
+      etd.add(new EntityTypeRenderer.AttributeData(a.name, a.javaType.name, a.association, a.collection, a.persistentAttributeType.toString()));
     }
     context.provide(etd);
   }

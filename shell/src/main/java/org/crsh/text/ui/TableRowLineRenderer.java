@@ -19,38 +19,38 @@
 
 package org.crsh.text.ui;
 
-import org.crsh.text.Renderer;
+import org.crsh.text.LineRenderer;
 
 import java.util.List;
 
-class TableRowRenderer {
+class TableRowLineRenderer {
 
   /** . */
-  final TableRenderer table;
+  final TableLineRenderer table;
 
   /** . */
-  final RowRenderer row;
+  final RowLineRenderer row;
 
   /** . */
   final boolean header;
 
   /** . */
-  private TableRowRenderer previous;
+  private TableRowLineRenderer previous;
 
   /** . */
-  private TableRowRenderer next;
+  private TableRowLineRenderer next;
 
   /** . */
   private int index;
 
-  TableRowRenderer(TableRenderer table, RowElement row) {
+  TableRowLineRenderer(TableLineRenderer table, RowElement row) {
     this.table = table;
-    this.row = new RowRenderer(row, table.separator, table.leftCellPadding, table.rightCellPadding);
+    this.row = new RowLineRenderer(row, table.separator, table.leftCellPadding, table.rightCellPadding);
     this.header = row.header;
     this.index = 0;
   }
 
-  TableRowRenderer add(TableRowRenderer next) {
+  TableRowLineRenderer add(TableRowLineRenderer next) {
     next.previous = this;
     next.index = index + 1;
     this.next = next;
@@ -73,11 +73,11 @@ class TableRowRenderer {
     return index + 1;
   }
 
-  TableRowRenderer previous() {
+  TableRowLineRenderer previous() {
     return previous;
   }
 
-  TableRowRenderer next() {
+  TableRowLineRenderer next() {
     return next;
   }
 
@@ -89,7 +89,7 @@ class TableRowRenderer {
     return row.getSize();
   }
 
-  List<Renderer> getCols() {
+  List<LineRenderer> getCols() {
     return row.getCols();
   }
 
@@ -131,7 +131,7 @@ class TableRowRenderer {
       case WRAP:
         actualHeight = 0;
         for (int i = 0;i < widths.length;i++) {
-          Renderer col = row.getCols().get(i);
+          LineRenderer col = row.getCols().get(i);
           actualHeight = Math.max(actualHeight, col.getActualHeight(widths[i]));
         }
         break;
@@ -156,7 +156,7 @@ class TableRowRenderer {
       case WRAP:
         minHeight = 0;
         for (int i = 0;i < widths.length;i++) {
-          Renderer col = row.getCols().get(i);
+          LineRenderer col = row.getCols().get(i);
           minHeight = Math.max(minHeight, col.getMinHeight(widths[i]));
         }
         break;

@@ -19,14 +19,14 @@
 
 package org.crsh.shell;
 
-import org.crsh.text.Renderable;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Renderer;
 import org.crsh.text.ui.LabelElement;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class ValueRenderable extends Renderable<Value> {
+public class ValueRenderable extends Renderer<Value> {
 
   @Override
   public Class<Value> getType() {
@@ -34,12 +34,12 @@ public class ValueRenderable extends Renderable<Value> {
   }
 
   @Override
-  public Renderer renderer(Iterator<Value> stream) {
-    ArrayList<Renderer> renderers = new ArrayList<Renderer>();
+  public LineRenderer renderer(Iterator<Value> stream) {
+    ArrayList<LineRenderer> renderers = new ArrayList<LineRenderer>();
     while (stream.hasNext()) {
       Value value = stream.next();
       renderers.add(new LabelElement("<value>" + value.getValue() + "</value>").renderer());
     }
-    return Renderer.vertical(renderers);
+    return LineRenderer.vertical(renderers);
   }
 }

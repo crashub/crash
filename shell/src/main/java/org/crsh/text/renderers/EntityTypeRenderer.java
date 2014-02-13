@@ -19,7 +19,7 @@
 
 package org.crsh.text.renderers;
 
-import org.crsh.text.Renderable;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Renderer;
 import org.crsh.text.ui.*;
 
@@ -28,15 +28,15 @@ import java.util.*;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class EntityTypeRenderable extends Renderable<EntityTypeRenderable.EntityTypeData> {
+public class EntityTypeRenderer extends Renderer<EntityTypeRenderer.EntityTypeData> {
 
   @Override
-  public Class<EntityTypeRenderable.EntityTypeData> getType() {
-    return EntityTypeRenderable.EntityTypeData.class;
+  public Class<EntityTypeRenderer.EntityTypeData> getType() {
+    return EntityTypeRenderer.EntityTypeData.class;
   }
 
   @Override
-  public Renderer renderer(Iterator<EntityTypeRenderable.EntityTypeData> stream) {
+  public LineRenderer renderer(Iterator<EntityTypeRenderer.EntityTypeData> stream) {
 
     TableElement table = new TableElement();
 

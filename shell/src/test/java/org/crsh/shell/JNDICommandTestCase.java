@@ -18,7 +18,7 @@
  */
 package org.crsh.shell;
 
-import org.crsh.text.renderers.BindingRenderable;
+import org.crsh.text.renderers.BindingRenderer;
 
 import javax.naming.Context;
 import java.util.*;
@@ -29,13 +29,13 @@ import java.util.*;
 public class JNDICommandTestCase extends AbstractCommandTestCase {
 
   private String defaultFactory;
-  public static List<BindingRenderable.BindingData> output = new ArrayList<BindingRenderable.BindingData>();
+  public static List<BindingRenderer.BindingData> output = new ArrayList<BindingRenderer.BindingData>();
 
   private final String consume_command = "class consume_command {\n" +
       "@Command\n" +
-      "public org.crsh.command.PipeCommand<org.crsh.text.renderers.BindingRenderable.BindingData, Object> main() {\n" +
-      "return new org.crsh.command.PipeCommand<org.crsh.text.renderers.BindingRenderable.BindingData, Object>() {\n" +
-      "public void provide(org.crsh.text.renderers.BindingRenderable.BindingData element) {\n" +
+      "public org.crsh.command.PipeCommand<org.crsh.text.renderers.BindingRenderer.BindingData, Object> main() {\n" +
+      "return new org.crsh.command.PipeCommand<org.crsh.text.renderers.BindingRenderer.BindingData, Object>() {\n" +
+      "public void provide(org.crsh.text.renderers.BindingRenderer.BindingData element) {\n" +
       "org.crsh.shell.JNDICommandTestCase.output.add(element)\n" +
       "}\n" +
       "}\n" +

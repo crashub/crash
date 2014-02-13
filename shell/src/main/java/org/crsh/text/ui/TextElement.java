@@ -20,7 +20,7 @@
 package org.crsh.text.ui;
 
 import org.crsh.text.Chunk;
-import org.crsh.text.Renderer;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Style;
 import org.crsh.text.Text;
 import org.crsh.util.Utils;
@@ -80,7 +80,7 @@ public class TextElement extends Element {
     this(stream, 1);
   }
 
-  public Renderer renderer() {
+  public LineRenderer renderer() {
     // return new LabelRenderer(this);
     throw new UnsupportedOperationException();
   }

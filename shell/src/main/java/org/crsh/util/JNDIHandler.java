@@ -1,7 +1,7 @@
 package org.crsh.util;
 
 import org.crsh.cli.completers.AbstractPathCompleter;
-import org.crsh.text.renderers.BindingRenderable;
+import org.crsh.text.renderers.BindingRenderer;
 
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -13,14 +13,14 @@ import java.util.regex.Pattern;
 /** @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a> */
 public class JNDIHandler {
 
-  public static List<BindingRenderable.BindingData> lookup(List<String> filters, String name, Boolean verbose) {
+  public static List<BindingRenderer.BindingData> lookup(List<String> filters, String name, Boolean verbose) {
 
     Pattern pattern = null;
     if (name != null) {
       pattern = Pattern.compile("^" + Utils.globexToRegex(name) + "$");
     }
 
-    List<BindingRenderable.BindingData> data = new ArrayList<BindingRenderable.BindingData>();
+    List<BindingRenderer.BindingData> data = new ArrayList<BindingRenderer.BindingData>();
 
     data.addAll(get(filters, pattern, verbose, ""));
     data.addAll(get(filters, pattern, verbose, "java:/"));
@@ -34,7 +34,7 @@ public class JNDIHandler {
 
   }
 
-  static List<BindingRenderable.BindingData> get(
+  static List<BindingRenderer.BindingData> get(
       List<String> filters,
       Pattern pattern,
       Boolean verbose,
@@ -43,7 +43,7 @@ public class JNDIHandler {
     return get(filters, pattern, verbose, path, path, null);
   }
 
-  static List<BindingRenderable.BindingData> get(
+  static List<BindingRenderer.BindingData> get(
       List<String> filters,
       Pattern pattern,
       Boolean verbose,
@@ -51,7 +51,7 @@ public class JNDIHandler {
       String search,
       Context ctx) {
 
-    List<BindingRenderable.BindingData> data = new ArrayList<BindingRenderable.BindingData>();
+    List<BindingRenderer.BindingData> data = new ArrayList<BindingRenderer.BindingData>();
 
     try {
       if (ctx == null) {
@@ -72,7 +72,7 @@ public class JNDIHandler {
                 filters.size() == 0 ||
                 TypeResolver.instanceOf(instance.getObject().getClass(), filters)) {
           if (pattern == null || pattern.matcher(fullName).find()) {
-            data.add(new BindingRenderable.BindingData(fullName, instance.getClassName(), instance, verbose));
+            data.add(new BindingRenderer.BindingData(fullName, instance.getClassName(), instance, verbose));
           }
         }
         if (instance.getObject() instanceof Context) {
@@ -91,7 +91,7 @@ public class JNDIHandler {
   public static class JNDICompleter extends AbstractPathCompleter<String> {
 
     private final String[] filters;
-    private List<BindingRenderable.BindingData> bindings;
+    private List<BindingRenderer.BindingData> bindings;
 
     public JNDICompleter(String... filters) {
       this.filters = filters;
@@ -113,7 +113,7 @@ public class JNDIHandler {
       if (path.equals("/") || path.endsWith("/")) {
         return true;
       } else {
-        for (BindingRenderable.BindingData binding : bindings) {
+        for (BindingRenderer.BindingData binding : bindings) {
           if (binding.name.startsWith(path.substring(1) + "/")) {
             return true;
           }
@@ -130,7 +130,7 @@ public class JNDIHandler {
       if (path.startsWith("/")) {
         path = path.substring(1);
       }
-      for (BindingRenderable.BindingData binding : bindings) {
+      for (BindingRenderer.BindingData binding : bindings) {
         if (binding.name.startsWith(path + "/")) {
           return true;
         }
@@ -147,7 +147,7 @@ public class JNDIHandler {
         path = path.substring(1);
       }
       if (path.endsWith("/")) {
-        for (BindingRenderable.BindingData binding : bindings) {
+        for (BindingRenderer.BindingData binding : bindings) {
           if (binding.name.equals(path.substring(0, path.length() - 1))) {
             return true;
           }
@@ -159,7 +159,7 @@ public class JNDIHandler {
     @Override
     protected Collection<String> getChilren(String path) {
       List<String> l = new ArrayList<String>();
-      for (BindingRenderable.BindingData binding : bindings) {
+      for (BindingRenderer.BindingData binding : bindings) {
         if (path.equals("/") || binding.name.startsWith(path.substring(1))) {
           String completion = binding.name.substring(path.substring(1).length());
           if (completion.startsWith("/")) {

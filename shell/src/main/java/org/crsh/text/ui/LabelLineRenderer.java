@@ -20,15 +20,15 @@
 package org.crsh.text.ui;
 
 import org.crsh.text.LineReader;
-import org.crsh.text.Renderer;
+import org.crsh.text.LineRenderer;
 import org.crsh.util.Pair;
 
-class LabelRenderer extends Renderer {
+class LabelLineRenderer extends LineRenderer {
 
   /** . */
   private final LabelElement element;
 
-  LabelRenderer(LabelElement element) {
+  LabelLineRenderer(LabelElement element) {
     this.element = element;
   }
 

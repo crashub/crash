@@ -26,8 +26,8 @@ import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.text.Chunk;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.RenderPrintWriter;
-import org.crsh.text.Renderable;
 import org.crsh.text.Renderer;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class EvalElement extends Element {
   /** The closure to evaluate. */
   Closure closure;
 
-  public Renderer renderer() {
+  public LineRenderer renderer() {
 
     Object owner = closure.getOwner();
 
@@ -63,7 +63,7 @@ public class EvalElement extends Element {
     }
 
     //
-    final LinkedList<Renderer> renderers = new LinkedList<Renderer>();
+    final LinkedList<LineRenderer> renderers = new LinkedList<LineRenderer>();
 
     //
     final InvocationContext nested = new InvocationContext() {
@@ -72,7 +72,7 @@ public class EvalElement extends Element {
       private LinkedList<Object> buffer = new LinkedList<Object>();
 
       /** . */
-      private Renderable renderable;
+      private Renderer renderable;
 
       public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
         return ctx.resolve(s);
@@ -127,9 +127,9 @@ public class EvalElement extends Element {
       }
 
       public void provide(Object element) throws IOException {
-        Renderable current = Renderable.getRenderable(element.getClass());
+        Renderer current = Renderer.getRenderable(element.getClass());
         if (current == null) {
-          current = Renderable.ANY;
+          current = Renderer.ANY;
         }
         if (current != null) {
           if (renderable != null && !current.equals(renderable)) {
@@ -143,7 +143,7 @@ public class EvalElement extends Element {
       public void flush() throws IOException {
         // We don't really flush, we just compute renderables from the buffer
         if (buffer.size() > 0) {
-          Renderer i = renderable.renderer(buffer.iterator());
+          LineRenderer i = renderable.renderer(buffer.iterator());
           buffer.clear();
           renderers.add(i);
         }
@@ -179,6 +179,6 @@ public class EvalElement extends Element {
     }
 
     //
-    return Renderer.vertical(renderers);
+    return LineRenderer.vertical(renderers);
   }
 }

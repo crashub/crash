@@ -20,8 +20,8 @@
 package org.crsh.text.ui;
 
 import org.crsh.text.LineReader;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.RenderAppendable;
-import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 
 public abstract class Element {
@@ -33,10 +33,10 @@ public abstract class Element {
     this.style = null;
   }
 
-  public abstract Renderer renderer();
+  public abstract LineRenderer renderer();
 
   public void render(RenderAppendable to) {
-    Renderer renderer = renderer();
+    LineRenderer renderer = renderer();
 
     // For now height - 1 because of the char that goes to the line in some impl
     LineReader reader = renderer.reader(to.getWidth(), to.getHeight() - 1);

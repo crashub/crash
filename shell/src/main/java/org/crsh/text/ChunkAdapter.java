@@ -30,11 +30,11 @@ import java.util.LinkedList;
  */
 public class ChunkAdapter implements Consumer<Object> {
 
-  /** . */
+  /** Buffers objects of the same kind. */
   private final LinkedList<Object> buffer = new LinkedList<Object>();
 
   /** . */
-  private Renderable renderable = null;
+  private Renderer renderable = null;
 
   /** . */
   private final RenderAppendable out;
@@ -48,7 +48,7 @@ public class ChunkAdapter implements Consumer<Object> {
   }
 
   public void provide(Object element) throws IOException {
-    Renderable current = Renderable.getRenderable(element.getClass());
+    Renderer current = Renderer.getRenderable(element.getClass());
     if (current == null) {
       send();
       if (element instanceof Chunk) {
@@ -72,7 +72,7 @@ public class ChunkAdapter implements Consumer<Object> {
 
   public void send() throws IOException {
     if (buffer.size() > 0) {
-      Renderer renderer = renderable.renderer(buffer.iterator());
+      LineRenderer renderer = renderable.renderer(buffer.iterator());
       renderer.render(out);
       buffer.clear();
       renderable = null;

@@ -1,8 +1,0 @@
-org.crsh.text.renderers.ThreadRenderable
-org.crsh.text.renderers.MapRenderable
-org.crsh.text.renderers.LoggerRenderable
-org.crsh.text.renderers.MemoryUsageRenderable
-org.crsh.text.renderers.BindingRenderable
-org.crsh.text.renderers.EntityTypeRenderable
-org.crsh.text.ui.ElementRenderable
-org.crsh.text.ui.UIBuilderRenderable
