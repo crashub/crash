@@ -117,11 +117,11 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
   }
 
   public int getWidth() {
-    return adapter.getWidth();
+    return processContext.getWidth();
   }
 
   public int getHeight() {
-    return adapter.getHeight();
+    return processContext.getHeight();
   }
 
   public Class<Object> getConsumedType() {

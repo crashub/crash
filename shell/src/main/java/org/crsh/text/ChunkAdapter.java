@@ -19,12 +19,16 @@
 
 package org.crsh.text;
 
+import org.crsh.io.Consumer;
 import org.crsh.shell.ScreenContext;
 
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class ChunkAdapter implements ScreenContext {
+/**
+ * A <code>Consumer&lt;Object&gt;</code> that renders the object stream to a {@link org.crsh.shell.ScreenContext}.
+ */
+public class ChunkAdapter implements Consumer<Object> {
 
   /** . */
   private final LinkedList<Object> buffer = new LinkedList<Object>();
@@ -39,20 +43,8 @@ public class ChunkAdapter implements ScreenContext {
     this.out = new RenderAppendable(out);
   }
 
-  public int getWidth() {
-    return out.getWidth();
-  }
-
-  public int getHeight() {
-    return out.getHeight();
-  }
-
   public Class<Object> getConsumedType() {
     return Object.class;
-  }
-
-  public void write(Chunk chunk) throws IOException {
-    provide(chunk);
   }
 
   public void provide(Object element) throws IOException {

@@ -38,9 +38,9 @@ public class EvalTestCase extends AbstractCommandTestCase {
 
     //
     assertEquals(
-        "a                             \n" +
-        "--                            \n" +
-        "1                             \n", assertOk("foo"));
+        "a                              \n" +
+        "--                             \n" +
+        "1                              \n", assertOk("foo"));
   }
 
   public void testProvideText() {
@@ -58,7 +58,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
     lifeCycle.bindGroovy("bar", "out << 'hello';");
 
     //
-    assertEquals("hello                         \n", assertOk("foo"));
+    assertEquals("hello                          \n", assertOk("foo"));
   }
 
   public void testEvalCommandInEval() {
@@ -75,7 +75,7 @@ public class EvalTestCase extends AbstractCommandTestCase {
     lifeCycle.bindGroovy("foo", foo);
 
     //
-    assertEquals("bar                           \n", assertOk("foo"));
+    assertEquals("bar                            \n", assertOk("foo"));
   }
 
   public void testEvalCommandInCommand() {
