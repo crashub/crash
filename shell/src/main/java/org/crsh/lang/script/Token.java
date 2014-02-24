@@ -38,8 +38,24 @@ public class Token {
   }
 
   public PipeLineFactory createFactory() throws SyntaxException {
-    PipeLineFactory nextFactory = next != null ? next.createFactory() : null;
-    return Utils.notBlank(value) ? new PipeLineFactory(value, nextFactory) : null;
+    if (Utils.notBlank(value)) {
+      PipeLineFactory nextFactory;
+      if (next != null) {
+        nextFactory = next.createFactory();
+        if (nextFactory == null) {
+          throw new SyntaxException("Pipe not well formed");
+        }
+      } else {
+        nextFactory = null;
+      }
+      return new PipeLineFactory(value, nextFactory);
+    } else {
+      if (next != null) {
+        throw new SyntaxException("Pipe not well formed");
+      } else {
+        return null;
+      }
+    }
   }
 
   public Token getLast() {

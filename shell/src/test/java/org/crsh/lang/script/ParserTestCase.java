@@ -24,8 +24,9 @@ import org.crsh.command.SyntaxException;
 
 public class ParserTestCase extends TestCase {
 
-  public void testEmpty() {
-    assertSyntaxException("");
+  public void testBlank() {
+    assertNull(Token.parse("").createFactory());
+    assertNull(Token.parse(" ").createFactory());
   }
 
   public void testCommand() {
