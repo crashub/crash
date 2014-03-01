@@ -32,8 +32,6 @@ import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.shell.ShellFactory;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.ssh.term.subsystem.SubsystemFactoryPlugin;
-import org.crsh.term.TermLifeCycle;
-import org.crsh.term.spi.TermIOHandler;
 
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -43,7 +41,7 @@ import java.util.logging.Logger;
 /**
  * Interesting stuff here : http://gerrit.googlecode.com/git-history/4b9e5e7fb9380cfadd28d7ffe3dc496dc06f5892/gerrit-sshd/src/main/java/com/google/gerrit/sshd/DatabasePubKeyAuth.java
  */
-public class SSHLifeCycle extends TermLifeCycle {
+public class SSHLifeCycle {
 
   /** . */
   public static final Session.AttributeKey<String> USERNAME = new Session.AttributeKey<java.lang.String>();
@@ -76,11 +74,12 @@ public class SSHLifeCycle extends TermLifeCycle {
   /** . */
   private Integer localPort;
 
-  public SSHLifeCycle(PluginContext context, ArrayList<AuthenticationPlugin> authenticationPlugins) {
-    super(context);
+  /** . */
+  private final PluginContext context;
 
-    //
+  public SSHLifeCycle(PluginContext context, ArrayList<AuthenticationPlugin> authenticationPlugins) {
     this.authenticationPlugins = authenticationPlugins;
+    this.context = context;
   }
 
   public int getPort() {
@@ -127,13 +126,11 @@ public class SSHLifeCycle extends TermLifeCycle {
     this.keyPairProvider = keyPairProvider;
   }
 
-  @Override
-  protected void doInit() {
+  public void init() {
     try {
 
       //
-      TermIOHandler handler = getHandler();
-      ShellFactory factory = getContext().getPlugin(ShellFactory.class);
+      ShellFactory factory = context.getPlugin(ShellFactory.class);
 
       //
       SshServer server = SshServer.setUpDefaultServer();
@@ -146,13 +143,13 @@ public class SSHLifeCycle extends TermLifeCycle {
         server.getProperties().put(ServerFactoryManager.AUTH_TIMEOUT, String.valueOf(this.authTimeout));
       }
 
-      server.setShellFactory(new CRaSHCommandFactory(handler, factory));
-      server.setCommandFactory(new SCPCommandFactory(getContext()));
+      server.setShellFactory(new CRaSHCommandFactory(factory));
+      server.setCommandFactory(new SCPCommandFactory(context));
       server.setKeyPairProvider(keyPairProvider);
 
       //
       ArrayList<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>(0);
-      for (SubsystemFactoryPlugin plugin : getContext().getPlugins(SubsystemFactoryPlugin.class)) {
+      for (SubsystemFactoryPlugin plugin : context.getPlugins(SubsystemFactoryPlugin.class)) {
         namedFactoryList.add(plugin.getFactory());
       }
       server.setSubsystemFactories(namedFactoryList);
@@ -197,8 +194,7 @@ public class SSHLifeCycle extends TermLifeCycle {
     }
   }
 
-  @Override
-  protected void doDestroy() {
+  public void destroy() {
     if (server != null) {
       try {
         server.stop();

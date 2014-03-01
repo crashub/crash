@@ -16,36 +16,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.telnet.term;
+package org.crsh.ssh;
 
-import org.junit.Test;
+import org.crsh.plugin.CRaSHPlugin;
+import org.crsh.processor.term.SyncShell;
+import org.crsh.shell.Shell;
+import org.crsh.shell.ShellFactory;
 
-public class ClientWriteTestCase extends AbstractTelnetTestCase  {
+import java.io.IOException;
+import java.security.Principal;
+import java.util.concurrent.CountDownLatch;
 
-  @Test
-  public void testChar() throws Exception {
-    out.write(" A".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO('A'));
-    handler.add(IOAction.end());
-  }
+/**
+ * @author Julien Viet
+ */
+public class Foo extends CRaSHPlugin<ShellFactory> {
 
-  @Test
-  public void testTab() throws Exception {
-    out.write(" \t".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.TAB));
-    handler.add(IOAction.end());
-  }
+  /** . */
+  final CountDownLatch closed = new CountDownLatch(1);
 
-  @Test
-  public void testDelete() throws Exception {
-    out.write(" \b".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.BACKSPACE));
-    handler.add(IOAction.end());
+  /** . */
+  final SyncShell shell = new SyncShell() {
+    @Override
+    public void close() throws IOException {
+      closed.countDown();
+    }
+  };
+
+  @Override
+  public ShellFactory getImplementation() {
+    return new ShellFactory() {
+      @Override
+      public Shell create(Principal principal) {
+        return shell;
+      }
+    };
   }
 }

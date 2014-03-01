@@ -17,40 +17,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.telnet.term;
+package org.crsh.telnet.term.processor;
 
-import net.wimpi.telnetd.net.Connection;
-import net.wimpi.telnetd.net.ConnectionEvent;
-import net.wimpi.telnetd.shell.Shell;
+import org.crsh.plugin.CRaSHPlugin;
+import org.crsh.shell.Shell;
+import org.crsh.shell.ShellFactory;
+import org.crsh.telnet.term.console.ConsoleTerm;
+import org.crsh.telnet.term.spi.TermIO;
 import org.crsh.telnet.term.spi.TermIOHandler;
 
-public class TelnetHandler implements Shell {
+import java.security.Principal;
 
-  public void run(Connection conn) {
+public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandler {
 
-    // Prevent screen flickering
-    conn.getTerminalIO().setAutoflushing(false);
+  /** . */
+  private ShellFactory factory;
 
-    //
-    TelnetIO io = new TelnetIO(conn);
-    TelnetLifeCycle lifeCycle = TelnetLifeCycle.getLifeCycle(conn);
-    TermIOHandler handler = lifeCycle.getHandler();
-    handler.handle(io, null);
+  @Override
+  public TermIOHandler getImplementation() {
+    return this;
   }
 
-  public void connectionIdle(ConnectionEvent connectionEvent) {
+  @Override
+  public void init() {
+    this.factory = getContext().getPlugin(ShellFactory.class);
   }
 
-  public void connectionTimedOut(ConnectionEvent connectionEvent) {
+  @Override
+  public void destroy() {
   }
 
-  public void connectionLogoutRequest(ConnectionEvent connectionEvent) {
-  }
-
-  public void connectionSentBreak(ConnectionEvent connectionEvent) {
-  }
-
-  public static Shell createShell() {
-    return new TelnetHandler();
+  public void handle(final TermIO io, Principal user) {
+    Shell shell = factory.create(user);
+    ConsoleTerm term = new ConsoleTerm(io);
+    Processor processor = new Processor(term, shell);
+    processor.addListener(io);
+    processor.addListener(shell);
+    processor.run();
   }
 }

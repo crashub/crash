@@ -17,22 +17,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.console;
+package org.crsh.telnet.term.console;
+
+import org.crsh.telnet.term.spi.TermIO;
 
 import java.io.IOException;
 
 /**
- * Wraps {@link org.crsh.telnet.term.spi.TermIO} and care about CRLF.
+ * Wraps {@link TermIO} and care about CRLF.
  */
-class EditorWriter {
+public class TermIOWriter {
 
   /** . */
   private boolean previousCR;
 
   /** . */
-  private final ConsoleDriver io;
+  private final TermIO io;
 
-  protected EditorWriter(ConsoleDriver io) {
+  public TermIOWriter(TermIO io) {
     this.io = io;
   }
 
@@ -40,9 +42,9 @@ class EditorWriter {
    * Write a char sequence to the output.
    *
    * @param s the char sequence
-   * @throws java.io.IOException any io exception
+   * @throws IOException any io exception
    */
-  void write(CharSequence s) throws IOException {
+  public void write(CharSequence s) throws IOException {
     int len = s.length();
     if (len > 0) {
       for (int i = 0;i < len;i++) {
@@ -56,9 +58,9 @@ class EditorWriter {
    * Write a single char to the output.
    *
    * @param c the char to write
-   * @throws java.io.IOException any io exception
+   * @throws IOException any io exception
    */
-  void write(char c) throws IOException {
+  public void write(char c) throws IOException {
     writeNoFlush(c);
   }
 

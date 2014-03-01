@@ -16,41 +16,54 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.telnet.term;
 
-import net.wimpi.telnetd.net.Connection;
-import net.wimpi.telnetd.net.ConnectionEvent;
-import net.wimpi.telnetd.shell.Shell;
+import org.crsh.plugin.PluginContext;
 import org.crsh.telnet.term.spi.TermIOHandler;
 
-public class TelnetHandler implements Shell {
+import java.util.Iterator;
 
-  public void run(Connection conn) {
+public abstract class TermLifeCycle {
 
-    // Prevent screen flickering
-    conn.getTerminalIO().setAutoflushing(false);
+  /** . */
+  private final PluginContext context;
+
+  protected TermLifeCycle(PluginContext context) {
+    if (context == null) {
+      throw new NullPointerException();
+    }
 
     //
-    TelnetIO io = new TelnetIO(conn);
-    TelnetLifeCycle lifeCycle = TelnetLifeCycle.getLifeCycle(conn);
-    TermIOHandler handler = lifeCycle.getHandler();
-    handler.handle(io, null);
+    this.context = context;
   }
 
-  public void connectionIdle(ConnectionEvent connectionEvent) {
+  public final void init() {
+    try {
+      doInit();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
-  public void connectionTimedOut(ConnectionEvent connectionEvent) {
+  public final void destroy() {
+    doDestroy();
   }
 
-  public void connectionLogoutRequest(ConnectionEvent connectionEvent) {
+  public final TermIOHandler getHandler() {
+    Iterator<TermIOHandler> handlers = context.getPlugins(TermIOHandler.class).iterator();
+    if (handlers.hasNext()) {
+      return handlers.next();
+    } else {
+      return null;
+    }
   }
 
-  public void connectionSentBreak(ConnectionEvent connectionEvent) {
+  public final PluginContext getContext() {
+    return context;
   }
 
-  public static Shell createShell() {
-    return new TelnetHandler();
-  }
+  protected abstract void doInit() throws Exception;
+
+  protected abstract void doDestroy();
+
 }

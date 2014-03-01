@@ -26,7 +26,6 @@ import net.wimpi.telnetd.net.PortListener;
 import net.wimpi.telnetd.shell.ShellManager;
 import net.wimpi.telnetd.util.StringUtil;
 import org.crsh.plugin.PluginContext;
-import org.crsh.term.TermLifeCycle;
 import org.crsh.vfs.Resource;
 
 import java.io.ByteArrayInputStream;

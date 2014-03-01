@@ -24,10 +24,8 @@ import net.wimpi.telnetd.io.TerminalIO;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionData;
 import org.crsh.text.Color;
-import org.crsh.text.Decoration;
 import org.crsh.text.Style;
-import org.crsh.term.*;
-import org.crsh.term.spi.TermIO;
+import org.crsh.telnet.term.spi.TermIO;
 
 import java.io.EOFException;
 import java.io.IOException;

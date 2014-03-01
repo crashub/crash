@@ -23,7 +23,7 @@ import jline.console.ConsoleReader;
 import org.apache.sshd.server.Environment;
 import org.crsh.console.jline.JLineProcessor;
 import org.crsh.shell.Shell;
-import org.crsh.shell.ShellFactory;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,13 +47,12 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   private SSHContext context;
 
   /** . */
-  private SSHIO io;
+  private JLineProcessor console;
 
   public void start(Environment env) throws IOException {
 
     //
     context = new SSHContext(env);
-    io = new SSHIO(this);
 
     //
     thread = new Thread(this, "CRaSH");
@@ -65,7 +64,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   }
 
   public void destroy() {
-    io.closed.set(true);
+    Utils.close(console);
     thread.interrupt();
   }
 

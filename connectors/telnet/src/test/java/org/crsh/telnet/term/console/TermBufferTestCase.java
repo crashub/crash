@@ -16,36 +16,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.telnet.term;
+package org.crsh.telnet.term.console;
 
-import org.junit.Test;
+public class TermBufferTestCase extends AbstractTermBufferTestCase {
 
-public class ClientWriteTestCase extends AbstractTelnetTestCase  {
-
-  @Test
-  public void testChar() throws Exception {
-    out.write(" A".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO('A'));
-    handler.add(IOAction.end());
+  @Override
+  protected boolean getSupportsCursorMove() {
+    return true;
   }
 
-  @Test
-  public void testTab() throws Exception {
-    out.write(" \t".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.TAB));
-    handler.add(IOAction.end());
+  @Override
+  protected String getExpectedMoveLeftInsert() {
+    return "ba";
   }
 
-  @Test
-  public void testDelete() throws Exception {
-    out.write(" \b".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.BACKSPACE));
-    handler.add(IOAction.end());
+  @Override
+  protected String getExpectedMoveLeftDel() {
+    return "b";
+  }
+
+  @Override
+  protected String getExpectedMoveRightInsert() {
+    return "abdc";
+  }
+
+  @Override
+  protected String getExpectedMoveRightDel() {
+    return "ac";
+  }
+
+  @Override
+  protected String getExpectedMoveRightAtEndOfLine() {
+    return "ab";
+  }
+
+  @Override
+  protected String getExpectedMoveLeftAtBeginningOfLine() {
+    return "ba";
   }
 }

@@ -16,36 +16,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.telnet.term;
 
-import org.junit.Test;
+package org.crsh.telnet.term.console;
 
-public class ClientWriteTestCase extends AbstractTelnetTestCase  {
+import junit.framework.TestCase;
 
-  @Test
-  public void testChar() throws Exception {
-    out.write(" A".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO('A'));
-    handler.add(IOAction.end());
-  }
+import java.io.IOException;
 
-  @Test
-  public void testTab() throws Exception {
-    out.write(" \t".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.TAB));
-    handler.add(IOAction.end());
-  }
+public class TermIOWriterTestCase extends TestCase {
 
-  @Test
-  public void testDelete() throws Exception {
-    out.write(" \b".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.BACKSPACE));
-    handler.add(IOAction.end());
+  public void testCRLF() throws IOException {
+
+    for (String test : new String[]{"a\n","a\r","a\r\n"}) {
+      SimpleTermIO output = new SimpleTermIO(false);
+      TermIOWriter writer = new TermIOWriter(output);
+      writer.write(test);
+      output.assertChars("a\r\n");
+      output.assertEmpty();
+    }
+
+    for (String test : new String[]{"a\n\n","a\n\r","a\r\r"}) {
+      SimpleTermIO output = new SimpleTermIO(false);
+      TermIOWriter writer = new TermIOWriter(output);
+      writer.write(test);
+      output.assertChars("a\r\n\r\n");
+      output.assertEmpty();
+    }
   }
 }

@@ -23,7 +23,6 @@ import org.apache.commons.net.telnet.TelnetClient;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.plugin.SimplePluginDiscovery;
 import org.crsh.telnet.TelnetPlugin;
-import org.crsh.term.IOHandler;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.After;
 import org.junit.Assert;

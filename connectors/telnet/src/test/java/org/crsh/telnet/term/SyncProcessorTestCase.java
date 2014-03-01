@@ -16,36 +16,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.crsh.telnet.term;
 
-import org.junit.Test;
+import org.crsh.processor.term.SyncShell;
+import org.crsh.telnet.term.processor.Processor;
 
-public class ClientWriteTestCase extends AbstractTelnetTestCase  {
+public class SyncProcessorTestCase extends AbstractProcessorTestCase {
 
-  @Test
-  public void testChar() throws Exception {
-    out.write(" A".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO('A'));
-    handler.add(IOAction.end());
+  @Override
+  protected SyncTerm createTerm() {
+    return new SyncTerm();
   }
 
-  @Test
-  public void testTab() throws Exception {
-    out.write(" \t".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.TAB));
-    handler.add(IOAction.end());
+  @Override
+  protected SyncShell createShell() {
+    return new SyncShell();
   }
 
-  @Test
-  public void testDelete() throws Exception {
-    out.write(" \b".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.BACKSPACE));
-    handler.add(IOAction.end());
+  @Override
+  protected Processor createProcessor(SyncTerm term, SyncShell shell) {
+    return new Processor(term, shell);
+  }
+
+  @Override
+  protected int getBarrierSize() {
+    return 1;
   }
 }

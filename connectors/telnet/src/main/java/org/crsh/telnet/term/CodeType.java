@@ -16,36 +16,45 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.crsh.telnet.term;
 
-import org.junit.Test;
+public enum CodeType {
 
-public class ClientWriteTestCase extends AbstractTelnetTestCase  {
+  CLOSE,
 
-  @Test
-  public void testChar() throws Exception {
-    out.write(" A".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO('A'));
-    handler.add(IOAction.end());
-  }
+  BACKSPACE,
 
-  @Test
-  public void testTab() throws Exception {
-    out.write(" \t".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.TAB));
-    handler.add(IOAction.end());
-  }
+  UP,
 
-  @Test
-  public void testDelete() throws Exception {
-    out.write(" \b".getBytes());
-    out.flush();
-    handler.add(IOAction.read());
-    handler.assertEvent(new IOEvent.IO(CodeType.BACKSPACE));
-    handler.add(IOAction.end());
+  DOWN,
+
+  CHAR,
+
+  RIGHT,
+
+  LEFT,
+
+  TAB,
+
+  BREAK,
+
+  BACKWARD_WORD,
+
+  FORWARD_WORD,
+
+  BEGINNING_OF_LINE,
+
+  END_OF_LINE;
+
+  /** . */
+  private static final CodeType[] ALL = values();
+
+  public static CodeType valueOf(int ordinal) {
+    if (ordinal >= 0 && ordinal < ALL.length) {
+      return ALL[ordinal];
+    } else {
+      return null;
+    }
   }
 }
