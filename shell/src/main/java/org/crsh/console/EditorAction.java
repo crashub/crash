@@ -442,6 +442,13 @@ class EditorAction {
     }
   };
 
+  private static class DeleteEnd extends EditorAction {
+    @Override
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
+      super.perform(editor, buffer);
+    }
+  }
+
   static EditorAction DELETE_END = new EditorAction() {
     @Override
     void perform(Editor editor, EditorBuffer buffer) throws IOException {
