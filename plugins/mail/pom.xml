@@ -2,12 +2,12 @@
   <parent>
     <artifactId>crash.plugins</artifactId>
     <groupId>org.crashub</groupId>
-    <version>1.3.0-beta15-SNAPSHOT</version>
+    <version>1.3.0-beta15</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>crash.plugins.mail</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.0-beta15-SNAPSHOT</version>
+  <version>1.3.0-beta15</version>
 
   <name>CRaSH Plugin - Mail plugin</name>
   <description>This plugin allows to integrate JavaMail in CRaSH and provides a mail command</description>
