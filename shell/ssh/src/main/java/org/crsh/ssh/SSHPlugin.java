@@ -43,7 +43,16 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   /** The SSH server key path. */
   public static final PropertyDescriptor<String> SSH_SERVER_KEYPATH = PropertyDescriptor.create("ssh.keypath", (String)null, "The path to the key file");
 
-  /** . */
+  /** The SSH server idle timeout. */
+  private static final int SSH_SERVER_IDLE_DEFAULT_TIMEOUT = 10 * 60 * 1000;
+  public static final PropertyDescriptor<Integer> SSH_SERVER_IDLE_TIMEOUT = PropertyDescriptor.create("ssh.idle-timeout", SSH_SERVER_IDLE_DEFAULT_TIMEOUT, "The idle-timeout for ssh sessions");
+
+  /** The SSH server authentication timeout. */
+  private static final int SSH_SERVER_AUTH_DEFAULT_TIMEOUT = 10 * 60 * 1000;
+  public static final PropertyDescriptor<Integer> SSH_SERVER_AUTH_TIMEOUT = PropertyDescriptor.create("ssh.auth-timeout", SSH_SERVER_AUTH_DEFAULT_TIMEOUT, "The authentication timeout for ssh sessions");
+
+
+    /** . */
   private SSHLifeCycle lifeCycle;
 
   @Override
@@ -53,7 +62,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   @Override
   protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
-    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, AuthenticationPlugin.AUTH);
+    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, SSH_SERVER_IDLE_TIMEOUT, SSH_SERVER_AUTH_TIMEOUT, AuthenticationPlugin.AUTH);
   }
 
   @Override
@@ -65,6 +74,15 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     if (port == null) {
       log.log(Level.INFO, "Could not boot SSHD due to missing due to missing port configuration");
       return;
+    }
+
+    Integer idleTimeout = getContext().getProperty(SSH_SERVER_IDLE_TIMEOUT);
+    if (idleTimeout == null) {
+      idleTimeout = SSH_SERVER_IDLE_DEFAULT_TIMEOUT;
+    }
+    Integer authTimeout = getContext().getProperty(SSH_SERVER_AUTH_TIMEOUT);
+    if (authTimeout == null) {
+      authTimeout = SSH_SERVER_AUTH_DEFAULT_TIMEOUT;
     }
 
     //
@@ -131,6 +149,8 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext(), authPlugin);
     lifeCycle.setPort(port);
     lifeCycle.setKey(serverKey);
+    lifeCycle.setAuthTimeout(authTimeout);
+    lifeCycle.setIdleTimeout(idleTimeout);
     lifeCycle.init();
 
     //

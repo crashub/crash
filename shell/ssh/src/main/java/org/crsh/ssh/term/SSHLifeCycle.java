@@ -22,9 +22,11 @@ import org.apache.sshd.SshServer;
 import org.apache.sshd.common.Session;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.PublickeyAuthenticator;
+import org.apache.sshd.server.ServerFactoryManager;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
 import org.crsh.auth.AuthenticationPlugin;
+import org.crsh.ssh.SSHPlugin;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.term.TermLifeCycle;
 import org.crsh.term.spi.TermIOHandler;
@@ -54,7 +56,15 @@ public class SSHLifeCycle extends TermLifeCycle {
   /** . */
   private int port;
 
+
   /** . */
+  private int idleTimeout;
+
+  /** . */
+  private int authTimeout;
+
+
+    /** . */
   private Resource key;
 
   /** . */
@@ -78,7 +88,23 @@ public class SSHLifeCycle extends TermLifeCycle {
     this.port = port;
   }
 
-  /**
+  public int getIdleTimeout() {
+    return idleTimeout;
+  }
+
+  public void setIdleTimeout(int idleTimeout) {
+    this.idleTimeout = idleTimeout;
+  }
+
+  public int getAuthTimeout() {
+    return authTimeout;
+  }
+
+  public void setAuthTimeout(int authTimeout) {
+    this.authTimeout = authTimeout;
+  }
+
+    /**
    * Returns the local part after the ssh server has been succesfully bound or null. This is useful when
    * the port is chosen at random by the system.
    *
@@ -106,6 +132,11 @@ public class SSHLifeCycle extends TermLifeCycle {
       //
       SshServer server = SshServer.setUpDefaultServer();
       server.setPort(port);
+
+      server.getProperties().put(ServerFactoryManager.IDLE_TIMEOUT, String.valueOf(this.idleTimeout));
+      server.getProperties().put(ServerFactoryManager.AUTH_TIMEOUT, String.valueOf(this.authTimeout));
+
+
       server.setShellFactory(new CRaSHCommandFactory(handler));
       server.setCommandFactory(new SCPCommandFactory(getContext()));
       server.setKeyPairProvider(new URLKeyPairProvider(key));
