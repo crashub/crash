@@ -44,10 +44,12 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   public static final PropertyDescriptor<String> SSH_SERVER_KEYPATH = PropertyDescriptor.create("ssh.keypath", (String)null, "The path to the key file");
 
   /** The SSH server idle timeout. */
-  public static final PropertyDescriptor<Integer> SSH_SERVER_IDLE_TIMEOUT = PropertyDescriptor.create("ssh.idle-timeout", 10 * 60 * 1000, "The idle-timeout for ssh sessions");
+  private static final int SSH_SERVER_IDLE_DEFAULT_TIMEOUT = 10 * 60 * 1000;
+  public static final PropertyDescriptor<Integer> SSH_SERVER_IDLE_TIMEOUT = PropertyDescriptor.create("ssh.idle-timeout", SSH_SERVER_IDLE_DEFAULT_TIMEOUT, "The idle-timeout for ssh sessions");
 
   /** The SSH server authentication timeout. */
-  public static final PropertyDescriptor<Integer> SSH_SERVER_AUTH_TIMEOUT = PropertyDescriptor.create("ssh.auth-timeout", 10 * 60 * 1000, "The authentication timeout for ssh sessions");
+  private static final int SSH_SERVER_AUTH_DEFAULT_TIMEOUT = 10 * 60 * 1000;
+  public static final PropertyDescriptor<Integer> SSH_SERVER_AUTH_TIMEOUT = PropertyDescriptor.create("ssh.auth-timeout", SSH_SERVER_AUTH_DEFAULT_TIMEOUT, "The authentication timeout for ssh sessions");
 
 
     /** . */
@@ -76,13 +78,11 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
     Integer idleTimeout = getContext().getProperty(SSH_SERVER_IDLE_TIMEOUT);
     if (idleTimeout == null) {
-      log.log(Level.INFO, "Could not boot SSHD due to missing required idle timeout configuration");
-      return;
+      idleTimeout = SSH_SERVER_IDLE_DEFAULT_TIMEOUT;
     }
     Integer authTimeout = getContext().getProperty(SSH_SERVER_AUTH_TIMEOUT);
     if (authTimeout == null) {
-      log.log(Level.INFO, "Could not boot SSHD due to missing required authentication timeout configuration");
-      return;
+      authTimeout = SSH_SERVER_AUTH_DEFAULT_TIMEOUT;
     }
 
     //
