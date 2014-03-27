@@ -51,6 +51,13 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   /** SSH host key auto generate */
   public static final PropertyDescriptor<String> SSH_SERVER_KEYGEN = PropertyDescriptor.create("ssh.keygen", "false", "Whether to automatically generate a host key");
 
+  /** The SSH server idle timeout. */
+  public static final PropertyDescriptor<Integer> SSH_SERVER_IDLE_TIMEOUT = PropertyDescriptor.create("ssh.idle-timeout", 10 * 60 * 1000, "The idle-timeout for ssh sessions");
+
+  /** The SSH server authentication timeout. */
+  public static final PropertyDescriptor<Integer> SSH_SERVER_AUTH_TIMEOUT = PropertyDescriptor.create("ssh.auth-timeout", 10 * 60 * 1000, "The authentication timeout for ssh sessions");
+
+
   /** . */
   private SSHLifeCycle lifeCycle;
 
@@ -61,7 +68,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   @Override
   protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
-    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, SSH_SERVER_KEYGEN, AuthenticationPlugin.AUTH);
+    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, SSH_SERVER_KEYGEN, SSH_SERVER_AUTH_TIMEOUT, SSH_SERVER_IDLE_TIMEOUT, AuthenticationPlugin.AUTH);
   }
 
   @Override
@@ -74,6 +81,18 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
       log.log(Level.INFO, "Could not boot SSHD due to missing due to missing port configuration");
       return;
     }
+
+    Integer idleTimeout = getContext().getProperty(SSH_SERVER_IDLE_TIMEOUT);
+    if (idleTimeout == null) {
+      log.log(Level.INFO, "Could not boot SSHD due to missing required idle timeout configuration");
+      return;
+    }
+    Integer authTimeout = getContext().getProperty(SSH_SERVER_AUTH_TIMEOUT);
+    if (authTimeout == null) {
+      log.log(Level.INFO, "Could not boot SSHD due to missing required authentication timeout configuration");
+      return;
+    }
+
 
     //
     Resource serverKey = null;
@@ -146,6 +165,8 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     log.log(Level.INFO, "Booting SSHD");
     SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext(), authPlugins);
     lifeCycle.setPort(port);
+    lifeCycle.setAuthTimeout(authTimeout);
+    lifeCycle.setIdleTimeout(idleTimeout);
     lifeCycle.setKeyPairProvider(keyPairProvider);
     lifeCycle.init();
 

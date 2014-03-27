@@ -25,6 +25,7 @@ import org.apache.sshd.common.Session;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.PublickeyAuthenticator;
+import org.apache.sshd.server.ServerFactoryManager;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
 import org.crsh.auth.AuthenticationPlugin;
@@ -59,6 +60,13 @@ public class SSHLifeCycle extends TermLifeCycle {
   private int port;
 
   /** . */
+  private int idleTimeout;
+
+  /** . */
+  private int authTimeout;
+
+
+  /** . */
   private KeyPairProvider keyPairProvider;
 
   /** . */
@@ -81,6 +89,24 @@ public class SSHLifeCycle extends TermLifeCycle {
   public void setPort(int port) {
     this.port = port;
   }
+
+
+  public int getIdleTimeout() {
+    return idleTimeout;
+  }
+
+  public void setIdleTimeout(int idleTimeout) {
+    this.idleTimeout = idleTimeout;
+  }
+
+  public int getAuthTimeout() {
+    return authTimeout;
+  }
+
+  public void setAuthTimeout(int authTimeout) {
+    this.authTimeout = authTimeout;
+  }
+
 
   /**
    * Returns the local part after the ssh server has been succesfully bound or null. This is useful when
@@ -110,6 +136,10 @@ public class SSHLifeCycle extends TermLifeCycle {
       //
       SshServer server = SshServer.setUpDefaultServer();
       server.setPort(port);
+
+      server.getProperties().put(ServerFactoryManager.IDLE_TIMEOUT, String.valueOf(this.idleTimeout));
+      server.getProperties().put(ServerFactoryManager.AUTH_TIMEOUT, String.valueOf(this.authTimeout));
+
       server.setShellFactory(new CRaSHCommandFactory(handler));
       server.setCommandFactory(new SCPCommandFactory(getContext()));
       server.setKeyPairProvider(keyPairProvider);
