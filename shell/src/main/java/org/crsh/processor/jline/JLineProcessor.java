@@ -230,7 +230,7 @@ public class JLineProcessor implements Runnable, Completer {
       checkInterrupt();
       String line = reader.readLine(prompt);
       if (line == null) {
-        break;
+        return null;
       } else {
         lineBuffer.append(line);
         if (lineBuffer.crlf()) {
