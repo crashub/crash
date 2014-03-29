@@ -48,6 +48,17 @@ crash.ssh.port=2000
 crash.telnet.port=5000
 {{/code}}
 
+== Changing SSH authentication and idle timeouts ==
+
+Default authentication and idle timeout of the SSH server are set to 10 minutes (600'000 ms). Both timeouts can be configured in milliseconds with the //crash.ssh.auth-timeout// and //crash.ssh.idle-timeout// parameters in the //crash.properties// file
+
+{{code}}
+# SSH configuration 5 minutes = 5 * 60 * 1000 = 300'000
+crash.ssh.auth-timeout=300000
+crash.ssh.idle-timeout=300000
+{{/code}}
+
+
 == Removing telnet or SSH access ==
 
 * to remove the telnet access, remove the jar file in the //WEB-INF/lib/crsh.shell.telnet-$[crash.version].jar// .

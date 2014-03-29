@@ -185,6 +185,11 @@ Here is an example of embedding crash:
         <!-- SSH configuration -->
        <prop key="crash.ssh.port">2000</prop>
 
+       <!-- Optional SSH timeouts -->
+       <prop key="crash.ssh.auth-timeout">300000</prop>
+       <prop key="crash.ssh.idle-timeout">300000</prop>
+
+
         <!-- Telnet configuration -->
         <prop key="crash.telnet.port">5000</prop>
 
