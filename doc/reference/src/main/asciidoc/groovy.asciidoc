@@ -32,6 +32,9 @@ env           display the term env
 
 Typing a command name evalutes to a Groovy closure, allowing to call the command just like a function.
 
+NOTE: to switch back to the script REPL, you need to use the Groovy syntax +repl("script")+ as +repl+
+is a command itself
+
 .Typing a command evaluates to a closure
 ----
 % cmd = help
