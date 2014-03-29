@@ -60,6 +60,8 @@ public class SSHTestCase extends Assert {
     //
     TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(new SSHPlugin(), handler, auth);
     lifeCycle.setProperty(SSHPlugin.SSH_PORT, port);
+    lifeCycle.setProperty(SSHPlugin.SSH_SERVER_IDLE_TIMEOUT, 10 * 60 * 1000);
+    lifeCycle.setProperty(SSHPlugin.SSH_SERVER_AUTH_TIMEOUT, 10 * 60 * 1000);
     lifeCycle.setProperty(AuthenticationPlugin.AUTH, Arrays.asList(auth.getName()));
     lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_USERNAME, "root");
     lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_PASSWORD, "");
