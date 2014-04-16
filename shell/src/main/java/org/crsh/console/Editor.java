@@ -151,7 +151,9 @@ class Editor extends Plugin {
       return action.execute(this, buffer, sequence, true);
     }
     catch (IOException e) {
-      throw new AssertionError("Not yet supported", e);
+      AssertionError ae = new AssertionError("Not yet supported");
+      ae.initCause(e);
+      throw ae;
     }
   }
 

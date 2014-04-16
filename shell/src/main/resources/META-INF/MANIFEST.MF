@@ -3,5 +3,5 @@ Archiver-Version: Plexus Archiver
 Created-By: Apache Maven
 Built-By: julien
 Build-Jdk: 1.6.0_26
-Main-Class: org.crsh.standalone.CRaSH
+Main-Class: org.crsh.standalone.CRaSH2
 Agent-Class: org.crsh.standalone.Agent
