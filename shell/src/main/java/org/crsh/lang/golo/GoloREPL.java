@@ -25,6 +25,10 @@ import gololang.EvaluationEnvironment;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
+import org.crsh.command.CommandContext;
+import org.crsh.command.CommandCreationException;
+import org.crsh.command.CommandInvoker;
+import org.crsh.command.ShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
 import org.crsh.repl.EvalResponse;
@@ -32,29 +36,19 @@ import org.crsh.repl.REPL;
 import org.crsh.repl.REPLSession;
 import org.crsh.shell.ShellResponse;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** @author Julien Viet */
 public class GoloREPL extends CRaSHPlugin<REPL> implements REPL {
 
   /** . */
-  private static final String replScript =
-      "module repl\n" +
-      "function eval = |script| {\n" +
-      "  let env = gololang.EvaluationEnvironment()\n" +
-      "  let ret = env: run(script)\n" +
-      "} \n";
-
-  /** . */
   private GoloClassLoader replLoader;
 
-  /** . */
-  // private Class<?> replClass;
-
-  public GoloREPL() {
-  }
+  public GoloREPL() {}
 
   @Override
   public boolean isActive() {
@@ -63,7 +57,7 @@ public class GoloREPL extends CRaSHPlugin<REPL> implements REPL {
 
   @Override
   public String getDescription() {
-    return "The golo repl";
+    return "The Golo REPL provides a Groovy interpreter able to interact with shell commands";
   }
 
   @Override
@@ -76,7 +70,6 @@ public class GoloREPL extends CRaSHPlugin<REPL> implements REPL {
     PluginContext context = getContext();
     ClassLoader loader = context.getLoader();
     replLoader = new GoloClassLoader(loader);
-    // replClass = replLoader.load("repl.golo", new ByteArrayInputStream(replScript.getBytes()));
   }
 
   public String getName() {
@@ -86,35 +79,16 @@ public class GoloREPL extends CRaSHPlugin<REPL> implements REPL {
   public EvalResponse eval(REPLSession session, String request) {
 
     try {
-//      Method eval = replClass.getMethod("eval", Object.class);
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       try {
         Thread.currentThread().setContextClassLoader(replLoader);
-//        eval.invoke(null, request);
 
-        //
-//        request =
-//            "local function println = |obj| {\n" +
-//                "gololang.Predefined.println(\">>> \" + obj)\n" +
-//                "}\n" +
-//            request;
-
-        String mainWrapper = "function main = { \n" + request + "\n}";
-
-//        run(request);
-        EvaluationEnvironment environment = new EvaluationEnvironment();
-        Class<?> code = (Class<?>) environment.anonymousModule(mainWrapper);
-        Method main = code.getDeclaredMethod("main");
-        main.invoke(code);
       }
       finally {
         Thread.currentThread().setContextClassLoader(old);
       }
-      return new EvalResponse.Response(ShellResponse.ok());
+      return new EvalResponse.Invoke(buildCommandInvoker(session, request));
     }
-//    catch (InvocationTargetException e) {
-//      return new EvalResponse.Response(ShellResponse.evalError("Could not evaluate request", e.getCause()));
-//    }
     catch (GoloCompilationException e) {
       return new EvalResponse.Response(ShellResponse.evalError("Could not evaluate request", e));
     }
@@ -124,76 +98,75 @@ public class GoloREPL extends CRaSHPlugin<REPL> implements REPL {
     catch (TokenMgrError error) {
       return new EvalResponse.Response(ShellResponse.internalError("Could not parse", error));
     }
-
-
   }
-
-
-
-  // Forked from gololang.EvaluationEnvironment
-
-  private final List<String> imports = new LinkedList<>();
-
-//  private static String anonymousModuleName() {
-//    return "module anonymous" + System.nanoTime();
-//  }
 
   public CompletionMatch complete(REPLSession session, String prefix) {
     return new CompletionMatch(Delimiter.EMPTY, Completion.create());
   }
 
-//  public Object run(String source) {
-//    return loadAndRun(source, "$_code");
-//  }
+  private CommandInvoker buildCommandInvoker(REPLSession session, String request) {
+    String cmdLinePattern = "(\\S+)(.*)";
+    Matcher matcher = Pattern.compile(cmdLinePattern).matcher(request);
 
-//  private Object loadAndRun(String source, String target, String... argumentNames) {
-//    try {
-//      Class<?> module = wrapAndLoad(source, argumentNames);
-//      return module.getMethod(target).invoke(null);
-//    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-//      throw new RuntimeException(e);
-//    }
-//  }
+    ShellCommand crashCmd = null;
+    try {
+      if(matcher.matches()) {
+        String command = matcher.group(1);
+        String line = matcher.group(2);
+        crashCmd = session.getCommand(command);
+        if (crashCmd != null) {
+          return crashCmd.resolveInvoker(line);
+        }
+      }
+    } catch (CommandCreationException e) {
+      e.printStackTrace();
+    }
+    return new GoloCommandInvoker(session, request);
+  }
 
-//  private Class<?> wrapAndLoad(String source, String... argumentNames) {
-//    StringBuilder builder = new StringBuilder()
-//        .append(anonymousModuleName())
-//        .append("\n");
-//    for (String importSymbol : imports) {
-//      builder.append("import ").append(importSymbol).append("\n");
-//    }
-//    builder.append("\nfunction $_code = ");
-//    if (argumentNames.length > 0) {
-//      builder.append("| ");
-//      final int lastIndex = argumentNames.length - 1;
-//      for (int i = 0; i < argumentNames.length; i++) {
-//        builder.append(argumentNames[i]);
-//        if (i < lastIndex) {
-//          builder.append(", ");
-//        }
-//      }
-//      builder.append(" |");
-//    }
-//    builder
-//        .append(" {\n")
-//        .append(source)
-//        .append("\n}\n\n")
-//        .append("function $_code_ref = -> ^$_code\n\n");
-//    return (Class<?>) asModule(builder.toString());
-//  }
 
-//  public Object asModule(String source) {
-//    try (InputStream in = new ByteArrayInputStream(source.getBytes())) {
-//      return replLoader.load(anonymousFilename(), in);
-//    } catch (IOException e) {
-//      throw new RuntimeException(e);
-//    } catch (GoloCompilationException e) {
-//      e.setSourceCode(source);
-//      throw e;
-//    }
-//  }
+  private class GoloCommandInvoker extends CommandInvoker<Void, Object> {
 
-//  private static String anonymousFilename() {
-//    return "$Anonymous$_" + System.nanoTime() + ".golo";
-//  }
+    private CommandContext<Object> foo;
+    private final String request;
+    private final REPLSession session;
+
+    private GoloCommandInvoker(REPLSession session, String request) {
+      this.session = session;
+      this.request = request;
+    }
+
+    public void provide(Void element) throws IOException {
+      throw new UnsupportedOperationException("Should not be invoked");
+    }
+    public Class<Void> getConsumedType() {
+      return Void.class;
+    }
+    public void flush() throws IOException {
+    }
+    public Class<Object> getProducedType() {
+      return Object.class;
+    }
+
+    public void open(CommandContext<? super Object> consumer) {
+      this.foo = (CommandContext<Object>)consumer;
+      String mainWrapper = "function run = -> " + request;
+      Object o;
+      try {
+        EvaluationEnvironment environment = new EvaluationEnvironment();
+        Class<?> code = (Class<?>) environment.anonymousModule(mainWrapper);
+        Method main = code.getDeclaredMethod("main");
+        o = main.invoke(code);
+        if (o != null) {
+          consumer.provide(o);
+        }
+      } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        e.printStackTrace();
+      }
+    }
+    public void close() throws IOException {
+      foo.flush();
+      foo.close();
+    }
+  }
 }
