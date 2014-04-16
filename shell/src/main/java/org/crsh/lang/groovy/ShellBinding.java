@@ -24,6 +24,7 @@ import org.crsh.command.CommandCreationException;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.groovy.closure.PipeLineClosure;
+import org.crsh.repl.REPLSession;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.text.Chunk;
 
@@ -34,9 +35,16 @@ import java.util.Map;
 class ShellBinding extends Binding {
 
   /** . */
+  private final REPLSession session;
+
+  /** . */
   private CommandContext<Object> current;
 
-  ShellBinding() {
+  public ShellBinding(Map variables, REPLSession session) {
+    super(variables);
+
+    //
+    this.session = session;
   }
 
   private CommandContext<Object> proxy = new CommandContext<Object>() {
@@ -140,10 +148,6 @@ class ShellBinding extends Binding {
     }
   };
 
-  public ShellBinding(Map variables) {
-    super(variables);
-  }
-
   public CommandContext<Object> getCurrent() {
     return current;
   }
@@ -157,10 +161,9 @@ class ShellBinding extends Binding {
     if (name.equals("context")) {
       return new InvocationContextImpl<Object>(proxy);
     } else {
-      CRaSH crash = (CRaSH)super.getVariable("crash");
-      if (crash != null) {
+      if (session != null) {
         try {
-          ShellCommand cmd = crash.getCommand(name);
+          ShellCommand cmd = session.getCommand(name);
           if (cmd != null) {
             return new PipeLineClosure(null, name, cmd);
           }

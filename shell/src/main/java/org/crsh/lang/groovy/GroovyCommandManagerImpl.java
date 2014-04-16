@@ -119,7 +119,7 @@ public class GroovyCommandManagerImpl implements CommandManager {
     if (shell == null) {
       CompilerConfiguration config = new CompilerConfiguration();
       config.setRecompileGroovySource(true);
-      ShellBinding binding = new ShellBinding(session);
+      ShellBinding binding = new ShellBinding(session, session);
       shell = new GroovyShell(session.crash.getContext().getLoader(), binding, config);
       session.put("shell", shell);
     }
