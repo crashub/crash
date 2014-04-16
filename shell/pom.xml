@@ -50,7 +50,7 @@
     <dependency>
       <groupId>org.golo-lang</groupId>
       <artifactId>golo</artifactId>
-      <version>0-preview8</version>
+      <version>0-preview11</version>
     </dependency>
 
     <!-- For unit testing purpose -->

@@ -21,7 +21,7 @@ package org.crsh.lang.golo;
 import fr.insalyon.citi.golo.compiler.GoloClassLoader;
 import fr.insalyon.citi.golo.compiler.GoloCompilationException;
 import fr.insalyon.citi.golo.compiler.parser.TokenMgrError;
-import fr.insalyon.citi.golo.runtime.FunctionCallSupport;
+import gololang.EvaluationEnvironment;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
@@ -32,10 +32,6 @@ import org.crsh.repl.REPL;
 import org.crsh.repl.REPLSession;
 import org.crsh.shell.ShellResponse;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,13 +93,19 @@ public class GoloREPL extends CRaSHPlugin<REPL> implements REPL {
 //        eval.invoke(null, request);
 
         //
-        request =
-            "local function println = |obj| {\n" +
-                "gololang.Predefined.println(\">>> \" + obj)\n" +
-                "}\n" +
-            request;
+//        request =
+//            "local function println = |obj| {\n" +
+//                "gololang.Predefined.println(\">>> \" + obj)\n" +
+//                "}\n" +
+//            request;
 
-        run(request);
+        String mainWrapper = "function main = { \n" + request + "\n}";
+
+//        run(request);
+        EvaluationEnvironment environment = new EvaluationEnvironment();
+        Class<?> code = (Class<?>) environment.anonymousModule(mainWrapper);
+        Method main = code.getDeclaredMethod("main");
+        main.invoke(code);
       }
       finally {
         Thread.currentThread().setContextClassLoader(old);
@@ -126,70 +128,72 @@ public class GoloREPL extends CRaSHPlugin<REPL> implements REPL {
 
   }
 
+
+
   // Forked from gololang.EvaluationEnvironment
 
   private final List<String> imports = new LinkedList<>();
 
-  private static String anonymousModuleName() {
-    return "module anonymous" + System.nanoTime();
-  }
+//  private static String anonymousModuleName() {
+//    return "module anonymous" + System.nanoTime();
+//  }
 
   public CompletionMatch complete(REPLSession session, String prefix) {
     return new CompletionMatch(Delimiter.EMPTY, Completion.create());
   }
 
-  public Object run(String source) {
-    return loadAndRun(source, "$_code");
-  }
+//  public Object run(String source) {
+//    return loadAndRun(source, "$_code");
+//  }
 
-  private Object loadAndRun(String source, String target, String... argumentNames) {
-    try {
-      Class<?> module = wrapAndLoad(source, argumentNames);
-      return module.getMethod(target).invoke(null);
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    }
-  }
+//  private Object loadAndRun(String source, String target, String... argumentNames) {
+//    try {
+//      Class<?> module = wrapAndLoad(source, argumentNames);
+//      return module.getMethod(target).invoke(null);
+//    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+//      throw new RuntimeException(e);
+//    }
+//  }
 
-  private Class<?> wrapAndLoad(String source, String... argumentNames) {
-    StringBuilder builder = new StringBuilder()
-        .append(anonymousModuleName())
-        .append("\n");
-    for (String importSymbol : imports) {
-      builder.append("import ").append(importSymbol).append("\n");
-    }
-    builder.append("\nfunction $_code = ");
-    if (argumentNames.length > 0) {
-      builder.append("| ");
-      final int lastIndex = argumentNames.length - 1;
-      for (int i = 0; i < argumentNames.length; i++) {
-        builder.append(argumentNames[i]);
-        if (i < lastIndex) {
-          builder.append(", ");
-        }
-      }
-      builder.append(" |");
-    }
-    builder
-        .append(" {\n")
-        .append(source)
-        .append("\n}\n\n")
-        .append("function $_code_ref = -> ^$_code\n\n");
-    return (Class<?>) asModule(builder.toString());
-  }
+//  private Class<?> wrapAndLoad(String source, String... argumentNames) {
+//    StringBuilder builder = new StringBuilder()
+//        .append(anonymousModuleName())
+//        .append("\n");
+//    for (String importSymbol : imports) {
+//      builder.append("import ").append(importSymbol).append("\n");
+//    }
+//    builder.append("\nfunction $_code = ");
+//    if (argumentNames.length > 0) {
+//      builder.append("| ");
+//      final int lastIndex = argumentNames.length - 1;
+//      for (int i = 0; i < argumentNames.length; i++) {
+//        builder.append(argumentNames[i]);
+//        if (i < lastIndex) {
+//          builder.append(", ");
+//        }
+//      }
+//      builder.append(" |");
+//    }
+//    builder
+//        .append(" {\n")
+//        .append(source)
+//        .append("\n}\n\n")
+//        .append("function $_code_ref = -> ^$_code\n\n");
+//    return (Class<?>) asModule(builder.toString());
+//  }
 
-  public Object asModule(String source) {
-    try (InputStream in = new ByteArrayInputStream(source.getBytes())) {
-      return replLoader.load(anonymousFilename(), in);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (GoloCompilationException e) {
-      e.setSourceCode(source);
-      throw e;
-    }
-  }
+//  public Object asModule(String source) {
+//    try (InputStream in = new ByteArrayInputStream(source.getBytes())) {
+//      return replLoader.load(anonymousFilename(), in);
+//    } catch (IOException e) {
+//      throw new RuntimeException(e);
+//    } catch (GoloCompilationException e) {
+//      e.setSourceCode(source);
+//      throw e;
+//    }
+//  }
 
-  private static String anonymousFilename() {
-    return "$Anonymous$_" + System.nanoTime() + ".golo";
-  }
+//  private static String anonymousFilename() {
+//    return "$Anonymous$_" + System.nanoTime() + ".golo";
+//  }
 }
