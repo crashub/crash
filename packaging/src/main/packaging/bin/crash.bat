@@ -37,6 +37,11 @@ for %%F in (%CRASH_HOME%\lib\*.jar) do set CLASSPATH=!CLASSPATH!;%%F
 REM Create tmp dir if it does not exist
 if not exist "%CRASH_HOME%\tmp" mkdir %CRASH_HOME%\tmp
 
+REM Make sure, the java.exe of the JDK is before C:\WINDOWS\system32\java.exe
+if ".%JAVA_HOME%" == "."  goto startCrash
+set PATH=%JAVA_HOME%\bin;%PATH%
+
+:startCrash
 REM start the application with all parameters. Add tools.jar to the bootclasspath, otherwise it cannot be found
 REM echo "java -Xbootclasspath/a:%TOOLS_JAR% -classpath %CLASSPATH% %CRASH_DEBUG_OPTS% -Djava.util.logging.config.file=%CRASH_HOME%\conf\logging.properties org.crsh.cli.impl.bootstrap.Main --conf %CRASH_HOME%\conf --cmd %CRASH_HOME%\cmd %CMD_LINE_ARGS%"
 
