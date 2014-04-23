@@ -43,6 +43,18 @@ import java.util.concurrent.ConcurrentHashMap;
 /** @author Julien Viet */
 public class ClasspathResolverTestCase extends AbstractTestCase {
 
+  final ClassLoader parent = new ClassLoader() {
+    @Override
+    public URL getResource(String name) {
+      return null;
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+      return Collections.enumeration(Collections.<URL>emptyList());
+    }
+  };
+
   /** . */
   private JavaArchive archive;
   
@@ -69,7 +81,7 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
 
   public void testDir() throws Exception {
     File root = toExploded(archive, "");
-    ClassLoader cl = new URLClassLoader(new URL[]{root.toURI().toURL()}, null);
+    ClassLoader cl = new URLClassLoader(new URL[]{root.toURI().toURL()}, parent);
     ClasspathResolver resolver = new ClasspathResolver(cl);
 
     // No recurse
@@ -89,7 +101,7 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
 
   public void testJar() throws Exception {
     File jar = toFile(this.archive, ".jar");
-    ClassLoader cl = new URLClassLoader(new URL[]{jar.toURI().toURL()}, null);
+    ClassLoader cl = new URLClassLoader(new URL[]{jar.toURI().toURL()}, parent);
     ClasspathResolver resolver = new ClasspathResolver(cl);
 
     // No recurse
@@ -108,7 +120,7 @@ public class ClasspathResolverTestCase extends AbstractTestCase {
 
   public void testNestedJar() throws Exception {
     final File war = toFile(ShrinkWrap.create(WebArchive.class).addAsLibrary(archive), ".jar");
-    ClassLoader cl = new ClassLoader(null) {
+    ClassLoader cl = new ClassLoader(parent) {
       @Override
       protected Enumeration<URL> findResources(String name) throws IOException {
         if ("META-INF/MANIFEST.MF".equals(name)) {
