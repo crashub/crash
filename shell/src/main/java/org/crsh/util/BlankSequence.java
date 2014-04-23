@@ -19,10 +19,12 @@
 
 package org.crsh.util;
 
+import java.io.Serializable;
+
 /**
  * An immutable sequence of white spaces.
  */
-public class BlankSequence implements CharSequence {
+public class BlankSequence implements CharSequence, Serializable {
 
   /** . */
   private static final BlankSequence[] CACHE = new BlankSequence[64];
