@@ -60,10 +60,10 @@ public abstract class AbstractConsoleTestCase extends AbstractTestCase {
   }
 
   protected final String getClipboard() {
-    return ((Editor)console.handler.get()).getClipboard();
+    return ((Editor)console.handler.get()).getKillBuffer();
   }
 
   protected final void setClipboard(String s) {
-    ((Editor)console.handler.get()).setClipboard(s);
+    ((Editor)console.handler.get()).setKillBuffer(s);
   }
 }

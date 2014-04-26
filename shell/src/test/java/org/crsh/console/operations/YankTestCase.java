@@ -25,21 +25,24 @@ import org.crsh.console.KeyStrokes;
 /**
  * @author Julien Viet
  */
-public class BackwardKillWordTestCase extends AbstractConsoleTestCase {
+public class YankTestCase extends AbstractConsoleTestCase {
 
   public void testEmacs() {
     console.init();
-    console.on(KeyStrokes.of("abc def ghi "));
-    console.on(Operation.BACKWARD_KILL_WORD);
-    assertEquals("abc def ", getCurrentLine());
-    assertEquals(8, getCurrentCursor());
-    assertEquals("ghi ", getClipboard());
+    console.on(Operation.YANK);
+    assertEquals("", getCurrentLine());
+    assertEquals(0, getCurrentCursor());
+    setClipboard("foobar");
+    console.on(Operation.YANK);
+    assertEquals("foobar", getCurrentLine());
+    assertEquals(6, getCurrentCursor());
     console.on(KeyStrokes.LEFT);
-    assertEquals("abc def ", getCurrentLine());
-    assertEquals(7, getCurrentCursor());
-    console.on(Operation.BACKWARD_KILL_WORD);
-    assertEquals("abc  ", getCurrentLine());
-    assertEquals(4, getCurrentCursor());
-    assertEquals("def", getClipboard());
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    setClipboard("juu");
+    console.on(Operation.YANK);
+    assertEquals("foojuubar", getCurrentLine());
+    assertEquals(6, getCurrentCursor());
   }
+
 }

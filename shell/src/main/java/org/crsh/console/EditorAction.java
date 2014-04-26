@@ -376,26 +376,26 @@ class EditorAction {
   static EditorAction DELETE_PREV_WORD = new EditorAction() {
     @Override
     void perform(Editor editor, EditorBuffer buffer) throws IOException {
-      editor.clipboard.setLength(0);
+      editor.killBuffer.setLength(0);
       boolean chars = false;
       while (true) {
         int cursor = buffer.getCursor();
         if (cursor > 0) {
           if (buffer.charAt(cursor - 1) == ' ') {
             if (!chars) {
-              editor.clipboard.appendCodePoint(buffer.del());
+              editor.killBuffer.appendCodePoint(buffer.del());
             } else {
               break;
             }
           } else {
-            editor.clipboard.appendCodePoint(buffer.del());
+            editor.killBuffer.appendCodePoint(buffer.del());
             chars = true;
           }
         } else {
           break;
         }
       }
-      editor.clipboard.reverse();
+      editor.killBuffer.reverse();
     }
   };
 
@@ -423,11 +423,11 @@ class EditorAction {
           break;
         }
       }
-      editor.clipboard.setLength(0);
+      editor.killBuffer.setLength(0);
       while (count-- > 0) {
-        editor.clipboard.appendCodePoint(buffer.del());
+        editor.killBuffer.appendCodePoint(buffer.del());
       }
-      editor.clipboard.reverse();
+      editor.killBuffer.reverse();
     }
   };
 
@@ -456,11 +456,11 @@ class EditorAction {
       while (buffer.moveRight()) {
         count++;
       }
-      editor.clipboard.setLength(0);
+      editor.killBuffer.setLength(0);
       while (count-- > 0) {
-        editor.clipboard.appendCodePoint(buffer.del());
+        editor.killBuffer.appendCodePoint(buffer.del());
       }
-      editor.clipboard.reverse();
+      editor.killBuffer.reverse();
       if (buffer.getCursor() > editor.getCursorBound()) {
         buffer.moveLeft();
       }
@@ -491,8 +491,8 @@ class EditorAction {
   static EditorAction PASTE_BEFORE = new EditorAction() {
     @Override
     void perform(Editor editor, EditorBuffer buffer) throws IOException {
-      if (editor.clipboard.length() > 0) {
-        buffer.append(editor.clipboard);
+      if (editor.killBuffer.length() > 0) {
+        buffer.append(editor.killBuffer);
         buffer.flush();
       }
     }
@@ -501,7 +501,7 @@ class EditorAction {
   static EditorAction PASTE_AFTER = new EditorAction() {
     @Override
     void perform(Editor editor, EditorBuffer buffer) throws IOException {
-      if (editor.clipboard.length() > 0) {
+      if (editor.killBuffer.length() > 0) {
 
       }
     }
@@ -628,6 +628,18 @@ class EditorAction {
       EditorAction.MOVE_BEGINNING.perform(editor, buffer);
       buffer.append("#");
       return EditorAction.ENTER.execute(editor, buffer, sequence, flush);
+    }
+  };
+
+  static EditorAction YANK = new EditorAction() {
+    @Override
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
+      if (editor.killBuffer.length() > 0) {
+        for (int i = 0;i < editor.killBuffer.length();i++) {
+          char c = editor.killBuffer.charAt(i);
+          buffer.append(c);
+        }
+      }
     }
   };
 

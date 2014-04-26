@@ -112,13 +112,14 @@ public abstract class Mode extends EditorAction {
           return EditorAction.INTERRUPT;
         case CLEAR_SCREEN:
           return EditorAction.CLS;
+        case YANK:
+          return EditorAction.YANK;
         case DO_LOWERCASE_VERSION:
         case ABORT:
         case EXCHANGE_POINT_AND_MARK:
         case QUOTED_INSERT:
         case REVERSE_SEARCH_HISTORY:
         case FORWARD_SEARCH_HISTORY:
-        case YANK:
         case CHARACTER_SEARCH:
         case UNDO:
         case RE_READ_INIT_FILE:
@@ -198,12 +199,12 @@ public abstract class Mode extends EditorAction {
           return EditorAction.HISTORY_FIRST;
         case END_OF_HISTORY:
           return EditorAction.HISTORY_LAST;
+        case YANK:
         case MENU_COMPLETE:
         case MENU_COMPLETE_BACKWARD:
         case REVERSE_SEARCH_HISTORY:
         case FORWARD_SEARCH_HISTORY:
         case QUOTED_INSERT:
-        case YANK:
         case UNDO:
           // Not yet implemented
         default:

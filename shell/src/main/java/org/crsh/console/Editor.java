@@ -61,8 +61,8 @@ class Editor extends Plugin {
   /** . */
   String historyBuffer;
 
-  /** The buffer that holds what we cut. */
-  final StringBuilder clipboard;
+  /** The buffer that holds what we kill. */
+  final StringBuilder killBuffer;
 
   /** . */
   private final ArrayList<Runnable> modeListeners;
@@ -85,7 +85,7 @@ class Editor extends Plugin {
     this.history = new LinkedList<String>();
     this.historyCursor = -1;
     this.historyBuffer = null;
-    this.clipboard = new StringBuilder();
+    this.killBuffer = new StringBuilder();
     this.mode = Mode.EMACS;
     this.modeListeners = new ArrayList<Runnable>();
   }
@@ -122,16 +122,16 @@ class Editor extends Plugin {
     }
   }
 
-  String getClipboard() {
-    return clipboard.toString();
+  String getKillBuffer() {
+    return killBuffer.toString();
   }
 
-  void setClipboard(CharSequence s) {
+  void setKillBuffer(CharSequence s) {
     if (s == null) {
       throw new NullPointerException("No null buffer content");
     }
-    clipboard.setLength(0);
-    clipboard.append(s);
+    killBuffer.setLength(0);
+    killBuffer.append(s);
   }
 
   boolean isEmpty() {
