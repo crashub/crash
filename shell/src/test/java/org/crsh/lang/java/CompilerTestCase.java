@@ -19,8 +19,10 @@
 package org.crsh.lang.java;
 
 import org.crsh.AbstractTestCase;
+import org.crsh.util.Utils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
+import org.jboss.shrinkwrap.api.exporter.ExplodedExporter;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -56,35 +58,45 @@ public class CompilerTestCase extends AbstractTestCase {
     assertEquals("hello", ret);
   }
 
-  public void testImport() throws Exception {
+  public void testImportFromFolder() throws Exception {
+    doTestImport(new ClassLoaderFactory() {
+      @Override
+      public ClassLoader getClassLoader(JavaArchive jar) throws Exception {
+        File tmp = File.createTempFile("root", "tmp");
+        assertTrue(tmp.delete());
+        assertTrue(tmp.mkdir());
+        tmp.deleteOnExit();
+        jar.as(ExplodedExporter.class).exportExploded(tmp, "root");
+        URL url = new File(tmp, "root").toURI().toURL();
+        return new URLClassLoader(new URL[]{url});
+      }
+    });
+  }
 
-    Compiler compiler = new Compiler();
-    List<JavaClassFileObject> files = compiler.compile("foo.A", "package foo;\n public class A {}");
-    assertEquals(1, files.size());
-    final JavaClassFileObject aFile = files.get(0);
-    JavaArchive a = ShrinkWrap.create(JavaArchive.class, "crash.jar");
-    a.add(new ByteArrayAsset(files.get(0).getBytes()), "foo/A.class");
-    a.setManifest(Thread.currentThread().getContextClassLoader().getResource("META-INF/MANIFEST.MF"));
-
-    for (int i = 0;i < 2;i++) {
-
-      //
-
-      //
-      ClassLoader cl;
-      if (i == 0) {
+  public void testImportFromJar() throws Exception {
+    doTestImport(new ClassLoaderFactory() {
+      @Override
+      public ClassLoader getClassLoader(JavaArchive jar) throws Exception {
         File tmp = File.createTempFile("crash", ".jar");
         assertTrue(tmp.delete());
-        a.as(ZipExporter.class).exportTo(tmp);
-        cl = new URLClassLoader(new URL[]{tmp.toURI().toURL()});
-      } else {
-        WebArchive b = ShrinkWrap.create(WebArchive.class);
-        b.setManifest(Thread.currentThread().getContextClassLoader().getResource("META-INF/MANIFEST.MF"));
-        b.addAsLibrary(a);
+        jar.as(ZipExporter.class).exportTo(tmp);
+        return new URLClassLoader(new URL[]{tmp.toURI().toURL()});
+      }
+    });
+  }
+
+  public void testImportFromNestedJar() throws Exception {
+    doTestImport(new ClassLoaderFactory() {
+      @Override
+      public ClassLoader getClassLoader(final JavaArchive jar) throws Exception {
+        WebArchive war = ShrinkWrap.create(WebArchive.class);
+        war.setManifest(Thread.currentThread().getContextClassLoader().getResource("META-INF/MANIFEST.MF"));
+        war.addAsLibrary(jar);
         final File tmp = File.createTempFile("crash", ".war");
         assertTrue(tmp.delete());
-        b.as(ZipExporter.class).exportTo(tmp);
-        cl = new ClassLoader(Thread.currentThread().getContextClassLoader()) {
+        war.as(ZipExporter.class).exportTo(tmp);
+        final byte[] bytes = Utils.readAsBytes(jar.get("foo/A.class").getAsset().openStream());
+        return new ClassLoader(Thread.currentThread().getContextClassLoader()) {
           Class<?> aClass = null;
           @Override
           protected Class<?> findClass(String name) throws ClassNotFoundException {
@@ -93,7 +105,7 @@ public class CompilerTestCase extends AbstractTestCase {
                 // Normally we should use the bytes from the nested crash.jar but it's too difficult
                 // so we just use what we compiled before as it is the same bytecode and already
                 // available here
-                byte[] bytes = aFile.getBytes();
+
                 aClass = defineClass(name, bytes, 0, bytes.length);
               }
               return aClass;
@@ -116,27 +128,44 @@ public class CompilerTestCase extends AbstractTestCase {
           }
         };
       }
+    });
+  }
 
-      //
-      compiler = new Compiler(cl);
-      files = compiler.compile("B",
-          "import foo.A;\n" +
-              "public class B implements java.util.concurrent.Callable<A> {\n" +
-              "public A call() {\n" +
-              "return new A();\n" +
-              "}\n" +
-              "}");
-      assertEquals(1, files.size());
-      LoadingClassLoader loader = new LoadingClassLoader(cl, files);
-      Class<?> B = loader.findClass("B");
-      Callable<?> asCallable = (Callable<?>)B.newInstance();
-      Object ret = asCallable.call();
-      assertNotNull(ret);
-      Class<?> A = ret.getClass();
-      assertEquals("foo.A", A.getName());
-      assertEquals(cl, A.getClassLoader());
-    }
+  private interface ClassLoaderFactory {
 
+    ClassLoader getClassLoader(JavaArchive jar) throws Exception;
+
+  }
+
+  private void doTestImport(ClassLoaderFactory factory) throws Exception {
+
+    Compiler compiler = new Compiler();
+    List<JavaClassFileObject> files = compiler.compile("foo.A", "package foo;\n public class A {}");
+    assertEquals(1, files.size());
+    JavaClassFileObject aFile = files.get(0);
+    JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "crash.jar");
+    jar.add(new ByteArrayAsset(aFile.getBytes()), "foo/A.class");
+    jar.setManifest(Thread.currentThread().getContextClassLoader().getResource("META-INF/MANIFEST.MF"));
+    ClassLoader cl = factory.getClassLoader(jar);
+
+    //
+    compiler = new Compiler(cl);
+    files = compiler.compile("B",
+        "import foo.A;\n" +
+            "public class B implements java.util.concurrent.Callable<A> {\n" +
+            "public A call() {\n" +
+            "return new A();\n" +
+            "}\n" +
+            "}");
+    assertEquals(1, files.size());
+    LoadingClassLoader loader = new LoadingClassLoader(cl, files);
+    Class<?> B = loader.findClass("B");
+    Callable<?> asCallable = (Callable<?>)B.newInstance();
+    Object ret = asCallable.call();
+    assertNotNull(ret);
+    Class<?> A = ret.getClass();
+    assertEquals("foo.A", A.getName());
+    assertEquals(cl, A.getClassLoader());
   }
 
   public void testCompilationFailure() throws Exception {
