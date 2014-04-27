@@ -114,6 +114,8 @@ public abstract class Mode extends EditorAction {
           return EditorAction.CLS;
         case YANK:
           return EditorAction.YANK;
+        case KILL_WORD:
+          return EditorAction.DELETE_NEXT_WORD;
         case DO_LOWERCASE_VERSION:
         case ABORT:
         case EXCHANGE_POINT_AND_MARK:
