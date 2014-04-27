@@ -46,6 +46,7 @@ public class UnixLineDiscardTestCase extends AbstractConsoleTestCase {
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("def", getCurrentLine());
     assertEquals(0, getCurrentCursor());
+    assertEquals("abc", getClipboard());
   }
 
   // Vi move
@@ -60,6 +61,7 @@ public class UnixLineDiscardTestCase extends AbstractConsoleTestCase {
     console.on(KeyStrokes.LEFT);
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("play", getCurrentLine());
+    assertEquals("all work and no ", getClipboard());
   }
 
   public void testCtrlU2() throws Exception {
@@ -70,6 +72,7 @@ public class UnixLineDiscardTestCase extends AbstractConsoleTestCase {
     console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("donkey punch", getCurrentLine());
+    assertEquals("", getClipboard());
   }
 
   public void testCtrlU3() throws Exception {
@@ -79,5 +82,6 @@ public class UnixLineDiscardTestCase extends AbstractConsoleTestCase {
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("r", getCurrentLine());
+    assertEquals("rabid hamste", getClipboard());
   }
 }

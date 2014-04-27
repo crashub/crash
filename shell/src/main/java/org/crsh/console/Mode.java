@@ -97,7 +97,7 @@ public abstract class Mode extends EditorAction {
         case TRANSPOSE_CHARS:
           return EditorAction.TRANSPOSE_CHARS;
         case UNIX_LINE_DISCARD:
-          return EditorAction.DELETE_BEGINNING;
+          return EditorAction.UNIX_LINE_DISCARD;
         case UNIX_WORD_RUBOUT:
           return EditorAction.DELETE_PREV_WORD;
         case BACKWARD_KILL_WORD:
@@ -188,7 +188,7 @@ public abstract class Mode extends EditorAction {
         case TRANSPOSE_CHARS:
           return EditorAction.TRANSPOSE_CHARS;
         case UNIX_LINE_DISCARD:
-          return EditorAction.DELETE_BEGINNING;
+          return EditorAction.UNIX_LINE_DISCARD;
         case UNIX_WORD_RUBOUT:
           return EditorAction.DELETE_PREV_WORD;
         case INTERRUPT:
@@ -282,7 +282,7 @@ public abstract class Mode extends EditorAction {
         case TRANSPOSE_CHARS:
           return EditorAction.TRANSPOSE_CHARS;
         case UNIX_LINE_DISCARD:
-          return EditorAction.DELETE_BEGINNING;
+          return EditorAction.UNIX_LINE_DISCARD;
         case UNIX_WORD_RUBOUT:
           return EditorAction.DELETE_PREV_WORD;
         case END_OF_LINE:
@@ -304,7 +304,7 @@ public abstract class Mode extends EditorAction {
             return super.on(keyStroke);
           }
         case VI_PUT:
-          return EditorAction.PASTE_AFTER;
+          return EditorAction.PUT;
         case VI_CHANGE_CHAR:
           return new ChangeChar(1);
         case INTERRUPT:
