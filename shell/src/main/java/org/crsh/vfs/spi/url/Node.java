@@ -23,24 +23,33 @@ import org.crsh.util.InputStreamFactory;
 import org.crsh.util.Utils;
 import org.crsh.util.ZipIterator;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class Node implements Iterable<Resource> {
 
   /** . */
+  private static final File[] EMPTY = new File[0];
+
+  /** . */
   public final String name;
+
+  /** The lazy dires not yet processed. */
+  File[] dirs = EMPTY;
 
   /** . */
   HashMap<String, Node> children = new HashMap<String, Node>();
@@ -106,6 +115,24 @@ public class Node implements Iterable<Resource> {
     }
   }
 
+  Iterable<Node> children() throws IOException {
+    // Lazy merge the dirs when accessing this node
+    // it is not only important for performance reason but in some case
+    // the classpath may contain an exploded dir that see the the whole file system
+    // and the full scan is an issue
+    while (true) {
+      int length = dirs.length;
+      if (length > 0) {
+        File dir = dirs[length - 1];
+        dirs = Arrays.copyOf(dirs, length - 1);
+        merge(dir);
+      } else {
+        break;
+      }
+    }
+    return children.values();
+  }
+
   void mergeEntries(URL url) throws IOException, URISyntaxException {
     // We handle a special case of spring-boot URLs here before diving in the recursive analysis
     // see https://github.com/spring-projects/spring-boot/tree/master/spring-boot-tools/spring-boot-loader#urls
@@ -165,12 +192,12 @@ public class Node implements Iterable<Resource> {
         Node child = children.get(name);
         if (file.isDirectory()) {
           if (child == null) {
-            Node dir = new Node(name);
-            dir.merge(file);
-            children.put(name, dir);
-          } else {
-            child.merge(file);
+            child = new Node(name);
+            children.put(name, child);
           }
+          int length = child.dirs.length;
+          child.dirs = Arrays.copyOf(child.dirs, length + 1);
+          child.dirs[length] = file;
         } else {
           if (child == null) {
             children.put(name, child = new Node(name));

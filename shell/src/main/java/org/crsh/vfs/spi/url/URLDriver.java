@@ -59,7 +59,7 @@ public class URLDriver extends AbstractFSDriver<Node> {
   }
 
   public Iterable<Node> children(Node handle) throws IOException {
-    return handle.children.values();
+    return handle.children();
   }
 
   public long getLastModified(Node handle) throws IOException {
