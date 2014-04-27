@@ -38,7 +38,6 @@ import org.crsh.command.ShellCommand;
 import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
 import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.shell.impl.command.CommandResolution;
-import org.crsh.util.AbstractClassCache;
 import org.crsh.util.ClassCache;
 import org.crsh.shell.impl.command.CommandManager;
 import org.crsh.lang.groovy.command.GroovyScript;
@@ -61,7 +60,7 @@ public class GroovyCommandManagerImpl implements CommandManager {
   static final Logger log = Logger.getLogger(GroovyCommandManagerImpl.class.getName());
 
   /** . */
-  private AbstractClassCache<GroovyScript> scriptCache;
+  private ClassCache<GroovyScript> scriptCache;
 
   /** . */
   private GroovyClassFactory<Object> objectGroovyClassFactory;
