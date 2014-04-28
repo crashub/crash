@@ -527,11 +527,24 @@ class EditorAction {
     @Override
     void perform(Editor editor, EditorBuffer buffer) throws IOException {
       int size = editor.buffer.getSize();
-      if (size > 0) {
-        editor.killBuffer.setLength(0);
-        for (int i = 0;i < size;i++) {
-          editor.killBuffer.append(editor.buffer.charAt(i));
-        }
+      editor.killBuffer.setLength(0);
+      for (int i = 0;i < size;i++) {
+        editor.killBuffer.append(editor.buffer.charAt(i));
+      }
+    }
+  };
+
+  static EditorAction COPY_NEXT_WORD = new EditorAction() {
+    @Override
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
+      int size = editor.buffer.getSize();
+      int cursor = editor.buffer.getCursor();
+      editor.killBuffer.setLength(0);
+      while (cursor < size && editor.buffer.charAt(cursor) != ' ') {
+        editor.killBuffer.append(editor.buffer.charAt(cursor++));
+      }
+      while (cursor < size && editor.buffer.charAt(cursor) == ' ') {
+        editor.killBuffer.append(editor.buffer.charAt(cursor++));
       }
     }
   };

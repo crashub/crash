@@ -51,4 +51,23 @@ public class ViYankToTestCase extends AbstractPasteTestCase {
     assertEquals(Mode.VI_MOVE, console.getMode());
     assertEquals("abcdef", getClipboard());
   }
+
+  public void testNextWord() {
+    console.init();
+    console.on(KeyStrokes.of("abc  def"));
+    console.toMove();
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(KeyStrokes.LEFT);
+    console.on(Operation.VI_YANK_TO);
+    assertEquals(Mode.YANK_TO, console.getMode());
+    console.on(Operation.VI_NEXT_WORD);
+    assertEquals(Mode.VI_MOVE, console.getMode());
+    assertEquals("bc  ", getClipboard());
+    assertEquals(1, getCurrentCursor());
+  }
 }

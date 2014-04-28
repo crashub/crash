@@ -410,6 +410,8 @@ public abstract class Mode extends EditorAction {
       switch (keyStroke.operation) {
         case VI_YANK_TO:
           return EditorAction.COPY.then(VI_MOVE);
+        case VI_NEXT_WORD:
+          return EditorAction.COPY_NEXT_WORD.then(VI_MOVE);
         case END_OF_LINE:
           // Not implemented
           return VI_MOVE;
