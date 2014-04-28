@@ -588,6 +588,21 @@ class EditorAction {
     }
   };
 
+  static EditorAction COPY_PREV_WORD = new EditorAction() {
+    @Override
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
+      int cursor = buffer.getCursor() - 1;
+      editor.killBuffer.setLength(0);
+      while (cursor > 0 && buffer.charAt(cursor) != ' ') {
+        editor.killBuffer.append(buffer.charAt(cursor--));
+      }
+      while (cursor > 0 && editor.buffer.charAt(cursor) == ' ') {
+        editor.killBuffer.append(buffer.charAt(cursor--));
+      }
+      editor.killBuffer.reverse();
+    }
+  };
+
   static class ChangeChars extends EditorAction {
 
     /** . */

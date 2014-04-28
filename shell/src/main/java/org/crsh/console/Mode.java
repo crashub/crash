@@ -410,12 +410,14 @@ public abstract class Mode extends EditorAction {
       switch (keyStroke.operation) {
         case VI_YANK_TO:
           return EditorAction.COPY.then(VI_MOVE);
-        case VI_NEXT_WORD:
-          return EditorAction.COPY_NEXT_WORD.then(VI_MOVE);
         case END_OF_LINE:
           return COPY_END_OF_LINE.then(VI_MOVE);
         case VI_BEGNNING_OF_LINE_OR_ARG_DIGIT:
           return COPY_BEGINNING_OF_LINE.then(VI_MOVE);
+        case VI_NEXT_WORD:
+          return EditorAction.COPY_NEXT_WORD.then(VI_MOVE);
+        case VI_FIRST_PRINT:
+          return EditorAction.COPY_PREV_WORD.then(VI_MOVE);
         case INTERRUPT:
           return EditorAction.INTERRUPT.then(VI_MOVE);
         default:
