@@ -549,6 +549,18 @@ class EditorAction {
     }
   };
 
+  static EditorAction COPY_END_OF_LINE = new EditorAction() {
+    @Override
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
+      int size = editor.buffer.getSize();
+      int cursor = editor.buffer.getCursor();
+      editor.killBuffer.setLength(0);
+      while (cursor < size) {
+        editor.killBuffer.append(editor.buffer.charAt(cursor++));
+      }
+    }
+  };
+
   static class ChangeChars extends EditorAction {
 
     /** . */

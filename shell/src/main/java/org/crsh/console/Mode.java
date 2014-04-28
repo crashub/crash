@@ -413,8 +413,7 @@ public abstract class Mode extends EditorAction {
         case VI_NEXT_WORD:
           return EditorAction.COPY_NEXT_WORD.then(VI_MOVE);
         case END_OF_LINE:
-          // Not implemented
-          return VI_MOVE;
+          return COPY_END_OF_LINE.then(VI_MOVE);
         case INTERRUPT:
           return EditorAction.INTERRUPT.then(VI_MOVE);
         default:
