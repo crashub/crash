@@ -113,7 +113,7 @@ public abstract class Mode extends EditorAction {
         case CLEAR_SCREEN:
           return EditorAction.CLS;
         case YANK:
-          return EditorAction.YANK;
+          return EditorAction.PASTE_AFTER;
         case KILL_WORD:
           return EditorAction.DELETE_NEXT_WORD;
         case DO_LOWERCASE_VERSION:
@@ -304,7 +304,7 @@ public abstract class Mode extends EditorAction {
             return super.on(keyStroke);
           }
         case VI_PUT:
-          return EditorAction.PUT;
+          return EditorAction.PASTE_AFTER;
         case VI_CHANGE_CHAR:
           return new ChangeChar(1);
         case INTERRUPT:
@@ -408,6 +408,9 @@ public abstract class Mode extends EditorAction {
     @Override
     public EditorAction on(KeyStroke keyStroke) {
       switch (keyStroke.operation) {
+        case VI_YANK_TO:
+
+          return EditorAction.PASTE_AFTER;
         case END_OF_LINE:
           // Not implemented
           return VI_MOVE;

@@ -501,7 +501,7 @@ class EditorAction {
     }
   };
 
-  static EditorAction YANK = new EditorAction() {
+  static EditorAction PASTE_AFTER = new EditorAction() {
     @Override
     void perform(Editor editor, EditorBuffer buffer) throws IOException {
       if (editor.killBuffer.length() > 0) {
@@ -512,8 +512,6 @@ class EditorAction {
       }
     }
   };
-
-  static EditorAction PUT = YANK;
 
   static EditorAction MOVE_END = new EditorAction() {
     @Override
