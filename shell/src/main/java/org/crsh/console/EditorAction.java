@@ -523,14 +523,53 @@ class EditorAction {
     }
   };
 
-  static EditorAction COPY = new EditorAction() {
+  static abstract class Copy extends EditorAction {
+
+    protected abstract int getFrom(EditorBuffer buffer);
+
+    protected abstract int getTo(EditorBuffer buffer);
+
     @Override
     void perform(Editor editor, EditorBuffer buffer) throws IOException {
-      int size = editor.buffer.getSize();
+      int from = getFrom(buffer);
+      int to = getTo(buffer);
       editor.killBuffer.setLength(0);
-      for (int i = 0;i < size;i++) {
+      for (int i = from;i < to;i++) {
         editor.killBuffer.append(editor.buffer.charAt(i));
       }
+    }
+  }
+
+  static EditorAction COPY = new Copy() {
+    @Override
+    protected int getFrom(EditorBuffer buffer) {
+      return 0;
+    }
+    @Override
+    protected int getTo(EditorBuffer buffer) {
+      return buffer.getSize();
+    }
+  };
+
+  static EditorAction COPY_END_OF_LINE = new Copy() {
+    @Override
+    protected int getFrom(EditorBuffer buffer) {
+      return buffer.getCursor();
+    }
+    @Override
+    protected int getTo(EditorBuffer buffer) {
+      return buffer.getSize();
+    }
+  };
+
+  static EditorAction COPY_BEGINNING_OF_LINE = new Copy() {
+    @Override
+    protected int getFrom(EditorBuffer buffer) {
+      return 0;
+    }
+    @Override
+    protected int getTo(EditorBuffer buffer) {
+      return buffer.getCursor();
     }
   };
 
@@ -544,18 +583,6 @@ class EditorAction {
         editor.killBuffer.append(editor.buffer.charAt(cursor++));
       }
       while (cursor < size && editor.buffer.charAt(cursor) == ' ') {
-        editor.killBuffer.append(editor.buffer.charAt(cursor++));
-      }
-    }
-  };
-
-  static EditorAction COPY_END_OF_LINE = new EditorAction() {
-    @Override
-    void perform(Editor editor, EditorBuffer buffer) throws IOException {
-      int size = editor.buffer.getSize();
-      int cursor = editor.buffer.getCursor();
-      editor.killBuffer.setLength(0);
-      while (cursor < size) {
         editor.killBuffer.append(editor.buffer.charAt(cursor++));
       }
     }
