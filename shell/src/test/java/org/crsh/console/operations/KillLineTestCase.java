@@ -33,11 +33,13 @@ public class KillLineTestCase extends AbstractConsoleTestCase {
     console.on(Operation.KILL_LINE);
     assertEquals("abc def", getCurrentLine());
     assertEquals(7, getCurrentCursor());
+    assertEquals("", getClipboard());
     console.on(Operation.BACKWARD_WORD);
     assertEquals(4, getCurrentCursor());
     console.on(Operation.KILL_LINE);
     assertEquals("abc ", getCurrentLine());
     assertEquals(4, getCurrentCursor());
+    assertEquals("def", getClipboard());
   }
 
   // Vi move
@@ -51,5 +53,6 @@ public class KillLineTestCase extends AbstractConsoleTestCase {
     console.on(Operation.KILL_LINE);
     assertEquals("abcd", getCurrentLine());
     assertEquals(3, getCurrentCursor());
+    assertEquals("ef", getClipboard());
   }
 }
