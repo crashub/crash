@@ -486,6 +486,14 @@ public abstract class Mode extends EditorAction {
       this(0);
     }
 
+    public int getCount() {
+      return count;
+    }
+
+    public Character getTo() {
+      return to;
+    }
+
     @Override
     public String getKeyMap() {
       return "vi-move";
@@ -592,11 +600,7 @@ public abstract class Mode extends EditorAction {
           to = 'c';
           return null;
         case VI_YANK_TO:
-          if (to != null) {
-            throw new UnsupportedOperationException("Not yet handled");
-          }
-          to = 'y';
-          return null;
+          return YANK_TO;
         case VI_CHANGE_CHAR:
           if (to != null) {
             throw new UnsupportedOperationException("Not yet handled");

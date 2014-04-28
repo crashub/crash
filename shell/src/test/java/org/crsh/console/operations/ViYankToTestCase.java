@@ -27,10 +27,24 @@ import org.crsh.console.Mode;
  */
 public class ViYankToTestCase extends AbstractPasteTestCase {
 
-  public void testVi() {
+  public void testNormal() {
     console.init();
     console.on(KeyStrokes.of("abcdef"));
     console.toMove();
+    console.on(Operation.VI_YANK_TO);
+    assertEquals(Mode.YANK_TO, console.getMode());
+    console.on(Operation.VI_YANK_TO);
+    assertEquals(Mode.VI_MOVE, console.getMode());
+    assertEquals("abcdef", getClipboard());
+  }
+
+  public void testDigit() {
+    console.init();
+    console.on(KeyStrokes.of("abcdef"));
+    console.toMove();
+    console.on(Operation.VI_ARG_DIGIT, '4');
+    assertEquals(4, assertInstance(Mode.Digit.class, console.getMode()).getCount());
+    assertEquals(null, assertInstance(Mode.Digit.class, console.getMode()).getTo());
     console.on(Operation.VI_YANK_TO);
     assertEquals(Mode.YANK_TO, console.getMode());
     console.on(Operation.VI_YANK_TO);
