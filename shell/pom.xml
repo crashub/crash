@@ -112,7 +112,7 @@
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
-                    <Main-Class>org.crsh.standalone.CRaSH2</Main-Class>
+                    <Main-Class>org.crsh.standalone.CRaSH</Main-Class>
                     <Agent-Class>org.crsh.standalone.Agent</Agent-Class>
                   </manifestEntries>
                 </transformer>
