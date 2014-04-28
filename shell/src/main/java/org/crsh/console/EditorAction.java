@@ -711,7 +711,7 @@ class EditorAction {
     throw new UnsupportedOperationException("Implement the edition logic");
   }
 
-  public EditorAction append(final EditorAction action) {
+  public EditorAction then(final EditorAction action) {
     return new EditorAction() {
       @Override
       String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {

@@ -168,7 +168,7 @@ public abstract class Mode extends EditorAction {
     public EditorAction on(KeyStroke keyStroke) {
       switch (keyStroke.operation) {
         case VI_MOVEMENT_MODE:
-          return VI_MOVE.append(EditorAction.LEFT);
+          return VI_MOVE.then(EditorAction.LEFT);
         case FORWARD_CHAR:
           return EditorAction.RIGHT;
         case BACKWARD_CHAR:
@@ -236,7 +236,7 @@ public abstract class Mode extends EditorAction {
         case VI_INSERTION_MODE:
           return VI_INSERT;
         case VI_INSERT_BEG:
-          return EditorAction.MOVE_BEGINNING.append(VI_INSERT);
+          return EditorAction.MOVE_BEGINNING.then(VI_INSERT);
         case VI_INSERT_COMMENT:
           return EditorAction.INSERT_COMMENT;
         case BACKWARD_DELETE_CHAR:
@@ -261,7 +261,7 @@ public abstract class Mode extends EditorAction {
           if (buffer.length > 0 && buffer[0] == 'C') {
             // Workaround since it is only implemented in jline 2.12 with Operation.VI_CHANGE_TO_EOL
             // see https://github.com/jline/jline2/commit/f60432ffbd8322f53abb2d284e1f92f94acf0cc8
-            return EMACS.append(EditorAction.DELETE_END).append(VI_INSERT);
+            return EMACS.then(EditorAction.DELETE_END).then(VI_INSERT);
           } else {
             return CHANGE_TO;
           }
@@ -274,7 +274,7 @@ public abstract class Mode extends EditorAction {
         case VI_APPEND_MODE:
           // That's a trick to let the cursor go to the end of the line
           // then we set to VI_INSERT
-          return EMACS.append(EditorAction.RIGHT).append(VI_INSERT);
+          return EMACS.then(EditorAction.RIGHT).then(VI_INSERT);
         case VI_BEGNNING_OF_LINE_OR_ARG_DIGIT:
           return EditorAction.MOVE_BEGINNING;
         case FORWARD_CHAR:
@@ -299,7 +299,7 @@ public abstract class Mode extends EditorAction {
           if (buffer.length > 0 && buffer[0] == 'S') {
             // Workaround since it is only implemented in jline 2.12 with Operation.KILL_WHOLE_LINE
             // see https://github.com/jline/jline2/commit/f60432ffbd8322f53abb2d284e1f92f94acf0cc8
-            return EditorAction.DELETE_LINE.append(VI_INSERT);
+            return EditorAction.DELETE_LINE.then(VI_INSERT);
           } else {
             return super.on(keyStroke);
           }
@@ -344,17 +344,17 @@ public abstract class Mode extends EditorAction {
     public EditorAction on(KeyStroke keyStroke) {
       switch (keyStroke.operation) {
         case BACKWARD_CHAR:
-          return EditorAction.DELETE_PREV_CHAR.append(VI_MOVE);
+          return EditorAction.DELETE_PREV_CHAR.then(VI_MOVE);
         case FORWARD_CHAR:
-          return EditorAction.DELETE_NEXT_CHAR.append(VI_MOVE);
+          return EditorAction.DELETE_NEXT_CHAR.then(VI_MOVE);
         case END_OF_LINE:
-          return EditorAction.DELETE_END.append(VI_MOVE);
+          return EditorAction.DELETE_END.then(VI_MOVE);
         case VI_NEXT_WORD:
-          return EditorAction.DELETE_UNTIL_NEXT_WORD.append(VI_MOVE);
+          return EditorAction.DELETE_UNTIL_NEXT_WORD.then(VI_MOVE);
         case VI_DELETE_TO:
-          return EditorAction.DELETE_LINE.append(VI_MOVE);
+          return EditorAction.DELETE_LINE.then(VI_MOVE);
         case INTERRUPT:
-          return EditorAction.INTERRUPT.append(VI_MOVE);
+          return EditorAction.INTERRUPT.then(VI_MOVE);
         default:
           return VI_MOVE;
       }
@@ -377,15 +377,15 @@ public abstract class Mode extends EditorAction {
     public EditorAction on(KeyStroke keyStroke) {
       switch (keyStroke.operation) {
         case BACKWARD_CHAR:
-          return EditorAction.DELETE_PREV_CHAR.append(VI_INSERT);
+          return EditorAction.DELETE_PREV_CHAR.then(VI_INSERT);
         case END_OF_LINE:
-          return EMACS.append(EditorAction.DELETE_END).append(VI_INSERT);
+          return EMACS.then(EditorAction.DELETE_END).then(VI_INSERT);
         case VI_NEXT_WORD:
-          return EditorAction.DELETE_NEXT_WORD.append(VI_INSERT);
+          return EditorAction.DELETE_NEXT_WORD.then(VI_INSERT);
         case VI_CHANGE_TO:
-          return EditorAction.DELETE_LINE.append(VI_INSERT);
+          return EditorAction.DELETE_LINE.then(VI_INSERT);
         case INTERRUPT:
-          return EditorAction.INTERRUPT.append(VI_MOVE);
+          return EditorAction.INTERRUPT.then(VI_MOVE);
         default:
           return VI_MOVE;
       }
@@ -409,12 +409,12 @@ public abstract class Mode extends EditorAction {
     public EditorAction on(KeyStroke keyStroke) {
       switch (keyStroke.operation) {
         case VI_YANK_TO:
-          return EditorAction.COPY.append(VI_MOVE);
+          return EditorAction.COPY.then(VI_MOVE);
         case END_OF_LINE:
           // Not implemented
           return VI_MOVE;
         case INTERRUPT:
-          return EditorAction.INTERRUPT.append(VI_MOVE);
+          return EditorAction.INTERRUPT.then(VI_MOVE);
         default:
           return super.on(keyStroke);
       }
@@ -446,9 +446,9 @@ public abstract class Mode extends EditorAction {
         case VI_MOVEMENT_MODE: // ESC
           return VI_MOVE;
         case INTERRUPT:
-          return EditorAction.INTERRUPT.append(VI_MOVE);
+          return EditorAction.INTERRUPT.then(VI_MOVE);
         default:
-          return new EditorAction.ChangeChars(count, keyStroke.sequence[0]).append(VI_MOVE);
+          return new EditorAction.ChangeChars(count, keyStroke.sequence[0]).then(VI_MOVE);
       }
     }
 
@@ -516,11 +516,11 @@ public abstract class Mode extends EditorAction {
           return null;
         case BACKWARD_CHAR:
           if (to == null) {
-            return EditorAction.LEFT.repeat(count).append(VI_MOVE);
+            return EditorAction.LEFT.repeat(count).then(VI_MOVE);
           } else if (to == 'd') {
-            return EditorAction.DELETE_PREV_CHAR.repeat(count).append(VI_MOVE);
+            return EditorAction.DELETE_PREV_CHAR.repeat(count).then(VI_MOVE);
           } else if (to == 'c') {
-            return EditorAction.DELETE_PREV_CHAR.repeat(count).append(VI_INSERT);
+            return EditorAction.DELETE_PREV_CHAR.repeat(count).then(VI_INSERT);
           } else if (to == 'y') {
             // Not implemented
             return VI_MOVE;
@@ -529,11 +529,11 @@ public abstract class Mode extends EditorAction {
           }
         case FORWARD_CHAR:
           if (to == null) {
-            return EditorAction.RIGHT.repeat(count).append(VI_MOVE);
+            return EditorAction.RIGHT.repeat(count).then(VI_MOVE);
           } else if (to == 'd') {
-            return EditorAction.DELETE_NEXT_CHAR.repeat(count).append(VI_MOVE);
+            return EditorAction.DELETE_NEXT_CHAR.repeat(count).then(VI_MOVE);
           } else if (to == 'c') {
-            return EditorAction.DELETE_NEXT_CHAR.repeat(count).append(VI_INSERT);
+            return EditorAction.DELETE_NEXT_CHAR.repeat(count).then(VI_INSERT);
           } else if (to == 'y') {
             throw new UnsupportedOperationException("Not yet handled");
           } else {
@@ -541,41 +541,41 @@ public abstract class Mode extends EditorAction {
           }
         case VI_NEXT_WORD:
           if (to == null) {
-            return EditorAction.MOVE_NEXT_WORD_AT_BEGINNING.repeat(count).append(VI_MOVE);
+            return EditorAction.MOVE_NEXT_WORD_AT_BEGINNING.repeat(count).then(VI_MOVE);
           } else if (to == 'd') {
-            return EditorAction.DELETE_UNTIL_NEXT_WORD.repeat(count).append(VI_MOVE);
+            return EditorAction.DELETE_UNTIL_NEXT_WORD.repeat(count).then(VI_MOVE);
           } else if (to == 'c') {
-            return EditorAction.DELETE_NEXT_WORD.repeat(count).append(VI_INSERT);
+            return EditorAction.DELETE_NEXT_WORD.repeat(count).then(VI_INSERT);
           } else {
             return super.on(keyStroke);
           }
         case VI_PREV_WORD:
           if (to == null) {
-            return EditorAction.MOVE_PREV_WORD_AT_END.repeat(count).append(VI_MOVE);
+            return EditorAction.MOVE_PREV_WORD_AT_END.repeat(count).then(VI_MOVE);
           } else {
             super.on(keyStroke);
           }
         case VI_END_WORD:
           if (to == null) {
-            return EditorAction.MOVE_NEXT_WORD_BEFORE_END.repeat(count).append(VI_MOVE);
+            return EditorAction.MOVE_NEXT_WORD_BEFORE_END.repeat(count).then(VI_MOVE);
           } else {
             super.on(keyStroke);
           }
         case BACKWARD_DELETE_CHAR:
           if (to == null) {
-            return EditorAction.DELETE_PREV_CHAR.repeat(count).append(VI_MOVE);
+            return EditorAction.DELETE_PREV_CHAR.repeat(count).then(VI_MOVE);
           } else {
             return super.on(keyStroke);
           }
         case VI_CHANGE_CASE:
           if (to == null) {
-            return EditorAction.CHANGE_CASE.repeat(count).append(VI_MOVE);
+            return EditorAction.CHANGE_CASE.repeat(count).then(VI_MOVE);
           } else {
             return super.on(keyStroke);
           }
         case VI_DELETE:
           if (to == null) {
-            return new EditorAction.DeleteNextChars(count).append(VI_MOVE);
+            return new EditorAction.DeleteNextChars(count).then(VI_MOVE);
           } else {
             return super.on(keyStroke);
           }
@@ -603,7 +603,7 @@ public abstract class Mode extends EditorAction {
           }
           return new ChangeChar(count);
         case INTERRUPT:
-          return EditorAction.INTERRUPT.append(VI_MOVE);
+          return EditorAction.INTERRUPT.then(VI_MOVE);
         default:
           return VI_MOVE;
       }
