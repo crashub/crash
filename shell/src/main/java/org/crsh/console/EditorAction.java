@@ -460,6 +460,17 @@ class EditorAction {
     }
   };
 
+  static EditorAction DELETE_BEGINNING = new EditorAction() {
+    @Override
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
+      editor.killBuffer.setLength(0);
+      while (editor.buffer.getCursor() > 0) {
+        editor.killBuffer.appendCodePoint(buffer.del());
+      }
+      editor.killBuffer.reverse();
+    }
+  };
+
   static EditorAction UNIX_LINE_DISCARD = new EditorAction() {
     @Override
     void perform(Editor editor, EditorBuffer buffer) throws IOException {
@@ -481,16 +492,6 @@ class EditorAction {
       buffer.moveRightBy(buffer.getSize() - buffer.getCursor());
       buffer.replace("");
       return null;
-    }
-  };
-
-  static EditorAction PASTE_BEFORE = new EditorAction() {
-    @Override
-    void perform(Editor editor, EditorBuffer buffer) throws IOException {
-      if (editor.killBuffer.length() > 0) {
-        buffer.append(editor.killBuffer);
-        buffer.flush();
-      }
     }
   };
 

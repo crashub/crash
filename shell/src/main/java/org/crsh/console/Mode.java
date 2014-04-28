@@ -90,6 +90,8 @@ public abstract class Mode extends EditorAction {
           return EditorAction.ENTER;
         case KILL_LINE:
           return EditorAction.DELETE_END;
+        case BACKWARD_KILL_LINE:
+          return EditorAction.DELETE_BEGINNING;
         case PREVIOUS_HISTORY:
           return EditorAction.HISTORY_PREV;
         case NEXT_HISTORY:
@@ -245,6 +247,8 @@ public abstract class Mode extends EditorAction {
           return EditorAction.DELETE_NEXT_CHAR;
         case KILL_LINE:
           return EditorAction.DELETE_END;
+        case BACKWARD_KILL_LINE:
+          return EditorAction.DELETE_BEGINNING;
         case VI_DELETE_TO:
           if (buffer.length > 0 && buffer[0] == 'D') {
             // Workaround since it is only implemented in jline 2.12 with Operation.VI_DELETE_TO_EOL
