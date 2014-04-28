@@ -21,6 +21,7 @@ package org.crsh.console;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * <p>The current mode of the editor state machine. It decodes a command line operation according
@@ -30,6 +31,9 @@ import java.io.IOException;
  * @author Julien Viet
  */
 public abstract class Mode extends EditorAction {
+
+  /** The logger. */
+  private static final Logger log = Logger.getLogger(Mode.class.getName());
 
   public abstract String getKeyMap();
 
@@ -48,7 +52,7 @@ public abstract class Mode extends EditorAction {
    */
   public EditorAction on(KeyStroke keyStroke) {
     String message = "Operation " + keyStroke.operation + " not mapped in " + getClass().getSimpleName() + " mode " + this;
-    System.err.println(message);
+    log.warning(message);
     return null;
   }
 
