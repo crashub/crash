@@ -409,8 +409,7 @@ public abstract class Mode extends EditorAction {
     public EditorAction on(KeyStroke keyStroke) {
       switch (keyStroke.operation) {
         case VI_YANK_TO:
-
-          return EditorAction.PASTE_AFTER;
+          return EditorAction.COPY.append(VI_MOVE);
         case END_OF_LINE:
           // Not implemented
           return VI_MOVE;

@@ -523,6 +523,19 @@ class EditorAction {
     }
   };
 
+  static EditorAction COPY = new EditorAction() {
+    @Override
+    void perform(Editor editor, EditorBuffer buffer) throws IOException {
+      int size = editor.buffer.getSize();
+      if (size > 0) {
+        editor.killBuffer.setLength(0);
+        for (int i = 0;i < size;i++) {
+          editor.killBuffer.append(editor.buffer.charAt(i));
+        }
+      }
+    }
+  };
+
   static class ChangeChars extends EditorAction {
 
     /** . */
