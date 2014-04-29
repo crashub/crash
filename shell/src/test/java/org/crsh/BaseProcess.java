@@ -19,6 +19,7 @@
 package org.crsh;
 
 import junit.framework.AssertionFailedError;
+import org.crsh.console.KeyHandler;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -51,7 +52,12 @@ public class BaseProcess implements ShellProcess {
     return ShellResponse.ok();
   }
 
-  protected final String readLine(String msg, boolean echo) {
+  @Override
+  public KeyHandler getKeyHandler() {
+    return null;
+  }
+
+  protected final String readLine(String msg, boolean echo) throws IOException, InterruptedException {
     return processContext.readLine(msg, echo);
   }
 

@@ -54,7 +54,8 @@ public class RenderAppendable implements Appendable, ScreenContext {
   }
 
   public int getWidth() {
-    return context.getWidth();
+    // Use one less char to have a correct display on windows
+    return Math.max(0, context.getWidth() - 1);
   }
 
   public int getHeight() {

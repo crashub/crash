@@ -19,7 +19,7 @@
 
 package org.crsh.text.ui;
 
-import org.crsh.text.Renderer;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Style;
 
 import java.util.ArrayList;
@@ -100,8 +100,8 @@ public class TableElement extends Element {
     this.rowLayout = rowLayout;
   }
 
-  public Renderer renderer() {
-    return new TableRenderer(this);
+  public LineRenderer renderer() {
+    return new TableLineRenderer(this);
   }
 
   public TableElement withColumnLayout(Layout columnLayout) {

@@ -31,8 +31,9 @@ import org.crsh.cli.impl.invocation.Resolver;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
+import org.crsh.console.KeyHandler;
 import org.crsh.shell.ErrorType;
-import org.crsh.util.TypeResolver;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -210,7 +211,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
         Class<?> parameterType = parameterTypes[i];
         if (InvocationContext.class.isAssignableFrom(parameterType)) {
           Type contextGenericParameterType = invoker.getGenericParameterTypes()[i];
-          producedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
+          producedType = Utils.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
           break;
         }
       }
@@ -242,10 +243,10 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
       final Type ret = invoker.getGenericReturnType();
 
       /** . */
-      final Class<C> consumedType = (Class<C>)TypeResolver.resolveToClass(ret, PipeCommand.class, 0);
+      final Class<C> consumedType = (Class<C>)Utils.resolveToClass(ret, PipeCommand.class, 0);
 
       /** . */
-      final Class<P> producedType = (Class<P>)TypeResolver.resolveToClass(ret, PipeCommand.class, 1);
+      final Class<P> producedType = (Class<P>)Utils.resolveToClass(ret, PipeCommand.class, 1);
 
       PipeCommand<C, P> real;
 
@@ -261,6 +262,15 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
         // Java is fine with that but not intellij....
         CommandContext<P> consumer2 = (CommandContext<P>)consumer;
         open2(consumer2);
+      }
+
+      @Override
+      public KeyHandler getKeyHandler() {
+        if (instance instanceof KeyHandler) {
+          return (KeyHandler)instance;
+        } else {
+          return null;
+        }
       }
 
       public void open2(final CommandContext<P> consumer) {
@@ -356,12 +366,24 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
         instance.unmatched = invoker.getMatch().getRest();
       }
 
+
+      @Override
+      public KeyHandler getKeyHandler() {
+        if (instance instanceof KeyHandler) {
+          return (KeyHandler)instance;
+        } else {
+          return null;
+        }
+      }
+
       public void provide(Void element) throws IOException {
         // Drop everything
       }
+
       public void flush() throws IOException {
         // peekContext().flush();
       }
+
       public void close() throws IOException, UndeclaredThrowableException {
 
         //

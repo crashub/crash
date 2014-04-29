@@ -19,34 +19,43 @@
 
 package org.crsh.text;
 
-public class Text extends Chunk {
+/**
+ * A textual chunk.
+ */
+public class Text implements Chunk {
 
-  public static Text create(CharSequence s) {
+  /**
+   * Create a new text chunk wrapping the provided sequence.
+   *
+   * @param s the sequence
+   * @return the created text
+   * @throws NullPointerException if the sequence is null
+   */
+  public static Text create(CharSequence s) throws NullPointerException {
+    if (s == null) {
+      throw new NullPointerException("No null sequence accepted");
+    }
     return new Text(s);
   }
 
   /** . */
-  final StringBuilder buffer;
-
-  Text() {
-    this.buffer = new StringBuilder();
-  }
+  final CharSequence value;
 
   private Text(CharSequence s) {
-    this.buffer = new StringBuilder().append(s);
+    this.value = s;
   }
 
   public CharSequence getText() {
-    return buffer;
+    return value;
   }
 
   @Override
   public boolean equals(Object obj) {
-    return obj == this || obj instanceof Text && buffer.toString().equals(((Text)obj).buffer.toString());
+    return obj == this || obj instanceof Text && value.toString().equals(((Text)obj).value.toString());
   }
 
   @Override
   public String toString() {
-    return "Text[" + buffer + "]";
+    return "Text[" + value + "]";
   }
 }

@@ -22,8 +22,8 @@ package org.crsh.text.ui;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
 import org.crsh.text.LineReader;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.RenderAppendable;
-import org.crsh.text.Renderer;
 import org.crsh.text.Style;
 
 import static org.crsh.text.ui.Element.label;
@@ -65,8 +65,8 @@ public class RendererTestCase extends AbstractRendererTestCase {
       LabelElement juu = new LabelElement("juu");
 
       @Override
-      public Renderer renderer() {
-        return new Renderer() {
+      public LineRenderer renderer() {
+        return new LineRenderer() {
           @Override
           public int getActualWidth() {
             return 9;

@@ -18,9 +18,6 @@
  */
 package org.crsh.telnet.term;
 
-import org.crsh.term.CodeType;
-import org.crsh.term.IOAction;
-import org.crsh.term.IOEvent;
 import org.jboss.byteman.contrib.bmunit.BMScript;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;

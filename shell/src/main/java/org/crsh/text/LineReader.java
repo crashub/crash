@@ -19,6 +19,9 @@
 
 package org.crsh.text;
 
+/**
+ * The line reader.
+ */
 public interface LineReader {
 
   /**

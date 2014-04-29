@@ -21,22 +21,24 @@ package org.crsh.ssh;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.auth.SimpleAuthenticationPlugin;
-import org.crsh.term.CodeType;
-import org.crsh.term.IOAction;
-import org.crsh.term.IOEvent;
-import org.crsh.term.IOHandler;
+import org.crsh.processor.term.SyncProcess;
+import org.crsh.shell.ShellProcessContext;
+import org.crsh.shell.ShellResponse;
+import org.crsh.text.Text;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SSHTestCase extends Assert {
 
   /** . */
-  private IOHandler handler;
+//  private IOHandler handler;
 
   /** . */
   private SSHClient client;
@@ -47,6 +49,9 @@ public class SSHTestCase extends Assert {
   /** We change the port for every test. */
   private static final AtomicInteger PORTS = new AtomicInteger(2000);
 
+  /** . */
+  private Foo foo;
+
   @Before
   public void setUp() throws Exception {
 
@@ -54,11 +59,12 @@ public class SSHTestCase extends Assert {
     int port = PORTS.getAndIncrement();
 
     //
-    IOHandler handler = new IOHandler();
+//    IOHandler handler = new IOHandler();
     SimpleAuthenticationPlugin auth = new SimpleAuthenticationPlugin();
 
     //
-    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(new SSHPlugin(), handler, auth);
+    Foo foo = new Foo();
+    TestPluginLifeCycle lifeCycle = new TestPluginLifeCycle(new SSHPlugin(), foo, auth);
     lifeCycle.setProperty(SSHPlugin.SSH_PORT, port);
     lifeCycle.setProperty(SSHPlugin.SSH_SERVER_IDLE_TIMEOUT, 10 * 60 * 1000);
     lifeCycle.setProperty(SSHPlugin.SSH_SERVER_AUTH_TIMEOUT, 10 * 60 * 1000);
@@ -69,11 +75,55 @@ public class SSHTestCase extends Assert {
     SSHClient client = new SSHClient(port).connect();
 
     //
-    this.handler = handler;
+//    this.handler = handler;
     this.client = client;
     this.lifeCycle = lifeCycle;
+    this.foo = foo;
   }
 
+  @Test
+  public void testRequest() throws Exception {
+    final ArrayBlockingQueue<String> requests = new ArrayBlockingQueue<String>(1);
+    foo.shell.addProcess(new SyncProcess() {
+      @Override
+      public void run(String request, ShellProcessContext context) throws Exception {
+        context.write(Text.create("world"));
+        context.end(ShellResponse.ok());
+        requests.add(request);
+      }
+    });
+    client.write("hello\n").flush();
+    String request = requests.poll(10, TimeUnit.SECONDS);
+    assertEquals("hello", request);
+    lifeCycle.stop();
+    client.close();
+  }
+
+  @Test
+  public void testServerClose() throws Exception {
+    final ArrayBlockingQueue<String> requests = new ArrayBlockingQueue<String>(1);
+    foo.shell.addProcess(new SyncProcess() {
+      @Override
+      public void run(String request, ShellProcessContext context) throws Exception {
+        context.end(ShellResponse.close());
+        requests.add(request);
+      }
+    });
+    client.write("hello\n").flush();
+    foo.closed.await(10, TimeUnit.SECONDS);
+
+    //
+    try {
+      client.write("foo");
+      fail();
+    } catch (IOException ignore) {
+    }
+
+    //
+    lifeCycle.stop();
+  }
+
+/*
   @Test
   public void testServerReadAfterClientClose() throws Exception {
     client.write("a").flush();
@@ -197,4 +247,5 @@ public class SSHTestCase extends Assert {
     lifeCycle.stop();
     assertEquals(-1, client.read());
   }
+*/
 }

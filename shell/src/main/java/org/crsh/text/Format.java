@@ -28,8 +28,8 @@ public enum Format {
     public void append(Chunk chunk, Appendable to) throws IOException {
       if (chunk instanceof Text) {
         Text text = (Text)chunk;
-        if (text.buffer.length() > 0) {
-          to.append(text.buffer);
+        if (text.value.length() > 0) {
+          to.append(text.value);
         }
       }
     }
@@ -40,8 +40,8 @@ public enum Format {
     public void append(Chunk chunk, Appendable to) throws IOException {
       if (chunk instanceof Text) {
         Text text = (Text)chunk;
-        if (text.buffer.length() > 0) {
-          to.append(text.buffer);
+        if (text.value.length() > 0) {
+          to.append(text.value);
         }
       } else if (chunk instanceof Style) {
         ((Style)chunk).writeAnsiTo(to);

@@ -20,25 +20,27 @@
 package org.crsh.standalone;
 
 import com.sun.tools.attach.VirtualMachine;
-import jline.NoInterruptUnixTerminal;
-import org.crsh.cli.descriptor.CommandDescriptor;
+import jline.AnsiWindowsTerminal;
 import jline.Terminal;
 import jline.TerminalFactory;
-import org.crsh.cli.impl.Delimiter;
-import org.crsh.cli.impl.descriptor.IntrospectionException;
+import jline.console.ConsoleReader;
 import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
 import org.crsh.cli.Usage;
-import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.cli.descriptor.CommandDescriptor;
+import org.crsh.cli.impl.Delimiter;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
+import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.console.jline.JLineProcessor;
 import org.crsh.plugin.ResourceManager;
-import org.crsh.processor.jline.JLineProcessor;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.remoting.RemoteServer;
 import org.crsh.util.CloseableList;
+import org.crsh.util.InterruptHandler;
 import org.crsh.util.Utils;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
@@ -349,12 +351,23 @@ public class CRaSH {
     //
     if (shell != null) {
 
-      // Start crash for this command line
-      jline.TerminalFactory.registerFlavor(jline.TerminalFactory.Flavor.UNIX, NoInterruptUnixTerminal.class);
+
       final Terminal term = TerminalFactory.create();
-      Runtime.getRuntime().addShutdownHook(new Thread(){
+      final boolean installWindows = term.isAnsiSupported() && term instanceof AnsiWindowsTerminal;
+
+      //
+      if (installWindows) {
+        log.info("Installing windowd ansi console");
+        AnsiConsole.systemInstall();
+      }
+
+
+      Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
+          if (installWindows) {
+            AnsiConsole.systemUninstall();
+          }
           try {
             term.restore();
           }
@@ -373,11 +386,28 @@ public class CRaSH {
 
       //
       FileInputStream in = new FileInputStream(FileDescriptor.in);
-      final JLineProcessor processor = new JLineProcessor( shell, in, out, err, term);
+      ConsoleReader reader = new ConsoleReader(null, in, out, term);
+
+      //
+      final JLineProcessor processor = new JLineProcessor(shell, reader, out);
+
+      //
+      InterruptHandler interruptHandler = new InterruptHandler(new Runnable() {
+        @Override
+        public void run() {
+          processor.interrupt();
+        }
+      });
+      interruptHandler.install();
+
+      //
+      Thread thread = new Thread(processor);
+      thread.setDaemon(true);
+      thread.start();
 
       //
       try {
-        processor.run();
+        processor.closed();
       }
       catch (Throwable t) {
         t.printStackTrace();

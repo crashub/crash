@@ -20,7 +20,7 @@
 package org.crsh.command;
 
 import org.crsh.io.Filter;
-import org.crsh.util.TypeResolver;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 
@@ -40,11 +40,11 @@ public abstract class PipeCommand<C, P> implements Filter<C, P, InvocationContex
   }
 
   public final Class<P> getProducedType() {
-    return (Class<P>)TypeResolver.resolveToClass(getClass(), PipeCommand.class, 1);
+    return (Class<P>)Utils.resolveToClass(getClass(), PipeCommand.class, 1);
   }
 
   public final Class<C> getConsumedType() {
-    return (Class<C>)TypeResolver.resolveToClass(getClass(), PipeCommand.class, 0);
+    return (Class<C>)Utils.resolveToClass(getClass(), PipeCommand.class, 0);
   }
 
   public void open(InvocationContext<P> consumer) {

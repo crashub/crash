@@ -93,7 +93,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return commandContext.getProperty(propertyName);
   }
 
-  public String readLine(String msg, boolean echo) {
+  public String readLine(String msg, boolean echo) throws IOException, InterruptedException {
     return commandContext.readLine(msg, echo);
   }
 

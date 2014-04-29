@@ -23,7 +23,7 @@ import groovy.lang.Closure;
 import groovy.util.BuilderSupport;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.text.Color;
-import org.crsh.text.Renderer;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Style;
 import org.crsh.util.Utils;
 
@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
+public class UIBuilder extends BuilderSupport implements Iterable<LineRenderer> {
 
   /** . */
   private final List<Element> elements;
@@ -238,13 +238,13 @@ public class UIBuilder extends BuilderSupport implements Iterable<Renderer> {
     super.nodeCompleted(parent, child);
   }
 
-  public Iterator<Renderer> iterator() {
-    return new Iterator<Renderer>() {
+  public Iterator<LineRenderer> iterator() {
+    return new Iterator<LineRenderer>() {
       Iterator<Element> i = elements.iterator();
       public boolean hasNext() {
         return i.hasNext();
       }
-      public Renderer next() {
+      public LineRenderer next() {
         return i.next().renderer();
       }
       public void remove() {

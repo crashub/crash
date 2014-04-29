@@ -19,7 +19,7 @@
 
 package org.crsh.plugin;
 
-import org.crsh.util.TypeResolver;
+import org.crsh.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +56,7 @@ public abstract class CRaSHPlugin<P> {
   private List<PropertyDescriptor<?>> configurationCapabilities;
 
   protected CRaSHPlugin() {
-    this.type = (Class<P>)TypeResolver.resolveToClass(getClass(), CRaSHPlugin.class, 0);
+    this.type = (Class<P>)Utils.resolveToClass(getClass(), CRaSHPlugin.class, 0);
     this.status = CONSTRUCTED;
     this.context = null;
   }

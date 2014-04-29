@@ -22,7 +22,7 @@ package org.crsh.telnet.term;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
-import org.crsh.term.spi.TermIOHandler;
+import org.crsh.telnet.term.spi.TermIOHandler;
 
 public class TelnetHandler implements Shell {
 

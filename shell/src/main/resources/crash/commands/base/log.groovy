@@ -1,8 +1,11 @@
 import org.crsh.cli.descriptor.ParameterDescriptor
+import org.crsh.text.Color
 
 import java.util.logging.LogManager
+import java.util.logging.LogRecord
 import java.util.logging.Logger;
-import java.util.logging.LoggingMXBean;
+import java.util.logging.LoggingMXBean
+import java.util.logging.StreamHandler;
 import java.util.regex.Pattern;
 import javax.management.ObjectName;
 import org.crsh.cli.spi.Completer;
@@ -89,9 +92,9 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
 
   @Usage("list the available loggers")
   @Man("""\
-The logls command list all the available loggers., for instance:
+The log ls command list all the available loggers., for instance:
 
-% logls
+% log ls
 org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/].[default]
 org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/eXoGadgetServer].[concat]
 org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/dashboard].[jsp]
@@ -99,12 +102,11 @@ org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/dashboard].[jsp]
 
 The -f switch provides filtering with a Java regular expression
 
-% logls -f javax.*
+% log ls -f javax.*
 javax.management.mbeanserver
 javax.management.modelmbean
 
-The logls command is a <Void,Logger> command, therefore any logger produced can be consumed.""")
-
+The log ls command is a <Void,Logger> command, therefore any logger produced can be consumed.""")
   @Command
   public void ls(InvocationContext<Logger> context, @FilterOpt String filter) {
 
@@ -136,11 +138,11 @@ The logls command is a <Void,Logger> command, therefore any logger produced can 
 
   @Man("""\
 The set command sets the level of a logger. One or several logger names can be specified as arguments
-and the -l option specify the level among the trace, debug, info, warn and error levels. When no level is
+and the -l option specify the level among the finest, finer, fine, info, warn and severe levels. When no level is
 specified, the level is cleared and the level will be inherited from its ancestors.
 
-% logset -l trace foo
-% logset foo
+% log set -l trace foo
+% log set foo
 
 The logger name can be omitted and instead stream of logger can be consumed as it is a <Logger,Void> command.
 The following set the level warn on all the available loggers:
@@ -167,20 +169,97 @@ The following set the level warn on all the available loggers:
       }
     };
   }
+
+  @Man("""\
+The tail command provides a tail view of a list of loggers. One or several logger names can be specified
+as argument and the -l option configures the level threshold. When no logger name is specified, the root
+logger will be tailed, when no level is specified, the info level will be used:
+
+% log tail
+Feb 10, 2014 1:50:36 PM java_util_logging_Logger\$log call
+INFO: HELLO
+
+The tail process will end upon interruption (ctrl-c).""")
+  @Usage("tail loggers")
+  @Command
+  public void tail(
+      @Usage("the level treshold")
+      @LevelOpt Level level,
+      @Usage("the logger names to tail or empty for the root logger")
+      @LoggerArg List<String> names,
+      InvocationContext<LogRecord> context) {
+    if (level == null) {
+      level = Level.info;
+    }
+    def loggers = []
+    if (names != null && names.size() > 0) {
+      names.each { loggers << Logger.getLogger(it)  }
+    } else {
+      loggers = [Logger.getLogger("")]
+    }
+    def handler = new StreamHandler() {
+      @Override
+      synchronized void publish(LogRecord record) {
+        if (record.level.intValue() >= level.value.intValue()) {
+          context.provide(record);
+          context.flush();
+        }
+      }
+      @Override
+      synchronized void flush() {
+        context.flush();
+      }
+      @Override
+      void close() throws SecurityException {
+        // ?
+      }
+    };
+    loggers.each { it.addHandler(handler); }
+    def lock = new Object();
+    try {
+      synchronized (lock) {
+        // Wait until ctrl-c
+        lock.wait();
+      }
+    } finally {
+      loggers.each { it.removeHandler(handler); }
+    }
+  }
 }
 
 enum Level {
-  trace(java.util.logging.Level.FINEST),
-  debug(java.util.logging.Level.FINER),
-  info(java.util.logging.Level.INFO),
-  warn(java.util.logging.Level.WARNING),
-  error(java.util.logging.Level.SEVERE) ;
+  finest( java.util.logging.Level.FINEST,  Color.blue),
+  finer(  java.util.logging.Level.FINER,   Color.blue),
+  fine(   java.util.logging.Level.FINE,    Color.blue),
+  info(   java.util.logging.Level.INFO,    Color.white),
+  warning(java.util.logging.Level.WARNING, Color.yellow),
+  severe( java.util.logging.Level.SEVERE,  Color.red);
+  static Level valueOf(java.util.logging.Level level) {
+    switch (level.intValue()) {
+      case 300:
+        return finest;
+      case 400:
+        return finer;
+      case 500:
+        return fine;
+      case 800:
+        return info;
+      case 900:
+        return warning;
+      case 1000:
+        return severe;
+      default:
+        return null;
+    }
+  }
+  final Color color;
   final java.util.logging.Level value;
-  Level(java.util.logging.Level value) {
+  Level(java.util.logging.Level value, Color color) {
     this.value = value;
+    this.color = color;
   }
   void log(Logger logger, String msg) {
-    logger."${name()}"(msg);
+    logger.log(value, msg);
   }
   void setLevel(Logger logger) {
     logger.level = value;

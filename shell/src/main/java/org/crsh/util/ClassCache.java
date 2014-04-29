@@ -19,14 +19,20 @@
 
 package org.crsh.util;
 
+import org.crsh.command.CommandCreationException;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.shell.ErrorType;
 import org.crsh.vfs.Resource;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ClassCache<T> extends AbstractClassCache<T> {
+public class ClassCache<T> {
+
+  /** . */
+  private final ClassFactory<T> classFactory;
 
   /** . */
   private final Map<String, TimestampedObject<Class<? extends T>>> classes = new ConcurrentHashMap<String, TimestampedObject<Class<? extends T>>>();
@@ -38,25 +44,66 @@ public class ClassCache<T> extends AbstractClassCache<T> {
   private final ResourceKind kind;
 
   public ClassCache(PluginContext context, ClassFactory<T> classFactory, ResourceKind kind) {
-    super(classFactory);
-
-    //
+    this.classFactory = classFactory;
     this.context = context;
     this.kind = kind;
   }
 
-  @Override
-  protected TimestampedObject<Class<? extends T>> loadClass(String name) {
+  private TimestampedObject<Class<? extends T>> loadClass(String name) {
     return classes.get(name);
   }
 
-  @Override
-  protected void saveClass(String name, TimestampedObject<Class<? extends T>> clazz) {
+  private void saveClass(String name, TimestampedObject<Class<? extends T>> clazz) {
     classes.put(name, clazz);
   }
 
-  @Override
-  protected Resource getResource(String name) {
+  private Resource getResource(String name) {
     return context.loadResource(name, kind);
+  }
+
+  public TimestampedObject<Class<? extends T>> getClass(String name) throws CommandCreationException, NullPointerException {
+    if (name == null) {
+      throw new NullPointerException("No null argument allowed");
+    }
+
+    TimestampedObject<Class<? extends T>> providerRef = loadClass(name);
+
+    //
+    Resource script = getResource(name);
+
+    //
+    if (script != null) {
+      if (providerRef != null) {
+        if (script.getTimestamp() != providerRef.getTimestamp()) {
+          providerRef = null;
+        }
+      }
+
+      //
+      if (providerRef == null) {
+
+        //
+        String source;
+        try {
+          source = new String(script.getContent(), "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+          throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+        }
+
+        //
+        Class<? extends T> clazz = classFactory.parse(name, source);
+        providerRef = new TimestampedObject<Class<? extends T>>(script.getTimestamp(), clazz);
+        saveClass(name, providerRef);
+      }
+    }
+
+    //
+    if (providerRef == null) {
+      return null;
+    }
+
+    //
+    return providerRef;
   }
 }

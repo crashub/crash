@@ -24,16 +24,17 @@ import org.crsh.command.RuntimeContext;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.command.ShellCommand;
+import org.crsh.console.KeyHandler;
+import org.crsh.lang.script.ScriptRepl;
 import org.crsh.plugin.PluginContext;
-import org.crsh.repl.REPL;
+import org.crsh.repl.Repl;
+import org.crsh.repl.ReplSession;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.repl.EvalResponse;
-import org.crsh.lang.script.ScriptREPL;
-import org.crsh.repl.REPLSession;
 import org.crsh.text.Text;
 import org.crsh.util.Utils;
 
@@ -46,7 +47,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, RuntimeContext, REPLSession {
+public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, RuntimeContext, ReplSession {
 
   /** . */
   static final Logger log = Logger.getLogger(CRaSHSession.class.getName());
@@ -61,7 +62,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   final Principal user;
 
   /** . */
-  private REPL repl = ScriptREPL.getInstance();
+  private Repl repl = ScriptRepl.getInstance();
 
   CRaSHSession(final CRaSH crash, Principal user) {
     // Set variable available to all scripts
@@ -88,7 +89,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
    *
    * @return the current repl
    */
-  public REPL getRepl() {
+  public Repl getRepl() {
     return repl;
   }
 
@@ -98,7 +99,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
    * @param repl the new repl
    * @throws NullPointerException if the repl is null
    */
-  public void setRepl(REPL repl) throws NullPointerException {
+  public void setRepl(Repl repl) throws NullPointerException {
     if (repl == null) {
       throw new NullPointerException("No null repl accepted");
     }
@@ -184,6 +185,11 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
       } else {
         final CommandInvoker<Void, ?> pipeLine = ((EvalResponse.Invoke)r).invoker;
         return new CRaSHProcess(this, request) {
+
+          @Override
+          public KeyHandler getKeyHandler() {
+            return pipeLine.getKeyHandler();
+          }
 
           @Override
           ShellResponse doInvoke(final ShellProcessContext context) throws InterruptedException {

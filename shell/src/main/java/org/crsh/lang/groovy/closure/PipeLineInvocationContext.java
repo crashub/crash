@@ -73,7 +73,7 @@ class PipeLineInvocationContext implements InvocationContext<Object> {
     return outter.getProperty(propertyName);
   }
 
-  public String readLine(String msg, boolean echo) {
+  public String readLine(String msg, boolean echo) throws IOException, InterruptedException {
     return outter.readLine(msg, echo);
   }
 

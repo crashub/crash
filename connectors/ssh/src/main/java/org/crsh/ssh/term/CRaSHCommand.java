@@ -18,12 +18,21 @@
  */
 package org.crsh.ssh.term;
 
+import jline.Terminal;
+import jline.console.ConsoleReader;
 import org.apache.sshd.server.Environment;
+import org.crsh.console.jline.JLineProcessor;
+import org.crsh.shell.Shell;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.security.Principal;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CRaSHCommand extends AbstractCommand implements Runnable {
+public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal {
 
   /** . */
   private final CRaSHCommandFactory factory;
@@ -39,13 +48,12 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   private SSHContext context;
 
   /** . */
-  private SSHIO io;
+  private JLineProcessor console;
 
   public void start(Environment env) throws IOException {
 
     //
     context = new SSHContext(env);
-    io = new SSHIO(this);
 
     //
     thread = new Thread(this, "CRaSH");
@@ -57,11 +65,12 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
   }
 
   public void destroy() {
-    io.closed.set(true);
+    Utils.close(console);
     thread.interrupt();
   }
 
   public void run() {
+    final AtomicBoolean exited = new AtomicBoolean(false);
     try {
       final String userName = session.getAttribute(SSHLifeCycle.USERNAME);
       Principal user = new Principal() {
@@ -69,10 +78,85 @@ public class CRaSHCommand extends AbstractCommand implements Runnable {
           return userName;
         }
       };
-      factory.handler.handle(io, user);
+      Shell shell = factory.shellFactory.create(user);
+      ConsoleReader reader = new ConsoleReader(in, out, this) {
+        @Override
+        public void shutdown() {
+          exited.set(true);
+          callback.onExit(0);
+          super.shutdown();
+        }
+      };
+      JLineProcessor processor = new JLineProcessor(shell, reader, new PrintStream(out), "\r\n");
+      processor.run();
+    } catch (java.io.InterruptedIOException e) {
+      // Expected behavior because of the onExit callback in the shutdown above
+    } catch (Exception e) {
+      e.printStackTrace();
     } finally {
-      callback.onExit(0);
+      // Make sure we call it
+      if (!exited.get()) {
+        callback.onExit(0);
+      }
     }
+  }
+
+  //
+
+  @Override
+  public void init() throws Exception {
+  }
+
+  @Override
+  public void restore() throws Exception {
+  }
+
+  @Override
+  public void reset() throws Exception {
+  }
+
+  @Override
+  public boolean isSupported() {
+    return true;
+  }
+
+  @Override
+  public int getWidth() {
+    return context.getWidth();
+  }
+
+  @Override
+  public int getHeight() {
+    return context.getHeight();
+  }
+
+  @Override
+  public boolean isAnsiSupported() {
+    return true;
+  }
+
+  @Override
+  public OutputStream wrapOutIfNeeded(OutputStream out) {
+    return out;
+  }
+
+  @Override
+  public InputStream wrapInIfNeeded(InputStream in) throws IOException {
+    return in;
+  }
+
+  @Override
+  public boolean hasWeirdWrap() {
+    return false;
+  }
+
+  @Override
+  public boolean isEchoEnabled() {
+    return false;
+  }
+
+  @Override
+  public void setEchoEnabled(boolean enabled) {
   }
 }
 

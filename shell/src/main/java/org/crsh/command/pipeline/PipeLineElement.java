@@ -57,7 +57,7 @@ class PipeLineElement<C, P> implements Filter<C, P, CommandContext<P>>, CommandC
     return context.getProperty(propertyName);
   }
 
-  public final String readLine(String msg, boolean echo) {
+  public final String readLine(String msg, boolean echo) throws IOException, InterruptedException {
     return context.readLine(msg, echo);
   }
 

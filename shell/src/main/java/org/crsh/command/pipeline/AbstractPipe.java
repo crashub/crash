@@ -57,7 +57,7 @@ public abstract class AbstractPipe<C, P, CONS extends CommandContext<? super P>>
     return consumer.getProperty(propertyName);
   }
 
-  public String readLine(String msg, boolean echo) {
+  public String readLine(String msg, boolean echo) throws IOException, InterruptedException {
     return consumer.readLine(msg, echo);
   }
 

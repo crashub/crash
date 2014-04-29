@@ -19,10 +19,12 @@
 
 package org.crsh.util;
 
+import java.io.Serializable;
+
 /**
  * An immutable sequence of white spaces.
  */
-public class BlankSequence implements CharSequence {
+public class BlankSequence implements CharSequence, Serializable {
 
   /** . */
   private static final BlankSequence[] CACHE = new BlankSequence[64];
@@ -104,7 +106,7 @@ public class BlankSequence implements CharSequence {
     if (index < 0) {
       throw new IndexOutOfBoundsException("No negative " + name + " value " + index);
     }
-    if (index >= length) {
+    if (index > length) {
       throw new IndexOutOfBoundsException("The " + name + " value " + index + " cannot greater than length " + length);
     }
   }

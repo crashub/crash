@@ -18,8 +18,6 @@
  */
 package org.crsh.telnet.term;
 
-import org.crsh.term.IOAction;
-import org.crsh.term.IOEvent;
 import org.junit.Test;
 
 import java.io.IOException;

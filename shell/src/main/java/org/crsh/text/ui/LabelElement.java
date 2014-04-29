@@ -19,7 +19,7 @@
 
 package org.crsh.text.ui;
 
-import org.crsh.text.Renderer;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Style;
 import org.crsh.util.CharSlicer;
 import org.crsh.util.Pair;
@@ -74,8 +74,8 @@ public class LabelElement extends Element {
     return value;
   }
 
-  public Renderer renderer() {
-    return new LabelRenderer(this);
+  public LineRenderer renderer() {
+    return new LabelLineRenderer(this);
   }
 
   @Override

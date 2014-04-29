@@ -19,7 +19,10 @@
 
 package org.crsh.text;
 
-public class CLS extends Chunk {
+/**
+ * Clears the screen.
+ */
+public class CLS implements Chunk {
 
   /** . */
   public static final CLS INSTANCE = new CLS();

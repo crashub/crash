@@ -2,9 +2,21 @@ package crash.commands.base
 
 import org.crsh.cli.Command
 import org.crsh.cli.Usage
+import org.crsh.console.KeyHandler
+import org.crsh.console.KeyType
 import org.crsh.text.ui.UIBuilder
 
-public class dasboard {
+public class dashboard implements KeyHandler {
+
+  @Override
+  void handle(KeyType type, int[] sequence) {
+    if (sequence.length == 1 && sequence[0] == 'q') {
+      current?.interrupt();
+    }
+  }
+
+  /** . */
+  private volatile Thread current;
 
   @Command
   @Usage("a monitoring dashboard")
@@ -65,13 +77,17 @@ public class dasboard {
     }
 
     context.takeAlternateBuffer();
+    current = Thread.currentThread();
     try {
+      run = true;
       while (!Thread.interrupted()) {
         out.cls()
         out.show(table);
         out.flush();
         Thread.sleep(1000);
       }
+    }
+    catch (InterruptedException ignore) {
     }
     finally {
       context.releaseAlternateBuffer();

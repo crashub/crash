@@ -19,98 +19,27 @@
 
 package org.crsh.text.renderers;
 
-import org.crsh.text.Color;
-import org.crsh.text.LineReader;
-import org.crsh.text.RenderAppendable;
+import org.crsh.text.LineRenderer;
 import org.crsh.text.Renderer;
 
 import java.lang.management.MemoryUsage;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-public class MemoryUsageRenderer extends Renderer {
+public class MemoryUsageRenderer extends Renderer<MemoryUsage> {
 
-  /** . */
-  private final MemoryUsage usage;
-
-  public MemoryUsageRenderer(MemoryUsage usage) {
-    this.usage = usage;
+  @Override
+  public Class<MemoryUsage> getType() {
+    return MemoryUsage.class;
   }
 
   @Override
-  public int getActualWidth() {
-    return 32;
-  }
-
-  @Override
-  public int getMinWidth() {
-    return 4;
-  }
-
-  @Override
-  public int getMinHeight(int width) {
-    return 1;
-  }
-
-  @Override
-  public int getActualHeight(int width) {
-    return 2;
-  }
-
-  @Override
-  public LineReader reader(int width) {
-    return reader(width, 2);
-  }
-
-  @Override
-  public LineReader reader(final int width, final int height) {
-    return new LineReader() {
-
-      /** . */
-      private int index = 0;
-
-      public boolean hasLine() {
-        return index < height;
-      }
-      public void renderLine(RenderAppendable to) throws IllegalStateException {
-        if (!hasLine()) {
-          throw new IllegalStateException();
-        }
-        long range = usage.getMax() - usage.getInit();
-        Color previous = null;
-
-        if (usage.getMax() > 0) {
-          long a = (width * usage.getUsed()) / (usage.getMax());
-          long b = (width * usage.getCommitted()) / (usage.getMax());
-          for (int i = 0;i < width;i++) {
-            Color current;
-            if (i >= b) {
-              // MAX
-              current = Color.green;
-            } else if (i >= a) {
-              // COMMITED
-              current = Color.blue;
-            } else {
-              // USED
-              current = Color.cyan;
-            }
-            if (previous != current) {
-              if (previous != null) {
-                to.leaveStyle();
-              }
-              to.enterStyle(current.bg());
-              previous = current;
-            }
-            to.append(' ');
-          }
-          if (previous != null) {
-            to.leaveStyle();
-          }
-        } else {
-          for (int i = 0;i < width;i++) {
-            to.append(' ');
-          }
-        }
-        index++;
-      }
-    };
+  public LineRenderer renderer(Iterator<MemoryUsage> stream) {
+    ArrayList<MemoryUsageLineRenderer> renderers = new ArrayList<MemoryUsageLineRenderer>();
+    while (stream.hasNext()) {
+      MemoryUsage usage = stream.next();
+      renderers.add(new MemoryUsageLineRenderer(usage));
+    }
+    return LineRenderer.vertical(renderers);
   }
 }

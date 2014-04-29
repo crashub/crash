@@ -18,6 +18,7 @@
  */
 package org.crsh.command;
 
+import org.crsh.console.KeyHandler;
 import org.crsh.io.Filter;
 
 import java.io.IOException;
@@ -50,4 +51,12 @@ public abstract class CommandInvoker<C, P> implements Filter<C, P, CommandContex
     }
   }
 
+  /**
+   * Return the key handler or null if the invoker cannot handler key events.
+   *
+   * @return the key handler
+   */
+  public KeyHandler getKeyHandler() {
+    return null;
+  }
 }

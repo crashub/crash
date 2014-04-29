@@ -18,6 +18,7 @@
  */
 package org.crsh.shell.impl.command;
 
+import org.crsh.console.KeyHandler;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -88,6 +89,11 @@ abstract class CRaSHProcess implements ShellProcess {
     finally {
       crash.setPreviousLoader(previous);
     }
+  }
+
+  @Override
+  public KeyHandler getKeyHandler() {
+    return null;
   }
 
   abstract ShellResponse doInvoke(ShellProcessContext context) throws InterruptedException;

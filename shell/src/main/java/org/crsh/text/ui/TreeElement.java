@@ -19,7 +19,7 @@
 
 package org.crsh.text.ui;
 
-import org.crsh.text.Renderer;
+import org.crsh.text.LineRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class TreeElement extends Element {
   }
 
   @Override
-  public Renderer renderer() {
-    return new TreeRenderer(this);
+  public LineRenderer renderer() {
+    return new TreeLineRenderer(this);
   }
 }

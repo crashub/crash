@@ -24,8 +24,7 @@ import org.crsh.command.CommandCreationException;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.command.ShellCommand;
 import org.crsh.lang.groovy.closure.PipeLineClosure;
-import org.crsh.repl.REPLSession;
-import org.crsh.shell.impl.command.CRaSH;
+import org.crsh.repl.ReplSession;
 import org.crsh.text.Chunk;
 
 import java.io.IOException;
@@ -35,12 +34,12 @@ import java.util.Map;
 class ShellBinding extends Binding {
 
   /** . */
-  private final REPLSession session;
+  private final ReplSession session;
 
   /** . */
   private CommandContext<Object> current;
 
-  public ShellBinding(Map variables, REPLSession session) {
+  public ShellBinding(Map variables, ReplSession session) {
     super(variables);
 
     //
@@ -76,7 +75,7 @@ class ShellBinding extends Binding {
         return current.releaseAlternateBuffer();
       }
     }
-    public String readLine(String msg, boolean echo) {
+    public String readLine(String msg, boolean echo) throws IOException, InterruptedException {
       if (current == null) {
         throw new IllegalStateException("Not under context");
       } else {

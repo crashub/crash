@@ -21,7 +21,7 @@ package org.crsh.shell;
 import org.crsh.shell.entities.Bar;
 import org.crsh.shell.entities.Foo;
 import org.crsh.shell.entities.Foo2;
-import org.crsh.text.renderers.EntityTypeRenderable;
+import org.crsh.text.renderers.EntityTypeRenderer;
 
 import javax.naming.Context;
 import javax.persistence.EntityManager;
@@ -35,14 +35,14 @@ import java.util.*;
 public class JPACommandTestCase extends AbstractCommandTestCase {
 
   private String defaultFactory;
-  public static List<EntityTypeRenderable.EntityTypeData> output_entity = new ArrayList<EntityTypeRenderable.EntityTypeData>();
+  public static List<EntityTypeRenderer.EntityTypeData> output_entity = new ArrayList<EntityTypeRenderer.EntityTypeData>();
   public static List<Map> output_value = new ArrayList<Map>();
 
   private final String consume_command_entity = "class consume_command_entity {\n" +
       "@Command\n" +
-      "public org.crsh.command.PipeCommand<org.crsh.text.renderers.EntityTypeRenderable.EntityTypeData, Object> main() {\n" +
-      "return new org.crsh.command.PipeCommand<org.crsh.text.renderers.EntityTypeRenderable.EntityTypeData, Object>() {\n" +
-      "public void provide(org.crsh.text.renderers.EntityTypeRenderable.EntityTypeData element) {\n" +
+      "public org.crsh.command.PipeCommand<org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData, Object> main() {\n" +
+      "return new org.crsh.command.PipeCommand<org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData, Object>() {\n" +
+      "public void provide(org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData element) {\n" +
       "org.crsh.shell.JPACommandTestCase.output_entity.add(element)\n" +
       "}\n" +
       "}\n" +
@@ -60,13 +60,13 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
       "}\n" +
       "}";
 
-  private final Comparator entityComparator = new Comparator<EntityTypeRenderable.EntityTypeData>() {
-    public int compare(EntityTypeRenderable.EntityTypeData o1, EntityTypeRenderable.EntityTypeData o2) {
+  private final Comparator entityComparator = new Comparator<EntityTypeRenderer.EntityTypeData>() {
+    public int compare(EntityTypeRenderer.EntityTypeData o1, EntityTypeRenderer.EntityTypeData o2) {
       return o1.name.compareTo(o2.name);
     }
   };
-  private final Comparator attributeComparator = new Comparator<EntityTypeRenderable.AttributeData>() {
-    public int compare(EntityTypeRenderable.AttributeData o1, EntityTypeRenderable.AttributeData o2) {
+  private final Comparator attributeComparator = new Comparator<EntityTypeRenderer.AttributeData>() {
+    public int compare(EntityTypeRenderer.AttributeData o1, EntityTypeRenderer.AttributeData o2) {
       return o1.name.compareTo(o2.name);
     }
   };

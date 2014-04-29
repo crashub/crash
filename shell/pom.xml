@@ -80,6 +80,48 @@
 
   <build>
     <plugins>
+<!--
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <artifactSet>
+                <includes>
+                  <include>jline:jline</include>
+                  <include>org.crashub:crash.cli</include>
+                </includes>
+              </artifactSet>
+              <relocations>
+                <relocation>
+                  <pattern>jline</pattern>
+                  <shadedPattern>org.crsh.console.jline</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.fusesource</pattern>
+                  <shadedPattern>org.crsh.console.org.fusesource</shadedPattern>
+                </relocation>
+              </relocations>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>org.crsh.standalone.CRaSH</Main-Class>
+                    <Agent-Class>org.crsh.standalone.Agent</Agent-Class>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>

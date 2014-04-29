@@ -84,7 +84,7 @@ public class ToChunkPipe<C, CONS extends CommandContext<? super Chunk>> extends 
   }
 
   public void write(Chunk chunk) throws IOException {
-    adapter.write(chunk);
+    adapter.provide(chunk);
   }
 
   public Class<Chunk> getProducedType() {

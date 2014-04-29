@@ -59,9 +59,8 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Consumer<Chun
   }
 
   public void format(Format format, Appendable appendable) throws IOException {
-    Iterator<Chunk> iterator = iterator();
-    while (iterator.hasNext()) {
-      format.append(iterator.next(), appendable);
+    for (Chunk chunk : this) {
+      format.append(chunk, appendable);
     }
   }
 
@@ -89,8 +88,18 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Consumer<Chun
     return this;
   }
 
-  public ChunkBuffer append(char c) {
-    last().buffer.append(c);
+  public ChunkBuffer append(Text text) {
+    CharSequence s = text.getText();
+    if (s.length() > 0) {
+      if (!next.equals(current)) {
+        if (!Style.style().equals(next)) {
+          chunks.addLast(next);
+        }
+        current = next;
+        next = Style.style();
+      }
+      chunks.addLast(text);
+    }
     return this;
   }
 
@@ -99,28 +108,13 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Consumer<Chun
   }
 
   public ChunkBuffer append(CharSequence s, int start, int end) {
-    if (end > start) {
-      last().buffer.append(s, start, end);
+    if (end != start) {
+      if (start != 0 || end != s.length()) {
+        s = s.subSequence(start, end);
+      }
+      append(Text.create(s));
     }
     return this;
-  }
-
-  private Text last() {
-    if (!next.equals(current)) {
-      if (!Style.style().equals(next)) {
-        chunks.addLast(next);
-      }
-      current = next;
-      next = Style.style();
-    }
-    Chunk last = chunks.peekLast();
-    if (last instanceof Text) {
-      return (Text)last;
-    } else {
-      Text text = new Text();
-      chunks.addLast(text);
-      return text;
-    }
   }
 
   public Class<Chunk> getConsumedType() {
@@ -157,7 +151,7 @@ public class ChunkBuffer implements Iterable<Chunk>, Serializable, Consumer<Chun
     if (chunk instanceof Style) {
       append((Style)chunk);
     } else if (chunk instanceof Text){
-      append(((Text)chunk).buffer);
+      append(((Text)chunk));
     } else {
       cls();
     }

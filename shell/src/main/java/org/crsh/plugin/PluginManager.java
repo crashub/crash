@@ -99,7 +99,7 @@ class PluginManager {
           if (tmp.isEmpty()) {
             tmp = new ArrayList<T>();
           }
-          T t = wantedType.cast(plugin);
+          T t = wantedType.cast(plugin.getImplementation());
           tmp.add(t);
         }
       }

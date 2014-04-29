@@ -22,14 +22,15 @@ package crash.commands.base
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
+import org.crsh.util.Utils
+
 import javax.naming.InitialContext
 import org.crsh.cli.Argument
-import org.crsh.text.renderers.EntityTypeRenderable
+import org.crsh.text.renderers.EntityTypeRenderer
 import org.crsh.cli.spi.Completer
 import org.crsh.cli.spi.Completion
 import org.crsh.cli.descriptor.ParameterDescriptor
 import org.crsh.util.JNDIHandler
-import org.crsh.util.TypeResolver
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -74,15 +75,15 @@ class jpa implements Completer {
 
   @Usage("List JPA entities")
   @Command
-  void entities(InvocationContext<EntityTypeRenderable.EntityTypeData> context) {
+  void entities(InvocationContext<EntityTypeRenderer.EntityTypeData> context) {
     em.metamodel.entities.each { e ->
-      context.provide(new EntityTypeRenderable.EntityTypeData(e.name, e.javaType.name, e.persistenceType.toString()));
+      context.provide(new EntityTypeRenderer.EntityTypeData(e.name, e.javaType.name, e.persistenceType.toString()));
     }
   }
 
   @Usage("Display JPA entity")
   @Command
-  void entity(InvocationContext<EntityTypeRenderable.EntityTypeData> context, @Argument String name) {
+  void entity(InvocationContext<EntityTypeRenderer.EntityTypeData> context, @Argument String name) {
     def en;
       em.metamodel.entities.each { e ->
       if (e.name.equals(name)) {
@@ -93,9 +94,9 @@ class jpa implements Completer {
       throw new ScriptException("${name} is not an entity");
     }
     
-    def etd = new EntityTypeRenderable.EntityTypeData(en.name, en.javaType.name, en.persistenceType.toString(), true)
+    def etd = new EntityTypeRenderer.EntityTypeData(en.name, en.javaType.name, en.persistenceType.toString(), true)
     en.attributes.each { a ->
-      etd.add(new EntityTypeRenderable.AttributeData(a.name, a.javaType.name, a.association, a.collection, a.persistentAttributeType.toString()));
+      etd.add(new EntityTypeRenderer.AttributeData(a.name, a.javaType.name, a.association, a.collection, a.persistentAttributeType.toString()));
     }
     context.provide(etd);
   }
@@ -130,7 +131,7 @@ class jpa implements Completer {
 
   void addValue(attribute, row, result) {
     if (!attribute.collection) {
-      if (TypeResolver.instanceOf(attribute.type.class, "javax.persistence.metamodel.EntityType")) {
+      if (Utils.instanceOf(attribute.type.class, "javax.persistence.metamodel.EntityType")) {
         if (row."${attribute.name}" != null) {
           result.put(attribute.name, formatEntity(attribute.type, row."${attribute.name}"))
         } else {
@@ -155,7 +156,7 @@ class jpa implements Completer {
   String formatEntity(entity, instance) {
     def ids = "";
     entity.attributes.each { a ->
-      if (TypeResolver.instanceOf(a.class, "javax.persistence.metamodel.SingularAttribute") && a.id) {
+      if (Utils.instanceOf(a.class, "javax.persistence.metamodel.SingularAttribute") && a.id) {
         ids += a.name + "=" + instance."${a.name}" + ","
       }
     }

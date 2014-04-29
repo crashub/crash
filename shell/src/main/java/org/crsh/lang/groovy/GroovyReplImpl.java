@@ -27,8 +27,8 @@ import org.crsh.command.CommandInvoker;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.lang.groovy.closure.PipeLineInvoker;
 import org.crsh.repl.EvalResponse;
-import org.crsh.repl.REPL;
-import org.crsh.repl.REPLSession;
+import org.crsh.repl.Repl;
+import org.crsh.repl.ReplSession;
 import org.crsh.cli.impl.line.LineParser;
 import org.crsh.shell.impl.command.CRaSHSession;
 
@@ -39,7 +39,7 @@ import java.io.IOException;
  *
  * @author Julien Viet
  */
-public class GroovyReplImpl implements  REPL {
+public class GroovyReplImpl implements Repl {
 
   public GroovyReplImpl() {
     // Force to load Groovy here or fail
@@ -60,7 +60,7 @@ public class GroovyReplImpl implements  REPL {
     return "The Groovy REPL provides a Groovy interpreter able to interact with shell commands";
   }
 
-  public EvalResponse eval(final REPLSession session, final String r2) {
+  public EvalResponse eval(final ReplSession session, final String r2) {
 
 
     GroovyLineEscaper foo = new GroovyLineEscaper();
@@ -122,7 +122,7 @@ public class GroovyReplImpl implements  REPL {
     return new EvalResponse.Invoke(invoker);
   }
 
-  public CompletionMatch complete(REPLSession session, String prefix) {
+  public CompletionMatch complete(ReplSession session, String prefix) {
     return new CompletionMatch(Delimiter.EMPTY, Completion.create());
   }
 }

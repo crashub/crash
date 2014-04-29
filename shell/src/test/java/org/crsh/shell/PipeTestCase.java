@@ -81,7 +81,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
 
   public void testProducerWithFormatter() throws Exception {
     lifeCycle.bindClass("cmd", Commands.ProduceValue.class);
-    assertEquals("<value>abc</value>              \n", assertOk("cmd"));
+    assertEquals("<value>abc</value>             \n", assertOk("cmd"));
   }
 
   public void testLeftShiftOperator() {
@@ -107,7 +107,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("producer | consumer");
     ChunkBuffer buffer = new ChunkBuffer().append(Commands.list);
-    assertEquals("<value>abc</value>              \n", buffer.toString());
+    assertEquals("<value>abc</value>             \n", buffer.toString());
   }
 
   public void testLifeCycle() throws Exception {

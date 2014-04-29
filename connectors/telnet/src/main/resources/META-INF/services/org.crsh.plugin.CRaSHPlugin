@@ -1,1 +1,3 @@
 org.crsh.telnet.TelnetPlugin
+org.crsh.telnet.term.processor.ProcessorIOHandler
+
