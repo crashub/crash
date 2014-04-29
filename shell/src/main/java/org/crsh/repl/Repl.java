@@ -25,7 +25,7 @@ import org.crsh.cli.impl.completion.CompletionMatch;
  *
  * @author Julien Viet
  */
-public interface REPL {
+public interface Repl {
 
   /**
    * Return true if this REPL is active. Implementation can decide based on the runtime, for instance the
@@ -56,7 +56,7 @@ public interface REPL {
    * @param request the request to evaluate
    * @return the evaluation response
    */
-  EvalResponse eval(REPLSession session, String request);
+  EvalResponse eval(ReplSession session, String request);
 
   /**
    * Perform completion.
@@ -65,6 +65,6 @@ public interface REPL {
    * @param prefix the prefix to complete
    * @return the completion match
    */
-  CompletionMatch complete(REPLSession session, String prefix);
+  CompletionMatch complete(ReplSession session, String prefix);
 
 }

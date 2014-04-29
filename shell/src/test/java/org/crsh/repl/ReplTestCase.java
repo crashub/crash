@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /** @author Julien Viet */
-public class REPLTestCase extends AbstractCommandTestCase {
+public class ReplTestCase extends AbstractCommandTestCase {
 
   /** . */
   public static final ArrayList<Object> list = new ArrayList<Object>();

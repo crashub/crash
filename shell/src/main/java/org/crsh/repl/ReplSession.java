@@ -25,7 +25,7 @@ import org.crsh.plugin.PluginContext;
 import java.util.Map;
 
 /** @author Julien Viet */
-public interface REPLSession extends Map<String, Object> {
+public interface ReplSession extends Map<String, Object> {
 
   Iterable<String> getCommandNames();
 

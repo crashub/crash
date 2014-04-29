@@ -21,25 +21,25 @@ package org.crsh.lang.groovy;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.repl.EvalResponse;
-import org.crsh.repl.REPL;
-import org.crsh.repl.REPLSession;
+import org.crsh.repl.Repl;
+import org.crsh.repl.ReplSession;
 
 import java.util.logging.Logger;
 
 /**
  * @author Julien Viet
  */
-public class GroovyRepl extends CRaSHPlugin<REPL> implements REPL {
+public class GroovyRepl extends CRaSHPlugin<Repl> implements Repl {
 
   /** . */
   static final Logger log = Logger.getLogger(GroovyRepl.class.getName());
 
   /** . */
-  private static final REPL groovyRepl = getREPL();
+  private static final Repl groovyRepl = getREPL();
 
-  public static REPL getREPL() {
+  public static Repl getREPL() {
     try {
-      Class<REPL> groovyReplClass = (Class<REPL>)GroovyRepl.class.getClassLoader().loadClass("org.crsh.lang.groovy.GroovyReplImpl");
+      Class<Repl> groovyReplClass = (Class<Repl>)GroovyRepl.class.getClassLoader().loadClass("org.crsh.lang.groovy.GroovyReplImpl");
       return groovyReplClass.newInstance();
     }
     catch (Exception e) {
@@ -53,7 +53,7 @@ public class GroovyRepl extends CRaSHPlugin<REPL> implements REPL {
   }
 
   @Override
-  public REPL getImplementation() {
+  public Repl getImplementation() {
     return this;
   }
 
@@ -73,7 +73,7 @@ public class GroovyRepl extends CRaSHPlugin<REPL> implements REPL {
   }
 
   @Override
-  public EvalResponse eval(REPLSession session, String request) {
+  public EvalResponse eval(ReplSession session, String request) {
     if (groovyRepl != null) {
       return groovyRepl.eval(session, request);
     } else {
@@ -82,7 +82,7 @@ public class GroovyRepl extends CRaSHPlugin<REPL> implements REPL {
   }
 
   @Override
-  public CompletionMatch complete(REPLSession session, String prefix) {
+  public CompletionMatch complete(ReplSession session, String prefix) {
     if (groovyRepl != null) {
       return groovyRepl.complete(session, prefix);
     } else {

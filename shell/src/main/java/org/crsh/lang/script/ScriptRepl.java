@@ -26,11 +26,11 @@ import org.crsh.command.CommandCreationException;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.SyntaxException;
+import org.crsh.repl.Repl;
+import org.crsh.repl.ReplSession;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.repl.EvalResponse;
-import org.crsh.repl.REPL;
-import org.crsh.repl.REPLSession;
 import org.crsh.text.Chunk;
 import org.crsh.util.Utils;
 
@@ -38,19 +38,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /** @author Julien Viet */
-public class ScriptREPL implements REPL {
+public class ScriptRepl implements Repl {
 
   /** . */
-  private static final ScriptREPL instance = new ScriptREPL();
+  private static final ScriptRepl instance = new ScriptRepl();
 
   /** . */
-  static final Logger log = Logger.getLogger(ScriptREPL.class.getName());
+  static final Logger log = Logger.getLogger(ScriptRepl.class.getName());
 
-  public static ScriptREPL getInstance() {
+  public static ScriptRepl getInstance() {
     return instance;
   }
 
-  private ScriptREPL() {
+  private ScriptRepl() {
   }
 
   @Override
@@ -64,10 +64,10 @@ public class ScriptREPL implements REPL {
 
   @Override
   public String getDescription() {
-    return "The Script REPL provides command line interpreter with a bash like syntax";
+    return "The Script repl provides command line interpreter with a bash like syntax";
   }
 
-  public EvalResponse eval(REPLSession session, String request) {
+  public EvalResponse eval(ReplSession session, String request) {
     PipeLineFactory factory;
     try {
       factory = Token.parse(request).createFactory();
@@ -89,7 +89,7 @@ public class ScriptREPL implements REPL {
     }
   }
 
-  public CompletionMatch complete(REPLSession session, String prefix) {
+  public CompletionMatch complete(ReplSession session, String prefix) {
     Token ast = Token.parse(prefix);
     String termPrefix;
     if (ast != null) {

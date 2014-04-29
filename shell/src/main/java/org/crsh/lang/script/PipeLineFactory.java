@@ -23,7 +23,7 @@ import org.crsh.command.CommandCreationException;
 import org.crsh.command.CommandInvoker;
 import org.crsh.command.ShellCommand;
 import org.crsh.command.SyntaxException;
-import org.crsh.repl.REPLSession;
+import org.crsh.repl.ReplSession;
 import org.crsh.command.pipeline.PipeLine;
 import org.crsh.shell.ErrorType;
 import org.crsh.text.Chunk;
@@ -85,7 +85,7 @@ public class PipeLineFactory {
     return next;
   }
 
-  public CommandInvoker<Void, Chunk> create(REPLSession session) throws CommandCreationException {
+  public CommandInvoker<Void, Chunk> create(ReplSession session) throws CommandCreationException {
     LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();
     for (PipeLineFactory current = this;current != null;current = current.next) {
       ShellCommand command = session.getCommand(current.name);

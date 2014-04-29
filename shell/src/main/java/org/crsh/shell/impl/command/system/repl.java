@@ -26,8 +26,8 @@ import org.crsh.cli.spi.Completion;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.lang.script.ScriptREPL;
-import org.crsh.repl.REPL;
+import org.crsh.lang.script.ScriptRepl;
+import org.crsh.repl.Repl;
 import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
@@ -50,16 +50,16 @@ public class repl extends BaseCommand implements ReplCompleter {
       @Usage("the optional repl name")
       String name) throws IOException {
     CRaSHSession session = (CRaSHSession)context.getSession();
-    REPL current = session.getRepl();
+    Repl current = session.getRepl();
     if (name != null) {
       if (name.equals(current.getName())) {
         context.provide("Using repl " + name);
       } else {
-        REPL found = null;
+        Repl found = null;
         if ("script".equals(name)) {
-          found = ScriptREPL.getInstance();
+          found = ScriptRepl.getInstance();
         } else {
-          for (REPL repl : session.crash.getContext().getPlugins(REPL.class)) {
+          for (Repl repl : session.crash.getContext().getPlugins(Repl.class)) {
             if (repl.getName().equals(name)) {
               if (repl.isActive()) {
                 found = repl;
@@ -80,9 +80,9 @@ public class repl extends BaseCommand implements ReplCompleter {
     } else {
 
       //
-      ArrayList<REPL> repls = new ArrayList<REPL>();
-      repls.add(ScriptREPL.getInstance());
-      for (REPL repl : session.crash.getContext().getPlugins(REPL.class)) {
+      ArrayList<Repl> repls = new ArrayList<Repl>();
+      repls.add(ScriptRepl.getInstance());
+      for (Repl repl : session.crash.getContext().getPlugins(Repl.class)) {
         repls.add(repl);
       }
 
@@ -93,7 +93,7 @@ public class repl extends BaseCommand implements ReplCompleter {
               add(new LabelElement("NAME").style(Style.style(Decoration.bold))).
               add(new LabelElement("DESCRIPTION")).
               add(new LabelElement("ACTIVE")));
-      for (REPL repl : repls) {
+      for (Repl repl : repls) {
         table.add(
             new RowElement().
                 add(new LabelElement(repl.getName()).style(Style.style(Color.red))).
@@ -114,7 +114,7 @@ public class repl extends BaseCommand implements ReplCompleter {
     if ("script".startsWith(prefix)) {
       builder.add("script".substring(prefix.length()), true);
     }
-    for (REPL repl : session.crash.getContext().getPlugins(REPL.class)) {
+    for (Repl repl : session.crash.getContext().getPlugins(Repl.class)) {
       String name = repl.getName();
       if (name.startsWith(prefix)) {
         builder.add(name.substring(prefix.length()), true);
