@@ -33,7 +33,7 @@ import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
 import org.crsh.console.KeyHandler;
 import org.crsh.shell.ErrorType;
-import org.crsh.util.TypeResolver;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -211,7 +211,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
         Class<?> parameterType = parameterTypes[i];
         if (InvocationContext.class.isAssignableFrom(parameterType)) {
           Type contextGenericParameterType = invoker.getGenericParameterTypes()[i];
-          producedType = TypeResolver.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
+          producedType = Utils.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
           break;
         }
       }
@@ -243,10 +243,10 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
       final Type ret = invoker.getGenericReturnType();
 
       /** . */
-      final Class<C> consumedType = (Class<C>)TypeResolver.resolveToClass(ret, PipeCommand.class, 0);
+      final Class<C> consumedType = (Class<C>)Utils.resolveToClass(ret, PipeCommand.class, 0);
 
       /** . */
-      final Class<P> producedType = (Class<P>)TypeResolver.resolveToClass(ret, PipeCommand.class, 1);
+      final Class<P> producedType = (Class<P>)Utils.resolveToClass(ret, PipeCommand.class, 1);
 
       PipeCommand<C, P> real;
 

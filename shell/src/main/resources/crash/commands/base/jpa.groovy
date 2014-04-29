@@ -22,6 +22,7 @@ package crash.commands.base
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.InvocationContext
+import org.crsh.util.Utils
 
 import javax.naming.InitialContext
 import org.crsh.cli.Argument
@@ -30,7 +31,6 @@ import org.crsh.cli.spi.Completer
 import org.crsh.cli.spi.Completion
 import org.crsh.cli.descriptor.ParameterDescriptor
 import org.crsh.util.JNDIHandler
-import org.crsh.util.TypeResolver
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
@@ -131,7 +131,7 @@ class jpa implements Completer {
 
   void addValue(attribute, row, result) {
     if (!attribute.collection) {
-      if (TypeResolver.instanceOf(attribute.type.class, "javax.persistence.metamodel.EntityType")) {
+      if (Utils.instanceOf(attribute.type.class, "javax.persistence.metamodel.EntityType")) {
         if (row."${attribute.name}" != null) {
           result.put(attribute.name, formatEntity(attribute.type, row."${attribute.name}"))
         } else {
@@ -156,7 +156,7 @@ class jpa implements Completer {
   String formatEntity(entity, instance) {
     def ids = "";
     entity.attributes.each { a ->
-      if (TypeResolver.instanceOf(a.class, "javax.persistence.metamodel.SingularAttribute") && a.id) {
+      if (Utils.instanceOf(a.class, "javax.persistence.metamodel.SingularAttribute") && a.id) {
         ids += a.name + "=" + instance."${a.name}" + ","
       }
     }
