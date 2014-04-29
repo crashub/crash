@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.security.Principal;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal {
 
@@ -69,6 +70,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   }
 
   public void run() {
+    final AtomicBoolean exited = new AtomicBoolean(false);
     try {
       final String userName = session.getAttribute(SSHLifeCycle.USERNAME);
       Principal user = new Principal() {
@@ -77,13 +79,25 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
         }
       };
       Shell shell = factory.shellFactory.create(user);
-      ConsoleReader reader = new ConsoleReader(in, out, this);
+      ConsoleReader reader = new ConsoleReader(in, out, this) {
+        @Override
+        public void shutdown() {
+          exited.set(true);
+          callback.onExit(0);
+          super.shutdown();
+        }
+      };
       JLineProcessor processor = new JLineProcessor(shell, reader, new PrintStream(out), "\r\n");
       processor.run();
+    } catch (java.io.InterruptedIOException e) {
+      // Expected behavior because of the onExit callback in the shutdown above
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
-      callback.onExit(0);
+      // Make sure we call it
+      if (!exited.get()) {
+        callback.onExit(0);
+      }
     }
   }
 

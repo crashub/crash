@@ -401,8 +401,13 @@ public class CRaSH {
       interruptHandler.install();
 
       //
+      Thread thread = new Thread(processor);
+      thread.setDaemon(true);
+      thread.start();
+
+      //
       try {
-        processor.run();
+        processor.closed();
       }
       catch (Throwable t) {
         t.printStackTrace();

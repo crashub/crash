@@ -32,6 +32,7 @@ import org.crsh.text.Style;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Stack;
+import java.util.concurrent.CountDownLatch;
 
 public class JLineProcessor implements Runnable, ConsoleDriver {
 
@@ -43,6 +44,7 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
 
   // *********
 
+  final CountDownLatch done;
   final Terminal terminal;
   final PrintStream writer;
   final ConsoleReader reader;
@@ -68,6 +70,7 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
     this.terminal = reader.getTerminal();
     this.reader = reader;
     this.lineSeparator = lineSeparator;
+    this.done = new CountDownLatch(1);
 
     // Update the mode according to the notification
     console.addModeListener(new Runnable() {
@@ -83,6 +86,10 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
   }
 
   // *****
+
+  public void closed() throws InterruptedException {
+    done.await();
+  }
 
   public void run() {
 
@@ -315,6 +322,7 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
 
   @Override
   public void close() throws IOException {
+    done.countDown();
     reader.shutdown();
   }
 }
