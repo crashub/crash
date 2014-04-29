@@ -3,13 +3,13 @@
   <parent>
     <artifactId>crash.plugins.jcr</artifactId>
     <groupId>org.crashub</groupId>
-    <version>1.3.0-beta17-SNAPSHOT</version>
+    <version>1.3.0-beta17</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crashub</groupId>
   <artifactId>crash.plugins.jcr.jackrabbit</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.0-beta17-SNAPSHOT</version>
+  <version>1.3.0-beta17</version>
 
   <name>CRaSH Plugin - JCR Jackrabbit</name>
   <description>The CRaSH JCR module for Apache Jackrabbit</description>
