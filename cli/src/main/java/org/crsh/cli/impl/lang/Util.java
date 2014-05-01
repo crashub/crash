@@ -30,6 +30,9 @@ import java.util.regex.Pattern;
 public class Util {
 
   /** . */
+  static final Object[] EMPTY_ARGS = new Object[0];
+
+  /** . */
   static final Pattern INDENT_PATTERN = Pattern.compile("(?<=^|\\n)[ \\t\\x0B\\f\\r]*(?=\\S)");
 
   /** . */

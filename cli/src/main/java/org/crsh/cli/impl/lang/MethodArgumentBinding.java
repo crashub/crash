@@ -19,7 +19,7 @@
 
 package org.crsh.cli.impl.lang;
 
-public class MethodArgumentBinding {
+public class MethodArgumentBinding extends Binding {
 
   /** . */
   private final int index;
@@ -30,5 +30,10 @@ public class MethodArgumentBinding {
 
   public int getIndex() {
     return index;
+  }
+
+  @Override
+  public void set(Object o, Object[] args, Object value) {
+    args[index] = value;
   }
 }

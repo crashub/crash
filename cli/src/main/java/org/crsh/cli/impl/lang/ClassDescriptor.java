@@ -19,7 +19,6 @@
 
 package org.crsh.cli.impl.lang;
 
-import org.crsh.cli.descriptor.ArgumentDescriptor;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
@@ -30,10 +29,8 @@ import org.crsh.cli.SyntaxException;
 import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
-import org.crsh.cli.impl.invocation.ParameterMatch;
 import org.crsh.cli.impl.invocation.Resolver;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Map;
@@ -106,7 +103,7 @@ class ClassDescriptor<T> extends CommandDescriptorImpl<T> {
         }
         @Override
         public Void invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
-          configure(match, command);
+          MethodDescriptor.bind(match, getParameters(), command, Util.EMPTY_ARGS);
           Runnable runnable = Runnable.class.cast(command);
           try {
             runnable.run();
@@ -119,33 +116,6 @@ class ClassDescriptor<T> extends CommandDescriptorImpl<T> {
       };
     } else {
       return null;
-    }
-  }
-
-  void configure(InvocationMatch<T> classMatch, T command) throws InvocationException, SyntaxException {
-    for (ParameterDescriptor parameter : getParameters()) {
-      ParameterMatch match = classMatch.getParameter(parameter);
-      if (match == null) {
-        if (parameter.isRequired()) {
-          if (parameter instanceof ArgumentDescriptor) {
-            ArgumentDescriptor argument = (ArgumentDescriptor)parameter;
-            throw new SyntaxException("Missing argument " + argument.getName());
-          } else {
-            OptionDescriptor option = (OptionDescriptor)parameter;
-            throw new SyntaxException("Missing option " + option.getNames());
-          }
-        }
-      } else {
-        Object value = match.computeValue();
-        Field f = ((ClassFieldBinding)parameter.getBinding()).getField();
-        try {
-          f.setAccessible(true);
-          f.set(command, value);
-        }
-        catch (Exception e) {
-          throw new InvocationException(e.getMessage(), e);
-        }
-      }
     }
   }
 

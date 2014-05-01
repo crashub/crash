@@ -27,6 +27,7 @@ import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
 import org.crsh.cli.Required;
+import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
@@ -104,7 +105,12 @@ public class MatcherTestCase extends TestCase {
 
     a = new A();
     a.i = -3;
-    analyzer.parse("").invoke(a);
+    try {
+      analyzer.parse("").invoke(a);
+      fail();
+    }
+    catch (SyntaxException e) {
+    }
     assertEquals(-3, a.i);
   }
 

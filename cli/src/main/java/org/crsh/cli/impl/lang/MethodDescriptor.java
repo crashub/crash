@@ -116,6 +116,26 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
     return getInvoker2(match, type);
   }
 
+  static void bind(InvocationMatch<?> _match, Iterable<ParameterDescriptor> parameters, Object target, Object[] args) {
+    for (ParameterDescriptor parameter : parameters) {
+      ParameterMatch match = _match.getParameter(parameter);
+      Object value = match != null ? match.computeValue() : null;
+      if (value == null) {
+        if (parameter.getDeclaredType().isPrimitive() || parameter.isRequired()) {
+          if (parameter instanceof ArgumentDescriptor) {
+            ArgumentDescriptor argument = (ArgumentDescriptor)parameter;
+            throw new SyntaxException("Missing argument " + argument.getName());
+          } else {
+            OptionDescriptor option = (OptionDescriptor)parameter;
+            throw new SyntaxException("Missing option " + option.getNames());
+          }
+        }
+      } else {
+        ((Binding)parameter.getBinding()).set(target, args, value);
+      }
+    }
+  }
+
   private <V> CommandInvoker<T, V> getInvoker2(final InvocationMatch<T> _match, final Class<V> returnType) {
     return new CommandInvoker<T, V>() {
       @Override
@@ -142,46 +162,28 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
       public V invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
 
         //
-        owner.configure(_match.owner(), command);
+        bind(_match.owner(), owner.getParameters(), command, Util.EMPTY_ARGS);
 
         // Prepare invocation
         Method m = getMethod();
         Class<?>[] parameterTypes = m.getParameterTypes();
         Object[] mArgs = new Object[parameterTypes.length];
+
+        // Bind method parameter first
+        bind(_match, getParameters(), command, mArgs);
+
+        // Fill missing contextual parameters and make primitive check
         for (int i = 0;i < mArgs.length;i++) {
-          ParameterDescriptor parameter = getParameter(i);
-
-          //
           Class<?> parameterType = parameterTypes[i];
-
-          Object v;
-          if (parameter == null) {
-            // Attempt to obtain from resolver
-            v = resolver.resolve(parameterType);
-          } else {
-            ParameterMatch match = _match.getParameter(parameter);
-            if (match != null) {
-              v = match.computeValue();
-            } else {
-              v = null;
+          if (mArgs[i] == null) {
+            Object v = resolver.resolve(parameterType);
+            if (v != null) {
+              mArgs[i] = v;
             }
           }
-
-          //
-          if (v == null) {
-            if (parameterType.isPrimitive() || parameter.isRequired()) {
-              if (parameter instanceof ArgumentDescriptor) {
-                ArgumentDescriptor argument = (ArgumentDescriptor)parameter;
-                throw new SyntaxException("Missing argument " + argument.getName());
-              } else {
-                OptionDescriptor option = (OptionDescriptor)parameter;
-                throw new SyntaxException("Missing option " + option.getNames());
-              }
-            }
+          if (mArgs[i] == null && parameterType.isPrimitive()) {
+            throw new SyntaxException("Method argument at position " + i + " of " + m + " is missing");
           }
-
-          //
-          mArgs[i] = v;
         }
 
         // Perform method invocation

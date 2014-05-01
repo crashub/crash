@@ -19,9 +19,11 @@
 
 package org.crsh.cli.impl.lang;
 
+import org.crsh.cli.impl.invocation.InvocationException;
+
 import java.lang.reflect.Field;
 
-public class ClassFieldBinding {
+public class ClassFieldBinding extends Binding {
 
   /** . */
   private final Field field;
@@ -32,5 +34,16 @@ public class ClassFieldBinding {
 
   public Field getField() {
     return field;
+  }
+
+  @Override
+  public void set(Object target, Object[] args, Object value) {
+    try {
+      field.setAccessible(true);
+      field.set(target, value);
+    }
+    catch (Exception e) {
+      throw new InvocationException(e.getMessage(), e);
+    }
   }
 }
