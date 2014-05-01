@@ -80,7 +80,7 @@
                 <doctype>book</doctype>
                 <attributes>
                   <toc2>1</toc2>
-                  <stylesheet>foundation-lime.css</stylesheet>
+                  <stylesheet>rocket-panda.css</stylesheet>
                   <source-highlighter>coderay</source-highlighter>
                   <crash-version>${project.version}</crash-version>
                   <sectanchors>1</sectanchors>
