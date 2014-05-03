@@ -17,11 +17,12 @@ class ws extends org.crsh.jcr.command.JCRCommand
   @Usage("login to a workspace")
   @Man("""
 This command login to a JCR workspace and establish a session with the repository.
-When you are connected the shell maintain a JCR session and allows you to interact with the session in a shell
-oriented fashion. The repository name must be specified and optionally you can specify a user name and password to
-have more privileges.
+When you are connected the shell maintain a JCR session and allows you to interact with
+the session in a shell oriented fashion. The repository name must be specified and
+optionally you can specify a user name and password to have more privileges.
 
-Before performing a login operation, a repository must be first selected with the repo command, for instance:
+Before performing a login operation, a repository must be first selected with the repo
+command, for instance:
 
 % repo use container=portal
 

@@ -61,7 +61,7 @@ public class BootstrapTestCase extends TestCase {
     CommandInvoker<A, ?> invoker = match.getInvoker();
     Help help = (Help)invoker.invoke(new A());
     assertNotNull(help);
-    assertSame(desc, help.getDescriptor());
+    assertSame(desc, help.getDescriptor().getDelegate());
 
     //
     match = matcher.parse("");

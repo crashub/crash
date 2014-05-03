@@ -10,8 +10,8 @@ public class ls extends org.crsh.jcr.command.JCRCommand {
 
   @Usage("list the content of a node")
   @Man("""\
-The ls command displays the content of a node. By default it lists the content of the current node, however it also
-accepts a path argument that can be absolute or relative.
+The ls command displays the content of a node. By default it lists the content of the
+current node, however it also accepts a path argument that can be absolute or relative.
 
 [/]% ls
 /
@@ -19,7 +19,7 @@ accepts a path argument that can be absolute or relative.
 | +-jcr:primaryType: nt:unstructured
 | +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
 | +-exo:owner: '__system'
-| +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administrators set_property,*:/platform/administrators remove]
+| +-exo:permissions: [any read,*:/platform/administrators read]
 +-children
 | +-/workspace
 | +-/contents

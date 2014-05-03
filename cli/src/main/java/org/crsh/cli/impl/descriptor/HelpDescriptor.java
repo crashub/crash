@@ -197,7 +197,7 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
         }
         @Override
         public Help invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
-          return new Help<T>(delegate);
+          return new Help<T>(HelpDescriptor.this);
         }
       };
     } else {

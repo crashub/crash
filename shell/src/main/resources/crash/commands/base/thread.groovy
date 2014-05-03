@@ -36,9 +36,10 @@ Stopped thread Thread[pool-1-thread-1,5,main]
 % thread interrupt 17
 Interrupted thread Thread[pool-1-thread-1,5,main]
 
-In addition of the classical usage, the various commands (ls, stop, interrupt) can be combined
-with a pipe, the most common operation is to combine the ls command with the stop, interrupt or dump command,
-for instance the following command will interrupt all the thread having a name starting with the 'pool' prefix:
+In addition of the classical usage, the various commands (ls, stop, interrupt) can be
+combined with a pipe, the most common operation is to combine the ls command with the stop,
+interrupt or dump command, for instance the following command will interrupt all the thread
+having a name starting with the 'pool' prefix:
 
 % thread ls --filter pool.* | thread interrupt
 Interrupted thread Thread[pool-1-thread-1,5,main]

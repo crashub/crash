@@ -21,11 +21,9 @@ package org.crsh.doc;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.command.BaseShellCommand;
-import org.crsh.command.CRaSHCommand;
 import org.crsh.command.DescriptionFormat;
 import org.crsh.command.ShellCommand;
 import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.ResourceKind;
 import org.crsh.plugin.ServiceLoaderDiscovery;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.vfs.FS;
@@ -65,16 +63,13 @@ public class Generator {
         BaseShellCommand cc = (BaseShellCommand)cmd;
         CommandDescriptor<?> desc = cc.getDescriptor();
         buffer.append("== ").append(desc.getName()).append("\n").append("\n");
-        if (desc.getSubordinates().size() > 1) {
-          for (CommandDescriptor<?> m : desc.getSubordinates().values()) {
-            buffer.append("=== ").append(desc.getName()).append(" ").append(m.getName()).append("\n").append("\n");
-            buffer.append("----\n");
-            m.printMan(buffer);
-            buffer.append("----\n\n");
-          }
-        } else {
+        buffer.append("----\n");
+        buffer.append(cc.describe("", DescriptionFormat.MAN));
+        buffer.append("----\n");
+        for (CommandDescriptor<?> m : desc.getSubordinates().values()) {
+          buffer.append("=== ").append(desc.getName()).append(" ").append(m.getName()).append("\n").append("\n");
           buffer.append("----\n");
-          desc.printMan(buffer);
+          buffer.append(cc.describe(m.getName(), DescriptionFormat.MAN));
           buffer.append("----\n\n");
         }
       }

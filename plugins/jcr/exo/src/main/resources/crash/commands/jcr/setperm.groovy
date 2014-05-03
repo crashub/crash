@@ -45,16 +45,18 @@ public class setperm extends org.crsh.jcr.command.JCRCommand {
 
   @Command
   @Usage("modify the security permissions of a JCR node")
-  @Man("""The setperm commands configures the security of a node based on (see eXo JCR access control at
-http://wiki.exoplatform.com/xwiki/bin/view/JCR/Access%20Control). When a node is protected by access control, it owns a
-mixin named exo:privilegeable that contains a exo:permissions property, for instance:
+  @Man(
+"""The setperm commands configures the security of a node based on (see eXo JCR access
+control at http://wiki.exoplatform.com/xwiki/bin/view/JCR/Access%20Control). When a node
+is protected by access control, it owns a mixin named exo:privilegeable that contains a
+exo:permissions property, for instance:
 
 [/production]% ls
 /production
 +-properties
 | +-jcr:primaryType: nt:unstructured
 | +-jcr:mixinTypes: [exo:privilegeable]
-| +-exo:permissions: [*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administrators set_property,*:/platform/administrators remove]
+| +-exo:permissions: [*:/platform/administrators read,*:/platform/administrators add_node]
 +-children
 | +-/production/app:gadgets
 | +-/production/app:applications
@@ -70,8 +72,9 @@ You can also remove a permission by using the -r option.
 [/production]% setperm -i *:/platform/mygroup -r add_node /
 Node /production updated to [read]
 
-The setperm command will add automatically the exo:privilegeable mixin on the node when it is missing. The setperm is
-a <Node,Void> command altering the security of the consumed node stream.""")
+The setperm command will add automatically the exo:privilegeable mixin on the node when it
+is missing. The setperm is a <Node,Void> command altering the security of the consumed
+node stream.""")
   public void main(@Argument @Usage("the paths to secure") @Man("The node path list to secure") List<Path> paths) {
 
     //

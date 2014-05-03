@@ -75,21 +75,19 @@
  */
 package org.crsh.cli.impl.descriptor;
 
-import org.crsh.cli.descriptor.CommandDescriptor;
-
 import java.io.IOException;
 
 /** @author Julien Viet */
 public class Help<T> {
 
   /** . */
-  private final CommandDescriptorImpl<T> descriptor;
+  private final HelpDescriptor<T> descriptor;
 
-  public Help(CommandDescriptorImpl<T> descriptor) {
+  public Help(HelpDescriptor<T> descriptor) {
     this.descriptor = descriptor;
   }
 
-  public CommandDescriptor<T> getDescriptor() {
+  public HelpDescriptor<T> getDescriptor() {
     return descriptor;
   }
 

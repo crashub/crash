@@ -10,7 +10,7 @@ public class xpath {
 
   @Usage("execute a JCR xpath query")
   @Command
-  @Man("""Executes a JCR query with the xpath dialect, by default results are limited to 5.\
+  @Man("""Executes a JCR query with the xpath dialect, by default results are limited to 5.
 All results matched by the query are produced by this command.""")
   public Object main(
     @Option(names=["o","offset"])

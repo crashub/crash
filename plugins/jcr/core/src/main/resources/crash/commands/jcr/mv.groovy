@@ -12,8 +12,9 @@ public class mv extends org.crsh.jcr.command.JCRCommand {
   @Command
   @Usage("move a node")
   @Man("""\
-The mv command can move a node to a target location in the JCR tree. It can be used also to rename a node. The mv
-command is a <Node,Node> command consuming a stream of node to move them and producing nodes that were moved.
+The mv command can move a node to a target location in the JCR tree. It can be used also to
+rename a node. The mv command is a <Node,Node> command consuming a stream of node to move
+them and producing nodes that were moved.
 
 [/registry]% mv Registry Registry2""")
 

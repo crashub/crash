@@ -16,9 +16,10 @@ public class node extends org.crsh.jcr.command.JCRCommand {
 
   @Usage("creates one or several nodes")
   @Man("""\
-The addnode command creates one or several nodes. The command takes at least one node as argument, but it can
- take more. Each path can be either absolute or relative, relative path creates nodes relative to the current node.
- By default the node type is the default repository node type, but the option -t can be used to specify another one.
+The addnode command creates one or several nodes. The command takes at least one node as
+argument, but it can take more. Each path can be either absolute or relative, relative path
+creates nodes relative to the current node. By default the node type is the default
+repository node type, but the option -t can be used to specify another one.
 
 [/registry]% addnode foo
 Node /foo created
@@ -83,8 +84,8 @@ Update the existing foo property:
 
 [/]% set foo juu
 
-When a property is created and does not have a property descriptor that constraint its type, you can specify it
-with the -t option
+When a property is created and does not have a property descriptor that constraint its type,
+you can specify it with the -t option
 
 [/]% set -t LONG long_property 3
 

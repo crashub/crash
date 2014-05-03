@@ -28,7 +28,8 @@ import org.crsh.jcr.JCRPlugin
 
 @Usage("repository interaction commands")
 @Man("""\
-The repo commands allow to select a repository to use, it is the main entry point for using JCR commands.
+The repo commands allow to select a repository to use, it is the main entry point for
+using JCR commands.
 
 The set of available repository plugins can be discovered with the ls command:
 
@@ -61,12 +62,13 @@ class repo extends org.crsh.jcr.command.JCRCommand {
 
   @Usage("changes the current repository")
   @Man("""\
-The use command changes the current repository used by for JCR commands. The command accepts a set of properties
-as main command argument that will be used to select a repository:
+The use command changes the current repository used by for JCR commands. The command accepts
+a set of properties as main command argument that will be used to select a repository:
 
 % repo use parameterName=parameterValue;nextParameterName=nextParameterValue
 
-The parameters is specific to JCR plugin implementations, more details can be found thanks to the ls command.
+The parameters is specific to JCR plugin implementations, more details can be found thanks
+to the ls command.
 """)
   @Command
   public Object use(

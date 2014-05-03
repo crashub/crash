@@ -12,8 +12,9 @@ public class rm extends org.crsh.jcr.command.JCRCommand {
   @Command
   @Usage("remove one or several node or a property")
   @Man("""\
-The rm command removes a node or property specified by its path either absolute or relative. This operation
-is executed against the JCR session, meaning that it will not be effective until it is commited to the JCR server.
+The rm command removes a node or property specified by its path either absolute or relative.
+This operation is executed against the JCR session, meaning that it will not be effective
+until it is commited to the JCR server.
 
 [/]% rm foo
 Node /foo removed

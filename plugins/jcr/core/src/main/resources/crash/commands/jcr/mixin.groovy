@@ -14,8 +14,8 @@ public class mixin extends org.crsh.jcr.command.JCRCommand {
   // It consumes a node stream or path arguments
   @Usage("add a mixin to one or several nodes")
   @Man("""\
-The add command addds a mixin to one or several nodes, this command is a <Node,Void> command, and can
-add a mixin from an incoming node stream, for instance:
+The add command addds a mixin to one or several nodes, this command is a <Node,Void>
+command, and can add a mixin from an incoming node stream, for instance:
 
 [/]% select * from mynode | mixin add mix:versionable
 """)
@@ -42,8 +42,8 @@ add a mixin from an incoming node stream, for instance:
   // It consumes a node stream or path arguments
   @Usage("removes a mixin from one or several nodes")
   @Man("""\
-The remove command removes a mixin from one or several nodes, this command is a <Node,Void> command, and can
-remove a mixin from an incoming node stream, for instance:
+The remove command removes a mixin from one or several nodes, this command is a <Node,Void>
+command, and can remove a mixin from an incoming node stream, for instance:
 
 [/]% select * from mynode | mixin remove mix:versionable
 """)

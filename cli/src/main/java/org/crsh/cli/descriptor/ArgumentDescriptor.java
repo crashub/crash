@@ -128,10 +128,12 @@ public class ArgumentDescriptor extends ParameterDescriptor {
    * @throws IOException any io exception
    */
   public void printUsage(Appendable writer) throws IOException {
+    writer.append('<');
+    writer.append((name == null || name.length() == 0) ? "arg" : name);
+    writer.append('>');
     if (getMultiplicity() == Multiplicity.MULTI) {
       writer.append("... ");
     }
-    writer.append((name == null || name.length() == 0) ? "arg" : name);
   }
 
   @Override

@@ -28,8 +28,9 @@ public class log {
 
   @Usage("send a message to a logger")
   @Man("""\
-The send command log one or several loggers with a specified message. For instance the following impersonates
-the javax.management.mbeanserver class and send a message on its own logger.
+The send command log one or several loggers with a specified message. For instance the
+following impersonates the javax.management.mbeanserver class and send a message on its own
+logger.
 
 #% log send -m hello javax.management.mbeanserver
 
@@ -106,7 +107,8 @@ The -f switch provides filtering with a Java regular expression
 javax.management.mbeanserver
 javax.management.modelmbean
 
-The log ls command is a <Void,Logger> command, therefore any logger produced can be consumed.""")
+The log ls command is a <Void,Logger> command, therefore any logger produced can be
+consumed.""")
   @Command
   public void ls(InvocationContext<Logger> context, @FilterOpt String filter) {
 
@@ -137,15 +139,16 @@ The log ls command is a <Void,Logger> command, therefore any logger produced can
   }
 
   @Man("""\
-The set command sets the level of a logger. One or several logger names can be specified as arguments
-and the -l option specify the level among the finest, finer, fine, info, warn and severe levels. When no level is
-specified, the level is cleared and the level will be inherited from its ancestors.
+The set command sets the level of a logger. One or several logger names can be specified as
+arguments and the -l option specify the level among the finest, finer, fine, info, warn and
+severe levels. When no level is specified, the level is cleared and the level will be
+inherited from its ancestors.
 
 % log set -l trace foo
 % log set foo
 
-The logger name can be omitted and instead stream of logger can be consumed as it is a <Logger,Void> command.
-The following set the level warn on all the available loggers:
+The logger name can be omitted and instead stream of logger can be consumed as it is a
+<Logger,Void> command. The following set the level warn on all the available loggers:
 
 % log ls | log set -l warn""")
   @Usage("configures the level of one of several loggers")
@@ -171,9 +174,10 @@ The following set the level warn on all the available loggers:
   }
 
   @Man("""\
-The tail command provides a tail view of a list of loggers. One or several logger names can be specified
-as argument and the -l option configures the level threshold. When no logger name is specified, the root
-logger will be tailed, when no level is specified, the info level will be used:
+The tail command provides a tail view of a list of loggers. One or several logger names can
+be specified as argument and the -l option configures the level threshold. When no logger
+name is specified, the root logger will be tailed, when no level is specified, the info
+level will be used:
 
 % log tail
 Feb 10, 2014 1:50:36 PM java_util_logging_Logger\$log call

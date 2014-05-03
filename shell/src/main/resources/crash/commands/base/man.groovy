@@ -10,7 +10,7 @@ class man {
   Object main(@Usage("the command") @Argument @Required String command) {
     def cmd = crash.getCommand(command);
     if (cmd != null) {
-      return  cmd.describe(unmatched, DescriptionFormat.MAN);
+      return cmd.describe(unmatched, DescriptionFormat.MAN);
     } else {
       return "Command $command not found";
     }

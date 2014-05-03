@@ -14,9 +14,10 @@ public class select {
 
   @Usage("execute a JCR sql query")
   @Command
-  @Man("""Queries in SQL format are possible via the ##select## command. You can write a query with the same syntax defined
-by the specification and add options to control the number of results returned. By default the number of nodes is limited
-to 5 results:
+  @Man(
+"""Queries in SQL format are possible via the ##select## command. You can write a query with
+the same syntax defined by the specification and add options to control the number of
+results returned. By default the number of nodes is limited to 5 results:
 
 [/]% select * from nt:base
 The query matched 1114 nodes
@@ -25,7 +26,7 @@ The query matched 1114 nodes
 | | +-jcr:primaryType: nt:unstructured
 | | +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
 | | +-exo:owner: '__system'
-| | +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administratorsset_property,*:/platform/administrators remove]
+| | +-exo:permissions: [any read,*:/platform/administrators read]
 +-/workspace
 | +-properties
 | | +-jcr:primaryType: mop:workspace
@@ -38,7 +39,8 @@ Display 20 nodes from the offset 10:
 The query matched 1114 nodes
 ...
 
-It is possible also to remove the limit of displayed nodes with the -a option (you should use this option with care) :
+It is possible also to remove the limit of displayed nodes with the -a option (you should
+use this option with care) :
 
 [/]% select -a * from nt:base
 The query matched 1114 nodes
