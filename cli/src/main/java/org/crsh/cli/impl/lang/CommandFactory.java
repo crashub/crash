@@ -97,54 +97,58 @@ public class CommandFactory {
     List<Method> methods = findAllMethods(type);
 
     //
-    Map<String, MethodDescriptor<T>> methodMap = new LinkedHashMap<String, MethodDescriptor<T>>();
-    ClassDescriptor<T> classDescriptor = new ClassDescriptor<T>(type, methodMap, new Description(type));
-
-    // Process command methods
-    for (Method method : methods) {
-
-      Description info = new Description(method);
-      MethodDescriptor<T> methodDescriptor = new MethodDescriptor<T>(
-          classDescriptor,
-          method,
-          method.getName().toLowerCase(),
-          info);
-
-      Type[] parameterTypes = method.getGenericParameterTypes();
-      Annotation[][] parameterAnnotationMatrix = method.getParameterAnnotations();
-      for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
-
-        Annotation[] parameterAnnotations = parameterAnnotationMatrix[i];
-        Type parameterType = parameterTypes[i];
-        Tuple tuple = get(parameterAnnotations);
-
-        MethodArgumentBinding binding = new MethodArgumentBinding(i);
-        ParameterDescriptor parameter = create(
-            binding,
-            parameterType,
-            tuple.argumentAnn,
-            tuple.optionAnn,
-            tuple.required,
-            tuple.descriptionAnn,
-            tuple.ann);
-        if (parameter != null) {
-          methodDescriptor.addParameter(parameter);
-        } else {
-          log.log(Level.FINE, "Method argument with index " + i + " of method " + method + " is not annotated");
-        }
+    if (methods.size() == 1 && methods.get(0).getName().equals("main")) {
+      MethodDescriptor<T> methodDescriptor = create(null, type.getSimpleName().toLowerCase(), methods.get(0));
+      for (ParameterDescriptor parameter : parameters(type)) {
+        methodDescriptor.addParameter(parameter);
       }
-
-      //
-      methodMap.put(methodDescriptor.getName(), methodDescriptor);
+      return methodDescriptor;
+    } else {
+      Map<String, MethodDescriptor<T>> methodMap = new LinkedHashMap<String, MethodDescriptor<T>>();
+      ClassDescriptor<T> classDescriptor = new ClassDescriptor<T>(type, methodMap, new Description(type));
+      for (Method method : methods) {
+        MethodDescriptor<T> methodDescriptor = create(classDescriptor, method.getName().toLowerCase(), method);
+        methodMap.put(methodDescriptor.getName(), methodDescriptor);
+      }
+      for (ParameterDescriptor parameter : parameters(type)) {
+        classDescriptor.addParameter(parameter);
+      }
+      return classDescriptor;
     }
+  }
 
-    // Process class parameters
-    for (ParameterDescriptor parameter : parameters(type)) {
-      classDescriptor.addParameter(parameter);
+  private <T> MethodDescriptor<T> create(ClassDescriptor<T> classDescriptor, String name, Method method) {
+    Description info = new Description(method);
+    MethodDescriptor<T> methodDescriptor = new MethodDescriptor<T>(
+        classDescriptor,
+        method,
+        name,
+        info);
+
+    Type[] parameterTypes = method.getGenericParameterTypes();
+    Annotation[][] parameterAnnotationMatrix = method.getParameterAnnotations();
+    for (int i = 0;i < parameterAnnotationMatrix.length;i++) {
+
+      Annotation[] parameterAnnotations = parameterAnnotationMatrix[i];
+      Type parameterType = parameterTypes[i];
+      Tuple tuple = get(parameterAnnotations);
+
+      MethodArgumentBinding binding = new MethodArgumentBinding(i);
+      ParameterDescriptor parameter = create(
+          binding,
+          parameterType,
+          tuple.argumentAnn,
+          tuple.optionAnn,
+          tuple.required,
+          tuple.descriptionAnn,
+          tuple.ann);
+      if (parameter != null) {
+        methodDescriptor.addParameter(parameter);
+      } else {
+        log.log(Level.FINE, "Method argument with index " + i + " of method " + method + " is not annotated");
+      }
     }
-
-    //
-    return classDescriptor;
+    return methodDescriptor;
   }
 
   private ParameterDescriptor create(

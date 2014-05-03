@@ -47,17 +47,13 @@ class CommandCompletion<T> extends Completion {
   private final CommandDescriptor<T> descriptor;
 
   /** . */
-  private final String mainName;
-
-  /** . */
   private final  String prefix;
 
   /** . */
   private final Delimiter delimiter;
 
-  CommandCompletion(CommandDescriptor<T> descriptor, String mainName, String prefix, Delimiter delimiter) {
+  CommandCompletion(CommandDescriptor<T> descriptor, String prefix, Delimiter delimiter) {
     this.descriptor = descriptor;
-    this.mainName = mainName;
     this.prefix = prefix;
     this.delimiter = delimiter;
   }
@@ -68,9 +64,7 @@ class CommandCompletion<T> extends Completion {
     for (CommandDescriptor<?> m : descriptor.getSubordinates().values()) {
       String name = m.getName();
       if (name.startsWith(prefix)) {
-        if (!name.equals(mainName)) {
-          builder.add(name.substring(prefix.length()), true);
-        }
+        builder.add(name.substring(prefix.length()), true);
       }
     }
     return new CompletionMatch(delimiter, builder.build());

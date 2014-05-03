@@ -41,19 +41,15 @@ abstract class Status {
 
     /** . */
     final Mode mode;
-    
-    /** . */
-    final String mainName;
-    
+
     /** . */
     Tokenizer tokenizer;
 
     /** . */
     final CommandDescriptor<T> command;
 
-    Request(Mode mode, String mainName, Tokenizer tokenizer, CommandDescriptor<T> command) {
+    Request(Mode mode, Tokenizer tokenizer, CommandDescriptor<T> command) {
       this.mode = mode;
-      this.mainName = mainName;
       this.tokenizer = tokenizer;
       this.command = command;
     }
@@ -126,30 +122,13 @@ abstract class Status {
           if (optionToken.getName().length() == 0 && optionToken instanceof Token.Literal.Option.Long) {
             req.tokenizer.next();
             if (req.tokenizer.hasNext()) {
-              CommandDescriptor<T> m = req.command.getSubordinate(req.mainName);
-              if (m != null) {
-                response.command = m;
-                response.add(new Event.Subordinate.Implicit(m, optionToken));
-              }
               response.status = new Status.WantReadArg();
             } else {
               if (req.mode == Mode.INVOKE) {
-                CommandDescriptor<T> m = req.command.getSubordinate(req.mainName);
-                if (m != null) {
-                  response.command = m;
-                  response.add(new Event.Subordinate.Implicit(m, optionToken));
-                }
                 response.status = new Status.Done();
                 response.add(new Event.Stop.Done(req.tokenizer.getIndex()));
               } else {
-                CommandDescriptor<T> m = req.command.getSubordinate(req.mainName);
-                if (m != null) {
-                  response.command = m;
-                  response.add(new Event.Subordinate.Implicit(m, optionToken));
-                  response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
-                } else  {
-                  response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
-                }
+                response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
               }
             }
           } else {
@@ -186,43 +165,18 @@ abstract class Status {
               }
               response.add(new Event.Option(req.command, desc, optionToken, values));
             } else {
-              // We are reading an unknown option
-              // it could match an option of an implicit command
-              CommandDescriptor<T> m = req.command.getSubordinate(req.mainName);
-              if (m != null) {
-                desc = m.findOption(literal.getValue());
-                if (desc != null) {
-                  response.command = m;
-                  response.add(new Event.Subordinate.Implicit(m, literal));
-                } else {
-                  if (req.command.getOptionNames().size() == 0) {
-                    response.command = m;
-                    response.add(new Event.Subordinate.Implicit(m, literal));
-                  } else {
-                    response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
-                  }
-                }
-              } else {
-                response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
-              }
+              response.add(new Event.Stop.Unresolved.NoSuchOption(optionToken));
             }
           }
         } else {
           Token.Literal.Word wordLiteral = (Token.Literal.Word)literal;
           CommandDescriptor<T> m = req.command.getSubordinate(wordLiteral.getValue());
-          if (m != null && !m.getName().equals(req.mainName)) {
+          if (m != null) {
             response.command = m;
             req.tokenizer.next();
             response.add(new Event.Subordinate.Explicit(m, wordLiteral));
           } else {
-            m = req.command.getSubordinate(req.mainName);
-            if (m != null) {
-              response.add(new Event.Subordinate.Implicit(m, wordLiteral));
-              response.status = new Status.WantReadArg();
-              response.command = m;
-            } else {
-              response.status = new Status.WantReadArg();
-            }
+            response.status = new Status.WantReadArg();
           }
         }
       }

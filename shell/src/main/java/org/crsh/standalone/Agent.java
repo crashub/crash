@@ -54,7 +54,7 @@ public class Agent {
       public void run() {
         try {
           CommandDescriptor<Agent> c = CommandFactory.DEFAULT.create(Agent.class);
-          InvocationMatcher<Agent> matcher = c.matcher("main");
+          InvocationMatcher<Agent> matcher = c.matcher();
           InvocationMatch<Agent> match = matcher.parse(agentArgs);
           match.invoke(new Agent(inst));
         } catch (Exception e) {

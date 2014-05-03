@@ -45,7 +45,6 @@ import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
 
-import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
@@ -64,11 +63,11 @@ public abstract class CommandDescriptorImpl<T> extends CommandDescriptor<T> {
   public abstract CommandInvoker<T, ?> getInvoker(InvocationMatch<T> match);
 
   @Override
-  public InvocationMatcher<T> matcher(String mainName) {
-    return new InvocationMatcher<T>(this, mainName);
+  public InvocationMatcher<T> matcher() {
+    return new InvocationMatcher<T>(this);
   }
 
-  public final CompletionMatcher<T> completer(String mainName) {
-    return new CompletionMatcher<T>(this, mainName);
+  public final CompletionMatcher<T> completer() {
+    return new CompletionMatcher<T>(this);
   }
 }

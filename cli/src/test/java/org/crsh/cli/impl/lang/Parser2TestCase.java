@@ -244,6 +244,9 @@ public class Parser2TestCase extends TestCase {
       @Command
       void m() {
       }
+      @Command
+      void dummy() {
+      }
     }
 
     //
@@ -257,6 +260,9 @@ public class Parser2TestCase extends TestCase {
       String s;
       @Command
       void m(@Option(names = "o") String o, @Argument String a) {
+      }
+      @Command
+      void dummy() {
       }
     }
 

@@ -52,10 +52,7 @@ public class BootstrapTestCase extends TestCase {
     assertNotNull(optionDesc);
     OptionDescriptor foo = helpDesc.getOption("-f");
     assertNotNull(foo);
-    CommandDescriptor<A> bar = helpDesc.getSubordinate("bar");
-    OptionDescriptor barHelp = bar.getOption("-h");
-    assertNull(barHelp);
-    InvocationMatcher<A> matcher = helpDesc.matcher("main");
+    InvocationMatcher<A> matcher = helpDesc.matcher();
 
     //
     InvocationMatch<A> match = matcher.parse("--help");
@@ -83,27 +80,23 @@ public class BootstrapTestCase extends TestCase {
     }
   }
 
-  public void testMain() {
+  public void testMain1() {
 
     CommandDescriptor<B> desc = CommandFactory.DEFAULT.create(B.class);
     HelpDescriptor<B> helpDesc = new HelpDescriptor<B>(desc);
     OptionDescriptor optionDesc = helpDesc.getOption("-h");
     assertNotNull(optionDesc);
-    InvocationMatcher<B> matcher = helpDesc.matcher("main");
+    InvocationMatcher<B> matcher = helpDesc.matcher();
 
     //
     InvocationMatch<B> match = matcher.parse("--help");
     ParameterMatch<OptionDescriptor> helpMatch = match.getParameter(optionDesc);
-    assertNull(helpMatch);
-    InvocationMatch<B> ownerMatch = match.owner();
-    helpMatch = ownerMatch.getParameter(optionDesc);
     assertNotNull(helpMatch);
     CommandInvoker<B, ?> invoker = match.getInvoker();
     Help help = (Help)invoker.invoke(new B());
     assertNotNull(help);
     CommandDescriptor mainDescriptor = help.getDescriptor();
-    assertEquals("main", mainDescriptor.getName());
-    assertSame(desc, mainDescriptor.getOwner());
+    assertEquals("b", mainDescriptor.getName());
+    assertSame(null, mainDescriptor.getOwner());
   }
-
 }

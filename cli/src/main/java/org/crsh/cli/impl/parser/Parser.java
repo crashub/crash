@@ -32,9 +32,6 @@ public final class Parser<T> implements Iterator<Event> {
   private final Tokenizer tokenizer;
 
   /** . */
-  private final String mainName;
-
-  /** . */
   private final Mode mode;
 
   /** . */
@@ -46,10 +43,9 @@ public final class Parser<T> implements Iterator<Event> {
   /** . */
   private final LinkedList<Event> next;
 
-  public Parser(Tokenizer tokenizer, CommandDescriptor<T> command, String mainName, Mode mode) {
+  public Parser(Tokenizer tokenizer, CommandDescriptor<T> command, Mode mode) {
     this.tokenizer = tokenizer;
     this.command = command;
-    this.mainName = mainName;
     this.status = new Status.ReadingOption();
     this.mode = mode;
     this.next = new LinkedList<Event>();
@@ -79,7 +75,7 @@ public final class Parser<T> implements Iterator<Event> {
 
   private void determine() {
     while (next.isEmpty()) {
-      Status.Response<T> nextStatus = status.process(new Status.Request<T>(mode, mainName, tokenizer, command));
+      Status.Response<T> nextStatus = status.process(new Status.Request<T>(mode, tokenizer, command));
       if (nextStatus.status != null) {
         this.status = nextStatus.status;
       }

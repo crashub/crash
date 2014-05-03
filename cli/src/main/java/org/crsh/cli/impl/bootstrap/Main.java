@@ -56,7 +56,7 @@ public class Main {
   private static <T> void handle(Class<T> commandClass, String line) throws Exception {
     CommandDescriptor<T> descriptor = CommandFactory.DEFAULT.create(commandClass);
     descriptor = HelpDescriptor.create(descriptor);
-    InvocationMatcher<T> matcher = descriptor.matcher("main");
+    InvocationMatcher<T> matcher = descriptor.matcher();
     InvocationMatch<T> match = matcher.parse(line);
     T instance = commandClass.newInstance();
     Object o = match.invoke(instance);

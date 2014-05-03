@@ -45,7 +45,7 @@ public class EscapeTestCase extends TestCase {
 
     //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> matcher = desc.matcher("main");
+    InvocationMatcher<A> matcher = desc.matcher();
 
     //
     A a = new A();

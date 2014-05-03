@@ -129,11 +129,26 @@ public class CommandInfoTestCase extends TestCase {
     }
   }
 
+  public void testMain() throws IntrospectionException {
+
+    class A {
+      @Command
+      void b() {
+      }
+    }
+
+    CommandDescriptor<A> a = CommandFactory.DEFAULT.create(A.class);
+    assertNotNull(a);
+  }
+
   public void testSub() throws IntrospectionException {
 
     class A {
       @Command
       void b() {
+      }
+      @Command
+      void c() {
       }
     }
 

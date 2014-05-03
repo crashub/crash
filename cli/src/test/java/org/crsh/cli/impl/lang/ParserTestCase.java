@@ -42,9 +42,6 @@ public class ParserTestCase extends TestCase {
   private static class Tester<T> {
 
     /** . */
-    private final CommandDescriptor<T> command;
-
-    /** . */
     private Parser parser;
 
     private Tester(CommandDescriptor<T> command, String s) {
@@ -52,8 +49,7 @@ public class ParserTestCase extends TestCase {
     }
 
     private Tester(CommandDescriptor<T> command, String s, Mode mode) {
-      this.command = command;
-      this.parser = new Parser<T>(new TokenizerImpl(s), (ClassDescriptor<T>)command, "main", mode);
+      this.parser = new Parser<T>(new TokenizerImpl(s), command, mode);
     }
 
     public void assertSeparator() {
@@ -106,7 +102,6 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
-    tester.assertMethod("main");
     tester.assertEnd(Event.Stop.Unresolved.NoSuchOption.class, 0);
   }
 
@@ -119,10 +114,8 @@ public class ParserTestCase extends TestCase {
     CommandDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
     //
-    Tester<A> tester = new Tester<A>(cmd, "m -o");
-    tester.assertMethod("m");
-    tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.NoSuchOption.class, 2);
+    Tester<A> tester = new Tester<A>(cmd, "-o");
+    tester.assertEnd(Event.Stop.Unresolved.NoSuchOption.class, 0);
   }
 
   public void testClassOption() throws Exception {
@@ -159,15 +152,12 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
-    tester.assertMethod("main");
     tester.assertOption("o");
     tester.assertEnd(Event.Stop.Done.class, 2);
     tester = new Tester<A>(cmd, "-o a");
-    tester.assertMethod("main");
     tester.assertOption("o", "a");
     tester.assertEnd(Event.Stop.Done.class, 4);
     tester = new Tester<A>(cmd, "-o a b");
-    tester.assertMethod("main");
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
@@ -205,15 +195,12 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o");
-    tester.assertMethod("main");
     tester.assertOption("o");
     tester.assertEnd(Event.Stop.Done.class, 2);
     tester = new Tester<A>(cmd, "-o a");
-    tester.assertMethod("main");
     tester.assertOption("o", "a");
     tester.assertEnd(Event.Stop.Done.class, 4);
     tester = new Tester<A>(cmd, "-o a -o b");
-    tester.assertMethod("main");
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertOption("o", "b");
@@ -239,20 +226,16 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "-o a b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertMethod("main");
     tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
 
     //
     tester = new Tester<A>(cmd, "-p");
-    tester.assertMethod("main");
     tester.assertOption("p");
     tester.assertEnd(Event.Stop.Done.class, 2);
     tester = new Tester<A>(cmd, "-p a");
-    tester.assertMethod("main");
     tester.assertOption("p", "a");
     tester.assertEnd(Event.Stop.Done.class, 4);
     tester = new Tester<A>(cmd, "-p a b");
-    tester.assertMethod("main");
     tester.assertOption("p", "a");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
@@ -261,19 +244,16 @@ public class ParserTestCase extends TestCase {
     tester = new Tester<A>(cmd, "-o -p");
     tester.assertOption("o");
     tester.assertSeparator();
-    tester.assertMethod("main");
     tester.assertOption("p");
     tester.assertEnd(Event.Stop.Done.class, 5);
     tester = new Tester<A>(cmd, "-o a -p");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertMethod("main");
     tester.assertOption("p");
     tester.assertEnd(Event.Stop.Done.class, 7);
     tester = new Tester<A>(cmd, "-o a -p b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
-    tester.assertMethod("main");
     tester.assertOption("p", "b");
     tester.assertEnd(Event.Stop.Done.class, 9);
   }
@@ -283,7 +263,7 @@ public class ParserTestCase extends TestCase {
     class A {
       @Option(names = "o") String o;
       @Command
-      public void m(@Option(names = "p") String p) {}
+      public void main(@Option(names = "p") String p) {}
     }
     CommandDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
 
@@ -300,54 +280,40 @@ public class ParserTestCase extends TestCase {
     tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
 
     //
-    tester = new Tester<A>(cmd, "m -p");
-    tester.assertMethod("m");
-    tester.assertSeparator();
+    tester = new Tester<A>(cmd, "-p");
     tester.assertOption("p");
+    tester.assertEnd(Event.Stop.Done.class, 2);
+    tester = new Tester<A>(cmd, "-p a");
+    tester.assertOption("p", "a");
     tester.assertEnd(Event.Stop.Done.class, 4);
-    tester = new Tester<A>(cmd, "m -p a");
-    tester.assertMethod("m");
-    tester.assertSeparator();
-    tester.assertOption("p", "a");
-    tester.assertEnd(Event.Stop.Done.class, 6);
-    tester = new Tester<A>(cmd, "m -p a b");
-    tester.assertMethod("m");
-    tester.assertSeparator();
+    tester = new Tester<A>(cmd, "-p a b");
     tester.assertOption("p", "a");
     tester.assertSeparator();
-    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 7);
+    tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 5);
 
     //
-    tester = new Tester<A>(cmd, "-o a m -p");
-    tester.assertOption("o", "a");
-    tester.assertSeparator();
-    tester.assertMethod("m");
-    tester.assertSeparator();
-    tester.assertOption("p");
-    tester.assertEnd(Event.Stop.Done.class, 9);
-    tester = new Tester<A>(cmd, "-o a m -p b");
-    tester.assertOption("o", "a");
-    tester.assertSeparator();
-    tester.assertMethod("m");
-    tester.assertSeparator();
-    tester.assertOption("p", "b");
-    tester.assertEnd(Event.Stop.Done.class, 11);
-
-    //
-    tester = new Tester<A>(cmd, "m -o a -p");
-    tester.assertMethod("m");
-    tester.assertSeparator();
+    tester = new Tester<A>(cmd, "-o a -p");
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertOption("p");
-    tester.assertEnd(Event.Stop.Done.class, 9);
-    tester = new Tester<A>(cmd, "m -o a -p b");
-    tester.assertMethod("m");
-    tester.assertSeparator();
+    tester.assertEnd(Event.Stop.Done.class, 7);
+    tester = new Tester<A>(cmd, "-o a -p b");
     tester.assertOption("o", "a");
     tester.assertSeparator();
     tester.assertOption("p", "b");
-    tester.assertEnd(Event.Stop.Done.class, 11);
+    tester.assertEnd(Event.Stop.Done.class, 9);
+
+    //
+    tester = new Tester<A>(cmd, "-o a -p");
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertOption("p");
+    tester.assertEnd(Event.Stop.Done.class, 7);
+    tester = new Tester<A>(cmd, "-o a -p b");
+    tester.assertOption("o", "a");
+    tester.assertSeparator();
+    tester.assertOption("p", "b");
+    tester.assertEnd(Event.Stop.Done.class, 9);
   }
 
   public void testImplicitSubordinateOption() {
@@ -360,7 +326,6 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "-o foo");
-    tester.assertMethod("main");
     tester.assertOption("o", "foo");
     tester.assertEnd(Event.Stop.Done.class, 6);
   }
@@ -394,13 +359,11 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
-    tester.assertMethod("main");
     tester.assertArgument("arg", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a b");
-    tester.assertMethod("main");
     tester.assertArgument("arg", "a");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Unresolved.TooManyArguments.class, 2);
@@ -416,13 +379,11 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("arg", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a b", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("arg", "a");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.class, 2);
@@ -438,26 +399,22 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
-    tester.assertMethod("main");
     tester.assertArgument("args", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a ");
-    tester.assertMethod("main");
     tester.assertArgument("args", "a");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.class, 2);
 
     //
     tester = new Tester<A>(cmd, "a b");
-    tester.assertMethod("main");
     tester.assertArgument("args", "a", "b");
     tester.assertEnd(Event.Stop.Done.class, 3);
 
     //
     tester = new Tester<A>(cmd, "a b ");
-    tester.assertMethod("main");
     tester.assertArgument("args", "a", "b");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.class, 4);
@@ -473,26 +430,22 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("args", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a ", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("args", "a");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.class, 2);
 
     //
     tester = new Tester<A>(cmd, "a b", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("args", "a", "b");
     tester.assertEnd(Event.Stop.Done.class, 3);
 
     //
     tester = new Tester<A>(cmd, "a b ", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("args", "a", "b");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.class, 4);
@@ -508,13 +461,11 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a b");
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
     tester.assertArgument("arg2", "b");
@@ -531,13 +482,11 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a b", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
     tester.assertArgument("arg2", "b");
@@ -554,13 +503,11 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a b");
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
     tester.assertArgument("arg2", "b");
@@ -577,13 +524,11 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a b");
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
     tester.assertArgument("arg2", "b");
@@ -600,13 +545,11 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a");
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a b");
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a", "b");
     tester.assertEnd(Event.Stop.Done.class, 3);
   }
@@ -621,47 +564,15 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "a", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("arg2", "a");
     tester.assertEnd(Event.Stop.Done.class, 1);
 
     //
     tester = new Tester<A>(cmd, "a b", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertArgument("arg1", "a");
     tester.assertSeparator();
     tester.assertArgument("arg2", "b");
     tester.assertEnd(Event.Stop.Done.class, 3);
-  }
-
-  public void testExplicitMainMethod() throws Exception {
-
-    class A {
-      @Command
-      public void main(@Argument(name = "arg") String arg) {}
-    }
-    CommandDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
-
-    //
-    Tester<A> tester = new Tester<A>(cmd, "main");
-    tester.assertMethod("main");
-    tester.assertArgument("arg", "main");
-    tester.assertEnd(Event.Stop.Done.class, 4);
-  }
-
-  public void testSatisfyAllExplicitMainMethod() throws Exception {
-
-    class A {
-      @Command
-      public void main(@Argument(name = "arg") String arg) {}
-    }
-    CommandDescriptor<A> cmd = CommandFactory.DEFAULT.create(A.class);
-
-    //
-    Tester<A> tester = new Tester<A>(cmd, "main", Mode.INVOKE);
-    tester.assertMethod("main");
-    tester.assertArgument("arg", "main");
-    tester.assertEnd(Event.Stop.Done.class, 4);
   }
 
   public void testDoubleDash() throws Exception {
@@ -674,18 +585,15 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "--", Mode.COMPLETE);
-    tester.assertMethod("main");
     tester.assertEnd(Event.Stop.Unresolved.NoSuchOption.class, 0);
 
     //
     tester = new Tester<A>(cmd, "-- ", Mode.COMPLETE);
-    tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.class, 3);
 
     //
     tester = new Tester<A>(cmd, "-- foo", Mode.COMPLETE);
-    tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertArgument("arg", "foo");
     tester.assertEnd(Event.Stop.Done.class, 6);
@@ -701,18 +609,15 @@ public class ParserTestCase extends TestCase {
 
     //
     Tester<A> tester = new Tester<A>(cmd, "--", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertEnd(Event.Stop.Done.class, 2);
 
     //
     tester = new Tester<A>(cmd, "-- ", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertEnd(Event.Stop.Done.class, 3);
 
     //
     tester = new Tester<A>(cmd, "-- foo", Mode.INVOKE);
-    tester.assertMethod("main");
     tester.assertSeparator();
     tester.assertArgument("arg", "foo");
     tester.assertEnd(Event.Stop.Done.class, 6);

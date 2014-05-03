@@ -31,7 +31,6 @@ import org.crsh.cli.impl.parser.Mode;
 import org.crsh.cli.impl.parser.Parser;
 import org.crsh.cli.spi.Completer;
 
-import java.util.Collections;
 import java.util.List;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
@@ -40,11 +39,7 @@ public final class CompletionMatcher<T> {
   /** . */
   private final CommandDescriptor<T> descriptor;
 
-  /** . */
-  private final String mainName;
-
-  public CompletionMatcher(CommandDescriptor<T> descriptor, String mainName) {
-    this.mainName = mainName;
+  public CompletionMatcher(CommandDescriptor<T> descriptor) {
     this.descriptor = descriptor;
   }
 
@@ -69,16 +64,15 @@ public final class CompletionMatcher<T> {
   private Completion getCompletion(Completer completer, String s) throws CompletionException {
 
     // Find delimiter
-    CommandDescriptor<T> descriptor = this.descriptor;
+    CommandDescriptor<T> foo = this.descriptor;
 
     TokenizerImpl tokenizer = new TokenizerImpl(s);
     Delimiter delimiter = tokenizer.getEndingDelimiter();
-    Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Mode.COMPLETE);
+    Parser<T> parser = new Parser<T>(tokenizer, foo, Mode.COMPLETE);
 
     // Last non separator event
     Event last = null;
     Event.Separator separator = null;
-    CommandDescriptor<?> method = null;
     Event.Stop stop;
 
     //
@@ -93,30 +87,24 @@ public final class CompletionMatcher<T> {
         last = event;
         separator = null;
       } else if (event instanceof Event.Subordinate) {
-        method = ((Event.Subordinate)event).getDescriptor();
+        // ABUSE!!! fixme
+        foo = (CommandDescriptor<T>)((Event.Subordinate)event).getDescriptor();
         last = event;
         separator = null;
       } else if (event instanceof Event.Argument) {
         last = event;
         separator = null;
-      }/* else if (event instanceof Event.DoubleDash) {
-        last = event;
-        separator = null;
-      }*/
+      }
     }
 
     //
     if (stop instanceof Event.Stop.Unresolved.NoSuchOption) {
       Event.Stop.Unresolved.NoSuchOption nso = (Event.Stop.Unresolved.NoSuchOption)stop;
-      return new OptionCompletion<T>(method != null ? (CommandDescriptor<T>)method : descriptor, nso.getToken());
+      return new OptionCompletion<T>(foo, nso.getToken());
     } else if (stop instanceof Event.Stop.Unresolved) {
       if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
-        if (method == null) {
-          Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;
-          return new CommandCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), delimiter);
-        } else {
-          return new EmptyCompletion();
-        }
+        Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;
+        return new CommandCompletion<T>(foo, s.substring(stop.getIndex()), delimiter);
       } else {
         return new EmptyCompletion();
       }
@@ -124,31 +112,18 @@ public final class CompletionMatcher<T> {
       // to use ?
     }
 
-    //
     if (last == null) {
-      if (method == null) {
-        if (descriptor.getSubordinates().keySet().equals(Collections.singleton(mainName))) {
-          method = descriptor.getSubordinate(mainName);
-          List<ArgumentDescriptor> args = method.getArguments();
-          if (args.size() > 0) {
-            return new ParameterCompletion("", delimiter, args.get(0), completer);
-          } else {
-            return new EmptyCompletion();
-          }
-        } else {
-          return new CommandCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), Delimiter.EMPTY);
-        }
+      if (foo.getSubordinates().size() > 0) {
+        return new CommandCompletion<T>(foo, s.substring(stop.getIndex()), Delimiter.EMPTY);
       } else {
-        return new EmptyCompletion();
+        List<ArgumentDescriptor> args = foo.getArguments();
+        if (args.size() > 0) {
+          return new ParameterCompletion("", delimiter, args.get(0), completer);
+        } else {
+          return new EmptyCompletion();
+        }
       }
-    }
-
-    //
-    /*if (last instanceof Event.DoubleDash) {
-      Event.DoubleDash dd = (Event.DoubleDash)last;
-      return new OptionCompletion<T>(method != null ? (CommandDescriptor<T, ?>)method : descriptor, dd.token);
-    } else*/
-    if (last instanceof Event.Option) {
+    } else if (last instanceof Event.Option) {
       Event.Option optionEvent = (Event.Option)last;
       List<Token.Literal.Word> values = optionEvent.getValues();
       OptionDescriptor option = optionEvent.getParameter();
@@ -165,11 +140,7 @@ public final class CompletionMatcher<T> {
         if (values.size() < option.getArity()) {
           return new ParameterCompletion("", delimiter, option, completer);
         } else {
-          if (method == null) {
-            return new CommandCompletion<T>(descriptor, mainName, s.substring(stop.getIndex()), delimiter);
-          } else {
-            return argument(method, completer, delimiter);
-          }
+          return argument(foo, completer, delimiter);
         }
       }
     } else if (last instanceof Event.Argument) {
@@ -197,7 +168,7 @@ public final class CompletionMatcher<T> {
       }
     } else if (last instanceof Event.Subordinate) {
       if (separator != null) {
-        return argument(method, completer, delimiter);
+        return argument(foo, completer, delimiter);
       } else {
         return new SpaceCompletion();
       }

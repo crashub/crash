@@ -162,7 +162,9 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
       public V invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
 
         //
-        bind(_match.owner(), owner.getParameters(), command, Util.EMPTY_ARGS);
+        if (owner != null) {
+          bind(_match.owner(), owner.getParameters(), command, Util.EMPTY_ARGS);
+        }
 
         // Prepare invocation
         Method m = getMethod();

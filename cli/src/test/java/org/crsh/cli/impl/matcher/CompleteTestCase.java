@@ -69,7 +69,7 @@ public class CompleteTestCase extends TestCase {
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("ilto", true)), matcher.match(some, "n b"));
   }
 
-  public void testExplicitCommandSingleArgument() throws Exception
+  public void testSubordinateCommandSingleArgument() throws Exception
   {
 
     class A {
@@ -86,10 +86,10 @@ public class CompleteTestCase extends TestCase {
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("oo", true)), matcher.match("m f"));
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("o", true)), matcher.match("m fo"));
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create()), matcher.match("m a "));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create()), matcher.match("m a f"));
+    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("f")), matcher.match("m a f"));
   }
 
-  public void testImplicitCommandSingleArgument() throws Exception
+  public void testMainCommandSingleArgument() throws Exception
   {
 
     class A {
@@ -99,14 +99,14 @@ public class CompleteTestCase extends TestCase {
 
     //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    CompletionMatcher<A> matcher = desc.completer("main");
+    CompletionMatcher<A> matcher = desc.completer();
 
     //
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("foo", true)), matcher.match(""));
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("oo", true)), matcher.match("f"));
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("o", true)), matcher.match("fo"));
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create()), matcher.match("a "));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create()), matcher.match("a f"));
+    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("f")), matcher.match("a f"));
   }
 
   public void testSecondArgument() throws Exception {
@@ -120,7 +120,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    CompletionMatcher<A> matcher = desc.completer("main");
+    CompletionMatcher<A> matcher = desc.completer();
 
     //
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("foo", true)), matcher.match("foo "));
@@ -182,7 +182,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    CompletionMatcher<A> matcher = desc.completer("main");
+    CompletionMatcher<A> matcher = desc.completer();
 
     //
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("oo", true)), matcher.match("-- f"));
@@ -217,7 +217,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    CompletionMatcher<A> matcher = desc.completer("main");
+    CompletionMatcher<A> matcher = desc.completer();
 
     //
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("-", "o", true)), matcher.match("-"));
@@ -236,7 +236,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    CompletionMatcher<A> matcher = desc.completer("main");
+    CompletionMatcher<A> matcher = desc.completer();
 
     //
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("foo", true)), matcher.match("-o bar "));
@@ -256,7 +256,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    CompletionMatcher<A> matcher = desc.completer("main");
+    CompletionMatcher<A> matcher = desc.completer();
 
     //
     CompletionMatch a = new CompletionMatch(Delimiter.EMPTY, Completion.builder("").add("foo", true).add("faa", true).build());
@@ -269,34 +269,6 @@ public class CompleteTestCase extends TestCase {
     assertEquals(b, matcher.match("f"));
     assertEquals(c, matcher.match("foo"));
     assertEquals(d, matcher.match("foo "));
-
-    //
-    assertEquals(a, matcher.match("-a a "));
-    assertEquals(b, matcher.match("-a a f"));
-    assertEquals(c, matcher.match("-a a foo"));
-    assertEquals(d, matcher.match("-a a foo "));
-  }
-
-  public void testArgumentValuedMain() throws Exception
-  {
-
-    class A {
-      @Command
-      void main(@Argument(completer = CompleterSupport.Echo.class) String s) { }
-    }
-
-    //
-    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    CompletionMatcher<A> matcher = desc.completer("main");
-
-    //
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("", false)), matcher.match(""));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("m", false)), matcher.match("m"));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("ma", false)), matcher.match("ma"));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("mai", false)), matcher.match("mai"));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("main", false)), matcher.match("main"));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create()), matcher.match("main "));
-    assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create()), matcher.match("main a"));
   }
 
   public void testEnum() throws Exception
@@ -344,7 +316,7 @@ public class CompleteTestCase extends TestCase {
 
     //
     CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    CompletionMatcher<A> matcher = desc.completer("main");
+    CompletionMatcher<A> matcher = desc.completer();
 
     //
     assertEquals(new CompletionMatch(Delimiter.EMPTY, Completion.create("bar", true)), matcher.match(""));

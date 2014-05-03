@@ -42,9 +42,6 @@ import static org.crsh.cli.impl.lang.Util.tuples;
 public abstract class CommandDescriptor<T> {
 
   /** . */
-  private static final Set<String> MAIN_SINGLETON = Collections.singleton("main");
-
-  /** . */
   private final String name;
 
   /** . */
@@ -133,10 +130,18 @@ public abstract class CommandDescriptor<T> {
         String name;
         if (optionName.length() == 1) {
           name = "-" + optionName;
-          shortOptionNames.add(name);
+          if (shortOptionNames.contains(name)) {
+            throw new IntrospectionException();
+          } else {
+            shortOptionNames.add(name);
+          }
         } else {
           name = "--" + optionName;
-          longOptionNames.add(name);
+          if (longOptionNames.contains(name)) {
+            throw new IntrospectionException();
+          } else {
+            longOptionNames.add(name);
+          }
         }
         optionMap.put(name, option);
       }
@@ -160,6 +165,8 @@ public abstract class CommandDescriptor<T> {
       }
       arguments.add(argument);
       parameters.add(argument);
+    } else {
+      throw new AssertionError("Unreachable");
     }
   }
 
@@ -176,21 +183,16 @@ public abstract class CommandDescriptor<T> {
     int depth = getDepth();
     switch (depth) {
       case 0: {
-        Map<String, ? extends CommandDescriptor<T>> methods = getSubordinates();
-        if (methods.size() == 1) {
-          methods.values().iterator().next().printUsage(writer);
-        } else {
-          writer.append("usage: ").append(getName());
-          for (OptionDescriptor option : getOptions()) {
-            option.printUsage(writer);
-          }
-          writer.append(" COMMAND [ARGS]\n\n");
-          writer.append("The most commonly used ").append(getName()).append(" commands are:\n");
-          String format = "   %1$-16s %2$s\n";
-          for (CommandDescriptor<T> method : methods.values()) {
-            Formatter formatter = new Formatter(writer);
-            formatter.format(format, method.getName(), method.getUsage());
-          }
+        writer.append("usage: ").append(getName());
+        for (OptionDescriptor option : getOptions()) {
+          option.printUsage(writer);
+        }
+        writer.append(" COMMAND [ARGS]\n\n");
+        writer.append("The most commonly used ").append(getName()).append(" commands are:\n");
+        String format = "   %1$-16s %2$s\n";
+        for (CommandDescriptor<T> subordinate : getSubordinates().values()) {
+          Formatter formatter = new Formatter(writer);
+          formatter.format(format, subordinate.getName(), subordinate.getUsage());
         }
         break;
       }
@@ -200,7 +202,6 @@ public abstract class CommandDescriptor<T> {
         int length = 0;
         List<String> parameterUsages = new ArrayList<String>();
         List<String> parameterBilto = new ArrayList<String>();
-        boolean printName = !owner.getSubordinates().keySet().equals(MAIN_SINGLETON);
 
         //
         writer.append("usage: ").append(owner.getName());
@@ -219,7 +220,7 @@ public abstract class CommandDescriptor<T> {
         }
 
         //
-        writer.append(printName ? (" " + getName()) : "");
+        writer.append(" ").append(getName());
 
         //
         for (ParameterDescriptor parameter : getParameters()) {
@@ -257,62 +258,57 @@ public abstract class CommandDescriptor<T> {
     int depth = getDepth();
     switch (depth) {
       case 0: {
-        Map<String, ? extends CommandDescriptor<T>> methods = getSubordinates();
-        if (methods.size() == 1) {
-          methods.values().iterator().next().printMan(writer);
-        } else {
 
-          // Name
-          writer.append("NAME\n");
-          writer.append(Util.MAN_TAB).append(getName());
-          if (getUsage().length() > 0) {
-            writer.append(" - ").append(getUsage());
+        // Name
+        writer.append("NAME\n");
+        writer.append(Util.MAN_TAB).append(getName());
+        if (getUsage().length() > 0) {
+          writer.append(" - ").append(getUsage());
+        }
+        writer.append("\n\n");
+
+        // Synopsis
+        writer.append("SYNOPSIS\n");
+        writer.append(Util.MAN_TAB).append(getName());
+        for (OptionDescriptor option : getOptions()) {
+          writer.append(" ");
+          option.printUsage(writer);
+        }
+        writer.append(" COMMAND [ARGS]\n\n");
+
+        //
+        String man = getDescription().getMan();
+        if (man.length() > 0) {
+          writer.append("DESCRIPTION\n");
+          Util.indent(Util.MAN_TAB, man, writer);
+          writer.append("\n\n");
+        }
+
+        // Common options
+        if (getOptions().size() > 0) {
+          writer.append("PARAMETERS\n");
+          for (OptionDescriptor option : getOptions()) {
+            writer.append(Util.MAN_TAB);
+            option.printUsage(writer);
+            String optionText = option.getDescription().getBestEffortMan();
+            if (optionText.length() > 0) {
+              writer.append("\n");
+              Util.indent(Util.MAN_TAB_EXTRA, optionText, writer);
+            }
+            writer.append("\n\n");
+          }
+        }
+
+        //
+        writer.append("COMMANDS\n");
+        for (CommandDescriptor<T> subordinate : getSubordinates().values()) {
+          writer.append(Util.MAN_TAB).append(subordinate.getName());
+          String methodText = subordinate.getDescription().getBestEffortMan();
+          if (methodText.length() > 0) {
+            writer.append("\n");
+            Util.indent(Util.MAN_TAB_EXTRA, methodText, writer);
           }
           writer.append("\n\n");
-
-          // Synopsis
-          writer.append("SYNOPSIS\n");
-          writer.append(Util.MAN_TAB).append(getName());
-          for (OptionDescriptor option : getOptions()) {
-            writer.append(" ");
-            option.printUsage(writer);
-          }
-          writer.append(" COMMAND [ARGS]\n\n");
-
-          //
-          String man = getDescription().getMan();
-          if (man.length() > 0) {
-            writer.append("DESCRIPTION\n");
-            Util.indent(Util.MAN_TAB, man, writer);
-            writer.append("\n\n");
-          }
-
-          // Common options
-          if (getOptions().size() > 0) {
-            writer.append("PARAMETERS\n");
-            for (OptionDescriptor option : getOptions()) {
-              writer.append(Util.MAN_TAB);
-              option.printUsage(writer);
-              String optionText = option.getDescription().getBestEffortMan();
-              if (optionText.length() > 0) {
-                writer.append("\n");
-                Util.indent(Util.MAN_TAB_EXTRA, optionText, writer);
-              }
-              writer.append("\n\n");
-            }
-          }
-
-          //
-          writer.append("COMMANDS\n");
-          for (CommandDescriptor<T> method : methods.values()) {
-            writer.append(Util.MAN_TAB).append(method.getName());
-            String methodText = method.getDescription().getBestEffortMan();
-            if (methodText.length() > 0) {
-              writer.append("\n");
-              Util.indent(Util.MAN_TAB_EXTRA, methodText, writer);
-            }
-            writer.append("\n\n");
-          }
         }
         break;
       }
@@ -320,15 +316,10 @@ public abstract class CommandDescriptor<T> {
 
         CommandDescriptor<T> owner = getOwner();
 
-        //
-        boolean printName = !owner.getSubordinates().keySet().equals(MAIN_SINGLETON);
-
         // Name
         writer.append("NAME\n");
         writer.append(Util.MAN_TAB).append(owner.getName());
-        if (printName) {
-          writer.append(" ").append(getName());
-        }
+        writer.append(" ").append(getName());
         if (getUsage().length() > 0) {
           writer.append(" - ").append(getUsage());
         }
@@ -341,9 +332,7 @@ public abstract class CommandDescriptor<T> {
           writer.append(" ");
           option.printUsage(writer);
         }
-        if (printName) {
-          writer.append(" ").append(getName());
-        }
+        writer.append(" ").append(getName());
         for (OptionDescriptor option : getOptions()) {
           writer.append(" ");
           option.printUsage(writer);
@@ -525,16 +514,8 @@ public abstract class CommandDescriptor<T> {
     return description != null ? description.getUsage() : "";
   }
 
-  public final InvocationMatcher<T> matcher() {
-    return matcher(null);
-  }
+  public abstract InvocationMatcher<T> matcher();
 
-  public abstract InvocationMatcher<T> matcher(String mainName);
-
-  public final CompletionMatcher<T> completer() {
-    return completer(null);
-  }
-
-  public abstract CompletionMatcher<T> completer(String mainName);
+  public abstract CompletionMatcher<T> completer();
 
 }

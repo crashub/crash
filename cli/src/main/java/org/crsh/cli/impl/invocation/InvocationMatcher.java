@@ -43,18 +43,14 @@ public class InvocationMatcher<T> {
   private final CommandDescriptorImpl<T> descriptor;
 
   /** . */
-  private final String mainName;
-
-  /** . */
   private Iterable<Token> tokens;
 
-  public InvocationMatcher(CommandDescriptorImpl<T> descriptor, String mainName) {
-    this(descriptor, mainName, Collections.<Token>emptyList());
+  public InvocationMatcher(CommandDescriptorImpl<T> descriptor) {
+    this(descriptor, Collections.<Token>emptyList());
   }
 
-  private InvocationMatcher(CommandDescriptorImpl<T> descriptor, String mainName, Iterable<Token> tokens) {
+  private InvocationMatcher(CommandDescriptorImpl<T> descriptor, Iterable<Token> tokens) {
     this.descriptor = descriptor;
-    this.mainName = mainName;
     this.tokens = tokens;
   }
 
@@ -63,7 +59,7 @@ public class InvocationMatcher<T> {
     if (name != null && name.length() > 0) {
       tokens.add(new Token.Literal.Word(tokens.last(), name));
     }
-    return new InvocationMatcher<T>(descriptor, mainName, tokens);
+    return new InvocationMatcher<T>(descriptor, tokens);
   }
 
   public InvocationMatcher<T> option(String optionName, List<?> optionValue) throws SyntaxException {
@@ -75,7 +71,7 @@ public class InvocationMatcher<T> {
     for (Map.Entry<String, List<?>> option : options.entrySet()) {
       tokens.addOption(option.getKey(), option.getValue());
     }
-    return new InvocationMatcher<T>(descriptor, mainName, tokens);
+    return new InvocationMatcher<T>(descriptor, tokens);
   }
 
   public InvocationMatch<T> arguments(List<?> arguments) throws SyntaxException {
@@ -114,7 +110,7 @@ public class InvocationMatcher<T> {
   private InvocationMatch<T> match(Tokenizer tokenizer) throws SyntaxException {
 
     //
-    Parser<T> parser = new Parser<T>(tokenizer, descriptor, mainName, Mode.INVOKE);
+    Parser<T> parser = new Parser<T>(tokenizer, descriptor, Mode.INVOKE);
     InvocationMatch<T> current = new InvocationMatch<T>(descriptor);
 
     //
@@ -123,14 +119,6 @@ public class InvocationMatcher<T> {
       if (event instanceof Event.Separator) {
         //
       } else if (event instanceof Event.Stop) {
-        while (true) {
-          InvocationMatch<T> sub = current.subordinate(mainName);
-          if (sub != null) {
-            current = sub;
-          } else {
-            break;
-          }
-        }
         break;
       } else if (event instanceof Event.Option) {
         Event.Option optionEvent = (Event.Option)event;
