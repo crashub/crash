@@ -95,7 +95,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
+public class HelpDescriptor<T> extends CommandDescriptor<T> {
 
   public static <T> HelpDescriptor<T> create(CommandDescriptor<T> descriptor) {
     return new HelpDescriptor<T>(descriptor);
@@ -103,7 +103,6 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
 
   /** . */
   static final OptionDescriptor HELP_OPTION = new OptionDescriptor(
-      null,
       ParameterType.create(ValueTypeFactory.DEFAULT, Boolean.class),
       Arrays.asList("h", "help"),
       new Description("this help", "Display this help message"),
@@ -118,16 +117,16 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
   private final HelpDescriptor<T> owner;
 
   /** . */
-  private final CommandDescriptorImpl<T> delegate;
+  private final CommandDescriptor<T> delegate;
 
   /** . */
   private final LinkedHashMap<String, HelpDescriptor<T>> subordinates;
 
   public HelpDescriptor(CommandDescriptor<T> delegate) throws IntrospectionException {
-    this(null, (CommandDescriptorImpl<T>)delegate);
+    this(null, delegate);
   }
 
-  private HelpDescriptor(HelpDescriptor<T> owner, CommandDescriptorImpl<T> delegate) throws IntrospectionException {
+  private HelpDescriptor(HelpDescriptor<T> owner, CommandDescriptor<T> delegate) throws IntrospectionException {
     super(delegate.getName(), delegate.getDescription());
 
     //
@@ -143,7 +142,7 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
 
     // Wrap subordinates
     LinkedHashMap<String, HelpDescriptor<T>> subordinates = new LinkedHashMap<String, HelpDescriptor<T>>();
-    for (CommandDescriptorImpl<T> subordinate : delegate.getSubordinates().values()) {
+    for (CommandDescriptor<T> subordinate : delegate.getSubordinates().values()) {
       subordinates.put(subordinate.getName(), new HelpDescriptor<T>(this, subordinate));
     }
 
@@ -174,11 +173,7 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
 
     //
     if (help) {
-      return new CommandInvoker<T, Help>() {
-        @Override
-        public InvocationMatch<T> getMatch() {
-          return match;
-        }
+      return new CommandInvoker<T, Help>(match) {
         @Override
         public Class<Help> getReturnType() {
           return Help.class;
@@ -220,8 +215,4 @@ public class HelpDescriptor<T> extends CommandDescriptorImpl<T> {
     return subordinates;
   }
 
-  @Override
-  public HelpDescriptor<T> getSubordinate(String name) {
-    return subordinates.get(name);
-  }
 }

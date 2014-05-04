@@ -22,7 +22,6 @@ package org.crsh.cli.impl.lang;
 import org.crsh.cli.descriptor.ArgumentDescriptor;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.Description;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.descriptor.ParameterDescriptor;
@@ -39,7 +38,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
 
-class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
+class MethodDescriptor<T> extends CommandDescriptor<T> {
 
   /** . */
   private final ClassDescriptor<T> owner;
@@ -63,25 +62,6 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
     this.size = method.getParameterTypes().length;
   }
 
-  /**
-   * Returns the parameter descriptor for the specified method parameter index.
-   *
-   * @param index the parameter index
-   * @return the parameter descriptor or null if none can be bound
-   * @throws IndexOutOfBoundsException if the index is not valid
-   */
-  ParameterDescriptor getParameter(int index) throws IndexOutOfBoundsException {
-    if (index < 0 || index >= size) {
-      throw new IndexOutOfBoundsException("Bad index value " + index);
-    }
-    for (ParameterDescriptor argument : getParameters()) {
-      if (((MethodArgumentBinding)argument.getBinding()).getIndex() == index) {
-        return argument;
-      }
-    }
-    return null;
-  }
-
   @Override
   protected void addParameter(ParameterDescriptor parameter) throws IntrospectionException, NullPointerException, IllegalArgumentException {
     super.addParameter(parameter);
@@ -93,13 +73,8 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
   }
 
   @Override
-  public Map<String, ? extends CommandDescriptorImpl<T>> getSubordinates() {
+  public Map<String, ? extends CommandDescriptor<T>> getSubordinates() {
     return Collections.emptyMap();
-  }
-
-  @Override
-  public CommandDescriptorImpl<T> getSubordinate(String name) {
-    return null;
   }
 
   public Method getMethod() {
@@ -116,10 +91,10 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
     return getInvoker2(match, type);
   }
 
-  static void bind(InvocationMatch<?> _match, Iterable<ParameterDescriptor> parameters, Object target, Object[] args) {
+  static void bind(InvocationMatch<?> match, Iterable<ParameterDescriptor> parameters, Object target, Object[] args) {
     for (ParameterDescriptor parameter : parameters) {
-      ParameterMatch match = _match.getParameter(parameter);
-      Object value = match != null ? match.computeValue() : null;
+      ParameterMatch parameterMatch = match.getParameter(parameter);
+      Object value = parameterMatch != null ? parameterMatch.computeValue() : null;
       if (value == null) {
         if (parameter.getDeclaredType().isPrimitive() || parameter.isRequired()) {
           if (parameter instanceof ArgumentDescriptor) {
@@ -131,17 +106,13 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
           }
         }
       } else {
-        ((Binding)parameter.getBinding()).set(target, args, value);
+        ((Binding)parameter).set(target, args, value);
       }
     }
   }
 
-  private <V> CommandInvoker<T, V> getInvoker2(final InvocationMatch<T> _match, final Class<V> returnType) {
-    return new CommandInvoker<T, V>() {
-      @Override
-      public InvocationMatch<T> getMatch() {
-        return _match;
-      }
+  private <V> CommandInvoker<T, V> getInvoker2(final InvocationMatch<T> match, final Class<V> returnType) {
+    return new CommandInvoker<T, V>(match) {
       @Override
       public Class<V> getReturnType() {
         return returnType;
@@ -163,7 +134,7 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
 
         //
         if (owner != null) {
-          bind(_match.owner(), owner.getParameters(), command, Util.EMPTY_ARGS);
+          bind(match.owner(), owner.getParameters(), command, Util.EMPTY_ARGS);
         }
 
         // Prepare invocation
@@ -172,7 +143,7 @@ class MethodDescriptor<T> extends CommandDescriptorImpl<T> {
         Object[] mArgs = new Object[parameterTypes.length];
 
         // Bind method parameter first
-        bind(_match, getParameters(), command, mArgs);
+        bind(match, getParameters(), command, mArgs);
 
         // Fill missing contextual parameters and make primitive check
         for (int i = 0;i < mArgs.length;i++) {

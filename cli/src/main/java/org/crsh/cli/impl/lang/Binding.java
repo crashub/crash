@@ -3,8 +3,8 @@ package org.crsh.cli.impl.lang;
 /**
  * @author Julien Viet
  */
-public abstract class Binding {
+interface Binding {
 
-  public abstract void set(Object o, Object[] args, Object value);
+  void set(Object o, Object[] args, Object value);
 
 }

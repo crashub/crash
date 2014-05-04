@@ -56,18 +56,16 @@ public class ArgumentDescriptor extends ParameterDescriptor {
   private final String name;
 
   public ArgumentDescriptor(
-    Object binding,
-    String name,
-    ParameterType<?> type,
-    Description info,
-    boolean required,
-    boolean password,
-    boolean unquote,
-    Class<? extends Completer> completerType,
-    Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
+      String name,
+      ParameterType<?> type,
+      Description info,
+      boolean required,
+      boolean password,
+      boolean unquote,
+      Class<? extends Completer> completerType,
+      Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
     super(
-      binding,
-      type,
+        type,
       info,
       required,
       password,

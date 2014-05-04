@@ -132,7 +132,7 @@ abstract class Status {
               }
             }
           } else {
-            OptionDescriptor desc = req.command.findOption(literal.getValue());
+            OptionDescriptor desc = req.command.resolveOption(literal.getValue());
             if (desc != null) {
               req.tokenizer.next();
               int arity = desc.getArity();

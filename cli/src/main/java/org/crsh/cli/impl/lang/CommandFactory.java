@@ -20,10 +20,8 @@
 package org.crsh.cli.impl.lang;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
-import org.crsh.cli.descriptor.ArgumentDescriptor;
 import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
-import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.descriptor.ParameterDescriptor;
 import org.crsh.cli.impl.ParameterType;
 import org.crsh.cli.Argument;
@@ -152,7 +150,7 @@ public class CommandFactory {
   }
 
   private ParameterDescriptor create(
-      Object binding,
+      Binding binding,
       Type type,
       Argument argumentAnn,
       Option optionAnn,
@@ -167,7 +165,7 @@ public class CommandFactory {
       }
 
       //
-      return new ArgumentDescriptor(
+      return new BoundArgumentDescriptor(
           binding,
           argumentAnn.name(),
           ParameterType.create(valueTypeFactory, type),
@@ -178,7 +176,7 @@ public class CommandFactory {
           argumentAnn.completer(),
           ann);
     } else if (optionAnn != null) {
-      return new OptionDescriptor(
+      return new BoundOptionDescriptor(
           binding,
           ParameterType.create(valueTypeFactory, type),
           Collections.unmodifiableList(Arrays.asList(optionAnn.names())),

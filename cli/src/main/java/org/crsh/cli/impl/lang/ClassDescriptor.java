@@ -21,7 +21,6 @@ package org.crsh.cli.impl.lang;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.Description;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.descriptor.ParameterDescriptor;
@@ -36,7 +35,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class ClassDescriptor<T> extends CommandDescriptorImpl<T> {
+class ClassDescriptor<T> extends CommandDescriptor<T> {
 
   /** . */
   private final Class<T> type;
@@ -80,11 +79,7 @@ class ClassDescriptor<T> extends CommandDescriptorImpl<T> {
   public CommandInvoker<T, ?> getInvoker(final InvocationMatch<T> match) {
 
     if (Runnable.class.isAssignableFrom(type)) {
-      return new CommandInvoker<T, Void>() {
-        @Override
-        public InvocationMatch<T> getMatch() {
-          return match;
-        }
+      return new CommandInvoker<T, Void>(match) {
         @Override
         public Class<Void> getReturnType() {
           return Void.class;
@@ -134,7 +129,4 @@ class ClassDescriptor<T> extends CommandDescriptorImpl<T> {
     return methods;
   }
 
-  public MethodDescriptor<T> getSubordinate(String name) {
-    return methods.get(name);
-  }
 }

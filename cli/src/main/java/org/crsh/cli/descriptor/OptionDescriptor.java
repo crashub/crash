@@ -83,18 +83,16 @@ public class OptionDescriptor extends ParameterDescriptor {
   private final List<String> names;
 
   public OptionDescriptor(
-    Object binding,
-    ParameterType<?> type,
-    List<String> names,
-    Description info,
-    boolean required,
-    boolean password,
-    boolean unquote,
-    Class<? extends Completer> completerType,
-    Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
+      ParameterType<?> type,
+      List<String> names,
+      Description info,
+      boolean required,
+      boolean password,
+      boolean unquote,
+      Class<? extends Completer> completerType,
+      Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
     super(
-      binding,
-      type,
+        type,
       info,
       required,
       password,

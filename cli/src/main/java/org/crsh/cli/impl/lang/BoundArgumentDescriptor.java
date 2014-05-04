@@ -16,24 +16,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.cli.impl.lang;
 
-class MethodArgumentBinding implements Binding {
+import org.crsh.cli.descriptor.ArgumentDescriptor;
+import org.crsh.cli.descriptor.Description;
+import org.crsh.cli.impl.ParameterType;
+import org.crsh.cli.impl.descriptor.IllegalParameterException;
+import org.crsh.cli.impl.descriptor.IllegalValueTypeException;
+import org.crsh.cli.spi.Completer;
+
+import java.lang.annotation.Annotation;
+
+/**
+ * @author Julien Viet
+ */
+class BoundArgumentDescriptor extends ArgumentDescriptor implements Binding {
 
   /** . */
-  private final int index;
+  final Binding binding;
 
-  MethodArgumentBinding(int index) {
-    this.index = index;
-  }
+  BoundArgumentDescriptor(Binding binding, String name, ParameterType<?> type, Description info, boolean required, boolean password, boolean unquote, Class<? extends Completer> completerType, Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
+    super(name, type, info, required, password, unquote, completerType, annotation);
 
-  int getIndex() {
-    return index;
+    //
+    this.binding = binding;
   }
 
   @Override
   public void set(Object o, Object[] args, Object value) {
-    args[index] = value;
+    binding.set(o, args, value);
   }
 }

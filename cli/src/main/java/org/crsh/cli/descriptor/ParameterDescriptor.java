@@ -54,9 +54,6 @@ import java.util.List;
 public abstract class ParameterDescriptor {
 
   /** . */
-  private final Object binding;
-
-  /** . */
   private final Description description;
 
   /** . */
@@ -78,14 +75,13 @@ public abstract class ParameterDescriptor {
   private final boolean unquote;
 
   public ParameterDescriptor(
-    Object binding,
-    ParameterType<?> type,
-    Description description,
-    boolean required,
-    boolean password,
-    boolean unquote,
-    Class<? extends Completer> completerType,
-    Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
+      ParameterType<?> type,
+      Description description,
+      boolean required,
+      boolean password,
+      boolean unquote,
+      Class<? extends Completer> completerType,
+      Annotation annotation) throws IllegalValueTypeException, IllegalParameterException {
 
     //
     if (completerType == EmptyCompleter.class) {
@@ -93,7 +89,6 @@ public abstract class ParameterDescriptor {
     }
 
     //
-    this.binding = binding;
     this.description = description;
     this.required = required;
     this.password = password;
@@ -111,10 +106,6 @@ public abstract class ParameterDescriptor {
 
   public Class<?> getDeclaredType() {
     return type.getDeclaredType();
-  }
-
-  public final Object getBinding() {
-    return binding;
   }
 
   public final String getUsage() {

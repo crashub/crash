@@ -23,7 +23,7 @@ import org.crsh.cli.impl.invocation.InvocationException;
 
 import java.lang.reflect.Field;
 
-public class ClassFieldBinding extends Binding {
+public class ClassFieldBinding implements Binding {
 
   /** . */
   private final Field field;

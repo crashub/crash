@@ -19,7 +19,7 @@
 
 package org.crsh.cli.impl.invocation;
 
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.SyntaxException;
 import org.crsh.cli.impl.LiteralValue;
 import org.crsh.cli.descriptor.OptionDescriptor;
@@ -40,16 +40,16 @@ import java.util.Map;
 public class InvocationMatcher<T> {
 
   /** . */
-  private final CommandDescriptorImpl<T> descriptor;
+  private final CommandDescriptor<T> descriptor;
 
   /** . */
   private Iterable<Token> tokens;
 
-  public InvocationMatcher(CommandDescriptorImpl<T> descriptor) {
+  public InvocationMatcher(CommandDescriptor<T> descriptor) {
     this(descriptor, Collections.<Token>emptyList());
   }
 
-  private InvocationMatcher(CommandDescriptorImpl<T> descriptor, Iterable<Token> tokens) {
+  private InvocationMatcher(CommandDescriptor<T> descriptor, Iterable<Token> tokens) {
     this.descriptor = descriptor;
     this.tokens = tokens;
   }

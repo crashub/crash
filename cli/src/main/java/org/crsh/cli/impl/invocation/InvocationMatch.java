@@ -22,7 +22,6 @@ package org.crsh.cli.impl.invocation;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.descriptor.ParameterDescriptor;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
 import org.crsh.cli.SyntaxException;
 
 import java.util.Collection;
@@ -36,7 +35,7 @@ import java.util.Map;
 public final class InvocationMatch<T> {
 
   /** . */
-  private final CommandDescriptorImpl<T> descriptor;
+  private final CommandDescriptor<T> descriptor;
 
   /** . */
   private Map<OptionDescriptor, OptionMatch> options;
@@ -50,11 +49,11 @@ public final class InvocationMatch<T> {
   /** . */
   private final InvocationMatch<T> owner;
 
-  public InvocationMatch(CommandDescriptorImpl<T> descriptor) {
+  public InvocationMatch(CommandDescriptor<T> descriptor) {
     this(null, descriptor);
   }
 
-  private InvocationMatch(InvocationMatch<T> owner, CommandDescriptorImpl<T> descriptor) {
+  private InvocationMatch(InvocationMatch<T> owner, CommandDescriptor<T> descriptor) {
     this.owner = owner;
     this.descriptor = descriptor;
     this.options = Collections.emptyMap();
@@ -67,7 +66,7 @@ public final class InvocationMatch<T> {
   }
 
   public InvocationMatch<T> subordinate(String name) {
-    CommandDescriptorImpl<T> subordinate = descriptor.getSubordinate(name);
+    CommandDescriptor<T> subordinate = descriptor.getSubordinate(name);
     if (subordinate != null) {
       return new InvocationMatch<T>(this, subordinate);
     } else {

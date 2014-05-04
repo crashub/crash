@@ -20,7 +20,7 @@ package org.crsh.cli.impl;
 
 import junit.framework.TestCase;
 import org.crsh.cli.Command;
-import org.crsh.cli.impl.descriptor.CommandDescriptorImpl;
+import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.descriptor.Help;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.invocation.CommandInvoker;
@@ -42,7 +42,7 @@ public class HelpTestCase extends TestCase {
   }
 
   public void testFoo() {
-    CommandDescriptorImpl<A> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(A.class));
+    CommandDescriptor<A> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(A.class));
     InvocationMatcher<A> matcher = desc.matcher();
     InvocationMatch<A> match = matcher.options(Collections.<String, List<?>>singletonMap("h", Collections.singletonList(Boolean.TRUE))).arguments(Collections.emptyList());
     CommandInvoker<A, ?> invoker = match.getInvoker();

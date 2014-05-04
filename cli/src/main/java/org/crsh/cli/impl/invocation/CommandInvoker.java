@@ -26,7 +26,12 @@ import java.lang.reflect.Type;
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public abstract class CommandInvoker<C, V> {
 
-  public abstract InvocationMatch<C> getMatch();
+  /** . */
+  private final InvocationMatch<C> match;
+
+  protected CommandInvoker(InvocationMatch<C> match) {
+    this.match = match;
+  }
 
   public abstract Class<V> getReturnType();
 
@@ -36,10 +41,13 @@ public abstract class CommandInvoker<C, V> {
 
   public abstract Type[] getGenericParameterTypes();
 
+  public abstract V invoke(Resolver resolver, C command) throws InvocationException, SyntaxException;
+
+  public final InvocationMatch<C> getMatch() {
+    return match;
+  }
+
   public final V invoke(C command) throws InvocationException, SyntaxException {
     return invoke(Resolver.EMPTY, command);
   }
-
-  public abstract V invoke(Resolver resolver, C command) throws InvocationException, SyntaxException;
-
 }

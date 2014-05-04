@@ -22,6 +22,8 @@ package org.crsh.cli.descriptor;
 import org.crsh.cli.impl.completion.CompletionMatcher;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.impl.Multiplicity;
+import org.crsh.cli.impl.invocation.CommandInvoker;
+import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
 
 import java.io.IOException;
@@ -189,13 +191,19 @@ public abstract class CommandDescriptor<T> {
   }
 
   /**
-   * Returns the command subordinates as a map.
-   *
-   * @return the subordinates
+   * @return the command subordinates as a map.
    */
   public abstract Map<String, ? extends CommandDescriptor<T>> getSubordinates();
 
-  public abstract CommandDescriptor<T> getSubordinate(String name);
+  /**
+   * Returns a specified subordinate.
+   *
+   * @param name the subordinate name
+   * @return the subordinate command or null
+   */
+  public final CommandDescriptor<T> getSubordinate(String name) {
+    return getSubordinates().get(name);
+  }
 
   /**
    * Returns the command parameters, the returned collection contains the command options and
@@ -259,12 +267,12 @@ public abstract class CommandDescriptor<T> {
    * @param name the option name
    * @return the option or null
    */
-  public final OptionDescriptor findOption(String name) {
+  public final OptionDescriptor resolveOption(String name) {
     OptionDescriptor option = getOption(name);
     if (option == null) {
       CommandDescriptor<T> owner = getOwner();
       if (owner != null) {
-        option = owner.findOption(name);
+        option = owner.resolveOption(name);
       }
     }
     return option;
@@ -324,8 +332,14 @@ public abstract class CommandDescriptor<T> {
     return description != null ? description.getUsage() : "";
   }
 
-  public abstract InvocationMatcher<T> matcher();
+  public abstract CommandInvoker<T, ?> getInvoker(InvocationMatch<T> match);
 
-  public abstract CompletionMatcher<T> completer();
+  public final InvocationMatcher<T> matcher() {
+    return new InvocationMatcher<T>(this);
+  }
+
+  public final CompletionMatcher<T> completer() {
+    return new CompletionMatcher<T>(this);
+  }
 
 }
