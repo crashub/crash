@@ -23,7 +23,7 @@ import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.CommandContext;
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.lang.groovy.closure.PipeLineInvoker;
 import org.crsh.repl.EvalResponse;

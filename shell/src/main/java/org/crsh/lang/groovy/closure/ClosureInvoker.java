@@ -20,7 +20,7 @@ package org.crsh.lang.groovy.closure;
 
 import groovy.lang.Closure;
 import org.crsh.command.CommandContext;
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 
 import java.io.IOException;
 

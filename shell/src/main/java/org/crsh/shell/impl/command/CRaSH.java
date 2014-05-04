@@ -20,12 +20,14 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.BaseCommand;
-import org.crsh.command.BaseShellCommand;
+import org.crsh.shell.impl.command.spi.BaseShellCommand;
 import org.crsh.command.CommandCreationException;
-import org.crsh.command.DescriptionFormat;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.DescriptionFormat;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.shell.impl.command.spi.CommandManager;
+import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.shell.impl.command.system.help;
 import org.crsh.shell.impl.command.system.repl;
 import org.crsh.util.TimestampedObject;
@@ -113,7 +115,7 @@ public class CRaSH {
    * @throws org.crsh.command.CommandCreationException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  public ShellCommand getCommand(String name) throws CommandCreationException, NullPointerException {
+  public ShellCommand<?> getCommand(String name) throws CommandCreationException, NullPointerException {
     CommandResolution resolution = resolveCommand(name);
     return resolution != null ? resolution.getCommand() : null;
   }
@@ -191,7 +193,7 @@ public class CRaSH {
         return shellCommand.describe(commandClass.getSimpleName(), DescriptionFormat.DESCRIBE);
       }
       @Override
-      public ShellCommand getCommand() throws CommandCreationException {
+      public ShellCommand<?> getCommand() throws CommandCreationException {
         return shellCommand;
       }
     };

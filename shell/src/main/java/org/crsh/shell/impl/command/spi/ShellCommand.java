@@ -1,0 +1,151 @@
+/*
+ * Copyright (C) 2012 eXo Platform SAS.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+package org.crsh.shell.impl.command.spi;
+
+import org.crsh.cli.descriptor.CommandDescriptor;
+import org.crsh.cli.impl.Delimiter;
+import org.crsh.cli.impl.completion.CompletionException;
+import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.cli.impl.completion.CompletionMatcher;
+import org.crsh.cli.impl.invocation.InvocationMatch;
+import org.crsh.cli.impl.invocation.InvocationMatcher;
+import org.crsh.cli.spi.Completer;
+import org.crsh.cli.spi.Completion;
+import org.crsh.command.CommandCreationException;
+import org.crsh.command.RuntimeContext;
+import org.crsh.command.SyntaxException;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * A command as seen by the shell.
+ */
+public abstract class ShellCommand<T> {
+
+  /**
+   * Returns the command descriptor.
+   *
+   * @return the descriptor
+   */
+  public abstract CommandDescriptor<T> getDescriptor();
+
+  protected abstract Completer getCompleter(RuntimeContext context) throws CommandCreationException;
+
+  protected abstract CommandInvoker<?, ?> resolveInvoker(InvocationMatch<T> match) throws CommandCreationException;
+
+  protected abstract String describe(InvocationMatch<T> match, DescriptionFormat mode);
+
+  /**
+   * Provide completions for the specified arguments.
+   *
+   * @param context the command context
+   * @param line the original command line arguments
+   * @return the completions
+   */
+  public final CompletionMatch complete(RuntimeContext context, String line) throws CommandCreationException {
+    CompletionMatcher matcher = getDescriptor().completer();
+    Completer completer = getCompleter(context);
+    try {
+      return matcher.match(completer, line);
+    }
+    catch (CompletionException e) {
+      // command.log.log(Level.SEVERE, "Error during completion of line " + line, e);
+      return new CompletionMatch(Delimiter.EMPTY, Completion.create());
+    }
+  }
+
+  /**
+   * Returns a description of the command or null if none can be found.
+   *
+   * @param line the usage line
+   * @param mode the description mode
+   * @return the description
+   */
+  public final String describe(String line, DescriptionFormat mode) {
+    InvocationMatcher<T> analyzer = getDescriptor().matcher();
+    InvocationMatch<T> match;
+    try {
+      match = analyzer.parse(line);
+    }
+    catch (org.crsh.cli.SyntaxException e) {
+      throw new SyntaxException(e.getMessage());
+    }
+    return describe(match, mode);
+  }
+
+  /**
+   * Provides an invoker for the command line specified as a command line to parse.
+   *
+   * @param line the command line arguments
+   * @return the command
+   */
+  public final CommandInvoker<?, ?> resolveInvoker(String line) throws CommandCreationException {
+    CommandDescriptor<T> descriptor = getDescriptor();
+    InvocationMatcher<T> analyzer = descriptor.matcher();
+    InvocationMatch<T> match;
+    try {
+      match = analyzer.parse(line);
+    }
+    catch (org.crsh.cli.SyntaxException e) {
+      throw new SyntaxException(e.getMessage());
+    }
+    return resolveInvoker(match);
+  }
+
+  /**
+   * Provides an invoker for the command line specified in a detyped manner.
+   *
+   * @param options the base options
+   * @param subordinate the subordinate command name, might null
+   * @param subordinateOptions the subordinate options
+   * @param arguments arguments
+   * @return the command
+   */
+  public final CommandInvoker<?, ?> resolveInvoker(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CommandCreationException {
+    InvocationMatcher<T> matcher = getDescriptor().matcher();
+
+    //
+    if (options != null && options.size() > 0) {
+      for (Map.Entry<String, ?> option : options.entrySet()) {
+        matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
+      }
+    }
+
+    //
+    if (subordinate != null && subordinate.length() > 0) {
+      matcher = matcher.subordinate(subordinate);
+
+      // Minor : remove that and use same signature
+      if (subordinateOptions != null && subordinateOptions.size() > 0) {
+        for (Map.Entry<String, ?> option : subordinateOptions.entrySet()) {
+          matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
+        }
+      }
+    }
+
+    //
+    InvocationMatch<T> match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
+
+    //
+    return resolveInvoker(match);
+  }
+}

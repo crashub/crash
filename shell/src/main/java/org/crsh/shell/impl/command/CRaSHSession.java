@@ -21,9 +21,9 @@ package org.crsh.shell.impl.command;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.RuntimeContext;
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.ScriptException;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.console.KeyHandler;
 import org.crsh.lang.script.ScriptRepl;
 import org.crsh.plugin.PluginContext;
@@ -35,6 +35,7 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.repl.EvalResponse;
+import org.crsh.shell.impl.command.spi.CommandManager;
 import org.crsh.text.Text;
 import org.crsh.util.Utils;
 
@@ -110,7 +111,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     return crash.getCommandNames();
   }
 
-  public ShellCommand getCommand(String name) throws CommandCreationException {
+  public ShellCommand<?> getCommand(String name) throws CommandCreationException {
     return crash.getCommand(name);
   }
 

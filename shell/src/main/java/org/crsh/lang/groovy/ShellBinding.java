@@ -22,7 +22,7 @@ import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.InvocationContextImpl;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.groovy.closure.PipeLineClosure;
 import org.crsh.repl.ReplSession;
 import org.crsh.text.Chunk;
@@ -162,7 +162,7 @@ class ShellBinding extends Binding {
     } else {
       if (session != null) {
         try {
-          ShellCommand cmd = session.getCommand(name);
+          ShellCommand<?> cmd = session.getCommand(name);
           if (cmd != null) {
             return new PipeLineClosure(null, name, cmd);
           }

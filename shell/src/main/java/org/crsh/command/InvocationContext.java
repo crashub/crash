@@ -19,6 +19,7 @@
 
 package org.crsh.command;
 
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.text.RenderPrintWriter;
 
 import java.io.IOException;

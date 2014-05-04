@@ -20,10 +20,10 @@ package org.crsh.lang.groovy.closure;
 
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.command.CommandCreationException;
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.command.pipeline.PipeLine;
+import org.crsh.shell.impl.command.pipeline.PipeLine;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;

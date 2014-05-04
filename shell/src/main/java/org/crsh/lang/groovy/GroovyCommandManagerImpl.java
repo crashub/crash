@@ -32,14 +32,14 @@ import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
-import org.crsh.command.BaseShellCommand;
+import org.crsh.shell.impl.command.spi.BaseShellCommand;
 import org.crsh.command.CommandCreationException;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
 import org.crsh.shell.impl.command.CRaSHSession;
-import org.crsh.shell.impl.command.CommandResolution;
+import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.util.ClassCache;
-import org.crsh.shell.impl.command.CommandManager;
+import org.crsh.shell.impl.command.spi.CommandManager;
 import org.crsh.lang.groovy.command.GroovyScript;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.plugin.PluginContext;
@@ -210,13 +210,13 @@ public class GroovyCommandManagerImpl implements CommandManager {
 
     //
     return new CommandResolution() {
-      ShellCommand command;
+      ShellCommand<?> command;
       @Override
       public String getDescription() {
         return description;
       }
       @Override
-      public ShellCommand getCommand() throws CommandCreationException {
+      public ShellCommand<?> getCommand() throws CommandCreationException {
         if (command == null) {
           Class<?> clazz = objectGroovyClassFactory.parse(name, script);
           if (BaseCommand.class.isAssignableFrom(clazz)) {

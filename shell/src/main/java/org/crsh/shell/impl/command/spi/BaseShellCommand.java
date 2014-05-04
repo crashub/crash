@@ -16,23 +16,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
+package org.crsh.shell.impl.command.spi;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.Format;
-import org.crsh.cli.impl.Delimiter;
-import org.crsh.cli.impl.completion.CompletionException;
-import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.cli.impl.completion.CompletionMatcher;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
-import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.cli.impl.invocation.Resolver;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.lang.Util;
 import org.crsh.cli.spi.Completer;
-import org.crsh.cli.spi.Completion;
+import org.crsh.command.BaseCommand;
+import org.crsh.command.CommandContext;
+import org.crsh.command.CommandCreationException;
+import org.crsh.command.InvocationContext;
+import org.crsh.command.InvocationContextImpl;
+import org.crsh.command.PipeCommand;
+import org.crsh.command.RuntimeContext;
+import org.crsh.command.SyntaxException;
 import org.crsh.console.KeyHandler;
 import org.crsh.shell.ErrorType;
 import org.crsh.util.Utils;
@@ -42,64 +44,39 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 
 /** @author Julien Viet */
-public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
+public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
 
   /** . */
-  private final Class<CC> clazz;
+  private final Class<T> clazz;
 
   /** . */
-  private final CommandDescriptor<CC> descriptor;
+  private final CommandDescriptor<T> descriptor;
 
-  public BaseShellCommand(Class<CC> clazz) {
-
-    //
+  public BaseShellCommand(Class<T> clazz) {
     CommandFactory factory = new CommandFactory(getClass().getClassLoader());
-
-    //
     this.clazz = clazz;
     this.descriptor = HelpDescriptor.create(factory.create(clazz));
   }
 
-  public CommandDescriptor<? extends BaseCommand> getDescriptor() {
+  public CommandDescriptor<T> getDescriptor() {
     return descriptor;
   }
 
-  public final CompletionMatch complete(RuntimeContext context, String line) throws CommandCreationException {
-
-    // WTF
-    CompletionMatcher analyzer = descriptor.completer();
-
-    //
-    CC command = createCommand();
-
-    //
-    Completer completer = command instanceof Completer ? (Completer)command : null;
-
-    //
-    command.context = context;
-    try {
-      return analyzer.match(completer, line);
-    }
-    catch (CompletionException e) {
-      command.log.log(Level.SEVERE, "Error during completion of line " + line, e);
-      return new CompletionMatch(Delimiter.EMPTY, Completion.create());
-    }
-    finally {
-      command.context = null;
+  protected Completer getCompleter(final RuntimeContext context) throws CommandCreationException {
+    final T command = createCommand();
+    if (command instanceof Completer) {
+      command.context = context;
+      return (Completer)command;
+    } else {
+      return null;
     }
   }
 
-  public final String describe(String line, DescriptionFormat mode) {
-
-    //
-    final Bilto<?, ?> bilto = resolveBilto(line);
-    final InvocationMatch<?> match = bilto.getMatch();
+  @Override
+  public String describe(final InvocationMatch<T> match, DescriptionFormat mode) {
+    final Bilto<?, ?> bilto = resolveInvoker2(match);
 
     //
     try {
@@ -143,40 +120,11 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
     return null;
   }
 
-  public CommandInvoker<?, ?> resolveInvoker(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CommandCreationException {
-    InvocationMatcher<CC> matcher = descriptor.matcher();
-
-    //
-    if (options != null && options.size() > 0) {
-      for (Map.Entry<String, ?> option : options.entrySet()) {
-        matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
-      }
-    }
-
-    //
-    if (subordinate != null && subordinate.length() > 0) {
-      matcher = matcher.subordinate(subordinate);
-
-      // Minor : remove that and use same signature
-      if (subordinateOptions != null && subordinateOptions.size() > 0) {
-        for (Map.Entry<String, ?> option : subordinateOptions.entrySet()) {
-          matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
-        }
-      }
-    }
-
-    //
-    InvocationMatch<CC> match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
-
-    //
-    return resolveInvoker2(match).getInvoker();
-  }
-
   // Need to find a decent name...
   private abstract class Bilto<C, P> {
 
     CommandInvoker<C, P> getInvoker() throws CommandCreationException {
-      final CC instance = createCommand();
+      final T instance = createCommand();
       Resolver resolver = new Resolver() {
         public <T> T resolve(Class<T> type) {
           if (type.equals(InvocationContext.class)) {
@@ -191,33 +139,23 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
 
     abstract InvocationMatch<?> getMatch();
 
-    abstract CommandInvoker<C, P> getInvoker(CC instance, Resolver resolver) throws CommandCreationException;
+    abstract CommandInvoker<C, P> getInvoker(T instance, Resolver resolver) throws CommandCreationException;
 
     abstract Class<P> getProducedType();
 
     abstract Class<C> getConsumedType();
   }
 
-  public CommandInvoker<?, ?> resolveInvoker(String line) throws CommandCreationException {
-    return resolveBilto(line).getInvoker();
+  public CommandInvoker<?, ?> resolveInvoker(InvocationMatch<T> match) throws CommandCreationException {
+    // Please remove me
+    return resolveInvoker2((InvocationMatch<T>)match).getInvoker();
   }
 
-  public final Bilto<?, ?> resolveBilto(String line) {
-    InvocationMatcher<CC> analyzer = descriptor.matcher();
-    InvocationMatch<CC> match;
-    try {
-      match = analyzer.parse(line);
-    }
-    catch (org.crsh.cli.SyntaxException e) {
-      throw new SyntaxException(e.getMessage());
-    }
-    return resolveInvoker2(match);
-  }
 
-  private Bilto<?, ?> resolveInvoker2(final InvocationMatch<CC> match) {
+  private Bilto<?, ?> resolveInvoker2(final InvocationMatch<T> match) {
 
     // Invoker
-    org.crsh.cli.impl.invocation.CommandInvoker<CC, ?> invoker = match.getInvoker();
+    org.crsh.cli.impl.invocation.CommandInvoker<T, ?> invoker = match.getInvoker();
 
     // Do we have a pipe command or not ?
     if (PipeCommand.class.isAssignableFrom(invoker.getReturnType())) {
@@ -244,8 +182,8 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
     }
   }
 
-  private CC createCommand() throws CommandCreationException {
-    CC command;
+  private T createCommand() throws CommandCreationException {
+    T command;
     try {
       command = clazz.newInstance();
     }
@@ -256,7 +194,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
     return command;
   }
 
-  private <C, P, PC extends PipeCommand<C, P>> Bilto<C, P> getPipeCommandInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<CC, PC> invoker) {
+  private <C, P, PC extends PipeCommand<C, P>> Bilto<C, P> getPipeCommandInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, PC> invoker) {
     return new Bilto<C, P>() {
 
       /** . */
@@ -284,7 +222,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
       }
 
       @Override
-      CommandInvoker<C, P> getInvoker(final CC instance, final Resolver resolver) throws CommandCreationException {
+      CommandInvoker<C, P> getInvoker(final T instance, final Resolver resolver) throws CommandCreationException {
         return new CommandInvoker<C, P>() {
 
           PipeCommand<C, P> real;
@@ -374,7 +312,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
     };
   }
 
-  private <P> Bilto<Void, P> getInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<CC, ?> invoker, final Class<P> producedType) {
+  private <P> Bilto<Void, P> getInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, ?> invoker, final Class<P> producedType) {
     return new Bilto<Void, P>() {
 
       @Override
@@ -393,7 +331,7 @@ public class BaseShellCommand<CC extends BaseCommand> implements ShellCommand {
       }
 
       @Override
-      CommandInvoker<Void, P> getInvoker(final CC instance, final Resolver resolver) throws CommandCreationException {
+      CommandInvoker<Void, P> getInvoker(final T instance, final Resolver resolver) throws CommandCreationException {
         return new CommandInvoker<Void, P>() {
 
           public Class<P> getProducedType() {

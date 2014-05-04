@@ -23,8 +23,8 @@ import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.BaseRuntimeContext;
 import org.crsh.command.CommandCreationException;
-import org.crsh.command.CommandInvoker;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.command.SyntaxException;
 import org.crsh.repl.Repl;
 import org.crsh.repl.ReplSession;
@@ -115,7 +115,7 @@ public class ScriptRepl implements Repl {
       String commandName = termPrefix.substring(0, pos);
       termPrefix = termPrefix.substring(pos);
       try {
-        ShellCommand command = session.getCommand(commandName);
+        ShellCommand<?> command = session.getCommand(commandName);
         if (command != null) {
           completion = command.complete(new BaseRuntimeContext(session, session.getContext().getAttributes()), termPrefix);
         } else {

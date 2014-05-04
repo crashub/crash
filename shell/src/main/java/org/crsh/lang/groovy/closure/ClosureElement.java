@@ -19,7 +19,7 @@
 package org.crsh.lang.groovy.closure;
 
 import groovy.lang.Closure;
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 
 /** @author Julien Viet */
 public class ClosureElement extends PipeLineElement {

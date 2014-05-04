@@ -16,15 +16,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
+package org.crsh.shell.impl.command.spi;
 
+import org.crsh.command.CommandContext;
 import org.crsh.console.KeyHandler;
 import org.crsh.io.Filter;
 
 import java.io.IOException;
 
 /**
- * A command invoker is a filter for a {@link CommandContext} kind of consumer.
+ * A command invoker is a filter for a {@link org.crsh.command.CommandContext} kind of consumer.
  *
  * @param <C> the consumed element generic type
  * @param <P> the produced element generic type

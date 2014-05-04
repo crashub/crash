@@ -18,15 +18,15 @@
  */
 package org.crsh.lang.java;
 
-import org.crsh.command.BaseShellCommand;
+import org.crsh.shell.impl.command.spi.BaseShellCommand;
 import org.crsh.command.CommandCreationException;
-import org.crsh.command.DescriptionFormat;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.DescriptionFormat;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
 import org.crsh.shell.ErrorType;
-import org.crsh.shell.impl.command.CommandManager;
-import org.crsh.shell.impl.command.CommandResolution;
+import org.crsh.shell.impl.command.spi.CommandManager;
+import org.crsh.shell.impl.command.spi.CommandResolution;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -94,7 +94,7 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
               return description;
             }
             @Override
-            public ShellCommand getCommand() throws CommandCreationException {
+            public ShellCommand<Object> getCommand() throws CommandCreationException {
               return command;
             }
           };

@@ -19,17 +19,19 @@
 
 package org.crsh.command;
 
+import org.crsh.shell.impl.command.spi.CommandInvoker;
+
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.logging.Logger;
 
 public abstract class BaseCommand extends AbstractCommand {
 
-  /** . */
-  final Logger log = Logger.getLogger(getClass().getName());
+  /** Need to find a way to make not that public. */
+  public final Logger log = Logger.getLogger(getClass().getName());
 
-  /** The unmatched text, only valid during an invocation. */
-  protected String unmatched;
+  /** The unmatched text, only valid during an invocation - Need to find a way to make not that public. */
+  public String unmatched;
 
   protected BaseCommand() {
     this.unmatched = null;

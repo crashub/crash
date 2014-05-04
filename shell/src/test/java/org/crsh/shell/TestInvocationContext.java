@@ -21,11 +21,11 @@ package org.crsh.shell;
 
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
-import org.crsh.command.BaseShellCommand;
+import org.crsh.shell.impl.command.spi.BaseShellCommand;
 import org.crsh.io.Consumer;
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.ScriptException;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.command.BaseRuntimeContext;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
@@ -141,7 +141,7 @@ public class TestInvocationContext<C> extends BaseRuntimeContext implements Comm
     return execute(new GroovyScriptShellCommand<B>(commandClass), args);
   }
 
-  private String execute(ShellCommand command, String... args) throws Exception {
+  private String execute(ShellCommand<?> command, String... args) throws Exception {
     if (reader != null) {
       reader.clear();
     }
@@ -153,6 +153,7 @@ public class TestInvocationContext<C> extends BaseRuntimeContext implements Comm
       sb.append(arg);
     }
     CommandInvoker<C, Object> invoker = (CommandInvoker<C, Object>)command.resolveInvoker(sb.toString());
+
     invoker.open(this);
     invoker.flush();
     invoker.close();

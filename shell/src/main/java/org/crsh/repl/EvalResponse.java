@@ -18,9 +18,8 @@
  */
 package org.crsh.repl;
 
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Chunk;
 
 /** @author Julien Viet */
 public abstract class EvalResponse {

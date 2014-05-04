@@ -24,10 +24,10 @@ import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.command.CommandCreationException;
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.groovy.closure.PipeLineClosure;
 import org.crsh.lang.groovy.closure.PipeLineInvoker;
 import org.crsh.shell.impl.command.CRaSH;
@@ -101,7 +101,7 @@ public abstract class GroovyScriptCommand extends Script {
       if (context instanceof InvocationContext) {
         CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
-          ShellCommand cmd;
+          ShellCommand<?> cmd;
           try {
             cmd = crash.getCommand(name);
           }
@@ -146,7 +146,7 @@ public abstract class GroovyScriptCommand extends Script {
         CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
           try {
-            ShellCommand cmd = crash.getCommand(property);
+            ShellCommand<?> cmd = crash.getCommand(property);
             if (cmd != null) {
               InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
               return new PipeLineClosure(ic, property, cmd);

@@ -17,10 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command.pipeline;
+package org.crsh.shell.impl.command.pipeline;
 
 import org.crsh.command.CommandContext;
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.console.KeyHandler;
 import org.crsh.text.Chunk;
 

@@ -23,6 +23,7 @@ import org.crsh.lang.script.Token;
 import org.crsh.shell.ScreenContext;
 import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.lang.script.PipeLineFactory;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
 

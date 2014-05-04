@@ -20,9 +20,8 @@
 package org.crsh.doc;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
-import org.crsh.command.BaseShellCommand;
-import org.crsh.command.DescriptionFormat;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.DescriptionFormat;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ServiceLoaderDiscovery;
 import org.crsh.shell.impl.command.CRaSH;
@@ -58,20 +57,17 @@ public class Generator {
     CRaSH crash = new CRaSH(ctx);
     StringBuilder buffer = new StringBuilder();
     for (String s : crash.getCommandNames()) {
-      ShellCommand cmd = crash.getCommand(s);
-      if (cmd instanceof BaseShellCommand) {
-        BaseShellCommand cc = (BaseShellCommand)cmd;
-        CommandDescriptor<?> desc = cc.getDescriptor();
-        buffer.append("== ").append(desc.getName()).append("\n").append("\n");
+      ShellCommand<?> cmd = crash.getCommand(s);
+      CommandDescriptor<?> desc = cmd.getDescriptor();
+      buffer.append("== ").append(desc.getName()).append("\n").append("\n");
+      buffer.append("----\n");
+      buffer.append(cmd.describe("", DescriptionFormat.MAN));
+      buffer.append("----\n");
+      for (CommandDescriptor<?> m : desc.getSubordinates().values()) {
+        buffer.append("=== ").append(desc.getName()).append(" ").append(m.getName()).append("\n").append("\n");
         buffer.append("----\n");
-        buffer.append(cc.describe("", DescriptionFormat.MAN));
-        buffer.append("----\n");
-        for (CommandDescriptor<?> m : desc.getSubordinates().values()) {
-          buffer.append("=== ").append(desc.getName()).append(" ").append(m.getName()).append("\n").append("\n");
-          buffer.append("----\n");
-          buffer.append(cc.describe(m.getName(), DescriptionFormat.MAN));
-          buffer.append("----\n\n");
-        }
+        buffer.append(cmd.describe(m.getName(), DescriptionFormat.MAN));
+        buffer.append("----\n\n");
       }
     }
     if (buffer.length() > 0) {

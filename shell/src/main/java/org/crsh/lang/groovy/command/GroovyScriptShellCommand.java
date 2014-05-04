@@ -20,16 +20,18 @@ package org.crsh.lang.groovy.command;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
-import org.crsh.cli.impl.Delimiter;
-import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.cli.spi.Completion;
+import org.crsh.cli.descriptor.CommandDescriptor;
+import org.crsh.cli.impl.descriptor.HelpDescriptor;
+import org.crsh.cli.impl.invocation.InvocationMatch;
+import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandCreationException;
-import org.crsh.command.CommandInvoker;
-import org.crsh.command.DescriptionFormat;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
+import org.crsh.shell.impl.command.spi.DescriptionFormat;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.command.RuntimeContext;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.util.Utils;
@@ -37,20 +39,40 @@ import org.crsh.util.Utils;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
-import java.util.Map;
 
 /** @author Julien Viet */
-public class GroovyScriptShellCommand<C extends GroovyScriptCommand> implements ShellCommand {
+public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends ShellCommand<T> {
 
   /** . */
-  private final Class<C> clazz;
+  private final Class<T> clazz;
 
-  public GroovyScriptShellCommand(Class<C> clazz) {
+  /** . */
+  private final CommandDescriptor<T> descriptor;
+
+  public GroovyScriptShellCommand(Class<T> clazz) {
+
+    //
+    CommandFactory factory = new CommandFactory(getClass().getClassLoader());
+
+    //
     this.clazz = clazz;
+    this.descriptor = HelpDescriptor.create(factory.create(clazz));
   }
 
-  private C createCommand() throws CommandCreationException {
-    C command;
+  @Override
+  public CommandDescriptor<T> getDescriptor() {
+    return descriptor;
+  }
+
+  @Override
+  public CommandInvoker<?, ?> resolveInvoker(InvocationMatch<T> match) throws CommandCreationException {
+    List<String> chunks = Utils.chunks(match.getRest());
+    String[] args = chunks.toArray(new String[chunks.size()]);
+    return getInvoker(args);
+  }
+
+  private T createCommand() throws CommandCreationException {
+    T command;
     try {
       command = clazz.newInstance();
     }
@@ -61,30 +83,18 @@ public class GroovyScriptShellCommand<C extends GroovyScriptCommand> implements 
     return command;
   }
 
-  public final CompletionMatch complete(RuntimeContext context, String line) {
-    return new CompletionMatch(Delimiter.EMPTY, Completion.create());
-  }
-
-  public final String describe(String line, DescriptionFormat mode) {
+  @Override
+  protected Completer getCompleter(RuntimeContext context) throws CommandCreationException {
     return null;
   }
 
-  public final CommandInvoker<?, ?> resolveInvoker(String line) throws CommandCreationException {
-    List<String> chunks = Utils.chunks(line);
-    String[] args = chunks.toArray(new String[chunks.size()]);
-    return getInvoker(args);
-  }
-
-  public final CommandInvoker<?, ?> resolveInvoker(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CommandCreationException {
-    String[] tmp = new String[arguments.size()];
-    for (int i = 0;i < tmp.length;i++) {
-      tmp[i] = arguments.get(i).toString();
-    }
-    return getInvoker(tmp);
+  @Override
+  public String describe(InvocationMatch<T> match, DescriptionFormat mode) {
+    return null;
   }
 
   private CommandInvoker<Object, Object> getInvoker(final String[] args) throws CommandCreationException {
-    final C command = createCommand();
+    final T command = createCommand();
     return new CommandInvoker<Object, Object>() {
 
       public final Class<Object> getProducedType() {

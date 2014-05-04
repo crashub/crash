@@ -20,11 +20,11 @@
 package org.crsh.lang.script;
 
 import org.crsh.command.CommandCreationException;
-import org.crsh.command.CommandInvoker;
-import org.crsh.command.ShellCommand;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.command.SyntaxException;
 import org.crsh.repl.ReplSession;
-import org.crsh.command.pipeline.PipeLine;
+import org.crsh.shell.impl.command.pipeline.PipeLine;
 import org.crsh.shell.ErrorType;
 import org.crsh.text.Chunk;
 
@@ -88,7 +88,7 @@ public class PipeLineFactory {
   public CommandInvoker<Void, Chunk> create(ReplSession session) throws CommandCreationException {
     LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();
     for (PipeLineFactory current = this;current != null;current = current.next) {
-      ShellCommand command = session.getCommand(current.name);
+      ShellCommand<?> command = session.getCommand(current.name);
       if (command == null) {
         throw new CommandCreationException(current.name, ErrorType.EVALUATION, "Unknown command");
       }

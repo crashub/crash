@@ -24,7 +24,6 @@ import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.command.BaseCommand;
-import org.crsh.command.ShellCommand;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.command.SyntaxException;
 

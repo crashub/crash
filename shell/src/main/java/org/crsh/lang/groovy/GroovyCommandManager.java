@@ -21,8 +21,8 @@ package org.crsh.lang.groovy;
 import org.crsh.command.CommandCreationException;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
-import org.crsh.shell.impl.command.CommandManager;
-import org.crsh.shell.impl.command.CommandResolution;
+import org.crsh.shell.impl.command.spi.CommandManager;
+import org.crsh.shell.impl.command.spi.CommandResolution;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;

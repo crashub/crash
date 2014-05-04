@@ -16,15 +16,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.impl.command;
 
-import org.crsh.command.CommandCreationException;
-import org.crsh.command.ShellCommand;
+package org.crsh.shell.impl.command.spi;
 
-/** @author Julien Viet */
-public interface CommandResolution {
+public enum DescriptionFormat {
 
-  String getDescription();
+  /**
+   * The command descriptiion in one line.
+   */
+  DESCRIBE,
 
-  ShellCommand getCommand() throws CommandCreationException;
+  /**
+   * The command usage.
+   */
+  USAGE,
+
+  /**
+   * The command manual.
+   */
+  MAN
+
 }

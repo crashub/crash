@@ -19,7 +19,7 @@
 
 package org.crsh.lang.groovy.closure;
 
-import org.crsh.command.CommandInvoker;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.text.Chunk;

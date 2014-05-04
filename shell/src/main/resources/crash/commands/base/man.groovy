@@ -1,5 +1,5 @@
 import org.crsh.cli.Required
-import org.crsh.command.DescriptionFormat
+import org.crsh.shell.impl.command.spi.DescriptionFormat
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.cli.Argument;

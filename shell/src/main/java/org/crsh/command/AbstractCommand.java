@@ -28,8 +28,8 @@ public abstract class AbstractCommand {
   /** . */
   private LinkedList<InvocationContext<?>> stack;
 
-  /** The current context. */
-  protected RuntimeContext context;
+  /** The current context : need to find a way to make not that public. */
+  public RuntimeContext context;
 
   /** The current output. */
   protected RenderPrintWriter out;
