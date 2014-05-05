@@ -6,7 +6,7 @@ import org.crsh.cli.Option;
 import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.PipeCommand;
+import org.crsh.command.Pipe;
 import org.crsh.command.ScriptException;
 
 import javax.management.JMException;
@@ -81,7 +81,7 @@ public class jmx extends BaseCommand {
 
   @Usage("get attributes of an MBean")
   @Command
-  public PipeCommand<ObjectName, Map> get(@Argument final List<String> attributes) {
+  public Pipe<ObjectName, Map> get(@Argument final List<String> attributes) {
 
     // Determine common attributes from all names
     if (attributes == null || attributes.isEmpty()) {
@@ -89,7 +89,7 @@ public class jmx extends BaseCommand {
     }
 
     //
-    return new PipeCommand<ObjectName, Map>() {
+    return new Pipe<ObjectName, Map>() {
 
       /** . */
       private MBeanServer server;

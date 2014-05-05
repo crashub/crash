@@ -21,7 +21,7 @@ import org.crsh.command.InvocationContext
 
 import org.crsh.cli.completers.EnumCompleter
 import org.crsh.cli.spi.Completion
-import org.crsh.command.PipeCommand;
+import org.crsh.command.Pipe;
 
 @Usage("logging commands")
 public class log {
@@ -38,9 +38,9 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
 
 % log ls | log send -m hello -l warn""")
   @Command
-  public PipeCommand<Logger, Object> send(@MsgOpt String msg, @LoggerArg String name, @LevelOpt Level level) {
+  public Pipe<Logger, Object> send(@MsgOpt String msg, @LoggerArg String name, @LevelOpt Level level) {
     level = level ?: Level.info;
-    return new PipeCommand<Logger, Object>() {
+    return new Pipe<Logger, Object>() {
       @Override
       void open() {
         if (!isPiped()) {
@@ -153,10 +153,10 @@ The logger name can be omitted and instead stream of logger can be consumed as i
 % log ls | log set -l warn""")
   @Usage("configures the level of one of several loggers")
   @Command
-  public PipeCommand<Logger, Object> set(@LoggerArg List<String> names, @LevelOpt @Required Level level) {
+  public Pipe<Logger, Object> set(@LoggerArg List<String> names, @LevelOpt @Required Level level) {
 
     //
-    return new PipeCommand<Logger, Object>() {
+    return new Pipe<Logger, Object>() {
       @Override
       void open() {
         if (!isPiped()) {

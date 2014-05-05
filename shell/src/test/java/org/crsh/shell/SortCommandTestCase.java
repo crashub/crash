@@ -31,8 +31,8 @@ public class SortCommandTestCase extends AbstractCommandTestCase {
 
   private final String consume_command = "class consume_command {\n" +
       "@Command\n" +
-      "public org.crsh.command.PipeCommand<java.util.Map, Object> main() {\n" +
-      "return new org.crsh.command.PipeCommand<java.util.Map, Object>() {\n" +
+      "public org.crsh.command.Pipe<java.util.Map, Object> main() {\n" +
+      "return new org.crsh.command.Pipe<java.util.Map, Object>() {\n" +
       "public void provide(java.util.Map element) {\n" +
       "org.crsh.shell.SortCommandTestCase.output.add(element)\n" +
       "}\n" +

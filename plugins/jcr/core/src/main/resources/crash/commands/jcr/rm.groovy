@@ -4,7 +4,7 @@ import org.crsh.cli.Usage
 import org.crsh.cli.Man
 import org.crsh.jcr.command.Path
 import org.crsh.cli.Argument
-import org.crsh.command.PipeCommand;
+import org.crsh.command.Pipe;
 import javax.jcr.Node;
 
 public class rm extends org.crsh.jcr.command.JCRCommand {
@@ -25,11 +25,11 @@ It is possible to specify several nodes.
 Node /foo /bar removed
 
 rm is a <Node,Void> command removing all the consumed nodes.""")
-  public PipeCommand<Node, Void> main(
+  public Pipe<Node, Void> main(
     @Argument @Usage("the paths to remove") @Man("The paths of the node to remove") List<Path> paths) {
     assertConnected();
     def foo = out;
-    return new PipeCommand<Node, Void>() {
+    return new Pipe<Node, Void>() {
       @Override
       void open() {
         foo << 'Removed nodes ';

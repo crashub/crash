@@ -5,7 +5,7 @@ import org.crsh.cli.Command
 import org.crsh.cli.Man
 import org.crsh.cli.Option
 import org.crsh.cli.Usage
-import org.crsh.command.PipeCommand
+import org.crsh.command.Pipe
 import org.crsh.mail.MailPlugin
 import org.crsh.text.Chunk
 import org.crsh.text.ChunkBuffer
@@ -26,7 +26,7 @@ can be piped into the mail command: an email with the list of current JVM thread
 """)
   @Usage("send an mail to a list of recipients, the body of the mail is the input stream of the command.")
   @Command
-  PipeCommand<Chunk, Chunk> main(
+  Pipe<Chunk, Chunk> main(
       @Usage("block until the mails are delivered")
       @Option(names=["b","block"])
       Boolean block,
@@ -37,7 +37,7 @@ can be piped into the mail command: an email with the list of current JVM thread
       @Argument List<String> recipients) {
     ChunkBuffer buffer = new ChunkBuffer();
     MailPlugin plugin = crash.context.getPlugin(MailPlugin.class);
-    new PipeCommand<Chunk, Chunk>() {
+    new Pipe<Chunk, Chunk>() {
 
       @Override
       void provide(Chunk element) {

@@ -5,7 +5,7 @@ import org.crsh.cli.Usage
 import org.crsh.cli.Man
 import org.crsh.jcr.command.Path
 import org.crsh.cli.Argument
-import org.crsh.command.PipeCommand;
+import org.crsh.command.Pipe;
 
 public class mv extends org.crsh.jcr.command.JCRCommand {
 
@@ -19,14 +19,14 @@ them and producing nodes that were moved.
 [/registry]% mv Registry Registry2""")
 
 
-  public PipeCommand<Node, Node> main(
+  public Pipe<Node, Node> main(
     @Argument @Usage("the source path") @Man("The path of the source node to move, absolute or relative") Path source,
     @Argument @Usage("the target path") @Man("The destination path absolute or relative") Path target) {
     assertConnected()
 
     // Resolve JCR session
     def session = session;
-    return new PipeCommand<Node, Node>() {
+    return new Pipe<Node, Node>() {
       @Override
       void open() {
         if (!isPiped()) {

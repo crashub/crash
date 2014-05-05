@@ -21,11 +21,12 @@ package crash.commands.base
 
 import org.crsh.cli.Command
 import org.crsh.cli.Usage
+
 import java.lang.management.ManagementFactory
 
 import org.crsh.command.InvocationContext
 import org.crsh.cli.Argument
-import org.crsh.command.PipeCommand
+import org.crsh.command.Pipe
 import java.lang.management.MemoryPoolMXBean
 import java.lang.management.MemoryUsage;
 
@@ -137,9 +138,9 @@ class jvm {
    */
   @Usage("Show JVM memory pool")
   @Command
-  public PipeCommand<String, MemoryUsage> pool(@Argument List<String> pools) {
+  public Pipe<String, MemoryUsage> pool(@Argument List<String> pools) {
     def mem = ManagementFactory.memoryPoolMXBeans
-    return new PipeCommand<String, MemoryUsage>() {
+    return new Pipe<String, MemoryUsage>() {
       @Override
       void open() {
         for (String pool : pools) {

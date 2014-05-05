@@ -27,7 +27,7 @@ import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CRaSHCommand;
-import org.crsh.command.PipeCommand;
+import org.crsh.command.Pipe;
 import org.crsh.command.ScriptException;
 import org.crsh.text.Chunk;
 
@@ -44,8 +44,8 @@ public class Commands {
 
   public static class Noop extends BaseCommand {
     @Command
-    public PipeCommand<Object, Object> main() throws IOException {
-      return new PipeCommand<Object, Object>() {
+    public Pipe<Object, Object> main() throws IOException {
+      return new Pipe<Object, Object>() {
       };
     }
   }
@@ -89,8 +89,8 @@ public class Commands {
 
   public static class ConsumeString extends BaseCommand {
     @Command
-    public org.crsh.command.PipeCommand<String, Object> main() {
-      return new PipeCommand<String, Object>() {
+    public Pipe<String, Object> main() {
+      return new Pipe<String, Object>() {
         @Override
         public void provide(String element) throws ScriptException, IOException {
           list.add(element);
@@ -101,8 +101,8 @@ public class Commands {
 
   public static class Buffer extends BaseCommand {
     @Command
-    public org.crsh.command.PipeCommand<String, String> main() {
-      return new PipeCommand<String, String>() {
+    public Pipe<String, String> main() {
+      return new Pipe<String, String>() {
         List<String> buffer = new ArrayList<String>();
         @Override
         public void provide(String element) throws ScriptException, IOException {
@@ -122,8 +122,8 @@ public class Commands {
 
   public static class Filter extends BaseCommand {
     @Command
-    public org.crsh.command.PipeCommand<String, String> main() {
-      return new PipeCommand<String, String>() {
+    public Pipe<String, String> main() {
+      return new Pipe<String, String>() {
         @Override
         public void provide(String element) throws ScriptException, IOException {
           context.provide(element);
@@ -141,8 +141,8 @@ public class Commands {
 
   public static class ConsumeInteger extends BaseCommand {
     @Command
-    public org.crsh.command.PipeCommand<Integer, Object> main() {
-      return new PipeCommand<Integer, Object>() {
+    public Pipe<Integer, Object> main() {
+      return new Pipe<Integer, Object>() {
         @Override
         public void provide(Integer element) throws ScriptException, IOException {
           list.add(element);
@@ -153,8 +153,8 @@ public class Commands {
 
   public static class ConsumeBoolean extends BaseCommand {
     @Command
-    public org.crsh.command.PipeCommand<Boolean, Object> main() {
-      return new PipeCommand<Boolean, Object>() {
+    public Pipe<Boolean, Object> main() {
+      return new Pipe<Boolean, Object>() {
         @Override
         public void provide(Boolean element) throws ScriptException, IOException {
           list.add(element);
@@ -165,8 +165,8 @@ public class Commands {
 
   public static class ConsumeChunk extends BaseCommand {
     @Command
-    public org.crsh.command.PipeCommand<Chunk, Object> main() {
-      return new PipeCommand<Chunk, Object>() {
+    public Pipe<Chunk, Object> main() {
+      return new Pipe<Chunk, Object>() {
         @Override
         public void provide(Chunk element) throws ScriptException, IOException {
           list.add(element);
@@ -177,8 +177,8 @@ public class Commands {
 
   public static class ConsumeObject extends BaseCommand {
     @Command
-    public org.crsh.command.PipeCommand<Object, Object> main() {
-      return new PipeCommand<Object, Object>() {
+    public Pipe<Object, Object> main() {
+      return new Pipe<Object, Object>() {
         @Override
         public void provide(Object element) throws ScriptException, IOException {
           list.add(element);
@@ -189,13 +189,13 @@ public class Commands {
 
   public static class ParameterizedConsumeToList extends BaseCommand {
     @Command
-    public PipeCommand<String, Object> main(final @Option(names={"opt"}) String opt, @Argument List<String> args) {
+    public Pipe<String, Object> main(final @Option(names={"opt"}) String opt, @Argument List<String> args) {
       if (args != null) {
         for (String arg : args) {
           list.add((opt != null ? opt : "") + arg);
         }
       }
-      return new PipeCommand<String, Object>() {
+      return new Pipe<String, Object>() {
         @Override
         public void provide(String element) throws ScriptException, IOException {
           list.add((opt != null ? opt : "") + element);
@@ -210,8 +210,8 @@ public class Commands {
     public static final AtomicInteger closed = new AtomicInteger();
 
     @Command
-    public org.crsh.command.PipeCommand<Object, Object> main() {
-      return new PipeCommand<Object, Object>() {
+    public Pipe<Object, Object> main() {
+      return new Pipe<Object, Object>() {
         @Override
         public void close() throws ScriptException {
           closed.incrementAndGet();
@@ -222,8 +222,8 @@ public class Commands {
 
   public static class IsPiped extends BaseCommand {
     @Command
-    public org.crsh.command.PipeCommand<Object, Object> main() {
-      return new PipeCommand<Object, Object>() {
+    public Pipe<Object, Object> main() {
+      return new Pipe<Object, Object>() {
         @Override
         public void open() throws ScriptException {
           list.add(isPiped());
@@ -249,8 +249,8 @@ public class Commands {
 
   public static class CompoundConsumeString extends BaseCommand {
     @Command
-    public org.crsh.command.PipeCommand<String, Object> compound() {
-      return new PipeCommand<String, Object>() {
+    public Pipe<String, Object> compound() {
+      return new Pipe<String, Object>() {
         @Override
         public void provide(String element) throws ScriptException, IOException {
           list.add(element);
@@ -348,8 +348,8 @@ public class Commands {
     static final AtomicInteger closeCount = new AtomicInteger();
 
     @Command
-    public org.crsh.command.PipeCommand<String, Object> main() {
-      return new PipeCommand<String, Object>() {
+    public Pipe<String, Object> main() {
+      return new Pipe<String, Object>() {
         @Override
         public void open() throws ScriptException {
           openCount.incrementAndGet();
@@ -393,8 +393,8 @@ public class Commands {
     static final AtomicInteger closeCount = new AtomicInteger();
 
     @Command
-    public org.crsh.command.PipeCommand<String, Object> main() {
-      return new PipeCommand<String, Object>() {
+    public Pipe<String, Object> main() {
+      return new Pipe<String, Object>() {
         @Override
         public void open() throws ScriptException {
           openCount.incrementAndGet();

@@ -22,16 +22,16 @@ package crash.commands.base
 import org.crsh.cli.Command
 import org.crsh.cli.Option
 import org.crsh.cli.Usage
-import org.crsh.command.PipeCommand
+import org.crsh.command.Pipe
 
 class sort {
 
   @Usage("sort a map")
   @Command
-  PipeCommand<Map, Map> main(
+  Pipe<Map, Map> main(
       @Usage("Filed used to sort")
       @Option(names = ['f', 'fields']) List<String> fields) {
-    return new PipeCommand<Map, Map>() {
+    return new Pipe<Map, Map>() {
       List<Map> d = new ArrayList<Map>();
 
       @Override

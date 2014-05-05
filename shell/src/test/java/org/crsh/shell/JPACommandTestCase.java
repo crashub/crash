@@ -40,8 +40,8 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
 
   private final String consume_command_entity = "class consume_command_entity {\n" +
       "@Command\n" +
-      "public org.crsh.command.PipeCommand<org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData, Object> main() {\n" +
-      "return new org.crsh.command.PipeCommand<org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData, Object>() {\n" +
+      "public org.crsh.command.Pipe<org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData, Object> main() {\n" +
+      "return new org.crsh.command.Pipe<org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData, Object>() {\n" +
       "public void provide(org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData element) {\n" +
       "org.crsh.shell.JPACommandTestCase.output_entity.add(element)\n" +
       "}\n" +
@@ -51,8 +51,8 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
 
   private final String consume_command_value = "class consume_command_value {\n" +
       "@Command\n" +
-      "public org.crsh.command.PipeCommand<Map, Object> main() {\n" +
-      "return new org.crsh.command.PipeCommand<Map, Object>() {\n" +
+      "public org.crsh.command.Pipe<Map, Object> main() {\n" +
+      "return new org.crsh.command.Pipe<Map, Object>() {\n" +
       "public void provide(Map element) {\n" +
       "org.crsh.shell.JPACommandTestCase.output_value.add(element)\n" +
       "}\n" +

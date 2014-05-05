@@ -1,4 +1,4 @@
-package crash.commands.base;
+package crash.commands.base
 
 import java.util.regex.Pattern;
 import org.crsh.cli.Usage
@@ -8,7 +8,7 @@ import org.crsh.cli.Option
 import org.crsh.cli.Man
 import org.crsh.cli.Argument
 
-import org.crsh.command.PipeCommand
+import org.crsh.command.Pipe
 import org.crsh.text.ui.UIBuilder
 import org.crsh.util.Utils
 
@@ -161,8 +161,8 @@ public class thread  {
   @Usage("interrupt vm threads")
   @Man("Interrup VM threads.")
   @Command
-  public PipeCommand<Thread, Thread> interrupt(@Argument @Usage("the thread ids to interrupt") List<Thread> threads) {
-    return new PipeCommand<Thread, Thread>() {
+  public Pipe<Thread, Thread> interrupt(@Argument @Usage("the thread ids to interrupt") List<Thread> threads) {
+    return new Pipe<Thread, Thread>() {
       void open() throws org.crsh.command.ScriptException {
         threads.each(this.&provide)
       }
@@ -176,8 +176,8 @@ public class thread  {
   @Usage("stop vm threads")
   @Man("Stop VM threads.")
   @Command
-  public PipeCommand<Thread, Thread> stop(@Argument @Usage("the thread ids to stop") List<Thread> threads) {
-    return new PipeCommand<Thread, Thread>() {
+  public Pipe<Thread, Thread> stop(@Argument @Usage("the thread ids to stop") List<Thread> threads) {
+    return new Pipe<Thread, Thread>() {
       void open() throws org.crsh.command.ScriptException {
         threads.each(this.&provide)
       }
@@ -191,8 +191,8 @@ public class thread  {
   @Usage("dump vm threads")
   @Man("Dump VM threads.")
   @Command
-  public PipeCommand<Thread, Object> dump(@Argument @Usage("the thread ids to dump") List<Thread> threads) {
-    return new PipeCommand<Thread, Object>() {
+  public Pipe<Thread, Object> dump(@Argument @Usage("the thread ids to dump") List<Thread> threads) {
+    return new Pipe<Thread, Object>() {
       void open() throws org.crsh.command.ScriptException {
         threads.each(this.&provide)
       }

@@ -25,12 +25,12 @@ import org.crsh.util.Utils;
 import java.io.IOException;
 
 /**
- * A pipe command.
+ * A command pipe.
  *
  * @param <C> the consumed generic type
  * @param <P> the produced generic type
  */
-public abstract class PipeCommand<C, P> implements Filter<C, P, InvocationContext<P>> {
+public abstract class Pipe<C, P> implements Filter<C, P, InvocationContext<P>> {
 
   /** . */
   protected InvocationContext<P> context;
@@ -40,11 +40,11 @@ public abstract class PipeCommand<C, P> implements Filter<C, P, InvocationContex
   }
 
   public final Class<P> getProducedType() {
-    return (Class<P>)Utils.resolveToClass(getClass(), PipeCommand.class, 1);
+    return (Class<P>)Utils.resolveToClass(getClass(), Pipe.class, 1);
   }
 
   public final Class<C> getConsumedType() {
-    return (Class<C>)Utils.resolveToClass(getClass(), PipeCommand.class, 0);
+    return (Class<C>)Utils.resolveToClass(getClass(), Pipe.class, 0);
   }
 
   public void open(InvocationContext<P> consumer) {

@@ -114,8 +114,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     String consumer =
         "class consumer {\n" +
         "  @Command\n" +
-        "  public org.crsh.command.PipeCommand<Object, Object> main() {\n" +
-        "    return new org.crsh.command.PipeCommand<Object, Object>() {\n" +
+        "  public org.crsh.command.Pipe<Object, Object> main() {\n" +
+        "    return new org.crsh.command.Pipe<Object, Object>() {\n" +
         "      public void open() {\n" +
         "        org.crsh.shell.Commands.list.add('open');\n" +
         "      }\n" +
@@ -140,8 +140,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     String producer =
         "class producer {\n" +
         "  @Command\n" +
-        "  public org.crsh.command.PipeCommand<Object, Object> main() {\n" +
-        "    return new org.crsh.command.PipeCommand<Object, Object>() {\n" +
+        "  public org.crsh.command.Pipe<Object, Object> main() {\n" +
+        "    return new org.crsh.command.Pipe<Object, Object>() {\n" +
         "      public void open() {\n" +
         "        context.flush();\n" +
         "      }\n" +
@@ -151,8 +151,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     String consumer =
         "class consumer {\n" +
         "  @Command\n" +
-        "  public org.crsh.command.PipeCommand<Object, Object> main() {\n" +
-        "    return new org.crsh.command.PipeCommand<Object, Object>() {\n" +
+        "  public org.crsh.command.Pipe<Object, Object> main() {\n" +
+        "    return new org.crsh.command.Pipe<Object, Object>() {\n" +
         "      public void flush() {\n" +
         "        org.crsh.shell.Commands.list.add('flush');\n" +
         "      }\n" +
@@ -177,8 +177,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     String producer =
         "class producer {\n" +
         "  @Command\n" +
-        "  public org.crsh.command.PipeCommand<Object, String> main() {\n" +
-        "    return new org.crsh.command.PipeCommand<Object, String>() {\n" +
+        "  public org.crsh.command.Pipe<Object, String> main() {\n" +
+        "    return new org.crsh.command.Pipe<Object, String>() {\n" +
         "      public void flush() {\n" +
         "        context.provide('foo');\n" +
         "      }\n" +
@@ -202,8 +202,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     String producer =
         "class producer {\n" +
             "  @Command\n" +
-            "  public org.crsh.command.PipeCommand<Object, String> main() {\n" +
-            "    return new org.crsh.command.PipeCommand<Object, String>() {\n" +
+            "  public org.crsh.command.Pipe<Object, String> main() {\n" +
+            "    return new org.crsh.command.Pipe<Object, String>() {\n" +
             "      public void close() {\n" +
             "        context.provide('foo');\n" +
             "      }\n" +
@@ -243,8 +243,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     String consumer =
         "class producer {\n" +
             "  @Command\n" +
-            "  public org.crsh.command.PipeCommand<Integer, Object> main() {\n" +
-            "    return new org.crsh.command.PipeCommand<Integer, Object>() {\n" +
+            "  public org.crsh.command.Pipe<Integer, Object> main() {\n" +
+            "    return new org.crsh.command.Pipe<Integer, Object>() {\n" +
             "      public void provide(Integer element) {\n" +
             "        throw new org.crsh.command.ScriptException('foo')\n" +
             "      }\n" +

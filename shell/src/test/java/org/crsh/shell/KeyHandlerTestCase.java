@@ -45,10 +45,10 @@ public class KeyHandlerTestCase extends AbstractCommandTestCase {
     testKeyHandler("public class foo implements org.crsh.console.KeyHandler {\n" +
         "public void handle(org.crsh.console.KeyType type, int[] sequence) { queue.add(sequence); latch2.countDown(); }\n" +
         "@Command\n" +
-        "public org.crsh.command.PipeCommand<Object, String> main() {\n" +
+        "public org.crsh.command.Pipe<Object, String> main() {\n" +
         "  def l1 = latch1\n" +
         "  def l2 = latch2\n" +
-        "  return new org.crsh.command.PipeCommand<Object, String>() {\n" +
+        "  return new org.crsh.command.Pipe<Object, String>() {\n" +
         "    public void close() {\n" +
         "      l1.countDown();" +
         "      l2.await(10, java.util.concurrent.TimeUnit.SECONDS);" +

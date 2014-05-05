@@ -32,7 +32,7 @@ import org.crsh.command.CommandContext;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.InvocationContextImpl;
-import org.crsh.command.PipeCommand;
+import org.crsh.command.Pipe;
 import org.crsh.command.RuntimeContext;
 import org.crsh.command.SyntaxException;
 import org.crsh.console.KeyHandler;
@@ -158,9 +158,9 @@ public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
     org.crsh.cli.impl.invocation.CommandInvoker<T, ?> invoker = match.getInvoker();
 
     // Do we have a pipe command or not ?
-    if (PipeCommand.class.isAssignableFrom(invoker.getReturnType())) {
+    if (Pipe.class.isAssignableFrom(invoker.getReturnType())) {
       org.crsh.cli.impl.invocation.CommandInvoker invoker2 = invoker;
-      return getPipeCommandInvoker(invoker2);
+      return getPipedCommandInvoker(invoker2);
     } else {
 
       // A priori it could be any class
@@ -194,17 +194,17 @@ public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
     return command;
   }
 
-  private <C, P, PC extends PipeCommand<C, P>> Bilto<C, P> getPipeCommandInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, PC> invoker) {
+  private <C, P, PC extends Pipe<C, P>> Bilto<C, P> getPipedCommandInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, PC> invoker) {
     return new Bilto<C, P>() {
 
       /** . */
       final Type ret = invoker.getGenericReturnType();
 
       /** . */
-      final Class<C> consumedType = (Class<C>)Utils.resolveToClass(ret, PipeCommand.class, 0);
+      final Class<C> consumedType = (Class<C>)Utils.resolveToClass(ret, Pipe.class, 0);
 
       /** . */
-      final Class<P> producedType = (Class<P>)Utils.resolveToClass(ret, PipeCommand.class, 1);
+      final Class<P> producedType = (Class<P>)Utils.resolveToClass(ret, Pipe.class, 1);
 
       @Override
       InvocationMatch<?> getMatch() {
@@ -225,7 +225,7 @@ public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
       CommandInvoker<C, P> getInvoker(final T instance, final Resolver resolver) throws CommandCreationException {
         return new CommandInvoker<C, P>() {
 
-          PipeCommand<C, P> real;
+          Pipe<C, P> real;
 
           public Class<P> getProducedType() {
             return producedType;

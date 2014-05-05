@@ -22,7 +22,7 @@ package crash.commands.base
 import org.crsh.cli.Usage
 import org.crsh.command.ScriptException
 import org.crsh.cli.Command
-import org.crsh.command.PipeCommand
+import org.crsh.command.Pipe
 import org.crsh.cli.Option
 import java.util.regex.Pattern
 import org.crsh.util.Utils
@@ -37,7 +37,7 @@ class filter {
 
   @Command
   @Usage("a filter for a stream of map")
-  PipeCommand<Map, Map> main(
+  Pipe<Map, Map> main(
     @Usage("format <key>:<value>")
     @Option(names=['p','pattern']) List<String> patterns) {
 
@@ -76,7 +76,7 @@ class filter {
     }
 
     //
-    return new PipeCommand<Map, Map>() {
+    return new Pipe<Map, Map>() {
       @Override
       void provide(Map element) {
         for (int i = 0;i < keys.length;i++) {

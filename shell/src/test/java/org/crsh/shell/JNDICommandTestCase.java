@@ -33,8 +33,8 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
 
   private final String consume_command = "class consume_command {\n" +
       "@Command\n" +
-      "public org.crsh.command.PipeCommand<org.crsh.text.renderers.BindingRenderer.BindingData, Object> main() {\n" +
-      "return new org.crsh.command.PipeCommand<org.crsh.text.renderers.BindingRenderer.BindingData, Object>() {\n" +
+      "public org.crsh.command.Pipe<org.crsh.text.renderers.BindingRenderer.BindingData, Object> main() {\n" +
+      "return new org.crsh.command.Pipe<org.crsh.text.renderers.BindingRenderer.BindingData, Object>() {\n" +
       "public void provide(org.crsh.text.renderers.BindingRenderer.BindingData element) {\n" +
       "org.crsh.shell.JNDICommandTestCase.output.add(element)\n" +
       "}\n" +

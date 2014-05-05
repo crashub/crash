@@ -2,7 +2,7 @@ package crash.commands.base;
 
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
-import org.crsh.command.PipeCommand
+import org.crsh.command.Pipe
 import org.crsh.console.KeyHandler
 import org.crsh.console.KeyType
 import org.crsh.text.Chunk
@@ -10,7 +10,7 @@ import org.crsh.text.Chunk
 class less
 {
 
-  static class impl extends PipeCommand<Chunk, Chunk> implements KeyHandler, Runnable {
+  static class impl extends Pipe<Chunk, Chunk> implements KeyHandler, Runnable {
 
     /** . */
     final def buffer = new LinkedList<Chunk>()
@@ -91,7 +91,7 @@ class less
 
   @Usage("more...")
   @Command
-  PipeCommand<Chunk, Chunk> main() {
+  Pipe<Chunk, Chunk> main() {
     return new impl();
   }
 }

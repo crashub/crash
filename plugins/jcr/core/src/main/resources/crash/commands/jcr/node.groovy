@@ -9,7 +9,7 @@ import org.crsh.cli.Required;
 import org.crsh.jcr.PropertyType
 import org.crsh.cli.Argument
 import org.crsh.jcr.command.Path
-import org.crsh.command.PipeCommand
+import org.crsh.command.Pipe
 
 @Usage("node commands")
 public class node extends org.crsh.jcr.command.JCRCommand {
@@ -94,12 +94,12 @@ Remove a property
 [/]% set foo
 
 set is a <Node,Void> command updating the property of the consumed node stream.""")
-  public PipeCommand<Node, Node> set(
+  public Pipe<Node, Node> set(
     @Argument @Usage("the property name") @Man("The name of the property to alter") String propertyName,
     @Argument @Usage("the property value") @Man("The new value of the property") String propertyValue,
     @Option(names=["t","type"]) @Usage("the property type") @Man("The property type to use when it cannot be inferred") PropertyType propertyType) {
     propertyType = propertyType ?: PropertyType.STRING;
-    return new PipeCommand<Node, Node>() {
+    return new Pipe<Node, Node>() {
       @Override
       void open() {
         if (!isPiped()) {
