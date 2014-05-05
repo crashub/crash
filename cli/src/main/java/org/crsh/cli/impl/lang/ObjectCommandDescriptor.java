@@ -16,24 +16,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.cli.impl.lang;
 
-package org.crsh.cli.impl.invocation;
+import org.crsh.cli.descriptor.CommandDescriptor;
+import org.crsh.cli.descriptor.Description;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
 
-public interface Resolver {
+/**
+ * @author Julien Viet
+ */
+public abstract class ObjectCommandDescriptor<T> extends CommandDescriptor<InvocationContext<T>> {
 
-  Resolver EMPTY = new Resolver() {
-    public <T> T resolve(Class<T> type) {
-      return null;
-    }
-  };
-
-  /**
-   * Resolve the specified type to an instance.
-   *
-   * @param type the type to resolve
-   * @param <T> the generic type parameter
-   * @return the resolved instance
-   */
-  <T> T resolve(Class<T> type);
-
+  public ObjectCommandDescriptor(String name, Description description) throws IntrospectionException {
+    super(name, description);
+  }
 }

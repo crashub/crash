@@ -19,7 +19,6 @@
 
 package org.crsh.cli.impl.lang;
 
-import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.descriptor.ParameterDescriptor;
@@ -89,7 +88,7 @@ public class CommandFactory {
     return methods;
   }
 
-  public <T> CommandDescriptor<T> create(Class<T> type) throws IntrospectionException {
+  public <T> ObjectCommandDescriptor<T> create(Class<T> type) throws IntrospectionException {
 
     // Find all command methods
     List<Method> methods = findAllMethods(type);

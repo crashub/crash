@@ -96,13 +96,9 @@ public final class InvocationMatch<T> {
   }
 
   public Object invoke(T command) throws InvocationException, SyntaxException {
-    return invoke(Resolver.EMPTY, command);
-  }
-
-  public Object invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
     CommandInvoker<T, ?> invoker = getInvoker();
     if (invoker != null) {
-      return invoker.invoke(resolver, command);
+      return invoker.invoke(command);
     } else {
       return null;
     }

@@ -30,7 +30,7 @@ import org.crsh.cli.Required;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
-import org.crsh.cli.impl.invocation.Resolver;
+import org.crsh.cli.impl.lang.InvocationContext;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,16 +51,16 @@ public class MatcherTestCase extends TestCase {
       String s;
       public void run() {}
     }
-    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<InvocationContext<A>> analyzer = desc.matcher();
 
     A a = new A();
-    analyzer.parse("-o foo").invoke(a);
+    analyzer.parse("-o foo").invoke(InvocationContext.wrap(a));
     assertEquals("foo", a.s);
 
     try {
       a = new A();
-      analyzer.parse("").invoke(a);
+      analyzer.parse("").invoke(InvocationContext.wrap(a));
       fail();
     }
     catch (SyntaxException e) {
@@ -73,15 +73,15 @@ public class MatcherTestCase extends TestCase {
       String s;
       public void run() {}
     }
-    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<InvocationContext<A>> analyzer = desc.matcher();
 
     A a = new A();
-    analyzer.parse("-o foo").invoke(a);
+    analyzer.parse("-o foo").invoke(InvocationContext.wrap(a));
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.parse("").invoke(a);
+    analyzer.parse("").invoke(InvocationContext.wrap(a));
     assertEquals(null, a.s);
   }
 
@@ -91,21 +91,21 @@ public class MatcherTestCase extends TestCase {
       int i;
       public void run() {}
     }
-    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<InvocationContext<A>> analyzer = desc.matcher();
 
     A a = new A();
-    analyzer.parse("5").invoke(a);
+    analyzer.parse("5").invoke(InvocationContext.wrap(a));
     assertEquals(5, a.i);
 
     a = new A();
-    analyzer.parse("5 6").invoke(a);
+    analyzer.parse("5 6").invoke(InvocationContext.wrap(a));
     assertEquals(5, a.i);
 
     a = new A();
     a.i = -3;
     try {
-      analyzer.parse("").invoke(a);
+      analyzer.parse("").invoke(InvocationContext.wrap(a));
       fail();
     }
     catch (SyntaxException e) {
@@ -122,20 +122,20 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testPrimitiveMethodArgument() throws Exception {
-    CommandDescriptor<PMA> desc = CommandFactory.DEFAULT.create(PMA.class);
-    InvocationMatcher<PMA> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<PMA>> desc = CommandFactory.DEFAULT.create(PMA.class);
+    InvocationMatcher<InvocationContext<PMA>> analyzer = desc.matcher();
 
     PMA a = new PMA();
-    analyzer.parse("m 5").invoke(a);
+    analyzer.parse("m 5").invoke(InvocationContext.wrap(a));
     assertEquals(5, a.i);
 
     a = new PMA();
-    analyzer.parse("m 5 6").invoke(a);
+    analyzer.parse("m 5 6").invoke(InvocationContext.wrap(a));
     assertEquals(5, a.i);
 
     a = new PMA();
     try {
-      analyzer.parse("m").invoke(a);
+      analyzer.parse("m").invoke(InvocationContext.wrap(a));
       fail();
     }
     catch (SyntaxException e) {
@@ -148,19 +148,19 @@ public class MatcherTestCase extends TestCase {
       String s;
       public void run() {}
     }
-    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<InvocationContext<A>> analyzer = desc.matcher();
 
     A a = new A();
-    analyzer.parse("foo").invoke(a);
+    analyzer.parse("foo").invoke(InvocationContext.wrap(a));
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.parse("foo bar").invoke(a);
+    analyzer.parse("foo bar").invoke(InvocationContext.wrap(a));
     assertEquals("foo", a.s);
 
     a = new A();
-    analyzer.parse("").invoke(a);
+    analyzer.parse("").invoke(InvocationContext.wrap(a));
     assertEquals(null, a.s);
   }
 
@@ -183,21 +183,21 @@ public class MatcherTestCase extends TestCase {
     }
 
     Tester t1 = new Tester() {
-      CommandDescriptor<BC1> desc1 = CommandFactory.DEFAULT.create(BC1.class);
+      CommandDescriptor<InvocationContext<BC1>> desc1 = CommandFactory.DEFAULT.create(BC1.class);
       @Override
       List<String> invoke(String line) {
         BC1 object = new BC1();
-        desc1.matcher().parse(line).invoke(object);
+        desc1.matcher().parse(line).invoke(InvocationContext.wrap(object));
         return object.s;
       }
     };
 
     Tester t2 = new Tester() {
-      CommandDescriptor<BC2> desc2 = CommandFactory.DEFAULT.create(BC2.class);
+      CommandDescriptor<InvocationContext<BC2>> desc2 = CommandFactory.DEFAULT.create(BC2.class);
       @Override
       List<String> invoke(String line) {
         BC2 object = new BC2();
-        desc2.matcher().parse(line).invoke(object);
+        desc2.matcher().parse(line).invoke(InvocationContext.wrap(object));
         return object.s;
       }
     };
@@ -219,13 +219,13 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testOptionSyntaxException() throws Exception {
-    CommandDescriptor<OptionSyntaxException> desc = CommandFactory.DEFAULT.create(OptionSyntaxException.class);
-    InvocationMatcher<OptionSyntaxException> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<OptionSyntaxException>> desc = CommandFactory.DEFAULT.create(OptionSyntaxException.class);
+    InvocationMatcher<InvocationContext<OptionSyntaxException>> analyzer = desc.matcher();
     OptionSyntaxException cmd = new OptionSyntaxException();
 
     //
     try {
-      analyzer.parse("-o").invoke(cmd);
+      analyzer.parse("-o").invoke(InvocationContext.wrap(cmd));
       fail();
     }
     catch (SyntaxException ignore) {
@@ -233,7 +233,7 @@ public class MatcherTestCase extends TestCase {
 
     //
     try {
-      analyzer.parse("-o 0 -o 1").invoke(cmd);
+      analyzer.parse("-o 0 -o 1").invoke(InvocationContext.wrap(cmd));
       fail();
     }
     catch (SyntaxException ignore) {
@@ -241,14 +241,14 @@ public class MatcherTestCase extends TestCase {
 
     //
     try {
-      analyzer.parse("-o a").invoke(cmd);
+      analyzer.parse("-o a").invoke(InvocationContext.wrap(cmd));
       fail();
     }
     catch (SyntaxException ignore) {
     }
 
     //
-    analyzer.parse("-o 45").invoke(cmd);
+    analyzer.parse("-o 45").invoke(InvocationContext.wrap(cmd));
     assertEquals(45, cmd.option);
   }
 
@@ -259,23 +259,23 @@ public class MatcherTestCase extends TestCase {
       List<String> s;
       public void run() {}
     }
-    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<InvocationContext<A>> analyzer = desc.matcher();
 
     A a = new A();
     try {
-      analyzer.parse("").invoke(a);
+      analyzer.parse("").invoke(InvocationContext.wrap(a));
       fail();
     }
     catch (SyntaxException expected) {
     }
 
     a = new A();
-    analyzer.parse("foo").invoke(a);
+    analyzer.parse("foo").invoke(InvocationContext.wrap(a));
     assertEquals(Arrays.asList("foo"), a.s);
 
     a = new A();
-    analyzer.parse("foo bar").invoke(a);
+    analyzer.parse("foo bar").invoke(InvocationContext.wrap(a));
     assertEquals(Arrays.asList("foo", "bar"), a.s);
   }
 
@@ -295,39 +295,39 @@ public class MatcherTestCase extends TestCase {
 
   public void testMethodInvocation() throws Exception {
 
-    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<InvocationContext<A>> analyzer = desc.matcher();
 
     //
     A a = new A();
-    analyzer.parse("-s foo m -o bar juu").invoke(a);
+    analyzer.parse("-s foo m -o bar juu").invoke(InvocationContext.wrap(a));
     assertEquals("foo", a.s);
     assertEquals("bar", a.o);
     assertEquals("juu", a.a);
 
     //
     a = new A();
-    analyzer.parse("m -o bar juu").invoke(a);
+    analyzer.parse("m -o bar juu").invoke(InvocationContext.wrap(a));
     assertEquals(null, a.s);
     assertEquals("bar", a.o);
     assertEquals("juu", a.a);
 
     //
     a = new A();
-    analyzer.parse("m juu").invoke(a);
+    analyzer.parse("m juu").invoke(InvocationContext.wrap(a));
     assertEquals(null, a.s);
     assertEquals(null, a.o);
     assertEquals("juu", a.a);
 
     //
     a = new A();
-    analyzer.parse("m -o bar").invoke(a);
+    analyzer.parse("m -o bar").invoke(InvocationContext.wrap(a));
     assertEquals(null, a.s);
     assertEquals("bar", a.o);
     assertEquals(null, a.a);
 
     a = new A();
-    analyzer.parse("m").invoke(a);
+    analyzer.parse("m").invoke(InvocationContext.wrap(a));
     assertEquals(null, a.s);
     assertEquals(null, a.o);
     assertEquals(null, a.a);
@@ -344,14 +344,14 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testMainMethodInvocation() throws Exception {
-    CommandDescriptor<B> desc = CommandFactory.DEFAULT.create(B.class);
+    CommandDescriptor<InvocationContext<B>> desc = CommandFactory.DEFAULT.create(B.class);
 
     //
     B b = new B();
-    desc.matcher().parse("").invoke(b);
+    desc.matcher().parse("").invoke(InvocationContext.wrap(b));
     assertEquals(1, b.count);
     b = new B();
-    desc.matcher().arguments(Collections.emptyList()).invoke(b);
+    desc.matcher().arguments(Collections.emptyList()).invoke(InvocationContext.wrap(b));
     assertEquals(1, b.count);
   }
 
@@ -367,12 +367,16 @@ public class MatcherTestCase extends TestCase {
 
   public void testInvocationAttributeInjection() throws Exception {
 
-    CommandDescriptor<C> desc = CommandFactory.DEFAULT.create(C.class);
-    InvocationMatcher<C> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<C>> desc = CommandFactory.DEFAULT.create(C.class);
+    InvocationMatcher<InvocationContext<C>> analyzer = desc.matcher();
 
     //
-    C c = new C();
-    Resolver context = new Resolver() {
+    final C c = new C();
+    InvocationContext<C> context = new InvocationContext<C>() {
+      @Override
+      public C getInstance() {
+        return c;
+      }
       public <T> T resolve(Class<T> type) {
         if (type.equals(Locale.class)) {
           return type.cast(Locale.FRENCH);
@@ -381,7 +385,7 @@ public class MatcherTestCase extends TestCase {
         }
       }
     };
-    analyzer.parse("").invoke(context, c);
+    analyzer.parse("").invoke(context);
     assertEquals(Locale.FRENCH, c.locale);
   }
 
@@ -402,16 +406,16 @@ public class MatcherTestCase extends TestCase {
 
   public void testInvocationTypeConversionInjection() throws Exception {
 
-    CommandDescriptor<D> desc = CommandFactory.DEFAULT.create(D.class);
+    CommandDescriptor<InvocationContext<D>> desc = CommandFactory.DEFAULT.create(D.class);
 
     //
     D d = new D();
-    desc.matcher().parse("a -o 5").invoke(d);
+    desc.matcher().parse("a -o 5").invoke(InvocationContext.wrap(d));
     assertEquals((Integer)5, d.i);
 
     //
     d = new D();
-    desc.matcher().parse("b -o 5").invoke(d);
+    desc.matcher().parse("b -o 5").invoke(InvocationContext.wrap(d));
     assertEquals((Integer)5, d.i);
   }
 
@@ -427,16 +431,16 @@ public class MatcherTestCase extends TestCase {
 
   public void testQuoted() throws Exception {
 
-    CommandDescriptor<E> desc = CommandFactory.DEFAULT.create(E.class);
+    CommandDescriptor<InvocationContext<E>> desc = CommandFactory.DEFAULT.create(E.class);
 
     //
     E e = new E();
-    desc.matcher().parse("a -o a").invoke(e);
+    desc.matcher().parse("a -o a").invoke(InvocationContext.wrap(e));
     assertEquals("a", e.i);
 
     //
     e = new E();
-    desc.matcher().parse("a -o \"a\"").invoke(e);
+    desc.matcher().parse("a -o \"a\"").invoke(InvocationContext.wrap(e));
     assertEquals("\"a\"", e.i);
   }
 
@@ -448,22 +452,22 @@ public class MatcherTestCase extends TestCase {
 
   public void testOptionList() throws Exception {
 
-    CommandDescriptor<F> desc = CommandFactory.DEFAULT.create(F.class);
+    CommandDescriptor<InvocationContext<F>> desc = CommandFactory.DEFAULT.create(F.class);
 
     //
     F f = new F();
-    desc.matcher().parse("foo -o a").invoke(f);
+    desc.matcher().parse("foo -o a").invoke(InvocationContext.wrap(f));
     assertEquals(Arrays.asList("a"), f.s);
     f = new F();
-    desc.matcher().subordinate("foo").option("o", Collections.singletonList("a")).arguments(Collections.emptyList()).invoke(f);
+    desc.matcher().subordinate("foo").option("o", Collections.singletonList("a")).arguments(Collections.emptyList()).invoke(InvocationContext.wrap(f));
     assertEquals(Arrays.asList("a"), f.s);
 
     //
     f = new F();
-    desc.matcher().parse("foo -o a -o b").invoke(f);
+    desc.matcher().parse("foo -o a -o b").invoke(InvocationContext.wrap(f));
     assertEquals(Arrays.asList("a", "b"), f.s);
     f = new F();
-    desc.matcher().subordinate("foo").option("o", Arrays.asList("a", "b")).arguments(Collections.emptyList()).invoke(f);
+    desc.matcher().subordinate("foo").option("o", Arrays.asList("a", "b")).arguments(Collections.emptyList()).invoke(InvocationContext.wrap(f));
     assertEquals(Arrays.asList("a", "b"), f.s);
   }
 
@@ -476,14 +480,14 @@ public class MatcherTestCase extends TestCase {
   public void testValue() throws Exception {
 
     //
-    CommandDescriptor<G> desc = new CommandFactory(MatcherTestCase.class.getClassLoader()).create(G.class);
+    CommandDescriptor<InvocationContext<G>> desc = new CommandFactory(MatcherTestCase.class.getClassLoader()).create(G.class);
 
     //
     G g = new G();
-    desc.matcher().parse("foo -o a").invoke(g);
+    desc.matcher().parse("foo -o a").invoke(InvocationContext.wrap(g));
     assertEquals(new Custom("a"), g.o);
     g = new G();
-    desc.matcher().subordinate("foo").option("o", Collections.singletonList("a")).arguments(Collections.emptyList()).invoke(g);
+    desc.matcher().subordinate("foo").option("o", Collections.singletonList("a")).arguments(Collections.emptyList()).invoke(InvocationContext.wrap(g));
     assertEquals(new Custom("a"), g.o);
   }
 
@@ -494,13 +498,13 @@ public class MatcherTestCase extends TestCase {
 
   public void testException() throws Exception {
 
-    CommandDescriptor<H> desc = CommandFactory.DEFAULT.create(H.class);
+    CommandDescriptor<InvocationContext<H>> desc = CommandFactory.DEFAULT.create(H.class);
 
     //
     H h = new H();
-    InvocationMatch<H> matcher = desc.matcher().parse("foo");
+    InvocationMatch<InvocationContext<H>> matcher = desc.matcher().parse("foo");
     try {
-      matcher.invoke(h);
+      matcher.invoke(InvocationContext.wrap(h));
       fail();
     } catch (CLIException e) {
       assertEquals(Exception.class, e.getCause().getClass());
@@ -515,13 +519,13 @@ public class MatcherTestCase extends TestCase {
 
   public void testRuntimeException() throws Exception {
 
-    CommandDescriptor<I> desc = CommandFactory.DEFAULT.create(I.class);
+    CommandDescriptor<InvocationContext<I>> desc = CommandFactory.DEFAULT.create(I.class);
 
     //
     I i = new I();
-    InvocationMatch<I> matcher = desc.matcher().parse("foo");
+    InvocationMatch<InvocationContext<I>> matcher = desc.matcher().parse("foo");
     try {
-      matcher.invoke(i);
+      matcher.invoke(InvocationContext.wrap(i));
       fail();
     } catch (CLIException e) {
       assertEquals(RuntimeException.class, e.getCause().getClass());
@@ -536,13 +540,13 @@ public class MatcherTestCase extends TestCase {
 
   public void testError() throws Exception {
 
-    CommandDescriptor<J> desc = CommandFactory.DEFAULT.create(J.class);
+    CommandDescriptor<InvocationContext<J>> desc = CommandFactory.DEFAULT.create(J.class);
 
     //
     J j = new J();
-    InvocationMatch<J> matcher = desc.matcher().parse("foo");
+    InvocationMatch<InvocationContext<J>> matcher = desc.matcher().parse("foo");
     try {
-      matcher.invoke(j);
+      matcher.invoke(InvocationContext.wrap(j));
       fail();
     } catch (Error e) {
       assertEquals("fooerror", e.getMessage());
@@ -557,22 +561,22 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testSpecifyClassOptionBeforeSubordinate() throws Exception {
-    CommandDescriptor<K> desc = CommandFactory.DEFAULT.create(K.class);
+    CommandDescriptor<InvocationContext<K>> desc = CommandFactory.DEFAULT.create(K.class);
     K k = new K();
-    desc.matcher().parse("-o foo cmd").invoke(k);
+    desc.matcher().parse("-o foo cmd").invoke(InvocationContext.wrap(k));
     assertEquals("foo", k.opt);
     k = new K();
-    desc.matcher().option("o", Collections.singletonList("foo")).subordinate("cmd").arguments(Collections.emptyList()).invoke(k);
+    desc.matcher().option("o", Collections.singletonList("foo")).subordinate("cmd").arguments(Collections.emptyList()).invoke(InvocationContext.wrap(k));
     assertEquals("foo", k.opt);
   }
 
   public void testSpecifyClassOptionAfterSubordinate() throws Exception {
-    CommandDescriptor<K> desc = CommandFactory.DEFAULT.create(K.class);
+    CommandDescriptor<InvocationContext<K>> desc = CommandFactory.DEFAULT.create(K.class);
     K k = new K();
-    desc.matcher().parse("cmd -o foo").invoke(k);
+    desc.matcher().parse("cmd -o foo").invoke(InvocationContext.wrap(k));
     assertEquals(null, k.opt);
     k = new K();
-    desc.matcher().subordinate("cmd").option("o", Collections.singletonList("foo")).arguments(Collections.emptyList()).invoke(k);
+    desc.matcher().subordinate("cmd").option("o", Collections.singletonList("foo")).arguments(Collections.emptyList()).invoke(InvocationContext.wrap(k));
     assertEquals(null, k.opt);
   }
 
@@ -585,22 +589,22 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testSpecifySubordinateOptionBeforeSubordinate() throws Exception {
-    CommandDescriptor<L> desc = CommandFactory.DEFAULT.create(L.class);
+    CommandDescriptor<InvocationContext<L>> desc = CommandFactory.DEFAULT.create(L.class);
     L l = new L();
-    desc.matcher().parse("-o foo cmd").invoke(l);
+    desc.matcher().parse("-o foo cmd").invoke(InvocationContext.wrap(l));
     assertEquals(null, l.opt);
     l = new L();
-    desc.matcher().option("o", Collections.singletonList("foo")).subordinate("cmd").arguments(Collections.emptyList()).invoke(l);
+    desc.matcher().option("o", Collections.singletonList("foo")).subordinate("cmd").arguments(Collections.emptyList()).invoke(InvocationContext.wrap(l));
     assertEquals(null, l.opt);
   }
 
   public void testSpecifySubordinateOptionAfterSubordinate() throws Exception {
-    CommandDescriptor<L> desc = CommandFactory.DEFAULT.create(L.class);
+    CommandDescriptor<InvocationContext<L>> desc = CommandFactory.DEFAULT.create(L.class);
     L l = new L();
-    desc.matcher().parse("cmd -o foo").invoke(l);
+    desc.matcher().parse("cmd -o foo").invoke(InvocationContext.wrap(l));
     assertEquals("foo", l.opt);
     l = new L();
-    desc.matcher().subordinate("cmd").option("o", Collections.singletonList("foo")).arguments(Collections.emptyList()).invoke(l);
+    desc.matcher().subordinate("cmd").option("o", Collections.singletonList("foo")).arguments(Collections.emptyList()).invoke(InvocationContext.wrap(l));
     assertEquals("foo", l.opt);
   }
 
@@ -611,12 +615,12 @@ public class MatcherTestCase extends TestCase {
   }
 
   public void testImplicitSubordinateOption() throws Exception {
-    CommandDescriptor<M> desc = CommandFactory.DEFAULT.create(M.class);
+    CommandDescriptor<InvocationContext<M>> desc = CommandFactory.DEFAULT.create(M.class);
     M m = new M();
-    desc.matcher().parse("-o foo").invoke(m);
+    desc.matcher().parse("-o foo").invoke(InvocationContext.wrap(m));
     assertEquals("foo", m.opt);
     m = new M();
-    desc.matcher().option("o", Collections.singletonList("foo")).arguments(Collections.emptyList()).invoke(m);
+    desc.matcher().option("o", Collections.singletonList("foo")).arguments(Collections.emptyList()).invoke(InvocationContext.wrap(m));
     assertEquals("foo", m.opt);
   }
 
@@ -626,15 +630,15 @@ public class MatcherTestCase extends TestCase {
       boolean o;
       public void run() {}
     }
-    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<A> analyzer = desc.matcher();
+    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<InvocationContext<A>> analyzer = desc.matcher();
 
     //
     A a = new A();
-    analyzer.parse("-o").invoke(a);
+    analyzer.parse("-o").invoke(InvocationContext.wrap(a));
     assertEquals(true, a.o);
     a = new A();
-    analyzer.option("o", Collections.singletonList(true)).arguments(Collections.emptyList()).invoke(a);
+    analyzer.option("o", Collections.singletonList(true)).arguments(Collections.emptyList()).invoke(InvocationContext.wrap(a));
     assertEquals(true, a.o);
   }
 
@@ -647,29 +651,29 @@ public class MatcherTestCase extends TestCase {
       String target;
       public void run() {}
     }
-    CommandDescriptor<SCP> desc = CommandFactory.DEFAULT.create(SCP.class);
-    InvocationMatcher<SCP> matcher = desc.matcher();
+    CommandDescriptor<InvocationContext<SCP>> desc = CommandFactory.DEFAULT.create(SCP.class);
+    InvocationMatcher<InvocationContext<SCP>> matcher = desc.matcher();
 
     //
     SCP scp = new SCP();
-    matcher.parse("-t -- portal:collaboration:/Documents").invoke(scp);
+    matcher.parse("-t -- portal:collaboration:/Documents").invoke(InvocationContext.wrap(scp));
     assertEquals(true, scp.t);
     assertEquals("portal:collaboration:/Documents", scp.target);
     scp = new SCP();
-    matcher.option("t", Collections.singletonList(true)).arguments(Collections.singletonList("portal:collaboration:/Documents")).invoke(scp);
+    matcher.option("t", Collections.singletonList(true)).arguments(Collections.singletonList("portal:collaboration:/Documents")).invoke(InvocationContext.wrap(scp));
     assertEquals(true, scp.t);
     assertEquals("portal:collaboration:/Documents", scp.target);
 
     //
     scp = new SCP();
     try {
-      matcher.parse("-t").invoke(scp);
+      matcher.parse("-t").invoke(InvocationContext.wrap(scp));
       fail();
     } catch (CLIException e) {
     }
     scp = new SCP();
     try {
-      matcher.option("t", Collections.singletonList(true)).arguments(Collections.emptyList()).invoke(scp);
+      matcher.option("t", Collections.singletonList(true)).arguments(Collections.emptyList()).invoke(InvocationContext.wrap(scp));
       fail();
     } catch (CLIException e) {
     }

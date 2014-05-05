@@ -22,7 +22,6 @@ import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
-import org.crsh.cli.impl.invocation.Resolver;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.BaseCommand;
@@ -45,13 +44,13 @@ import java.lang.reflect.Type;
 import java.lang.reflect.UndeclaredThrowableException;
 
 /** @author Julien Viet */
-public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
+public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.crsh.cli.impl.lang.InvocationContext<T>> {
 
   /** . */
   private final Class<T> clazz;
 
   /** . */
-  private final CommandDescriptor<T> descriptor;
+  private final CommandDescriptor<org.crsh.cli.impl.lang.InvocationContext<T>> descriptor;
 
   public ShellCommandImpl(Class<T> clazz) {
     CommandFactory factory = new CommandFactory(getClass().getClassLoader());
@@ -59,7 +58,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
     this.descriptor = HelpDescriptor.create(factory.create(clazz));
   }
 
-  public CommandDescriptor<T> getDescriptor() {
+  public CommandDescriptor<org.crsh.cli.impl.lang.InvocationContext<T>> getDescriptor() {
     return descriptor;
   }
 
@@ -73,10 +72,11 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
     }
   }
 
-  protected Command<?, ?> resolveCommand(final InvocationMatch<T> match) {
+  @Override
+  protected Command<?, ?> resolveCommand(InvocationMatch<org.crsh.cli.impl.lang.InvocationContext<T>> match) {
 
     // Invoker
-    org.crsh.cli.impl.invocation.CommandInvoker<T, ?> invoker = match.getInvoker();
+    org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, ?> invoker = match.getInvoker();
 
     // Do we have a pipe command or not ?
     if (Pipe.class.isAssignableFrom(invoker.getReturnType())) {
@@ -114,7 +114,11 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
 
     public CommandInvoker<C, P> getInvoker() throws CommandCreationException {
       final T instance = baseShellCommand.createCommand();
-      Resolver resolver = new Resolver() {
+      org.crsh.cli.impl.lang.InvocationContext<T> resolver = new org.crsh.cli.impl.lang.InvocationContext<T>() {
+        @Override
+        public T getInstance() {
+          return instance;
+        }
         public <T> T resolve(Class<T> type) {
           if (type.equals(InvocationContext.class)) {
             return type.cast(instance.peekContext());
@@ -123,10 +127,10 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
           }
         }
       };
-      return getInvoker(instance, resolver);
+      return getInvoker(resolver);
     }
 
-    abstract CommandInvoker<C, P> getInvoker(T instance, Resolver resolver) throws CommandCreationException;
+    abstract CommandInvoker<C, P> getInvoker(org.crsh.cli.impl.lang.InvocationContext<T> context) throws CommandCreationException;
   }
 
   T createCommand() throws CommandCreationException {
@@ -141,7 +145,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
     return command;
   }
 
-  private <C, P, PC extends Pipe<C, P>> Command<C, P> getPipedCommandInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, PC> invoker) {
+  private <C, P, PC extends Pipe<C, P>> Command<C, P> getPipedCommandInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, PC> invoker) {
     return new Bilto<T, C, P>(this) {
 
       /** . */
@@ -169,7 +173,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
       }
 
       @Override
-      CommandInvoker<C, P> getInvoker(final T instance, final Resolver resolver) throws CommandCreationException {
+      CommandInvoker<C, P> getInvoker(final org.crsh.cli.impl.lang.InvocationContext<T> context) throws CommandCreationException {
         return new CommandInvoker<C, P>() {
 
           Pipe<C, P> real;
@@ -190,8 +194,8 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
 
           @Override
           public KeyHandler getKeyHandler() {
-            if (instance instanceof KeyHandler) {
-              return (KeyHandler)instance;
+            if (context.getInstance() instanceof KeyHandler) {
+              return (KeyHandler)context.getInstance();
             } else {
               return null;
             }
@@ -203,20 +207,20 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
             final InvocationContextImpl<P> invocationContext = new InvocationContextImpl<P>(consumer);
 
             // Push context
-            instance.pushContext(invocationContext);
+            context.getInstance().pushContext(invocationContext);
 
             //  Set the unmatched part
-            instance.unmatched = invoker.getMatch().getRest();
+            context.getInstance().unmatched = invoker.getMatch().getRest();
 
             //
             PC ret;
             try {
-              ret = invoker.invoke(resolver, instance);
+              ret = invoker.invoke(context);
             }
             catch (org.crsh.cli.SyntaxException e) {
               throw new SyntaxException(e.getMessage());
             } catch (InvocationException e) {
-              throw instance.toScript(e.getCause());
+              throw context.getInstance().toScript(e.getCause());
             }
 
             // It's a pipe command
@@ -236,7 +240,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
             if (real != null) {
               real.flush();
             } else {
-              instance.peekContext().flush();
+              context.getInstance().peekContext().flush();
             }
           }
 
@@ -246,20 +250,20 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
                 real.close();
               }
               finally {
-                instance.popContext();
+                context.getInstance().popContext();
               }
             } else {
-              InvocationContext<?> context = instance.popContext();
-              context.close();
+              InvocationContext<?> ctx = context.getInstance().popContext();
+              ctx.close();
             }
-            instance.unmatched = null;
+            context.getInstance().unmatched = null;
           }
         };
       }
     };
   }
 
-  private <P> Command<Void, P> getInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, ?> invoker, final Class<P> producedType) {
+  private <P> Command<Void, P> getInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, ?> invoker, final Class<P> producedType) {
     return new Bilto<T, Void, P>(this) {
 
       @Override
@@ -278,7 +282,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
       }
 
       @Override
-      CommandInvoker<Void, P> getInvoker(final T instance, final Resolver resolver) throws CommandCreationException {
+      CommandInvoker<Void, P> getInvoker(final org.crsh.cli.impl.lang.InvocationContext<T> context) throws CommandCreationException {
         return new CommandInvoker<Void, P>() {
 
           public Class<P> getProducedType() {
@@ -301,17 +305,17 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
             final InvocationContextImpl<P> invocationContext = new InvocationContextImpl<P>(consumer);
 
             // Push context
-            instance.pushContext(invocationContext);
+            context.getInstance().pushContext(invocationContext);
 
             //  Set the unmatched part
-            instance.unmatched = invoker.getMatch().getRest();
+            context.getInstance().unmatched = invoker.getMatch().getRest();
           }
 
 
           @Override
           public KeyHandler getKeyHandler() {
-            if (instance instanceof KeyHandler) {
-              return (KeyHandler)instance;
+            if (context.getInstance() instanceof KeyHandler) {
+              return (KeyHandler)context.getInstance();
             } else {
               return null;
             }
@@ -329,24 +333,24 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
             //
             Object ret;
             try {
-              ret = invoker.invoke(resolver, instance);
+              ret = invoker.invoke(context);
             }
             catch (org.crsh.cli.SyntaxException e) {
               throw new SyntaxException(e.getMessage());
             } catch (InvocationException e) {
-              throw instance.toScript(e.getCause());
+              throw context.getInstance().toScript(e.getCause());
             }
 
             //
             if (ret != null) {
-              instance.peekContext().getWriter().print(ret);
+              context.getInstance().peekContext().getWriter().print(ret);
             }
 
             //
-            InvocationContext<?> context = instance.popContext();
-            context.flush();
-            context.close();
-            instance.unmatched = null;
+            InvocationContext<?> ctx = context.getInstance().popContext();
+            ctx.flush();
+            ctx.close();
+            context.getInstance().unmatched = null;
           }
         };
       }

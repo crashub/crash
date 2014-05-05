@@ -31,6 +31,7 @@ import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
+import org.crsh.cli.impl.lang.InvocationContext;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class BootstrapTestCase extends TestCase {
@@ -46,30 +47,30 @@ public class BootstrapTestCase extends TestCase {
   public void testOption() throws Exception {
 
     //
-    CommandDescriptor<A> desc = CommandFactory.DEFAULT.create(A.class);
-    HelpDescriptor<A> helpDesc = new HelpDescriptor<A>(desc);
+    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    HelpDescriptor<InvocationContext<A>> helpDesc = new HelpDescriptor<InvocationContext<A>>(desc);
     OptionDescriptor optionDesc = helpDesc.getOption("-h");
     assertNotNull(optionDesc);
     OptionDescriptor foo = helpDesc.getOption("-f");
     assertNotNull(foo);
-    InvocationMatcher<A> matcher = helpDesc.matcher();
+    InvocationMatcher<InvocationContext<A>> matcher = helpDesc.matcher();
 
     //
-    InvocationMatch<A> match = matcher.parse("--help");
+    InvocationMatch<InvocationContext<A>> match = matcher.parse("--help");
     ParameterMatch<OptionDescriptor> helpMatch = match.getParameter(optionDesc);
     assertNotNull(helpMatch);
-    CommandInvoker<A, ?> invoker = match.getInvoker();
-    Help help = (Help)invoker.invoke(new A());
+    CommandInvoker<InvocationContext<A>, ?> invoker = match.getInvoker();
+    Help help = (Help)invoker.invoke(InvocationContext.wrap(new A()));
     assertNotNull(help);
     assertSame(desc, help.getDescriptor().getDelegate());
 
     //
     match = matcher.parse("");
     invoker = match.getInvoker();
-    invoker.invoke(new A());
+    invoker.invoke(InvocationContext.wrap(new A()));
     match = matcher.parse("-f foo_value bar");
     invoker = match.getInvoker();
-    assertEquals("invoked:foo_value", invoker.invoke(new A()));
+    assertEquals("invoked:foo_value", invoker.invoke(InvocationContext.wrap(new A())));
   }
 
   public static class B {
@@ -82,18 +83,18 @@ public class BootstrapTestCase extends TestCase {
 
   public void testMain1() {
 
-    CommandDescriptor<B> desc = CommandFactory.DEFAULT.create(B.class);
-    HelpDescriptor<B> helpDesc = new HelpDescriptor<B>(desc);
+    CommandDescriptor<InvocationContext<B>> desc = CommandFactory.DEFAULT.create(B.class);
+    HelpDescriptor<InvocationContext<B>> helpDesc = new HelpDescriptor<InvocationContext<B>>(desc);
     OptionDescriptor optionDesc = helpDesc.getOption("-h");
     assertNotNull(optionDesc);
-    InvocationMatcher<B> matcher = helpDesc.matcher();
+    InvocationMatcher<InvocationContext<B>> matcher = helpDesc.matcher();
 
     //
-    InvocationMatch<B> match = matcher.parse("--help");
+    InvocationMatch<InvocationContext<B>> match = matcher.parse("--help");
     ParameterMatch<OptionDescriptor> helpMatch = match.getParameter(optionDesc);
     assertNotNull(helpMatch);
-    CommandInvoker<B, ?> invoker = match.getInvoker();
-    Help help = (Help)invoker.invoke(new B());
+    CommandInvoker<InvocationContext<B>, ?> invoker = match.getInvoker();
+    Help help = (Help)invoker.invoke(InvocationContext.wrap(new B()));
     assertNotNull(help);
     CommandDescriptor mainDescriptor = help.getDescriptor();
     assertEquals("b", mainDescriptor.getName());

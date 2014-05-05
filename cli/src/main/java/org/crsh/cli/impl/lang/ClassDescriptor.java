@@ -28,14 +28,13 @@ import org.crsh.cli.SyntaxException;
 import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
-import org.crsh.cli.impl.invocation.Resolver;
 
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class ClassDescriptor<T> extends CommandDescriptor<T> {
+class ClassDescriptor<T> extends ObjectCommandDescriptor<T> {
 
   /** . */
   private final Class<T> type;
@@ -76,10 +75,10 @@ class ClassDescriptor<T> extends CommandDescriptor<T> {
   }
 
   @Override
-  public CommandInvoker<T, ?> getInvoker(final InvocationMatch<T> match) {
+  public CommandInvoker<InvocationContext<T>, ?> getInvoker(final InvocationMatch<InvocationContext<T>> match) {
 
     if (Runnable.class.isAssignableFrom(type)) {
-      return new CommandInvoker<T, Void>(match) {
+      return new CommandInvoker<InvocationContext<T>, Void>(match) {
         @Override
         public Class<Void> getReturnType() {
           return Void.class;
@@ -96,8 +95,8 @@ class ClassDescriptor<T> extends CommandDescriptor<T> {
         public Type[] getGenericParameterTypes() {
           return new Type[0];
         }
-        @Override
-        public Void invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
+        public Void invoke(InvocationContext<T> context) throws InvocationException, SyntaxException {
+          T command = context.getInstance();
           MethodDescriptor.bind(match, getParameters(), command, Util.EMPTY_ARGS);
           Runnable runnable = Runnable.class.cast(command);
           try {
@@ -115,7 +114,7 @@ class ClassDescriptor<T> extends CommandDescriptor<T> {
   }
 
   @Override
-  public CommandDescriptor<T> getOwner() {
+  public CommandDescriptor<InvocationContext<T>> getOwner() {
     return null;
   }
 

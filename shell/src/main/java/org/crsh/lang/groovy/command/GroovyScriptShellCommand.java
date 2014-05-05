@@ -24,6 +24,7 @@ import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.cli.impl.lang.InvocationContext;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandCreationException;
@@ -41,13 +42,13 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 
 /** @author Julien Viet */
-public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends ShellCommand<T> {
+public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends ShellCommand<InvocationContext<T>> {
 
   /** . */
   private final Class<T> clazz;
 
   /** . */
-  private final CommandDescriptor<T> descriptor;
+  private final CommandDescriptor<InvocationContext<T>> descriptor;
 
   public GroovyScriptShellCommand(Class<T> clazz) {
 
@@ -60,12 +61,12 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends She
   }
 
   @Override
-  public CommandDescriptor<T> getDescriptor() {
+  public CommandDescriptor<InvocationContext<T>> getDescriptor() {
     return descriptor;
   }
 
   @Override
-  protected Command<?, ?> resolveCommand(final InvocationMatch<T> match) {
+  protected Command<?, ?> resolveCommand(final InvocationMatch<InvocationContext<T>> match) {
     return new Command<Void, Object>() {
       @Override
       public CommandInvoker<Void, Object> getInvoker() throws CommandCreationException {

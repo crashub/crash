@@ -86,7 +86,6 @@ import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.ParameterMatch;
-import org.crsh.cli.impl.invocation.Resolver;
 import org.crsh.cli.type.ValueTypeFactory;
 
 import java.lang.reflect.Type;
@@ -191,7 +190,7 @@ public class HelpDescriptor<T> extends CommandDescriptor<T> {
           return new Type[0];
         }
         @Override
-        public Help invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
+        public Help invoke(T command) throws InvocationException, SyntaxException {
           return new Help<T>(HelpDescriptor.this);
         }
       };

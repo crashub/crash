@@ -34,6 +34,7 @@ import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.cli.impl.lang.InvocationContext;
 import org.crsh.console.jline.JLineProcessor;
 import org.crsh.plugin.ResourceManager;
 import org.crsh.shell.Shell;
@@ -70,7 +71,7 @@ public class CRaSH {
   private static Logger log = Logger.getLogger(CRaSH.class.getName());
 
   /** . */
-  private final CommandDescriptor<CRaSH> descriptor;
+  private final CommandDescriptor<InvocationContext<CRaSH>> descriptor;
 
   public CRaSH() throws IntrospectionException {
     this.descriptor = CommandFactory.DEFAULT.create(CRaSH.class);
@@ -437,8 +438,8 @@ public class CRaSH {
 
     //
     CRaSH main = new CRaSH();
-    InvocationMatcher<CRaSH> matcher = main.descriptor.matcher();
-    InvocationMatch<CRaSH> match = matcher.parse(line.toString());
-    match.invoke(new CRaSH());
+    InvocationMatcher<InvocationContext<CRaSH>> matcher = main.descriptor.matcher();
+    InvocationMatch<InvocationContext<CRaSH>> match = matcher.parse(line.toString());
+    match.invoke(InvocationContext.wrap(main));
   }
 }

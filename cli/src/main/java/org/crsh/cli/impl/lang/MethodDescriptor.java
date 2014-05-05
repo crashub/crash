@@ -30,7 +30,6 @@ import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.ParameterMatch;
-import org.crsh.cli.impl.invocation.Resolver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,7 +37,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
 
-class MethodDescriptor<T> extends CommandDescriptor<T> {
+class MethodDescriptor<T> extends ObjectCommandDescriptor<T> {
 
   /** . */
   private final ClassDescriptor<T> owner;
@@ -64,12 +63,12 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
   }
 
   @Override
-  public CommandDescriptor<T> getOwner() {
+  public CommandDescriptor<InvocationContext<T>> getOwner() {
     return owner;
   }
 
   @Override
-  public Map<String, ? extends CommandDescriptor<T>> getSubordinates() {
+  public Map<String, ? extends CommandDescriptor<InvocationContext<T>>> getSubordinates() {
     return Collections.emptyMap();
   }
 
@@ -77,7 +76,8 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
     return method;
   }
 
-  public CommandInvoker<T, ?> getInvoker(final InvocationMatch<T> match) {
+  @Override
+  public CommandInvoker<InvocationContext<T>, ?> getInvoker(InvocationMatch<InvocationContext<T>> match) {
     Class<?> type = method.getReturnType();
     return getInvoker2(match, type);
   }
@@ -102,8 +102,8 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
     }
   }
 
-  private <V> CommandInvoker<T, V> getInvoker2(final InvocationMatch<T> match, final Class<V> returnType) {
-    return new CommandInvoker<T, V>(match) {
+  private <V> CommandInvoker<InvocationContext<T>, V> getInvoker2(final InvocationMatch<InvocationContext<T>> match, final Class<V> returnType) {
+    return new CommandInvoker<InvocationContext<T>, V>(match) {
       @Override
       public Class<V> getReturnType() {
         return returnType;
@@ -121,7 +121,10 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
         return getMethod().getGenericParameterTypes();
       }
       @Override
-      public V invoke(Resolver resolver, T command) throws InvocationException, SyntaxException {
+      public V invoke(InvocationContext<T> context) throws InvocationException, SyntaxException {
+
+        //
+        T command = context.getInstance();
 
         //
         if (owner != null) {
@@ -140,7 +143,7 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
         for (int i = 0;i < mArgs.length;i++) {
           Class<?> parameterType = parameterTypes[i];
           if (mArgs[i] == null) {
-            Object v = resolver.resolve(parameterType);
+            Object v = context.resolve(parameterType);
             if (v != null) {
               mArgs[i] = v;
             }

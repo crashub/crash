@@ -62,9 +62,9 @@ public class Parser2TestCase extends TestCase {
 
     private <T> Test(Class<T> type, String s) {
       try {
-        CommandDescriptor<T> command = CommandFactory.DEFAULT.create(type);
-        InvocationMatcher<T> parser = command.matcher();
-        InvocationMatch<T> match = parser.parse(s);
+        CommandDescriptor<InvocationContext<T>> command = CommandFactory.DEFAULT.create(type);
+        InvocationMatcher<InvocationContext<T>> parser = command.matcher();
+        InvocationMatch<InvocationContext<T>> match = parser.parse(s);
 
         //
         if (match.owner() == null) {
