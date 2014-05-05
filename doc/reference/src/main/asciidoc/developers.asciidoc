@@ -405,6 +405,95 @@ in the _/META-INF/services/_ directory of the jar containing the custom value ty
 my.CustomValueType
 ----
 
+== Adding style
+
+CRaSH adds (since version 1.1) the support for colored text and text decoration. Each portion of text printed
+ has three style attributes:
+
+* _Decoration_: bold, underline or blink, as the +org.crsh.text.Decoration+ enum.
+* _Foreground_ color.
+* _Background_ color.
+
+Available colors are grouped as the +org.crsh.text.Color+ enum:
+
+[cols="2*", frame="none", grid="none"]
+|===
+a|
+* [black]#black#
+* [red]#red#
+* [green]#green#
+* [yellow]#yellow#
+
+a|
+* [blue]#blue#
+* [fuchsia]#magenta#
+* [aqua]#cyan#
+* [white black-background]#white#
+|===
+
+Decoration and colors can be applied with overloaded +print+ and +println+ methods provided by the +ShellPrinterWriter+.
+This printer is available as the implicit _out_ attribute or thanks to the +<<command_context,context>>.getWriter()+
+method.
+
+[source,groovy]
+.Decorating and coloring text
+----
+out.println("hello", red); // <1>
+out.println("hello", red, blue); // <2>
+out.println("hello", underline, red, blue); // <3>
+----
+<1> Print hello in red color
+<2> Print hello in red with a red blue
+<3> Print hello in red underlined with a red blue
+
+The combination of the decoration, background and foreground colors is a _style_ represented by the +org.crsh.text.Style+
+object. Styles can be used like decoration and colors:
+
+[source,groovy]
+.Printing styled text
+----
+out.println("hello", style(red)); // <1>
+out.println("hello", style(red, blue)); // <2>
+out.println("hello", style(underline, red, blue)); // <3>
+----
+<1> Print hello in red color
+<2> Print hello in red with a red blue
+<3> Print hello in red underlined with a red blue
+
+When using the print methods, the style will be used for the currently printed object. It is possible to change the
+style permanently (until it is reset) using Groovy _leftshift_ operator: +<<+
+
+By default the +<<+ operator prints output on the console. The +ShellPrintWriter+ overrides the operator to work
+with color, decoration and styles:
+
+[source,groovy]
+.Styling with the leftshift operator
+----
+out << red // <1>
+out << underline // <2>
+out << "hello" // <3>
+out << reset; // <4>
+----
+<1> Set red foreground color
+<2> Set underline
+<3> Print hello in underlined red
+<4> Reset style
+
+Operators can also be combined on the same line providing a more compact syntax:
+
+[source,groovy]
+----
+out << red << underline << "hello" << reset
+----
+
+[source,groovy]
+----
+out << style(underline, red, blue) << "hello" << reset
+----
+
+NOTE: Throughout the examples we have used decoration, color and styles. CRaSH automatically imports those classes so
+they can be used out of the box in any CRaSH command without requiring prior import.
+
 [[command_context]]
 == Command context
 
@@ -495,92 +584,3 @@ def age = context.readLine("How old are you?", false);
 
 Finally the +isPiped+, +consume+ and +produce+ methods are used when writing commands that exchange objects via
 the pipe mechanism.
-
-== Adding style
-
-CRaSH adds (since version 1.1) the support for colored text and text decoration. Each portion of text printed
- has three style attributes:
-
-* _Decoration_: bold, underline or blink, as the +org.crsh.text.Decoration+ enum.
-* _Foreground_ color.
-* _Background_ color.
-
-Available colors are grouped as the +org.crsh.text.Color+ enum:
-
-[cols="2*", frame="none", grid="none"]
-|===
-a|
-* [black]#black#
-* [red]#red#
-* [green]#green#
-* [yellow]#yellow#
-
-a|
-* [blue]#blue#
-* [fuchsia]#magenta#
-* [aqua]#cyan#
-* [white black-background]#white#
-|===
-
-Decoration and colors can be applied with overloaded +print+ and +println+ methods provided by the +ShellPrinterWriter+.
-This printer is available as the implicit _out_ attribute or thanks to the +<<command_context,context>>.getWriter()+
-method.
-
-[source,groovy]
-.Decorating and coloring text
-----
-out.println("hello", red); // <1>
-out.println("hello", red, blue); // <2>
-out.println("hello", underline, red, blue); // <3>
-----
-<1> Print hello in red color
-<2> Print hello in red with a red blue
-<3> Print hello in red underlined with a red blue
-
-The combination of the decoration, background and foreground colors is a _style_ represented by the +org.crsh.text.Style+
-object. Styles can be used like decoration and colors:
-
-[source,groovy]
-.Printing styled text
-----
-out.println("hello", style(red)); // <1>
-out.println("hello", style(red, blue)); // <2>
-out.println("hello", style(underline, red, blue)); // <3>
-----
-<1> Print hello in red color
-<2> Print hello in red with a red blue
-<3> Print hello in red underlined with a red blue
-
-When using the print methods, the style will be used for the currently printed object. It is possible to change the
-style permanently (until it is reset) using Groovy _leftshift_ operator: +<<+
-
-By default the +<<+ operator prints output on the console. The +ShellPrintWriter+ overrides the operator to work
-with color, decoration and styles:
-
-[source,groovy]
-.Styling with the leftshift operator
-----
-out << red // <1>
-out << underline // <2>
-out << "hello" // <3>
-out << reset; // <4>
-----
-<1> Set red foreground color
-<2> Set underline
-<3> Print hello in underlined red
-<4> Reset style
-
-Operators can also be combined on the same line providing a more compact syntax:
-
-[source,groovy]
-----
-out << red << underline << "hello" << reset
-----
-
-[source,groovy]
-----
-out << style(underline, red, blue) << "hello" << reset
-----
-
-NOTE: Throughout the examples we have used decoration, color and styles. CRaSH automatically imports those classes so
-they can be used out of the box in any CRaSH command without requiring prior import.
