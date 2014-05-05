@@ -20,18 +20,23 @@
 package org.crsh.shell.impl.command.spi;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
+import org.crsh.cli.descriptor.Format;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionException;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.completion.CompletionMatcher;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
+import org.crsh.cli.impl.lang.Util;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.RuntimeContext;
 import org.crsh.command.SyntaxException;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +53,69 @@ public abstract class ShellCommand<T> {
    */
   public abstract CommandDescriptor<T> getDescriptor();
 
+  /**
+   * Returns a completer for this command.
+   *
+   * @param context the related runtime context
+   * @return the completer
+   * @throws CommandCreationException anything that would prevent completion to happen
+   */
   protected abstract Completer getCompleter(RuntimeContext context) throws CommandCreationException;
 
-  protected abstract CommandInvoker<?, ?> resolveInvoker(InvocationMatch<T> match) throws CommandCreationException;
+  /**
+   * Resolve the real command for a specified invocation match.
+   *
+   * @param match the match
+   * @return the command
+   */
+  protected abstract Command<?, ?> resolveCommand(InvocationMatch<T> match);
 
-  protected abstract String describe(InvocationMatch<T> match, DescriptionFormat mode);
+  public final String describe(final InvocationMatch<T> match, DescriptionFormat mode) {
+
+    //
+    final Command<?, ?> command = resolveCommand(match);
+
+    //
+    try {
+      switch (mode) {
+        case DESCRIBE:
+          return match.getDescriptor().getUsage();
+        case MAN: {
+          StringWriter sw = new StringWriter();
+          PrintWriter pw = new PrintWriter(sw);
+          Format.Man man = new Format.Man() {
+            @Override
+            public void printSynopsisSection(CommandDescriptor<?> descriptor, Appendable stream) throws IOException {
+              super.printSynopsisSection(descriptor, stream);
+
+              // Extra stream section
+              if (match.getDescriptor().getSubordinates().isEmpty()) {
+                stream.append("STREAM\n");
+                stream.append(Util.MAN_TAB);
+                printFQN(descriptor, stream);
+                stream.append(" <").append(command.getConsumedType().getName()).append(", ").append(command.getProducedType().getName()).append('>');
+                stream.append("\n\n");
+              }
+            }
+          };
+          match.getDescriptor().print(man, pw);
+          return sw.toString();
+        }
+        case USAGE: {
+          StringWriter sw = new StringWriter();
+          PrintWriter pw = new PrintWriter(sw);
+          match.getDescriptor().printUsage(pw);
+          return sw.toString();
+        }
+      }
+    }
+    catch (IOException e) {
+      throw new AssertionError(e);
+    }
+
+    //
+    return null;
+  }
 
   /**
    * Provide completions for the specified arguments.
@@ -108,7 +171,7 @@ public abstract class ShellCommand<T> {
     catch (org.crsh.cli.SyntaxException e) {
       throw new SyntaxException(e.getMessage());
     }
-    return resolveInvoker(match);
+    return resolveCommand(match).getInvoker();
   }
 
   /**
@@ -146,6 +209,6 @@ public abstract class ShellCommand<T> {
     InvocationMatch<T> match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
 
     //
-    return resolveInvoker(match);
+    return resolveCommand(match).getInvoker();
   }
 }

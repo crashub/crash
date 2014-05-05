@@ -16,16 +16,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.impl.command.spi;
+package org.crsh.lang.java;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
-import org.crsh.cli.descriptor.Format;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.Resolver;
 import org.crsh.cli.impl.lang.CommandFactory;
-import org.crsh.cli.impl.lang.Util;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
@@ -37,16 +35,17 @@ import org.crsh.command.RuntimeContext;
 import org.crsh.command.SyntaxException;
 import org.crsh.console.KeyHandler;
 import org.crsh.shell.ErrorType;
+import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.lang.reflect.UndeclaredThrowableException;
 
 /** @author Julien Viet */
-public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
+public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<T> {
 
   /** . */
   private final Class<T> clazz;
@@ -54,7 +53,7 @@ public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
   /** . */
   private final CommandDescriptor<T> descriptor;
 
-  public BaseShellCommand(Class<T> clazz) {
+  public ShellCommandImpl(Class<T> clazz) {
     CommandFactory factory = new CommandFactory(getClass().getClassLoader());
     this.clazz = clazz;
     this.descriptor = HelpDescriptor.create(factory.create(clazz));
@@ -74,85 +73,7 @@ public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
     }
   }
 
-  @Override
-  public String describe(final InvocationMatch<T> match, DescriptionFormat mode) {
-    final Bilto<?, ?> bilto = resolveInvoker2(match);
-
-    //
-    try {
-      switch (mode) {
-        case DESCRIBE:
-          return match.getDescriptor().getUsage();
-        case MAN: {
-          StringWriter sw = new StringWriter();
-          PrintWriter pw = new PrintWriter(sw);
-          Format.Man man = new Format.Man() {
-            @Override
-            public void printSynopsisSection(CommandDescriptor<?> command, Appendable stream) throws IOException {
-              super.printSynopsisSection(command, stream);
-
-              // Extra stream section
-              if (match.getDescriptor().getSubordinates().isEmpty()) {
-                stream.append("STREAM\n");
-                stream.append(Util.MAN_TAB);
-                printFQN(command, stream);
-                stream.append(" <").append(bilto.getConsumedType().getName()).append(", ").append(bilto.getProducedType().getName()).append('>');
-                stream.append("\n\n");
-              }
-            }
-          };
-          match.getDescriptor().print(man, pw);
-          return sw.toString();
-        }
-        case USAGE: {
-          StringWriter sw = new StringWriter();
-          PrintWriter pw = new PrintWriter(sw);
-          match.getDescriptor().printUsage(pw);
-          return sw.toString();
-        }
-      }
-    }
-    catch (IOException e) {
-      throw new AssertionError(e);
-    }
-
-    //
-    return null;
-  }
-
-  // Need to find a decent name...
-  private abstract class Bilto<C, P> {
-
-    CommandInvoker<C, P> getInvoker() throws CommandCreationException {
-      final T instance = createCommand();
-      Resolver resolver = new Resolver() {
-        public <T> T resolve(Class<T> type) {
-          if (type.equals(InvocationContext.class)) {
-            return type.cast(instance.peekContext());
-          } else {
-            return null;
-          }
-        }
-      };
-      return getInvoker(instance, resolver);
-    }
-
-    abstract InvocationMatch<?> getMatch();
-
-    abstract CommandInvoker<C, P> getInvoker(T instance, Resolver resolver) throws CommandCreationException;
-
-    abstract Class<P> getProducedType();
-
-    abstract Class<C> getConsumedType();
-  }
-
-  public CommandInvoker<?, ?> resolveInvoker(InvocationMatch<T> match) throws CommandCreationException {
-    // Please remove me
-    return resolveInvoker2((InvocationMatch<T>)match).getInvoker();
-  }
-
-
-  private Bilto<?, ?> resolveInvoker2(final InvocationMatch<T> match) {
+  protected Command<?, ?> resolveCommand(final InvocationMatch<T> match) {
 
     // Invoker
     org.crsh.cli.impl.invocation.CommandInvoker<T, ?> invoker = match.getInvoker();
@@ -182,7 +103,33 @@ public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
     }
   }
 
-  private T createCommand() throws CommandCreationException {
+  private abstract class Bilto<T extends org.crsh.command.BaseCommand, C, P> extends Command<C, P> {
+
+    /** . */
+    private ShellCommandImpl<T> baseShellCommand;
+
+    public Bilto(ShellCommandImpl<T> baseShellCommand) {
+      this.baseShellCommand = baseShellCommand;
+    }
+
+    public CommandInvoker<C, P> getInvoker() throws CommandCreationException {
+      final T instance = baseShellCommand.createCommand();
+      Resolver resolver = new Resolver() {
+        public <T> T resolve(Class<T> type) {
+          if (type.equals(InvocationContext.class)) {
+            return type.cast(instance.peekContext());
+          } else {
+            return null;
+          }
+        }
+      };
+      return getInvoker(instance, resolver);
+    }
+
+    abstract CommandInvoker<C, P> getInvoker(T instance, Resolver resolver) throws CommandCreationException;
+  }
+
+  T createCommand() throws CommandCreationException {
     T command;
     try {
       command = clazz.newInstance();
@@ -194,8 +141,8 @@ public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
     return command;
   }
 
-  private <C, P, PC extends Pipe<C, P>> Bilto<C, P> getPipedCommandInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, PC> invoker) {
-    return new Bilto<C, P>() {
+  private <C, P, PC extends Pipe<C, P>> Command<C, P> getPipedCommandInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, PC> invoker) {
+    return new Bilto<T, C, P>(this) {
 
       /** . */
       final Type ret = invoker.getGenericReturnType();
@@ -207,17 +154,17 @@ public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
       final Class<P> producedType = (Class<P>)Utils.resolveToClass(ret, Pipe.class, 1);
 
       @Override
-      InvocationMatch<?> getMatch() {
+      public InvocationMatch<?> getMatch() {
         return invoker.getMatch();
       }
 
       @Override
-      Class<P> getProducedType() {
+      public Class<P> getProducedType() {
         return producedType;
       }
 
       @Override
-      Class<C> getConsumedType() {
+      public Class<C> getConsumedType() {
         return consumedType;
       }
 
@@ -312,21 +259,21 @@ public class BaseShellCommand<T extends BaseCommand> extends ShellCommand<T> {
     };
   }
 
-  private <P> Bilto<Void, P> getInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, ?> invoker, final Class<P> producedType) {
-    return new Bilto<Void, P>() {
+  private <P> Command<Void, P> getInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<T, ?> invoker, final Class<P> producedType) {
+    return new Bilto<T, Void, P>(this) {
 
       @Override
-      InvocationMatch<?> getMatch() {
+      public InvocationMatch<?> getMatch() {
         return invoker.getMatch();
       }
 
       @Override
-      Class<P> getProducedType() {
+      public Class<P> getProducedType() {
         return producedType;
       }
 
       @Override
-      Class<Void> getConsumedType() {
+      public Class<Void> getConsumedType() {
         return Void.class;
       }
 

@@ -27,8 +27,8 @@ import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.shell.impl.command.spi.DescriptionFormat;
 import org.crsh.command.InvocationContextImpl;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.impl.command.spi.ShellCommand;
@@ -65,10 +65,30 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends She
   }
 
   @Override
-  public CommandInvoker<?, ?> resolveInvoker(InvocationMatch<T> match) throws CommandCreationException {
-    List<String> chunks = Utils.chunks(match.getRest());
-    String[] args = chunks.toArray(new String[chunks.size()]);
-    return getInvoker(args);
+  protected Command<?, ?> resolveCommand(final InvocationMatch<T> match) {
+    return new Command<Void, Object>() {
+      @Override
+      public CommandInvoker<Void, Object> getInvoker() throws CommandCreationException {
+        List<String> chunks = Utils.chunks(match.getRest());
+        String[] args = chunks.toArray(new String[chunks.size()]);
+        return GroovyScriptShellCommand.this.getInvoker(args);
+      }
+
+      @Override
+      public InvocationMatch<?> getMatch() {
+        return match;
+      }
+
+      @Override
+      public Class<Object> getProducedType() {
+        return Object.class;
+      }
+
+      @Override
+      public Class<Void> getConsumedType() {
+        return Void.class;
+      }
+    };
   }
 
   private T createCommand() throws CommandCreationException {
@@ -88,21 +108,16 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends She
     return null;
   }
 
-  @Override
-  public String describe(InvocationMatch<T> match, DescriptionFormat mode) {
-    return null;
-  }
-
-  private CommandInvoker<Object, Object> getInvoker(final String[] args) throws CommandCreationException {
+  private CommandInvoker<Void, Object> getInvoker(final String[] args) throws CommandCreationException {
     final T command = createCommand();
-    return new CommandInvoker<Object, Object>() {
+    return new CommandInvoker<Void, Object>() {
 
       public final Class<Object> getProducedType() {
         return Object.class;
       }
 
-      public final Class<Object> getConsumedType() {
-        return Object.class;
+      public final Class<Void> getConsumedType() {
+        return Void.class;
       }
 
       public void open(CommandContext<? super Object> consumer) {
@@ -142,7 +157,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends She
         }
       }
 
-      public void provide(Object element) throws IOException {
+      public void provide(Void element) throws IOException {
         // Should never be called
       }
 

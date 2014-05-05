@@ -18,7 +18,6 @@
  */
 package org.crsh.lang.java;
 
-import org.crsh.shell.impl.command.spi.BaseShellCommand;
 import org.crsh.command.CommandCreationException;
 import org.crsh.shell.impl.command.spi.DescriptionFormat;
 import org.crsh.shell.impl.command.spi.ShellCommand;
@@ -86,7 +85,7 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
         LoadingClassLoader loader = new LoadingClassLoader(getContext().getLoader(), classFiles);
         try {
           Class<?> clazz = loader.loadClass(classFile.getClassName());
-          final BaseShellCommand command = new BaseShellCommand(clazz);
+          final ShellCommandImpl command = new ShellCommandImpl(clazz);
           final String description = command.describe(name, DescriptionFormat.DESCRIBE);
           return new CommandResolution() {
             @Override

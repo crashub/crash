@@ -20,7 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.BaseCommand;
-import org.crsh.shell.impl.command.spi.BaseShellCommand;
+import org.crsh.lang.java.ShellCommandImpl;
 import org.crsh.command.CommandCreationException;
 import org.crsh.shell.impl.command.spi.DescriptionFormat;
 import org.crsh.shell.impl.command.spi.ShellCommand;
@@ -187,7 +187,7 @@ public class CRaSH {
 
   private <C extends BaseCommand> CommandResolution createCommand(final Class<C> commandClass) {
     return new CommandResolution() {
-      final BaseShellCommand<C> shellCommand = new BaseShellCommand<C>(commandClass);
+      final ShellCommandImpl<C> shellCommand = new ShellCommandImpl<C>(commandClass);
       @Override
       public String getDescription() {
         return shellCommand.describe(commandClass.getSimpleName(), DescriptionFormat.DESCRIBE);
