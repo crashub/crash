@@ -102,8 +102,8 @@ class MethodDescriptor<T> extends ObjectCommandDescriptor<T> {
     }
   }
 
-  private <V> CommandInvoker<InvocationContext<T>, V> getInvoker2(final InvocationMatch<InvocationContext<T>> match, final Class<V> returnType) {
-    return new CommandInvoker<InvocationContext<T>, V>(match) {
+  private <V> ObjectCommandInvoker<T, V> getInvoker2(final InvocationMatch<InvocationContext<T>> match, final Class<V> returnType) {
+    return new ObjectCommandInvoker<T, V>(match) {
       @Override
       public Class<V> getReturnType() {
         return returnType;

@@ -16,31 +16,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.cli.impl.lang;
 
-package org.crsh.cli.impl.invocation;
-
-import org.crsh.cli.SyntaxException;
+import org.crsh.cli.impl.invocation.CommandInvoker;
+import org.crsh.cli.impl.invocation.InvocationMatch;
 
 import java.lang.reflect.Type;
 
-/** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-public abstract class CommandInvoker<C, V> {
+/**
+ * @author Julien Viet
+ */
+public abstract class ObjectCommandInvoker<T, V> extends CommandInvoker<InvocationContext<T>, V> {
 
-  /** . */
-  private final InvocationMatch<C> match;
-
-  protected CommandInvoker(InvocationMatch<C> match) {
-    this.match = match;
+  protected ObjectCommandInvoker(InvocationMatch<InvocationContext<T>> match) {
+    super(match);
   }
 
-  public abstract Class<V> getReturnType();
+  public abstract Class<?>[] getParameterTypes();
 
-  public abstract Type getGenericReturnType();
+  public abstract Type[] getGenericParameterTypes();
 
-  public final InvocationMatch<C> getMatch() {
-    return match;
-  }
-
-  public abstract V invoke(C command) throws InvocationException, SyntaxException;
 
 }

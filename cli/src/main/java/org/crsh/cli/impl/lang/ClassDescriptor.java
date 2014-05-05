@@ -75,10 +75,10 @@ class ClassDescriptor<T> extends ObjectCommandDescriptor<T> {
   }
 
   @Override
-  public CommandInvoker<InvocationContext<T>, ?> getInvoker(final InvocationMatch<InvocationContext<T>> match) {
+  public ObjectCommandInvoker<T, ?> getInvoker(final InvocationMatch<InvocationContext<T>> match) {
 
     if (Runnable.class.isAssignableFrom(type)) {
-      return new CommandInvoker<InvocationContext<T>, Void>(match) {
+      return new ObjectCommandInvoker<T, Void>(match) {
         @Override
         public Class<Void> getReturnType() {
           return Void.class;

@@ -23,6 +23,7 @@ import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.cli.impl.lang.ObjectCommandInvoker;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
@@ -75,26 +76,29 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
   @Override
   protected Command<?, ?> resolveCommand(InvocationMatch<org.crsh.cli.impl.lang.InvocationContext<T>> match) {
 
-    // Invoker
-    org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, ?> invoker = match.getInvoker();
+    // Cast to the object invoker
+    org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>,?> invoker = match.getInvoker();
 
     // Do we have a pipe command or not ?
     if (Pipe.class.isAssignableFrom(invoker.getReturnType())) {
-      org.crsh.cli.impl.invocation.CommandInvoker invoker2 = invoker;
-      return getPipedCommandInvoker(invoker2);
+      org.crsh.cli.impl.invocation.CommandInvoker tmp = invoker;
+      return getPipedCommandInvoker(tmp);
     } else {
 
       // A priori it could be any class
       Class<?> producedType = Object.class;
 
       // Override produced type from InvocationContext<P> if any
-      Class<?>[] parameterTypes = invoker.getParameterTypes();
-      for (int i = 0;i < parameterTypes.length;i++) {
-        Class<?> parameterType = parameterTypes[i];
-        if (InvocationContext.class.isAssignableFrom(parameterType)) {
-          Type contextGenericParameterType = invoker.getGenericParameterTypes()[i];
-          producedType = Utils.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
-          break;
+      if (invoker instanceof ObjectCommandInvoker) {
+        ObjectCommandInvoker<T, ?> objectInvoker = (ObjectCommandInvoker<T, ?>)invoker;
+        Class<?>[] parameterTypes = objectInvoker.getParameterTypes();
+        for (int i = 0;i < parameterTypes.length;i++) {
+          Class<?> parameterType = parameterTypes[i];
+          if (InvocationContext.class.isAssignableFrom(parameterType)) {
+            Type contextGenericParameterType = objectInvoker.getGenericParameterTypes()[i];
+            producedType = Utils.resolveToClass(contextGenericParameterType, InvocationContext.class, 0);
+            break;
+          }
         }
       }
 

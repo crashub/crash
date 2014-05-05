@@ -182,14 +182,6 @@ public class HelpDescriptor<T> extends CommandDescriptor<T> {
           return Help.class;
         }
         @Override
-        public Class<?>[] getParameterTypes() {
-          return new Class[0];
-        }
-        @Override
-        public Type[] getGenericParameterTypes() {
-          return new Type[0];
-        }
-        @Override
         public Help invoke(T command) throws InvocationException, SyntaxException {
           return new Help<T>(HelpDescriptor.this);
         }
