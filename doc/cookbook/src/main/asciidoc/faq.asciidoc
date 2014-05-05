@@ -31,7 +31,7 @@ Refer to documentation in the <<reference#connection,Connection>> section of the
 === What is the best way to create a command ?
 
 The best way to create a command is to use CRaSH utilities.
-Refer to documentation in the <<reference#commands_as_class,Commands as a class>> section of the Developers chapter.
+Refer to documentation in the <<reference#developping_commands>> section of the Developers chapter.
 
 === What is the best way to start with CRaSH ?
 

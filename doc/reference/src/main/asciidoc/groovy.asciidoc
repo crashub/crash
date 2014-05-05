@@ -1,5 +1,78 @@
 This section teaches about advanced Groovy usage in CRaSH.
 
+[[commands_as_script]]
+== Commands as a script
+
+The <<developers>> covered how to write a CRaSH command as a Groovy/Java class. The Groovy language
+also supports simple scripts. A simple script that returns a string is a valid command:
+
+[source,java]
+----
+return "Hello World";
+----
+
+The +out+ implicit variable can be used to send a message to the console:
+
+[source,java]
+----
+out.println("Hello World");
+----
+
+It can be even Groovier:
+
+[source,groovy]
+----
+out << "Hello World"
+----
+
+== Inter command API
+
+Groovy provides powerful support for invoking nested commands, allowing to reuse any CRaSH
+commands inside your commands, obviously such nested commands don't have be Groovy commands.
+Let's study how a command can reuse existing commands:
+
+[source,groovy]
+.dbscript.groovy
+----
+jdbc.connect username:root, password:crash, "jdbc:derby:memory:EmbeddedDB;create=true"
+jdbc.execute "create table derbyDB(num int, addr varchar(40))"
+jdbc.execute "insert into derbyDB values (1956,'Webster St.')"
+jdbc.execute "insert into derbyDB values (1910,'Union St.')"
+jdbc.execute "select * from derbyDb"
+jdbc.close
+----
+
+This script is written in Groovy and use Groovy DSL capabilities, the first statement can be
+analyzed:
+
+* the +jdbc.connect+ statement is decomposed into two steps
+** the +jdbc+ is resolved as the command itself
+** the +connect+ invokes the connect command
+* the +username+ and +password+ are considered as command options
+* the SQL statement +"jdbc:derby:memory:EmbeddedDB;create=true"+ is the main argument of the command
+
+This syntax is quite powerful (and explained more in depth in <<groovy_repl>> section)
+is equivalent to the command line:
+
+----
+% jdbc connect --username root --password crash jdbc:derby:memory:EmbeddedDB;create=true
+----
+
+The rest of the script is fairly easy to understand, here is the output of the script execution:
+
+----
+% dbscript
+Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
+Query executed successfully
+Query executed successfully
+Query executed successfully
+NUM                  ADDR
+1956                 Webster St.
+1910                 Union St.
+Connection closed
+----
+
+[groovy_repl]
 == The Groovy REPL
 
 The _Read–eval–print loop_ known as _REPL_ is the interactive evaluation of CRaSH. Since CRaSH 1.3, the REPL evaluation

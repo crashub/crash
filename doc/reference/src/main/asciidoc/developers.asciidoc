@@ -1,58 +1,34 @@
+[[developping_commands]]
 == Developping commands
 
-A CRaSH command is written in the http://groovy.codehaus.org[Groovy] language. The Groovy language provides
-several signifiant advantages:
+Early CRaSH versions of CRaSH were targetting Groovy only, since version 1.3, CRaSH has become polyglot and
+can work potentially with any language supported by the JVM. The Java language is now supported out of the box
+along with Groovy.
 
-* Commands can be bare scripts or can be a class
-* Java developers can write Groovy commands without learning much of it
-* Groovy is a dynamic language and can manipulate unknown types
+In this section we will describe commands written in the Java or/and http://groovy.codehaus.org[Groovy] languages.
+These two JVM languages share a lot and often valid Java code is also valid Groovy code (obviously the converse is not true).
 
-Each command has a corresponding Groovy file that contains a command class that will be invoked by the shell.
-The files are located in:
+Each command has a corresponding source ending with _.java_ or _.groovy_ file that contains a command class
+that will be invoked by the shell. The files are usually located in:
 
+* _/crash/commands/_ path of jar files
 * _cmd_ directory for the standalone distribution
 * _/WEB-INF/crash/commands_ directory for the web archive deployment
 
-New commands can directly be placed in the commands directory; however they can also be placed in a sub directory of the
+When CRaSH is embedded by a runtime, CRaSH commands can be in other places, please refer to the documentation
+of your runtime.
+
+Commands can directly be placed in the commands directory; however they can also be placed in a sub directory of the
 command directory, which is useful to group commands of the same kind.
 
 In addition of that there are two special files called _login.groovy_ and _logout.groovy_ that are executed upon login
 and logout of a user. They are useful to setup and cleanup things related to the current user session.
 
-[[commands_as_script]]
-=== Commands as a script
+Commands are annotated classes, such class can be a _simple_ command or a _git-style_ command.
+The _cli_ framework provides conventions and a set of annotations for easily writing commands with
+options and arguments in a very declarative manner.
 
-The simplest command can be a simple script that returns a string
-
-[source,java]
-----
-return "Hello World";
-----
-
-The +out+ implicit variable can be used to send a message to the console:
-
-[source,java]
-----
-out.println("Hello World");
-----
-
-It can be even Groovier:
-
-[source,groovy]
-----
-out << "Hello World"
-----
-
-[[commands_as_class]]
-=== Commands as a class
-
-Class can also be used for defining a command, it provides significant advantages over scripts:
-
-* A command can declare options and arguments for the command
-* Sub command style (git style) can be expressed easily
-
-When the user types a command in the sell, the command line is parsed by the _cmdline_ framework and injected in
-the command class.
+=== Simple command
 
 Let's study a simple class command example:
 
@@ -77,7 +53,7 @@ class date {
 }
 ----
 
-The command is pretty straightforward to grasp:
+The _date_ command is pretty straightforward to understand:
 
 * The +@Command+ annotation declares the +main+ method as a command
 * The command takes one optional +format+ option declared by the +@Option+ annotation
@@ -88,7 +64,10 @@ The command is pretty straightforward to grasp:
 Thu Apr 19 15:44:05 CEST 2012
 ----
 
-The +@Usage+ annotation is important because it will give a decent human description of the command
+NOTE: the +main+ name is a convention for simple commands. Another name would create a git-style
+command instead.
+
+The +@Usage+ annotation is important because it gives a human description of the command to the user:
 
 ----
 % date -h
@@ -143,13 +122,48 @@ Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
 Connection closed
 ----
 
+=== Java commands
+
+The previous examples focused on the Groovy language, let's see how we can do the same in Java:
+
+[source,java]
+----
+import org.crsh.command.*;
+import org.crsh.cli.*;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
+public class date extends BaseCommand {
+  @Usage("show the current time")
+  @Command
+  public Object main(@Usage("the time format") @Option(names={"f","format"}) String format) {
+    if (format == null)
+      format = "EEE MMM d HH:mm:ss z yyyy";
+    Date date = new Date();
+    SimpleDateFormat formatter = new SimpleDateFormat(format);
+    return formatter.format(date);
+  }
+}
+----
+
+Beside the fact that the Java version is a bit more verbose, let's outline the noticeable differences:
+
+* the command must extend the +org.crsh.command.BaseCommand+ class: the main reason is that the +BaseCommand+ class
+ provides contextual state managed by CRaSH, like the +context+ or +out+ fields. A Groovy command doesn't need to inherit
+ explicitly, but CRaSH will make it extend this class using Groovy annotation processing.
+* the modifier _public_ is required for the class declaration and the command method declarations
+* the option declaration uses curly braces (_names={"f","format"}_) instead of brackets (_names=["f","format"]_)
+
+NOTE: if you need a more torough example of a Java command, you can read the source code of the _jmx_ command
+written in Java
+
 === Command line annotations
 
-Let's review the various annotations for declaring a command.
+Let's study the various annotations the _cli_ framework provides for declaring a command.
 
 ==== +@org.crsh.cli.Command+
 
-Defines a command method, when using a mono command the method should be named +main+:
+Defines a command method, when using a simple command the method should be named +main+:
 
 [source,groovy]
 ----
@@ -162,12 +176,7 @@ public class sample {
 }
 ----
 
-Using this annotation automatically turns a class into a class command.
-
-NOTE: Previous versions of CRaSH required command classes to extend the +org.crsh.command.CRaSHCommand+ class, this is not
-necessary anymore as the +@Command+ annotation is enough.
-
-Sub commands will simply declares several methods:
+Using this annotation automatically turns a class into a class command. _git-style_ commands simply declares several methods:
 
 [source,groovy]
 ----
@@ -188,8 +197,8 @@ public class sample {
 ==== +@org.crsh.cli.Option+
 
 Declares an option, the _names_ member must be specified: single letter name are turned into posix style option (single hyphen)
-other names are turned into GNU style option (double hyphen). Several names can specified as aliases of the same option. Option
-can be declared as method parameters or a class fields.
+other names are turned into GNU style option (double hyphen). Several names can specified as aliases of the same option.
+Options can be declared as method parameters or a class fields.
 
 [source,groovy]
 ----
@@ -215,7 +224,7 @@ public class sample {
 
 ==== +@org.crsh.cli.Argument+
 
-Declares an argument, this annotation should be declares as method parameters.
+Declares an argument, this annotation should be used as method parameters only.
 
 [source,groovy]
 ----
@@ -269,8 +278,60 @@ public class sample {
 }
 ----
 
-* +@Usage+ specifies the usage, rather a short description
-* +@Man+ provides the manuel, rather a verbose description
+* +@Usage+ specifies the usage, a short description, preferably starting with a lower case
+* +@Man+ provides the manual, a verbose description, preferably starting with an upper case
+
+==== Parameter annotations: Don't Repeat Yourself
+
+When one or several commands uses the same parameter (option or argument), there is the opportunity to avoid repetition and
+ define a custom annotation that can be used for declaring the parameter:
+
+[source,java]
+----
+@Retention(RetentionPolicy.RUNTIME)
+@Usage("A color")
+@Option(names = "c")
+public @interface PathOption {
+}
+----
+
+The annotation can then be used instead for declaring an option:
+
+[source,java]
+----
+public class mycommand {
+  @Command
+  public void foo(@ColorOption String color) {
+    ...
+  }
+  @Command
+  public void bar(@ColorOption String color) {
+    ...
+  }
+}
+----
+
+=== Parameter multiplicity
+
+The multiplicity is the number of values expected by a parameter, the multiplicity with simple types is always 1. The arity can
+also be _several_ when the +java.util.List+ type is used.
+
+[source,java]
+----
+public class sample {
+
+  @Command
+  public void sub1(@Option(names = ["o"]) List<String> opts) {
+    ...
+  }
+}
+----
+
+The option can now accept several values:
+
+----
+> sample sub1 -o foo -o bar
+----
 
 === Parameter types
 
@@ -344,63 +405,10 @@ in the _/META-INF/services/_ directory of the jar containing the custom value ty
 my.CustomValueType
 ----
 
-=== Parameter multiplicity
-
-The multiplicity is the number of values expected by a parameter, the multiplicity with simple types is always 1. The arity can
-also be _several_ when the +java.util.List+ type is used.
-
-[source,java]
-----
-public class sample {
-
-  @Command
-  public void sub1(@Option(names = ["o"]) List<String> opts) {
-    ...
-  }
-}
-----
-
-The option can now accept several values:
-
-----
-> sample sub1 -o foo -o bar
-----
-
-== Parameter annotations: Don't Repeat Yourself
-
-When one or several commands uses the same parameter (option or argument), there is the opportunity to avoid repetition and
- define a custom annotation that can be used for declaring the parameter:
-
-[source,java]
-----
-@Retention(RetentionPolicy.RUNTIME)
-@Usage("A color")
-@Option(names = "c")
-public @interface PathOption {
-}
-----
-
-The annotation can then be used instead for declaring an option:
-
-[source,java]
-----
-public class mycommand {
-  @Command
-  public void foo(@ColorOption String color) {
-    ...
-  }
-  @Command
-  public void bar(@ColorOption String color) {
-    ...
-  }
-}
-----
-
 [[command_context]]
 == Command context
 
-During the execution of a command, CRaSH provides a _context_ for
-interacting with it:
+During the execution of a command, CRaSH provides a _context_ for interacting with it:
 
 * the property _context_ is resolved to an instance of +org.crsh.command.InvocationContext+
 * the invocation context class extends the +org.crsh.command.CommandContext+.
@@ -576,46 +584,3 @@ out << style(underline, red, blue) << "hello" << reset
 
 NOTE: Throughout the examples we have used decoration, color and styles. CRaSH automatically imports those classes so
 they can be used out of the box in any CRaSH command without requiring prior import.
-
-== Inter command API
-
-In this section we study how a command can reuse existing commands. Here is an example
-
-[source,groovy]
-.dbscript.groovy
-----
-jdbc.connect username:root, password:crash, "jdbc:derby:memory:EmbeddedDB;create=true"
-jdbc.execute "create table derbyDB(num int, addr varchar(40))"
-jdbc.execute "insert into derbyDB values (1956,'Webster St.')"
-jdbc.execute "insert into derbyDB values (1910,'Union St.')"
-jdbc.execute "select * from derbyDb"
-jdbc.close
-----
-
-This script is written in Groovy and use Groovy DSL capabilities, let's study the first statement:
-
-* the +jdbc.connect+ statement can be decomposed into two steps
-** the +jdbc+ is resolved as the command itself
-** the +connect+ invokes the connect command
-* the +username+ and +password+ are considered as command options
-* the SQL statement +"jdbc:derby:memory:EmbeddedDB;create=true"+ is the main argument of the command
-
-It is equivalent to the shell command:
-
-----
-% jdbc connect --username root --password crash jdbc:derby:memory:EmbeddedDB;create=true
-----
-
-The rest of the script is fairly easy to understand, here is the output of the script execution:
-
-----
-% dbscript
-Connected to data base : jdbc:derby:memory:EmbeddedDB;create=true
-Query executed successfully
-Query executed successfully
-Query executed successfully
-NUM                  ADDR
-1956                 Webster St.
-1910                 Union St.
-Connection closed
-----
