@@ -18,101 +18,20 @@
  */
 package org.crsh.lang.groovy;
 
-import org.crsh.command.CommandCreationException;
-import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.plugin.PluginContext;
-import org.crsh.shell.impl.command.spi.CommandManager;
-import org.crsh.shell.impl.command.spi.CommandResolution;
+import org.crsh.shell.impl.command.spi.CommandManagerProxy;
 
-import java.lang.reflect.Constructor;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 /**
  * @author Julien Viet
  */
-public class GroovyCommandManager extends CRaSHPlugin<CommandManager> implements CommandManager {
-
-  /** . */
-  static final Logger log = Logger.getLogger(GroovyRepl.class.getName());
+public class GroovyCommandManager extends CommandManagerProxy {
 
   /** . */
   static final Set<String> EXT = Collections.singleton("groovy");
 
-  /** . */
-  private final AtomicReference<CommandManager> real = new AtomicReference<CommandManager>();
-
-  @Override
-  public CommandManager getImplementation() {
-    return this;
-  }
-
-  @Override
-  public void init() {
-    try {
-      Class<CommandManager> mgrClass = (Class<CommandManager>)GroovyCommandManager.class.getClassLoader().loadClass("org.crsh.lang.groovy.GroovyCommandManagerImpl");
-      Constructor<CommandManager> mgrCtor = mgrClass.getConstructor(PluginContext.class);
-      CommandManager mgr = mgrCtor.newInstance(getContext());
-      real.set(mgr);
-    }
-    catch (Exception e) {
-      log.info("Plugin is inactive");
-    }
-    catch (NoClassDefFoundError e) {
-      log.info("Plugin is inactive");
-    }
-  }
-
-  @Override
-  public boolean isActive() {
-    return real.get() != null;
-  }
-
-  @Override
-  public Set<String> getExtensions() {
-    return EXT;
-  }
-
-  @Override
-  public CommandResolution resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
-    CommandManager mgr = real.get();
-    if (mgr != null) {
-      return mgr.resolveCommand(name, source);
-    } else {
-      throw new IllegalStateException("Groovy command manager is not available");
-    }
-  }
-
-  @Override
-  public void init(HashMap<String, Object> session) {
-    CommandManager mgr = real.get();
-    if (mgr != null) {
-      mgr.init(session);
-    } else {
-      throw new IllegalStateException("Groovy command manager is not available");
-    }
-  }
-
-  @Override
-  public void destroy(HashMap<String, Object> session) {
-    CommandManager mgr = real.get();
-    if (mgr != null) {
-      mgr.destroy(session);
-    } else {
-      throw new IllegalStateException("Groovy command manager is not available");
-    }
-  }
-
-  @Override
-  public String doCallBack(HashMap<String, Object> session, String name, String defaultValue) {
-    CommandManager mgr = real.get();
-    if (mgr != null) {
-      return mgr.doCallBack(session, name, defaultValue);
-    } else {
-      throw new IllegalStateException("Groovy command manager is not available");
-    }
+  public GroovyCommandManager() {
+    super("Groovy", "org.crsh.lang.groovy.GroovyCommandManagerImpl", EXT);
   }
 }
