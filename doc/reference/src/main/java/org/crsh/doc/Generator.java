@@ -20,7 +20,7 @@
 package org.crsh.doc;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
-import org.crsh.shell.impl.command.spi.DescriptionFormat;
+import org.crsh.cli.descriptor.Format;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ServiceLoaderDiscovery;
@@ -61,12 +61,12 @@ public class Generator {
       CommandDescriptor<?> desc = cmd.getDescriptor();
       buffer.append("== ").append(desc.getName()).append("\n").append("\n");
       buffer.append("----\n");
-      buffer.append(cmd.describe("", DescriptionFormat.MAN));
+      buffer.append(cmd.describe("", Format.MAN));
       buffer.append("----\n");
       for (CommandDescriptor<?> m : desc.getSubordinates().values()) {
         buffer.append("=== ").append(desc.getName()).append(" ").append(m.getName()).append("\n").append("\n");
         buffer.append("----\n");
-        buffer.append(cmd.describe(m.getName(), DescriptionFormat.MAN));
+        buffer.append(cmd.describe(m.getName(), Format.MAN));
         buffer.append("----\n\n");
       }
     }

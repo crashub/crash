@@ -53,10 +53,13 @@ import java.util.List;
 public abstract class Format {
 
   /** . */
-  static final Usage USAGE = new Usage();
+  public static final Describe DESCRIBE = new Describe();
 
   /** . */
-  static final Man MAN = new Man();
+  public static final Usage USAGE = new Usage();
+
+  /** . */
+  public static final Man MAN = new Man();
 
   /**
    * Print the specified <code>command</code> to the <code>stream</code>
@@ -95,6 +98,19 @@ public abstract class Format {
     }
   }
 
+  /**
+   * The command description in one line.
+   */
+  public static class Describe extends Format {
+    @Override
+    public void print(CommandDescriptor<?> command, Appendable stream) throws IOException {
+      stream.append(command.getUsage());
+    }
+  }
+
+  /**
+   * The command manual.
+   */
   public static class Man extends Format {
 
     public void print(CommandDescriptor<?> command, Appendable stream) throws IOException {
@@ -195,6 +211,9 @@ public abstract class Format {
     }
   }
 
+  /**
+   * The command usage.
+   */
   public static class Usage extends Format {
 
     public void print(CommandDescriptor<?> command, Appendable stream) throws IOException {

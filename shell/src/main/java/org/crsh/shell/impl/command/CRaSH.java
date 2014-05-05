@@ -19,10 +19,10 @@
 
 package org.crsh.shell.impl.command;
 
+import org.crsh.cli.descriptor.Format;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.java.ShellCommandImpl;
 import org.crsh.command.CommandCreationException;
-import org.crsh.shell.impl.command.spi.DescriptionFormat;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
@@ -190,7 +190,7 @@ public class CRaSH {
       final ShellCommandImpl<C> shellCommand = new ShellCommandImpl<C>(commandClass);
       @Override
       public String getDescription() {
-        return shellCommand.describe(commandClass.getSimpleName(), DescriptionFormat.DESCRIBE);
+        return shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
       }
       @Override
       public ShellCommand<?> getCommand() throws CommandCreationException {

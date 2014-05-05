@@ -18,8 +18,8 @@
  */
 package org.crsh.lang.java;
 
+import org.crsh.cli.descriptor.Format;
 import org.crsh.command.CommandCreationException;
-import org.crsh.shell.impl.command.spi.DescriptionFormat;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
@@ -86,7 +86,7 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
         try {
           Class<?> clazz = loader.loadClass(classFile.getClassName());
           final ShellCommandImpl command = new ShellCommandImpl(clazz);
-          final String description = command.describe(name, DescriptionFormat.DESCRIBE);
+          final String description = command.describe(name, Format.DESCRIBE);
           return new CommandResolution() {
             @Override
             public String getDescription() {

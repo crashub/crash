@@ -35,7 +35,6 @@ import org.crsh.command.RuntimeContext;
 import org.crsh.command.SyntaxException;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
@@ -70,51 +69,40 @@ public abstract class ShellCommand<T> {
    */
   protected abstract Command<?, ?> resolveCommand(InvocationMatch<T> match);
 
-  public final String describe(final InvocationMatch<T> match, DescriptionFormat mode) {
+  public final String describe(final InvocationMatch<T> match, Format format) {
 
     //
     final Command<?, ?> command = resolveCommand(match);
 
     //
-    try {
-      switch (mode) {
-        case DESCRIBE:
-          return match.getDescriptor().getUsage();
-        case MAN: {
-          StringWriter sw = new StringWriter();
-          PrintWriter pw = new PrintWriter(sw);
-          Format.Man man = new Format.Man() {
-            @Override
-            public void printSynopsisSection(CommandDescriptor<?> descriptor, Appendable stream) throws IOException {
-              super.printSynopsisSection(descriptor, stream);
+    if (format instanceof Format.Man) {
+      final Format.Man man = (Format.Man)format;
+      format = new Format.Man() {
+        @Override
+        public void printSynopsisSection(CommandDescriptor<?> descriptor, Appendable stream) throws IOException {
+          man.printSynopsisSection(descriptor, stream);
 
-              // Extra stream section
-              if (match.getDescriptor().getSubordinates().isEmpty()) {
-                stream.append("STREAM\n");
-                stream.append(Util.MAN_TAB);
-                printFQN(descriptor, stream);
-                stream.append(" <").append(command.getConsumedType().getName()).append(", ").append(command.getProducedType().getName()).append('>');
-                stream.append("\n\n");
-              }
-            }
-          };
-          match.getDescriptor().print(man, pw);
-          return sw.toString();
+          // Extra stream section
+          if (match.getDescriptor().getSubordinates().isEmpty()) {
+            stream.append("STREAM\n");
+            stream.append(Util.MAN_TAB);
+            printFQN(descriptor, stream);
+            stream.append(" <").append(command.getConsumedType().getName()).append(", ").append(command.getProducedType().getName()).append('>');
+            stream.append("\n\n");
+          }
         }
-        case USAGE: {
-          StringWriter sw = new StringWriter();
-          PrintWriter pw = new PrintWriter(sw);
-          match.getDescriptor().printUsage(pw);
-          return sw.toString();
-        }
-      }
+      };
+    }
+
+    //
+    try {
+      StringBuffer buffer = new StringBuffer();
+      match.getDescriptor().print(format, buffer);
+      return buffer.toString();
     }
     catch (IOException e) {
       throw new AssertionError(e);
     }
-
-    //
-    return null;
   }
 
   /**
@@ -140,10 +128,10 @@ public abstract class ShellCommand<T> {
    * Returns a description of the command or null if none can be found.
    *
    * @param line the usage line
-   * @param mode the description mode
+   * @param format the description format
    * @return the description
    */
-  public final String describe(String line, DescriptionFormat mode) {
+  public final String describe(String line, Format format) {
     InvocationMatcher<T> analyzer = getDescriptor().matcher();
     InvocationMatch<T> match;
     try {
@@ -152,7 +140,7 @@ public abstract class ShellCommand<T> {
     catch (org.crsh.cli.SyntaxException e) {
       throw new SyntaxException(e.getMessage());
     }
-    return describe(match, mode);
+    return describe(match, format);
   }
 
   /**
