@@ -141,8 +141,11 @@ PARAMETERS
 == Command pipeline
 
 A CRaSH command is able to consume and produce a stream of object, allowing complex interactions between commands
-where they can exchange stream of compatible objets. Such commands are called _pipe_ commands, pipe commands specifies
-two types:
+where they can exchange stream of compatible objets. Such commands are called _pipe_ commands.
+
+=== Pipe commands
+
+A pipe commands is a command that can consume and/or produce two type of objects:
 
 * the _consumed_ type: the type of the object that the command consumes
 * the _produced_ type: the type of the object that the command produces
@@ -154,72 +157,134 @@ Non pipe command consumes the +java.lang.Void+ type and produces the +java.lang.
 commands will discard any input and can produce any kind of object.
 
 The types consumed and produced by a command are documented in the _STREAM_ section of its manual, let's
-read the +thread ls+ manual:
+read the +system propls+ manual:
 
 ----
-% man thread ls
+% man system propls
 NAME
-       thread ls - list the vm threads
+       system propls - list the vm system properties
 
 SYNOPSIS
-       thread [-h | --help] ls [-n | --name] [-g | --group] [-s | --state]
+       system [-h | --help] propls [-f | --filter]
 
 STREAM
-       thread ls <java.lang.Void, java.lang.Thread>
+       system propls <java.lang.Void, java.util.Map>
 
 PARAMETERS
        [-h | --help]
            Display this help message
 
-       [-n | --name]
-           Filter the threads with a glob expression on their name
-
-       [-g | --group]
-           Filter the threads with a glob expression on their group
-
-       [-s | --state]
-           Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)
+       [-f | --filter]
+           filter the property with a regular expression on their name
 ----
 
-The _thread ls_ command is a command that:
+The system propls_ command is a command that:
 
 * consumes no object (+Void+)
-* produces +<Thread>+ objects
+* produces system properties as +<java.util.Map>+ objects with two entries _NAME_ and _VALUE_
 
 Such command is often referred as a _producer_ command as it produces a stream of objects that will
 either be rendered in the shell or consumed by other commands.
 
 Other pipe commands are usually _filters_ because they consumes and produces objects, for instance
-the _thread interrupt_ command consumes +Thread+ objects and produces +Thread+ objects:
+the _filter_ command consumes +Map+ objects and produces +Map+ objects:
 
 ----
-% man thread interrupt
+% man filter
 NAME
-       thread interrupt - interrupt vm threads
+       filter - a filter for a stream of map
 
 SYNOPSIS
-       thread [-h | --help] interrupt <threads>...
+       filter [-p | --pattern] [-h | --help]
 
 STREAM
-       thread interrupt <java.lang.Thread, java.lang.Thread>
-
-DESCRIPTION
-       Interrup VM threads.
+       filter <java.util.Map, java.util.Map>
 
 PARAMETERS
+       [-p | --pattern]
+           format <key>:<value>
+
        [-h | --help]
            Display this help message
-
-       <threads>...
-           the thread ids to interrupt
 ----
 
-This command will interrupt any thread it receives and will produce the same thread, providing opportunity
+This command consumers any map it receives and produces a subset of the maps based on the _pattern_, providing opportunity
 for applying other filters down the road.
 
-This operation can be achieved with the pipe operator `|` and we can naturally combine the +thread ls+ and
-the +thread interrupt+ command together:
+=== Creating a pipeline
+
+This operation can be achieved with the pipe operator `|` and we can combine the +system propls+ and
+the +filter+ command together:
 
 ----
-% thread ls | thread interrupt
+% system propls | filter -p NAME:*Hosts
+
+NAME               VALUE
+---------------------------------------------------------
+http.nonProxyHosts local|*.local|169.254/16|*.169.254/16
+socksNonProxyHosts local|*.local|169.254/16|*.169.254/16
+ftp.nonProxyHosts  local|*.local|169.254/16|*.169.254/16
 ----
+
+This work naturally because we have the same type +Map+ shared by the two commands. When the type
+does not match, several scenarios can happen, depending on the type declared by the piped command:
+
+* +Void+ : all objects are discarded
+* a super type of the produced type : the objects are consumed since they are acceptable by the command
+* +org.crsh.text.Chunk+ : the chunk is an object representing some textual data. In this case the object
++toString()+ method is called and the returning string is transformed into a Chunk object
+
+=== Pipeline commands
+
+Here is a quick overview of various commands that can interract with the object pipe
+
+==== Thread
+
+The +thread+ command manipulates +java.lang.Thread+ objects:
+
+* +thread ls+ : produces threads
+* +thread interrupt+ : interrupts threads
+* +thread stop+ : stop threads
+* +thread dump+ : dump thread stacktrace
+
+==== Log command
+
+The +log+ command manipulates +java.util.logging.Logger+ objects:
+
+* +log ls+ : produces logger objects
+* +log send+ : consumes logger object and sends a message
+* +log tail+ : produces log record objects
+* +log set+ : consumes logger object and sets the log level
++ +log add+ : create new logger and produces them
+
+==== JDBC command
+
+The +jdbc+ command manipulates tables as +java.util.Map+ objects:
+
+* +jdbc select+ : execute a query and produce a stream of map
+* +jdbc props+ : display the connection properties as a single map
+* +jdbc info+ : describe the database as a stream of map
+
+==== System command
+
+* +system propls+ : produces a stream of map with the current system properties
+
+==== Filter command
+
+Filter maps based on value patterns.
+
+==== Sort command
+
+Buffer a stream and sort it based on keys.
+
+==== JMX command
+
+todo.
+
+==== Egrep command
+
+todo.
+
+==== Jvm command
+
+todo.
