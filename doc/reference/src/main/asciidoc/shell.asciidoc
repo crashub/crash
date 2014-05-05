@@ -117,105 +117,109 @@ Typing the command followed by options and arguments will do the job
 Any command help can be displayed by using the -h argument:
 
 ----
-% ls -h
-usage: ls [-h | --help] [-h | --help] [-d | --depth] path
+% help -h
+usage: help [-h | --help]
 
-   [-h | --help]  command usage
-   [-h | --help]  command usage
-   [-d | --depth] Print depth
-   path           the path of the node content to list
+   [-h | --help] this help
 ----
 
 In addition of that, commands can have a complete manual that can be displayed thanks to the +man+ command:
 
 ----
-% man ls
+% man help
 NAME
-       ls - list the content of a node
+       help - provides basic help
 
 SYNOPSIS
-       ls [-h | --help] [-h | --help] [-d | --depth] [-d | --depth] path
-
-DESCRIPTION
-       The ls command displays the content of a node. By default it lists the content of the current node, however it also
-       accepts a path argument that can be absolute or relative.
-
-       [/]% ls
-       /
-       +-properties
-       | +-jcr:primaryType: nt:unstructured
-       | +-jcr:mixinTypes: [exo:owneable,exo:privilegeable]
-       | +-exo:owner: '__system'
-       | +-exo:permissions: [any read,*:/platform/administrators read,*:/platform/administrators add_node,*:/platform/administrators set_property,*:/platform/administrators remove]
-       +-children
-       | +-/workspace
-       | +-/contents
-       | +-/Users
-       | +-/gadgets
-       | +-/folder
-
+       help [-h | --help]
 
 PARAMETERS
        [-h | --help]
-           Provides command usage
-
-       [-h | --help]
-           Provides command usage
-
-       [-d | --depth]
-           Print depth
-
-       path
-           the path of the node content to list
+           Display this help message
 ----
 
-==== Advanced command usage
+== Command pipeline
 
 A CRaSH command is able to consume and produce a stream of object, allowing complex interactions between commands
-where they can exchange stream of compatible objets. Most of the time, JCR nodes are the objects exchanged by the
-commands but any command is free to produce or consume any type.
+where they can exchange stream of compatible objets. Such commands are called _pipe_ commands, pipe commands specifies
+two types:
 
-By default a command that does not support this feature does not consume or produce anything. Such commands usually
-inherits from the +org.crsh.command.ClassCommand+ class that does not care about it. If you look at this class
-you will see it extends the the +org.crsh.command.BaseCommand+.
+* the _consumed_ type: the type of the object that the command consumes
+* the _produced_ type: the type of the object that the command produces
 
-More advanced commands inherits from +org.crsh.command.BaseCommand+ class that specifies two generic types +<C>+
-and +<P>+:
+The Java generic declaration notation is used to denote the command capabilities: +<C, P>+, for instance
+the _filter_ is a +<Map, Map>+ pipe.
 
-* +<C>+ is the type of the object that the command consumes
-* +<P>+ is the type of the object that the command produces
+Non pipe command consumes the +java.lang.Void+ type and produces the +java.lang.Object+ type: +<Void, Object>+ . Such
+commands will discard any input and can produce any kind of object.
 
-The command composition provides two operators:
+The types consumed and produced by a command are documented in the _STREAM_ section of its manual, let's
+read the +thread ls+ manual:
 
-* The pipe operator `|` allows to stream a command output stream to a command input stream
-* The distribution operator `+` allows to distribute an input stream to several commands and to combine the output stream
-of several commands into a single stream.
-
-==== Connecting a +<Void,Node>+ command to a +<Node,Void>+ command through a pipe
-
-.Remove all nt:unstructed nodes
 ----
-% select * from nt:unstructed | rm
+% man thread ls
+NAME
+       thread ls - list the vm threads
+
+SYNOPSIS
+       thread [-h | --help] ls [-n | --name] [-g | --group] [-s | --state]
+
+STREAM
+       thread ls <java.lang.Void, java.lang.Thread>
+
+PARAMETERS
+       [-h | --help]
+           Display this help message
+
+       [-n | --name]
+           Filter the threads with a glob expression on their name
+
+       [-g | --group]
+           Filter the threads with a glob expression on their group
+
+       [-s | --state]
+           Filter the threads by their status (new,runnable,blocked,waiting,timed_waiting,terminated)
 ----
 
-==== Connecting a +<Void,Node>+ command to two +<Node,Void>+ commands through a pipe
+The _thread ls_ command is a command that:
 
-.Update the security of all nt:unstructed nodes
+* consumes no object (+Void+)
+* produces +<Thread>+ objects
+
+Such command is often referred as a _producer_ command as it produces a stream of objects that will
+either be rendered in the shell or consumed by other commands.
+
+Other pipe commands are usually _filters_ because they consumes and produces objects, for instance
+the _thread interrupt_ command consumes +Thread+ objects and produces +Thread+ objects:
+
 ----
-% select * from nt:unstructured | setperm -i any -a read + setperm -i any -a write
+% man thread interrupt
+NAME
+       thread interrupt - interrupt vm threads
+
+SYNOPSIS
+       thread [-h | --help] interrupt <threads>...
+
+STREAM
+       thread interrupt <java.lang.Thread, java.lang.Thread>
+
+DESCRIPTION
+       Interrup VM threads.
+
+PARAMETERS
+       [-h | --help]
+           Display this help message
+
+       <threads>...
+           the thread ids to interrupt
 ----
 
-==== Connecting two +<Void,Node>+ command to a +<Node,Void>+ commands through a pipe
+This command will interrupt any thread it receives and will produce the same thread, providing opportunity
+for applying other filters down the road.
 
-.Add the mixin mix:referenceable to any node of type nt:file or nt:folder
+This operation can be achieved with the pipe operator `|` and we can naturally combine the +thread ls+ and
+the +thread interrupt+ command together:
+
 ----
-% select * from nt:file + select * from nt:folder | addmixin mix:referenceable
+% thread ls | thread interrupt
 ----
-
-==== Mixed cases
-
-When a command does not consume a stream but is involved in a distribution it will not receive any stream but will
-be nevertheless invoked.
-
-Likewise when a command does not produce a stream but is involved in a distribution, it will not produce anything but
-will be nevertheless invoked.
