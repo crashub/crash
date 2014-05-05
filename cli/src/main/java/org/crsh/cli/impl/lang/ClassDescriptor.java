@@ -120,11 +120,6 @@ class ClassDescriptor<T> extends CommandDescriptor<T> {
   }
 
   @Override
-  public Class<T> getType() {
-    return type;
-  }
-
-  @Override
   public Map<String, ? extends MethodDescriptor<T>> getSubordinates() {
     return methods;
   }

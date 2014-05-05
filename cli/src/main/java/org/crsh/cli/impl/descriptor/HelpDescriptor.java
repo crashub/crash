@@ -201,11 +201,6 @@ public class HelpDescriptor<T> extends CommandDescriptor<T> {
   }
 
   @Override
-  public Class<T> getType() {
-    return delegate.getType();
-  }
-
-  @Override
   public CommandDescriptor<T> getOwner() {
     return owner;
   }

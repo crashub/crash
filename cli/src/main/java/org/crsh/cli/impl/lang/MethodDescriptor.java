@@ -46,9 +46,6 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
   /** . */
   private final Method method;
 
-  /** . */
-  private final int size;
-
   public MethodDescriptor(
     ClassDescriptor<T> owner,
     Method method,
@@ -59,7 +56,6 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
     //
     this.owner = owner;
     this.method = method;
-    this.size = method.getParameterTypes().length;
   }
 
   @Override
@@ -79,11 +75,6 @@ class MethodDescriptor<T> extends CommandDescriptor<T> {
 
   public Method getMethod() {
     return method;
-  }
-
-  @Override
-  public Class<T> getType() {
-    return owner.getType();
   }
 
   public CommandInvoker<T, ?> getInvoker(final InvocationMatch<T> match) {

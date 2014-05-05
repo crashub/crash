@@ -168,8 +168,6 @@ public abstract class CommandDescriptor<T> {
     }
   }
 
-  public abstract Class<T> getType();
-
   public abstract CommandDescriptor<T> getOwner();
 
   public final int getDepth() {
