@@ -584,3 +584,323 @@ def age = context.readLine("How old are you?", false);
 
 Finally the +isPiped+, +consume+ and +produce+ methods are used when writing commands that exchange objects via
 the pipe mechanism.
+
+== Object pipeline
+
+One of the most powerful feature of CRaSH is the object pipeline. CRaSH commands can consume and produce objects
+allowing the creation of object pipelines by combining commands. Writing such commands is very easy, in fact
+*any* CRaSH command can be combined in a pipe. Indeed a command that merely prints text, is a command that
+produces character data in the pipe.
+
+=== Producer commands
+
+Until now we have seen how to use annotations of the _cli_ framework to create commands. The logic of
+this kind of command is executed in +@Command+ annotated methods and it produces character data either by
+writing text to the output or by returning a string. Such command is called a _producer_ command because
+it creates a stream of data but does not consume anything. Producer commands can produce other objects
+than text.
+
+Since CRaSH 1.3 the man page of a command gives details about the object it can consume and produce, let's
+look at the man page of the _env_ command:
+
+----
+% man env
+NAME
+       env - display the term env
+
+SYNOPSIS
+       env [-h | --help]
+
+STREAM
+       env <java.lang.Void, java.lang.Object>
+
+PARAMETERS
+       [-h | --help]
+           Display this help message
+----
+
+The _STREAM_ section tells us that the _env_ commands consumes the +Void+ type and produces the +Object+
+type. In fact by default any command is a producer command that can produce any object (+<java.lang.Object>+) and consume
+none (+<java.lang.Void>+).
+
+Producing any object is easy, the command just need to return it, let's see an example
+
+[source,groovy]
+----
+@Command
+Map main() {
+  return  Thread.currentThread()
+}
+----
+
+Let's print its man page:
+
+----
+% man test
+NAME
+       test
+
+SYNOPSIS
+       test [-h | --help]
+
+STREAM
+       test <java.lang.Void, java.lang.Thread>
+
+PARAMETERS
+       [-h | --help]
+           Display this help message
+----
+
+If you invoke you might expect to read +Thread[ppool-1-thread-10,5,main]+ returned by the +Thread#toString()+ method,
+the result is actually quite different:
+
+----
+% test
+ID      NAME                   GROUP           PRIORI STATE   %CPU    TIME    INTERR DAEMON
+37      pool-1-thread-10       main            5      RUNNABL 100     0:0     false  false
+----
+
+The explanation is simple: the thread object is sent in the pipe and hits the end of the pipe. At
+this moment CRaSH render those objects, it can of course use the +toString()+ method however
+specific renderers can be used to produce a more visual result for the user. Thread objects have
+a dedicated render that displays a nice table showing threads.
+
+This example shows that it is easy to produce an object in the pipe, however it produces a single
+object instance. Producing a stream of object can be achieved via the +InvocationContext+ object. A
+command method can declare an +InvocationContext+ among its argument list and use the +provide+ method
+during the invocation of the method
+
+[source,groovy]
+.The threads command list all the threads of the virtual machine
+----
+class threads {
+  @Command
+  void main(InvocationContext<Thread> context) { <1>
+    for (Thread thread : Thread.getAllStackTraces().keySet()) {
+      context.provide(thread); <2>
+    }
+  }
+}
+----
+<1> declares <Thread> as produced type
+<2> send a thread object in the pipe
+
+
+=== Pipe commands
+
+A pipe command declares a consumed type other than the +java.lang.Void+ type. Developing a pipe command
+is easy although it is a bit different from producer commands.
+
+Here is an example of a simple pipe:
+
+[source,groovy]
+.The daemons command filters the thread stream to retain on the daemons
+----
+import org.crsh.command.Pipe;
+
+class daemons {
+  @Command
+  Pipe<Thread, Thread> main() {
+    return new Pipe<Thread, Thread>() {    <1>
+      public void provide(Thread thread) { <2>
+        if (thread.isDaemon()) {
+          context.provide(thread);         <2>
+        }
+      }
+    };
+  }
+}
+----
+<1> A pipe command is a factory for +org.crsh.command.Pipe+ objects
+<2> The +provide+ method is invoked for each object of the stream
+<3> The +context+ object is an +InvocationContext+ used to produce daemon threads
+
+A pipe command is thus a factory for +org.crsh.command.Pipe+ objects, the pipe declaration specifies
+the type consumed and produced by the pipe, in this case the daemon command declares +Thread+ for both
+types.
+
+The +provide+ callback is invoked for each object of the stream, during this invocation, the pipe implementation
+can invoke the +context+ provide method to produce its objects. As our command filters threads to retain only the
+daemon threads, this is done only for daemon threads.
+
+Now let's continue our tour and write a pipe command that counts the number of objects in a pipe. This example
+is interesting because it demonstrates:
+
+* different consumed and produced types can be used
+* objects can be produced in the close method of the pipe
+
+[source,groovy]
+----
+import org.crsh.command.Pipe;
+
+class count {
+  @Command
+  Pipe<Object, Integer> main() {
+    return new Pipe<Object, Integer>() {
+      int value = 0;
+      public void provide(Object o) {
+        value++; <1>
+      }
+      public void close() {
+        context.provide(value); <2>
+      }
+    };
+  }
+}
+----
+<1> count the number of consumed objects
+<2> before closing we produce the count value
+
+Now we can combine those three commands to count the number of daemon threads:
+
+----
+% threads | daemons | count
+6
+----
+
+== Command interruption
+
+During the execution of a command, sometimes the user wants to interrupt the execution of the
+command, specially for long lived commands. The _ctrl-c_ keystroke in the shell will trigger
+a thread interruption during the execution a command.
+
+If you command thread is in the waiting state, an +InterruptedException+ will be thrown otherwise
+  you can check the current thread status with +Thread.interrupted()+ static method:
+
+[source,groovy]
+----
+class clock {
+  @Command
+  Object main(InvocationContext<Date> context) {
+    while (!Thread.interrupted()) { <1>
+       context.provide(new Date());
+       context.flush();
+       try {
+         Thread.sleep(1000); <2>
+       } catch (InterruptedException e) {
+         Thread.currentThread().interrupt(); <3>
+         break;
+       }
+    }
+  }
+}
+----
+<1> check the thread has not been interrupted
+<2> sleep for 1 second
+<3> the command was interrupted while sleeping
+
+This producer command produces the current time in the object stream until the user interrupts
+it.
+
+----
+% clock
+Tue May 06 22:27:55 CEST 2014Tue May 06 22:27:56 CEST 2014Tue May 06 22:27:57 CEST 2014Tue May 06 22:27:58 CEST 2014Tue May 06 22:27:59 CEST 2014Tue May 06 22:28:00 CEST 2014Tue May 06 22:28:01 CEST 2014Tue May 06 22:28:02 CEST 2014Tue May 06 22:28:03 CEST 2014
+^C
+
+%
+----
+
+== Keyboard interactions
+
+A command can interact with the keyboard in two manners, either by reading a line (synchronous api) or by
+reacting to keyboard events (asynchronous api).
+
+=== Reading a line
+
+When a command needs to interact with they user to get input, it can use the +InvocationContext#readLine()+ method to
+prompt the user for a line of text.
+
+[source,groovy]
+----
+String line = context.readLine("tell me something", false);
+if (line != null) {
+  out.println("You wrote " + line);
+}
+----
+
+The returned line may be null sometimes so the command should handle this case properly.
+For instance, if the user intertupts the command while reading the line, then the line is null. Reading
+ a line is synchronous and blocking until the users hits the _enter_ key or interrupts the command.
+
+=== Keyboard events
+
+A command can also react to keyboard events by implementing the +org.crsh.console.KeyHandler+ interface. Our
+previous clock example could be rewritten using this API:
+
+[source,groovy]
+----
+import org.crsh.console.KeyHandler;
+import org.crsh.console.KeyType;
+
+class clock implements KeyHandler {
+
+  final AtomicBoolean done = new AtomicBoolean(false);
+
+  @Override
+  void handle(KeyType type, int[] sequence) {
+    if (type == KeyType.q) {
+      done.set(true);
+    }
+  }
+
+  @Command
+  Object main(InvocationContext<Date> context) {
+    while (!done.get()) {
+       context.provide(new Date());
+       context.flush();
+       try {
+         Thread.sleep(1000);
+       } catch (InterruptedException e) {
+       }
+    }
+  }
+}
+----
+
+This command will stream until the user hits the _q_ key.
+
+== Renderers
+
+We studied previously CRaSH object pipe: command push objects into the stream, when an object hits the
+end of the pipeline, it is printed on the user console. For character data, printing it an obvious operation.
+For other objects, the _renderer_ api can provide customized textual representation of the object.
+
+The _renderer_ api makes also writing command easier: a command can focus on the business part and just
+send objects in the pipe, if there is an appropriate renderer for it, it will be displayed nicely:
+
+[source,groovy]
+----
+class developers {
+  @Command
+  void main(InvocationContext<Map> context) {
+    context.provide([firstName:"Julien",lastName:"Viet"]);
+    context.provide([firstName:"Alain",lastName:"Defrance"]);
+    context.provide([firstName:"Arnaud",lastName:"Heritier"]);
+  }
+}
+----
+
+The _map_ renderer will format these three maps as a table:
+
+----
+% date
+firstName lastName
+------------------
+Julien    Viet
+Alain     Defrance
+Arnaud    Heritier
+----
+
+=== Predefined renderers
+
+CRaSH provides a few renderers out of the box:
+
+* LoggerRenderer : +java.util.logging.Logger+ objects
+* LogRecordRenderer : +java.util.logging.LogRecord+ objects
+* ThreadRenderer : +java.lang.Thread+ objects
+* MapRenderer : +java.util.Map+ objects
+* MemoryUsageRenderer : +java.lang.management.MemoryUsage+ objects
+
+=== Implementing a renderer
+
+Renderer implementation is not covered yet.
