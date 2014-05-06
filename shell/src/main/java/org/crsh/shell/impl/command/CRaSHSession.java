@@ -22,26 +22,18 @@ import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
-import org.crsh.console.KeyHandler;
 import org.crsh.lang.script.ScriptRepl;
 import org.crsh.plugin.PluginContext;
 import org.crsh.repl.Repl;
 import org.crsh.repl.ReplSession;
-import org.crsh.shell.ErrorType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
-import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.repl.EvalResponse;
 import org.crsh.shell.impl.command.spi.CommandManager;
-import org.crsh.text.Text;
-import org.crsh.util.Utils;
 
 import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -185,81 +177,10 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
         response = rr.response;
       } else {
         final CommandInvoker<Void, ?> pipeLine = ((EvalResponse.Invoke)r).invoker;
-        return new CRaSHProcess(this, request) {
-
-          @Override
-          public KeyHandler getKeyHandler() {
-            return pipeLine.getKeyHandler();
-          }
-
-          @Override
-          ShellResponse doInvoke(final ShellProcessContext context) throws InterruptedException {
-            CRaSHProcessContext invocationContext = new CRaSHProcessContext(CRaSHSession.this, context);
-            try {
-              pipeLine.invoke(invocationContext);
-              return ShellResponse.ok();
-            }
-            catch (ScriptException e) {
-              return build(e);
-            } catch (Throwable t) {
-              return build(t);
-            } finally {
-              Utils.close(invocationContext);
-            }
-          }
-
-          private ShellResponse.Error build(Throwable throwable) {
-            ErrorType errorType;
-            if (throwable instanceof ScriptException || throwable instanceof UndeclaredThrowableException) {
-              errorType = ErrorType.EVALUATION;
-              Throwable cause = throwable.getCause();
-              if (cause != null) {
-                throwable = cause;
-              }
-            } else {
-              errorType = ErrorType.INTERNAL;
-            }
-            String result;
-            String msg = throwable.getMessage();
-            if (throwable instanceof ScriptException) {
-              if (msg == null) {
-                result = request + ": failed";
-              } else {
-                result = request + ": " + msg;
-              }
-              return ShellResponse.error(errorType, result, throwable);
-            } else {
-              if (msg == null) {
-                msg = throwable.getClass().getSimpleName();
-              }
-              if (throwable instanceof RuntimeException) {
-                result = request + ": exception: " + msg;
-              } else if (throwable instanceof Exception) {
-                result = request + ": exception: " + msg;
-              } else if (throwable instanceof java.lang.Error) {
-                result = request + ": error: " + msg;
-              } else {
-                result = request + ": unexpected throwable: " + msg;
-              }
-              return ShellResponse.error(errorType, result, throwable);
-            }
-          }
-        };
+        return new CRaSHCommandProcess(this, request, pipeLine);
       }
     }
-    return new CRaSHProcess(this, request) {
-      @Override
-      ShellResponse doInvoke(ShellProcessContext context) throws InterruptedException {
-        if (msg.length() > 0) {
-          try {
-            context.write(Text.create(msg));
-          }
-          catch (IOException ignore) {
-          }
-        }
-        return response;
-      }
-    };
+    return new CRaSHResponseProcess(this, request, msg, response);
   }
 
   /**
@@ -285,4 +206,5 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   void setPreviousLoader(ClassLoader previous) {
     Thread.currentThread().setContextClassLoader(previous);
   }
+
 }
