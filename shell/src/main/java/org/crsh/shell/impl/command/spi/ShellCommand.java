@@ -35,7 +35,6 @@ import org.crsh.command.RuntimeContext;
 import org.crsh.command.SyntaxException;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +149,10 @@ public abstract class ShellCommand<T> {
    * @return the command
    */
   public final CommandInvoker<?, ?> resolveInvoker(String line) throws CommandCreationException {
+    return resolveCommand(line).getInvoker();
+  }
+
+  public final Command<?, ?> resolveCommand(String line) throws CommandCreationException {
     CommandDescriptor<T> descriptor = getDescriptor();
     InvocationMatcher<T> analyzer = descriptor.matcher();
     InvocationMatch<T> match;
@@ -159,7 +162,7 @@ public abstract class ShellCommand<T> {
     catch (org.crsh.cli.SyntaxException e) {
       throw new SyntaxException(e.getMessage());
     }
-    return resolveCommand(match).getInvoker();
+    return resolveCommand(match);
   }
 
   /**

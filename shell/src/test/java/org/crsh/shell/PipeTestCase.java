@@ -20,8 +20,11 @@
 package org.crsh.shell;
 
 import org.crsh.command.ScriptException;
+import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.text.ChunkBuffer;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -237,6 +240,46 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
+  }
+
+  public void testReturnedObjectByJavaIsProduced() throws Exception {
+    lifeCycle.bindClass("producer", Commands.ReturnInteger.class);
+    lifeCycle.bindClass("consumer", Commands.ConsumeInteger.class);
+    Commands.list.clear();
+    assertOk("producer | consumer");
+    assertEquals(Arrays.<Object>asList(3), Commands.list);
+    ShellCommand<?> producer = shell.getCommand("producer");
+    Command<?, ?> command = producer.resolveCommand("");
+    assertEquals(Integer.class, command.getProducedType());
+  }
+
+  public void testReturnedObjectByGroovyIsProduced() throws Exception {
+    lifeCycle.bindGroovy("producer", "" +
+        "class producer {\n" +
+        "    @Command\n" +
+        "    public Integer main() {\n" +
+        "      context.session['class'] = getClass();\n" +
+        "      return 3;\n" +
+        "    }\n" +
+        "  }\n");
+    lifeCycle.bindClass("consumer", Commands.ConsumeInteger.class);
+    Commands.list.clear();
+    assertOk("producer | consumer");
+    assertEquals(Arrays.<Object>asList(3), Commands.list);
+    ShellCommand<?> producer = shell.getCommand("producer");
+    Command<?, ?> command = producer.resolveCommand("");
+    assertEquals(Integer.class, command.getProducedType());
+  }
+
+  public void testReturnedObjectByGroovyScriptIsProduced() throws Exception {
+    lifeCycle.bindGroovy("producer", "return 3");
+    lifeCycle.bindClass("consumer", Commands.ConsumeInteger.class);
+    Commands.list.clear();
+    assertOk("producer | consumer");
+    assertEquals(Arrays.<Object>asList(3), Commands.list);
+    ShellCommand<?> producer = shell.getCommand("producer");
+    Command<?, ?> command = producer.resolveCommand("");
+    assertEquals(Object.class, command.getProducedType());
   }
 
   public void testConsumerThrowsScriptExceptionInProvide() throws Exception {

@@ -139,6 +139,13 @@ public class Commands {
     }
   }
 
+  public static class ReturnInteger extends BaseCommand {
+    @Command
+    public Integer main() {
+      return 3;
+    }
+  }
+
   public static class ConsumeInteger extends BaseCommand {
     @Command
     public Pipe<Integer, Object> main() {

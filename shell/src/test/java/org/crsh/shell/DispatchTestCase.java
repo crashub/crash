@@ -176,7 +176,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String foo = "try {" +
         "checked_exception_command()" +
         "} catch(javax.naming.NamingException e) {\n" +
-        "return 'bar'\n" +
+        "out << 'bar'\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);
     lifeCycle.bindClass("checked_exception_command", Commands.ThrowCheckedException.class);
@@ -207,7 +207,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String foo = "try {" +
         "script_exception_command()" +
         "} catch(org.crsh.command.ScriptException e) {\n" +
-        "return 'bar'\n" +
+        "out << 'bar'\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);
     lifeCycle.bindClass("script_exception_command", Commands.ThrowScriptException.class);
@@ -238,7 +238,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String foo = "try {" +
         "groovy_script_exception_command()" +
         "} catch(org.crsh.command.ScriptException e) {\n" +
-        "return 'bar'\n" +
+        "out << 'bar'\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);
     lifeCycle.bindGroovyClass("groovy_script_exception_command", Commands.ThrowGroovyScriptException.class);
@@ -269,7 +269,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String foo = "try {" +
         "runtime_exception_command()" +
         "} catch(java.lang.SecurityException e) {\n" +
-        "return 'bar'\n" +
+        "out << 'bar'\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);
     lifeCycle.bindClass("runtime_exception_command", Commands.ThrowRuntimeException.class);
@@ -300,7 +300,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String foo = "try {" +
         "error_command()" +
         "} catch(java.awt.AWTError e) {\n" +
-        "return 'bar'\n" +
+        "out << 'bar'\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);
     lifeCycle.bindClass("error_command", Commands.ThrowError.class);
@@ -331,7 +331,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
     String foo = "try {\n" +
         "cannot_create_command()" +
         "} catch (org.crsh.command.CommandCreationException e) {\n" +
-        "return 'bar';\n" +
+        "out << 'bar';\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);
     lifeCycle.bindClass("cannot_create_command", Commands.CannotInstantiate.class);

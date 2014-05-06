@@ -82,11 +82,16 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
     // Do we have a pipe command or not ?
     if (Pipe.class.isAssignableFrom(invoker.getReturnType())) {
       org.crsh.cli.impl.invocation.CommandInvoker tmp = invoker;
-      return getPipedCommandInvoker(tmp);
+      return getPipeInvoker(tmp);
     } else {
 
-      // A priori it could be any class
-      Class<?> producedType = Object.class;
+      // Determine the produced type
+      Class<?> producedType;
+      if (void.class.equals(invoker.getReturnType())) {
+        producedType = Object.class;
+      } else {
+        producedType = invoker.getReturnType();
+      }
 
       // Override produced type from InvocationContext<P> if any
       if (invoker instanceof ObjectCommandInvoker) {
@@ -103,7 +108,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
       }
 
       //
-      return getInvoker(invoker, producedType);
+      return getProducerInvoker(invoker, producedType);
     }
   }
 
@@ -149,7 +154,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
     return command;
   }
 
-  private <C, P, PC extends Pipe<C, P>> Command<C, P> getPipedCommandInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, PC> invoker) {
+  private <C, P, PC extends Pipe<C, P>> Command<C, P> getPipeInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, PC> invoker) {
     return new Bilto<T, C, P>(this) {
 
       /** . */
@@ -267,7 +272,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
     };
   }
 
-  private <P> Command<Void, P> getInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, ?> invoker, final Class<P> producedType) {
+  private <P> Command<Void, P> getProducerInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, ?> invoker, final Class<P> producedType) {
     return new Bilto<T, Void, P>(this) {
 
       @Override
@@ -289,6 +294,9 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
       CommandInvoker<Void, P> getInvoker(final org.crsh.cli.impl.lang.InvocationContext<T> context) throws CommandCreationException {
         return new CommandInvoker<Void, P>() {
 
+          /** . */
+          private InvocationContext<P> invocationContext;
+
           public Class<P> getProducedType() {
             return producedType;
           }
@@ -306,7 +314,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
           public void open2(final CommandContext<P> consumer) {
 
             //
-            final InvocationContextImpl<P> invocationContext = new InvocationContextImpl<P>(consumer);
+            invocationContext = new InvocationContextImpl<P>(consumer);
 
             // Push context
             context.getInstance().pushContext(invocationContext);
@@ -346,15 +354,16 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
             }
 
             //
-            if (ret != null) {
-              context.getInstance().peekContext().getWriter().print(ret);
+            if (ret != null && producedType.isInstance(ret)) {
+              P produced = producedType.cast(ret);
+              invocationContext.provide(produced);
             }
 
             //
-            InvocationContext<?> ctx = context.getInstance().popContext();
-            ctx.flush();
-            ctx.close();
+            invocationContext.flush();
+            invocationContext.close();
             context.getInstance().unmatched = null;
+            invocationContext = null;
           }
         };
       }

@@ -23,13 +23,15 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.crsh.AbstractTestCase;
 import org.crsh.command.BaseCommand;
+import org.crsh.command.InvocationContext;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.command.SyntaxException;
 
 import java.util.Arrays;
 
-public class InvocationContextTestCase extends TestCase {
+public class InvocationContextTestCase extends AbstractTestCase {
 
 
   /** . */
@@ -70,7 +72,9 @@ public class InvocationContextTestCase extends TestCase {
       "}");
 
     //
-    assertEquals("abc", new TestInvocationContext().execute(clazz, "-s", "abc"));
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute(clazz, "-s", "abc");
+    assertEquals(Arrays.asList("abc"), ctx.getProducedItems());
     try {
       new TestInvocationContext().execute(clazz);
       fail();
@@ -90,7 +94,8 @@ public class InvocationContextTestCase extends TestCase {
     //
     TestInvocationContext<Void> ctx = new TestInvocationContext<Void>();
     ctx.getSession().put("juu", "daa");
-    assertEquals("daa", ctx.execute(clazz));
+    ctx.execute(clazz);
+    assertEquals(Arrays.<Object>asList("daa"), ctx.getProducedItems());
   }
 
   public void testArgumentInjectionInCommandCmdLine() throws Exception {
@@ -102,7 +107,9 @@ public class InvocationContextTestCase extends TestCase {
       "}");
 
     //
-    assertEquals("b", new TestInvocationContext().execute(clazz, "b"));
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute(clazz, "b");
+    assertEquals(Arrays.asList("b"), ctx.getProducedItems());
   }
 
   public void testMainInCommandCmdLine() throws Exception {
@@ -114,7 +121,9 @@ public class InvocationContextTestCase extends TestCase {
       "}");
 
     //
-    assertEquals("foo", new TestInvocationContext().execute(clazz));
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute(clazz);
+    assertEquals(Arrays.asList("foo"), ctx.getProducedItems());
   }
 
   public void testContextAccessInCommandClass() throws Exception {
@@ -130,7 +139,8 @@ public class InvocationContextTestCase extends TestCase {
     ctx.getSession().put("bar", "bar_value");
 
     // Execute directly
-    assertEquals("bar_value", ctx.execute(clazz));
+    ctx.execute(clazz);
+    assertEquals(Arrays.asList("bar_value"), ctx.getProducedItems());
   }
 
   public void testClosureInvocationInClass() throws Exception {
@@ -147,7 +157,8 @@ public class InvocationContextTestCase extends TestCase {
     ctx.getSession().put("bar", closure);
 
     // Execute directly
-    assertEquals("from_closure", ctx.execute(clazz));
+    ctx.execute(clazz);
+    assertEquals(Arrays.asList("from_closure"), ctx.getProducedItems());
   }
 
   public void testArgumentQuoteInClass() throws Exception {
@@ -159,7 +170,9 @@ public class InvocationContextTestCase extends TestCase {
       "}\n");
 
     // Execute directly
-    assertEquals("" + Arrays.asList("foo"), new TestInvocationContext().execute(clazz, "'foo'"));
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute(clazz, "'foo'");
+    assertEquals(Arrays.<Object>asList(Arrays.asList("foo")), ctx.getProducedItems());
   }
 
   public void testArgumentQuoteInClass2() throws Exception {
@@ -171,52 +184,74 @@ public class InvocationContextTestCase extends TestCase {
       "}\n");
 
     // Execute directly
-    assertEquals("" + Arrays.asList("'foo'"), new TestInvocationContext().execute(clazz, "'foo'"));
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute(clazz, "'foo'");
+    assertEquals(Arrays.<Object>asList(Arrays.asList("'foo'")), ctx.getProducedItems());
   }
 
   public void testContextAccessInScript() throws Exception {
     Class<? extends GroovyScriptCommand> clazz = loader.parseClass("System.out.println('bar:' + bar) ; return bar;");
     TestInvocationContext ctx = new TestInvocationContext();
     ctx.getSession().put("bar", "bar_value");
-    assertEquals("bar_value", ctx.execute2(clazz));
+    ctx.execute2(clazz);
+    assertEquals(Arrays.asList("bar_value"), ctx.getProducedItems());
   }
 
   public void testArgumentAccessInScript() throws Exception {
     Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("return args[0];");
-    assertEquals("arg_value", new TestInvocationContext().execute2(clazz, "arg_value"));
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute2(clazz, "arg_value");
+    assertEquals(Arrays.asList("arg_value"), ctx.getProducedItems());
   }
 
   public void testArgumentAccessInClosure() throws Exception {
-    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("{ arg -> return arg };");
-    assertEquals("arg_value", new TestInvocationContext().execute2(clazz, "arg_value"));
+    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("{ arg -> context.provide(arg) };");
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute2(clazz, "arg_value");
+    assertEquals(Arrays.asList("arg_value"), ctx.getProducedItems());
   }
 
   public void testResolveContext() throws Exception {
     Class<? extends BaseCommand> clazz = loader.parseClass("class foo {\n" +
       "@Command\n" +
       "public Object main() {\n" +
-      "return context.class.name;\n" +
+      "return context;\n" +
       "}\n" +
       "}\n");
 
     // Execute directly
     TestInvocationContext context = new TestInvocationContext();
-    assertNotNull(context.execute(clazz));
+    context.execute(clazz);
+    assertEquals(1, context.getProducedItems().size());
+    assertInstance(InvocationContext.class, context.getProducedItems().get(0));
   }
 
   public void testResolveContextInScript() throws Exception {
-    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("return context.class.name");
+    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("return context");
     TestInvocationContext context = new TestInvocationContext();
-    assertNotNull(context.execute2(clazz));
+    context.execute2(clazz);
+    assertEquals(1, context.getProducedItems().size());
+    assertInstance(InvocationContext.class, context.getProducedItems().get(0));
   }
 
   public void testScriptUseReturnValue() throws Exception {
     Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("return 'def'");
-    assertEquals("def", new TestInvocationContext().execute2(clazz));
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute2(clazz);
+    assertEquals(Arrays.asList("def"), ctx.getProducedItems());
   }
 
-  public void testScriptDiscardReturnValue() throws Exception {
-    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("out << 'abc'\nreturn 'def'");
-    assertEquals("abc", new TestInvocationContext().execute2(clazz));
+  public void testScriptDiscardImplicitReturnValue() throws Exception {
+    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("def a = 'def'");
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute2(clazz);
+    assertEquals(0, ctx.getProducedItems().size());
+  }
+
+  public void testScriptReturnExplicitReturnValue() throws Exception {
+    Class<? extends GroovyScriptCommand>  clazz = loader.parseClass("return 'def'");
+    TestInvocationContext ctx = new TestInvocationContext();
+    ctx.execute2(clazz);
+    assertEquals(Arrays.asList("def"), ctx.getProducedItems());
   }
 }
