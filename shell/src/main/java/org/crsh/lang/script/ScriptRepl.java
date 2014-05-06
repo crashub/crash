@@ -21,7 +21,7 @@ package org.crsh.lang.script;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
-import org.crsh.command.BaseRuntimeContext;
+import org.crsh.shell.impl.command.RuntimeContextImpl;
 import org.crsh.command.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
@@ -117,7 +117,7 @@ public class ScriptRepl implements Repl {
       try {
         ShellCommand<?> command = session.getCommand(commandName);
         if (command != null) {
-          completion = command.complete(new BaseRuntimeContext(session, session.getContext().getAttributes()), termPrefix);
+          completion = command.complete(new RuntimeContextImpl(session, session.getContext().getAttributes()), termPrefix);
         } else {
           completion = new CompletionMatch(Delimiter.EMPTY, Completion.create());
         }

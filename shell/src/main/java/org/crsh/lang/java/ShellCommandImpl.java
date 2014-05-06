@@ -29,7 +29,7 @@ import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.InvocationContext;
-import org.crsh.shell.impl.command.spi.InvocationContextImpl;
+import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.command.Pipe;
 import org.crsh.command.RuntimeContext;
 import org.crsh.command.SyntaxException;

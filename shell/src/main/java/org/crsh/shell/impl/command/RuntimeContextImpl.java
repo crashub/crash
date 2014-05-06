@@ -17,11 +17,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
+package org.crsh.shell.impl.command;
+
+import org.crsh.command.RuntimeContext;
 
 import java.util.Map;
 
-public class BaseRuntimeContext implements RuntimeContext {
+public class RuntimeContextImpl implements RuntimeContext {
 
   /** . */
   private final Map<String, Object> session;
@@ -29,7 +31,7 @@ public class BaseRuntimeContext implements RuntimeContext {
   /** . */
   private final Map<String, Object> attributes;
 
-  public BaseRuntimeContext(Map<String, Object> session, Map<String, Object> attributes) {
+  public RuntimeContextImpl(Map<String, Object> session, Map<String, Object> attributes) {
     this.session = session;
     this.attributes = attributes;
   }

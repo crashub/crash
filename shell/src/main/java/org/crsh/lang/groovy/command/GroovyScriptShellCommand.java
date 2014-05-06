@@ -31,7 +31,7 @@ import org.crsh.command.CommandCreationException;
 import org.crsh.lang.groovy.ast.ScriptLastStatementTransformer;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.shell.impl.command.spi.InvocationContextImpl;
+import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.shell.ErrorType;

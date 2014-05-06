@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.impl.command.spi;
+package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandCreationException;
@@ -25,8 +25,8 @@ import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.lang.script.Token;
 import org.crsh.shell.ScreenContext;
-import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.lang.script.PipeLineFactory;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.util.Utils;

@@ -23,10 +23,10 @@ import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
 import org.crsh.lang.java.ShellCommandImpl;
 import org.crsh.io.Consumer;
+import org.crsh.shell.impl.command.RuntimeContextImpl;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
-import org.crsh.command.BaseRuntimeContext;
 import org.crsh.lang.groovy.command.GroovyScriptCommand;
 import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
 import org.crsh.text.Chunk;
@@ -35,7 +35,7 @@ import org.crsh.text.ChunkBuffer;
 import java.io.IOException;
 import java.util.*;
 
-public class TestInvocationContext<C> extends BaseRuntimeContext implements CommandContext<Object> {
+public class TestInvocationContext<C> extends RuntimeContextImpl implements CommandContext<Object> {
 
   /** . */
   protected List<Object> producedItems;
