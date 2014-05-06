@@ -22,7 +22,7 @@ import groovy.lang.GroovyObjectSupport;
 import groovy.lang.GroovyRuntimeException;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.command.CommandContext;
-import org.crsh.command.InvocationContextImpl;
+import org.crsh.shell.impl.command.spi.InvocationContextImpl;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;

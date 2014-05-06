@@ -17,15 +17,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.command;
+package org.crsh.shell.impl.command.spi;
 
+import org.crsh.command.CommandContext;
+import org.crsh.command.CommandCreationException;
+import org.crsh.command.InvocationContext;
+import org.crsh.command.ScriptException;
 import org.crsh.lang.script.Token;
 import org.crsh.shell.ScreenContext;
 import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.lang.script.PipeLineFactory;
-import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
+import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -33,13 +37,26 @@ import java.util.Map;
 public final class InvocationContextImpl<P> implements InvocationContext<P> {
 
   /** . */
+  private static final int WRITTEN = 0;
+
+  /** . */
+  private static final int FLUSHED = 1;
+
+  /** . */
+  private static final int CLOSED = 2;
+
+  /** . */
   private final CommandContext<P> commandContext;
 
   /** . */
   private RenderPrintWriter writer;
 
+  /** . */
+  int status;
+
   public InvocationContextImpl(CommandContext<P> commandContext) {
     this.commandContext = commandContext;
+    this.status = FLUSHED;
   }
 
   public boolean isPiped() {
@@ -50,16 +67,16 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     if (writer == null) {
       writer = new RenderPrintWriter(new ScreenContext() {
         public int getWidth() {
-          return commandContext.getWidth();
+          return InvocationContextImpl.this.getWidth();
         }
         public int getHeight() {
-          return commandContext.getHeight();
+          return InvocationContextImpl.this.getHeight();
         }
         public void write(Chunk chunk) throws IOException {
-          commandContext.write(chunk);
+          InvocationContextImpl.this.write(chunk);
         }
         public void flush() throws IOException {
-          commandContext.flush();
+          InvocationContextImpl.this.flush();
         }
       });
     }
@@ -107,19 +124,32 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
   }
 
   public void write(Chunk chunk) throws IOException {
-    commandContext.write(chunk);
+    if (status != CLOSED) {
+      status = WRITTEN;
+      commandContext.write(chunk);
+    }
   }
 
   public void provide(P element) throws IOException {
-    commandContext.provide(element);
+    if (status != CLOSED) {
+      status = WRITTEN;
+      commandContext.provide(element);
+    }
   }
 
   public void flush() throws IOException {
-    commandContext.flush();
+    if (status == WRITTEN) {
+      status = FLUSHED;
+      commandContext.flush();
+    }
   }
 
   public void close() throws IOException {
-    commandContext.close();
+    if (status != CLOSED) {
+      Utils.flush(this);
+      status = CLOSED;
+      Utils.close(commandContext);
+    }
   }
 
   public Map<String, Object> getSession() {
@@ -131,9 +161,10 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
   }
 
   public InvocationContextImpl<P> leftShift(Object o) throws IOException {
-    if (commandContext.getConsumedType().isInstance(o)) {
-      P p = commandContext.getConsumedType().cast(o);
-      commandContext.provide(p);
+    Class<P> consumedType = getConsumedType();
+    if (consumedType.isInstance(o)) {
+      P p = consumedType.cast(o);
+      provide(p);
     }
     return this;
   }

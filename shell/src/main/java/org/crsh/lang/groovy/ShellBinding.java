@@ -21,7 +21,7 @@ package org.crsh.lang.groovy;
 import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandCreationException;
-import org.crsh.command.InvocationContextImpl;
+import org.crsh.shell.impl.command.spi.InvocationContextImpl;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.groovy.closure.PipeLineClosure;
 import org.crsh.repl.ReplSession;

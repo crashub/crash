@@ -29,7 +29,7 @@ import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
 import org.crsh.command.CommandCreationException;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.InvocationContextImpl;
+import org.crsh.shell.impl.command.spi.InvocationContextImpl;
 import org.crsh.command.Pipe;
 import org.crsh.command.RuntimeContext;
 import org.crsh.command.SyntaxException;
@@ -186,6 +186,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
         return new CommandInvoker<C, P>() {
 
           Pipe<C, P> real;
+          InvocationContext<P> invocationContext;
 
           public Class<P> getProducedType() {
             return producedType;
@@ -213,7 +214,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
           public void open2(final CommandContext<P> consumer) {
 
             //
-            final InvocationContextImpl<P> invocationContext = new InvocationContextImpl<P>(consumer);
+            invocationContext = new InvocationContextImpl<P>(consumer);
 
             // Push context
             context.getInstance().pushContext(invocationContext);
@@ -249,23 +250,28 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
             if (real != null) {
               real.flush();
             } else {
-              context.getInstance().peekContext().flush();
+              invocationContext.flush();
             }
           }
 
           public void close() throws IOException {
-            if (real != null) {
-              try {
-                real.close();
+            T instance = context.getInstance();
+            try {
+              if (real != null) {
+                try {
+                  real.close();
+                }
+                finally {
+                  Utils.close(invocationContext);
+                }
+              } else {
+                Utils.close(invocationContext);
               }
-              finally {
-                context.getInstance().popContext();
-              }
-            } else {
-              InvocationContext<?> ctx = context.getInstance().popContext();
-              ctx.close();
             }
-            context.getInstance().unmatched = null;
+            finally {
+              instance.popContext();
+              instance.unmatched = null;
+            }
           }
         };
       }

@@ -99,6 +99,36 @@ public class Commands {
     }
   }
 
+  public static class Id extends BaseCommand {
+    @Command
+    public Pipe<Object, Object> main() {
+      return new Pipe<Object, Object>() {
+        @Override
+        public void provide(Object element) throws ScriptException, IOException {
+          context.provide(element);
+        }
+      };
+    }
+  }
+
+  public static class Count extends BaseCommand {
+    @Command
+    public Pipe<Object, Integer> main() {
+      return new Pipe<Object, Integer>() {
+        int count = 0;
+        @Override
+        public void provide(Object element) throws ScriptException, IOException {
+          System.out.println("getClass().getName() = " + getClass().getName());
+          count++;
+        }
+        @Override
+        public void close() throws ScriptException, IOException {
+          context.provide(count);
+        }
+      };
+    }
+  }
+
   public static class Buffer extends BaseCommand {
     @Command
     public Pipe<String, String> main() {

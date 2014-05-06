@@ -85,6 +85,7 @@ public abstract class Pipe<C, P> implements Filter<C, P, InvocationContext<P>> {
    *
    * @throws ScriptException any script exception
    */
-  public void close() throws ScriptException {
+  public void close() throws ScriptException, IOException {
+    context.close();
   }
 }

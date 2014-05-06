@@ -24,7 +24,7 @@ import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.CommandContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.command.InvocationContextImpl;
+import org.crsh.shell.impl.command.spi.InvocationContextImpl;
 import org.crsh.lang.groovy.closure.PipeLineInvoker;
 import org.crsh.repl.EvalResponse;
 import org.crsh.repl.Repl;

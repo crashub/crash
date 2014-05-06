@@ -136,7 +136,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     //
     Commands.list.clear();
     assertOk("producer | consumer");
-    assertEquals(Arrays.asList("open"), Commands.list);
+    assertEquals(Arrays.<Object>asList("open", "close"), Commands.list);
   }
 
   public void testPropagateFlush() throws Exception {
@@ -146,7 +146,9 @@ public class PipeTestCase extends AbstractCommandTestCase {
         "  public org.crsh.command.Pipe<Object, Object> main() {\n" +
         "    return new org.crsh.command.Pipe<Object, Object>() {\n" +
         "      public void open() {\n" +
+        "        context.provide(\"whatever\");\n" +
         "        context.flush();\n" +
+        "        context.provide(\"whatever\");\n" +
         "      }\n" +
         "    };\n" +
         "  }\n" +
@@ -173,7 +175,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
 
     // Producer flush
     // Before close flush
-    assertEquals(Arrays.asList("flush", "flush"), Commands.list);
+    assertEquals(Arrays.<Object>asList("flush", "flush"), Commands.list);
   }
 
   public void testProvideInFlush() throws Exception {
@@ -324,6 +326,17 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("produce_command | f | consume_command");
     assertEquals(2, Commands.list.size());
+  }
+
+  public void testBug() {
+    lifeCycle.bindClass("a", Commands.ProduceString.class);
+    lifeCycle.bindClass("b", Commands.Id.class);
+    lifeCycle.bindClass("c", Commands.Count.class);
+    String result = assertOk("a | b | c");
+    System.out.println("result = " + result);
+    System.out.println("result = " + result);
+    System.out.println("result = " + result);
+    System.out.println("result = " + result);
   }
 
   public void testPipeEOL() {
