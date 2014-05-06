@@ -29,7 +29,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.command.spi.ShellCommand;

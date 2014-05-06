@@ -23,7 +23,7 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;

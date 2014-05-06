@@ -22,7 +22,7 @@ import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.command.SyntaxException;

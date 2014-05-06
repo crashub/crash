@@ -22,7 +22,7 @@ package org.crsh.shell.impl.command;
 import org.crsh.cli.descriptor.Format;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.java.ShellCommandImpl;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
@@ -99,7 +99,7 @@ public class CRaSH {
    *
    * @param name the command name
    * @return a command description
-   * @throws org.crsh.command.CommandCreationException if an error occured preventing the command creation
+   * @throws org.crsh.shell.impl.command.spi.CommandCreationException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
   public String getCommandDescription(String name) throws CommandCreationException, NullPointerException {
@@ -112,7 +112,7 @@ public class CRaSH {
    *
    * @param name the command name
    * @return a command instance
-   * @throws org.crsh.command.CommandCreationException if an error occured preventing the command creation
+   * @throws org.crsh.shell.impl.command.spi.CommandCreationException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
   public ShellCommand<?> getCommand(String name) throws CommandCreationException, NullPointerException {
@@ -125,7 +125,7 @@ public class CRaSH {
    *
    * @param name the command name
    * @return a command instance
-   * @throws org.crsh.command.CommandCreationException if an error occured preventing the command creation
+   * @throws org.crsh.shell.impl.command.spi.CommandCreationException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
   public CommandResolution resolveCommand(final String name) throws CommandCreationException, NullPointerException {

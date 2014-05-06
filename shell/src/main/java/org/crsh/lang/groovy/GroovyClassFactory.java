@@ -23,7 +23,7 @@ import groovy.lang.GroovyCodeSource;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.util.ClassFactory;
 import org.crsh.shell.ErrorType;
 

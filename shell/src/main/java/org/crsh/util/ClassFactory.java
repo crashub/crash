@@ -18,7 +18,7 @@
  */
 package org.crsh.util;
 
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 
 /** @author Julien Viet */
 public abstract class ClassFactory<T> {

@@ -27,7 +27,7 @@ import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.lang.InvocationContext;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.lang.groovy.ast.ScriptLastStatementTransformer;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandInvoker;

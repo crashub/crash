@@ -33,7 +33,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.java.ShellCommandImpl;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
 import org.crsh.shell.impl.command.CRaSHSession;

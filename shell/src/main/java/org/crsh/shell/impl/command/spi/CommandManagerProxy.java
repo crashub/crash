@@ -18,7 +18,6 @@
  */
 package org.crsh.shell.impl.command.spi;
 
-import org.crsh.command.CommandCreationException;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
 

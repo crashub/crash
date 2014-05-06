@@ -19,7 +19,7 @@
 package org.crsh.lang.groovy.closure;
 
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;

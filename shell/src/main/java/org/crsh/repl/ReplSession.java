@@ -18,7 +18,7 @@
  */
 package org.crsh.repl;
 
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
 

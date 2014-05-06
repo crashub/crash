@@ -20,7 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.lang.script.Token;

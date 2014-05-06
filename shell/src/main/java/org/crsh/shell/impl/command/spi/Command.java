@@ -19,7 +19,6 @@
 package org.crsh.shell.impl.command.spi;
 
 import org.crsh.cli.impl.invocation.InvocationMatch;
-import org.crsh.command.CommandCreationException;
 
 /**
  * The real command that will be used in an command pipeline.

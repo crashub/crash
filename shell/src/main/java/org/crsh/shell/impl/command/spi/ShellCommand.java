@@ -30,7 +30,6 @@ import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.cli.impl.lang.Util;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
-import org.crsh.command.CommandCreationException;
 import org.crsh.command.RuntimeContext;
 import org.crsh.command.SyntaxException;
 

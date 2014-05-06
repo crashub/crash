@@ -18,8 +18,6 @@
  */
 package org.crsh.shell.impl.command.spi;
 
-import org.crsh.command.CommandCreationException;
-
 import java.util.HashMap;
 import java.util.Set;
 

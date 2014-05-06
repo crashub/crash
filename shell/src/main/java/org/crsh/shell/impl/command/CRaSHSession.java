@@ -19,7 +19,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.ScriptException;

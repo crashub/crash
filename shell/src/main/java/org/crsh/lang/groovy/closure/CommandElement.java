@@ -18,7 +18,7 @@
  */
 package org.crsh.lang.groovy.closure;
 
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 

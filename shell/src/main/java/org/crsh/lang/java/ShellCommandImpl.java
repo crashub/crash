@@ -27,7 +27,7 @@ import org.crsh.cli.impl.lang.ObjectCommandInvoker;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.command.InvocationContext;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.command.Pipe;

@@ -19,7 +19,7 @@
 
 package org.crsh.util;
 
-import org.crsh.command.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
