@@ -63,12 +63,12 @@ class MethodDescriptor<T> extends ObjectCommandDescriptor<T> {
   }
 
   @Override
-  public CommandDescriptor<InvocationContext<T>> getOwner() {
+  public CommandDescriptor<Instance<T>> getOwner() {
     return owner;
   }
 
   @Override
-  public Map<String, ? extends CommandDescriptor<InvocationContext<T>>> getSubordinates() {
+  public Map<String, ? extends CommandDescriptor<Instance<T>>> getSubordinates() {
     return Collections.emptyMap();
   }
 
@@ -77,7 +77,7 @@ class MethodDescriptor<T> extends ObjectCommandDescriptor<T> {
   }
 
   @Override
-  public CommandInvoker<InvocationContext<T>, ?> getInvoker(InvocationMatch<InvocationContext<T>> match) {
+  public CommandInvoker<Instance<T>, ?> getInvoker(InvocationMatch<Instance<T>> match) {
     Class<?> type = method.getReturnType();
     return getInvoker2(match, type);
   }
@@ -102,7 +102,7 @@ class MethodDescriptor<T> extends ObjectCommandDescriptor<T> {
     }
   }
 
-  private <V> ObjectCommandInvoker<T, V> getInvoker2(final InvocationMatch<InvocationContext<T>> match, final Class<V> returnType) {
+  private <V> ObjectCommandInvoker<T, V> getInvoker2(final InvocationMatch<Instance<T>> match, final Class<V> returnType) {
     return new ObjectCommandInvoker<T, V>(match) {
       @Override
       public Class<V> getReturnType() {
@@ -121,10 +121,16 @@ class MethodDescriptor<T> extends ObjectCommandDescriptor<T> {
         return getMethod().getGenericParameterTypes();
       }
       @Override
-      public V invoke(InvocationContext<T> context) throws InvocationException, SyntaxException {
+      public V invoke(Instance<T> commandInstance) throws InvocationException, SyntaxException {
 
         //
-        T command = context.getInstance();
+        T command = null;
+        try {
+          command = commandInstance.get();
+        }
+        catch (Exception e) {
+          throw new InvocationException(e);
+        }
 
         //
         if (owner != null) {
@@ -143,7 +149,7 @@ class MethodDescriptor<T> extends ObjectCommandDescriptor<T> {
         for (int i = 0;i < mArgs.length;i++) {
           Class<?> parameterType = parameterTypes[i];
           if (mArgs[i] == null) {
-            Object v = context.resolve(parameterType);
+            Object v = commandInstance.resolve(parameterType);
             if (v != null) {
               mArgs[i] = v;
             }

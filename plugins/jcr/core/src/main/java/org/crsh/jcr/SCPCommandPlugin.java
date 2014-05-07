@@ -25,7 +25,8 @@ import org.crsh.cli.CLIException;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
-import org.crsh.cli.impl.lang.InvocationContext;
+import org.crsh.cli.impl.lang.Instance;
+import org.crsh.cli.impl.lang.Util;
 import org.crsh.ssh.term.FailCommand;
 import org.crsh.ssh.term.scp.CommandPlugin;
 import org.crsh.ssh.term.scp.SCPAction;
@@ -39,10 +40,10 @@ public class SCPCommandPlugin extends CommandPlugin {
       try {
         command = command.substring(4);
         SCPAction action = new SCPAction();
-        CommandDescriptor<InvocationContext<SCPAction>> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
-        InvocationMatcher<InvocationContext<SCPAction>> analyzer = descriptor.matcher();
-        InvocationMatch<InvocationContext<SCPAction>> match = analyzer.parse(command);
-        match.invoke(InvocationContext.wrap(action));
+        CommandDescriptor<Instance<SCPAction>> descriptor = CommandFactory.DEFAULT.create(SCPAction.class);
+        InvocationMatcher<Instance<SCPAction>> analyzer = descriptor.matcher();
+        InvocationMatch<Instance<SCPAction>> match = analyzer.parse(command);
+        match.invoke(Util.wrap(action));
         if (Boolean.TRUE.equals(action.isSource())) {
           return new SourceCommand(action.getTarget(), Boolean.TRUE.equals(action.isRecursive()));
         }

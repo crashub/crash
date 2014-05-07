@@ -26,7 +26,8 @@ import org.crsh.cli.Option;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
-import org.crsh.cli.impl.lang.InvocationContext;
+import org.crsh.cli.impl.lang.Instance;
+import org.crsh.cli.impl.lang.Util;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.remoting.RemoteClient;
@@ -54,10 +55,10 @@ public class Agent {
       @Override
       public void run() {
         try {
-          CommandDescriptor<InvocationContext<Agent>> c = CommandFactory.DEFAULT.create(Agent.class);
-          InvocationMatcher<InvocationContext<Agent>> matcher = c.matcher();
-          InvocationMatch<InvocationContext<Agent>> match = matcher.parse(agentArgs);
-          match.invoke(InvocationContext.wrap(new Agent(inst)));
+          CommandDescriptor<Instance<Agent>> c = CommandFactory.DEFAULT.create(Agent.class);
+          InvocationMatcher<Instance<Agent>> matcher = c.matcher();
+          InvocationMatch<Instance<Agent>> match = matcher.parse(agentArgs);
+          match.invoke(Util.wrap(new Agent(inst)));
         } catch (Exception e) {
           e.printStackTrace();
         }

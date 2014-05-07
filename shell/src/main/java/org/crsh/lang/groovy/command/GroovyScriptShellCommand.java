@@ -24,7 +24,7 @@ import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.CommandFactory;
-import org.crsh.cli.impl.lang.InvocationContext;
+import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
@@ -42,7 +42,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 
 /** @author Julien Viet */
-public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends ShellCommand<InvocationContext<T>> {
+public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends ShellCommand<Instance<T>> {
 
   /** . */
   private final Class<T> clazz;
@@ -51,7 +51,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends She
   private final boolean hasExplicitReturn;
 
   /** . */
-  private final CommandDescriptor<InvocationContext<T>> descriptor;
+  private final CommandDescriptor<Instance<T>> descriptor;
 
   public GroovyScriptShellCommand(Class<T> clazz) {
 
@@ -74,12 +74,12 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends She
   }
 
   @Override
-  public CommandDescriptor<InvocationContext<T>> getDescriptor() {
+  public CommandDescriptor<Instance<T>> getDescriptor() {
     return descriptor;
   }
 
   @Override
-  protected Command<?, ?> resolveCommand(final InvocationMatch<InvocationContext<T>> match) {
+  protected Command<?, ?> resolveCommand(final InvocationMatch<Instance<T>> match) {
     return new Command<Void, Object>() {
       @Override
       public CommandInvoker<Void, Object> getInvoker() throws CommandCreationException {

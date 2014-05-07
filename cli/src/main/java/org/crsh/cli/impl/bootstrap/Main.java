@@ -24,8 +24,9 @@ import org.crsh.cli.impl.descriptor.HelpDescriptor;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
-import org.crsh.cli.impl.lang.InvocationContext;
+import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.impl.lang.ObjectCommandDescriptor;
+import org.crsh.cli.impl.lang.Util;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -56,11 +57,11 @@ public class Main {
 
   private static <T> void handle(Class<T> commandClass, String line) throws Exception {
     ObjectCommandDescriptor<T> descriptor = CommandFactory.DEFAULT.create(commandClass);
-    HelpDescriptor<InvocationContext<T>> helpDescriptor = HelpDescriptor.create(descriptor);
-    InvocationMatcher<InvocationContext<T>> matcher = helpDescriptor.matcher();
-    InvocationMatch<InvocationContext<T>> match = matcher.parse(line);
+    HelpDescriptor<Instance<T>> helpDescriptor = HelpDescriptor.create(descriptor);
+    InvocationMatcher<Instance<T>> matcher = helpDescriptor.matcher();
+    InvocationMatch<Instance<T>> match = matcher.parse(line);
     final T instance = commandClass.newInstance();
-    Object o = match.invoke(InvocationContext.wrap(instance));
+    Object o = match.invoke(Util.wrap(instance));
     if (o != null) {
       System.out.println(o);
     }

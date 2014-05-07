@@ -21,30 +21,24 @@ package org.crsh.cli.impl.lang;
 /**
  * @author Julien Viet
  */
-public abstract class InvocationContext<T> {
-
-  public static <T> InvocationContext<T> wrap(final T instance) {
-    return new InvocationContext<T>() {
-      @Override
-      public <T1> T1 resolve(Class<T1> type) {
-        return null;
-      }
-      @Override
-      public T getInstance() {
-        return instance;
-      }
-    };
-  }
+public interface Instance<T> {
 
   /**
-   * Resolve the specified type to an instance.
+   * Resolve the specified contextual type to an instance or return null if no object able
+   * to satisfy the class type was resolved.
    *
    * @param type the type to resolve
    * @param <T> the generic type parameter
    * @return the resolved instance
    */
-  public abstract <T> T resolve(Class<T> type);
+  <T> T resolve(Class<T> type);
 
-  public abstract T getInstance();
+  /**
+   * Return the instance, the same instance should be returned, however it can lazily be created.
+   *
+   * @return the instance
+   * @throws Exception any exception preventing to obtain the instance
+   */
+  T get() throws Exception;
 
 }

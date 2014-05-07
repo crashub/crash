@@ -26,9 +26,9 @@ import java.lang.reflect.Type;
 /**
  * @author Julien Viet
  */
-public abstract class ObjectCommandInvoker<T, V> extends CommandInvoker<InvocationContext<T>, V> {
+public abstract class ObjectCommandInvoker<T, V> extends CommandInvoker<Instance<T>, V> {
 
-  protected ObjectCommandInvoker(InvocationMatch<InvocationContext<T>> match) {
+  protected ObjectCommandInvoker(InvocationMatch<Instance<T>> match) {
     super(match);
   }
 

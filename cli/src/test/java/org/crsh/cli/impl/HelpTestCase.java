@@ -27,7 +27,8 @@ import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.cli.impl.lang.CommandFactory;
-import org.crsh.cli.impl.lang.InvocationContext;
+import org.crsh.cli.impl.lang.Instance;
+import org.crsh.cli.impl.lang.Util;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,11 +44,11 @@ public class HelpTestCase extends TestCase {
   }
 
   public void testFoo() {
-    CommandDescriptor<InvocationContext<A>> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(A.class));
-    InvocationMatcher<InvocationContext<A>> matcher = desc.matcher();
-    InvocationMatch<InvocationContext<A>> match = matcher.options(Collections.<String, List<?>>singletonMap("h", Collections.singletonList(Boolean.TRUE))).arguments(Collections.emptyList());
-    CommandInvoker<InvocationContext<A>, ?> invoker = match.getInvoker();
-    Object ret = invoker.invoke(InvocationContext.wrap(new A()));
+    CommandDescriptor<Instance<A>> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(A.class));
+    InvocationMatcher<Instance<A>> matcher = desc.matcher();
+    InvocationMatch<Instance<A>> match = matcher.options(Collections.<String, List<?>>singletonMap("h", Collections.singletonList(Boolean.TRUE))).arguments(Collections.emptyList());
+    CommandInvoker<Instance<A>, ?> invoker = match.getInvoker();
+    Object ret = invoker.invoke(Util.wrap(new A()));
     assertTrue(ret instanceof Help);
     assertEquals(Help.class, invoker.getReturnType());
   }

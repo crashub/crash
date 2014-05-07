@@ -25,7 +25,6 @@ import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.descriptor.ParameterDescriptor;
 import org.crsh.cli.SyntaxException;
-import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 
@@ -75,7 +74,7 @@ class ClassDescriptor<T> extends ObjectCommandDescriptor<T> {
   }
 
   @Override
-  public ObjectCommandInvoker<T, ?> getInvoker(final InvocationMatch<InvocationContext<T>> match) {
+  public ObjectCommandInvoker<T, ?> getInvoker(final InvocationMatch<Instance<T>> match) {
 
     if (Runnable.class.isAssignableFrom(type)) {
       return new ObjectCommandInvoker<T, Void>(match) {
@@ -95,8 +94,14 @@ class ClassDescriptor<T> extends ObjectCommandDescriptor<T> {
         public Type[] getGenericParameterTypes() {
           return new Type[0];
         }
-        public Void invoke(InvocationContext<T> context) throws InvocationException, SyntaxException {
-          T command = context.getInstance();
+        public Void invoke(Instance<T> commandInstance) throws InvocationException, SyntaxException {
+          T command;
+          try {
+            command = commandInstance.get();
+          }
+          catch (Exception e) {
+            throw new InvocationException(e);
+          }
           MethodDescriptor.bind(match, getParameters(), command, Util.EMPTY_ARGS);
           Runnable runnable = Runnable.class.cast(command);
           try {
@@ -114,7 +119,7 @@ class ClassDescriptor<T> extends ObjectCommandDescriptor<T> {
   }
 
   @Override
-  public CommandDescriptor<InvocationContext<T>> getOwner() {
+  public CommandDescriptor<Instance<T>> getOwner() {
     return null;
   }
 

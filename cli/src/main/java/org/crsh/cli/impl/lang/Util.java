@@ -161,4 +161,24 @@ public class Util {
       }
     };
   }
+
+  /**
+   * Wrap an object with an {@link org.crsh.cli.impl.lang.Instance}.
+   *
+   * @param object the object to wrap
+   * @param <T> the instance generic type
+   * @return an {@link org.crsh.cli.impl.lang.Instance} wrapping the specified object
+   */
+  public static <T> Instance<T> wrap(final T object) {
+    return new Instance<T>() {
+      @Override
+      public <T1> T1 resolve(Class<T1> type) {
+        return null;
+      }
+      @Override
+      public T get() {
+        return object;
+      }
+    };
+  }
 }

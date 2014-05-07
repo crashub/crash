@@ -25,7 +25,7 @@ import org.crsh.cli.impl.descriptor.IntrospectionException;
 /**
  * @author Julien Viet
  */
-public abstract class ObjectCommandDescriptor<T> extends CommandDescriptor<InvocationContext<T>> {
+public abstract class ObjectCommandDescriptor<T> extends CommandDescriptor<Instance<T>> {
 
   public ObjectCommandDescriptor(String name, Description description) throws IntrospectionException {
     super(name, description);

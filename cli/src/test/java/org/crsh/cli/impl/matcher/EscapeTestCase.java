@@ -25,7 +25,8 @@ import org.crsh.cli.Option;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.invocation.InvocationMatcher;
-import org.crsh.cli.impl.lang.InvocationContext;
+import org.crsh.cli.impl.lang.Instance;
+import org.crsh.cli.impl.lang.Util;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,22 +46,22 @@ public class EscapeTestCase extends TestCase {
     }
 
     //
-    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<InvocationContext<A>> matcher = desc.matcher();
+    CommandDescriptor<Instance<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<Instance<A>> matcher = desc.matcher();
 
     //
     A a = new A();
-    matcher.parse("-o \" \"").invoke(InvocationContext.wrap(a));
+    matcher.parse("-o \" \"").invoke(Util.wrap(a));
     assertEquals(" ", a.s);
 
     //
     a = new A();
-    matcher.parse("-o \"'\"").invoke(InvocationContext.wrap(a));
+    matcher.parse("-o \"'\"").invoke(Util.wrap(a));
     assertEquals("'", a.s);
 
     //
     a = new A();
-    matcher.parse("-o \" a b").invoke(InvocationContext.wrap(a));
+    matcher.parse("-o \" a b").invoke(Util.wrap(a));
     assertEquals(" a b", a.s);
   }
 
@@ -73,22 +74,22 @@ public class EscapeTestCase extends TestCase {
     }
 
     //
-    CommandDescriptor<InvocationContext<A>> desc = CommandFactory.DEFAULT.create(A.class);
-    InvocationMatcher<InvocationContext<A>> analyzer = desc.matcher();
+    CommandDescriptor<Instance<A>> desc = CommandFactory.DEFAULT.create(A.class);
+    InvocationMatcher<Instance<A>> analyzer = desc.matcher();
 
     //
     A a = new A();
-    analyzer.parse("\" \" b").invoke(InvocationContext.wrap(a));
+    analyzer.parse("\" \" b").invoke(Util.wrap(a));
     assertEquals(Arrays.asList(" ", "b"), a.s);
 
     //
     a = new A();
-    analyzer.parse("\"'\" b").invoke(InvocationContext.wrap(a));
+    analyzer.parse("\"'\" b").invoke(Util.wrap(a));
     assertEquals(Arrays.asList("'", "b"), a.s);
 
     //
     a = new A();
-    analyzer.parse("\"a b\" c").invoke(InvocationContext.wrap(a));
+    analyzer.parse("\"a b\" c").invoke(Util.wrap(a));
     assertEquals(Arrays.asList("a b", "c"), a.s);
   }
 }

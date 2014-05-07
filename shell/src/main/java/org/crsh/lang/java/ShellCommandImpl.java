@@ -20,38 +20,31 @@ package org.crsh.lang.java;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
-import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.CommandFactory;
+import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.impl.lang.ObjectCommandInvoker;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.BaseCommand;
-import org.crsh.command.CommandContext;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.command.InvocationContext;
-import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.command.Pipe;
 import org.crsh.command.RuntimeContext;
-import org.crsh.command.SyntaxException;
-import org.crsh.console.KeyHandler;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.impl.command.spi.Command;
-import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.util.Utils;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.lang.reflect.UndeclaredThrowableException;
 
 /** @author Julien Viet */
-public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.crsh.cli.impl.lang.InvocationContext<T>> {
+public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<Instance<T>> {
 
   /** . */
   private final Class<T> clazz;
 
   /** . */
-  private final CommandDescriptor<org.crsh.cli.impl.lang.InvocationContext<T>> descriptor;
+  private final CommandDescriptor<Instance<T>> descriptor;
 
   public ShellCommandImpl(Class<T> clazz) {
     CommandFactory factory = new CommandFactory(getClass().getClassLoader());
@@ -59,7 +52,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
     this.descriptor = HelpDescriptor.create(factory.create(clazz));
   }
 
-  public CommandDescriptor<org.crsh.cli.impl.lang.InvocationContext<T>> getDescriptor() {
+  public CommandDescriptor<Instance<T>> getDescriptor() {
     return descriptor;
   }
 
@@ -74,10 +67,10 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
   }
 
   @Override
-  protected Command<?, ?> resolveCommand(InvocationMatch<org.crsh.cli.impl.lang.InvocationContext<T>> match) {
+  protected Command<?, ?> resolveCommand(InvocationMatch<Instance<T>> match) {
 
     // Cast to the object invoker
-    org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>,?> invoker = match.getInvoker();
+    org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>,?> invoker = match.getInvoker();
 
     // Do we have a pipe command or not ?
     if (Pipe.class.isAssignableFrom(invoker.getReturnType())) {
@@ -112,36 +105,6 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
     }
   }
 
-  private abstract class Bilto<T extends org.crsh.command.BaseCommand, C, P> extends Command<C, P> {
-
-    /** . */
-    private ShellCommandImpl<T> baseShellCommand;
-
-    public Bilto(ShellCommandImpl<T> baseShellCommand) {
-      this.baseShellCommand = baseShellCommand;
-    }
-
-    public CommandInvoker<C, P> getInvoker() throws CommandCreationException {
-      final T instance = baseShellCommand.createCommand();
-      org.crsh.cli.impl.lang.InvocationContext<T> resolver = new org.crsh.cli.impl.lang.InvocationContext<T>() {
-        @Override
-        public T getInstance() {
-          return instance;
-        }
-        public <T> T resolve(Class<T> type) {
-          if (type.equals(InvocationContext.class)) {
-            return type.cast(instance.peekContext());
-          } else {
-            return null;
-          }
-        }
-      };
-      return getInvoker(resolver);
-    }
-
-    abstract CommandInvoker<C, P> getInvoker(org.crsh.cli.impl.lang.InvocationContext<T> context) throws CommandCreationException;
-  }
-
   T createCommand() throws CommandCreationException {
     T command;
     try {
@@ -154,225 +117,12 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<org.cr
     return command;
   }
 
-  private <C, P, PC extends Pipe<C, P>> Command<C, P> getPipeInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, PC> invoker) {
-    return new Bilto<T, C, P>(this) {
-
-      /** . */
-      final Type ret = invoker.getGenericReturnType();
-
-      /** . */
-      final Class<C> consumedType = (Class<C>)Utils.resolveToClass(ret, Pipe.class, 0);
-
-      /** . */
-      final Class<P> producedType = (Class<P>)Utils.resolveToClass(ret, Pipe.class, 1);
-
-      @Override
-      public InvocationMatch<?> getMatch() {
-        return invoker.getMatch();
-      }
-
-      @Override
-      public Class<P> getProducedType() {
-        return producedType;
-      }
-
-      @Override
-      public Class<C> getConsumedType() {
-        return consumedType;
-      }
-
-      @Override
-      CommandInvoker<C, P> getInvoker(final org.crsh.cli.impl.lang.InvocationContext<T> context) throws CommandCreationException {
-        return new CommandInvoker<C, P>() {
-
-          Pipe<C, P> real;
-          InvocationContext<P> invocationContext;
-
-          public Class<P> getProducedType() {
-            return producedType;
-          }
-
-          public Class<C> getConsumedType() {
-            return consumedType;
-          }
-
-          public void open(CommandContext<? super P> consumer) {
-            // Java is fine with that but not intellij....
-            CommandContext<P> consumer2 = (CommandContext<P>)consumer;
-            open2(consumer2);
-          }
-
-          @Override
-          public KeyHandler getKeyHandler() {
-            if (context.getInstance() instanceof KeyHandler) {
-              return (KeyHandler)context.getInstance();
-            } else {
-              return null;
-            }
-          }
-
-          public void open2(final CommandContext<P> consumer) {
-
-            //
-            invocationContext = new InvocationContextImpl<P>(consumer);
-
-            // Push context
-            context.getInstance().pushContext(invocationContext);
-
-            //  Set the unmatched part
-            context.getInstance().unmatched = invoker.getMatch().getRest();
-
-            //
-            PC ret;
-            try {
-              ret = invoker.invoke(context);
-            }
-            catch (org.crsh.cli.SyntaxException e) {
-              throw new SyntaxException(e.getMessage());
-            } catch (InvocationException e) {
-              throw context.getInstance().toScript(e.getCause());
-            }
-
-            // It's a pipe command
-            if (ret != null) {
-              real = ret;
-              real.open(invocationContext);
-            }
-          }
-
-          public void provide(C element) throws IOException {
-            if (real != null) {
-              real.provide(element);
-            }
-          }
-
-          public void flush() throws IOException {
-            if (real != null) {
-              real.flush();
-            } else {
-              invocationContext.flush();
-            }
-          }
-
-          public void close() throws IOException {
-            T instance = context.getInstance();
-            try {
-              if (real != null) {
-                try {
-                  real.close();
-                }
-                finally {
-                  Utils.close(invocationContext);
-                }
-              } else {
-                Utils.close(invocationContext);
-              }
-            }
-            finally {
-              instance.popContext();
-              instance.unmatched = null;
-            }
-          }
-        };
-      }
-    };
+  private <C, P, PC extends Pipe<C, P>> Command<C, P> getPipeInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>, PC> invoker) {
+    return new PipeCommandImpl<T, C, P, PC>(this, invoker);
   }
 
-  private <P> Command<Void, P> getProducerInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<org.crsh.cli.impl.lang.InvocationContext<T>, ?> invoker, final Class<P> producedType) {
-    return new Bilto<T, Void, P>(this) {
-
-      @Override
-      public InvocationMatch<?> getMatch() {
-        return invoker.getMatch();
-      }
-
-      @Override
-      public Class<P> getProducedType() {
-        return producedType;
-      }
-
-      @Override
-      public Class<Void> getConsumedType() {
-        return Void.class;
-      }
-
-      @Override
-      CommandInvoker<Void, P> getInvoker(final org.crsh.cli.impl.lang.InvocationContext<T> context) throws CommandCreationException {
-        return new CommandInvoker<Void, P>() {
-
-          /** . */
-          private InvocationContext<P> invocationContext;
-
-          public Class<P> getProducedType() {
-            return producedType;
-          }
-
-          public Class<Void> getConsumedType() {
-            return Void.class;
-          }
-
-          public void open(CommandContext<? super P> consumer) {
-            // Java is fine with that but not intellij....
-            CommandContext<P> consumer2 = (CommandContext<P>)consumer;
-            open2(consumer2);
-          }
-
-          public void open2(final CommandContext<P> consumer) {
-
-            //
-            invocationContext = new InvocationContextImpl<P>(consumer);
-
-            // Push context
-            context.getInstance().pushContext(invocationContext);
-
-            //  Set the unmatched part
-            context.getInstance().unmatched = invoker.getMatch().getRest();
-          }
-
-
-          @Override
-          public KeyHandler getKeyHandler() {
-            if (context.getInstance() instanceof KeyHandler) {
-              return (KeyHandler)context.getInstance();
-            } else {
-              return null;
-            }
-          }
-
-          public void provide(Void element) throws IOException {
-            // Drop everything
-          }
-
-          public void flush() throws IOException {
-          }
-
-          public void close() throws IOException, UndeclaredThrowableException {
-
-            //
-            Object ret;
-            try {
-              ret = invoker.invoke(context);
-            }
-            catch (org.crsh.cli.SyntaxException e) {
-              throw new SyntaxException(e.getMessage());
-            } catch (InvocationException e) {
-              throw context.getInstance().toScript(e.getCause());
-            }
-
-            //
-            if (ret != null && producedType.isInstance(ret)) {
-              P produced = producedType.cast(ret);
-              invocationContext.provide(produced);
-            }
-
-            //
-            invocationContext.flush();
-            invocationContext.close();
-            context.getInstance().unmatched = null;
-            invocationContext = null;
-          }
-        };
-      }
-    };
+  private <P> Command<Void, P> getProducerInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>, ?> invoker, final Class<P> producedType) {
+    return new ProducerCommandImpl<T, P>(this, invoker, producedType);
   }
+
 }

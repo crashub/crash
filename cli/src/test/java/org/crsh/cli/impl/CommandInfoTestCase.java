@@ -27,7 +27,7 @@ import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
-import org.crsh.cli.impl.lang.InvocationContext;
+import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.type.ValueType;
 import org.crsh.cli.impl.lang.CommandFactory;
 
@@ -47,7 +47,7 @@ public class CommandInfoTestCase extends TestCase {
   public void testCommandImplicitDescription() throws IntrospectionException {
     class A {
     }
-    CommandDescriptor<InvocationContext<A>> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<Instance<A>> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals("", c.getUsage());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, c.getOptions().size());
@@ -56,7 +56,7 @@ public class CommandInfoTestCase extends TestCase {
   public void testCommandDescription() throws IntrospectionException {
     class A {
     }
-    CommandDescriptor<InvocationContext<A>> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<Instance<A>> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals("", c.getUsage());
     assertEquals(0, c.getArguments().size());
     assertEquals(0, c.getOptions().size());
@@ -67,7 +67,7 @@ public class CommandInfoTestCase extends TestCase {
       @Option(names = "i")
       private int i;
     }
-    CommandDescriptor<InvocationContext<A>> ai = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<Instance<A>> ai = CommandFactory.DEFAULT.create(A.class);
     assertEquals(1,ai.getOptions().size());
     OptionDescriptor i = ai.getOption("-i");
     assertEquals(Arrays.asList("i"),i.getNames());
@@ -78,7 +78,7 @@ public class CommandInfoTestCase extends TestCase {
       @Option(names = "I")
       private int i;
     }
-    CommandDescriptor<InvocationContext<A>> ai = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<Instance<A>> ai = CommandFactory.DEFAULT.create(A.class);
     assertEquals(1,ai.getOptions().size());
     OptionDescriptor i = ai.getOption("-I");
     assertEquals(Arrays.asList("I"),i.getNames());
@@ -89,7 +89,7 @@ public class CommandInfoTestCase extends TestCase {
       @Argument()
       private int i;
     }
-    CommandDescriptor<InvocationContext<A>> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<Instance<A>> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals(1, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
     assertEquals(ValueType.INTEGER, i.getType());
@@ -104,7 +104,7 @@ public class CommandInfoTestCase extends TestCase {
       @Argument
       private List<Integer> j;
     }
-    CommandDescriptor<InvocationContext<A>> c = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<Instance<A>> c = CommandFactory.DEFAULT.create(A.class);
     assertEquals(2, c.getArguments().size());
     ArgumentDescriptor i = c.getArguments().get(0);
     assertEquals(ValueType.INTEGER, i.getType());
@@ -138,7 +138,7 @@ public class CommandInfoTestCase extends TestCase {
       }
     }
 
-    CommandDescriptor<InvocationContext<A>> a = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<Instance<A>> a = CommandFactory.DEFAULT.create(A.class);
     assertNotNull(a);
   }
 
@@ -153,7 +153,7 @@ public class CommandInfoTestCase extends TestCase {
       }
     }
 
-    CommandDescriptor<InvocationContext<A>> a = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<Instance<A>> a = CommandFactory.DEFAULT.create(A.class);
     CommandDescriptor<?> b = a.getSubordinate("b");
     assertNotNull(b);
 
@@ -190,7 +190,7 @@ public class CommandInfoTestCase extends TestCase {
       String l;
     }
 
-    CommandDescriptor<InvocationContext<A>> a = CommandFactory.DEFAULT.create(A.class);
+    CommandDescriptor<Instance<A>> a = CommandFactory.DEFAULT.create(A.class);
     assertEquals(1,a.getOptions().size());
     OptionDescriptor i = a.getOption("-l");
     assertEquals(Arrays.asList("l"),i.getNames());
