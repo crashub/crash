@@ -40,28 +40,12 @@
                 <outputDirectory>target/asciidoc</outputDirectory>
               </configuration>
             </execution>
-            <execution>
-              <id>copy-stylesheets</id>
-              <phase>generate-resources</phase>
-              <goals>
-                <goal>copy-resources</goal>
-              </goals>
-              <configuration>
-                <resources>
-                  <resource>
-                    <directory>src/main/resources</directory>
-                  </resource>
-                </resources>
-                <outputDirectory>target/docs/html</outputDirectory>
-              </configuration>
-            </execution>
           </executions>
         </plugin>
 
         <plugin>
           <groupId>org.asciidoctor</groupId>
           <artifactId>asciidoctor-maven-plugin</artifactId>
-          <version>0.1.3.1</version>
           <executions>
             <execution>
               <id>generate-html</id>
@@ -71,16 +55,17 @@
               </goals>
               <configuration>
                 <!-- asciidoctor -d book -o target/book.html -a copycss -a toc2 -a sectanchors \
-                     -a source-highlighter=coderay -a stylesheet=foundation-lime.css -a crash-version=${project.version} \
+                     -a source-highlighter=coderay -a stylesheet=rocket-panda.css -a crash-version=${project.version} \
                      target/asciidoc/book.asciidoc -->
                 <sourceDirectory>${project.build.directory}/asciidoc</sourceDirectory>
-                <sourceDocumentName>${project.build.directory}/asciidoc/book.asciidoc</sourceDocumentName>
+                <sourceDocumentName>book.asciidoc</sourceDocumentName>
                 <outputDirectory>target/docs/html</outputDirectory>
                 <backend>html</backend>
                 <doctype>book</doctype>
                 <attributes>
                   <toc2>1</toc2>
                   <stylesheet>rocket-panda.css</stylesheet>
+                  <stylesdir>${project.basedir}/src/main/resources</stylesdir>
                   <source-highlighter>coderay</source-highlighter>
                   <crash-version>${project.version}</crash-version>
                   <sectanchors>1</sectanchors>
@@ -90,40 +75,6 @@
               </configuration>
             </execution>
           </executions>
-          <dependencies>
-            <dependency>
-              <groupId>org.asciidoctor</groupId>
-              <artifactId>asciidoctor-java-integration</artifactId>
-              <version>0.1.3</version>
-              <scope>compile</scope>
-              <exclusions>
-                <exclusion>
-                  <artifactId>erubis</artifactId>
-                  <groupId>rubygems</groupId>
-                </exclusion>
-                <exclusion>
-                  <artifactId>tilt</artifactId>
-                  <groupId>rubygems</groupId>
-                </exclusion>
-                <exclusion>
-                  <artifactId>asciidoctor</artifactId>
-                  <groupId>rubygems</groupId>
-                </exclusion>
-                <exclusion>
-                  <artifactId>slim</artifactId>
-                  <groupId>rubygems</groupId>
-                </exclusion>
-                <exclusion>
-                  <artifactId>haml</artifactId>
-                  <groupId>rubygems</groupId>
-                </exclusion>
-                <exclusion>
-                  <artifactId>coderay</artifactId>
-                  <groupId>rubygems</groupId>
-                </exclusion>
-              </exclusions>
-            </dependency>
-          </dependencies>
         </plugin>
 
         <plugin>
