@@ -26,12 +26,12 @@ import org.crsh.text.RenderAppendable;
 
 import java.lang.management.MemoryUsage;
 
-public class MemoryUsageLineRenderer extends LineRenderer {
+class MemoryUsageLineRenderer extends LineRenderer {
 
   /** . */
   private final MemoryUsage usage;
 
-  public MemoryUsageLineRenderer(MemoryUsage usage) {
+  MemoryUsageLineRenderer(MemoryUsage usage) {
     this.usage = usage;
   }
 

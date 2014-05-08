@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoggerRenderable extends Renderer<Logger> {
+public class LoggerRenderer extends Renderer<Logger> {
 
   @Override
   public Class<Logger> getType() {

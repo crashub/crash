@@ -1,6 +1,6 @@
 org.crsh.text.renderers.ThreadRenderer
 org.crsh.text.renderers.MapRenderer
-org.crsh.text.renderers.LoggerRenderable
+org.crsh.text.renderers.LoggerRenderer
 org.crsh.text.renderers.MemoryUsageRenderer
 org.crsh.text.renderers.BindingRenderer
 org.crsh.text.renderers.EntityTypeRenderer
