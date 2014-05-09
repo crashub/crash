@@ -58,7 +58,7 @@ class FilePublicKeyProvider extends AbstractKeyPairProvider {
     this.passwordFinder = passwordFinder;
   }
 
-  public KeyPair[] loadKeys() {
+  public Iterable<KeyPair> loadKeys() {
     if (!SecurityUtils.isBouncyCastleRegistered()) {
       throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
     }
@@ -82,6 +82,6 @@ class FilePublicKeyProvider extends AbstractKeyPairProvider {
         LOG.info("Unable to read key {}: {}", file, e);
       }
     }
-    return keys.toArray(new KeyPair[keys.size()]);
+    return keys;
   }
 }
