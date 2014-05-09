@@ -49,7 +49,7 @@ class egrep {
               chunks.add(Text.create(rest));
               break;
             } else {
-              def s = text.text.subSequence(prev, index)
+              def s = text.text.subSequence(prev, index + 1)
               buffer.append(s);
               chunks.add(Text.create(s));
               def matched = matcher.reset(buffer).find();

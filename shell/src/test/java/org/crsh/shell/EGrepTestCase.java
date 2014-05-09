@@ -22,9 +22,10 @@ package org.crsh.shell;
 public class EGrepTestCase extends AbstractCommandTestCase {
 
   public void testFoo() {
-    assertEquals("abc", assertOk("echo 'abc\ndef\nghi' | egrep a"));
-    assertEquals("def", assertOk("echo 'abc\ndef\nghi' | egrep e"));
+    assertEquals("abc\n", assertOk("echo 'abc\ndef\nghi' | egrep a"));
+    assertEquals("def\n", assertOk("echo 'abc\ndef\nghi' | egrep e"));
     assertEquals("ghi", assertOk("echo 'abc\ndef\nghi' | egrep g"));
     assertEquals("", assertOk("echo 'abc\ndef\nghi' | egrep k"));
+    assertEquals("arnaud\nalain", assertOk("echo 'julien\narnaud\nalain' | egrep a"));
   }
 }
