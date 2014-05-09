@@ -44,38 +44,6 @@
       <artifactId>crash.connectors.ssh</artifactId>
     </dependency>
 
-    <!-- Sources -->
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.cli</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.shell</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.connectors.telnet</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.connectors.ssh</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.embed.spring</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.plugins.crowd</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -126,78 +94,6 @@
         </executions>
       </plugin>
 
-      <!-- Generate aggregated javadoc -->
-      <plugin>
-        <groupId>com.goldin.plugins</groupId>
-        <artifactId>maven-copy-plugin</artifactId>
-        <version>0.2.3</version>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <resource>
-                <targetPath>${project.build.directory}/sources</targetPath>
-                <dependencies>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.cli</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.shell</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.connectors.telnet</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.connectors.ssh</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.embed.spring</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.plugins.crowd</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                </dependencies>
-                <unpack>true</unpack>
-              </resource>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>javadoc</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <sourcepath>${project.build.directory}/sources</sourcepath>
-              <quiet>true</quiet>
-              <linksource>true</linksource>
-              <show>private</show>
-            </configuration>
-            <phase>process-sources</phase>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 

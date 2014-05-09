@@ -66,10 +66,10 @@
     </dependencySet>
 -->
     <dependencySet>
-      <outputDirectory>/reference/javadoc</outputDirectory>
+      <outputDirectory>/api</outputDirectory>
       <unpack>true</unpack>
       <includes>
-        <include>org.crashub:crash.doc.reference:jar:javadoc</include>
+        <include>org.crashub:crash.doc.api:jar:javadoc</include>
       </includes>
     </dependencySet>
     <dependencySet>

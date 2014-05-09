@@ -13,6 +13,7 @@
   <name>CRaSH Doc</name>
 
   <modules>
+    <module>api</module>
     <module>reference</module>
     <module>cookbook</module>
   </modules>
