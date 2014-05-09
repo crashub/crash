@@ -72,53 +72,18 @@
     <plugins>
       <!-- Generate aggregated javadoc -->
       <plugin>
-        <groupId>com.goldin.plugins</groupId>
-        <artifactId>maven-copy-plugin</artifactId>
-        <version>0.2.3</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>unpack</id>
-            <phase>generate-sources</phase>
+            <phase>process-sources</phase>
             <goals>
-              <goal>copy</goal>
+              <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-              <resource>
-                <targetPath>${project.build.directory}/sources</targetPath>
-                <dependencies>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.cli</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.shell</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.connectors.telnet</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.connectors.ssh</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.embed.spring</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.crashub</groupId>
-                    <artifactId>crash.plugins.crowd</artifactId>
-                    <classifier>sources</classifier>
-                  </dependency>
-                </dependencies>
-                <unpack>true</unpack>
-              </resource>
+              <includes>org/**/*.java</includes>
+              <outputDirectory>${project.build.directory}/sources</outputDirectory>
             </configuration>
           </execution>
         </executions>
