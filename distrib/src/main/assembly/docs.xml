@@ -46,7 +46,6 @@
         <include>org.crashub:crash.connectors.telnet:jar:sources</include>
         <include>org.crashub:crash.connectors.ssh:jar:sources</include>
         <include>org.crashub:crash.embed.spring:jar:sources</include>
-        <include>org.crashub:crash.plugins.crowd:jar:sources</include>
       </includes>
     </dependencySet>
     <dependencySet>

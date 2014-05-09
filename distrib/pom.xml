@@ -90,11 +90,6 @@
       <artifactId>crash.embed.spring</artifactId>
       <classifier>sources</classifier>
     </dependency>
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.plugins.crowd</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
 
     <!-- Doc -->
 <!--

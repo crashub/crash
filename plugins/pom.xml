@@ -13,7 +13,6 @@
   <name>CRaSH Plugins</name>
 
   <modules>
-    <module>crowd</module>
     <module>mail</module>
     <module>cron</module>
   </modules>
