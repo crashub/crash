@@ -143,10 +143,6 @@ CRaSH can use a standard web archive to be deployed in a web container. The war 
 and triggering the CRaSH life cycle start/stop. In this mode CRaSH has two packaging available:
 
 * A __core__ war file found under _deploy/core/crash.war_ provides the base CRaSH functionnalities
-* A __gatein__ war file found under _deploy/gatein/crash.war_ provides additional Java Content Repository (JCR)
-  features but deploys only in a GateIn server (Tomcat or JBoss). It extends the core packaging and adds:
-** JCR browsing and interactions
-** SCP support for JCR import and export
 
 You have to copy the _crash.war_ in the appropriate server, regardless of the packaging used.
 

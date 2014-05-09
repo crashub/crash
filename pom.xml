@@ -227,84 +227,6 @@
         <type>tar.gz</type>
       </dependency>
 
-      <!-- Module plugin JCR -->
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.core</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <type>jar</type>
-      </dependency>
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.core</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.core</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <classifier>javadoc</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.core</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <type>test-jar</type>
-      </dependency>
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.core</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <classifier>sources</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.core</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <classifier>standalone</classifier>
-      </dependency>
-
-      <!-- Module plugin JCR eXo -->
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.exo</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <type>jar</type>
-      </dependency>
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.exo</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.exo</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <classifier>sources</classifier>
-      </dependency>
-
-      <!-- Module plugin JCR Jackrabbit -->
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.jackrabbit</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <type>jar</type>
-      </dependency>
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.jackrabbit</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.crashub</groupId>
-        <artifactId>crash.plugins.jcr.jackrabbit</artifactId>
-        <version>1.3.0-beta19-SNAPSHOT</version>
-        <classifier>sources</classifier>
-      </dependency>
-
       <!-- Module plugin Crowd -->
       <dependency>
         <groupId>org.crashub</groupId>
@@ -424,11 +346,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>1.7.2</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <version>1.0</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>

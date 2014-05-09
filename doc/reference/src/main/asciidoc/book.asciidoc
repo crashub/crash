@@ -43,10 +43,6 @@ include::mail.asciidoc[]
 
 include::cron.asciidoc[]
 
-= JCR plugin
-
-include::jcr.asciidoc[]
-
 = Hey, I want to contribute!
 
 Drop me an email. You can find my email on http://www.julienviet.com. Any kind of help is welcome.

@@ -15,7 +15,6 @@
   <modules>
     <module>crowd</module>
     <module>mail</module>
-    <module>jcr</module>
     <module>cron</module>
   </modules>
 

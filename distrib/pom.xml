@@ -28,13 +28,6 @@
       <type>war</type>
     </dependency>
 
-    <!-- GateIn war -->
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.plugins.jcr.exo</artifactId>
-      <type>war</type>
-    </dependency>
-
     <!-- Spring war -->
     <dependency>
       <groupId>org.crashub</groupId>
@@ -95,21 +88,6 @@
     <dependency>
       <groupId>org.crashub</groupId>
       <artifactId>crash.embed.spring</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.plugins.jcr.core</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.plugins.jcr.exo</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.crashub</groupId>
-      <artifactId>crash.plugins.jcr.jackrabbit</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
@@ -206,18 +184,6 @@
             <configuration>
               <descriptors>
                 <descriptor>src/main/assembly/mule-app.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-          <execution>
-            <id>make-gatein</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/gatein.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
