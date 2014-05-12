@@ -25,11 +25,10 @@
       <artifactId>groovy-all</artifactId>
     </dependency>
 
-    <!-- Optional as one does not have to use jline but could use another connector -->
+    <!-- Will be shaded -->
     <dependency>
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
-      <optional>true</optional>
     </dependency>
 
     <dependency>
@@ -80,7 +79,6 @@
 
   <build>
     <plugins>
-<!--
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.2</version>
@@ -92,11 +90,11 @@
             </goals>
             <configuration>
               <shadedArtifactAttached>false</shadedArtifactAttached>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <createSourcesJar>true</createSourcesJar>
               <artifactSet>
                 <includes>
                   <include>jline:jline</include>
-                  <include>org.crashub:crash.cli</include>
                 </includes>
               </artifactSet>
               <relocations>
@@ -121,7 +119,7 @@
           </execution>
         </executions>
       </plugin>
--->
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>

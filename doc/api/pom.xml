@@ -78,6 +78,7 @@
             </goals>
             <configuration>
               <includes>org/**/*.java</includes>
+              <excludes>org/crsh/console/jline/**</excludes>
               <outputDirectory>${project.build.directory}/sources</outputDirectory>
             </configuration>
           </execution>

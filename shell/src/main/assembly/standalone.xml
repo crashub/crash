@@ -38,7 +38,9 @@
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>
       <includes>
+<!--
         <include>jline:jline</include>
+-->
         <include>org.crashub:crash.cli</include>
         <include>org.codehaus.groovy:groovy-all</include>
         <include>org.crashub:crash.shell</include>

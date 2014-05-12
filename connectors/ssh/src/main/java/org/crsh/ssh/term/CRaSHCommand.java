@@ -18,8 +18,8 @@
  */
 package org.crsh.ssh.term;
 
-import jline.Terminal;
-import jline.console.ConsoleReader;
+import org.crsh.console.jline.Terminal;
+import org.crsh.console.jline.console.ConsoleReader;
 import org.apache.sshd.server.Environment;
 import org.crsh.console.jline.JLineProcessor;
 import org.crsh.shell.Shell;

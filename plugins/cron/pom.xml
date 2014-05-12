@@ -59,12 +59,6 @@
   <profiles>
     <profile>
       <id>main</id>
-      <dependencies>
-        <dependency>
-          <groupId>jline</groupId>
-          <artifactId>jline</artifactId>
-        </dependency>
-      </dependencies>
       <build>
         <pluginManagement>
           <plugins>
