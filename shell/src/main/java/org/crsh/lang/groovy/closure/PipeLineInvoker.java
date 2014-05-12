@@ -27,6 +27,7 @@ import org.crsh.shell.impl.command.pipeline.PipeLine;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 /** @author Julien Viet */
@@ -74,5 +75,10 @@ public class PipeLineInvoker {
       // This is on purpose
       pipeLine.close();
     }
+  }
+
+  @Override
+  public String toString() {
+    return "PipeLineInvoker[" + closure + "](" + Arrays.toString(args) + ")";
   }
 }

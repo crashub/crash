@@ -92,7 +92,7 @@ public class PipeLineClosure extends Closure {
       combined[elements.length] = new ClosureElement(closure);
       return new PipeLineClosure(context, combined);
     } else {
-      throw new UnsupportedOperationException("Not supported");
+      throw new IllegalArgumentException("Cannot append to a pipeline: " + t);
     }
   }
 
