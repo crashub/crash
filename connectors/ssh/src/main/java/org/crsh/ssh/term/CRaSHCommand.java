@@ -91,6 +91,8 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
       processor.run();
     } catch (java.io.InterruptedIOException e) {
       // Expected behavior because of the onExit callback in the shutdown above
+      // clear interrupted status on purpose
+      Thread.interrupted();
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
