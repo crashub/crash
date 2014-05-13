@@ -36,6 +36,15 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Console {
 
   /** . */
+  static final int RUNNING = 0;
+
+  /** . */
+  static final int CLOSING = 1;
+
+  /** . */
+  static final int CLOSED = 2;
+
+  /** . */
   final Shell shell;
 
   /** The current handler. */
@@ -51,7 +60,7 @@ public class Console {
   final Editor editor;
 
   /** . */
-  boolean running;
+  int status;
 
   public Console(Shell shell, ConsoleDriver driver) throws NullPointerException {
     if (shell == null) {
@@ -62,7 +71,7 @@ public class Console {
     this.buffer = new LinkedBlockingDeque<KeyStroke>(1024);
     this.handler = new AtomicReference<Plugin>();
     this.editor = new Editor(this);
-    this.running = true;
+    this.status = RUNNING;
   }
 
   public void setMode(Mode mode) {
@@ -90,7 +99,7 @@ public class Console {
   }
 
   public boolean isRunning() {
-    return running;
+    return status == RUNNING;
   }
 
   /**
@@ -120,6 +129,8 @@ public class Console {
   }
 
   public void on(KeyStroke keyStroke) {
+
+    //
     if (keyStroke.operation == Operation.INTERRUPT) {
       Plugin current = handler.get();
       if (current == null) {
@@ -135,7 +146,15 @@ public class Console {
       }
     }
     buffer.add(keyStroke);
+
+    //
     iterate();
+
+    // This was modified by this thread during the loop
+    if (status == CLOSING) {
+      status = CLOSED;
+      Utils.close(driver);
+    }
   }
 
   public void on(KeyStroke[] keyStrokes) {
@@ -146,8 +165,10 @@ public class Console {
 
 
   void close() {
-    running = false;
-    Utils.close(driver);
+    if (status == RUNNING) {
+      status = CLOSED;
+      Utils.close(driver);
+    }
   }
 
   /**
@@ -173,7 +194,7 @@ public class Console {
    * Process the state machine.
    */
   void iterate() {
-    while (running) {
+    while (status == RUNNING) {
       Plugin current = handler.get();
       KeyStroke key = buffer.poll();
       if (key != null) {

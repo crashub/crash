@@ -195,7 +195,7 @@ class EditorAction {
     @Override
     String execute(Editor editor, EditorBuffer buffer, int[] sequence, boolean flush) throws IOException {
       if (editor.isEmpty()) {
-        editor.console.running = false;
+        editor.console.status = Console.CLOSING;
         return null;
       } else {
         if (editor.console.getMode() == Mode.EMACS) {
