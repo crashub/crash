@@ -148,8 +148,10 @@
   </dependencies>
 
   <build>
-    <finalName>crsh-${project.version}</finalName>
+    <finalName>crash-${project.version}</finalName>
     <plugins>
+
+      <!-- Assembly plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -186,44 +188,61 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- Produce an executable jar file that embeds Tomcat or Spring : useful for testing war packaging works well -->
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <id>war-exec</id>
+            <goals>
+              <goal>exec-war-only</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <finalName>crash-${project.version}-war-exec.jar</finalName>
+              <attachArtifact>false</attachArtifact>
+              <warRunDependencies>
+                <warRunDependency>
+                  <dependency>
+                    <groupId>org.crashub</groupId>
+                    <artifactId>crash.packaging</artifactId>
+                    <version>${project.version}</version>
+                    <type>war</type>
+                  </dependency>
+                  <contextPath>/</contextPath>
+                </warRunDependency>
+              </warRunDependencies>
+            </configuration>
+          </execution>
+          <execution>
+            <id>war-exec-spring</id>
+            <goals>
+              <goal>exec-war-only</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <finalName>crash-${project.version}-war-exec-spring.jar</finalName>
+              <attachArtifact>false</attachArtifact>
+              <warRunDependencies>
+                <warRunDependency>
+                  <dependency>
+                    <groupId>org.crashub</groupId>
+                    <artifactId>crash.packaging</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>spring</classifier>
+                    <type>war</type>
+                  </dependency>
+                  <contextPath>/</contextPath>
+                </warRunDependency>
+              </warRunDependencies>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
-  <!-- Produce an executable jar file that embeds Tomcat : useful for testing war packaging works well -->
-  <profiles>
-    <profile>
-      <id>tomcat</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.tomcat.maven</groupId>
-            <artifactId>tomcat7-maven-plugin</artifactId>
-            <version>2.1</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>exec-war-only</goal>
-                </goals>
-                <phase>package</phase>
-                <configuration>
-                  <warRunDependencies>
-                    <warRunDependency>
-                      <dependency>
-                        <groupId>org.crashub</groupId>
-                        <artifactId>crash.packaging</artifactId>
-                        <version>${project.version}</version>
-                        <type>war</type>
-                      </dependency>
-                      <contextPath>/</contextPath>
-                    </warRunDependency>
-                  </warRunDependencies>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
