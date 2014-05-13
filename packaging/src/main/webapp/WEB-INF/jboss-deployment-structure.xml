@@ -1,7 +1,10 @@
 <jboss-deployment-structure>
   <deployment>
     <resources>
-      <resource-root path="WEB-INF/lib/bcprov-jdk16-1.46.jar" use-physical-code-source="true"/>
+      <resource-root path="WEB-INF/lib/bcprov-jdk15on-1.49.jar" use-physical-code-source="true"/>
+    </resources>
+    <resources>
+      <resource-root path="WEB-INF/lib/bcpkix-jdk15on-1.49.jar" use-physical-code-source="true"/>
     </resources>
   </deployment>
 </jboss-deployment-structure>

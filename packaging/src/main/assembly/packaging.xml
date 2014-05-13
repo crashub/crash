@@ -44,7 +44,8 @@
         <include>org.apache.ivy:ivy</include>
         <include>org.crashub:crash.connectors.telnet:jar:standalone</include>
         <include>org.crashub:crash.connectors.ssh:jar:standalone</include>
-        <include>org.bouncycastle:bcprov-jdk16</include>
+        <include>org.bouncycastle:bcprov-jdk15on</include>
+        <include>org.bouncycastle:bcpkix-jdk15on</include>
       </includes>
     </dependencySet>
   </dependencySets>

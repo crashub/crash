@@ -36,6 +36,8 @@
         <include>org.slf4j:slf4j-jdk14</include>
         <include>org.apache.sshd:sshd-core</include>
         <include>org.apache.sshd:sshd-pam</include>
+        <include>org.bouncycastle:bcprov-jdk15on</include>
+        <include>org.bouncycastle:bcpkix-jdk15on</include>
         <include>org.apache.mina:mina-core</include>
         <include>net.wimpi:telnetd-x</include>
         <include>org.apache.ivy:ivy</include>
