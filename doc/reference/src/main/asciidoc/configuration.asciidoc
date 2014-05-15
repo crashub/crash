@@ -1,6 +1,116 @@
-CRaSH is configured by a set of properties, the properties are configured differently according to the mode.
+This chapter explains the configuration of CRaSH, configuration aims to be as simple as possible
+and is adapted to the mode running CRaSH.
 
-== Configuring the standalone or attach mode
+== Mount point configuration
+
+CRaSH uses the file system for reading configuration files and discovering command source files. CRaSh uses a virtual
+file system to be decoupled from the implementation, there are up to three implementations provided out of the box
+(frameworks embedding CRaSH may add their own VFS implementation):
+
+- _file_ : the actual file system of the operating system based on the _java.io.File_ API
+- _classpath_ : uses the resources provided by the actual classpath
+- _war_ : the content of the web archive, available only when CRaSH is embedded in a web application
+
+CRaSH can be configured for the _conf_ and _cmd_ mount points with a simple string that describes the VFS to be used. A _mount point_
+is configured with a list of mounts, a mount being the name of a file system associated with a path in this file system.
+
+* _file:cmd/_ : the _cmd_ directory relative to the file system running the JVM
+* _file:/cmd/_ : the _cmd_ directory relative to the root of the file system (so _/cmd_)
+* _classpath:/crash/commands/_ : any _/crash/command/_ package found in the classpath
+* _war:/WEB-INF/crash/commands/_ : the folder _/WEB-INF/crash/commands_ in the war file hosting CRaSH
+* _classpath:/crash/commands/;war:/WEB-INF/crash/commands_ : the aggregates of two entries
+
+By default CRaSH provides an adapted mount point configuration for each mode, but you can customize it
+according to your needs.
+
+=== Configuring the standalone mode
+
+The mount point configurations of the standalone mode can be specified with command line options:
+
+- the _-cmd_ option set the command moint point configuration, the default value being _classpath:/crash/commands/_
+- the _-conf_ option set the conf moint point configuration, the default value being _classpath:/crash/_
+
+The default behavior of the distribution extracts the content of these mount points in the _/cmd_ and _/conf_ folders
+of the distribution. This behavior can be explained by looking at _crash.sh_ and _crash.bat_ startup scripts, they
+uses the options _--cmd-folder_ and _--conf-folder_ to set this behavior.
+
+Thanks to this default behavior, the commands and configurations files can be  easily modified. Without this feature, any modification
+would imply to modify the jar files, which is not a viable option.
+
+TIP: removing these options from the startup scripts will configure CRaSH to uses the files from the jars directly.
+
+=== Configuring the attach mode
+
+Same as standalone mode.
+
+=== Configuring the web application mode
+
+The servlet context parameters are used for configuring the paths:
+
+[source,xml]
+----
+<web-app>
+  ...
+  <context-param>
+    <param-name>crash.mountpointconfig.conf</param-name>
+    <param-value>war:/WEB-INF/crash/</param-value>
+  </context-param>
+  <context-param>
+    <param-name>crash.mountpointconfig.cmd</param-name>
+    <param-value>war:/WEB-INF/crash/commands/</param-value>
+  </context-param>
+  ...
+</web-app>
+----
+
+In this mode, the configs are subject to property interpolation based on the system properties of the JVM:
+
+[source,xml]
+----
+<web-app>
+  ...
+  <context-param>
+    <param-name>crash.mountpointconfig.conf</param-name>
+    <param-value>${myconf}</param-value>
+  </context-param>
+  ...
+</web-app>
+----
+
+The interpolation format allows to specify a default value when the property cannot be resolved using Bash syntax:
+
+[source,xml]
+----
+<web-app>
+  ...
+  <context-param>
+    <param-name>crash.mountpointconfig.conf</param-name>
+    <param-value>${myconf:-war:/WEB-INF/crash/commands/}</param-value>
+  </context-param>
+  ...
+</web-app>
+----
+
+Interpolation is only available for the web application mode.
+
+=== Configuring the spring mode
+
+The +org.crsh.spring.SpringWebBootstrap+ bean exposes the _cmdMountPointConfig_ and _confMountPointConfig_ properties to configure it:
+
+[source,xml]
+----
+  <bean class="org.crsh.spring.SpringWebBootstrap">
+    <property name="cmdMountPointConfig" value="war:/WEB-INF/crash/commands/"/>
+    <property name="confMounPointConfig" value="war:/WEB-INF/crash/"/>
+    ...
+  </bean>
+----
+
+== Configuration properties
+
+Properties play an important role in CRaSH configuration, they are configured differently according to the mode.
+
+=== Configuring the standalone or attach mode
 
 In standalone or attach mode configuration can be in the _/conf/crash.properties_ file or via the command line directly.
 
@@ -17,14 +127,14 @@ You can also specify properties as a CRaSH command line argument with the _-p_ o
 % crash -p crash.property_name=property_value
 ----
 
-== Configuring the web application mode
+=== Configuring the web application mode
 
 In the war file packaging, the configuration file can be found under _/WEB-INF/crash/crash.properties_ file of the archive.
 Configuration can be overriden by Java Virtual Machine system properties by using the same property name.
 
-== Configuration properties
+=== Configuration properties
 
-=== Changing SSH server key
+==== Changing SSH server key
 
 The key can be changed by replacing the file _WEB-INF/sshd/hostkey.pem_. Alternatively you can configure the server
 to use an external file by using the _crash.ssh.keypath_ parameter in the _crash.properties_. Uncomment the corresponding
@@ -41,7 +151,7 @@ will take place when someone first connects through SSH. The default behavior is
 #crash.ssh.keygen=false
 ----
 
-=== Changing telnet or SSH server ports
+==== Changing telnet or SSH server ports
 
 The ports of the server are parameterized by the _crash.ssh.port_ and _crash.telnet.port_ parameters in the _crash.properties_ file
 
@@ -55,7 +165,7 @@ crash.ssh.port=2000
 crash.telnet.port=5000
 ----
 
-=== Changing SSH authentication and idle timeouts ===
+==== Changing SSH authentication and idle timeouts ===
 
 Default authentication and idle timeout of the SSH server are set to 10 minutes (600'000 ms). Both timeouts can be configured in milliseconds with the //crash.ssh.auth-timeout// and //crash.ssh.idle-timeout// parameters in the //crash.properties// file
 
@@ -71,7 +181,7 @@ crash.ssh.idle-timeout=300000
 * to remove the telnet access, remove the jar file in the _WEB-INF/lib/crsh.connectors.telnet-{crash-version}.jar_.
 * to remove the SSH access, remove the jar file in the _WEB-INF/lib/crsh.connectors.ssh-{crash-version}.jar_.
 
-=== Configuring shell default message
+==== Configuring shell default message
 
 The _/WEB-INF/crash/commands/base/login.groovy_ file contains two closures that are evaluated each time a message is required
 
@@ -80,7 +190,7 @@ The _/WEB-INF/crash/commands/base/login.groovy_ file contains two closures that 
 
 Those closure can be customized to return different messages.
 
-=== Configuring authentication
+==== Configuring authentication
 
 Authentication is used by the SSH server when a user authenticates. Authentication interface is pluggable and has default
 implementations. The <<pluggable_auth,authentication chapter>> explains how to write a custom authentication plugin, in this section we cover the
@@ -102,7 +212,7 @@ crash.auth=simple,key
 
 CRaSH comes out of the box with two authentication plugins.
 
-==== Simple authentication
+===== Simple authentication
 
 Simple authentication provides a simple username/password authentication configured with the _crash.auth.simple.username_ and
 _crash.auth.simple.password_ properties:
@@ -114,7 +224,7 @@ crash.auth.simple.username=admin
 crash.auth.simple.password=admin
 ----
 
-==== Jaas authentation
+===== Jaas authentation
 
 Jaas authentication uses jaas to perform authentication configured with the _crash.auth.jaas.domain_ property to define the
 jaas domain to use when performing authentication:
@@ -125,7 +235,7 @@ crash.auth=jaas
 crash.auth.jaas.domain=my-domain
 ----
 
-==== Key authentication
+===== Key authentication
 
 Key authentication relies on a set of authorized public keys to perform authentication configured with the
 _crash.auth.key.path_ property to specify the path of the keys. The property should point to a valid _.pem_ file.

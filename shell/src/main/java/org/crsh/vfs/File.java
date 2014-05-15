@@ -19,6 +19,8 @@
 
 package org.crsh.vfs;
 
+import org.crsh.vfs.spi.FSDriver;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +41,7 @@ public final class File {
   private LinkedList<Handle<?>> handles;
 
   /** . */
-  private LinkedHashMap<Key, File> children;
+  private LinkedHashMap<String, File> children;
 
   public File(FS fs, Path path) {
     this.fs = fs;
@@ -51,27 +53,25 @@ public final class File {
     return path;
   }
 
-  public boolean isDir() {
-    return path.isDir();
-  }
-
   public String getName() {
     return path.getName();
   }
 
-  public Resource getResource() throws IOException {
-    if (path.isDir()) {
-      throw new IllegalStateException("Cannot get url of a dir");
-    }
-    Handle handle = getHandles().peekFirst();
-    return handle != null ? handle.getResource() : null;
+  public boolean hasChildren() throws IOException {
+    return children().iterator().hasNext();
+  }
 
+  public Resource getResource() throws IOException {
+    for (Handle handle : getHandles()) {
+      Resource resource = handle.getResource();
+      if (resource != null) {
+        return resource;
+      }
+    }
+    return null;
   }
 
   public Iterable<Resource> getResources() throws IOException {
-    if (path.isDir()) {
-      throw new IllegalStateException("Cannot get url of a dir");
-    }
     List<Resource> urls = Collections.emptyList();
     for (Handle<?> handle : getHandles()) {
       if (urls.isEmpty()) {
@@ -86,22 +86,22 @@ public final class File {
     return urls;
   }
 
-  public File child(String name, boolean dir) throws IOException {
+  public File child(String name) throws IOException {
     if (children == null) {
       children();
     }
-    return children.get(new Key(name, dir));
+    return children.get(name);
   }
 
   public Iterable<File> children() throws IOException {
     if (children == null) {
-      LinkedHashMap<Key, File> children = new LinkedHashMap<Key, File>();
+      LinkedHashMap<String, File> children = new LinkedHashMap<String, File>();
       for (Handle<?> handle : getHandles()) {
         for (Handle<?> childHandle : handle.children()) {
-          File child = children.get(childHandle.key);
+          File child = children.get(childHandle.name);
           if (child == null) {
-            child = new File(fs, Path.get(path, childHandle.key.name, childHandle.key.dir));
-            children.put(childHandle.key, child);
+            child = new File(fs, path.append(childHandle.name, false));
+            children.put(childHandle.name, child);
           }
           if (child.handles == null) {
             child.handles = new LinkedList<Handle<?>>();
@@ -117,10 +117,10 @@ public final class File {
   LinkedList<Handle<?>> getHandles() {
     if (handles == null) {
       LinkedList<Handle<?>> handles = new LinkedList<Handle<?>>();
-      for (Mount<?> mount : fs.mounts) {
+      for (FSDriver<?> driver : fs.drivers) {
         Handle<?> handle = null;
         try {
-          handle = mount.getHandle(path);
+          handle = getHandle(driver, path);
         }
         catch (IOException e) {
           e.printStackTrace();
@@ -132,6 +132,24 @@ public final class File {
       this.handles = handles;
     }
     return handles;
+  }
+
+  <H> Handle<H> getHandle(FSDriver<H> driver, Path path) throws IOException {
+    H current = resolve(driver, driver.root(), path);
+    if (current != null) {
+      return new Handle<H>(driver, current);
+    } else {
+      return null;
+    }
+  }
+
+  private <H> H resolve(FSDriver<H> driver, H current, Path path) throws IOException {
+    int index = 0;
+    while (current != null && index < path.getSize()) {
+      String name = path.nameAt(index++);
+      current = driver.child(current, name);
+    }
+    return current;
   }
 
   @Override

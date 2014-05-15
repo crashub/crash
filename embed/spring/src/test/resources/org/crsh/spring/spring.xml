@@ -4,6 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean class="org.crsh.spring.SpringBootstrap">
+    <property name="cmdMountPointConfig" value="classpath:/crash/commands/"/>
+    <property name="confMountPointConfig" value="classpath:/crash/"/>
     <property name="config">
       <props>
         <prop key="crash.telnet.port">4000</prop>

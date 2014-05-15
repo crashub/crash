@@ -24,6 +24,15 @@
 <web-app>
   <display-name>CRaSH</display-name>
 
+  <context-param>
+    <param-name>crash.mountpointconfig.conf</param-name>
+    <param-value>war:/WEB-INF/crash/</param-value>
+  </context-param>
+  <context-param>
+    <param-name>crash.mountpointconfig.cmd</param-name>
+    <param-value>war:/WEB-INF/crash/commands/</param-value>
+  </context-param>
+
   <listener>
     <listener-class>org.crsh.plugin.WebPluginLifeCycle</listener-class>
   </listener>

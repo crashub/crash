@@ -26,29 +26,36 @@ import java.util.Iterator;
 public class PathTestCase extends TestCase {
 
   public void testPath() throws Exception {
-    assertSamePath("/", true);
-    assertSamePath("//", true);
-    assertSamePath("/a", false, "a");
-    assertSamePath("//a", false, "a");
-    assertSamePath("/a/", true, "a");
-    assertSamePath("//a/", true, "a");
-    assertSamePath("/a/b", false, "a", "b");
-    assertSamePath("/a//b", false, "a", "b");
-    assertSamePath("//a/b", false, "a", "b");
-    assertSamePath("/a/b/", true, "a", "b");
-    assertSamePath("/a//b/", true, "a", "b");
-    assertSamePath("//a/b/", true, "a", "b");
-    assertSamePath("//a/b//", true, "a", "b");
+    assertSamePath("", false, true);
+    assertSamePath("/", true, true);
+    assertSamePath("//", true, true);
+    assertSamePath("/a", true, false, "a");
+    assertSamePath("//a", true, false, "a");
+    assertSamePath("a", false, false, "a");
+    assertSamePath("/a/", true, true, "a");
+    assertSamePath("//a/", true, true, "a");
+    assertSamePath("a/", false, true, "a");
+    assertSamePath("/a/b", true, false, "a", "b");
+    assertSamePath("/a//b", true, false, "a", "b");
+    assertSamePath("//a/b", true, false, "a", "b");
+    assertSamePath("a/b", false, false, "a", "b");
+    assertSamePath("a//b", false, false, "a", "b");
+    assertSamePath("/a/b/", true, true, "a", "b");
+    assertSamePath("/a//b/", true, true, "a", "b");
+    assertSamePath("//a/b/", true, true, "a", "b");
+    assertSamePath("//a/b//", true, true, "a", "b");
+    assertSamePath("a/b/", false, true, "a", "b");
+    assertSamePath("a//b/", false, true, "a", "b");
+    assertSamePath("a/b//", false, true, "a", "b");
   }
 
-  private void assertSamePath(String s, boolean dir, String... expectedNames) {
+  private void assertSamePath(String s, boolean absolute, boolean dir, String... expectedNames) {
     Path path = Path.get(s);
     assertEquals(dir, path.isDir());
+    assertEquals(absolute, path.isAbsolute());
     assertEquals(path.getSize(), expectedNames.length);
-    Iterator<String> names = path.iterator();
-    for (int i = 0;i < expectedNames.length;i++) {
-      assertEquals(expectedNames[i], names.next());
+    for (int index = 0;index < expectedNames.length;index++) {
+      assertEquals(expectedNames[index], path.nameAt(index));
     }
   }
-
 }

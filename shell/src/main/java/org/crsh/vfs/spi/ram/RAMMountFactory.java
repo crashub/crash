@@ -16,37 +16,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.vfs.spi.ram;
 
-package org.crsh.vfs.spi;
+import org.crsh.vfs.Path;
+import org.crsh.vfs.spi.FSMountFactory;
+import org.crsh.vfs.spi.Mount;
 
 import java.io.IOException;
 
-public abstract class AbstractFSDriver<H> implements FSDriver<H> {
+/**
+ * @author Julien Viet
+ */
+public class RAMMountFactory implements FSMountFactory<Path> {
 
-  /**
-   * A simple implementation that iterates over the children to return the one specified
-   * by the <code>name</code> argument. Subclasses can override this method to provide
-   * a more efficient implementation.
-   *
-   * @param handle the directory handle
-   * @param name the child name
-   * @return the child or null
-   * @throws IOException any io exception
-   */
   @Override
-  public H child(H handle, String name) throws IOException {
-    if (handle == null) {
-      throw new NullPointerException();
-    }
-    if (name == null) {
-      throw new NullPointerException();
-    }
-    for (H child : children(handle)) {
-      String childName = name(child);
-      if (childName.equals(name)) {
-        return child;
-      }
-    }
-    return null;
+  public Mount<Path> create(Path path) throws IOException {
+    // Not a great implementation
+    return new Mount<Path>(new RAMDriver(), null);
   }
 }

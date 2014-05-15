@@ -35,19 +35,18 @@ class Handle<H> {
   private final FSDriver<H> driver;
 
   /** . */
-  final Key key;
+  final String name;
 
   /** . */
   final H handle;
 
   Handle(FSDriver<H> driver, H handle) throws IOException {
     String name = driver.name(handle);
-    boolean dir = driver.isDir(handle);
 
     //
     this.driver = driver;
     this.handle = handle;
-    this.key = new Key(name, dir);
+    this.name = name;
   }
 
   Iterable<Handle<H>> children() throws IOException {
@@ -62,7 +61,7 @@ class Handle<H> {
     InputStream in = open();
     byte[] bytes = Utils.readAsBytes(in);
     long lastModified = getLastModified();
-    return new Resource(key.name, bytes, lastModified);
+    return new Resource(name, bytes, lastModified);
   }
 
   Iterator<Resource> getResources() throws IOException {
@@ -73,7 +72,7 @@ class Handle<H> {
         InputStream in = i.next();
         byte[] bytes = Utils.readAsBytes(in);
         long lastModified = getLastModified();
-        resources.add(new Resource(key.name, bytes, lastModified));
+        resources.add(new Resource(name, bytes, lastModified));
       }
       return resources.iterator();
     } else {

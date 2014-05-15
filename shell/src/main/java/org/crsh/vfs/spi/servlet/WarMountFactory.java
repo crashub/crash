@@ -16,39 +16,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.vfs.spi.servlet;
 
-package org.crsh.vfs;
+import org.crsh.vfs.Path;
+import org.crsh.vfs.spi.FSMountFactory;
+import org.crsh.vfs.spi.Mount;
 
-class Key {
+import javax.servlet.ServletContext;
+import java.io.IOException;
+
+/**
+ * @author Julien Viet
+ */
+public class WarMountFactory implements FSMountFactory<String> {
 
   /** . */
-  final String name;
+  private final ServletContext context;
 
-  /** . */
-  final boolean dir;
-
-  Key(String name, boolean dir) {
-    if (name == null) {
-      throw new NullPointerException();
-    }
-    this.name = name;
-    this.dir = dir;
+  public WarMountFactory(ServletContext context) {
+    this.context = context;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj instanceof Key) {
-      Key that = (Key)obj;
-      return name.equals(that.name) && dir == that.dir;
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return name.hashCode() ^ (dir ? 0xFFFFFFFF : 0);
+  public Mount<String> create(Path path) throws IOException {
+    return new Mount<String>(new ServletContextDriver(context, path.absolute().getValue()), "war:" + path.absolute().getValue());
   }
 }

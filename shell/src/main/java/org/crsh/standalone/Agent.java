@@ -18,6 +18,7 @@
  */
 package org.crsh.standalone;
 
+import org.crsh.cli.Required;
 import org.crsh.cli.Usage;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.Argument;
@@ -31,9 +32,11 @@ import org.crsh.cli.impl.lang.Util;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.impl.remoting.RemoteClient;
-import org.crsh.vfs.Path;
+import org.crsh.util.Utils;
+import org.crsh.vfs.FS;
+import org.crsh.vfs.spi.file.FileMountFactory;
+import org.crsh.vfs.spi.url.ClassPathMountFactory;
 
-import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.util.Collections;
 import java.util.List;
@@ -79,53 +82,28 @@ public class Agent {
 
   @Command
   public void main(
+      @Required
       @Option(names={"c","cmd"})
-      @Usage("adds a dir to the command path")
-      List<String> cmds,
+      @Usage("the command path")
+      String cmd,
+      @Required
       @Option(names={"conf"})
-      @Usage("adds a dir to the conf path")
-      List<String> confs,
+      @Usage("the conf path")
+      String conf,
       @Option(names={"p","property"})
       @Usage("set a property of the form a=b")
       List<String> properties,
-      @Option(names = {"cmd-mode"})
-      @Usage("the cmd mode (read or copy), copy mode requires at least one cmd path to be specified")
-      ResourceMode cmdMode,
-      @Option(names = {"conf-mode"})
-      @Usage("the conf mode (read of copy), copy mode requires at least one conf path to be specified")
-      ResourceMode confMode,
       @Argument(name = "port")
-    Integer port) throws Exception {
+      Integer port) throws Exception {
 
     //
-    boolean copyCmd = cmdMode != ResourceMode.read && cmds != null && cmds.size() > 0;
-    boolean copyConf = confMode != ResourceMode.read && confs != null && confs.size() > 0;
+    FileMountFactory fileDriver = new FileMountFactory(Utils.getCurrentDirectory());
+    ClassPathMountFactory classpathDriver = new ClassPathMountFactory(Thread.currentThread().getContextClassLoader());
 
     //
-    Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
-
-    //
-    if (!copyCmd) {
-      bootstrap.addToCmdPath(Path.get("/crash/commands/"));
-    }
-    if (cmds != null) {
-      for (String cmd : cmds) {
-        File cmdPath = new File(cmd);
-        bootstrap.addToCmdPath(cmdPath);
-      }
-    }
-
-
-    //
-    if (!copyConf) {
-      bootstrap.addToConfPath(Path.get("/crash/"));
-    }
-    if (confs != null) {
-      for (String conf : confs) {
-        File confPath = new File(conf);
-        bootstrap.addToConfPath(confPath);
-      }
-    }
+    FS cmdFS = new FS.Builder().register("file", fileDriver).register("classpath", classpathDriver).mount(cmd).build();
+    FS confFS = new FS.Builder().register("file", fileDriver).register("classpath", classpathDriver).mount(conf).build();
+    Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader(), confFS, cmdFS);
 
     //
     if (properties != null) {

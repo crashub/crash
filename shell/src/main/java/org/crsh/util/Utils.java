@@ -658,4 +658,106 @@ public class Utils {
 
     return false;
   }
+
+  /** . */
+  private static final int ESCAPE = -1, SCANNING = 0, DOLLAR = 1, EVALUATING = 2;
+
+  /**
+   * Interpolate a string and replace the occurence from a context map, the syntax for a variable
+   * is <code>${}</code> and it can accept a default value used when the variable cannot be resolved
+   * with the <code>:-</code> separator:
+   *
+   * <ul>
+   *   <li><code>{}</code> + "foo" => "foo"</li>
+   *   <li><code>{}</code> + "${foo}" => ""</li>
+   *   <li><code>{}</code> + "\\${foo}" => "${foo}"</li>
+   *   <li><code>{foo:bar}</code> + "${foo}" => "bar"</li>
+   *   <li><code>{}</code> + "${foo:-bar}" => "bar"</li>
+   * </ul>
+   *
+   * @param interpolated the value to interpolate
+   * @param context the context
+   * @return the interpolated string
+   * @throws NullPointerException if the interpolated argument is null
+   */
+  public static String interpolate(String interpolated, Map<?, ?> context) throws NullPointerException {
+    StringBuilder sb = new StringBuilder();
+    int status = 0;
+    int prev = 0;
+    int length = interpolated.length();
+    for (int i = 0;i < length;i++) {
+      char c = interpolated.charAt(i);
+      switch (status) {
+        case ESCAPE:
+          if (c == '$') {
+            sb.append('$');
+          } else {
+            sb.append('\\').append(c);
+          }
+          status = SCANNING;
+          break;
+        case SCANNING:
+          if (c == '$') {
+            status = DOLLAR;
+          } else if (c == '\\') {
+            status = ESCAPE;
+          } else {
+            sb.append(c);
+          }
+          break;
+        case DOLLAR:
+          if (c == '{') {
+            status = EVALUATING;
+            prev = i + 1;
+          } else {
+            sb.append('$').append(c);
+          }
+          break;
+        case EVALUATING:
+          if (c == '}') {
+            int j = prev + 1;
+            while (j < i) {
+              if (j < length && interpolated.charAt(j - 1) == ':' && interpolated.charAt(j) == '-') {
+                break;
+              } else {
+                j++;
+              }
+            }
+            Object value;
+            if (j < i) {
+              String key = interpolated.substring(prev, j - 1);
+              value = context.get(key);
+              if (value == null) {
+                value = interpolated.substring(j + 1, i);
+              }
+            } else {
+              String key = interpolated.substring(prev, i);
+              value = context.get(key);
+            }
+            if (value != null) {
+              sb.append(value);
+            }
+            status = SCANNING;
+          }
+          break;
+      }
+    }
+    switch (status) {
+      case DOLLAR:
+        sb.append('$');
+        break;
+      case EVALUATING:
+        sb.append("${").append(interpolated, prev, interpolated.length());
+        break;
+    }
+    return sb.toString();
+  }
+
+  /**
+   * @return the current user directory
+   */
+  public static File getCurrentDirectory() {
+    String userDir = System.getProperty("user.dir");
+    return new File(userDir);
+  }
 }

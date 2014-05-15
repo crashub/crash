@@ -16,37 +16,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.vfs.spi;
+
+import org.crsh.vfs.Path;
 
 import java.io.IOException;
 
-public abstract class AbstractFSDriver<H> implements FSDriver<H> {
+/**
+ * The mount factory is able to create mounts for a given file system and a specified path.
+ *
+ * @author Julien Viet
+ */
+public interface FSMountFactory<H> {
 
   /**
-   * A simple implementation that iterates over the children to return the one specified
-   * by the <code>name</code> argument. Subclasses can override this method to provide
-   * a more efficient implementation.
+   * Resolve a mount for the specified path.
    *
-   * @param handle the directory handle
-   * @param name the child name
-   * @return the child or null
+   * @param path the path
+   * @return the created mount object
    * @throws IOException any io exception
    */
-  @Override
-  public H child(H handle, String name) throws IOException {
-    if (handle == null) {
-      throw new NullPointerException();
-    }
-    if (name == null) {
-      throw new NullPointerException();
-    }
-    for (H child : children(handle)) {
-      String childName = name(child);
-      if (childName.equals(name)) {
-        return child;
-      }
-    }
-    return null;
-  }
+  Mount<H> create(Path path) throws IOException;
+
 }

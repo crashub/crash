@@ -117,8 +117,8 @@ done
 # Create tmp dir if it does not exist
 mkdir -p $CRASH_HOME/tmp
 
-export CLASSPATH=$CLASSPATH:$CRASH_HOME/bin/crash.cli-${project.version}.jar:$EXT_JARS
+export CLASSPATH=$CLASSPATH:$CRASH_HOME/bin/crash.cli-1.3.0-beta21-SNAPSHOT.jar:$EXT_JARS
 
 exec $JAVACMD $BOOTCP \
      -Djava.util.logging.config.file=$CRASH_HOME/conf/logging.properties \
-     org.crsh.cli.impl.bootstrap.Main --conf $CRASH_HOME/conf --cmd $CRASH_HOME/cmd "$@"
+     org.crsh.cli.impl.bootstrap.Main --conf-folder $CRASH_HOME/conf --cmd-folder $CRASH_HOME/cmd  "$@"

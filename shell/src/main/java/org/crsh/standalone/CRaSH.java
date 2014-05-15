@@ -47,6 +47,9 @@ import org.crsh.util.Utils;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.Resource;
+import org.crsh.vfs.spi.Mount;
+import org.crsh.vfs.spi.file.FileMountFactory;
+import org.crsh.vfs.spi.url.ClassPathMountFactory;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.ByteArrayInputStream;
@@ -79,7 +82,7 @@ public class CRaSH {
   }
 
   private void copyCmd(org.crsh.vfs.File src, File dst) throws IOException {
-    if (src.isDir()) {
+    if (src.hasChildren()) {
       if (!dst.exists()) {
         if (dst.mkdir()) {
           log.fine("Could not create dir " + dst.getCanonicalPath());
@@ -102,7 +105,7 @@ public class CRaSH {
   }
 
   private void copyConf(org.crsh.vfs.File src, File dst) throws IOException {
-    if (!src.isDir()) {
+    if (!src.hasChildren()) {
       if (!dst.exists()) {
         Resource resource = ResourceManager.loadConf(src);
         if (resource != null) {
@@ -113,63 +116,86 @@ public class CRaSH {
     }
   }
 
+  private String toString(FS.Builder builder) {
+    StringBuilder sb = new StringBuilder();
+    List<Mount<?>> mounts = builder.getMounts();
+    for (int i = 0;i < mounts.size();i++) {
+      Mount<?> mount = mounts.get(i);
+      if (i > 0) {
+        sb.append(';');
+      }
+      sb.append(mount.getValue());
+    }
+    return sb.toString();
+  }
+
+  private FS.Builder createBuilder() throws IOException {
+    FileMountFactory fileDriver = new FileMountFactory(Utils.getCurrentDirectory());
+    ClassPathMountFactory classpathDriver = new ClassPathMountFactory(Thread.currentThread().getContextClassLoader());
+    return new FS.Builder().register("file", fileDriver).register("classpath", classpathDriver);
+  }
+
   @Command
   public void main(
     @Option(names= {"non-interactive"})
     @Usage("non interactive mode, the JVM io will not be used")
     Boolean nonInteractive,
     @Option(names={"c","cmd"})
-    @Usage("adds a dir to the command path")
-    List<String> cmds,
+    @Usage("the command mounts")
+    String cmd,
     @Option(names={"conf"})
-    @Usage("adds a dir to the conf path")
-    List<String> confs,
+    @Usage("the conf mounts")
+    String conf,
     @Option(names={"p","property"})
     @Usage("set a property of the form a=b")
     List<String> properties,
-    @Option(names = {"cmd-mode"})
-    @Usage("the cmd mode (read or copy), copy mode requires at least one cmd path to be specified")
-    ResourceMode cmdMode,
-    @Option(names = {"conf-mode"})
-    @Usage("the conf mode (read of copy), copy mode requires at least one conf path to be specified")
-    ResourceMode confMode,
+    @Option(names = {"cmd-folder"})
+    @Usage("a folder in which commands should be extracted")
+    String cmdFolder,
+    @Option(names = {"conf-folder"})
+    @Usage("a folder in which configuration should be extracted")
+    String confFolder,
     @Argument(name = "pid")
     @Usage("the optional list of JVM process id to attach to")
     List<Integer> pids) throws Exception {
 
     //
-    boolean copyCmd = cmdMode != ResourceMode.read && cmds != null && cmds.size() > 0;
-    boolean copyConf = confMode != ResourceMode.read && confs != null && confs.size() > 0;
     boolean interactive = nonInteractive == null || !nonInteractive;
 
     //
-    if (copyCmd) {
-      File dst = new File(cmds.get(0));
-      if (!dst.isDirectory()) {
-        throw new Exception("Directory " + dst.getAbsolutePath() + " does not exist");
-      }
-      FS fs = new FS();
-      fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/commands/"));
-      org.crsh.vfs.File f = fs.get(Path.get("/"));
-      log.info("Copying command classpath resources");
-      copyCmd(f, dst);
+    if (conf == null) {
+      conf = "classpath:/crash/";
     }
-
-    //
-    if (copyConf) {
-      File dst = new File(confs.get(0));
+    FS.Builder confBuilder = createBuilder().mount(conf);
+    if (confFolder != null) {
+      File dst = new File(confFolder);
       if (!dst.isDirectory()) {
         throw new Exception("Directory " + dst.getAbsolutePath() + " does not exist");
       }
-      FS fs = new FS();
-      fs.mount(Thread.currentThread().getContextClassLoader(), Path.get("/crash/"));
-      org.crsh.vfs.File f = fs.get(Path.get("/"));
-      log.info("Copying conf classpath resources");
+      org.crsh.vfs.File f = confBuilder.build().get(Path.get("/"));
+      log.info("Extracting conf resources to " + dst.getAbsolutePath());
       for (org.crsh.vfs.File child : f.children()) {
-        if (!child.isDir()) {
+        if (!child.hasChildren()) {
           copyConf(child, new File(dst, child.getName()));
         }
       }
+      confBuilder = createBuilder().mount("file:" + dst.getAbsolutePath());
+    }
+
+    //
+    if (cmd == null) {
+      cmd = "classpath:/crash/commands/";
+    }
+    FS.Builder cmdBuilder = createBuilder().mount(cmd);
+    if (cmdFolder != null) {
+      File dst = new File(cmdFolder);
+      if (!dst.isDirectory()) {
+        throw new Exception("Directory " + dst.getAbsolutePath() + " does not exist");
+      }
+      org.crsh.vfs.File f = cmdBuilder.build().get(Path.get("/"));
+      log.info("Extracting command resources to " + dst.getAbsolutePath());
+      copyCmd(f, dst);
+      cmdBuilder = createBuilder().mount("file:" + dst.getAbsolutePath());
     }
 
     //
@@ -213,39 +239,13 @@ public class CRaSH {
       // Build the options
       StringBuilder sb = new StringBuilder();
 
-      // Rewrite canonical path
-      if (copyCmd) {
-        sb.append("--cmd-mode copy ");
-      } else {
-        sb.append("--cmd-mode read ");
-      }
-      if (cmds != null) {
-        for (String cmd : cmds) {
-          File cmdPath = new File(cmd);
-          if (cmdPath.exists()) {
-            sb.append("--cmd ");
-            Delimiter.EMPTY.escape(cmdPath.getCanonicalPath(), sb);
-            sb.append(' ');
-          }
-        }
-      }
-
-      // Rewrite canonical path
-      if (copyCmd) {
-        sb.append("--conf-mode copy ");
-      } else {
-        sb.append("--conf-mode read ");
-      }
-      if (confs != null) {
-        for (String conf : confs) {
-          File confPath = new File(conf);
-          if (confPath.exists()) {
-            sb.append("--conf ");
-            Delimiter.EMPTY.escape(confPath.getCanonicalPath(), sb);
-            sb.append(' ');
-          }
-        }
-      }
+      // Path configuration
+      sb.append("--cmd ");
+      Delimiter.EMPTY.escape(toString(cmdBuilder), sb);
+      sb.append(' ');
+      sb.append("--conf ");
+      Delimiter.EMPTY.escape(toString(confBuilder), sb);
+      sb.append(' ');
 
       // Propagate canonical config
       if (properties != null) {
@@ -285,29 +285,10 @@ public class CRaSH {
         shell = null;
       }
     } else {
-      final Bootstrap bootstrap = new Bootstrap(Thread.currentThread().getContextClassLoader());
-
-      //
-      if (!copyCmd) {
-        bootstrap.addToCmdPath(Path.get("/crash/commands/"));
-      }
-      if (cmds != null) {
-        for (String cmd : cmds) {
-          File cmdPath = new File(cmd);
-          bootstrap.addToCmdPath(cmdPath);
-        }
-      }
-
-      //
-      if (!copyConf) {
-        bootstrap.addToConfPath(Path.get("/crash/"));
-      }
-      if (confs != null) {
-        for (String conf : confs) {
-          File confPath = new File(conf);
-          bootstrap.addToConfPath(confPath);
-        }
-      }
+      final Bootstrap bootstrap = new Bootstrap(
+          Thread.currentThread().getContextClassLoader(),
+          confBuilder.build(),
+          cmdBuilder.build());
 
       //
       if (properties != null) {
@@ -363,7 +344,7 @@ public class CRaSH {
         AnsiConsole.systemInstall();
       }
 
-
+      //
       Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {

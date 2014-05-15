@@ -20,7 +20,10 @@
 package org.crsh.util;
 
 import junit.framework.TestCase;
+import org.junit.Test;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,5 +85,23 @@ public class UtilsTestCase extends TestCase {
     Pattern p = Pattern.compile("^" + Utils.globexToRegex(globex) + "$");
     Matcher matcher = p.matcher(test);
     assertFalse("Was expecting " + test + " to not match " + globex, matcher.matches());
+  }
+
+  public void testInterpolate() {
+    Map<String,String> context = Collections.singletonMap("foo", "bar");
+    assertEquals("", Utils.interpolate("", context));
+    assertEquals("$", Utils.interpolate("$", context));
+    assertEquals("${foo}", Utils.interpolate("\\${foo}", context));
+    assertEquals("${", Utils.interpolate("${", context));
+    assertEquals("${a", Utils.interpolate("${a", context));
+    assertEquals("bar", Utils.interpolate("${foo}", context));
+    assertEquals("<bar>", Utils.interpolate("<${foo}>", context));
+    assertEquals("<bar></bar>", Utils.interpolate("<${foo}></${foo}>", context));
+    assertEquals("", Utils.interpolate("${bar}", context));
+    assertEquals("juu", Utils.interpolate("${bar:-juu}", context));
+    assertEquals("bar", Utils.interpolate("${foo:-juu}", context));
+    assertEquals("", Utils.interpolate("${bar:-}", context));
+    assertEquals("juu", Utils.interpolate("${:-juu}", context));
+    assertEquals(":-", Utils.interpolate("${bar:-:-}", context));
   }
 }

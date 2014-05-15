@@ -20,16 +20,20 @@
 package org.crsh.plugin;
 
 import org.crsh.util.ServletContextMap;
-import org.crsh.vfs.FS;
-import org.crsh.vfs.spi.servlet.ServletContextDriver;
+import org.crsh.util.Utils;
+import org.crsh.vfs.spi.FSMountFactory;
+import org.crsh.vfs.spi.file.FileMountFactory;
+import org.crsh.vfs.spi.servlet.WarMountFactory;
+import org.crsh.vfs.spi.url.ClassPathMountFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
-public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContextListener {
+public class WebPluginLifeCycle extends Embedded implements ServletContextListener {
 
   /** . */
   private static final Object lock = new Object();
@@ -39,6 +43,12 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
 
   /** . */
   private boolean registered = false;
+
+  /** . */
+  private Map<String, FSMountFactory<?>> mountContexts = new HashMap<String, FSMountFactory<?>>(3);
+
+  /** . */
+  private ServletContext context;
 
   /**
    * Returns a plugin context associated with the servlet context or null if such context does not exist.
@@ -54,6 +64,21 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
   }
 
   /**
+   * This implementation register three file system drivers:
+   * <ul>
+   *   <li><code>file</code> : the current file system</li>
+   *   <li><code>classpath</code> : the classpath</li>
+   *   <li><code>war</code> : the war content</li>
+   * </ul>
+   *
+   * @return the drivers
+   */
+  @Override
+  protected Map<String, FSMountFactory<?>> getMountFactories() {
+    return mountContexts;
+  }
+
+  /**
    * Create the service loader discovery, this can be subclassed to provide an implementation, the current
    * implementation returns a {@link ServiceLoaderDiscovery} instance.
    *
@@ -66,68 +91,83 @@ public class WebPluginLifeCycle extends PluginLifeCycle implements ServletContex
   }
 
   public void contextInitialized(ServletContextEvent sce) {
-    ServletContext context = sce.getServletContext();
-    String contextPath = context.getContextPath();
+    context = sce.getServletContext();
 
     // Use JVM properties as external config
     setConfig(System.getProperties());
 
+    // Initialise the registerable drivers
+    try {
+      mountContexts.put("classpath", new ClassPathMountFactory(context.getClassLoader()));
+      mountContexts.put("file", new FileMountFactory(Utils.getCurrentDirectory()));
+      mountContexts.put("war", new WarMountFactory(context));
+    }
+    catch (Exception e) {
+      log.log(Level.SEVERE, "Coult not initialize classpath driver", e);
+      return;
+    }
+
     //
+    String contextPath = context.getContextPath();
     synchronized (lock) {
       if (!contextMap.containsKey(contextPath)) {
-
-        //
-        FS cmdFS = createCommandFS(context);
-        FS confFS = createConfFS(context);
         ClassLoader webAppLoader = Thread.currentThread().getContextClassLoader();
         PluginDiscovery discovery = createDiscovery(context, webAppLoader);
-
-        //
-        PluginContext pluginContext = createPluginContext(context, cmdFS, confFS, discovery);
-
-        //
+        PluginContext pluginContext = start(new ServletContextMap(context), discovery, context.getClassLoader());
         contextMap.put(contextPath, pluginContext);
         registered = true;
-
-        //
-        start(pluginContext);
       }
     }
   }
 
   /**
-   * Create the plugin context, allowing subclasses to provide a custom configuration.
+   * The path property is resolved from the servlet context parameters. When the parameter does not exist,
+   * the <code>defaultValue</code> argument is used instead, so it should not be null.
+   * After the path is resolved, it is interpolated using the JVM system properties and the syntax
+   * defined by the {@link org.crsh.util.Utils#interpolate(String, java.util.Map)} function.
    *
-   * @param context the servlet context
-   * @param cmdFS the command file system
-   * @param confFS the conf file system
-   * @param discovery the plugin discovery
-   * @return the plugin context
+   * @param propertyName the property name to resolve
+   * @param defaultValue the default property value
+   * @return the path value
    */
-  protected PluginContext createPluginContext(ServletContext context, FS cmdFS, FS confFS, PluginDiscovery discovery) {
-    return new PluginContext(discovery, new ServletContextMap(context), cmdFS, confFS, context.getClassLoader());
+  private String resolvePathProperty(String propertyName, String defaultValue) {
+    String path = context.getInitParameter(propertyName);
+    if (path == null) {
+      path = defaultValue;
+    }
+    return Utils.interpolate(path, System.getProperties());
   }
 
   /**
-   * Create the command file system, this method binds the <code>/WEB-INF/crash/commands/</code> path of the
-   * servlet context.
-   *
-   * @param context the servlet context
-   * @return the command file system
+   * @return the value returned by {@link #resolvePathProperty(String, String)} with the <code>crash.mountpointconfig.conf</code> name
+   *         and the {@link #getDefaultConfMountPointConfig()} default value
    */
-  protected FS createCommandFS(ServletContext context) {
-    return new FS().mount(new ServletContextDriver(context, "/WEB-INF/crash/commands/"));
+  @Override
+  protected String resolveConfMountPointConfig() {
+    return resolvePathProperty("crash.mountpointconfig.conf", getDefaultConfMountPointConfig());
   }
 
   /**
-   * Create the conf file system, this method binds the <code>/WEB-INF/crash/</code> path of the
-   * servlet context.
-   *
-   * @param context the servlet context
-   * @return the conf file system
+   * @return the value returned by {@link #resolvePathProperty(String, String)} with the <code>crash.mountpointconfig.cmd</code> name
+   *         and the {@link #getDefaultCmdMountPointConfig()} default value
    */
-  protected FS createConfFS(ServletContext context) {
-    return new FS().mount(new ServletContextDriver(context, "/WEB-INF/crash/"));
+  @Override
+  protected String resolveCmdMountPointConfig() {
+    return resolvePathProperty("crash.mountpointconfig.cmd", getDefaultCmdMountPointConfig());
+  }
+
+  /**
+   * @return <code>war:/WEB-INF/crash/commands/</code>
+   */
+  protected String getDefaultCmdMountPointConfig() {
+    return "war:/WEB-INF/crash/commands/";
+  }
+
+  /**
+   * @return <code>war:/WEB-INF/crash/</code>
+   */
+  protected String getDefaultConfMountPointConfig() {
+    return "war:/WEB-INF/crash";
   }
 
   public void contextDestroyed(ServletContextEvent sce) {

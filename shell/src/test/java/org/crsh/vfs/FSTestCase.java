@@ -19,9 +19,10 @@
 
 package org.crsh.vfs;
 
-import junit.framework.TestCase;
+import org.crsh.AbstractTestCase;
 import org.crsh.util.Utils;
 import org.crsh.vfs.spi.ram.RAMDriver;
+import org.crsh.vfs.spi.ram.RAMMountFactory;
 import org.crsh.vfs.spi.url.Node;
 import org.crsh.vfs.spi.url.URLDriver;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -33,7 +34,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Iterator;
 
-public class FSTestCase extends TestCase {
+public class FSTestCase extends AbstractTestCase {
 
   /** . */
   private java.io.File warFile;
@@ -42,7 +43,7 @@ public class FSTestCase extends TestCase {
   protected void setUp() throws Exception {
     java.io.File warFile = java.io.File.createTempFile("test", ".war");
     warFile.deleteOnExit();
-    JavaArchive jar = ShrinkWrap.create(JavaArchive.class,"foo.jar");
+    JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "foo.jar");
     jar.addClass(FSTestCase.class);
     WebArchive war = ShrinkWrap.create(WebArchive.class);
     war.addAsLibraries(jar);
@@ -54,14 +55,14 @@ public class FSTestCase extends TestCase {
   public void testFoo() throws Exception {
     FS fs = new FS().mount(FSTestCase.class);
     File root = fs.get(Path.get("/"));
-    File org = root.child("org", true);
+    File org = root.child("org");
     assertEquals("org", org.getName());
-    assertEquals(true, org.isDir());
+    assertEquals(true, org.hasChildren());
     Iterator<File> orgChildren = org.children().iterator();
     File crsh = orgChildren.next();
     assertFalse(orgChildren.hasNext());
     assertEquals("crsh", crsh.getName());
-    assertEquals(true, crsh.isDir());
+    assertEquals(true, crsh.hasChildren());
   }
 
   public void testJar() throws Exception {
@@ -181,5 +182,13 @@ public class FSTestCase extends TestCase {
     String file = Utils.readAsUTF8(in.next());
     assertFalse(in.hasNext());
     assertEquals("bar", file);
+  }
+
+  public void testMount() throws Exception {
+    RAMMountFactory resolver = new RAMMountFactory();
+    FS fs = new FS.Builder().register("ram", resolver).mount("ram:/;ram:/b").build();
+    assertEquals(2, fs.drivers.size());
+    assertInstance(RAMDriver.class, fs.drivers.get(0));
+    assertInstance(RAMDriver.class, fs.drivers.get(1));
   }
 }

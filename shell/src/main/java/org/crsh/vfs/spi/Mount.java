@@ -16,37 +16,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.crsh.vfs.spi;
 
-import java.io.IOException;
+/**
+ * A driver mount.
+ *
+ * @author Julien Viet
+ */
+public class Mount<H> {
 
-public abstract class AbstractFSDriver<H> implements FSDriver<H> {
+  /** . */
+  private final FSDriver<H> driver;
 
-  /**
-   * A simple implementation that iterates over the children to return the one specified
-   * by the <code>name</code> argument. Subclasses can override this method to provide
-   * a more efficient implementation.
-   *
-   * @param handle the directory handle
-   * @param name the child name
-   * @return the child or null
-   * @throws IOException any io exception
-   */
-  @Override
-  public H child(H handle, String name) throws IOException {
-    if (handle == null) {
-      throw new NullPointerException();
-    }
-    if (name == null) {
-      throw new NullPointerException();
-    }
-    for (H child : children(handle)) {
-      String childName = name(child);
-      if (childName.equals(name)) {
-        return child;
-      }
-    }
-    return null;
+  /** . */
+  private final String value;
+
+  public Mount(FSDriver<H> driver, String value) {
+    this.driver = driver;
+    this.value = value;
+  }
+
+  public FSDriver<H> getDriver() {
+    return driver;
+  }
+
+  public String getValue() {
+    return value;
   }
 }

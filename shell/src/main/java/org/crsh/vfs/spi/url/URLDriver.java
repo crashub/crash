@@ -38,12 +38,14 @@ public class URLDriver extends AbstractFSDriver<Node> {
     this.root = new Node();
   }
 
-  public void merge(ClassLoader loader) throws IOException, URISyntaxException {
+  public URLDriver merge(ClassLoader loader) throws IOException, URISyntaxException {
     root.merge(loader);
+    return this;
   }
 
-  public void merge(URL url) throws IOException, URISyntaxException {
+  public URLDriver merge(URL url) throws IOException, URISyntaxException {
     root.mergeEntries(url);
+    return this;
   }
 
   public Node root() throws IOException {

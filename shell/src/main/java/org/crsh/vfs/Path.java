@@ -24,56 +24,53 @@ import org.crsh.util.BaseIterator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public final class Path implements Iterable<String> {
+public abstract class Path implements Iterable<String> {
 
   /** . */
   private static final String[] EMPTY_STRING = new String[0];
 
   /** . */
-  private final boolean dir;
+  public static final Absolute ROOT = new Absolute(true, EMPTY_STRING);
 
   /** . */
-  private final String[] names;
-
-  /** . */
-  private String value;
-
-  public static Path get(Path parent, String name, boolean dir) {
-    if (!parent.dir) {
-      throw new IllegalArgumentException("Not a dir");
-    }
-    int length = parent.names.length;
-    String[] names = new String[length + 1];
-    System.arraycopy(parent.names, 0, names, 0, length);
-    names[length] = name;
-    return new Path(dir, names);
-  }
+  public static final Relative EMPTY = new Relative(true, EMPTY_STRING);
 
   public static Path get(String s) {
     if (s.length() == 0) {
-      throw new IllegalArgumentException("No empty path");
-    }
-    if (s.charAt(0) != '/') {
-      throw new IllegalArgumentException("Path " + s + " must begin with a '/'");
+      return EMPTY;
     }
 
     //
-    int start = 0;
-    int end = s.length();
-    String[] names = EMPTY_STRING;
-    while (start < end) {
-      if (s.charAt(end - 1) == '/') {
-        end--;
-      } else if (s.charAt(start) == '/') {
-        start++;
+    int start;
+    boolean absolute;
+    if (s.charAt(0) != '/') {
+      start = 0;
+      absolute = false;
+    } else {
+      if (s.length() == 1) {
+        return ROOT;
       } else {
-        names = parseNames(s, start, end, 0);
-        break;
+        start = 1;
+        absolute = true;
       }
     }
 
     //
-    return new Path(end < s.length(), names);
+    boolean dir;
+    int end;
+    if (s.charAt(s.length() - 1) == '/') {
+      dir = true;
+      end = s.length() - 1;
+    } else {
+      dir = false;
+      end = s.length();
+    }
+
+    //
+    String[] names = parseNames(s, start, end, 0);
+
+    //
+    return absolute ? new Absolute(dir, names) : new Relative(dir, names);
   }
 
   private static String[] parseNames(final String s, final int prev, int end, final int count) {
@@ -94,6 +91,15 @@ public final class Path implements Iterable<String> {
       return parseNames(s, next + 1, end, count);
     }
   }
+
+  /** . */
+  protected final boolean dir;
+
+  /** . */
+  protected final String[] names;
+
+  /** . */
+  private String value;
 
   private Path(boolean dir, String[] names) {
     this.dir = dir;
@@ -116,6 +122,20 @@ public final class Path implements Iterable<String> {
     };
   }
 
+  public Path append(String name, boolean dir) {
+    int length = names.length;
+    String[] names = new String[length + 1];
+    System.arraycopy(names, 0, names, 0, length);
+    names[length] = name;
+    return create(dir, names);
+  }
+
+  protected abstract Path create(boolean dir, String[] names);
+
+  public abstract boolean isAbsolute();
+
+  public abstract Absolute absolute();
+
   public int getSize() {
     return names.length;
   }
@@ -126,6 +146,14 @@ public final class Path implements Iterable<String> {
 
   public String getName() {
     return names.length > 0 ? names[names.length - 1] : "";
+  }
+
+  public String nameAt(int index) throws IndexOutOfBoundsException {
+    if (index < 0 || index >= names.length) {
+      throw new IndexOutOfBoundsException("Index out of bounds [0" + (names.length - 1) + "]" + index);
+    } else {
+      return names[index];
+    }
   }
 
   public boolean isChildOf(Path parent) {
@@ -179,19 +207,87 @@ public final class Path implements Iterable<String> {
    */
   public String getValue() {
     if (value == null) {
-      StringBuilder sb = new StringBuilder(8 * names.length);
-      for (String name : names) {
-        sb.append('/').append(name);
+      if (names.length == 0) {
+        if (isAbsolute()) {
+          return "/";
+        } else {
+          return "";
+        }
+      } else {
+        StringBuilder sb = new StringBuilder(8 * names.length);
+        if (isAbsolute()) {
+          sb.append('/');
+        }
+        for (int i = 0;i < names.length;i++) {
+          if (i > 0) {
+            sb.append('/');
+          }
+          sb.append(names[i]);
+        }
+        if (dir) {
+          sb.append('/');
+        }
+        value = sb.toString();
       }
-      if (dir) {
-        sb.append('/');
-      }
-      value = sb.toString();
     }
     return value;
   }
 
   public String toString() {
     return "Path[value=" + getValue() + "]";
+  }
+
+  public static class Absolute extends Path {
+
+    private Absolute(boolean dir, String[] names) {
+      super(dir, names);
+    }
+
+    @Override
+    public Absolute append(String name, boolean dir) {
+      return (Absolute)super.append(name, dir);
+    }
+
+    @Override
+    protected Absolute create(boolean dir, String[] names) {
+      return new Absolute(dir, names);
+    }
+
+    @Override
+    public Absolute absolute() {
+      return this;
+    }
+
+    @Override
+    public boolean isAbsolute() {
+      return true;
+    }
+  }
+
+  private static class Relative extends Path {
+
+    private Relative(boolean dir, String[] names) {
+      super(dir, names);
+    }
+
+    @Override
+    public Relative append(String name, boolean dir) {
+      return (Relative)super.append(name, dir);
+    }
+
+    @Override
+    protected Relative create(boolean dir, String[] names) {
+      return new Relative(dir, names);
+    }
+
+    @Override
+    public Absolute absolute() {
+      return new Absolute(dir, names);
+    }
+
+    @Override
+    public boolean isAbsolute() {
+      return false;
+    }
   }
 }

@@ -75,7 +75,7 @@ public class ResourceManager {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             long timestamp = Long.MIN_VALUE;
             for (File path : dirs) {
-              File f = path.child(resourceId + ".groovy", false);
+              File f = path.child(resourceId + ".groovy");
               if (f != null) {
                 Resource sub = f.getResource();
                 if (sub != null) {
@@ -91,7 +91,7 @@ public class ResourceManager {
         case COMMAND:
           // Find the resource first, we find for the first found
           for (File path : dirs) {
-            File f = path.child(resourceId, false);
+            File f = path.child(resourceId);
             if (f != null) {
               return Collections.singleton(f.getResource());
             }
@@ -153,7 +153,7 @@ public class ResourceManager {
       List<File> newDirs = new ArrayList<File>();
       newDirs.add(commands);
       for (File path : commands.children()) {
-        if (path.isDir()) {
+        if (path.children().iterator().hasNext()) {
           newDirs.add(path);
         }
       }

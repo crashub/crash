@@ -44,10 +44,10 @@ public class Bootstrap extends PluginLifeCycle {
   protected final Logger log = Logger.getLogger(getClass().getName());
 
   /** The configuration file system. */
-  private final FS confFS = new FS();
+  private final FS confFS;
 
   /** The command file system. */
-  private final FS cmdFS = new FS();
+  private final FS cmdFS;
 
   /** The base classloader. */
   private final ClassLoader loader;
@@ -59,14 +59,34 @@ public class Bootstrap extends PluginLifeCycle {
    * Create a bootstrap instance with the base classloader and an empty and unmodifiable attribute map.
    *
    * @param baseLoader the base classloader crash will use
-   * @throws NullPointerException if the loader argument is null
+   * @param confFS the conf file system
+   * @param cmdFS the cmd file system
+   * @throws NullPointerException if any argument is null
    */
-  public Bootstrap(ClassLoader baseLoader) throws NullPointerException {
+  public Bootstrap(ClassLoader baseLoader, FS confFS, FS cmdFS) throws NullPointerException {
     if (baseLoader == null) {
       throw new NullPointerException("No null base loader accepted");
     }
+    if (confFS == null) {
+      throw new NullPointerException("No null conf file system accepted");
+    }
+    if (cmdFS == null) {
+      throw new NullPointerException("No null cmd file system accepted");
+    }
     this.attributes = Collections.emptyMap();
+    this.confFS = confFS;
+    this.cmdFS = cmdFS;
     this.loader = new URLClassLoader(new URL[]{}, baseLoader);
+  }
+
+  /**
+   * Create a bootstrap instance with the base classloader and an empty and unmodifiable attribute map.
+   *
+   * @param baseLoader the base classloader crash will use
+   * @throws NullPointerException if any argument is null
+   */
+  public Bootstrap(ClassLoader baseLoader) throws NullPointerException {
+    this(baseLoader, new FS(), new FS());
   }
 
   /**
@@ -84,8 +104,9 @@ public class Bootstrap extends PluginLifeCycle {
    * @param driver the configuration driver
    * @return this bootstrap
    * @throws NullPointerException when the driver is null
+   * @throws IOException any io exception
    */
-  public Bootstrap addToConfPath(FSDriver<?> driver) throws NullPointerException {
+  public Bootstrap addToConfPath(FSDriver<?> driver) throws IOException, NullPointerException {
     if (driver == null) {
       throw new NullPointerException("No null conf driver");
     }
@@ -135,8 +156,9 @@ public class Bootstrap extends PluginLifeCycle {
    * @param driver the command driver
    * @return this bootstrap
    * @throws NullPointerException when the driver is null
+   * @throws IOException any io exception
    */
-  public Bootstrap addToCmdPath(FSDriver<?> driver) throws NullPointerException {
+  public Bootstrap addToCmdPath(FSDriver<?> driver) throws IOException, NullPointerException {
     if (driver == null) {
       throw new NullPointerException("No null conf driver");
     }

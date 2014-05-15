@@ -19,12 +19,12 @@
 
 package org.crsh.spring;
 
-import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.Embedded;
 import org.crsh.plugin.PluginDiscovery;
-import org.crsh.plugin.PluginLifeCycle;
-import org.crsh.plugin.ServiceLoaderDiscovery;
-import org.crsh.vfs.FS;
-import org.crsh.vfs.Path;
+import org.crsh.util.Utils;
+import org.crsh.vfs.spi.FSMountFactory;
+import org.crsh.vfs.spi.file.FileMountFactory;
+import org.crsh.vfs.spi.url.ClassPathMountFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
@@ -33,13 +33,12 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
-public class SpringBootstrap extends PluginLifeCycle implements
+public class SpringBootstrap extends Embedded implements
     BeanClassLoaderAware,
     BeanFactoryAware,
     InitializingBean,
@@ -51,7 +50,32 @@ public class SpringBootstrap extends PluginLifeCycle implements
   /** . */
   private BeanFactory factory;
 
+  /** . */
+  protected final HashMap<String, FSMountFactory<?>> drivers = new HashMap<String, FSMountFactory<?>>();
+
+  /** . */
+  private String cmdMountPointConfig;
+
+  /** . */
+  private String confMountPointConfig;
+
   public SpringBootstrap() {
+  }
+
+  public String getCmdMountPointConfig() {
+    return cmdMountPointConfig;
+  }
+
+  public void setCmdMountPointConfig(String cmdMountPointConfig) {
+    this.cmdMountPointConfig = cmdMountPointConfig;
+  }
+
+  public String getConfMountPointConfig() {
+    return confMountPointConfig;
+  }
+
+  public void setConfMountPointConfig(String confMountPointConfig) {
+    this.confMountPointConfig = confMountPointConfig;
   }
 
   public void setBeanClassLoader(ClassLoader loader) {
@@ -63,6 +87,16 @@ public class SpringBootstrap extends PluginLifeCycle implements
   }
 
   public void afterPropertiesSet() throws Exception {
+
+    // Initialise the registerable drivers
+    try {
+      drivers.put("classpath", new ClassPathMountFactory(loader));
+      drivers.put("file", new FileMountFactory(Utils.getCurrentDirectory()));
+    }
+    catch (Exception e) {
+      log.log(Level.SEVERE, "Coult not initialize classpath driver", e);
+      return;
+    }
 
     // List beans
     Map<String,Object> attributes = new HashMap<String, Object>();
@@ -76,36 +110,30 @@ public class SpringBootstrap extends PluginLifeCycle implements
     PluginDiscovery discovery = new SpringPluginDiscovery(loader, factory);
 
     //
-    FS cmdFS = createCommandFS();
-
-    //
-    FS confFS = createConfFS();
-
-    //
-    PluginContext context = new PluginContext(
-        discovery,
-        Collections.unmodifiableMap(attributes),
-        cmdFS,
-        confFS,
-        loader);
-
-    //
-    context.refresh();
-
-    //
-    start(context);
+    start(Collections.unmodifiableMap(attributes), discovery, loader);
   }
 
-  protected FS createCommandFS() throws IOException, URISyntaxException {
-    FS cmdFS = new FS();
-    cmdFS.mount(loader, Path.get("/crash/commands/"));
-    return cmdFS;
+  @Override
+  protected Map<String, FSMountFactory<?>> getMountFactories() {
+    return drivers;
   }
 
-  protected FS createConfFS() throws IOException, URISyntaxException {
-    FS confFS = new FS();
-    confFS.mount(loader, Path.get("/crash/"));
-    return confFS;
+  @Override
+  protected String resolveConfMountPointConfig() {
+    return confMountPointConfig != null ? confMountPointConfig : getDefaultConfMountPointConfig();
+  }
+
+  @Override
+  protected String resolveCmdMountPointConfig() {
+    return cmdMountPointConfig != null ? cmdMountPointConfig : getDefaultCmdMountPointConfig();
+  }
+
+  protected String getDefaultCmdMountPointConfig() {
+    return "classpath:/crash/commands/";
+  }
+
+  protected String getDefaultConfMountPointConfig() {
+    return "classpath:/crash/";
   }
 
   public void destroy() throws Exception {

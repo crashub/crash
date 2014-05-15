@@ -4,6 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean class="org.crsh.spring.SpringWebBootstrap">
+    <property name="cmdMountPointConfig" value="war:/WEB-INF/crash/commands/"/>
+    <property name="confMountPointConfig" value="war:/WEB-INF/crash/"/>
     <property name="config">
       <props>
         <!-- VFS configuration -->

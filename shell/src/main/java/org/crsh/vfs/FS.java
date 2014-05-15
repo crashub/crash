@@ -20,60 +20,128 @@
 package org.crsh.vfs;
 
 import org.crsh.vfs.spi.FSDriver;
+import org.crsh.vfs.spi.FSMountFactory;
+import org.crsh.vfs.spi.Mount;
 import org.crsh.vfs.spi.file.FileDriver;
+import org.crsh.vfs.spi.url.ClassPathMountFactory;
 import org.crsh.vfs.spi.url.URLDriver;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 
+/**
+ * The file system provides a federated view of {@link org.crsh.vfs.spi.FSDriver} mounts.
+ */
 public class FS {
 
+  public static class Builder {
+
+    /** . */
+    private HashMap<String, FSMountFactory<?>> resolvers;
+
+    /** . */
+    private ArrayList<Mount<?>> mounts = new ArrayList<Mount<?>>();
+
+    public Builder() {
+      this.resolvers = new HashMap<String, FSMountFactory<?>>();
+    }
+
+    /**
+     * Register a resolver.
+     *
+     * @param name the registration name
+     * @param resolver the resolver implementation
+     */
+    public Builder register(String name, FSMountFactory<?> resolver) {
+      resolvers.put(name, resolver);
+      return this;
+    }
+
+    public Builder mount(String name, Path path) throws IOException, IllegalArgumentException {
+      FSMountFactory<?> resolver = resolvers.get(name);
+      if (resolver == null) {
+        throw new IllegalArgumentException("Unknown driver " + name);
+      } else {
+        Mount<?> mount = resolver.create(path);
+        mounts.add(mount);
+        return this;
+      }
+    }
+
+    public Builder mount(String mountPointConfig) throws IOException {
+      int prev = 0;
+      while (true) {
+        int next = mountPointConfig.indexOf(';', prev);
+        if (next == -1) {
+          next = mountPointConfig.length();
+        }
+        if (next > prev) {
+          String mount = mountPointConfig.substring(prev, next);
+          int index = mount.indexOf(':');
+          String name;
+          String path;
+          if (index == -1) {
+            name = "classpath";
+            path = mount;
+          } else {
+            name = mount.substring(0, index);
+            path = mount.substring(index + 1);
+          }
+          mount(name, Path.get(path));
+          prev = next + 1;
+        } else {
+          break;
+        }
+      }
+      return this;
+    }
+
+    public List<Mount<?>> getMounts() {
+      return mounts;
+    }
+
+    public FS build() throws IOException {
+      FS fs = new FS();
+      for (Mount<?> mount : mounts) {
+        fs.mount(mount.getDriver());
+      }
+      return fs;
+    }
+  }
+
   /** . */
-  final List<Mount<?>> mounts;
+  final List<FSDriver<?>> drivers;
 
   public FS() {
-    this.mounts = new ArrayList<Mount<?>>();
+    this.drivers = new ArrayList<FSDriver<?>>();
   }
 
   public File get(Path path) throws IOException {
     return new File(this, path);
   }
 
-  public <H> FS mount(FSDriver<H> driver) {
+  public FS mount(FSDriver<?> driver) throws IOException {
     if (driver == null) {
       throw new NullPointerException();
     }
-    mounts.add(Mount.wrap(driver));
+    drivers.add(driver);
     return this;
   }
 
-  public FS mount(java.io.File root) {
+  public FS mount(java.io.File root) throws IOException {
     return mount(new FileDriver(root));
   }
 
   public FS mount(ClassLoader cl, Path path) throws IOException, URISyntaxException {
     if (cl == null) {
       throw new NullPointerException();
+    } else {
+      return mount(new ClassPathMountFactory(cl).create(path).getDriver());
     }
-    if (path == null) {
-      throw new NullPointerException();
-    }
-    if (!path.isDir()) {
-      throw new IllegalArgumentException("Path " + path + " must be a dir");
-    }
-    URLDriver driver = new URLDriver();
-    // Add the resources
-    Enumeration<URL> en = cl.getResources(path.getValue().substring(1));
-    while (en.hasMoreElements()) {
-      URL url = en.nextElement();
-      driver.merge(url);
-    }
-
-    return mount(driver);
   }
 
   public FS mount(Class<?> clazz) throws IOException, URISyntaxException {
