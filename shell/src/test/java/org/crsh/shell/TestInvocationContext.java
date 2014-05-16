@@ -21,7 +21,7 @@ package org.crsh.shell;
 
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
-import org.crsh.lang.java.ShellCommandImpl;
+import org.crsh.lang.java.ClassShellCommand;
 import org.crsh.io.Consumer;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
@@ -134,7 +134,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
   }
 
   public <B extends BaseCommand> String execute(Class<B> commandClass, String... args) throws Exception {
-    return execute(new ShellCommandImpl<B>(commandClass), args);
+    return execute(new ClassShellCommand<B>(commandClass), args);
   }
 
   public <B extends GroovyScriptCommand> String execute2(Class<B> commandClass, String... args) throws Exception {

@@ -38,7 +38,7 @@ import org.crsh.util.Utils;
 import java.lang.reflect.Type;
 
 /** @author Julien Viet */
-public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<Instance<T>> {
+public class ClassShellCommand<T extends BaseCommand> extends ShellCommand<Instance<T>> {
 
   /** . */
   private final Class<T> clazz;
@@ -46,7 +46,7 @@ public class ShellCommandImpl<T extends BaseCommand> extends ShellCommand<Instan
   /** . */
   private final CommandDescriptor<Instance<T>> descriptor;
 
-  public ShellCommandImpl(Class<T> clazz) {
+  public ClassShellCommand(Class<T> clazz) {
     CommandFactory factory = new CommandFactory(getClass().getClassLoader());
     this.clazz = clazz;
     this.descriptor = HelpDescriptor.create(factory.create(clazz));

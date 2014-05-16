@@ -32,7 +32,7 @@ import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
-import org.crsh.lang.java.ShellCommandImpl;
+import org.crsh.lang.java.ClassShellCommand;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
@@ -236,8 +236,8 @@ public class GroovyCommandManagerImpl implements CommandManager {
     };
   }
 
-  private <C extends BaseCommand> ShellCommandImpl<C> make(Class<C> clazz) {
-    return new ShellCommandImpl<C>(clazz);
+  private <C extends BaseCommand> ClassShellCommand<C> make(Class<C> clazz) {
+    return new ClassShellCommand<C>(clazz);
   }
   private <C extends GroovyScriptCommand> GroovyScriptShellCommand<C> make2(Class<C> clazz) {
     return new GroovyScriptShellCommand<C>(clazz);

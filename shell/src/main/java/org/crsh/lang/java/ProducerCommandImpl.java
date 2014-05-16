@@ -41,7 +41,7 @@ class ProducerCommandImpl<T extends BaseCommand, P> extends CommandImpl<T, Void,
   private final CommandInvoker<Instance<T>, ?> invoker;
   private final Class<P> producedType;
 
-  public ProducerCommandImpl(ShellCommandImpl<T> shellCommand, CommandInvoker<Instance<T>, ?> invoker, Class<P> producedType) {
+  public ProducerCommandImpl(ClassShellCommand<T> shellCommand, CommandInvoker<Instance<T>, ?> invoker, Class<P> producedType) {
     super(shellCommand);
 
     //

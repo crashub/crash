@@ -50,7 +50,7 @@ class PipeCommandImpl<T extends BaseCommand, C, P, PC extends Pipe<C, P>> extend
   final Class<P> producedType;
   private final CommandInvoker<Instance<T>, PC> invoker;
 
-  public PipeCommandImpl(ShellCommandImpl<T> baseShellCommand, CommandInvoker<Instance<T>, PC> invoker) {
+  public PipeCommandImpl(ClassShellCommand<T> baseShellCommand, CommandInvoker<Instance<T>, PC> invoker) {
     super(baseShellCommand);
     this.invoker = invoker;
     ret = invoker.getGenericReturnType();

@@ -31,9 +31,9 @@ import org.crsh.shell.impl.command.spi.CommandInvoker;
 abstract class CommandImpl<T extends BaseCommand, C, P> extends Command<C, P> {
 
   /** . */
-  private final ShellCommandImpl<T> baseShellCommand;
+  private final ClassShellCommand<T> baseShellCommand;
 
-  public CommandImpl(ShellCommandImpl<T> baseShellCommand) {
+  public CommandImpl(ClassShellCommand<T> baseShellCommand) {
     this.baseShellCommand = baseShellCommand;
   }
 

@@ -71,7 +71,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     //
     ClassLoader previous = setCRaSHLoader();
     try {
-      for (CommandManager manager : crash.resolver.activeManagers.values()) {
+      for (CommandManager manager : crash.scriptResolver.activeManagers.values()) {
         manager.init(this);
       }
     }
@@ -125,7 +125,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public void close() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      for (CommandManager manager : crash.resolver.activeManagers.values()) {
+      for (CommandManager manager : crash.scriptResolver.activeManagers.values()) {
         manager.destroy(this);
       }
     }
@@ -139,7 +139,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public String getWelcome() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      CommandManager groovy = crash.resolver.activeManagers.get("groovy");
+      CommandManager groovy = crash.scriptResolver.activeManagers.get("groovy");
       if (groovy != null) {
         return groovy.doCallBack(this, "welcome", "");
       } else {
@@ -154,7 +154,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   public String getPrompt() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      CommandManager groovy = crash.resolver.activeManagers.get("groovy");
+      CommandManager groovy = crash.scriptResolver.activeManagers.get("groovy");
       if (groovy != null) {
         return groovy.doCallBack(this, "prompt", "% ");
       } else {

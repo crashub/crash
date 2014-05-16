@@ -19,35 +19,27 @@
 
 package org.crsh.shell.impl.command;
 
-import org.crsh.cli.descriptor.Format;
-import org.crsh.command.BaseCommand;
-import org.crsh.lang.java.ShellCommandImpl;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.shell.impl.command.spi.CommandResolution;
-import org.crsh.shell.impl.command.system.help;
-import org.crsh.shell.impl.command.system.repl;
+import org.crsh.shell.impl.command.spi.ShellCommandResolver;
+import org.crsh.shell.impl.command.system.SystemResolver;
 
 import java.security.Principal;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 public class CRaSH {
 
   /** . */
-  private static final HashMap<String, Class<? extends BaseCommand>> systemCommands = new HashMap<String, Class<? extends BaseCommand>>();
-
-  static {
-    systemCommands.put("help", help.class);
-    systemCommands.put("repl", repl.class);
-  }
-
-  /** . */
   final PluginContext context;
 
   /** . */
-  final ScriptResolver resolver;
+  final ScriptResolver scriptResolver;
+
+  /** . */
+  private final ArrayList<ShellCommandResolver> resolvers = new ArrayList<ShellCommandResolver>();
 
   /**
    * Create a new CRaSH.
@@ -57,7 +49,11 @@ public class CRaSH {
    */
   public CRaSH(PluginContext context) throws NullPointerException {
     this.context = context;
-    this.resolver = new ScriptResolver(context);
+    this.scriptResolver = new ScriptResolver(context);
+
+    //
+    resolvers.add(scriptResolver);
+    resolvers.add(SystemResolver.INSTANCE);
   }
 
   public CRaSHSession createSession(Principal user) {
@@ -103,33 +99,22 @@ public class CRaSH {
     if (name == null) {
       throw new NullPointerException("No null name accepted");
     }
-    final Class<? extends BaseCommand> systemCommand = systemCommands.get(name);
-    if (systemCommand != null) {
-      return createCommand(systemCommand);
-    } else {
-      return resolver.resolveCommand(name);
+    for (int i = 0;i < resolvers.size();i++) {
+      CommandResolution resolution = resolvers.get(i).resolveCommand(name);
+      if (resolution != null) {
+        return resolution;
+      }
     }
+    return null;
   }
 
   public Iterable<String> getCommandNames() {
-    LinkedHashSet<String> names = new LinkedHashSet<String>(systemCommands.keySet());
-    for (String name : resolver.getCommandNames()) {
-      names.add(name);
+    LinkedHashSet<String> names = new LinkedHashSet<String>();
+    for (int i = 0;i < resolvers.size();i++) {
+      for (String s : resolvers.get(i).getCommandNames()) {
+        names.add(s);
+      }
     }
     return names;
-  }
-
-  private <C extends BaseCommand> CommandResolution createCommand(final Class<C> commandClass) {
-    return new CommandResolution() {
-      final ShellCommandImpl<C> shellCommand = new ShellCommandImpl<C>(commandClass);
-      @Override
-      public String getDescription() {
-        return shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
-      }
-      @Override
-      public ShellCommand<?> getCommand() throws CommandCreationException {
-        return shellCommand;
-      }
-    };
   }
 }

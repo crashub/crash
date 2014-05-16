@@ -85,7 +85,7 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
         LoadingClassLoader loader = new LoadingClassLoader(getContext().getLoader(), classFiles);
         try {
           Class<?> clazz = loader.loadClass(classFile.getClassName());
-          final ShellCommandImpl command = new ShellCommandImpl(clazz);
+          final ClassShellCommand command = new ClassShellCommand(clazz);
           final String description = command.describe(name, Format.DESCRIBE);
           return new CommandResolution() {
             @Override
