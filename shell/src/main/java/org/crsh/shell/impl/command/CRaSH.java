@@ -25,19 +25,13 @@ import org.crsh.lang.java.ShellCommandImpl;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.ResourceKind;
-import org.crsh.shell.impl.command.spi.CommandManager;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.shell.impl.command.system.help;
 import org.crsh.shell.impl.command.system.repl;
-import org.crsh.util.TimestampedObject;
-import org.crsh.vfs.Resource;
 
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class CRaSH {
 
@@ -53,10 +47,7 @@ public class CRaSH {
   final PluginContext context;
 
   /** . */
-  final HashMap<String, CommandManager> activeManagers;
-
-  /** . */
-  private final Map<String, TimestampedObject<CommandResolution>> commandCache = new ConcurrentHashMap<String, TimestampedObject<CommandResolution>>();
+  final ScriptResolver resolver;
 
   /**
    * Create a new CRaSH.
@@ -65,20 +56,8 @@ public class CRaSH {
    * @throws NullPointerException if the context argument is null
    */
   public CRaSH(PluginContext context) throws NullPointerException {
-
-    //
-    HashMap<String, CommandManager> activeManagers = new HashMap<String, CommandManager>();
-    for (CommandManager manager : context.getPlugins(CommandManager.class)) {
-      if (manager.isActive()) {
-        for (String ext : manager.getExtensions()) {
-          activeManagers.put(ext, manager);
-        }
-      }
-    }
-
-
     this.context = context;
-    this.activeManagers = activeManagers;
+    this.resolver = new ScriptResolver(context);
   }
 
   public CRaSHSession createSession(Principal user) {
@@ -120,15 +99,7 @@ public class CRaSH {
     return resolution != null ? resolution.getCommand() : null;
   }
 
-  /**
-   * Attempt to obtain a command instance. Null is returned when such command does not exist.
-   *
-   * @param name the command name
-   * @return a command instance
-   * @throws org.crsh.shell.impl.command.spi.CommandCreationException if an error occured preventing the command creation
-   * @throws NullPointerException if the name argument is null
-   */
-  public CommandResolution resolveCommand(final String name) throws CommandCreationException, NullPointerException {
+  public CommandResolution resolveCommand(String name) throws CommandCreationException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null name accepted");
     }
@@ -136,53 +107,16 @@ public class CRaSH {
     if (systemCommand != null) {
       return createCommand(systemCommand);
     } else {
-      for (CommandManager manager : activeManagers.values()) {
-        if (manager.isActive()) {
-          for (String ext : manager.getExtensions()) {
-            Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
-            for (Resource resource : resources) {
-              CommandResolution resolution = resolveCommand(manager, name, resource);
-              if (resolution != null) {
-                return resolution;
-              }
-            }
-          }
-        }
-      }
-      return null;
+      return resolver.resolveCommand(name);
     }
   }
 
   public Iterable<String> getCommandNames() {
     LinkedHashSet<String> names = new LinkedHashSet<String>(systemCommands.keySet());
-    for (String resourceName : context.listResources(ResourceKind.COMMAND)) {
-      int index = resourceName.indexOf('.');
-      String name = resourceName.substring(0, index);
-      String ext = resourceName.substring(index + 1);
-      if (activeManagers.containsKey(ext)) {
-        names.add(name);
-      }
+    for (String name : resolver.getCommandNames()) {
+      names.add(name);
     }
     return names;
-  }
-
-  private CommandResolution resolveCommand(CommandManager manager, String name, Resource script) throws CommandCreationException {
-    TimestampedObject<CommandResolution> ref = commandCache.get(name);
-    if (ref != null) {
-      if (script.getTimestamp() != ref.getTimestamp()) {
-        ref = null;
-      }
-    }
-    CommandResolution command;
-    if (ref == null) {
-      command = manager.resolveCommand(name, script.getContent());
-      if (command != null) {
-        commandCache.put(name, new TimestampedObject<CommandResolution>(script.getTimestamp(), command));
-      }
-    } else {
-      command = ref.getObject();
-    }
-    return command;
   }
 
   private <C extends BaseCommand> CommandResolution createCommand(final Class<C> commandClass) {
