@@ -51,6 +51,11 @@ public class CRaSH {
     this.context = context;
     this.scriptResolver = new ScriptResolver(context);
 
+    // Add the resolver plugins
+    for (ShellCommandResolver resolver : context.getPlugins(ShellCommandResolver.class)) {
+      resolvers.add(resolver);
+    }
+
     //
     resolvers.add(scriptResolver);
     resolvers.add(SystemResolver.INSTANCE);
