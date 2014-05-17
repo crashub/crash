@@ -28,7 +28,7 @@ import org.crsh.command.InvocationContext;
 import org.crsh.command.SyntaxException;
 import org.crsh.console.KeyHandler;
 import org.crsh.shell.impl.command.InvocationContextImpl;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -65,7 +65,7 @@ class ProducerCommandImpl<T extends BaseCommand, P> extends CommandImpl<T, Void,
   }
 
   @Override
-  BaseInvoker getInvoker(T command) throws CommandCreationException {
+  BaseInvoker getInvoker(T command) throws CreateCommandException {
 
     //
     return new BaseInvoker(command) {

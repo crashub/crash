@@ -22,7 +22,7 @@ import org.crsh.cli.Command;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.shell.impl.command.spi.ShellCommandResolver;
@@ -56,7 +56,7 @@ public class CustomShellCommandResolverTestCase extends AbstractCommandTestCase 
     }
 
     @Override
-    public CommandResolution resolveCommand(String name) throws CommandCreationException, NullPointerException {
+    public CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException {
       if ("mycommand".equals(name)) {
         return new CommandResolution() {
           @Override
@@ -64,7 +64,7 @@ public class CustomShellCommandResolverTestCase extends AbstractCommandTestCase 
             return "mycommand";
           }
           @Override
-          public ShellCommand<?> getCommand() throws CommandCreationException {
+          public ShellCommand<?> getCommand() throws CreateCommandException {
             return new ClassShellCommand<mycommand>(mycommand.class);
           }
         };

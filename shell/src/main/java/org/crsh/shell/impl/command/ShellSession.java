@@ -19,7 +19,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.lang.spi.Repl;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
 
@@ -32,7 +32,7 @@ public interface ShellSession extends Map<String, Object> {
 
   Iterable<String> getCommandNames();
 
-  ShellCommand<?> getCommand(String name) throws CommandCreationException;
+  ShellCommand<?> getCommand(String name) throws CreateCommandException;
 
   /**
    * @return the current repl of this session

@@ -19,7 +19,7 @@
 package org.crsh.lang.spi;
 
 import org.crsh.shell.impl.command.ShellSession;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 
 import java.util.Set;
@@ -43,10 +43,10 @@ public interface Compiler {
    *
    * @param name the command name
    * @param source the command source  @return the command or null if no command can be resolved
-   * @throws org.crsh.shell.impl.command.spi.CommandCreationException when the command exists but cannot be created
+   * @throws org.crsh.shell.impl.command.spi.CreateCommandException when the command exists but cannot be created
    * @throws NullPointerException if the command name is null
    */
-  CommandResolution compileCommand(String name, byte[] source) throws CommandCreationException, NullPointerException;
+  CommandResolution compileCommand(String name, byte[] source) throws CreateCommandException, NullPointerException;
 
   String doCallBack(ShellSession session, String name, String defaultValue);
 

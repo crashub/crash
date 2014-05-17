@@ -18,11 +18,11 @@
  */
 package org.crsh.util;
 
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 
 /** @author Julien Viet */
 public abstract class ClassFactory<T> {
 
-  public abstract Class<? extends T> parse(String name, String source) throws CommandCreationException;
+  public abstract Class<? extends T> parse(String name, String source) throws CreateCommandException;
 
 }

@@ -20,7 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.lang.impl.script.Token;
@@ -98,7 +98,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     try {
       return factory.create(session);
     }
-    catch (CommandCreationException e) {
+    catch (CreateCommandException e) {
       throw new ScriptException(e);
     }
   }

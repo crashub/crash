@@ -26,7 +26,7 @@ import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.impl.lang.ObjectCommandInvoker;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.BaseCommand;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.Pipe;
 import org.crsh.command.RuntimeContext;
@@ -56,7 +56,7 @@ public class ClassShellCommand<T extends BaseCommand> extends ShellCommand<Insta
     return descriptor;
   }
 
-  protected Completer getCompleter(final RuntimeContext context) throws CommandCreationException {
+  protected Completer getCompleter(final RuntimeContext context) throws CreateCommandException {
     final T command = createCommand();
     if (command instanceof Completer) {
       command.context = context;
@@ -105,14 +105,14 @@ public class ClassShellCommand<T extends BaseCommand> extends ShellCommand<Insta
     }
   }
 
-  T createCommand() throws CommandCreationException {
+  T createCommand() throws CreateCommandException {
     T command;
     try {
       command = clazz.newInstance();
     }
     catch (Exception e) {
       String name = clazz.getSimpleName();
-      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance", e);
+      throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance", e);
     }
     return command;
   }

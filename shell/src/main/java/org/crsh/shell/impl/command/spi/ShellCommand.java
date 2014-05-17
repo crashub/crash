@@ -55,9 +55,9 @@ public abstract class ShellCommand<T> {
    *
    * @param context the related runtime context
    * @return the completer
-   * @throws CommandCreationException anything that would prevent completion to happen
+   * @throws CreateCommandException anything that would prevent completion to happen
    */
-  protected abstract Completer getCompleter(RuntimeContext context) throws CommandCreationException;
+  protected abstract Completer getCompleter(RuntimeContext context) throws CreateCommandException;
 
   /**
    * Resolve the real command for a specified invocation match.
@@ -110,7 +110,7 @@ public abstract class ShellCommand<T> {
    * @param line the original command line arguments
    * @return the completions
    */
-  public final CompletionMatch complete(RuntimeContext context, String line) throws CommandCreationException {
+  public final CompletionMatch complete(RuntimeContext context, String line) throws CreateCommandException {
     CompletionMatcher matcher = getDescriptor().completer();
     Completer completer = getCompleter(context);
     try {
@@ -147,11 +147,11 @@ public abstract class ShellCommand<T> {
    * @param line the command line arguments
    * @return the command
    */
-  public final CommandInvoker<?, ?> resolveInvoker(String line) throws CommandCreationException {
+  public final CommandInvoker<?, ?> resolveInvoker(String line) throws CreateCommandException {
     return resolveCommand(line).getInvoker();
   }
 
-  public final Command<?, ?> resolveCommand(String line) throws CommandCreationException {
+  public final Command<?, ?> resolveCommand(String line) throws CreateCommandException {
     CommandDescriptor<T> descriptor = getDescriptor();
     InvocationMatcher<T> analyzer = descriptor.matcher();
     InvocationMatch<T> match;
@@ -173,7 +173,7 @@ public abstract class ShellCommand<T> {
    * @param arguments arguments
    * @return the command
    */
-  public final CommandInvoker<?, ?> resolveInvoker(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CommandCreationException {
+  public final CommandInvoker<?, ?> resolveInvoker(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CreateCommandException {
     InvocationMatcher<T> matcher = getDescriptor().matcher();
 
     //

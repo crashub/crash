@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 
 /**
  * Various test related to command dispatch.
@@ -317,7 +317,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "public String main() {\n" +
         "try {\n" +
         "cannot_create_command()" +
-        "} catch (" + CommandCreationException.class.getName() + " e) {\n" +
+        "} catch (" + CreateCommandException.class.getName() + " e) {\n" +
         "return 'bar';\n" +
         "}\n" +
         "}\n" +
@@ -332,7 +332,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   public void testCannotCreateCommandInScript() {
     String foo = "try {\n" +
         "cannot_create_command()" +
-        "} catch (" + CommandCreationException.class.getName() + " e) {\n" +
+        "} catch (" + CreateCommandException.class.getName() + " e) {\n" +
         "out << 'bar';\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);

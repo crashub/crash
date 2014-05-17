@@ -21,7 +21,7 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.lang.LanguageCommandResolver;
 import org.crsh.lang.spi.Language;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
 import org.crsh.shell.impl.command.spi.CommandResolution;
@@ -89,10 +89,10 @@ public class CRaSH {
    *
    * @param name the command name
    * @return a command description
-   * @throws org.crsh.shell.impl.command.spi.CommandCreationException if an error occured preventing the command creation
+   * @throws org.crsh.shell.impl.command.spi.CreateCommandException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  public String getCommandDescription(String name) throws CommandCreationException, NullPointerException {
+  public String getCommandDescription(String name) throws CreateCommandException, NullPointerException {
     CommandResolution resolution = resolveCommand(name);
     return resolution != null ? resolution.getDescription() : null;
   }
@@ -102,15 +102,15 @@ public class CRaSH {
    *
    * @param name the command name
    * @return a command instance
-   * @throws org.crsh.shell.impl.command.spi.CommandCreationException if an error occured preventing the command creation
+   * @throws org.crsh.shell.impl.command.spi.CreateCommandException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  public ShellCommand<?> getCommand(String name) throws CommandCreationException, NullPointerException {
+  public ShellCommand<?> getCommand(String name) throws CreateCommandException, NullPointerException {
     CommandResolution resolution = resolveCommand(name);
     return resolution != null ? resolution.getCommand() : null;
   }
 
-  public CommandResolution resolveCommand(String name) throws CommandCreationException, NullPointerException {
+  public CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null name accepted");
     }

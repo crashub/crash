@@ -20,7 +20,7 @@
 package org.crsh.lang.impl.script;
 
 import org.crsh.shell.impl.command.ShellSession;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.command.SyntaxException;
@@ -85,16 +85,16 @@ public class PipeLineFactory {
     return next;
   }
 
-  public CommandInvoker<Void, Chunk> create(ShellSession session) throws CommandCreationException {
+  public CommandInvoker<Void, Chunk> create(ShellSession session) throws CreateCommandException {
     LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();
     for (PipeLineFactory current = this;current != null;current = current.next) {
       ShellCommand<?> command = session.getCommand(current.name);
       if (command == null) {
-        throw new CommandCreationException(current.name, ErrorType.EVALUATION, "Unknown command");
+        throw new CreateCommandException(current.name, ErrorType.EVALUATION, "Unknown command");
       }
       CommandInvoker commandInvoker = command.resolveInvoker(current.rest);
       if (commandInvoker == null) {
-        throw new CommandCreationException(current.name, ErrorType.EVALUATION, "Command " + current.rest + " cannot not be invoked");
+        throw new CreateCommandException(current.name, ErrorType.EVALUATION, "Command " + current.rest + " cannot not be invoked");
       }
       pipes.add(commandInvoker);
     }

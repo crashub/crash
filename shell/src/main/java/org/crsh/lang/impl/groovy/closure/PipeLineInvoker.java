@@ -19,7 +19,7 @@
 package org.crsh.lang.impl.groovy.closure;
 
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
@@ -52,7 +52,7 @@ public class PipeLineInvoker {
     try {
       pipe = closure.resolve2(args);
     }
-    catch (CommandCreationException e) {
+    catch (CreateCommandException e) {
       throw new UndeclaredThrowableException(e);
     }
     CommandInvoker[] array = pipe.toArray(new CommandInvoker[pipe.size()]);

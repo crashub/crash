@@ -19,7 +19,7 @@
 
 package org.crsh.util;
 
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
@@ -61,7 +61,7 @@ public class ClassCache<T> {
     return context.loadResource(name, kind);
   }
 
-  public TimestampedObject<Class<? extends T>> getClass(String name) throws CommandCreationException, NullPointerException {
+  public TimestampedObject<Class<? extends T>> getClass(String name) throws CreateCommandException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null argument allowed");
     }
@@ -88,7 +88,7 @@ public class ClassCache<T> {
           source = new String(script.getContent(), "UTF-8");
         }
         catch (UnsupportedEncodingException e) {
-          throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+          throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
         }
 
         //

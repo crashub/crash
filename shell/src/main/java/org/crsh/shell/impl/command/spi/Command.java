@@ -30,9 +30,9 @@ public abstract class Command<C, P> {
 
   /**
    * @return an invoker for this command.
-   * @throws CommandCreationException
+   * @throws CreateCommandException
    */
-  public  abstract CommandInvoker<C, P> getInvoker() throws CommandCreationException;
+  public  abstract CommandInvoker<C, P> getInvoker() throws CreateCommandException;
 
   /**
    * @return the match that created this command

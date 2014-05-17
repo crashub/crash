@@ -34,7 +34,7 @@ import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.shell.impl.command.ShellSession;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
 import org.crsh.shell.impl.command.spi.CommandResolution;
@@ -88,7 +88,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
         login.run();
       }
     }
-    catch (CommandCreationException e) {
+    catch (CreateCommandException e) {
       e.printStackTrace();
     }
   }
@@ -101,7 +101,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
         logout.run();
       }
     }
-    catch (CommandCreationException e) {
+    catch (CreateCommandException e) {
       e.printStackTrace();
     }
   }
@@ -143,7 +143,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
     }
   }
 
-  public GroovyScript getLifeCycle(ShellSession session, String name) throws CommandCreationException, NullPointerException {
+  public GroovyScript getLifeCycle(ShellSession session, String name) throws CreateCommandException, NullPointerException {
     TimestampedObject<Class<? extends GroovyScript>> ref = scriptCache.getClass(name);
     if (ref != null) {
       Class<? extends GroovyScript> scriptClass = ref.getObject();
@@ -155,7 +155,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
     }
   }
 
-  public CommandResolution compileCommand(final String name, byte[] source) throws CommandCreationException, NullPointerException {
+  public CommandResolution compileCommand(final String name, byte[] source) throws CreateCommandException, NullPointerException {
 
     //
     if (source == null) {
@@ -168,7 +168,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
       script = new String(source, "UTF-8");
     }
     catch (UnsupportedEncodingException e) {
-      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+      throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
     }
 
     // Get the description using a partial compilation because it is much faster than compiling the class
@@ -180,7 +180,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
       cu.compile(Phases.CONVERSION);
     }
     catch (CompilationFailedException e) {
-      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not compile command", e);
+      throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not compile command", e);
     }
     CompileUnit ast = cu.getAST();
     if (ast.getClasses().size() > 0) {
@@ -214,7 +214,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
         return description;
       }
       @Override
-      public ShellCommand<?> getCommand() throws CommandCreationException {
+      public ShellCommand<?> getCommand() throws CreateCommandException {
         if (command == null) {
           Class<?> clazz = objectGroovyClassFactory.parse(name, script);
           if (BaseCommand.class.isAssignableFrom(clazz)) {
@@ -226,7 +226,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
             command = make2(cmd);
           }
           else {
-            throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
+            throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
           }
         }
         return command;

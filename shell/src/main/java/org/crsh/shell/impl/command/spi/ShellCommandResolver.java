@@ -33,8 +33,8 @@ public interface ShellCommandResolver {
    *
    * @param name the command name
    * @return a command instance
-   * @throws CommandCreationException if an error occured preventing the command creation
+   * @throws CreateCommandException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  CommandResolution resolveCommand(String name) throws CommandCreationException, NullPointerException;
+  CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException;
 }

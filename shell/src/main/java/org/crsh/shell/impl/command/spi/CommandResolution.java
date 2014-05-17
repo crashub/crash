@@ -23,5 +23,5 @@ public interface CommandResolution {
 
   String getDescription();
 
-  ShellCommand<?> getCommand() throws CommandCreationException;
+  ShellCommand<?> getCommand() throws CreateCommandException;
 }

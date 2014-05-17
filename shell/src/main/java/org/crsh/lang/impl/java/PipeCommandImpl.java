@@ -29,7 +29,7 @@ import org.crsh.command.Pipe;
 import org.crsh.command.SyntaxException;
 import org.crsh.console.KeyHandler;
 import org.crsh.shell.impl.command.InvocationContextImpl;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
@@ -74,7 +74,7 @@ class PipeCommandImpl<T extends BaseCommand, C, P, PC extends Pipe<C, P>> extend
   }
 
   @Override
-  BaseInvoker getInvoker(T command) throws CommandCreationException {
+  BaseInvoker getInvoker(T command) throws CreateCommandException {
 
     //
     return new BaseInvoker(command) {

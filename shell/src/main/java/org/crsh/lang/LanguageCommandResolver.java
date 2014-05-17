@@ -22,7 +22,7 @@ import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.Language;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.shell.impl.command.spi.ShellCommandResolver;
 import org.crsh.util.TimestampedObject;
@@ -86,7 +86,7 @@ public class LanguageCommandResolver implements ShellCommandResolver {
   }
 
   @Override
-  public CommandResolution resolveCommand(String name) throws CommandCreationException, NullPointerException {
+  public CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException {
     for (Compiler manager : activeCompilers.values()) {
       for (String ext : manager.getExtensions()) {
         Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
@@ -101,7 +101,7 @@ public class LanguageCommandResolver implements ShellCommandResolver {
     return null;
   }
 
-  private CommandResolution resolveCommand(org.crsh.lang.spi.Compiler manager, String name, Resource script) throws CommandCreationException {
+  private CommandResolution resolveCommand(org.crsh.lang.spi.Compiler manager, String name, Resource script) throws CreateCommandException {
     TimestampedObject<CommandResolution> ref = commandCache.get(name);
     if (ref != null) {
       if (script.getTimestamp() != ref.getTimestamp()) {

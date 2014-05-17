@@ -21,7 +21,7 @@ package org.crsh.shell.impl.command.system;
 import org.crsh.cli.descriptor.Format;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.java.ClassShellCommand;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.shell.impl.command.spi.ShellCommandResolver;
@@ -53,7 +53,7 @@ public class SystemResolver implements ShellCommandResolver {
   }
 
   @Override
-  public CommandResolution resolveCommand(String name) throws CommandCreationException, NullPointerException {
+  public CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException {
     final Class<? extends BaseCommand> systemCommand = systemCommands.get(name);
     if (systemCommand != null) {
       return createCommand(systemCommand);
@@ -69,7 +69,7 @@ public class SystemResolver implements ShellCommandResolver {
         return shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
       }
       @Override
-      public ShellCommand<?> getCommand() throws CommandCreationException {
+      public ShellCommand<?> getCommand() throws CreateCommandException {
         return shellCommand;
       }
     };

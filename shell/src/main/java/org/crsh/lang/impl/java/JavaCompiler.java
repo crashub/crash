@@ -20,7 +20,7 @@ package org.crsh.lang.impl.java;
 
 import org.crsh.cli.descriptor.Format;
 import org.crsh.shell.impl.command.ShellSession;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.impl.command.spi.CommandResolution;
@@ -51,17 +51,17 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
     return EXT;
   }
 
-  public CommandResolution compileCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
+  public CommandResolution compileCommand(String name, byte[] source) throws CreateCommandException, NullPointerException {
     String script = new String(source);
     List<JavaClassFileObject> classFiles;
     try {
       classFiles = compiler.compile(name, script);
     }
     catch (IOException e) {
-      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not access command", e);
+      throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not access command", e);
     }
     catch (CompilationFailureException e) {
-        throw new CommandCreationException(name, ErrorType.EVALUATION, "Could not compile command", e);
+        throw new CreateCommandException(name, ErrorType.EVALUATION, "Could not compile command", e);
     }
     for (JavaClassFileObject classFile : classFiles) {
       String className = classFile.getClassName();
@@ -78,17 +78,17 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
               return description;
             }
             @Override
-            public ShellCommand<Object> getCommand() throws CommandCreationException {
+            public ShellCommand<Object> getCommand() throws CreateCommandException {
               return command;
             }
           };
         }
         catch (ClassNotFoundException e) {
-          throw new CommandCreationException(name, ErrorType.EVALUATION, "Command cannot be loaded", e);
+          throw new CreateCommandException(name, ErrorType.EVALUATION, "Command cannot be loaded", e);
         }
       }
     }
-    throw new CommandCreationException(name, ErrorType.EVALUATION, "Command class not found");
+    throw new CreateCommandException(name, ErrorType.EVALUATION, "Command class not found");
   }
 
   public void init(ShellSession session) {

@@ -23,7 +23,7 @@ import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.Language;
 import org.crsh.lang.spi.Repl;
 import org.crsh.lang.spi.ReplResponse;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
@@ -92,7 +92,7 @@ class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, 
     return crash.getCommandNames();
   }
 
-  public ShellCommand<?> getCommand(String name) throws CommandCreationException {
+  public ShellCommand<?> getCommand(String name) throws CreateCommandException {
     return crash.getCommand(name);
   }
 

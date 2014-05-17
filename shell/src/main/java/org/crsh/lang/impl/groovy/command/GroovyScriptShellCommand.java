@@ -27,7 +27,7 @@ import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.lang.impl.groovy.ast.ScriptLastStatementTransformer;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
@@ -82,7 +82,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends She
   protected Command<?, ?> resolveCommand(final InvocationMatch<Instance<T>> match) {
     return new Command<Void, Object>() {
       @Override
-      public CommandInvoker<Void, Object> getInvoker() throws CommandCreationException {
+      public CommandInvoker<Void, Object> getInvoker() throws CreateCommandException {
         List<String> chunks = Utils.chunks(match.getRest());
         String[] args = chunks.toArray(new String[chunks.size()]);
         return GroovyScriptShellCommand.this.getInvoker(args);
@@ -105,24 +105,24 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends She
     };
   }
 
-  private T createCommand() throws CommandCreationException {
+  private T createCommand() throws CreateCommandException {
     T command;
     try {
       command = clazz.newInstance();
     }
     catch (Exception e) {
       String name = clazz.getSimpleName();
-      throw new CommandCreationException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance", e);
+      throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance", e);
     }
     return command;
   }
 
   @Override
-  protected Completer getCompleter(RuntimeContext context) throws CommandCreationException {
+  protected Completer getCompleter(RuntimeContext context) throws CreateCommandException {
     return null;
   }
 
-  private CommandInvoker<Void, Object> getInvoker(final String[] args) throws CommandCreationException {
+  private CommandInvoker<Void, Object> getInvoker(final String[] args) throws CreateCommandException {
     final T command = createCommand();
     return new CommandInvoker<Void, Object>() {
 

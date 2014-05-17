@@ -24,7 +24,7 @@ import org.crsh.cli.spi.Completion;
 import org.crsh.lang.spi.*;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
 import org.crsh.shell.impl.command.ShellSession;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.command.SyntaxException;
@@ -90,7 +90,7 @@ public class ScriptRepl implements Repl {
         CommandInvoker<Void, Chunk> invoker = factory.create(session);
         return new ReplResponse.Invoke(invoker);
       }
-      catch (CommandCreationException e) {
+      catch (CreateCommandException e) {
         log.log(Level.FINER, "Could not create command", e);
         return new ReplResponse.Response(ShellResponse.unknownCommand(e.getCommandName()));
       }
@@ -132,7 +132,7 @@ public class ScriptRepl implements Repl {
           completion = new CompletionMatch(Delimiter.EMPTY, Completion.create());
         }
       }
-      catch (CommandCreationException e) {
+      catch (CreateCommandException e) {
         log.log(Level.FINE, "Could not create command for completion of " + prefix, e);
         completion = new CompletionMatch(Delimiter.EMPTY, Completion.create());
       }
