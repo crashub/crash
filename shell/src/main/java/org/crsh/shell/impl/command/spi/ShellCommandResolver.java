@@ -19,6 +19,8 @@
 package org.crsh.shell.impl.command.spi;
 
 /**
+ * Resolve shell commands.
+ *
  * @author Julien Viet
  */
 public interface ShellCommandResolver {
