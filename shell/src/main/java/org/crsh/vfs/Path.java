@@ -264,7 +264,7 @@ public abstract class Path implements Iterable<String> {
     }
   }
 
-  private static class Relative extends Path {
+  public static class Relative extends Path {
 
     private Relative(boolean dir, String[] names) {
       super(dir, names);
