@@ -24,7 +24,7 @@ import org.crsh.shell.impl.command.spi.CommandInvoker;
 /** @author Julien Viet */
 abstract class PipeLineElement {
 
-  abstract CommandInvoker make() throws CreateCommandException;
+  abstract CommandInvoker create() throws CreateCommandException;
 
   abstract void toString(StringBuilder buffer);
 

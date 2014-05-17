@@ -32,7 +32,7 @@ public class ClosureElement extends PipeLineElement {
   }
 
   @Override
-  CommandInvoker make() {
+  CommandInvoker create() {
     return new ClosureInvoker(closure);
   }
 

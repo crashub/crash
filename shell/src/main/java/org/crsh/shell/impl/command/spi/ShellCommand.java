@@ -173,7 +173,7 @@ public abstract class ShellCommand<T> {
    * @param arguments arguments
    * @return the command
    */
-  public final CommandInvoker<?, ?> resolveInvoker(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CreateCommandException {
+  public final CommandMatch<?, ?> resolveCommand(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CreateCommandException {
     InvocationMatcher<T> matcher = getDescriptor().matcher();
 
     //
@@ -199,6 +199,6 @@ public abstract class ShellCommand<T> {
     InvocationMatch<T> match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
 
     //
-    return resolve(match).getInvoker();
+    return resolve(match);
   }
 }

@@ -272,7 +272,7 @@ public class PipeLineClosure extends Closure {
     //
     LinkedList<CommandInvoker> ret = new LinkedList<CommandInvoker>();
     for (PipeLineElement _elt : a) {
-      ret.add(_elt.make());
+      ret.add(_elt.create());
     }
 
     //

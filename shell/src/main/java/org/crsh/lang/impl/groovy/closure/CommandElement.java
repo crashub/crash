@@ -118,8 +118,8 @@ class CommandElement extends PipeLineElement {
   }
 
   @Override
-  CommandInvoker make() throws CreateCommandException {
-    return command.resolveInvoker(options, subordinate, subordinateOptions, args);
+  CommandInvoker create() throws CreateCommandException {
+    return command.resolveCommand(options, subordinate, subordinateOptions, args).getInvoker();
   }
 
   private void format(Object o, StringBuilder buffer) {
