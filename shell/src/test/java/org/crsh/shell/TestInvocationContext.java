@@ -21,14 +21,14 @@ package org.crsh.shell;
 
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
-import org.crsh.lang.java.ClassShellCommand;
+import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.io.Consumer;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
-import org.crsh.lang.groovy.command.GroovyScriptCommand;
-import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
+import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
+import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
 import org.crsh.text.Chunk;
 import org.crsh.text.ChunkBuffer;
 

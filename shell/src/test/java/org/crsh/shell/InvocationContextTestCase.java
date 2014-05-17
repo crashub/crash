@@ -21,12 +21,11 @@ package org.crsh.shell;
 import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
-import junit.framework.TestCase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.AbstractTestCase;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
-import org.crsh.lang.groovy.command.GroovyScriptCommand;
+import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.command.SyntaxException;
 
 import java.util.Arrays;

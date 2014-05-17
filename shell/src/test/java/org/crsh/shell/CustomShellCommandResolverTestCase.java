@@ -20,7 +20,7 @@ package org.crsh.shell;
 
 import org.crsh.cli.Command;
 import org.crsh.command.BaseCommand;
-import org.crsh.lang.java.ClassShellCommand;
+import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandResolution;

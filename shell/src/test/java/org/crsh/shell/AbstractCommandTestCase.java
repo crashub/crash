@@ -25,9 +25,9 @@ import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.lang.groovy.GroovyCommandManager;
-import org.crsh.lang.groovy.GroovyCommandManagerImpl;
-import org.crsh.lang.java.JavaCommandManager;
+import org.crsh.lang.impl.groovy.GroovyCommandManager;
+import org.crsh.lang.impl.groovy.GroovyCommandManagerImpl;
+import org.crsh.lang.impl.java.JavaCommandManager;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.impl.command.ShellSession;
 

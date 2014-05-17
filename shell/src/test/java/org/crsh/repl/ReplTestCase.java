@@ -21,7 +21,7 @@ package org.crsh.repl;
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
 import org.crsh.command.BaseCommand;
-import org.crsh.lang.groovy.GroovyRepl;
+import org.crsh.lang.impl.groovy.GroovyRepl;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.AbstractCommandTestCase;
 import org.crsh.shell.Commands;

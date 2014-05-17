@@ -20,7 +20,7 @@ package org.crsh.mail;
 
 import junit.framework.Assert;
 import org.crsh.TestPluginLifeCycle;
-import org.crsh.lang.groovy.GroovyCommandManager;
+import org.crsh.lang.impl.groovy.GroovyCommandManager;
 import org.subethamail.smtp.MessageHandlerFactory;
 import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
 import org.subethamail.smtp.server.SMTPServer;

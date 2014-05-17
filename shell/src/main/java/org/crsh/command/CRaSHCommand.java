@@ -19,7 +19,7 @@
 
 package org.crsh.command;
 
-import org.crsh.lang.groovy.command.GroovyCommand;
+import org.crsh.lang.impl.groovy.command.GroovyCommand;
 
 public abstract class CRaSHCommand extends GroovyCommand {
 

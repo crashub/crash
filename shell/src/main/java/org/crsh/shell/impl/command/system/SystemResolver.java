@@ -20,7 +20,7 @@ package org.crsh.shell.impl.command.system;
 
 import org.crsh.cli.descriptor.Format;
 import org.crsh.command.BaseCommand;
-import org.crsh.lang.java.ClassShellCommand;
+import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.shell.impl.command.spi.ShellCommand;

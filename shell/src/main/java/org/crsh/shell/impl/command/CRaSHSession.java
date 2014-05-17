@@ -19,18 +19,18 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.lang.ReplResponse;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
-import org.crsh.lang.script.ScriptRepl;
+import org.crsh.lang.impl.script.ScriptRepl;
 import org.crsh.plugin.PluginContext;
-import org.crsh.repl.Repl;
+import org.crsh.lang.Repl;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
-import org.crsh.repl.EvalResponse;
-import org.crsh.shell.impl.command.spi.CommandManager;
+import org.crsh.lang.CommandManager;
 
 import java.io.Closeable;
 import java.security.Principal;
@@ -162,12 +162,12 @@ class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, 
     if ("bye".equals(trimmedRequest) || "exit".equals(trimmedRequest)) {
       response = ShellResponse.close();
     } else {
-      EvalResponse r = repl.eval(this, request);
-      if (r instanceof EvalResponse.Response) {
-        EvalResponse.Response rr = (EvalResponse.Response)r;
+      ReplResponse r = repl.eval(this, request);
+      if (r instanceof ReplResponse.Response) {
+        ReplResponse.Response rr = (ReplResponse.Response)r;
         response = rr.response;
       } else {
-        final CommandInvoker<Void, ?> pipeLine = ((EvalResponse.Invoke)r).invoker;
+        final CommandInvoker<Void, ?> pipeLine = ((ReplResponse.Invoke)r).invoker;
         return new CRaSHCommandProcess(this, request, pipeLine);
       }
     }

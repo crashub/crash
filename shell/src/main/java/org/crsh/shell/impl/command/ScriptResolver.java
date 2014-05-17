@@ -21,7 +21,7 @@ package org.crsh.shell.impl.command;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
-import org.crsh.shell.impl.command.spi.CommandManager;
+import org.crsh.lang.CommandManager;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.shell.impl.command.spi.ShellCommandResolver;
 import org.crsh.util.TimestampedObject;
