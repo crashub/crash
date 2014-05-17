@@ -18,26 +18,19 @@
  */
 package org.crsh.shell.impl.command.spi;
 
-import org.crsh.cli.impl.invocation.InvocationMatch;
-
 /**
- * The real command that will be used in an command pipeline.
+ * The command match that will be used in an command pipeline.
  *
  * @param <C> the consumed type
  * @param <P> the the produced type
  */
-public abstract class Command<C, P> {
+public abstract class CommandMatch<C, P> {
 
   /**
    * @return an invoker for this command.
    * @throws CreateCommandException
    */
-  public  abstract CommandInvoker<C, P> getInvoker() throws CreateCommandException;
-
-  /**
-   * @return the match that created this command
-   */
-  public abstract InvocationMatch<?> getMatch();
+  public abstract CommandInvoker<C, P> getInvoker() throws CreateCommandException;
 
   /**
    * @return the command produced type

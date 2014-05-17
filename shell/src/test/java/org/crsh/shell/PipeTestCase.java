@@ -20,11 +20,10 @@
 package org.crsh.shell;
 
 import org.crsh.command.ScriptException;
-import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.CommandMatch;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.text.ChunkBuffer;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -251,8 +250,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
     ShellCommand<?> producer = session.getCommand("producer");
-    Command<?, ?> command = producer.resolveCommand("");
-    assertEquals(Integer.class, command.getProducedType());
+    CommandMatch<?, ?> commandMatch = producer.resolveCommand("");
+    assertEquals(Integer.class, commandMatch.getProducedType());
   }
 
   public void testReturnedObjectByGroovyIsProduced() throws Exception {
@@ -269,8 +268,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
     ShellCommand<?> producer = session.getCommand("producer");
-    Command<?, ?> command = producer.resolveCommand("");
-    assertEquals(Integer.class, command.getProducedType());
+    CommandMatch<?, ?> commandMatch = producer.resolveCommand("");
+    assertEquals(Integer.class, commandMatch.getProducedType());
   }
 
   public void testReturnedObjectByGroovyScriptIsProduced() throws Exception {
@@ -280,8 +279,8 @@ public class PipeTestCase extends AbstractCommandTestCase {
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
     ShellCommand<?> producer = session.getCommand("producer");
-    Command<?, ?> command = producer.resolveCommand("");
-    assertEquals(Object.class, command.getProducedType());
+    CommandMatch<?, ?> commandMatch = producer.resolveCommand("");
+    assertEquals(Object.class, commandMatch.getProducedType());
   }
 
   public void testConsumerThrowsScriptExceptionInProvide() throws Exception {

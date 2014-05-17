@@ -21,19 +21,19 @@ package org.crsh.lang.impl.java;
 import org.crsh.cli.impl.lang.Instance;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
-import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.CommandMatch;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 
 /**
 * @author Julien Viet
 */
-abstract class CommandImpl<T extends BaseCommand, C, P> extends Command<C, P> {
+abstract class BaseCommandMatch<T extends BaseCommand, C, P> extends CommandMatch<C, P> {
 
   /** . */
   private final ClassShellCommand<T> baseShellCommand;
 
-  public CommandImpl(ClassShellCommand<T> baseShellCommand) {
+  public BaseCommandMatch(ClassShellCommand<T> baseShellCommand) {
     this.baseShellCommand = baseShellCommand;
   }
 

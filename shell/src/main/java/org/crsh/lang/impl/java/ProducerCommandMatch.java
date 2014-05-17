@@ -20,7 +20,6 @@ package org.crsh.lang.impl.java;
 
 import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationException;
-import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.Instance;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
@@ -36,22 +35,17 @@ import java.lang.reflect.UndeclaredThrowableException;
 /**
 * @author Julien Viet
 */
-class ProducerCommandImpl<T extends BaseCommand, P> extends CommandImpl<T, Void, P> {
+class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T, Void, P> {
 
   private final CommandInvoker<Instance<T>, ?> invoker;
   private final Class<P> producedType;
 
-  public ProducerCommandImpl(ClassShellCommand<T> shellCommand, CommandInvoker<Instance<T>, ?> invoker, Class<P> producedType) {
+  public ProducerCommandMatch(ClassShellCommand<T> shellCommand, CommandInvoker<Instance<T>, ?> invoker, Class<P> producedType) {
     super(shellCommand);
 
     //
     this.invoker = invoker;
     this.producedType = producedType;
-  }
-
-  @Override
-  public InvocationMatch<?> getMatch() {
-    return invoker.getMatch();
   }
 
   @Override

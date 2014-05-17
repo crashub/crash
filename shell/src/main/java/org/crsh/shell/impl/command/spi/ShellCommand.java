@@ -60,17 +60,17 @@ public abstract class ShellCommand<T> {
   protected abstract Completer getCompleter(RuntimeContext context) throws CreateCommandException;
 
   /**
-   * Resolve the real command for a specified invocation match.
+   * Resolve the real match for a specified invocation match.
    *
    * @param match the match
    * @return the command
    */
-  protected abstract Command<?, ?> resolveCommand(InvocationMatch<T> match);
+  protected abstract CommandMatch<?, ?> resolve(InvocationMatch<T> match);
 
   public final String describe(final InvocationMatch<T> match, Format format) {
 
     //
-    final Command<?, ?> command = resolveCommand(match);
+    final CommandMatch<?, ?> commandMatch = resolve(match);
 
     //
     if (format instanceof Format.Man) {
@@ -85,7 +85,7 @@ public abstract class ShellCommand<T> {
             stream.append("STREAM\n");
             stream.append(Util.MAN_TAB);
             printFQN(descriptor, stream);
-            stream.append(" <").append(command.getConsumedType().getName()).append(", ").append(command.getProducedType().getName()).append('>');
+            stream.append(" <").append(commandMatch.getConsumedType().getName()).append(", ").append(commandMatch.getProducedType().getName()).append('>');
             stream.append("\n\n");
           }
         }
@@ -151,7 +151,7 @@ public abstract class ShellCommand<T> {
     return resolveCommand(line).getInvoker();
   }
 
-  public final Command<?, ?> resolveCommand(String line) throws CreateCommandException {
+  public final CommandMatch<?, ?> resolveCommand(String line) throws CreateCommandException {
     CommandDescriptor<T> descriptor = getDescriptor();
     InvocationMatcher<T> analyzer = descriptor.matcher();
     InvocationMatch<T> match;
@@ -161,7 +161,7 @@ public abstract class ShellCommand<T> {
     catch (org.crsh.cli.SyntaxException e) {
       throw new SyntaxException(e.getMessage());
     }
-    return resolveCommand(match);
+    return resolve(match);
   }
 
   /**
@@ -199,6 +199,6 @@ public abstract class ShellCommand<T> {
     InvocationMatch<T> match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
 
     //
-    return resolveCommand(match).getInvoker();
+    return resolve(match).getInvoker();
   }
 }

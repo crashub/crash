@@ -26,12 +26,12 @@ import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.impl.lang.ObjectCommandInvoker;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.BaseCommand;
+import org.crsh.shell.impl.command.spi.CommandMatch;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.Pipe;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.ErrorType;
-import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.util.Utils;
 
@@ -67,7 +67,7 @@ public class ClassShellCommand<T extends BaseCommand> extends ShellCommand<Insta
   }
 
   @Override
-  protected Command<?, ?> resolveCommand(InvocationMatch<Instance<T>> match) {
+  protected CommandMatch<?, ?> resolve(InvocationMatch<Instance<T>> match) {
 
     // Cast to the object invoker
     org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>,?> invoker = match.getInvoker();
@@ -117,12 +117,12 @@ public class ClassShellCommand<T extends BaseCommand> extends ShellCommand<Insta
     return command;
   }
 
-  private <C, P, PC extends Pipe<C, P>> Command<C, P> getPipeInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>, PC> invoker) {
-    return new PipeCommandImpl<T, C, P, PC>(this, invoker);
+  private <C, P, PC extends Pipe<C, P>> CommandMatch<C, P> getPipeInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>, PC> invoker) {
+    return new PipeCommandMatch<T, C, P, PC>(this, invoker);
   }
 
-  private <P> Command<Void, P> getProducerInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>, ?> invoker, final Class<P> producedType) {
-    return new ProducerCommandImpl<T, P>(this, invoker, producedType);
+  private <P> CommandMatch<Void, P> getProducerInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>, ?> invoker, final Class<P> producedType) {
+    return new ProducerCommandMatch<T, P>(this, invoker, producedType);
   }
 
 }

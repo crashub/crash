@@ -20,7 +20,6 @@ package org.crsh.lang.impl.java;
 
 import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationException;
-import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.Instance;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
@@ -38,7 +37,7 @@ import java.lang.reflect.Type;
 /**
 * @author Julien Viet
 */
-class PipeCommandImpl<T extends BaseCommand, C, P, PC extends Pipe<C, P>> extends CommandImpl<T, C, P> {
+class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> extends BaseCommandMatch<T, C, P> {
 
   /** . */
   final Type ret;
@@ -50,17 +49,12 @@ class PipeCommandImpl<T extends BaseCommand, C, P, PC extends Pipe<C, P>> extend
   final Class<P> producedType;
   private final CommandInvoker<Instance<T>, PC> invoker;
 
-  public PipeCommandImpl(ClassShellCommand<T> baseShellCommand, CommandInvoker<Instance<T>, PC> invoker) {
+  public PipeCommandMatch(ClassShellCommand<T> baseShellCommand, CommandInvoker<Instance<T>, PC> invoker) {
     super(baseShellCommand);
     this.invoker = invoker;
     ret = invoker.getGenericReturnType();
     consumedType = (Class<C>)Utils.resolveToClass(ret, Pipe.class, 0);
     producedType = (Class<P>)Utils.resolveToClass(ret, Pipe.class, 1);
-  }
-
-  @Override
-  public InvocationMatch<?> getMatch() {
-    return invoker.getMatch();
   }
 
   @Override

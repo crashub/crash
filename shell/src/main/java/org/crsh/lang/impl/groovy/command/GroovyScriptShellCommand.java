@@ -29,7 +29,7 @@ import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.lang.impl.groovy.ast.ScriptLastStatementTransformer;
-import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.CommandMatch;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.command.RuntimeContext;
@@ -79,18 +79,13 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends She
   }
 
   @Override
-  protected Command<?, ?> resolveCommand(final InvocationMatch<Instance<T>> match) {
-    return new Command<Void, Object>() {
+  protected CommandMatch<?, ?> resolve(final InvocationMatch<Instance<T>> match) {
+    return new CommandMatch<Void, Object>() {
       @Override
       public CommandInvoker<Void, Object> getInvoker() throws CreateCommandException {
         List<String> chunks = Utils.chunks(match.getRest());
         String[] args = chunks.toArray(new String[chunks.size()]);
         return GroovyScriptShellCommand.this.getInvoker(args);
-      }
-
-      @Override
-      public InvocationMatch<?> getMatch() {
-        return match;
       }
 
       @Override
