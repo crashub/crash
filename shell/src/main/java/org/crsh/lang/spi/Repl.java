@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.lang;
+package org.crsh.lang.spi;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.shell.impl.command.ShellSession;
@@ -29,29 +29,17 @@ import org.crsh.shell.impl.command.ShellSession;
 public interface Repl {
 
   /**
-   * Return true if this REPL is active. Implementation can decide based on the runtime, for instance the
-   * Groovy REPL can be inactive when Groovy is not available at runtime.
-   *
-   * @return the active status
+   * @return the language this repl belongs to
    */
-  boolean isActive();
+  Language getLanguage();
 
   /**
-   * Return the repl name.
-   *
-   * @return the repl name
-   */
-  String getName();
-
-  /**
-   * Returns a descripton of the REPL.
-   *
-   * @return the repl description
+   * @return a descripton of the Repl
    */
   String getDescription();
 
   /**
-   * Evaluate a request
+   * Evaluate a request.
    *
    * @param session the session
    * @param request the request to evaluate

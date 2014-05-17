@@ -16,35 +16,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.impl.command;
+package org.crsh.lang.impl.groovy;
 
-import org.crsh.lang.spi.Repl;
-import org.crsh.shell.impl.command.spi.CommandCreationException;
-import org.crsh.shell.impl.command.spi.ShellCommand;
-import org.crsh.plugin.PluginContext;
+import org.crsh.lang.impl.LanguageProxy;
 
-import java.util.Map;
+/**
+ * @author Julien Viet
+ */
+public class GroovyLanguageProxy extends LanguageProxy {
 
-/** @author Julien Viet */
-public interface ShellSession extends Map<String, Object> {
-
-  PluginContext getContext();
-
-  Iterable<String> getCommandNames();
-
-  ShellCommand<?> getCommand(String name) throws CommandCreationException;
-
-  /**
-   * @return the current repl of this session
-   */
-  Repl getRepl();
-
-  /**
-   * Set the current repl of this session.
-   *
-   * @param repl the new repl
-   * @throws NullPointerException if the repl is null
-   */
-  void setRepl(Repl repl) throws NullPointerException;
-
+  public GroovyLanguageProxy() {
+    super("groovy", "org.crsh.lang.impl.groovy.GroovyLanguage");
+  }
 }

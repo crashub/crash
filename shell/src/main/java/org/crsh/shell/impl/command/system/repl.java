@@ -26,8 +26,9 @@ import org.crsh.cli.spi.Completion;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
+import org.crsh.lang.spi.Language;
 import org.crsh.lang.impl.script.ScriptRepl;
-import org.crsh.lang.Repl;
+import org.crsh.lang.spi.Repl;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
@@ -37,7 +38,8 @@ import org.crsh.text.ui.RowElement;
 import org.crsh.text.ui.TableElement;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /** @author Julien Viet */
 public class repl extends BaseCommand implements ReplCompleter {
@@ -52,21 +54,21 @@ public class repl extends BaseCommand implements ReplCompleter {
     ShellSession session = (ShellSession)context.getSession();
     Repl current = session.getRepl();
     if (name != null) {
-      if (name.equals(current.getName())) {
+      if (name.equals(current.getLanguage().getName())) {
         context.provide("Using repl " + name);
       } else {
         Repl found = null;
-        if ("script".equals(name)) {
-          found = ScriptRepl.getInstance();
-        } else {
-          for (Repl repl : session.getContext().getPlugins(Repl.class)) {
-            if (repl.getName().equals(name)) {
-              if (repl.isActive()) {
-                found = repl;
+        for (Language lang : session.getContext().getPlugins(Language.class)) {
+          if (lang.getName().equals(name)) {
+            if (lang.isActive()) {
+              found = lang.getRepl();
+              if (found != null) {
                 break;
               } else {
-                throw new ScriptException("Repl " + name + " is not active");
+                throw new ScriptException("Language " + name + " does not provide a repl");
               }
+            } else {
+              throw new ScriptException("Language " + name + " not active");
             }
           }
         }
@@ -80,10 +82,13 @@ public class repl extends BaseCommand implements ReplCompleter {
     } else {
 
       //
-      ArrayList<Repl> repls = new ArrayList<Repl>();
-      repls.add(ScriptRepl.getInstance());
-      for (Repl repl : session.getContext().getPlugins(Repl.class)) {
-        repls.add(repl);
+      LinkedHashMap<Repl, Boolean> repls = new LinkedHashMap<Repl, Boolean>();
+      repls.put(ScriptRepl.getInstance(), true);
+      for (Language lang : session.getContext().getPlugins(Language.class)) {
+        Repl repl = lang.getRepl();
+        if (repl != null) {
+          repls.put(repl, lang.isActive());
+        }
       }
 
       //
@@ -91,18 +96,24 @@ public class repl extends BaseCommand implements ReplCompleter {
       table.add(
           new RowElement().
               add(new LabelElement("NAME").style(Style.style(Decoration.bold))).
+              add(new LabelElement("DISPLAY NAME")).
               add(new LabelElement("DESCRIPTION")).
               add(new LabelElement("ACTIVE")));
-      for (Repl repl : repls) {
+      for (Map.Entry<Repl, Boolean> entry : repls.entrySet()) {
+        Boolean active = entry.getValue();
+        String langDescription = entry.getKey().getDescription();
+        String langDisplayName = entry.getKey().getLanguage().getDisplayName();
+        String langName = entry.getKey().getLanguage().getName();
         table.add(
             new RowElement().
-                add(new LabelElement(repl.getName()).style(Style.style(Color.red))).
-                add(new LabelElement(repl.getDescription())).
-                add(new LabelElement(repl.isActive())));
+                add(new LabelElement(langName).style(Style.style(Color.red))).
+                add(new LabelElement(langDisplayName != null ? langDisplayName : "")).
+                add(new LabelElement(langDescription != null ? langDescription : "")).
+                add(new LabelElement(active)));
       }
 
       //
-      context.provide(new LabelElement("Current repl is \" + current.getName() + \"available repl are:\n"));
+      context.provide(new LabelElement("Current repl is " + current.getLanguage().getName() + "available repl are:\n"));
       context.provide(table);
     }
   }
@@ -111,13 +122,14 @@ public class repl extends BaseCommand implements ReplCompleter {
   public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
     ShellSession session = (ShellSession)context.getSession();
     Completion.Builder builder = Completion.builder(prefix);
-    if ("script".startsWith(prefix)) {
-      builder.add("script".substring(prefix.length()), true);
-    }
-    for (Repl repl : session.getContext().getPlugins(Repl.class)) {
-      String name = repl.getName();
-      if (name.startsWith(prefix)) {
-        builder.add(name.substring(prefix.length()), true);
+    for (Language lang : session.getContext().getPlugins(Language.class)) {
+      if (lang.isActive()) {
+        if (lang.getRepl() != null) {
+          String name = lang.getName();
+          if (name.startsWith(prefix)) {
+            builder.add(name.substring(prefix.length()), true);
+          }
+        }
       }
     }
     return builder.build();

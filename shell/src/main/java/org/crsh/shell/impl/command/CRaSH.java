@@ -19,6 +19,8 @@
 
 package org.crsh.shell.impl.command;
 
+import org.crsh.lang.LanguageCommandResolver;
+import org.crsh.lang.spi.Language;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
@@ -36,10 +38,13 @@ public class CRaSH {
   final PluginContext context;
 
   /** . */
-  final ScriptResolver scriptResolver;
+  final LanguageCommandResolver scriptResolver;
 
   /** . */
   private final ArrayList<ShellCommandResolver> resolvers = new ArrayList<ShellCommandResolver>();
+
+  /** . */
+  final ArrayList<Language> langs = new ArrayList<Language>();
 
   /**
    * Create a new CRaSH.
@@ -49,11 +54,16 @@ public class CRaSH {
    */
   public CRaSH(PluginContext context) throws NullPointerException {
     this.context = context;
-    this.scriptResolver = new ScriptResolver(context);
+    this.scriptResolver = new LanguageCommandResolver(context);
 
     // Add the resolver plugins
     for (ShellCommandResolver resolver : context.getPlugins(ShellCommandResolver.class)) {
       resolvers.add(resolver);
+    }
+    for (Language lang : context.getPlugins(Language.class)) {
+      if (lang.isActive()) {
+        langs.add(lang);
+      }
     }
 
     //

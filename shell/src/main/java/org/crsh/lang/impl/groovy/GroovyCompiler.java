@@ -39,7 +39,6 @@ import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.util.ClassCache;
-import org.crsh.lang.CommandManager;
 import org.crsh.lang.impl.groovy.command.GroovyScript;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.plugin.PluginContext;
@@ -48,15 +47,19 @@ import org.crsh.shell.ErrorType;
 import org.crsh.util.TimestampedObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /** @author Julien Viet */
-public class GroovyCommandManagerImpl implements CommandManager {
+public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
 
   /** . */
-  static final Logger log = Logger.getLogger(GroovyCommandManagerImpl.class.getName());
+  static final Logger log = Logger.getLogger(GroovyCompiler.class.getName());
+
+  /** . */
+  private static final Set<String> EXT = Collections.singleton("groovy");
 
   /** . */
   private ClassCache<GroovyScript> scriptCache;
@@ -64,17 +67,13 @@ public class GroovyCommandManagerImpl implements CommandManager {
   /** . */
   private GroovyClassFactory<Object> objectGroovyClassFactory;
 
-  public GroovyCommandManagerImpl(PluginContext context) {
+  public GroovyCompiler(PluginContext context) {
     this.objectGroovyClassFactory = new GroovyClassFactory<Object>(context.getLoader(), Object.class, GroovyScriptCommand.class);
     this.scriptCache = new ClassCache<GroovyScript>(context, new GroovyClassFactory<GroovyScript>(context.getLoader(), GroovyScript.class, GroovyScript.class), ResourceKind.LIFECYCLE);
   }
 
   public Set<String> getExtensions() {
-    return GroovyCommandManager.EXT;
-  }
-
-  public boolean isActive() {
-    return true;
+    return EXT;
   }
 
   public String doCallBack(ShellSession session, String name, String defaultValue) {
@@ -156,7 +155,7 @@ public class GroovyCommandManagerImpl implements CommandManager {
     }
   }
 
-  public CommandResolution resolveCommand(final String name, byte[] source) throws CommandCreationException, NullPointerException {
+  public CommandResolution compileCommand(final String name, byte[] source) throws CommandCreationException, NullPointerException {
 
     //
     if (source == null) {

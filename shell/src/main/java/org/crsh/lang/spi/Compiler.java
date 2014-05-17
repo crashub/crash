@@ -16,25 +16,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.lang;
+package org.crsh.lang.spi;
 
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 
-import java.util.HashMap;
 import java.util.Set;
 
-/** @author Julien Viet */
-public interface CommandManager {
-
-  /**
-   * Return true if this command manager is active. Implementation can decide based on the runtime, for instance the
-   * Groovy REPL can be inactive when Groovy is not available at runtime.
-   *
-   * @return the active status
-   */
-  boolean isActive();
+/**
+ *
+ *
+ * @author Julien Viet
+ */
+public interface Compiler {
 
   /**
    * Returns the set of extensions managed by this implementation.
@@ -44,18 +39,14 @@ public interface CommandManager {
   Set<String> getExtensions();
 
   /**
-   * Resolve a command for the specified command name.
+   * Compile a command..
    *
    * @param name the command name
    * @param source the command source  @return the command or null if no command can be resolved
    * @throws org.crsh.shell.impl.command.spi.CommandCreationException when the command exists but cannot be created
    * @throws NullPointerException if the command name is null
    */
-  CommandResolution resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException;
-
-  void init(ShellSession session);
-
-  void destroy(ShellSession session);
+  CommandResolution compileCommand(String name, byte[] source) throws CommandCreationException, NullPointerException;
 
   String doCallBack(ShellSession session, String name, String defaultValue);
 

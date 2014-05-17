@@ -19,18 +19,19 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.lang.ReplResponse;
+import org.crsh.lang.spi.Compiler;
+import org.crsh.lang.spi.Language;
+import org.crsh.lang.spi.Repl;
+import org.crsh.lang.spi.ReplResponse;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.impl.script.ScriptRepl;
 import org.crsh.plugin.PluginContext;
-import org.crsh.lang.Repl;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
-import org.crsh.lang.CommandManager;
 
 import java.io.Closeable;
 import java.security.Principal;
@@ -65,12 +66,9 @@ class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, 
     this.user = user;
 
     //
-
-
-    //
     ClassLoader previous = setCRaSHLoader();
     try {
-      for (CommandManager manager : crash.scriptResolver.activeManagers.values()) {
+      for (Language manager : crash.langs) {
         manager.init(this);
       }
     }
@@ -113,7 +111,7 @@ class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, 
   public void close() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      for (CommandManager manager : crash.scriptResolver.activeManagers.values()) {
+      for (Language manager : crash.langs) {
         manager.destroy(this);
       }
     }
@@ -127,7 +125,7 @@ class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, 
   public String getWelcome() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      CommandManager groovy = crash.scriptResolver.activeManagers.get("groovy");
+      Compiler groovy = crash.scriptResolver.getCompiler("groovy");
       if (groovy != null) {
         return groovy.doCallBack(this, "welcome", "");
       } else {
@@ -142,7 +140,7 @@ class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, 
   public String getPrompt() {
     ClassLoader previous = setCRaSHLoader();
     try {
-      CommandManager groovy = crash.scriptResolver.activeManagers.get("groovy");
+      Compiler groovy = crash.scriptResolver.getCompiler("groovy");
       if (groovy != null) {
         return groovy.doCallBack(this, "prompt", "% ");
       } else {

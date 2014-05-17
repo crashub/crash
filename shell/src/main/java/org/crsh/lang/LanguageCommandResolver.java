@@ -16,12 +16,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.impl.command;
+package org.crsh.lang;
 
+import org.crsh.lang.spi.Compiler;
+import org.crsh.lang.spi.Language;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
-import org.crsh.lang.CommandManager;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.shell.impl.command.spi.ShellCommandResolver;
 import org.crsh.util.TimestampedObject;
@@ -33,31 +34,40 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * A shell command resolver for languages.
+ *
  * @author Julien Viet
  */
-public class ScriptResolver implements ShellCommandResolver {
+public class LanguageCommandResolver implements ShellCommandResolver {
 
   /** . */
   private final Map<String, TimestampedObject<CommandResolution>> commandCache = new ConcurrentHashMap<String, TimestampedObject<CommandResolution>>();
 
   /** . */
-  final HashMap<String, CommandManager> activeManagers = new HashMap<String, CommandManager>();
+  final HashMap<String, Compiler> activeCompilers = new HashMap<String, Compiler>();
 
   /** . */
   final PluginContext context;
 
-  public ScriptResolver(PluginContext context) {
+  public LanguageCommandResolver(PluginContext context) {
 
     //
-    for (CommandManager manager : context.getPlugins(CommandManager.class)) {
-      if (manager.isActive()) {
-        for (String ext : manager.getExtensions()) {
-          activeManagers.put(ext, manager);
+    for (Language lang : context.getPlugins(Language.class)) {
+      if (lang.isActive()) {
+        Compiler compiler = lang.getCompiler();
+        if (compiler != null) {
+          for (String ext : compiler.getExtensions()) {
+            activeCompilers.put(ext, compiler);
+          }
         }
       }
     }
 
     this.context = context;
+  }
+
+  public Compiler getCompiler(String name) {
+    return activeCompilers.get(name);
   }
 
   @Override
@@ -68,7 +78,7 @@ public class ScriptResolver implements ShellCommandResolver {
       int index = resourceName.indexOf('.');
       String name = resourceName.substring(0, index);
       String ext = resourceName.substring(index + 1);
-      if (activeManagers.containsKey(ext)) {
+      if (activeCompilers.containsKey(ext)) {
         names.add(name);
       }
     }
@@ -77,15 +87,13 @@ public class ScriptResolver implements ShellCommandResolver {
 
   @Override
   public CommandResolution resolveCommand(String name) throws CommandCreationException, NullPointerException {
-    for (CommandManager manager : activeManagers.values()) {
-      if (manager.isActive()) {
-        for (String ext : manager.getExtensions()) {
-          Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
-          for (Resource resource : resources) {
-            CommandResolution resolution = resolveCommand(manager, name, resource);
-            if (resolution != null) {
-              return resolution;
-            }
+    for (Compiler manager : activeCompilers.values()) {
+      for (String ext : manager.getExtensions()) {
+        Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
+        for (Resource resource : resources) {
+          CommandResolution resolution = resolveCommand(manager, name, resource);
+          if (resolution != null) {
+            return resolution;
           }
         }
       }
@@ -93,7 +101,7 @@ public class ScriptResolver implements ShellCommandResolver {
     return null;
   }
 
-  private CommandResolution resolveCommand(CommandManager manager, String name, Resource script) throws CommandCreationException {
+  private CommandResolution resolveCommand(org.crsh.lang.spi.Compiler manager, String name, Resource script) throws CommandCreationException {
     TimestampedObject<CommandResolution> ref = commandCache.get(name);
     if (ref != null) {
       if (script.getTimestamp() != ref.getTimestamp()) {
@@ -102,7 +110,7 @@ public class ScriptResolver implements ShellCommandResolver {
     }
     CommandResolution command;
     if (ref == null) {
-      command = manager.resolveCommand(name, script.getContent());
+      command = manager.compileCommand(name, script.getContent());
       if (command != null) {
         commandCache.put(name, new TimestampedObject<CommandResolution>(script.getTimestamp(), command));
       }

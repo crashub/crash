@@ -18,75 +18,111 @@
  */
 package org.crsh.lang.impl.groovy;
 
+import groovy.lang.GroovyShell;
+import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.lang.ReplResponse;
-import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.lang.Repl;
+import org.crsh.cli.spi.Completion;
+import org.crsh.command.CommandContext;
+import org.crsh.lang.spi.Language;
+import org.crsh.lang.spi.ReplResponse;
 import org.crsh.shell.impl.command.ShellSession;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
+import org.crsh.shell.impl.command.InvocationContextImpl;
+import org.crsh.lang.impl.groovy.closure.PipeLineInvoker;
+import org.crsh.lang.spi.Repl;
+import org.crsh.cli.impl.line.LineParser;
 
-import java.util.logging.Logger;
+import java.io.IOException;
 
 /**
+ * Groovy REPL implementation.
+ *
  * @author Julien Viet
  */
-public class GroovyRepl extends CRaSHPlugin<Repl> implements Repl {
+public class GroovyRepl implements Repl {
 
   /** . */
-  static final Logger log = Logger.getLogger(GroovyRepl.class.getName());
+  final GroovyLanguage lang;
 
-  /** . */
-  private static final Repl groovyRepl = getREPL();
-
-  public static Repl getREPL() {
-    try {
-      Class<Repl> groovyReplClass = (Class<Repl>)GroovyRepl.class.getClassLoader().loadClass("org.crsh.lang.impl.groovy.GroovyReplImpl");
-      return groovyReplClass.newInstance();
-    }
-    catch (Exception e) {
-      log.info("Plugin is inactive");
-      return null;
-    }
-    catch (NoClassDefFoundError e) {
-      log.info("Plugin is inactive");
-      return null;
-    }
+  public GroovyRepl(GroovyLanguage lang) {
+    // Force to load Groovy here or fail
+    Object o = GroovyShell.class;
+    this.lang = lang;
   }
 
   @Override
-  public Repl getImplementation() {
-    return this;
-  }
-
-  @Override
-  public boolean isActive() {
-    return groovyRepl != null;
-  }
-
-  @Override
-  public String getName() {
-    return "groovy";
+  public Language getLanguage() {
+    return lang;
   }
 
   @Override
   public String getDescription() {
-    return "The Groovy REPL provides a Groovy interpreter able to interact with shell commands";
+    return "The Groovy repl provides a Groovy interpreter able to interact with shell commands";
   }
 
-  @Override
-  public ReplResponse eval(ShellSession session, String request) {
-    if (groovyRepl != null) {
-      return groovyRepl.eval(session, request);
-    } else {
-      throw new IllegalStateException("Groovy REPL is not available");
-    }
+  public ReplResponse eval(final ShellSession session, final String r2) {
+
+
+    GroovyLineEscaper foo = new GroovyLineEscaper();
+    LineParser parser = new LineParser(foo);
+    parser.append(r2);
+    final String request = foo.buffer.toString();
+
+
+    //
+    CommandInvoker<Void, Object> invoker = new CommandInvoker<Void, Object>() {
+      public void provide(Void element) throws IOException {
+        throw new UnsupportedOperationException("Should not be invoked");
+      }
+      public Class<Void> getConsumedType() {
+        return Void.class;
+      }
+      public void flush() throws IOException {
+      }
+      public Class<Object> getProducedType() {
+        return Object.class;
+      }
+      CommandContext<Object> foo;
+      public void open(CommandContext<? super Object> consumer) {
+        this.foo = (CommandContext<Object>)consumer;
+        GroovyShell shell = GroovyCompiler.getGroovyShell(session);
+        ShellBinding binding = (ShellBinding)shell.getContext();
+        binding.setCurrent(foo);
+        Object o;
+        try {
+          o = shell.evaluate(request);
+        }
+        finally {
+          binding.setCurrent(null);
+        }
+        if (o instanceof PipeLineInvoker) {
+          PipeLineInvoker eval = (PipeLineInvoker)o;
+          try {
+            eval.invoke(new InvocationContextImpl<Object>(foo));
+          }
+          catch (Exception e) {
+            throw new UnsupportedOperationException("handle me gracefully", e);
+          }
+        } else {
+          try {
+            if (o != null) {
+              consumer.provide(o);
+            }
+          }
+          catch (IOException e) {
+            throw new UnsupportedOperationException("handle me gracefully", e);
+          }
+        }
+      }
+      public void close() throws IOException {
+        foo.flush();
+        foo.close();
+      }
+    };
+    return new ReplResponse.Invoke(invoker);
   }
 
-  @Override
   public CompletionMatch complete(ShellSession session, String prefix) {
-    if (groovyRepl != null) {
-      return groovyRepl.complete(session, prefix);
-    } else {
-      throw new IllegalStateException("Groovy REPL is not available");
-    }
+    return new CompletionMatch(Delimiter.EMPTY, Completion.create());
   }
 }

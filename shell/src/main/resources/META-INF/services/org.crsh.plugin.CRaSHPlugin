@@ -1,6 +1,6 @@
 org.crsh.shell.impl.command.CRaSHShellFactory
-org.crsh.lang.impl.java.JavaCommandManager
-org.crsh.lang.impl.groovy.GroovyCommandManager
-org.crsh.lang.impl.groovy.GroovyRepl
+org.crsh.lang.impl.groovy.GroovyLanguageProxy
+org.crsh.lang.impl.java.JavaLanguage
+org.crsh.lang.impl.script.ScriptLanguage
 org.crsh.auth.JaasAuthenticationPlugin
 org.crsh.auth.SimpleAuthenticationPlugin

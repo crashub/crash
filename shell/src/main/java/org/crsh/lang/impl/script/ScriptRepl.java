@@ -21,14 +21,13 @@ package org.crsh.lang.impl.script;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
-import org.crsh.lang.ReplResponse;
+import org.crsh.lang.spi.*;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.command.SyntaxException;
-import org.crsh.lang.Repl;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.text.Chunk;
@@ -50,12 +49,23 @@ public class ScriptRepl implements Repl {
     return instance;
   }
 
+  /** . */
+  private final Language lang = new Language() {
+    @Override public String getName() { return "script"; }
+    @Override public String getDisplayName() { return "Script 1.0"; }
+    @Override public boolean isActive() { return true; }
+    @Override public Repl getRepl() { return ScriptRepl.this; }
+    @Override public org.crsh.lang.spi.Compiler getCompiler() { return null; }
+    @Override public void init(ShellSession session) { }
+    @Override public void destroy(ShellSession session) { }
+  };
+
   private ScriptRepl() {
   }
 
   @Override
-  public boolean isActive() {
-    return true;
+  public Language getLanguage() {
+    return lang;
   }
 
   public String getName() {

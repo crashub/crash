@@ -20,7 +20,7 @@ package org.crsh.cron;
 
 import org.crsh.AbstractTestCase;
 import org.crsh.TestPluginLifeCycle;
-import org.crsh.lang.impl.groovy.GroovyCommandManager;
+import org.crsh.lang.impl.groovy.GroovyLanguageProxy;
 import org.crsh.shell.impl.command.CRaSHShellFactory;
 import org.crsh.vfs.Resource;
 
@@ -47,7 +47,7 @@ public class CrontabTestCase extends AbstractTestCase {
         protected Resource getConfig() {
           return new Resource("contrab", crontab.getBytes(), 0);
         }
-      }, new GroovyCommandManager(), new CRaSHShellFactory());
+      }, new GroovyLanguageProxy(), new CRaSHShellFactory());
       lifecycle.start();
     }
   }

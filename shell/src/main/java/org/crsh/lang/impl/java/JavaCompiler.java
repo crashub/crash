@@ -22,10 +22,7 @@ import org.crsh.cli.descriptor.Format;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
-import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.plugin.PluginContext;
 import org.crsh.shell.ErrorType;
-import org.crsh.lang.CommandManager;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 
 import java.io.IOException;
@@ -34,39 +31,27 @@ import java.util.List;
 import java.util.Set;
 
 /** @author Julien Viet */
-public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements CommandManager {
+public class JavaCompiler implements org.crsh.lang.spi.Compiler {
 
   /** . */
   private static final Set<String> EXT = Collections.singleton("java");
 
   /** . */
-  private Compiler compiler;
+  private final org.crsh.lang.impl.java.Compiler compiler;
 
-  @Override
-  public boolean isActive() {
-    return true;
-  }
+  /** . */
+  private final ClassLoader loader;
 
-  @Override
-  public void init() {
-    PluginContext context = getContext();
-    ClassLoader loader = context.getLoader();
-    Compiler compiler = new Compiler(loader);
-
-    //
-    this.compiler = compiler;
-  }
-
-  @Override
-  public CommandManager getImplementation() {
-    return this;
+  JavaCompiler(ClassLoader loader) {
+    this.compiler = new org.crsh.lang.impl.java.Compiler(loader);
+    this.loader = loader;
   }
 
   public Set<String> getExtensions() {
     return EXT;
   }
 
-  public CommandResolution resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
+  public CommandResolution compileCommand(String name, byte[] source) throws CommandCreationException, NullPointerException {
     String script = new String(source);
     List<JavaClassFileObject> classFiles;
     try {
@@ -82,7 +67,7 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
       String className = classFile.getClassName();
       String simpleName = className.substring(className.lastIndexOf('.') + 1);
       if (simpleName.equals(name)) {
-        LoadingClassLoader loader = new LoadingClassLoader(getContext().getLoader(), classFiles);
+        LoadingClassLoader loader = new LoadingClassLoader(this.loader, classFiles);
         try {
           Class<?> clazz = loader.loadClass(classFile.getClassName());
           final ClassShellCommand command = new ClassShellCommand(clazz);

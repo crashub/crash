@@ -16,22 +16,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.lang.impl.groovy;
+package org.crsh.lang.impl.script;
 
-import org.crsh.lang.impl.CommandManagerProxy;
-
-import java.util.Collections;
-import java.util.Set;
+import org.crsh.lang.spi.Language;
+import org.crsh.plugin.CRaSHPlugin;
 
 /**
  * @author Julien Viet
  */
-public class GroovyCommandManager extends CommandManagerProxy {
+public class ScriptLanguage extends CRaSHPlugin<Language> {
 
-  /** . */
-  static final Set<String> EXT = Collections.singleton("groovy");
-
-  public GroovyCommandManager() {
-    super("Groovy", "org.crsh.lang.impl.groovy.GroovyCommandManagerImpl", EXT);
+  @Override
+  public Language getImplementation() {
+    return ScriptRepl.getInstance().getLanguage();
   }
 }
