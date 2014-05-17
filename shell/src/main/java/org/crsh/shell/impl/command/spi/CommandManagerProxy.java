@@ -20,9 +20,9 @@ package org.crsh.shell.impl.command.spi;
 
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
+import org.crsh.shell.impl.command.ShellSession;
 
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -93,7 +93,7 @@ public class CommandManagerProxy extends CRaSHPlugin<CommandManager> implements 
   }
 
   @Override
-  public void init(HashMap<String, Object> session) {
+  public void init(ShellSession session) {
     CommandManager mgr = real.get();
     if (mgr != null) {
       mgr.init(session);
@@ -103,7 +103,7 @@ public class CommandManagerProxy extends CRaSHPlugin<CommandManager> implements 
   }
 
   @Override
-  public void destroy(HashMap<String, Object> session) {
+  public void destroy(ShellSession session) {
     CommandManager mgr = real.get();
     if (mgr != null) {
       mgr.destroy(session);
@@ -113,7 +113,7 @@ public class CommandManagerProxy extends CRaSHPlugin<CommandManager> implements 
   }
 
   @Override
-  public String doCallBack(HashMap<String, Object> session, String name, String defaultValue) {
+  public String doCallBack(ShellSession session, String name, String defaultValue) {
     CommandManager mgr = real.get();
     if (mgr != null) {
       return mgr.doCallBack(session, name, defaultValue);

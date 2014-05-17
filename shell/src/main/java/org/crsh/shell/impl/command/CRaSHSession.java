@@ -26,7 +26,6 @@ import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.script.ScriptRepl;
 import org.crsh.plugin.PluginContext;
 import org.crsh.repl.Repl;
-import org.crsh.repl.ReplSession;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellResponse;
@@ -40,7 +39,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, RuntimeContext, ReplSession {
+class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, RuntimeContext, ShellSession {
 
   /** . */
   static final Logger log = Logger.getLogger(CRaSHSession.class.getName());
@@ -80,21 +79,10 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     }
   }
 
-  /**
-   * Returns the current repl of this session.
-   *
-   * @return the current repl
-   */
   public Repl getRepl() {
     return repl;
   }
 
-  /**
-   * Set the current repl of this session.
-   *
-   * @param repl the new repl
-   * @throws NullPointerException if the repl is null
-   */
   public void setRepl(Repl repl) throws NullPointerException {
     if (repl == null) {
       throw new NullPointerException("No null repl accepted");

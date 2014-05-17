@@ -18,6 +18,8 @@
  */
 package org.crsh.shell.impl.command.spi;
 
+import org.crsh.shell.impl.command.ShellSession;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -49,10 +51,10 @@ public interface CommandManager {
    */
   CommandResolution resolveCommand(String name, byte[] source) throws CommandCreationException, NullPointerException;
 
-  void init(HashMap<String, Object> session);
+  void init(ShellSession session);
 
-  void destroy(HashMap<String, Object> session);
+  void destroy(ShellSession session);
 
-  String doCallBack(HashMap<String, Object> session, String name, String defaultValue);
+  String doCallBack(ShellSession session, String name, String defaultValue);
 
 }

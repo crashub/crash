@@ -23,14 +23,13 @@ import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.CommandContext;
+import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.lang.groovy.closure.PipeLineInvoker;
 import org.crsh.repl.EvalResponse;
 import org.crsh.repl.Repl;
-import org.crsh.repl.ReplSession;
 import org.crsh.cli.impl.line.LineParser;
-import org.crsh.shell.impl.command.CRaSHSession;
 
 import java.io.IOException;
 
@@ -60,7 +59,7 @@ public class GroovyReplImpl implements Repl {
     return "The Groovy REPL provides a Groovy interpreter able to interact with shell commands";
   }
 
-  public EvalResponse eval(final ReplSession session, final String r2) {
+  public EvalResponse eval(final ShellSession session, final String r2) {
 
 
     GroovyLineEscaper foo = new GroovyLineEscaper();
@@ -85,7 +84,7 @@ public class GroovyReplImpl implements Repl {
       CommandContext<Object> foo;
       public void open(CommandContext<? super Object> consumer) {
         this.foo = (CommandContext<Object>)consumer;
-        GroovyShell shell = GroovyCommandManagerImpl.getGroovyShell((CRaSHSession)session);
+        GroovyShell shell = GroovyCommandManagerImpl.getGroovyShell(session);
         ShellBinding binding = (ShellBinding)shell.getContext();
         binding.setCurrent(foo);
         Object o;
@@ -122,7 +121,7 @@ public class GroovyReplImpl implements Repl {
     return new EvalResponse.Invoke(invoker);
   }
 
-  public CompletionMatch complete(ReplSession session, String prefix) {
+  public CompletionMatch complete(ShellSession session, String prefix) {
     return new CompletionMatch(Delimiter.EMPTY, Completion.create());
   }
 }

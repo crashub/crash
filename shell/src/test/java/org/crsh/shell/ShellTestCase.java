@@ -19,12 +19,9 @@
 
 package org.crsh.shell;
 
-import java.util.Map;
-
 public class ShellTestCase extends AbstractCommandTestCase {
 
   public void testWelcomeNoClosure() {
-    Map<String, Object> session = shell.getSession();
     Object welcome = session.remove("welcome");
     try {
       String s = shell.getWelcome();
@@ -36,7 +33,6 @@ public class ShellTestCase extends AbstractCommandTestCase {
   }
 
   public void testPromptNoClosure() {
-    Map<String,Object> session = shell.getSession();
     Object prompt = session.remove("prompt");
     try {
       String s = shell.getPrompt();

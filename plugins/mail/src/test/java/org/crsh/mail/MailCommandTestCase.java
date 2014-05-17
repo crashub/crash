@@ -22,8 +22,8 @@ import junit.framework.Assert;
 import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
+import org.crsh.shell.Shell;
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.impl.command.CRaSHSession;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
@@ -40,7 +40,7 @@ public class MailCommandTestCase extends AbstractTestCase {
     Support support = new Support() {
       @Override
       protected void execute(TestPluginLifeCycle lifeCycle, Wiser wiser) throws IOException, MessagingException, ExecutionException, InterruptedException {
-        CRaSHSession shell = lifeCycle.createShell();
+        Shell shell = lifeCycle.createShell();
         BaseProcessContext process = BaseProcessContext.create(shell, "echo abc | mail -s the_subject -b admin@gmail.com").execute();
         ShellResponse.Ok ok = assertInstance(ShellResponse.Ok.class, process.getResponse());
         Assert.assertEquals(1, wiser.getMessages().size());

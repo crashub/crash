@@ -22,7 +22,7 @@ import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.repl.EvalResponse;
 import org.crsh.repl.Repl;
-import org.crsh.repl.ReplSession;
+import org.crsh.shell.impl.command.ShellSession;
 
 import java.util.logging.Logger;
 
@@ -73,7 +73,7 @@ public class GroovyRepl extends CRaSHPlugin<Repl> implements Repl {
   }
 
   @Override
-  public EvalResponse eval(ReplSession session, String request) {
+  public EvalResponse eval(ShellSession session, String request) {
     if (groovyRepl != null) {
       return groovyRepl.eval(session, request);
     } else {
@@ -82,7 +82,7 @@ public class GroovyRepl extends CRaSHPlugin<Repl> implements Repl {
   }
 
   @Override
-  public CompletionMatch complete(ReplSession session, String prefix) {
+  public CompletionMatch complete(ShellSession session, String prefix) {
     if (groovyRepl != null) {
       return groovyRepl.complete(session, prefix);
     } else {

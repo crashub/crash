@@ -33,10 +33,10 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.java.ClassShellCommand;
+import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.groovy.command.GroovyScriptShellCommand;
-import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.shell.impl.command.spi.CommandResolution;
 import org.crsh.util.ClassCache;
 import org.crsh.shell.impl.command.spi.CommandManager;
@@ -48,7 +48,6 @@ import org.crsh.shell.ErrorType;
 import org.crsh.util.TimestampedObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,11 +77,11 @@ public class GroovyCommandManagerImpl implements CommandManager {
     return true;
   }
 
-  public String doCallBack(HashMap<String, Object> session, String name, String defaultValue) {
+  public String doCallBack(ShellSession session, String name, String defaultValue) {
     return eval(session, name, defaultValue);
   }
 
-  public void init(HashMap<String, Object> session) {
+  public void init(ShellSession session) {
     try {
       GroovyScript login = getLifeCycle(session, "login");
       if (login != null) {
@@ -95,7 +94,7 @@ public class GroovyCommandManagerImpl implements CommandManager {
     }
   }
 
-  public void destroy(HashMap<String, Object> session) {
+  public void destroy(ShellSession session) {
     try {
       GroovyScript logout = getLifeCycle(session, "logout");
       if (logout != null) {
@@ -113,21 +112,21 @@ public class GroovyCommandManagerImpl implements CommandManager {
    *
    * @return a groovy shell operating on the session attributes
    */
-  public static GroovyShell getGroovyShell(CRaSHSession session) {
+  public static GroovyShell getGroovyShell(ShellSession session) {
     GroovyShell shell = (GroovyShell)session.get("shell");
     if (shell == null) {
       CompilerConfiguration config = new CompilerConfiguration();
       config.setRecompileGroovySource(true);
       ShellBinding binding = new ShellBinding(session, session);
-      shell = new GroovyShell(session.crash.getContext().getLoader(), binding, config);
+      shell = new GroovyShell(session.getContext().getLoader(), binding, config);
       session.put("shell", shell);
     }
     return shell;
   }
 
-  private String eval(HashMap<String, Object> session, String name, String def) {
+  private String eval(ShellSession session, String name, String def) {
     try {
-      GroovyShell shell = getGroovyShell((CRaSHSession)session);
+      GroovyShell shell = getGroovyShell(session);
       Object ret = shell.getContext().getVariable(name);
       if (ret instanceof Closure) {
         log.log(Level.FINEST, "Invoking " + name + " closure");
@@ -145,7 +144,7 @@ public class GroovyCommandManagerImpl implements CommandManager {
     }
   }
 
-  public GroovyScript getLifeCycle(HashMap<String, Object> session, String name) throws CommandCreationException, NullPointerException {
+  public GroovyScript getLifeCycle(ShellSession session, String name) throws CommandCreationException, NullPointerException {
     TimestampedObject<Class<? extends GroovyScript>> ref = scriptCache.getClass(name);
     if (ref != null) {
       Class<? extends GroovyScript> scriptClass = ref.getObject();

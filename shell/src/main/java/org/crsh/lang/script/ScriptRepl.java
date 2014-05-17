@@ -22,12 +22,12 @@ import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
+import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.command.SyntaxException;
 import org.crsh.repl.Repl;
-import org.crsh.repl.ReplSession;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.repl.EvalResponse;
@@ -67,7 +67,7 @@ public class ScriptRepl implements Repl {
     return "The Script repl provides command line interpreter with a bash like syntax";
   }
 
-  public EvalResponse eval(ReplSession session, String request) {
+  public EvalResponse eval(ShellSession session, String request) {
     PipeLineFactory factory;
     try {
       factory = Token.parse(request).createFactory();
@@ -89,7 +89,7 @@ public class ScriptRepl implements Repl {
     }
   }
 
-  public CompletionMatch complete(ReplSession session, String prefix) {
+  public CompletionMatch complete(ShellSession session, String prefix) {
     Token ast = Token.parse(prefix);
     String termPrefix;
     if (ast != null) {

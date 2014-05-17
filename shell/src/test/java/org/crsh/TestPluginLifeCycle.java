@@ -21,8 +21,8 @@ package org.crsh;
 
 import org.crsh.command.BaseCommand;
 import org.crsh.plugin.*;
+import org.crsh.shell.Shell;
 import org.crsh.shell.impl.command.CRaSH;
-import org.crsh.shell.impl.command.CRaSHSession;
 import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.crsh.vfs.spi.ram.RAMDriver;
@@ -115,7 +115,7 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
     start(context);
   }
 
-  public CRaSHSession createShell() {
+  public Shell createShell() {
     return crash.createSession(null);
   }
 }

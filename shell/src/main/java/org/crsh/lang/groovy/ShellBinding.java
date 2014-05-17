@@ -20,11 +20,11 @@ package org.crsh.lang.groovy;
 
 import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
+import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.groovy.closure.PipeLineClosure;
-import org.crsh.repl.ReplSession;
 import org.crsh.text.Chunk;
 
 import java.io.IOException;
@@ -34,12 +34,12 @@ import java.util.Map;
 class ShellBinding extends Binding {
 
   /** . */
-  private final ReplSession session;
+  private final ShellSession session;
 
   /** . */
   private CommandContext<Object> current;
 
-  public ShellBinding(Map variables, ReplSession session) {
+  public ShellBinding(Map variables, ShellSession session) {
     super(variables);
 
     //

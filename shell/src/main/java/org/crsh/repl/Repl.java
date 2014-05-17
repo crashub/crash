@@ -19,6 +19,7 @@
 package org.crsh.repl;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.shell.impl.command.ShellSession;
 
 /**
  * Read–eval–print loop.
@@ -56,7 +57,7 @@ public interface Repl {
    * @param request the request to evaluate
    * @return the evaluation response
    */
-  EvalResponse eval(ReplSession session, String request);
+  EvalResponse eval(ShellSession session, String request);
 
   /**
    * Perform completion.
@@ -65,6 +66,6 @@ public interface Repl {
    * @param prefix the prefix to complete
    * @return the completion match
    */
-  CompletionMatch complete(ReplSession session, String prefix);
+  CompletionMatch complete(ShellSession session, String prefix);
 
 }

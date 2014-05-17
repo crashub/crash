@@ -82,7 +82,7 @@ public class CustomShellCommandResolverTestCase extends AbstractCommandTestCase 
 
   public void testFoo() {
     assertEquals("ok_mycommand", assertOk("mycommand"));
-    List<String> names = Utils.list(shell.getCommandNames());
+    List<String> names = Utils.list(session.getCommandNames());
     assertTrue("Was expecting " + names + " to contain mycommand", names.contains("mycommand"));
   }
 }

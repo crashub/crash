@@ -28,7 +28,7 @@ import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.lang.script.ScriptRepl;
 import org.crsh.repl.Repl;
-import org.crsh.shell.impl.command.CRaSHSession;
+import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
 import org.crsh.text.Style;
@@ -49,7 +49,7 @@ public class repl extends BaseCommand implements ReplCompleter {
       @Argument(completer = ReplCompleter.class)
       @Usage("the optional repl name")
       String name) throws IOException {
-    CRaSHSession session = (CRaSHSession)context.getSession();
+    ShellSession session = (ShellSession)context.getSession();
     Repl current = session.getRepl();
     if (name != null) {
       if (name.equals(current.getName())) {
@@ -59,7 +59,7 @@ public class repl extends BaseCommand implements ReplCompleter {
         if ("script".equals(name)) {
           found = ScriptRepl.getInstance();
         } else {
-          for (Repl repl : session.crash.getContext().getPlugins(Repl.class)) {
+          for (Repl repl : session.getContext().getPlugins(Repl.class)) {
             if (repl.getName().equals(name)) {
               if (repl.isActive()) {
                 found = repl;
@@ -82,7 +82,7 @@ public class repl extends BaseCommand implements ReplCompleter {
       //
       ArrayList<Repl> repls = new ArrayList<Repl>();
       repls.add(ScriptRepl.getInstance());
-      for (Repl repl : session.crash.getContext().getPlugins(Repl.class)) {
+      for (Repl repl : session.getContext().getPlugins(Repl.class)) {
         repls.add(repl);
       }
 
@@ -109,12 +109,12 @@ public class repl extends BaseCommand implements ReplCompleter {
 
   @Override
   public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
-    CRaSHSession session = (CRaSHSession)context.getSession();
+    ShellSession session = (ShellSession)context.getSession();
     Completion.Builder builder = Completion.builder(prefix);
     if ("script".startsWith(prefix)) {
       builder.add("script".substring(prefix.length()), true);
     }
-    for (Repl repl : session.crash.getContext().getPlugins(Repl.class)) {
+    for (Repl repl : session.getContext().getPlugins(Repl.class)) {
       String name = repl.getName();
       if (name.startsWith(prefix)) {
         builder.add(name.substring(prefix.length()), true);

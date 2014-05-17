@@ -250,7 +250,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
-    ShellCommand<?> producer = shell.getCommand("producer");
+    ShellCommand<?> producer = session.getCommand("producer");
     Command<?, ?> command = producer.resolveCommand("");
     assertEquals(Integer.class, command.getProducedType());
   }
@@ -268,7 +268,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
-    ShellCommand<?> producer = shell.getCommand("producer");
+    ShellCommand<?> producer = session.getCommand("producer");
     Command<?, ?> command = producer.resolveCommand("");
     assertEquals(Integer.class, command.getProducedType());
   }
@@ -279,7 +279,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
-    ShellCommand<?> producer = shell.getCommand("producer");
+    ShellCommand<?> producer = session.getCommand("producer");
     Command<?, ?> command = producer.resolveCommand("");
     assertEquals(Object.class, command.getProducedType());
   }

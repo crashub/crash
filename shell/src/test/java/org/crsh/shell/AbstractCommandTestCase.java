@@ -29,7 +29,7 @@ import org.crsh.lang.groovy.GroovyCommandManager;
 import org.crsh.lang.groovy.GroovyCommandManagerImpl;
 import org.crsh.lang.java.JavaCommandManager;
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.shell.impl.command.CRaSHSession;
+import org.crsh.shell.impl.command.ShellSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,10 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
   protected final Logger log = Logger.getLogger(getClass().getName());
 
   /** . */
-  protected CRaSHSession shell;
+  protected Shell shell;
+
+  /** . */
+  protected ShellSession session;
 
   /** . */
   protected GroovyShell groovyShell;
@@ -76,7 +79,8 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
 
     //
     this.shell = lifeCycle.createShell();
-    this.groovyShell = GroovyCommandManagerImpl.getGroovyShell(shell);
+    this.session = (ShellSession)shell; // A bit nasty but will do for tests :-)
+    this.groovyShell = GroovyCommandManagerImpl.getGroovyShell((ShellSession)shell);
     this.lifeCycle = lifeCycle;
   }
 

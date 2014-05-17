@@ -19,6 +19,7 @@
 package org.crsh.lang.java;
 
 import org.crsh.cli.descriptor.Format;
+import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandCreationException;
 import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
@@ -106,15 +107,15 @@ public class JavaCommandManager extends CRaSHPlugin<CommandManager> implements C
     throw new CommandCreationException(name, ErrorType.EVALUATION, "Command class not found");
   }
 
-  public void init(HashMap<String, Object> session) {
+  public void init(ShellSession session) {
     //
   }
 
-  public void destroy(HashMap<String, Object> session) {
+  public void destroy(ShellSession session) {
     //
   }
 
-  public String doCallBack(HashMap<String, Object> session, String name, String defaultValue) {
+  public String doCallBack(ShellSession session, String name, String defaultValue) {
     throw new UnsupportedOperationException("not yet implemented");
   }
 }
