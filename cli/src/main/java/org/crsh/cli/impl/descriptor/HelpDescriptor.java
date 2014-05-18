@@ -135,7 +135,18 @@ public class HelpDescriptor<T> extends CommandDescriptor<T> {
 
     // Override the help parameter only for the root level
     // otherwise it may be repeated several times
+    boolean add;
     if (owner == null) {
+      add = !(getOptionNames().contains("-h") || getOptionNames().contains("--help"));
+      for (CommandDescriptor<T> sub : delegate.getSubordinates().values()) {
+        if (sub.getOptionNames().contains("-h") || getOptionNames().contains("--help")) {
+          add = false;
+        }
+      }
+    } else {
+      add = false;
+    }
+    if (add) {
       addParameter(HELP_OPTION);
     }
 

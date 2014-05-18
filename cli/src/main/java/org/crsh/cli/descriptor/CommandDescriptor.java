@@ -129,7 +129,7 @@ public abstract class CommandDescriptor<T> {
         if (optionName.length() == 1) {
           name = "-" + optionName;
           if (shortOptionNames.contains(name)) {
-            throw new IntrospectionException();
+            throw new IntrospectionException("Duplicate option " + name);
           } else {
             shortOptionNames.add(name);
           }
