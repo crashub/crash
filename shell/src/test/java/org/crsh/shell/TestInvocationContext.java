@@ -24,9 +24,9 @@ import org.crsh.command.CommandContext;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.io.Consumer;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.ScriptException;
-import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
 import org.crsh.text.Chunk;
@@ -141,7 +141,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     return execute(new GroovyScriptShellCommand<B>(commandClass), args);
   }
 
-  private String execute(ShellCommand<?> command, String... args) throws Exception {
+  private String execute(Command<?> command, String... args) throws Exception {
     if (reader != null) {
       reader.clear();
     }

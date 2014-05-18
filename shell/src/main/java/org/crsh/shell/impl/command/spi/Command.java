@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * A command as seen by the shell.
  */
-public abstract class ShellCommand<T> {
+public abstract class Command<T> {
 
   /**
    * Returns the command descriptor.

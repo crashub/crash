@@ -23,7 +23,7 @@ import org.crsh.command.CommandContext;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.InvocationContextImpl;
-import org.crsh.shell.impl.command.spi.ShellCommand;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
 import org.crsh.text.Chunk;
 
@@ -162,7 +162,7 @@ class ShellBinding extends Binding {
     } else {
       if (session != null) {
         try {
-          ShellCommand<?> cmd = session.getCommand(name);
+          Command<?> cmd = session.getCommand(name);
           if (cmd != null) {
             return new PipeLineClosure(null, name, cmd);
           }

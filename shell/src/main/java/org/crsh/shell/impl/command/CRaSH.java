@@ -21,16 +21,16 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.lang.LanguageCommandResolver;
 import org.crsh.lang.spi.Language;
+import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.CommandResolver;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
-import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.plugin.PluginContext;
-import org.crsh.shell.impl.command.spi.CommandResolution;
-import org.crsh.shell.impl.command.spi.ShellCommandResolver;
 import org.crsh.shell.impl.command.system.SystemResolver;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CRaSH {
 
@@ -41,7 +41,7 @@ public class CRaSH {
   final LanguageCommandResolver scriptResolver;
 
   /** . */
-  private final ArrayList<ShellCommandResolver> resolvers = new ArrayList<ShellCommandResolver>();
+  private final ArrayList<CommandResolver> resolvers = new ArrayList<CommandResolver>();
 
   /** . */
   final ArrayList<Language> langs = new ArrayList<Language>();
@@ -57,7 +57,7 @@ public class CRaSH {
     this.scriptResolver = new LanguageCommandResolver(context);
 
     // Add the resolver plugins
-    for (ShellCommandResolver resolver : context.getPlugins(ShellCommandResolver.class)) {
+    for (CommandResolver resolver : context.getPlugins(CommandResolver.class)) {
       resolvers.add(resolver);
     }
     for (Language lang : context.getPlugins(Language.class)) {
@@ -85,19 +85,6 @@ public class CRaSH {
   }
 
   /**
-   * Attempt to obtain a command description. Null is returned when such command does not exist.
-   *
-   * @param name the command name
-   * @return a command description
-   * @throws org.crsh.shell.impl.command.spi.CreateCommandException if an error occured preventing the command creation
-   * @throws NullPointerException if the name argument is null
-   */
-  public String getCommandDescription(String name) throws CreateCommandException, NullPointerException {
-    CommandResolution resolution = resolveCommand(name);
-    return resolution != null ? resolution.getDescription() : null;
-  }
-
-  /**
    * Attempt to obtain a command instance. Null is returned when such command does not exist.
    *
    * @param name the command name
@@ -105,31 +92,26 @@ public class CRaSH {
    * @throws org.crsh.shell.impl.command.spi.CreateCommandException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  public ShellCommand<?> getCommand(String name) throws CreateCommandException, NullPointerException {
-    CommandResolution resolution = resolveCommand(name);
-    return resolution != null ? resolution.getCommand() : null;
-  }
-
-  public CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException {
+  public Command<?> getCommand(String name) throws CreateCommandException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null name accepted");
     }
     for (int i = 0;i < resolvers.size();i++) {
-      CommandResolution resolution = resolvers.get(i).resolveCommand(name);
-      if (resolution != null) {
-        return resolution;
+      Command<?> command = resolvers.get(i).resolveCommand(name);
+      if (command != null) {
+        return command;
       }
     }
     return null;
   }
 
-  public Iterable<String> getCommandNames() {
-    LinkedHashSet<String> names = new LinkedHashSet<String>();
+  public Iterable<Map.Entry<String, String>> getCommands() {
+    LinkedHashMap<String, String> names = new LinkedHashMap<String, String>();
     for (int i = 0;i < resolvers.size();i++) {
-      for (String s : resolvers.get(i).getCommandNames()) {
-        names.add(s);
+      for (Map.Entry<String, String> entry : resolvers.get(i).getDescriptions()) {
+        names.put(entry.getKey(), entry.getValue());
       }
     }
-    return names;
+    return names.entrySet();
   }
 }

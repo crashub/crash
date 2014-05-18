@@ -6,7 +6,7 @@ import org.crsh.cli.Usage
 import org.crsh.command.InvocationContext
 import org.crsh.cron.CRaSHTaskProcess
 import org.crsh.cron.CronPlugin
-import org.crsh.lang.impl.groovy.command.GroovyCommand
+import org.crsh.groovy.GroovyCommand
 import org.crsh.plugin.PluginContext
 import org.crsh.shell.impl.command.CRaSH;
 

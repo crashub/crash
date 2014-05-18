@@ -31,6 +31,7 @@ import org.crsh.text.ui.RowElement;
 import org.crsh.text.ui.TableElement;
 
 import java.io.IOException;
+import java.util.Map;
 
 /** @author Julien Viet */
 public class help extends BaseCommand {
@@ -48,16 +49,15 @@ public class help extends BaseCommand {
 
     //
     CRaSH crash = (CRaSH)context.getSession().get("crash");
-    Iterable<String> names = crash.getCommandNames();
-    for (String name : names) {
+    for (Map.Entry<String, String> command : crash.getCommands()) {
       try {
-        String desc = crash.getCommandDescription(name);
+        String desc = command.getValue();
         if (desc == null) {
           desc = "";
         }
         table.add(
             new RowElement().
-                add(new LabelElement(name).style(Style.style(Color.red))).
+                add(new LabelElement(command.getKey()).style(Style.style(Color.red))).
                 add(new LabelElement(desc)));
       } catch (Exception ignore) {
         //

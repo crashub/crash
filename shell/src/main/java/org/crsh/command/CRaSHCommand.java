@@ -19,8 +19,12 @@
 
 package org.crsh.command;
 
-import org.crsh.lang.impl.groovy.command.GroovyCommand;
+import org.crsh.groovy.GroovyCommand;
 
+/**
+ * @deprecated should be removed instead extend {@link org.crsh.groovy.GroovyCommand} or just don't extend anything
+ */
+@Deprecated()
 public abstract class CRaSHCommand extends GroovyCommand {
 
 }

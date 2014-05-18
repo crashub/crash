@@ -16,27 +16,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.impl.command.spi;
+package org.crsh.lang.spi;
 
-/**
- * Resolve shell commands.
- *
- * @author Julien Viet
- */
-public interface ShellCommandResolver {
+import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.CreateCommandException;
 
-  /**
-   * @return the known command names by this resolver
-   */
-  Iterable<String> getCommandNames();
+/** @author Julien Viet */
+public interface CommandResolution {
 
-  /**
-   * Attempt to obtain a command instance. Null is returned when such command does not exist.
-   *
-   * @param name the command name
-   * @return a command instance
-   * @throws CreateCommandException if an error occured preventing the command creation
-   * @throws NullPointerException if the name argument is null
-   */
-  CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException;
+  String getDescription();
+
+  Command<?> getCommand() throws CreateCommandException;
 }

@@ -26,13 +26,14 @@ import org.crsh.shell.impl.command.RuntimeContextImpl;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.shell.impl.command.spi.ShellCommand;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.command.SyntaxException;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.ShellResponse;
 import org.crsh.text.Chunk;
 import org.crsh.util.Utils;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -115,7 +116,8 @@ public class ScriptRepl implements Repl {
     int pos = termPrefix.indexOf(' ');
     if (pos == -1) {
       Completion.Builder builder = Completion.builder(termPrefix);
-      for (String name : session.getCommandNames()) {
+      for (Map.Entry<String, String> command : session.getCommands()) {
+        String name = command.getKey();
         if (name.startsWith(termPrefix)) {
           builder.add(name.substring(termPrefix.length()), true);
         }
@@ -125,7 +127,7 @@ public class ScriptRepl implements Repl {
       String commandName = termPrefix.substring(0, pos);
       termPrefix = termPrefix.substring(pos);
       try {
-        ShellCommand<?> command = session.getCommand(commandName);
+        Command<?> command = session.getCommand(commandName);
         if (command != null) {
           completion = command.complete(new RuntimeContextImpl(session, session.getContext().getAttributes()), termPrefix);
         } else {

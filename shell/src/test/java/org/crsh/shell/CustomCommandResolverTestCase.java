@@ -18,56 +18,46 @@
  */
 package org.crsh.shell;
 
-import org.crsh.cli.Command;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
+import org.crsh.shell.impl.command.spi.CommandResolver;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
-import org.crsh.shell.impl.command.spi.CommandResolution;
-import org.crsh.shell.impl.command.spi.ShellCommand;
-import org.crsh.shell.impl.command.spi.ShellCommandResolver;
-import org.crsh.util.Utils;
+import org.crsh.shell.impl.command.spi.Command;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Julien Viet
  */
-public class CustomShellCommandResolverTestCase extends AbstractCommandTestCase {
+public class CustomCommandResolverTestCase extends AbstractCommandTestCase {
 
   public static class mycommand extends BaseCommand {
-    @Command
+    @org.crsh.cli.Command
     public String main() {
       return "ok_mycommand";
     }
   }
 
-  static class CustomShellCommandResolver extends CRaSHPlugin<ShellCommandResolver> implements ShellCommandResolver {
+  static class CustomCommandResolver extends CRaSHPlugin<CommandResolver> implements CommandResolver {
 
     @Override
-    public ShellCommandResolver getImplementation() {
+    public CommandResolver getImplementation() {
       return this;
     }
 
     @Override
-    public Iterable<String> getCommandNames() {
-      return Collections.singleton("mycommand");
+    public Iterable<Map.Entry<String, String>> getDescriptions() {
+      return Collections.singletonMap("mycommand", "my command").entrySet();
     }
 
     @Override
-    public CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException {
+    public Command<?> resolveCommand(String name) throws CreateCommandException, NullPointerException {
       if ("mycommand".equals(name)) {
-        return new CommandResolution() {
-          @Override
-          public String getDescription() {
-            return "mycommand";
-          }
-          @Override
-          public ShellCommand<?> getCommand() throws CreateCommandException {
-            return new ClassShellCommand<mycommand>(mycommand.class);
-          }
-        };
+        return new ClassShellCommand<mycommand>(mycommand.class);
       }
       return null;
     }
@@ -76,13 +66,16 @@ public class CustomShellCommandResolverTestCase extends AbstractCommandTestCase 
   @Override
   protected List<CRaSHPlugin<?>> getPlugins() {
     List<CRaSHPlugin<?>> plugins = super.getPlugins();
-    plugins.add(new CustomShellCommandResolver());
+    plugins.add(new CustomCommandResolver());
     return plugins;
   }
 
   public void testFoo() {
     assertEquals("ok_mycommand", assertOk("mycommand"));
-    List<String> names = Utils.list(session.getCommandNames());
-    assertTrue("Was expecting " + names + " to contain mycommand", names.contains("mycommand"));
+    Map<String, String> commands = new HashMap<String, String>();
+    for (Map.Entry<String, String> entry : session.getCommands()) {
+      commands.put(entry.getKey(), entry.getValue());
+    }
+    assertTrue("Was expecting " + commands + " to contain mycommand", commands.containsKey("mycommand"));
   }
 }

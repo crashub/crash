@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.lang.impl.groovy.command;
+package org.crsh.groovy;
 
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
@@ -32,7 +32,7 @@ import org.crsh.command.BaseCommand;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.shell.impl.command.spi.ShellCommand;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
 import org.crsh.lang.impl.groovy.closure.PipeLineInvoker;
 import org.crsh.shell.impl.command.CRaSH;
@@ -40,6 +40,9 @@ import org.crsh.shell.impl.command.CRaSH;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 
+/**
+ * The base command for Groovy class based commands.
+ */
 public abstract class GroovyCommand extends BaseCommand implements GroovyObject {
 
   // never persist the MetaClass
@@ -90,7 +93,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
       if (context instanceof InvocationContext) {
         CRaSH crash = (CRaSH)context.getSession().get("crash");
         if (crash != null) {
-          ShellCommand<?> cmd;
+          Command<?> cmd;
           try {
             cmd = crash.getCommand(name);
           }
@@ -140,7 +143,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
       CRaSH crash = (CRaSH)context.getSession().get("crash");
       if (crash != null) {
         try {
-          ShellCommand<?> cmd = crash.getCommand(property);
+          Command<?> cmd = crash.getCommand(property);
           if (cmd != null) {
             InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
             return new PipeLineClosure(ic, property, cmd);

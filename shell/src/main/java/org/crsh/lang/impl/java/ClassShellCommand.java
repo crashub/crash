@@ -26,19 +26,19 @@ import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.impl.lang.ObjectCommandInvoker;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.BaseCommand;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandMatch;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.Pipe;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.ErrorType;
-import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.util.Utils;
 
 import java.lang.reflect.Type;
 
 /** @author Julien Viet */
-public class ClassShellCommand<T extends BaseCommand> extends ShellCommand<Instance<T>> {
+public class ClassShellCommand<T extends BaseCommand> extends Command<Instance<T>> {
 
   /** . */
   private final Class<T> clazz;

@@ -18,9 +18,9 @@
  */
 package org.crsh.lang.impl.groovy.closure;
 
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.shell.impl.command.spi.ShellCommand;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ class CommandElement extends PipeLineElement {
   final String commandName;
 
   /** . */
-  final ShellCommand<?> command;
+  final Command<?> command;
 
   /** . */
   final Map<String, Object> options;
@@ -49,7 +49,7 @@ class CommandElement extends PipeLineElement {
   /** . */
   final List<Object> args;
 
-  public CommandElement(String commandName, ShellCommand<?> command, Map<String, Object> options) {
+  public CommandElement(String commandName, Command<?> command, Map<String, Object> options) {
     this.commandName = commandName;
     this.command = command;
     this.options = options;
@@ -108,7 +108,7 @@ class CommandElement extends PipeLineElement {
     }
   }
 
-  private CommandElement(String commandName, ShellCommand<?> command, Map<String, Object> options, String subordinate, Map<String, Object> subordinateOptions, List<Object> args) {
+  private CommandElement(String commandName, Command<?> command, Map<String, Object> options, String subordinate, Map<String, Object> subordinateOptions, List<Object> args) {
     this.commandName = commandName;
     this.command = command;
     this.options = options;

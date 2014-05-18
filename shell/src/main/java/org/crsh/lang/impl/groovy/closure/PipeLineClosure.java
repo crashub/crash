@@ -24,10 +24,10 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Tuple;
 import org.codehaus.groovy.runtime.MetaClassHelper;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
-import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.util.Utils;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class PipeLineClosure extends Closure {
   /** . */
   private PipeLineElement[] elements;
 
-  public PipeLineClosure(InvocationContext<Object> context, String name, ShellCommand<?> command) {
+  public PipeLineClosure(InvocationContext<Object> context, String name, Command<?> command) {
     this(context, new CommandElement[]{new CommandElement(name, command, null)});
   }
 

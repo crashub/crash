@@ -22,14 +22,15 @@ import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.Language;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
+import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.CommandResolver;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
-import org.crsh.shell.impl.command.spi.CommandResolution;
-import org.crsh.shell.impl.command.spi.ShellCommandResolver;
+import org.crsh.lang.spi.CommandResolution;
 import org.crsh.util.TimestampedObject;
 import org.crsh.vfs.Resource;
 
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Julien Viet
  */
-public class LanguageCommandResolver implements ShellCommandResolver {
+public class LanguageCommandResolver implements CommandResolver {
 
   /** . */
   private final Map<String, TimestampedObject<CommandResolution>> commandCache = new ConcurrentHashMap<String, TimestampedObject<CommandResolution>>();
@@ -71,22 +72,32 @@ public class LanguageCommandResolver implements ShellCommandResolver {
   }
 
   @Override
-  public Iterable<String> getCommandNames() {
-    // Todo change to a live iteration...
-    LinkedHashSet<String> names = new LinkedHashSet<String>();
+  public Iterable<Map.Entry<String, String>> getDescriptions() {
+    LinkedHashMap<String, String> commands = new LinkedHashMap<String, String>();
     for (String resourceName : context.listResources(ResourceKind.COMMAND)) {
       int index = resourceName.indexOf('.');
       String name = resourceName.substring(0, index);
       String ext = resourceName.substring(index + 1);
       if (activeCompilers.containsKey(ext)) {
-        names.add(name);
+        try {
+          CommandResolution resolution = resolveCommand2(name);
+          commands.put(name, resolution.getDescription());
+        }
+        catch (CreateCommandException e) {
+          //
+        }
       }
     }
-    return names;
+    return commands.entrySet();
   }
 
   @Override
-  public CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException {
+  public Command<?> resolveCommand(String name) throws CreateCommandException, NullPointerException {
+    CommandResolution resolution = resolveCommand2(name);
+    return resolution != null ? resolution.getCommand() : null;
+  }
+
+  private CommandResolution resolveCommand2(String name) throws CreateCommandException, NullPointerException {
     for (Compiler manager : activeCompilers.values()) {
       for (String ext : manager.getExtensions()) {
         Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);

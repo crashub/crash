@@ -21,42 +21,48 @@ package org.crsh.shell.impl.command.system;
 import org.crsh.cli.descriptor.Format;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.java.ClassShellCommand;
+import org.crsh.shell.impl.command.spi.CommandResolver;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
-import org.crsh.shell.impl.command.spi.CommandResolution;
-import org.crsh.shell.impl.command.spi.ShellCommand;
-import org.crsh.shell.impl.command.spi.ShellCommandResolver;
+import org.crsh.lang.spi.CommandResolution;
+import org.crsh.shell.impl.command.spi.Command;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Julien Viet
  */
-public class SystemResolver implements ShellCommandResolver {
+public class SystemResolver implements CommandResolver {
 
   /** . */
   public static final SystemResolver INSTANCE = new SystemResolver();
 
   /** . */
-  private static final HashMap<String, Class<? extends BaseCommand>> systemCommands = new HashMap<String, Class<? extends BaseCommand>>();
+  private static final HashMap<String, Class<? extends BaseCommand>> commands = new HashMap<String, Class<? extends BaseCommand>>();
+
+  /** . */
+  private static final HashMap<String, String> descriptions = new HashMap<String, String>();
 
   static {
-    systemCommands.put("help", help.class);
-    systemCommands.put("repl", repl.class);
+    commands.put("help", help.class);
+    commands.put("repl", repl.class);
+    descriptions.put("help", "provides basic help");
+    descriptions.put("repl", "list the repl or change the current repl");
   }
 
   private SystemResolver() {
   }
 
   @Override
-  public Iterable<String> getCommandNames() {
-    return systemCommands.keySet();
+  public Iterable<Map.Entry<String, String>> getDescriptions() {
+    return descriptions.entrySet();
   }
 
   @Override
-  public CommandResolution resolveCommand(String name) throws CreateCommandException, NullPointerException {
-    final Class<? extends BaseCommand> systemCommand = systemCommands.get(name);
+  public Command<?> resolveCommand(String name) throws CreateCommandException, NullPointerException {
+    final Class<? extends BaseCommand> systemCommand = commands.get(name);
     if (systemCommand != null) {
-      return createCommand(systemCommand);
+      return createCommand(systemCommand).getCommand();
     }
     return null;
   }
@@ -69,7 +75,7 @@ public class SystemResolver implements ShellCommandResolver {
         return shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
       }
       @Override
-      public ShellCommand<?> getCommand() throws CreateCommandException {
+      public Command<?> getCommand() throws CreateCommandException {
         return shellCommand;
       }
     };

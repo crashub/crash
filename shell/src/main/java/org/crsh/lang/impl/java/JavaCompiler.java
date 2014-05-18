@@ -20,10 +20,10 @@ package org.crsh.lang.impl.java;
 
 import org.crsh.cli.descriptor.Format;
 import org.crsh.shell.impl.command.ShellSession;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
-import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.shell.ErrorType;
-import org.crsh.shell.impl.command.spi.CommandResolution;
+import org.crsh.lang.spi.CommandResolution;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -78,7 +78,7 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
               return description;
             }
             @Override
-            public ShellCommand<Object> getCommand() throws CreateCommandException {
+            public Command<Object> getCommand() throws CreateCommandException {
               return command;
             }
           };

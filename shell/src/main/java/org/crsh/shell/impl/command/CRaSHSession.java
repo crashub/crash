@@ -26,7 +26,7 @@ import org.crsh.lang.spi.ReplResponse;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.shell.impl.command.spi.ShellCommand;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.lang.impl.script.ScriptRepl;
 import org.crsh.plugin.PluginContext;
 import org.crsh.shell.Shell;
@@ -88,11 +88,11 @@ class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, 
     this.repl = repl;
   }
 
-  public Iterable<String> getCommandNames() {
-    return crash.getCommandNames();
+  public Iterable<Map.Entry<String, String>> getCommands() {
+    return crash.getCommands();
   }
 
-  public ShellCommand<?> getCommand(String name) throws CreateCommandException {
+  public Command<?> getCommand(String name) throws CreateCommandException {
     return crash.getCommand(name);
   }
 

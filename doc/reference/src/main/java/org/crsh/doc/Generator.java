@@ -21,7 +21,7 @@ package org.crsh.doc;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.Format;
-import org.crsh.shell.impl.command.spi.ShellCommand;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ServiceLoaderDiscovery;
 import org.crsh.shell.impl.command.CRaSH;
@@ -31,6 +31,7 @@ import org.crsh.vfs.Path;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.Map;
 
 public class Generator {
 
@@ -56,8 +57,8 @@ public class Generator {
     ctx.refresh();
     CRaSH crash = new CRaSH(ctx);
     StringBuilder buffer = new StringBuilder();
-    for (String s : crash.getCommandNames()) {
-      ShellCommand<?> cmd = crash.getCommand(s);
+    for (Map.Entry<String, String> s : crash.getCommands()) {
+      Command<?> cmd = crash.getCommand(s.getKey());
       CommandDescriptor<?> desc = cmd.getDescriptor();
       buffer.append("== ").append(desc.getName()).append("\n").append("\n");
       buffer.append("----\n");

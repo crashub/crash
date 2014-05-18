@@ -21,7 +21,7 @@ package org.crsh.shell;
 
 import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.command.spi.CommandMatch;
-import org.crsh.shell.impl.command.spi.ShellCommand;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.text.ChunkBuffer;
 
 import java.util.Arrays;
@@ -249,7 +249,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
-    ShellCommand<?> producer = session.getCommand("producer");
+    Command<?> producer = session.getCommand("producer");
     CommandMatch<?, ?> commandMatch = producer.resolveCommand("");
     assertEquals(Integer.class, commandMatch.getProducedType());
   }
@@ -267,7 +267,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
-    ShellCommand<?> producer = session.getCommand("producer");
+    Command<?> producer = session.getCommand("producer");
     CommandMatch<?, ?> commandMatch = producer.resolveCommand("");
     assertEquals(Integer.class, commandMatch.getProducedType());
   }
@@ -278,7 +278,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.list.clear();
     assertOk("producer | consumer");
     assertEquals(Arrays.<Object>asList(3), Commands.list);
-    ShellCommand<?> producer = session.getCommand("producer");
+    Command<?> producer = session.getCommand("producer");
     CommandMatch<?, ?> commandMatch = producer.resolveCommand("");
     assertEquals(Object.class, commandMatch.getProducedType());
   }

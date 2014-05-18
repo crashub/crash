@@ -34,10 +34,10 @@ import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.shell.impl.command.ShellSession;
+import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
-import org.crsh.shell.impl.command.spi.ShellCommand;
 import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
-import org.crsh.shell.impl.command.spi.CommandResolution;
+import org.crsh.lang.spi.CommandResolution;
 import org.crsh.util.ClassCache;
 import org.crsh.lang.impl.groovy.command.GroovyScript;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
@@ -208,13 +208,13 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
 
     //
     return new CommandResolution() {
-      ShellCommand<?> command;
+      Command<?> command;
       @Override
       public String getDescription() {
         return description;
       }
       @Override
-      public ShellCommand<?> getCommand() throws CreateCommandException {
+      public Command<?> getCommand() throws CreateCommandException {
         if (command == null) {
           Class<?> clazz = objectGroovyClassFactory.parse(name, script);
           if (BaseCommand.class.isAssignableFrom(clazz)) {

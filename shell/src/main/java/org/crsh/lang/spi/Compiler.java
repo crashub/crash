@@ -20,7 +20,6 @@ package org.crsh.lang.spi;
 
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CreateCommandException;
-import org.crsh.shell.impl.command.spi.CommandResolution;
 
 import java.util.Set;
 
@@ -48,6 +47,7 @@ public interface Compiler {
    */
   CommandResolution compileCommand(String name, byte[] source) throws CreateCommandException, NullPointerException;
 
+  //
   String doCallBack(ShellSession session, String name, String defaultValue);
 
 }
