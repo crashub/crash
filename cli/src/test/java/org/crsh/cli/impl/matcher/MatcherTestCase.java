@@ -20,9 +20,9 @@
 package org.crsh.cli.impl.matcher;
 
 import junit.framework.TestCase;
-import org.crsh.cli.CLIException;
+import org.crsh.cli.impl.CLIException;
 import org.crsh.cli.descriptor.CommandDescriptor;
-import org.crsh.cli.SyntaxException;
+import org.crsh.cli.impl.SyntaxException;
 import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
@@ -180,13 +180,13 @@ public class MatcherTestCase extends TestCase {
   public void testOptionalArgumentList() throws Exception {
 
     abstract class Tester {
-      abstract List<String> invoke(String line);
+      abstract List<String> invoke(String line) throws Exception ;
     }
 
     Tester t1 = new Tester() {
       CommandDescriptor<Instance<BC1>> desc1 = CommandFactory.DEFAULT.create(BC1.class);
       @Override
-      List<String> invoke(String line) {
+      List<String> invoke(String line) throws Exception {
         BC1 object = new BC1();
         desc1.matcher().parse(line).invoke(Util.wrap(object));
         return object.s;
@@ -196,7 +196,7 @@ public class MatcherTestCase extends TestCase {
     Tester t2 = new Tester() {
       CommandDescriptor<Instance<BC2>> desc2 = CommandFactory.DEFAULT.create(BC2.class);
       @Override
-      List<String> invoke(String line) {
+      List<String> invoke(String line) throws Exception {
         BC2 object = new BC2();
         desc2.matcher().parse(line).invoke(Util.wrap(object));
         return object.s;

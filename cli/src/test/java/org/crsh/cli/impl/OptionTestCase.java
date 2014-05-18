@@ -176,7 +176,7 @@ public class OptionTestCase extends TestCase {
     assertEquals(ValueType.ENUM, i.getType());
   }
 
-  public void testSingleLetterName() {
+  public void testSingleLetterName() throws Exception {
     class A {
       @Option(names = "o")
       RetentionPolicy o;
@@ -199,7 +199,7 @@ public class OptionTestCase extends TestCase {
     assertIllegalParameter(C.class);
   }
 
-  public void testTwoLettersName() {
+  public void testTwoLettersName() throws Exception {
     class A {
       @Option(names = "op")
       RetentionPolicy o;
@@ -222,7 +222,7 @@ public class OptionTestCase extends TestCase {
     assertIllegalParameter(C.class);
   }
 
-  public void testThreeLettersName() {
+  public void testThreeLettersName() throws Exception {
     class A {
       @Option(names = "opt")
       RetentionPolicy o;

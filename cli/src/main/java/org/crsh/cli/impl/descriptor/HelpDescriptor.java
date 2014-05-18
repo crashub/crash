@@ -76,7 +76,7 @@
 
 package org.crsh.cli.impl.descriptor;
 
-import org.crsh.cli.SyntaxException;
+import org.crsh.cli.impl.SyntaxException;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.descriptor.OptionDescriptor;
@@ -89,6 +89,7 @@ import org.crsh.cli.impl.invocation.ParameterMatch;
 import org.crsh.cli.type.ValueTypeFactory;
 
 import java.lang.reflect.Type;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -96,21 +97,30 @@ import java.util.Map;
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public class HelpDescriptor<T> extends CommandDescriptor<T> {
 
-  public static <T> HelpDescriptor<T> create(CommandDescriptor<T> descriptor) {
+  public static <T> HelpDescriptor<T> create(CommandDescriptor<T> descriptor) throws IntrospectionException {
     return new HelpDescriptor<T>(descriptor);
   }
 
   /** . */
-  static final OptionDescriptor HELP_OPTION = new OptionDescriptor(
-      ParameterType.create(ValueTypeFactory.DEFAULT, Boolean.class),
-      Arrays.asList("h", "help"),
-      new Description("this help", "Display this help message"),
-      false,
-      false,
-      false,
-      null,
-      null
-  );
+  static final OptionDescriptor HELP_OPTION;
+
+  static {
+    try {
+      HELP_OPTION = new OptionDescriptor(
+          ParameterType.create(ValueTypeFactory.DEFAULT, Boolean.class),
+          Arrays.asList("h", "help"),
+          new Description("this help", "Display this help message"),
+          false,
+          false,
+          false,
+          null,
+          null
+      );
+    }
+    catch (IntrospectionException e) {
+      throw new UndeclaredThrowableException(e);
+    }
+  }
 
   /** . */
   private final HelpDescriptor<T> owner;

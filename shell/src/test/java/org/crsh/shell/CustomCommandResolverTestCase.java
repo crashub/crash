@@ -18,6 +18,7 @@
  */
 package org.crsh.shell;
 
+import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
@@ -57,7 +58,12 @@ public class CustomCommandResolverTestCase extends AbstractCommandTestCase {
     @Override
     public Command<?> resolveCommand(String name) throws CreateCommandException, NullPointerException {
       if ("mycommand".equals(name)) {
-        return new ClassShellCommand<mycommand>(mycommand.class);
+        try {
+          return new ClassShellCommand<mycommand>(mycommand.class);
+        }
+        catch (IntrospectionException e) {
+          throw new CreateCommandException(name, ErrorType.EVALUATION, "Invalid cli annotations", e);
+        }
       }
       return null;
     }

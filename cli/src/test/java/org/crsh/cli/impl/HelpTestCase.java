@@ -44,7 +44,7 @@ public class HelpTestCase extends TestCase {
     }
   }
 
-  public void testFoo() {
+  public void testFoo() throws Exception {
     CommandDescriptor<Instance<A>> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(A.class));
     InvocationMatcher<Instance<A>> matcher = desc.matcher();
     InvocationMatch<Instance<A>> match = matcher.options(Collections.<String, List<?>>singletonMap("h", Collections.singletonList(Boolean.TRUE))).arguments(Collections.emptyList());
@@ -84,14 +84,14 @@ public class HelpTestCase extends TestCase {
     }
   }
 
-  public void testPreserveHelp() {
+  public void testPreserveHelp() throws Exception {
     assertPreserveHelp(B1.class, new B1(), "h");
     assertPreserveHelp(B2.class, new B2(), "help");
     assertPreserveHelp(B3.class, new B3(), "h");
     assertPreserveHelp(B4.class, new B4(), "help");
   }
 
-  public <C> void assertPreserveHelp(Class<C> clazz, C instance, String option) {
+  public <C> void assertPreserveHelp(Class<C> clazz, C instance, String option) throws Exception {
     CommandDescriptor<Instance<C>> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(clazz));
     InvocationMatcher<Instance<C>> matcher = desc.matcher();
     InvocationMatch<Instance<C>> match = matcher.options(Collections.<String, List<?>>singletonMap(option, Collections.singletonList(Boolean.TRUE))).arguments(Collections.emptyList());
@@ -114,12 +114,12 @@ public class HelpTestCase extends TestCase {
     }
   }
 
-  public void testPreserveHelpInSubCommand() {
+  public void testPreserveHelpInSubCommand() throws Exception {
     assertPreserveHelpInSubCommand1(C1.class, new C1(), "h");
     assertPreserveHelpInSubCommand1(C2.class, new C2(), "help");
   }
 
-  public <C> void assertPreserveHelpInSubCommand1(Class<C> clazz, C instance, String option) {
+  public <C> void assertPreserveHelpInSubCommand1(Class<C> clazz, C instance, String option) throws Exception {
     CommandDescriptor<Instance<C>> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(clazz));
     InvocationMatcher<Instance<C>> matcher = desc.matcher();
     InvocationMatch<Instance<C>> match = matcher.
@@ -146,11 +146,11 @@ public class HelpTestCase extends TestCase {
     }
   }
 
-  public void testPreserveHelpInSubCommand2() {
+  public void testPreserveHelpInSubCommand2() throws Exception {
     assertPreserveHelpInSubCommand2(D1.class, new D1(), "h");
     assertPreserveHelpInSubCommand2(D2.class, new D2(), "help");
   }
-  public <C> void assertPreserveHelpInSubCommand2(Class<C> clazz, C instance, String option) {
+  public <C> void assertPreserveHelpInSubCommand2(Class<C> clazz, C instance, String option) throws Exception {
     CommandDescriptor<Instance<C>> desc = HelpDescriptor.create(CommandFactory.DEFAULT.create(clazz));
     InvocationMatcher<Instance<C>> matcher = desc.matcher();
     InvocationMatch<Instance<C>> match = matcher.

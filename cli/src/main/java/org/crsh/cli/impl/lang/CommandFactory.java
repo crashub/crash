@@ -114,7 +114,7 @@ public class CommandFactory {
     }
   }
 
-  private <T> MethodDescriptor<T> create(ClassDescriptor<T> classDescriptor, String name, Method method) {
+  private <T> MethodDescriptor<T> create(ClassDescriptor<T> classDescriptor, String name, Method method) throws IntrospectionException {
     Description info = new Description(method);
     MethodDescriptor<T> methodDescriptor = new MethodDescriptor<T>(
         classDescriptor,

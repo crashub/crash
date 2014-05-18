@@ -316,7 +316,7 @@ public class ParserTestCase extends TestCase {
     tester.assertEnd(Event.Stop.Done.class, 9);
   }
 
-  public void testImplicitSubordinateOption() {
+  public void testImplicitSubordinateOption() throws Exception {
 
     class A {
       @Command

@@ -36,7 +36,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.cli;
+package org.crsh.cli.impl;
 
 public class SyntaxException extends CLIException {
 

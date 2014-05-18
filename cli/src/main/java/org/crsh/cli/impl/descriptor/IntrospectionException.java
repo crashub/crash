@@ -38,7 +38,7 @@
 
 package org.crsh.cli.impl.descriptor;
 
-import org.crsh.cli.CLIException;
+import org.crsh.cli.impl.CLIException;
 
 public class IntrospectionException extends CLIException {
 

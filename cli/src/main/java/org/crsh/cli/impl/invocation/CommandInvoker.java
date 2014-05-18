@@ -19,7 +19,7 @@
 
 package org.crsh.cli.impl.invocation;
 
-import org.crsh.cli.SyntaxException;
+import org.crsh.cli.impl.SyntaxException;
 
 import java.lang.reflect.Type;
 

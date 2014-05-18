@@ -44,9 +44,26 @@ public class CommandTestCase extends AbstractCommandTestCase {
 //    assertEquals(Exception.class, t.getClass());
   }
 
-  public void testInvalid() throws Exception {
+  public void testGroovyCompilationError() throws Exception {
     assertUnknownCommand("invalid");
-//    assertEquals(MultipleCompilationErrorsException.class, t.getClass());
+  }
+
+  public void testGroovyInvalidCommandDescriptor() throws Exception {
+    lifeCycle.bindGroovy("foo",
+        "public class foo { @Command public void main(@Option(names = [\"-h\"]) String opt) { } }");
+    assertUnknownCommand("foo");
+  }
+
+  public void testJavaCompilationError() throws Exception {
+    lifeCycle.bindJava("foo",
+        "public class foo { @Command public void main( { } }");
+    assertUnknownCommand("foo");
+  }
+
+  public void testJavaInvalidCommandDescriptor() throws Exception {
+    lifeCycle.bindJava("foo",
+        "public class foo { @Command public void main(@Option(names = \"-h\") String opt) { } }");
+    assertUnknownCommand("foo");
   }
 
   public void testSimple() throws Exception {

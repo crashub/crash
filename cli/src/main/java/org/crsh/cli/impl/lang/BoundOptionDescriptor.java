@@ -23,6 +23,7 @@ import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.impl.ParameterType;
 import org.crsh.cli.impl.descriptor.IllegalParameterException;
 import org.crsh.cli.impl.descriptor.IllegalValueTypeException;
+import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.spi.Completer;
 
 import java.lang.annotation.Annotation;
@@ -44,7 +45,7 @@ class BoundOptionDescriptor extends OptionDescriptor implements Binding {
   }
 
   @Override
-  public void set(Object o, Object[] args, Object value) {
+  public void set(Object o, Object[] args, Object value) throws InvocationException {
     binding.set(o, args, value);
   }
 }

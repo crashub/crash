@@ -25,7 +25,7 @@ import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.descriptor.ParameterDescriptor;
-import org.crsh.cli.SyntaxException;
+import org.crsh.cli.impl.SyntaxException;
 import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
@@ -82,7 +82,7 @@ class MethodDescriptor<T> extends ObjectCommandDescriptor<T> {
     return getInvoker2(match, type);
   }
 
-  static void bind(InvocationMatch<?> match, Iterable<ParameterDescriptor> parameters, Object target, Object[] args) {
+  static void bind(InvocationMatch<?> match, Iterable<ParameterDescriptor> parameters, Object target, Object[] args) throws SyntaxException, InvocationException {
     for (ParameterDescriptor parameter : parameters) {
       ParameterMatch parameterMatch = match.getParameter(parameter);
       Object value = parameterMatch != null ? parameterMatch.computeValue() : null;

@@ -38,7 +38,7 @@
 
 package org.crsh.cli.impl.completion;
 
-import org.crsh.cli.CLIException;
+import org.crsh.cli.impl.CLIException;
 
 public class CompletionException extends CLIException {
   public CompletionException() {

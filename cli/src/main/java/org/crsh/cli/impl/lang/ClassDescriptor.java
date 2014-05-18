@@ -24,7 +24,7 @@ import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.descriptor.ParameterDescriptor;
-import org.crsh.cli.SyntaxException;
+import org.crsh.cli.impl.SyntaxException;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 

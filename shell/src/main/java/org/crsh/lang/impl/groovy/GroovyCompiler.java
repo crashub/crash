@@ -31,6 +31,7 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.Usage;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.shell.impl.command.ShellSession;
@@ -219,11 +220,21 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
           Class<?> clazz = objectGroovyClassFactory.parse(name, script);
           if (BaseCommand.class.isAssignableFrom(clazz)) {
             Class<? extends BaseCommand> cmd = clazz.asSubclass(BaseCommand.class);
-            command = make(cmd);
+            try {
+              command = make(cmd);
+            }
+            catch (IntrospectionException e) {
+              throw new CreateCommandException(name, ErrorType.EVALUATION, "Invalid cli annotations", e);
+            }
           }
           else if (GroovyScriptCommand.class.isAssignableFrom(clazz)) {
             Class<? extends GroovyScriptCommand> cmd = clazz.asSubclass(GroovyScriptCommand.class);
-            command = make2(cmd);
+            try {
+              command = make2(cmd);
+            }
+            catch (IntrospectionException e) {
+              throw new CreateCommandException(name, ErrorType.EVALUATION, "Invalid cli annotations", e);
+            }
           }
           else {
             throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
@@ -234,10 +245,11 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
     };
   }
 
-  private <C extends BaseCommand> ClassShellCommand<C> make(Class<C> clazz) {
+  private <C extends BaseCommand> ClassShellCommand<C> make(Class<C> clazz) throws IntrospectionException {
     return new ClassShellCommand<C>(clazz);
   }
-  private <C extends GroovyScriptCommand> GroovyScriptShellCommand<C> make2(Class<C> clazz) {
+
+  private <C extends GroovyScriptCommand> GroovyScriptShellCommand<C> make2(Class<C> clazz) throws IntrospectionException {
     return new GroovyScriptShellCommand<C>(clazz);
   }
 }

@@ -22,6 +22,7 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.lang.Instance;
@@ -54,7 +55,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends Com
   /** . */
   private final CommandDescriptor<Instance<T>> descriptor;
 
-  public GroovyScriptShellCommand(Class<T> clazz) {
+  public GroovyScriptShellCommand(Class<T> clazz) throws IntrospectionException {
 
     //
     CommandFactory factory = new CommandFactory(getClass().getClassLoader());

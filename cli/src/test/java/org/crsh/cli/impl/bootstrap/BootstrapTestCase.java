@@ -82,7 +82,7 @@ public class BootstrapTestCase extends TestCase {
     }
   }
 
-  public void testMain1() {
+  public void testMain1() throws Exception {
 
     CommandDescriptor<Instance<B>> desc = CommandFactory.DEFAULT.create(B.class);
     HelpDescriptor<Instance<B>> helpDesc = new HelpDescriptor<Instance<B>>(desc);

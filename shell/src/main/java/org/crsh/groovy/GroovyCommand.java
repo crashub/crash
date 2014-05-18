@@ -48,7 +48,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
   // never persist the MetaClass
   private transient MetaClass metaClass;
 
-  protected GroovyCommand() throws IntrospectionException {
+  protected GroovyCommand() {
     this.metaClass = InvokerHelper.getMetaClass(this.getClass());
   }
 

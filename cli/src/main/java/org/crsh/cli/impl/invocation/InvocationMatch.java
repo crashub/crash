@@ -22,7 +22,7 @@ package org.crsh.cli.impl.invocation;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.descriptor.ParameterDescriptor;
-import org.crsh.cli.SyntaxException;
+import org.crsh.cli.impl.SyntaxException;
 
 import java.util.Collection;
 import java.util.Collections;

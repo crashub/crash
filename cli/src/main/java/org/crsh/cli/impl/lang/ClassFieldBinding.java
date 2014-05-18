@@ -37,7 +37,7 @@ public class ClassFieldBinding implements Binding {
   }
 
   @Override
-  public void set(Object target, Object[] args, Object value) {
+  public void set(Object target, Object[] args, Object value) throws InvocationException {
     try {
       field.setAccessible(true);
       field.set(target, value);

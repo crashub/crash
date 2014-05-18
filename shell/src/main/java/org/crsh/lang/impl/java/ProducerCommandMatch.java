@@ -111,7 +111,7 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
         try {
           ret = invoker.invoke(this);
         }
-        catch (org.crsh.cli.SyntaxException e) {
+        catch (org.crsh.cli.impl.SyntaxException e) {
           throw new SyntaxException(e.getMessage());
         } catch (InvocationException e) {
           throw command.toScript(e.getCause());

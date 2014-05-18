@@ -20,6 +20,7 @@ package org.crsh.lang.impl.java;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.impl.descriptor.HelpDescriptor;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.lang.Instance;
@@ -46,7 +47,7 @@ public class ClassShellCommand<T extends BaseCommand> extends Command<Instance<T
   /** . */
   private final CommandDescriptor<Instance<T>> descriptor;
 
-  public ClassShellCommand(Class<T> clazz) {
+  public ClassShellCommand(Class<T> clazz) throws IntrospectionException {
     CommandFactory factory = new CommandFactory(getClass().getClassLoader());
     this.clazz = clazz;
     this.descriptor = HelpDescriptor.create(factory.create(clazz));

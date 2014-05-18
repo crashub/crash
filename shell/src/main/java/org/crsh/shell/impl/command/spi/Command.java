@@ -32,6 +32,7 @@ import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.RuntimeContext;
 import org.crsh.command.SyntaxException;
+import org.crsh.shell.ErrorType;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -135,7 +136,7 @@ public abstract class Command<T> {
     try {
       match = analyzer.parse(line);
     }
-    catch (org.crsh.cli.SyntaxException e) {
+    catch (org.crsh.cli.impl.SyntaxException e) {
       throw new SyntaxException(e.getMessage());
     }
     return describe(match, format);
@@ -158,7 +159,7 @@ public abstract class Command<T> {
     try {
       match = analyzer.parse(line);
     }
-    catch (org.crsh.cli.SyntaxException e) {
+    catch (org.crsh.cli.impl.SyntaxException e) {
       throw new SyntaxException(e.getMessage());
     }
     return resolve(match);
@@ -177,26 +178,32 @@ public abstract class Command<T> {
     InvocationMatcher<T> matcher = getDescriptor().matcher();
 
     //
-    if (options != null && options.size() > 0) {
-      for (Map.Entry<String, ?> option : options.entrySet()) {
-        matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
-      }
-    }
-
-    //
-    if (subordinate != null && subordinate.length() > 0) {
-      matcher = matcher.subordinate(subordinate);
-
-      // Minor : remove that and use same signature
-      if (subordinateOptions != null && subordinateOptions.size() > 0) {
-        for (Map.Entry<String, ?> option : subordinateOptions.entrySet()) {
+    InvocationMatch<T> match;
+    try {
+      if (options != null && options.size() > 0) {
+        for (Map.Entry<String, ?> option : options.entrySet()) {
           matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
         }
       }
-    }
 
-    //
-    InvocationMatch<T> match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
+      //
+      if (subordinate != null && subordinate.length() > 0) {
+        matcher = matcher.subordinate(subordinate);
+
+        // Minor : remove that and use same signature
+        if (subordinateOptions != null && subordinateOptions.size() > 0) {
+          for (Map.Entry<String, ?> option : subordinateOptions.entrySet()) {
+            matcher = matcher.option(option.getKey(), Collections.singletonList(option.getValue()));
+          }
+        }
+      }
+
+      //
+      match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
+    }
+    catch (org.crsh.cli.impl.SyntaxException e) {
+      throw new CreateCommandException(getDescriptor().getName(), ErrorType.EVALUATION, "Could not resolve command", e);
+    }
 
     //
     return resolve(match);

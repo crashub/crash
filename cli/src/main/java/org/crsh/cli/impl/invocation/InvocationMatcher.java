@@ -20,7 +20,7 @@
 package org.crsh.cli.impl.invocation;
 
 import org.crsh.cli.descriptor.CommandDescriptor;
-import org.crsh.cli.SyntaxException;
+import org.crsh.cli.impl.SyntaxException;
 import org.crsh.cli.impl.LiteralValue;
 import org.crsh.cli.descriptor.OptionDescriptor;
 import org.crsh.cli.impl.tokenizer.Token;
@@ -93,7 +93,7 @@ public class InvocationMatcher<T> {
     return match(tokens);
   }
 
-  private InvocationMatch<T> match(final Iterable<Token> tokens) {
+  private InvocationMatch<T> match(final Iterable<Token> tokens) throws SyntaxException {
     Tokenizer tokenizer = new Tokenizer() {
 
       /** . */
