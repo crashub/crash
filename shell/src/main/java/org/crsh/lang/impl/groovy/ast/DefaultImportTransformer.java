@@ -31,9 +31,9 @@ import org.crsh.cli.Required;
 import org.crsh.cli.Usage;
 import org.crsh.cli.Man;
 import org.crsh.cli.Option;
-import org.crsh.command.CRaSHCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
+import org.crsh.groovy.GroovyCommand;
 import org.crsh.text.ui.BorderStyle;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
@@ -58,7 +58,7 @@ public class DefaultImportTransformer implements ASTTransformation {
     Command.class,
     ScriptException.class,
     InvocationContext.class,
-    CRaSHCommand.class,
+    GroovyCommand.class,
   };
 
   /** . */

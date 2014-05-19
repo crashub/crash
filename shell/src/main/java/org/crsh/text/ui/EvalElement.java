@@ -20,7 +20,7 @@
 package org.crsh.text.ui;
 
 import groovy.lang.Closure;
-import org.crsh.command.CRaSHCommand;
+import org.crsh.groovy.GroovyCommand;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.command.InvocationContext;
@@ -47,9 +47,9 @@ public class EvalElement extends Element {
     final InvocationContext ctx;
     Object cmd;
     while (true) {
-      if (owner instanceof CRaSHCommand) {
+      if (owner instanceof GroovyCommand) {
         cmd = owner;
-        ctx = ((CRaSHCommand)cmd).peekContext();
+        ctx = ((GroovyCommand)cmd).peekContext();
         break;
       } else if (owner instanceof GroovyScriptCommand) {
         cmd = owner;
@@ -154,8 +154,8 @@ public class EvalElement extends Element {
       }
     };
 
-    if (cmd instanceof CRaSHCommand) {
-      ((CRaSHCommand)cmd).pushContext(nested);
+    if (cmd instanceof GroovyCommand) {
+      ((GroovyCommand)cmd).pushContext(nested);
     } else {
       ((GroovyScriptCommand)cmd).pushContext(nested);
     }
@@ -163,8 +163,8 @@ public class EvalElement extends Element {
       closure.call();
     }
     finally {
-      if (cmd instanceof CRaSHCommand) {
-        ((CRaSHCommand)cmd).popContext();
+      if (cmd instanceof GroovyCommand) {
+        ((GroovyCommand)cmd).popContext();
       } else {
         ((GroovyScriptCommand)cmd).popContext();
       }

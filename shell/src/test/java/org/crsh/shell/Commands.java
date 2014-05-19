@@ -26,9 +26,9 @@ import org.crsh.cli.Option;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.BaseCommand;
-import org.crsh.command.CRaSHCommand;
 import org.crsh.command.Pipe;
 import org.crsh.command.ScriptException;
+import org.crsh.groovy.GroovyCommand;
 import org.crsh.text.Chunk;
 
 import javax.naming.NamingException;
@@ -317,7 +317,7 @@ public class Commands {
     }
   }
 
-  public static class ThrowGroovyScriptException extends CRaSHCommand {
+  public static class ThrowGroovyScriptException extends GroovyCommand {
     @Command
     public String main() throws groovy.util.ScriptException {
       throw new groovy.util.ScriptException();

@@ -48,7 +48,7 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 import org.crsh.cli.Command;
-import org.crsh.command.CRaSHCommand;
+import org.crsh.groovy.GroovyCommand;
 
 import java.util.logging.Logger;
 
@@ -56,7 +56,7 @@ import java.util.logging.Logger;
 public class CommandTransformer implements ASTTransformation {
 
   /** . */
-  private static final ClassNode CRASH_COMMAND = ClassHelper.make(CRaSHCommand.class);
+  private static final ClassNode CRASH_COMMAND = ClassHelper.make(GroovyCommand.class);
 
   /** . */
   private static final Logger log = Logger.getLogger(CommandTransformer.class.getName());
