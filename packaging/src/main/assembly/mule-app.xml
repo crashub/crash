@@ -58,6 +58,9 @@
         <includes>
           <include>crash/**</include>
         </includes>
+        <excludes>
+          <exclude>crash/crash.properties</exclude>
+        </excludes>
       </unpackOptions>
       <outputDirectory>/classes/</outputDirectory>
       <includes>
