@@ -42,19 +42,26 @@ public class KeyHandlerTestCase extends AbstractCommandTestCase {
   }
 
   public void testPipeCommand() throws Exception {
-    testKeyHandler("public class foo implements org.crsh.console.KeyHandler {\n" +
-        "public void handle(org.crsh.console.KeyType type, int[] sequence) { queue.add(sequence); latch2.countDown(); }\n" +
-        "@Command\n" +
-        "public org.crsh.command.Pipe<Object, String> main() {\n" +
-        "  def l1 = latch1\n" +
-        "  def l2 = latch2\n" +
-        "  return new org.crsh.command.Pipe<Object, String>() {\n" +
+    testKeyHandler("public class foo {\n" +
+        "  static class PipeImpl extends org.crsh.command.Pipe<Object, String> implements org.crsh.console.KeyHandler {\n" +
+        "    java.util.concurrent.CountDownLatch l1\n" +
+        "    java.util.concurrent.CountDownLatch l2\n" +
+        "    java.util.concurrent.ArrayBlockingQueue q\n" +
+        "    PipeImpl(java.util.concurrent.ArrayBlockingQueue queue, java.util.concurrent.CountDownLatch latch1, java.util.concurrent.CountDownLatch latch2) {\n" +
+        "      q = queue;\n" +
+        "      l1 = latch1;\n" +
+        "      l2 = latch2;\n" +
+        "    }\n" +
+        "    public void handle(org.crsh.console.KeyType type, int[] sequence) { q.add(sequence); l2.countDown(); }\n" +
         "    public void close() {\n" +
         "      l1.countDown();" +
         "      l2.await(10, java.util.concurrent.TimeUnit.SECONDS);" +
         "    }\n" +
-        "  };\n" +
-        "}\n" +
+        "  }\n" +
+        "  @Command\n" +
+        "  public org.crsh.command.Pipe<Object, String> main() {\n" +
+        "    return new PipeImpl(queue, latch1, latch2);\n" +
+        "  }\n" +
         "}\n");
   }
 

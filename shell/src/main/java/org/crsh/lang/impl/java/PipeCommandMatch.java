@@ -92,7 +92,7 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
 
       @Override
       public KeyHandler getKeyHandler() {
-        return command instanceof KeyHandler ? (KeyHandler)command : null;
+        return real instanceof KeyHandler ? (KeyHandler)real : null;
       }
 
       public void open2(final CommandContext<P> consumer) {
