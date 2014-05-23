@@ -1,19 +1,21 @@
-package crash.commands.base;
+package crash.commands.base
 
+import org.crsh.cli.Man;
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.Pipe
 import org.crsh.console.KeyHandler
 import org.crsh.console.KeyType
 import org.crsh.text.Chunk
+import org.crsh.text.ScreenBuffer
 
 class less
 {
 
-  static class impl extends Pipe<Chunk, Chunk> implements KeyHandler, Runnable {
+  static class impl extends Pipe<Chunk, Chunk> implements KeyHandler {
 
     /** . */
-    final def buffer = new LinkedList<Chunk>()
+    ScreenBuffer buffer;
 
     /** . */
     final def lock = new Object()
@@ -21,8 +23,8 @@ class less
     /** . */
     def boolean done = false;
 
-    /** . */
-    def width = 0;
+    impl() {
+    }
 
     @Override
     void handle(KeyType type, int[] sequence) {
@@ -31,65 +33,74 @@ class less
           done = true;
           lock.notifyAll();
         }
-      }
-    }
-
-    /**
-     * This method monitors the changes of the display periodically and refresh the screen if the size changes.
-     */
-    @Override
-    void run() {
-      // Refresh the screen periodically based upond needs
-      while (true) {
-
-        def w = context.getWidth()
-        if (w != width) {
-          context.writer.print("width changed");
-          context.writer.flush();
-          width = w;
+      } else {
+        buffer.update();
+        if (type == KeyType.DOWN) {
+          buffer.nextRow();
+        } else if (type == KeyType.UP) {
+          buffer.previousRow();
+        } else if (type == KeyType.SPACE) {
+          buffer.nextPage();
         }
-
-        synchronized (lock) {
-          lock.wait(1000);
-          if (done) {
-            break;
-          }
-        }
+        buffer.paint();
+        buffer.flush();
       }
-
-      context.writer.print("done");
-      context.writer.flush();
     }
 
     @Override
     void open() throws ScriptException {
-      new Thread(this).start();
+      buffer = new ScreenBuffer(context);
+      context.takeAlternateBuffer();
     }
 
     @Override
     void provide(Chunk element) throws ScriptException, IOException {
-      buffer.addLast(element);
-      context.provide(element);
+      buffer.write(element);
+      boolean flush = buffer.update();
+      buffer.paint();
+      if (flush) {
+        buffer.flush();
+      }
+    }
+
+    @Override
+    void flush() throws ScriptException, IOException {
+      buffer.update();
+      buffer.paint();
+      buffer.flush();
     }
 
     @Override
     void close() throws ScriptException {
-      context.writer.print("waiting now");
-      context.writer.flush();
-      synchronized (lock) {
-        if (!done) {
-          lock.wait();
-          if (!done) {
-            // Interrupted...
-            done = true;
-            lock.notifyAll();
+      context.takeAlternateBuffer();
+      while (!Thread.currentThread().isInterrupted() && !done) {
+        buffer.update();
+        buffer.paint();
+        buffer.flush();
+        synchronized (lock) {
+          try {
+            lock.wait(100);
+          }
+          catch (InterruptedException e) {
+            // Reset interrupted status
+            Thread.currentThread().interrupt();
           }
         }
       }
+      context.releaseAlternateBuffer();
     }
   }
 
-  @Usage("more...")
+  @Usage("opposite of more")
+  @Man("""\
+Less  is a program similar to more, but which allows backward movement in the file as well as forward movement.
+
+The following commands are available while less is running:
+
+SPACE - Scroll forward one page
+UP    - Scroll forward one line
+DOWN  - Scroll backward one line
+q     - Quit""")
   @Command
   Pipe<Chunk, Chunk> main() {
     return new impl();

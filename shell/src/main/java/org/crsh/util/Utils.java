@@ -159,6 +159,16 @@ public class Utils {
     }
   }
 
+  /**
+   * Return the value when it is positive otherwise return 0.
+   *
+   * @param value the value
+   * @return the non negative value
+   */
+  public static int notNegative(int value) {
+    return value >= 0 ? value : 0;
+  }
+
   private static final Pattern FOO = Pattern.compile("" +
       "(\\*)" + // Wildcard *
       "|" +

@@ -65,16 +65,24 @@ public class BaseProcessContext implements ShellProcessContext {
   /** . */
   private ShellProcess process;
 
+  /** . */
+  private volatile boolean alternateBuffer = false;
+
   private BaseProcessContext(ShellProcess process) {
     this.process = process;
     this.latch = new CountDownLatch(1);
     this.response = null;
     this.width = 32;
     this.height = 40;
+    this.alternateBuffer = false;
   }
 
   private BaseProcessContext(Shell shell, String line) {
     this(shell.createProcess(line));
+  }
+
+  public boolean getAlternateBuffer() {
+    return alternateBuffer;
   }
 
   public BaseProcessContext cancel() {
@@ -122,11 +130,13 @@ public class BaseProcessContext implements ShellProcessContext {
   }
 
   public boolean takeAlternateBuffer() {
-    return false;
+    alternateBuffer = true;
+    return true;
   }
 
   public boolean releaseAlternateBuffer() {
-    return false;
+    alternateBuffer = false;
+    return true;
   }
 
   public int getWidth() {

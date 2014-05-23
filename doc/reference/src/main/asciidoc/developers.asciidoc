@@ -765,14 +765,14 @@ command, specially for long lived commands. The _ctrl-c_ keystroke in the shell 
 a thread interruption during the execution a command.
 
 If you command thread is in the waiting state, an +InterruptedException+ will be thrown otherwise
-  you can check the current thread status with +Thread.interrupted()+ static method:
+  you can check the current thread status with +Thread.currentThread.isInterrupted()+:
 
 [source,groovy]
 ----
 class clock {
   @Command
   Object main(InvocationContext<Date> context) {
-    while (!Thread.interrupted()) { <1>
+    while (!Thread.currentThread().isInterrupted()) { <1>
        context.provide(new Date());
        context.flush();
        try {
@@ -799,6 +799,11 @@ Tue May 06 22:27:55 CEST 2014Tue May 06 22:27:56 CEST 2014Tue May 06 22:27:57 CE
 
 %
 ----
+
+NOTE: when you are programming a long lived command that will stop upon a signal you should
+follow the pattern above and never forget to leave the thread in the interrupted state
+when your thread exits the command. We recommend also to understand well how Java thread interruption
+works.
 
 == Keyboard interactions
 

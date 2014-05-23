@@ -80,14 +80,15 @@ public class dashboard implements KeyHandler {
     current = Thread.currentThread();
     try {
       run = true;
-      while (!Thread.interrupted()) {
+      while (!Thread.currentThread().isInterrupted()) {
         out.cls()
         out.show(table);
         out.flush();
         Thread.sleep(1000);
       }
     }
-    catch (InterruptedException ignore) {
+    catch (InterruptedException e) {
+      Thread.currentThread().interrupt()
     }
     finally {
       context.releaseAlternateBuffer();

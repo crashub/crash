@@ -125,11 +125,16 @@ class jvm {
 
   @Command
   public void top(InvocationContext<MemoryUsage> context) {
-    while (!Thread.interrupted()) {
+    while (!Thread.currentThread().interrupted()) {
       out.cls();
       heap(context);
       out.flush();
-      Thread.sleep(1000);
+      try {
+        Thread.sleep(1000);
+      }
+      catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
     }
   }
 

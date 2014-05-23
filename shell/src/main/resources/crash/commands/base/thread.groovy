@@ -87,11 +87,16 @@ public class thread  {
     }
     context.takeAlternateBuffer();
     try {
-      while (!Thread.interrupted()) {
+      while (!Thread.currentThread().isInterrupted()) {
         out.cls()
         out.show(table);
         out.flush();
-        Thread.sleep(1000);
+        try {
+          Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+          Thread.currentThread().interrupt()
+        }
       }
     }
     finally {
