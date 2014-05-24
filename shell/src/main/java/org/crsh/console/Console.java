@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A console state machine, which delegates the state machine to the {@link Plugin} implementation.
@@ -34,6 +36,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Julien Viet
  */
 public class Console {
+
+  /** The logger. */
+  private static final Logger log = Logger.getLogger(Console.class.getName());
 
   /** . */
   static final int RUNNING = 0;
@@ -227,7 +232,13 @@ public class Console {
             KeyHandler keyHandler = processHandler.process.getKeyHandler();
             if (keyHandler != null) {
               KeyType type = KeyType.map(key.operation, key.sequence);
-              keyHandler.handle(type, key.sequence);
+              try {
+                keyHandler.handle(type, key.sequence);
+              }
+              catch (Throwable t) {
+                // Perhaps handle better this and treat error / exception differently
+                log.log(Level.SEVERE, "Key handler " + keyHandler + " failure", t);
+              }
             } else {
               buffer.addFirst(key);
             }

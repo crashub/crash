@@ -355,6 +355,24 @@ public class ConsoleTestCase extends AbstractConsoleTestCase {
     assertFalse(console.getKeyBuffer().iterator().hasNext());
   }
 
+  public void testHandleKeyExceptionInProcess() {
+    shell.addProcess(new SyncProcess() {
+      @Override
+      protected KeyHandler createKeyHandler() {
+        return new KeyHandler() {
+          @Override
+          public void handle(KeyType type, int[] sequence) {
+            throw new RuntimeException();
+          }
+        };
+      }
+    });
+    console.init();
+    console.on(KeyStrokes.a);
+    console.on(KeyStrokes.ENTER);
+    console.on(KeyStrokes.b);
+  }
+
   public void testCompleteEmpty() {
     shell.setCompleter(new SyncCompleter() {
       @Override
