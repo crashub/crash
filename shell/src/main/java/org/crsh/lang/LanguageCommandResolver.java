@@ -18,6 +18,7 @@
  */
 package org.crsh.lang;
 
+import org.crsh.lang.impl.script.ScriptCompiler;
 import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.Language;
 import org.crsh.plugin.PluginContext;
@@ -51,6 +52,9 @@ public class LanguageCommandResolver implements CommandResolver {
   final PluginContext context;
 
   public LanguageCommandResolver(PluginContext context) {
+
+    //
+    activeCompilers.put("script", ScriptCompiler.getInstance());
 
     //
     for (Language lang : context.getPlugins(Language.class)) {

@@ -54,7 +54,7 @@ public class ScriptRepl implements Repl {
     @Override public String getDisplayName() { return "Script 1.0"; }
     @Override public boolean isActive() { return true; }
     @Override public Repl getRepl() { return ScriptRepl.this; }
-    @Override public org.crsh.lang.spi.Compiler getCompiler() { return null; }
+    @Override public org.crsh.lang.spi.Compiler getCompiler() { return ScriptCompiler.instance; }
     @Override public void init(ShellSession session) { }
     @Override public void destroy(ShellSession session) { }
   };

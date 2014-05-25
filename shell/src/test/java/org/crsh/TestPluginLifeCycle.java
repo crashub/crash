@@ -67,6 +67,10 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
     this.crash = new CRaSH(context);
   }
 
+  public void bindScript(String name, String command) {
+    bind(name, "script", command);
+  }
+
   public void bindGroovy(String name, String command) {
     bind(name, "groovy", command);
   }

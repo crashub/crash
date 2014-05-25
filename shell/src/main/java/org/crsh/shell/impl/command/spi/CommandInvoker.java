@@ -23,6 +23,7 @@ import org.crsh.console.KeyHandler;
 import org.crsh.io.Filter;
 
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * A command invoker is a filter for a {@link org.crsh.command.CommandContext} kind of consumer.
@@ -37,8 +38,9 @@ public abstract class CommandInvoker<C, P> implements Filter<C, P, CommandContex
    *
    * @param consumer the consumer for this invocation
    * @throws IOException any io exception
+   * @throws UndeclaredThrowableException anything not declared
    */
-  public final void invoke(CommandContext<? super P> consumer) throws IOException {
+  public final void invoke(CommandContext<? super P> consumer) throws IOException, UndeclaredThrowableException {
     try {
       open(consumer);
     }

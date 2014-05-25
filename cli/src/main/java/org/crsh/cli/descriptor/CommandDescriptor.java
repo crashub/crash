@@ -84,7 +84,7 @@ public abstract class CommandDescriptor<T> {
   /** . */
   private final List<ParameterDescriptor> uParameters;
 
-  protected CommandDescriptor(String name, Description description) throws IntrospectionException {
+  protected CommandDescriptor(String name, Description description) {
 
     //
     this.description = description;
