@@ -78,6 +78,7 @@ public class CancellationTestCase extends AbstractCommandTestCase {
     ShellResponse resp = ctx.getResponse();
     assertEquals(ShellResponse.Cancelled.class, resp.getClass());
     assertTrue(interruptInterrupted);
+    assertFalse(t.isInterrupted());
   }
 
   public void testLoop() throws Exception {
