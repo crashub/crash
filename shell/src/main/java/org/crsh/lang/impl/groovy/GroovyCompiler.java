@@ -18,7 +18,6 @@
  */
 package org.crsh.lang.impl.groovy;
 
-import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.ast.AnnotationNode;
@@ -29,7 +28,6 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.Phases;
-import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.cli.Usage;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
@@ -39,13 +37,9 @@ import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
 import org.crsh.lang.spi.CommandResolution;
-import org.crsh.util.ClassCache;
-import org.crsh.lang.impl.groovy.command.GroovyScript;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.plugin.PluginContext;
-import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.ErrorType;
-import org.crsh.util.TimestampedObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
@@ -63,14 +57,10 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
   private static final Set<String> EXT = Collections.singleton("groovy");
 
   /** . */
-  private ClassCache<GroovyScript> scriptCache;
-
-  /** . */
   private GroovyClassFactory<Object> objectGroovyClassFactory;
 
   public GroovyCompiler(PluginContext context) {
     this.objectGroovyClassFactory = new GroovyClassFactory<Object>(context.getLoader(), Object.class, GroovyScriptCommand.class);
-    this.scriptCache = new ClassCache<GroovyScript>(context, new GroovyClassFactory<GroovyScript>(context.getLoader(), GroovyScript.class, GroovyScript.class), ResourceKind.LIFECYCLE);
   }
 
   public Set<String> getExtensions() {
@@ -79,32 +69,6 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
 
   public String doCallBack(ShellSession session, String name, String defaultValue) {
     return eval(session, name, defaultValue);
-  }
-
-  public void init(ShellSession session) {
-    try {
-      GroovyScript login = getLifeCycle(session, "login");
-      if (login != null) {
-        login.setBinding(new Binding(session));
-        login.run();
-      }
-    }
-    catch (CommandException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void destroy(ShellSession session) {
-    try {
-      GroovyScript logout = getLifeCycle(session, "logout");
-      if (logout != null) {
-        logout.setBinding(new Binding(session));
-        logout.run();
-      }
-    }
-    catch (CommandException e) {
-      e.printStackTrace();
-    }
   }
 
   /**
@@ -141,18 +105,6 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
     catch (Exception e) {
       log.log(Level.SEVERE, "Could not get a " + name + " message, will use empty", e);
       return def;
-    }
-  }
-
-  public GroovyScript getLifeCycle(ShellSession session, String name) throws CommandException, NullPointerException {
-    TimestampedObject<Class<? extends GroovyScript>> ref = scriptCache.getClass(name);
-    if (ref != null) {
-      Class<? extends GroovyScript> scriptClass = ref.getObject();
-      GroovyScript script = (GroovyScript)InvokerHelper.createScript(scriptClass, new Binding(session));
-      script.setBinding(new Binding(session));
-      return script;
-    } else {
-      return null;
     }
   }
 

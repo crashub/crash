@@ -18,16 +18,26 @@
  */
 package org.crsh.lang.impl.groovy;
 
+import groovy.lang.Binding;
 import groovy.lang.GroovySystem;
+import org.codehaus.groovy.runtime.InvokerHelper;
+import org.crsh.lang.impl.groovy.command.GroovyScript;
 import org.crsh.lang.spi.Language;
 import org.crsh.lang.spi.Repl;
 import org.crsh.plugin.PluginContext;
+import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.impl.command.ShellSession;
+import org.crsh.shell.impl.command.spi.CommandException;
+import org.crsh.util.ClassCache;
+import org.crsh.util.TimestampedObject;
 
 /**
  * @author Julien Viet
  */
 public class GroovyLanguage implements Language {
+
+  /** . */
+  private ClassCache<GroovyScript> scriptCache;
 
   /** . */
   private GroovyRepl repl;
@@ -38,6 +48,7 @@ public class GroovyLanguage implements Language {
   public GroovyLanguage(PluginContext context) {
     compiler = new GroovyCompiler(context);
     repl = new GroovyRepl(this);
+    scriptCache = new ClassCache<GroovyScript>(context, new GroovyClassFactory<GroovyScript>(context.getLoader(), GroovyScript.class, GroovyScript.class), ResourceKind.LIFECYCLE);
   }
 
   public String getName() {
@@ -66,11 +77,42 @@ public class GroovyLanguage implements Language {
 
   @Override
   public void init(ShellSession session) {
-    compiler.init(session);
+    try {
+      GroovyScript login = getLifeCycle(session, "login");
+      if (login != null) {
+        login.setBinding(new Binding(session));
+        login.run();
+      }
+    }
+    catch (CommandException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void destroy(ShellSession session) {
-    compiler.destroy(session);
+    try {
+      GroovyScript logout = getLifeCycle(session, "logout");
+      if (logout != null) {
+        logout.setBinding(new Binding(session));
+        logout.run();
+      }
+    }
+    catch (CommandException e) {
+      e.printStackTrace();
+    }
   }
+
+  public GroovyScript getLifeCycle(ShellSession session, String name) throws CommandException, NullPointerException {
+    TimestampedObject<Class<? extends GroovyScript>> ref = scriptCache.getClass(name);
+    if (ref != null) {
+      Class<? extends GroovyScript> scriptClass = ref.getObject();
+      GroovyScript script = (GroovyScript)InvokerHelper.createScript(scriptClass, new Binding(session));
+      script.setBinding(new Binding(session));
+      return script;
+    } else {
+      return null;
+    }
+  }
+
 }
