@@ -19,7 +19,7 @@
 package org.crsh.lang.impl.groovy.closure;
 
 import org.crsh.shell.impl.command.spi.Command;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 
 import java.util.ArrayList;
@@ -118,7 +118,7 @@ class CommandElement extends PipeLineElement {
   }
 
   @Override
-  CommandInvoker create() throws CreateCommandException {
+  CommandInvoker create() throws CommandException {
     return command.resolveCommand(options, subordinate, subordinateOptions, args).getInvoker();
   }
 

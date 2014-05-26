@@ -185,7 +185,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
         "throw new groovy.util.ScriptException()" +
         "}\n" +
         "}\n");
-    assertEvalError("a", ScriptException.class);
+    assertEvalError("a", groovy.util.ScriptException.class);
   }
 
   public void testThrowCheckedException() throws Exception {
@@ -235,7 +235,7 @@ public class CommandTestCase extends AbstractCommandTestCase {
         "throw new groovy.util.ScriptException()" +
         "}\n" +
         "}\n");
-    assertEvalError("a", ScriptException.class);
+    assertEvalError("a", groovy.util.ScriptException.class);
   }
 
   public void testUndeclaredThrowCheckedException() throws Exception {

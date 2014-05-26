@@ -21,8 +21,8 @@ package org.crsh.lang.impl.java;
 import org.crsh.cli.impl.lang.Instance;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandMatch;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 
 /**
@@ -37,7 +37,7 @@ abstract class BaseCommandMatch<T extends BaseCommand, C, P> extends CommandMatc
     this.baseShellCommand = baseShellCommand;
   }
 
-  public CommandInvoker<C, P> getInvoker() throws CreateCommandException {
+  public CommandInvoker<C, P> getInvoker() throws CommandException {
     final T command = baseShellCommand.createCommand();
     return getInvoker(command);
   }
@@ -65,5 +65,5 @@ abstract class BaseCommandMatch<T extends BaseCommand, C, P> extends CommandMatc
     }
   }
 
-  abstract BaseInvoker getInvoker(T command) throws CreateCommandException;
+  abstract BaseInvoker getInvoker(T command) throws CommandException;
 }

@@ -21,10 +21,10 @@ package org.crsh.shell.impl.command.system;
 import org.crsh.cli.descriptor.Format;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.shell.ErrorType;
 import org.crsh.shell.impl.command.spi.CommandResolver;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.lang.spi.CommandResolution;
 import org.crsh.shell.impl.command.spi.Command;
 
@@ -61,7 +61,7 @@ public class SystemResolver implements CommandResolver {
   }
 
   @Override
-  public Command<?> resolveCommand(String name) throws CreateCommandException, NullPointerException {
+  public Command<?> resolveCommand(String name) throws CommandException, NullPointerException {
     final Class<? extends BaseCommand> systemCommand = commands.get(name);
     if (systemCommand != null) {
       return createCommand(systemCommand).getCommand();
@@ -69,21 +69,23 @@ public class SystemResolver implements CommandResolver {
     return null;
   }
 
-  private <C extends BaseCommand> CommandResolution createCommand(final Class<C> commandClass) throws CreateCommandException {
+  private <C extends BaseCommand> CommandResolution createCommand(final Class<C> commandClass) throws CommandException {
     final ClassShellCommand<C> shellCommand;
+    final String description;
     try {
       shellCommand = new ClassShellCommand<C>(commandClass);
+      description = shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
     }
     catch (IntrospectionException e) {
-      throw new CreateCommandException(commandClass.getSimpleName(), ErrorType.INTERNAL, "Invalid cli annotation", e);
+      throw new CommandException(commandClass.getSimpleName(), ErrorType.INTERNAL, "Invalid cli annotation", e);
     }
     return new CommandResolution() {
       @Override
       public String getDescription() {
-        return shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
+        return description;
       }
       @Override
-      public Command<?> getCommand() throws CreateCommandException {
+      public Command<?> getCommand() throws CommandException {
         return shellCommand;
       }
     };

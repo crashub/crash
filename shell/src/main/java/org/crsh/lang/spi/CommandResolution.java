@@ -19,12 +19,12 @@
 package org.crsh.lang.spi;
 
 import org.crsh.shell.impl.command.spi.Command;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 
 /** @author Julien Viet */
 public interface CommandResolution {
 
   String getDescription();
 
-  Command<?> getCommand() throws CreateCommandException;
+  Command<?> getCommand() throws CommandException;
 }

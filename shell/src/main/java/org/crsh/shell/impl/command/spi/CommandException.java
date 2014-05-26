@@ -24,7 +24,7 @@ import org.crsh.shell.ErrorType;
 /**
  * Thrown when a command could not be created.
  */
-public final class CreateCommandException extends Exception {
+public final class CommandException extends Exception {
 
   /** . */
   private final String commandName;
@@ -32,7 +32,7 @@ public final class CreateCommandException extends Exception {
   /** . */
   private final ErrorType errorType;
 
-  public CreateCommandException(String commandName, ErrorType errorType, String message) {
+  public CommandException(String commandName, ErrorType errorType, String message) {
     super(message);
 
     //
@@ -40,7 +40,7 @@ public final class CreateCommandException extends Exception {
     this.errorType = errorType;
   }
 
-  public CreateCommandException(String commandName, ErrorType errorType, String message, Throwable cause) {
+  public CommandException(String commandName, ErrorType errorType, String message, Throwable cause) {
     super(message, cause);
 
     //

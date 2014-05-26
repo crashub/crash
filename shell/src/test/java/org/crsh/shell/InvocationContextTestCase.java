@@ -23,11 +23,12 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.AbstractTestCase;
+import org.crsh.cli.impl.SyntaxException;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
-import org.crsh.command.SyntaxException;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
 
 public class InvocationContextTestCase extends AbstractTestCase {
@@ -78,7 +79,8 @@ public class InvocationContextTestCase extends AbstractTestCase {
       new TestInvocationContext().execute(clazz);
       fail();
     }
-    catch (SyntaxException e) {
+    catch (UndeclaredThrowableException e) {
+      assertInstance(SyntaxException.class, e.getUndeclaredThrowable());
     }
   }
 

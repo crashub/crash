@@ -23,8 +23,8 @@ import org.crsh.lang.spi.Language;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandResolver;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.lang.spi.CommandResolution;
 import org.crsh.util.TimestampedObject;
 import org.crsh.vfs.Resource;
@@ -83,7 +83,7 @@ public class LanguageCommandResolver implements CommandResolver {
           CommandResolution resolution = resolveCommand2(name);
           commands.put(name, resolution.getDescription());
         }
-        catch (CreateCommandException e) {
+        catch (CommandException e) {
           //
         }
       }
@@ -92,12 +92,12 @@ public class LanguageCommandResolver implements CommandResolver {
   }
 
   @Override
-  public Command<?> resolveCommand(String name) throws CreateCommandException, NullPointerException {
+  public Command<?> resolveCommand(String name) throws CommandException, NullPointerException {
     CommandResolution resolution = resolveCommand2(name);
     return resolution != null ? resolution.getCommand() : null;
   }
 
-  private CommandResolution resolveCommand2(String name) throws CreateCommandException, NullPointerException {
+  private CommandResolution resolveCommand2(String name) throws CommandException, NullPointerException {
     for (Compiler manager : activeCompilers.values()) {
       for (String ext : manager.getExtensions()) {
         Iterable<Resource> resources = context.loadResources(name + "." + ext, ResourceKind.COMMAND);
@@ -112,7 +112,7 @@ public class LanguageCommandResolver implements CommandResolver {
     return null;
   }
 
-  private CommandResolution resolveCommand(org.crsh.lang.spi.Compiler manager, String name, Resource script) throws CreateCommandException {
+  private CommandResolution resolveCommand(org.crsh.lang.spi.Compiler manager, String name, Resource script) throws CommandException {
     TimestampedObject<CommandResolution> ref = commandCache.get(name);
     if (ref != null) {
       if (script.getTimestamp() != ref.getTimestamp()) {

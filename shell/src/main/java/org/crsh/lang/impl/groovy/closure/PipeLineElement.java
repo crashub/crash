@@ -18,13 +18,13 @@
  */
 package org.crsh.lang.impl.groovy.closure;
 
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 
 /** @author Julien Viet */
 abstract class PipeLineElement {
 
-  abstract CommandInvoker create() throws CreateCommandException;
+  abstract CommandInvoker create() throws CommandException;
 
   abstract void toString(StringBuilder buffer);
 

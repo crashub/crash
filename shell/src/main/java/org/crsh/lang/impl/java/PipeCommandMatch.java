@@ -25,14 +25,14 @@ import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.Pipe;
-import org.crsh.command.SyntaxException;
 import org.crsh.console.KeyHandler;
 import org.crsh.shell.impl.command.InvocationContextImpl;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.lang.reflect.UndeclaredThrowableException;
 
 /**
 * @author Julien Viet
@@ -68,7 +68,7 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
   }
 
   @Override
-  BaseInvoker getInvoker(T command) throws CreateCommandException {
+  BaseInvoker getInvoker(T command) throws CommandException {
 
     //
     return new BaseInvoker(command) {
@@ -95,7 +95,7 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
         return real instanceof KeyHandler ? (KeyHandler)real : null;
       }
 
-      public void open2(final CommandContext<P> consumer) {
+      public void open2(final CommandContext<P> consumer) throws UndeclaredThrowableException {
 
         //
         invocationContext = new InvocationContextImpl<P>(consumer);
@@ -112,9 +112,9 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
           ret = invoker.invoke(this);
         }
         catch (org.crsh.cli.impl.SyntaxException e) {
-          throw new SyntaxException(e.getMessage());
+          throw new UndeclaredThrowableException(e);
         } catch (InvocationException e) {
-          throw command.toScript(e.getCause());
+          throw new UndeclaredThrowableException(e.getCause());
         }
 
         // It's a pipe command

@@ -23,7 +23,7 @@ import groovy.lang.GroovyCodeSource;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.util.ClassFactory;
 import org.crsh.shell.ErrorType;
 
@@ -51,7 +51,7 @@ class GroovyClassFactory<T> extends ClassFactory<T> {
   }
 
   @Override
-  public Class<? extends T> parse(String name, String source) throws CreateCommandException {
+  public Class<? extends T> parse(String name, String source) throws CommandException {
     Class<?> clazz;
     try {
       GroovyCodeSource gcs = new GroovyCodeSource(source, name, "/groovy/shell");
@@ -59,16 +59,16 @@ class GroovyClassFactory<T> extends ClassFactory<T> {
       clazz = gcl.parseClass(gcs, false);
     }
     catch (NoClassDefFoundError e) {
-      throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+      throw new CommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
     }
     catch (CompilationFailedException e) {
-      throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+      throw new CommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
     }
 
     if (baseClass.isAssignableFrom(clazz)) {
       return clazz.asSubclass(baseClass);
     } else {
-      throw new CreateCommandException(name, ErrorType.INTERNAL, "Parsed script " + clazz.getName() +
+      throw new CommandException(name, ErrorType.INTERNAL, "Parsed script " + clazz.getName() +
           " does not implements " + baseClass.getName());
     }
   }

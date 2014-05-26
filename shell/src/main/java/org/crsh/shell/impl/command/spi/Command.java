@@ -31,7 +31,6 @@ import org.crsh.cli.impl.lang.Util;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.RuntimeContext;
-import org.crsh.command.SyntaxException;
 import org.crsh.shell.ErrorType;
 
 import java.io.IOException;
@@ -56,9 +55,9 @@ public abstract class Command<T> {
    *
    * @param context the related runtime context
    * @return the completer
-   * @throws CreateCommandException anything that would prevent completion to happen
+   * @throws CommandException anything that would prevent completion to happen
    */
-  protected abstract Completer getCompleter(RuntimeContext context) throws CreateCommandException;
+  protected abstract Completer getCompleter(RuntimeContext context) throws CommandException;
 
   /**
    * Resolve the real match for a specified invocation match.
@@ -111,7 +110,7 @@ public abstract class Command<T> {
    * @param line the original command line arguments
    * @return the completions
    */
-  public final CompletionMatch complete(RuntimeContext context, String line) throws CreateCommandException {
+  public final CompletionMatch complete(RuntimeContext context, String line) throws CommandException {
     CompletionMatcher matcher = getDescriptor().completer();
     Completer completer = getCompleter(context);
     try {
@@ -130,14 +129,15 @@ public abstract class Command<T> {
    * @param format the description format
    * @return the description
    */
-  public final String describe(String line, Format format) {
-    InvocationMatcher<T> analyzer = getDescriptor().matcher();
+  public final String describe(String line, Format format) throws CommandException {
+    CommandDescriptor<T> descriptor = getDescriptor();
+    InvocationMatcher<T> analyzer = descriptor.matcher();
     InvocationMatch<T> match;
     try {
       match = analyzer.parse(line);
     }
     catch (org.crsh.cli.impl.SyntaxException e) {
-      throw new SyntaxException(e.getMessage());
+      throw new CommandException(descriptor.getName(), ErrorType.SYNTAX, e.getMessage(), e);
     }
     return describe(match, format);
   }
@@ -148,11 +148,11 @@ public abstract class Command<T> {
    * @param line the command line arguments
    * @return the command
    */
-  public final CommandInvoker<?, ?> resolveInvoker(String line) throws CreateCommandException {
+  public final CommandInvoker<?, ?> resolveInvoker(String line) throws CommandException {
     return resolveCommand(line).getInvoker();
   }
 
-  public final CommandMatch<?, ?> resolveCommand(String line) throws CreateCommandException {
+  public final CommandMatch<?, ?> resolveCommand(String line) throws CommandException {
     CommandDescriptor<T> descriptor = getDescriptor();
     InvocationMatcher<T> analyzer = descriptor.matcher();
     InvocationMatch<T> match;
@@ -160,7 +160,7 @@ public abstract class Command<T> {
       match = analyzer.parse(line);
     }
     catch (org.crsh.cli.impl.SyntaxException e) {
-      throw new SyntaxException(e.getMessage());
+      throw new CommandException(descriptor.getName(), ErrorType.SYNTAX, e.getMessage(), e);
     }
     return resolve(match);
   }
@@ -174,7 +174,7 @@ public abstract class Command<T> {
    * @param arguments arguments
    * @return the command
    */
-  public final CommandMatch<?, ?> resolveCommand(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CreateCommandException {
+  public final CommandMatch<?, ?> resolveCommand(Map<String, ?> options, String subordinate, Map<String, ?> subordinateOptions, List<?> arguments) throws CommandException {
     InvocationMatcher<T> matcher = getDescriptor().matcher();
 
     //
@@ -202,7 +202,7 @@ public abstract class Command<T> {
       match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
     }
     catch (org.crsh.cli.impl.SyntaxException e) {
-      throw new CreateCommandException(getDescriptor().getName(), ErrorType.EVALUATION, "Could not resolve command", e);
+      throw new CommandException(getDescriptor().getName(), ErrorType.EVALUATION, "Could not resolve command", e);
     }
 
     //

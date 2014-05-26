@@ -36,7 +36,7 @@ import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.Command;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
 import org.crsh.lang.spi.CommandResolution;
 import org.crsh.util.ClassCache;
@@ -89,7 +89,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
         login.run();
       }
     }
-    catch (CreateCommandException e) {
+    catch (CommandException e) {
       e.printStackTrace();
     }
   }
@@ -102,7 +102,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
         logout.run();
       }
     }
-    catch (CreateCommandException e) {
+    catch (CommandException e) {
       e.printStackTrace();
     }
   }
@@ -144,7 +144,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
     }
   }
 
-  public GroovyScript getLifeCycle(ShellSession session, String name) throws CreateCommandException, NullPointerException {
+  public GroovyScript getLifeCycle(ShellSession session, String name) throws CommandException, NullPointerException {
     TimestampedObject<Class<? extends GroovyScript>> ref = scriptCache.getClass(name);
     if (ref != null) {
       Class<? extends GroovyScript> scriptClass = ref.getObject();
@@ -156,7 +156,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
     }
   }
 
-  public CommandResolution compileCommand(final String name, byte[] source) throws CreateCommandException, NullPointerException {
+  public CommandResolution compileCommand(final String name, byte[] source) throws CommandException, NullPointerException {
 
     //
     if (source == null) {
@@ -169,7 +169,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
       script = new String(source, "UTF-8");
     }
     catch (UnsupportedEncodingException e) {
-      throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+      throw new CommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
     }
 
     // Get the description using a partial compilation because it is much faster than compiling the class
@@ -181,7 +181,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
       cu.compile(Phases.CONVERSION);
     }
     catch (CompilationFailedException e) {
-      throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not compile command", e);
+      throw new CommandException(name, ErrorType.INTERNAL, "Could not compile command", e);
     }
     CompileUnit ast = cu.getAST();
     if (ast.getClasses().size() > 0) {
@@ -215,7 +215,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
         return description;
       }
       @Override
-      public Command<?> getCommand() throws CreateCommandException {
+      public Command<?> getCommand() throws CommandException {
         if (command == null) {
           Class<?> clazz = objectGroovyClassFactory.parse(name, script);
           if (BaseCommand.class.isAssignableFrom(clazz)) {
@@ -224,7 +224,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
               command = make(cmd);
             }
             catch (IntrospectionException e) {
-              throw new CreateCommandException(name, ErrorType.EVALUATION, "Invalid cli annotations", e);
+              throw new CommandException(name, ErrorType.EVALUATION, "Invalid cli annotations", e);
             }
           }
           else if (GroovyScriptCommand.class.isAssignableFrom(clazz)) {
@@ -233,11 +233,11 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
               command = make2(cmd);
             }
             catch (IntrospectionException e) {
-              throw new CreateCommandException(name, ErrorType.EVALUATION, "Invalid cli annotations", e);
+              throw new CommandException(name, ErrorType.EVALUATION, "Invalid cli annotations", e);
             }
           }
           else {
-            throw new CreateCommandException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
+            throw new CommandException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance");
           }
         }
         return command;

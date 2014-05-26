@@ -21,9 +21,8 @@ package org.crsh.lang.impl.script;
 
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.Command;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.command.SyntaxException;
 import org.crsh.shell.impl.command.pipeline.PipeLine;
 import org.crsh.shell.ErrorType;
 import org.crsh.text.Chunk;
@@ -56,9 +55,9 @@ public class PipeLineFactory {
    *
    * @param line the line
    * @param next the next factory
-   * @throws SyntaxException when the line is not correct
+   * @throws CommandException when the line is not correct
    */
-  public PipeLineFactory(String line, PipeLineFactory next) throws SyntaxException {
+  public PipeLineFactory(String line, PipeLineFactory next) throws CommandException {
     java.util.regex.Matcher m = p.matcher(line);
     if (m.find()) {
       this.name = m.group(1);
@@ -73,7 +72,7 @@ public class PipeLineFactory {
           sb.append('|').append(factory.line);
         }
       }
-      throw new SyntaxException(sb.toString());
+      throw new CommandException(line, ErrorType.SYNTAX, sb.toString());
     }
   }
 
@@ -85,16 +84,16 @@ public class PipeLineFactory {
     return next;
   }
 
-  public CommandInvoker<Void, Chunk> create(ShellSession session) throws CreateCommandException {
+  public CommandInvoker<Void, Chunk> create(ShellSession session) throws CommandException {
     LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();
     for (PipeLineFactory current = this;current != null;current = current.next) {
       Command<?> command = session.getCommand(current.name);
       if (command == null) {
-        throw new CreateCommandException(current.name, ErrorType.EVALUATION, "Unknown command");
+        throw new CommandException(current.name, ErrorType.EVALUATION, "Unknown command");
       }
       CommandInvoker commandInvoker = command.resolveInvoker(current.rest);
       if (commandInvoker == null) {
-        throw new CreateCommandException(current.name, ErrorType.EVALUATION, "Command " + current.rest + " cannot not be invoked");
+        throw new CommandException(current.name, ErrorType.EVALUATION, "Command " + current.rest + " cannot not be invoked");
       }
       pipes.add(commandInvoker);
     }

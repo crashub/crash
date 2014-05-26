@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 
 /**
  * Various test related to command dispatch.
@@ -224,7 +224,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "public String main() {\n" +
         "try {" +
         "groovy_script_exception_command()" +
-        "} catch(org.crsh.command.ScriptException e) {\n" +
+        "} catch(groovy.util.ScriptException e) {\n" +
         "return 'bar'\n" +
         "}\n" +
         "}\n" +
@@ -239,7 +239,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   public void testGroovyScriptExceptionInScript() {
     String foo = "try {" +
         "groovy_script_exception_command()" +
-        "} catch(org.crsh.command.ScriptException e) {\n" +
+        "} catch(groovy.util.ScriptException e) {\n" +
         "out << 'bar'\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);
@@ -317,7 +317,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "public String main() {\n" +
         "try {\n" +
         "cannot_create_command()" +
-        "} catch (" + CreateCommandException.class.getName() + " e) {\n" +
+        "} catch (" + CommandException.class.getName() + " e) {\n" +
         "return 'bar';\n" +
         "}\n" +
         "}\n" +
@@ -332,7 +332,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   public void testCannotCreateCommandInScript() {
     String foo = "try {\n" +
         "cannot_create_command()" +
-        "} catch (" + CreateCommandException.class.getName() + " e) {\n" +
+        "} catch (" + CommandException.class.getName() + " e) {\n" +
         "out << 'bar';\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);

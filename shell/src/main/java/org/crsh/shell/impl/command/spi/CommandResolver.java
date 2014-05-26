@@ -38,8 +38,8 @@ public interface CommandResolver {
    *
    * @param name the command name
    * @return the command shell
-   * @throws CreateCommandException if an error occured preventing the command creation
+   * @throws CommandException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  Command<?> resolveCommand(String name) throws CreateCommandException, NullPointerException;
+  Command<?> resolveCommand(String name) throws CommandException, NullPointerException;
 }

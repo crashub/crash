@@ -25,7 +25,7 @@ import groovy.lang.MissingPropertyException;
 import groovy.lang.Tuple;
 import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.crsh.shell.impl.command.spi.Command;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.util.Utils;
@@ -231,7 +231,7 @@ public class PipeLineClosure extends Closure {
     return new PipeLineInvoker(this, args);
   }
 
-  LinkedList<CommandInvoker> resolve2(Object[] args) throws CreateCommandException {
+  LinkedList<CommandInvoker> resolve2(Object[] args) throws CommandException {
 
     // Resolve options and arguments
     Map<String, Object> invokerOptions = Collections.emptyMap();

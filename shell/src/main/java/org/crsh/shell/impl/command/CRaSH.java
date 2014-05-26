@@ -22,8 +22,8 @@ package org.crsh.shell.impl.command;
 import org.crsh.lang.LanguageCommandResolver;
 import org.crsh.lang.spi.Language;
 import org.crsh.shell.impl.command.spi.Command;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandResolver;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
 import org.crsh.plugin.PluginContext;
 import org.crsh.shell.impl.command.system.SystemResolver;
 
@@ -89,10 +89,10 @@ public class CRaSH {
    *
    * @param name the command name
    * @return a command instance
-   * @throws org.crsh.shell.impl.command.spi.CreateCommandException if an error occured preventing the command creation
+   * @throws org.crsh.shell.impl.command.spi.CommandException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  public Command<?> getCommand(String name) throws CreateCommandException, NullPointerException {
+  public Command<?> getCommand(String name) throws CommandException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null name accepted");
     }

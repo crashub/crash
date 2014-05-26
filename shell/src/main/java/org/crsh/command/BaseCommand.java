@@ -22,7 +22,6 @@ package org.crsh.command;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.logging.Logger;
 
 public abstract class BaseCommand extends AbstractCommand {
@@ -60,9 +59,5 @@ public abstract class BaseCommand extends AbstractCommand {
     invoker.open(context);
     invoker.flush();
     invoker.close();
-  }
-
-  public UndeclaredThrowableException toScript(Throwable cause) {
-    return new UndeclaredThrowableException(cause);
   }
 }

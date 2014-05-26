@@ -24,10 +24,9 @@ import org.crsh.cli.impl.lang.Instance;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.SyntaxException;
 import org.crsh.console.KeyHandler;
 import org.crsh.shell.impl.command.InvocationContextImpl;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -59,7 +58,7 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
   }
 
   @Override
-  BaseInvoker getInvoker(T command) throws CreateCommandException {
+  BaseInvoker getInvoker(T command) throws CommandException {
 
     //
     return new BaseInvoker(command) {
@@ -112,9 +111,9 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
           ret = invoker.invoke(this);
         }
         catch (org.crsh.cli.impl.SyntaxException e) {
-          throw new SyntaxException(e.getMessage());
+          throw new UndeclaredThrowableException(e);
         } catch (InvocationException e) {
-          throw command.toScript(e.getCause());
+          throw new UndeclaredThrowableException(e.getCause());
         }
 
         //

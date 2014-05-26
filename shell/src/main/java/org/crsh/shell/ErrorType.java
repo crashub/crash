@@ -21,6 +21,8 @@ package org.crsh.shell;
 
 public enum ErrorType {
 
+  SYNTAX,
+
   EVALUATION,
 
   INTERNAL

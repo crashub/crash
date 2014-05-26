@@ -18,7 +18,8 @@
  */
 package org.crsh.lang.impl.script;
 
-import org.crsh.command.SyntaxException;
+import org.crsh.shell.ErrorType;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.util.Utils;
 
 /**
@@ -33,21 +34,20 @@ public class Token {
   public final Token next;
 
   public Token(String value, Token next) {
+    if (value == null) {
+      throw new NullPointerException("No null value");
+    }
     this.value = value;
     this.next = next;
   }
 
-  public PipeLineFactory createFactory() throws SyntaxException {
+  public PipeLineFactory createFactory() throws CommandException {
     if (next != null) {
-      if (value == null) {
-        throw new SyntaxException("");
+      PipeLineFactory nextFactory = next.createFactory();
+      if (nextFactory != null) {
+        return new PipeLineFactory(value, nextFactory);
       } else {
-        PipeLineFactory nextFactory = next.createFactory();
-        if (nextFactory != null) {
-          return new PipeLineFactory(value, nextFactory);
-        } else {
-          throw new SyntaxException("");
-        }
+        throw new CommandException(value, ErrorType.SYNTAX, "");
       }
     } else {
       return Utils.notBlank(value) ? new PipeLineFactory(value, null) : null;

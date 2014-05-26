@@ -332,13 +332,9 @@ public class PipeTestCase extends AbstractCommandTestCase {
     lifeCycle.bindClass("b", Commands.Id.class);
     lifeCycle.bindClass("c", Commands.Count.class);
     String result = assertOk("a | b | c");
-    System.out.println("result = " + result);
-    System.out.println("result = " + result);
-    System.out.println("result = " + result);
-    System.out.println("result = " + result);
   }
 
   public void testPipeEOL() {
-    assertError("command |", ErrorType.EVALUATION);
+    assertError("command |", ErrorType.SYNTAX);
   }
 }

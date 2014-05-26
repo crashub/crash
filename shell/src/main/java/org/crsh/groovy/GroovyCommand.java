@@ -27,9 +27,8 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.command.spi.Command;
@@ -50,14 +49,6 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
 
   protected GroovyCommand() {
     this.metaClass = InvokerHelper.getMetaClass(this.getClass());
-  }
-
-  @Override
-  public UndeclaredThrowableException toScript(Throwable cause) {
-    if (cause instanceof groovy.util.ScriptException) {
-      cause = unwrap((groovy.util.ScriptException)cause);
-    }
-    return super.toScript(cause);
   }
 
   public static ScriptException unwrap(groovy.util.ScriptException cause) {
@@ -97,7 +88,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
           try {
             cmd = crash.getCommand(name);
           }
-          catch (CreateCommandException ce) {
+          catch (CommandException ce) {
             throw new InvokerInvocationException(ce);
           }
           if (cmd != null) {
@@ -148,7 +139,7 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
             InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
             return new PipeLineClosure(ic, property, cmd);
           }
-        } catch (CreateCommandException e) {
+        } catch (CommandException e) {
           throw new InvokerInvocationException(e);
         }
       }

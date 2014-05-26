@@ -20,22 +20,23 @@
 package org.crsh.lang.impl.script;
 
 import junit.framework.TestCase;
-import org.crsh.command.SyntaxException;
+import org.crsh.shell.ErrorType;
+import org.crsh.shell.impl.command.spi.CommandException;
 
 public class ParserTestCase extends TestCase {
 
-  public void testBlank() {
+  public void testBlank() throws CommandException {
     assertNull(Token.parse("").createFactory());
     assertNull(Token.parse(" ").createFactory());
   }
 
-  public void testCommand() {
+  public void testCommand() throws CommandException {
     PipeLineFactory e = Token.parse("a").createFactory();
     assertEquals("a", e.getLine());
     assertNull(e.getNext());
   }
 
-  public void testPipe() {
+  public void testPipe() throws CommandException {
     PipeLineFactory e = Token.parse("a|b").createFactory();
     assertEquals("a", e.getLine());
     assertEquals("b", e.getNext().getLine());
@@ -53,7 +54,8 @@ public class ParserTestCase extends TestCase {
       Token.parse(s).createFactory();
       fail();
     }
-    catch (SyntaxException ignore) {
+    catch (CommandException e) {
+      assertEquals(ErrorType.SYNTAX, e.getErrorType());
     }
   }
 }

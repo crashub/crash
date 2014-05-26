@@ -20,7 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
-import org.crsh.shell.impl.command.spi.CreateCommandException;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.lang.impl.script.Token;
@@ -94,11 +94,11 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
   public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
     CRaSHSession session = (CRaSHSession)getSession();
     Token token2 = Token.parse(s);
-    PipeLineFactory factory = token2.createFactory();
     try {
+      PipeLineFactory factory = token2.createFactory();
       return factory.create(session);
     }
-    catch (CreateCommandException e) {
+    catch (CommandException e) {
       throw new ScriptException(e);
     }
   }

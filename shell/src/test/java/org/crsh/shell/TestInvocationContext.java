@@ -19,8 +19,10 @@
 
 package org.crsh.shell;
 
+import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.io.Consumer;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
@@ -33,6 +35,7 @@ import org.crsh.text.Chunk;
 import org.crsh.text.ChunkBuffer;
 
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.*;
 
 public class TestInvocationContext<C> extends RuntimeContextImpl implements CommandContext<Object> {
@@ -133,15 +136,15 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     return reader;
   }
 
-  public <B extends BaseCommand> String execute(Class<B> commandClass, String... args) throws Exception {
+  public <B extends BaseCommand> String execute(Class<B> commandClass, String... args) throws IntrospectionException, IOException, UndeclaredThrowableException, CommandException  {
     return execute(new ClassShellCommand<B>(commandClass), args);
   }
 
-  public <B extends GroovyScriptCommand> String execute2(Class<B> commandClass, String... args) throws Exception {
+  public <B extends GroovyScriptCommand> String execute2(Class<B> commandClass, String... args) throws IntrospectionException, IOException, UndeclaredThrowableException, CommandException {
     return execute(new GroovyScriptShellCommand<B>(commandClass), args);
   }
 
-  private String execute(Command<?> command, String... args) throws Exception {
+  private String execute(Command<?> command, String... args) throws IOException, UndeclaredThrowableException, CommandException {
     if (reader != null) {
       reader.clear();
     }
