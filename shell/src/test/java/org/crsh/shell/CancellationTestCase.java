@@ -23,6 +23,7 @@ import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CancellationTestCase extends AbstractCommandTestCase {
 
@@ -30,10 +31,10 @@ public class CancellationTestCase extends AbstractCommandTestCase {
   private static final Object interrupLock = new Object();
 
   /** . */
-  private static boolean interruptDoCancel = false;
+  private static boolean interruptDoCancel;
 
   /** . */
-  private static boolean interruptInterrupted = false;
+  private static boolean interruptInterrupted;
 
   public static void interruptCallback() {
     synchronized (interrupLock) {
@@ -43,17 +44,35 @@ public class CancellationTestCase extends AbstractCommandTestCase {
         interrupLock.wait(10 * 1000);
       }
       catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
         interruptInterrupted = true;
       }
     }
   }
 
-  public void testInterrupt() {
-    final BaseProcessContext ctx = create("invoke " + CancellationTestCase.class.getName() + " interruptCallback");
+  public void testInterrupt() throws Exception {
+    lifeCycle.bindGroovy("interrupt", getClass().getName() + ".interruptCallback()");
+    lifeCycle.bindGroovy("caller", "interrupt()");
+    doTest("interrupt");
+    doTest("caller");
+  }
+
+  private void doTest(String command) {
+    interruptDoCancel = false;
+    interruptInterrupted = false;
+
+    //
+    final BaseProcessContext ctx = create(command);
+    final AtomicReference<Boolean> interrupted = new AtomicReference<Boolean>();
     Thread t = new Thread() {
       @Override
       public void run() {
-        ctx.execute();
+        try {
+          ctx.execute();
+        }
+        finally {
+          interrupted.set(isInterrupted());
+        }
       }
     };
     t.start();
@@ -78,7 +97,13 @@ public class CancellationTestCase extends AbstractCommandTestCase {
     ShellResponse resp = ctx.getResponse();
     assertEquals(ShellResponse.Cancelled.class, resp.getClass());
     assertTrue(interruptInterrupted);
-    assertFalse(t.isInterrupted());
+    while (true) {
+      Boolean b = interrupted.get();
+      if (b != null) {
+        assertTrue("Was not expecting thread to be interrupted", b);
+        break;
+      }
+    }
   }
 
   public void testLoop() throws Exception {
