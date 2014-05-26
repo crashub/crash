@@ -747,7 +747,9 @@ class EditorAction {
         editor.console.driver.writeCRLF();
         editor.console.driver.flush();
         String request = editor.visitor.getRaw();
-        editor.addToHistory(request);
+        if (request.length() > 0) {
+          editor.addToHistory(request);
+        }
         return request;
       } else {
         buffer.append('\n');
