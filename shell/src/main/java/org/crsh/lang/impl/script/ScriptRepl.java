@@ -82,7 +82,7 @@ public class ScriptRepl implements Repl {
       factory = Token.parse(request).createFactory();
     }
     catch (CommandException e) {
-      return new ReplResponse.Response(ShellResponse.error(e.getErrorType(), e.getMessage(), e.getCause()));
+      return new ReplResponse.Response(ShellResponse.error(e.getErrorKind(), e.getMessage(), e.getCause()));
     }
     if (factory != null) {
       try {

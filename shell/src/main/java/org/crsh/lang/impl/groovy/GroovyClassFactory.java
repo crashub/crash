@@ -23,9 +23,9 @@ import groovy.lang.GroovyCodeSource;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.util.ClassFactory;
-import org.crsh.shell.ErrorType;
 
 /** @author Julien Viet */
 class GroovyClassFactory<T> extends ClassFactory<T> {
@@ -59,16 +59,16 @@ class GroovyClassFactory<T> extends ClassFactory<T> {
       clazz = gcl.parseClass(gcs, false);
     }
     catch (NoClassDefFoundError e) {
-      throw new CommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+      throw new CommandException(name, ErrorKind.INTERNAL, "Could not compile command script " + name, e);
     }
     catch (CompilationFailedException e) {
-      throw new CommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+      throw new CommandException(name, ErrorKind.INTERNAL, "Could not compile command script " + name, e);
     }
 
     if (baseClass.isAssignableFrom(clazz)) {
       return clazz.asSubclass(baseClass);
     } else {
-      throw new CommandException(name, ErrorType.INTERNAL, "Parsed script " + clazz.getName() +
+      throw new CommandException(name, ErrorKind.INTERNAL, "Parsed script " + clazz.getName() +
           " does not implements " + baseClass.getName());
     }
   }

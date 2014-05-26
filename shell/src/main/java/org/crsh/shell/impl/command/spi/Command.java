@@ -31,7 +31,7 @@ import org.crsh.cli.impl.lang.Util;
 import org.crsh.cli.spi.Completer;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.RuntimeContext;
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -137,7 +137,7 @@ public abstract class Command<T> {
       match = analyzer.parse(line);
     }
     catch (org.crsh.cli.impl.SyntaxException e) {
-      throw new CommandException(descriptor.getName(), ErrorType.SYNTAX, e.getMessage(), e);
+      throw new CommandException(descriptor.getName(), ErrorKind.SYNTAX, e.getMessage(), e);
     }
     return describe(match, format);
   }
@@ -160,7 +160,7 @@ public abstract class Command<T> {
       match = analyzer.parse(line);
     }
     catch (org.crsh.cli.impl.SyntaxException e) {
-      throw new CommandException(descriptor.getName(), ErrorType.SYNTAX, e.getMessage(), e);
+      throw new CommandException(descriptor.getName(), ErrorKind.SYNTAX, e.getMessage(), e);
     }
     return resolve(match);
   }
@@ -202,7 +202,7 @@ public abstract class Command<T> {
       match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
     }
     catch (org.crsh.cli.impl.SyntaxException e) {
-      throw new CommandException(getDescriptor().getName(), ErrorType.EVALUATION, "Could not resolve command", e);
+      throw new CommandException(getDescriptor().getName(), ErrorKind.EVALUATION, "Could not resolve command", e);
     }
 
     //

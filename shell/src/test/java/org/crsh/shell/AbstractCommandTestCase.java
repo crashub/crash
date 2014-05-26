@@ -117,7 +117,7 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
   }
 
   protected final Throwable assertEvalError(String s) {
-    return assertError(s, ErrorType.EVALUATION);
+    return assertError(s, ErrorKind.EVALUATION);
   }
 
   protected final void assertInternalError(String s, Class<? extends Throwable> expectedThrowableType) {
@@ -126,18 +126,18 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
   }
 
   protected final Throwable assertInternalError(String s) {
-    return assertError(s, ErrorType.INTERNAL);
+    return assertError(s, ErrorKind.INTERNAL);
   }
 
-  protected final void assertError(String s, ErrorType expectedErrorType, Class<? extends Throwable> expectedThrowableType) {
+  protected final void assertError(String s, ErrorKind expectedErrorType, Class<? extends Throwable> expectedThrowableType) {
     Throwable error = assertError(s, expectedErrorType);
     assertType(expectedThrowableType, error);
   }
 
-  protected final Throwable assertError(String s, ErrorType expectedErrorType) {
+  protected final Throwable assertError(String s, ErrorKind expectedErrorType) {
     ShellResponse resp = evaluate(s);
     ShellResponse.Error error = assertInstance(ShellResponse.Error.class, resp);
-    assertEquals(expectedErrorType, error.getType());
+    assertEquals(expectedErrorType, error.getKind());
     return error.getThrowable();
   }
 

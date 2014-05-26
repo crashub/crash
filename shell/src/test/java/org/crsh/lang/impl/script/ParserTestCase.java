@@ -20,7 +20,7 @@
 package org.crsh.lang.impl.script;
 
 import junit.framework.TestCase;
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandException;
 
 public class ParserTestCase extends TestCase {
@@ -55,7 +55,7 @@ public class ParserTestCase extends TestCase {
       fail();
     }
     catch (CommandException e) {
-      assertEquals(ErrorType.SYNTAX, e.getErrorType());
+      assertEquals(ErrorKind.SYNTAX, e.getErrorKind());
     }
   }
 }

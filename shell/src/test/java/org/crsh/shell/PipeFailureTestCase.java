@@ -65,7 +65,7 @@ public class PipeFailureTestCase extends AbstractCommandTestCase {
   public void testFailDuringOpen1() {
     lifeCycle.bindClass("FailDuringOpen1", Commands.FailDuringOpen1.class);
     Commands.FailDuringOpen1.reset();
-    assertError("FailDuringOpen1", ErrorType.EVALUATION, ScriptException.class);
+    assertError("FailDuringOpen1", ErrorKind.EVALUATION, ScriptException.class);
     assertEquals(1, Commands.FailDuringOpen1.openCount.get());
     assertEquals(0, Commands.FailDuringOpen1.provideCound.get());
     assertEquals(0, Commands.FailDuringOpen1.flushCount.get());
@@ -77,7 +77,7 @@ public class PipeFailureTestCase extends AbstractCommandTestCase {
     lifeCycle.bindClass("FailDuringOpen2", Commands.FailDuringOpen2.class);
     Commands.FailDuringOpen1.reset();
     Commands.FailDuringOpen2.reset();
-    assertError("FailDuringOpen1 | FailDuringOpen2", ErrorType.EVALUATION, ScriptException.class);
+    assertError("FailDuringOpen1 | FailDuringOpen2", ErrorKind.EVALUATION, ScriptException.class);
     assertEquals(1, Commands.FailDuringOpen1.openCount.get());
     assertEquals(0, Commands.FailDuringOpen1.provideCound.get());
     assertEquals(0, Commands.FailDuringOpen1.flushCount.get());
@@ -93,7 +93,7 @@ public class PipeFailureTestCase extends AbstractCommandTestCase {
     lifeCycle.bindClass("FailDuringOpen2", Commands.FailDuringOpen2.class);
     Commands.FailDuringOpen1.reset();
     Commands.FailDuringOpen2.reset();
-    assertError("FailDuringOpen2 | FailDuringOpen1", ErrorType.EVALUATION, ScriptException.class);
+    assertError("FailDuringOpen2 | FailDuringOpen1", ErrorKind.EVALUATION, ScriptException.class);
     assertEquals(1, Commands.FailDuringOpen1.openCount.get());
     assertEquals(0, Commands.FailDuringOpen1.provideCound.get());
     assertEquals(0, Commands.FailDuringOpen1.flushCount.get());

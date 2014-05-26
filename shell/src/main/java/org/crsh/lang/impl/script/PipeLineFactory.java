@@ -19,12 +19,12 @@
 
 package org.crsh.lang.impl.script;
 
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.pipeline.PipeLine;
-import org.crsh.shell.ErrorType;
 import org.crsh.text.Chunk;
 
 import java.util.LinkedList;
@@ -72,7 +72,7 @@ public class PipeLineFactory {
           sb.append('|').append(factory.line);
         }
       }
-      throw new CommandException(line, ErrorType.SYNTAX, sb.toString());
+      throw new CommandException(line, ErrorKind.SYNTAX, sb.toString());
     }
   }
 
@@ -89,11 +89,11 @@ public class PipeLineFactory {
     for (PipeLineFactory current = this;current != null;current = current.next) {
       Command<?> command = session.getCommand(current.name);
       if (command == null) {
-        throw new CommandException(current.name, ErrorType.EVALUATION, "Unknown command");
+        throw new CommandException(current.name, ErrorKind.EVALUATION, "Unknown command");
       }
       CommandInvoker commandInvoker = command.resolveInvoker(current.rest);
       if (commandInvoker == null) {
-        throw new CommandException(current.name, ErrorType.EVALUATION, "Command " + current.rest + " cannot not be invoked");
+        throw new CommandException(current.name, ErrorKind.EVALUATION, "Command " + current.rest + " cannot not be invoked");
       }
       pipes.add(commandInvoker);
     }

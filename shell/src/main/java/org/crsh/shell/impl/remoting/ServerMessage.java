@@ -20,7 +20,7 @@
 package org.crsh.shell.impl.remoting;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.ShellResponse;
 
 import java.io.IOException;
@@ -108,7 +108,7 @@ public class ServerMessage implements Serializable {
       if (response instanceof ShellResponse.Error) {
         oos.writeBoolean(false);
         ShellResponse.Error error = (ShellResponse.Error)response;
-        oos.writeObject(error.getType());
+        oos.writeObject(error.getKind());
         oos.writeObject(error.getMessage());
         oos.writeObject(error.getThrowable().getMessage());
         oos.writeObject(error.getThrowable().getStackTrace());
@@ -122,7 +122,7 @@ public class ServerMessage implements Serializable {
       if (ois.readBoolean()) {
         response = (ShellResponse)ois.readObject();
       } else {
-        ErrorType type = (ErrorType)ois.readObject();
+        ErrorKind type = (ErrorKind)ois.readObject();
         String message = (String)ois.readObject();
         String errorMessage = (String)ois.readObject();
         StackTraceElement[] errorTrace = (StackTraceElement[])ois.readObject();

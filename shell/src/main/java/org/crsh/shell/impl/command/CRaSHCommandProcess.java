@@ -2,7 +2,7 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.command.ScriptException;
 import org.crsh.console.KeyHandler;
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
@@ -51,15 +51,15 @@ class CRaSHCommandProcess extends CRaSHProcess {
   }
 
   private ShellResponse.Error build(Throwable throwable) {
-    ErrorType errorType;
+    ErrorKind errorType;
     if (throwable instanceof ScriptException || throwable instanceof UndeclaredThrowableException) {
-      errorType = ErrorType.EVALUATION;
+      errorType = ErrorKind.EVALUATION;
       Throwable cause = throwable.getCause();
       if (cause != null) {
         throwable = cause;
       }
     } else {
-      errorType = ErrorType.INTERNAL;
+      errorType = ErrorKind.INTERNAL;
     }
     String result;
     String msg = throwable.getMessage();

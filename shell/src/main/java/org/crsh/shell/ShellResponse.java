@@ -41,26 +41,26 @@ public abstract class ShellResponse implements Serializable {
   }
 
   public static Error evalError(String msg, Throwable throwable) {
-    return new Error(ErrorType.EVALUATION, msg, throwable);
+    return new Error(ErrorKind.EVALUATION, msg, throwable);
   }
 
   public static Error evalError(String msg) {
-    return new Error(ErrorType.EVALUATION, msg);
+    return new Error(ErrorKind.EVALUATION, msg);
   }
 
   public static Error internalError(String msg, Throwable throwable) {
-    return new Error(ErrorType.INTERNAL, msg, throwable);
+    return new Error(ErrorKind.INTERNAL, msg, throwable);
   }
 
   public static Error internalError(String msg) {
-    return new Error(ErrorType.INTERNAL, msg);
+    return new Error(ErrorKind.INTERNAL, msg);
   }
 
-  public static Error error(ErrorType type, String msg, Throwable throwable) {
+  public static Error error(ErrorKind type, String msg, Throwable throwable) {
     return new Error(type, msg, throwable);
   }
 
-  public static Error error(ErrorType type, String msg) {
+  public static Error error(ErrorKind type, String msg) {
     return new Error(type, msg);
   }
 
@@ -169,7 +169,7 @@ public abstract class ShellResponse implements Serializable {
   public static class Error extends ShellResponse {
 
     /** . */
-    private final ErrorType type;
+    private final ErrorKind kind;
 
     /** The throwable. */
     private final Throwable throwable;
@@ -177,20 +177,20 @@ public abstract class ShellResponse implements Serializable {
     /** . */
     private final String msg;
 
-    private Error(ErrorType type, String msg) {
-      this.type = type;
+    private Error(ErrorKind kind, String msg) {
+      this.kind = kind;
       this.msg = msg;
       this.throwable = null;
     }
 
-    private Error(ErrorType type, String msg, Throwable throwable) {
-      this.type = type;
+    private Error(ErrorKind kind, String msg, Throwable throwable) {
+      this.kind = kind;
       this.msg = msg;
       this.throwable = throwable;
     }
 
-    public ErrorType getType() {
-      return type;
+    public ErrorKind getKind() {
+      return kind;
     }
 
     public Throwable getThrowable() {
@@ -203,7 +203,7 @@ public abstract class ShellResponse implements Serializable {
     }
 
     public String toString() {
-      return "ShellResponse.Error[type=" + type + ",msg=" + msg + "]";
+      return "ShellResponse.Error[kind=" + kind + ",msg=" + msg + "]";
     }
   }
 }

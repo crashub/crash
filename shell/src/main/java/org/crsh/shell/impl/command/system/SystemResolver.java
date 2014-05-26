@@ -21,9 +21,9 @@ package org.crsh.shell.impl.command.system;
 import org.crsh.cli.descriptor.Format;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.lang.impl.java.ClassShellCommand;
-import org.crsh.shell.ErrorType;
 import org.crsh.shell.impl.command.spi.CommandResolver;
 import org.crsh.lang.spi.CommandResolution;
 import org.crsh.shell.impl.command.spi.Command;
@@ -77,7 +77,7 @@ public class SystemResolver implements CommandResolver {
       description = shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
     }
     catch (IntrospectionException e) {
-      throw new CommandException(commandClass.getSimpleName(), ErrorType.INTERNAL, "Invalid cli annotation", e);
+      throw new CommandException(commandClass.getSimpleName(), ErrorKind.INTERNAL, "Invalid cli annotation", e);
     }
     return new CommandResolution() {
       @Override

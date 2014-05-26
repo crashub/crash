@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-public enum ErrorType {
+public enum ErrorKind {
 
   SYNTAX,
 

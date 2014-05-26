@@ -19,7 +19,7 @@
 package org.crsh.lang.impl.script;
 
 import org.crsh.shell.AbstractCommandTestCase;
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 
 /**
  * @author Julien Viet
@@ -28,7 +28,7 @@ public class ScriptTestCase extends AbstractCommandTestCase {
 
   public void testBye() {
     lifeCycle.bindScript("test", "bye");
-    Throwable t = assertError("test", ErrorType.EVALUATION);
+    Throwable t = assertError("test", ErrorKind.EVALUATION);
     assertEquals(Exception.class, t.getClass());
     assertEquals("Was not expecting response UnknownCommand[bye]", t.getMessage());
   }
@@ -46,21 +46,21 @@ public class ScriptTestCase extends AbstractCommandTestCase {
 
   public void testException() {
     lifeCycle.bindScript("test", "fail this_is_an_exception");
-    Throwable t = assertError("test", ErrorType.EVALUATION);
+    Throwable t = assertError("test", ErrorKind.EVALUATION);
     assertEquals(Exception.class, t.getClass());
     assertEquals("this_is_an_exception", t.getMessage());
   }
 
   public void testRuntimeException() {
     lifeCycle.bindScript("test", "fail -t RUNTIME this_is_a_runtime_exception");
-    Throwable t = assertError("test", ErrorType.EVALUATION);
+    Throwable t = assertError("test", ErrorKind.EVALUATION);
     assertEquals(RuntimeException.class, t.getClass());
     assertEquals("this_is_a_runtime_exception", t.getMessage());
   }
 
   public void testError() {
     lifeCycle.bindScript("test", "fail -t ERROR this_is_an_error");
-    Throwable t = assertError("test", ErrorType.INTERNAL);
+    Throwable t = assertError("test", ErrorKind.INTERNAL);
     assertEquals(Error.class, t.getClass());
     assertEquals("this_is_an_error", t.getMessage());
   }

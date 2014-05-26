@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.command.spi;
 
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 
 /**
  * Thrown when a command could not be created.
@@ -30,26 +30,26 @@ public final class CommandException extends Exception {
   private final String commandName;
 
   /** . */
-  private final ErrorType errorType;
+  private final ErrorKind errorKind ;
 
-  public CommandException(String commandName, ErrorType errorType, String message) {
+  public CommandException(String commandName, ErrorKind errorKind, String message) {
     super(message);
 
     //
     this.commandName = commandName;
-    this.errorType = errorType;
+    this.errorKind = errorKind;
   }
 
-  public CommandException(String commandName, ErrorType errorType, String message, Throwable cause) {
+  public CommandException(String commandName, ErrorKind errorKind, String message, Throwable cause) {
     super(message, cause);
 
     //
     this.commandName = commandName;
-    this.errorType = errorType;
+    this.errorKind = errorKind;
   }
 
-  public ErrorType getErrorType() {
-    return errorType;
+  public ErrorKind getErrorKind() {
+    return errorKind;
   }
 
   public String getCommandName() {

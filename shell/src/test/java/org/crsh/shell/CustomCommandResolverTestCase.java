@@ -62,7 +62,7 @@ public class CustomCommandResolverTestCase extends AbstractCommandTestCase {
           return new ClassShellCommand<mycommand>(mycommand.class);
         }
         catch (IntrospectionException e) {
-          throw new CommandException(name, ErrorType.EVALUATION, "Invalid cli annotations", e);
+          throw new CommandException(name, ErrorKind.EVALUATION, "Invalid cli annotations", e);
         }
       }
       return null;

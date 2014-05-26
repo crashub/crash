@@ -27,7 +27,7 @@ import org.crsh.BaseShell;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.spi.Completion;
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
@@ -285,7 +285,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
     //
     ServerMessage.End message = (ServerMessage.End)serverOIS.readObject();
     ShellResponse.Error error = assertInstance(ShellResponse.Error.class, message.response);
-    assertEquals(ErrorType.INTERNAL, error.getType());
+    assertEquals(ErrorKind.INTERNAL, error.getKind());
     assertInstance(Exception.class, error.getThrowable());
     assertEquals("this is a runtime exception", error.getThrowable().getMessage());
     assertEquals(Arrays.asList(ex.get().getStackTrace()), Arrays.asList(error.getThrowable().getStackTrace()));

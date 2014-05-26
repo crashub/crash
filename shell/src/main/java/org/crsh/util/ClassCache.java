@@ -19,10 +19,10 @@
 
 package org.crsh.util;
 
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.ResourceKind;
-import org.crsh.shell.ErrorType;
 import org.crsh.vfs.Resource;
 
 import java.io.UnsupportedEncodingException;
@@ -88,7 +88,7 @@ public class ClassCache<T> {
           source = new String(script.getContent(), "UTF-8");
         }
         catch (UnsupportedEncodingException e) {
-          throw new CommandException(name, ErrorType.INTERNAL, "Could not compile command script " + name, e);
+          throw new CommandException(name, ErrorKind.INTERNAL, "Could not compile command script " + name, e);
         }
 
         //

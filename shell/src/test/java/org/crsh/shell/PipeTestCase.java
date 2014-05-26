@@ -298,7 +298,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     lifeCycle.bindClass("producer", Commands.ProduceInteger.class);
     lifeCycle.bindGroovy("consumer", consumer);
     Commands.list.clear();
-    Throwable t = assertError("producer | consumer", ErrorType.EVALUATION);
+    Throwable t = assertError("producer | consumer", ErrorKind.EVALUATION);
     ScriptException ex = assertInstance(ScriptException.class, t);
     assertEquals("foo", ex.getMessage());
   }
@@ -335,6 +335,6 @@ public class PipeTestCase extends AbstractCommandTestCase {
   }
 
   public void testPipeEOL() {
-    assertError("command |", ErrorType.SYNTAX);
+    assertError("command |", ErrorKind.SYNTAX);
   }
 }

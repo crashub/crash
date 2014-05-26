@@ -29,6 +29,7 @@ import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
 import org.crsh.groovy.GroovyCommand;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.lang.impl.groovy.ast.ScriptLastStatementTransformer;
 import org.crsh.shell.impl.command.spi.CommandMatch;
@@ -36,7 +37,6 @@ import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.command.RuntimeContext;
 import org.crsh.shell.impl.command.spi.Command;
-import org.crsh.shell.ErrorType;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
@@ -109,7 +109,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends Com
     }
     catch (Exception e) {
       String name = clazz.getSimpleName();
-      throw new CommandException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance", e);
+      throw new CommandException(name, ErrorKind.INTERNAL, "Could not create command " + name + " instance", e);
     }
     return command;
   }

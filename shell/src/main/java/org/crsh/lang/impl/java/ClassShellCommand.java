@@ -27,13 +27,13 @@ import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.impl.lang.ObjectCommandInvoker;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.BaseCommand;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandMatch;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.Pipe;
 import org.crsh.command.RuntimeContext;
-import org.crsh.shell.ErrorType;
 import org.crsh.util.Utils;
 
 import java.lang.reflect.Type;
@@ -113,7 +113,7 @@ public class ClassShellCommand<T extends BaseCommand> extends Command<Instance<T
     }
     catch (Exception e) {
       String name = clazz.getSimpleName();
-      throw new CommandException(name, ErrorType.INTERNAL, "Could not create command " + name + " instance", e);
+      throw new CommandException(name, ErrorKind.INTERNAL, "Could not create command " + name + " instance", e);
     }
     return command;
   }

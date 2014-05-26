@@ -19,7 +19,7 @@
 package org.crsh.shell.impl.remoting;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.ShellResponse;
 
 import java.io.ByteArrayInputStream;
@@ -39,7 +39,7 @@ public class ServerMessageTestCase extends AbstractTestCase {
   }
 
   public void testErrorResponseSerialiation() throws Exception {
-    ShellResponse.Error expectedResponse = ShellResponse.error(ErrorType.EVALUATION, "hell", new MyException());
+    ShellResponse.Error expectedResponse = ShellResponse.error(ErrorKind.EVALUATION, "hell", new MyException());
     ServerMessage expectedMessage = new ServerMessage.End(expectedResponse);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     ObjectOutputStream oos = new ObjectOutputStream(baos);

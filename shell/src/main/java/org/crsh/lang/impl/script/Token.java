@@ -18,7 +18,7 @@
  */
 package org.crsh.lang.impl.script;
 
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.util.Utils;
 
@@ -47,7 +47,7 @@ public class Token {
       if (nextFactory != null) {
         return new PipeLineFactory(value, nextFactory);
       } else {
-        throw new CommandException(value, ErrorType.SYNTAX, "");
+        throw new CommandException(value, ErrorKind.SYNTAX, "");
       }
     } else {
       return Utils.notBlank(value) ? new PipeLineFactory(value, null) : null;

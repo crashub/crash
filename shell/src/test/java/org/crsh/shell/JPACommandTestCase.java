@@ -91,16 +91,16 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
   public void testOpenClose() throws Exception {
     
     //
-    assertError("jpa close", ErrorType.EVALUATION);
+    assertError("jpa close", ErrorKind.EVALUATION);
     
     //
-    assertError("jpa open none", ErrorType.EVALUATION);
+    assertError("jpa open none", ErrorKind.EVALUATION);
     assertOk("jpa open testEmf");
-    assertError("jpa open testEmf", ErrorType.EVALUATION);
+    assertError("jpa open testEmf", ErrorKind.EVALUATION);
 
     //
     assertOk("jpa close");
-    assertError("jpa close", ErrorType.EVALUATION);
+    assertError("jpa close", ErrorKind.EVALUATION);
     
   }
 
@@ -126,7 +126,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
     output_entity.clear();
     lifeCycle.bindGroovy("consume_command_entity", consume_command_entity);
     assertOk("jpa open testEmf");
-    assertError("jpa entity None", ErrorType.EVALUATION);
+    assertError("jpa entity None", ErrorKind.EVALUATION);
     assertOk("jpa entity " + Foo.class.getName() + " | consume_command_entity");
     assertEquals(1, output_entity.size());
     assertTrue(output_entity.get(0).name.endsWith("Foo"));

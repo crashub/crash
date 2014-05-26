@@ -72,7 +72,7 @@ public class FilterCommandTestCase extends AbstractCommandTestCase {
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     lifeCycle.bindGroovy("produce_command", produce_command);
-    assertError("produce_command | filter -p invalid | consume_command", ErrorType.EVALUATION, ScriptException.class);
+    assertError("produce_command | filter -p invalid | consume_command", ErrorKind.EVALUATION, ScriptException.class);
   }
 
   public void testIntersect() throws Exception {

@@ -19,7 +19,7 @@
 
 package org.crsh.shell.impl.remoting;
 
-import org.crsh.shell.ErrorType;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -77,7 +77,7 @@ class ClientProcessContext implements ShellProcessContext {
         @Override
         protected void run() throws Throwable {
           // If it's not executing then we attempt to end it
-          end(ShellResponse.error(ErrorType.INTERNAL, "Unexpected process execution error", t));
+          end(ShellResponse.error(ErrorKind.INTERNAL, "Unexpected process execution error", t));
         }
       }.all();
     }
