@@ -35,7 +35,7 @@ public class jmx extends BaseCommand {
   @Command
   public void find(
       InvocationContext<ObjectName> context,
-      @Usage("The object name pattern")
+      @Usage("the object name pattern for the query")
       @Option(names = {"p", "pattern"})
       String pattern) throws Exception {
 
@@ -48,10 +48,10 @@ public class jmx extends BaseCommand {
     }
   }
 
-  @Usage("provide the mbean info of the specified mbean")
+  @Usage("provide the mbean info of the specifie managed bean")
   @Command
   @Named("info")
-  public MBeanInfo info(@Required @Argument @Usage("the mbean object name") ObjectName mbean) {
+  public MBeanInfo info(@Required @Argument @Usage("a managed bean object name") ObjectName mbean) {
     try {
       MBeanServer server = ManagementFactory.getPlatformMBeanServer();
       return server.getMBeanInfo(mbean);
@@ -61,9 +61,14 @@ public class jmx extends BaseCommand {
     }
   }
 
-  @Usage("get attributes of an MBean")
+  @Usage("get attributes of a managed bean")
   @Command
-  public Pipe<ObjectName, Map> get(@Argument final List<String> attributes) {
+  public Pipe<ObjectName, Map> get(
+      @Usage("specifies a managed bean attribute name")
+      @Option(names = {"a","attributes"}) final List<String> attributes,
+      @Usage("a managed bean object name")
+      @Argument(name = "mbean") final List<ObjectName> mbeans
+  ) {
 
     //
     return new Pipe<ObjectName, Map>() {
@@ -72,17 +77,22 @@ public class jmx extends BaseCommand {
       private MBeanServer server;
 
       /** . */
-      private List<ObjectName> mbeans;
+      private List<ObjectName> buffer;
 
       @Override
       public void open() throws ScriptException {
-        server = ManagementFactory.getPlatformMBeanServer();
-        mbeans = new ArrayList<ObjectName>();
+        this.server = ManagementFactory.getPlatformMBeanServer();
+        this.buffer = new ArrayList<ObjectName>();
+
+        //
+        if (mbeans != null) {
+          buffer.addAll(mbeans);
+        }
       }
 
       @Override
       public void provide(ObjectName name) throws IOException {
-        mbeans.add(name);
+        buffer.add(name);
       }
 
       @Override
@@ -92,7 +102,7 @@ public class jmx extends BaseCommand {
         String[] names;
         if (attributes == null) {
           LinkedHashSet<String> tmp = new LinkedHashSet<String>();
-          for (ObjectName mbean : mbeans) {
+          for (ObjectName mbean : buffer) {
             MBeanInfo mbeanInfo;
             try {
               mbeanInfo = server.getMBeanInfo(mbean);
@@ -112,7 +122,7 @@ public class jmx extends BaseCommand {
         }
 
         // Produce the output
-        for (ObjectName mbean : mbeans) {
+        for (ObjectName mbean : buffer) {
           LinkedHashMap<String, Object> tuple = new LinkedHashMap<String, Object>();
           tuple.put("MBean", mbean);
           for (String name : names) {
