@@ -21,16 +21,16 @@ package org.crsh.lang.impl.script;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.impl.SyntaxException;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.invocation.InvocationMatch;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
 import org.crsh.command.RuntimeContext;
-import org.crsh.command.ScriptException;
 import org.crsh.lang.spi.CommandResolution;
 import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.ReplResponse;
-import org.crsh.shell.ShellResponse;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
@@ -80,37 +80,43 @@ public class ScriptCompiler implements Compiler {
       public Command<?> getCommand() throws CommandException {
 
         //
-        final CommandDescriptor<Object> descriptor = new CommandDescriptor<Object>(name, new Description()) {
-          @Override
-          public CommandDescriptor<Object> getOwner() {
-            return null;
-          }
+        final CommandDescriptor<Object> descriptor;
+        try {
+          descriptor = new CommandDescriptor<Object>(name, new Description()) {
+            @Override
+            public CommandDescriptor<Object> getOwner() {
+              return null;
+            }
 
-          @Override
-          public Map<String, ? extends CommandDescriptor<Object>> getSubordinates() {
-            return Collections.emptyMap();
-          }
+            @Override
+            public Map<String, ? extends CommandDescriptor<Object>> getSubordinates() {
+              return Collections.emptyMap();
+            }
 
-          @Override
-          public org.crsh.cli.impl.invocation.CommandInvoker<Object, ?> getInvoker(InvocationMatch<Object> match) {
-            return new org.crsh.cli.impl.invocation.CommandInvoker<Object, Object>(match) {
-              @Override
-              public Class<Object> getReturnType() {
-                return Object.class;
-              }
+            @Override
+            public org.crsh.cli.impl.invocation.CommandInvoker<Object, ?> getInvoker(InvocationMatch<Object> match) {
+              return new org.crsh.cli.impl.invocation.CommandInvoker<Object, Object>(match) {
+                @Override
+                public Class<Object> getReturnType() {
+                  return Object.class;
+                }
 
-              @Override
-              public Type getGenericReturnType() {
-                return Object.class;
-              }
+                @Override
+                public Type getGenericReturnType() {
+                  return Object.class;
+                }
 
-              @Override
-              public Object invoke(Object command) throws InvocationException, SyntaxException {
-                throw new UnsupportedOperationException("Not used");
-              }
-            };
-          }
-        };
+                @Override
+                public Object invoke(Object command) throws InvocationException, SyntaxException {
+                  throw new UnsupportedOperationException("Not used");
+                }
+              };
+            }
+          };
+        }
+        catch (IntrospectionException e) {
+          throw new CommandException(name, ErrorKind.SYNTAX, e.getMessage(), e);
+        }
 
         return new Command<Object>() {
           @Override

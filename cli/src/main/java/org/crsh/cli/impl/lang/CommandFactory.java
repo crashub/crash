@@ -19,6 +19,7 @@
 
 package org.crsh.cli.impl.lang;
 
+import org.crsh.cli.Named;
 import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.descriptor.ParameterDescriptor;
@@ -94,17 +95,31 @@ public class CommandFactory {
     List<Method> methods = findAllMethods(type);
 
     //
+    String commandName;
+    if (type.getAnnotation(Named.class) != null) {
+      commandName = type.getAnnotation(Named.class).value();
+    } else {
+      commandName = type.getSimpleName();
+    }
+
+    //
     if (methods.size() == 1 && methods.get(0).getName().equals("main")) {
-      MethodDescriptor<T> methodDescriptor = create(null, type.getSimpleName().toLowerCase(), methods.get(0));
+      MethodDescriptor<T> methodDescriptor = create(null, commandName, methods.get(0));
       for (ParameterDescriptor parameter : parameters(type)) {
         methodDescriptor.addParameter(parameter);
       }
       return methodDescriptor;
     } else {
       Map<String, MethodDescriptor<T>> methodMap = new LinkedHashMap<String, MethodDescriptor<T>>();
-      ClassDescriptor<T> classDescriptor = new ClassDescriptor<T>(type, methodMap, new Description(type));
+      ClassDescriptor<T> classDescriptor = new ClassDescriptor<T>(type, commandName, methodMap, new Description(type));
       for (Method method : methods) {
-        MethodDescriptor<T> methodDescriptor = create(classDescriptor, method.getName().toLowerCase(), method);
+        String methodName;
+        if (method.getAnnotation(Named.class) != null) {
+          methodName = method.getAnnotation(Named.class).value();
+        } else {
+          methodName = method.getName();
+        }
+        MethodDescriptor<T> methodDescriptor = create(classDescriptor, methodName, method);
         methodMap.put(methodDescriptor.getName(), methodDescriptor);
       }
       for (ParameterDescriptor parameter : parameters(type)) {

@@ -84,7 +84,26 @@ public abstract class CommandDescriptor<T> {
   /** . */
   private final List<ParameterDescriptor> uParameters;
 
-  protected CommandDescriptor(String name, Description description) {
+  protected CommandDescriptor(String name, Description description) throws IntrospectionException {
+
+    //
+    int nameLength = name.length();
+    if (nameLength == 0) {
+      throw new IntrospectionException("Command name cannot be null");
+    } else {
+      for (int i = 0;i < nameLength;i++) {
+        char c = name.charAt(i);
+        if (i == 0) {
+          if (!Character.isLetter(c)) {
+            throw new IntrospectionException("Invalid command name <" + name + "> does not start with a letter");
+          }
+        } else {
+          if (!Character.isLetter(c) && !Character.isDigit(c) && c != '_' && c != '-') {
+            throw new IntrospectionException("Invalid command name <" + name + "> char " + c + " at position " + i + " is now allowed");
+          }
+        }
+      }
+    }
 
     //
     this.description = description;

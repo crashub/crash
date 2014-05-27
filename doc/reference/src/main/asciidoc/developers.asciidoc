@@ -194,6 +194,29 @@ public class sample {
 }
 ----
 
+==== +@org.crsh.cli.Named+
+
+Overrides the default command name, the command name must follow these rules:
+
+* it must not be empty
+* the first letter must be a letter
+* the other letters must be
+** a letter
+** a digit
+** the +_+ or +-+ character
+
+[source,groovy]
+----
+@Named("foo")
+public class sample {
+   @Command
+   @Named("bar")
+   public void m() {
+     ...
+   }
+}
+----
+
 ==== +@org.crsh.cli.Option+
 
 Declares an option, the _names_ member must be specified: single letter name are turned into posix style option (single hyphen)

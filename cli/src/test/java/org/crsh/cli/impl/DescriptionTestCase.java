@@ -19,6 +19,7 @@
 
 package org.crsh.cli.impl;
 
+import org.crsh.cli.Named;
 import org.crsh.cli.descriptor.CommandDescriptor;
 import org.crsh.cli.descriptor.Description;
 import org.crsh.cli.descriptor.OptionDescriptor;
@@ -27,6 +28,7 @@ import org.crsh.cli.Command;
 import org.crsh.cli.Man;
 import org.crsh.cli.Option;
 import org.crsh.cli.Usage;
+import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.lang.Instance;
 
@@ -73,6 +75,35 @@ public class DescriptionTestCase extends TestCase {
     assertEquals("method_usage", m.getUsage());
     assertEquals("method_usage", m.getDescription().getUsage());
     assertEquals("method_man", m.getDescription().getMan());
+  }
+
+  public void testClassNameOverride() throws Exception {
+    @Named("foo") class A { @Command public void main() {} }
+    CommandDescriptor<Instance<A>> c = CommandFactory.DEFAULT.create(A.class);
+    assertEquals("foo", c.getName());
+  }
+
+  public void testMethodNameOverride() throws Exception {
+    class A { @Named("foo") @Command public void bar() {} }
+    CommandDescriptor<Instance<A>> c = CommandFactory.DEFAULT.create(A.class);
+    assertEquals("A", c.getName());
+    assertNotNull(c.getSubordinate("foo"));
+    assertEquals("foo", c.getSubordinate("foo").getName());
+  }
+
+  public void testInvalidName() {
+    @Named("") class A { @Command public void main() {} }
+    @Named(" ") class B { @Command public void main() {} }
+    @Named("0a") class C { @Command public void main() {} }
+    @Named("a)") class D { @Command public void main() {} }
+    for (Class<?> clazz : new Class[]{A.class,B.class,C.class,D.class}) {
+      try {
+        CommandFactory.DEFAULT.create(clazz);
+        fail();
+      }
+      catch (IntrospectionException ignore) {
+      }
+    }
   }
 
   public void testParameterDescription() throws Exception {

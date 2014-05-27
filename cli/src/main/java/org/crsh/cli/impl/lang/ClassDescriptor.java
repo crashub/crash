@@ -41,8 +41,8 @@ class ClassDescriptor<T> extends ObjectCommandDescriptor<T> {
   /** . */
   private final Map<String, MethodDescriptor<T>> methods;
 
-  ClassDescriptor(Class<T> type, Map<String, MethodDescriptor<T>> methods, Description info) throws IntrospectionException {
-    super(type.getSimpleName().toLowerCase(), info);
+  ClassDescriptor(Class<T> type, String name, Map<String, MethodDescriptor<T>> methods, Description info) throws IntrospectionException {
+    super(name, info);
 
     //
     this.methods = methods;

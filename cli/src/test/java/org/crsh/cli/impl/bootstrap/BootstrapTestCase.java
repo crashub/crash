@@ -74,7 +74,7 @@ public class BootstrapTestCase extends TestCase {
     assertEquals("invoked:foo_value", invoker.invoke(Util.wrap(new A())));
   }
 
-  public static class B {
+  public static class b {
 
     @Command
     public void main() throws Exception {
@@ -84,18 +84,18 @@ public class BootstrapTestCase extends TestCase {
 
   public void testMain1() throws Exception {
 
-    CommandDescriptor<Instance<B>> desc = CommandFactory.DEFAULT.create(B.class);
-    HelpDescriptor<Instance<B>> helpDesc = new HelpDescriptor<Instance<B>>(desc);
+    CommandDescriptor<Instance<b>> desc = CommandFactory.DEFAULT.create(b.class);
+    HelpDescriptor<Instance<b>> helpDesc = new HelpDescriptor<Instance<b>>(desc);
     OptionDescriptor optionDesc = helpDesc.getOption("-h");
     assertNotNull(optionDesc);
-    InvocationMatcher<Instance<B>> matcher = helpDesc.matcher();
+    InvocationMatcher<Instance<b>> matcher = helpDesc.matcher();
 
     //
-    InvocationMatch<Instance<B>> match = matcher.parse("--help");
+    InvocationMatch<Instance<b>> match = matcher.parse("--help");
     ParameterMatch<OptionDescriptor> helpMatch = match.getParameter(optionDesc);
     assertNotNull(helpMatch);
-    CommandInvoker<Instance<B>, ?> invoker = match.getInvoker();
-    Help help = (Help)invoker.invoke(Util.wrap(new B()));
+    CommandInvoker<Instance<b>, ?> invoker = match.getInvoker();
+    Help help = (Help)invoker.invoke(Util.wrap(new b()));
     assertNotNull(help);
     CommandDescriptor mainDescriptor = help.getDescriptor();
     assertEquals("b", mainDescriptor.getName());
