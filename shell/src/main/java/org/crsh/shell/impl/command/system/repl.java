@@ -93,23 +93,23 @@ public class repl extends BaseCommand implements ReplCompleter {
 
       //
       TableElement table = new TableElement().rightCellPadding(1);
-      table.add(
-          new RowElement().
-              add(new LabelElement("NAME").style(Style.style(Decoration.bold))).
-              add(new LabelElement("DISPLAY NAME")).
-              add(new LabelElement("DESCRIPTION")).
-              add(new LabelElement("ACTIVE")));
+      table.row(
+        new LabelElement("NAME").style(Style.style(Decoration.bold)),
+        new LabelElement("DISPLAY NAME"),
+        new LabelElement("DESCRIPTION"),
+        new LabelElement("ACTIVE")
+      );
       for (Map.Entry<Repl, Boolean> entry : repls.entrySet()) {
         Boolean active = entry.getValue();
         String langDescription = entry.getKey().getDescription();
         String langDisplayName = entry.getKey().getLanguage().getDisplayName();
         String langName = entry.getKey().getLanguage().getName();
-        table.add(
-            new RowElement().
-                add(new LabelElement(langName).style(Style.style(Color.red))).
-                add(new LabelElement(langDisplayName != null ? langDisplayName : "")).
-                add(new LabelElement(langDescription != null ? langDescription : "")).
-                add(new LabelElement(active)));
+        table.row(
+          new LabelElement(langName).style(Style.style(Color.red)),
+          new LabelElement(langDisplayName != null ? langDisplayName : ""),
+          new LabelElement(langDescription != null ? langDescription : ""),
+          new LabelElement(active)
+        );
       }
 
       //

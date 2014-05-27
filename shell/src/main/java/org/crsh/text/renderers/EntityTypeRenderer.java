@@ -48,38 +48,38 @@ public class EntityTypeRenderer extends Renderer<EntityTypeRenderer.EntityTypeDa
       if (!entityTypeData.verbose) {
         if (table.getRows().size() == 0) {
           RowElement header = new RowElement(true);
-          header.add(new LabelElement("NAME"), new LabelElement("TYPE"));
+          header.add("NAME", "TYPE");
           table.add(header);
         }
         RowElement row = new RowElement();
-        row.add(new LabelElement(entityTypeData.name), new LabelElement(entityTypeData.type));
+        row.add(entityTypeData.name, entityTypeData.type);
         table.add(row);
       } else {
         table.setColumnLayout(Layout.weighted(1));
         RowElement name = new RowElement();
-        name.add(new LabelElement("Name : " + entityTypeData.name));
+        name.add("Name : " + entityTypeData.name);
         table.add(name);
         RowElement type = new RowElement();
-        type.add(new LabelElement("Type : " + entityTypeData.type));
+        type.add("Type : " + entityTypeData.type);
         table.add(type);
         RowElement mapping = new RowElement();
-        mapping.add(new LabelElement("Mapping : " + entityTypeData.mapping));
+        mapping.add("Mapping : " + entityTypeData.mapping);
         table.add(mapping);
 
         if (entityTypeData.attributes.size() > 0) {
           RowElement attributesLabel = new RowElement();
-          attributesLabel.add(new LabelElement("Attributes : "));
+          attributesLabel.add("Attributes : ");
           table.add(attributesLabel);
 
           TableElement attributeTable = new TableElement();
           attributeTable.setRightCellPadding(1);
           RowElement attributeRowHeader = new RowElement(true);
-          attributeRowHeader.add(new LabelElement("NAME"), new LabelElement("TYPE"), new LabelElement("ASSOCIATION"), new LabelElement("COLLECTION"), new LabelElement("MAPPING"));
+          attributeRowHeader.add("NAME", "TYPE", "ASSOCIATION", "COLLECTION", "MAPPING");
           attributeTable.add(attributeRowHeader);
 
           for (AttributeData attributes : entityTypeData.attributes) {
             RowElement row = new RowElement();
-            row.add(new LabelElement(attributes.name), new LabelElement(attributes.type), new LabelElement(attributes.association), new LabelElement(attributes.collection), new LabelElement(attributes.mapping));
+            row.add(attributes.name, attributes.type, "" + attributes.association, "" + attributes.collection, attributes.mapping);
             attributeTable.add(row);
           }
 

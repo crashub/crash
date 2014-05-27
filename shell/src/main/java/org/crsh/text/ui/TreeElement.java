@@ -33,11 +33,15 @@ public class TreeElement extends Element {
   final List<Element> children = new ArrayList<Element>();
 
   public TreeElement() {
-    this(null);
+    this((Element)null);
   }
 
   public TreeElement(Element value) {
     this.value = value;
+  }
+
+  public TreeElement(String value) {
+    this.value = new LabelElement(value);
   }
 
   public TreeElement addChild(Element child) {

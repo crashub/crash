@@ -43,11 +43,7 @@ public class LoggerRenderer extends Renderer<Logger> {
     TableElement table = new TableElement();
 
     // Header
-    RowElement header = new RowElement();
-    header.style(Decoration.bold.fg(Color.black).bg(Color.white));
-    header.add(new LabelElement("NAME"));
-    header.add(new LabelElement("LEVEL"));
-    table.add(header);
+    table.add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add("NAME", "LEVEL"));
 
     //
     while (stream.hasNext()) {
@@ -70,10 +66,7 @@ public class LoggerRenderer extends Renderer<Logger> {
       }
 
       //
-      RowElement row = new RowElement();
-      row.add(new LabelElement(logger.getName()));
-      row.add(new LabelElement(level));
-      table.add(row);
+      table.row(logger.getName(), level);
     }
 
     //

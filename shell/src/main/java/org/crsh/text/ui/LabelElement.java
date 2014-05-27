@@ -41,7 +41,18 @@ public class LabelElement extends Element {
   /** . */
   final CharSlicer slicer;
 
-  public LabelElement(String value, int minWidth) {
+  /**
+   * Create a new label element
+   *
+   * @param value the label value
+   * @param minWidth the label minimum width
+   * @throws NullPointerException if the value is null
+   * @throws IllegalArgumentException if the minimum width is negative
+   */
+  public LabelElement(String value, int minWidth) throws NullPointerException, IllegalArgumentException {
+    if (value == null) {
+      throw new NullPointerException("No null value allowed");
+    }
     if (minWidth < 0) {
       throw new IllegalArgumentException("No negative min size allowed");
     }

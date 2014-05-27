@@ -131,18 +131,19 @@ public class ThreadRenderer extends Renderer<Thread> {
     TableElement table = new TableElement(1,3,2,1,1,1,1,1,1).overflow(Overflow.HIDDEN).rightCellPadding(1);
 
     // Header
-    RowElement header = new RowElement();
-    header.style(Decoration.bold.fg(Color.black).bg(Color.white));
-    header.add(new LabelElement("ID"));
-    header.add(new LabelElement("NAME"));
-    header.add(new LabelElement("GROUP"));
-    header.add(new LabelElement("PRIORITY"));
-    header.add(new LabelElement("STATE"));
-    header.add(new LabelElement("%CPU"));
-    header.add(new LabelElement("TIME"));
-    header.add(new LabelElement("INTERRUPTED"));
-    header.add(new LabelElement("DAEMON"));
-    table.add(header);
+    table.add(
+      new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add(
+        "ID",
+        "NAME",
+        "GROUP",
+        "PRIORITY",
+        "STATE",
+        "%CPU",
+        "TIME",
+        "INTERRUPTED",
+        "DAEMON"
+      )
+    );
 
     //
     for (Thread thread : threads) {
@@ -151,22 +152,18 @@ public class ThreadRenderer extends Renderer<Thread> {
       long min = seconds / 60;
       String time = min + ":" + (seconds % 60);
       long cpu = cpus.get(thread);
-
-      //
       ThreadGroup group = thread.getThreadGroup();
-
-      //
-      RowElement row = new RowElement();
-      row.add(new LabelElement(thread.getId()));
-      row.add(new LabelElement(thread.getName()));
-      row.add(new LabelElement(group == null ? "" : group.getName()));
-      row.add(new LabelElement(thread.getPriority()));
-      row.add(new LabelElement(thread.getState()).style(c.fg()));
-      row.add(new LabelElement(cpu));
-      row.add(new LabelElement(time));
-      row.add(new LabelElement(thread.isInterrupted()));
-      row.add(new LabelElement(thread.isDaemon()));
-      table.add(row);
+      table.row(
+          new LabelElement(thread.getId()),
+          new LabelElement(thread.getName()),
+          new LabelElement(group == null ? "" : group.getName()),
+          new LabelElement(thread.getPriority()),
+          new LabelElement(thread.getState()).style(c.fg()),
+          new LabelElement(cpu),
+          new LabelElement(time),
+          new LabelElement(thread.isInterrupted()),
+          new LabelElement(thread.isDaemon())
+      );
     }
 
     //

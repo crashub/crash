@@ -69,7 +69,7 @@ public class MapRenderer extends Renderer<Map<?, ?>> {
           RowElement header = new RowElement(true);
           header.style(Decoration.bold.fg(Color.black).bg(Color.white));
           for (String s : bilto) {
-            header.add(new LabelElement(s));
+            header.add(s);
           }
           table.add(header);
           current = bilto;
@@ -78,8 +78,7 @@ public class MapRenderer extends Renderer<Map<?, ?>> {
         //
         RowElement r = new RowElement();
         for (String s : bilto) {
-          String v = String.valueOf(row.get(s));
-          r.add(new LabelElement(v));
+          r.add(String.valueOf(row.get(s)));
         }
         table.add(r);
       }

@@ -38,7 +38,7 @@ public class MBeanInfoRenderer extends Renderer<MBeanInfo> {
       MBeanInfo info = stream.next();
 
       //
-      TreeElement root = new TreeElement(new LabelElement(info.getClassName()));
+      TreeElement root = new TreeElement(info.getClassName());
 
       // Descriptor
       TableElement descriptor = new TableElement().
@@ -48,10 +48,7 @@ public class MBeanInfoRenderer extends Renderer<MBeanInfo> {
       if (descriptorInfo != null) {
         for (String fieldName : descriptorInfo.getFieldNames()) {
           String fieldValue = String.valueOf(descriptorInfo.getFieldValue(fieldName));
-          descriptor.add(new RowElement().add(
-              new LabelElement(fieldName),
-              new LabelElement(fieldValue)
-          ));
+          descriptor.row(fieldName, fieldValue);
         }
       }
 
@@ -59,34 +56,22 @@ public class MBeanInfoRenderer extends Renderer<MBeanInfo> {
       TableElement attributes = new TableElement().
           overflow(Overflow.HIDDEN).
           rightCellPadding(1).
-          add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add(
-              new LabelElement("NAME"),
-              new LabelElement("TYPE"),
-              new LabelElement("DESCRIPTION")
-          ));
+          add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add("NAME", "TYPE", "DESCRIPTION"));
       for (MBeanAttributeInfo attributeInfo : info.getAttributes()) {
-        attributes.add(new RowElement().add(
-            new LabelElement(attributeInfo.getName()),
-            new LabelElement(attributeInfo.getType()),
-            new LabelElement(attributeInfo.getDescription())
-        ));
+        attributes.row(attributeInfo.getName(), attributeInfo.getType(), attributeInfo.getDescription());
       }
 
       // Operations
-      TreeElement operations = new TreeElement(new LabelElement("Operations"));
+      TreeElement operations = new TreeElement("Operations");
       for (MBeanOperationInfo operationInfo : info.getOperations()) {
         TableElement signature = new TableElement().
             overflow(Overflow.HIDDEN).
             rightCellPadding(1);
         MBeanParameterInfo[] parameterInfos = operationInfo.getSignature();
         for (MBeanParameterInfo parameterInfo : parameterInfos) {
-          signature.add(new RowElement().add(
-              new LabelElement(parameterInfo.getName()),
-              new LabelElement(parameterInfo.getType()),
-              new LabelElement(parameterInfo.getDescription())
-          ));
+          signature.row(parameterInfo.getName(), parameterInfo.getType(), parameterInfo.getDescription());
         }
-        TreeElement operation = new TreeElement(new LabelElement(operationInfo.getName()));
+        TreeElement operation = new TreeElement(operationInfo.getName());
         String impact;
         switch (operationInfo.getImpact()) {
           case MBeanOperationInfo.ACTION:
@@ -103,9 +88,9 @@ public class MBeanInfoRenderer extends Renderer<MBeanInfo> {
         }
         operation.addChild(new TableElement().
             add(
-                new RowElement().add(new LabelElement("Type: "), new LabelElement(operationInfo.getReturnType())),
-                new RowElement().add(new LabelElement("Description: "), new LabelElement(operationInfo.getDescription())),
-                new RowElement().add(new LabelElement("Impact: "), new LabelElement(impact)),
+                new RowElement().add("Type: ", operationInfo.getReturnType()),
+                new RowElement().add("Description: ", operationInfo.getDescription()),
+                new RowElement().add("Impact: ", impact),
                 new RowElement().add(new LabelElement("Signature: "), signature)
             )
         );
@@ -114,12 +99,14 @@ public class MBeanInfoRenderer extends Renderer<MBeanInfo> {
       }
 
       //
-      root.addChild(new TableElement().leftCellPadding(1).overflow(Overflow.HIDDEN).add(
-          new RowElement().add(new LabelElement("ClassName"), new LabelElement(info.getClassName())),
-          new RowElement().add(new LabelElement("Description"), new LabelElement(info.getDescription()))
-      ));
-      root.addChild(new TreeElement(new LabelElement("Descriptor")).addChild(descriptor));
-      root.addChild(new TreeElement(new LabelElement("Attributes")).addChild(attributes));
+      root.addChild(
+        new TableElement().leftCellPadding(1).overflow(Overflow.HIDDEN).
+          row("ClassName", info.getClassName()).
+          row("Description", info.getDescription()
+        )
+      );
+      root.addChild(new TreeElement("Descriptor").addChild(descriptor));
+      root.addChild(new TreeElement("Attributes").addChild(attributes));
       root.addChild(operations);
 
       //

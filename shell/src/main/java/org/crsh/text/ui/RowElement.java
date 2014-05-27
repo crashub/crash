@@ -55,6 +55,13 @@ public class RowElement extends Element {
     return this;
   }
 
+  public RowElement add(String... cols) {
+    for (String col : cols) {
+      this.cols.add(new LabelElement(col));
+    }
+    return this;
+  }
+
   @Override
   public RowElement style(Style.Composite style) {
     return (RowElement)super.style(style);

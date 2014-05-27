@@ -59,21 +59,14 @@ public class ObjectNameRenderer extends Renderer<ObjectName> {
     Collections.sort(names);
 
     //
-    TableElement table = new TableElement(/*1,3,2,1,1,1,1,1,1*/).overflow(Overflow.HIDDEN).rightCellPadding(1);
+    TableElement table = new TableElement().overflow(Overflow.HIDDEN).rightCellPadding(1);
 
     // Header
-    RowElement header = new RowElement();
-    header.style(Decoration.bold.fg(Color.black).bg(Color.white));
-    header.add(new LabelElement("NAME"));
-    header.add(new LabelElement("CLASSNAME"));
-    header.add(new LabelElement("MXBEAN"));
-    header.add(new LabelElement("DESCRIPTION"));
-//    header.add(new LabelElement("STATE"));
-//    header.add(new LabelElement("%CPU"));
-//    header.add(new LabelElement("TIME"));
-//    header.add(new LabelElement("INTERRUPTED"));
-//    header.add(new LabelElement("DAEMON"));
-    table.add(header);
+    table.add(
+      new RowElement().
+        style(Decoration.bold.fg(Color.black).bg(Color.white)).
+        add("NAME", "CLASSNAME", "MXBEAN", "DESCRIPTION")
+    );
 
     //
     for (ObjectName name : names) {
@@ -95,22 +88,7 @@ public class ObjectNameRenderer extends Renderer<ObjectName> {
       }
 
       //
-      RowElement row = new RowElement();
-      row.add(new LabelElement(name));
-      row.add(new LabelElement(className));
-      row.add(new LabelElement(mxbean));
-      row.add(new LabelElement(description));
-/*
-      row.add(new LabelElement(thread.getName()));
-      row.add(new LabelElement(group == null ? "" : group.getName()));
-      row.add(new LabelElement(thread.getPriority()));
-      row.add(new LabelElement(thread.getState()).style(c.fg()));
-      row.add(new LabelElement(cpu));
-      row.add(new LabelElement(time));
-      row.add(new LabelElement(thread.isInterrupted()));
-      row.add(new LabelElement(thread.isDaemon()));
-*/
-      table.add(row);
+      table.row("" + name, className, mxbean, description);
     }
 
     //

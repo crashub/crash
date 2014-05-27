@@ -61,12 +61,12 @@ public class FileRenderer extends Renderer<File> {
       String length = Long.toString(file.length());
       date.setTime(file.lastModified());
       String lastModified = format.format(date);
-      RowElement row = new RowElement();
-      row.add(new LabelElement(mode));
-      row.add(new LabelElement(length));
-      row.add(new LabelElement(lastModified));
-      row.add(new LabelElement(file.getName()));
-      table.add(row);
+      table.row(
+        mode,
+        length,
+        lastModified,
+        file.getName()
+      );
     }
 
     //

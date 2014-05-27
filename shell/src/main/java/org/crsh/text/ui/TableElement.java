@@ -85,6 +85,26 @@ public class TableElement extends Element {
     return this;
   }
 
+  public TableElement header(Element... cols) {
+    return row(true, cols);
+  }
+
+  public TableElement row(Element... cols) {
+    return row(false, cols);
+  }
+
+  public TableElement row(String... cols) {
+    return row(false, cols);
+  }
+
+  public TableElement row(boolean header, Element... cols) {
+    return add(new RowElement(header).add(cols));
+  }
+
+  public TableElement row(boolean header, String... cols) {
+    return add(new RowElement(header).add(cols));
+  }
+
   public Layout getColumnLayout() {
     return columnLayout;
   }

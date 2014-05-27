@@ -57,7 +57,6 @@ public class LogRecordRenderer extends Renderer<LogRecord> {
           public LineRenderer next() {
             LogRecord record = stream.next();
             String line = formatter.format(record);
-            LabelElement element = new LabelElement(line);
             Color color;
             if (record.getLevel() == Level.SEVERE) {
               color = Color.red;
@@ -68,8 +67,7 @@ public class LogRecordRenderer extends Renderer<LogRecord> {
             } else {
               color = Color.blue;
             }
-            element.setStyle(color.fg());
-            return element.renderer();
+            return new LabelElement(line).style(color.fg()).renderer();
           }
         };
       }

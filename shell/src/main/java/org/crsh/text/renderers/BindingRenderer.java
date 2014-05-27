@@ -42,7 +42,7 @@ public class BindingRenderer extends Renderer<BindingRenderer.BindingData> {
     TableElement table = new TableElement();
     table.setRightCellPadding(1);
     RowElement header = new RowElement(true);
-    header.add(new LabelElement("NAME"));
+    header.add("NAME");
     table.add(header);
 
     while (stream.hasNext()) {
@@ -50,12 +50,12 @@ public class BindingRenderer extends Renderer<BindingRenderer.BindingData> {
 
       RowElement row = new RowElement();
 
-       row.add(new LabelElement(binding.name));
+       row.add(binding.name);
 
       if (binding.verbose) {
         row.add(new LabelElement(binding.type));
         if (header.getSize() == 1) {
-          header.add(new LabelElement("CLASS"));
+          header.add("CLASS");
         }
       }
       

@@ -27,7 +27,6 @@ import org.crsh.text.Color;
 import org.crsh.text.Decoration;
 import org.crsh.text.Style;
 import org.crsh.text.ui.LabelElement;
-import org.crsh.text.ui.RowElement;
 import org.crsh.text.ui.TableElement;
 
 import java.io.IOException;
@@ -42,10 +41,10 @@ public class help extends BaseCommand {
 
     //
     TableElement table = new TableElement().rightCellPadding(1);
-    table.add(
-        new RowElement().
-            add(new LabelElement("NAME").style(Style.style(Decoration.bold))).
-            add(new LabelElement("DESCRIPTION")));
+    table.row(
+      new LabelElement("NAME").style(Style.style(Decoration.bold)),
+      new LabelElement("DESCRIPTION")
+    );
 
     //
     CRaSH crash = (CRaSH)context.getSession().get("crash");
@@ -55,10 +54,9 @@ public class help extends BaseCommand {
         if (desc == null) {
           desc = "";
         }
-        table.add(
-            new RowElement().
-                add(new LabelElement(command.getKey()).style(Style.style(Color.red))).
-                add(new LabelElement(desc)));
+        table.row(
+          new LabelElement(command.getKey()).style(Style.style(Color.red)),
+          new LabelElement(desc));
       } catch (Exception ignore) {
         //
       }
