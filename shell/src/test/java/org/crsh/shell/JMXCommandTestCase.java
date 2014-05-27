@@ -21,6 +21,7 @@ package org.crsh.shell;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.Collections;
+import java.util.HashMap;
 
 /** @author Julien Viet */
 public class JMXCommandTestCase extends AbstractCommandTestCase {
@@ -37,7 +38,7 @@ public class JMXCommandTestCase extends AbstractCommandTestCase {
   public void testFind() throws Exception {
     lifeCycle.bindClass("consume", Commands.ConsumeObject.class);
     Commands.list.clear();
-    assertOk("jmx find -p java.lang:* | consume");
+    assertOk("jmx query -p java.lang:* | consume");
     assertTrue(Commands.list.contains(OPERATING_SYSTEM));
   }
 
@@ -45,7 +46,10 @@ public class JMXCommandTestCase extends AbstractCommandTestCase {
     Object version = ManagementFactory.getPlatformMBeanServer().getAttribute(OPERATING_SYSTEM, "Version");
     lifeCycle.bindClass("consume", Commands.ConsumeObject.class);
     Commands.list.clear();
-    assertOk("jmx find -p java.lang:* | jmx get Version | consume");
-    assertEquals(Collections.<Object>singletonList(Collections.singletonMap("Version", version)), Commands.list);
+    assertOk("jmx query -p " + OPERATING_SYSTEM + " | jmx get -a Version | consume");
+    HashMap<String, Object> expected = new HashMap<String, Object>();
+    expected.put("Version", version);
+    expected.put("MBean", OPERATING_SYSTEM);
+    assertEquals(Collections.<Object>singletonList(expected), Commands.list);
   }
 }

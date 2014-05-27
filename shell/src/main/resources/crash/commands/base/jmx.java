@@ -34,17 +34,17 @@ import java.util.Set;
 @Man("The jmx commands interracts with the JMX registry allowing several kind JMX operations.")
 public class jmx extends BaseCommand {
 
-  @Usage("find mbeans")
+  @Usage("query mbeans")
   @Man(
-      "Create a stream of managed beansn, by default the stream will contain all the registered managed beans:\n" +
-      "% jmx find\n" +
+      "Create a stream of managed beans, by default the stream will contain all the registered managed beans:\n" +
+      "% jmx query\n" +
       "...\n" +
       "The stream can be filtered with the pattern option:\n" +
-      "% jmx find -p java.lang:*\n" +
+      "% jmx query -p java.lang:*\n" +
       "..."
   )
   @Command
-  public void find(
+  public void query(
       InvocationContext<ObjectName> context,
       @Usage("the object name pattern for the query")
       @Option(names = {"p", "pattern"})
@@ -97,10 +97,10 @@ public class jmx extends BaseCommand {
       "by specifying managed bean arguments\n" +
       "% jmx get java.lang:type=ClassLoading\n" +
       "It also accepts a managed bean stream:\n" +
-      "% jmx find -p java.lang:* | jmx get\n" +
+      "% jmx query -p java.lang:* | jmx get\n" +
       "By default all managed bean attributes will be retrieved, the attributes option allow to " +
       "use a list of attributes:\n" +
-      "% jmx find -p java.lang:* | jmx get -a TotalSwapSpaceSize\n"
+      "% jmx query -p java.lang:* | jmx get -a TotalSwapSpaceSize\n"
   )
   @Command
   public Pipe<ObjectName, Map> get(
