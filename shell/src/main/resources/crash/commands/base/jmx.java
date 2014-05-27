@@ -18,6 +18,7 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import javax.management.RuntimeMBeanException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -64,6 +65,9 @@ public class jmx extends BaseCommand {
   @Usage("get attributes of a managed bean")
   @Command
   public Pipe<ObjectName, Map> get(
+      @Usage("Silent mode ignores any attribute runtime failures")
+      @Option(names = {"s","silent"})
+      final Boolean silent,
       @Usage("specifies a managed bean attribute name")
       @Option(names = {"a","attributes"}) final List<String> attributes,
       @Usage("a managed bean object name")
@@ -129,6 +133,13 @@ public class jmx extends BaseCommand {
             Object value;
             try {
               value = server.getAttribute(mbean, name);
+            }
+            catch (RuntimeMBeanException runtime) {
+              if (Boolean.TRUE.equals(silent)) {
+                throw new ScriptException(runtime.getCause());
+              } else {
+                value = null;
+              }
             }
             catch (AttributeNotFoundException e) {
               value = null;
