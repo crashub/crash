@@ -9,6 +9,7 @@ import org.crsh.command.InvocationContext;
 import org.crsh.command.Pipe;
 import org.crsh.command.ScriptException;
 
+import javax.management.AttributeNotFoundException;
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
@@ -17,7 +18,10 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,52 +45,11 @@ public class jmx extends BaseCommand {
     for (ObjectInstance instance : instances) {
       context.provide(instance.getObjectName());
     }
-/*
-    if (context.piped) {
-    } else {
-      UIBuilder ui = new UIBuilder()
-      ui.table(columns: [1,3]) {
-        row(bold: true, fg: black, bg: white) {
-          label("CLASS NAME"); label("OBJECT NAME")
-        }
-        instances.each { instance ->
-          row() {
-            label(foreground: red, instance.getClassName()); label(instance.objectName)
-          }
-        }
-      }
-      out << ui;
-    }
-*/
-  }
-
-  @Command
-  @Usage("return the attributes info of an MBean")
-  public void attributes(InvocationContext<Map> context, @Argument ObjectName name) throws IOException {
-    MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-    try {
-      MBeanInfo info = server.getMBeanInfo(name);
-      for (MBeanAttributeInfo attributeInfo : info.getAttributes()) {
-        HashMap<String, Object> tuple = new HashMap<String, Object>();
-        tuple.put("name", attributeInfo.getName());
-        tuple.put("type", attributeInfo.getType());
-        tuple.put("description", attributeInfo.getDescription());
-        context.provide(tuple);
-      }
-    }
-    catch (JMException e) {
-      throw new ScriptException("Could not access MBean meta data", e);
-    }
   }
 
   @Usage("get attributes of an MBean")
   @Command
-  public Pipe<ObjectName, Map> get(@Argument final List<String> attributes) {
-
-    // Determine common attributes from all names
-    if (attributes == null || attributes.isEmpty()) {
-      throw new ScriptException("Must provide JMX attributes");
-    }
+  public Pipe<ObjectName, Map> attributes(@Argument final List<String> attributes) {
 
     //
     return new Pipe<ObjectName, Map>() {
@@ -94,28 +57,64 @@ public class jmx extends BaseCommand {
       /** . */
       private MBeanServer server;
 
+      /** . */
+      private List<ObjectName> mbeans;
+
       @Override
       public void open() throws ScriptException {
         server = ManagementFactory.getPlatformMBeanServer();
+        mbeans = new ArrayList<ObjectName>();
       }
 
       @Override
       public void provide(ObjectName name) throws IOException {
-        try {
-          HashMap<String, Object> tuple = new HashMap<String, Object>();
-          for (String attribute : attributes) {
-            String prop = name.getKeyProperty(attribute);
-            if (prop != null) {
-              tuple.put(attribute, prop);
+        mbeans.add(name);
+      }
+
+      @Override
+      public void close() throws ScriptException, IOException {
+
+        // Determine attribute names
+        String[] names;
+        if (attributes == null) {
+          LinkedHashSet<String> tmp = new LinkedHashSet<String>();
+          for (ObjectName mbean : mbeans) {
+            MBeanInfo mbeanInfo;
+            try {
+              mbeanInfo = server.getMBeanInfo(mbean);
             }
-            else {
-              tuple.put(attribute, server.getAttribute(name, attribute));
+            catch (JMException e) {
+              throw new ScriptException(e);
+            }
+            for (MBeanAttributeInfo attributeInfo : mbeanInfo.getAttributes()) {
+              if (attributeInfo.isReadable()) {
+                tmp.add(attributeInfo.getName());
+              }
             }
           }
-          context.provide(tuple);
+          names = tmp.toArray(new String[tmp.size()]);
+        } else {
+          names = attributes.toArray(new String[attributes.size()]);
         }
-        catch (JMException ignore) {
-          //
+
+        // Produce the output
+        for (ObjectName mbean : mbeans) {
+          LinkedHashMap<String, Object> tuple = new LinkedHashMap<String, Object>();
+          tuple.put("MBean", mbean);
+          for (String name : names) {
+            Object value;
+            try {
+              value = server.getAttribute(mbean, name);
+            }
+            catch (AttributeNotFoundException e) {
+              value = null;
+            }
+            catch (JMException e) {
+              throw new ScriptException(e);
+            }
+            tuple.put(name, value);
+          }
+          context.provide(tuple);
         }
       }
     };
