@@ -1,6 +1,7 @@
 package crash.commands.base;
 
 import org.crsh.cli.Argument;
+import org.crsh.cli.Man;
 import org.crsh.cli.Command;
 import org.crsh.cli.Named;
 import org.crsh.cli.Option;
@@ -30,9 +31,18 @@ import java.util.Set;
 
 /** @author Julien Viet */
 @Usage("Java Management Extensions")
+@Man("The jmx commands interracts with the JMX registry allowing several kind JMX operations.")
 public class jmx extends BaseCommand {
 
   @Usage("find mbeans")
+  @Man(
+      "Create a stream of managed beansn, by default the stream will contain all the registered managed beans:\n" +
+      "% jmx find\n" +
+      "...\n" +
+      "The stream can be filtered with the pattern option:\n" +
+      "% jmx find -p java.lang:*\n" +
+      "..."
+  )
   @Command
   public void find(
       InvocationContext<ObjectName> context,
@@ -49,7 +59,26 @@ public class jmx extends BaseCommand {
     }
   }
 
-  @Usage("provide the mbean info of the specifie managed bean")
+  @Usage("provide the mbean info of a managed bean")
+  @Man(
+      "Provide the mbean info for a managed bean:\n" +
+      "% jmx info java.lang:type=ClassLoading \n" +
+      "sun.management.ClassLoadingImpl\n" +
+      "+- ClassName   sun.management.ClassLoadingImpl\n" +
+      "|  Description Information on the management interface of the MBean\n" +
+      "+-Descriptor\n" +
+      "| +-immutableInfo      true\n" +
+      "|   interfaceClassName java.lang.management.ClassLoadingMXBean\n" +
+      "|   mxbean             true\n" +
+      "+-Attributes\n" +
+      "| +-NAME                  TYPE                        DESCRIPTION\n" +
+      "|   Verbose               boolean                     Verbose\n" +
+      "|   TotalLoadedClassCount long                        TotalLoadedClassCount\n" +
+      "|   LoadedClassCount      int                         LoadedClassCount\n" +
+      "|   UnloadedClassCount    long                        UnloadedClassCount\n" +
+      "|   ObjectName            javax.management.ObjectName ObjectName\n" +
+      "+-Operations\n"
+  )
   @Command
   @Named("info")
   public MBeanInfo info(@Required @Argument @Usage("a managed bean object name") ObjectName mbean) {
@@ -63,6 +92,16 @@ public class jmx extends BaseCommand {
   }
 
   @Usage("get attributes of a managed bean")
+  @Man(
+      "Retrieves the attributes of a stream of managed beans, this command can be used " +
+      "by specifying managed bean arguments\n" +
+      "% jmx get java.lang:type=ClassLoading\n" +
+      "It also accepts a managed bean stream:\n" +
+      "% jmx find -p java.lang:* | jmx get\n" +
+      "By default all managed bean attributes will be retrieved, the attributes option allow to " +
+      "use a list of attributes:\n" +
+      "% jmx find -p java.lang:* | jmx get -a TotalSwapSpaceSize\n"
+  )
   @Command
   public Pipe<ObjectName, Map> get(
       @Usage("Silent mode ignores any attribute runtime failures")
