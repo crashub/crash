@@ -10,6 +10,7 @@ import org.crsh.groovy.GroovyCommand
 import org.crsh.plugin.PluginContext
 import org.crsh.shell.impl.command.CRaSH;
 
+@Usage("manages the cron plugin")
 public class cron extends GroovyCommand {
 
   private CronPlugin getCronPlugin() {
@@ -24,7 +25,7 @@ public class cron extends GroovyCommand {
   }
 
   @Command
-  @Usage("Display the process history")
+  @Usage("display the process history")
   public void history(InvocationContext<Map> context) {
     CronPlugin plugin = getCronPlugin();
     for (CRaSHTaskProcess process : plugin.history) {
@@ -38,14 +39,14 @@ public class cron extends GroovyCommand {
   }
 
   @Command
-  @Usage("Trigger the cron service now")
+  @Usage("trigger the cron service now")
   public void spawn() {
     CronPlugin plugin = getCronPlugin();
     plugin.spawn();
   }
 
   @Command
-  @Usage("Read or write the cron config path")
+  @Usage("read or write the cron config path")
   public void config(
       @Usage("the new config path when specified")
       @Argument
