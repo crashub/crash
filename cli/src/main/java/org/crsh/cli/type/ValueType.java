@@ -22,6 +22,7 @@ package org.crsh.cli.type;
 import org.crsh.cli.completers.EmptyCompleter;
 import org.crsh.cli.completers.EnumCompleter;
 import org.crsh.cli.completers.FileCompleter;
+import org.crsh.cli.completers.ObjectNameCompleter;
 import org.crsh.cli.completers.ThreadCompleter;
 import org.crsh.cli.spi.Completer;
 
@@ -98,7 +99,7 @@ public abstract class ValueType<V> {
   };
 
   /** A JMX object name value type. */
-  public static final ValueType<ObjectName> OBJECT_NAME = new ValueType<ObjectName>(ObjectName.class) {
+  public static final ValueType<ObjectName> OBJECT_NAME = new ValueType<ObjectName>(ObjectName.class, ObjectNameCompleter.class) {
     @Override
     public <S extends ObjectName> S parse(Class<S> type, String s) throws Exception {
       return type.cast(ObjectName.getInstance(s));
