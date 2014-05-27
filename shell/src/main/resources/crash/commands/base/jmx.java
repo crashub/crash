@@ -2,8 +2,10 @@ package crash.commands.base;
 
 import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
+import org.crsh.cli.Named;
 import org.crsh.cli.Option;
 import org.crsh.cli.Usage;
+import org.crsh.cli.Required;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.Pipe;
@@ -19,7 +21,6 @@ import javax.management.ObjectName;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -47,9 +48,22 @@ public class jmx extends BaseCommand {
     }
   }
 
+  @Usage("provide the mbean info of the specified mbean")
+  @Command
+  @Named("info")
+  public MBeanInfo info(@Required @Argument @Usage("the mbean object name") ObjectName mbean) {
+    try {
+      MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+      return server.getMBeanInfo(mbean);
+    }
+    catch (JMException e) {
+      throw new ScriptException("Could not retrieve mbean " + mbean + "info", e);
+    }
+  }
+
   @Usage("get attributes of an MBean")
   @Command
-  public Pipe<ObjectName, Map> attributes(@Argument final List<String> attributes) {
+  public Pipe<ObjectName, Map> get(@Argument final List<String> attributes) {
 
     //
     return new Pipe<ObjectName, Map>() {

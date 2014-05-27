@@ -7,5 +7,6 @@ org.crsh.text.renderers.EntityTypeRenderer
 org.crsh.text.renderers.LogRecordRenderer
 org.crsh.text.renderers.FileRenderer
 org.crsh.text.renderers.ObjectNameRenderer
+org.crsh.text.renderers.MBeanInfoRenderer
 org.crsh.text.ui.ElementRenderer
 org.crsh.text.ui.UIBuilderRenderer

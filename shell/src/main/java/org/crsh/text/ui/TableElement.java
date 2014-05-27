@@ -78,6 +78,13 @@ public class TableElement extends Element {
     return this;
   }
 
+  public TableElement add(RowElement... rows) {
+    for (RowElement row : rows) {
+      add(row);
+    }
+    return this;
+  }
+
   public Layout getColumnLayout() {
     return columnLayout;
   }
