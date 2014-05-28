@@ -54,19 +54,25 @@ CRaSH = (function(element, width, height) {
           string: string
         };
         socket.send(JSON.stringify({type: "complete",prefix:prefix}));
+        term.pause();
       } else {
         log.debug("Could not perform completion of " + prefix + " because of null socket");
       }
     },
     keypress: function(event, term) {
-      if (event.keyCode == 3) {
-        if (socket != null) {
+      if (socket != null && socket.readyState == 1 && term.paused()) {
+        var code = event.keyCode;
+        if (code == 3) {
           log.debug("Cancelling current command");
           cancelTime = (new Date()).getTime();
           socket.send(JSON.stringify({type: "cancel"}));
         } else {
-          log.debug("Could not cancel because of null socket");
+          log.debug("Sending key event " + code);
+          socket.send(JSON.stringify({type: "key",code: code}));
         }
+        return false;
+      } else {
+        return true;
       }
     }
   });
@@ -151,6 +157,7 @@ CRaSH = (function(element, width, height) {
               completions[i] = completion.string + completions[i];
             }
             completion.callback(completions);
+            terminal.resume();
           }
         };
       } else {

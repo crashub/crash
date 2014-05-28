@@ -111,17 +111,22 @@ public enum KeyType {
 
   /** . */
 
+  public static KeyType forCodePoint(int codePoint) {
+    if (codePoint >= 0 && codePoint < INDEX.length) {
+      return INDEX[codePoint];
+    } else {
+      return null;
+    }
+  }
 
   static KeyType map(Operation operation, int[] sequence) {
     switch (operation) {
       case SELF_INSERT:
         if (sequence.length == 1) {
           int index = sequence[0];
-          if (index >= 0 && index < INDEX.length) {
-            KeyType found = INDEX[index];
-            if (found != null) {
-              return found;
-            }
+          KeyType found = forCodePoint(index);
+          if (found != null) {
+            return found;
           }
         }
         break;

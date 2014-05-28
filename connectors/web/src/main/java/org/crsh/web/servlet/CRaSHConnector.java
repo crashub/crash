@@ -24,6 +24,8 @@ import com.google.gson.JsonParser;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
+import org.crsh.console.KeyHandler;
+import org.crsh.console.KeyType;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.WebPluginLifeCycle;
 import org.crsh.shell.Shell;
@@ -43,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /** @author Julien Viet */
@@ -150,7 +153,33 @@ public class CRaSHConnector {
               log.fine("Cancelling command \"" + current.command + "\"");
               current.process.cancel();
             } else {
-              log.fine("No command to cancel");
+              log.fine("No process to cancel");
+            }
+          } else if (type.getAsString().equals("key")) {
+            WSProcessContext current = session.current.get();
+            int code = event.get("code").getAsInt();
+            if (code >= 32) {
+            }
+            if (current != null) {
+              KeyHandler keyHandler = current.process.getKeyHandler();
+              if (keyHandler != null) {
+                KeyType keyType = KeyType.forCodePoint(code);
+                if (keyType != null) {
+                  log.fine("Code " + code + " is mapped to " + keyType);
+                  try {
+                    keyHandler.handle(keyType, new int[]{code});
+                  }
+                  catch (Exception e) {
+                    log.log(Level.SEVERE, "Processing key handler " + keyHandler + " threw an exception", e);
+                  }
+                } else {
+                  log.fine("Code " + code + " could not be mapped to any key type");
+                }
+              } else {
+                log.fine("Process has no key handler to handle the key event");
+              }
+            } else {
+              log.fine("No process can handle the key event");
             }
           } else if (type.getAsString().equals("complete")) {
             String prefix = event.get("prefix").getAsString();
