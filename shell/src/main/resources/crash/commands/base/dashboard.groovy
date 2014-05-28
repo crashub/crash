@@ -10,7 +10,7 @@ public class dashboard implements KeyHandler {
 
   @Override
   void handle(KeyType type, int[] sequence) {
-    if (sequence.length == 1 && sequence[0] == 'q') {
+    if (type == KeyType.CHARACTER && sequence[0] == 'q') {
       current?.interrupt();
     }
   }

@@ -866,7 +866,7 @@ class clock implements KeyHandler {
 
   @Override
   void handle(KeyType type, int[] sequence) {
-    if (type == KeyType.q) {
+    if (type == KeyType.CHARACTER && sequence[0] == 'q') {
       done.set(true);
     }
   }
@@ -885,7 +885,16 @@ class clock implements KeyHandler {
 }
 ----
 
-This command will stream until the user hits the _q_ key.
+This command will stream until the user hits the _q_ key. The +KeyType+ allow to distinguish special key sequences whose
+sequence may vary according to the terminal:
+
+* +KeyType.UP+
+* +KeyType.DOWN+
+* +KeyType.LEFT+
+* +KeyType.RIGHT+
+* +KeyType.DELETE+
+* +KeyType.BACKSPACE+
+* +KeyType.ENTER+
 
 == Renderers
 

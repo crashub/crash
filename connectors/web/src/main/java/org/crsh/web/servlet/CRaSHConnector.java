@@ -158,16 +158,22 @@ public class CRaSHConnector {
           } else if (type.getAsString().equals("key")) {
             WSProcessContext current = session.current.get();
             int code = event.get("code").getAsInt();
-            if (code >= 32) {
-            }
             if (current != null) {
               KeyHandler keyHandler = current.process.getKeyHandler();
               if (keyHandler != null) {
-                KeyType keyType = KeyType.forCodePoint(code);
+                KeyType keyType;
+                int[] sequence;
+                if (code >= 32) {
+                  keyType = KeyType.CHARACTER;
+                  sequence = new int[]{code};
+                } else {
+                  keyType = null;
+                  sequence = null;
+                }
                 if (keyType != null) {
-                  log.fine("Code " + code + " is mapped to " + keyType);
+                  log.fine("Key event " + code + " is mapped to " + keyType);
                   try {
-                    keyHandler.handle(keyType, new int[]{code});
+                    keyHandler.handle(keyType, sequence);
                   }
                   catch (Exception e) {
                     log.log(Level.SEVERE, "Processing key handler " + keyHandler + " threw an exception", e);

@@ -9,7 +9,7 @@ class keyhandler implements KeyHandler {
 
   @Override
   void handle(KeyType type, int[] sequence) {
-    if (type == KeyType.q) {
+    if (type == KeyType.CHARACTER && sequence[0] == 'q') {
       out << "done";
       out.flush();
       synchronized (lock) {

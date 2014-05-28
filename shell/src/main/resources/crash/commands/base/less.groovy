@@ -28,7 +28,7 @@ class less
 
     @Override
     void handle(KeyType type, int[] sequence) {
-      if (type == KeyType.q) {
+      if (type == KeyType.CHARACTER && sequence[0] == 'q') {
         synchronized (lock) {
           done = true;
           lock.notifyAll();
@@ -39,7 +39,7 @@ class less
           buffer.nextRow();
         } else if (type == KeyType.UP) {
           buffer.previousRow();
-        } else if (type == KeyType.SPACE) {
+        } else if (type == KeyType.CHARACTER && sequence[0] == ' ') {
           buffer.nextPage();
         }
         buffer.paint();
