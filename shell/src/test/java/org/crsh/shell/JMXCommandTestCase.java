@@ -46,7 +46,7 @@ public class JMXCommandTestCase extends AbstractCommandTestCase {
     Object version = ManagementFactory.getPlatformMBeanServer().getAttribute(OPERATING_SYSTEM, "Version");
     lifeCycle.bindClass("consume", Commands.ConsumeObject.class);
     Commands.list.clear();
-    assertOk("jmx query -p " + OPERATING_SYSTEM + " | jmx get -a Version | consume");
+    assertOk("jmx query -p " + OPERATING_SYSTEM + " | jmx get -n MBean -a Version | consume");
     HashMap<String, Object> expected = new HashMap<String, Object>();
     expected.put("Version", version);
     expected.put("MBean", OPERATING_SYSTEM);

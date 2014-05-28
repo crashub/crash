@@ -104,9 +104,12 @@ public class jmx extends BaseCommand {
   )
   @Command
   public Pipe<ObjectName, Map> get(
-      @Usage("Silent mode ignores any attribute runtime failures")
+      @Usage("silent mode ignores any attribute runtime failures")
       @Option(names = {"s","silent"})
       final Boolean silent,
+      @Usage("add a column  with the option value with the managed bean name")
+      @Option(names = {"n","name"})
+      final String name,
       @Usage("specifies a managed bean attribute name")
       @Option(names = {"a","attributes"}) final List<String> attributes,
       @Usage("a managed bean object name")
@@ -167,7 +170,9 @@ public class jmx extends BaseCommand {
         // Produce the output
         for (ObjectName mbean : buffer) {
           LinkedHashMap<String, Object> tuple = new LinkedHashMap<String, Object>();
-          tuple.put("MBean", mbean);
+          if (name != null) {
+            tuple.put(name, mbean);
+          }
           for (String name : names) {
             Object value;
             try {
