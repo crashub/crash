@@ -46,13 +46,9 @@ public class LabelElement extends Element {
    *
    * @param value the label value
    * @param minWidth the label minimum width
-   * @throws NullPointerException if the value is null
    * @throws IllegalArgumentException if the minimum width is negative
    */
-  public LabelElement(String value, int minWidth) throws NullPointerException, IllegalArgumentException {
-    if (value == null) {
-      throw new NullPointerException("No null value allowed");
-    }
+  public LabelElement(String value, int minWidth) throws IllegalArgumentException {
     if (minWidth < 0) {
       throw new IllegalArgumentException("No negative min size allowed");
     }
