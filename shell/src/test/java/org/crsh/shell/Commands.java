@@ -29,7 +29,10 @@ import org.crsh.command.BaseCommand;
 import org.crsh.command.Pipe;
 import org.crsh.command.ScriptException;
 import org.crsh.groovy.GroovyCommand;
-import org.crsh.text.Chunk;
+import org.crsh.text.CLS;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.ScreenContext;
+import org.crsh.text.Style;
 
 import javax.naming.NamingException;
 import java.io.IOException;
@@ -201,14 +204,21 @@ public class Commands {
   }
 
   public static class ConsumeChunk extends BaseCommand {
+
+    static class ConsumePipe extends Pipe<CharSequence, Object> implements ScreenContext {
+      public int getWidth() { return context.getWidth(); }
+      public int getHeight() { return context.getHeight(); }
+      public Appendable append(char c) throws IOException { list.add("" + c); return this; }
+      public Appendable append(CharSequence s) throws IOException { list.add(s); return this; }
+      public Appendable append(CharSequence csq, int start, int end) throws IOException { list.add(csq.subSequence(start, end)); return this; }
+      public ScreenAppendable append(Style style) throws IOException { list.add(style); return this; }
+      public ScreenAppendable cls() throws IOException { list.add(CLS.INSTANCE); return this; }
+      public void provide(CharSequence element) throws ScriptException, IOException { list.add(element); }
+    }
+
     @Command
-    public Pipe<Chunk, Object> main() {
-      return new Pipe<Chunk, Object>() {
-        @Override
-        public void provide(Chunk element) throws ScriptException, IOException {
-          list.add(element);
-        }
-      };
+    public Pipe<CharSequence, Object> main() {
+      return new ConsumePipe();
     }
   }
 
@@ -247,23 +257,11 @@ public class Commands {
     public static final AtomicInteger closed = new AtomicInteger();
 
     @Command
-    public Pipe<Object, Object> main() {
-      return new Pipe<Object, Object>() {
+    public Pipe<Void, Object> main() {
+      return new Pipe<Void, Object>() {
         @Override
         public void close() throws ScriptException {
           closed.incrementAndGet();
-        }
-      };
-    }
-  }
-
-  public static class IsPiped extends BaseCommand {
-    @Command
-    public Pipe<Object, Object> main() {
-      return new Pipe<Object, Object>() {
-        @Override
-        public void open() throws ScriptException {
-          list.add(isPiped());
         }
       };
     }

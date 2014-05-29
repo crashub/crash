@@ -22,7 +22,7 @@ package org.crsh.text;
 /**
  * Clears the screen.
  */
-public class CLS implements Chunk {
+public class CLS {
 
   /** . */
   public static final CLS INSTANCE = new CLS();

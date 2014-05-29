@@ -16,41 +16,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.crsh.shell;
-
-import org.crsh.text.Chunk;
+package org.crsh.text;
 
 import java.io.Flushable;
 import java.io.IOException;
 
 /**
- * The screen context extends the consumer and add information about the screen.
+ * Defines how to send data to a screen.
+ *
+ * @author Julien Viet
  */
-public interface ScreenContext extends Flushable {
+public interface ScreenAppendable extends Appendable, Flushable {
 
-  /**
-   * Returns the screen width in chars. When the value is not positive it means
-   * the value could not be determined.
-   *
-   * @return the term width
-   */
-  int getWidth();
+  Appendable append(char c) throws IOException;
 
-  /**
-   * Returns the screen height in chars. When the value is not positive it means
-   * the value could not be determined.
-   *
-   * @return the term height
-   */
-  int getHeight();
+  Appendable append(CharSequence s) throws IOException;
 
-  /**
-   * Write a chunk to the screen.
-   *
-   * @param chunk the chunk
-   * @throws IOException any io exception
-   */
-  void write(Chunk chunk) throws IOException;
+  Appendable append(CharSequence csq, int start, int end) throws IOException;
+
+  ScreenAppendable append(Style style) throws IOException;
+
+  ScreenAppendable cls() throws IOException;
 
 }

@@ -20,10 +20,11 @@
 package org.crsh.shell.impl.remoting;
 
 import org.crsh.shell.ErrorKind;
+import org.crsh.text.ScreenAppendable;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Chunk;
+import org.crsh.text.Style;
 import org.crsh.util.Statement;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ class ClientProcessContext implements ShellProcessContext {
   final ShellProcess process;
 
   /** . */
-  final ArrayList<Chunk> buffer;
+  final ArrayList<ServerMessage.Chunk> buffer;
 
   /** . */
   private boolean closed;
@@ -46,7 +47,7 @@ class ClientProcessContext implements ShellProcessContext {
   ClientProcessContext(ClientAutomaton client, ShellProcess process) {
     this.client = client;
     this.process = process;
-    this.buffer = new ArrayList<Chunk>(1000);
+    this.buffer = new ArrayList<ServerMessage.Chunk>(1000);
     this.closed = false;
   }
 
@@ -149,26 +150,46 @@ class ClientProcessContext implements ShellProcessContext {
     return null;
   }
 
-  public void write(Chunk chunk) throws IOException {
-    provide(chunk);
-  }
-
-  public void provide(Chunk element) throws IOException {
+  @Override
+  public ScreenAppendable append(CharSequence s) throws IOException {
     if (!closed) {
-      buffer.add(element);
+      buffer.add(new ServerMessage.Chunk.Text(s));
     }
+    return this;
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
+  @Override
+  public ScreenAppendable append(char c) throws IOException {
+    return append(Character.toString(c));
+  }
+
+  @Override
+  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+    return append(csq.subSequence(start, end));
+  }
+
+  @Override
+  public ScreenAppendable append(Style style) throws IOException {
+    if (!closed) {
+      buffer.add(new ServerMessage.Chunk.Style(style));
+    }
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable cls() throws IOException {
+    if (!closed) {
+      buffer.add(new ServerMessage.Chunk.Cls());
+    }
+    return this;
   }
 
   public synchronized void flush() {
     if (!closed) {
       if (buffer.size() > 0) {
         try {
-          for (Chunk chunk : buffer) {
-            client.out.writeObject(new ServerMessage.Chunk(chunk));
+          for (ServerMessage.Chunk chunk : buffer) {
+            client.out.writeObject(chunk);
           }
           client.out.writeObject(new ServerMessage.Flush());
           client.out.flush();

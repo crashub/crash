@@ -43,11 +43,9 @@ Send is a <Logger, Void> command, it can log messages to consumed log objects:
     return new Pipe<Logger, Object>() {
       @Override
       void open() {
-        if (!isPiped()) {
-          if (name != null) {
-            def logger = Logger.getLogger(name);
-            level.log(logger, msg);
-          }
+        if (name != null) {
+          def logger = Logger.getLogger(name);
+          level.log(logger, msg);
         }
       }
       @Override
@@ -159,11 +157,9 @@ The logger name can be omitted and instead stream of logger can be consumed as i
     return new Pipe<Logger, Object>() {
       @Override
       void open() {
-        if (!isPiped()) {
-          names.each() {
-            def logger = Logger.getLogger(it);
-            level.setLevel(logger)
-          }
+        names.each() {
+          def logger = Logger.getLogger(it);
+          level.setLevel(logger)
         }
       }
       @Override

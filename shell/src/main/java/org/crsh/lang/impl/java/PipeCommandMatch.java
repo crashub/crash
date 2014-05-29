@@ -26,6 +26,7 @@ import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.Pipe;
 import org.crsh.keyboard.KeyHandler;
+import org.crsh.text.ScreenContext;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.util.Utils;
@@ -88,6 +89,11 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
         // Java is fine with that but not intellij....
         CommandContext<P> consumer2 = (CommandContext<P>)consumer;
         open2(consumer2);
+      }
+
+      @Override
+      public ScreenContext getScreenContext() {
+        return real instanceof ScreenContext ? (ScreenContext)real : invocationContext;
       }
 
       @Override

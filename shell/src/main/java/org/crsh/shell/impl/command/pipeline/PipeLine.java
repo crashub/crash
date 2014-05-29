@@ -22,11 +22,10 @@ package org.crsh.shell.impl.command.pipeline;
 import org.crsh.command.CommandContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.keyboard.KeyHandler;
-import org.crsh.text.Chunk;
 
 import java.io.IOException;
 
-public class PipeLine extends CommandInvoker<Void, Chunk> {
+public class PipeLine extends CommandInvoker<Void, Object> {
 
   /** . */
   private final CommandInvoker[] invokers;
@@ -43,11 +42,11 @@ public class PipeLine extends CommandInvoker<Void, Chunk> {
     return Void.class;
   }
 
-  public Class<Chunk> getProducedType() {
-    return Chunk.class;
+  public Class<Object> getProducedType() {
+    return Object.class;
   }
 
-  public void open(CommandContext<? super Chunk> consumer) {
+  public void open(CommandContext<? super Object> consumer) {
     open(0, consumer);
   }
 
@@ -60,20 +59,13 @@ public class PipeLine extends CommandInvoker<Void, Chunk> {
 
       //
       final Class produced = invoker.getProducedType();
-      final Class<?> consumed = next.getConsumedType();
-      boolean piped = index > 0;
-
-      AbstractPipe filter;
-      if (consumed.equals(Chunk.class)) {
-        filter = new ToChunkPipe(produced, piped);
+      final Class<?> consumed = invoker.getConsumedType();
+      CommandInvokerAdapter filterContext;
+      if (consumed.equals(Void.class)) {
+        filterContext = new CommandInvokerAdapter(invoker, consumed, produced, Void.class);
       } else {
-        filter = new ConvertingPipe(produced, consumed, piped);
+        filterContext = new CommandInvokerAdapter(invoker, consumed, produced, Object.class);
       }
-      filter.open(next);
-      next = filter;
-
-      //
-      PipeLineElement filterContext = new PipeLineElement(invoker);
       filterContext.open(next);
 
       // Save current filter in field

@@ -31,8 +31,10 @@ import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.ScriptException;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
-import org.crsh.text.Chunk;
-import org.crsh.text.ChunkBuffer;
+import org.crsh.text.CLS;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.ScreenBuffer;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -44,7 +46,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
   protected List<Object> producedItems;
 
   /** . */
-  protected ChunkBuffer reader;
+  protected ScreenBuffer reader;
 
   /** . */
   private final Consumer<Object> producer = new Consumer<Object>() {
@@ -67,10 +69,6 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     //
     this.reader = null;
     this.producedItems = Collections.emptyList();
-  }
-
-  public boolean isPiped() {
-    throw new UnsupportedOperationException();
   }
 
   public boolean takeAlternateBuffer() {
@@ -101,16 +99,52 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     throw new UnsupportedOperationException();
   }
 
-  public void write(Chunk chunk) throws IOException {
-    provide(chunk);
+  public ScreenAppendable append(CharSequence s) throws IOException {
+    if (reader == null) {
+      reader = new ScreenBuffer();
+    }
+    reader.append(s);
+    return this;
+  }
+
+  public ScreenAppendable append(char c) throws IOException {
+    if (reader == null) {
+      reader = new ScreenBuffer();
+    }
+    reader.append(c);
+    return this;
+  }
+
+  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+    if (reader == null) {
+      reader = new ScreenBuffer();
+    }
+    reader.append(csq, start, end);
+    return this;
+  }
+
+  public ScreenAppendable append(Style style) throws IOException {
+    if (reader == null) {
+      reader = new ScreenBuffer();
+    }
+    reader.append(style);
+    return this;
+  }
+
+  public ScreenAppendable cls() throws IOException {
+    if (reader == null) {
+      reader = new ScreenBuffer();
+    }
+    reader.cls();
+    return this;
   }
 
   public void provide(Object element) throws IOException {
-    if (element instanceof Chunk) {
+    if (element instanceof Style || element instanceof CLS) {
       if (reader == null) {
-        reader = new ChunkBuffer();
+        reader = new ScreenBuffer();
       }
-      reader.provide((Chunk)element);
+      reader.append(element);
     } else {
       producer.provide(element);
     }
@@ -132,7 +166,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     return producedItems;
   }
 
-  public ChunkBuffer getReader() {
+  public ScreenBuffer getReader() {
     return reader;
   }
 

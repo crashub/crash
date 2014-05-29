@@ -19,10 +19,8 @@
 
 package org.crsh.text.ui;
 
-import org.crsh.text.Chunk;
 import org.crsh.text.LineRenderer;
 import org.crsh.text.Style;
-import org.crsh.text.Text;
 import org.crsh.util.Utils;
 
 import java.util.Iterator;
@@ -30,7 +28,7 @@ import java.util.Iterator;
 public class TextElement extends Element {
 
   /** . */
-  final Iterable<Chunk> stream;
+  final Iterable<Object> stream;
 
   /** . */
   final int minWidth;
@@ -38,12 +36,12 @@ public class TextElement extends Element {
   /** . */
   final int width;
 
-  private static int width(int width, Iterator<Chunk> stream, Text current, Integer from) {
+  private static int width(int width, Iterator<Object> stream, CharSequence current, Integer from) {
     while (current == null) {
       if (stream.hasNext()) {
-        Chunk next = stream.next();
-        if (next instanceof Text) {
-          current = (Text)next;
+        Object next = stream.next();
+        if (next instanceof CharSequence) {
+          current = (CharSequence)next;
           from = 0;
         }
       } else {
@@ -53,16 +51,16 @@ public class TextElement extends Element {
     if (current == null) {
       return width;
     } else {
-      int pos = Utils.indexOf(current.getText(), from, '\n');
+      int pos = Utils.indexOf(current, from, '\n');
       if (pos == -1) {
-        return width(width + current.getText().length() - from, stream, current, from);
+        return width(width + current.length() - from, stream, current, from);
       } else {
         return Math.max(width + pos - from, width(0, stream, null, 0));
       }
     }
   }
 
-  public TextElement(Iterable<Chunk> stream, int minWidth) {
+  public TextElement(Iterable<Object> stream, int minWidth) {
     if (minWidth < 0) {
       throw new IllegalArgumentException("No negative min size allowed");
     }
@@ -76,7 +74,7 @@ public class TextElement extends Element {
     this.width = width;
   }
 
-  public TextElement(Iterable<Chunk> stream) {
+  public TextElement(Iterable<Object> stream) {
     this(stream, 1);
   }
 

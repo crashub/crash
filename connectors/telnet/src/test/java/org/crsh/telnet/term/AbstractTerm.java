@@ -19,7 +19,8 @@
 
 package org.crsh.telnet.term;
 
-import org.crsh.text.Chunk;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 
@@ -53,16 +54,24 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
-  }
-
-  public void provide(Chunk element) throws IOException {
+  public Appendable append(CharSequence s) throws IOException {
     throw new UnsupportedOperationException();
   }
 
-  public void write(Chunk chunk) throws IOException {
-    provide(chunk);
+  public Appendable append(char c) throws IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  public ScreenAppendable append(Style style) throws IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  public ScreenAppendable cls() throws IOException {
+    throw new UnsupportedOperationException();
   }
 
   public Appendable getDirectBuffer() {

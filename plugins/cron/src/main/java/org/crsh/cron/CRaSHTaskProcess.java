@@ -23,8 +23,8 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Chunk;
-import org.crsh.text.Text;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.Date;
@@ -120,10 +120,32 @@ public class CRaSHTaskProcess {
       return 40;
     }
 
-    public void write(Chunk element) throws IOException {
-      if (element instanceof Text) {
-        msg.append(((Text)element).getText().toString());
-      }
+    @Override
+    public Appendable append(char c) throws IOException {
+      msg.append(c);
+      return this;
+    }
+
+    @Override
+    public Appendable append(CharSequence s) throws IOException {
+      msg.append(s);
+      return this;
+    }
+
+    @Override
+    public Appendable append(CharSequence csq, int start, int end) throws IOException {
+      msg.append(csq, start, end);
+      return this;
+    }
+
+    @Override
+    public ScreenAppendable append(Style style) throws IOException {
+      return this;
+    }
+
+    @Override
+    public ScreenAppendable cls() throws IOException {
+      return this;
     }
 
     public void flush() throws IOException {

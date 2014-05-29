@@ -20,7 +20,8 @@
 package org.crsh.telnet.term;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.text.Chunk;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -118,15 +119,24 @@ public class SyncTerm implements Term {
     }
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
+  public Appendable append(char c) throws IOException {
+    return this;
   }
 
-  public void write(Chunk chunk) throws IOException {
-    provide(chunk);
+  public Appendable append(CharSequence s) throws IOException {
+    return this;
   }
 
-  public void provide(Chunk element) throws IOException {
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    return this;
+  }
+
+  public ScreenAppendable append(Style style) throws IOException {
+    return this;
+  }
+
+  public ScreenAppendable cls() throws IOException {
+    return this;
   }
 
   public Appendable getDirectBuffer() {

@@ -20,12 +20,12 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
-import org.crsh.io.Consumer;
-import org.crsh.shell.ScreenContext;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.ScreenContext;
 import org.crsh.shell.ShellProcessContext;
-import org.crsh.text.Chunk;
-import org.crsh.text.ChunkAdapter;
-import org.crsh.text.ChunkBuffer;
+import org.crsh.text.ScreenBuffer;
+import org.crsh.text.ScreenContextConsumer;
+import org.crsh.text.Style;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -40,7 +40,10 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
   private final ShellProcessContext processContext;
 
   /** . */
-  private final ChunkAdapter adapter;
+  private final ScreenContextConsumer adapter;
+
+  /** . */
+  private final ScreenBuffer buffer;
 
   /** . */
   private boolean useAlternateBuffer;
@@ -50,20 +53,10 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
     // We use this chunk buffer to buffer stuff
     // but also because it optimises the chunks
     // which provides better perormances on the client
-    final ChunkBuffer buffer = new ChunkBuffer(new Consumer<Chunk>() {
-      public void provide(Chunk element) throws IOException {
-        processContext.write(element);
-      }
-      public Class<Chunk> getConsumedType() {
-        return Chunk.class;
-      }
-      public void flush() throws IOException {
-        processContext.flush();
-      }
-    });
+    final ScreenBuffer buffer = new ScreenBuffer(processContext);
 
     //
-    final ChunkAdapter adapter = new ChunkAdapter(new ScreenContext() {
+    final ScreenContextConsumer adapter = new ScreenContextConsumer(new ScreenContext() {
       public int getWidth() {
         return processContext.getWidth();
       }
@@ -72,16 +65,34 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
         return processContext.getHeight();
       }
 
-      public void write(Chunk chunk) throws IOException {
-        provide(chunk);
+      @Override
+      public ScreenAppendable append(CharSequence s) throws IOException {
+        buffer.append(s);
+        return this;
       }
 
-      public Class<Chunk> getConsumedType() {
-        return Chunk.class;
+      @Override
+      public Appendable append(char c) throws IOException {
+        buffer.append(c);
+        return this;
       }
 
-      public void provide(Chunk element) throws IOException {
-        buffer.provide(element);
+      @Override
+      public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+        buffer.append(csq, start, end);
+        return this;
+      }
+
+      @Override
+      public ScreenAppendable append(Style style) throws IOException {
+        buffer.append(style);
+        return this;
+      }
+
+      @Override
+      public ScreenAppendable cls() throws IOException {
+        buffer.cls();
+        return this;
       }
 
       public void flush() throws IOException {
@@ -94,10 +105,7 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
     this.processContext = processContext;
     this.adapter = adapter;
     this.useAlternateBuffer = false;
-  }
-
-  public boolean isPiped() {
-    throw new UnsupportedOperationException();
+    this.buffer = buffer;
   }
 
   public boolean takeAlternateBuffer() throws IOException {
@@ -128,8 +136,37 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
     return Object.class;
   }
 
-  public void write(Chunk chunk) throws IOException {
-    adapter.provide(chunk);
+  @Override
+  public ScreenAppendable append(CharSequence s) throws IOException {
+    return append(s, 0, s.length());
+  }
+
+  @Override
+  public ScreenAppendable append(char c) throws IOException {
+    adapter.send();
+    buffer.append(c);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+    if (start < end) {
+      adapter.send();
+      buffer.append(csq, start, end);
+    }
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(Style style) throws IOException {
+    adapter.provide(style);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable cls() throws IOException {
+    buffer.cls();
+    return this;
   }
 
   public void provide(Object element) throws IOException {

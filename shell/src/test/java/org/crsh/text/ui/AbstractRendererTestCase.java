@@ -20,12 +20,13 @@
 package org.crsh.text.ui;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.text.Chunk;
-import org.crsh.text.ChunkBuffer;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.ScreenBuffer;
 import org.crsh.text.Format;
 import org.crsh.text.LineReader;
 import org.crsh.text.RenderAppendable;
-import org.crsh.shell.ScreenContext;
+import org.crsh.text.ScreenContext;
+import org.crsh.text.Style;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
   public List<String> render(final LineReader renderer, final int width) {
     ArrayList<String> result = new ArrayList<String>();
     while (renderer.hasLine()) {
-      final ChunkBuffer buffer = new ChunkBuffer();
+      final ScreenBuffer buffer = new ScreenBuffer();
       renderer.renderLine(new RenderAppendable(new ScreenContext() {
         public int getWidth() {
           return width;
@@ -46,14 +47,25 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
         public int getHeight() {
           return 40;
         }
-        public Class<Chunk> getConsumedType() {
-          return Chunk.class;
+        public ScreenAppendable append(CharSequence s) throws IOException {
+          buffer.append(s);
+          return this;
         }
-        public void write(Chunk chunk) throws IOException {
-          provide(chunk);
+        public Appendable append(char c) throws IOException {
+          buffer.append(c);
+          return this;
         }
-        public void provide(Chunk element) throws IOException {
-          buffer.provide(element);
+        public Appendable append(CharSequence csq, int start, int end) throws IOException {
+          buffer.append(csq, start, end);
+          return this;
+        }
+        public ScreenAppendable append(Style style) throws IOException {
+          buffer.append(style);
+          return this;
+        }
+        public ScreenAppendable cls() throws IOException {
+          buffer.cls();
+          return this;
         }
         public void flush() throws IOException {
           buffer.flush();

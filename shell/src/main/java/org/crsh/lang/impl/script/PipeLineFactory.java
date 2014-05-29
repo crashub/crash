@@ -25,7 +25,6 @@ import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.pipeline.PipeLine;
-import org.crsh.text.Chunk;
 
 import java.util.LinkedList;
 import java.util.regex.Pattern;
@@ -84,7 +83,7 @@ public class PipeLineFactory {
     return next;
   }
 
-  public CommandInvoker<Void, Chunk> create(ShellSession session) throws CommandException {
+  public CommandInvoker<Void, Object> create(ShellSession session) throws CommandException {
     LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();
     for (PipeLineFactory current = this;current != null;current = current.next) {
       Command<?> command = session.getCommand(current.name);

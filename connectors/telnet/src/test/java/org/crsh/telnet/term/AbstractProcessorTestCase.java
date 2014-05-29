@@ -25,7 +25,6 @@ import org.crsh.processor.term.SyncShell;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.telnet.term.processor.Processor;
-import org.crsh.text.Text;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -90,7 +89,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
       public void run(String request, ShellProcessContext context) throws Exception {
         syncA.await();
         syncB.await();
-        context.write(Text.create("foo"));
+        context.append("foo");
         context.end(ShellResponse.ok());
       }
     });
@@ -99,7 +98,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     syncB.countDown();
     shell.addProcess(new SyncProcess() {
       public void run(String request, ShellProcessContext context) throws Exception {
-        context.write(Text.create("bar"));
+        context.append("bar");
         context.end(ShellResponse.ok());
       }
     });
@@ -139,7 +138,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
     term.publish(TermEvent.readLine("bar"));
     shell.addProcess(new SyncProcess() {
       public void run(String request, ShellProcessContext context) throws Exception {
-        context.write(Text.create("bar"));
+        context.append("bar");
         context.end(ShellResponse.ok());
       }
     });
@@ -185,7 +184,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        context.write(Text.create("foo"));
+        context.append("foo");
         context.end(ShellResponse.ok());
       }
     });
@@ -258,7 +257,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        context.write(Text.create("foo"));
+        context.append("foo");
         context.end(ShellResponse.ok());
       }
     });
@@ -302,7 +301,7 @@ public abstract class AbstractProcessorTestCase extends AbstractTestCase {
         catch (Exception e) {
           e.printStackTrace();
         }
-        context.write(Text.create("foo"));
+        context.append("foo");
         context.end(ShellResponse.ok());
       }
     });

@@ -25,30 +25,38 @@ public enum Format {
 
   TEXT() {
     @Override
-    public void append(Chunk chunk, Appendable to) throws IOException {
-      if (chunk instanceof Text) {
-        Text text = (Text)chunk;
-        if (text.value.length() > 0) {
-          to.append(text.value);
-        }
+    public void write(CharSequence s, Appendable to) throws IOException {
+      if (s.length() > 0) {
+        to.append(s);
       }
+    }
+    @Override
+    public void write(Style style, Appendable to) throws IOException {
+    }
+    @Override
+    public void cls(Appendable to) throws IOException {
     }
   },
 
   ANSI() {
     @Override
-    public void append(Chunk chunk, Appendable to) throws IOException {
-      if (chunk instanceof Text) {
-        Text text = (Text)chunk;
-        if (text.value.length() > 0) {
-          to.append(text.value);
-        }
-      } else if (chunk instanceof Style) {
-        ((Style)chunk).writeAnsiTo(to);
+    public void write(CharSequence s, Appendable to) throws IOException {
+      if (s.length() > 0) {
+        to.append(s);
       }
+    }
+    @Override
+    public void write(Style style, Appendable to) throws IOException {
+      style.writeAnsiTo(to);
+    }
+    @Override
+    public void cls(Appendable to) throws IOException {
     }
   };
 
-  public abstract void append(Chunk chunk, Appendable to) throws IOException;
+  public abstract void write(CharSequence s, Appendable to) throws IOException;
 
+  public abstract void write(Style style, Appendable to) throws IOException;
+
+  public abstract void cls(Appendable to) throws IOException;
 }

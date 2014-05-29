@@ -21,6 +21,7 @@ package org.crsh.shell.impl.command.spi;
 import org.crsh.command.CommandContext;
 import org.crsh.keyboard.KeyHandler;
 import org.crsh.io.Filter;
+import org.crsh.text.ScreenContext;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -52,6 +53,15 @@ public abstract class CommandInvoker<C, P> implements Filter<C, P, CommandContex
         close();
       }
     }
+  }
+
+  /**
+   * Provide an opportunity for the command to implement screen context.
+   *
+   * @return the screen context
+   */
+  public ScreenContext getScreenContext() {
+    return null;
   }
 
   /**

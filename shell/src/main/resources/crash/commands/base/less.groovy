@@ -6,16 +6,19 @@ import org.crsh.cli.Command
 import org.crsh.command.Pipe
 import org.crsh.keyboard.KeyHandler
 import org.crsh.keyboard.KeyType
-import org.crsh.text.Chunk
-import org.crsh.text.ScreenBuffer
+import org.crsh.text.ScreenAppendable
+import org.crsh.text.ScreenContext
+import org.crsh.text.CLS
+import org.crsh.text.VirtualScreen
+import org.crsh.text.Style
 
 class less
 {
 
-  static class impl extends Pipe<Chunk, Chunk> implements KeyHandler {
+  static class impl extends Pipe<CharSequence, Object> implements KeyHandler, ScreenContext {
 
     /** . */
-    ScreenBuffer buffer;
+    VirtualScreen buffer;
 
     /** . */
     final def lock = new Object()
@@ -47,15 +50,59 @@ class less
       }
     }
 
-    @Override
+    int getWidth() {
+      return context.getWidth();
+    }
+
+    int getHeight() {
+      return context.getHeight();
+    }
+
+    Appendable append(char c) throws IOException {
+      buffer.append(c);
+      return this;
+    }
+
+    Appendable append(CharSequence s) throws IOException {
+      buffer.append(s);
+      return this;
+    }
+
+    Appendable append(CharSequence csq, int start, int end) throws IOException {
+      buffer.append(csq, start, end);
+      return this;
+    }
+
+    ScreenAppendable append(Style style) throws IOException {
+      buffer.append(style);
+      return this;
+    }
+
+    ScreenAppendable cls() throws IOException {
+      buffer.cls();
+      return this;
+    }
+
     void open() throws ScriptException {
-      buffer = new ScreenBuffer(context);
+      buffer = new VirtualScreen(context);
       context.takeAlternateBuffer();
     }
 
     @Override
-    void provide(Chunk element) throws ScriptException, IOException {
-      buffer.write(element);
+    void provide(CharSequence element) throws ScriptException, IOException {
+      if (element instanceof CLS) {
+        buffer.cls();
+      } else if (element instanceof Style) {
+        buffer.append(element);
+      } else {
+        CharSequence s;
+        if (element instanceof CharSequence) {
+          s = (CharSequence)element;
+        } else {
+          s = element.toString();
+        }
+        buffer.append(s);
+      }
       boolean flush = buffer.update();
       buffer.paint();
       if (flush) {
@@ -102,7 +149,7 @@ UP    - Scroll forward one line
 DOWN  - Scroll backward one line
 q     - Quit""")
   @Command
-  Pipe<Chunk, Chunk> main() {
+  Pipe<CharSequence, Object> main() {
     return new impl();
   }
 }

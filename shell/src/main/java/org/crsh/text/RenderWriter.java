@@ -19,12 +19,9 @@
 
 package org.crsh.text;
 
-import org.crsh.shell.ScreenContext;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.CharBuffer;
 
 public class RenderWriter extends Writer implements ScreenContext {
 
@@ -67,20 +64,20 @@ public class RenderWriter extends Writer implements ScreenContext {
     return out.getHeight();
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
+  public RenderWriter append(CharSequence s) throws IOException {
+    empty &= s.length() == 0;
+    out.append(s);
+    return this;
   }
 
-  public void write(Chunk chunk) throws IOException {
-    provide(chunk);
+  public ScreenAppendable append(Style style) throws IOException {
+    out.append(style);
+    return this;
   }
 
-  public void provide(Chunk element) throws IOException {
-    if (element instanceof Text) {
-      Text text = (Text)element;
-      empty &= text.getText().length() == 0;
-    }
-    out.write(element);
+  public ScreenAppendable cls() throws IOException {
+    out.cls();
+    return this;
   }
 
   @Override
@@ -89,7 +86,7 @@ public class RenderWriter extends Writer implements ScreenContext {
       throw new IOException("Already closed");
     }
     if (len > 0) {
-      provide(Text.create(new String(cbuf, off, len)));
+      out.append(new String(cbuf, off, len));
     }
   }
 

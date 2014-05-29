@@ -30,6 +30,4 @@ import java.io.Closeable;
  */
 public interface CommandContext<P> extends Consumer<P>, InteractionContext, RuntimeContext, Closeable {
 
-  boolean isPiped();
-
 }

@@ -47,7 +47,7 @@ public class PipeLineInvoker {
   public void invoke(InvocationContext<Object> context) throws IOException, UndeclaredThrowableException {
 
     //
-    PipeLineInvocationContext inner = new PipeLineInvocationContext(context, false);
+    PipeLineInvocationContext inner = new PipeLineInvocationContext(context);
     LinkedList<CommandInvoker> pipe;
     try {
       pipe = closure.resolve2(args);

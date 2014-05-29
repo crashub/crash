@@ -23,11 +23,9 @@ import org.crsh.keyboard.KeyType;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.CLS;
-import org.crsh.text.Chunk;
 import org.crsh.text.Color;
+import org.crsh.text.ScreenAppendable;
 import org.crsh.text.Style;
-import org.crsh.text.Text;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
@@ -131,56 +129,66 @@ public class WSProcessContext implements ShellProcessContext, KeyHandler {
   /** . */
   private Style style = Style.reset;
 
-  public void write(Chunk chunk) throws IOException {
+  @Override
+  public Appendable append(char c) throws IOException {
+    return append(Character.toString(c));
+  }
 
-    // TODO : handle Color.def
+  @Override
+  public Appendable append(CharSequence s) throws IOException {
+    return append(s, 0, s.length());
+  }
 
-    if (chunk instanceof Style) {
-      style = style.merge((Style)chunk);
-    } else {
-      if (chunk instanceof Text) {
-        Text text = (Text)chunk;
-        CharSequence chars = text.getText();
-        int length = chars.length();
-        if (length > 0) {
-          if (style.equals(Style.reset)) {
-            buffer.append(chars);
+  @Override
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    if (start < end) {
+      if (style.equals(Style.reset)) {
+        buffer.append(csq, start, end);
+      } else {
+        Style.Composite composite = (Style.Composite)style;
+        buffer.append("[[");
+        if (composite.getUnderline() == Boolean.TRUE) {
+          buffer.append('u');
+        }
+        if (composite.getBold() == Boolean.TRUE) {
+          buffer.append('b');
+        }
+        buffer.append(';');
+        if (composite.getForeground() != null) {
+          buffer.append(COLOR_MAP.get(composite.getForeground()));
+        }
+        buffer.append(';');
+        if (composite.getBackground() != null) {
+          buffer.append(COLOR_MAP.get(composite.getBackground()));
+        }
+        buffer.append(']');
+        while (start < end) {
+          char c = csq.charAt(start++);
+          if (c == ']') {
+            buffer.append("\\]");
           } else {
-            Style.Composite composite = (Style.Composite)style;
-            buffer.append("[[");
-            if (composite.getUnderline() == Boolean.TRUE) {
-              buffer.append('u');
-            }
-            if (composite.getBold() == Boolean.TRUE) {
-              buffer.append('b');
-            }
-            buffer.append(';');
-            if (composite.getForeground() != null) {
-              buffer.append(COLOR_MAP.get(composite.getForeground()));
-            }
-            buffer.append(';');
-            if (composite.getBackground() != null) {
-              buffer.append(COLOR_MAP.get(composite.getBackground()));
-            }
-            buffer.append(']');
-            for (int i = 0;i < length;i++) {
-              char c = chars.charAt(i);
-              if (c == ']') {
-                buffer.append("\\]");
-              } else {
-                buffer.append(c);
-              }
-            }
-            buffer.append(']');
+            buffer.append(c);
           }
         }
-      } else if (chunk instanceof CLS) {
-        buffer.append("\033[");
-        buffer.append("2J");
-        buffer.append("\033[");
-        buffer.append("1;1H");
+        buffer.append(']');
       }
     }
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(Style style) throws IOException {
+    style = style.merge(style);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable cls() throws IOException {
+    buffer.append("\033[");
+    buffer.append("2J");
+    buffer.append("\033[");
+    buffer.append("1;1H");
+    return this;
   }
 
   public void flush() throws IOException {

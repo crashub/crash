@@ -85,6 +85,16 @@ public interface ConsoleDriver extends Closeable {
   void write(CharSequence s) throws IOException;
 
   /**
+   * Write a string.
+   *
+   * @param s the string to write
+   * @param start the index of the first char
+   * @param end the index of the last char
+   * @throws java.io.IOException any io exception
+   */
+  void write(CharSequence s, int start, int end) throws IOException;
+
+  /**
    * Write a char.
    *
    * @param c the char to write

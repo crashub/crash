@@ -24,7 +24,6 @@ import org.crsh.auth.SimpleAuthenticationPlugin;
 import org.crsh.processor.term.SyncProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Text;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -87,7 +86,7 @@ public class SSHTestCase extends Assert {
     foo.shell.addProcess(new SyncProcess() {
       @Override
       public void run(String request, ShellProcessContext context) throws Exception {
-        context.write(Text.create("world"));
+        context.append("world");
         context.end(ShellResponse.ok());
         requests.add(request);
       }

@@ -23,10 +23,8 @@ import org.crsh.telnet.term.CodeType;
 import org.crsh.telnet.term.Term;
 import org.crsh.telnet.term.TermEvent;
 import org.crsh.telnet.term.spi.TermIO;
-import org.crsh.text.CLS;
-import org.crsh.text.Chunk;
+import org.crsh.text.ScreenAppendable;
 import org.crsh.text.Style;
-import org.crsh.text.Text;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -232,27 +230,33 @@ public class ConsoleTerm implements Term {
     }
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
+  @Override
+  public ScreenAppendable append(CharSequence s) throws IOException {
+    writer.write(s);
+    return this;
   }
 
-  public void write(Chunk chunk) throws IOException {
-    provide(chunk);
+  @Override
+  public Appendable append(char c) throws IOException {
+    writer.write(c);
+    return this;
   }
 
-  public void provide(Chunk element) throws IOException {
-    if (element == null) {
-      throw new NullPointerException("No null chunk accepted");
-    }
-    if (element instanceof Text) {
-      Text textChunk = (Text)element;
-      writer.write(textChunk.getText());
-    } else if (element instanceof Style) {
-      io.write(((Style)element));
-    } else if (element instanceof CLS) {
-      io.cls();
-    } else {
-      throw new UnsupportedOperationException("todo");
-    }
+  @Override
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    writer.write(csq.subSequence(start, end));
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(Style style) throws IOException {
+    io.write((style));
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable cls() throws IOException {
+    io.cls();
+    return this;
   }
 }

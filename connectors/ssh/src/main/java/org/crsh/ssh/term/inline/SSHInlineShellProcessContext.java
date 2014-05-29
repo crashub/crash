@@ -4,8 +4,8 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.ssh.term.SSHContext;
-import org.crsh.text.Chunk;
-import org.crsh.text.Text;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -93,26 +93,42 @@ public class SSHInlineShellProcessContext implements ShellProcessContext {
     return null;
   }
 
-  public void write(Chunk element) throws IOException {
-    if (element instanceof Text) {
-      CharSequence seq = ((Text)element).getText();
-      int length = seq.length();
-      if (length > 0) {
-        for (int i = 0;i < length;i++) {
-          // This is not perfect but it will be OK for now
-          // ideally we should reuse the IO / ConsoleTerm stuff
-          // but for now we don't have the time to do it properly
-          char c = seq.charAt(i);
-          if (c == '\r') {
-            //
-          } else if (c == '\n') {
-            out.print("\r\n");
-          } else {
-            out.print(c);
-          }
-        }
+  @Override
+  public Appendable append(char c) throws IOException {
+    return append(Character.toString(c));
+  }
+
+  @Override
+  public Appendable append(CharSequence s) throws IOException {
+    return append(s, 0, s.length());
+  }
+
+  @Override
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    while (start < end) {
+      // This is not perfect but it will be OK for now
+      // ideally we should reuse the IO / ConsoleTerm stuff
+      // but for now we don't have the time to do it properly
+      char c = csq.charAt(start++);
+      if (c == '\r') {
+        //
+      } else if (c == '\n') {
+        out.print("\r\n");
+      } else {
+        out.print(c);
       }
     }
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(Style style) throws IOException {
+    return null;
+  }
+
+  @Override
+  public ScreenAppendable cls() throws IOException {
+    return null;
   }
 
   public void flush() throws IOException {

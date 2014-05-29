@@ -28,7 +28,6 @@ import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Chunk;
 import org.crsh.util.Utils;
 
 import java.util.Map;
@@ -86,7 +85,7 @@ public class ScriptRepl implements Repl {
     }
     if (factory != null) {
       try {
-        CommandInvoker<Void, Chunk> invoker = factory.create(session);
+        CommandInvoker<Void, Object> invoker = factory.create(session);
         return new ReplResponse.Invoke(invoker);
       }
       catch (CommandException e) {

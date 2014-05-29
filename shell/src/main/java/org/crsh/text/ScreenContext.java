@@ -19,10 +19,25 @@
 
 package org.crsh.text;
 
-import java.io.Serializable;
-
 /**
- * The base chunk type.
+ * The screen context extends the {@link org.crsh.text.ScreenAppendable} and add information about the screen.
  */
-public interface Chunk extends Serializable {
+public interface ScreenContext extends ScreenAppendable {
+
+  /**
+   * Returns the screen width in chars. When the value is not positive it means
+   * the value could not be determined.
+   *
+   * @return the term width
+   */
+  int getWidth();
+
+  /**
+   * Returns the screen height in chars. When the value is not positive it means
+   * the value could not be determined.
+   *
+   * @return the term height
+   */
+  int getHeight();
+
 }

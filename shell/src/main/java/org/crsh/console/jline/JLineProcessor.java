@@ -269,9 +269,13 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
 
   @Override
   public void write(CharSequence s) throws IOException {
-    int len = s.length();
-    for (int i = 0;i < len;i++) {
-      char c = s.charAt(i);
+    write(s, 0, s.length());
+  }
+
+  @Override
+  public void write(CharSequence s, int start, int end) throws IOException {
+    while (start < end) {
+      char c = s.charAt(start++);
       write(c);
     }
   }

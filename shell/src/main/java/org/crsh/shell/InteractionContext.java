@@ -19,6 +19,8 @@
 
 package org.crsh.shell;
 
+import org.crsh.text.ScreenContext;
+
 import java.io.IOException;
 
 /**

@@ -23,8 +23,8 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.telnet.term.TermEvent;
-import org.crsh.text.Chunk;
-import org.crsh.text.Text;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Style;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
@@ -69,7 +69,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
 
   public String readLine(String msg, boolean echo) {
     try {
-      processor.term.write(Text.create(msg));
+      processor.term.append(msg);
       processor.term.flush();
     }
     catch (IOException e) {
@@ -102,7 +102,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
         try {
           processor.term.setEcho(echo);
           processor.readTerm();
-          processor.term.write(Text.create("\r\n"));
+          processor.term.append("\r\n");
         }
         catch (IOException e) {
           processor.log.log(Level.SEVERE, "Error when readline line");
@@ -115,16 +115,34 @@ class ProcessContext implements ShellProcessContext, Runnable {
     }
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
+  @Override
+  public Appendable append(char c) throws IOException {
+    processor.append(c);
+    return this;
   }
 
-  public void write(Chunk chunk) throws IOException {
-    provide(chunk);
+  @Override
+  public Appendable append(CharSequence s) throws IOException {
+    processor.append(s);
+    return this;
   }
 
-  public void provide(Chunk element) throws IOException {
-    processor.term.write(element);
+  @Override
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    processor.append(csq, start, end);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(Style style) throws IOException {
+    processor.append(style);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable cls() throws IOException {
+    processor.cls();
+    return this;
   }
 
   public void flush() throws IOException {
@@ -152,7 +170,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
             runnable = new Runnable() {
               public void run() {
                 try {
-                  processor.provide(Text.create(message));
+                  processor.append(message);
                 }
                 catch (IOException e) {
                   // todo ???

@@ -605,9 +605,6 @@ The +readLine+ method can be used to get interactive information from the user d
 def age = context.readLine("How old are you?", false);
 ----
 
-Finally the +isPiped+, +consume+ and +produce+ methods are used when writing commands that exchange objects via
-the pipe mechanism.
-
 == Object pipeline
 
 One of the most powerful feature of CRaSH is the object pipeline. CRaSH commands can consume and produce objects

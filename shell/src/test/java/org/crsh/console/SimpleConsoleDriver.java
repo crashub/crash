@@ -90,11 +90,16 @@ public class SimpleConsoleDriver implements ConsoleDriver {
     position = 0;
   }
 
-  public void write(CharSequence s) throws IOException {
-    for (int i = 0;i < s.length();i++) {
-      char c = s.charAt(i);
+  @Override
+  public void write(CharSequence s, int start, int end) throws IOException {
+    while (start < end) {
+      char c = s.charAt(start++);
       write(c);
     }
+  }
+
+  public void write(CharSequence s) throws IOException {
+    write(s, 0, s.length());
   }
 
   @Override

@@ -22,7 +22,7 @@ package org.crsh.shell;
 import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.command.spi.CommandMatch;
 import org.crsh.shell.impl.command.spi.Command;
-import org.crsh.text.ChunkBuffer;
+import org.crsh.text.ScreenBuffer;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,23 +41,6 @@ public class PipeTestCase extends AbstractCommandTestCase {
     Commands.IsClosed.closed.set(0);
     assertEquals("", assertOk("echo abc | closed"));
     assertEquals(1, Commands.IsClosed.closed.get());
-  }
-
-  public void testIsPiped() {
-    lifeCycle.bindClass("piped", Commands.IsPiped.class);
-    lifeCycle.bindClass("produce_command", Commands.ProduceString.class);
-    lifeCycle.bindClass("noop", Commands.Noop.class);
-
-    //
-    Commands.list.clear();
-    assertEquals("", assertOk("piped"));
-    assertEquals(Arrays.<Object>asList(Boolean.FALSE), Commands.list);
-    Commands.list.clear();
-    assertEquals("", assertOk("produce_command | piped"));
-    assertEquals(Arrays.<Object>asList(Boolean.TRUE), Commands.list);
-    Commands.list.clear();
-    assertEquals("", assertOk("piped | noop"));
-    assertEquals(Arrays.<Object>asList(Boolean.FALSE), Commands.list);
   }
 
   public void testKeepLastPipeContent() throws Exception {
@@ -108,7 +91,7 @@ public class PipeTestCase extends AbstractCommandTestCase {
     lifeCycle.bindClass("consumer", Commands.ConsumeChunk.class);
     Commands.list.clear();
     assertOk("producer | consumer");
-    ChunkBuffer buffer = new ChunkBuffer().append(Commands.list);
+    ScreenBuffer buffer = new ScreenBuffer().append(Commands.list);
     assertEquals("<value>abc</value>             \n", buffer.toString());
   }
 

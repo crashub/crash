@@ -19,7 +19,7 @@
 
 package org.crsh.telnet.term;
 
-import org.crsh.shell.ScreenContext;
+import org.crsh.text.ScreenContext;
 
 import java.io.Closeable;
 import java.io.IOException;

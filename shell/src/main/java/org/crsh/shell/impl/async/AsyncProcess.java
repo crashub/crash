@@ -20,10 +20,11 @@
 package org.crsh.shell.impl.async;
 
 import org.crsh.keyboard.KeyHandler;
+import org.crsh.text.ScreenAppendable;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Chunk;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -87,12 +88,31 @@ public class AsyncProcess implements ShellProcess {
       return caller.readLine(msg, echo);
     }
 
-    public Class<Chunk> getConsumedType() {
-      return Chunk.class;
+    public ScreenAppendable append(CharSequence s) throws IOException {
+      caller.append(s);
+      return this;
     }
 
-    public void write(Chunk chunk) throws IOException {
-      caller.write(chunk);
+    @Override
+    public ScreenAppendable append(char c) throws IOException {
+      caller.append(c);
+      return this;
+    }
+
+    @Override
+    public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+      caller.append(csq, start, end);
+      return this;
+    }
+
+    public ScreenAppendable append(Style style) throws IOException {
+      caller.append(style);
+      return this;
+    }
+
+    public ScreenAppendable cls() throws IOException {
+      caller.cls();
+      return this;
     }
 
     public void flush() throws IOException {

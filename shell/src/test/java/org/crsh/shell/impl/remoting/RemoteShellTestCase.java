@@ -32,7 +32,6 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Text;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -160,7 +159,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
         return new BaseProcess(request) {
           @Override
           public void process(String request, ShellProcessContext processContext) throws IOException {
-            processContext.write(Text.create("juu"));
+            processContext.append("juu");
             processContext.end(ShellResponse.ok());
           }
         };
@@ -335,7 +334,7 @@ public class RemoteShellTestCase extends AbstractTestCase {
                   }
                 }
                 try {
-                  processContext.write(Text.create("juu"));
+                  processContext.append("juu");
                   processContext.end(ShellResponse.ok());
                 }
                 catch (IOException e) {

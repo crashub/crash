@@ -76,19 +76,39 @@ public class ServerMessage implements Serializable {
 
   }
 
-  public static class Chunk extends ServerMessage {
+  public static abstract class Chunk extends ServerMessage {
 
-    /** . */
-    public final org.crsh.text.Chunk payload;
+    public static class Text extends Chunk {
 
-    public Chunk(org.crsh.text.Chunk payload) {
-      this.payload = payload;
+      /** . */
+      public final CharSequence payload;
+
+      public Text(CharSequence payload) {
+        this.payload = payload;
+      }
+    }
+
+    public static class Style extends Chunk {
+
+      /** . */
+      public final org.crsh.text.Style payload;
+
+      public Style(org.crsh.text.Style payload) {
+        this.payload = payload;
+      }
+    }
+
+    public static class Cls extends Chunk {
+
+      public Cls() {
+      }
     }
   }
 
   public static class Flush extends ServerMessage {
-
   }
+
+
 
   public static class End extends ServerMessage {
 

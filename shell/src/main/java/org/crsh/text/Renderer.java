@@ -60,10 +60,8 @@ public abstract class Renderer<E> {
       StringBuilder sb = new StringBuilder();
       while (stream.hasNext()) {
         Object next = stream.next();
-        if (next instanceof Chunk) {
-          if (next instanceof Text) {
-            sb.append(((Text)next).value);
-          }
+        if (next instanceof CharSequence) {
+          sb.append((CharSequence)next);
         } else {
           sb.append(next);
         }

@@ -20,15 +20,16 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
+import org.crsh.text.ScreenAppendable;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
 import org.crsh.lang.impl.script.Token;
-import org.crsh.shell.ScreenContext;
+import org.crsh.text.ScreenContext;
 import org.crsh.lang.impl.script.PipeLineFactory;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
+import org.crsh.text.Style;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
@@ -59,10 +60,6 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     this.status = FLUSHED;
   }
 
-  public boolean isPiped() {
-    return commandContext.isPiped();
-  }
-
   public RenderPrintWriter getWriter() {
     if (writer == null) {
       writer = new RenderPrintWriter(new ScreenContext() {
@@ -72,8 +69,25 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
         public int getHeight() {
           return InvocationContextImpl.this.getHeight();
         }
-        public void write(Chunk chunk) throws IOException {
-          InvocationContextImpl.this.write(chunk);
+        public ScreenAppendable append(CharSequence s) throws IOException {
+          InvocationContextImpl.this.append(s);
+          return this;
+        }
+        public Appendable append(char c) throws IOException {
+          InvocationContextImpl.this.append(c);
+          return this;
+        }
+        public Appendable append(CharSequence csq, int start, int end) throws IOException {
+          InvocationContextImpl.this.append(csq, start, end);
+          return this;
+        }
+        public ScreenAppendable append(Style style) throws IOException {
+          InvocationContextImpl.this.append(style);
+          return this;
+        }
+        public ScreenAppendable cls() throws IOException {
+          InvocationContextImpl.this.cls();
+          return this;
         }
         public void flush() throws IOException {
           InvocationContextImpl.this.flush();
@@ -123,11 +137,44 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return commandContext.getHeight();
   }
 
-  public void write(Chunk chunk) throws IOException {
+  public ScreenAppendable append(CharSequence s) throws IOException {
     if (status != CLOSED) {
       status = WRITTEN;
-      commandContext.write(chunk);
+      commandContext.append(s);
     }
+    return this;
+  }
+
+  public ScreenAppendable append(char c) throws IOException {
+    if (status != CLOSED) {
+      status = WRITTEN;
+      commandContext.append(c);
+    }
+    return this;
+  }
+
+  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+    if (status != CLOSED) {
+      status = WRITTEN;
+      commandContext.append(csq, start, end);
+    }
+    return this;
+  }
+
+  public ScreenAppendable append(Style style) throws IOException {
+    if (status != CLOSED) {
+      status = WRITTEN;
+      commandContext.append(style);
+    }
+    return this;
+  }
+
+  public ScreenAppendable cls() throws IOException {
+    if (status != CLOSED) {
+      status = WRITTEN;
+      commandContext.cls();
+    }
+    return this;
   }
 
   public void provide(P element) throws IOException {

@@ -20,15 +20,14 @@
 package org.crsh.text;
 
 import org.crsh.io.Consumer;
-import org.crsh.shell.ScreenContext;
 
 import java.io.IOException;
 import java.util.LinkedList;
 
 /**
- * A <code>Consumer&lt;Object&gt;</code> that renders the object stream to a {@link org.crsh.shell.ScreenContext}.
+ * A <code>Consumer&lt;Object&gt;</code> that renders the object stream to a {@link ScreenContext}.
  */
-public class ChunkAdapter implements Consumer<Object> {
+public class ScreenContextConsumer implements Consumer<Object> {
 
   /** Buffers objects of the same kind. */
   private final LinkedList<Object> buffer = new LinkedList<Object>();
@@ -39,7 +38,7 @@ public class ChunkAdapter implements Consumer<Object> {
   /** . */
   private final RenderAppendable out;
 
-  public ChunkAdapter(ScreenContext out) {
+  public ScreenContextConsumer(ScreenContext out) {
     this.out = new RenderAppendable(out);
   }
 
@@ -51,10 +50,14 @@ public class ChunkAdapter implements Consumer<Object> {
     Renderer current = Renderer.getRenderable(element.getClass());
     if (current == null) {
       send();
-      if (element instanceof Chunk) {
-        out.write((Chunk)element);
+      if (element instanceof CharSequence) {
+        out.append((CharSequence)element);
+      } else if (element instanceof CLS) {
+        out.cls();
+      } else if (element instanceof Style) {
+        out.append((Style)element);
       } else {
-        out.write(Text.create(element.toString()));
+        out.append(element.toString());
       }
     } else {
       if (renderable != null && !current.equals(renderable)) {

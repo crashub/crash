@@ -21,14 +21,16 @@ package org.crsh.text.ui;
 
 import groovy.lang.Closure;
 import org.crsh.groovy.GroovyCommand;
+import org.crsh.text.ScreenAppendable;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.text.Chunk;
+import org.crsh.text.CLS;
 import org.crsh.text.LineRenderer;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.Renderer;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -78,10 +80,6 @@ public class EvalElement extends Element {
         return ctx.resolve(s);
       }
 
-      public boolean isPiped() {
-        throw new UnsupportedOperationException();
-      }
-
       public boolean takeAlternateBuffer() {
         return false;
       }
@@ -122,8 +120,29 @@ public class EvalElement extends Element {
         return Object.class;
       }
 
-      public void write(Chunk chunk) throws IOException {
-        provide(chunk);
+      public ScreenAppendable append(CharSequence s) throws IOException {
+        provide(s);
+        return this;
+      }
+
+      @Override
+      public Appendable append(char c) throws IOException {
+        return append(Character.toString(c));
+      }
+
+      @Override
+      public Appendable append(CharSequence csq, int start, int end) throws IOException {
+        return append(csq.subSequence(start, end));
+      }
+
+      public ScreenAppendable append(Style style) throws IOException {
+        provide(style);
+        return this;
+      }
+
+      public ScreenAppendable cls() throws IOException {
+        provide(CLS.INSTANCE);
+        return this;
       }
 
       public void provide(Object element) throws IOException {

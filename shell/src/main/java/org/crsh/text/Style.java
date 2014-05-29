@@ -39,7 +39,7 @@ import java.util.Arrays;
  * A style is either a composite style or the {@link #reset} style. Styles can be composed together to form a new
  * style <code>style.merge(other)</code>.
  */
-public abstract class Style implements Chunk {
+public abstract class Style implements Serializable {
 
   public static final Style reset = new Style() {
 

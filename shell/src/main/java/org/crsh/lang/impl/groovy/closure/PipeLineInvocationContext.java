@@ -19,11 +19,12 @@
 
 package org.crsh.lang.impl.groovy.closure;
 
+import org.crsh.text.ScreenAppendable;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.text.Chunk;
 import org.crsh.text.RenderPrintWriter;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.Map;
@@ -33,20 +34,10 @@ class PipeLineInvocationContext implements InvocationContext<Object> {
   /** . */
   final InvocationContext<Object> outter;
 
-  /** . */
-  private final boolean piped;
-
-  PipeLineInvocationContext(
-      InvocationContext<Object> outter,
-      boolean piped) {
+  PipeLineInvocationContext(InvocationContext<Object> outter) {
 
     //
     this.outter = outter;
-    this.piped = piped;
-  }
-
-  public boolean isPiped() {
-    return piped;
   }
 
   public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
@@ -85,8 +76,29 @@ class PipeLineInvocationContext implements InvocationContext<Object> {
     return Object.class;
   }
 
-  public void write(Chunk chunk) throws IOException {
-    outter.write(chunk);
+  public ScreenAppendable append(CharSequence s) throws IOException {
+    outter.append(s);
+    return this;
+  }
+
+  public Appendable append(char c) throws IOException {
+    outter.append(c);
+    return this;
+  }
+
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    outter.append(csq, start, end);
+    return this;
+  }
+
+  public ScreenAppendable append(Style style) throws IOException {
+    outter.append(style);
+    return this;
+  }
+
+  public ScreenAppendable cls() throws IOException {
+    outter.cls();
+    return  this;
   }
 
   public void provide(Object element) throws IOException {

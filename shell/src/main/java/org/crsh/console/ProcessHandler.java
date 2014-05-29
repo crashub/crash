@@ -18,13 +18,11 @@
  */
 package org.crsh.console;
 
+import org.crsh.text.ScreenAppendable;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.CLS;
-import org.crsh.text.Chunk;
 import org.crsh.text.Style;
-import org.crsh.text.Text;
 
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -111,14 +109,33 @@ class ProcessHandler extends Plugin implements ShellProcessContext {
   }
 
   @Override
-  public void write(Chunk chunk) throws IOException {
-    if (chunk instanceof Text) {
-      console.driver.write(((Text)chunk).getText());
-    } else if (chunk instanceof Style) {
-      console.driver.write(((Style)chunk));
-    } else if (chunk instanceof CLS) {
-      console.driver.cls();
-    }
+  public ScreenAppendable append(CharSequence s) throws IOException {
+    console.driver.write(s);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(char c) throws IOException {
+    console.driver.write(c);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+    console.driver.write(csq, start, end);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(Style style) throws IOException {
+    console.driver.write(style);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable cls() throws IOException {
+    console.driver.cls();
+    return this;
   }
 
   @Override

@@ -22,8 +22,8 @@ package org.crsh.shell;
 public class HelpTestCase extends AbstractCommandTestCase {
 
   public void testPiped() {
-    lifeCycle.bindClass("piped", Commands.IsPiped.class);
-    String resp = assertOk("piped -h");
+    lifeCycle.bindClass("noop", Commands.Noop.class);
+    String resp = assertOk("noop -h");
     assertTrue(resp.contains("usage"));
   }
 }

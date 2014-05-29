@@ -19,7 +19,6 @@
 
 package org.crsh.text;
 
-import org.crsh.shell.ScreenContext;
 import org.crsh.text.ui.Element;
 
 import java.io.Closeable;
@@ -52,7 +51,7 @@ public class RenderPrintWriter extends PrintWriter {
 
   public final void print(Object obj, Color foreground) {
     try {
-      out.provide(Style.style(foreground));
+      out.append(Style.style(foreground));
     }
     catch (InterruptedIOException x) {
       Thread.currentThread().interrupt();
@@ -62,7 +61,7 @@ public class RenderPrintWriter extends PrintWriter {
     }
     print(obj);
     try {
-      out.provide(Style.reset);
+      out.append(Style.reset);
     }
     catch (InterruptedIOException x) {
       Thread.currentThread().interrupt();
@@ -79,7 +78,7 @@ public class RenderPrintWriter extends PrintWriter {
 
   public final void print(Object obj, Color foreground, Color background) {
     try {
-      out.provide(Style.style(foreground, background));
+      out.append(Style.style(foreground, background));
     }
     catch (InterruptedIOException x) {
       Thread.currentThread().interrupt();
@@ -89,7 +88,7 @@ public class RenderPrintWriter extends PrintWriter {
     }
     print(obj);
     try {
-      out.provide(Style.reset);
+      out.append(Style.reset);
     }
     catch (InterruptedIOException x) {
       Thread.currentThread().interrupt();
@@ -106,7 +105,7 @@ public class RenderPrintWriter extends PrintWriter {
 
   public final void print(Object obj, Decoration decoration) {
     try {
-      out.provide(Style.style(decoration));
+      out.append(Style.style(decoration));
     }
     catch (InterruptedIOException x) {
       Thread.currentThread().interrupt();
@@ -116,7 +115,7 @@ public class RenderPrintWriter extends PrintWriter {
     }
     print(obj);
     try {
-      out.provide(Style.reset);
+      out.append(Style.reset);
     }
     catch (InterruptedIOException x) {
       Thread.currentThread().interrupt();
@@ -153,7 +152,7 @@ public class RenderPrintWriter extends PrintWriter {
 
   public final void print(Object obj, Style style) {
     try {
-      out.provide(style);
+      out.append(style);
     }
     catch (InterruptedIOException x) {
       Thread.currentThread().interrupt();
@@ -163,7 +162,7 @@ public class RenderPrintWriter extends PrintWriter {
     }
     print(obj);
     try {
-      out.provide(Style.reset);
+      out.append(Style.reset);
     }
     catch (InterruptedIOException x) {
       Thread.currentThread().interrupt();
@@ -187,7 +186,7 @@ public class RenderPrintWriter extends PrintWriter {
   public final RenderPrintWriter leftShift(Object o) {
     if (o instanceof Style) {
       try {
-        out.provide((Style)o);
+        out.append((Style)o);
       }
       catch (InterruptedIOException x) {
         Thread.currentThread().interrupt();
@@ -197,7 +196,7 @@ public class RenderPrintWriter extends PrintWriter {
       }
     } else if (o instanceof Decoration) {
       try {
-        out.provide((Style.style((Decoration)o)));
+        out.append((Style.style((Decoration)o)));
       }
       catch (InterruptedIOException x) {
         Thread.currentThread().interrupt();
@@ -207,7 +206,7 @@ public class RenderPrintWriter extends PrintWriter {
       }
     } else if (o instanceof Color) {
       try {
-        out.provide(Style.style((Color)o));
+        out.append(Style.style((Color)o));
       }
       catch (InterruptedIOException x) {
         Thread.currentThread().interrupt();
@@ -223,7 +222,7 @@ public class RenderPrintWriter extends PrintWriter {
 
   public final RenderPrintWriter cls() {
     try {
-      out.provide(CLS.INSTANCE);
+      out.cls();
     }
     catch (InterruptedIOException x) {
       Thread.currentThread().interrupt();

@@ -176,13 +176,18 @@ public class TestDriver implements ConsoleDriver {
 
 
   public TestDriver assertEmpty() {
-    Assert.assertEquals(Collections.emptyList(), new ArrayList<String>(outter));
+    Assert.assertEquals(Collections.<String>emptyList(), new ArrayList<String>(outter));
     return this;
   }
 
   public void write(CharSequence s) throws IOException {
-    for (int i = 0;i < s.length();i++) {
-      char c = s.charAt(i);
+    write(s, 0, s.length());
+  }
+
+  @Override
+  public void write(CharSequence s, int start, int end) throws IOException {
+    while (start < end) {
+      char c = s.charAt(start++);
       write(c);
     }
   }

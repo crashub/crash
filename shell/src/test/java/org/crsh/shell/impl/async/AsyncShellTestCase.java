@@ -27,7 +27,6 @@ import org.crsh.BaseProcessFactory;
 import org.crsh.BaseShell;
 import org.crsh.TestPluginLifeCycle;
 import org.crsh.shell.*;
-import org.crsh.text.Text;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -67,7 +66,7 @@ public class AsyncShellTestCase extends AbstractTestCase {
             }
             catch (InterruptedException e) {
             }
-            processContext.write(Text.create(a));
+            processContext.append(a);
             processContext.end(ShellResponse.ok());
           }
         };

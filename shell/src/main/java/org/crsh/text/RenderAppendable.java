@@ -19,12 +19,10 @@
 
 package org.crsh.text;
 
-import org.crsh.shell.ScreenContext;
-
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class RenderAppendable implements Appendable, ScreenContext {
+public class RenderAppendable implements ScreenContext {
 
   /** . */
   private final ScreenContext context;
@@ -35,22 +33,55 @@ public class RenderAppendable implements Appendable, ScreenContext {
   public RenderAppendable(ScreenContext context) {
     this.context = context;
   }
-  
-  private void safeAppend(Chunk chunk) {
+
+  @Override
+  public RenderAppendable append(CharSequence s) {
     try {
-      context.write(chunk);
+      context.append(s);
     }
-    catch (java.io.IOException e) {
-//      e.printStackTrace();
+    catch (java.io.IOException ignore) {
     }
+    return this;
   }
 
-  public void write(Chunk chunk) throws IOException {
-    safeAppend(chunk);
+  @Override
+  public ScreenAppendable append(char c) {
+    try {
+      context.append(c);
+    }
+    catch (java.io.IOException ignore) {
+    }
+    return this;
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
+  @Override
+  public ScreenAppendable append(CharSequence csq, int start, int end) {
+    try {
+      context.append(csq, start, end);
+    }
+    catch (java.io.IOException ignore) {
+    }
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(Style style) {
+    try {
+      context.append(style);
+    }
+    catch (java.io.IOException ignore) {
+    }
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable cls() {
+    try {
+      context.cls();
+    }
+    catch (java.io.IOException ignore) {
+    }
+    return this;
   }
 
   public int getWidth() {
@@ -66,16 +97,11 @@ public class RenderAppendable implements Appendable, ScreenContext {
     context.flush();
   }
 
-  public RenderAppendable append(CharSequence csq) {
-    safeAppend(Text.create(csq));
-    return this;
-  }
-
   public void enterStyle(Style.Composite style) {
     if (stack == null) {
       stack = new LinkedList<Style.Composite>();
     }
-    safeAppend(style);
+    append(style);
     stack.addLast(style);
   }
 
@@ -103,9 +129,9 @@ public class RenderAppendable implements Appendable, ScreenContext {
       Style.Composite bilto = Style.style(bold, underline, blink, fg, bg);
 
       //   
-      safeAppend(bilto);
+      append(bilto);
     } else {
-      safeAppend(Style.reset);
+      append(Style.reset);
     }
     return last;
   }
@@ -149,23 +175,13 @@ public class RenderAppendable implements Appendable, ScreenContext {
 
   public void styleOff() {
     if (stack != null && stack.size() > 0) {
-      safeAppend(Style.reset);
+      append(Style.reset);
     }
   }
 
   public void styleOn() {
     if (stack != null && stack.size() > 0) {
-      safeAppend(getMerged());
+      append(getMerged());
     }
-  }
-
-  public RenderAppendable append(CharSequence csq, int start, int end) {
-    safeAppend(Text.create(csq.subSequence(start, end)));
-    return this;
-  }
-
-  public RenderAppendable append(char c) {
-    safeAppend(Text.create(Character.toString(c)));
-    return this;
   }
 }

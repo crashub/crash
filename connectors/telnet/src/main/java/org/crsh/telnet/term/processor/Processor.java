@@ -23,14 +23,14 @@ import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.line.LineParser;
 import org.crsh.cli.impl.line.MultiLineVisitor;
 import org.crsh.cli.spi.Completion;
-import org.crsh.io.Consumer;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.telnet.term.Term;
 import org.crsh.telnet.term.TermEvent;
-import org.crsh.text.Chunk;
-import org.crsh.text.Text;
+import org.crsh.text.ScreenAppendable;
+import org.crsh.text.ScreenContext;
+import org.crsh.text.Style;
 import org.crsh.util.CloseableList;
 import org.crsh.util.Utils;
 
@@ -42,10 +42,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class Processor implements Runnable, Consumer<Chunk> {
+public final class Processor implements Runnable, ScreenContext {
 
   /** . */
-  private static final Text CONTINUE_PROMPT = Text.create("> ");
+  private static final String CONTINUE_PROMPT = "> ";
 
   /** . */
   static final Runnable NOOP = new Runnable() {
@@ -130,7 +130,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
     try {
       String welcome = shell.getWelcome();
       log.log(Level.FINE, "Writing welcome message to term");
-      term.write(Text.create(welcome));
+      term.append(welcome);
       log.log(Level.FINE, "Wrote welcome message to term");
       writePromptFlush();
     }
@@ -197,7 +197,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
               lineBuffer.append(line);
               if (!lineBuffer.crlf()) {
                 try {
-                  term.write(CONTINUE_PROMPT);
+                  term.append(CONTINUE_PROMPT);
                   term.flush();
                 }
                 catch (IOException e) {
@@ -321,12 +321,44 @@ public final class Processor implements Runnable, Consumer<Chunk> {
     listeners.add(listener);
   }
 
-  public Class<Chunk> getConsumedType() {
-    return Chunk.class;
+  @Override
+  public int getWidth() {
+    return term.getWidth();
   }
 
-  public void provide(Chunk element) throws IOException {
-    term.write(element);
+  @Override
+  public int getHeight() {
+    return term.getHeight();
+  }
+
+  @Override
+  public Appendable append(char c) throws IOException {
+    term.append(c);
+    return this;
+  }
+
+  @Override
+  public Appendable append(CharSequence s) throws IOException {
+    term.append(s);
+    return this;
+  }
+
+  @Override
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    term.append(csq, start, end);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable append(Style style) throws IOException {
+    term.append(style);
+    return this;
+  }
+
+  @Override
+  public ScreenAppendable cls() throws IOException {
+    term.cls();
+    return this;
   }
 
   public void flush() throws IOException {
@@ -343,7 +375,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
       if (buffer != null) {
         sb.append(buffer);
       }
-      term.write(Text.create(sb));
+      term.append(sb);
       term.flush();
     } catch (IOException e) {
       // Todo : improve that
@@ -420,7 +452,7 @@ public final class Processor implements Runnable, Consumer<Chunk> {
         }
 
         // We propose
-        term.write(Text.create(sb.toString()));
+        term.append(sb);
 
         // Rewrite prompt
         writePromptFlush();

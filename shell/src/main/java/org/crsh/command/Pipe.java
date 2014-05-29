@@ -35,10 +35,6 @@ public abstract class Pipe<C, P> implements Filter<C, P, InvocationContext<P>> {
   /** . */
   protected InvocationContext<P> context;
 
-  public final boolean isPiped() {
-    return context.isPiped();
-  }
-
   public final Class<P> getProducedType() {
     return (Class<P>)Utils.resolveToClass(getClass(), Pipe.class, 1);
   }

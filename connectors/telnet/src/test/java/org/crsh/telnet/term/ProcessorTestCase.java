@@ -34,7 +34,6 @@ import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.telnet.term.spi.TestTermIO;
 import org.crsh.telnet.term.console.ConsoleTerm;
-import org.crsh.text.CLS;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -296,7 +295,7 @@ public class ProcessorTestCase extends TestCase {
             if ("bye".equals(request)) {
               processContext.end(ShellResponse.close());
             } else {
-              processContext.write(CLS.INSTANCE);
+              processContext.cls();
               processContext.end(ShellResponse.ok());
             }
           }

@@ -172,6 +172,7 @@ class Editor extends Plugin {
     @Override public boolean releaseAlternateBuffer() throws IOException { return false; }
     @Override public void flush() throws IOException { }
     @Override public void write(CharSequence s) throws IOException { }
+    @Override public void write(CharSequence s, int start, int end) throws IOException { }
     @Override public void write(int c) throws IOException { }
     @Override public void write(Style d) throws IOException { }
     @Override public void writeDel() throws IOException { }

@@ -20,7 +20,6 @@ package org.crsh;
 
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.Text;
 
 import java.io.IOException;
 
@@ -42,7 +41,7 @@ public abstract class BaseProcessFactory {
           if ("bye".equals(request)) {
             processContext.end(ShellResponse.close());
           } else {
-            processContext.write(Text.create(request));
+            processContext.append(request);
             processContext.end(ShellResponse.ok());
           }
         }

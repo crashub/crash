@@ -20,12 +20,13 @@ package org.crsh.lang.impl.groovy;
 
 import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
+import org.crsh.text.ScreenAppendable;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
-import org.crsh.text.Chunk;
+import org.crsh.text.Style;
 
 import java.io.IOException;
 import java.util.Map;
@@ -47,13 +48,6 @@ class ShellBinding extends Binding {
   }
 
   private CommandContext<Object> proxy = new CommandContext<Object>() {
-    public boolean isPiped() {
-      if (current == null) {
-        throw new IllegalStateException("Not under context");
-      } else {
-        return current.isPiped();
-      }
-    }
     public void close() throws IOException {
       if (current == null) {
         throw new IllegalStateException("Not under context");
@@ -138,12 +132,45 @@ class ShellBinding extends Binding {
         return current.getAttributes();
       }
     }
-    public void write(Chunk chunk) throws IOException {
+    public ScreenAppendable append(CharSequence s) throws IOException {
       if (current == null) {
         throw new IllegalStateException("Not under context");
       } else {
-        current.write(chunk);
+        current.append(s);
       }
+      return this;
+    }
+    public Appendable append(char c) throws IOException {
+      if (current == null) {
+        throw new IllegalStateException("Not under context");
+      } else {
+        current.append(c);
+      }
+      return this;
+    }
+    public Appendable append(CharSequence csq, int start, int end) throws IOException {
+      if (current == null) {
+        throw new IllegalStateException("Not under context");
+      } else {
+        current.append(csq, start, end);
+      }
+      return this;
+    }
+    public ScreenAppendable append(Style style) throws IOException {
+      if (current == null) {
+        throw new IllegalStateException("Not under context");
+      } else {
+        current.append(style);
+      }
+      return this;
+    }
+    public ScreenAppendable cls() throws IOException {
+      if (current == null) {
+        throw new IllegalStateException("Not under context");
+      } else {
+        current.cls();
+      }
+      return this;
     }
   };
 
