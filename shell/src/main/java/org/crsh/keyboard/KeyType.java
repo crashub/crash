@@ -19,16 +19,37 @@
 package org.crsh.keyboard;
 
 /**
+ * The type of a key.
+ *
  * @author Julien Viet
  */
 public enum KeyType {
 
+  /** The key is a character and the value is the actual char code point. */
   CHARACTER,
 
-  UP,DOWN,LEFT,RIGHT,
-  
-  DELETE,BACKSPACE,ENTER,
+  /** Up arrow . */
+  UP,
 
+  /** Down arrow . */
+  DOWN,
+
+  /** Left arrow . */
+  LEFT,
+
+  /** Right arrow . */
+  RIGHT,
+
+  /** Delete right char. */
+  DELETE,
+
+  /** Delete left char. */
+  BACKSPACE,
+
+  /** Enter. */
+  ENTER,
+
+  /** Anything not categorizable. */
   UNKNOWN
 
 }
