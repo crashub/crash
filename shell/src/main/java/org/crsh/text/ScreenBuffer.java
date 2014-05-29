@@ -26,7 +26,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * A buffering screen that can be scrolled. This class is thread safe.
+ * A buffering screen that can be scrolled. This class is thread safe, as it can be used concurrently by two
+ * threads, for example one thread can provide new elements while another thread is repainting the buffer
+ * to the screen, both threads can either modify the underlying data structure. Paint could also be called concurrently
+ * by two threads, one that just provided a new element and wants to repaint the structure and another that changes
+ * the current cursor and asks for a repaint too.
  *
  * @author Julien Viet
  */
@@ -134,7 +138,7 @@ public class ScreenBuffer implements ScreenContext {
    * @return this screen buffer
    * @throws IOException any io exception
    */
-  public ScreenBuffer paint() throws IOException {
+  public synchronized ScreenBuffer paint() throws IOException {
     if (status == REFRESH) {
       out.write(CLS.INSTANCE);
       out.write(Style.reset);
@@ -223,21 +227,21 @@ public class ScreenBuffer implements ScreenContext {
   /**
    * @return true if the buffer is painted
    */
-  public boolean isPainted() {
+  public synchronized boolean isPainted() {
     return status == PAINTED;
   }
 
   /**
    * @return true if the buffer is stale and needs a full repaint
    */
-  public boolean isRefresh() {
+  public synchronized boolean isRefresh() {
     return status == REFRESH;
   }
 
   /**
    * @return true if the buffer is waiting for input to become painted
    */
-  public boolean isPainting() {
+  public synchronized boolean isPainting() {
     return status == PAINTING;
   }
 
@@ -341,7 +345,7 @@ public class ScreenBuffer implements ScreenContext {
   }
 
   @Override
-  public void flush() throws IOException {
+  public synchronized void flush() throws IOException {
     // I think flush should not always be propagated, specially when we consider that the screen context
     // is already filled
     out.flush();
