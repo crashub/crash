@@ -52,6 +52,7 @@ import org.crsh.vfs.spi.file.FileMountFactory;
 import org.crsh.vfs.spi.url.ClassPathMountFactory;
 import org.fusesource.jansi.AnsiConsole;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -360,11 +361,14 @@ public class CRaSH {
       });
 
       // Use AnsiConsole only if term doesn't support Ansi
-      PrintStream out = System.out;
-      PrintStream err = System.err;
+      PrintStream out;
+      PrintStream err;
       if (!term.isAnsiSupported()) {
         out = AnsiConsole.out;
         err = AnsiConsole.err;
+      } else {
+        out = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.out), 16384), false);
+        err = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.err), 16384), false);
       }
 
       //

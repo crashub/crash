@@ -270,7 +270,7 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
   @Override
   public void write(CharSequence s) throws IOException {
     int len = s.length();
-    for (int i = 0;i < s.length();i++) {
+    for (int i = 0;i < len;i++) {
       char c = s.charAt(i);
       write(c);
     }
