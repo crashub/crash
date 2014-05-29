@@ -68,11 +68,39 @@ CRaSH = (function(element, width, height) {
           socket.send(JSON.stringify({type: "cancel"}));
         } else {
           log.debug("Sending key event " + code);
-          socket.send(JSON.stringify({type: "key",code: code}));
+          socket.send(JSON.stringify({type: "key",keyType:"character",keyCode:code}));
         }
         return false;
       } else {
         return true;
+      }
+    },
+    keydown: function(event, term) {
+      if (socket != null && socket.readyState == 1 && term.paused()) {
+        var keyType;
+        switch (event.keyCode) {
+          case 38:
+            keyType = "up";
+            break;
+          case 40:
+            keyType = "down";
+            break;
+          case 37:
+            keyType = "left";
+            break;
+          case 39:
+            keyType = "right";
+            break;
+          case 13:
+            keyType = "enter";
+            break;
+          default:
+            log.debug("Unmapped key code " + event.keyCode);
+            return;
+        }
+        log.debug("Sending key event " + keyType);
+        socket.send(JSON.stringify({type: "key",keyType: keyType}));
+        return false;
       }
     }
   });

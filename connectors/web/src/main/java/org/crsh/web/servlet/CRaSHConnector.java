@@ -157,32 +157,16 @@ public class CRaSHConnector {
             }
           } else if (type.getAsString().equals("key")) {
             WSProcessContext current = session.current.get();
-            int code = event.get("code").getAsInt();
             if (current != null) {
-              KeyHandler keyHandler = current.process.getKeyHandler();
-              if (keyHandler != null) {
-                KeyType keyType;
-                int[] sequence;
+              String _keyType = event.get("keyType").getAsString();
+              KeyType keyType = KeyType.valueOf(_keyType.toUpperCase());
+              if (keyType == KeyType.CHARACTER) {
+                int code = event.get("keyCode").getAsInt();
                 if (code >= 32) {
-                  keyType = KeyType.CHARACTER;
-                  sequence = new int[]{code};
-                } else {
-                  keyType = null;
-                  sequence = null;
-                }
-                if (keyType != null) {
-                  log.fine("Key event " + code + " is mapped to " + keyType);
-                  try {
-                    keyHandler.handle(keyType, sequence);
-                  }
-                  catch (Exception e) {
-                    log.log(Level.SEVERE, "Processing key handler " + keyHandler + " threw an exception", e);
-                  }
-                } else {
-                  log.fine("Code " + code + " could not be mapped to any key type");
+                  current.handle(KeyType.CHARACTER, new int[]{code});
                 }
               } else {
-                log.fine("Process has no key handler to handle the key event");
+                current.handle(keyType, new int[0]);
               }
             } else {
               log.fine("No process can handle the key event");

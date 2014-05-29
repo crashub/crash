@@ -18,6 +18,8 @@
  */
 package org.crsh.web.servlet;
 
+import org.crsh.console.KeyHandler;
+import org.crsh.console.KeyType;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -29,10 +31,12 @@ import org.crsh.text.Text;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.logging.Level;
 
 /** @author Julien Viet */
-public class WSProcessContext implements ShellProcessContext {
+public class WSProcessContext implements ShellProcessContext, KeyHandler {
 
   /** . */
   final ShellProcess process;
@@ -58,6 +62,20 @@ public class WSProcessContext implements ShellProcessContext {
     this.width = width;
     this.height = height;
     this.command = command;
+  }
+
+  @Override
+  public void handle(KeyType type, int[] sequence) {
+    KeyHandler keyHandler = process.getKeyHandler();
+    if (keyHandler != null) {
+      CRaSHConnector.log.fine("Processing key event " + type + " " + Arrays.toString(sequence));
+      try {
+        keyHandler.handle(type, sequence);
+      }
+      catch (Exception e) {
+        CRaSHConnector.log.log(Level.SEVERE, "Processing key handler " + keyHandler + " threw an exception", e);
+      }
+    }
   }
 
   public void end(ShellResponse response) {
