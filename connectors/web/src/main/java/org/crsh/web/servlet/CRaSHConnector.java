@@ -24,8 +24,7 @@ import com.google.gson.JsonParser;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
-import org.crsh.console.KeyHandler;
-import org.crsh.console.KeyType;
+import org.crsh.keyboard.KeyType;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.WebPluginLifeCycle;
 import org.crsh.shell.Shell;
@@ -45,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /** @author Julien Viet */

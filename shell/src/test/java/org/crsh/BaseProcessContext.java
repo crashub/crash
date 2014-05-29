@@ -20,8 +20,8 @@
 package org.crsh;
 
 import junit.framework.Assert;
-import org.crsh.console.KeyHandler;
-import org.crsh.console.KeyType;
+import org.crsh.keyboard.KeyHandler;
+import org.crsh.keyboard.KeyType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;

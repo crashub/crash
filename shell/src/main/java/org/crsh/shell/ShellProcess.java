@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-import org.crsh.console.KeyHandler;
+import org.crsh.keyboard.KeyHandler;
 
 /**
  * A shell process.

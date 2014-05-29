@@ -18,8 +18,8 @@
  */
 package org.crsh.web.servlet;
 
-import org.crsh.console.KeyHandler;
-import org.crsh.console.KeyType;
+import org.crsh.keyboard.KeyHandler;
+import org.crsh.keyboard.KeyType;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;

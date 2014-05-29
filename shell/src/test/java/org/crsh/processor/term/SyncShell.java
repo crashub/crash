@@ -21,7 +21,7 @@ package org.crsh.processor.term;
 
 import org.crsh.AbstractTestCase;
 import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.console.KeyHandler;
+import org.crsh.keyboard.KeyHandler;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;

@@ -19,7 +19,7 @@
 
 package org.crsh.processor.term;
 
-import org.crsh.console.KeyHandler;
+import org.crsh.keyboard.KeyHandler;
 import org.crsh.shell.ShellProcessContext;
 
 public class SyncProcess {

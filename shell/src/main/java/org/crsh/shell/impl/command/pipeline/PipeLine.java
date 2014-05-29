@@ -21,7 +21,7 @@ package org.crsh.shell.impl.command.pipeline;
 
 import org.crsh.command.CommandContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.console.KeyHandler;
+import org.crsh.keyboard.KeyHandler;
 import org.crsh.text.Chunk;
 
 import java.io.IOException;

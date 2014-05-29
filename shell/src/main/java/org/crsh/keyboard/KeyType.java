@@ -16,21 +16,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.console;
+package org.crsh.keyboard;
 
 /**
- * An handler for keyboard events.
- *
  * @author Julien Viet
  */
-public interface KeyHandler {
+public enum KeyType {
 
-  /**
-   * Handle a key event.
-   *
-   * @param type the key type
-   * @param sequence the key sequence
-   */
-  void handle(KeyType type, int[] sequence);
+  CHARACTER,
+
+  UP,DOWN,LEFT,RIGHT,
+  
+  DELETE,BACKSPACE,ENTER,
+
+  UNKNOWN
 
 }

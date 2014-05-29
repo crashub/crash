@@ -1,7 +1,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.ScriptException;
-import org.crsh.console.KeyHandler;
+import org.crsh.keyboard.KeyHandler;
 import org.crsh.shell.ErrorKind;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;

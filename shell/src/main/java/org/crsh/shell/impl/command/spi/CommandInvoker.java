@@ -19,7 +19,7 @@
 package org.crsh.shell.impl.command.spi;
 
 import org.crsh.command.CommandContext;
-import org.crsh.console.KeyHandler;
+import org.crsh.keyboard.KeyHandler;
 import org.crsh.io.Filter;
 
 import java.io.IOException;

@@ -19,6 +19,7 @@
 package org.crsh.console;
 
 import jline.console.Operation;
+import org.crsh.keyboard.KeyType;
 
 /**
  * A recorded key stroke that associates an operation with the sequence that triggered it.
@@ -36,5 +37,30 @@ class KeyStroke {
   public KeyStroke(Operation operation, int... sequence) {
     this.operation = operation;
     this.sequence = sequence;
+  }
+
+  KeyType map() {
+    switch (operation) {
+      case SELF_INSERT:
+        if (sequence.length == 1 && sequence[0] >= 32) {
+          return KeyType.CHARACTER;
+        }
+        break;
+      case BACKWARD_CHAR:
+        return KeyType.LEFT;
+      case FORWARD_CHAR:
+        return KeyType.RIGHT;
+      case PREVIOUS_HISTORY:
+        return KeyType.UP;
+      case NEXT_HISTORY:
+        return KeyType.DOWN;
+      case BACKWARD_DELETE_CHAR:
+        return KeyType.BACKSPACE;
+      case DELETE_CHAR:
+        return KeyType.DELETE;
+      case ACCEPT_LINE:
+        return KeyType.ENTER;
+    }
+    return KeyType.UNKNOWN;
   }
 }

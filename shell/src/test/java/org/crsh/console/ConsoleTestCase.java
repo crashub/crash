@@ -21,6 +21,8 @@ package org.crsh.console;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
+import org.crsh.keyboard.KeyHandler;
+import org.crsh.keyboard.KeyType;
 import org.crsh.processor.term.SyncCompleter;
 import org.crsh.processor.term.SyncProcess;
 import org.crsh.shell.ShellProcessContext;

@@ -2,8 +2,8 @@ package crash.commands.base
 
 import org.crsh.cli.Command
 import org.crsh.cli.Usage
-import org.crsh.console.KeyHandler
-import org.crsh.console.KeyType
+import org.crsh.keyboard.KeyHandler
+import org.crsh.keyboard.KeyType
 import org.crsh.text.ui.UIBuilder
 
 public class dashboard implements KeyHandler {

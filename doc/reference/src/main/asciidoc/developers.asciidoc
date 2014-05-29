@@ -852,13 +852,13 @@ For instance, if the user intertupts the command while reading the line, then th
 
 === Keyboard events
 
-A command can also react to keyboard events by implementing the +org.crsh.console.KeyHandler+ interface. Our
+A command can also react to keyboard events by implementing the +org.crsh.keyboard.KeyHandler+ interface. Our
 previous clock example could be rewritten using this API:
 
 [source,groovy]
 ----
-import org.crsh.console.KeyHandler;
-import org.crsh.console.KeyType;
+import org.crsh.keyboard.KeyHandler;
+import org.crsh.keyboard.KeyType;
 
 class clock implements KeyHandler {
 

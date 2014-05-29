@@ -19,6 +19,8 @@
 package org.crsh.console;
 
 import jline.console.Operation;
+import org.crsh.keyboard.KeyHandler;
+import org.crsh.keyboard.KeyType;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.util.Utils;
@@ -231,7 +233,7 @@ public class Console {
           } else {
             KeyHandler keyHandler = processHandler.process.getKeyHandler();
             if (keyHandler != null) {
-              KeyType type = KeyType.map(key.operation, key.sequence);
+              KeyType type = key.map();
               try {
                 keyHandler.handle(type, key.sequence);
               }

@@ -4,8 +4,8 @@ import org.crsh.cli.Man;
 import org.crsh.cli.Usage
 import org.crsh.cli.Command
 import org.crsh.command.Pipe
-import org.crsh.console.KeyHandler
-import org.crsh.console.KeyType
+import org.crsh.keyboard.KeyHandler
+import org.crsh.keyboard.KeyType
 import org.crsh.text.Chunk
 import org.crsh.text.ScreenBuffer
 

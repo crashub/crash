@@ -1,9 +1,8 @@
 package crash.commands.test
 
-import org.crsh.cli.Usage
 import org.crsh.cli.Command
-import org.crsh.console.KeyHandler
-import org.crsh.console.KeyType
+import org.crsh.keyboard.KeyHandler
+import org.crsh.keyboard.KeyType
 
 class keyhandler implements KeyHandler {
 
