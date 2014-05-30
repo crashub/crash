@@ -207,7 +207,6 @@ Overrides the default command name, the command name must follow these rules:
 
 [source,groovy]
 ----
-@Named("foo")
 public class sample {
    @Command
    @Named("bar")
@@ -216,6 +215,8 @@ public class sample {
    }
 }
 ----
+
+NOTE: only sub command can use this annotation as the global command name is provided by the script name of the command
 
 ==== +@org.crsh.cli.Option+
 
