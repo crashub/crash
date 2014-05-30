@@ -178,7 +178,7 @@ public class WSProcessContext implements ShellProcessContext, KeyHandler {
 
   @Override
   public ScreenAppendable append(Style style) throws IOException {
-    style = style.merge(style);
+    this.style = style.merge(style);
     return this;
   }
 
