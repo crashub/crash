@@ -59,9 +59,16 @@ public class CRaSHConnector {
   /** . */
   private static final ThreadLocal<Session> current = new ThreadLocal<Session>();
 
+  /**
+   * @return the current session crash id (CRASHID) or null if none is associated with the request
+   */
   public static String getHttpSessionId() {
     Session session = current.get();
-    return (String)session.getUserProperties().get("CRASHID");
+    if (session != null) {
+      return (String)session.getUserProperties().get("CRASHID");
+    } else {
+      return null;
+    }
   }
 
   @OnOpen
