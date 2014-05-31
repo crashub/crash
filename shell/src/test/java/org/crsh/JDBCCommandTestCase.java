@@ -44,7 +44,7 @@ public class JDBCCommandTestCase extends AbstractCommandTestCase {
     String res = assertOk("jdbc select * from derbyDb");
     assertTrue("Was expecting " + res + " to contain 'Webster'", res.contains("Webster"));
     lifeCycle.bindGroovy("foo", "(jdbc.select { '* from derbyDb' } | { Map it -> it['NUM'] })()");
-    assertEquals("1956Query executed successfully\n", assertOk("foo"));
+    assertEquals("1956", assertOk("foo"));
     assertOk("jdbc close");
   }
 

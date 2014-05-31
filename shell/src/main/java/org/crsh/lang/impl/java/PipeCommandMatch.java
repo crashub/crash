@@ -93,7 +93,7 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
 
       @Override
       public ScreenContext getScreenContext() {
-        return real instanceof ScreenContext ? (ScreenContext)real : invocationContext;
+        return real instanceof ScreenContext ? (ScreenContext)real : null;
       }
 
       @Override
