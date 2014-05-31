@@ -19,8 +19,8 @@
 package org.crsh.shell.impl.command.pipeline;
 
 import org.crsh.command.CommandContext;
-import org.crsh.io.Consumer;
-import org.crsh.io.Producer;
+import org.crsh.stream.Consumer;
+import org.crsh.stream.Producer;
 import org.crsh.text.ScreenAppendable;
 import org.crsh.text.ScreenContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;

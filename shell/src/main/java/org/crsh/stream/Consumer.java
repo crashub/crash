@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.io;
+package org.crsh.stream;
 
 import java.io.Flushable;
 import java.io.IOException;

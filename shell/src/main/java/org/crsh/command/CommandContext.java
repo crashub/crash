@@ -18,7 +18,7 @@
  */
 package org.crsh.command;
 
-import org.crsh.io.Consumer;
+import org.crsh.stream.Consumer;
 import org.crsh.shell.InteractionContext;
 
 import java.io.Closeable;

@@ -20,7 +20,7 @@ package org.crsh.shell.impl.command.spi;
 
 import org.crsh.command.CommandContext;
 import org.crsh.keyboard.KeyHandler;
-import org.crsh.io.Filter;
+import org.crsh.stream.Filter;
 import org.crsh.text.ScreenContext;
 
 import java.io.IOException;

@@ -19,7 +19,7 @@
 
 package org.crsh.text;
 
-import org.crsh.io.Consumer;
+import org.crsh.stream.Consumer;
 
 import java.io.IOException;
 import java.util.LinkedList;

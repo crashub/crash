@@ -19,7 +19,7 @@
 
 package org.crsh.command;
 
-import org.crsh.io.Filter;
+import org.crsh.stream.Filter;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
@@ -57,7 +57,7 @@ public abstract class Pipe<C, P> implements Filter<C, P, InvocationContext<P>> {
   }
 
   /**
-   * Extends the throw clause of the {@link org.crsh.io.Consumer#provide(Object)} method.
+   * Extends the throw clause of the {@link org.crsh.stream.Consumer#provide(Object)} method.
    *
    * @param element the provided element
    * @throws ScriptException any script exception

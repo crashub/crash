@@ -17,40 +17,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.io;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
+package org.crsh.stream;
 
 /**
- * A producer that produces elements in a specific consumer.
+ * A filter is the combination of a producer and a consumer.
  *
+ * @param <C> the consumed element generic type
  * @param <P> the produced element generic type
- * @param <C> the consumer element generic type
+ * @param <CONS> the consumer generic type
  */
-public interface Producer<P, C extends Consumer<? super P>> extends Closeable {
-
-  /**
-   * Returns the class of the produced type.
-   *
-   * @return the produced type
-   */
-  Class<P> getProducedType();
-
-  /**
-   * Open the producer with the specified consumer.
-   *
-   * @param consumer the consumer
-   */
-  void open(C consumer);
-
-  /**
-   * Close the producer.
-   *
-   * @throws IOException any io exception
-   * @throws UndeclaredThrowableException anything other kind of exception
-   */
-  void close() throws IOException, UndeclaredThrowableException;
-
+public interface Filter<C, P, CONS extends Consumer<? super P>> extends Consumer<C>, Producer<P, CONS>  {
 }
