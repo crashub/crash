@@ -22,6 +22,7 @@ CRaSH = (function(element, width, height) {
   var socket = null;
   var completion = null;
   var cancelTime = 0;
+  var executing = false;
 
   //
   var terminal = element.terminal(function (command, term) {
@@ -33,6 +34,7 @@ CRaSH = (function(element, width, height) {
         command: command
       };
       socket.send(JSON.stringify(event));
+      executing = true;
       term.pause();
     } else {
       log.debug("Could not execute command " + command + " because of null socket");
@@ -60,7 +62,7 @@ CRaSH = (function(element, width, height) {
       }
     },
     keypress: function(event, term) {
-      if (socket != null && socket.readyState == 1 && term.paused()) {
+      if (executing) {
         var code = event.keyCode;
         if (code == 3) {
           log.debug("Cancelling current command");
@@ -76,7 +78,7 @@ CRaSH = (function(element, width, height) {
       }
     },
     keydown: function(event, term) {
-      if (socket != null && socket.readyState == 1 && term.paused()) {
+      if (executing) {
         var keyType;
         switch (event.keyCode) {
           case 38:
@@ -138,6 +140,8 @@ CRaSH = (function(element, width, height) {
           log.debug('WebSocket closed');
           terminal.pause();
           socket = null;
+          // We may be executing and having connection closed => that would create an UI bug
+          executing = false;
           // If we had a recent cancel, close can be due to session trashed by the server
           // so we reconnect quickly so user won't notice the difference
           var currentTime = (new Date()).getTime();
@@ -177,6 +181,7 @@ CRaSH = (function(element, width, height) {
             terminal.set_prompt(event.data);
           } else if (type == "end") {
             log.debug("Ending command");
+            executing = false;
             terminal.resume();
           } else if (type == "complete") {
             log.debug("Completing completion");
