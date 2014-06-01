@@ -110,6 +110,14 @@ CRaSH = (function(element, width, height) {
   //
   return {
 
+    pause: function() {
+      terminal.pause();
+    },
+
+    resume: function() {
+      terminal.resume();
+    },
+
     connect: function(host) {
       if (socket == null) {
         if ('WebSocket' in window) {
