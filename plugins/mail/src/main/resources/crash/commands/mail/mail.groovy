@@ -46,20 +46,22 @@ can be piped into the mail command: an email with the list of current JVM thread
 
       @Override
       void close() throws org.crsh.command.ScriptException {
-        StringBuilder sb = new StringBuilder()
-        sb.append("<pre>");
-        buffer.format(Format.TEXT, sb);
-        sb.append("</pre>");
-        Future<Boolean> future = plugin.send(recipients, subject, sb.toString(), "text/html;charset=UTF-8");
-        if (block) {
-          try {
-            future.get();
-          }
-          catch (ExecutionException e) {
-            throw new org.crsh.command.ScriptException(e);
+        if (recipients != null && recipients.size() > 0) {
+          StringBuilder sb = new StringBuilder()
+          sb.append("<pre>");
+          buffer.format(Format.TEXT, sb);
+          sb.append("</pre>");
+          Future<Boolean> future = plugin.send(recipients, subject, sb.toString(), "text/html;charset=UTF-8");
+          if (block) {
+            try {
+              future.get();
+            }
+            catch (ExecutionException e) {
+              throw new org.crsh.command.ScriptException(e);
+            }
           }
         }
-        super.close()
+       super.close()
       }
     }
   }
