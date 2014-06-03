@@ -47,7 +47,7 @@ public class jmx extends BaseCommand {
   public void query(
       InvocationContext<ObjectName> context,
       @Usage("the object name pattern for the query")
-      @Option(names = {"p", "pattern"})
+      @Argument
       String pattern) throws Exception {
 
     //
