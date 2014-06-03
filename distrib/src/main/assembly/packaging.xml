@@ -23,6 +23,7 @@
   <id>packaging</id>
   <formats>
     <format>tar.gz</format>
+    <format>zip</format>
   </formats>
 
   <baseDirectory>crash-${project.version}</baseDirectory>
