@@ -193,7 +193,7 @@ public class TestDriver implements ConsoleDriver {
   }
 
   @Override
-  public void write(int c) throws IOException {
+  public void write(char c) throws IOException {
     outter.add("[" + (char)c + "]");
   }
 

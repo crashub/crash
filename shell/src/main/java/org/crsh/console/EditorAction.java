@@ -45,9 +45,11 @@ class EditorAction {
     }
 
     void perform(Editor editor, EditorBuffer buffer) throws IOException {
+      StringBuilder sb = new StringBuilder(sequence.length);
       for (int c : sequence) {
-        buffer.append((char)c);
+        sb.appendCodePoint(c);
       }
+      buffer.append(sb);
     }
   }
 

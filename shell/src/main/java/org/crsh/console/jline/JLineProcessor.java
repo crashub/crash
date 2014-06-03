@@ -281,13 +281,13 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
   }
 
   @Override
-  public void write(int c) throws IOException {
+  public void write(char c) throws IOException {
     if (c == '\r') {
       // Skip it
     } else if (c == '\n') {
       writeCRLF();
     } else {
-      writer.write(c);
+      writer.print(c);
     }
   }
 

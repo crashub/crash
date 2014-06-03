@@ -103,7 +103,7 @@ public class SimpleConsoleDriver implements ConsoleDriver {
   }
 
   @Override
-  public void write(int c) throws IOException {
+  public void write(char c) throws IOException {
     if (c == '\r' || c == '\n') {
       throw new AssertionFailedError();
     }

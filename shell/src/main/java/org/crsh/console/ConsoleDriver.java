@@ -100,7 +100,7 @@ public interface ConsoleDriver extends Closeable {
    * @param c the char to write
    * @throws java.io.IOException any io exception
    */
-  void write(int c) throws IOException;
+  void write(char c) throws IOException;
 
   /**
    * Write a style.
