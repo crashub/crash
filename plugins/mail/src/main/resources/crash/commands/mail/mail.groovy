@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 
 
+@Usage("interact with emails")
 class mail {
 
   @Man("""Send an mail to a list of recipients.
@@ -21,11 +22,11 @@ class mail {
 The body of the mail is the input stream of the command. For example, the output of the "thread ls | thread dump" command
 can be piped into the mail command: an email with the list of current JVM thread is sent to the admin:
 
-% thread ls | thread dump | mail -s "The thread dump" admin@foo.com
+% thread ls | thread dump | mail send -s "The thread dump" admin@foo.com
 """)
   @Usage("send an mail to a list of recipients, the body of the mail is the input stream of the command.")
   @Command
-  Pipe<CharSequence, CharSequence> main(
+  Pipe<CharSequence, CharSequence> send(
       @Usage("block until the mails are delivered")
       @Option(names=["b","block"])
       Boolean block,

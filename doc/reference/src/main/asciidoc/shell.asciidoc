@@ -83,7 +83,7 @@ jndi      Java Naming and Directory Interface
 jpa       Java persistance API
 jvm       JVM informations
 jul       java.util.logging commands
-mail      send an mail to a list of recipients, the body of the mail is the input stream of the command.
+mail      interact with emails
 man       format and display the on-line manual pages
 shell     shell related command
 sleep     sleep for some time

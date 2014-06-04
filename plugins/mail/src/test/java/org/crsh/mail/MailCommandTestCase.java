@@ -41,7 +41,7 @@ public class MailCommandTestCase extends AbstractTestCase {
       @Override
       protected void execute(TestPluginLifeCycle lifeCycle, Wiser wiser) throws IOException, MessagingException, ExecutionException, InterruptedException {
         Shell shell = lifeCycle.createShell();
-        BaseProcessContext process = BaseProcessContext.create(shell, "echo abc | mail -s the_subject -b admin@gmail.com").execute();
+        BaseProcessContext process = BaseProcessContext.create(shell, "echo abc | mail send -s the_subject -b admin@gmail.com").execute();
         ShellResponse.Ok ok = assertInstance(ShellResponse.Ok.class, process.getResponse());
         Assert.assertEquals(1, wiser.getMessages().size());
         WiserMessage msg = wiser.getMessages().get(0);

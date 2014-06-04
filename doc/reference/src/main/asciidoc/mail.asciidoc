@@ -36,5 +36,5 @@ to text before sending the email.
 .Send an email with a JVM thread dump
 [subs="attributes,specialcharacters", options="nowrap"]
 ----
-% thread ls | thread dump | mail -s "The thread dump" admin@foo.com
+% thread ls | thread dump | mail send -s "The thread dump" admin@foo.com
 ----
