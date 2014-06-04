@@ -182,6 +182,18 @@
               </descriptors>
             </configuration>
           </execution>
+          <execution>
+            <id>make-gvm</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/gvm.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
