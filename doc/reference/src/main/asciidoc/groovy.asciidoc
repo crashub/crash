@@ -171,7 +171,7 @@ Passing options and arguments at the same time is easy to do, however the option
 
 .Passing an options and arguments
 ----
-% log.send(m:"hello", "the.category")
+% jul.send(m:"hello", "the.category")
 Aug 12, 2013 11:22:50 AM org.codehaus.groovy.reflection.CachedMethod invoke
 INFO: hello
 ----
@@ -204,10 +204,10 @@ Of course it is possible to bind options and arguments too, the arguments needs 
 
 .Passing an options and arguments
 ----
-% (log.send { m="hello"; "the category" })()
+% (jul.send { m="hello"; "the category" })()
 ...
-% cmd = log.send { m="hello"; "the category" }
-log.send { m="hello"; ["the category"] }
+% cmd = jul.send { m="hello"; "the category" }
+jul.send { m="hello"; ["the category"] }
 % cmd()
 ...
 ----

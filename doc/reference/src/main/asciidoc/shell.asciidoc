@@ -82,7 +82,7 @@ jmx       Java Management Extensions
 jndi      Java Naming and Directory Interface
 jpa       Java persistance API
 jvm       JVM informations
-log       logging commands
+jul       java.util.logging commands
 mail      send an mail to a list of recipients, the body of the mail is the input stream of the command.
 man       format and display the on-line manual pages
 shell     shell related command
@@ -241,15 +241,15 @@ The +thread+ command manipulates +java.lang.Thread+ objects:
 * +thread stop+ : stop threads
 * +thread dump+ : dump thread stacktrace
 
-==== Log command
+==== Jul command
 
-The +log+ command manipulates +java.util.logging.Logger+ objects:
+The +Jul+ command manipulates +java.util.logging.Logger+ objects:
 
-* +log ls+ : produces logger objects
-* +log send+ : consumes logger object and sends a message
-* +log tail+ : produces log record objects
-* +log set+ : consumes logger object and sets the log level
-+ +log add+ : create new logger and produces them
+* +jul ls+ : produces logger objects
+* +jul send+ : consumes logger object and sends a message
+* +jul tail+ : produces log record objects
+* +jul set+ : consumes logger object and sets the log level
+* +jul add+ : create new logger and produces them
 
 ==== JDBC command
 
