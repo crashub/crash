@@ -90,6 +90,18 @@ public class Commands {
     }
   }
 
+  public static class ConsumeCharSequence extends BaseCommand {
+    @Command
+    public Pipe<CharSequence, Object> main() {
+      return new Pipe<CharSequence, Object>() {
+        @Override
+        public void provide(CharSequence element) throws ScriptException, IOException {
+          list.add(element.toString());
+        }
+      };
+    }
+  }
+
   public static class ConsumeString extends BaseCommand {
     @Command
     public Pipe<String, Object> main() {

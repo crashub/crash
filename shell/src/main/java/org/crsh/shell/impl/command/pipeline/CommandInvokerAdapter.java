@@ -32,8 +32,8 @@ import java.io.IOException;
 import java.util.Map;
 
 /** @author Julien Viet */
-class CommandInvokerAdapter<C2, C extends C2, P, CONSUMER extends CommandContext<? super P>>
-    implements Consumer<C2>, Producer<P, CONSUMER>, CommandContext<C2> {
+class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
+    implements Consumer<Object>, Producer<P, CONSUMER>, CommandContext<Object> {
 
   /** . */
   final CommandInvoker<C, P> command;
@@ -48,21 +48,29 @@ class CommandInvokerAdapter<C2, C extends C2, P, CONSUMER extends CommandContext
   private final Class<P> producedType;
 
   /** . */
-  private final Class<C2> fooClass;
-
-  /** . */
   private ScreenContextConsumer adapter;
 
   /** . */
   private ScreenContext screenContext;
 
-  CommandInvokerAdapter(CommandInvoker<C, P> command, Class<C> consumedType, Class<P> producedType, Class<C2> fooClass) {
+  /** . */
+  private final boolean charSequenceConsumer;
+
+  /** . */
+  private final boolean styleConsumer;
+
+  /** . */
+  private final boolean clsConsumer;
+
+  CommandInvokerAdapter(CommandInvoker<C, P> command, Class<C> consumedType, Class<P> producedType) {
     this.consumedType = consumedType;
     this.producedType = producedType;
-    this.fooClass = fooClass;
     this.consumer = null;
     this.command = command;
     this.screenContext = null;
+    this.charSequenceConsumer = consumedType.isAssignableFrom(CharSequence.class);
+    this.styleConsumer = consumedType.isAssignableFrom(Style.class);
+    this.clsConsumer = consumedType.isAssignableFrom(CLS.class);
   }
 
   public boolean takeAlternateBuffer() throws IOException {
@@ -113,8 +121,8 @@ class CommandInvokerAdapter<C2, C extends C2, P, CONSUMER extends CommandContext
   }
 
   @Override
-  public Class<C2> getConsumedType() {
-    return fooClass;
+  public Class<Object> getConsumedType() {
+    return Object.class;
   }
 
   @Override
@@ -126,7 +134,8 @@ class CommandInvokerAdapter<C2, C extends C2, P, CONSUMER extends CommandContext
   public void provide(Object element) throws IOException {
     if (adapter != null) {
       adapter.provide(element);
-    } else if (consumedType.isInstance(element)) {
+    }
+    if (consumedType.isInstance(element)) {
       command.provide(consumedType.cast(element));
     }
   }
@@ -135,8 +144,9 @@ class CommandInvokerAdapter<C2, C extends C2, P, CONSUMER extends CommandContext
   public Appendable append(char c) throws IOException {
     if (screenContext != null) {
       screenContext.append(c);
-    } else if (CharSequence.class.isAssignableFrom(consumedType)) {
-      provide(consumedType.cast(Character.toString(c)));
+    }
+    if (charSequenceConsumer) {
+      command.provide(consumedType.cast(Character.toString(c)));
     }
     return this;
   }
@@ -145,8 +155,9 @@ class CommandInvokerAdapter<C2, C extends C2, P, CONSUMER extends CommandContext
   public Appendable append(CharSequence s) throws IOException {
     if (screenContext != null) {
       screenContext.append(s);
-    } else if (CharSequence.class.isAssignableFrom(consumedType)) {
-      provide(consumedType.cast(s));
+    }
+    if (charSequenceConsumer) {
+      command.provide(consumedType.cast(s));
     }
     return this;
   }
@@ -155,8 +166,9 @@ class CommandInvokerAdapter<C2, C extends C2, P, CONSUMER extends CommandContext
   public Appendable append(CharSequence csq, int start, int end) throws IOException {
     if (screenContext != null) {
       screenContext.append(csq, start, end);
-    } else if (CharSequence.class.isAssignableFrom(consumedType)) {
-      provide(consumedType.cast(csq.subSequence(start, end)));
+    }
+    if (charSequenceConsumer) {
+      command.provide(consumedType.cast(csq.subSequence(start, end)));
     }
     return this;
   }
@@ -165,8 +177,9 @@ class CommandInvokerAdapter<C2, C extends C2, P, CONSUMER extends CommandContext
   public ScreenAppendable append(Style style) throws IOException {
     if (screenContext != null) {
       screenContext.append(style);
-    } else if (Style.class.isAssignableFrom(consumedType)) {
-      provide(consumedType.cast(style));
+    }
+    if (styleConsumer) {
+      command.provide(consumedType.cast(style));
     }
     return this;
   }
@@ -175,8 +188,9 @@ class CommandInvokerAdapter<C2, C extends C2, P, CONSUMER extends CommandContext
   public ScreenAppendable cls() throws IOException {
     if (screenContext != null) {
       screenContext.cls();
-    } else if (CLS.class.isAssignableFrom(consumedType)) {
-      provide(consumedType.cast(CLS.INSTANCE));
+    }
+    if (clsConsumer) {
+      command.provide(consumedType.cast(CLS.INSTANCE));
     }
     return this;
   }

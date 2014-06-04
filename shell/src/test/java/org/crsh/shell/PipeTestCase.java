@@ -320,4 +320,28 @@ public class PipeTestCase extends AbstractCommandTestCase {
   public void testPipeEOL() {
     assertError("command |", ErrorKind.SYNTAX);
   }
+
+  public void testScreenToStringConsumer() {
+    lifeCycle.bindGroovy("produce_command", "context.append(\"foo\")");
+    lifeCycle.bindClass("consume_command", Commands.ConsumeString.class);
+    Commands.list.clear();
+    assertOk("produce_command | consume_command");
+    assertEquals(Collections.emptyList(), Commands.list);
+  }
+
+  public void testScreenToCharSequenceConsumer() {
+    lifeCycle.bindGroovy("produce_command", "context.append(\"foo\")");
+    lifeCycle.bindClass("consume_command", Commands.ConsumeCharSequence.class);
+    Commands.list.clear();
+    assertOk("produce_command | consume_command");
+    assertEquals(Arrays.<Object>asList("foo"), Commands.list);
+  }
+
+  public void testScreenToObjectConsumer() {
+    lifeCycle.bindGroovy("produce_command", "context.append(\"foo\")");
+    lifeCycle.bindClass("consume_command", Commands.ConsumeObject.class);
+    Commands.list.clear();
+    assertOk("produce_command | consume_command");
+    assertEquals(Arrays.<Object>asList("foo"), Commands.list);
+  }
 }

@@ -18,7 +18,7 @@ class egrep {
   static final char CR = '\n';
 
 
-  static class impl extends Pipe<CharSequence, Object> implements ScreenContext {
+  static class impl extends Pipe<Void, Object> implements ScreenContext {
 
     /** . */
     final Matcher matcher;
@@ -34,13 +34,27 @@ class egrep {
     }
 
     @Override
-    void provide(CharSequence element) {
-      CharSequence text;
-      if (element instanceof CharSequence) {
-        text = (CharSequence)element;
-      } else {
-        text = element.toString();
-      }
+    void provide(Void element) throws ScriptException, IOException {
+      // Ignore
+    }
+
+    @Override
+    int getWidth() {
+      return context.getWidth();
+    }
+
+    @Override
+    int getHeight() {
+      return context.getHeight();
+    }
+
+    @Override
+    Appendable append(char c) throws IOException {
+      return append("" + c);
+    }
+
+    @Override
+    Appendable append(CharSequence text) throws IOException {
       int prev = 0;
       while (true) {
         int index = Utils.indexOf(text, prev, CR);
@@ -60,34 +74,12 @@ class egrep {
           prev = index + 1;
         }
       }
-    }
-
-    @Override
-    int getWidth() {
-      return context.getWidth();
-    }
-
-    @Override
-    int getHeight() {
-      return context.getHeight();
-    }
-
-    @Override
-    Appendable append(char c) throws IOException {
-      provide("" + c);
-      return this;
-    }
-
-    @Override
-    Appendable append(CharSequence s) throws IOException {
-      provide(s);
       return this;
     }
 
     @Override
     Appendable append(CharSequence csq, int start, int end) throws IOException {
-      provide(csq.subSequence(start, end));
-      return this;
+      return append(csq.subSequence(start, end));
     }
 
     @Override
@@ -118,7 +110,7 @@ class egrep {
 
   @Usage("search file(s) for lines that match a pattern")
   @Command
-  Pipe<CharSequence, Object> main(@Argument @Usage("the search pattern") String pattern) {
+  Pipe<Void, Object> main(@Argument @Usage("the search pattern") String pattern) {
     if (pattern == null) {
       pattern = "";
     }

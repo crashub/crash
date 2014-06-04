@@ -25,7 +25,7 @@ import org.crsh.keyboard.KeyHandler;
 
 import java.io.IOException;
 
-public class PipeLine extends CommandInvoker<Void, Object> {
+public class  PipeLine extends CommandInvoker<Void, Object> {
 
   /** . */
   private final CommandInvoker[] invokers;
@@ -58,14 +58,9 @@ public class PipeLine extends CommandInvoker<Void, Object> {
       CommandContext next = open(index + 1, last);
 
       //
-      final Class produced = invoker.getProducedType();
-      final Class<?> consumed = invoker.getConsumedType();
-      CommandInvokerAdapter filterContext;
-      if (consumed.equals(Void.class)) {
-        filterContext = new CommandInvokerAdapter(invoker, consumed, produced, Void.class);
-      } else {
-        filterContext = new CommandInvokerAdapter(invoker, consumed, produced, Object.class);
-      }
+      Class produced = invoker.getProducedType();
+      Class<?> consumed = invoker.getConsumedType();
+      CommandInvokerAdapter filterContext = new CommandInvokerAdapter(invoker, consumed, produced);
       filterContext.open(next);
 
       // Save current filter in field
