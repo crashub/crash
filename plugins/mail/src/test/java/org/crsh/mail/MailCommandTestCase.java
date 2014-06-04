@@ -22,39 +22,50 @@ import junit.framework.Assert;
 import org.crsh.AbstractTestCase;
 import org.crsh.BaseProcessContext;
 import org.crsh.TestPluginLifeCycle;
+import org.crsh.shell.Commands;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellResponse;
+import org.crsh.shell.Value;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.MessagingException;
+import javax.mail.Session;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 /** @author Julien Viet */
 public class MailCommandTestCase extends AbstractTestCase {
-  
-  
-  public void testFoo() throws Exception {
 
+  public void testFoo() throws Exception {
     Support support = new Support() {
       @Override
       protected void execute(TestPluginLifeCycle lifeCycle, Wiser wiser) throws IOException, MessagingException, ExecutionException, InterruptedException {
         Shell shell = lifeCycle.createShell();
-        BaseProcessContext process = BaseProcessContext.create(shell, "echo abc | mail send -s the_subject -b admin@gmail.com").execute();
+        lifeCycle.bindClass("produce", Commands.ProduceValue.class);
+        lifeCycle.bindClass("consume", Commands.ConsumeObject.class);
+        Commands.list.clear();
+        BaseProcessContext process = BaseProcessContext.create(shell, "produce | mail send -s the_subject -b admin@gmail.com | consume").execute();
         ShellResponse.Ok ok = assertInstance(ShellResponse.Ok.class, process.getResponse());
         Assert.assertEquals(1, wiser.getMessages().size());
         WiserMessage msg = wiser.getMessages().get(0);
-        // Assert.assertEquals("foo@gmail.com", msg.getEnvelopeSender());
+        Assert.assertEquals("foo@gmail.com", msg.getEnvelopeSender());
         Assert.assertEquals("admin@gmail.com", msg.getEnvelopeReceiver());
         Assert.assertEquals("the_subject", msg.getMimeMessage().getSubject());
         String data = new String(msg.getData());
+        String content = (String)msg.getMimeMessage().getContent();
+        assertTrue(content.contains("&lt;value&gt;abc&lt;/value&gt;"));
         assertTrue(data.contains("Content-Type: text/html;charset=UTF-8"));
+        System.out.println("data = " + data);
+        assertEquals(Arrays.<Object>asList(new Value("abc")), Commands.list);
       }
     };
-
     support.doTest();
-
-
   }
 }

@@ -98,11 +98,11 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
   }
 
   public int getWidth() {
-    return screenContext.getWidth();
+    return screenContext != null ? screenContext.getWidth() : consumer.getWidth();
   }
 
   public int getHeight() {
-    return screenContext.getHeight();
+    return screenContext != null ? screenContext.getHeight() : consumer.getHeight();
   }
 
   public void open(final CONSUMER consumer) {

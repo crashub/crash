@@ -25,6 +25,9 @@ public enum Format {
 
   TEXT() {
     @Override
+    public void begin(Appendable to) throws IOException {
+    }
+    @Override
     public void write(CharSequence s, Appendable to) throws IOException {
       if (s.length() > 0) {
         to.append(s);
@@ -36,9 +39,15 @@ public enum Format {
     @Override
     public void cls(Appendable to) throws IOException {
     }
+    @Override
+    public void end(Appendable to) throws IOException {
+    }
   },
 
   ANSI() {
+    @Override
+    public void begin(Appendable to) throws IOException {
+    }
     @Override
     public void write(CharSequence s, Appendable to) throws IOException {
       if (s.length() > 0) {
@@ -52,11 +61,62 @@ public enum Format {
     @Override
     public void cls(Appendable to) throws IOException {
     }
+    @Override
+    public void end(Appendable to) throws IOException {
+    }
+  },
+
+  PRE_HTML() {
+    @Override
+    public void begin(Appendable to) throws IOException {
+      to.append("<pre>");
+    }
+    @Override
+    public void write(CharSequence s, Appendable to) throws IOException {
+      if (s.length() > 0) {
+        for (int i = 0;i < s.length();i++) {
+          char c = s.charAt(i);
+          switch (c) {
+            case '>':
+              to.append("&gt;");
+              break;
+            case '<':
+              to.append("&lt;");
+              break;
+            case '&':
+              to.append("&amp;");
+              break;
+            case '\'':
+              to.append("&#039;");
+              break;
+            case '"':
+              to.append("&#034;");
+              break;
+            default:
+              to.append(c);
+          }
+        }
+      }
+    }
+    @Override
+    public void write(Style style, Appendable to) throws IOException {
+    }
+    @Override
+    public void cls(Appendable to) throws IOException {
+    }
+    @Override
+    public void end(Appendable to) throws IOException {
+      to.append("</pre>");
+    }
   };
+
+  public abstract void begin(Appendable to) throws IOException;
 
   public abstract void write(CharSequence s, Appendable to) throws IOException;
 
   public abstract void write(Style style, Appendable to) throws IOException;
 
   public abstract void cls(Appendable to) throws IOException;
+
+  public abstract void end(Appendable to) throws IOException;
 }

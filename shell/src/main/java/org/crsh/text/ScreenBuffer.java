@@ -57,6 +57,7 @@ public class ScreenBuffer implements Iterable<Object>, Serializable, ScreenAppen
   }
 
   public void format(Format format, Appendable appendable) throws IOException {
+    format.begin(appendable);
     for (Object chunk : this) {
       if (chunk instanceof Style) {
         format.write((Style)chunk, appendable);
@@ -66,6 +67,7 @@ public class ScreenBuffer implements Iterable<Object>, Serializable, ScreenAppen
         format.write((CharSequence)chunk, appendable);
       }
     }
+    format.end(appendable);
   }
 
   public ScreenBuffer append(Iterable<?> data) throws NullPointerException {

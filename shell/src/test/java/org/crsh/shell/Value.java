@@ -31,4 +31,16 @@ public class Value {
   public String getValue() {
     return value;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    } else if (obj instanceof Value) {
+      Value that = (Value)obj;
+      return value.equals(that.value);
+    } else {
+      return false;
+    }
+  }
 }
