@@ -32,26 +32,11 @@ public class PropertyManagerTestCase extends AbstractTestCase {
     }
   };
 
-  public void testResolveProperty() {
-    PropertyManager mgr = new PropertyManager();
-    mgr.setProperty(FOO, foo);
-    assertEquals(foo, mgr.resolvePropertyValue(FOO));
-  }
-
-  public void testResolveAbsentProperty() {
-    PropertyManager mgr = new PropertyManager();
-    assertEquals(foo, mgr.resolvePropertyValue(FOO));
-  }
-
   public void testGetProperty() {
     PropertyManager mgr = new PropertyManager();
     mgr.setProperty(FOO, foo);
     Property<Foo> property = mgr.getProperty(FOO);
     assertEquals(foo, property.getValue());
-    Property<Foo> asInteger = mgr.getProperty("foo", Foo.class);
-    assertEquals(foo, asInteger.getValue());
-    Property<Object> asObject = mgr.getProperty("foo", Object.class);
-    assertNull(asObject);
   }
 
   public void testDisplayValue() {

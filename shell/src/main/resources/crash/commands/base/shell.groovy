@@ -82,15 +82,15 @@ class shell {
   @Command
   public Object properties() {
     def capabilities = PropertyDescriptor.ALL.values()
-    def table = new UIBuilder().table(columns: [2,2,1,1], rightCellPadding: 1) {
+    def table = new UIBuilder().table(rightCellPadding: 1) {
       header(bold: true, fg: black, bg: white) {
-        label("name"); label("description"); label("type"); label("value")
+        label("name"); label("description"); label("type"); label("value"); label("default")
       }
       capabilities.each { desc ->
         def property = crash.context.propertyManager.getProperty(desc);
         String value = property != null ? property.displayValue : "";
         row {
-          label(desc.name); label(desc.description); label(desc.type.simpleName); label(value)
+          label(desc.name); label(desc.description); label(desc.type.simpleName); label(value); label(desc.defaultValue)
         }
       }
     }

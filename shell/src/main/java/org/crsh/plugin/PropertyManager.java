@@ -38,11 +38,27 @@ class PropertyManager {
   }
 
   /**
-   * Returns a context property or null if it cannot be found.
+   * Returns a property value or null if it cannot be found.
    *
    * @param desc the property descriptor
    * @param <T> the property parameter type
    * @return the property value
+   * @throws NullPointerException if the descriptor argument is null
+   */
+  public <T> T getPropertyValue(PropertyDescriptor<T> desc) throws NullPointerException {
+    if (desc == null) {
+      throw new NullPointerException();
+    }
+    Property<T> property = getProperty(desc.getName(), desc.getType());
+    return property != null ? property.getValue() : null;
+  }
+
+  /**
+   * Returns a property or null if it cannot be found.
+   *
+   * @param desc the property descriptor
+   * @param <T> the property parameter type
+   * @return the property object
    * @throws NullPointerException if the descriptor argument is null
    */
   public <T> Property<T> getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
@@ -53,15 +69,15 @@ class PropertyManager {
   }
 
   /**
-   * Returns a context property or null if it cannot be found.
+   * Returns a property or null if it cannot be found.
    *
    * @param propertyName the name of the property
    * @param type the property type
    * @param <T> the property parameter type
-   * @return the property value
-   * @throws NullPointerException if the descriptor argument is null
+   * @return the property object
+   * @throws NullPointerException if any argument is null
    */
-  <T> Property<T> getProperty(String propertyName, Class<T> type) throws NullPointerException {
+  private <T> Property<T> getProperty(String propertyName, Class<T> type) throws NullPointerException {
     if (propertyName == null) {
       throw new NullPointerException("No null property name accepted");
     }
@@ -74,48 +90,6 @@ class PropertyManager {
       if (type.equals(descriptor.getType())) {
         return (Property<T>)property;
       }
-    }
-    return null;
-  }
-
-  /**
-   * Returns a context property value or its default value if it cannot be found.
-   *
-   * @param desc the property descriptor
-   * @param <T> the property parameter type
-   * @return the property value
-   * @throws NullPointerException if the descriptor argument is null
-   */
-  public <T> T resolvePropertyValue(PropertyDescriptor<T> desc) throws NullPointerException {
-    if (desc == null) {
-      throw new NullPointerException();
-    }
-    T value = resolvePropertyValue(desc.getName(), desc.getType());
-    if (value == null) {
-      value = desc.defaultValue;
-    }
-    return value;
-  }
-
-  /**
-   * Returns a context property value or null if it cannot be found.
-   *
-   * @param propertyName the name of the property
-   * @param type the property type
-   * @param <T> the property parameter type
-   * @return the property value
-   * @throws NullPointerException if the descriptor argument is null
-   */
-  private <T> T resolvePropertyValue(String propertyName, Class<T> type) throws NullPointerException {
-    if (propertyName == null) {
-      throw new NullPointerException("No null property name accepted");
-    }
-    if (type == null) {
-      throw new NullPointerException("No null property type accepted");
-    }
-    Property<? extends T> property = getProperty(propertyName, type);
-    if (property != null) {
-      return property.getValue();
     }
     return null;
   }

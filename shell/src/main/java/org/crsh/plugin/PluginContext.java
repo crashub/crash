@@ -204,7 +204,7 @@ public final class PluginContext {
    * @throws NullPointerException if the descriptor argument is null
    */
   public <T> T getProperty(PropertyDescriptor<T> desc) throws NullPointerException {
-    return propertyManager.resolvePropertyValue(desc);
+    return propertyManager.getPropertyValue(desc);
   }
 
   /**
