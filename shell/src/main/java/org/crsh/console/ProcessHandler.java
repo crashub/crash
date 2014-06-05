@@ -18,7 +18,7 @@
  */
 package org.crsh.console;
 
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -109,31 +109,31 @@ class ProcessHandler extends Plugin implements ShellProcessContext {
   }
 
   @Override
-  public ScreenAppendable append(CharSequence s) throws IOException {
+  public Screenable append(CharSequence s) throws IOException {
     console.driver.write(s);
     return this;
   }
 
   @Override
-  public ScreenAppendable append(char c) throws IOException {
+  public Screenable append(char c) throws IOException {
     console.driver.write(c);
     return this;
   }
 
   @Override
-  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+  public Screenable append(CharSequence csq, int start, int end) throws IOException {
     console.driver.write(csq, start, end);
     return this;
   }
 
   @Override
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     console.driver.write(style);
     return this;
   }
 
   @Override
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     console.driver.cls();
     return this;
   }

@@ -22,11 +22,11 @@ import java.io.Flushable;
 import java.io.IOException;
 
 /**
- * Defines how to send data to a screen.
+ * The interface for pushing data to a screen.
  *
  * @author Julien Viet
  */
-public interface ScreenAppendable extends Appendable, Flushable {
+public interface Screenable extends Appendable, Flushable {
 
   Appendable append(char c) throws IOException;
 
@@ -34,8 +34,8 @@ public interface ScreenAppendable extends Appendable, Flushable {
 
   Appendable append(CharSequence csq, int start, int end) throws IOException;
 
-  ScreenAppendable append(Style style) throws IOException;
+  Screenable append(Style style) throws IOException;
 
-  ScreenAppendable cls() throws IOException;
+  Screenable cls() throws IOException;
 
 }

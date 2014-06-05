@@ -20,7 +20,7 @@
 package org.crsh.shell.impl.remoting;
 
 import org.crsh.shell.ErrorKind;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
@@ -151,7 +151,7 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   @Override
-  public ScreenAppendable append(CharSequence s) throws IOException {
+  public Screenable append(CharSequence s) throws IOException {
     if (!closed) {
       buffer.add(new ServerMessage.Chunk.Text(s));
     }
@@ -159,17 +159,17 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   @Override
-  public ScreenAppendable append(char c) throws IOException {
+  public Screenable append(char c) throws IOException {
     return append(Character.toString(c));
   }
 
   @Override
-  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+  public Screenable append(CharSequence csq, int start, int end) throws IOException {
     return append(csq.subSequence(start, end));
   }
 
   @Override
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     if (!closed) {
       buffer.add(new ServerMessage.Chunk.Style(style));
     }
@@ -177,7 +177,7 @@ class ClientProcessContext implements ShellProcessContext {
   }
 
   @Override
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     if (!closed) {
       buffer.add(new ServerMessage.Chunk.Cls());
     }

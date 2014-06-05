@@ -70,12 +70,12 @@ public class RenderWriter extends Writer implements ScreenContext {
     return this;
   }
 
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     out.append(style);
     return this;
   }
 
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     out.cls();
     return this;
   }

@@ -20,9 +20,9 @@
 package org.crsh.text;
 
 /**
- * The screen context extends the {@link org.crsh.text.ScreenAppendable} and add information about the screen.
+ * The screen context extends the {@link Screenable} and add information about the screen.
  */
-public interface ScreenContext extends ScreenAppendable {
+public interface ScreenContext extends Screenable {
 
   /**
    * Returns the screen width in chars. When the value is not positive it means

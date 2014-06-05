@@ -20,7 +20,7 @@
 package org.crsh.text.ui;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.ScreenBuffer;
 import org.crsh.text.Format;
 import org.crsh.text.LineReader;
@@ -47,7 +47,7 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
         public int getHeight() {
           return 40;
         }
-        public ScreenAppendable append(CharSequence s) throws IOException {
+        public Screenable append(CharSequence s) throws IOException {
           buffer.append(s);
           return this;
         }
@@ -59,11 +59,11 @@ public abstract class AbstractRendererTestCase extends AbstractTestCase {
           buffer.append(csq, start, end);
           return this;
         }
-        public ScreenAppendable append(Style style) throws IOException {
+        public Screenable append(Style style) throws IOException {
           buffer.append(style);
           return this;
         }
-        public ScreenAppendable cls() throws IOException {
+        public Screenable cls() throws IOException {
           buffer.cls();
           return this;
         }

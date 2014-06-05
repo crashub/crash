@@ -28,7 +28,7 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.telnet.term.Term;
 import org.crsh.telnet.term.TermEvent;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.ScreenContext;
 import org.crsh.text.Style;
 import org.crsh.util.CloseableList;
@@ -350,13 +350,13 @@ public final class Processor implements Runnable, ScreenContext {
   }
 
   @Override
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     term.append(style);
     return this;
   }
 
   @Override
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     term.cls();
     return this;
   }

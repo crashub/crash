@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class ScreenBuffer implements Iterable<Object>, Serializable, ScreenAppendable {
+public class ScreenBuffer implements Iterable<Object>, Serializable, Screenable {
 
   /** . */
   private final LinkedList<Object> chunks;
@@ -36,7 +36,7 @@ public class ScreenBuffer implements Iterable<Object>, Serializable, ScreenAppen
   private Style next;
 
   /** Where we flush. */
-  private final ScreenAppendable out;
+  private final Screenable out;
 
   public ScreenBuffer() {
     this.chunks = new LinkedList<Object>();
@@ -45,7 +45,7 @@ public class ScreenBuffer implements Iterable<Object>, Serializable, ScreenAppen
     this.out = null;
   }
 
-  public ScreenBuffer(ScreenAppendable out) {
+  public ScreenBuffer(Screenable out) {
     this.chunks = new LinkedList<Object>();
     this.current = Style.style();
     this.next = Style.style();

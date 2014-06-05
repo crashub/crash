@@ -112,29 +112,29 @@ public class VirtualScreen implements ScreenContext {
   }
 
   @Override
-  public ScreenAppendable append(CharSequence s) throws IOException {
+  public Screenable append(CharSequence s) throws IOException {
     buffer.add(new Foo(s, style));
     return this;
   }
 
   @Override
-  public ScreenAppendable append(char c) throws IOException {
+  public Screenable append(char c) throws IOException {
     return append(Character.toString(c));
   }
 
   @Override
-  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+  public Screenable append(CharSequence csq, int start, int end) throws IOException {
     return append(csq.subSequence(start, end));
   }
 
   @Override
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     this.style = style.merge(style);
     return this;
   }
 
   @Override
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     buffer.clear();
     cursorX = 0;
     cursorY = 0;

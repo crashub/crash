@@ -30,7 +30,7 @@ import org.crsh.command.Pipe;
 import org.crsh.command.ScriptException;
 import org.crsh.groovy.GroovyCommand;
 import org.crsh.text.CLS;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.ScreenContext;
 import org.crsh.text.Style;
 
@@ -223,8 +223,8 @@ public class Commands {
       public Appendable append(char c) throws IOException { list.add("" + c); return this; }
       public Appendable append(CharSequence s) throws IOException { list.add(s); return this; }
       public Appendable append(CharSequence csq, int start, int end) throws IOException { list.add(csq.subSequence(start, end)); return this; }
-      public ScreenAppendable append(Style style) throws IOException { list.add(style); return this; }
-      public ScreenAppendable cls() throws IOException { list.add(CLS.INSTANCE); return this; }
+      public Screenable append(Style style) throws IOException { list.add(style); return this; }
+      public Screenable cls() throws IOException { list.add(CLS.INSTANCE); return this; }
       public void provide(CharSequence element) throws ScriptException, IOException { list.add(element); }
     }
 

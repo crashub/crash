@@ -23,7 +23,7 @@ import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.Style;
 
 import java.io.IOException;
@@ -139,12 +139,12 @@ public class CRaSHTaskProcess {
     }
 
     @Override
-    public ScreenAppendable append(Style style) throws IOException {
+    public Screenable append(Style style) throws IOException {
       return this;
     }
 
     @Override
-    public ScreenAppendable cls() throws IOException {
+    public Screenable cls() throws IOException {
       return this;
     }
 

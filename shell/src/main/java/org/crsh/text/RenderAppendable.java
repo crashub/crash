@@ -45,7 +45,7 @@ public class RenderAppendable implements ScreenContext {
   }
 
   @Override
-  public ScreenAppendable append(char c) {
+  public Screenable append(char c) {
     try {
       context.append(c);
     }
@@ -55,7 +55,7 @@ public class RenderAppendable implements ScreenContext {
   }
 
   @Override
-  public ScreenAppendable append(CharSequence csq, int start, int end) {
+  public Screenable append(CharSequence csq, int start, int end) {
     try {
       context.append(csq, start, end);
     }
@@ -65,7 +65,7 @@ public class RenderAppendable implements ScreenContext {
   }
 
   @Override
-  public ScreenAppendable append(Style style) {
+  public Screenable append(Style style) {
     try {
       context.append(style);
     }
@@ -75,7 +75,7 @@ public class RenderAppendable implements ScreenContext {
   }
 
   @Override
-  public ScreenAppendable cls() {
+  public Screenable cls() {
     try {
       context.cls();
     }

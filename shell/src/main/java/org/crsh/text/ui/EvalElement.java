@@ -21,7 +21,7 @@ package org.crsh.text.ui;
 
 import groovy.lang.Closure;
 import org.crsh.groovy.GroovyCommand;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.command.InvocationContext;
@@ -120,7 +120,7 @@ public class EvalElement extends Element {
         return Object.class;
       }
 
-      public ScreenAppendable append(CharSequence s) throws IOException {
+      public Screenable append(CharSequence s) throws IOException {
         provide(s);
         return this;
       }
@@ -135,12 +135,12 @@ public class EvalElement extends Element {
         return append(csq.subSequence(start, end));
       }
 
-      public ScreenAppendable append(Style style) throws IOException {
+      public Screenable append(Style style) throws IOException {
         provide(style);
         return this;
       }
 
-      public ScreenAppendable cls() throws IOException {
+      public Screenable cls() throws IOException {
         provide(CLS.INSTANCE);
         return this;
       }

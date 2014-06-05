@@ -8,7 +8,7 @@ import org.crsh.cli.Usage
 import org.crsh.command.Pipe
 import org.crsh.mail.MailPlugin
 import org.crsh.shell.impl.command.CRaSH
-import org.crsh.text.ScreenAppendable
+import org.crsh.text.Screenable
 import org.crsh.text.ScreenBuffer
 import org.crsh.text.Format
 import org.crsh.text.ScreenContext
@@ -70,13 +70,13 @@ class mail {
     }
 
     @Override
-    ScreenAppendable append(Style style) throws IOException {
+    Screenable append(Style style) throws IOException {
       buffer.append(style);
       return this;
     }
 
     @Override
-    ScreenAppendable cls() throws IOException {
+    Screenable cls() throws IOException {
       buffer.cls();
       return this;
     }

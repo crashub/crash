@@ -20,7 +20,7 @@
 package org.crsh.telnet.term;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.Style;
 
 import java.io.IOException;
@@ -131,11 +131,11 @@ public class SyncTerm implements Term {
     return this;
   }
 
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     return this;
   }
 
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     return this;
   }
 

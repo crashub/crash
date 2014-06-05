@@ -20,7 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.ScreenContext;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.text.ScreenBuffer;
@@ -66,7 +66,7 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
       }
 
       @Override
-      public ScreenAppendable append(CharSequence s) throws IOException {
+      public Screenable append(CharSequence s) throws IOException {
         buffer.append(s);
         return this;
       }
@@ -78,19 +78,19 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
       }
 
       @Override
-      public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+      public Screenable append(CharSequence csq, int start, int end) throws IOException {
         buffer.append(csq, start, end);
         return this;
       }
 
       @Override
-      public ScreenAppendable append(Style style) throws IOException {
+      public Screenable append(Style style) throws IOException {
         buffer.append(style);
         return this;
       }
 
       @Override
-      public ScreenAppendable cls() throws IOException {
+      public Screenable cls() throws IOException {
         buffer.cls();
         return this;
       }
@@ -137,19 +137,19 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
   }
 
   @Override
-  public ScreenAppendable append(CharSequence s) throws IOException {
+  public Screenable append(CharSequence s) throws IOException {
     return append(s, 0, s.length());
   }
 
   @Override
-  public ScreenAppendable append(char c) throws IOException {
+  public Screenable append(char c) throws IOException {
     adapter.send();
     buffer.append(c);
     return this;
   }
 
   @Override
-  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+  public Screenable append(CharSequence csq, int start, int end) throws IOException {
     if (start < end) {
       adapter.send();
       buffer.append(csq, start, end);
@@ -158,13 +158,13 @@ class CRaSHProcessContext implements CommandContext<Object>, Closeable {
   }
 
   @Override
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     adapter.provide(style);
     return this;
   }
 
   @Override
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     buffer.cls();
     return this;
   }

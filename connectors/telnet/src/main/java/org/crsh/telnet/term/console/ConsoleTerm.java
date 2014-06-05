@@ -23,7 +23,7 @@ import org.crsh.telnet.term.CodeType;
 import org.crsh.telnet.term.Term;
 import org.crsh.telnet.term.TermEvent;
 import org.crsh.telnet.term.spi.TermIO;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.Style;
 
 import java.io.IOException;
@@ -231,7 +231,7 @@ public class ConsoleTerm implements Term {
   }
 
   @Override
-  public ScreenAppendable append(CharSequence s) throws IOException {
+  public Screenable append(CharSequence s) throws IOException {
     writer.write(s);
     return this;
   }
@@ -249,13 +249,13 @@ public class ConsoleTerm implements Term {
   }
 
   @Override
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     io.write((style));
     return this;
   }
 
   @Override
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     io.cls();
     return this;
   }

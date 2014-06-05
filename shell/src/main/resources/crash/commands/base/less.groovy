@@ -6,7 +6,7 @@ import org.crsh.cli.Command
 import org.crsh.command.Pipe
 import org.crsh.keyboard.KeyHandler
 import org.crsh.keyboard.KeyType
-import org.crsh.text.ScreenAppendable
+import org.crsh.text.Screenable
 import org.crsh.text.ScreenContext
 import org.crsh.text.CLS
 import org.crsh.text.VirtualScreen
@@ -73,12 +73,12 @@ class less
       return this;
     }
 
-    ScreenAppendable append(Style style) throws IOException {
+    Screenable append(Style style) throws IOException {
       buffer.append(style);
       return this;
     }
 
-    ScreenAppendable cls() throws IOException {
+    Screenable cls() throws IOException {
       buffer.cls();
       return this;
     }

@@ -19,7 +19,7 @@
 
 package org.crsh.lang.impl.groovy.closure;
 
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
@@ -76,7 +76,7 @@ class PipeLineInvocationContext implements InvocationContext<Object> {
     return Object.class;
   }
 
-  public ScreenAppendable append(CharSequence s) throws IOException {
+  public Screenable append(CharSequence s) throws IOException {
     outter.append(s);
     return this;
   }
@@ -91,12 +91,12 @@ class PipeLineInvocationContext implements InvocationContext<Object> {
     return this;
   }
 
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     outter.append(style);
     return this;
   }
 
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     outter.cls();
     return  this;
   }

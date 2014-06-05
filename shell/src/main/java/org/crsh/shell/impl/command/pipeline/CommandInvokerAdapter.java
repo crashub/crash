@@ -21,7 +21,7 @@ package org.crsh.shell.impl.command.pipeline;
 import org.crsh.command.CommandContext;
 import org.crsh.stream.Consumer;
 import org.crsh.stream.Producer;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.ScreenContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.text.CLS;
@@ -174,7 +174,7 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
   }
 
   @Override
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     if (screenContext != null) {
       screenContext.append(style);
     }
@@ -185,7 +185,7 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
   }
 
   @Override
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     if (screenContext != null) {
       screenContext.cls();
     }

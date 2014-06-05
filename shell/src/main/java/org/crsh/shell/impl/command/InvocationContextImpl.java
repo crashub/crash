@@ -20,7 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
@@ -69,7 +69,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
         public int getHeight() {
           return InvocationContextImpl.this.getHeight();
         }
-        public ScreenAppendable append(CharSequence s) throws IOException {
+        public Screenable append(CharSequence s) throws IOException {
           InvocationContextImpl.this.append(s);
           return this;
         }
@@ -81,11 +81,11 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
           InvocationContextImpl.this.append(csq, start, end);
           return this;
         }
-        public ScreenAppendable append(Style style) throws IOException {
+        public Screenable append(Style style) throws IOException {
           InvocationContextImpl.this.append(style);
           return this;
         }
-        public ScreenAppendable cls() throws IOException {
+        public Screenable cls() throws IOException {
           InvocationContextImpl.this.cls();
           return this;
         }
@@ -137,7 +137,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return commandContext.getHeight();
   }
 
-  public ScreenAppendable append(CharSequence s) throws IOException {
+  public Screenable append(CharSequence s) throws IOException {
     if (status != CLOSED) {
       status = WRITTEN;
       commandContext.append(s);
@@ -145,7 +145,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return this;
   }
 
-  public ScreenAppendable append(char c) throws IOException {
+  public Screenable append(char c) throws IOException {
     if (status != CLOSED) {
       status = WRITTEN;
       commandContext.append(c);
@@ -153,7 +153,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return this;
   }
 
-  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+  public Screenable append(CharSequence csq, int start, int end) throws IOException {
     if (status != CLOSED) {
       status = WRITTEN;
       commandContext.append(csq, start, end);
@@ -161,7 +161,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return this;
   }
 
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     if (status != CLOSED) {
       status = WRITTEN;
       commandContext.append(style);
@@ -169,7 +169,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return this;
   }
 
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     if (status != CLOSED) {
       status = WRITTEN;
       commandContext.cls();

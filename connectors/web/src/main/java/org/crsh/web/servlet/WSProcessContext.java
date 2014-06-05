@@ -24,7 +24,7 @@ import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.text.Color;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.Style;
 import org.crsh.util.Utils;
 
@@ -177,13 +177,13 @@ public class WSProcessContext implements ShellProcessContext, KeyHandler {
   }
 
   @Override
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     this.style = style.merge(style);
     return this;
   }
 
   @Override
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     buffer.append("\033[");
     buffer.append("2J");
     buffer.append("\033[");

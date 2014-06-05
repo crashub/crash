@@ -32,7 +32,7 @@ import org.crsh.command.ScriptException;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
 import org.crsh.text.CLS;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.ScreenBuffer;
 import org.crsh.text.Style;
 
@@ -99,7 +99,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     throw new UnsupportedOperationException();
   }
 
-  public ScreenAppendable append(CharSequence s) throws IOException {
+  public Screenable append(CharSequence s) throws IOException {
     if (reader == null) {
       reader = new ScreenBuffer();
     }
@@ -107,7 +107,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     return this;
   }
 
-  public ScreenAppendable append(char c) throws IOException {
+  public Screenable append(char c) throws IOException {
     if (reader == null) {
       reader = new ScreenBuffer();
     }
@@ -115,7 +115,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     return this;
   }
 
-  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+  public Screenable append(CharSequence csq, int start, int end) throws IOException {
     if (reader == null) {
       reader = new ScreenBuffer();
     }
@@ -123,7 +123,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     return this;
   }
 
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     if (reader == null) {
       reader = new ScreenBuffer();
     }
@@ -131,7 +131,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     return this;
   }
 
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     if (reader == null) {
       reader = new ScreenBuffer();
     }

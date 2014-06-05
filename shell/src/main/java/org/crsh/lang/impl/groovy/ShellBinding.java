@@ -20,7 +20,7 @@ package org.crsh.lang.impl.groovy;
 
 import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.InvocationContextImpl;
@@ -132,7 +132,7 @@ class ShellBinding extends Binding {
         return current.getAttributes();
       }
     }
-    public ScreenAppendable append(CharSequence s) throws IOException {
+    public Screenable append(CharSequence s) throws IOException {
       if (current == null) {
         throw new IllegalStateException("Not under context");
       } else {
@@ -156,7 +156,7 @@ class ShellBinding extends Binding {
       }
       return this;
     }
-    public ScreenAppendable append(Style style) throws IOException {
+    public Screenable append(Style style) throws IOException {
       if (current == null) {
         throw new IllegalStateException("Not under context");
       } else {
@@ -164,7 +164,7 @@ class ShellBinding extends Binding {
       }
       return this;
     }
-    public ScreenAppendable cls() throws IOException {
+    public Screenable cls() throws IOException {
       if (current == null) {
         throw new IllegalStateException("Not under context");
       } else {

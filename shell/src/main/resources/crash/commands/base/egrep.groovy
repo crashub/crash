@@ -4,7 +4,7 @@ import org.crsh.cli.Argument
 import org.crsh.cli.Command
 import org.crsh.cli.Usage
 import org.crsh.command.Pipe
-import org.crsh.text.ScreenAppendable
+import org.crsh.text.Screenable
 import org.crsh.text.ScreenContext
 import org.crsh.text.Style
 import org.crsh.util.Utils
@@ -83,13 +83,13 @@ class egrep {
     }
 
     @Override
-    ScreenAppendable append(Style style) throws IOException {
+    Screenable append(Style style) throws IOException {
       chunks.add(style);
       return this;
     }
 
     @Override
-    ScreenAppendable cls() throws IOException {
+    Screenable cls() throws IOException {
       buffer.setLength(0);
       chunks.clear();
       context.cls();

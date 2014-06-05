@@ -19,7 +19,7 @@
 
 package org.crsh.telnet.term;
 
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.text.Style;
 
 import java.io.IOException;
@@ -66,11 +66,11 @@ public class AbstractTerm implements Term {
     throw new UnsupportedOperationException();
   }
 
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     throw new UnsupportedOperationException();
   }
 
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     throw new UnsupportedOperationException();
   }
 

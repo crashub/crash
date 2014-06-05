@@ -22,7 +22,7 @@ package org.crsh;
 import junit.framework.Assert;
 import org.crsh.keyboard.KeyHandler;
 import org.crsh.keyboard.KeyType;
-import org.crsh.text.ScreenAppendable;
+import org.crsh.text.Screenable;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellProcess;
 import org.crsh.shell.ShellProcessContext;
@@ -164,26 +164,26 @@ public class BaseProcessContext implements ShellProcessContext {
     return input.isEmpty() ? null : input.removeLast();
   }
 
-  public ScreenAppendable append(CharSequence s) throws IOException {
+  public Screenable append(CharSequence s) throws IOException {
     if (s.length() > 0) {
       output.add(s.toString());
     }
     return this;
   }
 
-  public ScreenAppendable append(char c) throws IOException {
+  public Screenable append(char c) throws IOException {
     return append(Character.toString(c));
   }
 
-  public ScreenAppendable append(CharSequence csq, int start, int end) throws IOException {
+  public Screenable append(CharSequence csq, int start, int end) throws IOException {
     return append(csq.subSequence(start, end));
   }
 
-  public ScreenAppendable append(Style style) throws IOException {
+  public Screenable append(Style style) throws IOException {
     return this;
   }
 
-  public ScreenAppendable cls() throws IOException {
+  public Screenable cls() throws IOException {
     return this;
   }
 
