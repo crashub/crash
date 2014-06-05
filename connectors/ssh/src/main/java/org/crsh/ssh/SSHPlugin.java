@@ -42,6 +42,12 @@ import org.apache.sshd.common.util.SecurityUtils;
 
 public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
+  /** The SSH server idle timeout value. */
+  private static final int SSH_SERVER_IDLE_DEFAULT_TIMEOUT = 10 * 60 * 1000;
+
+  /** The SSH server authentication timeout value. */
+  private static final int SSH_SERVER_AUTH_DEFAULT_TIMEOUT = 10 * 60 * 1000;
+
   /** The SSH port. */
   public static final PropertyDescriptor<Integer> SSH_PORT = PropertyDescriptor.create("ssh.port", 2000, "The SSH port");
 
@@ -51,14 +57,11 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   /** SSH host key auto generate */
   public static final PropertyDescriptor<String> SSH_SERVER_KEYGEN = PropertyDescriptor.create("ssh.keygen", "false", "Whether to automatically generate a host key");
 
-  /** The SSH server idle timeout. */
-  private static final int SSH_SERVER_IDLE_DEFAULT_TIMEOUT = 10 * 60 * 1000;
+  /** The SSH server idle timeout property. */
   public static final PropertyDescriptor<Integer> SSH_SERVER_IDLE_TIMEOUT = PropertyDescriptor.create("ssh.idle-timeout", SSH_SERVER_IDLE_DEFAULT_TIMEOUT, "The idle-timeout for ssh sessions in milliseconds");
 
-  /** The SSH server authentication timeout. */
-  private static final int SSH_SERVER_AUTH_DEFAULT_TIMEOUT = 10 * 60 * 1000;
+  /** The SSH server authentication timeout property. */
   public static final PropertyDescriptor<Integer> SSH_SERVER_AUTH_TIMEOUT = PropertyDescriptor.create("ssh.auth-timeout", SSH_SERVER_AUTH_DEFAULT_TIMEOUT, "The authentication timeout for ssh sessions in milliseconds");
-
 
   /** . */
   private SSHLifeCycle lifeCycle;
