@@ -1,20 +1,70 @@
-== Connectors
+= Connectors
 
 Connectors manages the connection of the client to the shell.
 
-=== JLine connector
+== JVM connector
 
-todo
+The jvm connector is used in the standalone mode and relies on the JVM streams (_System.in_, _System.out_ and
+_System.err_).
 
-=== SSH connector
+== SSH connector
 
-todo
+=== Changing the SSH server port
 
-=== Telnet connector
+The ports of the server is parameterized by the _crash.ssh.port_ configuration property
 
-todo
+----
+crash.ssh.port=2000
+----
 
-=== Web connector
+=== Changing SSH server key
+
+The key can be changed by replacing the file _WEB-INF/sshd/hostkey.pem_. Alternatively you can configure the server
+to use an external file by using the _crash.ssh.keypath_ parameter in the _crash.properties_. Uncomment the corresponding
+property and change the path to the key file.
+
+----
+#crash.ssh.keypath=/path/to/the/key/file
+----
+
+If you specify an external file, you can also configure the server to generate it for you. In this case, the generation
+will take place when someone first connects through SSH. The default behavior is _false_, i.e. not to generate.
+
+----
+#crash.ssh.keygen=false
+----
+
+=== Changing SSH authentication and idle timeouts
+
+Default authentication and idle timeout of the SSH server are set to 10 minutes (600'000 ms). Both timeouts can be
+configured in milliseconds with the _crash.ssh.auth-timeout_ and _crash.ssh.idle-timeout_ parameters in the
+_crash.properties_ file
+
+----
+# SSH configuration 5 minutes = 5 * 60 * 1000 = 300'000
+crash.ssh.auth-timeout=300000
+crash.ssh.idle-timeout=300000
+----
+
+=== Removing SSH access
+
+To remove the SSH access, remove the jar file _crash.connectors.ssh-{crash-version}.jar_.
+
+== Telnet connector
+
+=== Changing the Telnet server port
+
+The ports of the server is parameterized by the _crash.telnet.port_ configuration property
+
+----
+crash.telnet.port=5000
+----
+
+=== Removing Telnet access
+
+To remove the Telnet access, remove the jar file _crash.connectors.telnet-{crash-version}.jar_.
+
+== Web connector
 
 The websocket provides connectivity from a web browser through WebSockets based on:
 
@@ -22,7 +72,7 @@ The websocket provides connectivity from a web browser through WebSockets based 
 - a browser supporting WebSockets
 - a Java web server implementing the JSR 356 API
 
-==== Client setup
+=== Client setup
 
 CRaSH.js is the client side part of the connector, it is built on top of the _jQuery Terminal Emulator Plugin_ and
  uses a client/server protocol for the shell connection.
@@ -59,7 +109,7 @@ var crash = new CRaSH($('#term_demo'), 1024, 768);
 crash.connect(url);
 ----
 
-==== Server setup
+=== Server setup
 
 Currently the WebSocket server uses the JSR 356 API, the connector is bootstrapped by the +org.crashub:crash.connectors.web+ jar
 that contains an annotation based endpoint bound to the _/crash_ uri. Therefore the full uri is prefixed by the web application
@@ -69,13 +119,13 @@ The +org.crashub:crash.connectors.web+ jar contains also the assets for setting 
 when the jar is in the _WEB-INF/lib_ of the web application (they are located in the _META-INF/resources_ entry of the
 jar). To activate the connector the property +crash.web.enabled+ must be set to +true+.
 
-==== Step by step setup (recap)
+=== Step by step setup (recap)
 
 - put the +org.crashub:crash.connectors.web+ jar in _WEB-INF/lib_
 - add the +crash.web.enabled=true+ in _WEB-INF/crash/crash.properties_
 - create a web page in your war file that contains the assets listed previously
-- setup _CRaSH.js_ in the page
+- setup _crash.js_ in the page
 
-==== Securing the server
+=== Securing the server
 
 todo

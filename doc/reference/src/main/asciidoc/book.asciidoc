@@ -5,41 +5,23 @@ The Common Reusable SHell (CRaSH) deploys in a Java runtime and provides interac
 Commands are written in Groovy and can be developed at runtime making the extension of the shell very easy
 with fast development cycle.
 
-[[running_crash]]
-= Running CRaSH
-
 include::running.asciidoc[]
-
-= Interacting with the shell
 
 include::shell.asciidoc[]
 
-= Configuration
-
 include::configuration.asciidoc[]
-
-= Connectors
 
 include::connectors.asciidoc[]
 
-[[developers]]
-= Developers
+include::authentication.asciidoc[]
 
 include::developers.asciidoc[]
 
-= Groovy guide
-
 include::groovy.asciidoc[]
-
-= Extending CRaSH
 
 include::extension.asciidoc[]
 
-= Mail plugin
-
 include::mail.asciidoc[]
-
-= Cron plugin
 
 include::cron.asciidoc[]
 

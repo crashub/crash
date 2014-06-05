@@ -1,3 +1,5 @@
+= Groovy guide
+
 This section teaches about advanced Groovy usage in CRaSH.
 
 [[commands_as_script]]

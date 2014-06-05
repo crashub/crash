@@ -1,3 +1,5 @@
+= Mail plugin
+
 The mail plugin configures an email client for CRaSH. This email client can be used as a service or via the +mail+
 command.
 

@@ -1,0 +1,254 @@
+= Authentication
+
+== Authentication configuration
+
+Authentication is used by the SSH server when a user authenticates. Authentication interface is pluggable and has default
+implementations. The <<pluggable_auth,authentication chapter>> explains how to write a custom authentication plugin, in this section we cover the
+configuation of the authentication.
+
+The configuration of the authentication plugin is done via property, this is necessary because several plugins can be detected
+by CRaSH, and the plugin is selected via the property _crash.auth_ that must match the authentication plugin name:
+
+----
+crash.auth=simple
+----
+
+It can also take a comma-separated list of multiple authentication plugins, allowing to mix username/password and key
+authentication. In this case plugins are tested in the order which they were specified:
+
+----
+crash.auth=simple,key
+----
+
+CRaSH comes out of the box with two authentication plugins.
+
+=== Simple authentication
+
+Simple authentication provides a simple username/password authentication configured with the _crash.auth.simple.username_ and
+_crash.auth.simple.password_ properties:
+
+----
+# Authentication configuration
+crash.auth=simple
+crash.auth.simple.username=admin
+crash.auth.simple.password=admin
+----
+
+=== Jaas authentation
+
+Jaas authentication uses jaas to perform authentication configured with the _crash.auth.jaas.domain_ property to define the
+jaas domain to use when performing authentication:
+
+----
+# Authentication configuration
+crash.auth=jaas
+crash.auth.jaas.domain=my-domain
+----
+
+=== Key authentication
+
+Key authentication relies on a set of authorized public keys to perform authentication configured with the
+_crash.auth.key.path_ property to specify the path of the keys. The property should point to a valid _.pem_ file.
+Obviously only a public key is required to be in the file, although it can also contain a private key (that will not be used).
+
+----
+# Authentication configuration
+crash.auth=key
+crash.auth.key.path=/Users/julien/.ssh/id_dsa.pem
+----
+
+[[pluggable_auth]]
+== Pluggable authentication
+
+Creating a custom authentication mechanism is done by implementing a CRaSH plugin that provides an implementation of the +AuthenticationPlugin+
+interface. Let's study the _simple_ authentication plugin implementation.
+
+The +AuthenticationPlugin+ is the interface to implement in order to integrate CRaSH with an authentication mechanism:
+
+////
+[source,java]
+----
+include::{sourcesdir}/org/crsh/auth/AuthenticationPlugin.java[tags=javadoc;classdef]
+----
+////
+
+[source,java]
+----
+include::{sourcesdir}/org/crsh/auth/AuthenticationPlugin.java[lines=24..-1]
+----
+
+The integration as a CRaSH plugin mandates to extend the class +CRaSHPlugin+ with the generic type +AuthenticationPlugin+:
+
+////
+[source,java]
+----
+public class SimpleAuthenticationPlugin extends
+    CRaSHPlugin<AuthenticationPlugin> implements
+    AuthenticationPlugin {
+
+include::{sourcesdir}/org/crsh/auth/SimpleAuthenticationPlugin.java[tags=getName;getImplementation]
+
+  ...
+
+}
+----
+////
+
+[source,java]
+----
+public class SimpleAuthenticationPlugin extends
+    CRaSHPlugin<AuthenticationPlugin> implements
+    AuthenticationPlugin {
+
+include::{sourcesdir}/org/crsh/auth/SimpleAuthenticationPlugin.java[lines=76..78;64..67]
+
+  ...
+
+}
+----
+
+* The +getName()+ method returns the _simple_ value that matchs the _crash.auth_ configuration property
+* The +getImplementation()+ method returns the object that implements the +AuthenticationPlugin+ class, this method
+is implemented from the +CRaSHPlugin+ abstract class, but in our case it
+simply returns +this+ because +SimpleAuthenticationPlugin+ is directly the implementation class.
+
+Now let's study how the plugin retrieves the configuration properties +crash.auth.simple.username+ and +crash.auth.simple.password+:
+
+////
+[source,java]
+----
+public class SimpleAuthenticationPlugin extends
+    CRaSHPlugin<AuthenticationPlugin> implements
+    AuthenticationPlugin {
+
+include::{sourcesdir}/org/crsh/auth/SimpleAuthenticationPlugin.java[tags=SIMPLE_USERNAME;SIMPLE_PASSWORD;createConfigurationCapabilities;init]
+
+  ...
+
+}
+----
+////
+
+[source,java]
+----
+public class SimpleAuthenticationPlugin extends
+    CRaSHPlugin<AuthenticationPlugin> implements
+    AuthenticationPlugin {
+
+include::{sourcesdir}/org/crsh/auth/SimpleAuthenticationPlugin.java[lines=32..46;53..59;69..74]
+
+  ...
+
+}
+----
+
+* The +createConfigurationCapabilities()+ method returns the constants +SIMPLE_USERNAME+ and +SIMPLE_PASSWORD+ that defines
+the configuration properties that the plugin uses
+* The +init()+ method is invoked by CRaSH before the plugin will be used, at this moment, the configuration properties are retrieved
+from the plugin context with the method +getContext()+ available in the +CRaSHPlugin+ base class
+
+Finally the plugin needs to provide the +authenticate()+ method that implement the authentication logic:
+
+////
+[source,java,indent=0]
+----
+include::{sourcesdir}/org/crsh/auth/SimpleAuthenticationPlugin.java[tags=authenticate]
+----
+////
+
+[source,java,indent=0]
+----
+include::{sourcesdir}/org/crsh/auth/SimpleAuthenticationPlugin.java[lines=80..86]
+----
+
+The logic is straightforward with an equality check of the username and password.
+
+Last but not least we must declare our plugin to make it recognized by CRaSH, this is achieved thanks to the +java.util.ServiceLoader+
+class. CRaSH uses the +ServiceLoader+ for loading plugins and the loader needs a file to be present in the jar file containing
+the class under the name +META-INF/services/org.crsh.plugin.CRaSHPlugin+ containing the class name of the plugin:
+
+----
+org.crsh.auth.SimpleAuthenticationPlugin
+----
+
+When all of this is done, the plugin and its service loader descriptor must be packaged in a jar file and available on the classpath
+of CRaSH.
+
+NOTE: You can learn more about the +java.util.ServiceLoader+ by looking at the online http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html[javadoc].
+
+== Spring authentication
+
+When running in the Spring embedded mode, any Spring bean extending +org.crsh.plugin.CRaSHPlugin+ will be registered
+as a CRaSH plugin. This can be used for delegating CRaSH authentication to a Spring bean:
+
+.Spring managed authentication plugin
+[source,java]
+----
+package example;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.sql.DataSource;
+
+import org.crsh.auth.AuthenticationPlugin;
+import org.crsh.plugin.CRaSHPlugin;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component("dbCrshAuth")
+public class DbCrshAuthPlugin extends CRaSHPlugin<AuthenticationPlugin>
+        implements AuthenticationPlugin {
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Override
+    public AuthenticationPlugin getImplementation() {
+        return this;
+    }
+
+    @Override
+    public boolean authenticate(String username, String password)
+            throws Exception {
+        Connection conn = dataSource.getConnection();
+
+        PreparedStatement statement = conn
+                .prepareStatement("SELECT COUNT(*) FROM users WHERE username = ? AND password = ?");
+        statement.setString(1, username);
+        statement.setString(2, password);
+
+        ResultSet rs = statement.executeQuery();
+        return rs.getInt(1) >= 1;
+    }
+
+    @Override
+    public String getName() {
+        return "dbCrshAuth";
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+}
+----
+
+The above code uses Spring annotation driven beans, but this works the same with beans configured
+in XML:
+
+.Custom authentication bean in spring.xml
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean class="example.DbCrshAuthPlugin">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+</beans>
+----

@@ -1,3 +1,6 @@
+[[running_crash]]
+= Running CRaSH
+
 There are several ways to run CRaSH, as a standalone application it controls its own JVM or as an embedded
 service in an existing runtime like a web application or a Spring application.
 
@@ -206,81 +209,6 @@ The configuration properties are set as properties with the _config_ property of
 
 Any Spring managed beans that extend +org.crsh.plugin.CRaSHPlugin+ will be automatically
 registered as plugins in addition to those declared in +META-INF/services/org.crsh.plugin.CRaSHPlugin+.
-
-For example, the following implements a CRaSH authentication plugin that uses a JDBC DataSource 
-managed by Spring:
-
-.Spring managed authentication plugin
-[source,java]
-----
-package example;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
-import javax.sql.DataSource;
-
-import org.crsh.auth.AuthenticationPlugin;
-import org.crsh.plugin.CRaSHPlugin;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-@Component("dbCrshAuth")
-public class DbCrshAuthPlugin extends CRaSHPlugin<AuthenticationPlugin>
-        implements AuthenticationPlugin {
-
-    @Autowired
-    private DataSource dataSource;
-
-    @Override
-    public AuthenticationPlugin getImplementation() {
-        return this;
-    }
-
-    @Override
-    public boolean authenticate(String username, String password)
-            throws Exception {
-        Connection conn = dataSource.getConnection();
-        
-        PreparedStatement statement = conn
-                .prepareStatement("SELECT COUNT(*) FROM users WHERE username = ? AND password = ?");
-        statement.setString(1, username);
-        statement.setString(2, password);
-        
-        ResultSet rs = statement.executeQuery();
-        return rs.getInt(1) >= 1;
-    }
-
-    @Override
-    public String getName() {
-        return "dbCrshAuth";
-    }
-    
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-}
-----
-
-The above code uses Spring annotation driven beans, but this works the same with beans configured 
-in XML:
-
-.Custom authentication bean in spring.xml
-[source,xml]
-----
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-
-    <bean class="example.DbCrshAuthPlugin">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-
-</beans>
-----
 
 ==== Embedding in a Spring web app
 

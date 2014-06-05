@@ -1,3 +1,5 @@
+= Cron plugin
+
 CRaSH provides a cron plugin for scheduling tasks, the plugin is a thin wrapper of the
 http://www.sauronsoftware.it/projects/cron4j/[cron4j] library.
 

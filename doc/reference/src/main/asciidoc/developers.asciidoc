@@ -1,3 +1,6 @@
+[[developers]]
+= Developers
+
 [[developping_commands]]
 == Developping commands
 

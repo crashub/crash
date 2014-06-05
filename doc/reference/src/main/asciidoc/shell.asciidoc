@@ -1,3 +1,5 @@
+= Interacting with the shell
+
 == Shell usage
 
 [[connection]]

@@ -1,3 +1,5 @@
+= Configuration
+
 This chapter explains the configuration of CRaSH, configuration aims to be as simple as possible
 and is adapted to the mode running CRaSH.
 
@@ -22,26 +24,6 @@ is configured with a list of mounts, a mount being the name of a file system ass
 
 By default CRaSH provides an adapted mount point configuration for each mode, but you can customize it
 according to your needs.
-
-=== Configuring the standalone mode
-
-The mount point configurations of the standalone mode can be specified with command line options:
-
-- the _-cmd_ option set the command moint point configuration, the default value being _classpath:/crash/commands/_
-- the _-conf_ option set the conf moint point configuration, the default value being _classpath:/crash/_
-
-The default behavior of the distribution extracts the content of these mount points in the _/cmd_ and _/conf_ folders
-of the distribution. This behavior can be explained by looking at _crash.sh_ and _crash.bat_ startup scripts, they
-uses the options _--cmd-folder_ and _--conf-folder_ to set this behavior.
-
-Thanks to this default behavior, the commands and configurations files can be  easily modified. Without this feature, any modification
-would imply to modify the jar files, which is not a viable option.
-
-TIP: removing these options from the startup scripts will configure CRaSH to uses the files from the jars directly.
-
-=== Configuring the attach mode
-
-Same as standalone mode.
 
 === Configuring the web application mode
 
@@ -132,117 +114,12 @@ You can also specify properties as a CRaSH command line argument with the _-p_ o
 In the war file packaging, the configuration file can be found under _/WEB-INF/crash/crash.properties_ file of the archive.
 Configuration can be overriden by Java Virtual Machine system properties by using the same property name.
 
-=== Configuration properties
+=== Configuring shell default message
 
-==== Changing SSH server key
-
-The key can be changed by replacing the file _WEB-INF/sshd/hostkey.pem_. Alternatively you can configure the server
-to use an external file by using the _crash.ssh.keypath_ parameter in the _crash.properties_. Uncomment the corresponding
-property and change the path to the key file.
-
-----
-#crash.ssh.keypath=/path/to/the/key/file
-----
-
-If you specify an external file, you can also configure the server to generate it for you. In this case, the generation
-will take place when someone first connects through SSH. The default behavior is _false_, i.e. not to generate.
-
-----
-#crash.ssh.keygen=false
-----
-
-==== Changing telnet or SSH server ports
-
-The ports of the server are parameterized by the _crash.ssh.port_ and _crash.telnet.port_ parameters in the _crash.properties_ file
-
-----
-# SSH configuration
-crash.ssh.port=2000
-----
-
-----
-# Telnet configuration
-crash.telnet.port=5000
-----
-
-==== Changing SSH authentication and idle timeouts ===
-
-Default authentication and idle timeout of the SSH server are set to 10 minutes (600'000 ms). Both timeouts can be configured in milliseconds with the //crash.ssh.auth-timeout// and //crash.ssh.idle-timeout// parameters in the //crash.properties// file
-
-----
-# SSH configuration 5 minutes = 5 * 60 * 1000 = 300'000
-crash.ssh.auth-timeout=300000
-crash.ssh.idle-timeout=300000
-----
-
-
-=== Removing telnet or SSH access
-
-* to remove the telnet access, remove the jar file in the _WEB-INF/lib/crsh.connectors.telnet-{crash-version}.jar_.
-* to remove the SSH access, remove the jar file in the _WEB-INF/lib/crsh.connectors.ssh-{crash-version}.jar_.
-
-==== Configuring shell default message
-
-The _/WEB-INF/crash/commands/base/login.groovy_ file contains two closures that are evaluated each time a message is required
+The _/crash/commands/base/login.groovy_ file contains two closures that are evaluated each time a message is required
 
 * The +prompt+ closure returns the prompt message
 * The +welcome+ closure returns the welcome message
 
 Those closure can be customized to return different messages.
 
-==== Configuring authentication
-
-Authentication is used by the SSH server when a user authenticates. Authentication interface is pluggable and has default
-implementations. The <<pluggable_auth,authentication chapter>> explains how to write a custom authentication plugin, in this section we cover the
-configuation of the authentication.
-
-The configuration of the authentication plugin is done via property, this is necessary because several plugins can be detected
-by CRaSH, and the plugin is selected via the property _crash.auth_ that must match the authentication plugin name:
-
-----
-crash.auth=simple
-----
-
-It can also take a comma-separated list of multiple authentication plugins, allowing to mix username/password and key
-authentication. In this case plugins are tested in the order which they were specified:
-
-----
-crash.auth=simple,key
-----
-
-CRaSH comes out of the box with two authentication plugins.
-
-===== Simple authentication
-
-Simple authentication provides a simple username/password authentication configured with the _crash.auth.simple.username_ and
-_crash.auth.simple.password_ properties:
-
-----
-# Authentication configuration
-crash.auth=simple
-crash.auth.simple.username=admin
-crash.auth.simple.password=admin
-----
-
-===== Jaas authentation
-
-Jaas authentication uses jaas to perform authentication configured with the _crash.auth.jaas.domain_ property to define the
-jaas domain to use when performing authentication:
-
-----
-# Authentication configuration
-crash.auth=jaas
-crash.auth.jaas.domain=my-domain
-----
-
-===== Key authentication
-
-Key authentication relies on a set of authorized public keys to perform authentication configured with the
-_crash.auth.key.path_ property to specify the path of the keys. The property should point to a valid _.pem_ file.
-Obviously only a public key is required to be in the file, although it can also contain a private key (that will not be used).
-
-----
-# Authentication configuration
-crash.auth=key
-crash.auth.key.path=/Users/julien/.ssh/id_dsa.pem
-----
