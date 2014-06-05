@@ -7,6 +7,8 @@ Connectors manages the connection of the client to the shell.
 The jvm connector is used in the standalone mode and relies on the JVM streams (_System.in_, _System.out_ and
 _System.err_).
 
+The jvm connector uses the default platform encoding provided by the JVM.
+
 == SSH connector
 
 === Changing the SSH server port
