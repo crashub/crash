@@ -24,6 +24,7 @@ import org.crsh.auth.SimpleAuthenticationPlugin;
 import org.crsh.processor.term.SyncProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.util.Utils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,6 +68,7 @@ public class SSHTestCase extends Assert {
     lifeCycle.setProperty(SSHPlugin.SSH_PORT, port);
     lifeCycle.setProperty(SSHPlugin.SSH_SERVER_IDLE_TIMEOUT, 10 * 60 * 1000);
     lifeCycle.setProperty(SSHPlugin.SSH_SERVER_AUTH_TIMEOUT, 10 * 60 * 1000);
+    lifeCycle.setProperty(SSHPlugin.SSH_ENCODING, Utils.UTF_8);
     lifeCycle.setProperty(AuthenticationPlugin.AUTH, Arrays.asList(auth.getName()));
     lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_USERNAME, "root");
     lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_PASSWORD, "");

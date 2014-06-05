@@ -22,13 +22,19 @@ import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
 import org.crsh.shell.ShellFactory;
 
+import java.nio.charset.Charset;
+
 public class CRaSHCommandFactory implements Factory<Command> {
 
   /** . */
   final ShellFactory shellFactory;
 
-  public CRaSHCommandFactory(ShellFactory shellFactory) {
+  /** . */
+  final Charset encoding;
+
+  public CRaSHCommandFactory(ShellFactory shellFactory, Charset encoding) {
     this.shellFactory = shellFactory;
+    this.encoding = encoding;
   }
 
   public Command create() {

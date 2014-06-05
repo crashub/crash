@@ -27,12 +27,14 @@ import org.crsh.plugin.PropertyDescriptor;
 import org.crsh.plugin.ResourceKind;
 import org.crsh.ssh.term.SSHLifeCycle;
 import org.crsh.ssh.term.URLKeyPairProvider;
+import org.crsh.util.Utils;
 import org.crsh.vfs.Resource;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,6 +65,14 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   /** The SSH server authentication timeout property. */
   public static final PropertyDescriptor<Integer> SSH_SERVER_AUTH_TIMEOUT = PropertyDescriptor.create("ssh.auth-timeout", SSH_SERVER_AUTH_DEFAULT_TIMEOUT, "The authentication timeout for ssh sessions in milliseconds");
 
+  /** The SSH charset. */
+  public static final PropertyDescriptor<Charset> SSH_ENCODING = new PropertyDescriptor<Charset>(Charset.class, "ssh.encoding", Utils.UTF_8, "The ssh stream encoding") {
+    @Override
+    protected Charset doParse(String s) throws Exception {
+      return Charset.forName(s);
+    }
+  };
+
   /** . */
   private SSHLifeCycle lifeCycle;
 
@@ -73,7 +83,8 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   @Override
   protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
-    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, SSH_SERVER_KEYGEN, SSH_SERVER_AUTH_TIMEOUT, SSH_SERVER_IDLE_TIMEOUT, AuthenticationPlugin.AUTH);
+    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, SSH_SERVER_KEYGEN, SSH_SERVER_AUTH_TIMEOUT,
+        SSH_SERVER_IDLE_TIMEOUT, SSH_ENCODING, AuthenticationPlugin.AUTH);
   }
 
   @Override
@@ -165,12 +176,21 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     }
 
     //
+    Charset encoding = getContext().getProperty(SSH_ENCODING);
+    if (encoding == null) {
+      encoding = Utils.UTF_8;
+    }
+
+    //
     log.log(Level.INFO, "Booting SSHD");
-    SSHLifeCycle lifeCycle = new SSHLifeCycle(getContext(), authPlugins);
-    lifeCycle.setPort(port);
-    lifeCycle.setAuthTimeout(authTimeout);
-    lifeCycle.setIdleTimeout(idleTimeout);
-    lifeCycle.setKeyPairProvider(keyPairProvider);
+    SSHLifeCycle lifeCycle = new SSHLifeCycle(
+        getContext(),
+        encoding,
+        port,
+        idleTimeout,
+        authTimeout,
+        keyPairProvider,
+        authPlugins);
     lifeCycle.init();
 
     //

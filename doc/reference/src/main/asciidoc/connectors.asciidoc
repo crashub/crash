@@ -38,7 +38,7 @@ will take place when someone first connects through SSH. The default behavior is
 
 Default authentication and idle timeout of the SSH server are set to 10 minutes (600'000 ms). Both timeouts can be
 configured in milliseconds with the _crash.ssh.auth-timeout_ and _crash.ssh.idle-timeout_ parameters in the
-_crash.properties_ file
+_crash.properties_ file.
 
 ----
 # SSH configuration 5 minutes = 5 * 60 * 1000 = 300'000
@@ -49,6 +49,15 @@ crash.ssh.idle-timeout=300000
 === Removing SSH access
 
 To remove the SSH access, remove the jar file _crash.connectors.ssh-{crash-version}.jar_.
+
+=== Overriding the encoding
+
+By default the SSH connector uses the _UTF-8_ encoding, this can be changed using the _crash.ssh.encoding_ configuration
+property.
+
+----
+crash.ssh.encoding=UTF-8
+----
 
 == Telnet connector
 

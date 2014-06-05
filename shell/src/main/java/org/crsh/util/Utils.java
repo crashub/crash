@@ -30,6 +30,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.sql.*;
 import java.io.File;
 import java.net.URISyntaxException;
@@ -50,6 +51,7 @@ public class Utils {
 
   /** . */
   private static final Iterator EMPTY_ITERATOR = Collections.emptyList().iterator();
+
   /** . */
   private static final Pattern p = Pattern.compile("\\S+");
 
@@ -770,4 +772,12 @@ public class Utils {
     String userDir = System.getProperty("user.dir");
     return new File(userDir);
   }
+
+  /** . */
+  public static final Charset UTF_8;
+
+  static {
+    UTF_8 = Charset.forName("utf8");
+  }
+
 }

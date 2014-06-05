@@ -33,6 +33,7 @@ import org.crsh.shell.ShellFactory;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.ssh.term.subsystem.SubsystemFactoryPlugin;
 
+import java.nio.charset.Charset;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -53,58 +54,63 @@ public class SSHLifeCycle {
   private final Logger log = Logger.getLogger(SSHLifeCycle.class.getName());
 
   /** . */
-  private SshServer server;
+  private final PluginContext context;
 
   /** . */
-  private int port;
+  private final int port;
 
   /** . */
-  private int idleTimeout;
+  private final int idleTimeout;
 
   /** . */
-  private int authTimeout;
-
+  private final int authTimeout;
 
   /** . */
-  private KeyPairProvider keyPairProvider;
+  private final Charset encoding;
+
+  /** . */
+  private final KeyPairProvider keyPairProvider;
 
   /** . */
   private final ArrayList<AuthenticationPlugin> authenticationPlugins;
 
   /** . */
-  private Integer localPort;
+  private SshServer server;
 
   /** . */
-  private final PluginContext context;
+  private Integer localPort;
 
-  public SSHLifeCycle(PluginContext context, ArrayList<AuthenticationPlugin> authenticationPlugins) {
+  public SSHLifeCycle(
+      PluginContext context,
+      Charset encoding,
+      int port,
+      int idleTimeout,
+      int authTimeout,
+      KeyPairProvider keyPairProvider,
+      ArrayList<AuthenticationPlugin> authenticationPlugins) {
     this.authenticationPlugins = authenticationPlugins;
     this.context = context;
+    this.encoding = encoding;
+    this.port = port;
+    this.idleTimeout = idleTimeout;
+    this.authTimeout = authTimeout;
+    this.keyPairProvider = keyPairProvider;
+  }
+
+  public Charset getEncoding() {
+    return encoding;
   }
 
   public int getPort() {
     return port;
   }
 
-  public void setPort(int port) {
-    this.port = port;
-  }
-
-
   public int getIdleTimeout() {
     return idleTimeout;
   }
 
-  public void setIdleTimeout(int idleTimeout) {
-    this.idleTimeout = idleTimeout;
-  }
-
   public int getAuthTimeout() {
     return authTimeout;
-  }
-
-  public void setAuthTimeout(int authTimeout) {
-    this.authTimeout = authTimeout;
   }
 
 
@@ -122,14 +128,8 @@ public class SSHLifeCycle {
     return keyPairProvider;
   }
 
-  public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
-    this.keyPairProvider = keyPairProvider;
-  }
-
   public void init() {
     try {
-
-      //
       ShellFactory factory = context.getPlugin(ShellFactory.class);
 
       //
@@ -143,7 +143,7 @@ public class SSHLifeCycle {
         server.getProperties().put(ServerFactoryManager.AUTH_TIMEOUT, String.valueOf(this.authTimeout));
       }
 
-      server.setShellFactory(new CRaSHCommandFactory(factory));
+      server.setShellFactory(new CRaSHCommandFactory(factory, encoding));
       server.setCommandFactory(new SCPCommandFactory(context));
       server.setKeyPairProvider(keyPairProvider);
 
