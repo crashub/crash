@@ -79,7 +79,7 @@ class PropertyManager {
   }
 
   /**
-   * Returns a context property value or null if it cannot be found.
+   * Returns a context property value or its default value if it cannot be found.
    *
    * @param desc the property descriptor
    * @param <T> the property parameter type
@@ -90,7 +90,11 @@ class PropertyManager {
     if (desc == null) {
       throw new NullPointerException();
     }
-    return resolvePropertyValue(desc.getName(), desc.getType());
+    T value = resolvePropertyValue(desc.getName(), desc.getType());
+    if (value == null) {
+      value = desc.defaultValue;
+    }
+    return value;
   }
 
   /**
@@ -102,57 +106,16 @@ class PropertyManager {
    * @return the property value
    * @throws NullPointerException if the descriptor argument is null
    */
-  <T> T resolvePropertyValue(String propertyName, Class<T> type) throws NullPointerException {
+  private <T> T resolvePropertyValue(String propertyName, Class<T> type) throws NullPointerException {
     if (propertyName == null) {
       throw new NullPointerException("No null property name accepted");
     }
     if (type == null) {
       throw new NullPointerException("No null property type accepted");
     }
-    Property<? extends T> property = resolveProperty(propertyName, type);
+    Property<? extends T> property = getProperty(propertyName, type);
     if (property != null) {
       return property.getValue();
-    }
-    return null;
-  }
-
-  /**
-   * Resolve a context property or null if it cannot be resolved.
-   *
-   * @param desc the property descriptor
-   * @param <T> the property parameter type
-   * @return the property value
-   * @throws NullPointerException if the descriptor argument is null
-   */
-  public <T> Property<? extends T> resolveProperty(PropertyDescriptor<T> desc) throws NullPointerException {
-    if (desc == null) {
-      throw new NullPointerException();
-    }
-    return resolveProperty(desc.getName(), desc.getType());
-  }
-
-  /**
-   * Resolve a context property or null if it cannot be resolved.
-   *
-   * @param propertyName the name of the property
-   * @param type the property type
-   * @param <T> the property parameter type
-   * @return the property value
-   * @throws NullPointerException if the descriptor argument is null
-   */
-  <T> Property<? extends T> resolveProperty(String propertyName, Class<T> type) throws NullPointerException {
-    if (propertyName == null) {
-      throw new NullPointerException("No null property name accepted");
-    }
-    if (type == null) {
-      throw new NullPointerException("No null property type accepted");
-    }
-    Property<?> property = properties.get(propertyName);
-    if (property != null) {
-      PropertyDescriptor<?> descriptor = property.getDescriptor();
-      if (type.isAssignableFrom(descriptor.getType())) {
-        return (Property<? extends T>)property;
-      }
     }
     return null;
   }

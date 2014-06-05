@@ -208,19 +208,6 @@ public final class PluginContext {
   }
 
   /**
-   * Returns a context property or null if it cannot be found.
-   *
-   * @param propertyName the name of the property
-   * @param type the property type
-   * @param <T> the property parameter type
-   * @return the property value
-   * @throws NullPointerException if the descriptor argument is null
-   */
-  public <T> T getProperty(String propertyName, Class<T> type) throws NullPointerException {
-    return propertyManager.resolvePropertyValue(propertyName, type);
-  }
-
-  /**
    * Set a context property to a new value. If the provided value is null, then the property is removed.
    *
    * @param desc the property descriptor

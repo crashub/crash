@@ -24,24 +24,23 @@ import org.crsh.auth.SimpleAuthenticationPlugin;
 public class PropertyManagerTestCase extends AbstractTestCase {
 
   class Foo {}
-  PropertyDescriptor<Foo> FOO = new PropertyDescriptor<Foo>(Foo.class, "foo", null, "the foo") {
+  Foo foo = new Foo();
+  PropertyDescriptor<Foo> FOO = new PropertyDescriptor<Foo>(Foo.class, "foo", foo, "the foo") {
     @Override
     protected Foo doParse(String s) throws Exception {
       throw new UnsupportedOperationException();
     }
   };
-  Foo foo = new Foo();
 
   public void testResolveProperty() {
     PropertyManager mgr = new PropertyManager();
     mgr.setProperty(FOO, foo);
     assertEquals(foo, mgr.resolvePropertyValue(FOO));
-    Property<? extends Foo> property = mgr.resolveProperty(FOO);
-    assertEquals(foo, property.getValue());
-    Property<? extends Foo> asInteger = mgr.resolveProperty("foo", Foo.class);
-    assertEquals(foo, asInteger.getValue());
-    Property<?> asObject = mgr.resolveProperty("foo", Object.class);
-    assertEquals(foo, asObject.getValue());
+  }
+
+  public void testResolveAbsentProperty() {
+    PropertyManager mgr = new PropertyManager();
+    assertEquals(foo, mgr.resolvePropertyValue(FOO));
   }
 
   public void testGetProperty() {
