@@ -128,7 +128,7 @@ class PropertyManager {
     if (desc == null) {
       throw new NullPointerException();
     }
-    return getProperty(desc.getName(), desc.getType());
+    return resolveProperty(desc.getName(), desc.getType());
   }
 
   /**
