@@ -25,7 +25,7 @@
     <format>zip</format>
   </formats>
 
-  <baseDirectory>crash-${project.version}</baseDirectory>
+  <baseDirectory>/</baseDirectory>
 
   <componentDescriptors>
     <componentDescriptor>src/main/assembly/distrib.xml</componentDescriptor>

@@ -5,13 +5,16 @@
 // SNAPSHOT should be used for testing purpose
 
 import groovyx.net.http.HTTPBuilder
+import org.apache.commons.compress.archivers.ArchiveOutputStream
+import org.apache.commons.compress.archivers.ArchiveStreamFactory
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.log4j.Logger
 
 import static groovyx.net.http.ContentType.BINARY
-import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.Method.*
 
 // Configure log4j
@@ -22,16 +25,6 @@ console.activateOptions();
 Logger.getRootLogger().addAppender(console);
 Logger.getRootLogger().setLevel(Level.INFO);
 Logger.getLogger(HTTPBuilder.class).setLevel(Level.ALL)
-
-// Credentials
-def bintrayUser = project.properties.bintrayUser;
-def bintrayApiKey = project.properties.bintrayApiKey;
-if (bintrayUser == null) {
-  throw new Exception("Property bintrayUser not found");
-}
-if (bintrayApiKey == null) {
-  throw new Exception("Property bintrayApiKey not found");
-}
 
 // Version check / change and so on
 def pattern = ~/([0-9\.]+)(\-.+)?/
@@ -63,11 +56,47 @@ if (!file.isFile()) {
   throw new Exception("${file.absolutePath} is not a file");
 }
 
+// Transform file to prefix
+ByteArrayOutputStream baos = new ByteArrayOutputStream((int)file.length())
+ZipArchiveInputStream zipIn = new ZipArchiveInputStream(new BufferedInputStream(new FileInputStream(file)));
+ArchiveOutputStream zipOut = new ArchiveStreamFactory().createArchiveOutputStream("zip", baos);
+byte[] buffer = new byte[512];
+while (true) {
+  ZipArchiveEntry entry = zipIn.getNextZipEntry();
+  if (entry == null) {
+    break;
+  } else {
+    def length = (int)entry.size
+    entry.name = "crash-${version}/${entry.name}";
+    if (entry.name.endsWith(".sh") || entry.name.endsWith(".bat")) {
+      entry.setUnixMode(0100755);
+    }
+    zipOut.putArchiveEntry(entry);
+    while (length > 0) {
+      def amount = zipIn.read(buffer, 0, Math.min(length, buffer.length));
+      zipOut.write(buffer, 0, amount);
+      length -= amount;
+    }
+    zipOut.closeArchiveEntry();
+  }
+}
+zipOut.close();
+
+// Credentials
+def bintrayUser = project.properties.bintrayUser;
+def bintrayApiKey = project.properties.bintrayApiKey;
+if (bintrayUser == null) {
+  throw new Exception("Property bintrayUser not found");
+}
+if (bintrayApiKey == null) {
+  throw new Exception("Property bintrayApiKey not found");
+}
+
 //
 def repoPath = "crashub/crash"
 def packageName = "gvm"
 def packagePath = "$repoPath/gvm"
-def uploadUri = "/content/$packagePath/${version}/crash.${version}.zip";
+def uploadUri = "/content/$packagePath/${version}/crash-${version}.zip";
 
 //
 def http = new HTTPBuilder("https://api.bintray.com");
@@ -77,7 +106,7 @@ println("Uploading ${file.absolutePath} to ${uploadUri}");
 def result = http.request(PUT) {
   uri.path = uploadUri
   requestContentType = BINARY
-  body = new FileInputStream(file);
+  body = new ByteArrayInputStream(baos.toByteArray());
   response.success = { resp ->
     return "Package ${packageName} uploaded.";
   }
