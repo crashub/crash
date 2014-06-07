@@ -57,13 +57,11 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
     return translated;
   }
 
-  public static ScriptException unwrap(Throwable cause) {
-    if (cause instanceof ScriptException) {
-      return (ScriptException)cause;
-    } if (cause instanceof groovy.util.ScriptException) {
+  public static Exception unwrap(Exception cause) {
+    if (cause instanceof groovy.util.ScriptException) {
       return unwrap((groovy.util.ScriptException)cause);
     } else {
-      return new ScriptException(cause);
+      return cause;
     }
   }
 

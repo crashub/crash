@@ -18,7 +18,6 @@
  */
 package org.crsh.text;
 
-import java.io.Flushable;
 import java.io.IOException;
 
 /**
@@ -26,7 +25,7 @@ import java.io.IOException;
  *
  * @author Julien Viet
  */
-public interface Screenable extends Appendable, Flushable {
+public interface Screenable extends Appendable {
 
   Appendable append(char c) throws IOException;
 

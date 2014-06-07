@@ -43,7 +43,7 @@ public abstract class Pipe<C, P> implements Filter<C, P, InvocationContext<P>> {
     return (Class<C>)Utils.resolveToClass(getClass(), Pipe.class, 0);
   }
 
-  public void open(InvocationContext<P> consumer) {
+  public void open(InvocationContext<P> consumer) throws Exception {
     this.context = consumer;
 
     //
@@ -53,35 +53,27 @@ public abstract class Pipe<C, P> implements Filter<C, P, InvocationContext<P>> {
   /**
    * Open pipe.
    */
-  public void open() throws ScriptException {
+  public void open() throws Exception {
   }
 
-  /**
-   * Extends the throw clause of the {@link org.crsh.stream.Consumer#provide(Object)} method.
-   *
-   * @param element the provided element
-   * @throws ScriptException any script exception
-   * @throws IOException any io exception
-   */
-  public void provide(C element) throws ScriptException, IOException {
+  public void provide(C element) throws Exception {
   }
 
   /**
    * Flush pipe.
    *
-   * @throws ScriptException any script exception
    * @throws IOException any io exception
    */
-  public void flush() throws ScriptException, IOException {
+  public void flush() throws IOException {
     context.flush();
   }
 
   /**
    * Close pipe.
    *
-   * @throws ScriptException any script exception
+   * @throws Exception any exception
    */
-  public void close() throws ScriptException, IOException {
+  public void close() throws Exception {
     context.close();
   }
 }

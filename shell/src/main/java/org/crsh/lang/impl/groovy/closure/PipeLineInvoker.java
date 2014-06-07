@@ -18,15 +18,12 @@
  */
 package org.crsh.lang.impl.groovy.closure;
 
-import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.command.pipeline.PipeLine;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -44,17 +41,11 @@ public class PipeLineInvoker {
     this.args = args;
   }
 
-  public void invoke(InvocationContext<Object> context) throws IOException, UndeclaredThrowableException {
+  public void invoke(InvocationContext<Object> context) throws IOException, CommandException {
 
     //
     PipeLineInvocationContext inner = new PipeLineInvocationContext(context);
-    LinkedList<CommandInvoker> pipe;
-    try {
-      pipe = closure.resolve2(args);
-    }
-    catch (CommandException e) {
-      throw new UndeclaredThrowableException(e);
-    }
+    LinkedList<CommandInvoker> pipe = closure.resolve2(args);
     CommandInvoker[] array = pipe.toArray(new CommandInvoker[pipe.size()]);
     PipeLine pipeLine = new PipeLine(array);
 
@@ -62,15 +53,6 @@ public class PipeLineInvoker {
     try {
       pipeLine.open(inner);
       pipeLine.flush();
-
-    }
-    catch (ScriptException e) {
-      Throwable cause = e.getCause();
-      if (cause != null) {
-        throw new InvokerInvocationException(cause);
-      } else {
-        throw e;
-      }
     } finally {
       // This is on purpose
       pipeLine.close();

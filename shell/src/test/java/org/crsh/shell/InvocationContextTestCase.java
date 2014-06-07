@@ -27,6 +27,7 @@ import org.crsh.cli.impl.SyntaxException;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
+import org.crsh.shell.impl.command.spi.CommandException;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
@@ -79,8 +80,8 @@ public class InvocationContextTestCase extends AbstractTestCase {
       new TestInvocationContext().execute(clazz);
       fail();
     }
-    catch (UndeclaredThrowableException e) {
-      assertInstance(SyntaxException.class, e.getUndeclaredThrowable());
+    catch (CommandException e) {
+      assertInstance(SyntaxException.class, e.getCause());
     }
   }
 

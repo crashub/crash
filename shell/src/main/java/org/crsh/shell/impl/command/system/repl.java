@@ -34,10 +34,8 @@ import org.crsh.text.Color;
 import org.crsh.text.Decoration;
 import org.crsh.text.Style;
 import org.crsh.text.ui.LabelElement;
-import org.crsh.text.ui.RowElement;
 import org.crsh.text.ui.TableElement;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -50,7 +48,7 @@ public class repl extends BaseCommand implements ReplCompleter {
       InvocationContext<Object> context,
       @Argument(completer = ReplCompleter.class)
       @Usage("the optional repl name")
-      String name) throws IOException {
+      String name) throws Exception {
     ShellSession session = (ShellSession)context.getSession();
     Repl current = session.getRepl();
     if (name != null) {

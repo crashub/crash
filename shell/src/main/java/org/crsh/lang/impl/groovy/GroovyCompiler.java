@@ -121,7 +121,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
       script = new String(source, "UTF-8");
     }
     catch (UnsupportedEncodingException e) {
-      throw new CommandException(name, ErrorKind.INTERNAL, "Could not compile command script " + name, e);
+      throw new CommandException(ErrorKind.INTERNAL, "Could not compile command script " + name, e);
     }
 
     // Get the description using a partial compilation because it is much faster than compiling the class
@@ -133,7 +133,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
       cu.compile(Phases.CONVERSION);
     }
     catch (CompilationFailedException e) {
-      throw new CommandException(name, ErrorKind.INTERNAL, "Could not compile command", e);
+      throw new CommandException(ErrorKind.INTERNAL, "Could not compile command", e);
     }
     CompileUnit ast = cu.getAST();
     if (ast.getClasses().size() > 0) {
@@ -176,7 +176,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
               command = make(cmd);
             }
             catch (IntrospectionException e) {
-              throw new CommandException(name, ErrorKind.EVALUATION, "Invalid cli annotations", e);
+              throw new CommandException(ErrorKind.INTERNAL, "Invalid cli annotations for command " + name, e);
             }
           }
           else if (GroovyScriptCommand.class.isAssignableFrom(clazz)) {
@@ -185,11 +185,11 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
               command = make2(cmd);
             }
             catch (IntrospectionException e) {
-              throw new CommandException(name, ErrorKind.EVALUATION, "Invalid cli annotations", e);
+              throw new CommandException(ErrorKind.INTERNAL, "Invalid cli annotations for command " + name, e);
             }
           }
           else {
-            throw new CommandException(name, ErrorKind.INTERNAL, "Could not create command " + name + " instance");
+            throw new CommandException(ErrorKind.INTERNAL, "Could not create command " + name + " instance");
           }
         }
         return command;

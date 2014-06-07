@@ -34,7 +34,7 @@ public class JavaCommandTestCase extends AbstractCommandTestCase {
 
   public void testCompilationFailure() {
     lifeCycle.bindJava("foo", "public class foo extends BaseCommand {}");
-    assertUnknownCommand("foo");
+    assertInternalError("foo");
   }
 
   public void testComplete() {

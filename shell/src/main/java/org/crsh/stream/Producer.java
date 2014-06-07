@@ -19,17 +19,13 @@
 
 package org.crsh.stream;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
-
 /**
  * A producer that produces elements in a specific consumer.
  *
  * @param <P> the produced element generic type
  * @param <C> the consumer element generic type
  */
-public interface Producer<P, C extends Consumer<? super P>> extends Closeable {
+public interface Producer<P, C extends Consumer<? super P>> {
 
   /**
    * Returns the class of the produced type.
@@ -42,15 +38,15 @@ public interface Producer<P, C extends Consumer<? super P>> extends Closeable {
    * Open the producer with the specified consumer.
    *
    * @param consumer the consumer
+   * @throws Exception any exception
    */
-  void open(C consumer);
+  void open(C consumer) throws Exception;
 
   /**
    * Close the producer.
    *
-   * @throws IOException any io exception
-   * @throws UndeclaredThrowableException anything other kind of exception
+   * @throws Exception any exception
    */
-  void close() throws IOException, UndeclaredThrowableException;
+  void close() throws Exception;
 
 }

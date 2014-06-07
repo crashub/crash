@@ -240,13 +240,13 @@ public class RenderPrintWriter extends PrintWriter {
   }
 
   public void show(Element element) {
-    element.render(new RenderAppendable(this.out));
+    element.render(new RenderAppendable(this.out.out));
   }
 
   @Override
   public void print(Object obj) {
     if (obj instanceof Element) {
-      RenderAppendable out = new RenderAppendable(this.out);
+      RenderAppendable out = new RenderAppendable(this.out.out);
       ((Element)obj).renderer().render(out);
     } else {
       super.print(obj);

@@ -25,19 +25,25 @@ import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
 import org.crsh.keyboard.KeyHandler;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.shell.impl.command.spi.CommandException;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 
 /**
 * @author Julien Viet
 */
 class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T, Void, P> {
 
+  /** . */
   private final CommandInvoker<Instance<T>, ?> invoker;
+
+  /** . */
   private final Class<P> producedType;
+
+  /** . */
+  private final String name;
 
   public ProducerCommandMatch(ClassShellCommand<T> shellCommand, CommandInvoker<Instance<T>, ?> invoker, Class<P> producedType) {
     super(shellCommand);
@@ -45,6 +51,7 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
     //
     this.invoker = invoker;
     this.producedType = producedType;
+    this.name = shellCommand.getDescriptor().getName();
   }
 
   @Override
@@ -96,14 +103,14 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
         }
       }
 
-      public void provide(Void element) throws IOException {
+      public void provide(Void element) {
         // Drop everything
       }
 
-      public void flush() throws IOException {
+      public void flush() {
       }
 
-      public void close() throws IOException, UndeclaredThrowableException {
+      public void close() throws IOException, CommandException {
 
         //
         Object ret;
@@ -111,20 +118,30 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
           ret = invoker.invoke(this);
         }
         catch (org.crsh.cli.impl.SyntaxException e) {
-          throw new UndeclaredThrowableException(e);
+          throw new CommandException(ErrorKind.SYNTAX, "Syntax exception when executing command " + name, e);
         } catch (InvocationException e) {
-          throw new UndeclaredThrowableException(e.getCause());
+          throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e.getCause());
         }
 
         //
         if (ret != null && producedType.isInstance(ret)) {
           P produced = producedType.cast(ret);
-          invocationContext.provide(produced);
+          try {
+            invocationContext.provide(produced);
+          }
+          catch (Exception e) {
+            throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
+          }
         }
 
         //
-        invocationContext.flush();
-        invocationContext.close();
+        try {
+          invocationContext.flush();
+          invocationContext.close();
+        }
+        catch (Exception e) {
+          throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
+        }
         command.unmatched = null;
         invocationContext = null;
       }

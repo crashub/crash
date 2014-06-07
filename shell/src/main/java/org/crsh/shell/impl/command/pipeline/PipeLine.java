@@ -20,6 +20,8 @@
 package org.crsh.shell.impl.command.pipeline;
 
 import org.crsh.command.CommandContext;
+import org.crsh.shell.ErrorKind;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.keyboard.KeyHandler;
 
@@ -46,11 +48,11 @@ public class  PipeLine extends CommandInvoker<Void, Object> {
     return Object.class;
   }
 
-  public void open(CommandContext<? super Object> consumer) {
+  public void open(CommandContext<? super Object> consumer) throws IOException, CommandException {
     open(0, consumer);
   }
 
-  private CommandContext open(final int index, final CommandContext last) {
+  private CommandContext open(final int index, final CommandContext last) throws IOException, CommandException {
     if (index < invokers.length) {
 
       //
@@ -61,7 +63,12 @@ public class  PipeLine extends CommandInvoker<Void, Object> {
       Class produced = invoker.getProducedType();
       Class<?> consumed = invoker.getConsumedType();
       CommandInvokerAdapter filterContext = new CommandInvokerAdapter(invoker, consumed, produced);
-      filterContext.open(next);
+      try {
+        filterContext.open(next);
+      }
+      catch (Exception e) {
+        throw new CommandException(ErrorKind.EVALUATION, e);
+      }
 
       // Save current filter in field
       // so if anything wrong happens it will be closed
@@ -94,7 +101,12 @@ public class  PipeLine extends CommandInvoker<Void, Object> {
     current.flush();
   }
 
-  public void close() throws IOException {
-    current.close();
+  public void close() throws IOException, CommandException {
+    try {
+      current.close();
+    }
+    catch (Exception e) {
+      throw new CommandException(ErrorKind.EVALUATION, e);
+    }
   }
 }

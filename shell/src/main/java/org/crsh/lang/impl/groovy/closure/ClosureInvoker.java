@@ -20,6 +20,8 @@ package org.crsh.lang.impl.groovy.closure;
 
 import groovy.lang.Closure;
 import org.crsh.command.CommandContext;
+import org.crsh.shell.ErrorKind;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 
 import java.io.IOException;
@@ -60,11 +62,16 @@ public class ClosureInvoker extends CommandInvoker<Object, Object> {
     return Object.class;
   }
 
-  public void provide(Object element) throws IOException {
+  public void provide(Object element) throws IOException, CommandException {
     if (type.isInstance(element)) {
       Object ret = closure.call(element);
       if (ret != null) {
-        consumer.provide(ret);
+        try {
+          consumer.provide(ret);
+        }
+        catch (Exception e) {
+          throw new CommandException(ErrorKind.EVALUATION, e);
+        }
       }
     }
   }

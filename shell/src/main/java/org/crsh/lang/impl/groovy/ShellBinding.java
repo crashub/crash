@@ -48,7 +48,7 @@ class ShellBinding extends Binding {
   }
 
   private CommandContext<Object> proxy = new CommandContext<Object>() {
-    public void close() throws IOException {
+    public void close() throws Exception {
       if (current == null) {
         throw new IllegalStateException("Not under context");
       } else {
@@ -90,7 +90,7 @@ class ShellBinding extends Binding {
         return current.getWidth();
       }
     }
-    public void provide(Object element) throws IOException {
+    public void provide(Object element) throws Exception {
       if (current == null) {
         throw new IllegalStateException("Not under context");
       } else {

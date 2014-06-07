@@ -36,6 +36,7 @@ import org.crsh.command.Pipe;
 import org.crsh.command.RuntimeContext;
 import org.crsh.util.Utils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 
 /** @author Julien Viet */
@@ -109,11 +110,15 @@ public class ClassShellCommand<T extends BaseCommand> extends Command<Instance<T
   T createCommand() throws CommandException {
     T command;
     try {
-      command = clazz.newInstance();
+      command = clazz.getConstructor().newInstance();
+    }
+    catch (InvocationTargetException e) {
+      String name = clazz.getSimpleName();
+      throw new CommandException(ErrorKind.EVALUATION, "Could not create command " + name + " instance", e.getCause());
     }
     catch (Exception e) {
       String name = clazz.getSimpleName();
-      throw new CommandException(name, ErrorKind.INTERNAL, "Could not create command " + name + " instance", e);
+      throw new CommandException(ErrorKind.INTERNAL, "Could not create command " + name + " instance", e);
     }
     return command;
   }

@@ -20,17 +20,17 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
+import org.crsh.lang.impl.script.CommandNotFoundException;
+import org.crsh.shell.ErrorKind;
 import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.ScriptException;
 import org.crsh.lang.impl.script.Token;
 import org.crsh.text.ScreenContext;
 import org.crsh.lang.impl.script.PipeLineFactory;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.Style;
-import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -105,15 +105,15 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return commandContext.releaseAlternateBuffer();
   }
 
-  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
+  public CommandInvoker<?, ?> resolve(String s) throws CommandException {
     CRaSHSession session = (CRaSHSession)getSession();
     Token token2 = Token.parse(s);
     try {
       PipeLineFactory factory = token2.createFactory();
       return factory.create(session);
     }
-    catch (CommandException e) {
-      throw new ScriptException(e);
+    catch (CommandNotFoundException e) {
+      throw new CommandException(ErrorKind.SYNTAX, e.getMessage(), e);
     }
   }
 
@@ -177,7 +177,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return this;
   }
 
-  public void provide(P element) throws IOException {
+  public void provide(P element) throws Exception {
     if (status != CLOSED) {
       status = WRITTEN;
       commandContext.provide(element);
@@ -193,9 +193,19 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
 
   public void close() throws IOException {
     if (status != CLOSED) {
-      Utils.flush(this);
+      try {
+        flush();
+      }
+      catch (Exception e) {
+        // Ignore ?
+      }
       status = CLOSED;
-      Utils.close(commandContext);
+      try {
+        commandContext.close();
+      }
+      catch (Exception e) {
+        //
+      }
     }
   }
 
@@ -207,7 +217,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     return commandContext.getAttributes();
   }
 
-  public InvocationContextImpl<P> leftShift(Object o) throws IOException {
+  public InvocationContextImpl<P> leftShift(Object o) throws Exception {
     Class<P> consumedType = getConsumedType();
     if (consumedType.isInstance(o)) {
       P p = consumedType.cast(o);

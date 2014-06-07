@@ -47,7 +47,7 @@ public class Token {
       if (nextFactory != null) {
         return new PipeLineFactory(value, nextFactory);
       } else {
-        throw new CommandException(value, ErrorKind.SYNTAX, "");
+        throw new CommandException(ErrorKind.SYNTAX, "");
       }
     } else {
       return Utils.notBlank(value) ? new PipeLineFactory(value, null) : null;

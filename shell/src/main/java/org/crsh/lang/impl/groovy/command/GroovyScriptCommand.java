@@ -26,7 +26,6 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.ScriptException;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
 import org.crsh.lang.impl.groovy.closure.PipeLineInvoker;
@@ -80,10 +79,22 @@ public abstract class GroovyScriptCommand extends Script {
     return context;
   }
 
-  public final void execute(String s) throws ScriptException, IOException {
+  public final void execute(String s) throws Exception {
     InvocationContext<?> context = peekContext();
-    CommandInvoker invoker = context.resolve(s);
-    invoker.invoke(context);
+    try {
+      CommandInvoker invoker = context.resolve(s);
+      invoker.invoke(context);
+    }
+    catch (CommandException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof Exception) {
+        throw (Exception)cause;
+      } else if (cause instanceof Error) {
+        throw (Error)cause;
+      } else {
+        throw new UndeclaredThrowableException(cause);
+      }
+    }
   }
 
   public final InvocationContext<?> peekContext() {
@@ -119,7 +130,7 @@ public abstract class GroovyScriptCommand extends Script {
             catch (IOException e) {
               throw new GroovyRuntimeException(e);
             }
-            catch (UndeclaredThrowableException e) {
+            catch (CommandException e) {
               throw new GroovyRuntimeException(e.getCause());
             }
           }

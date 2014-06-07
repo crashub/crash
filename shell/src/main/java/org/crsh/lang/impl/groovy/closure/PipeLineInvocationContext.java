@@ -19,10 +19,10 @@
 
 package org.crsh.lang.impl.groovy.closure;
 
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.ScriptException;
 import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.Style;
 
@@ -40,7 +40,7 @@ class PipeLineInvocationContext implements InvocationContext<Object> {
     this.outter = outter;
   }
 
-  public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
+  public CommandInvoker<?, ?> resolve(String s) throws CommandException {
     return outter.resolve(s);
   }
 
@@ -101,7 +101,7 @@ class PipeLineInvocationContext implements InvocationContext<Object> {
     return  this;
   }
 
-  public void provide(Object element) throws IOException {
+  public void provide(Object element) throws Exception {
     outter.provide(element);
   }
 
@@ -109,7 +109,7 @@ class PipeLineInvocationContext implements InvocationContext<Object> {
     outter.flush();
   }
 
-  public void close() throws IOException {
+  public void close() {
     // Nothing to do
   }
 

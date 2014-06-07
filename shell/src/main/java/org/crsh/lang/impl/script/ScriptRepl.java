@@ -88,9 +88,13 @@ public class ScriptRepl implements Repl {
         CommandInvoker<Void, Object> invoker = factory.create(session);
         return new ReplResponse.Invoke(invoker);
       }
+      catch (CommandNotFoundException e) {
+        log.log(Level.FINER, "Could not create command", e);
+        return new ReplResponse.Response(ShellResponse.unknownCommand(e.getName()));
+      }
       catch (CommandException e) {
         log.log(Level.FINER, "Could not create command", e);
-        return new ReplResponse.Response(ShellResponse.unknownCommand(e.getCommandName()));
+        return new ReplResponse.Response(ShellResponse.error(e.getErrorKind(), e.getMessage(), e));
       }
     } else {
       return new ReplResponse.Response(ShellResponse.noCommand());

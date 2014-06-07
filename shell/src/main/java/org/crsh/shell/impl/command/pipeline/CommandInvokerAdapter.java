@@ -19,6 +19,7 @@
 package org.crsh.shell.impl.command.pipeline;
 
 import org.crsh.command.CommandContext;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.stream.Consumer;
 import org.crsh.stream.Producer;
 import org.crsh.text.Screenable;
@@ -29,6 +30,7 @@ import org.crsh.text.ScreenContextConsumer;
 import org.crsh.text.Style;
 
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Map;
 
 /** @author Julien Viet */
@@ -105,10 +107,22 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
     return screenContext != null ? screenContext.getHeight() : consumer.getHeight();
   }
 
-  public void open(final CONSUMER consumer) {
+  public void open(final CONSUMER consumer) throws Exception {
 
     //
-    command.open(consumer);
+    try {
+      command.open(consumer);
+    }
+    catch (CommandException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof Exception) {
+        throw (Exception)cause;
+      } else if (cause instanceof Error) {
+        throw (Error)cause;
+      } else {
+        throw new UndeclaredThrowableException(cause);
+      }
+    }
 
     //
     ScreenContext screenContext = command.getScreenContext();
@@ -131,12 +145,24 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
   }
 
   @Override
-  public void provide(Object element) throws IOException {
+  public void provide(Object element) throws Exception  {
     if (adapter != null) {
       adapter.provide(element);
     }
     if (consumedType.isInstance(element)) {
-      command.provide(consumedType.cast(element));
+      try {
+        command.provide(consumedType.cast(element));
+      }
+      catch (CommandException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof Exception) {
+          throw (Exception)cause;
+        } else if (cause instanceof Error) {
+          throw (Error)cause;
+        } else {
+          throw new UndeclaredThrowableException(cause);
+        }
+      }
     }
   }
 
@@ -146,7 +172,19 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
       screenContext.append(c);
     }
     if (charSequenceConsumer) {
-      command.provide(consumedType.cast(Character.toString(c)));
+      try {
+        command.provide(consumedType.cast(Character.toString(c)));
+      }
+      catch (CommandException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException) {
+          throw (RuntimeException)cause;
+        } else if (cause instanceof Error) {
+          throw (Error)cause;
+        } else {
+          throw new UndeclaredThrowableException(cause);
+        }
+      }
     }
     return this;
   }
@@ -157,7 +195,19 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
       screenContext.append(s);
     }
     if (charSequenceConsumer) {
-      command.provide(consumedType.cast(s));
+      try {
+        command.provide(consumedType.cast(s));
+      }
+      catch (CommandException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException) {
+          throw (RuntimeException)cause;
+        } else if (cause instanceof Error) {
+          throw (Error)cause;
+        } else {
+          throw new UndeclaredThrowableException(cause);
+        }
+      }
     }
     return this;
   }
@@ -168,7 +218,19 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
       screenContext.append(csq, start, end);
     }
     if (charSequenceConsumer) {
-      command.provide(consumedType.cast(csq.subSequence(start, end)));
+      try {
+        command.provide(consumedType.cast(csq.subSequence(start, end)));
+      }
+      catch (CommandException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException) {
+          throw (RuntimeException)cause;
+        } else if (cause instanceof Error) {
+          throw (Error)cause;
+        } else {
+          throw new UndeclaredThrowableException(cause);
+        }
+      }
     }
     return this;
   }
@@ -179,7 +241,19 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
       screenContext.append(style);
     }
     if (styleConsumer) {
-      command.provide(consumedType.cast(style));
+      try {
+        command.provide(consumedType.cast(style));
+      }
+      catch (CommandException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException) {
+          throw (RuntimeException)cause;
+        } else if (cause instanceof Error) {
+          throw (Error)cause;
+        } else {
+          throw new UndeclaredThrowableException(cause);
+        }
+      }
     }
     return this;
   }
@@ -190,7 +264,19 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
       screenContext.cls();
     }
     if (clsConsumer) {
-      command.provide(consumedType.cast(CLS.INSTANCE));
+      try {
+        command.provide(consumedType.cast(CLS.INSTANCE));
+      }
+      catch (CommandException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException) {
+          throw (RuntimeException)cause;
+        } else if (cause instanceof Error) {
+          throw (Error)cause;
+        } else {
+          throw new UndeclaredThrowableException(cause);
+        }
+      }
     }
     return this;
   }
@@ -202,10 +288,22 @@ class CommandInvokerAdapter<C, P, CONSUMER extends CommandContext<? super P>>
     command.flush();
   }
 
-  public void close() throws IOException {
+  public void close() throws Exception {
     if (adapter != null) {
       adapter.flush();
     }
-    command.close();
+    try {
+      command.close();
+    }
+    catch (CommandException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof Exception) {
+        throw (Exception)cause;
+      } else if (cause instanceof Error) {
+        throw (Error)cause;
+      } else {
+        throw new UndeclaredThrowableException(cause);
+      }
+    }
   }
 }

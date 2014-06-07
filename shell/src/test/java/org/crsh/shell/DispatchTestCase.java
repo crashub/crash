@@ -317,7 +317,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
         "public String main() {\n" +
         "try {\n" +
         "cannot_create_command()" +
-        "} catch (" + CommandException.class.getName() + " e) {\n" +
+        "} catch (" + RuntimeException.class.getName() + " e) {\n" +
         "return 'bar';\n" +
         "}\n" +
         "}\n" +
@@ -332,7 +332,7 @@ public class DispatchTestCase extends AbstractCommandTestCase {
   public void testCannotCreateCommandInScript() {
     String foo = "try {\n" +
         "cannot_create_command()" +
-        "} catch (" + CommandException.class.getName() + " e) {\n" +
+        "} catch (" + RuntimeException.class.getName() + " e) {\n" +
         "out << 'bar';\n" +
         "}\n";
     lifeCycle.bindGroovy("foo", foo);

@@ -40,7 +40,6 @@ import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 
 /** @author Julien Viet */
@@ -109,7 +108,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends Com
     }
     catch (Exception e) {
       String name = clazz.getSimpleName();
-      throw new CommandException(name, ErrorKind.INTERNAL, "Could not create command " + name + " instance", e);
+      throw new CommandException(ErrorKind.INTERNAL, "Could not create command " + name + " instance", e);
     }
     return command;
   }
@@ -134,7 +133,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends Com
         return Void.class;
       }
 
-      public void open(CommandContext<? super Object> consumer) {
+      public void open(CommandContext<? super Object> consumer) throws IOException, CommandException {
 
         // Set the context
         context = new InvocationContextImpl<Object>((CommandContext<Object>)consumer);
@@ -171,11 +170,11 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends Com
           }
         }
         catch (Exception t) {
-          throw GroovyCommand.unwrap(t);
+          throw new CommandException(ErrorKind.EVALUATION, GroovyCommand.unwrap(t));
         }
       }
 
-      public void provide(Void element) throws IOException {
+      public void provide(Void element) {
         // Should never be called
       }
 
@@ -183,7 +182,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends Com
         context.flush();
       }
 
-      public void close() throws IOException, UndeclaredThrowableException {
+      public void close() throws IOException {
         context = null;
         command.popContext();
       }

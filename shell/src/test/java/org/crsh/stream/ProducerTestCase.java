@@ -71,7 +71,7 @@ public class ProducerTestCase extends AbstractTestCase {
       this.consumer = consumer;
     }
 
-    public void provide(P product) throws IOException {
+    public void provide(P product) throws Exception {
       consumer.provide(product);
     }
 
@@ -80,7 +80,7 @@ public class ProducerTestCase extends AbstractTestCase {
     }
   }
 
-  public void testSuperType() throws IOException {
+  public void testSuperType() throws Exception {
     Consumer<Object> consumer = new ConsumerImpl<Object>(Object.class);
     ProducerImpl<String, Consumer<Object>> producer = new ProducerImpl<String, Consumer<Object>>(String.class);
     producer.open(consumer);
@@ -88,7 +88,7 @@ public class ProducerTestCase extends AbstractTestCase {
     assertEquals(Arrays.<Object>asList("foo"), consumer);
   }
 
-  public void testSameType() throws IOException {
+  public void testSameType() throws Exception {
     Consumer<String> consumer = new ConsumerImpl<String>(String.class);
     ProducerImpl<String, Consumer<String>> producer = new ProducerImpl<String, Consumer<String>>(String.class);
     producer.open(consumer);

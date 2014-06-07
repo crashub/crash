@@ -21,11 +21,11 @@ package org.crsh.text.ui;
 
 import groovy.lang.Closure;
 import org.crsh.groovy.GroovyCommand;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.command.InvocationContext;
-import org.crsh.command.ScriptException;
 import org.crsh.text.CLS;
 import org.crsh.text.LineRenderer;
 import org.crsh.text.RenderPrintWriter;
@@ -76,7 +76,7 @@ public class EvalElement extends Element {
       /** . */
       private Renderer renderable;
 
-      public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
+      public CommandInvoker<?, ?> resolve(String s) throws CommandException {
         return ctx.resolve(s);
       }
 
@@ -193,7 +193,7 @@ public class EvalElement extends Element {
     try {
       nested.flush();
     }
-    catch (IOException e) {
+    catch (Exception e) {
       e.printStackTrace();
     }
 

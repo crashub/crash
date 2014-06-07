@@ -59,10 +59,10 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
       classFiles = compiler.compile(name, script);
     }
     catch (IOException e) {
-      throw new CommandException(name, ErrorKind.INTERNAL, "Could not access command", e);
+      throw new CommandException(ErrorKind.INTERNAL, "Could not access command", e);
     }
     catch (CompilationFailureException e) {
-        throw new CommandException(name, ErrorKind.EVALUATION, "Could not compile command", e);
+        throw new CommandException(ErrorKind.INTERNAL, "Could not compile command", e);
     }
     for (JavaClassFileObject classFile : classFiles) {
       String className = classFile.getClassName();
@@ -76,7 +76,7 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
             command = new ClassShellCommand(clazz);
           }
           catch (IntrospectionException e) {
-            throw new CommandException(name, ErrorKind.EVALUATION, "Invalid cli annotations", e);
+            throw new CommandException(ErrorKind.INTERNAL, "Invalid cli annotations", e);
           }
           final String description = command.describe(name, Format.DESCRIBE);
           return new CommandResolution() {
@@ -91,11 +91,11 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
           };
         }
         catch (ClassNotFoundException e) {
-          throw new CommandException(name, ErrorKind.EVALUATION, "Command cannot be loaded", e);
+          throw new CommandException(ErrorKind.INTERNAL, "Command cannot be loaded", e);
         }
       }
     }
-    throw new CommandException(name, ErrorKind.EVALUATION, "Command class not found");
+    throw new CommandException(ErrorKind.INTERNAL, "Command class not found");
   }
 
   public void init(ShellSession session) {

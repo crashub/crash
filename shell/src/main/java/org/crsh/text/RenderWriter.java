@@ -23,10 +23,10 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 
-public class RenderWriter extends Writer implements ScreenContext {
+public class RenderWriter extends Writer implements Screenable {
 
   /** . */
-  private final ScreenContext out;
+  final ScreenContext out;
 
   /** . */
   private final Closeable closeable;
@@ -54,14 +54,6 @@ public class RenderWriter extends Writer implements ScreenContext {
 
   public boolean isEmpty() {
     return empty;
-  }
-
-  public int getWidth() {
-    return out.getWidth();
-  }
-
-  public int getHeight() {
-    return out.getHeight();
   }
 
   public RenderWriter append(CharSequence s) throws IOException {
@@ -95,7 +87,16 @@ public class RenderWriter extends Writer implements ScreenContext {
     if (closed) {
       throw new IOException("Already closed");
     }
-    out.flush();
+    try {
+      out.flush();
+    }
+    catch (IOException e) {
+      throw e;
+    }
+    catch (Exception e) {
+      // e.printStackTrace();
+      // just swallow ?
+    }
   }
 
   @Override

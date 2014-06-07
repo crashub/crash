@@ -24,7 +24,6 @@ import org.crsh.stream.Filter;
 import org.crsh.text.ScreenContext;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * A command invoker is a filter for a {@link org.crsh.command.CommandContext} kind of consumer.
@@ -39,9 +38,9 @@ public abstract class CommandInvoker<C, P> implements Filter<C, P, CommandContex
    *
    * @param consumer the consumer for this invocation
    * @throws IOException any io exception
-   * @throws UndeclaredThrowableException anything not declared
+   * @throws CommandException anything command exception
    */
-  public final void invoke(CommandContext<? super P> consumer) throws IOException, UndeclaredThrowableException {
+  public final void invoke(CommandContext<? super P> consumer) throws IOException, CommandException {
     try {
       open(consumer);
     }
@@ -54,6 +53,18 @@ public abstract class CommandInvoker<C, P> implements Filter<C, P, CommandContex
       }
     }
   }
+
+  @Override
+  public abstract void flush() throws IOException;
+
+  @Override
+  public abstract void provide(C element) throws IOException, CommandException;
+
+  @Override
+  public abstract void open(CommandContext<? super P> consumer) throws IOException, CommandException;
+
+  @Override
+  public abstract void close() throws IOException, CommandException;
 
   /**
    * Provide an opportunity for the command to implement screen context.

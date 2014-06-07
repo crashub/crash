@@ -77,7 +77,7 @@ public class SystemResolver implements CommandResolver {
       description = shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
     }
     catch (IntrospectionException e) {
-      throw new CommandException(commandClass.getSimpleName(), ErrorKind.INTERNAL, "Invalid cli annotation", e);
+      throw new CommandException(ErrorKind.SYNTAX, "Invalid cli annotation in command " + commandClass.getSimpleName(), e);
     }
     return new CommandResolution() {
       @Override

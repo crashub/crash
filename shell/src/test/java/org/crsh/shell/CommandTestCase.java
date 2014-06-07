@@ -45,25 +45,25 @@ public class CommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testGroovyCompilationError() throws Exception {
-    assertUnknownCommand("invalid");
+    assertInternalError("invalid");
   }
 
   public void testGroovyInvalidCommandDescriptor() throws Exception {
     lifeCycle.bindGroovy("foo",
         "public class foo { @Command public void main(@Option(names = [\"-h\"]) String opt) { } }");
-    assertUnknownCommand("foo");
+    assertInternalError("foo");
   }
 
   public void testJavaCompilationError() throws Exception {
     lifeCycle.bindJava("foo",
         "public class foo { @Command public void main( { } }");
-    assertUnknownCommand("foo");
+    assertInternalError("foo");
   }
 
   public void testJavaInvalidCommandDescriptor() throws Exception {
     lifeCycle.bindJava("foo",
         "public class foo { @Command public void main(@Option(names = \"-h\") String opt) { } }");
-    assertUnknownCommand("foo");
+    assertInternalError("foo");
   }
 
   public void testSimple() throws Exception {

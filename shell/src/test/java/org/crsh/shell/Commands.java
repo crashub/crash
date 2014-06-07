@@ -29,6 +29,7 @@ import org.crsh.command.BaseCommand;
 import org.crsh.command.Pipe;
 import org.crsh.command.ScriptException;
 import org.crsh.groovy.GroovyCommand;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.text.CLS;
 import org.crsh.text.Screenable;
 import org.crsh.text.ScreenContext;
@@ -36,6 +37,7 @@ import org.crsh.text.Style;
 
 import javax.naming.NamingException;
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -77,14 +79,14 @@ public class Commands {
 
   public static class ProduceValue extends BaseCommand {
     @Command
-    public void main(org.crsh.command.InvocationContext<Value> context) throws IOException {
+    public void main(org.crsh.command.InvocationContext<Value> context) throws Exception {
       context.provide(new Value("abc"));
     }
   }
 
   public static class ProduceString extends BaseCommand {
     @Command
-    public void main(org.crsh.command.InvocationContext<String> context) throws IOException {
+    public void main(org.crsh.command.InvocationContext<String> context) throws Exception {
       context.provide("foo");
       context.provide("bar");
     }
@@ -119,7 +121,7 @@ public class Commands {
     public Pipe<Object, Object> main() {
       return new Pipe<Object, Object>() {
         @Override
-        public void provide(Object element) throws ScriptException, IOException {
+        public void provide(Object element) throws Exception {
           context.provide(element);
         }
       };
@@ -137,7 +139,7 @@ public class Commands {
           count++;
         }
         @Override
-        public void close() throws ScriptException, IOException {
+        public void close() throws Exception {
           context.provide(count);
         }
       };
@@ -154,9 +156,14 @@ public class Commands {
           buffer.add(element);
         }
         @Override
-        public void flush() throws ScriptException, IOException {
+        public void flush() throws IOException {
           for (String s : buffer) {
-            context.provide(s);
+            try {
+              context.provide(s);
+            }
+            catch (Exception e) {
+              throw new UndeclaredThrowableException(e);
+            }
           }
           buffer.clear();
           super.flush();
@@ -170,7 +177,7 @@ public class Commands {
     public Pipe<String, String> main() {
       return new Pipe<String, String>() {
         @Override
-        public void provide(String element) throws ScriptException, IOException {
+        public void provide(String element) throws Exception {
           context.provide(element);
         }
       };
@@ -179,7 +186,7 @@ public class Commands {
 
   public static class ProduceInteger extends BaseCommand {
     @Command
-    public void main(org.crsh.command.InvocationContext<Integer> context) throws IOException {
+    public void main(org.crsh.command.InvocationContext<Integer> context) throws Exception {
       context.provide(3);
     }
   }
@@ -288,7 +295,7 @@ public class Commands {
 
   public static class CompoundProduceString extends BaseCommand {
     @Command
-    public void compound(org.crsh.command.InvocationContext<String> context) throws IOException {
+    public void compound(org.crsh.command.InvocationContext<String> context) throws Exception {
       context.provide("foo");
       context.provide("bar");
     }
@@ -464,7 +471,7 @@ public class Commands {
 
   public static class SubordinateProduceInteger extends BaseCommand {
     @Command
-    public void sub(org.crsh.command.InvocationContext<Integer> context) throws IOException {
+    public void sub(org.crsh.command.InvocationContext<Integer> context) throws Exception {
       context.provide(3);
     }
   }

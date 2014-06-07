@@ -24,7 +24,6 @@ import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.lang.impl.java.ClassShellCommand;
-import org.crsh.stream.Consumer;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
@@ -47,21 +46,6 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
 
   /** . */
   protected ScreenBuffer reader;
-
-  /** . */
-  private final Consumer<Object> producer = new Consumer<Object>() {
-    public Class<Object> getConsumedType() {
-      return Object.class;
-    }
-    public void provide(Object element) throws IOException {
-      if (producedItems.isEmpty()) {
-        producedItems = new LinkedList<Object>();
-      }
-      producedItems.add(element);
-    }
-    public void flush() throws IOException {
-    }
-  };
 
   public TestInvocationContext() {
     super(new HashMap<String, Object>(), new HashMap<String, Object>());
@@ -146,16 +130,17 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
       }
       reader.append(element);
     } else {
-      producer.provide(element);
+      if (producedItems.isEmpty()) {
+        producedItems = new LinkedList<Object>();
+      }
+      producedItems.add(element);
     }
   }
 
   public void flush() throws IOException {
-    producer.flush();
   }
 
   public void close() throws IOException {
-    //
   }
 
   public CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException {
@@ -170,7 +155,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
     return reader;
   }
 
-  public <B extends BaseCommand> String execute(Class<B> commandClass, String... args) throws IntrospectionException, IOException, UndeclaredThrowableException, CommandException  {
+  public <B extends BaseCommand> String execute(Class<B> commandClass, String... args) throws IntrospectionException, IOException, CommandException  {
     return execute(new ClassShellCommand<B>(commandClass), args);
   }
 

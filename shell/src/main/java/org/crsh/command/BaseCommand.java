@@ -19,6 +19,7 @@
 
 package org.crsh.command;
 
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 
 import java.io.IOException;
@@ -53,7 +54,7 @@ public abstract class BaseCommand extends AbstractCommand {
   }
 
 
-  public final void execute(String s) throws ScriptException, IOException {
+  public final void execute(String s) throws IOException, CommandException {
     InvocationContext<?> context = peekContext();
     CommandInvoker invoker = context.resolve(s);
     invoker.open(context);

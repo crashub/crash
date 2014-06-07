@@ -26,6 +26,7 @@ import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.Pipe;
 import org.crsh.keyboard.KeyHandler;
+import org.crsh.shell.ErrorKind;
 import org.crsh.text.ScreenContext;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.shell.impl.command.spi.CommandException;
@@ -33,7 +34,6 @@ import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.lang.reflect.UndeclaredThrowableException;
 
 /**
 * @author Julien Viet
@@ -48,7 +48,12 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
 
   /** . */
   final Class<P> producedType;
+
+  /** . */
   private final CommandInvoker<Instance<T>, PC> invoker;
+
+  /** . */
+  private final String name;
 
   public PipeCommandMatch(ClassShellCommand<T> baseShellCommand, CommandInvoker<Instance<T>, PC> invoker) {
     super(baseShellCommand);
@@ -56,6 +61,7 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
     ret = invoker.getGenericReturnType();
     consumedType = (Class<C>)Utils.resolveToClass(ret, Pipe.class, 0);
     producedType = (Class<P>)Utils.resolveToClass(ret, Pipe.class, 1);
+    name = baseShellCommand.getDescriptor().getName();
   }
 
   @Override
@@ -85,7 +91,7 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
         return consumedType;
       }
 
-      public void open(CommandContext<? super P> consumer) {
+      public void open(CommandContext<? super P> consumer) throws CommandException {
         // Java is fine with that but not intellij....
         CommandContext<P> consumer2 = (CommandContext<P>)consumer;
         open2(consumer2);
@@ -101,7 +107,7 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
         return real instanceof KeyHandler ? (KeyHandler)real : null;
       }
 
-      public void open2(final CommandContext<P> consumer) throws UndeclaredThrowableException {
+      public void open2(final CommandContext<P> consumer) throws CommandException {
 
         //
         invocationContext = new InvocationContextImpl<P>(consumer);
@@ -118,21 +124,31 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
           ret = invoker.invoke(this);
         }
         catch (org.crsh.cli.impl.SyntaxException e) {
-          throw new UndeclaredThrowableException(e);
+          throw new CommandException(ErrorKind.SYNTAX, "Syntax exception when executing command " + name, e);
         } catch (InvocationException e) {
-          throw new UndeclaredThrowableException(e.getCause());
+          throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e.getCause());
         }
 
         // It's a pipe command
         if (ret != null) {
           real = ret;
-          real.open(invocationContext);
+          try {
+            real.open(invocationContext);
+          }
+          catch (Exception e) {
+            throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
+          }
         }
       }
 
-      public void provide(C element) throws IOException {
+      public void provide(C element) throws IOException, CommandException {
         if (real != null) {
-          real.provide(element);
+          try {
+            real.provide(element);
+          }
+          catch (Exception e) {
+            throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
+          }
         }
       }
 
@@ -144,17 +160,30 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
         }
       }
 
-      public void close() throws IOException {
+      public void close() throws IOException, CommandException {
         try {
           if (real != null) {
             try {
               real.close();
             }
+            catch (Exception e) {
+              throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
+            }
             finally {
-              Utils.close(invocationContext);
+              try {
+                invocationContext.close();
+              }
+              catch (Exception e) {
+                //
+              }
             }
           } else {
-            Utils.close(invocationContext);
+            try {
+              invocationContext.close();
+            }
+            catch (Exception e) {
+              //
+            }
           }
         }
         finally {

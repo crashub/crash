@@ -79,7 +79,7 @@ public class WSProcessContext implements ShellProcessContext, KeyHandler {
   public void end(ShellResponse response) {
     CRaSHConnector.log.fine("Ended \"" + command + "\"");
     session.current.compareAndSet(this, null);
-    Utils.flush(this);
+    flush();
     String msg = response.getMessage();
     if (msg.length() > 0) {
       session.send("print", msg);
@@ -191,7 +191,7 @@ public class WSProcessContext implements ShellProcessContext, KeyHandler {
     return this;
   }
 
-  public void flush() throws IOException {
+  public void flush() {
     if (buffer.length() > 0) {
       session.send("print", buffer.toString());
       buffer.setLength(0);

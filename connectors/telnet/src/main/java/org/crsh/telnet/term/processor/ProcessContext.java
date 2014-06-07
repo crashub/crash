@@ -178,7 +178,11 @@ class ProcessContext implements ShellProcessContext, Runnable {
                 }
                 finally {
                   // Be sure to flush
-                  Utils.flush(processor.term);
+                  try {
+                    processor.term.flush();
+                  }
+                  catch (IOException e) {
+                  }
                 }
               }
             };

@@ -25,10 +25,10 @@ import org.crsh.cli.spi.Completion;
 import org.crsh.command.CommandContext;
 import org.crsh.lang.spi.Language;
 import org.crsh.lang.spi.ReplResponse;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.ShellSession;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.shell.impl.command.InvocationContextImpl;
-import org.crsh.lang.impl.groovy.closure.PipeLineInvoker;
 import org.crsh.lang.spi.Repl;
 import org.crsh.cli.impl.line.LineParser;
 
@@ -83,7 +83,7 @@ public class GroovyRepl implements Repl {
         return Object.class;
       }
       CommandContext<Object> foo;
-      public void open(CommandContext<? super Object> consumer) {
+      public void open(CommandContext<? super Object> consumer) throws IOException, CommandException {
         this.foo = (CommandContext<Object>)consumer;
         GroovyShell shell = GroovyCompiler.getGroovyShell(session);
         ShellBinding binding = (ShellBinding)shell.getContext();
@@ -100,13 +100,24 @@ public class GroovyRepl implements Repl {
             consumer.provide(o);
           }
           catch (IOException e) {
-            throw new UnsupportedOperationException("handle me gracefully", e);
+            throw e;
+          }
+          catch (CommandException e) {
+            throw e;
+          }
+          catch (Exception e) {
+            throw new CommandException(ErrorKind.EVALUATION, "An error occured during the evalution of '" + request + "'", e);
           }
         }
       }
-      public void close() throws IOException {
-        foo.flush();
-        foo.close();
+      public void close() throws IOException, CommandException {
+        try {
+          foo.flush();
+          foo.close();
+        }
+        catch (Exception e) {
+          throw new CommandException(ErrorKind.EVALUATION, "An error occured during the evalution of '" + request + "'", e);
+        }
       }
     };
     return new ReplResponse.Invoke(invoker);

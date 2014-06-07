@@ -88,7 +88,7 @@ public class ClassCache<T> {
           source = new String(script.getContent(), "UTF-8");
         }
         catch (UnsupportedEncodingException e) {
-          throw new CommandException(name, ErrorKind.INTERNAL, "Could not compile command script " + name, e);
+          throw new CommandException(ErrorKind.INTERNAL, "Could not compile command script " + name, e);
         }
 
         //

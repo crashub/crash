@@ -22,42 +22,35 @@ package org.crsh.shell.impl.command.spi;
 import org.crsh.shell.ErrorKind;
 
 /**
- * Thrown when a command could not be created.
+ * Signals a general command exception.
  */
 public final class CommandException extends Exception {
 
   /** . */
-  private final String commandName;
-
-  /** . */
   private final ErrorKind errorKind ;
 
-  public CommandException(String commandName, ErrorKind errorKind, String message) {
+  public CommandException(ErrorKind errorKind, String message) {
     super(message);
 
     //
-    this.commandName = commandName;
     this.errorKind = errorKind;
   }
 
-  public CommandException(String commandName, ErrorKind errorKind, String message, Throwable cause) {
+  public CommandException(ErrorKind errorKind, String message, Throwable cause) {
     super(message, cause);
 
     //
-    this.commandName = commandName;
+    this.errorKind = errorKind;
+  }
+
+  public CommandException(ErrorKind errorKind, Throwable cause) {
+    super(cause.getMessage(), cause);
+
+    //
     this.errorKind = errorKind;
   }
 
   public ErrorKind getErrorKind() {
     return errorKind;
-  }
-
-  public String getCommandName() {
-    return commandName;
-  }
-
-  @Override
-  public String getMessage() {
-    return "Could not create command " + commandName + ": " + super.getMessage();
   }
 }

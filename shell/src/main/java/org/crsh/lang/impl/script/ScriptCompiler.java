@@ -36,14 +36,12 @@ import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.shell.impl.command.spi.CommandMatch;
-import org.crsh.util.Utils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -115,7 +113,7 @@ public class ScriptCompiler implements Compiler {
           };
         }
         catch (IntrospectionException e) {
-          throw new CommandException(name, ErrorKind.SYNTAX, e.getMessage(), e);
+          throw new CommandException(ErrorKind.SYNTAX, "Script " + name + " failed unexpectedly", e);
         }
 
         return new Command<Object>() {
@@ -162,7 +160,7 @@ public class ScriptCompiler implements Compiler {
                   }
 
                   @Override
-                  public void close() throws IOException, UndeclaredThrowableException {
+                  public void close() throws IOException, CommandException {
 
                     // Execute sequentially the script
                     BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(source)));
@@ -182,7 +180,8 @@ public class ScriptCompiler implements Compiler {
                       ReplResponse response = ScriptRepl.getInstance().eval(session, request);
                       if (response instanceof ReplResponse.Response) {
                         ReplResponse.Response shellResponse = (ReplResponse.Response)response;
-                        throw new UndeclaredThrowableException(new Exception("Was not expecting response " + shellResponse.response));
+                        Exception ex = new Exception("Was not expecting response " + shellResponse.response);
+                        throw new CommandException(ErrorKind.EVALUATION, "Failure when evaluating '" + request + "'  in script " + name, ex);
                       } else if (response instanceof ReplResponse.Invoke) {
                         ReplResponse.Invoke invokeResponse = (ReplResponse.Invoke)response;
                         CommandInvoker invoker =  invokeResponse.invoker;
@@ -191,7 +190,12 @@ public class ScriptCompiler implements Compiler {
                     }
 
                     //
-                    Utils.close(consumer);
+                    try {
+                      consumer.close();
+                    }
+                    catch (Exception e) {
+                      // ?
+                    }
 
                     //
                     this.consumer = null;

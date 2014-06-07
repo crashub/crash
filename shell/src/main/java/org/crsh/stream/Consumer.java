@@ -19,7 +19,6 @@
 
 package org.crsh.stream;
 
-import java.io.Flushable;
 import java.io.IOException;
 
 /**
@@ -27,14 +26,22 @@ import java.io.IOException;
  *
  * @param <C> the consumed element generic type
  */
-public interface Consumer<C> extends Flushable {
+public interface Consumer<C> {
 
   /**
    * Provide an element.
    *
    * @param element the provided element
+   * @throws Exception any exception
    */
-  void provide(C element) throws IOException;
+  void provide(C element) throws Exception;
+
+  /**
+   * Flush the stream.
+   *
+   * @throws IOException any io exception
+   */
+  void flush() throws IOException;
 
   /**
    * Returns the class of the element generic type.

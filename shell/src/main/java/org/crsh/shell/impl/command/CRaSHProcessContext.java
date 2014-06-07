@@ -20,6 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.text.Screenable;
 import org.crsh.text.ScreenContext;
 import org.crsh.shell.ShellProcessContext;

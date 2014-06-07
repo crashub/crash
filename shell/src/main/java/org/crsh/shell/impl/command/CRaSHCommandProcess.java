@@ -1,14 +1,12 @@
 package org.crsh.shell.impl.command;
 
-import org.crsh.command.ScriptException;
 import org.crsh.keyboard.KeyHandler;
 import org.crsh.shell.ErrorKind;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.util.Utils;
-
-import java.lang.reflect.UndeclaredThrowableException;
 
 /**
 * @author Julien Viet
@@ -41,7 +39,7 @@ class CRaSHCommandProcess extends CRaSHProcess {
       command.invoke(invocationContext);
       return ShellResponse.ok();
     }
-    catch (ScriptException e) {
+    catch (CommandException e) {
       return build(e);
     } catch (Throwable t) {
       return build(t);
@@ -52,8 +50,9 @@ class CRaSHCommandProcess extends CRaSHProcess {
 
   private ShellResponse.Error build(Throwable throwable) {
     ErrorKind errorType;
-    if (throwable instanceof ScriptException || throwable instanceof UndeclaredThrowableException) {
-      errorType = ErrorKind.EVALUATION;
+    if (throwable instanceof CommandException) {
+      CommandException ce = (CommandException)throwable;
+      errorType = ce.getErrorKind();
       Throwable cause = throwable.getCause();
       if (cause != null) {
         throwable = cause;
@@ -63,7 +62,7 @@ class CRaSHCommandProcess extends CRaSHProcess {
     }
     String result;
     String msg = throwable.getMessage();
-    if (throwable instanceof ScriptException) {
+    if (throwable instanceof CommandException) {
       if (msg == null) {
         result = request + ": failed";
       } else {

@@ -16,18 +16,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.command;
-
-import org.crsh.stream.Consumer;
-import org.crsh.shell.InteractionContext;
+package org.crsh.lang.impl.script;
 
 /**
- * The command context provides the services for invoking a command.
- *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+ * @author Julien Viet
  */
-public interface CommandContext<P> extends Consumer<P>, InteractionContext, RuntimeContext {
+public class CommandNotFoundException extends Exception {
 
-  void close() throws Exception;
+  /** . */
+  final String name;
 
+  public CommandNotFoundException(String name) {
+    super("Command " + name + " not found");
+    this.name = name;
+  }
+
+  public String getName() {
+    return name;
+  }
 }

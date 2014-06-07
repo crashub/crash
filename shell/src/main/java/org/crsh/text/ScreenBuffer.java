@@ -36,7 +36,7 @@ public class ScreenBuffer implements Iterable<Object>, Serializable, Screenable 
   private Style next;
 
   /** Where we flush. */
-  private final Screenable out;
+  private final ScreenContext out;
 
   public ScreenBuffer() {
     this.chunks = new LinkedList<Object>();
@@ -45,7 +45,7 @@ public class ScreenBuffer implements Iterable<Object>, Serializable, Screenable 
     this.out = null;
   }
 
-  public ScreenBuffer(Screenable out) {
+  public ScreenBuffer(ScreenContext out) {
     this.chunks = new LinkedList<Object>();
     this.current = Style.style();
     this.next = Style.style();

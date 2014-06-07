@@ -59,16 +59,16 @@ class GroovyClassFactory<T> extends ClassFactory<T> {
       clazz = gcl.parseClass(gcs, false);
     }
     catch (NoClassDefFoundError e) {
-      throw new CommandException(name, ErrorKind.INTERNAL, "Could not compile command script " + name, e);
+      throw new CommandException(ErrorKind.INTERNAL, "Could not compile command script " + name, e);
     }
     catch (CompilationFailedException e) {
-      throw new CommandException(name, ErrorKind.INTERNAL, "Could not compile command script " + name, e);
+      throw new CommandException(ErrorKind.INTERNAL, "Could not compile command script " + name, e);
     }
 
     if (baseClass.isAssignableFrom(clazz)) {
       return clazz.asSubclass(baseClass);
     } else {
-      throw new CommandException(name, ErrorKind.INTERNAL, "Parsed script " + clazz.getName() +
+      throw new CommandException(ErrorKind.INTERNAL, "Parsed script " + clazz.getName() +
           " does not implements " + baseClass.getName());
     }
   }

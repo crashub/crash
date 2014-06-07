@@ -137,7 +137,7 @@ public abstract class Command<T> {
       match = analyzer.parse(line);
     }
     catch (org.crsh.cli.impl.SyntaxException e) {
-      throw new CommandException(descriptor.getName(), ErrorKind.SYNTAX, e.getMessage(), e);
+      throw new CommandException(ErrorKind.SYNTAX, "Syntax exception when evaluating " + descriptor.getName(), e);
     }
     return describe(match, format);
   }
@@ -160,7 +160,7 @@ public abstract class Command<T> {
       match = analyzer.parse(line);
     }
     catch (org.crsh.cli.impl.SyntaxException e) {
-      throw new CommandException(descriptor.getName(), ErrorKind.SYNTAX, e.getMessage(), e);
+      throw new CommandException(ErrorKind.SYNTAX, "Syntax exception when evaluating "+ getDescriptor().getName(), e);
     }
     return resolve(match);
   }
@@ -202,7 +202,7 @@ public abstract class Command<T> {
       match = matcher.arguments(arguments != null ? arguments : Collections.emptyList());
     }
     catch (org.crsh.cli.impl.SyntaxException e) {
-      throw new CommandException(getDescriptor().getName(), ErrorKind.EVALUATION, "Could not resolve command", e);
+      throw new CommandException(ErrorKind.EVALUATION, "Could not resolve command " + getDescriptor().getName(), e);
     }
 
     //

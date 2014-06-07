@@ -142,7 +142,7 @@ public class jmx extends BaseCommand {
       }
 
       @Override
-      public void close() throws ScriptException, IOException {
+      public void close() throws Exception, IOException {
 
         // Determine attribute names
         String[] names;

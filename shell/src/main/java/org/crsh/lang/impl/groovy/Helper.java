@@ -28,7 +28,6 @@ import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * @author Julien Viet
@@ -75,7 +74,7 @@ public class Helper {
             catch (IOException e) {
               throw new GroovyRuntimeException(e);
             }
-            catch (UndeclaredThrowableException e) {
+            catch (CommandException e) {
               throw new GroovyRuntimeException(e.getCause());
             }
           }

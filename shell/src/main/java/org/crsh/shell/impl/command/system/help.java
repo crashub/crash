@@ -37,7 +37,7 @@ public class help extends BaseCommand {
 
   @Usage("provides basic help")
   @Command
-  public void main(InvocationContext<Object> context) throws IOException {
+  public void main(InvocationContext<Object> context) throws Exception {
 
     //
     TableElement table = new TableElement().rightCellPadding(1);

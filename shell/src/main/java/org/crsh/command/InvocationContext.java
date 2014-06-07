@@ -19,6 +19,7 @@
 
 package org.crsh.command;
 
+import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.text.RenderPrintWriter;
 
@@ -38,9 +39,8 @@ public interface InvocationContext<P> extends CommandContext<P> {
    *
    * @param s the command line
    * @return the command invoker
-   * @throws ScriptException any script exception
-   * @throws IOException any io exception
+   * @throws CommandException any command exception
    */
-  CommandInvoker<?, ?> resolve(String s) throws ScriptException, IOException;
+  CommandInvoker<?, ?> resolve(String s) throws CommandException;
 
 }

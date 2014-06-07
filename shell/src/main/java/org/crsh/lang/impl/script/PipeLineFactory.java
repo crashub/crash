@@ -71,7 +71,7 @@ public class PipeLineFactory {
           sb.append('|').append(factory.line);
         }
       }
-      throw new CommandException(line, ErrorKind.SYNTAX, sb.toString());
+      throw new CommandException(ErrorKind.SYNTAX, sb.toString());
     }
   }
 
@@ -83,16 +83,16 @@ public class PipeLineFactory {
     return next;
   }
 
-  public CommandInvoker<Void, Object> create(ShellSession session) throws CommandException {
+  public CommandInvoker<Void, Object> create(ShellSession session) throws CommandNotFoundException, CommandException {
     LinkedList<CommandInvoker> pipes = new LinkedList<CommandInvoker>();
     for (PipeLineFactory current = this;current != null;current = current.next) {
       Command<?> command = session.getCommand(current.name);
       if (command == null) {
-        throw new CommandException(current.name, ErrorKind.EVALUATION, "Unknown command");
+        throw new CommandNotFoundException(current.name);
       }
       CommandInvoker commandInvoker = command.resolveInvoker(current.rest);
       if (commandInvoker == null) {
-        throw new CommandException(current.name, ErrorKind.EVALUATION, "Command " + current.rest + " cannot not be invoked");
+        throw new CommandNotFoundException(current.name);
       }
       pipes.add(commandInvoker);
     }

@@ -19,6 +19,8 @@
 
 package org.crsh.text;
 
+import java.io.IOException;
+
 /**
  * The screen context extends the {@link Screenable} and add information about the screen.
  */
@@ -39,5 +41,12 @@ public interface ScreenContext extends Screenable {
    * @return the term height
    */
   int getHeight();
+
+  /**
+   * Flush the stream.
+   *
+   * @throws IOException any io exception
+   */
+  void flush() throws IOException;
 
 }
