@@ -19,13 +19,10 @@
 package org.crsh.lang.impl.groovy.closure;
 
 import groovy.lang.GroovyObjectSupport;
-import groovy.lang.GroovyRuntimeException;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.command.CommandContext;
+import org.crsh.lang.impl.groovy.Helper;
 import org.crsh.shell.impl.command.InvocationContextImpl;
-
-import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 
 /** @author Julien Viet */
 class ClosureDelegate extends GroovyObjectSupport {
@@ -50,10 +47,11 @@ class ClosureDelegate extends GroovyObjectSupport {
     if ("context".equals(property)) {
       return context;
     } else {
-      Object value = InvokerHelper.getProperty(owner, property);
-      if (value instanceof PipeLineClosure) {
-        PipeLineClosure closure = (PipeLineClosure)value;
-        value = closure.bind(new InvocationContextImpl<Object>(context));
+      Object value = Helper.resolveCommandProperty(new InvocationContextImpl(context), property);
+      if (value != null) {
+        return value;
+      } else {
+        value = InvokerHelper.getProperty(owner, property);
       }
       return value;
     }
@@ -61,21 +59,12 @@ class ClosureDelegate extends GroovyObjectSupport {
 
   @Override
   public Object invokeMethod(String name, Object args) {
-    Object result = InvokerHelper.invokeMethod(owner, name, args);
-    if (result instanceof PipeLineInvoker) {
-      try {
-        PipeLineInvoker invoker = (PipeLineInvoker)result;
-        invoker.invoke(new InvocationContextImpl<Object>(context));
-        return null;
-      }
-      catch (IOException e) {
-        throw new GroovyRuntimeException(e);
-      }
-      catch (UndeclaredThrowableException e) {
-        throw new GroovyRuntimeException(e.getCause());
-      }
+    Runnable runnable = Helper.resolveCommandInvocation(new InvocationContextImpl(context), name, args);
+    if (runnable != null) {
+      runnable.run();
+      return null;
     } else {
-      return result;
+      return InvokerHelper.invokeMethod(owner, name, args);
     }
   }
 }

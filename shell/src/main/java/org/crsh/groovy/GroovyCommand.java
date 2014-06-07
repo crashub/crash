@@ -21,23 +21,14 @@ package org.crsh.groovy;
 
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
-import groovy.lang.GroovyRuntimeException;
 import groovy.lang.MetaClass;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import org.codehaus.groovy.runtime.InvokerHelper;
-import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.command.BaseCommand;
-import org.crsh.shell.impl.command.spi.CommandException;
+import org.crsh.lang.impl.groovy.Helper;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
-import org.crsh.shell.impl.command.spi.Command;
-import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
-import org.crsh.lang.impl.groovy.closure.PipeLineInvoker;
-import org.crsh.shell.impl.command.CRaSH;
-
-import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * The base command for Groovy class based commands.
@@ -81,31 +72,11 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
       return getMetaClass().invokeMethod(this, name, args);
     }
     catch (MissingMethodException missing) {
-      if (context instanceof InvocationContext) {
-        CRaSH crash = (CRaSH)context.getSession().get("crash");
-        if (crash != null) {
-          Command<?> cmd;
-          try {
-            cmd = crash.getCommand(name);
-          }
-          catch (CommandException ce) {
-            throw new InvokerInvocationException(ce);
-          }
-          if (cmd != null) {
-            InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
-            PipeLineClosure closure = new PipeLineClosure(ic, name, cmd);
-            PipeLineInvoker evaluation = closure.bind(args);
-            try {
-              evaluation.invoke(ic);
-              return null;
-            }
-            catch (IOException e) {
-              throw new GroovyRuntimeException(e);
-            }
-            catch (UndeclaredThrowableException e) {
-              throw new GroovyRuntimeException(e.getCause());
-            }
-          }
+      if (context instanceof InvocationContext<?>) {
+        Runnable executed = Helper.resolveCommandInvocation((InvocationContext)context, name, args);
+        if (executed != null) {
+          executed.run();
+          return null;
         }
       }
 
@@ -131,17 +102,9 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
 
   public final Object getProperty(String property) {
     if (context instanceof InvocationContext<?>) {
-      CRaSH crash = (CRaSH)context.getSession().get("crash");
-      if (crash != null) {
-        try {
-          Command<?> cmd = crash.getCommand(property);
-          if (cmd != null) {
-            InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
-            return new PipeLineClosure(ic, property, cmd);
-          }
-        } catch (CommandException e) {
-          throw new InvokerInvocationException(e);
-        }
+      Object ret = Helper.resolveCommandProperty((InvocationContext)context, property);
+      if (ret != null) {
+        return ret;
       }
     }
 

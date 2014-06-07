@@ -55,9 +55,11 @@ public class ClosureInvoker extends CommandInvoker<Object, Object> {
   public Class<Object> getProducedType() {
     return Object.class;
   }
+
   public Class<Object> getConsumedType() {
     return Object.class;
   }
+
   public void provide(Object element) throws IOException {
     if (type.isInstance(element)) {
       Object ret = closure.call(element);

@@ -95,19 +95,9 @@ public class GroovyRepl implements Repl {
         finally {
           binding.setCurrent(null);
         }
-        if (o instanceof PipeLineInvoker) {
-          PipeLineInvoker eval = (PipeLineInvoker)o;
+        if (o != null) {
           try {
-            eval.invoke(new InvocationContextImpl<Object>(foo));
-          }
-          catch (Exception e) {
-            throw new UnsupportedOperationException("handle me gracefully", e);
-          }
-        } else {
-          try {
-            if (o != null) {
-              consumer.provide(o);
-            }
+            consumer.provide(o);
           }
           catch (IOException e) {
             throw new UnsupportedOperationException("handle me gracefully", e);

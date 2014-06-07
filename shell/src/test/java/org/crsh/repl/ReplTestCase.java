@@ -120,6 +120,16 @@ public class ReplTestCase extends AbstractCommandTestCase {
     assertEquals(Arrays.<Object>asList(3, 3), Commands.list);
   }
 
+  public void testSubordinateCommandInClosure() {
+    lifeCycle.bindClass("produce", Commands.ProduceString.class);
+    lifeCycle.bindClass("value", Commands.SubordinateProduceInteger.class);
+    lifeCycle.bindClass("consume", Commands.ConsumeInteger.class);
+    assertOk("repl groovy");
+    Commands.list.clear();
+    assertOk("(produce | { String it -> value.sub(); } | consume)()");
+    assertEquals(Arrays.<Object>asList(3, 3), Commands.list);
+  }
+
   public void testSubCommandInClosure() {
     lifeCycle.bindClass("produce", Commands.ProduceInteger.class);
     lifeCycle.bindGroovy("toto", "public class toto {\n" +
@@ -262,5 +272,19 @@ public class ReplTestCase extends AbstractCommandTestCase {
     assertOk("a = cmd { o = 'foo_opt'; }");
     assertOk("a()");
     assertEquals("foo_opt", Commands.Parameterized.opt);
+  }
+
+  public void testInClosure() {
+    lifeCycle.bindClass("cmd", Commands.ProduceString.class);
+    assertOk("repl groovy");
+    String s = assertOk("[0].each { cmd() }");
+    assertEquals("foobar[0]", s);
+  }
+
+  public void testSubordinateInClosure() {
+    lifeCycle.bindClass("cmd", Commands.SubordinateProduceInteger.class);
+    assertOk("repl groovy");
+    String s = assertOk("[0].each { cmd.sub() }");
+    assertEquals("3[0]", s);
   }
 }

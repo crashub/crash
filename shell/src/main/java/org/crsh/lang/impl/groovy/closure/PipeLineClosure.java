@@ -204,9 +204,9 @@ public class PipeLineClosure extends Closure {
       }
       return options(closureOptions, closureArgs);
     } else {
-      PipeLineInvoker binding = bind(args);
       if (context != null) {
         try {
+          PipeLineInvoker binding = bind(args);
           binding.invoke(context);
           return null;
         }
@@ -214,7 +214,7 @@ public class PipeLineClosure extends Closure {
           return throwRuntimeException(e);
         }
       } else {
-        return binding;
+        return super.call(args);
       }
     }
   }

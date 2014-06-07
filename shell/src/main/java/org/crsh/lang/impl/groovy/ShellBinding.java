@@ -191,10 +191,10 @@ class ShellBinding extends Binding {
         try {
           Command<?> cmd = session.getCommand(name);
           if (cmd != null) {
-            return new PipeLineClosure(null, name, cmd);
+            return new PipeLineClosure(new InvocationContextImpl<Object>(proxy), name, cmd);
           }
         } catch (CommandException ignore) {
-          //
+          // Really ?
         }
         return super.getVariable(name);
       } else {

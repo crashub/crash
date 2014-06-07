@@ -461,4 +461,11 @@ public class Commands {
       };
     }
   }
+
+  public static class SubordinateProduceInteger extends BaseCommand {
+    @Command
+    public void sub(org.crsh.command.InvocationContext<Integer> context) throws IOException {
+      context.provide(3);
+    }
+  }
 }
