@@ -21,9 +21,20 @@ package org.crsh.text;
 import java.io.IOException;
 
 /** @author Julien Viet */
-public enum Format {
+public abstract class Format {
 
-  TEXT() {
+  /** . */
+  public static final Text TEXT = new Text();
+
+  /** . */
+  public static final Ansi ANSI = new Ansi();
+
+  /** . */
+  public static final PreHtml PRE_HTML = new PreHtml();
+
+  public static class Text extends Format {
+    protected Text() {
+    }
     @Override
     public void begin(Appendable to) throws IOException {
     }
@@ -42,9 +53,11 @@ public enum Format {
     @Override
     public void end(Appendable to) throws IOException {
     }
-  },
+  }
 
-  ANSI() {
+  public static class Ansi extends Format {
+    protected Ansi() {
+    }
     @Override
     public void begin(Appendable to) throws IOException {
     }
@@ -64,9 +77,11 @@ public enum Format {
     @Override
     public void end(Appendable to) throws IOException {
     }
-  },
+  }
 
-  PRE_HTML() {
+  public static class PreHtml extends Format {
+    protected PreHtml() {
+    }
     @Override
     public void begin(Appendable to) throws IOException {
       to.append("<pre>");
@@ -108,7 +123,7 @@ public enum Format {
     public void end(Appendable to) throws IOException {
       to.append("</pre>");
     }
-  };
+  }
 
   public abstract void begin(Appendable to) throws IOException;
 
