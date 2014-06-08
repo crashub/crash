@@ -16,20 +16,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.command;
 
 import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
+import junit.framework.Assert;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.AbstractTestCase;
 import org.crsh.cli.impl.SyntaxException;
-import org.crsh.command.BaseCommand;
-import org.crsh.command.InvocationContext;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.shell.impl.command.spi.CommandException;
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
 
 public class InvocationContextTestCase extends AbstractTestCase {
@@ -60,7 +58,7 @@ public class InvocationContextTestCase extends AbstractTestCase {
       "}");
 
     //
-    assertEquals("abc", new TestInvocationContext().execute(clazz));
+    Assert.assertEquals("abc", new TestInvocationContext().execute(clazz));
   }
 
   public void testOptionInjectionInCommandClassCmdLine() throws Exception {

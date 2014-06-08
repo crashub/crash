@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.command;
 
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.*;
 
-public class TestInvocationContext<C> extends RuntimeContextImpl implements CommandContext<Object> {
+class TestInvocationContext<C> extends RuntimeContextImpl implements CommandContext<Object> {
 
   /** . */
   protected List<Object> producedItems;
@@ -47,7 +47,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
   /** . */
   protected ScreenBuffer reader;
 
-  public TestInvocationContext() {
+  TestInvocationContext() {
     super(new HashMap<String, Object>(), new HashMap<String, Object>());
 
     //
