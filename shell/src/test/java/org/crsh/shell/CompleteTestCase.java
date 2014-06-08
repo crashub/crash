@@ -24,7 +24,7 @@ import org.crsh.cli.spi.Completion;
 
 import java.util.Collections;
 
-public class CompleteTestCase extends AbstractCommandTestCase {
+public class CompleteTestCase extends AbstractShellTestCase {
 
   public void testCommandImplementingCompleter() {
     lifeCycle.bindClass("complete", Commands.Complete.class);

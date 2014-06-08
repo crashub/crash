@@ -18,11 +18,11 @@
  */
 package org.crsh.lang.impl.groovy;
 
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 import org.crsh.shell.Commands;
 
 /** @author Julien Viet */
-public class ScriptTestCase extends AbstractCommandTestCase {
+public class ScriptTestCase extends AbstractShellTestCase {
 
   public static boolean failed;
 

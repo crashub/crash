@@ -18,7 +18,7 @@
  */
 package org.crsh.command.base;
 
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 import org.crsh.shell.Commands;
 
 import javax.management.ObjectName;
@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /** @author Julien Viet */
-public class JMXCommandTestCase extends AbstractCommandTestCase {
+public class JMXCommandTestCase extends AbstractShellTestCase {
 
   /** . */
   private ObjectName OPERATING_SYSTEM;

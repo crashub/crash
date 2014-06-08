@@ -18,10 +18,10 @@
  */
 package org.crsh.command.base;
 
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 
 /** @author Julien Viet */
-public class EGrepTestCase extends AbstractCommandTestCase {
+public class EGrepTestCase extends AbstractShellTestCase {
 
   public void testFoo() {
     assertEquals("abc\n", assertOk("echo 'abc\ndef\nghi' | egrep a"));

@@ -20,9 +20,9 @@
 package org.crsh;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 
-public class SystemCommandTestCase extends AbstractCommandTestCase {
+public class SystemCommandTestCase extends AbstractShellTestCase {
 
   public void testFoo() throws Exception {
     System.setProperty("foo", "bar");

@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Julien Viet
  */
-public class KeyHandlerTestCase extends AbstractCommandTestCase {
+public class KeyHandlerTestCase extends AbstractShellTestCase {
 
   public void testCommand() throws Exception {
     testKeyHandler("public class foo implements org.crsh.keyboard.KeyHandler {\n" +

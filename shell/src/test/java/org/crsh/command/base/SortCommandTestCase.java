@@ -18,7 +18,7 @@
  */
 package org.crsh.command.base;
 
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class SortCommandTestCase extends AbstractCommandTestCase {
+public class SortCommandTestCase extends AbstractShellTestCase {
 
   public static List<Map> output = new ArrayList<Map>();
 

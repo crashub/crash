@@ -66,7 +66,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
-public class PipeLineFailureTestCase extends AbstractCommandTestCase {
+public class PipeLineFailureTestCase extends AbstractShellTestCase {
 
   public static class Counter extends Pipe<String, Object> {
 

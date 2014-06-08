@@ -20,11 +20,11 @@
 package org.crsh;
 
 import org.crsh.command.ScriptException;
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 
 import java.sql.SQLException;
 
-public class JDBCCommandTestCase extends AbstractCommandTestCase {
+public class JDBCCommandTestCase extends AbstractShellTestCase {
 
   public void testCannotConnect() {
     assertEvalError("jdbc connect jdbc:foo", SQLException.class);

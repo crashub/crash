@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * @author Julien Viet
  */
-public class CustomCommandResolverTestCase extends AbstractCommandTestCase {
+public class CustomCommandResolverTestCase extends AbstractShellTestCase {
 
   public static class mycommand extends BaseCommand {
     @org.crsh.cli.Command

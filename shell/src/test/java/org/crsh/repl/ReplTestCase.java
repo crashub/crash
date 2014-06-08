@@ -23,7 +23,7 @@ import org.crsh.cli.Option;
 import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.groovy.GroovyLanguageProxy;
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 import org.crsh.shell.Commands;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /** @author Julien Viet */
-public class ReplTestCase extends AbstractCommandTestCase {
+public class ReplTestCase extends AbstractShellTestCase {
 
   /** . */
   public static final ArrayList<Object> list = new ArrayList<Object>();

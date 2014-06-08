@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public abstract class AbstractCommandTestCase extends AbstractTestCase {
+public abstract class AbstractShellTestCase extends AbstractTestCase {
 
   /** . */
   protected final Logger log = Logger.getLogger(getClass().getName());
@@ -52,10 +52,10 @@ public abstract class AbstractCommandTestCase extends AbstractTestCase {
   /** . */
   protected TestPluginLifeCycle lifeCycle;
 
-  protected AbstractCommandTestCase() {
+  protected AbstractShellTestCase() {
   }
 
-  protected AbstractCommandTestCase(String name) {
+  protected AbstractShellTestCase(String name) {
     super(name);
   }
 

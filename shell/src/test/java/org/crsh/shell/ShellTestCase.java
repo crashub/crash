@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-public class ShellTestCase extends AbstractCommandTestCase {
+public class ShellTestCase extends AbstractShellTestCase {
 
   public void testWelcomeNoClosure() {
     Object welcome = session.remove("welcome");

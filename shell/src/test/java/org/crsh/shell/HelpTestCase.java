@@ -19,7 +19,7 @@
 package org.crsh.shell;
 
 /** @author Julien Viet */
-public class HelpTestCase extends AbstractCommandTestCase {
+public class HelpTestCase extends AbstractShellTestCase {
 
   public void testPiped() {
     lifeCycle.bindClass("noop", Commands.Noop.class);

@@ -18,7 +18,7 @@
  */
 package org.crsh.command.base;
 
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 import org.crsh.shell.ErrorKind;
 import org.crsh.command.base.entities.Bar;
 import org.crsh.command.base.entities.Foo;
@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class JPACommandTestCase extends AbstractCommandTestCase {
+public class JPACommandTestCase extends AbstractShellTestCase {
 
   private String defaultFactory;
   public static List<EntityTypeRenderer.EntityTypeData> output_entity = new ArrayList<EntityTypeRenderer.EntityTypeData>();

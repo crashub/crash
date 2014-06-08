@@ -18,7 +18,7 @@
  */
 package org.crsh.command.base;
 
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 import org.crsh.text.renderers.BindingRenderer;
 
 import javax.naming.Context;
@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class JNDICommandTestCase extends AbstractCommandTestCase {
+public class JNDICommandTestCase extends AbstractShellTestCase {
 
   private String defaultFactory;
   public static List<BindingRenderer.BindingData> output = new ArrayList<BindingRenderer.BindingData>();

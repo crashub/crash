@@ -25,7 +25,7 @@ import javax.management.JMException;
 import java.awt.*;
 import java.util.EmptyStackException;
 
-public class CommandTestCase extends AbstractCommandTestCase {
+public class CommandTestCase extends AbstractShellTestCase {
 
   /** . */
   private final String no_ret = "class no_ret {\n" +

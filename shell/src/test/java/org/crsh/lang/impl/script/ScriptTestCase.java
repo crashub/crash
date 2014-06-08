@@ -18,13 +18,13 @@
  */
 package org.crsh.lang.impl.script;
 
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 import org.crsh.shell.ErrorKind;
 
 /**
  * @author Julien Viet
  */
-public class ScriptTestCase extends AbstractCommandTestCase {
+public class ScriptTestCase extends AbstractShellTestCase {
 
   public void testBye() {
     lifeCycle.bindScript("test", "bye");

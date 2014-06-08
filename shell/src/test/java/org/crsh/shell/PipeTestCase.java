@@ -27,7 +27,7 @@ import org.crsh.text.ScreenBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class PipeTestCase extends AbstractCommandTestCase {
+public class PipeTestCase extends AbstractShellTestCase {
 
   public void testClose() {
     lifeCycle.bindClass("closed", Commands.IsClosed.class);

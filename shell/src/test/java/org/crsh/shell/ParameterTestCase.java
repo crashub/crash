@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-public class ParameterTestCase extends AbstractCommandTestCase {
+public class ParameterTestCase extends AbstractShellTestCase {
 
   /** . */
   private final String option_command = "class option_command {\n" +

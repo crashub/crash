@@ -19,12 +19,10 @@
 
 package org.crsh.shell;
 
-import org.crsh.shell.impl.command.spi.CommandException;
-
 /**
  * Various test related to command dispatch.
  */
-public class DispatchTestCase extends AbstractCommandTestCase {
+public class DispatchTestCase extends AbstractShellTestCase {
 
   public void testInvokeCompound() throws Exception {
     String foo = "class foo {\n" +

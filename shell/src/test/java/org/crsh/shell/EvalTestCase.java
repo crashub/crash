@@ -19,7 +19,7 @@
 
 package org.crsh.shell;
 
-public class EvalTestCase extends AbstractCommandTestCase {
+public class EvalTestCase extends AbstractShellTestCase {
 
 
   public void testProvideRenderable() {

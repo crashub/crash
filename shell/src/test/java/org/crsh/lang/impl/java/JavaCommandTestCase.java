@@ -20,12 +20,12 @@ package org.crsh.lang.impl.java;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 
 import java.util.Map;
 
 /** @author Julien Viet */
-public class JavaCommandTestCase extends AbstractCommandTestCase {
+public class JavaCommandTestCase extends AbstractShellTestCase {
 
   public void testSimple() throws Exception {
     assertEquals("hello", assertOk("java_command"));

@@ -19,7 +19,7 @@
 package org.crsh.command.base;
 
 import org.crsh.command.ScriptException;
-import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.AbstractShellTestCase;
 import org.crsh.shell.ErrorKind;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import static org.crsh.util.Utils.*;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class FilterCommandTestCase extends AbstractCommandTestCase {
+public class FilterCommandTestCase extends AbstractShellTestCase {
 
   public static List<Map> output = new ArrayList<Map>();
 
