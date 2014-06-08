@@ -17,9 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh;
+package test.shell.base;
 
 import junit.framework.Assert;
+import org.crsh.AbstractTestCase;
 import org.crsh.keyboard.KeyHandler;
 import org.crsh.keyboard.KeyType;
 import org.crsh.text.Screenable;

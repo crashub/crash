@@ -19,7 +19,7 @@
 package org.crsh.cron;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.TestPluginLifeCycle;
+import test.plugin.TestPluginLifeCycle;
 import org.crsh.lang.impl.groovy.GroovyLanguageProxy;
 import org.crsh.shell.impl.command.CRaSHShellFactory;
 import org.crsh.vfs.Resource;

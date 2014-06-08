@@ -21,11 +21,11 @@ package org.crsh.shell.impl.async;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import org.crsh.AbstractTestCase;
-import org.crsh.BaseProcess;
-import org.crsh.BaseProcessContext;
-import org.crsh.BaseProcessFactory;
-import org.crsh.BaseShell;
-import org.crsh.TestPluginLifeCycle;
+import test.shell.base.BaseProcess;
+import test.shell.base.BaseProcessContext;
+import test.shell.base.BaseProcessFactory;
+import test.shell.base.BaseShell;
+import test.plugin.TestPluginLifeCycle;
 import org.crsh.shell.*;
 
 import java.io.IOException;

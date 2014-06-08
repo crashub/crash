@@ -18,7 +18,7 @@
  */
 package org.crsh.shell;
 
-import org.crsh.BaseProcessContext;
+import test.shell.base.BaseProcessContext;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;

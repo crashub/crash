@@ -20,10 +20,10 @@
 package org.crsh.shell.impl.remoting;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.BaseProcess;
-import org.crsh.BaseProcessContext;
-import org.crsh.BaseProcessFactory;
-import org.crsh.BaseShell;
+import test.shell.base.BaseProcess;
+import test.shell.base.BaseProcessContext;
+import test.shell.base.BaseProcessFactory;
+import test.shell.base.BaseShell;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.spi.Completion;

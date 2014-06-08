@@ -25,6 +25,7 @@ import junit.framework.Assert;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.crsh.AbstractTestCase;
 import org.crsh.cli.impl.SyntaxException;
+import test.command.TestInvocationContext;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.shell.impl.command.spi.CommandException;
 

@@ -18,10 +18,10 @@
  */
 package org.crsh.ssh;
 
-import org.crsh.TestPluginLifeCycle;
+import test.plugin.TestPluginLifeCycle;
 import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.auth.SimpleAuthenticationPlugin;
-import org.crsh.processor.term.SyncProcess;
+import test.shell.sync.SyncProcess;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.util.Utils;

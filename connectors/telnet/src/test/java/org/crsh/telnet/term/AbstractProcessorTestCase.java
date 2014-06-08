@@ -20,8 +20,8 @@
 package org.crsh.telnet.term;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.processor.term.SyncProcess;
-import org.crsh.processor.term.SyncShell;
+import test.shell.sync.SyncProcess;
+import test.shell.sync.SyncShell;
 import org.crsh.shell.ShellProcessContext;
 import org.crsh.shell.ShellResponse;
 import org.crsh.telnet.term.processor.Processor;

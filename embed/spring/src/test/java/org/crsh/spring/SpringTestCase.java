@@ -21,7 +21,7 @@ package org.crsh.spring;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import org.crsh.BaseProcessContext;
+import test.shell.base.BaseProcessContext;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 import org.crsh.shell.ShellProcess;

@@ -19,7 +19,7 @@
 
 package org.crsh.telnet.term;
 
-import org.crsh.processor.term.SyncShell;
+import test.shell.sync.SyncShell;
 import org.crsh.telnet.term.processor.Processor;
 
 public class SyncProcessorTestCase extends AbstractProcessorTestCase {

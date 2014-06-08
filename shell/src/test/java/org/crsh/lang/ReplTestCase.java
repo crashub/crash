@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.repl;
+package org.crsh.lang;
 
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
@@ -24,7 +24,7 @@ import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.groovy.GroovyLanguageProxy;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.AbstractShellTestCase;
-import org.crsh.shell.Commands;
+import test.command.Commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;

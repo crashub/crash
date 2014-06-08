@@ -19,7 +19,7 @@
 package org.crsh.console;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.processor.term.SyncShell;
+import test.shell.sync.SyncShell;
 
 /**
  * @author Julien Viet

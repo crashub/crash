@@ -16,31 +16,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.command;
 
-package org.crsh.shell;
+import org.crsh.shell.AbstractShellTestCase;
+import test.command.Commands;
 
-public class Value {
+/** @author Julien Viet */
+public class HelpTestCase extends AbstractShellTestCase {
 
-  /** . */
-  private final String value;
-
-  public Value(String value) {
-    this.value = value;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    } else if (obj instanceof Value) {
-      Value that = (Value)obj;
-      return value.equals(that.value);
-    } else {
-      return false;
-    }
+  public void testPiped() {
+    lifeCycle.bindClass("noop", Commands.Noop.class);
+    String resp = assertOk("noop -h");
+    assertTrue(resp.contains("usage"));
   }
 }

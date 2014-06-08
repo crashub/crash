@@ -19,7 +19,7 @@
 package org.crsh.ssh;
 
 import org.crsh.plugin.CRaSHPlugin;
-import org.crsh.processor.term.SyncShell;
+import test.shell.sync.SyncShell;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
 

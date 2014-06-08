@@ -17,29 +17,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package test.text;
 
-import org.crsh.text.LineRenderer;
-import org.crsh.text.Renderer;
-import org.crsh.text.ui.LabelElement;
+public class Value {
 
-import java.util.ArrayList;
-import java.util.Iterator;
+  /** . */
+  private final String value;
 
-public class ValueRenderable extends Renderer<Value> {
+  public Value(String value) {
+    this.value = value;
+  }
 
-  @Override
-  public Class<Value> getType() {
-    return Value.class;
+  public String getValue() {
+    return value;
   }
 
   @Override
-  public LineRenderer renderer(Iterator<Value> stream) {
-    ArrayList<LineRenderer> renderers = new ArrayList<LineRenderer>();
-    while (stream.hasNext()) {
-      Value value = stream.next();
-      renderers.add(new LabelElement("<value>" + value.getValue() + "</value>").renderer());
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    } else if (obj instanceof Value) {
+      Value that = (Value)obj;
+      return value.equals(that.value);
+    } else {
+      return false;
     }
-    return LineRenderer.vertical(renderers);
   }
 }

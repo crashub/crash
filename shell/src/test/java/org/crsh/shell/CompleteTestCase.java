@@ -21,6 +21,7 @@ package org.crsh.shell;
 
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
+import test.command.Commands;
 
 import java.util.Collections;
 

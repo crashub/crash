@@ -20,24 +20,18 @@ package org.crsh.mail;
 
 import junit.framework.Assert;
 import org.crsh.AbstractTestCase;
-import org.crsh.BaseProcessContext;
-import org.crsh.TestPluginLifeCycle;
-import org.crsh.shell.Commands;
+import test.shell.base.BaseProcessContext;
+import test.plugin.TestPluginLifeCycle;
+import test.command.Commands;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellResponse;
-import org.crsh.shell.Value;
+import test.text.Value;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 /** @author Julien Viet */

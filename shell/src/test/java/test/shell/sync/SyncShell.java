@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.processor.term;
+package test.shell.sync;
 
 import org.crsh.AbstractTestCase;
 import org.crsh.cli.impl.completion.CompletionMatch;

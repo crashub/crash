@@ -20,7 +20,7 @@
 package org.crsh.shell;
 
 import org.crsh.AbstractTestCase;
-import org.crsh.BaseProcessContext;
+import test.shell.base.BaseProcessContext;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;

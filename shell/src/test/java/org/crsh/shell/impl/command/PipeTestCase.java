@@ -17,9 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.shell.impl.command;
 
 import org.crsh.command.ScriptException;
+import org.crsh.shell.AbstractShellTestCase;
+import test.command.Commands;
+import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandMatch;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.text.ScreenBuffer;
@@ -102,10 +105,10 @@ public class PipeTestCase extends AbstractShellTestCase {
         "  public org.crsh.command.Pipe<Object, Object> main() {\n" +
         "    return new org.crsh.command.Pipe<Object, Object>() {\n" +
         "      public void open() {\n" +
-        "        org.crsh.shell.Commands.list.add('open');\n" +
+        "        test.command.Commands.list.add('open');\n" +
         "      }\n" +
         "      public void close() {\n" +
-        "        org.crsh.shell.Commands.list.add('close');\n" +
+        "        test.command.Commands.list.add('close');\n" +
         "      }\n" +
         "    };\n" +
         "  }\n" +
@@ -141,7 +144,7 @@ public class PipeTestCase extends AbstractShellTestCase {
         "  public org.crsh.command.Pipe<Object, Object> main() {\n" +
         "    return new org.crsh.command.Pipe<Object, Object>() {\n" +
         "      public void flush() {\n" +
-        "        org.crsh.shell.Commands.list.add('flush');\n" +
+        "        test.command.Commands.list.add('flush');\n" +
         "      }\n" +
         "    };\n" +
         "  }\n" +

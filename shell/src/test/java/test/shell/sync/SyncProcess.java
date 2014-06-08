@@ -16,16 +16,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.processor.term;
 
-import org.crsh.cli.impl.completion.CompletionMatch;
+package test.shell.sync;
 
-/**
- * @author Julien Viet
- */
-public class SyncCompleter {
+import org.crsh.keyboard.KeyHandler;
+import org.crsh.shell.ShellProcessContext;
 
-  public CompletionMatch complete(String prefix) {
+public class SyncProcess {
+
+  /** . */
+  private KeyHandler keyHandler;
+
+  public void run(String request, ShellProcessContext context) throws Exception {
+  }
+
+  protected KeyHandler createKeyHandler() {
     return null;
+  }
+
+  public KeyHandler keyHandler() {
+    if (keyHandler == null) {
+      keyHandler = createKeyHandler();
+    }
+    return keyHandler;
+  }
+
+  public void cancel() {
   }
 }

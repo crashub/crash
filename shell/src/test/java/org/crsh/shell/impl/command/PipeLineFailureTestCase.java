@@ -55,11 +55,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.shell.impl.command;
 
 import org.crsh.cli.Command;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.Pipe;
+import org.crsh.shell.AbstractShellTestCase;
+import org.crsh.shell.ErrorKind;
 
 import javax.naming.NamingException;
 import java.io.IOException;

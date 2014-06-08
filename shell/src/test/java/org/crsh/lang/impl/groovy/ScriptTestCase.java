@@ -19,7 +19,7 @@
 package org.crsh.lang.impl.groovy;
 
 import org.crsh.shell.AbstractShellTestCase;
-import org.crsh.shell.Commands;
+import test.command.Commands;
 
 /** @author Julien Viet */
 public class ScriptTestCase extends AbstractShellTestCase {

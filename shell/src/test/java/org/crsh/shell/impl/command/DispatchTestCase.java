@@ -17,7 +17,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.shell.impl.command;
+
+import org.crsh.shell.AbstractShellTestCase;
+import test.command.Commands;
 
 /**
  * Various test related to command dispatch.

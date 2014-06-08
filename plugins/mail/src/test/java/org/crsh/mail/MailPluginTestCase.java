@@ -19,7 +19,7 @@
 package org.crsh.mail;
 
 import junit.framework.TestCase;
-import org.crsh.TestPluginLifeCycle;
+import test.plugin.TestPluginLifeCycle;
 import org.subethamail.smtp.MessageHandlerFactory;
 import org.subethamail.smtp.auth.LoginAuthenticationHandlerFactory;
 import org.subethamail.smtp.auth.LoginFailedException;

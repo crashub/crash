@@ -19,7 +19,7 @@
 package org.crsh.mail;
 
 import junit.framework.Assert;
-import org.crsh.TestPluginLifeCycle;
+import test.plugin.TestPluginLifeCycle;
 import org.crsh.lang.impl.groovy.GroovyLanguageProxy;
 import org.crsh.lang.impl.java.JavaLanguage;
 import org.subethamail.smtp.MessageHandlerFactory;

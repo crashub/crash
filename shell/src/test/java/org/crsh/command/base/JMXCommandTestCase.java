@@ -19,7 +19,7 @@
 package org.crsh.command.base;
 
 import org.crsh.shell.AbstractShellTestCase;
-import org.crsh.shell.Commands;
+import test.command.Commands;
 
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;

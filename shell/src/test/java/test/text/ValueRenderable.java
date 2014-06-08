@@ -17,30 +17,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.processor.term;
+package test.text;
 
-import org.crsh.keyboard.KeyHandler;
-import org.crsh.shell.ShellProcessContext;
+import org.crsh.text.LineRenderer;
+import org.crsh.text.Renderer;
+import org.crsh.text.ui.LabelElement;
 
-public class SyncProcess {
+import java.util.ArrayList;
+import java.util.Iterator;
 
-  /** . */
-  private KeyHandler keyHandler;
+public class ValueRenderable extends Renderer<Value> {
 
-  public void run(String request, ShellProcessContext context) throws Exception {
+  @Override
+  public Class<Value> getType() {
+    return Value.class;
   }
 
-  protected KeyHandler createKeyHandler() {
-    return null;
-  }
-
-  public KeyHandler keyHandler() {
-    if (keyHandler == null) {
-      keyHandler = createKeyHandler();
+  @Override
+  public LineRenderer renderer(Iterator<Value> stream) {
+    ArrayList<LineRenderer> renderers = new ArrayList<LineRenderer>();
+    while (stream.hasNext()) {
+      Value value = stream.next();
+      renderers.add(new LabelElement("<value>" + value.getValue() + "</value>").renderer());
     }
-    return keyHandler;
-  }
-
-  public void cancel() {
+    return LineRenderer.vertical(renderers);
   }
 }

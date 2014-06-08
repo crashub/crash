@@ -17,7 +17,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package org.crsh.text.ui;
+
+import org.crsh.shell.AbstractShellTestCase;
 
 public class EvalTestCase extends AbstractShellTestCase {
 

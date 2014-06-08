@@ -16,14 +16,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package test.shell.sync;
 
-/** @author Julien Viet */
-public class HelpTestCase extends AbstractShellTestCase {
+import org.crsh.cli.impl.completion.CompletionMatch;
 
-  public void testPiped() {
-    lifeCycle.bindClass("noop", Commands.Noop.class);
-    String resp = assertOk("noop -h");
-    assertTrue(resp.contains("usage"));
+/**
+ * @author Julien Viet
+ */
+public class SyncCompleter {
+
+  public CompletionMatch complete(String prefix) {
+    return null;
   }
 }

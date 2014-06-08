@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell;
+package test.command;
 
 import org.crsh.cli.descriptor.ParameterDescriptor;
 import org.crsh.cli.Argument;
@@ -33,6 +33,7 @@ import org.crsh.text.CLS;
 import org.crsh.text.Screenable;
 import org.crsh.text.ScreenContext;
 import org.crsh.text.Style;
+import test.text.Value;
 
 import javax.naming.NamingException;
 import java.io.IOException;

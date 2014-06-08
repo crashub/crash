@@ -20,7 +20,7 @@
 package org.crsh.telnet.term;
 
 import org.apache.commons.net.telnet.TelnetClient;
-import org.crsh.TestPluginLifeCycle;
+import test.plugin.TestPluginLifeCycle;
 import org.crsh.plugin.SimplePluginDiscovery;
 import org.crsh.telnet.TelnetPlugin;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;

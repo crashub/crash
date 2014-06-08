@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.groovy;
+package org.crsh.lang.impl.groovy;
 
 import groovy.lang.GroovyClassLoader;
 import junit.framework.TestCase;
