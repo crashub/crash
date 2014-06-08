@@ -16,9 +16,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.command.base;
 
 import org.crsh.command.ScriptException;
+import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.ErrorKind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +39,7 @@ public class FilterCommandTestCase extends AbstractCommandTestCase {
       "public org.crsh.command.Pipe<java.util.Map, Object> main() {\n" +
       "return new org.crsh.command.Pipe<java.util.Map, Object>() {\n" +
       "public void provide(java.util.Map element) {\n" +
-      "org.crsh.shell.FilterCommandTestCase.output.add(element)\n" +
+      "org.crsh.command.base.FilterCommandTestCase.output.add(element)\n" +
       "}\n" +
       "}\n" +
       "}\n" +

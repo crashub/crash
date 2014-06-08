@@ -16,18 +16,38 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.factory;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
-import java.util.Hashtable;
+package org.crsh.command.base.entities;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class TypedInitialContextFactory implements InitialContextFactory {
-  public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
-    return new TypedContext();
+@Entity
+public class Foo2 implements Serializable {
+
+  private Long id;
+  private List<Bar> bars;
+
+  @Id
+  @GeneratedValue
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  @OneToMany
+  public List<Bar> getBars() {
+    return bars;
+  }
+
+  public void setBars(List<Bar> bars) {
+    this.bars = bars;
   }
 }

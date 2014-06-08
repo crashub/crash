@@ -16,11 +16,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.command.base;
 
-import org.crsh.shell.entities.Bar;
-import org.crsh.shell.entities.Foo;
-import org.crsh.shell.entities.Foo2;
+import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.ErrorKind;
+import org.crsh.command.base.entities.Bar;
+import org.crsh.command.base.entities.Foo;
+import org.crsh.command.base.entities.Foo2;
 import org.crsh.text.renderers.EntityTypeRenderer;
 
 import javax.naming.Context;
@@ -43,7 +45,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
       "public org.crsh.command.Pipe<org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData, Object> main() {\n" +
       "return new org.crsh.command.Pipe<org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData, Object>() {\n" +
       "public void provide(org.crsh.text.renderers.EntityTypeRenderer.EntityTypeData element) {\n" +
-      "org.crsh.shell.JPACommandTestCase.output_entity.add(element)\n" +
+      "org.crsh.command.base.JPACommandTestCase.output_entity.add(element)\n" +
       "}\n" +
       "}\n" +
       "}\n" +
@@ -54,7 +56,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
       "public org.crsh.command.Pipe<Map, Object> main() {\n" +
       "return new org.crsh.command.Pipe<Map, Object>() {\n" +
       "public void provide(Map element) {\n" +
-      "org.crsh.shell.JPACommandTestCase.output_value.add(element)\n" +
+      "org.crsh.command.base.JPACommandTestCase.output_value.add(element)\n" +
       "}\n" +
       "}\n" +
       "}\n" +
@@ -75,7 +77,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
   public void setUp() throws Exception {
     super.setUp();
     defaultFactory = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
-    System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.crsh.shell.factory.JPAInitialContextFactory");
+    System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.crsh.command.base.factory.JPAInitialContextFactory");
   }
 
   @Override
@@ -112,11 +114,11 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
     Collections.sort(output_entity, entityComparator);
     assertEquals(3, output_entity.size());
     assertTrue(output_entity.get(0).name.endsWith("Bar"));
-    assertEquals("org.crsh.shell.entities.Bar", output_entity.get(0).type);
+    assertEquals("org.crsh.command.base.entities.Bar", output_entity.get(0).type);
     assertEquals("ENTITY", output_entity.get(0).mapping);
     assertEquals(false, output_entity.get(0).verbose);
     assertTrue(output_entity.get(1).name.endsWith("Foo"));
-    assertEquals("org.crsh.shell.entities.Foo", output_entity.get(1).type);
+    assertEquals("org.crsh.command.base.entities.Foo", output_entity.get(1).type);
     assertEquals("ENTITY", output_entity.get(1).mapping);
     assertEquals(false, output_entity.get(1).verbose);
     assertOk("jpa close");
@@ -130,7 +132,7 @@ public class JPACommandTestCase extends AbstractCommandTestCase {
     assertOk("jpa entity " + Foo.class.getName() + " | consume_command_entity");
     assertEquals(1, output_entity.size());
     assertTrue(output_entity.get(0).name.endsWith("Foo"));
-    assertEquals("org.crsh.shell.entities.Foo", output_entity.get(0).type);
+    assertEquals("org.crsh.command.base.entities.Foo", output_entity.get(0).type);
     assertEquals("ENTITY", output_entity.get(0).mapping);
     assertEquals(true, output_entity.get(0).verbose);
     Collections.sort(output_entity.get(0).attributes, attributeComparator);

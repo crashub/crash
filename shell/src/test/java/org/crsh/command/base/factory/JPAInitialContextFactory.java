@@ -16,42 +16,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.factory;
+package org.crsh.command.base.factory;
 
-import javax.naming.Binding;
-import javax.naming.NamingEnumeration;
+import javax.naming.Context;
 import javax.naming.NamingException;
-import java.util.Iterator;
-import java.util.List;
+import javax.naming.spi.InitialContextFactory;
+import java.util.Hashtable;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class Bindings implements NamingEnumeration<Binding> {
-
-  Iterator<Binding> i;
-
-  Bindings(List<Binding> l) {
-    i = l.iterator();
-  }
-
-
-  public Binding next() throws NamingException {
-    return i.next();
-  }
-
-  public boolean hasMore() throws NamingException {
-    return i.hasNext();
-  }
-
-  public void close() throws NamingException {
-  }
-
-  public boolean hasMoreElements() {
-    return i.hasNext();
-  }
-
-  public Binding nextElement() {
-    return i.next();
+public class JPAInitialContextFactory implements InitialContextFactory {
+  public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+    return new JPAContext();
   }
 }

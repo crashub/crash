@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.factory;
+package org.crsh.command.base.factory;
 
 import javax.naming.Binding;
 import javax.naming.NamingEnumeration;
@@ -27,15 +27,14 @@ import java.util.List;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class TypedContext extends EmptyContext {
+public class SimpleContext extends EmptyContext {
 
     @Override
     public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
 
-      if (name == "") {
+      if (name.startsWith("java:global") || name == "") {
         List<Binding> l = new ArrayList<Binding>();
-        l.add(new Binding("String", "Bar", ""));
-        l.add(new Binding("ArrayList", "Bar", new ArrayList()));
+        l.add(new Binding("Foo", "Bar", ""));
         return new Bindings(l);
       } else {
         throw new NamingException();

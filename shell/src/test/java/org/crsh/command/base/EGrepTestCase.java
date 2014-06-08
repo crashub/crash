@@ -16,18 +16,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.factory;
+package org.crsh.command.base;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
-import java.util.Hashtable;
+import org.crsh.shell.AbstractCommandTestCase;
 
-/**
- * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
- */
-public class SimpleInitialContextFactory implements InitialContextFactory {
-  public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
-    return new SimpleContext();
+/** @author Julien Viet */
+public class EGrepTestCase extends AbstractCommandTestCase {
+
+  public void testFoo() {
+    assertEquals("abc\n", assertOk("echo 'abc\ndef\nghi' | egrep a"));
+    assertEquals("def\n", assertOk("echo 'abc\ndef\nghi' | egrep e"));
+    assertEquals("ghi", assertOk("echo 'abc\ndef\nghi' | egrep g"));
+    assertEquals("", assertOk("echo 'abc\ndef\nghi' | egrep k"));
+    assertEquals("arnaud\nalain", assertOk("echo 'julien\narnaud\nalain' | egrep a"));
   }
 }

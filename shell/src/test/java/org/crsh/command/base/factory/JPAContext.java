@@ -16,18 +16,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.factory;
+package org.crsh.command.base.factory;
 
-import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
-import java.util.Hashtable;
+import javax.persistence.Persistence;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class ErrorInitialContextFactory implements InitialContextFactory {
-  public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
-    return new ErrorContext();
+public class JPAContext extends EmptyContext {
+  @Override
+  public Object lookup(String name) throws NamingException {
+    if (name.equals("testEmf")) {
+      return Persistence.createEntityManagerFactory("testPU");
+    } else if (name.equals("invalid")) {
+      return "invalid";
+    } else {
+      return null;
+    }
   }
 }

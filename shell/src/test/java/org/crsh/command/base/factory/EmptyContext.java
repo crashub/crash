@@ -16,12 +16,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.factory;
+package org.crsh.command.base.factory;
 
 import javax.naming.*;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>

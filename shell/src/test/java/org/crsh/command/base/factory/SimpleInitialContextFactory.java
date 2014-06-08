@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell.factory;
+package org.crsh.command.base.factory;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -26,8 +26,8 @@ import java.util.Hashtable;
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-public class NestedInitialContextFactory implements InitialContextFactory {
+public class SimpleInitialContextFactory implements InitialContextFactory {
   public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
-    return new NestedContext();
+    return new SimpleContext();
   }
 }

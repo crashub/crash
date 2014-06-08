@@ -16,8 +16,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.command.base;
 
+import org.crsh.shell.AbstractCommandTestCase;
 import org.crsh.text.renderers.BindingRenderer;
 
 import javax.naming.Context;
@@ -36,7 +37,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
       "public org.crsh.command.Pipe<org.crsh.text.renderers.BindingRenderer.BindingData, Object> main() {\n" +
       "return new org.crsh.command.Pipe<org.crsh.text.renderers.BindingRenderer.BindingData, Object>() {\n" +
       "public void provide(org.crsh.text.renderers.BindingRenderer.BindingData element) {\n" +
-      "org.crsh.shell.JNDICommandTestCase.output.add(element)\n" +
+      "org.crsh.command.base.JNDICommandTestCase.output.add(element)\n" +
       "}\n" +
       "}\n" +
       "}\n" +
@@ -53,7 +54,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testSimple() throws Exception {
-    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.SimpleInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find | consume_command");
@@ -65,7 +66,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testNested() throws Exception {
-    setFactory("org.crsh.shell.factory.NestedInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.NestedInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find | consume_command");
@@ -79,7 +80,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testError() throws Exception {
-    setFactory("org.crsh.shell.factory.ErrorInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.ErrorInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find | consume_command");
@@ -91,7 +92,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testFilter() throws Exception {
-    setFactory("org.crsh.shell.factory.TypedInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.TypedInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -f java.lang.String | consume_command");
@@ -101,7 +102,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testFilterMany() throws Exception {
-    setFactory("org.crsh.shell.factory.TypedInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.TypedInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -f java.lang.String -f java.util.List | consume_command");
@@ -113,7 +114,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testFilterInterface() throws Exception {
-    setFactory("org.crsh.shell.factory.TypedInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.TypedInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -f java.util.List | consume_command");
@@ -123,7 +124,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testFilterSuperType() throws Exception {
-    setFactory("org.crsh.shell.factory.TypedInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.TypedInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -f java.util.AbstractList | consume_command");
@@ -133,7 +134,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testNameExact() throws Exception {
-    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.SimpleInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n Foo | consume_command");
@@ -143,7 +144,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testNameBegin() throws Exception {
-    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.SimpleInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n F* | consume_command");
@@ -153,7 +154,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testNameEnd() throws Exception {
-    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.SimpleInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n *o | consume_command");
@@ -165,7 +166,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testNameNoBeginEnd() throws Exception {
-    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.SimpleInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n *global* | consume_command");
@@ -175,7 +176,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testNameWildcard() throws Exception {
-    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.SimpleInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n java:*/Foo | consume_command");
@@ -185,7 +186,7 @@ public class JNDICommandTestCase extends AbstractCommandTestCase {
   }
 
   public void testNameWildcardBeginEnd() throws Exception {
-    setFactory("org.crsh.shell.factory.SimpleInitialContextFactory");
+    setFactory("org.crsh.command.base.factory.SimpleInitialContextFactory");
     output.clear();
     lifeCycle.bindGroovy("consume_command", consume_command);
     assertOk("jndi find -n *:*/* | consume_command");

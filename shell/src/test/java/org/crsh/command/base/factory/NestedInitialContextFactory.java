@@ -16,33 +16,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.crsh.command.base.factory;
 
-package org.crsh.shell.entities;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import java.io.Serializable;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.spi.InitialContextFactory;
+import java.util.Hashtable;
 
 /**
  * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
  */
-@Entity
-public class Bar implements Serializable {
-
-  private Long id;
-
-  @Id
-  @GeneratedValue
-  public Long getId() {
-    return id;
+public class NestedInitialContextFactory implements InitialContextFactory {
+  public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+    return new NestedContext();
   }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Bar() {
-  }
-  
 }

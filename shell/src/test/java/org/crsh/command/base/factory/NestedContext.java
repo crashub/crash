@@ -16,16 +16,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.command.base.factory;
 
-/** @author Julien Viet */
-public class EGrepTestCase extends AbstractCommandTestCase {
+import javax.naming.Binding;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import java.util.ArrayList;
+import java.util.List;
 
-  public void testFoo() {
-    assertEquals("abc\n", assertOk("echo 'abc\ndef\nghi' | egrep a"));
-    assertEquals("def\n", assertOk("echo 'abc\ndef\nghi' | egrep e"));
-    assertEquals("ghi", assertOk("echo 'abc\ndef\nghi' | egrep g"));
-    assertEquals("", assertOk("echo 'abc\ndef\nghi' | egrep k"));
-    assertEquals("arnaud\nalain", assertOk("echo 'julien\narnaud\nalain' | egrep a"));
+/**
+ * @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a>
+ */
+public class NestedContext extends EmptyContext {
+
+  @Override
+  public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
+
+    if (name.startsWith("java:global")) {
+      List<Binding> l = new ArrayList<Binding>();
+      l.add(new Binding("Foo", "Bar", ""));
+      l.add(new Binding("Foo2", "Bar2", new SimpleContext()));
+      return new Bindings(l);
+    } else {
+      throw new NamingException();
+    }
   }
 }

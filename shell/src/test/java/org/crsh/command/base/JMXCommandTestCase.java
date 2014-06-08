@@ -16,7 +16,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.crsh.shell;
+package org.crsh.command.base;
+
+import org.crsh.shell.AbstractCommandTestCase;
+import org.crsh.shell.Commands;
 
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;

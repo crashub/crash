@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.crsh.shell.entities;
+package org.crsh.command.base.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
