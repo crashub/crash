@@ -162,31 +162,22 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
 
       public void close() throws IOException, CommandException {
         try {
-          if (real != null) {
-            try {
+          try {
+            if (real != null) {
               real.close();
             }
-            catch (Exception e) {
-              throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
-            }
-            finally {
-              try {
-                invocationContext.close();
-              }
-              catch (Exception e) {
-                //
-              }
-            }
-          } else {
+          }
+          catch (Exception e) {
+            throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
+          } finally {
             try {
               invocationContext.close();
             }
             catch (Exception e) {
-              //
+              throw new CommandException(ErrorKind.EVALUATION, e);
             }
           }
-        }
-        finally {
+        } finally {
           command.popContext();
           command.unmatched = null;
         }

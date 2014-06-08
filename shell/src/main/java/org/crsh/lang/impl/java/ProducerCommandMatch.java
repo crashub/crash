@@ -111,39 +111,43 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
       }
 
       public void close() throws IOException, CommandException {
-
-        //
-        Object ret;
         try {
-          ret = invoker.invoke(this);
-        }
-        catch (org.crsh.cli.impl.SyntaxException e) {
-          throw new CommandException(ErrorKind.SYNTAX, "Syntax exception when executing command " + name, e);
-        } catch (InvocationException e) {
-          throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e.getCause());
-        }
-
-        //
-        if (ret != null && producedType.isInstance(ret)) {
-          P produced = producedType.cast(ret);
+          Object ret;
           try {
-            invocationContext.provide(produced);
+            ret = invoker.invoke(this);
           }
-          catch (Exception e) {
-            throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
+          catch (org.crsh.cli.impl.SyntaxException e) {
+            throw new CommandException(ErrorKind.SYNTAX, "Syntax exception when executing command " + name, e);
+          } catch (InvocationException e) {
+            throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e.getCause());
           }
-        }
 
-        //
-        try {
-          invocationContext.flush();
-          invocationContext.close();
+          // Anything returned compatible is then produced
+          if (ret != null && producedType.isInstance(ret)) {
+            P produced = producedType.cast(ret);
+            try {
+              invocationContext.provide(produced);
+            }
+            catch (Exception e) {
+              throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
+            }
+          }
+        } finally {
+          try {
+            invocationContext.flush();
+          }
+          finally {
+            try {
+              invocationContext.close();
+            }
+            catch (Exception e) {
+              throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
+            } finally {
+              command.unmatched = null;
+              invocationContext = null;
+            }
+          }
         }
-        catch (Exception e) {
-          throw new CommandException(ErrorKind.EVALUATION, "Command " + name + " failed", e);
-        }
-        command.unmatched = null;
-        invocationContext = null;
       }
     };
   }

@@ -191,7 +191,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
     }
   }
 
-  public void close() throws IOException {
+  public void close() throws Exception {
     if (status != CLOSED) {
       try {
         flush();
@@ -200,12 +200,7 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
         // Ignore ?
       }
       status = CLOSED;
-      try {
-        commandContext.close();
-      }
-      catch (Exception e) {
-        //
-      }
+      commandContext.close();
     }
   }
 
