@@ -27,12 +27,6 @@ import java.io.IOException;
  */
 public interface Screenable extends Appendable {
 
-  Appendable append(char c) throws IOException;
-
-  Appendable append(CharSequence s) throws IOException;
-
-  Appendable append(CharSequence csq, int start, int end) throws IOException;
-
   Screenable append(Style style) throws IOException;
 
   Screenable cls() throws IOException;
