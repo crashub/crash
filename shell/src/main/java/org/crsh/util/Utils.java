@@ -777,7 +777,7 @@ public class Utils {
   public static final Charset UTF_8;
 
   static {
-    UTF_8 = Charset.forName("utf8");
+    UTF_8 = Charset.forName("UTF-8");
   }
 
 }
