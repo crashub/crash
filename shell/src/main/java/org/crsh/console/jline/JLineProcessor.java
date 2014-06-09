@@ -49,15 +49,18 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
   final PrintStream writer;
   final ConsoleReader reader;
   final String lineSeparator;
+  final boolean ansi;
 
   public JLineProcessor(
+      boolean ansi,
       Shell shell,
       ConsoleReader reader,
       PrintStream out) {
-    this(shell, reader, out, System.getProperty("line.separator"));
+    this(ansi, shell, reader, out, System.getProperty("line.separator"));
   }
 
   public JLineProcessor(
+      boolean ansi,
       Shell shell,
       final ConsoleReader reader,
       PrintStream out,
@@ -71,6 +74,7 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
     this.reader = reader;
     this.lineSeparator = lineSeparator;
     this.done = new CountDownLatch(1);
+    this.ansi = ansi;
 
     // Update the mode according to the notification
     console.addModeListener(new Runnable() {
@@ -226,36 +230,40 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
 
   @Override
   public boolean takeAlternateBuffer() throws IOException {
-    if (!useAlternate) {
-      useAlternate = true;
+    if (ansi) {
+      if (!useAlternate) {
+        useAlternate = true;
 
-      // To get those codes I captured the output of telnet running top
-      // on OSX:
-      // 1/ sudo /usr/libexec/telnetd -debug #run telnet
-      // 2/ telnet localhost >output.txt
-      // 3/ type username + enter
-      // 4/ type password + enter
-      // 5/ type top + enter
-      // 6/ ctrl-c
-      // 7/ type exit + enter
+        // To get those codes I captured the output of telnet running top
+        // on OSX:
+        // 1/ sudo /usr/libexec/telnetd -debug #run telnet
+        // 2/ telnet localhost >output.txt
+        // 3/ type username + enter
+        // 4/ type password + enter
+        // 5/ type top + enter
+        // 6/ ctrl-c
+        // 7/ type exit + enter
 
-      // Save screen and erase
-      writer.print("\033[?47h"); // Switches to the alternate screen
-      // writer.print("\033[1;43r");
+        // Save screen and erase
+        writer.print("\033[?47h"); // Switches to the alternate screen
+        // writer.print("\033[1;43r");
 //      processor.writer.print("\033[m"); // Reset to normal (Sets SGR parameters : 0 m == m)
-      // writer.print("\033[4l");
-      // writer.print("\033[?1h");
-      // writer.print("\033[=");
+        // writer.print("\033[4l");
+        // writer.print("\033[?1h");
+        // writer.print("\033[=");
 //      processor.writer.print("\033[H"); // Move the cursor to home
 //      processor.writer.print("\033[2J"); // Clear screen
 //      processor.writer.flush();
+      }
+      return true;
+    } else {
+      return false;
     }
-    return true;
   }
 
   @Override
   public boolean releaseAlternateBuffer() throws IOException {
-    if (useAlternate) {
+    if (ansi && useAlternate) {
       useAlternate = false;
       writer.print("\033[?47l"); // Switches back to the normal screen
     }
@@ -293,7 +301,9 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
 
   @Override
   public void write(Style d) throws IOException {
-    d.writeAnsiTo(writer);
+    if (ansi) {
+      d.writeAnsiTo(writer);
+    }
   }
 
   @Override
@@ -308,8 +318,10 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
 
   @Override
   public void cls() throws IOException {
-    writer.print("\033[2J");
-    writer.print("\033[1;1H");
+    if (ansi) {
+      writer.print("\033[2J");
+      writer.print("\033[1;1H");
+    }
   }
 
   @Override

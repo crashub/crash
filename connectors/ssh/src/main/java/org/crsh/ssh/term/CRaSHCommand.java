@@ -92,7 +92,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
           super.shutdown();
         }
       };
-      JLineProcessor processor = new JLineProcessor(shell, reader, new PrintStream(out, false, factory.encoding.name()), "\r\n");
+      JLineProcessor processor = new JLineProcessor(true, shell, reader, new PrintStream(out, false, factory.encoding.name()), "\r\n");
       processor.run();
     } catch (java.io.InterruptedIOException e) {
       // Expected behavior because of the onExit callback in the shutdown above

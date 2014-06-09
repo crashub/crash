@@ -363,12 +363,15 @@ public class CRaSH {
       // Use AnsiConsole only if term doesn't support Ansi
       PrintStream out;
       PrintStream err;
-      if (!term.isAnsiSupported()) {
-        out = AnsiConsole.out;
-        err = AnsiConsole.err;
-      } else {
+      boolean ansi;
+      if (term.isAnsiSupported()) {
         out = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.out), 16384), false);
         err = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.err), 16384), false);
+        ansi = true;
+      } else {
+        out = AnsiConsole.out;
+        err = AnsiConsole.err;
+        ansi = false;
       }
 
       //
@@ -376,7 +379,7 @@ public class CRaSH {
       ConsoleReader reader = new ConsoleReader(null, in, out, term);
 
       //
-      final JLineProcessor processor = new JLineProcessor(shell, reader, out);
+      final JLineProcessor processor = new JLineProcessor(ansi, shell, reader, out);
 
       //
       InterruptHandler interruptHandler = new InterruptHandler(new Runnable() {
