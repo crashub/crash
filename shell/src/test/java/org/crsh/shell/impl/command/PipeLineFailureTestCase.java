@@ -113,6 +113,23 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
     }
   }
 
+  public static class FailOnInvoke extends BaseCommand {
+
+    /** . */
+    static final AtomicInteger count = new AtomicInteger();
+
+    public static Class<FailOnInvoke> reset() {
+      count.set(0);
+      return FailOnInvoke.class;
+    }
+
+    @Command
+    public Pipe<String, Object> main() throws Exception {
+      count.incrementAndGet();
+      throw new NamingException();
+    }
+  }
+
   public static class FailOnOpen extends BaseCommand {
 
     public static Class<FailOnOpen> reset() {
@@ -194,6 +211,42 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
       count.incrementAndGet();
       context.provide("foo");
     }
+  }
+
+  public void testFailOnInvokePipe() {
+    lifeCycle.bindClass("command", FailOnInvoke.reset());
+    assertError("command", ErrorKind.EVALUATION, NamingException.class);
+    assertEquals(1, FailOnInvoke.count.get());
+  }
+
+  public void testFailOnInvokePipeToPipe() {
+    lifeCycle.bindClass("producer", FailOnInvoke.reset());
+    lifeCycle.bindClass("consumer", CallbackCounterCommand.reset());
+    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertEquals(1, FailOnInvoke.count.get());
+    assertEquals(1, CallbackCounterCommand.counter.openCount.get());
+    assertEquals(0, CallbackCounterCommand.counter.provideCound.get());
+    assertEquals(1, CallbackCounterCommand.counter.flushCount.get());
+    assertEquals(1, CallbackCounterCommand.counter.closeCount.get());
+  }
+
+  public void testPipeToFailOnInvokePipe() {
+    lifeCycle.bindClass("producer", CallbackCounterCommand.reset());
+    lifeCycle.bindClass("consumer", FailOnInvoke.reset());
+    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertEquals(1, FailOnInvoke.count.get());
+    assertEquals(0, CallbackCounterCommand.counter.openCount.get());
+    assertEquals(0, CallbackCounterCommand.counter.provideCound.get());
+    assertEquals(0, CallbackCounterCommand.counter.flushCount.get());
+    assertEquals(0, CallbackCounterCommand.counter.closeCount.get());
+  }
+
+  public void testProducerToFailOnInvokePipe() {
+    lifeCycle.bindClass("producer", Producer.reset());
+    lifeCycle.bindClass("consumer", FailOnInvoke.reset());
+    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertEquals(1, FailOnInvoke.count.get());
+    assertEquals(0, Producer.count.get());
   }
 
   public void testFailOnOpenPipe() {
