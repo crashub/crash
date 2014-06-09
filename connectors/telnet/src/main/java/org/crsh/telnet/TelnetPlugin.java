@@ -82,9 +82,10 @@ public class TelnetPlugin extends CRaSHPlugin<TelnetPlugin> {
     TelnetLifeCycle lifeCycle = new TelnetLifeCycle(context);
     lifeCycle.setConfig(config);
     Integer port = context.getProperty(TELNET_PORT);
-    if (port != null) {
-      lifeCycle.setPort(port);
+    if (port == null) {
+      port = TELNET_PORT.defaultValue;
     }
+    lifeCycle.setPort(port);
 
     //
     lifeCycle.init();
