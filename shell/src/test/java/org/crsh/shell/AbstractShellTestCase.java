@@ -131,7 +131,7 @@ public abstract class AbstractShellTestCase extends AbstractTestCase {
 
   protected final void assertError(String s, ErrorKind expectedErrorType, Class<? extends Throwable> expectedThrowableType) {
     Throwable error = assertError(s, expectedErrorType);
-    assertType(expectedThrowableType, error);
+    assertInstance(expectedThrowableType, error);
   }
 
   protected final Throwable assertError(String s, ErrorKind expectedErrorType) {

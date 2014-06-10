@@ -63,7 +63,11 @@ import org.crsh.command.Pipe;
 import org.crsh.shell.AbstractShellTestCase;
 import org.crsh.shell.ErrorKind;
 
+import javax.naming.CommunicationException;
 import javax.naming.NamingException;
+import javax.naming.SizeLimitExceededException;
+import javax.naming.directory.AttributeInUseException;
+import javax.naming.directory.SchemaViolationException;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -126,7 +130,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
     @Command
     public Pipe<String, Object> main() throws Exception {
       count.incrementAndGet();
-      throw new NamingException();
+      throw new SchemaViolationException();
     }
   }
 
@@ -142,7 +146,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
       @Override
       public void open() throws Exception {
         super.open();
-        throw new NamingException();
+        throw new AttributeInUseException();
       }
     };
 
@@ -164,7 +168,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
       @Override
       public void provide(String element) throws Exception {
         super.provide(element);
-        throw new NamingException();
+        throw new CommunicationException();
       }
     };
 
@@ -186,7 +190,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
       @Override
       public void close() throws Exception {
         super.close();
-        throw new NamingException();
+        throw new SizeLimitExceededException();
       }
     };
 
@@ -215,14 +219,14 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
 
   public void testFailOnInvokePipe() {
     lifeCycle.bindClass("command", FailOnInvoke.reset());
-    assertError("command", ErrorKind.EVALUATION, NamingException.class);
+    assertError("command", ErrorKind.EVALUATION, SchemaViolationException.class);
     assertEquals(1, FailOnInvoke.count.get());
   }
 
   public void testFailOnInvokePipeToPipe() {
     lifeCycle.bindClass("producer", FailOnInvoke.reset());
     lifeCycle.bindClass("consumer", CallbackCounterCommand.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, SchemaViolationException.class);
     assertEquals(1, FailOnInvoke.count.get());
     assertEquals(1, CallbackCounterCommand.counter.openCount.get());
     assertEquals(0, CallbackCounterCommand.counter.provideCound.get());
@@ -233,7 +237,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
   public void testPipeToFailOnInvokePipe() {
     lifeCycle.bindClass("producer", CallbackCounterCommand.reset());
     lifeCycle.bindClass("consumer", FailOnInvoke.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, SchemaViolationException.class);
     assertEquals(1, FailOnInvoke.count.get());
     assertEquals(0, CallbackCounterCommand.counter.openCount.get());
     assertEquals(0, CallbackCounterCommand.counter.provideCound.get());
@@ -244,14 +248,14 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
   public void testProducerToFailOnInvokePipe() {
     lifeCycle.bindClass("producer", Producer.reset());
     lifeCycle.bindClass("consumer", FailOnInvoke.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, SchemaViolationException.class);
     assertEquals(1, FailOnInvoke.count.get());
     assertEquals(0, Producer.count.get());
   }
 
   public void testFailOnOpenPipe() {
     lifeCycle.bindClass("command", FailOnOpen.reset());
-    assertError("command", ErrorKind.EVALUATION, NamingException.class);
+    assertError("command", ErrorKind.EVALUATION, AttributeInUseException.class);
     assertEquals(1, FailOnOpen.counter.openCount.get());
     assertEquals(0, FailOnOpen.counter.provideCound.get());
     assertEquals(0, FailOnOpen.counter.flushCount.get());
@@ -261,7 +265,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
   public void testFailOnOpenPipeToPipe() {
     lifeCycle.bindClass("producer", FailOnOpen.reset());
     lifeCycle.bindClass("consumer", CallbackCounterCommand.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, AttributeInUseException.class);
     assertEquals(1, FailOnOpen.counter.openCount.get());
     assertEquals(0, FailOnOpen.counter.provideCound.get());
     assertEquals(0, FailOnOpen.counter.flushCount.get());
@@ -275,7 +279,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
   public void testPipeToFailOnOpenPipe() {
     lifeCycle.bindClass("producer", CallbackCounterCommand.reset());
     lifeCycle.bindClass("consumer", FailOnOpen.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, AttributeInUseException.class);
     assertEquals(1, FailOnOpen.counter.openCount.get());
     assertEquals(0, FailOnOpen.counter.provideCound.get());
     assertEquals(0, FailOnOpen.counter.flushCount.get());
@@ -289,7 +293,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
   public void testProducerToFailOnOpenPipe() {
     lifeCycle.bindClass("producer", Producer.reset());
     lifeCycle.bindClass("consumer", FailOnOpen.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, AttributeInUseException.class);
     assertEquals(0, Producer.count.get());
     assertEquals(1, FailOnOpen.counter.openCount.get());
     assertEquals(0, FailOnOpen.counter.provideCound.get());
@@ -300,7 +304,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
   public void testProducerToFailOnProvidePipe() {
     lifeCycle.bindClass("producer", Producer.reset());
     lifeCycle.bindClass("consumer", FailOnProvide.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, CommunicationException.class);
     assertEquals(1, Producer.count.get());
     assertEquals(1, FailOnProvide.counter.openCount.get());
     assertEquals(1, FailOnProvide.counter.provideCound.get());
@@ -311,17 +315,17 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
   public void testProducerToFailOnClosePipe() {
     lifeCycle.bindClass("producer", Producer.reset());
     lifeCycle.bindClass("consumer", FailOnClose.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, SizeLimitExceededException.class);
     assertEquals(1, Producer.count.get());
-    assertEquals(1, FailOnProvide.counter.openCount.get());
-    assertEquals(1, FailOnProvide.counter.provideCound.get());
-    assertEquals(1, FailOnProvide.counter.flushCount.get());
-    assertEquals(1, FailOnProvide.counter.closeCount.get());
+    assertEquals(1, FailOnClose.counter.openCount.get());
+    assertEquals(1, FailOnClose.counter.provideCound.get());
+    assertEquals(1, FailOnClose.counter.flushCount.get());
+    assertEquals(1, FailOnClose.counter.closeCount.get());
   }
 
   public void testFailOnClosePipe() {
     lifeCycle.bindClass("command", FailOnClose.reset());
-    assertError("command", ErrorKind.EVALUATION, NamingException.class);
+    assertError("command", ErrorKind.EVALUATION, SizeLimitExceededException.class);
     assertEquals(1, FailOnClose.counter.openCount.get());
     assertEquals(0, FailOnClose.counter.provideCound.get());
     assertEquals(1, FailOnClose.counter.flushCount.get());
@@ -331,7 +335,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
   public void testFailOnClosePipeToPipe() {
     lifeCycle.bindClass("producer", FailOnClose.reset());
     lifeCycle.bindClass("consumer", CallbackCounterCommand.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, SizeLimitExceededException.class);
     assertEquals(1, FailOnClose.counter.openCount.get());
     assertEquals(0, FailOnOpen.counter.provideCound.get());
     assertEquals(1, FailOnClose.counter.flushCount.get());
@@ -345,7 +349,7 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
   public void testPipeToFailOnClosePipe() {
     lifeCycle.bindClass("producer", CallbackCounterCommand.reset());
     lifeCycle.bindClass("consumer", FailOnClose.reset());
-    assertError("producer | consumer", ErrorKind.EVALUATION, NamingException.class);
+    assertError("producer | consumer", ErrorKind.EVALUATION, SizeLimitExceededException.class);
     assertEquals(1, CallbackCounterCommand.counter.openCount.get());
     assertEquals(0, CallbackCounterCommand.counter.provideCound.get());
     assertEquals(1, CallbackCounterCommand.counter.flushCount.get());
@@ -353,6 +357,20 @@ public class PipeLineFailureTestCase extends AbstractShellTestCase {
     assertEquals(1, FailOnClose.counter.openCount.get());
     assertEquals(0, FailOnOpen.counter.provideCound.get());
     // assertEquals(1 , FailDuringClose.counter.flushCount.get()); <-- not passing at the moment
+    assertEquals(1, FailOnClose.counter.closeCount.get());
+  }
+
+  public void testFailOnClosePipeToFailOnOpenPipe() {
+    lifeCycle.bindClass("producer", FailOnOpen.reset());
+    lifeCycle.bindClass("consumer", FailOnClose.reset());
+    assertError("producer | consumer", ErrorKind.EVALUATION, SizeLimitExceededException.class);
+    assertEquals(1, FailOnOpen.counter.openCount.get());
+    assertEquals(0, FailOnOpen.counter.provideCound.get());
+    assertEquals(0, FailOnOpen.counter.flushCount.get());
+    assertEquals(0, FailOnOpen.counter.closeCount.get());
+    assertEquals(1, FailOnClose.counter.openCount.get());
+    assertEquals(0, FailOnClose.counter.provideCound.get());
+    assertEquals(1, FailOnClose.counter.flushCount.get());
     assertEquals(1, FailOnClose.counter.closeCount.get());
   }
 }
