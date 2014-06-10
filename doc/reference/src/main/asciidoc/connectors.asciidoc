@@ -9,6 +9,29 @@ _System.err_).
 
 The jvm connector uses the default platform encoding provided by the JVM.
 
+The jvm connector uses some parts of the https://github.com/jline/jline2[JLine] library, since 1.3 it uses the
+_terminal detection and configuration_ and the _key mapping_. The JLine library is shaded and included in the
+_crash.shell_ jar: you don't need the JLine jar on your classpath and the included jar will not conflict
+with another existing JLine jar.
+
+JLine can be configured via system properties and the property names should be prefixed with +org.crsh.console+ as
+the library is shaded.
+
+=== Terminal detection
+
+By default JLine autodetects the terminal based of the current operating system, the autodetection can be configured
+to a more specific terminal type with the +org.crsh.console.jline.terminal+ property, see the JLine
+https://github.com/jline/jline2/wiki/Terminal%20Factory%20Configuration[wiki].
+
+TIP: running CRaSH an IDE terminal has limited capabilities and setting the system property
++org.crsh.console.jline.terminal=none+ will improve the user experience
+
+=== JLine logging
+
+JLine logging is useful for troubleshooting the terminal emulation, trace and debug can be activated with the
++org.crsh.console.jline.internal.Log.debug=true+ and +org.crsh.console.jline.internal.Log.trace=true+, see the
+JLine https://github.com/jline/jline2/wiki/Logging%20Configuration[wiki]
+
 == SSH connector
 
 === Changing the SSH server port
