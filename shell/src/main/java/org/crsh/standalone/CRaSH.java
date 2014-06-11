@@ -343,23 +343,13 @@ public class CRaSH {
     //
     if (shell != null) {
 
-
-      final Terminal term = TerminalFactory.create();
-      final boolean installWindows = term.isAnsiSupported() && term instanceof AnsiWindowsTerminal;
-
       //
-      if (installWindows) {
-        log.info("Installing windowd ansi console");
-        AnsiConsole.systemInstall();
-      }
+      final Terminal term = TerminalFactory.create();
 
       //
       Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
-          if (installWindows) {
-            AnsiConsole.systemUninstall();
-          }
           try {
             term.restore();
           }
@@ -376,8 +366,8 @@ public class CRaSH {
       PrintStream err;
       boolean ansi;
       if (term.isAnsiSupported()) {
-        out = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.out), 16384), false, encoding);
-        err = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.err), 16384), false, encoding);
+        out = new PrintStream(new BufferedOutputStream(term.wrapOutIfNeeded(new FileOutputStream(FileDescriptor.out)), 16384), false, encoding);
+        err = new PrintStream(new BufferedOutputStream(term.wrapOutIfNeeded(new FileOutputStream(FileDescriptor.err)), 16384), false, encoding);
         ansi = true;
       } else {
         out = AnsiConsole.out;
