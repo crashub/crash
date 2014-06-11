@@ -26,6 +26,7 @@ import org.crsh.command.CommandContext;
 import org.crsh.lang.spi.Language;
 import org.crsh.lang.spi.ReplResponse;
 import org.crsh.shell.ErrorKind;
+import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
@@ -82,12 +83,12 @@ public class GroovyRepl implements Repl {
       public Class<Object> getProducedType() {
         return Object.class;
       }
-      CommandContext<Object> foo;
+      CommandContext<Object> consumer;
       public void open(CommandContext<? super Object> consumer) throws IOException, CommandException {
-        this.foo = (CommandContext<Object>)consumer;
+        this.consumer = (CommandContext<Object>)consumer;
         GroovyShell shell = GroovyCompiler.getGroovyShell(session);
         ShellBinding binding = (ShellBinding)shell.getContext();
-        binding.setCurrent(foo);
+        binding.setCurrent(new InvocationContextImpl<Object>(this.consumer));
         Object o;
         try {
           o = shell.evaluate(request);
@@ -112,8 +113,8 @@ public class GroovyRepl implements Repl {
       }
       public void close() throws IOException, CommandException {
         try {
-          foo.flush();
-          foo.close();
+          consumer.flush();
+          consumer.close();
         }
         catch (Exception e) {
           throw new CommandException(ErrorKind.EVALUATION, "An error occured during the evalution of '" + request + "'", e);

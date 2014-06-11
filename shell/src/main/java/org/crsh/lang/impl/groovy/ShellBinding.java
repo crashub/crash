@@ -20,6 +20,10 @@ package org.crsh.lang.impl.groovy;
 
 import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
+import org.crsh.command.InvocationContext;
+import org.crsh.shell.impl.command.AbstractInvocationContext;
+import org.crsh.shell.impl.command.spi.CommandInvoker;
+import org.crsh.text.RenderPrintWriter;
 import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.ShellSession;
 import org.crsh.shell.impl.command.spi.CommandException;
@@ -38,7 +42,7 @@ class ShellBinding extends Binding {
   private final ShellSession session;
 
   /** . */
-  private CommandContext<Object> current;
+  private InvocationContext<Object> current;
 
   public ShellBinding(Map variables, ShellSession session) {
     super(variables);
@@ -47,7 +51,22 @@ class ShellBinding extends Binding {
     this.session = session;
   }
 
-  private CommandContext<Object> proxy = new CommandContext<Object>() {
+  private InvocationContext<Object> proxy = new AbstractInvocationContext<Object>() {
+    public RenderPrintWriter getWriter() {
+      if (current == null) {
+        throw new IllegalStateException("Not under context");
+      } else {
+        // Warning we don't proxy the writer, should we ?
+        return current.getWriter();
+      }
+    }
+    public CommandInvoker<?, ?> resolve(String s) throws CommandException {
+      if (current == null) {
+        throw new IllegalStateException("Not under context");
+      } else {
+        return current.resolve(s);
+      }
+    }
     public void close() throws Exception {
       if (current == null) {
         throw new IllegalStateException("Not under context");
@@ -174,18 +193,18 @@ class ShellBinding extends Binding {
     }
   };
 
-  public CommandContext<Object> getCurrent() {
+  public InvocationContext<Object> getCurrent() {
     return current;
   }
 
-  public void setCurrent(CommandContext<Object> current) {
+  public void setCurrent(InvocationContext<Object> current) {
     this.current = current;
   }
 
   @Override
   public Object getVariable(String name) {
     if (name.equals("context")) {
-      return new InvocationContextImpl<Object>(proxy);
+      return proxy;
     } else {
       if (session != null) {
         try {

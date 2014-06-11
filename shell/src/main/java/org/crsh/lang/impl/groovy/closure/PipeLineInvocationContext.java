@@ -19,6 +19,7 @@
 
 package org.crsh.lang.impl.groovy.closure;
 
+import org.crsh.shell.impl.command.AbstractInvocationContext;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
@@ -29,7 +30,7 @@ import org.crsh.text.Style;
 import java.io.IOException;
 import java.util.Map;
 
-class PipeLineInvocationContext implements InvocationContext<Object> {
+class PipeLineInvocationContext extends AbstractInvocationContext<Object> {
 
   /** . */
   final InvocationContext<Object> outter;

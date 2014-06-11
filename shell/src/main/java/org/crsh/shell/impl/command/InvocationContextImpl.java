@@ -24,7 +24,6 @@ import org.crsh.lang.impl.script.CommandNotFoundException;
 import org.crsh.shell.ErrorKind;
 import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.spi.CommandException;
-import org.crsh.command.InvocationContext;
 import org.crsh.lang.impl.script.Token;
 import org.crsh.text.ScreenContext;
 import org.crsh.lang.impl.script.PipeLineFactory;
@@ -35,7 +34,7 @@ import org.crsh.text.Style;
 import java.io.IOException;
 import java.util.Map;
 
-public final class InvocationContextImpl<P> implements InvocationContext<P> {
+public final class InvocationContextImpl<P> extends AbstractInvocationContext<P> {
 
   /** . */
   private static final int WRITTEN = 0;
@@ -210,14 +209,5 @@ public final class InvocationContextImpl<P> implements InvocationContext<P> {
 
   public Map<String, Object> getAttributes() {
     return commandContext.getAttributes();
-  }
-
-  public InvocationContextImpl<P> leftShift(Object o) throws Exception {
-    Class<P> consumedType = getConsumedType();
-    if (consumedType.isInstance(o)) {
-      P p = consumedType.cast(o);
-      provide(p);
-    }
-    return this;
   }
 }

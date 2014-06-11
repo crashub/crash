@@ -21,6 +21,7 @@ package org.crsh.text.ui;
 
 import groovy.lang.Closure;
 import org.crsh.groovy.GroovyCommand;
+import org.crsh.shell.impl.command.AbstractInvocationContext;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.text.Screenable;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
@@ -68,7 +69,7 @@ public class EvalElement extends Element {
     final LinkedList<LineRenderer> renderers = new LinkedList<LineRenderer>();
 
     //
-    final InvocationContext nested = new InvocationContext() {
+    final InvocationContext nested = new AbstractInvocationContext() {
 
       /** . */
       private LinkedList<Object> buffer = new LinkedList<Object>();
