@@ -75,13 +75,14 @@ crash.ssh.idle-timeout=300000
 
 To remove the SSH access, remove the jar file _crash.connectors.ssh-{crash-version}.jar_.
 
-=== Overriding the encoding
+=== Character encoding
 
-By default the SSH connector uses the _UTF-8_ encoding, this can be changed using the _crash.ssh.encoding_ configuration
+By default the SSH connector will uses the _LC_CTYPE_ env value set by the remote client. When this cannot be achieved
+the SSH connector uses the _UTF-8_ as default encoding. This default value can be changed using the _crash.ssh.default_encoding_ configuration
 property.
 
 ----
-crash.ssh.encoding=UTF-8
+crash.ssh.default_encoding=UTF-8
 ----
 
 == Telnet connector

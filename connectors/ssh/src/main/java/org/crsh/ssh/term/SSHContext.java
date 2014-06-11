@@ -21,10 +21,39 @@ package org.crsh.ssh.term;
 import org.apache.sshd.common.PtyMode;
 import org.apache.sshd.server.Environment;
 
+import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SSHContext {
+
+  /** . */
+  static final Pattern LC_TYPE_PATTERN = Pattern.compile("(?:\\p{Alpha}{2}_\\p{Alpha}{2}\\.)?([^@]+)(?:@.+)?");
+
+  /**
+   * Parse the <code>LC_CTYPE</code> format or return null.
+   *
+   * @param value the value to parse
+   * @return the corresponding charset
+   */
+  public static Charset parseEncoding(String value) {
+    Matcher matcher = LC_TYPE_PATTERN.matcher(value);
+    if (matcher.matches()) {
+      String encoding = matcher.group(1);
+      try {
+        return Charset.forName(encoding);
+      }
+      catch (Exception e) {
+        log.log(Level.FINE, "Could not find charset " + encoding + " for LC_TYPE " + value, e);
+        return null;
+      }
+    } else {
+      log.log(Level.FINE, "Could not parse LC_TYPE " + value);
+    }
+    return null;
+  }
 
   /** . */
   private static final Logger log = Logger.getLogger(SSHContext.class.getName());
@@ -35,6 +64,9 @@ public class SSHContext {
   /** . */
   private final Environment env;
 
+  /** . */
+  public final Charset encoding;
+
   public SSHContext(Environment env) {
     if (env == null) {
       throw new NullPointerException("No null env");
@@ -42,10 +74,18 @@ public class SSHContext {
 
     //
     Integer verase = env.getPtyModes().get(PtyMode.VERASE);
+    String LC_CTYPE = env.getEnv().get("LC_CTYPE");
+    Charset encoding;
+    if (LC_CTYPE != null) {
+      encoding = parseEncoding(LC_CTYPE);
+    } else {
+      encoding = null;
+    }
 
     //
     this.env = env;
     this.verase = verase != null ? verase : -1;
+    this.encoding = encoding;
   }
 
   public int getWidth() {

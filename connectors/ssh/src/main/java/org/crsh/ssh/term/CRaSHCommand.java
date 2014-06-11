@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -92,7 +93,8 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
           super.shutdown();
         }
       };
-      JLineProcessor processor = new JLineProcessor(true, shell, reader, new PrintStream(out, false, factory.encoding.name()), "\r\n");
+      Charset encoding = context.encoding != null ? context.encoding : factory.encoding;
+      JLineProcessor processor = new JLineProcessor(true, shell, reader, new PrintStream(out, false, encoding.name()), "\r\n");
       processor.run();
     } catch (java.io.InterruptedIOException e) {
       // Expected behavior because of the onExit callback in the shutdown above

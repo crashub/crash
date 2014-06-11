@@ -66,7 +66,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   public static final PropertyDescriptor<Integer> SSH_SERVER_AUTH_TIMEOUT = PropertyDescriptor.create("ssh.auth-timeout", SSH_SERVER_AUTH_DEFAULT_TIMEOUT, "The authentication timeout for ssh sessions in milliseconds");
 
   /** The SSH charset. */
-  public static final PropertyDescriptor<Charset> SSH_ENCODING = new PropertyDescriptor<Charset>(Charset.class, "ssh.encoding", Utils.UTF_8, "The ssh stream encoding") {
+  public static final PropertyDescriptor<Charset> SSH_ENCODING = new PropertyDescriptor<Charset>(Charset.class, "ssh.default_encoding", Utils.UTF_8, "The ssh stream default encoding when no one could be determined") {
     @Override
     protected Charset doParse(String s) throws Exception {
       return Charset.forName(s);
