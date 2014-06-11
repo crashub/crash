@@ -24,6 +24,7 @@ import jline.AnsiWindowsTerminal;
 import jline.Terminal;
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
+import jline.internal.Configuration;
 import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
 import org.crsh.cli.Option;
@@ -360,13 +361,16 @@ public class CRaSH {
         }
       });
 
+      //
+      String encoding = Configuration.getEncoding();
+
       // Use AnsiConsole only if term doesn't support Ansi
       PrintStream out;
       PrintStream err;
       boolean ansi;
       if (term.isAnsiSupported()) {
-        out = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.out), 16384), false);
-        err = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.err), 16384), false);
+        out = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.out), 16384), false, encoding);
+        err = new PrintStream(new BufferedOutputStream(new FileOutputStream(FileDescriptor.err), 16384), false, encoding);
         ansi = true;
       } else {
         out = AnsiConsole.out;

@@ -253,26 +253,18 @@ public abstract class Mode extends EditorAction {
           return EditorAction.DELETE_END;
         case BACKWARD_KILL_LINE:
           return EditorAction.DELETE_BEGINNING;
+        case VI_DELETE_TO_EOL:
+          return EditorAction.DELETE_END;
         case VI_DELETE_TO:
-          if (buffer.length > 0 && buffer[0] == 'D') {
-            // Workaround since it is only implemented in jline 2.12 with Operation.VI_DELETE_TO_EOL
-            // see https://github.com/jline/jline2/commit/f60432ffbd8322f53abb2d284e1f92f94acf0cc8
-            return EditorAction.DELETE_END;
-          } else {
-            return DELETE_TO;
-          }
+          return DELETE_TO;
         case VI_NEXT_WORD:
           return EditorAction.MOVE_NEXT_WORD_AT_BEGINNING;
         case BACKWARD_WORD:
           return EditorAction.MOVE_PREV_WORD_AT_BEGINNING;
+        case VI_CHANGE_TO_EOL:
+          return EMACS.then(EditorAction.DELETE_END).then(VI_INSERT);
         case VI_CHANGE_TO:
-          if (buffer.length > 0 && buffer[0] == 'C') {
-            // Workaround since it is only implemented in jline 2.12 with Operation.VI_CHANGE_TO_EOL
-            // see https://github.com/jline/jline2/commit/f60432ffbd8322f53abb2d284e1f92f94acf0cc8
-            return EMACS.then(EditorAction.DELETE_END).then(VI_INSERT);
-          } else {
-            return CHANGE_TO;
-          }
+          return CHANGE_TO;
         case VI_YANK_TO:
           return YANK_TO;
         case VI_ARG_DIGIT:
@@ -303,14 +295,8 @@ public abstract class Mode extends EditorAction {
           return EditorAction.MOVE_NEXT_WORD_BEFORE_END;
         case VI_CHANGE_CASE:
           return EditorAction.CHANGE_CASE;
-        case VI_SUBST:
-          if (buffer.length > 0 && buffer[0] == 'S') {
-            // Workaround since it is only implemented in jline 2.12 with Operation.KILL_WHOLE_LINE
-            // see https://github.com/jline/jline2/commit/f60432ffbd8322f53abb2d284e1f92f94acf0cc8
-            return EditorAction.DELETE_LINE.then(VI_INSERT);
-          } else {
-            return super.on(keyStroke);
-          }
+        case VI_KILL_WHOLE_LINE:
+          return EditorAction.DELETE_LINE.then(VI_INSERT);
         case VI_PUT:
           return EditorAction.PASTE_AFTER;
         case VI_CHANGE_CHAR:

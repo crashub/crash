@@ -37,7 +37,7 @@ public class ViChangeToEolTestCase extends AbstractConsoleTestCase {
     console.on(KeyStrokes.LEFT);
     console.on(KeyStrokes.LEFT);
     console.on(KeyStrokes.LEFT);
-    console.on(Operation.VI_CHANGE_TO, 'C');
+    console.on(Operation.VI_CHANGE_TO_EOL);
     console.on(KeyStrokes.of("yo"));
     assertEquals("yoyo", getCurrentLine());
     assertEquals(Mode.VI_INSERT, console.getMode());

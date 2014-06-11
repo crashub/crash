@@ -37,7 +37,7 @@ public class ViKillWholeLineTestCase extends AbstractConsoleTestCase {
     console.on(KeyStrokes.LEFT);
     console.on(KeyStrokes.LEFT);
     console.on(KeyStrokes.LEFT);
-    console.on(Operation.VI_SUBST, 'S');
+    console.on(Operation.VI_KILL_WHOLE_LINE);
     console.on(KeyStrokes.of("dogfishhead"));
     assertEquals("dogfishhead", getCurrentLine());
     assertEquals(Mode.VI_INSERT, console.getMode());

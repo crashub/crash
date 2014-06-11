@@ -46,6 +46,9 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   /** . */
   private Thread thread;
 
+  /** . */
+  private String encoding;
+
   public CRaSHCommand(CRaSHCommandFactory factory) {
     this.factory = factory;
   }
@@ -57,12 +60,11 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   private JLineProcessor console;
 
   public void start(Environment env) throws IOException {
-
-    //
     context = new SSHContext(env);
+    encoding = context.encoding != null ? context.encoding.name() : factory.encoding.name();
+    thread = new Thread(this, "CRaSH");
 
     //
-    thread = new Thread(this, "CRaSH");
     thread.start();
   }
 
@@ -93,8 +95,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
           super.shutdown();
         }
       };
-      Charset encoding = context.encoding != null ? context.encoding : factory.encoding;
-      JLineProcessor processor = new JLineProcessor(true, shell, reader, new PrintStream(out, false, encoding.name()), "\r\n");
+      JLineProcessor processor = new JLineProcessor(true, shell, reader, new PrintStream(out, false, encoding), "\r\n");
       processor.run();
     } catch (java.io.InterruptedIOException e) {
       // Expected behavior because of the onExit callback in the shutdown above
@@ -111,6 +112,11 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   }
 
   //
+
+  @Override
+  public String getOutputEncoding() {
+    return encoding;
+  }
 
   @Override
   public void init() throws Exception {

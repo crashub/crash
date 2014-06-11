@@ -36,7 +36,7 @@ public class ViDeleteToEolTestCase extends AbstractConsoleTestCase {
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(KeyStrokes.LEFT);
     console.on(KeyStrokes.LEFT);
-    console.on(Operation.VI_DELETE_TO, 'D');
+    console.on(Operation.VI_DELETE_TO_EOL);
     console.on(Operation.VI_APPEND_MODE);
     console.on(KeyStrokes.of("daid"));
     assertEquals("bandaid", getCurrentLine());
