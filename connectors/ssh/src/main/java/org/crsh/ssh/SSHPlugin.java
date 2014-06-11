@@ -60,10 +60,10 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   public static final PropertyDescriptor<String> SSH_SERVER_KEYGEN = PropertyDescriptor.create("ssh.keygen", "false", "Whether to automatically generate a host key");
 
   /** The SSH server idle timeout property. */
-  public static final PropertyDescriptor<Integer> SSH_SERVER_IDLE_TIMEOUT = PropertyDescriptor.create("ssh.idle-timeout", SSH_SERVER_IDLE_DEFAULT_TIMEOUT, "The idle-timeout for ssh sessions in milliseconds");
+  public static final PropertyDescriptor<Integer> SSH_SERVER_IDLE_TIMEOUT = PropertyDescriptor.create("ssh.idle_timeout", SSH_SERVER_IDLE_DEFAULT_TIMEOUT, "The idle-timeout for ssh sessions in milliseconds");
 
   /** The SSH server authentication timeout property. */
-  public static final PropertyDescriptor<Integer> SSH_SERVER_AUTH_TIMEOUT = PropertyDescriptor.create("ssh.auth-timeout", SSH_SERVER_AUTH_DEFAULT_TIMEOUT, "The authentication timeout for ssh sessions in milliseconds");
+  public static final PropertyDescriptor<Integer> SSH_SERVER_AUTH_TIMEOUT = PropertyDescriptor.create("ssh.auth_timeout", SSH_SERVER_AUTH_DEFAULT_TIMEOUT, "The authentication timeout for ssh sessions in milliseconds");
 
   /** The SSH charset. */
   public static final PropertyDescriptor<Charset> SSH_ENCODING = new PropertyDescriptor<Charset>(Charset.class, "ssh.default_encoding", Utils.UTF_8, "The ssh stream default encoding when no one could be determined") {

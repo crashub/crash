@@ -67,9 +67,11 @@ _crash.properties_ file.
 
 ----
 # SSH configuration 5 minutes = 5 * 60 * 1000 = 300'000
-crash.ssh.auth-timeout=300000
-crash.ssh.idle-timeout=300000
+crash.ssh.auth_timeout=300000
+crash.ssh.idle_timeout=300000
 ----
+
+NOTE: those properties are named _crash.ssh.auth-timeout_ and _crash.ssh.idle-timeout_ in previous version.
 
 === Removing SSH access
 
