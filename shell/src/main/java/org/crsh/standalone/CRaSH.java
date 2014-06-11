@@ -183,7 +183,7 @@ public class CRaSH {
           copyConf(child, new File(dst, child.getName()));
         }
       }
-      confBuilder = createBuilder().mount("file:" + dst.getAbsolutePath());
+      confBuilder = createBuilder().mount("file", Path.get(dst));
     }
 
     //
@@ -199,7 +199,7 @@ public class CRaSH {
       org.crsh.vfs.File f = cmdBuilder.build().get(Path.get("/"));
       log.info("Extracting command resources to " + dst.getAbsolutePath());
       copyCmd(f, dst);
-      cmdBuilder = createBuilder().mount("file:" + dst.getAbsolutePath());
+      cmdBuilder = createBuilder().mount("file", Path.get(dst));
     }
 
     //

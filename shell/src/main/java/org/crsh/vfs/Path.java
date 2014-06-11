@@ -35,6 +35,27 @@ public abstract class Path implements Iterable<String> {
   /** . */
   public static final Relative EMPTY = new Relative(true, EMPTY_STRING);
 
+  private static String[] path(java.io.File file, int size) {
+    String[] ret;
+    java.io.File parent = file.getParentFile();
+    if (parent != null && parent.isDirectory()) {
+      ret = path(parent, 1 + size);
+    } else {
+      ret = new String[1 + size];
+    }
+    ret[ret.length - size - 1] = file.getName();
+    return ret;
+  }
+
+  public static Path get(java.io.File file) {
+    String[] names = path(file, 0);
+    if (file.isAbsolute()) {
+      return new Absolute(file.isDirectory(), names);
+    } else {
+      return new Relative(file.isDirectory(), names);
+    }
+  }
+
   public static Path get(String s) {
     if (s.length() == 0) {
       return EMPTY;
