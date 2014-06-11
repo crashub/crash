@@ -203,6 +203,11 @@ public class CRaSH {
     }
 
     //
+    log.log(Level.INFO, "conf mounts: " + confBuilder.toString());
+    log.log(Level.INFO, "cmd mounts: " + cmdBuilder.toString());
+
+
+    //
     CloseableList closeable = new CloseableList();
     Shell shell;
     if (pids != null && pids.size() > 0) {

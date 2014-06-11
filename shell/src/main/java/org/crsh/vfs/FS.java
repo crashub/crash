@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -110,6 +111,19 @@ public class FS {
         fs.mount(mount.getDriver());
       }
       return fs;
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+      for (Iterator<Mount<?>> i = mounts.iterator();i.hasNext();) {
+        Mount<?> mount = i.next();
+        sb.append(mount.getValue());
+        if (i.hasNext()) {
+          sb.append(';');
+        }
+      }
+      return sb.toString();
     }
   }
 
