@@ -27,6 +27,7 @@ import jline.console.ConsoleReader;
 import jline.internal.Configuration;
 import org.crsh.cli.Argument;
 import org.crsh.cli.Command;
+import org.crsh.cli.Named;
 import org.crsh.cli.Option;
 import org.crsh.cli.Usage;
 import org.crsh.cli.descriptor.CommandDescriptor;
@@ -71,6 +72,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+@Named("crash")
 public class CRaSH {
 
   /** . */
