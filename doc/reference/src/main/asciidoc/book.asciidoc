@@ -3,7 +3,7 @@ Julien Viet <http://www.julienviet.com>
 v{crash-version}
 
 The Common Reusable SHell (CRaSH) deploys in a Java runtime and provides interactions with the JVM.
-Commands are written in Groovy and can be developed at runtime making the extension of the shell very easy
+Commands are written in Groovy or Java and can be developed at runtime making the extension of the shell very easy
 with fast development cycle.
 
 include::running.asciidoc[]
