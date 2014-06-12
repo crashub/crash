@@ -18,23 +18,51 @@
  */
 package org.crsh.lang.impl.groovy;
 
-import groovy.lang.GroovyRuntimeException;
+import groovy.lang.Closure;
+import groovy.lang.MissingMethodException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
+import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
+import org.crsh.command.RuntimeContext;
 import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
-import org.crsh.lang.impl.groovy.closure.PipeLineInvoker;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
-
-import java.io.IOException;
+import org.crsh.util.SafeCallable;
 
 /**
  * @author Julien Viet
  */
 public class Helper {
 
-  public static PipeLineClosure resolveCommandProperty(final InvocationContext context, final String property) {
+  public static Object invokeMethod(RuntimeContext context, String name, Object args, MissingMethodException ex) {
+    if (context instanceof InvocationContext<?>) {
+      SafeCallable executed = Helper.resolveMethodInvocation((InvocationContext)context, name, args);
+      if (executed != null) {
+        return executed.call();
+      }
+    }
+
+    //
+    Object o = context.getSession().get(name);
+    if (o instanceof Closure) {
+      Closure closure = (Closure)o;
+      if (args instanceof Object[]) {
+        Object[] array = (Object[])args;
+        if (array.length == 0) {
+          return closure.call();
+        } else {
+          return closure.call(array);
+        }
+      } else {
+        return closure.call(args);
+      }
+    } else {
+      throw ex;
+    }
+  }
+
+  public static PipeLineClosure resolveProperty(final InvocationContext context, final String property) {
     CRaSH crash = (CRaSH)context.getSession().get("crash");
     if (crash != null) {
       try {
@@ -52,7 +80,7 @@ public class Helper {
     }
   }
 
-  public static Runnable resolveCommandInvocation(final InvocationContext context, final String name, final Object args) {
+  public static SafeCallable resolveMethodInvocation(final InvocationContext context, final String name, final Object args) {
     CRaSH crash = (CRaSH)context.getSession().get("crash");
     if (crash != null) {
       final Command<?> cmd;
@@ -63,20 +91,11 @@ public class Helper {
         throw new InvokerInvocationException(ce);
       }
       if (cmd != null) {
-        return new Runnable() {
+        return new SafeCallable() {
           @Override
-          public void run() {
+          public Object call() {
             PipeLineClosure closure = new PipeLineClosure(context, name, cmd);
-            PipeLineInvoker evaluation = closure.bind(args);
-            try {
-              evaluation.invoke(context);
-            }
-            catch (IOException e) {
-              throw new GroovyRuntimeException(e);
-            }
-            catch (CommandException e) {
-              throw new GroovyRuntimeException(e.getCause());
-            }
+            return closure.call((Object[])args);
           }
         };
       }

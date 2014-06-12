@@ -19,6 +19,7 @@
 
 package org.crsh.shell.impl.command;
 
+import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
 import org.crsh.shell.AbstractShellTestCase;
 import test.command.Commands;
 
@@ -27,6 +28,7 @@ import test.command.Commands;
  */
 public class DispatchTestCase extends AbstractShellTestCase {
 
+/*
   public void testInvokeCompound() throws Exception {
     String foo = "class foo {\n" +
         "@Command\n" +
@@ -45,7 +47,7 @@ public class DispatchTestCase extends AbstractShellTestCase {
     String foo = "class foo {\n" +
         "@Command\n" +
         "public void main() {\n" +
-        "produce_command { it }\n" +
+        "(produce_command { it })()\n" +
         "}\n" +
         "}";
     lifeCycle.bindGroovy("foo", foo);
@@ -156,6 +158,7 @@ public class DispatchTestCase extends AbstractShellTestCase {
     //
     assertEquals("bar", assertOk("foo"));
   }
+*/
 
   public void testCheckedException() {
     String foo = "class foo {\n" +
@@ -341,5 +344,29 @@ public class DispatchTestCase extends AbstractShellTestCase {
 
     //
     assertEquals("bar", assertOk("foo"));
+  }
+
+  public static Object bound;
+
+  public void testBindCommandInCommand() {
+    lifeCycle.bindClass("bound", Commands.Parameterized.class);
+    lifeCycle.bindGroovy("container", "public class container {\n" +
+        "@Command public void main() {\n" +
+        DispatchTestCase.class.getName() + ".bound = bound { }\n" +
+        "}\n" +
+        "}\n");
+    bound = null;
+    assertOk("container");
+    assertNotNull(bound);
+    assertInstance(PipeLineClosure.class, bound);
+  }
+
+  public void testBindCommandInScript() {
+    lifeCycle.bindClass("bound", Commands.Parameterized.class);
+    lifeCycle.bindGroovy("container",  DispatchTestCase.class.getName() + ".bound = bound { }\n");
+    bound = null;
+    assertOk("container");
+    assertNotNull(bound);
+    assertInstance(PipeLineClosure.class, bound);
   }
 }

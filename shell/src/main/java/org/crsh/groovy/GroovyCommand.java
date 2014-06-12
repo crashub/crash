@@ -19,7 +19,6 @@
 
 package org.crsh.groovy;
 
-import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
 import groovy.lang.MetaClass;
 import groovy.lang.MissingMethodException;
@@ -29,6 +28,7 @@ import org.crsh.command.BaseCommand;
 import org.crsh.lang.impl.groovy.Helper;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ScriptException;
+import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
 
 /**
  * The base command for Groovy class based commands.
@@ -70,43 +70,17 @@ public abstract class GroovyCommand extends BaseCommand implements GroovyObject 
       return getMetaClass().invokeMethod(this, name, args);
     }
     catch (MissingMethodException missing) {
-      if (context instanceof InvocationContext<?>) {
-        Runnable executed = Helper.resolveCommandInvocation((InvocationContext)context, name, args);
-        if (executed != null) {
-          executed.run();
-          return null;
-        }
-      }
-
-      //
-      Object o = context.getSession().get(name);
-      if (o instanceof Closure) {
-        Closure closure = (Closure)o;
-        if (args instanceof Object[]) {
-          Object[] array = (Object[])args;
-          if (array.length == 0) {
-            return closure.call();
-          } else {
-            return closure.call(array);
-          }
-        } else {
-          return closure.call(args);
-        }
-      } else {
-        throw missing;
-      }
+      return Helper.invokeMethod(context, name, args, missing);
     }
   }
 
   public final Object getProperty(String property) {
     if (context instanceof InvocationContext<?>) {
-      Object ret = Helper.resolveCommandProperty((InvocationContext)context, property);
+      PipeLineClosure ret = Helper.resolveProperty((InvocationContext)context, property);
       if (ret != null) {
         return ret;
       }
     }
-
-    //
     try {
       return getMetaClass().getProperty(this, property);
     }

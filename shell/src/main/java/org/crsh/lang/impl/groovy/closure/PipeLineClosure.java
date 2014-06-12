@@ -30,6 +30,7 @@ import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
 import org.crsh.util.Utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -210,8 +211,11 @@ public class PipeLineClosure extends Closure {
           binding.invoke(context);
           return null;
         }
-        catch (Exception e) {
+        catch (IOException e) {
           return throwRuntimeException(e);
+        }
+        catch (CommandException e) {
+          return throwRuntimeException(e.getCause());
         }
       } else {
         return super.call(args);

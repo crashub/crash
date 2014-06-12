@@ -18,21 +18,16 @@
  */
 package org.crsh.lang.impl.groovy.command;
 
-import groovy.lang.GroovyRuntimeException;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
-import org.codehaus.groovy.runtime.InvokerInvocationException;
+import org.crsh.lang.impl.groovy.Helper;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.command.InvocationContext;
-import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
-import org.crsh.lang.impl.groovy.closure.PipeLineInvoker;
-import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.text.RenderPrintWriter;
 
-import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.LinkedList;
 
@@ -62,7 +57,7 @@ public abstract class GroovyScriptCommand extends Script {
     }
 
     // Save current context (is null the first time)
-    stack.addLast((InvocationContext)this.context);
+    stack.addLast(this.context);
 
     // Set new context
     this.context = context;
@@ -109,66 +104,21 @@ public abstract class GroovyScriptCommand extends Script {
       return super.invokeMethod(name, args);
     }
     catch (MissingMethodException missing) {
-      if (context instanceof InvocationContext) {
-        CRaSH crash = (CRaSH)context.getSession().get("crash");
-        if (crash != null) {
-          Command<?> cmd;
-          try {
-            cmd = crash.getCommand(name);
-          }
-          catch (CommandException ce) {
-            throw new InvokerInvocationException(ce);
-          }
-          if (cmd != null) {
-            InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
-            PipeLineClosure closure = new PipeLineClosure(ic, name, cmd);
-            PipeLineInvoker evaluation = closure.bind(args);
-            try {
-              evaluation.invoke(ic);
-              return null;
-            }
-            catch (IOException e) {
-              throw new GroovyRuntimeException(e);
-            }
-            catch (CommandException e) {
-              throw new GroovyRuntimeException(e.getCause());
-            }
-          }
-        }
-      }
-
-      //
-      throw missing;
+      return Helper.invokeMethod(context, name, args, missing);
     }
   }
 
   @Override
   public final Object getProperty(String property) {
     if ("out".equals(property)) {
-      if (context instanceof InvocationContext<?>) {
-        return ((InvocationContext<?>)context).getWriter();
-      } else {
-        return null;
-      }
+      return ((InvocationContext<?>)context).getWriter();
     } else if ("context".equals(property)) {
       return context;
     } else {
-      if (context instanceof InvocationContext<?>) {
-        CRaSH crash = (CRaSH)context.getSession().get("crash");
-        if (crash != null) {
-          try {
-            Command<?> cmd = crash.getCommand(property);
-            if (cmd != null) {
-              InvocationContext<Object> ic = (InvocationContext<Object>)peekContext();
-              return new PipeLineClosure(ic, property, cmd);
-            }
-          } catch (CommandException e) {
-            throw new InvokerInvocationException(e);
-          }
-        }
+      PipeLineClosure ret = Helper.resolveProperty(context, property);
+      if (ret != null) {
+        return ret;
       }
-
-      //
       try {
         return super.getProperty(property);
       }
