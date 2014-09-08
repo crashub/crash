@@ -21,6 +21,8 @@ package org.crsh.spring;
 
 import org.crsh.util.SimpleMap;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,11 +43,21 @@ class SpringMap extends SimpleMap<String, Object> {
     return Arrays.asList(factory.getBeanDefinitionNames()).iterator();
   }
 
-  @Override
-  public Object get(Object key) {
-    if (key instanceof String) {
-      return factory.getBean(((String)key));
+   @Override
+   public Object get(Object key) {
+     Object bean = null;
+     if (key instanceof String) {
+       String sKey = (String) key;
+       if (this.factory instanceof DefaultListableBeanFactory) {
+         DefaultListableBeanFactory defaultFactory = (DefaultListableBeanFactory) factory;
+         BeanDefinition beanDef = defaultFactory.getBeanDefinition(sKey);
+         if (!beanDef.isAbstract() && !beanDef.isLazyInit()) {
+           bean = factory.getBean(sKey);
+         }
+       } else {
+         bean = factory.getBean(sKey);
+       }
+     }
+     return bean;
     }
-    return null;
-  }
 }
