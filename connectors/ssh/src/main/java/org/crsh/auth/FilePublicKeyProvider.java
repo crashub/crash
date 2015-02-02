@@ -20,11 +20,11 @@ package org.crsh.auth;
 
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.util.SecurityUtils;
-import org.bouncycastle.openssl.PEMReader;
-import org.bouncycastle.openssl.PasswordFinder;
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.crsh.ssh.util.KeyPairUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.security.KeyPair;
@@ -46,16 +46,8 @@ class FilePublicKeyProvider extends AbstractKeyPairProvider {
   /** . */
   private String[] files;
 
-  /** . */
-  private PasswordFinder passwordFinder;
-
   FilePublicKeyProvider(String[] files) {
     this.files = files;
-  }
-
-  FilePublicKeyProvider(String[] files, PasswordFinder passwordFinder) {
-    this.files = files;
-    this.passwordFinder = passwordFinder;
   }
 
   public Iterable<KeyPair> loadKeys() {
@@ -65,18 +57,16 @@ class FilePublicKeyProvider extends AbstractKeyPairProvider {
     List<KeyPair> keys = new ArrayList<KeyPair>();
     for (String file : files) {
       try {
-        PEMReader r = new PEMReader(new InputStreamReader(new FileInputStream(file)), passwordFinder);
-        try {
-          Object o = r.readObject();
+          Object o = KeyPairUtils.readKey(new InputStreamReader(new FileInputStream(file)));
           if (o instanceof KeyPair) {
             keys.add(new KeyPair(((KeyPair)o).getPublic(), null));
           } else if (o instanceof PublicKey) {
             keys.add(new KeyPair((PublicKey)o, null));
+          } else if (o instanceof PEMKeyPair) {
+            PEMKeyPair keyPair = (PEMKeyPair)o;
+            JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+            keys.add(new KeyPair(converter.getPublicKey(keyPair.getPublicKeyInfo()), null));
           }
-        }
-        finally {
-          r.close();
-        }
       }
       catch (Exception e) {
         LOG.info("Unable to read key {}: {}", file, e);

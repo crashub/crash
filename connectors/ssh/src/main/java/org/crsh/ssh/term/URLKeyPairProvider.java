@@ -20,7 +20,9 @@ package org.crsh.ssh.term;
 
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.util.SecurityUtils;
-import org.bouncycastle.openssl.PEMReader;
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.crsh.ssh.util.KeyPairUtils;
 import org.crsh.vfs.Resource;
 
 import java.io.ByteArrayInputStream;
@@ -51,15 +53,13 @@ public class URLKeyPairProvider extends AbstractKeyPairProvider {
     List<KeyPair> keys = new ArrayList<KeyPair>();
     if (key != null) {
       try {
-        PEMReader r = new PEMReader(new InputStreamReader(new ByteArrayInputStream(key.getContent())));
-        try {
-          Object o = r.readObject();
+          Object o = KeyPairUtils.readKey(new InputStreamReader(new ByteArrayInputStream(key.getContent())));
           if (o instanceof KeyPair) {
             keys.add((KeyPair) o);
+          } else if(o instanceof PEMKeyPair) {
+            JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+            keys.add(converter.getKeyPair((PEMKeyPair)o));
           }
-        } finally {
-          r.close();
-        }
       } catch (Exception e) {
         log.log(Level.INFO, "Unable to read key " + key + ": " + key, e);
       }
