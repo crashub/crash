@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A shell command resolver for languages.
@@ -43,10 +45,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LanguageCommandResolver implements CommandResolver {
 
   /** . */
+  private final Logger log = Logger.getLogger(getClass().getName());
+
+  /** . */
   private final Map<String, TimestampedObject<CommandResolution>> commandCache = new ConcurrentHashMap<String, TimestampedObject<CommandResolution>>();
 
   /** . */
   final HashMap<String, Compiler> activeCompilers = new HashMap<String, Compiler>();
+
+  /** . */
+  private final Map<String, String> commandAliasMap = new HashMap<String, String>();
 
   /** . */
   final PluginContext context;
@@ -69,8 +77,25 @@ public class LanguageCommandResolver implements CommandResolver {
     }
 
     this.context = context;
-  }
 
+    for (String resourceName : context.listResources(ResourceKind.COMMAND)) {
+      int index = resourceName.indexOf('.');
+      String name = resourceName.substring(0, index);
+      String ext = resourceName.substring(index + 1);
+      if (activeCompilers.containsKey(ext)) {
+        try {
+          CommandResolution resolution = resolveCommand2(name);
+          String commandAlias = resolution.getCommand().getDescriptor().getName();
+          if (name.equals(commandAlias) == false) {
+            commandAliasMap.put(commandAlias, name);
+          }
+        } catch (Exception e) {
+          log.log(Level.WARNING, "problem processing command " + name, e);
+        }
+      }
+    }
+  }
+  
   public Compiler getCompiler(String name) {
     return activeCompilers.get(name);
   }
@@ -85,10 +110,10 @@ public class LanguageCommandResolver implements CommandResolver {
       if (activeCompilers.containsKey(ext)) {
         try {
           CommandResolution resolution = resolveCommand2(name);
-          commands.put(name, resolution.getDescription());
-        }
-        catch (CommandException e) {
-          //
+          String commandAliasCheck = resolution.getCommand().getDescriptor().getName();
+          commands.put(commandAliasCheck, resolution.getDescription());
+        } catch (CommandException e) {
+          log.log(Level.WARNING, "problem processing command " + name, e);
         }
       }
     }
@@ -97,6 +122,9 @@ public class LanguageCommandResolver implements CommandResolver {
 
   @Override
   public Command<?> resolveCommand(String name) throws CommandException, NullPointerException {
+    if (commandAliasMap.containsKey(name)) {
+      name = commandAliasMap.get(name);
+    }
     CommandResolution resolution = resolveCommand2(name);
     return resolution != null ? resolution.getCommand() : null;
   }
@@ -127,7 +155,8 @@ public class LanguageCommandResolver implements CommandResolver {
     if (ref == null) {
       command = manager.compileCommand(name, script.getContent());
       if (command != null) {
-        commandCache.put(name, new TimestampedObject<CommandResolution>(script.getTimestamp(), command));
+        String commandAliasCheck = command.getCommand().getDescriptor().getName();
+        commandCache.put(commandAliasCheck, new TimestampedObject<CommandResolution>(script.getTimestamp(), command));
       }
     } else {
       command = ref.getObject();
