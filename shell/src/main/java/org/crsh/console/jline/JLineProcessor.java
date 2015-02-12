@@ -24,6 +24,7 @@ import jline.console.ConsoleReader;
 import jline.console.KeyMap;
 import jline.console.Operation;
 import jline.internal.NonBlockingInputStream;
+
 import org.crsh.console.Console;
 import org.crsh.console.ConsoleDriver;
 import org.crsh.shell.Shell;
@@ -33,9 +34,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class JLineProcessor implements Runnable, ConsoleDriver {
 
+  /** . */
+  final Logger log = Logger.getLogger(getClass().getName());
+  
   /** . */
   private final Console console;
 
@@ -207,7 +213,7 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
         }
       }
       catch (IOException e) {
-        e.printStackTrace();
+        log.log(Level.INFO, "console has disconnected", e);
         return;
       }
     }
