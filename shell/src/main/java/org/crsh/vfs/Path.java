@@ -21,6 +21,7 @@ package org.crsh.vfs;
 
 import org.crsh.util.BaseIterator;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -79,7 +80,7 @@ public abstract class Path implements Iterable<String> {
     //
     boolean dir;
     int end;
-    if (s.charAt(s.length() - 1) == '/') {
+    if (s.charAt(s.length() - 1) == '/' || s.charAt(s.length() - 1) == File.separatorChar) {
       dir = true;
       end = s.length() - 1;
     } else {
@@ -96,6 +97,8 @@ public abstract class Path implements Iterable<String> {
 
   private static String[] parseNames(final String s, final int prev, int end, final int count) {
     int next = s.indexOf('/', prev);
+    if (next == -1) next = s.indexOf(File.separatorChar, prev);
+
     if (next == -1 || next > end) {
       if (prev < end) {
         String[] ret = new String[count + 1];

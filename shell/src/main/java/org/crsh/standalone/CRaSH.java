@@ -227,7 +227,15 @@ public class CRaSH {
           if (buffer.length() > 0) {
             buffer.append(' ');
           }
-          buffer.append(file.getCanonicalPath());
+          String fileName = file.getCanonicalPath();
+          if(fileName.charAt(0) != '/' && fileName.charAt(1) == ':') {
+            // On window, the value of Class-Path in Manifest file must in form: /C:/path/lib/abc.jar
+            fileName = fileName.replace(File.separatorChar, '/');
+            buffer.append("/").append(fileName);
+
+          } else {
+            buffer.append(file.getCanonicalPath());
+          }
         }
       }
 

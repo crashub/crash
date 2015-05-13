@@ -60,10 +60,22 @@ public class FileMountFactory implements FSMountFactory<File> {
   @Override
   public Mount<File> create(Path path) throws IOException {
     File file = path.isAbsolute() ? absoluteRoot : root;
-    for (String name : path) {
-      file = new File(file, name);
+
+    for (int i = 0; i < path.getSize(); i++) {
+      String name = path.nameAt(i);
+      if(i == 0 && isWindow() && name.length() == 2 && name.charAt(1) == ':') {
+        file = new File(name + File.separatorChar);
+      } else {
+        file = new File(file, name);
+      }
     }
+
     // Always use absolute path here
     return new Mount<File>(new FileDriver(file), "file:" + file.getAbsolutePath());
+  }
+
+  private static String OS = System.getProperty("os.name").toLowerCase();
+  private static boolean isWindow() {
+    return (OS.indexOf("win") >= 0);
   }
 }
