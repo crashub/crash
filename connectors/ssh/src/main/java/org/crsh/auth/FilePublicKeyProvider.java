@@ -20,6 +20,8 @@ package org.crsh.auth;
 
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.util.SecurityUtils;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.openssl.PEMException;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.crsh.ssh.util.KeyPairUtils;
@@ -64,8 +66,12 @@ class FilePublicKeyProvider extends AbstractKeyPairProvider {
             keys.add(new KeyPair((PublicKey)o, null));
           } else if (o instanceof PEMKeyPair) {
             PEMKeyPair keyPair = (PEMKeyPair)o;
-            JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
-            keys.add(new KeyPair(converter.getPublicKey(keyPair.getPublicKeyInfo()), null));
+            keys.add(convertPemKeyPair(keyPair));
+          } else if (o instanceof SubjectPublicKeyInfo) {
+            PEMKeyPair keyPair = new PEMKeyPair((SubjectPublicKeyInfo) o, null);
+            keys.add(convertPemKeyPair(keyPair));
+          } else {
+            throw new UnsupportedOperationException(String.format("Key type %s not supported.", o.getClass().getName()));
           }
       }
       catch (Exception e) {
@@ -74,4 +80,10 @@ class FilePublicKeyProvider extends AbstractKeyPairProvider {
     }
     return keys;
   }
+
+  private KeyPair convertPemKeyPair(PEMKeyPair pemKeyPair) throws PEMException {
+    JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+    return new KeyPair(converter.getPublicKey(pemKeyPair.getPublicKeyInfo()), null);
+  }
+
 }
