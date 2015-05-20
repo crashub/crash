@@ -3,6 +3,7 @@ setlocal ENABLEDELAYEDEXPANSION
 
 REM init variables
 set CMD_LINE_ARGS=
+set JAVA_EXEC=java
 
 REM Uncomment for remote debugging
 REM set CRASH_DEBUG_OPTS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
@@ -25,6 +26,7 @@ REM if JAVA_HOME is set, add tools.jar to classpath
 if ".%JAVA_HOME%" == "."  goto addCrashJar
 set CLASSPATH=%JAVA_HOME%\lib\tools.jar
 set TOOLS_JAR=%JAVA_HOME%\lib\tools.jar
+set JAVA_EXEC=%JAVA_HOME%\bin\java
 
 :addCrashJar
 for %%F in (%CRASH_HOME%\bin\crash.cli*.jar) do set JARNAME=%%~nxF
@@ -38,7 +40,7 @@ REM Create tmp dir if it does not exist
 if not exist "%CRASH_HOME%\tmp" mkdir %CRASH_HOME%\tmp
 
 REM start the application with all parameters. Add tools.jar to the bootclasspath, otherwise it cannot be found
-java -Xbootclasspath/a:"%TOOLS_JAR%" -classpath "%CLASSPATH%" %CRASH_DEBUG_OPTS% -Djava.util.logging.config.file="%CRASH_HOME%\conf\logging.properties" org.crsh.cli.impl.bootstrap.Main --conf-folder "%CRASH_HOME%\conf" --cmd-folder "%CRASH_HOME%\cmd" %CMD_LINE_ARGS%
+%JAVA_EXEC% -Xbootclasspath/a:"%TOOLS_JAR%" -classpath "%CLASSPATH%" %CRASH_DEBUG_OPTS% -Djava.util.logging.config.file="%CRASH_HOME%\conf\logging.properties" org.crsh.cli.impl.bootstrap.Main --conf-folder "%CRASH_HOME%\conf" --cmd-folder "%CRASH_HOME%\cmd" %CMD_LINE_ARGS%
 
 set ERROR_CODE=%ERRORLEVEL%
 endlocal & set ERROR_CODE=%ERROR_CODE%
