@@ -31,8 +31,10 @@ import org.crsh.util.TimestampedObject;
 import org.crsh.vfs.Resource;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -123,7 +125,21 @@ public class LanguageCommandResolver implements CommandResolver {
   @Override
   public Command<?> resolveCommand(String name) throws CommandException, NullPointerException {
     if (commandAliasMap.containsKey(name)) {
+      // exact alias match
       name = commandAliasMap.get(name);
+    } else {
+      // look for a unique matching prefix
+      final Set<String> prefixMatch = new HashSet<String>();
+      for (String alias : commandAliasMap.keySet()) {
+        if(alias.startsWith(name)) {
+          prefixMatch.add(alias);
+        }
+      }
+      // if a single matching alias has been found use its command 
+      if(prefixMatch.size() == 1) {
+        String alias = prefixMatch.iterator().next();
+        name = commandAliasMap.get(alias);
+      }
     }
     CommandResolution resolution = resolveCommand2(name);
     return resolution != null ? resolution.getCommand() : null;
