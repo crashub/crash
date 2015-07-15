@@ -142,7 +142,7 @@ arguments and the -l option specify the level among the finest, finer, fine, inf
 severe levels. When no level is specified, the level is cleared and the level will be
 inherited from its ancestors.
 
-% jul set -l trace foo
+% jul set -l finest foo
 % jul set foo
 
 The logger name can be omitted and instead stream of logger can be consumed as it is a
@@ -281,7 +281,7 @@ class LoggerCompleter implements Completer {
 
 @Retention(RetentionPolicy.RUNTIME)
 @Usage("the logger level")
-@Man("The logger level to assign among {trace, debug, info, warn, error}")
+@Man("The logger level to assign among {finest, finer, fine, info, warning, severe}")
 @Option(names=["l","level"],completer=EnumCompleter)
 @interface LevelOpt { }
 
