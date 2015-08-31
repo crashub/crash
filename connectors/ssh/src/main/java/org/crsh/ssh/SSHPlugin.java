@@ -50,6 +50,9 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   /** The SSH server authentication timeout value. */
   private static final int SSH_SERVER_AUTH_DEFAULT_TIMEOUT = 10 * 60 * 1000;
 
+  /** The SSH host. */
+  public static final PropertyDescriptor<String> SSH_HOST = PropertyDescriptor.create("ssh.host", (String)null, "The SSH host");
+
   /** The SSH port. */
   public static final PropertyDescriptor<Integer> SSH_PORT = PropertyDescriptor.create("ssh.port", 2000, "The SSH port");
 
@@ -83,7 +86,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
   @Override
   protected Iterable<PropertyDescriptor<?>> createConfigurationCapabilities() {
-    return Arrays.<PropertyDescriptor<?>>asList(SSH_PORT, SSH_SERVER_KEYPATH, SSH_SERVER_KEYGEN, SSH_SERVER_AUTH_TIMEOUT,
+    return Arrays.<PropertyDescriptor<?>>asList(SSH_HOST, SSH_PORT, SSH_SERVER_KEYPATH, SSH_SERVER_KEYGEN, SSH_SERVER_AUTH_TIMEOUT,
         SSH_SERVER_IDLE_TIMEOUT, SSH_ENCODING, AuthenticationPlugin.AUTH);
   }
 
@@ -91,6 +94,9 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   public void init() {
 
     SecurityUtils.setRegisterBouncyCastle(true);
+    //
+    String host = getContext().getProperty(SSH_HOST);
+
     //
     Integer port = getContext().getProperty(SSH_PORT);
     if (port == null) {
@@ -186,6 +192,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
     SSHLifeCycle lifeCycle = new SSHLifeCycle(
         getContext(),
         encoding,
+        host,
         port,
         idleTimeout,
         authTimeout,

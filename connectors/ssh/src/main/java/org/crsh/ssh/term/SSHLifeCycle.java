@@ -57,6 +57,9 @@ public class SSHLifeCycle {
   private final PluginContext context;
 
   /** . */
+  private final String host;
+
+  /** . */
   private final int port;
 
   /** . */
@@ -83,6 +86,7 @@ public class SSHLifeCycle {
   public SSHLifeCycle(
       PluginContext context,
       Charset encoding,
+      String host,
       int port,
       int idleTimeout,
       int authTimeout,
@@ -91,6 +95,7 @@ public class SSHLifeCycle {
     this.authenticationPlugins = authenticationPlugins;
     this.context = context;
     this.encoding = encoding;
+    this.host = host;
     this.port = port;
     this.idleTimeout = idleTimeout;
     this.authTimeout = authTimeout;
@@ -99,6 +104,10 @@ public class SSHLifeCycle {
 
   public Charset getEncoding() {
     return encoding;
+  }
+
+  public String getHost() {
+    return host;
   }
 
   public int getPort() {
@@ -134,6 +143,7 @@ public class SSHLifeCycle {
 
       //
       SshServer server = SshServer.setUpDefaultServer();
+      server.setHost(host);
       server.setPort(port);
 
       if (this.idleTimeout > 0) {
