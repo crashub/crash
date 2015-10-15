@@ -111,7 +111,7 @@ public class repl extends BaseCommand implements ReplCompleter {
       }
 
       //
-      context.provide(new LabelElement("Current repl is " + current.getLanguage().getName() + "available repl are:\n"));
+      context.provide(new LabelElement("Current repl is '" + current.getLanguage().getName() + "'. Available repl are:\n"));
       context.provide(table);
     }
   }
