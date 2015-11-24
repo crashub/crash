@@ -18,8 +18,8 @@
  */
 package org.crsh.ssh.term;
 
-import org.crsh.console.jline.Terminal;
-import org.crsh.console.jline.console.ConsoleReader;
+import jline.Terminal;
+import jline.console.ConsoleReader;
 import org.apache.sshd.server.Environment;
 import org.crsh.console.jline.JLineProcessor;
 import org.crsh.shell.Shell;
@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
