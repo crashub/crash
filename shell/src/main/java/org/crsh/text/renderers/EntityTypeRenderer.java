@@ -46,7 +46,7 @@ public class EntityTypeRenderer extends Renderer<EntityTypeRenderer.EntityTypeDa
       EntityTypeData entityTypeData = stream.next();
 
       if (!entityTypeData.verbose) {
-        if (table.getRows().size() == 0) {
+        if (table.getRows().isEmpty()) {
           RowElement header = new RowElement(true);
           header.add("NAME", "TYPE");
           table.add(header);
@@ -66,7 +66,7 @@ public class EntityTypeRenderer extends Renderer<EntityTypeRenderer.EntityTypeDa
         mapping.add("Mapping : " + entityTypeData.mapping);
         table.add(mapping);
 
-        if (entityTypeData.attributes.size() > 0) {
+        if (!entityTypeData.attributes.isEmpty()) {
           RowElement attributesLabel = new RowElement();
           attributesLabel.add("Attributes : ");
           table.add(attributesLabel);

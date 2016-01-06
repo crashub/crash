@@ -186,7 +186,7 @@ class ClientProcessContext implements ShellProcessContext {
 
   public synchronized void flush() {
     if (!closed) {
-      if (buffer.size() > 0) {
+      if (!buffer.isEmpty()) {
         try {
           for (ServerMessage.Chunk chunk : buffer) {
             client.out.writeObject(chunk);

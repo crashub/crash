@@ -58,7 +58,7 @@ public abstract class AbstractCommand {
   }
 
   public final InvocationContext<?> popContext() {
-    if (stack != null && stack.size() > 0) {
+    if (stack != null && !stack.isEmpty()) {
       InvocationContext context = (InvocationContext)this.context;
       this.context = stack.removeLast();
       this.out = this.context != null ? ((InvocationContext)this.context).getWriter() : null;

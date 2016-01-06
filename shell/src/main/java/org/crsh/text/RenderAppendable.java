@@ -110,7 +110,7 @@ public class RenderAppendable implements ScreenContext {
       throw new IllegalStateException("Cannot leave non existing style");
     }
     Style.Composite last = stack.removeLast();
-    if (stack.size() > 0) {
+    if (!stack.isEmpty()) {
 
       // Compute merged
       Style.Composite merged = getMerged();
@@ -174,13 +174,13 @@ public class RenderAppendable implements ScreenContext {
   }
 
   public void styleOff() {
-    if (stack != null && stack.size() > 0) {
+    if (stack != null && !stack.isEmpty()) {
       append(Style.reset);
     }
   }
 
   public void styleOn() {
-    if (stack != null && stack.size() > 0) {
+    if (stack != null && !stack.isEmpty()) {
       append(getMerged());
     }
   }

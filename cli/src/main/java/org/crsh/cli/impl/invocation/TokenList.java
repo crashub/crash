@@ -42,11 +42,11 @@ class TokenList implements Iterable<Token> {
   }
 
   int last() {
-    return list.size() > 0 ? list.get(list.size() - 1).getTo() : 0;
+    return !list.isEmpty() ? list.get(list.size() - 1).getTo() : 0;
   }
 
   public void add(Token token) {
-    if (list.size() > 0) {
+    if (!list.isEmpty()) {
       list.add(new Token.Whitespace(last(), " "));
     }
     list.add(token);
@@ -61,7 +61,7 @@ class TokenList implements Iterable<Token> {
   }
 
   public void addOption(String name, List<?> value) {
-    if (value.size() > 0) {
+    if (!value.isEmpty()) {
       Object first = value.get(0);
       if (first instanceof Boolean) {
         for (Object o : value) {

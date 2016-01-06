@@ -121,12 +121,12 @@ final class EditorBuffer implements Appendable, Iterator<String> {
 
   @Override
   public boolean hasNext() {
-    return lines.size() > 0;
+    return !lines.isEmpty();
   }
 
   @Override
   public String next() {
-    if (lines.size() == 0) {
+    if (lines.isEmpty()) {
       throw new NoSuchElementException();
     }
     return lines.removeFirst();

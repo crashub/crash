@@ -118,11 +118,11 @@ public final class TermIOBuffer implements Appendable, Iterator<CharSequence> {
   // Iterator<CharSequence> implementation *****************************************************************************
 
   public boolean hasNext() {
-    return lines.size() > 0;
+    return !lines.isEmpty();
   }
 
   public CharSequence next() {
-    if (lines.size() > 0) {
+    if (!lines.isEmpty()) {
       return lines.removeFirst();
     } else {
       throw new NoSuchElementException();

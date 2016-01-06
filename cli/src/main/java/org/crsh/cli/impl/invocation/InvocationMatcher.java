@@ -145,7 +145,7 @@ public class InvocationMatcher<T> {
         Event.Argument argumentEvent = (Event.Argument)event;
         List<Token.Literal> values = argumentEvent.getValues();
         ArgumentMatch match;
-        if (values.size() > 0) {
+        if (!values.isEmpty()) {
           match = new ArgumentMatch(
               argumentEvent.getParameter(),
               argumentEvent.getFrom(),

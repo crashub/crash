@@ -162,7 +162,7 @@ public class EvalElement extends Element {
 
       public void flush() throws IOException {
         // We don't really flush, we just compute renderables from the buffer
-        if (buffer.size() > 0) {
+        if (!buffer.isEmpty()) {
           LineRenderer i = renderable.renderer(buffer.iterator());
           buffer.clear();
           renderers.add(i);

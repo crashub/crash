@@ -83,7 +83,7 @@ class ProcessContext implements ShellProcessContext, Runnable {
           case CANCELLING:
             return null;
           case PROCESSING:
-            if (processor.queue.size() > 0) {
+            if (!processor.queue.isEmpty()) {
               TermEvent event = processor.queue.removeFirst();
               if (event instanceof TermEvent.ReadLine) {
                 return ((TermEvent.ReadLine)event).getLine().toString();

@@ -136,7 +136,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
       throw new CommandException(ErrorKind.INTERNAL, "Could not compile command", e);
     }
     CompileUnit ast = cu.getAST();
-    if (ast.getClasses().size() > 0) {
+    if (!ast.getClasses().isEmpty()) {
       ClassNode classNode= (ClassNode)ast.getClasses().get(0);
       if (classNode != null) {
         for (AnnotationNode annotation : classNode.getAnnotations()) {

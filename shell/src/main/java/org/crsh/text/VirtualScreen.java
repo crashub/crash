@@ -160,7 +160,7 @@ public class VirtualScreen implements ScreenContext {
       cursorStyle = Style.reset;
       status = PAINTING;
     }
-    if (buffer.size() > 0) {
+    if (!buffer.isEmpty()) {
       // We ensure there is a least one chunk in the buffer, otherwise it will throw a NullPointerException
       int prev = cursorIndex;
       while (cursorX < width && cursorY < height) {
@@ -344,7 +344,7 @@ public class VirtualScreen implements ScreenContext {
     if (width != nextWidth || height != nextHeight) {
       width = nextWidth;
       height = nextHeight;
-      if (buffer.size() > 0) {
+      if (!buffer.isEmpty()) {
         cursorIndex = index;
         cursorOffset = offset;
         cursorX = 0;

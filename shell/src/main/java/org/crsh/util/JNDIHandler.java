@@ -69,7 +69,7 @@ public class JNDIHandler {
 
         if (
             filters == null ||
-                filters.size() == 0 ||
+                filters.isEmpty() ||
                 Utils.instanceOf(instance.getObject().getClass(), filters)) {
           if (pattern == null || pattern.matcher(fullName).find()) {
             data.add(new BindingRenderer.BindingData(fullName, instance.getClassName(), instance, verbose));

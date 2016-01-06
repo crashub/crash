@@ -59,7 +59,7 @@ public final class Parser<T> implements Iterator<Event> {
     if (next.isEmpty()) {
       determine();
     }
-    return next.size() > 0;
+    return !next.isEmpty();
   }
 
   public Event next() {

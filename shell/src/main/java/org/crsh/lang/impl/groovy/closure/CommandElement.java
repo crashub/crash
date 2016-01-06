@@ -135,7 +135,7 @@ class CommandElement extends PipeLineElement {
   void toString(StringBuilder buffer) {
     buffer.append(commandName);
     boolean hasOptions = subordinateOptions != null && subordinateOptions.size() > 0;
-    boolean hasArguments = args != null && args.size() > 0;
+    boolean hasArguments = args != null && !args.isEmpty();
     if (hasOptions || hasArguments) {
       buffer.append(" {");
       if (hasOptions) {

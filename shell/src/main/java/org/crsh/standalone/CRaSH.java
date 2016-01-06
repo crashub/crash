@@ -210,7 +210,7 @@ public class CRaSH {
     //
     CloseableList closeable = new CloseableList();
     Shell shell;
-    if (pids != null && pids.size() > 0) {
+    if (pids != null && !pids.isEmpty()) {
 
       //
       if (interactive && pids.size() > 1) {

@@ -118,7 +118,7 @@ public abstract class Event {
 
     @Override
     public int getTo() {
-      return values.size() == 0 ? token.getTo() : peekLast().getTo();
+      return values.isEmpty() ? token.getTo() : peekLast().getTo();
     }
   }
 
@@ -128,7 +128,7 @@ public abstract class Event {
       super(command, descriptor, values);
 
       //
-      if (values.size() == 0) {
+      if (values.isEmpty()) {
         throw new IllegalArgumentException("No empty values");
       }
     }

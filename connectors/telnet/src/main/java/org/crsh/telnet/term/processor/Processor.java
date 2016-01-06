@@ -188,7 +188,7 @@ public final class Processor implements Runnable, ScreenContext {
     while (true) {
       synchronized (lock) {
         if (status == Status.AVAILABLE) {
-          if (queue.size() > 0) {
+          if (!queue.isEmpty()) {
             TermEvent event = queue.removeFirst();
             if (event instanceof TermEvent.Complete) {
               complete(((TermEvent.Complete)event).getLine());

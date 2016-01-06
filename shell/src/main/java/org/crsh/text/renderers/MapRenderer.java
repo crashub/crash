@@ -62,7 +62,7 @@ public class MapRenderer extends Renderer<Map<?, ?>> {
 
         // Create a new table if needed
         if (!current.equals(bilto)) {
-          if (table.getRows().size() > 0) {
+          if (!table.getRows().isEmpty()) {
             renderers.add(table.renderer());
           }
           table = new TableElement().rightCellPadding(1);
@@ -85,7 +85,7 @@ public class MapRenderer extends Renderer<Map<?, ?>> {
     }
 
     //
-    if (table.getRows().size() > 0) {
+    if (!table.getRows().isEmpty()) {
       renderers.add(table.renderer());
     }
 

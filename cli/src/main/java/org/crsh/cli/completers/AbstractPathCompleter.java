@@ -70,7 +70,7 @@ public abstract class AbstractPathCompleter<P> implements Completer {
         if (prefix.endsWith(sep)) {
           Collection<P> children = getChilren(f);
           if (children != null) {
-            if (children.size() > 0) {
+            if (!children.isEmpty()) {
               return listDir(f, "");
             } else {
               return Completion.create();

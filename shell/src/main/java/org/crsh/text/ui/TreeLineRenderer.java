@@ -102,7 +102,7 @@ class TreeLineRenderer extends LineRenderer {
             value = null;
           }
         }
-        while (readers.size() > 0) {
+        while (!readers.isEmpty()) {
           if (readers.peekFirst().hasLine()) {
             return true;
           } else {
@@ -122,7 +122,7 @@ class TreeLineRenderer extends LineRenderer {
           }
         }
         if (value == null) {
-          while (readers.size() > 0) {
+          while (!readers.isEmpty()) {
             LineReader first = readers.peekFirst();
             if (first.hasLine()) {
               if (node) {

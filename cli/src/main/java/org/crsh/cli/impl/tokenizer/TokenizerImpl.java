@@ -52,7 +52,7 @@ public class TokenizerImpl extends Tokenizer {
   }
 
   protected Token parse() {
-    if (automaton.tokens.size() > 0) {
+    if (!automaton.tokens.isEmpty()) {
       return automaton.tokens.removeFirst();
     } else {
       return null;

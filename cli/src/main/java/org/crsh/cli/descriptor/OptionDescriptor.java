@@ -147,7 +147,7 @@ public class OptionDescriptor extends ParameterDescriptor {
   @Override
   public Object parse(List<String> values) throws SyntaxException {
     if (arity == 0) {
-      if (values.size() > 0) {
+      if (!values.isEmpty()) {
         throw new SyntaxException("Too many values " + values + " for option " + names.get(0));
       }
       // It's a boolean and it is true
@@ -157,7 +157,7 @@ public class OptionDescriptor extends ParameterDescriptor {
         if (values.size() > 1) {
           throw new SyntaxException("Too many values " + values + " for option " + names.get(0));
         }
-        if (values.size() == 0) {
+        if (values.isEmpty()) {
           throw new SyntaxException("Missing option " + names.get(0) + " value");
         }
         String value = values.get(0);

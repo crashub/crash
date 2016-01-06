@@ -73,7 +73,7 @@ public class SyncShell implements Shell {
   public ShellProcess createProcess(final String request) throws IllegalStateException {
     synchronized (lock) {
       while (true) {
-        if (queue.size() > 0) {
+        if (!queue.isEmpty()) {
           final SyncProcess runnable = queue.removeFirst();
           return new ShellProcess() {
             @Override

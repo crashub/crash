@@ -74,7 +74,7 @@ public class ScreenContextConsumer implements Consumer<Object> {
   }
 
   public void send() throws IOException {
-    if (buffer.size() > 0) {
+    if (!buffer.isEmpty()) {
       LineRenderer renderer = renderable.renderer(buffer.iterator());
       renderer.render(out);
       buffer.clear();

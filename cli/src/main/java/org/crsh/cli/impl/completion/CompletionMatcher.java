@@ -117,7 +117,7 @@ public final class CompletionMatcher<T> {
         return new CommandCompletion<T>(foo, s.substring(stop.getIndex()), Delimiter.EMPTY);
       } else {
         List<ArgumentDescriptor> args = foo.getArguments();
-        if (args.size() > 0) {
+        if (!args.isEmpty()) {
           return new ParameterCompletion("", delimiter, args.get(0), completer);
         } else {
           return new EmptyCompletion();
@@ -128,7 +128,7 @@ public final class CompletionMatcher<T> {
       List<Token.Literal.Word> values = optionEvent.getValues();
       OptionDescriptor option = optionEvent.getParameter();
       if (separator == null) {
-        if (values.size() == 0) {
+        if (values.isEmpty()) {
           return new SpaceCompletion();
         } else if (values.size() <= option.getArity()) {
           Token.Literal.Word word = optionEvent.peekLast();

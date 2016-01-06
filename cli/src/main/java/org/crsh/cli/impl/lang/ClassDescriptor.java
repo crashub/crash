@@ -62,7 +62,7 @@ class ClassDescriptor<T> extends ObjectCommandDescriptor<T> {
       for (MethodDescriptor<T> method : methods.values()) {
         Set<String> diff = new HashSet<String>(method.getOptionNames());
         diff.retainAll(blah);
-        if (diff.size() > 0) {
+        if (!diff.isEmpty()) {
           throw new IntrospectionException("Cannot add method " + method.getName() + " because it has common "
           + " options with its class: " + diff);
         }

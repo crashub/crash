@@ -41,7 +41,7 @@ public class Configurator extends ServerEndpointConfig.Configurator {
     Map<String, List<String>> requestHeaders = request.getHeaders();
     List<String> cookieHeaders = requestHeaders.get("cookie");
     String sessionId = null;
-    if (cookieHeaders != null && cookieHeaders.size() > 0) {
+    if (cookieHeaders != null && !cookieHeaders.isEmpty()) {
       for (String cookieHeader : cookieHeaders) {
         Matcher matcher = cookiePattern.matcher(cookieHeader);
         while (matcher.find()) {
