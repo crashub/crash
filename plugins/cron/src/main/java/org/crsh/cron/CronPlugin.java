@@ -213,7 +213,7 @@ public class CronPlugin extends CRaSHPlugin<CronPlugin> implements TaskCollector
     return table;
   }
 
-  private CRaSHTaskDef validateAndParseCronLine(String cronLine) {
+  private static CRaSHTaskDef validateAndParseCronLine(String cronLine) {
 
     //
     cronLine = cronLine.trim();

@@ -143,7 +143,7 @@ public final class File {
     }
   }
 
-  private <H> H resolve(FSDriver<H> driver, H current, Path path) throws IOException {
+  private static <H> H resolve(FSDriver<H> driver, H current, Path path) throws IOException {
     int index = 0;
     while (current != null && index < path.getSize()) {
       String name = path.nameAt(index++);

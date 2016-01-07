@@ -120,7 +120,7 @@ public class ServletContextDriver extends AbstractFSDriver<String> {
     return Utils.iterator(ctx.getResource(handle).openConnection().getInputStream());
   }
 
-  private Matcher assertMatch(String path) {
+  private static Matcher assertMatch(String path) {
     Matcher m = pathPattern.matcher(path);
     if (m.matches()) {
       return m;

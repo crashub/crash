@@ -149,7 +149,7 @@ public class RenderAppendable implements ScreenContext {
     return merged;
   }
 
-  private Boolean foo(Boolean last, Boolean merged) {
+  private static Boolean foo(Boolean last, Boolean merged) {
     if (last != null) {
       if (merged != null) {
         return merged;
@@ -161,7 +161,7 @@ public class RenderAppendable implements ScreenContext {
     }
   }
 
-  private Color foo(Color last, Color merged, Color def) {
+  private static Color foo(Color last, Color merged, Color def) {
     if (last != null) {
       if (merged != null) {
         return merged;

@@ -81,7 +81,7 @@ class FilePublicKeyProvider extends AbstractKeyPairProvider {
     return keys;
   }
 
-  private KeyPair convertPemKeyPair(PEMKeyPair pemKeyPair) throws PEMException {
+  private static KeyPair convertPemKeyPair(PEMKeyPair pemKeyPair) throws PEMException {
     JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
     return new KeyPair(converter.getPublicKey(pemKeyPair.getPublicKeyInfo()), null);
   }

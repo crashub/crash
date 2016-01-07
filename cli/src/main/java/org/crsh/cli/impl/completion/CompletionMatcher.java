@@ -51,7 +51,7 @@ public final class CompletionMatcher<T> {
     return getCompletion(completer, s).complete();
   }
 
-  private Completion argument(CommandDescriptor<?> method, Completer completer, Delimiter delimiter) {
+  private static Completion argument(CommandDescriptor<?> method, Completer completer, Delimiter delimiter) {
     List<? extends ArgumentDescriptor> arguments = method.getArguments();
     if (arguments.isEmpty()) {
       return new EmptyCompletion();

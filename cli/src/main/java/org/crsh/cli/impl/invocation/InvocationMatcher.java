@@ -173,7 +173,7 @@ public class InvocationMatcher<T> {
     return current;
   }
 
-  private List<LiteralValue> bilto(List<? extends Token.Literal> literals) {
+  private static List<LiteralValue> bilto(List<? extends Token.Literal> literals) {
     List<LiteralValue> values = new ArrayList<LiteralValue>(literals.size());
     for (Token.Literal literal : literals) {
       values.add(new LiteralValue(literal.getRaw(), literal.getValue()));

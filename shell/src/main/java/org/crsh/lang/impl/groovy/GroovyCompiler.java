@@ -88,7 +88,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
     return shell;
   }
 
-  private String eval(ShellSession session, String name, String def) {
+  private static String eval(ShellSession session, String name, String def) {
     try {
       GroovyShell shell = getGroovyShell(session);
       Object ret = shell.getContext().getVariable(name);
@@ -197,11 +197,11 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
     };
   }
 
-  private <C extends BaseCommand> ClassShellCommand<C> make(Class<C> clazz) throws IntrospectionException {
+  private static <C extends BaseCommand> ClassShellCommand<C> make(Class<C> clazz) throws IntrospectionException {
     return new ClassShellCommand<C>(clazz);
   }
 
-  private <C extends GroovyScriptCommand> GroovyScriptShellCommand<C> make2(Class<C> clazz) throws IntrospectionException {
+  private static <C extends GroovyScriptCommand> GroovyScriptShellCommand<C> make2(Class<C> clazz) throws IntrospectionException {
     return new GroovyScriptShellCommand<C>(clazz);
   }
 }
