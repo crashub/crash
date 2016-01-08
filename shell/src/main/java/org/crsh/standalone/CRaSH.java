@@ -370,8 +370,8 @@ public class CRaSH {
       String encoding = Configuration.getEncoding();
 
       // Use AnsiConsole only if term doesn't support Ansi
-      PrintStream out;
-      PrintStream err;
+      PrintStream out = null;
+      PrintStream err = null;
       boolean ansi;
       if (term.isAnsiSupported()) {
         out = new PrintStream(new BufferedOutputStream(term.wrapOutIfNeeded(new FileOutputStream(FileDescriptor.out)), 16384), false, encoding);
@@ -412,6 +412,14 @@ public class CRaSH {
         t.printStackTrace();
       }
       finally {
+    	  
+    	if(out != null){
+    	  out.close();
+    	}
+    	  
+    	if(err != null){
+    	  err.close();
+    	}
 
         //
         if (closeable != null) {

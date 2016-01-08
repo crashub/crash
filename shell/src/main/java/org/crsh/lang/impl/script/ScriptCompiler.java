@@ -188,6 +188,7 @@ public class ScriptCompiler implements Compiler {
                         invoker.invoke(consumer);
                       }
                     }
+                    reader.close();
 
                     //
                     try {

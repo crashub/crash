@@ -103,7 +103,6 @@ public final class CompletionMatcher<T> {
       return new OptionCompletion<T>(foo, nso.getToken());
     } else if (stop instanceof Event.Stop.Unresolved) {
       if (stop instanceof Event.Stop.Unresolved.TooManyArguments) {
-        Event.Stop.Unresolved.TooManyArguments tma = (Event.Stop.Unresolved.TooManyArguments)stop;
         return new CommandCompletion<T>(foo, s.substring(stop.getIndex()), delimiter);
       } else {
         return new EmptyCompletion();

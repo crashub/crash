@@ -47,7 +47,6 @@ public class GroovyRepl implements Repl {
 
   public GroovyRepl(GroovyLanguage lang) {
     // Force to load Groovy here or fail
-    Object o = GroovyShell.class;
     this.lang = lang;
   }
 
