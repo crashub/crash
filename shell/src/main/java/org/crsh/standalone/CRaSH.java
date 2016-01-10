@@ -85,7 +85,7 @@ public class CRaSH {
     this.descriptor = CommandFactory.DEFAULT.create(CRaSH.class);
   }
 
-  private void copyCmd(org.crsh.vfs.File src, File dst) throws IOException {
+  private static void copyCmd(org.crsh.vfs.File src, File dst) throws IOException {
     if (src.hasChildren()) {
       if (!dst.exists()) {
         if (dst.mkdir()) {
@@ -108,7 +108,7 @@ public class CRaSH {
     }
   }
 
-  private void copyConf(org.crsh.vfs.File src, File dst) throws IOException {
+  private static void copyConf(org.crsh.vfs.File src, File dst) throws IOException {
     if (!src.hasChildren()) {
       if (!dst.exists()) {
         Resource resource = ResourceManager.loadConf(src);
@@ -120,7 +120,7 @@ public class CRaSH {
     }
   }
 
-  private String toString(FS.Builder builder) {
+  private static String toString(FS.Builder builder) {
     StringBuilder sb = new StringBuilder();
     List<Mount<?>> mounts = builder.getMounts();
     for (int i = 0;i < mounts.size();i++) {
@@ -133,7 +133,7 @@ public class CRaSH {
     return sb.toString();
   }
 
-  private FS.Builder createBuilder() throws IOException {
+  private static FS.Builder createBuilder() throws IOException {
     FileMountFactory fileDriver = new FileMountFactory(Utils.getCurrentDirectory());
     ClassPathMountFactory classpathDriver = new ClassPathMountFactory(Thread.currentThread().getContextClassLoader());
     return new FS.Builder().register("file", fileDriver).register("classpath", classpathDriver);

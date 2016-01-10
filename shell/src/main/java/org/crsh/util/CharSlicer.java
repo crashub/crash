@@ -63,7 +63,7 @@ public class CharSlicer {
     return lines(linesIterator(width), 0);
   }
 
-  private Pair<Integer, Integer>[] lines(Iterator<Pair<Integer, Integer>> i, int count) {
+  private static Pair<Integer, Integer>[] lines(Iterator<Pair<Integer, Integer>> i, int count) {
     Pair<Integer, Integer>[] lines;
     if (i.hasNext()) {
       Pair<Integer, Integer> n = i.next();
