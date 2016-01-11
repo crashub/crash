@@ -23,7 +23,12 @@ import org.bouncycastle.util.io.pem.PemReader;
 import java.io.Reader;
 
 /** @author <a href="mailto:tuyennt@exoplatform.com">Tuyen Nguyen The</a> */
-public class KeyPairUtils {
+public final class KeyPairUtils {
+	
+	private KeyPairUtils(){
+		throw new AssertionError("Must not instantiate this class");
+	}
+	
     public static Object readKey(Reader reader) throws Exception {
         try {
             PEMParser pemParser = new PEMParser(reader);

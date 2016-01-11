@@ -11,7 +11,11 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /** @author <a href="mailto:alain.defrance@exoplatform.com">Alain Defrance</a> */
-public class JNDIHandler {
+public final class JNDIHandler {
+	
+  private JNDIHandler(){
+	  throw new AssertionError("Must not instantiate this class");
+  }
 
   public static List<BindingRenderer.BindingData> lookup(List<String> filters, String name, Boolean verbose) {
 
