@@ -47,7 +47,7 @@ public class ObjectNameCompleter implements Completer {
 
   @Override
   public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
-    if (parameter.getType() == ValueType.OBJECT_NAME) {
+    if (ValueType.OBJECT_NAME.equals(parameter.getType())) {
       MBeanServer server = ManagementFactory.getPlatformMBeanServer();
       int colon = prefix.indexOf(':');
       if (colon == -1) {

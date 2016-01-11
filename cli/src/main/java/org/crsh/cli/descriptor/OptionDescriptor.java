@@ -101,7 +101,7 @@ public class OptionDescriptor extends ParameterDescriptor {
       annotation);
 
     //
-    if (getMultiplicity() == Multiplicity.MULTI && getType() == ValueType.BOOLEAN) {
+    if (Multiplicity.MULTI.equals(getMultiplicity()) && ValueType.BOOLEAN.equals(getType())) {
       throw new IllegalParameterException();
     }
 
@@ -126,7 +126,7 @@ public class OptionDescriptor extends ParameterDescriptor {
     }
 
     //
-    if (getType() == ValueType.BOOLEAN) {
+    if (ValueType.BOOLEAN.equals(getType())) {
       arity = 0;
     } else {
       arity = 1;

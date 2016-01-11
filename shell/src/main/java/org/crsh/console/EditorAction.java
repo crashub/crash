@@ -200,7 +200,7 @@ class EditorAction {
         editor.console.status = Console.CLOSING;
         return null;
       } else {
-        if (editor.console.getMode() == Mode.EMACS) {
+        if (Mode.EMACS.equals(editor.console.getMode())) {
           return EditorAction.DELETE_PREV_CHAR.execute(editor, buffer, sequence, true);
         } else {
           return EditorAction.ENTER.execute(editor, buffer, sequence, true);
@@ -687,7 +687,7 @@ class EditorAction {
               buffer.moveRight(b); // Should be assertion
               buffer.moveRight(a); // Should be assertion
               // A bit not great : need to find a better way to do that...
-              if (editor.console.getMode() == Mode.VI_MOVE && buffer.getCursor() > editor.getCursorBound()) {
+              if (Mode.VI_MOVE.equals(editor.console.getMode()) && buffer.getCursor() > editor.getCursorBound()) {
                 buffer.moveLeft();
               }
             }
@@ -742,7 +742,7 @@ class EditorAction {
       editor.historyBuffer = null;
       String line = buffer.getLine();
       editor.lineParser.append(line);
-      if (editor.console.getMode() == Mode.VI_MOVE) {
+      if (Mode.VI_MOVE.equals(editor.console.getMode())) {
         editor.console.setMode(Mode.VI_INSERT);
       }
       if (editor.lineParser.crlf()) {

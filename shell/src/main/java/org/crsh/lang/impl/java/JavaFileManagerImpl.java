@@ -52,7 +52,7 @@ class JavaFileManagerImpl extends ForwardingJavaFileManager<StandardJavaFileMana
 
   @Override
   public boolean hasLocation(Location location) {
-    return location == StandardLocation.CLASS_PATH || location == StandardLocation.PLATFORM_CLASS_PATH;
+    return StandardLocation.CLASS_PATH.equals(location) || StandardLocation.PLATFORM_CLASS_PATH.equals(location);
   }
 
   @Override
@@ -67,10 +67,10 @@ class JavaFileManagerImpl extends ForwardingJavaFileManager<StandardJavaFileMana
 
   @Override
   public Iterable<JavaFileObject> list(Location location, String packageName, Set<JavaFileObject.Kind> kinds, boolean recurse) throws IOException {
-    if (location == StandardLocation.PLATFORM_CLASS_PATH) {
+    if (StandardLocation.PLATFORM_CLASS_PATH.equals(location)) {
       return fileManager.list(location, packageName, kinds, recurse);
     }
-    else if (location == StandardLocation.CLASS_PATH && kinds.contains(JavaFileObject.Kind.CLASS)) {
+    else if (StandardLocation.CLASS_PATH.equals(location) && kinds.contains(JavaFileObject.Kind.CLASS)) {
       if (packageName.startsWith("java")) {
         return fileManager.list(location, packageName, kinds, recurse);
       }
@@ -91,7 +91,7 @@ class JavaFileManagerImpl extends ForwardingJavaFileManager<StandardJavaFileMana
   @Override
   public JavaFileObject getJavaFileForOutput(Location location, String className, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
 
-    if (location != StandardLocation.CLASS_OUTPUT) {
+    if (!StandardLocation.CLASS_OUTPUT.equals(location)) {
       throw new IOException("Location " + location + " not supported");
     }
     if (kind != JavaFileObject.Kind.CLASS) {

@@ -192,7 +192,7 @@ public class PipeLineClosure extends Closure {
         else {
           boolean use = true;
           for (Object value : closureOptions.values()) {
-            if (value == ret) {
+            if (value.equals(ret)) {
               use = false;
               break;
             }

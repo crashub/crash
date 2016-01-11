@@ -171,7 +171,7 @@ public abstract class Style implements Serializable {
       if (s == null) {
         throw new NullPointerException();
       }
-      if (s == reset) {
+      if (s.equals(reset)) {
         return reset;
       } else {
         Style.Composite that = (Composite)s;

@@ -41,7 +41,7 @@ public class EnumCompleter implements Completer {
   }
 
   public Completion complete(ParameterDescriptor parameter, String prefix) throws Exception {
-    if (parameter.getType() == ValueType.ENUM) {
+    if (ValueType.ENUM.equals(parameter.getType())) {
       Completion.Builder builder = null;
       Class<?> vt = parameter.getDeclaredType();
       Method valuesM = vt.getDeclaredMethod("values");

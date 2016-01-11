@@ -207,7 +207,7 @@ class ClientProcessContext implements ShellProcessContext {
   public synchronized void end(ShellResponse response) {
 
     // It may have been cancelled concurrently
-    if (client.current == this) {
+    if (client.current.equals(this)) {
 
       // Flush what we have in buffer first
       flush();

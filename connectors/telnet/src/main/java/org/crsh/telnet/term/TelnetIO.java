@@ -141,7 +141,7 @@ public class TelnetIO implements TermIO {
   }
 
   public void write(Style style) throws IOException {
-    if (style == Style.reset) {
+    if (Style.reset.equals(style)) {
       termIO.resetAttributes();
       termIO.write("");
     } else {

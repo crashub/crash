@@ -115,7 +115,7 @@ class Editor extends Plugin {
    * @return the current bound
    */
   int getCursorBound() {
-    if (console.getMode() == Mode.EMACS) {
+    if (Mode.EMACS.equals(console.getMode())) {
       return buffer.getSize();
     } else {
       return Math.max(0, buffer.getSize() - 1);
