@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ class FilePublicKeyProvider extends AbstractKeyPairProvider {
     List<KeyPair> keys = new ArrayList<KeyPair>();
     for (String file : files) {
       try {
-          Object o = KeyPairUtils.readKey(new InputStreamReader(new FileInputStream(file)));
+          Object o = KeyPairUtils.readKey(new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")));
           if (o instanceof KeyPair) {
             keys.add(new KeyPair(((KeyPair)o).getPublic(), null));
           } else if (o instanceof PublicKey) {

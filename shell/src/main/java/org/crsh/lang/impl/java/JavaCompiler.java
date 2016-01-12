@@ -27,6 +27,7 @@ import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.lang.spi.CommandResolution;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
   }
 
   public CommandResolution compileCommand(String name, byte[] source) throws CommandException, NullPointerException {
-    String script = new String(source);
+    String script = new String(source, Charset.forName("UTF-8"));
     List<JavaClassFileObject> classFiles;
     try {
       classFiles = compiler.compile(name, script);

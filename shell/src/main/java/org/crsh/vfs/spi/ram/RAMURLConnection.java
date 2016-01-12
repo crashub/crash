@@ -43,6 +43,6 @@ public class RAMURLConnection extends URLConnection {
 
   @Override
   public InputStream getInputStream() throws IOException{
-    return new ByteArrayInputStream(file.getBytes());
+    return new ByteArrayInputStream(file.getBytes("UTF-8"));
   }
 }
