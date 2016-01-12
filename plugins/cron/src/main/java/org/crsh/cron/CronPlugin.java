@@ -50,7 +50,7 @@ import java.util.logging.Logger;
 /** @author Benjamin Prato */
 public class CronPlugin extends CRaSHPlugin<CronPlugin> implements TaskCollector {
 
-  public static PropertyDescriptor<String> CRON_CONFIG_PATH = new PropertyDescriptor<String>(String.class, "cron.config.path", null, "The contrab file path") {
+  public static final PropertyDescriptor<String> CRON_CONFIG_PATH = new PropertyDescriptor<String>(String.class, "cron.config.path", null, "The contrab file path") {
     @Override
     protected String doParse(String s) throws Exception {
       return s;

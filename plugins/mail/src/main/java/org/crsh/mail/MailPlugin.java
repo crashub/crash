@@ -49,7 +49,7 @@ import java.util.concurrent.Future;
 public class MailPlugin extends CRaSHPlugin<MailPlugin> {
 
   /** . */
-  public static PropertyDescriptor<String> SMTP_HOST = new PropertyDescriptor<String>(String.class, "mail.smtp.host", "localhost", "The mail server host") {
+  public static final PropertyDescriptor<String> SMTP_HOST = new PropertyDescriptor<String>(String.class, "mail.smtp.host", "localhost", "The mail server host") {
     @Override
     protected String doParse(String s) throws Exception {
       return s;
@@ -57,7 +57,7 @@ public class MailPlugin extends CRaSHPlugin<MailPlugin> {
   };
 
   /** . */
-  public static PropertyDescriptor<Integer> SMTP_PORT = new PropertyDescriptor<Integer>(Integer.class, "mail.smtp.port", 25, "The mail server port") {
+  public static final PropertyDescriptor<Integer> SMTP_PORT = new PropertyDescriptor<Integer>(Integer.class, "mail.smtp.port", 25, "The mail server port") {
     @Override
     protected Integer doParse(String s) throws Exception {
       return Integer.parseInt(s);
@@ -65,7 +65,7 @@ public class MailPlugin extends CRaSHPlugin<MailPlugin> {
   };
 
   /** . */
-  public static PropertyDescriptor<SmtpSecure> SMTP_SECURE = new PropertyDescriptor<SmtpSecure>(SmtpSecure.class, "mail.smtp.secure", SmtpSecure.NONE, "The mail server port") {
+  public static final PropertyDescriptor<SmtpSecure> SMTP_SECURE = new PropertyDescriptor<SmtpSecure>(SmtpSecure.class, "mail.smtp.secure", SmtpSecure.NONE, "The mail server port") {
     @Override
     protected SmtpSecure doParse(String s) throws Exception {
       return SmtpSecure.valueOf(s.toUpperCase());
@@ -73,7 +73,7 @@ public class MailPlugin extends CRaSHPlugin<MailPlugin> {
   };
 
   /** . */
-  public static PropertyDescriptor<String> SMTP_USERNAME = new PropertyDescriptor<String>(String.class, "mail.smtp.username", null, "The mail server user name") {
+  public static final PropertyDescriptor<String> SMTP_USERNAME = new PropertyDescriptor<String>(String.class, "mail.smtp.username", null, "The mail server user name") {
     @Override
     protected String doParse(String s) throws Exception {
       return s;
@@ -81,7 +81,7 @@ public class MailPlugin extends CRaSHPlugin<MailPlugin> {
   };
 
   /** . */
-  public static PropertyDescriptor<String> SMTP_PASSWORD = new PropertyDescriptor<String>(String.class, "mail.smtp.password", null, "The mail server passord", true) {
+  public static final PropertyDescriptor<String> SMTP_PASSWORD = new PropertyDescriptor<String>(String.class, "mail.smtp.password", null, "The mail server passord", true) {
     @Override
     protected String doParse(String s) throws Exception {
       return s;
@@ -89,7 +89,7 @@ public class MailPlugin extends CRaSHPlugin<MailPlugin> {
   };
 
   /** . */
-  public static PropertyDescriptor<String> SMTP_FROM = new PropertyDescriptor<String>(String.class, "mail.smtp.from", null, "The mail sender address") {
+  public static final PropertyDescriptor<String> SMTP_FROM = new PropertyDescriptor<String>(String.class, "mail.smtp.from", null, "The mail sender address") {
     @Override
     protected String doParse(String s) throws Exception {
       return s;
@@ -97,7 +97,7 @@ public class MailPlugin extends CRaSHPlugin<MailPlugin> {
   };
 
   /** . */
-  public static PropertyDescriptor<Boolean> DEBUG = new PropertyDescriptor<Boolean>(Boolean.class, "mail.debug", false, "The mail smtp debug mode") {
+  public static final PropertyDescriptor<Boolean> DEBUG = new PropertyDescriptor<Boolean>(Boolean.class, "mail.debug", false, "The mail smtp debug mode") {
     @Override
     protected Boolean doParse(String s) throws Exception {
       return Boolean.parseBoolean(s);

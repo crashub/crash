@@ -36,6 +36,7 @@ import org.crsh.ssh.term.subsystem.SubsystemFactoryPlugin;
 import java.nio.charset.Charset;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -87,8 +88,8 @@ public class SSHLifeCycle {
       int idleTimeout,
       int authTimeout,
       KeyPairProvider keyPairProvider,
-      ArrayList<AuthenticationPlugin> authenticationPlugins) {
-    this.authenticationPlugins = authenticationPlugins;
+      List<AuthenticationPlugin> authenticationPlugins) {
+    this.authenticationPlugins = (ArrayList<AuthenticationPlugin>) authenticationPlugins;
     this.context = context;
     this.encoding = encoding;
     this.port = port;

@@ -49,7 +49,7 @@ public abstract class Renderer<E> {
     renderables = tmp.toArray(new Renderer<?>[tmp.size()]);
   }
 
-  public static Renderer<Object> ANY = new Renderer<Object>() {
+  public static final Renderer<Object> ANY = new Renderer<Object>() {
     @Override
     public Class<Object> getType() {
       return Object.class;
