@@ -47,7 +47,11 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Utils {
+public final class Utils {
+	
+  private Utils(){
+	  throw new AssertionError("Must not instantiate this class");
+  }
 
   /** . */
   private static final Iterator EMPTY_ITERATOR = Collections.emptyList().iterator();

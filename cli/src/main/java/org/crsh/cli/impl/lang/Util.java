@@ -27,7 +27,11 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Util {
+public final class Util {
+	
+  private Util(){
+	  throw new AssertionError("Must not instantiate this class");
+  }
 
   /** . */
   static final Object[] EMPTY_ARGS = new Object[0];

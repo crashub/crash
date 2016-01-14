@@ -33,7 +33,11 @@ import org.crsh.util.SafeCallable;
 /**
  * @author Julien Viet
  */
-public class Helper {
+public final class Helper {
+	
+  public Helper(){
+	  throw new AssertionError("Must not instantiate this class");
+  }
 
   public static Object invokeMethod(RuntimeContext context, String name, Object args, MissingMethodException ex) {
     if (context instanceof InvocationContext<?>) {
