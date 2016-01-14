@@ -58,11 +58,11 @@ public class LogRecordRenderer extends Renderer<LogRecord> {
             LogRecord record = stream.next();
             String line = formatter.format(record);
             Color color;
-            if (record.getLevel() == Level.SEVERE) {
+            if (Level.SEVERE.equals(record.getLevel())) {
               color = Color.red;
-            } else if (record.getLevel() == Level.WARNING) {
+            } else if (Level.WARNING.equals(record.getLevel())) {
               color = Color.yellow;
-            } else if (record.getLevel() == Level.INFO) {
+            } else if (Level.INFO.equals(record.getLevel())) {
               color = Color.green;
             } else {
               color = Color.blue;

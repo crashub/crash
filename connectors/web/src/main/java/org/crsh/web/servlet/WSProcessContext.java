@@ -147,10 +147,10 @@ public class WSProcessContext implements ShellProcessContext, KeyHandler {
       } else {
         Style.Composite composite = (Style.Composite)style;
         buffer.append("[[");
-        if (composite.getUnderline() == Boolean.TRUE) {
+        if (Boolean.TRUE.equals(composite.getUnderline())) {
           buffer.append('u');
         }
-        if (composite.getBold() == Boolean.TRUE) {
+        if (Boolean.TRUE.equals(composite.getBold())) {
           buffer.append('b');
         }
         buffer.append(';');

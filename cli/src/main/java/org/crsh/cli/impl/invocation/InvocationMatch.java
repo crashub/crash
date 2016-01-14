@@ -83,7 +83,7 @@ public final class InvocationMatch<T> {
       return (ParameterMatch<D>)options.get(parameter);
     } else {
       for (ArgumentMatch argumentMatch : arguments) {
-        if (argumentMatch.getParameter()  == parameter) {
+        if (argumentMatch.getParameter().equals(parameter)) {
           return (ParameterMatch<D>)argumentMatch;
         }
       }

@@ -152,7 +152,7 @@ public class InvocationMatcher<T> {
               argumentEvent.getTo(),
               bilto(argumentEvent.getValues())
           );
-          if (argumentEvent.getCommand() == current.getDescriptor()) {
+          if (argumentEvent.getCommand().equals(current.getDescriptor())) {
             current.argument(match);
           } else {
             throw new AssertionError();

@@ -185,7 +185,7 @@ public class ServerAutomaton implements Shell {
   }
 
   void cancel(ServerProcess process) throws IllegalStateException {
-    if (process == this.process) {
+    if (process.equals(this.process)) {
       this.process = null;
       try {
         out.writeObject(new ClientMessage.Cancel());
