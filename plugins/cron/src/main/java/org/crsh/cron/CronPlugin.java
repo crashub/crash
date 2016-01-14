@@ -182,9 +182,10 @@ public class CronPlugin extends CRaSHPlugin<CronPlugin> implements TaskCollector
     //
     Resource res = getConfig();
     List<String> lines = null;
+    BufferedReader reader = null;
     try {
       lines = new ArrayList<String>();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(res.getContent()), "UTF-8"));
+      reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(res.getContent()), "UTF-8"));
       while (true) {
         String cronLine = reader.readLine();
         if (cronLine == null) {
@@ -196,6 +197,16 @@ public class CronPlugin extends CRaSHPlugin<CronPlugin> implements TaskCollector
     }
     catch (IOException e) {
       log.log(Level.FINE, "Could not read cron file", e);
+    }
+    finally {
+      if(reader != null) {
+        try {
+	      reader.close();
+        }
+	    catch (IOException e){
+	   	  log.log(Level.FINE, "Exception while closing reading ", e);
+	    }
+      }
     }
 
     //
