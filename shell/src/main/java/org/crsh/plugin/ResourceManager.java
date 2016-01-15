@@ -26,6 +26,7 @@ import org.crsh.vfs.Resource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -165,7 +166,7 @@ public class ResourceManager {
   }
 
   /** . */
-  private static final byte[] SEPARATOR = System.getProperty("line.separator").getBytes();
+  private static final byte[] SEPARATOR = System.getProperty("line.separator").getBytes(Charset.forName("UTF-8"));
 
   public static Resource loadConf(File file) throws IOException {
     // Special handling for property files

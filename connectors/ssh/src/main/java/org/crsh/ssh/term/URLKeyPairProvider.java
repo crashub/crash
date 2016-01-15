@@ -27,6 +27,7 @@ import org.crsh.vfs.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public class URLKeyPairProvider extends AbstractKeyPairProvider {
     List<KeyPair> keys = new ArrayList<KeyPair>();
     if (key != null) {
       try {
-          Object o = KeyPairUtils.readKey(new InputStreamReader(new ByteArrayInputStream(key.getContent())));
+          Object o = KeyPairUtils.readKey(new InputStreamReader(new ByteArrayInputStream(key.getContent()), Charset.forName("UTF-8")));
           if (o instanceof KeyPair) {
             keys.add((KeyPair) o);
           } else if(o instanceof PEMKeyPair) {

@@ -12,6 +12,7 @@ import org.crsh.ssh.term.SSHLifeCycle;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,8 +59,17 @@ public class SSHInlineCommand extends AbstractCommand implements Runnable {
   public void run() {
 
     // get principal
-    PrintStream err = new PrintStream(this.err);
-    PrintStream out = new PrintStream(this.out);
+    PrintStream err = null;
+    PrintStream out = null;
+    try {
+      err = new PrintStream(this.err, false, "UTF-8");
+      out = new PrintStream(this.out, false, "UTF-8");
+    }
+    catch (UnsupportedEncodingException uee) {
+      log.log(Level.INFO, "UTF-8 character encoding not supported " + uee);
+      err = new PrintStream(this.err);
+      out = new PrintStream(this.out);
+    }
     final String userName = session.getAttribute(SSHLifeCycle.USERNAME);
     Principal user = new Principal() {
       public String getName() {

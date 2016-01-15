@@ -41,6 +41,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
@@ -163,7 +164,7 @@ public class ScriptCompiler implements Compiler {
                   public void close() throws IOException, CommandException {
 
                     // Execute sequentially the script
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(source)));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(source), Charset.forName("UTF-8")));
 
                     // A bit nasty but well it's ok
                     ShellSession session = (ShellSession)consumer.getSession();

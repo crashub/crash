@@ -73,7 +73,7 @@ public class Generator {
     }
     if (buffer.length() > 0) {
       File f = new File(root, "reference.asciidoc");
-      PrintWriter pw = new PrintWriter(f);
+      PrintWriter pw = new PrintWriter(f, "UTF-8");
       try {
         System.out.println("Generating asciidoc file " + f.getCanonicalPath());
         pw.print(buffer);
