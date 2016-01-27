@@ -752,6 +752,8 @@ public class Utils {
             status = SCANNING;
           }
           break;
+        default:
+          break;
       }
     }
     switch (status) {

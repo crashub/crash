@@ -65,6 +65,8 @@ public class ServerProcess implements ShellProcess {
       case 1:
         server.cancel(this);
         break;
+      default:
+        break;
     }
   }
 }

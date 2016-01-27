@@ -160,6 +160,8 @@ public final class LineParser {
             index += 2;
           }
           break;
+        default:
+          break;
       }
       escaped = false;
     }

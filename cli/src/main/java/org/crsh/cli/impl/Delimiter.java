@@ -35,6 +35,8 @@ public enum Delimiter {
           case '\'':
           case '\\':
             appendable.append('\\');
+          default:
+            break;
         }
         appendable.append(c);
       }
@@ -51,6 +53,8 @@ public enum Delimiter {
             case '\'':
             case '\\':
               appendable.append('\\');
+            default:
+              break;
           }
           appendable.append(c);
         }
@@ -68,6 +72,8 @@ public enum Delimiter {
             case '"':
             case '\\':
               appendable.append('\\');
+            default:
+              break;
           }
           appendable.append(c);
         }
