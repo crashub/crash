@@ -134,4 +134,11 @@ public final class Description {
       return false;
     }
   }
+
+  @Override
+  public int hashCode() {
+    int result = usage != null ? usage.hashCode() : 0;
+    result = 31 * result + (man != null ? man.hashCode() : 0);
+    return result;
+  }
 }

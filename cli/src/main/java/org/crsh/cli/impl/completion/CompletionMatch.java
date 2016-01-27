@@ -66,6 +66,13 @@ public final class CompletionMatch implements Serializable {
   }
 
   @Override
+  public int hashCode() {
+    int result = delimiter != null ? delimiter.hashCode() : 0;
+    result = 31 * result + (value != null ? value.hashCode() : 0);
+    return result;
+  }
+
+  @Override
   public String toString() {
     return "CommandCompletion[delimiter=" + delimiter + ",value=" + value + "]";
   }

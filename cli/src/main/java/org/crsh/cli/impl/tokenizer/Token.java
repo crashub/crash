@@ -39,6 +39,8 @@ public abstract class Token {
       }
       return false;
     }
+    
+    
 
     @Override
     public String toString() {
@@ -126,6 +128,13 @@ public abstract class Token {
     }
 
     @Override
+    public int hashCode() {
+      int result = super.hashCode();
+      result = 31 * result + (value != null ? value.hashCode() : 0);
+      return result;
+    }
+
+    @Override
     public String toString() {
       return getClass().getSimpleName() + "[index=" + index + ",raw=" + raw + ",value=" + value + "]";
     }
@@ -188,5 +197,12 @@ public abstract class Token {
       return index == that.index && raw.equals(that.raw);
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = index;
+    result = 31 * result + (raw != null ? raw.hashCode() : 0);
+    return result;
   }
 }

@@ -206,6 +206,16 @@ public abstract class PropertyDescriptor<T> {
     }
   }
 
+  @Override
+  public int hashCode() {
+    int result = type != null ? type.hashCode() : 0;
+    result = 31 * result + (name != null ? name.hashCode() : 0);
+    result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
+    result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (secret ? 1 : 0);
+    return result;
+  }
+
   /**
    * Parse a string representation of a value and returns the correspondig property value.
    *

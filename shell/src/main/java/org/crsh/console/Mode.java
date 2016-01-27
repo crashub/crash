@@ -464,6 +464,11 @@ public abstract class Mode extends EditorAction {
     }
 
     @Override
+    public int hashCode() {
+      return count;
+    }
+
+    @Override
     public String toString() {
       return "Mode.ChangeChat[count=" + count + "]";
     }
@@ -508,6 +513,13 @@ public abstract class Mode extends EditorAction {
       } else {
         return false;
       }
+    }
+
+    @Override
+    public int hashCode() {
+      int result = count;
+      result = 31 * result + (to != null ? to.hashCode() : 0);
+      return result;
     }
 
     @Override
