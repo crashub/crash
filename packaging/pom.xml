@@ -7,7 +7,6 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>crash.packaging</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.3-SNAPSHOT</version>
 
   <name>CRaSH Packaging</name>
   <description>The CRaSH packaging module</description>
@@ -106,10 +105,6 @@
     <dependency>
       <groupId>org.crashub</groupId>
       <artifactId>crash.embed.spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-asm</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
