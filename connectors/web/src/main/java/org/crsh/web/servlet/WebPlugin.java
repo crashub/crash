@@ -25,11 +25,12 @@ import java.util.Collections;
 
 /**
  * @author Julien Viet
+ * @author Venil Noronha
  */
 public class WebPlugin extends CRaSHPlugin<WebPlugin> {
 
   /** . */
-  public static final PropertyDescriptor<Boolean> ENABLED = new PropertyDescriptor<Boolean>(Boolean.class, "web.enabled", false, "The refresh time unit") {
+  public static final PropertyDescriptor<Boolean> ENABLED = new PropertyDescriptor<Boolean>(Boolean.class, "web.enabled", false, "Whether web connector should be enabled") {
     @Override
     public Boolean doParse(String s) {
       return Boolean.valueOf(s);
