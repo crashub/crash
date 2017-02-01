@@ -69,6 +69,7 @@ public class CRaSH {
     //
     resolvers.add(scriptResolver);
     resolvers.add(SystemResolver.INSTANCE);
+    resolvers.add(ExternalResolver.INSTANCE);
   }
 
   public CRaSHSession createSession(Principal user) {
