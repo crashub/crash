@@ -18,7 +18,7 @@
  */
 package org.crsh.auth;
 
-import org.apache.sshd.common.KeyPairProvider;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
 

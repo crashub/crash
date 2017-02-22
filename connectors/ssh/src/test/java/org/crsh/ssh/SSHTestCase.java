@@ -70,8 +70,8 @@ public class SSHTestCase extends Assert {
     lifeCycle.setProperty(SSHPlugin.SSH_SERVER_AUTH_TIMEOUT, 10 * 60 * 1000);
     lifeCycle.setProperty(SSHPlugin.SSH_ENCODING, Utils.UTF_8);
     lifeCycle.setProperty(AuthenticationPlugin.AUTH, Arrays.asList(auth.getName()));
-    lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_USERNAME, "root");
-    lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_PASSWORD, "");
+    lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_USERNAME, "admin");
+    lifeCycle.setProperty(SimpleAuthenticationPlugin.SIMPLE_PASSWORD, "admin");
     lifeCycle.start();
     SSHClient client = new SSHClient(port).connect();
 

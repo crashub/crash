@@ -91,6 +91,12 @@
   <dependencyManagement>
     <dependencies>
 
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.0.1</version>
+        <scope>provided</scope>
+      </dependency>
       <!-- Module cli -->
       <dependency>
         <groupId>org.crashub</groupId>
@@ -348,7 +354,7 @@
       <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
-        <version>0.11.0</version>
+        <version>1.3.0</version>
         <exclusions>
           <exclusion>
             <groupId>org.slf4j</groupId>

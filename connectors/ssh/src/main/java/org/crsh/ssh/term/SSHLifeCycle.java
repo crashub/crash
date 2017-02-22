@@ -18,14 +18,16 @@
  */
 package org.crsh.ssh.term;
 
-import org.apache.sshd.SshServer;
-import org.apache.sshd.common.KeyPairProvider;
+import org.apache.sshd.server.SshServer;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.common.Session;
+import org.apache.sshd.common.session.Session;
 import org.apache.sshd.server.Command;
-import org.apache.sshd.server.PasswordAuthenticator;
-import org.apache.sshd.server.PublickeyAuthenticator;
+import org.apache.sshd.server.auth.password.PasswordAuthenticator;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.ServerFactoryManager;
+import org.apache.sshd.server.auth.password.PasswordChangeRequiredException;
+import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
 import org.crsh.auth.AuthenticationPlugin;
@@ -33,6 +35,8 @@ import org.crsh.shell.ShellFactory;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.ssh.term.subsystem.SubsystemFactoryPlugin;
 
+import java.io.IOException;
+import java.io.File;
 import java.nio.charset.Charset;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -143,9 +147,12 @@ public class SSHLifeCycle {
         server.getProperties().put(ServerFactoryManager.AUTH_TIMEOUT, String.valueOf(this.authTimeout));
       }
 
+      SimpleGeneratorHostKeyProvider hostKeyProvider = new SimpleGeneratorHostKeyProvider(new File("/crash/hostkey.pem"));
+      hostKeyProvider.setAlgorithm("RSA");
+
       server.setShellFactory(new CRaSHCommandFactory(factory, encoding));
       server.setCommandFactory(new SCPCommandFactory(context));
-      server.setKeyPairProvider(keyPairProvider);
+      server.setKeyPairProvider(hostKeyProvider);
 
       //
       ArrayList<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>(0);
@@ -158,7 +165,7 @@ public class SSHLifeCycle {
       for (AuthenticationPlugin authenticationPlugin : authenticationPlugins) {
         if (server.getPasswordAuthenticator() == null && authenticationPlugin.getCredentialType().equals(String.class)) {
           server.setPasswordAuthenticator(new PasswordAuthenticator() {
-            public boolean authenticate(String _username, String _password, ServerSession session) {
+            public boolean authenticate(String _username, String _password, ServerSession session) throws PasswordChangeRequiredException {
               if (genericAuthenticate(String.class, _username, _password)) {
                 // We store username and password in session for later reuse
                 session.setAttribute(USERNAME, _username);
@@ -171,13 +178,14 @@ public class SSHLifeCycle {
           });
         }
 
-        if (server.getPublickeyAuthenticator() == null && authenticationPlugin.getCredentialType().equals(PublicKey.class)) {
-          server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
-            public boolean authenticate(String username, PublicKey key, ServerSession session) {
-              return genericAuthenticate(PublicKey.class, username, key);
-            }
-          });
-        }
+//        if (server.getPublickeyAuthenticator() == null && authenticationPlugin.getCredentialType().equals(PublicKey.class)) {
+//          server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
+//            @Override
+//            public boolean authenticate(String username, PublicKey key, ServerSession session) {
+//              return genericAuthenticate(PublicKey.class, username, key);
+//            }
+//          });
+//        }
       }
 
       //
@@ -199,7 +207,7 @@ public class SSHLifeCycle {
       try {
         server.stop();
       }
-      catch (InterruptedException e) {
+      catch (IOException e) {
         log.log(Level.FINE, "Got an interruption when stopping server", e);
       }
     }
