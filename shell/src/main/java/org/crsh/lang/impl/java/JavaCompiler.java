@@ -62,7 +62,7 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
       throw new CommandException(ErrorKind.INTERNAL, "Could not access command", e);
     }
     catch (CompilationFailureException e) {
-        throw new CommandException(ErrorKind.INTERNAL, "Could not compile command", e);
+        throw new CommandException(ErrorKind.INTERNAL, "Could not compile command: " + e.getMessage(), e);
     }
     for (JavaClassFileObject classFile : classFiles) {
       String className = classFile.getClassName();
