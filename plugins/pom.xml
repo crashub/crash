@@ -13,8 +13,10 @@
   <name>CRaSH Plugins</name>
 
   <modules>
-    <module>mail</module>
-    <module>cron</module>
+    <!-- Disable the mail and cron plugins, as they are buggy. -->
+
+    <!--<module>mail</module>-->
+    <!--<module>cron</module>-->
   </modules>
 
 </project>
