@@ -19,8 +19,9 @@
 
 package org.crsh.ssh;
 
-import org.apache.sshd.common.KeyPairProvider;
-import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
+//import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
+import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
@@ -138,7 +139,8 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
       File f = new File(serverKeyPath);
       String keyGen = getContext().getProperty(SSH_SERVER_KEYGEN);
       if (keyGen != null && keyGen.equals("true")) {
-        keyPairProvider = new PEMGeneratorHostKeyProvider(serverKeyPath, "RSA");
+        // keyPairProvider = new PEMGeneratorHostKeyProvider(serverKeyPath, "RSA");
+        keyPairProvider = new SimpleGeneratorHostKeyProvider(new File(serverKeyPath));
       } else if (f.exists() && f.isFile()) {
         try {
           serverKeyURL = f.toURI().toURL();

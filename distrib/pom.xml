@@ -105,12 +105,12 @@
       <classifier>html</classifier>
       <type>zip</type>
     </dependency>
+<!--
     <dependency>
       <groupId>org.crashub</groupId>
       <artifactId>crash.doc.api</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
-<!--
     <dependency>
       <groupId>org.crashub</groupId>
       <artifactId>crash.doc.cookbook</artifactId>

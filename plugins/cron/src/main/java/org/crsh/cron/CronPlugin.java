@@ -178,7 +178,9 @@ public class CronPlugin extends CRaSHPlugin<CronPlugin> implements TaskCollector
   }
 
   public TaskTable getTasks() {
-
+    if (getConfig() == null) {
+      return new TaskTable();
+    }
     //
     Resource res = getConfig();
     List<String> lines = null;
