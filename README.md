@@ -1,6 +1,6 @@
 # Corda Shell
 
-This is a patch set on top of of the excellent but unmaintained CRaSH project which you can find at http://www.crashub.org.
+This is a patch set on top of the excellent but unmaintained CRaSH project which you can find at http://www.crashub.org.
 
 It consists of the last release of CRaSH, with various pull requests merged and our own patches added. A brief summary of the changes are:
  
