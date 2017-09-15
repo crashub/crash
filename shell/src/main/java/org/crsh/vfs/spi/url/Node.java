@@ -133,9 +133,10 @@ public class Node implements Iterable<Resource> {
     return children.values();
   }
 
-  void mergeEntries(URL url) throws IOException, URISyntaxException {
+  void mergeEntries(URL urlToMerge) throws IOException, URISyntaxException {
     // We handle a special case of spring-boot URLs here before diving in the recursive analysis
     // see https://github.com/spring-projects/spring-boot/tree/master/spring-boot-tools/spring-boot-loader#urls
+    URL url = urlToMerge;
     if (url.getProtocol().equals("jar")) {
       url = new URL(rewrite(url.toString()));
     }
@@ -157,23 +158,22 @@ public class Node implements Iterable<Resource> {
       catch (URISyntaxException e) {
         throw new IOException(e);
       }
-    }
-    else if (url.getProtocol().equals("jar")) {
+    } else if (url.toString().startsWith("jar:jar:file")
+               && url.getPath().contains("BOOT-INF/classes")) {
+      URL jarFileURL = new URL(url.toString()
+                                  .substring(0, url.toString().indexOf("!/"))
+                                  .substring("jar:jar:".length()));
+      String path = "BOOT-INF/classes/";
+      ZipIterator i = ZipIterator.create(Utils.toFile(jarFileURL));
+
+      addZipEntries(url, path, i);
+    } else if (url.getProtocol().equals("jar")) {
       int pos = url.getPath().lastIndexOf("!/");
       URL jarURL = new URL(url.getPath().substring(0, pos));
       String path = url.getPath().substring(pos + 2);
       ZipIterator i = ZipIterator.create(jarURL);
-      try {
-        while (i.hasNext()) {
-          ZipEntry entry = i.next();
-          if (entry.getName().startsWith(path)) {
-            addEntry(url, entry.getName().substring(path.length()), i.getStreamFactory());
-          }
-        }
-      }
-      finally {
-        Utils.close(i);
-      }
+
+      addZipEntries(url, path, i);
     }
     else {
       if (url.getPath().endsWith(".jar")) {
@@ -181,6 +181,20 @@ public class Node implements Iterable<Resource> {
       } else {
         // WTF ?
       }
+    }
+  }
+
+  private void addZipEntries(URL url, String path, ZipIterator i) throws IOException {
+    try {
+      while (i.hasNext()) {
+        ZipEntry entry = i.next();
+        if (entry.getName().startsWith(path)) {
+          addEntry(url, entry.getName().substring(path.length()), i.getStreamFactory());
+        }
+      }
+    }
+    finally {
+      Utils.close(i);
     }
   }
 

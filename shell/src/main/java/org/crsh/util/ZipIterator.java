@@ -36,7 +36,7 @@ import java.util.zip.ZipInputStream;
 /** @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a> */
 public abstract class ZipIterator implements Closeable {
 
-  public static ZipIterator create(URL url) throws IOException, URISyntaxException {
+  public static ZipIterator create(URL url) throws IOException {
     if (url.getProtocol().equals("file")) {
       return create(Utils.toFile(url));
     } else if (url.getProtocol().equals("jar")) {
@@ -48,7 +48,7 @@ public abstract class ZipIterator implements Closeable {
       try {
         while (container.hasNext()) {
           ZipEntry entry = container.next();
-          if (entry.getName().equals(path)) {
+          if (entry.getName().equals(path) || entry.getName().equals(path + "/")) {
             InputStreamFactory resolved = container.getStreamFactory();
             final InputStream nested = resolved.open();
             InputStream filter = new InputStream() {
@@ -113,24 +113,24 @@ public abstract class ZipIterator implements Closeable {
     }
   }
 
-  static ZipIterator create(File file) throws IOException {
+  public static ZipIterator create(File file) throws IOException {
     // The fast way (but that requires a File object)
     final ZipFile jarFile = new ZipFile(file);
     final Enumeration<? extends ZipEntry> en = jarFile.entries();en.hasMoreElements();
     return new ZipIterator() {
       ZipEntry next;
       @Override
-      public boolean hasNext() throws IOException {
+      public boolean hasNext() {
         return en.hasMoreElements();
       }
       @Override
-      public ZipEntry next() throws IOException {
+      public ZipEntry next() {
         return next = en.nextElement();
       }
-      public void close() throws IOException {
+      public void close() {
       }
       @Override
-      public InputStreamFactory getStreamFactory() throws IOException {
+      public InputStreamFactory getStreamFactory() {
         final ZipEntry capture = next;
         return new InputStreamFactory() {
           public InputStream open() throws IOException {
@@ -141,7 +141,7 @@ public abstract class ZipIterator implements Closeable {
     };
   }
 
-  static ZipIterator create(InputStream in) throws IOException {
+  static ZipIterator create(InputStream in) {
     final byte[] tmp = new byte[512];
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     final ZipInputStream zip = new ZipInputStream(in);
