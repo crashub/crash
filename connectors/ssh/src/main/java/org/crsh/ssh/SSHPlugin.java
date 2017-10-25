@@ -41,7 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.apache.sshd.common.util.SecurityUtils;
+import org.apache.sshd.common.util.security.SecurityUtils;
 
 public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
@@ -91,7 +91,7 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   @Override
   public void init() {
 
-    SecurityUtils.setRegisterBouncyCastle(true);
+//    SecurityUtils.setRegisterBouncyCastle(true);
     //
     Integer port = getContext().getProperty(SSH_PORT);
     if (port == null) {
