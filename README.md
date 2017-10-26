@@ -1,40 +1,18 @@
-<pre><code>   ______
- .~      ~. |`````````,       .'.                   ..'''' |         |
-|           |'''|'''''      .''```.              .''       |_________|
-|           |    `.       .'       `.         ..'          |         |
- `.______.' |      `.   .'           `. ....''             |         |</code></pre>
+# Corda Shell
 
-The Common Reusable SHell (CRaSH) is a shell designed for extending Java programs and the Java Virtual Machine.
+This is a patch set on top of the excellent but unmaintained CRaSH project which you can find at http://www.crashub.org.
 
-- Website : http://www.crashub.org
-- JIRA: http://jira.exoplatform.org/browse/CRASH
-- Documentation: http://www.crashub.org
-- Continuous Integration: https://vietj.ci.cloudbees.com/job/CRaSH/
+It consists of the last release of CRaSH, with various pull requests merged and our own patches added. A brief summary of the changes are:
+ 
+ * Upgraded Apache SSHD to version 1.6.0, bumped required Java version to 7. Also re-enabled reading/generating PEM host key files on startup
+ * Thanks to Marek Skocovsky, Apache SSHD has been upgraded to version 1.3.0 which resolves bugs related to evolution of the SSH protocol over the years.
+ * Thanks to David Ribyrne, A new ExternalResolver class  which lets you add pre-compiled command classes.
+ 
+Future planned changes include:
 
-# How to build CRaSH
+ * Disabling commands that have bitrotted
+ * Commands to control/access log4j
 
-## Obtaining CRaSH source code
-
-CRaSH can be obtained by cloning the Git repository `git@github.com:crashub/crash.git`
-
-<pre><code>git clone git@github.com:crashub/crash.git</code></pre>
-
-## Building CRaSH
-
-CRaSH is built with Maven.
-
-<pre><code>mvn package</code></pre>
-
-The build produces several archives ready to use:
-
-- `crsh.shell-${version}-standalone.jar` : a minimalistic standalone jar (to run with `java -jar crsh.shell-${version}-standalone.jar`)
-- `packaging/target/crsh-${version}-spring.war` : the Spring war
-- `packaging/target/crsh-${version}.war` : the web app war
-
-It also produce the distribution:
-
-- `distrib/target/crash-${version}-docs.tar.gz` : the documentation
-- `distrib/target/crash-${version}.tar.gz` : the standalone distribution
-- `distrib/target/crash-${version}-war.tar.gz` : the web app distribution
-- `distrib/target/crash-${version}-spring.tar.gz` : the Spring distribution
-- `distrib/target/crash-${version}-mule-app.tar.gz` : the Mule distribution
+Please note that this is not a 'true' fork - the software is drop-in compatible and still calls itself CRaSH internally.
+We are not uploading it to Maven Central, so you can depend on it using jitpack.io instead. There are tags named A1, A2 etc
+that represent somewhat tested snapshots.

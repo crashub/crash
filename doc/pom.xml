@@ -18,6 +18,20 @@
     <module>cookbook</module>
   </modules>
 
+  <dependencies>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sun</groupId>
+      <artifactId>tools</artifactId>
+      <version>1.6.0</version>
+      <scope>system</scope>
+      <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
+    </dependency>
+  </dependencies>
   <build>
     <pluginManagement>
       <plugins>

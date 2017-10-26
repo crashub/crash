@@ -18,15 +18,22 @@
  */
 package org.crsh.ssh;
 
-import org.apache.sshd.ClientSession;
-import org.apache.sshd.SshClient;
+import org.apache.sshd.client.auth.password.PasswordIdentityProvider;
+import org.apache.sshd.client.future.AuthFuture;
+import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ChannelShell;
-import org.apache.sshd.common.PtyMode;
-import org.apache.sshd.common.util.SttySupport;
+import org.apache.sshd.common.channel.PtyMode;
+import org.apache.sshd.common.channel.SttySupport;
+import org.apache.sshd.common.future.SshFutureListener;
+import org.crsh.ssh.term.SSHLifeCycle;
 import org.crsh.util.Utils;
 
 import java.io.*;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SSHClient {
 
@@ -79,6 +86,8 @@ public class SSHClient {
     this.port = port;
   }
 
+  private final Logger log = Logger.getLogger(SSHClient.class.getName());
+
   public SSHClient connect() throws Exception {
 
     Map<PtyMode, Integer> tty = SttySupport.parsePtyModes(TTY);
@@ -88,11 +97,19 @@ public class SSHClient {
     client.start();
 
     //
-    ClientSession session = client.connect("localhost", port).await().getSession();
-    session.authPassword("root", "");
+    ClientSession session = client.connect("admin", "localhost", port).verify(4L, TimeUnit.SECONDS).getSession();
+    session.addPasswordIdentity("admin");
+    AuthFuture authFuture = session.auth().verify(4L, TimeUnit.SECONDS);
+
+    authFuture.addListener(new SshFutureListener<AuthFuture>() {
+        @Override
+        public void operationComplete(AuthFuture authFuture) {
+          log.info("Authentication completed with " + (authFuture.isSuccess() ? "success" : "failure"));
+        }
+    });
 
     //
-    ChannelShell channel = (ChannelShell)session.createShellChannel();
+    ChannelShell channel = session.createShellChannel();
     channel.setPtyModes(tty);
 
     //

@@ -30,7 +30,7 @@ import org.crsh.command.Pipe
 import java.lang.management.MemoryPoolMXBean
 import java.lang.management.MemoryUsage;
 
-@Usage("JVM informations")
+@Usage("JVM information")
 class jvm {
 
   /**
@@ -62,7 +62,7 @@ class jvm {
   /**
    * Show JMX data about Class Loading System.
    */
-  @Usage("Show JVM classloding")
+  @Usage("Show JVM classloading")
   @Command
   public void classloading() {
     def cl = ManagementFactory.classLoadingMXBean

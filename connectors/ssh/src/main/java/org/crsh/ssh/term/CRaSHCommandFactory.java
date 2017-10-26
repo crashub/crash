@@ -40,4 +40,9 @@ public class CRaSHCommandFactory implements Factory<Command> {
   public Command create() {
     return new CRaSHCommand(this);
   }
+
+  @Override
+  public Command get() {
+    return new CRaSHCommand(this);
+  }
 }
