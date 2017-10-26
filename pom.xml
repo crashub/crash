@@ -3,7 +3,7 @@
   <groupId>org.crashub</groupId>
   <artifactId>crash.parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.3.3-SNAPSHOT</version>
+  <version>1.6.0-SNAPSHOT</version>
 
   <parent>
     <groupId>org.sonatype.oss</groupId>
@@ -12,7 +12,7 @@
   </parent>
 
   <name>CRaSH Parent</name>
-  <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn</description>
+  <description>The CRaSH is a shell for Java Content Repository that comes bundled as a war file to deploy in eXo Portal 2.5 or GateIn - enhanced by Corda</description>
   <url>http://www.crashub.org/</url>
 
   <organization>
@@ -28,9 +28,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/crashub/crash.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/crashub/crash.git</developerConnection>
-    <url>http://www.crashub.org</url>
+    <connection>scm:git:git://github.com/corda/crash.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/corda/crash.git</developerConnection>
+    <url>http://www.corda.net</url>
   </scm>
 
   <developers>
