@@ -147,12 +147,12 @@ public class SSHLifeCycle {
         server.getProperties().put(ServerFactoryManager.AUTH_TIMEOUT, String.valueOf(this.authTimeout));
       }
 
-      SimpleGeneratorHostKeyProvider hostKeyProvider = new SimpleGeneratorHostKeyProvider(new File("/crash/hostkey.pem"));
-      hostKeyProvider.setAlgorithm("RSA");
+//      SimpleGeneratorHostKeyProvider hostKeyProvider = new SimpleGeneratorHostKeyProvider(new File("/crash/hostkey.pem"));
+//      hostKeyProvider.setAlgorithm("RSA");
 
       server.setShellFactory(new CRaSHCommandFactory(factory, encoding));
       server.setCommandFactory(new SCPCommandFactory(context));
-      server.setKeyPairProvider(hostKeyProvider);
+      server.setKeyPairProvider(keyPairProvider);
 
       //
       ArrayList<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>(0);
