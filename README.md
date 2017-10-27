@@ -4,6 +4,7 @@ This is a patch set on top of the excellent but unmaintained CRaSH project which
 
 It consists of the last release of CRaSH, with various pull requests merged and our own patches added. A brief summary of the changes are:
  
+ * Upgraded Apache SSHD to version 1.6.0, bumped required Java version to 7. Also re-enabled reading/generating PEM host key files on startup
  * Thanks to Marek Skocovsky, Apache SSHD has been upgraded to version 1.3.0 which resolves bugs related to evolution of the SSH protocol over the years.
  * Thanks to David Ribyrne, A new ExternalResolver class  which lets you add pre-compiled command classes.
  

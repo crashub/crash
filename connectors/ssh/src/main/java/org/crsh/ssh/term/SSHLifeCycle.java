@@ -24,10 +24,8 @@ import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
-import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.ServerFactoryManager;
 import org.apache.sshd.server.auth.password.PasswordChangeRequiredException;
-import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.crsh.plugin.PluginContext;
 import org.crsh.auth.AuthenticationPlugin;
@@ -36,9 +34,7 @@ import org.crsh.ssh.term.scp.SCPCommandFactory;
 import org.crsh.ssh.term.subsystem.SubsystemFactoryPlugin;
 
 import java.io.IOException;
-import java.io.File;
 import java.nio.charset.Charset;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -147,12 +143,9 @@ public class SSHLifeCycle {
         server.getProperties().put(ServerFactoryManager.AUTH_TIMEOUT, String.valueOf(this.authTimeout));
       }
 
-      SimpleGeneratorHostKeyProvider hostKeyProvider = new SimpleGeneratorHostKeyProvider(new File("/crash/hostkey.pem"));
-      hostKeyProvider.setAlgorithm("RSA");
-
       server.setShellFactory(new CRaSHCommandFactory(factory, encoding));
       server.setCommandFactory(new SCPCommandFactory(context));
-      server.setKeyPairProvider(hostKeyProvider);
+      server.setKeyPairProvider(keyPairProvider);
 
       //
       ArrayList<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>(0);
@@ -177,15 +170,6 @@ public class SSHLifeCycle {
             }
           });
         }
-
-//        if (server.getPublickeyAuthenticator() == null && authenticationPlugin.getCredentialType().equals(PublicKey.class)) {
-//          server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
-//            @Override
-//            public boolean authenticate(String username, PublicKey key, ServerSession session) {
-//              return genericAuthenticate(PublicKey.class, username, key);
-//            }
-//          });
-//        }
       }
 
       //

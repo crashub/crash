@@ -568,7 +568,10 @@ public class Utils {
       throw new NullPointerException("No null type accepted");
     }
     if (type instanceof Class<?>) {
-      return (Class<?>)type;
+      return (Class<?>) type;
+    } else if (type instanceof ParameterizedType) {
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      return resolveToClass(parameterizedType.getRawType());
     } else if (type instanceof TypeVariable) {
       TypeVariable resolvedTypeVariable = (TypeVariable)type;
       return resolveToClass(resolvedTypeVariable.getBounds()[0]);
