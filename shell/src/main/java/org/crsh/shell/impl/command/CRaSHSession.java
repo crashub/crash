@@ -18,6 +18,7 @@
  */
 package org.crsh.shell.impl.command;
 
+import org.crsh.auth.AuthInfo;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.Language;
@@ -40,7 +41,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, RuntimeContext, ShellSession {
+public class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, RuntimeContext, ShellSession {
 
   /** . */
   static final Logger log = Logger.getLogger(CRaSHSession.class.getName());
@@ -54,16 +55,19 @@ class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, 
   /** . */
   final Principal user;
 
+  final AuthInfo authInfo;
+
   /** . */
   private Repl repl = ScriptRepl.getInstance();
 
-  CRaSHSession(final CRaSH crash, Principal user) {
+  CRaSHSession(final CRaSH crash, Principal user, AuthInfo authInfo) {
     // Set variable available to all scripts
     put("crash", crash);
 
     //
     this.crash = crash;
     this.user = user;
+    this.authInfo = authInfo;
 
     //
     ClassLoader previous = setCRaSHLoader();
@@ -86,6 +90,10 @@ class CRaSHSession extends HashMap<String, Object> implements Shell, Closeable, 
       throw new NullPointerException("No null repl accepted");
     }
     this.repl = repl;
+  }
+
+  public AuthInfo getAuthInfo() {
+    return authInfo;
   }
 
   public Iterable<Map.Entry<String, String>> getCommands() {

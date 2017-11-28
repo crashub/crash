@@ -51,7 +51,7 @@ public class JaasAuthenticationPlugin extends CRaSHPlugin<AuthenticationPlugin> 
     return String.class;
   }
 
-  public boolean authenticate(final String username, final String password) throws Exception {
+  public AuthInfo authenticate(final String username, final String password) throws Exception {
     String domain = getContext().getProperty(JAAS_DOMAIN);
     if (domain != null) {
       log.log(Level.FINE, "Will use the JAAS domain '" + domain + "' for authenticating user " + username);
@@ -76,18 +76,18 @@ public class JaasAuthenticationPlugin extends CRaSHPlugin<AuthenticationPlugin> 
         loginContext.login();
         loginContext.logout();
         log.log(Level.FINE, "Authenticated user " + username + " against the JAAS domain '" + domain + "'");
-        return true;
+        return AuthInfo.SUCCESSFUL;
       }
       catch (Exception e) {
         if (log.isLoggable(Level.FINE)) {
           log.log(Level.SEVERE, "Exception when authenticating user " + username + " to JAAS domain '" + domain + "'", e);
         }
-        return false;
+        return AuthInfo.UNSUCCESSFUL;
       }
     }
     else {
       log.log(Level.WARNING, "The JAAS domain property '" + JAAS_DOMAIN.name + "' was not found");
-      return false;
+      return AuthInfo.UNSUCCESSFUL;
     }
   }
 

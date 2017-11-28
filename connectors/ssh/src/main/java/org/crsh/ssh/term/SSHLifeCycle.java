@@ -31,6 +31,7 @@ import org.crsh.plugin.PluginContext;
 import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.shell.ShellFactory;
 import org.crsh.ssh.term.scp.SCPCommandFactory;
+import org.crsh.auth.AuthInfo;
 import org.crsh.ssh.term.subsystem.SubsystemFactoryPlugin;
 
 import java.io.IOException;
@@ -49,6 +50,8 @@ public class SSHLifeCycle {
 
   /** . */
   public static final Session.AttributeKey<String> PASSWORD = new Session.AttributeKey<java.lang.String>();
+
+  public static final Session.AttributeKey<AuthInfo> AUTH_INFO = new Session.AttributeKey<AuthInfo>();
 
   /** . */
   private final Logger log = Logger.getLogger(SSHLifeCycle.class.getName());
@@ -159,10 +162,12 @@ public class SSHLifeCycle {
         if (server.getPasswordAuthenticator() == null && authenticationPlugin.getCredentialType().equals(String.class)) {
           server.setPasswordAuthenticator(new PasswordAuthenticator() {
             public boolean authenticate(String _username, String _password, ServerSession session) throws PasswordChangeRequiredException {
-              if (genericAuthenticate(String.class, _username, _password)) {
+              AuthInfo authInfo = genericAuthenticate(String.class, _username, _password);
+              if (authInfo.isSuccessful()) {
                 // We store username and password in session for later reuse
                 session.setAttribute(USERNAME, _username);
                 session.setAttribute(PASSWORD, _password);
+                session.setAttribute(AUTH_INFO, authInfo);
                 return true;
               } else {
                 return false;
@@ -197,22 +202,20 @@ public class SSHLifeCycle {
     }
   }
 
-  private <T> boolean genericAuthenticate(Class<T> type, String username, T credential) {
+  private <T> AuthInfo genericAuthenticate(Class<T> type, String username, T credential) {
     for (AuthenticationPlugin authenticationPlugin : authenticationPlugins) {
       if (authenticationPlugin.getCredentialType().equals(type)) {
         try {
           log.log(Level.FINE, "Using authentication plugin " + authenticationPlugin + " to authenticate user " + username);
           @SuppressWarnings("unchecked")
           AuthenticationPlugin<T> authPlugin = (AuthenticationPlugin<T>) authenticationPlugin;
-          if (authPlugin.authenticate(username, credential)) {
-            return true;
-          }
+          return authPlugin.authenticate(username, credential);
         } catch (Exception e) {
           log.log(Level.SEVERE, "Exception authenticating user " + username + " in authentication plugin: " + authenticationPlugin, e);
         }
       }
     }
 
-    return false;
+    return AuthInfo.UNSUCCESSFUL;
   }
 }

@@ -19,6 +19,8 @@
 
 package org.crsh.telnet.term.spi;
 
+import org.crsh.auth.AuthInfo;
+
 import java.security.Principal;
 
 public interface TermIOHandler {
@@ -29,6 +31,6 @@ public interface TermIOHandler {
    * @param io the io
    * @param user the principal
    */
-  void handle(TermIO io, Principal user);
+  void handle(TermIO io, Principal user, AuthInfo authInfo);
 
 }

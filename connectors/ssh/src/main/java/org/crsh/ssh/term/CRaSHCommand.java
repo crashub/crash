@@ -23,13 +23,13 @@ import org.crsh.console.jline.console.ConsoleReader;
 import org.apache.sshd.server.Environment;
 import org.crsh.console.jline.JLineProcessor;
 import org.crsh.shell.Shell;
+import org.crsh.auth.AuthInfo;
 import org.crsh.util.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -81,12 +81,13 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
     final AtomicBoolean exited = new AtomicBoolean(false);
     try {
       final String userName = session.getAttribute(SSHLifeCycle.USERNAME);
+      AuthInfo authInfo = session.getAttribute(SSHLifeCycle.AUTH_INFO);
       Principal user = new Principal() {
         public String getName() {
           return userName;
         }
       };
-      Shell shell = factory.shellFactory.create(user);
+      Shell shell = factory.shellFactory.create(user, authInfo);
       ConsoleReader reader = new ConsoleReader(in, out, this) {
         @Override
         public void shutdown() {

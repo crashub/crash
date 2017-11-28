@@ -44,8 +44,8 @@ public interface AuthenticationPlugin<C> {
     public String getName() {
       return "null";
     }
-    public boolean authenticate(String username, Object password) throws Exception {
-      return false;
+    public AuthInfo authenticate(String username, Object password) throws Exception {
+      return AuthInfo.UNSUCCESSFUL;
     }
   };
 
@@ -68,8 +68,8 @@ public interface AuthenticationPlugin<C> {
    *
    * @param username the username
    * @param credential the credential
-   * @return true if authentication succeeded
+   * @return AuthInfo object
    * @throws Exception any exception that would prevent authentication to happen
    */
-  boolean authenticate(String username, C credential) throws Exception;
+  AuthInfo authenticate(String username, C credential) throws Exception;
 }
