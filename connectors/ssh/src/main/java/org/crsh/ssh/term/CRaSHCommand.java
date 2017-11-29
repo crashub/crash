@@ -174,6 +174,16 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   @Override
   public void setEchoEnabled(boolean enabled) {
   }
+
+  @Override
+  public void disableInterruptCharacter() {
+
+  }
+
+  @Override
+  public void enableInterruptCharacter() {
+
+  }
 }
 
 

@@ -69,7 +69,7 @@ public class UnixLineDiscardTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("donkey punch"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.UNIX_LINE_DISCARD);
     assertEquals("donkey punch", getCurrentLine());
     assertEquals("", getClipboard());

@@ -33,7 +33,7 @@ public class ViDeleteToEndOfLineTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("chicken sushimi"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(KeyStrokes.RIGHT);
     console.on(KeyStrokes.RIGHT);
     console.on(Operation.VI_DELETE_TO);

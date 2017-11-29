@@ -32,7 +32,7 @@ public class ViDeleteToNextWordTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("big brown pickles"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_NEXT_WORD);
     console.on(Operation.VI_CHANGE_TO);
     console.on(Operation.VI_NEXT_WORD);

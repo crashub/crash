@@ -27,8 +27,8 @@
 
     <!-- Will be shaded -->
     <dependency>
-      <groupId>jline</groupId>
-      <artifactId>jline</artifactId>
+      <groupId>com.github.corda</groupId>
+      <artifactId>jline2</artifactId>
     </dependency>
 
     <dependency>
@@ -94,7 +94,7 @@
               <createSourcesJar>true</createSourcesJar>
               <artifactSet>
                 <includes>
-                  <include>jline:jline</include>
+                  <include>com.github.corda:jline2</include>
                 </includes>
               </artifactSet>
               <relocations>

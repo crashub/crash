@@ -275,7 +275,7 @@ public abstract class Mode extends EditorAction {
           // That's a trick to let the cursor go to the end of the line
           // then we set to VI_INSERT
           return EMACS.then(EditorAction.RIGHT).then(VI_INSERT);
-        case VI_BEGNNING_OF_LINE_OR_ARG_DIGIT:
+        case VI_BEGINNING_OF_LINE_OR_ARG_DIGIT:
           return EditorAction.MOVE_BEGINNING;
         case FORWARD_CHAR:
           return EditorAction.RIGHT;
@@ -406,7 +406,7 @@ public abstract class Mode extends EditorAction {
           return EditorAction.COPY.then(VI_MOVE);
         case END_OF_LINE:
           return COPY_END_OF_LINE.then(VI_MOVE);
-        case VI_BEGNNING_OF_LINE_OR_ARG_DIGIT:
+        case VI_BEGINNING_OF_LINE_OR_ARG_DIGIT:
           return COPY_BEGINNING_OF_LINE.then(VI_MOVE);
         case VI_NEXT_WORD:
           return EditorAction.COPY_NEXT_WORD.then(VI_MOVE);

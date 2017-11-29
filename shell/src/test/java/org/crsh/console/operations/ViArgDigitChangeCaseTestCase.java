@@ -32,7 +32,7 @@ public class ViArgDigitChangeCaseTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("big.LITTLE"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_ARG_DIGIT, '2');
     console.on(Operation.VI_ARG_DIGIT, '0');
     console.on(Operation.VI_CHANGE_CASE);
