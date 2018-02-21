@@ -59,6 +59,7 @@ public class Generator {
     StringBuilder buffer = new StringBuilder();
     for (Map.Entry<String, String> s : crash.getCommands()) {
       Command<?> cmd = crash.getCommand(s.getKey());
+//      need to escape as 'bye' and 'exit' are not valid commands, but we want them in the help's output
       if(cmd != null) {
         CommandDescriptor<?> desc = cmd.getDescriptor();
         buffer.append("== ").append(desc.getName()).append("\n").append("\n");
