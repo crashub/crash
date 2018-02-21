@@ -33,6 +33,10 @@
     <url>http://www.corda.net</url>
   </scm>
 
+  <prerequisites>
+    <maven>3.0.0</maven>
+  </prerequisites>
+
   <developers>
     <developer>
       <id>julien.viet</id>
@@ -524,6 +528,10 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
