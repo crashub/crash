@@ -50,6 +50,9 @@ public class SystemResolver implements CommandResolver {
     commands.put("repl", repl.class);
     descriptions.put("help", "provides basic help");
     descriptions.put("repl", "list the repl or change the current repl");
+
+    descriptions.put("exit", "Exits.");
+    descriptions.put("bye", "Exits, same as exit.");
   }
 
   private SystemResolver() {
