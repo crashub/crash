@@ -48,7 +48,11 @@ public class help extends BaseCommand {
 
     //
     CRaSH crash = (CRaSH)context.getSession().get("crash");
-    for (Map.Entry<String, String> command : crash.getCommands()) {
+    java.util.ArrayList<Map.Entry<String, String>> commands = new java.util.ArrayList<>();
+    crash.getCommands().iterator().forEachRemaining(commands::add);
+    commands.sort(java.util.Comparator.comparing(Map.Entry::getKey));
+
+    for (Map.Entry<String, String> command : commands) {
       try {
         String desc = command.getValue();
         if (desc == null) {

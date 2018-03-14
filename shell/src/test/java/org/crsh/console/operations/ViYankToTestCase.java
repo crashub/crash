@@ -111,7 +111,7 @@ public class ViYankToTestCase extends AbstractPasteTestCase {
     console.on(KeyStrokes.LEFT);
     console.on(Operation.VI_YANK_TO);
     assertEquals(Mode.YANK_TO, console.getMode());
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     assertEquals(Mode.VI_MOVE, console.getMode());
     assertEquals("abc  d", getClipboard());
     assertEquals(6, getCurrentCursor());

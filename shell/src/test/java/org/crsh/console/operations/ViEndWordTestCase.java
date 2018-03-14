@@ -34,7 +34,7 @@ public class ViEndWordTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("putrid pidgen porridge"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_END_WORD);
     console.on(Operation.KILL_LINE);
     assertEquals("putri", getCurrentLine());
@@ -46,7 +46,7 @@ public class ViEndWordTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("    putrid pidgen porridge"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_END_WORD);
     console.on(Operation.KILL_LINE);
     assertEquals("    putri", getCurrentLine());

@@ -32,7 +32,7 @@ public class ViNextWordTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("buttery frog necks"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_NEXT_WORD);
     console.on(Operation.VI_NEXT_WORD);
     console.on(Operation.UNIX_LINE_DISCARD);

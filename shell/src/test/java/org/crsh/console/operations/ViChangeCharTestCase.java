@@ -32,7 +32,7 @@ public class ViChangeCharTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("abcdefhij"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_CHANGE_CHAR);
     console.on(Operation.SELF_INSERT, 'X'); // Any operation should be fine I think
     console.on(Operation.VI_INSERTION_MODE);
@@ -45,7 +45,7 @@ public class ViChangeCharTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("abcdefhij"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_CHANGE_CHAR);
     console.on(Operation.VI_MOVEMENT_MODE);
     console.on(Operation.VI_INSERTION_MODE);

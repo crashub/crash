@@ -77,11 +77,16 @@ public class SimpleAuthenticationPlugin extends
     return "simple";
   }
 
-  public boolean authenticate(String username, String password)
+  public AuthInfo authenticate(String username, String password)
     throws Exception {
-    return this.username != null &&
-      this.password != null &&
-      this.username.equals(username) &&
-      this.password.equals(password);
+    return new AuthInfo() {
+      @Override
+      public boolean isSuccessful() {
+        return SimpleAuthenticationPlugin.this.username != null &&
+                SimpleAuthenticationPlugin.this.password != null &&
+                SimpleAuthenticationPlugin.this.username.equals(username) &&
+                SimpleAuthenticationPlugin.this.password.equals(password);
+      }
+    };
   }
 }

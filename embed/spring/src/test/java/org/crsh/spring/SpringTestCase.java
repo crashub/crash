@@ -47,7 +47,7 @@ public class SpringTestCase extends TestCase {
 
     // Test a bit
     ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
-    Shell shell = factory.create(null);
+    Shell shell = factory.create(null, null);
     assertNotNull(shell);
     ShellProcess process = shell.createProcess("foo_cmd");
     assertNotNull(process);

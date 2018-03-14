@@ -19,6 +19,7 @@
 
 package org.crsh.telnet.term.processor;
 
+import org.crsh.auth.AuthInfo;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
@@ -47,8 +48,8 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
   public void destroy() {
   }
 
-  public void handle(final TermIO io, Principal user) {
-    Shell shell = factory.create(user);
+  public void handle(final TermIO io, Principal user, AuthInfo authInfo) {
+    Shell shell = factory.create(user, authInfo);
     ConsoleTerm term = new ConsoleTerm(io);
     Processor processor = new Processor(term, shell);
     processor.addListener(io);

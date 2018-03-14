@@ -18,7 +18,7 @@
  */
 package org.crsh.ssh.term;
 
-import org.apache.sshd.common.PtyMode;
+import org.apache.sshd.common.channel.PtyMode;
 import org.apache.sshd.server.Environment;
 
 import java.nio.charset.Charset;

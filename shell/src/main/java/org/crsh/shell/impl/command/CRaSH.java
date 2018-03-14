@@ -19,6 +19,7 @@
 
 package org.crsh.shell.impl.command;
 
+import org.crsh.auth.AuthInfo;
 import org.crsh.lang.LanguageCommandResolver;
 import org.crsh.lang.spi.Language;
 import org.crsh.shell.impl.command.spi.Command;
@@ -69,10 +70,11 @@ public class CRaSH {
     //
     resolvers.add(scriptResolver);
     resolvers.add(SystemResolver.INSTANCE);
+    resolvers.add(ExternalResolver.INSTANCE);
   }
 
-  public CRaSHSession createSession(Principal user) {
-    return new CRaSHSession(this, user);
+  public CRaSHSession createSession(Principal user, AuthInfo authInfo) {
+    return new CRaSHSession(this, user, authInfo);
   }
 
   /**

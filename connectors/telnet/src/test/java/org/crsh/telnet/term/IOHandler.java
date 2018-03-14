@@ -19,6 +19,7 @@
 package org.crsh.telnet.term;
 
 import junit.framework.AssertionFailedError;
+import org.crsh.auth.AuthInfo;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.telnet.term.spi.TermIO;
 import org.crsh.telnet.term.spi.TermIOHandler;
@@ -42,7 +43,7 @@ public class IOHandler extends CRaSHPlugin<TermIOHandler> implements TermIOHandl
     return this;
   }
 
-  public void handle(TermIO io, Principal user) {
+  public void handle(TermIO io, Principal user, AuthInfo authInfo) {
     while (true) {
       IOAction action = null;
       while (action == null) {

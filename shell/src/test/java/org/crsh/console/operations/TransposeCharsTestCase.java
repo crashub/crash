@@ -65,7 +65,7 @@ public class TransposeCharsTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("abcdef"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.FORWARD_CHAR);
     console.on(Operation.TRANSPOSE_CHARS);
     assertEquals("bacdef", getCurrentLine());
@@ -92,7 +92,7 @@ public class TransposeCharsTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("abcdef"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.TRANSPOSE_CHARS);
     assertEquals("abcdef", getCurrentLine());
     assertEquals(0, getCurrentCursor());

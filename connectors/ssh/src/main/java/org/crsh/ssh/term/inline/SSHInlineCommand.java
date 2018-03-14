@@ -1,6 +1,7 @@
 package org.crsh.ssh.term.inline;
 
 import org.apache.sshd.server.Environment;
+import org.crsh.auth.AuthInfo;
 import org.crsh.plugin.PluginContext;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
@@ -61,12 +62,13 @@ public class SSHInlineCommand extends AbstractCommand implements Runnable {
     PrintStream err = new PrintStream(this.err);
     PrintStream out = new PrintStream(this.out);
     final String userName = session.getAttribute(SSHLifeCycle.USERNAME);
+    AuthInfo authInfo = session.getAttribute(SSHLifeCycle.AUTH_INFO);
     Principal user = new Principal() {
       public String getName() {
         return userName;
       }
     };
-    Shell shell = pluginContext.getPlugin(ShellFactory.class).create(user);
+    Shell shell = pluginContext.getPlugin(ShellFactory.class).create(user, authInfo);
     ShellProcess shellProcess = shell.createProcess(command);
 
     //

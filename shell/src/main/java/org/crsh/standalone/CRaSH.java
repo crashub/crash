@@ -341,7 +341,7 @@ public class CRaSH {
       //
       if (interactive) {
         ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
-        shell = factory.create(null);
+        shell = factory.create(null, null);
       } else {
         shell = null;
       }

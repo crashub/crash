@@ -32,7 +32,7 @@ public class ViArgDigitDeleteToNextWordTestCase extends AbstractConsoleTestCase 
     console.init();
     console.on(KeyStrokes.of("a big batch of buttery frog livers"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_ARG_DIGIT, '5');
     console.on(Operation.VI_DELETE_TO);
     console.on(Operation.VI_NEXT_WORD);

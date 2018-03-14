@@ -231,7 +231,15 @@ public class Console {
               }
             }
           } else {
-            KeyHandler keyHandler = processHandler.process.getKeyHandler();
+            KeyHandler keyHandler = null;
+            try {
+              keyHandler = processHandler.process.getKeyHandler();
+            } catch (IllegalStateException ignored) {
+              // Ignoring the illegal state exception. The ProcessHandler is of
+              // the previous command and terminated.
+              // The keyhandler will remain null and the input will be appended
+              // to the buffer.
+            }
             if (keyHandler != null) {
               KeyType type = key.map();
               try {

@@ -42,7 +42,7 @@ public class ViDeleteToDeleteToTestCase extends AbstractConsoleTestCase {
     console.init();
     console.on(KeyStrokes.of("abcdef"));
     console.on(Operation.VI_MOVEMENT_MODE);
-    console.on(Operation.VI_BEGNNING_OF_LINE_OR_ARG_DIGIT);
+    console.on(Operation.VI_BEGINNING_OF_LINE_OR_ARG_DIGIT);
     console.on(Operation.VI_DELETE_TO);
     console.on(Operation.VI_DELETE_TO);
     assertEquals("", getCurrentLine());

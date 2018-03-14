@@ -120,7 +120,7 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
   }
 
   public Shell createShell() {
-    return crash.createSession(null);
+    return crash.createSession(null, null);
   }
 }
 

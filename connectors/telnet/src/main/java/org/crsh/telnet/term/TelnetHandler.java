@@ -35,7 +35,7 @@ public class TelnetHandler implements Shell {
     TelnetIO io = new TelnetIO(conn);
     TelnetLifeCycle lifeCycle = TelnetLifeCycle.getLifeCycle(conn);
     TermIOHandler handler = lifeCycle.getHandler();
-    handler.handle(io, null);
+    handler.handle(io, null, null);
   }
 
   public void connectionIdle(ConnectionEvent connectionEvent) {

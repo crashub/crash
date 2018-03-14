@@ -19,8 +19,8 @@
 
 package org.crsh.ssh;
 
-import org.apache.sshd.common.KeyPairProvider;
-import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
+import org.apache.sshd.common.util.security.bouncycastle.BouncyCastleGeneratorHostKeyProvider;
 import org.crsh.auth.AuthenticationPlugin;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PropertyDescriptor;
@@ -40,7 +40,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.apache.sshd.common.util.SecurityUtils;
 
 public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
 
@@ -90,8 +89,6 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
   @Override
   public void init() {
 
-    SecurityUtils.setRegisterBouncyCastle(true);
-    //
     Integer port = getContext().getProperty(SSH_PORT);
     if (port == null) {
       log.log(Level.INFO, "Could not boot SSHD due to missing due to missing port configuration");
@@ -138,7 +135,8 @@ public class SSHPlugin extends CRaSHPlugin<SSHPlugin> {
       File f = new File(serverKeyPath);
       String keyGen = getContext().getProperty(SSH_SERVER_KEYGEN);
       if (keyGen != null && keyGen.equals("true")) {
-        keyPairProvider = new PEMGeneratorHostKeyProvider(serverKeyPath, "RSA");
+        // Provide PEM file generation/loading
+        keyPairProvider = new BouncyCastleGeneratorHostKeyProvider(new File(serverKeyPath).toPath());
       } else if (f.exists() && f.isFile()) {
         try {
           serverKeyURL = f.toURI().toURL();

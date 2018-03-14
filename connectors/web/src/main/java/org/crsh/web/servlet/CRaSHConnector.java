@@ -86,7 +86,7 @@ public class CRaSHConnector {
           log.fine("Using shell " + context);
           ShellFactory factory = context.getPlugin(ShellFactory.class);
           Principal user = wsSession.getUserPrincipal();
-          Shell shell = factory.create(user);
+          Shell shell = factory.create(user, null);
           CRaSHSession session = new CRaSHSession(wsSession, shell);
           sessions.put(wsSession.getId(), session);
           log.fine("Established session " + wsSession.getId());
