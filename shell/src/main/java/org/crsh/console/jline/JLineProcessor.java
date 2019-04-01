@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class JLineProcessor implements Runnable, ConsoleDriver {
 
@@ -50,6 +52,7 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
   final ConsoleReader reader;
   final String lineSeparator;
   final boolean ansi;
+  final Logger logger = Logger.getLogger(JLineProcessor.class.getName());
 
   public JLineProcessor(
       boolean ansi,
@@ -207,7 +210,7 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
         }
       }
       catch (IOException e) {
-        e.printStackTrace();
+        logger.log(Level.SEVERE, e.getMessage(), e);
         return;
       }
     }
