@@ -21,6 +21,7 @@ package org.crsh.shell.impl.command.system;
 import org.crsh.cli.descriptor.Format;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
+import org.crsh.command.ShellSafety;
 import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.lang.impl.java.ClassShellCommand;
@@ -37,46 +38,55 @@ import java.util.Map;
 public class SystemResolver implements CommandResolver {
 
   /** . */
-  public static final SystemResolver INSTANCE = new SystemResolver();
+  public static final SystemResolver UNSAFE_INSTANCE = new SystemResolver(false);
+  public static final SystemResolver SAFE_INSTANCE = new SystemResolver(true);
 
   /** . */
-  private static final HashMap<String, Class<? extends BaseCommand>> commands = new HashMap<String, Class<? extends BaseCommand>>();
+  private static final HashMap<String, Class<? extends BaseCommand>> unsafeCommands = new HashMap<String, Class<? extends BaseCommand>>();
+  private static final HashMap<String, Class<? extends BaseCommand>> safeCommands = new HashMap<String, Class<? extends BaseCommand>>();
 
   /** . */
-  private static final HashMap<String, String> descriptions = new HashMap<String, String>();
+  private static final HashMap<String, String> unsafeDescriptions = new HashMap<String, String>();
+  private static final HashMap<String, String> safeDescriptions = new HashMap<String, String>();
 
   static {
-    commands.put("help", help.class);
-    commands.put("repl", repl.class);
-    descriptions.put("help", "provides basic help");
-    descriptions.put("repl", "list the repl or change the current repl");
+    unsafeCommands.put("help", help.class);
+    unsafeCommands.put("repl", repl.class);
+    unsafeDescriptions.put("help", "provides basic help (all commands).");
+    unsafeDescriptions.put("repl", "list the repl or change the current repl");
 
-    descriptions.put("exit", "Exits.");
-    descriptions.put("bye", "Exits, same as exit.");
+    unsafeDescriptions.put("exit", "Exits.");
+    unsafeDescriptions.put("bye", "Exits, same as exit.");
+
+    safeCommands.put("help", help.class);
+    safeDescriptions.put("help", "provides basic help (safe mode commands).");
   }
 
-  private SystemResolver() {
+  private final boolean safeInstance;
+
+  private SystemResolver(boolean safe) {
+    this.safeInstance = safe;
   }
 
   @Override
   public Iterable<Map.Entry<String, String>> getDescriptions() {
-    return descriptions.entrySet();
+    return safeInstance ? safeDescriptions.entrySet() : unsafeDescriptions.entrySet();
   }
 
   @Override
-  public Command<?> resolveCommand(String name) throws CommandException, NullPointerException {
-    final Class<? extends BaseCommand> systemCommand = commands.get(name);
+  public Command<?> resolveCommand(String name, ShellSafety shellSafety) throws CommandException, NullPointerException {
+    final Class<? extends BaseCommand> systemCommand = safeInstance ? safeCommands.get(name) : unsafeCommands.get(name);
     if (systemCommand != null) {
-      return createCommand(systemCommand).getCommand();
+      return createCommand(systemCommand, shellSafety).getCommand(); //++++KEEP
     }
     return null;
   }
 
-  private <C extends BaseCommand> CommandResolution createCommand(final Class<C> commandClass) throws CommandException {
+  private <C extends BaseCommand> CommandResolution createCommand(final Class<C> commandClass, ShellSafety shellSafety) throws CommandException {
     final ClassShellCommand<C> shellCommand;
     final String description;
     try {
-      shellCommand = new ClassShellCommand<C>(commandClass);
+      shellCommand = new ClassShellCommand<C>(commandClass, shellSafety);//++++KEEP
       description = shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
     }
     catch (IntrospectionException e) {

@@ -20,6 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.command.CommandContext;
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.impl.script.CommandNotFoundException;
 import org.crsh.shell.ErrorKind;
 import org.crsh.text.Screenable;
@@ -53,9 +54,22 @@ public final class InvocationContextImpl<P> extends AbstractInvocationContext<P>
 
   /** . */
   int status;
+ //++++ String safeMode;//++++
+  private ShellSafety shellSafety = new ShellSafety();
 
-  public InvocationContextImpl(CommandContext<P> commandContext) {
+  @Override
+  public ShellSafety getShellSafety() {
+    return shellSafety; //++++KEEP
+  }
+
+ //++++ public String isSafeMode() {
+  //++++   return safeMode + "|InvocationContextImplDFG++++"; //++++REMOVE
+  //++++}
+
+  public InvocationContextImpl(CommandContext<P> commandContext, ShellSafety shellSafety) { //++++
     this.commandContext = commandContext;
+    //this.safeMode = safeMode;//++++ REMOVE
+    this.shellSafety = shellSafety; //++++KEEP
     this.status = FLUSHED;
   }
 

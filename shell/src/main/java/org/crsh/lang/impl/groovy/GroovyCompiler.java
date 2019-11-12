@@ -31,6 +31,7 @@ import org.codehaus.groovy.control.Phases;
 import org.crsh.cli.Usage;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.ShellSession;
@@ -198,7 +199,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
   }
 
   private <C extends BaseCommand> ClassShellCommand<C> make(Class<C> clazz) throws IntrospectionException {
-    return new ClassShellCommand<C>(clazz);
+    return new ClassShellCommand<C>(clazz, new ShellSafety());//++++KEEP
   }
 
   private <C extends GroovyScriptCommand> GroovyScriptShellCommand<C> make2(Class<C> clazz) throws IntrospectionException {

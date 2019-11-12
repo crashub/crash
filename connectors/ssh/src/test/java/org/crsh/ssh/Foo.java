@@ -18,6 +18,7 @@
  */
 package org.crsh.ssh;
 
+import org.crsh.command.ShellSafety;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.auth.AuthInfo;
 import test.shell.sync.SyncShell;
@@ -48,7 +49,7 @@ public class Foo extends CRaSHPlugin<ShellFactory> {
   public ShellFactory getImplementation() {
     return new ShellFactory() {
       @Override
-      public Shell create(Principal principal, AuthInfo authInfo) {
+      public Shell create(Principal principal, AuthInfo authInfo, ShellSafety shellSafety) {
         return shell;
       }
     };

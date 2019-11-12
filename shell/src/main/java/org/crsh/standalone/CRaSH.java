@@ -38,6 +38,7 @@ import org.crsh.cli.impl.invocation.InvocationMatcher;
 import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.impl.lang.Util;
+import org.crsh.command.ShellSafety;
 import org.crsh.console.jline.JLineProcessor;
 import org.crsh.plugin.ResourceManager;
 import org.crsh.shell.Shell;
@@ -341,7 +342,10 @@ public class CRaSH {
       //
       if (interactive) {
         ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
-        shell = factory.create(null, null);
+        //String safeMode = "standalone++++";//++++REMOVE
+        ShellSafety shellSafety = new ShellSafety();
+        shellSafety.setStandAlone(true); //++++KEEP +++++REVIEW
+        shell = factory.create(null, null, shellSafety);
       } else {
         shell = null;
       }

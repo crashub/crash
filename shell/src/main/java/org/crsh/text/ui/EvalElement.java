@@ -20,7 +20,9 @@
 package org.crsh.text.ui;
 
 import groovy.lang.Closure;
+import org.crsh.command.ShellSafety;
 import org.crsh.groovy.GroovyCommand;
+import org.crsh.shell.Shell;
 import org.crsh.shell.impl.command.AbstractInvocationContext;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.text.Screenable;
@@ -76,6 +78,14 @@ public class EvalElement extends Element {
 
       /** . */
       private Renderer renderable;
+
+  //    public String isSafeMode() {
+    //    return "EvalElement++++"; //++++
+      //} //++++REMOVE
+      @Override
+      public ShellSafety getShellSafety() {
+        return new ShellSafety(); //++++KEEP
+      }
 
       public CommandInvoker<?, ?> resolve(String s) throws CommandException {
         return ctx.resolve(s);

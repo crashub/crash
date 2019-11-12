@@ -22,6 +22,7 @@ import org.crsh.cli.Command;
 import org.crsh.cli.Usage;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.InvocationContext;
+import org.crsh.command.ShellSafety;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.text.Color;
 import org.crsh.text.Decoration;
@@ -29,17 +30,32 @@ import org.crsh.text.Style;
 import org.crsh.text.ui.LabelElement;
 import org.crsh.text.ui.TableElement;
 
-import java.io.IOException;
 import java.util.Map;
 
 /** @author Julien Viet */
 public class help extends BaseCommand {
-
+  //int xxx = 0; //++++
   @Usage("provides basic help")
   @Command
   public void main(InvocationContext<Object> context) throws Exception {
 
     //
+    ShellSafety shellSafety = context.getShellSafety(); //++++KEEP
+    /*++++
+    sshMode = safeMode.contains("SSH");//++++
+    String safeMode = context.isSafeMode(); //(xxx++ %2 == 0); //++++
+    System.out.println("help: " + xxx + " " + hashCode() + "[" + safeMode + "]");//++++
+    boolean safeShell = safeMode.contains("SAFESAFE");//++++
+    boolean standAlone = safeMode.contains("STANDALONE");//++++
+    boolean internal = safeMode.contains("INTERNAL");//++++
+    boolean sshMode = safeMode.contains("SSH");//++++
+    //++++REMOVE above
+     */
+    boolean safeShell = shellSafety.isSafeShell();
+    boolean standAlone = shellSafety.isStandAlone();
+    boolean internal = shellSafety.isInternal();
+    boolean sshMode = shellSafety.isSshMode(); //++++KEEP
+
     TableElement table = new TableElement().rightCellPadding(1);
     table.row(
       new LabelElement("NAME").style(Style.style(Decoration.bold)),
@@ -49,9 +65,14 @@ public class help extends BaseCommand {
     //
     CRaSH crash = (CRaSH)context.getSession().get("crash");
     java.util.ArrayList<Map.Entry<String, String>> commands = new java.util.ArrayList<>();
-    crash.getCommands().iterator().forEachRemaining(commands::add);
+    //++++crash.getCommandsX X X(context.isSafeMode()).iterator().forEachRemaining(commands::add); // Change to ShellSafety++++REMOVE
+    crash.getCommandsSafetyCheck(shellSafety).iterator().forEachRemaining(commands::add); // ++++KEEP
     commands.sort(java.util.Comparator.comparing(Map.Entry::getKey));
 
+    Color col =   sshMode    ? (safeShell ? Color.cyan   : Color.red)
+                : standAlone ? (safeShell ? Color.yellow : Color.red)
+                : internal   ? (safeShell ? Color.green  : Color.red)
+                :              (safeShell ? Color.red    : Color.red); // Unknown ++++KEEP
     for (Map.Entry<String, String> command : commands) {
       try {
         String desc = command.getValue();
@@ -59,15 +80,19 @@ public class help extends BaseCommand {
           desc = "";
         }
         table.row(
-          new LabelElement(command.getKey()).style(Style.style(Color.red)),
+          new LabelElement(command.getKey()).style(Style.style(col)), //++++
           new LabelElement(desc));
       } catch (Exception ignore) {
         //
       }
     }
 
-    //
-    context.provide(new LabelElement("Try one of these commands with the -h or --help switch:\n"));
+    String safeStr = safeShell ? "SAFE-" : "UNSAFE-";
+    String sshStr = sshMode ? "SSH-" : "";
+    String saStr = standAlone ? "Standalone-" : "";
+    String intStr = internal ? "Internal-" : "";
+    String pref = "[" + safeStr + saStr + intStr + sshStr + "Shell]: "; //++++
+    context.provide(new LabelElement(pref + "Try one of these commands with the -h or --help switch:\n"));
     context.provide(table);
   }
 }

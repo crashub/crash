@@ -20,6 +20,7 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.auth.AuthInfo;
 import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.Language;
 import org.crsh.lang.spi.Repl;
@@ -57,17 +58,21 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
 
   final AuthInfo authInfo;
 
+  final ShellSafety shellSafety;
+
   /** . */
   private Repl repl = ScriptRepl.getInstance();
 
-  CRaSHSession(final CRaSH crash, Principal user, AuthInfo authInfo) {
+  CRaSHSession(final CRaSH crash, Principal user, AuthInfo authInfo, ShellSafety shellSafety) {
     // Set variable available to all scripts
+    System.out.println("New Crash Session: U: '" + user + "' AI: " + authInfo.toString() + " ++++"); //++++REMOVE
     put("crash", crash);
 
     //
     this.crash = crash;
     this.user = user;
     this.authInfo = authInfo;
+    this.shellSafety = shellSafety;//++++KEEP
 
     //
     ClassLoader previous = setCRaSHLoader();
@@ -97,11 +102,11 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   }
 
   public Iterable<Map.Entry<String, String>> getCommands() {
-    return crash.getCommands();
+    return crash.getCommandsSafetyCheck(shellSafety);//++++KEEP
   }
 
   public Command<?> getCommand(String name) throws CommandException {
-    return crash.getCommand(name);
+    return crash.getCommandSafetyCheck(name, shellSafety);//++++KEEP
   }
 
   public PluginContext getContext() {

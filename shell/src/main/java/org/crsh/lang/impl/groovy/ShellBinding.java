@@ -21,6 +21,7 @@ package org.crsh.lang.impl.groovy;
 import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
+import org.crsh.command.ShellSafety;
 import org.crsh.shell.impl.command.AbstractInvocationContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.text.RenderPrintWriter;
@@ -60,6 +61,15 @@ class ShellBinding extends Binding {
         return current.getWriter();
       }
     }
+
+    @Override
+    public ShellSafety getShellSafety() {
+      return new ShellSafety(); //++++KEEP
+    }
+
+   //++++ public String isSafeMode() {
+      //++++REMOVE return "ShellBinding++++"; //++++
+    //++++}//++++
     public CommandInvoker<?, ?> resolve(String s) throws CommandException {
       if (current == null) {
         throw new IllegalStateException("Not under context");
@@ -210,7 +220,7 @@ class ShellBinding extends Binding {
         try {
           Command<?> cmd = session.getCommand(name);
           if (cmd != null) {
-            return new PipeLineClosure(new InvocationContextImpl<Object>(proxy), name, cmd);
+            return new PipeLineClosure(new InvocationContextImpl<Object>(proxy, new ShellSafety()), name, cmd); //++++KEEP
           }
         } catch (CommandException ignore) {
           // Really ?

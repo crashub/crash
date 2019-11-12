@@ -21,7 +21,9 @@ package org.crsh.lang.impl.groovy.closure;
 import groovy.lang.GroovyObjectSupport;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.crsh.command.CommandContext;
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.impl.groovy.Helper;
+import org.crsh.shell.Shell;
 import org.crsh.shell.impl.command.InvocationContextImpl;
 import org.crsh.util.SafeCallable;
 
@@ -48,7 +50,7 @@ class ClosureDelegate extends GroovyObjectSupport {
     if ("context".equals(property)) {
       return context;
     } else {
-      Object value = Helper.resolveProperty(new InvocationContextImpl(context), property);
+      Object value = Helper.resolveProperty(new InvocationContextImpl(context, new ShellSafety()), property); //++++KEEP
       if (value != null) {
         return value;
       } else {
@@ -60,7 +62,7 @@ class ClosureDelegate extends GroovyObjectSupport {
 
   @Override
   public Object invokeMethod(String name, Object args) {
-    SafeCallable runnable = Helper.resolveMethodInvocation(new InvocationContextImpl(context), name, args);
+    SafeCallable runnable = Helper.resolveMethodInvocation(new InvocationContextImpl(context, new ShellSafety()), name, args);//++++KEEP
     if (runnable != null) {
       return runnable.call();
     } else {

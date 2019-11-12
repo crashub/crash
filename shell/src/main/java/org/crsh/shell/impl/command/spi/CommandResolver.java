@@ -18,6 +18,8 @@
  */
 package org.crsh.shell.impl.command.spi;
 
+import org.crsh.command.ShellSafety;
+
 import java.util.Map;
 
 /**
@@ -41,5 +43,5 @@ public interface CommandResolver {
    * @throws CommandException if an error occured preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
-  Command<?> resolveCommand(String name) throws CommandException, NullPointerException;
+  Command<?> resolveCommand(String name, ShellSafety shellSafety) throws CommandException, NullPointerException;//++++KEEP
 }

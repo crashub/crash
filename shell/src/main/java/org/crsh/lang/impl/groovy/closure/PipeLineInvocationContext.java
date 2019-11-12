@@ -19,6 +19,7 @@
 
 package org.crsh.lang.impl.groovy.closure;
 
+import org.crsh.command.ShellSafety;
 import org.crsh.shell.impl.command.AbstractInvocationContext;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.text.Screenable;
@@ -40,6 +41,15 @@ class PipeLineInvocationContext extends AbstractInvocationContext<Object> {
     //
     this.outter = outter;
   }
+
+  @Override
+  public ShellSafety getShellSafety() {
+    return new ShellSafety(); //++++KEEP
+  }
+
+  //++++public String isSafeMode() {
+  //++++return "PipeLineInvocationContext++++"; //++++
+  //++++}
 
   public CommandInvoker<?, ?> resolve(String s) throws CommandException {
     return outter.resolve(s);

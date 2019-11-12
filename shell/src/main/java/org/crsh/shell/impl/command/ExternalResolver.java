@@ -6,6 +6,7 @@ import java.util.Map;
 import org.crsh.cli.descriptor.Format;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.lang.spi.CommandResolution;
 import org.crsh.shell.ErrorKind;
@@ -38,9 +39,8 @@ public class ExternalResolver implements CommandResolver
 		return descriptions.entrySet();
 	}
 
-
 	@Override
-	public Command<?> resolveCommand(String name) throws CommandException, NullPointerException
+	public Command<?> resolveCommand(String name, ShellSafety shellSafety) throws CommandException, NullPointerException
 	{
 		final Class<? extends BaseCommand> systemCommand = commands.get(name);
 		if (systemCommand != null)
@@ -50,14 +50,13 @@ public class ExternalResolver implements CommandResolver
 		return null;
 	}
 
-
 	private <C extends BaseCommand> CommandResolution createCommand(final Class<C> commandClass) throws CommandException
 	{
 		final ClassShellCommand<C> shellCommand;
 		final String description;
 		try
 		{
-			shellCommand = new ClassShellCommand<C>(commandClass);
+			shellCommand = new ClassShellCommand<C>(commandClass, new ShellSafety());//++++KEEP
 			description = shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
 		}
 		catch (IntrospectionException e)
