@@ -74,7 +74,7 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
           Class<?> clazz = loader.loadClass(classFile.getClassName());
           final ClassShellCommand command;
           try {
-            command = new ClassShellCommand(clazz, new ShellSafety());//++++KEEP
+            command = new ClassShellCommand(clazz, new ShellSafety());
           }
           catch (IntrospectionException e) {
             throw new CommandException(ErrorKind.INTERNAL, "Invalid cli annotations", e);

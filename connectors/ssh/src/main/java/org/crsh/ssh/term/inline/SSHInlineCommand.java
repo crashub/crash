@@ -69,7 +69,7 @@ public class SSHInlineCommand extends AbstractCommand implements Runnable {
         return userName;
       }
     };
-    Shell shell = pluginContext.getPlugin(ShellFactory.class).create(user, authInfo, new ShellSafety());//++++KEEP
+    Shell shell = pluginContext.getPlugin(ShellFactory.class).create(user, authInfo, new ShellSafety());
     ShellProcess shellProcess = shell.createProcess(command);
 
     //

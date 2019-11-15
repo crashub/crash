@@ -62,7 +62,7 @@ public class CustomCommandResolverTestCase extends AbstractShellTestCase {
     public Command<?> resolveCommand(String name, ShellSafety shellSafety) throws CommandException, NullPointerException {
       if ("mycommand".equals(name)) {
         try {
-          return new ClassShellCommand<mycommand>(mycommand.class, shellSafety);//++++KEEP
+          return new ClassShellCommand<mycommand>(mycommand.class, shellSafety);
         }
         catch (IntrospectionException e) {
           throw new CommandException(ErrorKind.EVALUATION, "Invalid cli annotations", e);

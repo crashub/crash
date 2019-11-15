@@ -50,7 +50,7 @@ class ClosureDelegate extends GroovyObjectSupport {
     if ("context".equals(property)) {
       return context;
     } else {
-      Object value = Helper.resolveProperty(new InvocationContextImpl(context, new ShellSafety()), property); //++++KEEP
+      Object value = Helper.resolveProperty(new InvocationContextImpl(context, new ShellSafety()), property);
       if (value != null) {
         return value;
       } else {
@@ -62,7 +62,7 @@ class ClosureDelegate extends GroovyObjectSupport {
 
   @Override
   public Object invokeMethod(String name, Object args) {
-    SafeCallable runnable = Helper.resolveMethodInvocation(new InvocationContextImpl(context, new ShellSafety()), name, args);//++++KEEP
+    SafeCallable runnable = Helper.resolveMethodInvocation(new InvocationContextImpl(context, new ShellSafety()), name, args);
     if (runnable != null) {
       return runnable.call();
     } else {

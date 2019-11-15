@@ -67,7 +67,7 @@ public class Helper {
     CRaSH crash = (CRaSH)context.getSession().get("crash");
     if (crash != null) {
       try {
-        Command<?> cmd = crash.getCommandSafetyCheck(property, new ShellSafety()); //++++KEEP
+        Command<?> cmd = crash.getCommandSafetyCheck(property, new ShellSafety());
         if (cmd != null) {
           return new PipeLineClosure(context, property, cmd);
         } else {
@@ -86,7 +86,7 @@ public class Helper {
     if (crash != null) {
       final Command<?> cmd;
       try {
-        cmd = crash.getCommandSafetyCheck(name, new ShellSafety()); //++++KEEP
+        cmd = crash.getCommandSafetyCheck(name, new ShellSafety());
       }
       catch (CommandException ce) {
         throw new InvokerInvocationException(ce);

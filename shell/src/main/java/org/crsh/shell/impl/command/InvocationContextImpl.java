@@ -54,22 +54,16 @@ public final class InvocationContextImpl<P> extends AbstractInvocationContext<P>
 
   /** . */
   int status;
- //++++ String safeMode;//++++
   private ShellSafety shellSafety = new ShellSafety();
 
   @Override
   public ShellSafety getShellSafety() {
-    return shellSafety; //++++KEEP
+    return shellSafety;
   }
 
- //++++ public String isSafeMode() {
-  //++++   return safeMode + "|InvocationContextImplDFG++++"; //++++REMOVE
-  //++++}
-
-  public InvocationContextImpl(CommandContext<P> commandContext, ShellSafety shellSafety) { //++++
+  public InvocationContextImpl(CommandContext<P> commandContext, ShellSafety shellSafety) {
     this.commandContext = commandContext;
-    //this.safeMode = safeMode;//++++ REMOVE
-    this.shellSafety = shellSafety; //++++KEEP
+    this.shellSafety = shellSafety;
     this.status = FLUSHED;
   }
 

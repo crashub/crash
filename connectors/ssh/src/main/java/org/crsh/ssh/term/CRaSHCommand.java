@@ -96,17 +96,13 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
       };
 
       boolean safeUser = !isUserUnsafe(user.getName());
-     //++++ boolean internalSSH = isInternalSSH();
-      System.out.println("User '" + user.getName() + "' is safe = " + safeUser);//++++REMOVE
-      //++++String safeMode = safeUser ? "SSH-SAFESAFE" : "UnsafeSSHUser";//++++REMOVE
+
       ShellSafety shellSafety = new ShellSafety();
-      shellSafety.setSafeShell(safeUser);//++++KEEP
-      shellSafety.setInternal(isInternalSSH());//++++KEEP
+      shellSafety.setSafeShell(safeUser);
+      shellSafety.setInternal(isInternalSSH());
       shellSafety.setSSH(true);
-      shellSafety.setStandAlone(isStandAloneSSH());//++++KEEP
-     //++++ if (isInternalSSH()) { safeMode += "|INTERNAL"; } //++++REMOVE
-      //++++if (isStandAloneSSH()) { safeMode += "|STANDALONE"; } //++++REMOVE
-      Shell shell = factory.shellFactory.create(user, authInfo, shellSafety); //++++KEEP
+      shellSafety.setStandAlone(isStandAloneSSH());
+      Shell shell = factory.shellFactory.create(user, authInfo, shellSafety);
       ConsoleReader reader = new ConsoleReader(in, out, this) {
         @Override
         public void shutdown() {

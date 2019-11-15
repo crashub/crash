@@ -131,7 +131,7 @@ public class Agent {
     if (port != null) {
       try {
         ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
-        Shell shell = factory.create(null,null, new ShellSafety()); //++++KEEP
+        Shell shell = factory.create(null,null, new ShellSafety());
         RemoteClient client = new RemoteClient(port, shell);
         log.log(Level.INFO, "Callback back remote on port " + port);
         client.connect();

@@ -33,7 +33,6 @@ public class CRaSHShellFactory extends CRaSHPlugin<ShellFactory> implements Shel
 
   /** . */
   private CRaSH crash;
-  //++++private boolean safeMode = false; //++++add
 
   public CRaSHShellFactory() {
   }
@@ -41,8 +40,7 @@ public class CRaSHShellFactory extends CRaSHPlugin<ShellFactory> implements Shel
   @Override
   public void init() {
     PluginContext context = getContext();
-    System.out.println("CRaSHShellFactory: NEW CRASH++++ via Init()++++"); //++++
-    crash = new CRaSH(context); //++++add
+    crash = new CRaSH(context);
   }
 
   @Override
@@ -50,7 +48,7 @@ public class CRaSHShellFactory extends CRaSHPlugin<ShellFactory> implements Shel
     return this;
   }
 
-  public Shell create(Principal principal, boolean async, AuthInfo authInfo, ShellSafety shellSafety) { //++++KEEP
+  public Shell create(Principal principal, boolean async, AuthInfo authInfo, ShellSafety shellSafety) {
     CRaSHSession session = crash.createSession(principal, authInfo, shellSafety);
     if (async) {
       return new AsyncShell(getContext().getExecutor(), session);
@@ -60,7 +58,7 @@ public class CRaSHShellFactory extends CRaSHPlugin<ShellFactory> implements Shel
   }
 
   @Override
-  public Shell create(Principal principal, AuthInfo authInfo, ShellSafety shellSafety) { //++++KEEP
+  public Shell create(Principal principal, AuthInfo authInfo, ShellSafety shellSafety) {
     return create(principal, true, authInfo, shellSafety);
   }
 }

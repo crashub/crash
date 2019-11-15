@@ -64,12 +64,9 @@ class ShellBinding extends Binding {
 
     @Override
     public ShellSafety getShellSafety() {
-      return new ShellSafety(); //++++KEEP
+      return new ShellSafety();
     }
 
-   //++++ public String isSafeMode() {
-      //++++REMOVE return "ShellBinding++++"; //++++
-    //++++}//++++
     public CommandInvoker<?, ?> resolve(String s) throws CommandException {
       if (current == null) {
         throw new IllegalStateException("Not under context");
@@ -220,7 +217,7 @@ class ShellBinding extends Binding {
         try {
           Command<?> cmd = session.getCommand(name);
           if (cmd != null) {
-            return new PipeLineClosure(new InvocationContextImpl<Object>(proxy, new ShellSafety()), name, cmd); //++++KEEP
+            return new PipeLineClosure(new InvocationContextImpl<Object>(proxy, new ShellSafety()), name, cmd);
           }
         } catch (CommandException ignore) {
           // Really ?

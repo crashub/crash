@@ -34,27 +34,16 @@ import java.util.Map;
 
 /** @author Julien Viet */
 public class help extends BaseCommand {
-  //int xxx = 0; //++++
   @Usage("provides basic help")
   @Command
   public void main(InvocationContext<Object> context) throws Exception {
 
     //
-    ShellSafety shellSafety = context.getShellSafety(); //++++KEEP
-    /*++++
-    sshMode = safeMode.contains("SSH");//++++
-    String safeMode = context.isSafeMode(); //(xxx++ %2 == 0); //++++
-    System.out.println("help: " + xxx + " " + hashCode() + "[" + safeMode + "]");//++++
-    boolean safeShell = safeMode.contains("SAFESAFE");//++++
-    boolean standAlone = safeMode.contains("STANDALONE");//++++
-    boolean internal = safeMode.contains("INTERNAL");//++++
-    boolean sshMode = safeMode.contains("SSH");//++++
-    //++++REMOVE above
-     */
+    ShellSafety shellSafety = context.getShellSafety();
     boolean safeShell = shellSafety.isSafeShell();
     boolean standAlone = shellSafety.isStandAlone();
     boolean internal = shellSafety.isInternal();
-    boolean sshMode = shellSafety.isSshMode(); //++++KEEP
+    boolean sshMode = shellSafety.isSshMode();
 
     TableElement table = new TableElement().rightCellPadding(1);
     table.row(
@@ -65,14 +54,13 @@ public class help extends BaseCommand {
     //
     CRaSH crash = (CRaSH)context.getSession().get("crash");
     java.util.ArrayList<Map.Entry<String, String>> commands = new java.util.ArrayList<>();
-    //++++crash.getCommandsX X X(context.isSafeMode()).iterator().forEachRemaining(commands::add); // Change to ShellSafety++++REMOVE
-    crash.getCommandsSafetyCheck(shellSafety).iterator().forEachRemaining(commands::add); // ++++KEEP
+    crash.getCommandsSafetyCheck(shellSafety).iterator().forEachRemaining(commands::add);
     commands.sort(java.util.Comparator.comparing(Map.Entry::getKey));
 
-    Color col =   sshMode    ? (safeShell ? Color.cyan   : Color.red)
-                : standAlone ? (safeShell ? Color.yellow : Color.red)
+    Color col =   sshMode    ? (safeShell ? Color.yellow : Color.red)
+                : standAlone ? (safeShell ? Color.cyan   : Color.red)
                 : internal   ? (safeShell ? Color.green  : Color.red)
-                :              (safeShell ? Color.red    : Color.red); // Unknown ++++KEEP
+                :              (safeShell ? Color.red    : Color.red);
     for (Map.Entry<String, String> command : commands) {
       try {
         String desc = command.getValue();
@@ -80,7 +68,7 @@ public class help extends BaseCommand {
           desc = "";
         }
         table.row(
-          new LabelElement(command.getKey()).style(Style.style(col)), //++++
+          new LabelElement(command.getKey()).style(Style.style(Decoration.bold, col)),
           new LabelElement(desc));
       } catch (Exception ignore) {
         //
@@ -91,7 +79,7 @@ public class help extends BaseCommand {
     String sshStr = sshMode ? "SSH-" : "";
     String saStr = standAlone ? "Standalone-" : "";
     String intStr = internal ? "Internal-" : "";
-    String pref = "[" + safeStr + saStr + intStr + sshStr + "Shell]: "; //++++
+    String pref = "[" + safeStr + saStr + intStr + sshStr + "Shell]: ";
     context.provide(new LabelElement(pref + "Try one of these commands with the -h or --help switch:\n"));
     context.provide(table);
   }

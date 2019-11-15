@@ -157,7 +157,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
   }
 
   public <B extends BaseCommand> String execute(Class<B> commandClass, String... args) throws IntrospectionException, IOException, CommandException  {
-    return execute(new ClassShellCommand<B>(commandClass, new ShellSafety()), args);//++++KEEP
+    return execute(new ClassShellCommand<B>(commandClass, new ShellSafety()), args);
   }
 
   public <B extends GroovyScriptCommand> String execute2(Class<B> commandClass, String... args) throws IntrospectionException, IOException, UndeclaredThrowableException, CommandException {

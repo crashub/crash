@@ -45,17 +45,16 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
 
   /** . */
   private final String name;
-  //++++private final String safeMode;//++++REMOVE
   private ShellSafety shellSafety;
 
-  public ProducerCommandMatch(ClassShellCommand<T> shellCommand, CommandInvoker<Instance<T>, ?> invoker, Class<P> producedType, ShellSafety shellSafety) { //++++KEEP
+  public ProducerCommandMatch(ClassShellCommand<T> shellCommand, CommandInvoker<Instance<T>, ?> invoker, Class<P> producedType, ShellSafety shellSafety) {
     super(shellCommand);
 
     //
     this.invoker = invoker;
     this.producedType = producedType;
     this.name = shellCommand.getDescriptor().getName();
-    this.shellSafety = shellSafety; //++++KEEP
+    this.shellSafety = shellSafety;
   }
 
   @Override
@@ -92,7 +91,7 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
       }
 
       public void open2(final CommandContext<P> consumer) {
-        invocationContext = new InvocationContextImpl<P>(consumer, shellSafety); //++++KEEP
+        invocationContext = new InvocationContextImpl<P>(consumer, shellSafety);
         command.pushContext(invocationContext);
         command.unmatched = invoker.getMatch().getRest();
       }

@@ -79,12 +79,9 @@ public class EvalElement extends Element {
       /** . */
       private Renderer renderable;
 
-  //    public String isSafeMode() {
-    //    return "EvalElement++++"; //++++
-      //} //++++REMOVE
       @Override
       public ShellSafety getShellSafety() {
-        return new ShellSafety(); //++++KEEP
+        return new ShellSafety();
       }
 
       public CommandInvoker<?, ?> resolve(String s) throws CommandException {

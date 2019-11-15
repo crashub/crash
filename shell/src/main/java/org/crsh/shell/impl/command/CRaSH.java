@@ -45,6 +45,7 @@ public class CRaSH {
 
   /** . */
   private final ArrayList<CommandResolver> safeResolvers = new ArrayList<CommandResolver>();
+  private final ArrayList<CommandResolver> semiSafeResolvers = new ArrayList<CommandResolver>();
   private final ArrayList<CommandResolver> unSafeResolvers = new ArrayList<CommandResolver>();
 
   /** . */
@@ -57,15 +58,12 @@ public class CRaSH {
    * @throws NullPointerException if the context argument is null
    */
 
-  public CRaSH(PluginContext context) throws NullPointerException { //++++ add safemode
-    System.out.println("CRaSH: Constructor++++ "); //++++
-
+  public CRaSH(PluginContext context) throws NullPointerException {
     this.context = context;
     this.scriptResolver = new LanguageCommandResolver(context);
 
     // Add the resolver plugins
     for (CommandResolver resolver : context.getPlugins(CommandResolver.class)) {
-     // System.out.println("++++ add plug in");
       unSafeResolvers.add(resolver);
     }
     for (Language lang : context.getPlugins(Language.class)) {
@@ -79,10 +77,12 @@ public class CRaSH {
     unSafeResolvers.add(ExternalResolver.INSTANCE);
     safeResolvers.add(SystemResolver.SAFE_INSTANCE);
     safeResolvers.add(ExternalResolver.INSTANCE);
+    semiSafeResolvers.add(SystemResolver.SEMI_SAFE_INSTANCE);
+    semiSafeResolvers.add(ExternalResolver.INSTANCE);
   }
 
   public CRaSHSession createSession(Principal user, AuthInfo authInfo, ShellSafety shellSafety) {
-    return new CRaSHSession(this, user, authInfo, shellSafety); //++++KEEP
+    return new CRaSHSession(this, user, authInfo, shellSafety);
   }
 
   /**
@@ -103,23 +103,19 @@ public class CRaSH {
    * @throws NullPointerException if the name argument is null
    */
   public Command<?> getCommand(String name) throws CommandException, NullPointerException {
-    return getCommandSafetyCheck(name, new ShellSafety());//++++KEEP
+    return getCommandSafetyCheck(name, new ShellSafety());
   }
   public Command<?> getCommandSafetyCheck(String name, ShellSafety shellSafety) throws CommandException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null name accepted");
     }
 
-//++++    boolean safe = safeMode.contains("SAFESAFE");//++++REMOVE
-    boolean safe = shellSafety.isSafeShell();//++++KEEP
-
-    ArrayList<CommandResolver> resolvers = safe ? safeResolvers : unSafeResolvers; //++++
-  //++++ if (xxx++ % 2 == 0) { resolvers = unSafeResolvers; } //++++REMOVE
-    //++++System.out.println("["+ safeMode +"] getCommand1(" + name + ") = " + ((resolvers == safeResolvers) ? "SAFE" : "Unsafe"));//++++REMOVE
-    //String safeModeH = safeMode + ((resolvers == safeResolvers) ?"|ClassShellCommand:SAFESAFE STAND ALONE S SH ++++":"UNSAFE internal");//++++REMOVE
+    boolean safe = shellSafety.isSafeShell();
+    boolean permitExit = shellSafety.permitExit();
+    ArrayList<CommandResolver> resolvers = safe ? (permitExit ? semiSafeResolvers : safeResolvers) : unSafeResolvers;
 
     for (int i = 0;i < resolvers.size();i++) {
-      Command<?> command = resolvers.get(i).resolveCommand(name, shellSafety);//++++KEEP
+      Command<?> command = resolvers.get(i).resolveCommand(name, shellSafety);
       if (command != null) {
         return command;
       }
@@ -127,21 +123,20 @@ public class CRaSH {
     return null;
   }
 
-  public Iterable<Map.Entry<String, String>> getCommands() {//++++
-    return getCommandsSafetyCheck(new ShellSafety()); //++++KEEP
+  public Iterable<Map.Entry<String, String>> getCommands() {
+    return getCommandsSafetyCheck(new ShellSafety());
   }
 
   public Iterable<Map.Entry<String, String>> getCommandsSafetyCheck(ShellSafety shellSafety) {
-    //++++boolean safe = safeMode.contains("SAFESAFE");//++++REMOVE
-    boolean safe = shellSafety.isSafeShell();//++++KEEP
-    ArrayList<CommandResolver> resolvers = safe ? safeResolvers : unSafeResolvers; //++++KEEP
+    boolean safe = shellSafety.isSafeShell();
+    boolean permitExit = shellSafety.permitExit();
+    ArrayList<CommandResolver> resolvers = safe ? (permitExit ? semiSafeResolvers : safeResolvers) : unSafeResolvers;
     LinkedHashMap<String, String> names = new LinkedHashMap<String, String>();
     for (int i = 0;i < resolvers.size();i++) {
       for (Map.Entry<String, String> entry : resolvers.get(i).getDescriptions()) {
         names.put(entry.getKey(), entry.getValue());
       }
     }
-   //++++ System.out.println("["+ safeMode +"] getCommand2(" + names.entrySet().size() + ") = " + ((resolvers == safeResolvers) ? "SAFE" : " Unsafe "));//++++REMOVE
     return names.entrySet();
   }
 }

@@ -342,9 +342,8 @@ public class CRaSH {
       //
       if (interactive) {
         ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
-        //String safeMode = "standalone++++";//++++REMOVE
         ShellSafety shellSafety = new ShellSafety();
-        shellSafety.setStandAlone(true); //++++KEEP +++++REVIEW
+        shellSafety.setStandAlone(true);
         shell = factory.create(null, null, shellSafety);
       } else {
         shell = null;

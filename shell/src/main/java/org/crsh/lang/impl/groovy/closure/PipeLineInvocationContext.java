@@ -44,12 +44,8 @@ class PipeLineInvocationContext extends AbstractInvocationContext<Object> {
 
   @Override
   public ShellSafety getShellSafety() {
-    return new ShellSafety(); //++++KEEP
+    return new ShellSafety();
   }
-
-  //++++public String isSafeMode() {
-  //++++return "PipeLineInvocationContext++++"; //++++
-  //++++}
 
   public CommandInvoker<?, ?> resolve(String s) throws CommandException {
     return outter.resolve(s);

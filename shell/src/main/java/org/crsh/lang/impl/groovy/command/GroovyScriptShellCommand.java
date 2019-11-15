@@ -137,7 +137,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends Com
       public void open(CommandContext<? super Object> consumer) throws IOException, CommandException {
 
         // Set the context
-        context = new InvocationContextImpl<Object>((CommandContext<Object>)consumer, new ShellSafety()); //++++KEEP
+        context = new InvocationContextImpl<Object>((CommandContext<Object>)consumer, new ShellSafety());
 
         // Set up current binding
         Binding binding = new Binding(consumer.getSession());

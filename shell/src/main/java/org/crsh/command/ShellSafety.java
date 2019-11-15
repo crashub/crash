@@ -5,6 +5,7 @@ public class ShellSafety {
     private boolean standAlone = false;
     private boolean internal = false;
     private boolean sshMode = false;
+    private boolean allowExitInSafeMode = false;
 
     public ShellSafety() {
     }
@@ -14,6 +15,7 @@ public class ShellSafety {
         standAlone = safetyMode.contains("STANDALONE");
         internal = safetyMode.contains("INTERNAL");
         sshMode = safetyMode.contains("SSH");
+        allowExitInSafeMode = safetyMode.contains("EXIT");
     }
 
     public String toSafeString() {
@@ -22,7 +24,12 @@ public class ShellSafety {
         if (standAlone) { ret += "|STANDALONE"; }
         if (internal) { ret += "|INTERNAL"; }
         if (sshMode) { ret += "|SSH"; }
+        if (allowExitInSafeMode) { ret += "|EXIT"; }
         return ret;
+    }
+
+    public String toString() {
+        return toSafeString();
     }
 
     public boolean isSafeShell() {
@@ -41,6 +48,10 @@ public class ShellSafety {
         return sshMode;
     }
 
+    public boolean isAllowExitInSafeMode() {
+        return allowExitInSafeMode;
+    }
+
     public void setSafeShell(boolean safeShell) {
         this.safeShell = safeShell;
     }
@@ -55,5 +66,13 @@ public class ShellSafety {
 
     public void setSSH(boolean sshMode) {
         this.sshMode = sshMode;
+    }
+
+    public void setAllowExitInSafeMode(boolean exit) {
+        this.allowExitInSafeMode = exit;
+    }
+
+    public boolean permitExit() {
+        return !isSafeShell() || !isInternal() || isSshMode() || isAllowExitInSafeMode();
     }
 };

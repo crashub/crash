@@ -199,7 +199,7 @@ public class GroovyCompiler implements org.crsh.lang.spi.Compiler {
   }
 
   private <C extends BaseCommand> ClassShellCommand<C> make(Class<C> clazz) throws IntrospectionException {
-    return new ClassShellCommand<C>(clazz, new ShellSafety());//++++KEEP
+    return new ClassShellCommand<C>(clazz, new ShellSafety());
   }
 
   private <C extends GroovyScriptCommand> GroovyScriptShellCommand<C> make2(Class<C> clazz) throws IntrospectionException {

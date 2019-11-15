@@ -56,7 +56,7 @@ public class ExternalResolver implements CommandResolver
 		final String description;
 		try
 		{
-			shellCommand = new ClassShellCommand<C>(commandClass, new ShellSafety());//++++KEEP
+			shellCommand = new ClassShellCommand<C>(commandClass, new ShellSafety());
 			description = shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
 		}
 		catch (IntrospectionException e)

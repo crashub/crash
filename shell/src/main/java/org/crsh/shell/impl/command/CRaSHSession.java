@@ -65,14 +65,13 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
 
   CRaSHSession(final CRaSH crash, Principal user, AuthInfo authInfo, ShellSafety shellSafety) {
     // Set variable available to all scripts
-    System.out.println("New Crash Session: U: '" + user + "' AI: " + authInfo.toString() + " ++++"); //++++REMOVE
     put("crash", crash);
 
     //
     this.crash = crash;
     this.user = user;
     this.authInfo = authInfo;
-    this.shellSafety = shellSafety;//++++KEEP
+    this.shellSafety = shellSafety;
 
     //
     ClassLoader previous = setCRaSHLoader();
@@ -102,11 +101,11 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   }
 
   public Iterable<Map.Entry<String, String>> getCommands() {
-    return crash.getCommandsSafetyCheck(shellSafety);//++++KEEP
+    return crash.getCommandsSafetyCheck(shellSafety);
   }
 
   public Command<?> getCommand(String name) throws CommandException {
-    return crash.getCommandSafetyCheck(name, shellSafety);//++++KEEP
+    return crash.getCommandSafetyCheck(name, shellSafety);
   }
 
   public PluginContext getContext() {
@@ -170,7 +169,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     String trimmedRequest = request.trim();
     final StringBuilder msg = new StringBuilder();
     final ShellResponse response;
-    if ("bye".equals(trimmedRequest) || "exit".equals(trimmedRequest)) {
+    if (("bye".equals(trimmedRequest) || "exit".equals(trimmedRequest)) && shellSafety.permitExit()) {
       response = ShellResponse.close();
     } else {
       ReplResponse r = repl.eval(this, request);

@@ -50,7 +50,7 @@ public class ProcessorIOHandler extends CRaSHPlugin<TermIOHandler> implements Te
   }
 
   public void handle(final TermIO io, Principal user, AuthInfo authInfo) {
-    Shell shell = factory.create(user, authInfo, new ShellSafety());//++++KEEP
+    Shell shell = factory.create(user, authInfo, new ShellSafety());
     ConsoleTerm term = new ConsoleTerm(io);
     Processor processor = new Processor(term, shell);
     processor.addListener(io);

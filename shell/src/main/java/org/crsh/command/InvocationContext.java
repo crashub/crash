@@ -34,7 +34,7 @@ public interface InvocationContext<P> extends CommandContext<P> {
    */
   RenderPrintWriter getWriter();
 
-  ShellSafety getShellSafety(); //++++KEEP
+  ShellSafety getShellSafety();
 
   /**
    * Resolve a command invoker for the specified command line.

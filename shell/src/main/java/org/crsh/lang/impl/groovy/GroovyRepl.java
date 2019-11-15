@@ -89,7 +89,7 @@ public class GroovyRepl implements Repl {
         this.consumer = (CommandContext<Object>)consumer;
         GroovyShell shell = GroovyCompiler.getGroovyShell(session);
         ShellBinding binding = (ShellBinding)shell.getContext();
-        binding.setCurrent(new InvocationContextImpl<Object>(this.consumer, new ShellSafety())); //++++KEEP
+        binding.setCurrent(new InvocationContextImpl<Object>(this.consumer, new ShellSafety()));
         Object o;
         try {
           o = shell.evaluate(request);

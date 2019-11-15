@@ -46,10 +46,10 @@ public class ClassShellCommand<T extends BaseCommand> extends Command<Instance<T
   private final CommandDescriptor<Instance<T>> descriptor;
   private final ShellSafety shellSafety;
 
-  public ClassShellCommand(Class<T> clazz, ShellSafety shellSafety) throws IntrospectionException { //++++
+  public ClassShellCommand(Class<T> clazz, ShellSafety shellSafety) throws IntrospectionException {
     CommandFactory factory = new CommandFactory(getClass().getClassLoader());
     this.clazz = clazz;
-    this.shellSafety = shellSafety;//++++KEEP
+    this.shellSafety = shellSafety;
     this.descriptor = HelpDescriptor.create(factory.create(clazz));
   }
 
@@ -127,7 +127,7 @@ public class ClassShellCommand<T extends BaseCommand> extends Command<Instance<T
   }
 
   private <P> CommandMatch<Void, P> getProducerInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>, ?> invoker, final Class<P> producedType) {
-    return new ProducerCommandMatch<T, P>(this, invoker, producedType, shellSafety); //++++KEEP
+    return new ProducerCommandMatch<T, P>(this, invoker, producedType, shellSafety);
   }
 
 }
