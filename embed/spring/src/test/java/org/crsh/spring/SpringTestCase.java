@@ -21,6 +21,7 @@ package org.crsh.spring;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+import org.crsh.command.ShellSafety;
 import test.shell.base.BaseProcessContext;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
@@ -47,7 +48,7 @@ public class SpringTestCase extends TestCase {
 
     // Test a bit
     ShellFactory factory = bootstrap.getContext().getPlugin(ShellFactory.class);
-    Shell shell = factory.create(null, null);
+    Shell shell = factory.create(null, null, new ShellSafety());
     assertNotNull(shell);
     ShellProcess process = shell.createProcess("foo_cmd");
     assertNotNull(process);

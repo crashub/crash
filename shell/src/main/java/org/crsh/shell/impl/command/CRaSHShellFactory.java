@@ -20,6 +20,7 @@
 package org.crsh.shell.impl.command;
 
 import org.crsh.auth.AuthInfo;
+import org.crsh.command.ShellSafety;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.plugin.PluginContext;
 import org.crsh.shell.Shell;
@@ -47,8 +48,8 @@ public class CRaSHShellFactory extends CRaSHPlugin<ShellFactory> implements Shel
     return this;
   }
 
-  public Shell create(Principal principal, boolean async, AuthInfo authInfo) {
-    CRaSHSession session = crash.createSession(principal, authInfo);
+  public Shell create(Principal principal, boolean async, AuthInfo authInfo, ShellSafety shellSafety) {
+    CRaSHSession session = crash.createSession(principal, authInfo, shellSafety);
     if (async) {
       return new AsyncShell(getContext().getExecutor(), session);
     } else {
@@ -56,7 +57,8 @@ public class CRaSHShellFactory extends CRaSHPlugin<ShellFactory> implements Shel
     }
   }
 
-  public Shell create(Principal principal, AuthInfo authInfo) {
-    return create(principal, true, authInfo);
+  @Override
+  public Shell create(Principal principal, AuthInfo authInfo, ShellSafety shellSafety) {
+    return create(principal, true, authInfo, shellSafety);
   }
 }

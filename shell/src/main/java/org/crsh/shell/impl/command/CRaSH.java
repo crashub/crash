@@ -19,7 +19,9 @@
 
 package org.crsh.shell.impl.command;
 
+//import crash.commands.base.system;
 import org.crsh.auth.AuthInfo;
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.LanguageCommandResolver;
 import org.crsh.lang.spi.Language;
 import org.crsh.shell.impl.command.spi.Command;
@@ -42,7 +44,9 @@ public class CRaSH {
   final LanguageCommandResolver scriptResolver;
 
   /** . */
-  private final ArrayList<CommandResolver> resolvers = new ArrayList<CommandResolver>();
+  private final ArrayList<CommandResolver> safeResolvers = new ArrayList<CommandResolver>();
+  private final ArrayList<CommandResolver> semiSafeResolvers = new ArrayList<CommandResolver>();
+  private final ArrayList<CommandResolver> unSafeResolvers = new ArrayList<CommandResolver>();
 
   /** . */
   final ArrayList<Language> langs = new ArrayList<Language>();
@@ -53,13 +57,14 @@ public class CRaSH {
    * @param context the plugin context
    * @throws NullPointerException if the context argument is null
    */
+
   public CRaSH(PluginContext context) throws NullPointerException {
     this.context = context;
     this.scriptResolver = new LanguageCommandResolver(context);
 
     // Add the resolver plugins
     for (CommandResolver resolver : context.getPlugins(CommandResolver.class)) {
-      resolvers.add(resolver);
+      unSafeResolvers.add(resolver);
     }
     for (Language lang : context.getPlugins(Language.class)) {
       if (lang.isActive()) {
@@ -67,14 +72,17 @@ public class CRaSH {
       }
     }
 
-    //
-    resolvers.add(scriptResolver);
-    resolvers.add(SystemResolver.INSTANCE);
-    resolvers.add(ExternalResolver.INSTANCE);
+    unSafeResolvers.add(scriptResolver);
+    unSafeResolvers.add(SystemResolver.UNSAFE_INSTANCE);
+    unSafeResolvers.add(ExternalResolver.INSTANCE);
+    safeResolvers.add(SystemResolver.SAFE_INSTANCE);
+    safeResolvers.add(ExternalResolver.INSTANCE);
+    semiSafeResolvers.add(SystemResolver.SEMI_SAFE_INSTANCE);
+    semiSafeResolvers.add(ExternalResolver.INSTANCE);
   }
 
-  public CRaSHSession createSession(Principal user, AuthInfo authInfo) {
-    return new CRaSHSession(this, user, authInfo);
+  public CRaSHSession createSession(Principal user, AuthInfo authInfo, ShellSafety shellSafety) {
+    return new CRaSHSession(this, user, authInfo, shellSafety);
   }
 
   /**
@@ -91,15 +99,23 @@ public class CRaSH {
    *
    * @param name the command name
    * @return a command instance
-   * @throws org.crsh.shell.impl.command.spi.CommandException if an error occured preventing the command creation
+   * @throws org.crsh.shell.impl.command.spi.CommandException if an error occurred preventing the command creation
    * @throws NullPointerException if the name argument is null
    */
   public Command<?> getCommand(String name) throws CommandException, NullPointerException {
+    return getCommandSafetyCheck(name, new ShellSafety());
+  }
+  public Command<?> getCommandSafetyCheck(String name, ShellSafety shellSafety) throws CommandException, NullPointerException {
     if (name == null) {
       throw new NullPointerException("No null name accepted");
     }
+
+    boolean safe = shellSafety.isSafeShell();
+    boolean permitExit = shellSafety.permitExit();
+    ArrayList<CommandResolver> resolvers = safe ? (permitExit ? semiSafeResolvers : safeResolvers) : unSafeResolvers;
+
     for (int i = 0;i < resolvers.size();i++) {
-      Command<?> command = resolvers.get(i).resolveCommand(name);
+      Command<?> command = resolvers.get(i).resolveCommand(name, shellSafety);
       if (command != null) {
         return command;
       }
@@ -108,6 +124,13 @@ public class CRaSH {
   }
 
   public Iterable<Map.Entry<String, String>> getCommands() {
+    return getCommandsSafetyCheck(new ShellSafety());
+  }
+
+  public Iterable<Map.Entry<String, String>> getCommandsSafetyCheck(ShellSafety shellSafety) {
+    boolean safe = shellSafety.isSafeShell();
+    boolean permitExit = shellSafety.permitExit();
+    ArrayList<CommandResolver> resolvers = safe ? (permitExit ? semiSafeResolvers : safeResolvers) : unSafeResolvers;
     LinkedHashMap<String, String> names = new LinkedHashMap<String, String>();
     for (int i = 0;i < resolvers.size();i++) {
       for (Map.Entry<String, String> entry : resolvers.get(i).getDescriptions()) {

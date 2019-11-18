@@ -18,6 +18,7 @@
  */
 package org.crsh.lang;
 
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.impl.script.ScriptCompiler;
 import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.Language;
@@ -96,7 +97,7 @@ public class LanguageCommandResolver implements CommandResolver {
   }
 
   @Override
-  public Command<?> resolveCommand(String name) throws CommandException, NullPointerException {
+  public Command<?> resolveCommand(String name, ShellSafety shellSafety) throws CommandException, NullPointerException {
     CommandResolution resolution = resolveCommand2(name);
     return resolution != null ? resolution.getCommand() : null;
   }

@@ -18,6 +18,7 @@
  */
 package org.crsh.ssh.term;
 
+import org.crsh.command.ShellSafety;
 import org.crsh.console.jline.Terminal;
 import org.crsh.console.jline.console.ConsoleReader;
 import org.apache.sshd.server.Environment;
@@ -31,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +41,11 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
 
   /** . */
   protected static final Logger log = Logger.getLogger(CRaSHCommand.class.getName());
+
+  private static HashSet<String> unsafeUsers = null;
+  private static boolean isInternalSSHConnection = false;
+  private static boolean isStandAloneSSHConnection = false;
+  private static Object userInfoLock = new Object();
 
   /** . */
   private final CRaSHCommandFactory factory;
@@ -87,7 +94,15 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
           return userName;
         }
       };
-      Shell shell = factory.shellFactory.create(user, authInfo);
+
+      boolean safeUser = !isUserUnsafe(user.getName());
+
+      ShellSafety shellSafety = new ShellSafety();
+      shellSafety.setSafeShell(safeUser);
+      shellSafety.setInternal(isInternalSSH());
+      shellSafety.setSSH(true);
+      shellSafety.setStandAlone(isStandAloneSSH());
+      Shell shell = factory.shellFactory.create(user, authInfo, shellSafety);
       ConsoleReader reader = new ConsoleReader(in, out, this) {
         @Override
         public void shutdown() {
@@ -183,6 +198,32 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   @Override
   public void enableInterruptCharacter() {
 
+  }
+
+  public static void setUserInfo(HashSet<String> users, boolean internalSSHShell, boolean standaloneSSHShell) {
+    synchronized (userInfoLock) {
+      unsafeUsers = users;
+      isInternalSSHConnection = internalSSHShell;
+      isStandAloneSSHConnection = standaloneSSHShell;
+    }
+  }
+
+  public static boolean isUserUnsafe(String username) {
+    synchronized (userInfoLock) {
+      return unsafeUsers != null && unsafeUsers.contains(username);
+    }
+  }
+
+  public static boolean isInternalSSH() {
+    synchronized (userInfoLock) {
+    return isInternalSSHConnection;
+    }
+  }
+
+  public static boolean isStandAloneSSH() {
+    synchronized (userInfoLock) {
+      return isStandAloneSSHConnection;
+    }
   }
 }
 

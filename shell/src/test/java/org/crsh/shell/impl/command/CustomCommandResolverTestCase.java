@@ -20,6 +20,7 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.plugin.CRaSHPlugin;
 import org.crsh.shell.AbstractShellTestCase;
@@ -58,10 +59,10 @@ public class CustomCommandResolverTestCase extends AbstractShellTestCase {
     }
 
     @Override
-    public Command<?> resolveCommand(String name) throws CommandException, NullPointerException {
+    public Command<?> resolveCommand(String name, ShellSafety shellSafety) throws CommandException, NullPointerException {
       if ("mycommand".equals(name)) {
         try {
-          return new ClassShellCommand<mycommand>(mycommand.class);
+          return new ClassShellCommand<mycommand>(mycommand.class, shellSafety);
         }
         catch (IntrospectionException e) {
           throw new CommandException(ErrorKind.EVALUATION, "Invalid cli annotations", e);

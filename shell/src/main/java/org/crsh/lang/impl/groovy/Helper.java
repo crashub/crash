@@ -21,10 +21,11 @@ package org.crsh.lang.impl.groovy;
 import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
-import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.RuntimeContext;
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
+import org.crsh.shell.Shell;
 import org.crsh.shell.impl.command.CRaSH;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
@@ -66,7 +67,7 @@ public class Helper {
     CRaSH crash = (CRaSH)context.getSession().get("crash");
     if (crash != null) {
       try {
-        Command<?> cmd = crash.getCommand(property);
+        Command<?> cmd = crash.getCommandSafetyCheck(property, new ShellSafety());
         if (cmd != null) {
           return new PipeLineClosure(context, property, cmd);
         } else {
@@ -85,7 +86,7 @@ public class Helper {
     if (crash != null) {
       final Command<?> cmd;
       try {
-        cmd = crash.getCommand(name);
+        cmd = crash.getCommandSafetyCheck(name, new ShellSafety());
       }
       catch (CommandException ce) {
         throw new InvokerInvocationException(ce);

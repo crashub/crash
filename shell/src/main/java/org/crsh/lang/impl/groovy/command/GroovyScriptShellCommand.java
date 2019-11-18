@@ -28,6 +28,7 @@ import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.spi.Completer;
 import org.crsh.command.CommandContext;
+import org.crsh.command.ShellSafety;
 import org.crsh.groovy.GroovyCommand;
 import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandException;
@@ -136,7 +137,7 @@ public class GroovyScriptShellCommand<T extends GroovyScriptCommand> extends Com
       public void open(CommandContext<? super Object> consumer) throws IOException, CommandException {
 
         // Set the context
-        context = new InvocationContextImpl<Object>((CommandContext<Object>)consumer);
+        context = new InvocationContextImpl<Object>((CommandContext<Object>)consumer, new ShellSafety());
 
         // Set up current binding
         Binding binding = new Binding(consumer.getSession());

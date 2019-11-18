@@ -26,14 +26,11 @@ import org.crsh.cli.impl.lang.CommandFactory;
 import org.crsh.cli.impl.lang.Instance;
 import org.crsh.cli.impl.lang.ObjectCommandInvoker;
 import org.crsh.cli.spi.Completer;
-import org.crsh.command.BaseCommand;
+import org.crsh.command.*;
 import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.spi.CommandMatch;
-import org.crsh.command.InvocationContext;
-import org.crsh.command.Pipe;
-import org.crsh.command.RuntimeContext;
 import org.crsh.util.Utils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -47,10 +44,12 @@ public class ClassShellCommand<T extends BaseCommand> extends Command<Instance<T
 
   /** . */
   private final CommandDescriptor<Instance<T>> descriptor;
+  private final ShellSafety shellSafety;
 
-  public ClassShellCommand(Class<T> clazz) throws IntrospectionException {
+  public ClassShellCommand(Class<T> clazz, ShellSafety shellSafety) throws IntrospectionException {
     CommandFactory factory = new CommandFactory(getClass().getClassLoader());
     this.clazz = clazz;
+    this.shellSafety = shellSafety;
     this.descriptor = HelpDescriptor.create(factory.create(clazz));
   }
 
@@ -128,7 +127,7 @@ public class ClassShellCommand<T extends BaseCommand> extends Command<Instance<T
   }
 
   private <P> CommandMatch<Void, P> getProducerInvoker(final org.crsh.cli.impl.invocation.CommandInvoker<Instance<T>, ?> invoker, final Class<P> producedType) {
-    return new ProducerCommandMatch<T, P>(this, invoker, producedType);
+    return new ProducerCommandMatch<T, P>(this, invoker, producedType, shellSafety);
   }
 
 }

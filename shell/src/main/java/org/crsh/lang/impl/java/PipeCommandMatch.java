@@ -21,10 +21,7 @@ package org.crsh.lang.impl.java;
 import org.crsh.cli.impl.invocation.CommandInvoker;
 import org.crsh.cli.impl.invocation.InvocationException;
 import org.crsh.cli.impl.lang.Instance;
-import org.crsh.command.BaseCommand;
-import org.crsh.command.CommandContext;
-import org.crsh.command.InvocationContext;
-import org.crsh.command.Pipe;
+import org.crsh.command.*;
 import org.crsh.keyboard.KeyHandler;
 import org.crsh.shell.ErrorKind;
 import org.crsh.text.ScreenContext;
@@ -110,7 +107,7 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
       public void open2(final CommandContext<P> consumer) throws CommandException {
 
         //
-        invocationContext = new InvocationContextImpl<P>(consumer);
+        invocationContext = new InvocationContextImpl<P>(consumer, new ShellSafety());
 
         // Push context
         command.pushContext(invocationContext);

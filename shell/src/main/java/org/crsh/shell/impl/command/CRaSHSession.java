@@ -20,6 +20,7 @@ package org.crsh.shell.impl.command;
 
 import org.crsh.auth.AuthInfo;
 import org.crsh.cli.impl.completion.CompletionMatch;
+import org.crsh.command.ShellSafety;
 import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.Language;
 import org.crsh.lang.spi.Repl;
@@ -57,10 +58,12 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
 
   final AuthInfo authInfo;
 
+  final ShellSafety shellSafety;
+
   /** . */
   private Repl repl = ScriptRepl.getInstance();
 
-  CRaSHSession(final CRaSH crash, Principal user, AuthInfo authInfo) {
+  CRaSHSession(final CRaSH crash, Principal user, AuthInfo authInfo, ShellSafety shellSafety) {
     // Set variable available to all scripts
     put("crash", crash);
 
@@ -68,6 +71,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     this.crash = crash;
     this.user = user;
     this.authInfo = authInfo;
+    this.shellSafety = shellSafety;
 
     //
     ClassLoader previous = setCRaSHLoader();
@@ -97,11 +101,11 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
   }
 
   public Iterable<Map.Entry<String, String>> getCommands() {
-    return crash.getCommands();
+    return crash.getCommandsSafetyCheck(shellSafety);
   }
 
   public Command<?> getCommand(String name) throws CommandException {
-    return crash.getCommand(name);
+    return crash.getCommandSafetyCheck(name, shellSafety);
   }
 
   public PluginContext getContext() {
@@ -165,7 +169,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     String trimmedRequest = request.trim();
     final StringBuilder msg = new StringBuilder();
     final ShellResponse response;
-    if ("bye".equals(trimmedRequest) || "exit".equals(trimmedRequest)) {
+    if (("bye".equals(trimmedRequest) || "exit".equals(trimmedRequest)) && shellSafety.permitExit()) {
       response = ShellResponse.close();
     } else {
       ReplResponse r = repl.eval(this, request);

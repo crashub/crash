@@ -24,6 +24,7 @@ import org.crsh.cli.impl.lang.Instance;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
+import org.crsh.command.ShellSafety;
 import org.crsh.keyboard.KeyHandler;
 import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.InvocationContextImpl;
@@ -44,14 +45,16 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
 
   /** . */
   private final String name;
+  private ShellSafety shellSafety;
 
-  public ProducerCommandMatch(ClassShellCommand<T> shellCommand, CommandInvoker<Instance<T>, ?> invoker, Class<P> producedType) {
+  public ProducerCommandMatch(ClassShellCommand<T> shellCommand, CommandInvoker<Instance<T>, ?> invoker, Class<P> producedType, ShellSafety shellSafety) {
     super(shellCommand);
 
     //
     this.invoker = invoker;
     this.producedType = producedType;
     this.name = shellCommand.getDescriptor().getName();
+    this.shellSafety = shellSafety;
   }
 
   @Override
@@ -88,7 +91,7 @@ class ProducerCommandMatch<T extends BaseCommand, P> extends BaseCommandMatch<T,
       }
 
       public void open2(final CommandContext<P> consumer) {
-        invocationContext = new InvocationContextImpl<P>(consumer);
+        invocationContext = new InvocationContextImpl<P>(consumer, shellSafety);
         command.pushContext(invocationContext);
         command.unmatched = invoker.getMatch().getRest();
       }
