@@ -3,7 +3,7 @@
   <groupId>org.crashub</groupId>
   <artifactId>crash.parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.7.0-SNAPSHOT</version>
+  <version>1.7.1-SNAPSHOT</version>
 
   <parent>
     <groupId>org.sonatype.oss</groupId>
@@ -112,12 +112,12 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.cli</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.cli</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -125,25 +125,25 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.shell</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.shell</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.shell</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.shell</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -151,18 +151,18 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.telnet</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.telnet</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.telnet</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -170,18 +170,18 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.ssh</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.ssh</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.ssh</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>standalone</classifier>
       </dependency>
 
@@ -189,12 +189,12 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.web</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.connectors.web</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -202,12 +202,12 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.embed.spring</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.embed.spring</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>sources</classifier>
       </dependency>
 
@@ -215,32 +215,32 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.packaging</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.packaging</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.packaging</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <type>war</type>
         <classifier>spring</classifier>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.packaging</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <type>zip</type>
         <classifier>mule-app</classifier>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.packaging</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <type>tar.gz</type>
       </dependency>
 
@@ -276,7 +276,7 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.doc.api</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>javadoc</classifier>
       </dependency>
 
@@ -284,13 +284,13 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.doc.reference</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <type>pdf</type>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.doc.reference</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>
@@ -299,13 +299,13 @@
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.doc.cookbook</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <type>pdf</type>
       </dependency>
       <dependency>
         <groupId>org.crashub</groupId>
         <artifactId>crash.doc.cookbook</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <classifier>html</classifier>
         <type>zip</type>
       </dependency>

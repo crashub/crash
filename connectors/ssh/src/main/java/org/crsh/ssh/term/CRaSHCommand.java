@@ -32,7 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.security.Principal;
-import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +42,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   /** . */
   protected static final Logger log = Logger.getLogger(CRaSHCommand.class.getName());
 
-  private static HashSet<String> unsafeUsers = null;
+  private static Set<String> unsafeUsers = null;
   private static boolean isInternalSSHConnection = false;
   private static boolean isStandAloneSSHConnection = false;
   private static Object userInfoLock = new Object();
@@ -200,7 +200,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
 
   }
 
-  public static void setUserInfo(HashSet<String> users, boolean internalSSHShell, boolean standaloneSSHShell) {
+  public static void setUserInfo(Set<String> users, boolean internalSSHShell, boolean standaloneSSHShell) {
     synchronized (userInfoLock) {
       unsafeUsers = users;
       isInternalSSHConnection = internalSSHShell;
