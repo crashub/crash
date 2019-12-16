@@ -18,8 +18,9 @@
  */
 package org.crsh.ssh.term.scp;
 
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.CommandFactory;
+import org.apache.sshd.server.channel.ChannelSession;
+import org.apache.sshd.server.command.Command;
+import org.apache.sshd.server.command.CommandFactory;
 import org.crsh.plugin.PluginContext;
 import org.crsh.ssh.term.FailCommand;
 
@@ -38,7 +39,7 @@ public class SCPCommandFactory implements CommandFactory {
     this.pluginContext = pluginContext;
   }
 
-  public Command createCommand(String command) {
+  public Command createCommand(ChannelSession channel, String command) {
     // Just in case
     command = command.trim();
 

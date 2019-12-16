@@ -19,7 +19,7 @@
 
 package org.crsh.ssh.term.inline;
 
-import org.apache.sshd.server.Command;
+import org.apache.sshd.server.command.Command;
 import org.crsh.ssh.term.scp.CommandPlugin;
 
 /***

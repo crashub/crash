@@ -19,6 +19,7 @@
 package org.crsh.ssh.term;
 
 import org.apache.sshd.server.Environment;
+import org.apache.sshd.server.channel.ChannelSession;
 
 import java.io.IOException;
 
@@ -40,7 +41,7 @@ public class FailCommand extends AbstractCommand {
     this.throwable = throwable;
   }
 
-  public void start(Environment env) throws IOException {
+  public void start(ChannelSession channel, Environment env) throws IOException {
     IOException ioe = new IOException("Failure " + failure);
     if (throwable != null) {
       ioe.initCause(throwable);
@@ -48,6 +49,6 @@ public class FailCommand extends AbstractCommand {
     throw ioe;
   }
 
-  public void destroy() {
+  public void destroy(ChannelSession channel) {
   }
 }

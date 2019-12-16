@@ -65,7 +65,7 @@ public class KeyAuthenticationPlugin extends CRaSHPlugin<KeyAuthenticationPlugin
   }
 
   @Override
-  public void init() {
+  public void init() throws Exception {
     String authorizedKeyPath = getContext().getProperty(AUTHORIZED_KEY_PATH);
     if (authorizedKeyPath != null) {
       File f = new File(authorizedKeyPath);
@@ -75,7 +75,7 @@ public class KeyAuthenticationPlugin extends CRaSHPlugin<KeyAuthenticationPlugin
         keys = new LinkedHashSet<PublicKey>();
         KeyPairProvider provider = new FilePublicKeyProvider(new String[]{authorizedKeyPath});
         for (String type : TYPES) {
-          KeyPair pair = provider.loadKey(type);
+          KeyPair pair = provider.loadKey(null, type);
           if (pair != null) {
             PublicKey key = pair.getPublic();
             if (key != null) {

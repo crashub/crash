@@ -19,7 +19,7 @@
 
 package org.crsh.ssh.term.scp;
 
-import org.apache.sshd.server.Command;
+import org.apache.sshd.server.command.Command;
 import org.crsh.plugin.CRaSHPlugin;
 
 public abstract class CommandPlugin extends CRaSHPlugin<CommandPlugin> {

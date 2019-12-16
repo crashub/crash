@@ -18,6 +18,7 @@
  */
 package org.crsh.ssh.term;
 
+import org.apache.sshd.server.channel.ChannelSession;
 import org.crsh.command.ShellSafety;
 import org.crsh.console.jline.Terminal;
 import org.crsh.console.jline.console.ConsoleReader;
@@ -66,7 +67,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
   /** . */
   private JLineProcessor console;
 
-  public void start(Environment env) throws IOException {
+  public void start(ChannelSession channel, Environment env) throws IOException {
     context = new SSHContext(env);
     encoding = context.encoding != null ? context.encoding.name() : factory.encoding.name();
     thread = new Thread(this, "CRaSH");
@@ -79,7 +80,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
     return context;
   }
 
-  public void destroy() {
+  public void destroy(ChannelSession channel) {
     Utils.close(console);
     thread.interrupt();
   }

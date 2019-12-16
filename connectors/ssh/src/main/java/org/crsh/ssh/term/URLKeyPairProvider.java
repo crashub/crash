@@ -19,6 +19,7 @@
 package org.crsh.ssh.term;
 
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
+import org.apache.sshd.common.session.SessionContext;
 import org.apache.sshd.common.util.security.SecurityUtils;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -46,7 +47,7 @@ public class URLKeyPairProvider extends AbstractKeyPairProvider {
   }
 
   @Override
-  public Iterable<java.security.KeyPair> loadKeys() {
+  public Iterable<java.security.KeyPair> loadKeys(SessionContext session) {
     if (!SecurityUtils.isBouncyCastleRegistered()) {
       throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
     }

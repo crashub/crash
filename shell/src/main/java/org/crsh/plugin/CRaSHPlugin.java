@@ -121,7 +121,7 @@ public abstract class CRaSHPlugin<P> {
   /**
    * Implement this method to know about init life cycle callback.
    */
-  public void init() {
+  public void init() throws Exception {
   }
 
   /**

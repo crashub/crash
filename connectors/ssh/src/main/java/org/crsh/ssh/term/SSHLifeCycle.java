@@ -22,7 +22,7 @@ import org.apache.sshd.server.SshServer;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.session.Session;
-import org.apache.sshd.server.Command;
+import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.ServerFactoryManager;
 import org.apache.sshd.server.auth.password.PasswordChangeRequiredException;

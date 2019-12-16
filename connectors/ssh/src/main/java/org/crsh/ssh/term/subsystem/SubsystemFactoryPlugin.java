@@ -20,7 +20,7 @@
 package org.crsh.ssh.term.subsystem;
 
 import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.server.Command;
+import org.apache.sshd.server.command.Command;
 import org.crsh.plugin.CRaSHPlugin;
 
 import java.util.List;

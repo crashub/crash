@@ -19,6 +19,7 @@
 package org.crsh.auth;
 
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
+import org.apache.sshd.common.session.SessionContext;
 import org.apache.sshd.common.util.security.SecurityUtils;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.openssl.PEMException;
@@ -52,7 +53,7 @@ class FilePublicKeyProvider extends AbstractKeyPairProvider {
     this.files = files;
   }
 
-  public Iterable<KeyPair> loadKeys() {
+  public Iterable<KeyPair> loadKeys(SessionContext session) {
     if (!SecurityUtils.isBouncyCastleRegistered()) {
       throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
     }
