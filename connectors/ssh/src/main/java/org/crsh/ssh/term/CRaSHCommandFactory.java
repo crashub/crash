@@ -20,6 +20,7 @@ package org.crsh.ssh.term;
 
 import org.apache.sshd.server.channel.ChannelSession;
 import org.apache.sshd.server.command.Command;
+import org.crsh.plugin.PluginContext;
 import org.crsh.shell.ShellFactory;
 
 import java.nio.charset.Charset;
@@ -32,9 +33,13 @@ public class CRaSHCommandFactory implements org.apache.sshd.server.shell.ShellFa
   /** . */
   final Charset encoding;
 
-  public CRaSHCommandFactory(ShellFactory shellFactory, Charset encoding) {
+  /** . */
+  final PluginContext pluginContext;
+
+  public CRaSHCommandFactory(ShellFactory shellFactory, Charset encoding, PluginContext pluginContext) {
     this.shellFactory = shellFactory;
     this.encoding = encoding;
+    this.pluginContext = pluginContext;
   }
 
   @Override

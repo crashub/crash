@@ -12,6 +12,7 @@ import org.crsh.shell.ShellResponse;
 import org.crsh.ssh.term.AbstractCommand;
 import org.crsh.ssh.term.SSHContext;
 import org.crsh.ssh.term.SSHLifeCycle;
+import org.crsh.auth.DisconnectPlugin;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -54,7 +55,15 @@ public class SSHInlineCommand extends AbstractCommand implements Runnable {
     thread.start();
   }
 
+  // Called only for SSH clients using <command> option, i.e. without interactive shell.
   public void destroy(ChannelSession channel) {
+    DisconnectPlugin disconnectHandler = pluginContext.getPlugin(DisconnectPlugin.class);
+    if (disconnectHandler != null) {
+      final String userName = session.getAttribute(SSHLifeCycle.USERNAME);
+      AuthInfo authInfo = session.getAttribute(SSHLifeCycle.AUTH_INFO);
+      disconnectHandler.onDisconnect(userName, authInfo);
+      log.info("Session " + userName + "@" + session.getIoSession().getRemoteAddress() + " disconnected");
+    }
     thread.interrupt();
   }
 

@@ -146,7 +146,7 @@ public class SSHLifeCycle {
         server.getProperties().put(ServerFactoryManager.AUTH_TIMEOUT, String.valueOf(this.authTimeout));
       }
 
-      server.setShellFactory(new CRaSHCommandFactory(factory, encoding));
+      server.setShellFactory(new CRaSHCommandFactory(factory, encoding, context));
       server.setCommandFactory(new SCPCommandFactory(context));
       server.setKeyPairProvider(keyPairProvider);
 

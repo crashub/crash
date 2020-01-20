@@ -30,6 +30,7 @@ import org.crsh.shell.Shell;
 import org.crsh.text.Style;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.PrintStream;
 import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
@@ -208,6 +209,11 @@ public class JLineProcessor implements Runnable, ConsoleDriver {
         } else {
           System.out.println("No operation: " + o);
         }
+      }
+      catch (InterruptedIOException e) {
+        // Suppress warning for "Interrupted at cycle #0 while waiting for data to become available"
+        logger.log(Level.FINE, e.getMessage(), e);
+        return;
       }
       catch (IOException e) {
         logger.log(Level.WARNING, e.getMessage(), e);

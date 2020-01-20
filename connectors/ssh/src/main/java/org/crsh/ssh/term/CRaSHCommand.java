@@ -19,6 +19,7 @@
 package org.crsh.ssh.term;
 
 import org.apache.sshd.server.channel.ChannelSession;
+import org.crsh.auth.DisconnectPlugin;
 import org.crsh.command.ShellSafety;
 import org.crsh.console.jline.Terminal;
 import org.crsh.console.jline.console.ConsoleReader;
@@ -80,8 +81,16 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
     return context;
   }
 
+  // Called only for SSH clients using interactive shell.
   public void destroy(ChannelSession channel) {
     Utils.close(console);
+    DisconnectPlugin disconnectHandler = factory.pluginContext.getPlugin(DisconnectPlugin.class);
+    if (disconnectHandler != null) {
+      final String userName = session.getAttribute(SSHLifeCycle.USERNAME);
+      AuthInfo authInfo = session.getAttribute(SSHLifeCycle.AUTH_INFO);
+      disconnectHandler.onDisconnect(userName, authInfo);
+      log.info("Session " + userName + "@" + session.getIoSession().getRemoteAddress() + " disconnected");
+    }
     thread.interrupt();
   }
 
