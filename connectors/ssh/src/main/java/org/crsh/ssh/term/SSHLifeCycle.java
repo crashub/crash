@@ -149,6 +149,12 @@ public class SSHLifeCycle {
       server.setShellFactory(new CRaSHCommandFactory(factory, encoding, context));
       server.setCommandFactory(new SCPCommandFactory(context));
       server.setKeyPairProvider(keyPairProvider);
+      // Disable outdated algorithms and ciphers
+      server.setSignatureFactories(SSHFactories.setUpSignatureFactories());
+      server.setCipherFactories(SSHFactories.setUpCipherFactories());
+      server.setKeyExchangeFactories(SSHFactories.setUpKeyExchangeFactories());
+      server.setMacFactories(SSHFactories.setUpMacFactories());
+      server.setCompressionFactories(SSHFactories.setUpCompressionFactories());
 
       //
       ArrayList<NamedFactory<Command>> namedFactoryList = new ArrayList<NamedFactory<Command>>(0);
