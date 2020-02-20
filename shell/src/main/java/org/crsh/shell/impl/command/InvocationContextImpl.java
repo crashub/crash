@@ -54,7 +54,7 @@ public final class InvocationContextImpl<P> extends AbstractInvocationContext<P>
 
   /** . */
   int status;
-  private ShellSafety shellSafety = new ShellSafety();
+  ShellSafety shellSafety = null;
 
   @Override
   public ShellSafety getShellSafety() {

@@ -21,6 +21,7 @@ package test.plugin;
 
 import org.crsh.command.BaseCommand;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.plugin.*;
 import org.crsh.shell.Shell;
 import org.crsh.shell.impl.command.CRaSH;
@@ -121,7 +122,7 @@ public class TestPluginLifeCycle extends PluginLifeCycle {
   }
 
   public Shell createShell() {
-    return crash.createSession(null, null, new ShellSafety());
+    return crash.createSession(null, null, ShellSafetyFactory.getCurrentThreadShellSafety());
   }
 }
 

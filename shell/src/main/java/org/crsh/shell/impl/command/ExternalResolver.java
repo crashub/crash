@@ -7,6 +7,7 @@ import org.crsh.cli.descriptor.Format;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
 import org.crsh.command.BaseCommand;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.lang.spi.CommandResolution;
 import org.crsh.shell.ErrorKind;
@@ -56,7 +57,7 @@ public class ExternalResolver implements CommandResolver
 		final String description;
 		try
 		{
-			shellCommand = new ClassShellCommand<C>(commandClass, new ShellSafety());
+			shellCommand = new ClassShellCommand<C>(commandClass, ShellSafetyFactory.getCurrentThreadShellSafety());
 			description = shellCommand.describe(commandClass.getSimpleName(), Format.DESCRIBE);
 		}
 		catch (IntrospectionException e)

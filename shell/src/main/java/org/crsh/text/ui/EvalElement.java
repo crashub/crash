@@ -21,6 +21,7 @@ package org.crsh.text.ui;
 
 import groovy.lang.Closure;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.groovy.GroovyCommand;
 import org.crsh.shell.Shell;
 import org.crsh.shell.impl.command.AbstractInvocationContext;
@@ -81,7 +82,7 @@ public class EvalElement extends Element {
 
       @Override
       public ShellSafety getShellSafety() {
-        return new ShellSafety();
+        return ShellSafetyFactory.getCurrentThreadShellSafety();
       }
 
       public CommandInvoker<?, ?> resolve(String s) throws CommandException {

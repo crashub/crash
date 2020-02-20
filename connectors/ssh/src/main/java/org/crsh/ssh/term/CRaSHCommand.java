@@ -21,6 +21,7 @@ package org.crsh.ssh.term;
 import org.apache.sshd.server.channel.ChannelSession;
 import org.crsh.auth.DisconnectPlugin;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.console.jline.Terminal;
 import org.crsh.console.jline.console.ConsoleReader;
 import org.apache.sshd.server.Environment;
@@ -107,7 +108,7 @@ public class CRaSHCommand extends AbstractCommand implements Runnable, Terminal 
 
       boolean safeUser = !isUserUnsafe(user.getName());
 
-      ShellSafety shellSafety = new ShellSafety();
+      ShellSafety shellSafety = ShellSafetyFactory.getCurrentThreadShellSafety();
       shellSafety.setSafeShell(safeUser);
       shellSafety.setInternal(isInternalSSH());
       shellSafety.setSSH(true);

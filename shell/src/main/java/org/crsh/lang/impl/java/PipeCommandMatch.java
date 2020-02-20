@@ -107,7 +107,7 @@ class PipeCommandMatch<T extends BaseCommand, C, P, PC extends Pipe<C, P>> exten
       public void open2(final CommandContext<P> consumer) throws CommandException {
 
         //
-        invocationContext = new InvocationContextImpl<P>(consumer, new ShellSafety());
+        invocationContext = new InvocationContextImpl<P>(consumer, ShellSafetyFactory.getCurrentThreadShellSafety());
 
         // Push context
         command.pushContext(invocationContext);

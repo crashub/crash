@@ -2,12 +2,12 @@
   <parent>
     <artifactId>crash.parent</artifactId>
     <groupId>org.crashub</groupId>
-    <version>1.7.3-SNAPSHOT</version>
+    <version>1.7.4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>crash.shell</artifactId>
   <packaging>jar</packaging>
-  <version>1.7.3-SNAPSHOT</version>
+  <version>1.7.4-SNAPSHOT</version>
 
   <name>CRaSH Shell</name>
   <description>The Shell module</description>

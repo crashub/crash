@@ -24,6 +24,7 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.RuntimeContext;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.lang.impl.groovy.closure.PipeLineClosure;
 import org.crsh.shell.Shell;
 import org.crsh.shell.impl.command.CRaSH;
@@ -67,7 +68,7 @@ public class Helper {
     CRaSH crash = (CRaSH)context.getSession().get("crash");
     if (crash != null) {
       try {
-        Command<?> cmd = crash.getCommandSafetyCheck(property, new ShellSafety());
+        Command<?> cmd = crash.getCommandSafetyCheck(property, ShellSafetyFactory.getCurrentThreadShellSafety());
         if (cmd != null) {
           return new PipeLineClosure(context, property, cmd);
         } else {
@@ -86,7 +87,7 @@ public class Helper {
     if (crash != null) {
       final Command<?> cmd;
       try {
-        cmd = crash.getCommandSafetyCheck(name, new ShellSafety());
+        cmd = crash.getCommandSafetyCheck(name, ShellSafetyFactory.getCurrentThreadShellSafety());
       }
       catch (CommandException ce) {
         throw new InvokerInvocationException(ce);

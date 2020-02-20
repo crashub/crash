@@ -20,7 +20,7 @@ package org.crsh.lang.impl.java;
 
 import org.crsh.cli.descriptor.Format;
 import org.crsh.cli.impl.descriptor.IntrospectionException;
-import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.shell.ErrorKind;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.shell.impl.command.ShellSession;
@@ -74,7 +74,7 @@ public class JavaCompiler implements org.crsh.lang.spi.Compiler {
           Class<?> clazz = loader.loadClass(classFile.getClassName());
           final ClassShellCommand command;
           try {
-            command = new ClassShellCommand(clazz, new ShellSafety());
+            command = new ClassShellCommand(clazz, ShellSafetyFactory.getCurrentThreadShellSafety());
           }
           catch (IntrospectionException e) {
             throw new CommandException(ErrorKind.INTERNAL, "Invalid cli annotations", e);

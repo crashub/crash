@@ -4,6 +4,7 @@ import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.channel.ChannelSession;
 import org.crsh.auth.AuthInfo;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.plugin.PluginContext;
 import org.crsh.shell.Shell;
 import org.crsh.shell.ShellFactory;
@@ -79,7 +80,7 @@ public class SSHInlineCommand extends AbstractCommand implements Runnable {
         return userName;
       }
     };
-    Shell shell = pluginContext.getPlugin(ShellFactory.class).create(user, authInfo, new ShellSafety());
+    Shell shell = pluginContext.getPlugin(ShellFactory.class).create(user, authInfo, ShellSafetyFactory.getCurrentThreadShellSafety());
     ShellProcess shellProcess = shell.createProcess(command);
 
     //

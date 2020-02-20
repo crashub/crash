@@ -25,6 +25,7 @@ import org.crsh.cli.impl.Delimiter;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.cli.spi.Completion;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.keyboard.KeyType;
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.WebPluginLifeCycle;
@@ -87,7 +88,7 @@ public class CRaSHConnector {
           log.fine("Using shell " + context);
           ShellFactory factory = context.getPlugin(ShellFactory.class);
           Principal user = wsSession.getUserPrincipal();
-          Shell shell = factory.create(user, null, new ShellSafety());
+          Shell shell = factory.create(user, null, ShellSafetyFactory.getCurrentThreadShellSafety());
           CRaSHSession session = new CRaSHSession(wsSession, shell);
           sessions.put(wsSession.getId(), session);
           log.fine("Established session " + wsSession.getId());

@@ -22,6 +22,7 @@ import groovy.lang.Binding;
 import org.crsh.command.CommandContext;
 import org.crsh.command.InvocationContext;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.shell.impl.command.AbstractInvocationContext;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
 import org.crsh.text.RenderPrintWriter;
@@ -64,7 +65,7 @@ class ShellBinding extends Binding {
 
     @Override
     public ShellSafety getShellSafety() {
-      return new ShellSafety();
+      return ShellSafetyFactory.getCurrentThreadShellSafety();
     }
 
     public CommandInvoker<?, ?> resolve(String s) throws CommandException {
@@ -217,7 +218,7 @@ class ShellBinding extends Binding {
         try {
           Command<?> cmd = session.getCommand(name);
           if (cmd != null) {
-            return new PipeLineClosure(new InvocationContextImpl<Object>(proxy, new ShellSafety()), name, cmd);
+            return new PipeLineClosure(new InvocationContextImpl<Object>(proxy, ShellSafetyFactory.getCurrentThreadShellSafety()), name, cmd);
           }
         } catch (CommandException ignore) {
           // Really ?

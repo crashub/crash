@@ -21,6 +21,7 @@ package org.crsh.shell.impl.command;
 import org.crsh.auth.AuthInfo;
 import org.crsh.cli.impl.completion.CompletionMatch;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.lang.spi.Compiler;
 import org.crsh.lang.spi.Language;
 import org.crsh.lang.spi.Repl;
@@ -72,6 +73,7 @@ public class CRaSHSession extends HashMap<String, Object> implements Shell, Clos
     this.user = user;
     this.authInfo = authInfo;
     this.shellSafety = shellSafety;
+    ShellSafetyFactory.registerShellSafetyForThread(this.shellSafety);
 
     //
     ClassLoader previous = setCRaSHLoader();

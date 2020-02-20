@@ -20,15 +20,12 @@
 package test.command;
 
 import org.crsh.cli.impl.descriptor.IntrospectionException;
-import org.crsh.command.BaseCommand;
-import org.crsh.command.CommandContext;
-import org.crsh.command.ShellSafety;
+import org.crsh.command.*;
 import org.crsh.shell.impl.command.spi.CommandException;
 import org.crsh.lang.impl.java.ClassShellCommand;
 import org.crsh.shell.impl.command.RuntimeContextImpl;
 import org.crsh.shell.impl.command.spi.Command;
 import org.crsh.shell.impl.command.spi.CommandInvoker;
-import org.crsh.command.ScriptException;
 import org.crsh.lang.impl.groovy.command.GroovyScriptCommand;
 import org.crsh.lang.impl.groovy.command.GroovyScriptShellCommand;
 import org.crsh.text.CLS;
@@ -157,7 +154,7 @@ public class TestInvocationContext<C> extends RuntimeContextImpl implements Comm
   }
 
   public <B extends BaseCommand> String execute(Class<B> commandClass, String... args) throws IntrospectionException, IOException, CommandException  {
-    return execute(new ClassShellCommand<B>(commandClass, new ShellSafety()), args);
+    return execute(new ClassShellCommand<B>(commandClass, ShellSafetyFactory.getCurrentThreadShellSafety()), args);
   }
 
   public <B extends GroovyScriptCommand> String execute2(Class<B> commandClass, String... args) throws IntrospectionException, IOException, UndeclaredThrowableException, CommandException {

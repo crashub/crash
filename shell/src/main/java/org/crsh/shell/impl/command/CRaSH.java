@@ -22,6 +22,7 @@ package org.crsh.shell.impl.command;
 //import crash.commands.base.system;
 import org.crsh.auth.AuthInfo;
 import org.crsh.command.ShellSafety;
+import org.crsh.command.ShellSafetyFactory;
 import org.crsh.lang.LanguageCommandResolver;
 import org.crsh.lang.spi.Language;
 import org.crsh.shell.impl.command.spi.Command;
@@ -103,7 +104,7 @@ public class CRaSH {
    * @throws NullPointerException if the name argument is null
    */
   public Command<?> getCommand(String name) throws CommandException, NullPointerException {
-    return getCommandSafetyCheck(name, new ShellSafety());
+    return getCommandSafetyCheck(name, ShellSafetyFactory.getCurrentThreadShellSafety());
   }
   public Command<?> getCommandSafetyCheck(String name, ShellSafety shellSafety) throws CommandException, NullPointerException {
     if (name == null) {
@@ -124,7 +125,7 @@ public class CRaSH {
   }
 
   public Iterable<Map.Entry<String, String>> getCommands() {
-    return getCommandsSafetyCheck(new ShellSafety());
+    return getCommandsSafetyCheck(ShellSafetyFactory.getCurrentThreadShellSafety());
   }
 
   public Iterable<Map.Entry<String, String>> getCommandsSafetyCheck(ShellSafety shellSafety) {
